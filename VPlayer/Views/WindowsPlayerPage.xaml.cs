@@ -42,7 +42,7 @@ namespace VPlayer.Views
             PlayerHandler.ChangeTime += PlayerHandler_ChangeTime;
 
             Task.Run(() => { AudioTracksView.AddFiles(new string[] { "D:\\Hudba\\Disturbed Discography" }); });
-            Task.Run(() => { AudioTracksView.UpdateDatabaseFromFolder("C:\\Users\\Roman Pecho\\Desktop\\Skuska"); });
+            Task.Run(() => { AudioTracksView.UpdateDatabaseFromFolder("D:\\Hudba\\Metallica\\Metallica - Discography 1983-2008 (19 Albums, 23 CDs)"); });
         }
 
         private void PlayerHandler_ChangeTime(object sender, double e)

@@ -53,7 +53,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject />
+    <StartupObject>VPlayer.App</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -189,6 +189,13 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="LocalMusicDatabase\Migrations\Configuration.cs" />
+    <Compile Include="Migrations\201903171808070_Initial.cs" />
+    <Compile Include="Migrations\201903171808070_Initial.Designer.cs">
+      <DependentUpon>201903171808070_Initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Other\AudioInfoDownloader\AudioInfo.cs" />
+    <Compile Include="Other\DatabaseManager.cs" />
     <Compile Include="Other\Extensions.cs" />
     <Compile Include="LocalMusicDatabase\Album.cs" />
     <Compile Include="LocalMusicDatabase\Artist.cs" />
@@ -249,7 +256,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LocalMusicDatabase\Migrations\Configuration.cs" />
     <Compile Include="Other\AudioInfoDownloader\AudioInfoDownloader.cs" />
     <Compile Include="Models\AudioTrack.cs" />
     <Compile Include="Models\InternetPlayer.cs" />
@@ -287,6 +293,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="Migrations\201903171808070_Initial.resx">
+      <DependentUpon>201903171808070_Initial.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -334,12 +343,6 @@
     <Content Include="Firefox\softokn3.dll" />
     <Content Include="Firefox\xul.dll" />
     <Resource Include="FodyWeavers.xml" />
-    <Content Include="LocalMusicDb\LocalMusicDb.mdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="LocalMusicDb\LocalMusicDb_log.ldf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VPlayer.Annotations;
-using VPlayer.LocalDatabase;
 
 namespace VPlayer.LocalMusicDatabase
 {
@@ -16,7 +15,9 @@ namespace VPlayer.LocalMusicDatabase
         public string Name { get; set; }
         public Artist Artist { get; set; }
         public string ReleaseDate { get; set; }
+        public string MusicBrainzId { get; set; }
         [CanBeNull] public string AlbumFrontCoverURI { get; set; }
         public virtual List<Song> Songs { get; set; }
+
     }
 }

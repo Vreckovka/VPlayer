@@ -15,5 +15,6 @@ namespace VPlayer.LocalMusicDatabase
         public string DiskLocation { get; set; }
         public string Name { get; set; }
         public int Length { get; set; }
+        public string MusicBrainzId { get; set; }
     }
 }

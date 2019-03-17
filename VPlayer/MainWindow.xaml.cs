@@ -8,7 +8,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using VPlayer.LocalDatabase;
 using VPlayer.LocalMusicDatabase;
 using VPlayer.Views;
 

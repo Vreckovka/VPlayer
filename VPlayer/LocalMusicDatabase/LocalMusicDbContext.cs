@@ -5,8 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using VPlayer.LocalDatabase;
-using VPlayer.Migrations;
+using VPlayer.LocalMusicDatabase.Migrations;
 
 namespace VPlayer.LocalMusicDatabase
 {
@@ -19,8 +18,8 @@ namespace VPlayer.LocalMusicDatabase
 
         public LocalMusicDbContext() : base()
         {
-
-            var databaseLocation = Environment.CurrentDirectory + "\\LocalMusicDb\\LocalMusicDb.mdf";
+            var solutionDirectory = TryGetSolutionDirectoryInfo();
+            var databaseLocation = solutionDirectory.FullName + "\\LocalMusicDb\\LocalMusicDb.mdf";
 
             Database.Connection.ConnectionString =
                 "Data Source=(LocalDB)\\MSSQLLocalDB;" +
@@ -29,6 +28,17 @@ namespace VPlayer.LocalMusicDatabase
                 "MultipleActiveResultSets=true";
 
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<LocalMusicDbContext, Configuration>());
+        }
+
+        public static DirectoryInfo TryGetSolutionDirectoryInfo(string currentPath = null)
+        {
+            var directory = new DirectoryInfo(
+                currentPath ?? Directory.GetCurrentDirectory());
+            while (directory != null && !directory.GetFiles("*.sln").Any())
+            {
+                directory = directory.Parent;
+            }
+            return directory;
         }
     }
 }

@@ -5,9 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VPlayer.Annotations;
-using VPlayer.LocalMusicDatabase;
 
-namespace VPlayer.LocalDatabase
+namespace VPlayer.LocalMusicDatabase
 {
     public class Artist
     {

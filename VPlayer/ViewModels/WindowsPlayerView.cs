@@ -14,6 +14,7 @@ using VPlayer.LocalMusicDatabase;
 using PropertyChanged;
 using VPlayer.Models;
 using VPlayer.Other;
+using VPlayer.Other.AudioInfoDownloader;
 using FileAttributes = System.IO.FileAttributes;
 
 namespace VPlayer.ViewModels
@@ -150,27 +151,24 @@ namespace VPlayer.ViewModels
                 if (directories.Length == 0)
                 {
                     DirectoryInfo directoryInfo = new DirectoryInfo(folderPath);
-                    var Files = directoryInfo.GetFiles("*.mp3");
+                    var extensions = new[] { "*.mp3", "*.wav" };
+                    var files = extensions.SelectMany(ext => directoryInfo.GetFiles(ext));
 
-                    foreach (var file in Files)
+                    foreach (var file in files)
                     {
-                        //var info = await GetMusicProperties(file.FullName);
-                        var aws = await AudioInfoDownloader.GetTrackInfoByFingerPrint(file.FullName);
+                        AudioInfo audioInfo = null;
+                        audioInfo = await AudioInfoDownloader.TryGetSongInfoFromFile(file.FullName);
 
-                        //    if (info.Album != "" && info.Artist != "")
-                        //    {
-                        //        var album = await AudioInfoDownloader.UpdateDatabase(info.Artist, info.Album);
+                        if (audioInfo == null)
+                            audioInfo = await AudioInfoDownloader.GetTrackInfoByFingerPrint(file.FullName);
 
-                        //        if (album != null)
-                        //            Console.WriteLine($"Album {album.Name} was sucessfuly added to database");
-
-                        //        if (info.Title != "")
-                        //        {
-                        //            await AudioInfoDownloader.SetDiskLocationToSong(info.Title, info.Album, info.Artist, file.FullName);
-                        //            Console.WriteLine($"Song {info.Title} was updated in database");
-                        //        }
-                        //    }
+                        if (audioInfo != null)
+                        {
+                            await DatabaseManager.UpdateDiscLocationOfSong(audioInfo, file.FullName);
+                        }
                     }
+
+                    Console.WriteLine("Update done");
                 }
                 else
                 {
@@ -178,6 +176,8 @@ namespace VPlayer.ViewModels
                     {
                         await UpdateDatabaseFromFolder(directories[i]);
                     }
+
+                    Console.WriteLine("Update done");
                 }
             }
             catch (Exception ex)
@@ -187,14 +187,6 @@ namespace VPlayer.ViewModels
             }
         }
 
-        private async Task<KeyValuePair<StorageFile, MusicProperties>> GetMusicProperties(string path)
-        {
-            StorageFile file = await StorageFile.GetFileFromPathAsync(path);
-            MusicProperties musicProperties = await file.Properties.GetMusicPropertiesAsync();
-            
-            return new KeyValuePair<StorageFile, MusicProperties>(file,musicProperties);
-        }
 
-       
     }
 }

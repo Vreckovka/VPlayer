@@ -7,6 +7,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer", "VPlayer\VPlayer.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener", "KeyListener\Listener.csproj", "{BA238278-32D0-4C4E-881A-AD2BE152832C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LocalMusicDb", "LocalMusicDb", "{4C0F028F-966D-4F94-BA52-49021914E483}"
+	ProjectSection(SolutionItems) = preProject
+		LocalMusicDb\LocalMusicDb.mdf = LocalMusicDb\LocalMusicDb.mdf
+		LocalMusicDb\LocalMusicDb_log.ldf = LocalMusicDb\LocalMusicDb_log.ldf
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
