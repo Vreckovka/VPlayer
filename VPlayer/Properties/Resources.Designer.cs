@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MultiMusicPlayer.Properties
+namespace VPlayer.Properties
 {
 
 

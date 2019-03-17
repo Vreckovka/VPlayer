@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Listener;
-using MultiMusicPlayer.ViewModels;
+using VPlayer.ViewModels;
 
-namespace MultiMusicPlayer.Models
+namespace VPlayer.Models
 {
     public static class PlayerHandler
     {

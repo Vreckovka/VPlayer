@@ -1,11 +1,13 @@
-namespace MultiMusicPlayer.Migrations
+using VPlayer.LocalMusicDatabase;
+
+namespace VPlayer.Migrations
 {
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<MultiMusicPlayer.LocalMusicDatabase.LocalMusicDbContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<LocalMusicDbContext>
     {
         public Configuration()
         {
@@ -13,7 +15,7 @@ namespace MultiMusicPlayer.Migrations
             AutomaticMigrationDataLossAllowed = true;
         }
 
-        protected override void Seed(MultiMusicPlayer.LocalMusicDatabase.LocalMusicDbContext context)
+        protected override void Seed(LocalMusicDbContext context)
         {
             //  This method will be called after migrating to the latest version.
 

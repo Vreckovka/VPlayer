@@ -5,10 +5,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MultiMusicPlayer.LocalDatabase;
-using MultiMusicPlayer.Migrations;
+using VPlayer.LocalDatabase;
+using VPlayer.Migrations;
 
-namespace MultiMusicPlayer.LocalMusicDatabase
+namespace VPlayer.LocalMusicDatabase
 {
     public class LocalMusicDbContext : DbContext
     {

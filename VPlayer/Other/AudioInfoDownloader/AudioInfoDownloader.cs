@@ -16,13 +16,13 @@ using System.Xml.Linq;
 using Hqub.MusicBrainz.API;
 using Hqub.MusicBrainz.API.Entities;
 using Hqub.MusicBrainz.API.Entities.Collections;
-using MultiMusicPlayer.LocalMusicDatabase;
 using unirest_net;
 using unirest_net.http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using VPlayer.LocalMusicDatabase;
 
-namespace MultiMusicPlayer.Other
+namespace VPlayer.Other
 {
     public class AudioInfoDownloader
     {

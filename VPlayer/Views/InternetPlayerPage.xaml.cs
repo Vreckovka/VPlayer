@@ -8,12 +8,12 @@ using System.Windows.Media;
 using Gecko;
 using Gecko.DOM;
 using Gecko.WebIDL;
-using MultiMusicPlayer.Models;
-using MultiMusicPlayer.ViewModels;
+using VPlayer.Models;
+using VPlayer.ViewModels;
 using Console = System.Console;
 using Grid = System.Windows.Controls.Grid;
 
-namespace MultiMusicPlayer.Views
+namespace VPlayer.Views
 {
     /// <summary>
     /// Interaction logic for InternetPlayerPage.xaml

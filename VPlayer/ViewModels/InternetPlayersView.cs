@@ -4,10 +4,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MultiMusicPlayer.Models;
 using PropertyChanged;
+using VPlayer.Models;
 
-namespace MultiMusicPlayer.ViewModels
+namespace VPlayer.ViewModels
 {
    
     class InternetPlayersView : BaseViewModel

@@ -1,7 +1,7 @@
-﻿<Application x:Class="MultiMusicPlayer.App"
+﻿<Application x:Class="VPlayer.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:MultiMusicPlayer"
+             xmlns:local="clr-namespace:VPlayer"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>

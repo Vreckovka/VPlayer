@@ -18,10 +18,10 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using Listener;
-using MultiMusicPlayer.Models;
-using MultiMusicPlayer.ViewModels;
+using VPlayer.Models;
+using VPlayer.ViewModels;
 
-namespace MultiMusicPlayer.Views
+namespace VPlayer.Views
 {
 
     /// <summary>

@@ -4,10 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MultiMusicPlayer.Annotations;
-using MultiMusicPlayer.LocalMusicDatabase;
+using VPlayer.Annotations;
+using VPlayer.LocalMusicDatabase;
 
-namespace MultiMusicPlayer.LocalDatabase
+namespace VPlayer.LocalDatabase
 {
     public class Artist
     {

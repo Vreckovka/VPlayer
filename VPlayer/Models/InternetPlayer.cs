@@ -8,7 +8,7 @@ using Gecko.DOM;
 using mshtml;
 using PropertyChanged;
 
-namespace MultiMusicPlayer.Models
+namespace VPlayer.Models
 {
     [AddINotifyPropertyChangedInterface]
     class InternetPlayer

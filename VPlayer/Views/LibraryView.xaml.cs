@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MultiMusicPlayer.Views
+namespace VPlayer.Views
 {
     /// <summary>
     /// Interaction logic for Library.xaml

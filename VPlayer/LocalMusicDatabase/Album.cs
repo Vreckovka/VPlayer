@@ -4,10 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MultiMusicPlayer.Annotations;
-using MultiMusicPlayer.LocalDatabase;
+using VPlayer.Annotations;
+using VPlayer.LocalDatabase;
 
-namespace MultiMusicPlayer.LocalMusicDatabase
+namespace VPlayer.LocalMusicDatabase
 {
     public class Album
     {

@@ -12,10 +12,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using MultiMusicPlayer.Models;
-using MultiMusicPlayer.ViewModels;
+using VPlayer.ViewModels;
+using VPlayer.Models;
 
-namespace MultiMusicPlayer.Views
+namespace VPlayer.Views
 {
     /// <summary>
     /// Interaction logic for PlayerPanelPage.xaml

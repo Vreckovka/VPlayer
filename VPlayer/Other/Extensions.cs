@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace MultiMusicPlayer.Other
+namespace VPlayer.Other
 {
     public static class Extensions
     {

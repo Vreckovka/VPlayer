@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace MultiMusicPlayer.StylesDictionaries
+namespace VPlayer.StylesDictionaries
 {
     public partial class WindowStyle
     {

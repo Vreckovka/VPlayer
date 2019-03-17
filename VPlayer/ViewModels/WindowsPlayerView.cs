@@ -10,13 +10,13 @@ using System.Windows;
 using System.Windows.Threading;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
-using MultiMusicPlayer.LocalMusicDatabase;
-using MultiMusicPlayer.Models;
-using MultiMusicPlayer.Other;
+using VPlayer.LocalMusicDatabase;
 using PropertyChanged;
+using VPlayer.Models;
+using VPlayer.Other;
 using FileAttributes = System.IO.FileAttributes;
 
-namespace MultiMusicPlayer.ViewModels
+namespace VPlayer.ViewModels
 {
     public class WindowsPlayerView : BaseViewModel
     {

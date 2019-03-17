@@ -6,10 +6,10 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using MultiMusicPlayer.Annotations;
 using PropertyChanged;
+using VPlayer.Annotations;
 
-namespace MultiMusicPlayer.Models
+namespace VPlayer.Models
 {
     [AddINotifyPropertyChangedInterface]
     public class AudioTrack 

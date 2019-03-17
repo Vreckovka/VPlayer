@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MultiMusicPlayer.Other
+namespace VPlayer.Other
 {
 
     public static class Levenshtein
