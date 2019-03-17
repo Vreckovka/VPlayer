@@ -194,6 +194,7 @@
     <Compile Include="Migrations\201903171808070_Initial.Designer.cs">
       <DependentUpon>201903171808070_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\LibraryModels\AlbumInfo.cs" />
     <Compile Include="Other\AudioInfoDownloader\AudioInfo.cs" />
     <Compile Include="Other\DatabaseManager.cs" />
     <Compile Include="Other\Extensions.cs" />
@@ -242,7 +243,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\LibraryView.xaml">
+    <Page Include="Views\LibraryViews\LibraryPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LibraryViews\LibraryPages\AlbumsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -266,13 +271,18 @@
       <DependentUpon>WindowsStyle.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\BaseViewModel.cs" />
+    <Compile Include="ViewModels\LibraryModels\AlbumsView.cs" />
+    <Compile Include="ViewModels\LibraryModels\BaseLibraryModel.cs" />
     <Compile Include="ViewModels\WindowsPlayerView.cs" />
     <Compile Include="ViewModels\InternetPlayersView.cs" />
     <Compile Include="Views\InternetPlayerPage.xaml.cs">
       <DependentUpon>InternetPlayerPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\LibraryView.xaml.cs">
-      <DependentUpon>LibraryView.xaml</DependentUpon>
+    <Compile Include="Views\LibraryViews\LibraryPage.xaml.cs">
+      <DependentUpon>LibraryPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LibraryViews\LibraryPages\AlbumsPage.xaml.cs">
+      <DependentUpon>AlbumsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PlayerPanelPage.xaml.cs">
       <DependentUpon>PlayerPanelPage.xaml</DependentUpon>
@@ -356,6 +366,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.3.3.2\build\Fody.targets" Condition="Exists('..\packages\Fody.3.3.2\build\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

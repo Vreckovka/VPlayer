@@ -218,4 +218,79 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style x:Key="ListViewItem_Albums" TargetType="{x:Type ListViewItem}">
+        <Setter Property="Foreground" Value="{DynamicResource DefaultWhiteBrush}"/>
+        <Setter Property="FontFamily" Value="Arial"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <!-- Trun off default selection-->
+                <ControlTemplate TargetType="{x:Type ListViewItem}">
+                    <Border x:Name="Bd" 
+                            Margin="3,3,3,0"
+                            Background="{TemplateBinding Background}" 
+                            Padding="8" 
+                            SnapsToDevicePixels="true"
+                            >
+                        
+                        <ContentPresenter 
+                            HorizontalAlignment="Stretch" 
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Margin="{TemplateBinding Margin}"
+                            ContentTemplate="{StaticResource AlbumViewTemplate}"
+                            />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                        </Trigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding RelativeSource={RelativeSource self}, Path=IsMouseOver}" Value="True"  />
+                                <Condition Binding="{Binding RelativeSource={RelativeSource self}, Path=IsSelected}" Value="False" />
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.EnterActions>
+                                <RemoveStoryboard BeginStoryboardName="B"/>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" To="#10b3adcd" Duration="0:0:.10"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </MultiDataTrigger.EnterActions>
+                            <MultiDataTrigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" To="Transparent" Duration="0:0:.10"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </MultiDataTrigger.ExitActions>
+                        </MultiDataTrigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard x:Name="A">
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" To="#fe1b48" Duration="0:0:0:0.2" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+
+                            <Trigger.ExitActions>
+                                <RemoveStoryboard BeginStoryboardName="A"/>
+                                <BeginStoryboard x:Name="B">
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" To="#48fe1b48" Duration="0:0:0:0.2" />
+                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" To="#10fe1b48" Duration="0:0:0:0.2" />
+                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" To="Transparent" Duration="0:0:0:.2" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

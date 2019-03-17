@@ -131,7 +131,7 @@
         <!--Library-->
         <Frame Grid.Column="1" 
                x:Name="Frame_Library"
-               Source="LibraryView.xaml" 
+               Source="LibraryViews/LibraryPage.xaml" 
                NavigationUIVisibility="Hidden"
                Width="0"
                HorizontalAlignment="Left">

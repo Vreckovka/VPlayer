@@ -32,4 +32,21 @@
         </StackPanel>
     </DataTemplate>
 
+    <DataTemplate x:Key="AlbumViewTemplate">
+        <StackPanel>
+            <TextBlock Text="{Binding Album.Name}"
+                       HorizontalAlignment="Center" 
+                       Style="{DynamicResource DefaultStyle}"
+                       FontSize="25"/>
+            <TextBlock Text="{Binding Artist.Name}"
+                       HorizontalAlignment="Center" 
+                       Style="{DynamicResource DefaultStyle}"
+                       FontSize="15"/>
+
+            <Border BorderBrush="{StaticResource TopWindowsColor}" BorderThickness="1"> 
+                <Image Source="{Binding Album.AlbumFrontCoverURI}" Width="200" Height="200"/>
+            </Border>
+        </StackPanel>
+    </DataTemplate>
+
 </ResourceDictionary>
