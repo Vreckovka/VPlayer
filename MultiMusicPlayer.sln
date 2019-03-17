@@ -7,11 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiMusicPlayer", "MultiMu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener", "KeyListener\Listener.csproj", "{BA238278-32D0-4C4E-881A-AD2BE152832C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EF4D1F0F-3FEC-4812-965E-D28B8288E86C}"
-	ProjectSection(SolutionItems) = preProject
-		MultiMusicPlayer\FodyWeavers.xml = MultiMusicPlayer\FodyWeavers.xml
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64

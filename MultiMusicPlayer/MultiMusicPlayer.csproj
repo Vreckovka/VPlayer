@@ -333,6 +333,7 @@
     <Content Include="Firefox\qipcap64.dll" />
     <Content Include="Firefox\softokn3.dll" />
     <Content Include="Firefox\xul.dll" />
+    <Resource Include="FodyWeavers.xml" />
     <Content Include="LocalMusicDb\LocalMusicDb.mdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
