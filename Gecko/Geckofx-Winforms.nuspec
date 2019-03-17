@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Geckofx45</id>
+    <version>$version$</version>
+    <title>geckofx-45 Windows 32bit</title>
+    <authors>geckofx</authors>
+    <owners>geckofx</owners>
+    <projectUrl>https://bitbucket.org/geckofx/</projectUrl>
+    <iconUrl>https://bitbucket.org/account/geckofx/avatar/256/?ts=1475265187</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <summary>library that allows embeding gecko in C# applications.</summary>
+    <description>library that allows embeding gecko in C# applications.
+	
+	Example Usage:
+	
+		[STAThread]
+        static void Main(string[] args)
+        {
+            Xpcom.Initialize("Firefox");
+            var geckoWebBrowser = new GeckoWebBrowser {Dock = DockStyle.Fill};
+            Form f = new Form();
+            f.Controls.Add(geckoWebBrowser);
+            geckoWebBrowser.Navigate("www.google.com");
+            Application.Run(f);
+        }
+	
+	</description>
+    <copyright>Copyright 2015</copyright>
+    <tags>Firefox Gecko Geckofx</tags>
+	<references>
+		<reference file="Geckofx-Core.dll" />
+		<reference file="Geckofx-Winforms.dll" />
+	</references>
+	<frameworkAssemblies>
+		<frameworkAssembly assemblyName="System.Windows.Forms" targetFramework="net45"/>
+		<frameworkAssembly assemblyName="System.Drawing" targetFramework="net45"/>
+	</frameworkAssemblies>
+  </metadata>
+  <files>
+   <file src="bin\$Configuration$\*.dll" target="lib\net45" />
+   <file src="bin\$Configuration$\*.pdb" target="lib\net45" />
+   <file src="bin\$Configuration$\*.config" target="lib" />
+   <file src="..\PutXulRunnerFolderHere\Firefox\*.dll" target="content\Firefox" />
+   <file src="..\PutXulRunnerFolderHere\Firefox\*.ja" target="content\Firefox" />
+   <file src="..\PutXulRunnerFolderHere\Firefox\plugin-*.exe" target="content\Firefox" />
+   <file src="Geckofx45.targets" target="build" />
+  </files>
+</package>

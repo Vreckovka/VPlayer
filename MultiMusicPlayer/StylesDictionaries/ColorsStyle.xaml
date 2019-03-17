@@ -1,0 +1,32 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:MultiMusicPlayer.StylesDictionaries">
+
+    <Color x:Key="BackgroudColor" R="21" G="18" B="29" A="255"/>
+    <Color x:Key="BackgroudColor2" R="26" G="22" B="34" A="255"/>
+    <Color x:Key="DefaultRedColor" R="254" G="27" B="72" A="255"/>
+    <Color x:Key="DefaultRedTransparentColor" R="254" G="27" B="72" A="50"/>
+    <Color x:Key="DefaultWhiteColor" R="229" G="223" B="255" A="255"/>
+    <Color x:Key="10_DefaultWhiteColor" R="179" G="173" B="205" A="10"/>
+    <Color x:Key="3_DefaultWhiteColor" R="179" G="173" B="205" A="3"/>
+
+    <SolidColorBrush x:Key="TopWindowsColor" Color="{DynamicResource BackgroudColor2}"/>
+    <SolidColorBrush x:Key="DefaultRedBrush" Color="{DynamicResource DefaultRedColor}"/>
+    <SolidColorBrush x:Key="DefaultRedTransparentBrush" Color="{DynamicResource DefaultRedTransparentColor}"/>
+    <SolidColorBrush x:Key="DefaultWhiteBrush" Color="{DynamicResource DefaultWhiteColor}"/>
+    <SolidColorBrush x:Key="10_WhiteTransparentBrush" Color="{DynamicResource 10_DefaultWhiteColor}"/>
+    <SolidColorBrush x:Key="3_WhiteTransparentBrush" Color="{DynamicResource 3_DefaultWhiteColor}"/>
+
+    <LinearGradientBrush x:Key="BackgroudBrush" StartPoint="0,0" EndPoint="0,3">
+        <GradientStop Color="{DynamicResource BackgroudColor}" 
+                      Offset="0.23" />
+        <GradientStop Color="{DynamicResource BackgroudColor2}" Offset="0.5" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="BackgroudPageBrush" StartPoint="0,0" EndPoint="0,3">
+        <GradientStop Color="{DynamicResource BackgroudColor}" 
+                      Offset="0.23" />
+        <GradientStop Color="{DynamicResource BackgroudColor2}" Offset="0.8" />
+    </LinearGradientBrush>
+
+</ResourceDictionary>

@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Geckofx45.64.Linux</id>
+    <version>$version$</version>
+    <title>geckofx-45 Linux 64bit</title>
+    <authors>geckofx</authors>
+    <owners>geckofx</owners>
+    <projectUrl>https://bitbucket.org/geckofx/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <summary>library that allows embeding gecko in C# applications.</summary>
+    <description>library that allows embeding gecko in C# applications.
+	
+	Example Usage:
+
+	// set env var LD_LIBRARY_PATH to $(ProjectDir)/Firefox
+	// set env var LD_PRELOAD to $(ProjectDir)/Firefox/libgeckofix.so
+	// add using Gecko
+	
+	[STAThread]
+        static void Main(string[] args)
+        {
+            Xpcom.Initialize("Firefox");
+            var geckoWebBrowser = new GeckoWebBrowser {Dock = DockStyle.Fill};
+            Form f = new Form();
+            f.Controls.Add(geckoWebBrowser);
+            geckoWebBrowser.Navigate("www.google.com");
+            Application.Run(f);
+        }
+	
+	</description>
+    <copyright>Copyright 2015</copyright>
+    <tags>Firefox Gecko Geckofx</tags>
+	<references>
+		<reference file="Geckofx-Core.dll" />
+		<reference file="Geckofx-Winforms.dll" />
+	</references>
+	<frameworkAssemblies>
+		<frameworkAssembly assemblyName="System.Windows.Forms"/>
+		<frameworkAssembly assemblyName="System.Drawing"/>
+	</frameworkAssemblies>
+  </metadata>
+  <files>
+   <file src="bin/Debug_Linux/*.dll" target="lib/net40" />
+   <file src="bin/Debug_Linux/*.mdb" target="lib/net40" />
+   <file src="bin/Debug_Linux/*.config" target="build" />
+   <file src="$firefoxdir$/*.so" target="content/Firefox-Linux64" />
+   <file src="$firefoxdir$/*.chk" target="content/Firefox-Linux64" />
+   <file src="$firefoxdir$/*.ini" target="content/Firefox-Linux64" />
+   <file src="$firefoxdir$/*.ja" target="content/Firefox-Linux64" />
+   <file src="$firefoxdir$/plugin-*" target="content/Firefox-Linux64" />
+   <file src="Geckofx45.64.Linux.targets" target="build" />
+  </files>
+</package>
