@@ -41,8 +41,8 @@ namespace VPlayer.Views
             PlayerHandler.Pause += PlayerHandler_Pause;
             PlayerHandler.ChangeTime += PlayerHandler_ChangeTime;
 
-            Task.Run(() => { AudioTracksView.AddFiles(new string[] { "D:\\Hudba\\Disturbed Discography" }); });
-            Task.Run(() => { AudioTracksView.UpdateDatabaseFromFolder("D:\\Hudba\\Metallica\\Metallica - Discography 1983-2008 (19 Albums, 23 CDs)"); });
+            //Task.Run(() => { AudioTracksView.AddFiles(new string[] { "D:\\Hudba\\Disturbed Discography" }); });
+            //Task.Run(() => { AudioTracksView.UpdateDatabaseFromFolder("D:\\Hudba\\Disturbed Discography"); });
         }
 
         private void PlayerHandler_ChangeTime(object sender, double e)
@@ -90,8 +90,11 @@ namespace VPlayer.Views
         {
             if (uri == null)
             {
-                MediaElement_Player.Source = AudioTracksView.ActualTrack.Uri;
-                AudioTracksView.Play();
+                if (AudioTracksView.ActualTrack.Uri != null)
+                {
+                    MediaElement_Player.Source = AudioTracksView.ActualTrack.Uri;
+                    AudioTracksView.Play();
+                }
             }
             else
             {

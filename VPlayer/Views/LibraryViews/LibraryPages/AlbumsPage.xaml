@@ -11,7 +11,7 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <ListView ItemsSource="{Binding Albums}" ItemTemplate="{StaticResource AlbumViewTemplate}" Style="{StaticResource ListView_Tracks}" />
     </Grid>

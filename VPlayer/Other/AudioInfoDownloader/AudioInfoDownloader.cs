@@ -386,7 +386,10 @@ namespace VPlayer.Other.AudioInfoDownloader
                 HttpResponse<string> response = Unirest.get(apiURL).asJson<string>();
 
                 dynamic stuff = JObject.Parse(response.Body);
-                return stuff.images[0].image;
+                var asd = stuff.images[0].thumbnails.small;
+                if(asd == null)
+                    asd = stuff.images[0].image;
+                return asd;
             }
             catch (Exception)
             {

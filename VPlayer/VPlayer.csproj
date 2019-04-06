@@ -6,7 +6,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{1FB08EAF-397B-4682-AFC9-73B3D1FA2CA5}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>VPlayer</RootNamespace>
     <AssemblyName>VPlayer</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
@@ -94,6 +94,9 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>VPlayerLogo – kópia.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -196,6 +199,7 @@
     </Compile>
     <Compile Include="Models\LibraryModels\AlbumInfo.cs" />
     <Compile Include="Other\AudioInfoDownloader\AudioInfo.cs" />
+    <Compile Include="Other\Converters.cs" />
     <Compile Include="Other\DatabaseManager.cs" />
     <Compile Include="Other\Extensions.cs" />
     <Compile Include="LocalMusicDatabase\Album.cs" />
@@ -212,6 +216,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="StylesDictionaries\ColorsStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StylesDictionaries\ConvertersStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -352,6 +360,9 @@
     <Content Include="Firefox\qipcap64.dll" />
     <Content Include="Firefox\softokn3.dll" />
     <Content Include="Firefox\xul.dll" />
+    <Resource Include="VPlayerLogo – kópia.ico" />
+    <Resource Include="VPlayerLogo.ico" />
+    <Resource Include="Includes\VPlayerLogo.png" />
     <Resource Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>

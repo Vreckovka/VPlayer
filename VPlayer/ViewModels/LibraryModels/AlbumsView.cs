@@ -15,7 +15,6 @@ namespace VPlayer.ViewModels.LibraryModels
         public AlbumsView()
         {
             _localMusicDbContext = new LocalMusicDbContext();
-
         }
 
         public void LoadAlbums(string interpert = null)
@@ -24,6 +23,7 @@ namespace VPlayer.ViewModels.LibraryModels
             {
                 Albums = (from x in _localMusicDbContext.Albums
                     join y in _localMusicDbContext.Artists on x.Artist equals y
+                    orderby y.Name,x.ReleaseDate
                     select new AlbumInfo()
                     {
                         Album = x,

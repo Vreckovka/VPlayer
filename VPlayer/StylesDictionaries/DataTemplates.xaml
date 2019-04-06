@@ -1,6 +1,11 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:VPlayer.StylesDictionaries">
+                    xmlns:local="clr-namespace:VPlayer.StylesDictionaries"
+                  >
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="ConvertersStyle.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
 
     <DataTemplate x:Key="SoundTrackTemplate">
         <Grid>
@@ -33,20 +38,44 @@
     </DataTemplate>
 
     <DataTemplate x:Key="AlbumViewTemplate">
-        <StackPanel>
+        <Grid HorizontalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
             <TextBlock Text="{Binding Album.Name}"
                        HorizontalAlignment="Center" 
                        Style="{DynamicResource DefaultStyle}"
-                       FontSize="25"/>
+                       FontSize="25"
+                       MaxWidth="250"
+                       />
             <TextBlock Text="{Binding Artist.Name}"
                        HorizontalAlignment="Center" 
                        Style="{DynamicResource DefaultStyle}"
-                       FontSize="15"/>
+                       FontSize="15"
+                       Grid.Row="1"
+                       />
 
-            <Border BorderBrush="{StaticResource TopWindowsColor}" BorderThickness="1"> 
-                <Image Source="{Binding Album.AlbumFrontCoverURI}" Width="200" Height="200"/>
+            <Border BorderBrush="{StaticResource TopWindowsColor}" BorderThickness="8"  Grid.Row="2"> 
+                <Image Source="{Binding Album.AlbumFrontCoverURI, Converter={StaticResource ImageLazyLoadingConverter}, IsAsync=True}" 
+                       Width="200" Height="200" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Effect">
+                            <Setter.Value>
+                                <DropShadowEffect BlurRadius="15"
+                                                  Direction="1"
+                                                  Color="Black"
+                                                  RenderingBias="Quality"
+                                                  ShadowDepth="15"
+                                                  Opacity="0.8"/>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Border.Style>
             </Border>
-        </StackPanel>
+        </Grid>
     </DataTemplate>
 
 </ResourceDictionary>

@@ -30,7 +30,7 @@ namespace VPlayer.Views.LibraryViews.LibraryPages
 
         private void Page_Initialized(object sender, EventArgs e)
         {
-            albumsView.LoadAlbums();
+            Task.Run(() => { albumsView.LoadAlbums(); });
         }
     }
 }
