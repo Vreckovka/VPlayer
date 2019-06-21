@@ -11,8 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
-using VPlayer.ViewModels.LibraryModels;
+//using System.Windows.Shapes;
+//using VPlayer.ViewModels.LibraryModels;
 
 namespace VPlayer.Views.LibraryViews.LibraryPages
 {
@@ -21,16 +21,16 @@ namespace VPlayer.Views.LibraryViews.LibraryPages
     /// </summary>
     public partial class AlbumsPage : Page
     {
-        private AlbumsView albumsView = new AlbumsView();
+       // private AlbumsView albumsView = new AlbumsView();
         public AlbumsPage()
         {
             InitializeComponent();
-            DataContext = albumsView;
+        //    DataContext = albumsView;
         }
 
         private void Page_Initialized(object sender, EventArgs e)
         {
-            Task.Run(() => { albumsView.LoadAlbums(); });
+          //  Task.Run(() => { albumsView.LoadAlbums(); });
         }
     }
 }

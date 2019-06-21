@@ -4,5 +4,5 @@
                     xmlns:converters="clr-namespace:VPlayer.Other.Converters">
 
 
-    <converters:ImageLazyLoadingConverter x:Key="ImageLazyLoadingConverter"/>
+    <!--<converters:ImageLazyLoadingConverter x:Key="ImageLazyLoadingConverter"/>-->
 </ResourceDictionary>

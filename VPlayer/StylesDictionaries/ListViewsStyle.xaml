@@ -4,24 +4,24 @@
 
     <Style x:Key="ListView_MenuStyle" TargetType="ListView">
         <Setter Property="SnapsToDevicePixels" Value="true" />
-        <Setter Property="OverridesDefaultStyle"
-          Value="true" />
-        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
-          Value="Auto" />
-        <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
-          Value="Auto" />
-        <Setter Property="ScrollViewer.CanContentScroll"
-          Value="true" />
-        <Setter Property="VerticalContentAlignment"
-          Value="Center" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.CanContentScroll" Value="true" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListView">
-                    <Border Name="Border" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                    <Border Name="Border" 
+                            BorderThickness="{TemplateBinding BorderThickness}" 
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            Background="{TemplateBinding Background}">
                         <ScrollViewer>
                             <ItemsPresenter />
                         </ScrollViewer>
                     </Border>
+
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsGrouping" Value="true">
                             <Setter Property="ScrollViewer.CanContentScroll" Value="false" />
@@ -110,6 +110,23 @@
         </Setter>
     </Style>
 
+    <Style x:Key="ListViewItem_AlbumStyle" TargetType="{x:Type ListViewItem}">
+        <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <!-- Trun off default selection-->
+                <ControlTemplate TargetType="{x:Type ListViewItem}">
+                    <ContentPresenter 
+                            HorizontalAlignment="Center" 
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Margin="{TemplateBinding Margin}"/>
+
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="ListView_Tracks" TargetType="ListView">
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="OverridesDefaultStyle" Value="true" />
@@ -130,6 +147,7 @@
                             <ItemsPresenter />
                         </ScrollViewer>
                     </Border>
+
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsGrouping" Value="true">
                             <Setter Property="ScrollViewer.CanContentScroll" Value="false" />
@@ -165,80 +183,6 @@
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                             Margin="{TemplateBinding Margin}"
-                            />
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="Foreground"
-                                    Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
-                        </Trigger>
-                        <MultiDataTrigger>
-                            <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding RelativeSource={RelativeSource self}, Path=IsMouseOver}" Value="True"  />
-                                <Condition Binding="{Binding RelativeSource={RelativeSource self}, Path=IsSelected}" Value="False" />
-                            </MultiDataTrigger.Conditions>
-                            <MultiDataTrigger.EnterActions>
-                                <RemoveStoryboard BeginStoryboardName="B"/>
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" To="#10b3adcd" Duration="0:0:.10"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </MultiDataTrigger.EnterActions>
-                            <MultiDataTrigger.ExitActions>
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" To="Transparent" Duration="0:0:.10"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </MultiDataTrigger.ExitActions>
-                        </MultiDataTrigger>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Trigger.EnterActions>
-                                <BeginStoryboard x:Name="A">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" To="#fe1b48" Duration="0:0:0:0.2" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.EnterActions>
-
-                            <Trigger.ExitActions>
-                                <RemoveStoryboard BeginStoryboardName="A"/>
-                                <BeginStoryboard x:Name="B">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" To="#48fe1b48" Duration="0:0:0:0.2" />
-                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" To="#10fe1b48" Duration="0:0:0:0.2" />
-                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" To="Transparent" Duration="0:0:0:.2" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.ExitActions>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="ListViewItem_Albums" TargetType="{x:Type ListViewItem}">
-        <Setter Property="Foreground" Value="{DynamicResource DefaultWhiteBrush}"/>
-        <Setter Property="FontFamily" Value="Arial"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <!-- Trun off default selection-->
-                <ControlTemplate TargetType="{x:Type ListViewItem}">
-                    <Border x:Name="Bd" 
-                            Margin="3,3,3,0"
-                            Background="{TemplateBinding Background}" 
-                            Padding="8" 
-                            SnapsToDevicePixels="true"
-                            >
-                        
-                        <ContentPresenter 
-                            HorizontalAlignment="Stretch" 
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            Margin="{TemplateBinding Margin}"
-                            ContentTemplate="{StaticResource AlbumViewTemplate}"
                             />
                     </Border>
                     <ControlTemplate.Triggers>

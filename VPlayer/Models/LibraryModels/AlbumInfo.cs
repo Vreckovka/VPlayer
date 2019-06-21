@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PropertyChanged;
-using VPlayer.LocalMusicDatabase;
+using VPlayer.AudioStorage.Models;
 
 namespace VPlayer.Models.LibraryModels
 {

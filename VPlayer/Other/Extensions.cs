@@ -1,32 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using Hqub.MusicBrainz.API.Entities;
 using Newtonsoft.Json.Linq;
-using VPlayer.LocalMusicDatabase;
+using VPlayer.AudioStorage.Models;
+
 
 namespace VPlayer.Other
 {
     public static class Extensions
     {
-        public static string Quote(this string s)
-        {
-            if (string.IsNullOrEmpty(s))
-            {
-                return "";
-            }
-
-            if (s.IndexOf(' ') < 0)
-            {
-                return s;
-            }
-
-            return "\"" + s + "\"";
-        }
+      
 
         public static string GetDate(this JObject jObject)
         {
@@ -46,25 +35,25 @@ namespace VPlayer.Other
             return null;
         }
 
-        public static List<Song> CreateSongs(this List<Track> tracks, LocalMusicDatabase.Album album)
-        {
-            List<Song> songs = new List<Song>();
-            foreach (var track in tracks)
-            {
-                songs.Add(new Song()
-                {
-                    Album = album,
-                    Name = track.Recording.Title,
-                    Length = (int)track.Recording.Length
-                });
-            }
-            return songs;
-        }
+        //public static List<Song> CreateSongs(this List<Track> tracks, LocalMusicDatabase.Album album)
+        //{
+        //    List<Song> songs = new List<Song>();
+        //    foreach (var track in tracks)
+        //    {
+        //        songs.Add(new Song()
+        //        {
+        //            Album = album,
+        //            Name = track.Recording.Title,
+        //            Length = (int)track.Recording.Length
+        //        });
+        //    }
+        //    return songs;
+        //}
 
-        public static XDocument ToXDocument(this XmlDocument document)
-        {
-            return document.ToXDocument(LoadOptions.None);
-        }
+        //public static XDocument ToXDocument(this XmlDocument document)
+        //{
+        //    return document.ToXDocument(LoadOptions.None);
+        //}
 
         public static XDocument ToXDocument(this XmlDocument document, LoadOptions options)
         {
@@ -73,5 +62,6 @@ namespace VPlayer.Other
                 return XDocument.Load(reader, options);
             }
         }
+
     }
 }

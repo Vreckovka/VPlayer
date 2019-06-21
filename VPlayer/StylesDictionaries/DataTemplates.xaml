@@ -58,7 +58,7 @@
                        />
 
             <Border BorderBrush="{StaticResource TopWindowsColor}" BorderThickness="8"  Grid.Row="2"> 
-                <Image Source="{Binding Album.AlbumFrontCoverURI, Converter={StaticResource ImageLazyLoadingConverter}, IsAsync=True}" 
+                <Image Source="{Binding Album.AlbumFrontCoverBLOB}" 
                        Width="200" Height="200" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                 <Border.Style>
                     <Style TargetType="Border">

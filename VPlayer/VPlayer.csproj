@@ -6,7 +6,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{1FB08EAF-397B-4682-AFC9-73B3D1FA2CA5}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>VPlayer</RootNamespace>
     <AssemblyName>VPlayer</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
@@ -96,8 +96,9 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>VPlayerLogo – kópia.ico</ApplicationIcon>
+    <ApplicationIcon>VPlayerLogo.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
@@ -131,6 +132,9 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="policy.2.0.taglib-sharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=MSIL">
       <HintPath>..\packages\taglib.2.1.0.0\lib\policy.2.0.taglib-sharp.dll</HintPath>
@@ -192,21 +196,9 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LocalMusicDatabase\Migrations\Configuration.cs" />
-    <Compile Include="Migrations\201903171808070_Initial.cs" />
-    <Compile Include="Migrations\201903171808070_Initial.Designer.cs">
-      <DependentUpon>201903171808070_Initial.cs</DependentUpon>
-    </Compile>
     <Compile Include="Models\LibraryModels\AlbumInfo.cs" />
-    <Compile Include="Other\AudioInfoDownloader\AudioInfo.cs" />
     <Compile Include="Other\Converters.cs" />
-    <Compile Include="Other\DatabaseManager.cs" />
     <Compile Include="Other\Extensions.cs" />
-    <Compile Include="LocalMusicDatabase\Album.cs" />
-    <Compile Include="LocalMusicDatabase\Artist.cs" />
-    <Compile Include="LocalMusicDatabase\Genre.cs" />
-    <Compile Include="LocalMusicDatabase\LocalMusicDbContext.cs" />
-    <Compile Include="LocalMusicDatabase\Song.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -247,14 +239,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\InternetPlayerPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\LibraryViews\LibraryPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\LibraryViews\LibraryPages\AlbumsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -263,40 +247,20 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\WindowsPlayerPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Other\AudioInfoDownloader\AudioInfoDownloader.cs" />
     <Compile Include="Models\AudioTrack.cs" />
-    <Compile Include="Models\InternetPlayer.cs" />
-    <Compile Include="Models\PlayerHandler.cs" />
-    <Compile Include="Other\Levenshtein.cs" />
+    <Compile Include="Other\IoC.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="StylesDictionaries\WindowsStyle.xaml.cs">
       <DependentUpon>WindowsStyle.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\LibraryModels\AlbumsView.cs" />
-    <Compile Include="ViewModels\LibraryModels\BaseLibraryModel.cs" />
-    <Compile Include="ViewModels\WindowsPlayerView.cs" />
-    <Compile Include="ViewModels\InternetPlayersView.cs" />
-    <Compile Include="Views\InternetPlayerPage.xaml.cs">
-      <DependentUpon>InternetPlayerPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\LibraryViews\LibraryPage.xaml.cs">
-      <DependentUpon>LibraryPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\LibraryViews\LibraryPages\AlbumsPage.xaml.cs">
       <DependentUpon>AlbumsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PlayerPanelPage.xaml.cs">
       <DependentUpon>PlayerPanelPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\WindowsPlayerPage.xaml.cs">
-      <DependentUpon>WindowsPlayerPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -311,9 +275,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="Migrations\201903171808070_Initial.resx">
-      <DependentUpon>201903171808070_Initial.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -332,6 +293,26 @@
     <ProjectReference Include="..\KeyListener\Listener.csproj">
       <Project>{ba238278-32d0-4c4e-881a-ad2be152832c}</Project>
       <Name>Listener</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VPlayer.AudioInfoDownloader\VPlayer.AudioInfoDownloader.csproj">
+      <Project>{5700b63d-857d-43fd-b0c4-4b2c88a5a1da}</Project>
+      <Name>VPlayer.AudioInfoDownloader</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VPlayer.Database\VPlayer.AudioStorage.csproj">
+      <Project>{b5245008-cfdf-4b83-bf61-b0b26a8e92bf}</Project>
+      <Name>VPlayer.AudioStorage</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VPlayer.Library\VPlayer.Library.csproj">
+      <Project>{26d6bb81-3f3c-4ddc-857d-2b2dc4c660b8}</Project>
+      <Name>VPlayer.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VPlayer.WebPlayer\VPlayer.WebPlayer.csproj">
+      <Project>{2d6b4aae-1065-4e73-a96a-bdc154f0f4fe}</Project>
+      <Name>VPlayer.WebPlayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VPlayer.WindowsPlayer\VPlayer.WindowsPlayer.csproj">
+      <Project>{a252ebb2-d31a-4a6a-a77c-a688e303801d}</Project>
+      <Name>VPlayer.WindowsPlayer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -360,10 +341,9 @@
     <Content Include="Firefox\qipcap64.dll" />
     <Content Include="Firefox\softokn3.dll" />
     <Content Include="Firefox\xul.dll" />
-    <Resource Include="VPlayerLogo – kópia.ico" />
     <Resource Include="VPlayerLogo.ico" />
-    <Resource Include="Includes\VPlayerLogo.png" />
     <Resource Include="FodyWeavers.xml" />
+    <Resource Include="Includes\VPlayerLogo.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
@@ -386,9 +366,9 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Fody.3.3.2\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.3.3.2\build\Fody.targets'))" />
     <Error Condition="!Exists('..\packages\PropertyChanged.Fody.2.6.0\build\PropertyChanged.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PropertyChanged.Fody.2.6.0\build\PropertyChanged.Fody.props'))" />
-    <Error Condition="!Exists('..\packages\Geckofx60.64.60.0.26\build\Geckofx60.64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Geckofx60.64.60.0.26\build\Geckofx60.64.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
+    <Error Condition="!Exists('..\packages\Geckofx60.64.60.0.26\build\Geckofx60.64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Geckofx60.64.60.0.26\build\Geckofx60.64.targets'))" />
   </Target>
-  <Import Project="..\packages\Geckofx60.64.60.0.26\build\Geckofx60.64.targets" Condition="Exists('..\packages\Geckofx60.64.60.0.26\build\Geckofx60.64.targets')" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
+  <Import Project="..\packages\Geckofx60.64.60.0.26\build\Geckofx60.64.targets" Condition="Exists('..\packages\Geckofx60.64.60.0.26\build\Geckofx60.64.targets')" />
 </Project>

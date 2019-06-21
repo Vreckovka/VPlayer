@@ -1,0 +1,119 @@
+﻿<Page x:Class="VPlayer.Library.Views.AlbumsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:VPlayer.Library.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <Grid>
+        <ScrollViewer>
+            <ListView ItemsSource="{Binding Albums}" 
+                      Background="{StaticResource TopWindowsColor}" 
+                      BorderThickness="0" >
+
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListViewItem_AlbumStyle}"/>
+                </ListView.ItemContainerStyle>
+
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type Page},Mode=FindAncestor},Path=ActualWidth}"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Width="200" Height="240" Margin="5" Background="Transparent">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Image Source="{Binding AlbumFrontCoverBLOB}"
+                                   Grid.Row="0" 
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Top"
+                                   Name="Image"
+                                  >
+                                <Image.Style>
+                                    <Style TargetType="Image">
+                                        <Setter Property="Width" Value="200"/>
+                                        <Setter Property="Height" Value="190"/>
+
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}, Mode=FindAncestor},Path=IsMouseOver}" Value="true">
+                                                <DataTrigger.EnterActions>
+                                                    <RemoveStoryboard BeginStoryboardName="SizeDownStoryBoard"/>
+                                                    <BeginStoryboard Name="SizeUpStoryBoard">
+                                                        <Storyboard>
+                                                            <DoubleAnimation Storyboard.TargetProperty="(Image.Height)" From="200" To="210" Duration="0:0:0.35" />
+                                                            <DoubleAnimation Storyboard.TargetProperty="(Image.Width)" From="190" To="200" Duration="0:0:0.35" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </DataTrigger.EnterActions>
+
+                                                <DataTrigger.ExitActions>
+                                                    <RemoveStoryboard BeginStoryboardName="SizeUpStoryBoard"/>
+                                                    <BeginStoryboard Name="SizeDownStoryBoard">
+                                                        <Storyboard>
+                                                            <DoubleAnimation Storyboard.TargetProperty="(Image.Height)" From="210" To="200" Duration="0:0:0.35" />
+                                                            <DoubleAnimation Storyboard.TargetProperty="(Image.Width)" From="200" To="190" Duration="0:0:0.35" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </DataTrigger.ExitActions>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                                <Image.Effect>
+                                    <DropShadowEffect BlurRadius="10" ShadowDepth="5"/>
+                                </Image.Effect>
+                            </Image>
+
+                            <Label Content="{Binding Name}" 
+                                   Grid.Row="1" 
+                                   HorizontalAlignment="Center"
+                                   FontFamily="Arial"
+                                   FontSize="20"
+                                   Name="LABELO"
+                                   >
+                                <Label.Effect>
+                                    <DropShadowEffect BlurRadius="5" ShadowDepth="5"/>
+                                </Label.Effect>
+                                <Label.Style>
+                                    <Style TargetType="Label">
+                                        <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}, Mode=FindAncestor},Path=IsMouseOver}" Value="true">
+                                                <DataTrigger.EnterActions>
+                                                    <RemoveStoryboard BeginStoryboardName="SizeDownStoryBoard"/>
+                                                    <BeginStoryboard Name="SizeUpStoryBoard">
+                                                        <Storyboard>
+                                                            <DoubleAnimation Storyboard.TargetProperty="(Label.FontSize)" From="20" To="25" Duration="0:0:0.25" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </DataTrigger.EnterActions>
+
+                                                <DataTrigger.ExitActions>
+                                                    <RemoveStoryboard BeginStoryboardName="SizeUpStoryBoard"/>
+                                                    <BeginStoryboard Name="SizeDownStoryBoard">
+                                                        <Storyboard>
+                                                            <DoubleAnimation Storyboard.TargetProperty="(Label.FontSize)" From="25" To="20" Duration="0:0:0.25" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </DataTrigger.ExitActions>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Label.Style>
+                            </Label>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </ScrollViewer>
+    </Grid>
+
+</Page>
