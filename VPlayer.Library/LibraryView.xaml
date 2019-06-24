@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:VPlayer"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    
+
     <UserControl.Resources>
         <Style TargetType="ListViewItem" BasedOn="{StaticResource ListViewItem_MenuStyle}" >
             <EventSetter Event="PreviewMouseDown" Handler="ListViewItem_Click" />
@@ -35,7 +35,7 @@
         <ListView>
             <ListView.Style>
                 <Style TargetType="ListView" BasedOn="{StaticResource ListView_MenuStyle}">
-                    <Setter Property="Background" Value="{StaticResource TopWindowsColor}"/>
+                    <Setter Property="Background" Value="{StaticResource BackgroudBrush}"/>
                 </Style>
             </ListView.Style>
 
@@ -46,6 +46,7 @@
             <ListViewItem Content="Genres" />
         </ListView>
 
-        <Frame Grid.Column="1" Background="Transparent" x:Name="Frame_LibraryContent"/>
+        <Frame Grid.Column="1"  Background="Transparent" x:Name="Frame_LibraryContent"/>
+
     </Grid>
 </UserControl>

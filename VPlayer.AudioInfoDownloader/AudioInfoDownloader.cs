@@ -33,7 +33,17 @@ namespace VPlayer.AudioInfoDownloader
         private string api = "eJSq8XSeYR";
         private string meta = "recordings+releases+tracks";
 
+        private string exceedMsg = "Your requests are exceeding the " +
+                                   "allowable rate limit. " +
+                                   "Please see http://wiki.musicbrainz.org/XMLWebService " +
+                                   "for more information.";
+
         private static AudioInfoDownloader _instance;
+
+        static SemaphoreSlim musibrainzAPISempathore = new SemaphoreSlim(1, 1);
+
+        public event EventHandler<List<AudioInfo>> SubdirectoryLoaded;
+
         public static AudioInfoDownloader Instance
         {
             get
@@ -52,17 +62,25 @@ namespace VPlayer.AudioInfoDownloader
             StorageManager.AlbumStored += AudioInfoDownloader_AlbumStored;
         }
 
-        private void AudioInfoDownloader_AlbumStored(object sender, Album e)
+        private async void AudioInfoDownloader_AlbumStored(object sender, Album e)
         {
-            Task.Run(async () =>
+            try
             {
                 var album = await UpdateAlbum(e);
 
-                using (IStorage storage = StorageManager.GetStorage())
+                if (album != null)
                 {
-                    await storage.UpdateAlbum(album);
+                    using (IStorage storage = StorageManager.GetStorage())
+                    {
+                        await storage.UpdateAlbum(album);
+                    }
                 }
-            });
+            }
+            catch (Exception ex)
+            {
+                Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+            }
+
         }
 
         #region Info methods
@@ -74,143 +92,78 @@ namespace VPlayer.AudioInfoDownloader
         /// <returns></returns>
         public async Task<AudioInfo> GetAudioInfo(string path)
         {
-            AudioInfo audioInfo = null;
+            return await Task.Run(async () =>
+            {
 
-            Logger.Logger.Instance.Log(typeof(AudioInfoDownloader), $"Trying get info by from windows {path}");
-            audioInfo = await GetAudioInfoByWindowsAsync(path);
 
-            if (audioInfo != null)
-                return audioInfo;
-            else
-                return await GetAudioInfoByFingerPrint(path);
+                AudioInfo audioInfo = null;
+
+                audioInfo = await Task.Run(() => GetAudioInfoByWindowsAsync(path));
+
+                if (audioInfo != null)
+                    return audioInfo;
+                //else
+                //{
+                //    audioInfo = await Task.Run(() =>  GetAudioInfoByFingerPrint(path));
+
+                //    if (audioInfo != null)
+                //    {
+                //        Logger.Logger.Instance.Log(Logger.MessageType.Success, $"Audio info was gotten by fingerprint {path}");
+                //        return audioInfo;
+                //    }
+
+                //    return null;
+                //}
+
+                return null;
+            });
+        }
+
+        public async Task<List<AudioInfo>> GetAudioInfosFromDirectory(string directoryPath, bool subDirectories = false)
+        {
+            return await Task.Run(async () =>
+            {
+                try
+                {
+                    List<AudioInfo> audioInfos = new List<AudioInfo>();
+
+                    DirectoryInfo d = new DirectoryInfo(directoryPath);
+                    FileInfo[] Files = d.GetFiles("*.mp3");
+
+                    foreach (FileInfo file in Files)
+                    {
+                        audioInfos.Add(await GetAudioInfo(file.FullName));
+                    }
+
+                    if (subDirectories)
+                    {
+                        foreach (var directory in await GetSubDirectories(directoryPath))
+                        {
+                            var audioInfosSub = await GetAudioInfosFromDirectory(directory);
+                            audioInfos.AddRange(audioInfosSub);
+
+                            OnSubdirectoryLoaded(audioInfosSub);
+                        }
+                    }
+
+                    return audioInfos;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+                    return null;
+                }
+            });
         }
 
         #endregion
 
-        #region FingerPrint methods
-
-        /// <summary>
-        /// Return audio info by fingerPrint
-        /// <param name="path"></param>
-        /// </summary>
-        private async Task<AudioInfo> GetAudioInfoByFingerPrint(string path, AudioInfo pAudioInfo = null)
-        {
-            try
-            {
-                Logger.Logger.Instance.Log(typeof(AudioInfoDownloader), $"Getting info by fingerprint {path}");
-
-                Task<AudioInfo> fpcalTask = new Task<AudioInfo>(() => RunFpcalc(path));
-                fpcalTask.Start();
-
-                var audioInfo = await fpcalTask;
-
-                if (audioInfo != null)
-                {
-                    var query = $"https://api.acoustid.org/v2/lookup?" +
-                                $"client={api}&" +
-                                $"meta={meta}&" +
-                                $"duration={audioInfo.Duration}&" +
-                                $"fingerprint={audioInfo.FingerPrint}";
-
-
-                    HttpResponse<string> response = Unirest.get(query).asJson<string>();
-
-                    if (response.Code != 200)
-                    {
-                        Logger.Logger.Instance.Log(typeof(AudioInfoDownloader), $"Response returns {response.Code} {path}");
-                        throw new Exception($"Response returns {response.Code}");
-                    }
-
-                    dynamic jObject = JObject.Parse(response.Body);
-                    var recordings = jObject.results[0].recordings;
-
-
-                    //Sometimes returns more then 1 recording
-                    dynamic bestRecording = null;
-                    var bestRecordingByDuration = GetBestMatch(recordings, audioInfo.Duration.ToString());
-
-                    if (pAudioInfo != null)
-                    {
-                        bestRecording = GetBestMatch(recordings, pAudioInfo);
-                    }
-                    else
-                    {
-                        bestRecording = bestRecordingByDuration;
-                    }
-
-                    var release = bestRecording.releases[0];
-                    AudioInfo newAudioInfo = new AudioInfo();
-
-
-                    if (bestRecording.artists.Count > 0)
-                    {
-                        newAudioInfo = new AudioInfo()
-                        {
-                            Title = bestRecording.title.ToString(),
-                            ArtistMbid = bestRecording.artists[0].id.ToString(),
-                            Album = release.title.ToString(),
-                            Artist = bestRecording.artists[0].name.ToString(),
-                            DiskLocation = path
-                        };
-                    }
-                    else
-                    {
-                        newAudioInfo = new AudioInfo()
-                        {
-                            Title = bestRecording.title.ToString(),
-                            Album = release.title.ToString(),
-                        };
-                    }
-
-                    Logger.Logger.Instance.Log(typeof(AudioInfoDownloader), $"Info was gotten by fingerprint {path} [{newAudioInfo}]");
-
-                    return newAudioInfo;
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Logger.Instance.Log(typeof(AudioInfoDownloader), ex.Message);
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Returns list of audioinfos from windows directory
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public async Task<List<AudioInfo>> GetAudioInfosByFingerprintDirectoryAsync(string path, bool subDirectories = false)
-        {
-            List<AudioInfo> audioInfos = new List<AudioInfo>();
-
-            if (!subDirectories)
-            {
-                DirectoryInfo d = new DirectoryInfo(path); //Assuming Test is your Folder
-                FileInfo[] Files = d.GetFiles("*.mp3"); //Getting Text files
-
-                foreach (FileInfo file in Files)
-                {
-                    audioInfos.Add(await GetAudioInfoByFingerPrint(file.FullName));
-                }
-            }
-            else
-            {
-                foreach (var directory in GetSubDirectories(path))
-                {
-                    audioInfos.AddRange(await GetAudioInfosByFingerprintDirectoryAsync(directory));
-                }
-            }
-
-            return audioInfos;
-        }
+        #region MusicBrainz Lookups
 
         public async Task<AudioStorage.Models.Artist> UpdateArtist(string artistName)
         {
             try
             {
-                Logger.Logger.Instance.Log(typeof(AudioInfoDownloader), $"Updating artist's data {artistName}");
-
                 var artists = await Artist.SearchAsync(artistName.Quote());
 
                 Artist artist = null;
@@ -218,10 +171,10 @@ namespace VPlayer.AudioInfoDownloader
                 if (artists.Items.Any(x => x.Score == 100))
                     artist = artists.Items.OrderByDescending(a => a.Score).First();
                 else
-                    artist = artists.Items.OrderByDescending(a => Extensions.Levenshtein.Similarity(a.Name, artistName)).First();
+                    artist = artists.Items.OrderByDescending(a => Levenshtein.Similarity(a.Name, artistName)).First();
 
 
-                Logger.Logger.Instance.Log(typeof(AudioInfoDownloader), $"Artist's data was updated {artistName}");
+                Logger.Logger.Instance.Log(Logger.MessageType.Inform, $"Artist's data was updated {artistName}");
 
 
                 //artist = await Artist.GetAsync(artist.Id, "artist-rels", "url-rels");
@@ -234,7 +187,7 @@ namespace VPlayer.AudioInfoDownloader
             }
             catch (Exception ex)
             {
-                Logger.Logger.Instance.Log(typeof(AudioInfoDownloader), ex.Message);
+                Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
                 return null;
             }
         }
@@ -244,35 +197,88 @@ namespace VPlayer.AudioInfoDownloader
         /// </summary>
         /// <param name="album"></param>
         /// <returns></returns>
+
+
+        private KeyValuePair<string, List<Album>> _actualArtist;
+
+        private bool apiExeed;
         public async Task<Album> UpdateAlbum(Album album)
         {
-            var artistName = album.Artist.Name;
             try
             {
-                Logger.Logger.Instance.Log(typeof(AudioInfoDownloader), $"Starting download album info {album.Name} - {album.Artist.Name}");
+                var albumName = album.Name;
 
-                // Search for an artist by name.
-                var artists = await Artist.SearchAsync(album.Artist.Name.Quote());
-                var artist = artists.Items.First();
-                Release release;
+                // The album known sometimes as The Black Album is already in this database,
+                // it is correctly named simply Metallica. This is because The Black Album is only a fan-composed name
+                if (albumName.ToLower().Contains("black album") && album.Artist.Name.ToLower() == "metallica")
+                {
+                    albumName = "Metallica";
+                }
+
+                await musibrainzAPISempathore.WaitAsync();
+
+                //API rate limit
+                Thread.Sleep(1000);
+
+                Logger.Logger.Instance.Log(Logger.MessageType.Inform, $"Downloading album info {album.Name}");
+
+                string artistMbid = "";
+                string artistName = "";
+                apiExeed = false;
+
+                if (album.Artist != null)
+                {
+                    artistName = album.Artist.Name;
+
+                    if (album.Artist.MusicBrainzId == null)
+                    {
+                        // Search for an artist by name.
+                        var artists = await Artist.SearchAsync(artistName.Quote());
+                        var artist = artists.Items.FirstOrDefault();
+
+                        if (artist == null)
+                        {
+                            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+                                $"Album info was not downloaded {album.Name} - {artistName}");
+                            return null;
+                        }
+                        else
+                        {
+                            artistMbid = artist.Id;
+                        }
+                    }
+                    else
+                        artistMbid = album.Artist.MusicBrainzId;
+                }
+
+                Release release = null;
+                Album bestAlbum = null;
 
                 // Build an advanced query to search for the release.
                 var query = new QueryParameters<Release>()
                 {
-                    { "arid", artist.Id },
-                    { "release", album.Name },
-                    { "type", "album" },
-                    { "status", "official" }
+                    {"arid", artistMbid},
+                    {"release", albumName},
+                    {"type", "album"},
+                    {"status", "official"}
                 };
 
                 // Search for a release by title.
                 var releases = await Release.SearchAsync(query);
 
+
                 if (releases.Count != 0)
                 {
                     // Get the oldest release (remember to sort out items with no date set).
                     release = releases.Items.Where(r => r.Date != null && IsCompactDisc(r)).OrderBy(r => r.Date)
-                        .First();
+                        .FirstOrDefault();
+
+                    if (release == null)
+                    {
+                        Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+                            $"Album info was not downloaded {album.Name} - {artistName}");
+                        return null;
+                    }
 
                     // Get detailed information of the release, including recordings.
                     release = await Release.GetAsync(release.Id, "recordings", "url-rels");
@@ -281,243 +287,226 @@ namespace VPlayer.AudioInfoDownloader
                     //var medium = release.Media.First();
 
                     //release = await Release.GetAsync(release.Id, "recordings", "url-rels");
-                    
+
                 }
                 else
                 {
-                    Logger.Logger.Instance.Log(typeof(AudioInfoDownloader), $"Fails to find info about {album.Name} trying another method");
-                    var albums = await GetArtistsAlbums(artist);
-
-                    var bestAlbum = albums.OrderByDescending(x => Extensions.Levenshtein.Similarity(x.Name, album.Name))
-                        .First();
-
-                    query = new QueryParameters<Release>()
+                    if (_actualArtist.Key == null)
                     {
-                        { "arid", artist.Id },
-                        { "release", bestAlbum.Name },
-                        { "type", "album" },
-                        { "status", "official" }
-                    };
+                        _actualArtist = new KeyValuePair<string, List<Album>>(artistMbid, await GetArtistsAlbums(artistMbid));
+                    }
+                    else if (_actualArtist.Key != artistMbid)
+                    {
+                        _actualArtist = new KeyValuePair<string, List<Album>>(artistMbid, await GetArtistsAlbums(artistMbid));
+                    }
 
-                    releases = await Release.SearchAsync(query);
-                        
-                    release = releases.Items.Where(r => r.Date != null && IsCompactDisc(r)).OrderBy(r => r.Date)
-                        .First();
+                    if (_actualArtist.Value.Count != 0)
+                    {
 
+                        bestAlbum = _actualArtist.Value
+                            .OrderByDescending(x => Levenshtein.Similarity(x.Name, album.Name)).First();
+
+                        if (bestAlbum.Name.LevenshteinDistance(album.Name) > album.Name.Length / 3)
+                        {
+                            var split = album.Name.Split('(');
+                            var splittedName = split[0];
+
+                            var albumsLow = _actualArtist.Value
+                                .Select(x => x.Name.ToLower().Replace(" ", "").Replace(".", "").Replace(",", "")).ToList();
+                            var albumLow = albumName.ToLower().Replace(" ", "").Replace(".", "").Replace(",", "");
+
+                            if (_actualArtist.Value.Any(x =>
+                                x.Name.LevenshteinDistance(albumName) < (splittedName.Length / 3)))
+                            {
+                                bestAlbum.Name = _actualArtist.Value
+                                    .Where(x => x.Name.LevenshteinDistance(albumName) < (splittedName.Length / 3))
+                                    .Select(x => x.Name).First();
+                            }
+                            else if (albumsLow.Any(x => x.Contains(albumLow)))
+                            {
+                                var name = albumsLow
+                                    .Where(x => x.Contains(albumLow))
+                                    .Select(x => x).First();
+                                bestAlbum.Name = _actualArtist.Value
+                                    .OrderByDescending(x => Levenshtein.Similarity(x.Name, name)).First().Name;
+                            }
+                            else if (albumsLow.Any(x => albumLow.Contains(x)))
+                            {
+                                var name = albumsLow.First(x => albumLow.Contains(x));
+                                bestAlbum.Name = _actualArtist.Value
+                                    .OrderByDescending(x => Levenshtein.Similarity(x.Name, name)).First().Name;
+                            }
+                            else
+                            {
+                                Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+                                    $"Unable to find album info {album.Name}");
+
+                                return null;
+                            }
+                        }
+
+                        query = new QueryParameters<Release>()
+                        {
+                            {"arid", artistMbid},
+                            {"release", bestAlbum.Name},
+                            {"type", "album"},
+                            {"status", "official"}
+                        };
+
+                        releases = await Release.SearchAsync(query);
+
+                        release = releases.Items.Where(r => r.Date != null && IsCompactDisc(r)).OrderBy(r => r.Date)
+                            .FirstOrDefault();
+
+                        if (release == null)
+                        {
+                            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+                                $"Album info was not downloaded {album.Name} - {artistName}");
+                            return null;
+                        }
+                    }
+                    else
+                    {
+                        Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+                            $"Album info was not downloaded {album.Name} - {artistName}");
+                        return null;
+                    }
                 }
 
-             
+                string albumCoverUrl = await GetAlbumFrontConverURL(release.Id);
+
+                if (albumCoverUrl == null)
+                {
+                    int releaseIndex = 0;
+
+                    while (albumCoverUrl == null)
+                    {
+                        if (releaseIndex < releases.Items.Count - 1)
+                            albumCoverUrl = await GetAlbumFrontConverURL(releases.Items[releaseIndex].Id);
+                        else
+                            break;
+
+                        releaseIndex++;
+                    }
+
+                    if (albumCoverUrl == null)
+                    {
+                        album = new Album()
+                        {
+                            AlbumId = album.AlbumId,
+                            Artist = album.Artist,
+                            Name = release.Title,
+                            MusicBrainzId = release.Id,
+                            ReleaseDate = release.Date,
+                        };
+
+                        Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+                            $"Album info was download without cover {album.Name} - {artistName}");
+
+                        return album;
+                    }
+                }
+
+                byte[] albumCoverBlob = await GetAlbumFrontConverBLOB(release.Id, albumCoverUrl);
+
+                albumName = release.Title;
+
+                // The album known sometimes as The Black Album is already in this database,
+                // it is correctly named simply Metallica. This is because The Black Album is only a fan-composed name
+                if (album.Name.ToLower().Contains("black album") && album.Artist.Name.ToLower() == "metallica")
+                    albumName = "Metallica (The Black Album)";
+
+                if (bestAlbum != null)
+                {
+                    albumName = bestAlbum.Name;
+                }
+
                 album = new Album()
                 {
                     AlbumId = album.AlbumId,
-                    Name = release.Title,
+                    Artist = album.Artist,
+                    Name = albumName,
                     MusicBrainzId = release.Id,
                     ReleaseDate = release.Date,
-                    AlbumFrontCoverURI = await GetAlbumFrontConverURL(release.Id),
-                    AlbumFrontCoverBLOB = await GetAlbumFrontConverBLOB(release.Id),
+                    AlbumFrontCoverURI = albumCoverUrl,
+                    AlbumFrontCoverBLOB = albumCoverBlob,
                 };
 
-                Logger.Logger.Instance.Log(typeof(AudioInfoDownloader),
-                    $"Album info was succesfully download {album.Name} - {artistName}");
-                
+                Logger.Logger.Instance.Log(Logger.MessageType.Success, $"Album info was succesfully downloaded {album.Name} - {artistName}");
+
                 return album;
 
+
             }
             catch (Exception ex)
             {
-                Logger.Logger.Instance.Log(typeof(AudioInfoDownloader), ex.Message);
-                return null;
+                if (ex.Message == exceedMsg)
+                {
+                    Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Requests are exceeding, trying again");
+
+                    musibrainzAPISempathore.Release();
+
+                    Album newAlbum = null;
+
+                    await Task.Run(async () =>
+                    {
+                        newAlbum = await UpdateAlbum(album);
+                    });
+
+                    apiExeed = true;
+                    return newAlbum;
+                }
+                else
+                {
+                    Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+                    return null;
+                }
             }
+            finally
+            {
+                if (!apiExeed)
+                    musibrainzAPISempathore.Release();
+            }
+
         }
 
-        /// <summary>
-        /// Gets audio with similar duration as file
-        /// </summary>
-        /// <param name="matchings"></param>
-        /// <param name="fileDuration"></param>
-        /// <returns></returns>
-        private static JToken GetBestMatch(JArray matchings, string fileDuration)
+
+        public async Task<List<Album>> GetArtistsAlbums(string artistMbid)
         {
-            try
+            return await Task.Run(async () =>
             {
-                if (matchings.Count == 1)
+                try
                 {
-                    return matchings[0];
-                }
-                else if (matchings.Count > 1)
-                {
+                    List<Album> albums = new List<Album>();
+                    var groups = await ReleaseGroup.BrowseAsync("artist", artistMbid, 100, 0);
 
-                    List<KeyValuePair<JToken, string>> durations = new List<KeyValuePair<JToken, string>>();
-
-                    for (int i = 0; i < matchings.Count; i++)
+                    foreach (var item in groups.Items.Where(g => IsOffical(g)).OrderBy(g => g.FirstReleaseDate))
                     {
-                        dynamic asd = matchings[i];
-                        var duration = asd.duration;
-
-                        if (duration != null)
-                            durations.Add(new KeyValuePair<JToken, string>(matchings[i], duration.ToString()));
-                    }
-
-                    return durations.OrderByDescending(a => Extensions.Levenshtein.Similarity(a.Value, fileDuration)).First().Key;
-                }
-
-                return null;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        private static JToken GetBestMatch(JArray matchings, AudioInfo audioInfo)
-        {
-            try
-            {
-                if (matchings.Count == 1)
-                {
-                    return matchings[0];
-                }
-
-                if (matchings.Count > 1)
-                {
-                    if (audioInfo.Artist != null && audioInfo.Album != null)
-                    {
-                        List<KeyValuePair<JToken, string>> candidates = new List<KeyValuePair<JToken, string>>();
-                        for (int i = 0; i < matchings.Count; i++)
+                        Album album = new Album()
                         {
-                            dynamic jToken = matchings[i];
-                            dynamic property = null;
-                            dynamic property1 = null;
+                            MusicBrainzId = item.Id,
+                            Name = item.Title,
+                        };
 
-                            if (jToken.artists != null)
-                                property = jToken.artists[0].name;
-
-                            if (property != null)
-                                property = property.ToString();
-
-                            if (jToken.releases != null)
-                                property1 = jToken.releases[0].title;
-
-                            if (property1 != null)
-                            {
-                                property1 = property1.ToString();
-                            }
-
-                            if (property != null && property1 != null)
-                                property += property1;
-
-                            if (property != null)
-                                candidates.Add(new KeyValuePair<JToken, string>(matchings[i], property.ToString()));
-                        }
-
-                        return candidates.OrderByDescending(a => Extensions.Levenshtein.Similarity(a.Value, audioInfo.Artist + audioInfo.Album))
-                            .First().Key;
+                        albums.Add(album);
                     }
-                    else if (audioInfo.Artist != null)
+
+                    return albums;
+
+                }
+                catch (Exception ex)
+                {
+                    if (ex.Message == exceedMsg)
                     {
-
-                        List<KeyValuePair<JToken, string>> candidates = new List<KeyValuePair<JToken, string>>();
-
-                        for (int i = 0; i < matchings.Count; i++)
-                        {
-                            dynamic jToken = matchings[i];
-                            var property = jToken.artists[0].name;
-
-                            if (property != null)
-                                candidates.Add(new KeyValuePair<JToken, string>(matchings[i], property.ToString()));
-                        }
-
-                        return candidates.OrderByDescending(a => Extensions.Levenshtein.Similarity(a.Value, audioInfo.Artist))
-                            .First().Key;
+                        return await GetArtistsAlbums(artistMbid);
                     }
-                    else if (audioInfo.Album != null)
+                    else
                     {
-                        List<KeyValuePair<JToken, string>> candidates = new List<KeyValuePair<JToken, string>>();
-
-                        for (int i = 0; i < matchings.Count; i++)
-                        {
-                            dynamic jToken = matchings[i];
-                            var property = jToken.releases[0].title.ToString();
-
-                            if (property != null)
-                                candidates.Add(new KeyValuePair<JToken, string>(matchings[i], property.ToString()));
-                        }
-
-                        return candidates.OrderByDescending(a => Extensions.Levenshtein.Similarity(a.Value, audioInfo.Album))
-                            .First().Key;
+                        Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+                        return null;
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Run fpcal process for getting audio fingerprint
-        /// </summary>
-        /// <param name="trackPath"></param>
-        /// <returns>Fingerprint of file</returns>
-        private static AudioInfo RunFpcalc(string trackPath)
-        {
-            string fpacl = Environment.CurrentDirectory + "\\ChromaPrint\\fpcalc.exe";
-
-            Process process = new Process();
-            process.StartInfo.FileName = fpacl;
-            process.StartInfo.Arguments = $"\"{trackPath}\"";
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            process.Start();
-            //* Read the output (or the error)
-            string output = process.StandardOutput.ReadToEnd();
-            string err = process.StandardError.ReadToEnd();
-
-            if (err != "")
-            {
-                Console.WriteLine(err);
-                return null;
-            }
-
-            process.WaitForExit();
-
-            var outputs = output.Split('\n');
-
-            return new AudioInfo()
-            {
-                FingerPrint = outputs[1].Replace("FINGERPRINT=", ""),
-                Duration = Convert.ToInt32(outputs[0].Replace("\r", "").Replace("DURATION=", ""))
-            };
-        }
-
-        #endregion
-
-        #region MusicBrainz Lookups
-
-
-        public static async Task<List<Album>> GetArtistsAlbums(Artist artist)
-        {
-            List<Album> albums = new List<Album>();
-            var groups = await ReleaseGroup.BrowseAsync("artist", artist.Id, 100, 0);
-
-            foreach (var item in groups.Items.Where(g => IsOffical(g)).OrderBy(g => g.FirstReleaseDate))
-            {
-                Album album = new Album()
-                {
-                    MusicBrainzId = item.Id,
-                    Name = item.Title,
-                };
-
-                albums.Add(album);
-
-                if (album.Name != null && artist.Name != null)
-                    Logger.Logger.Instance.Log(typeof(AudioInfoDownloader), $"Downloaded album {album.Name} of artists {artist.Name}");
-            }
-
-            return albums;
+            });
         }
 
         /// <summary>
@@ -528,11 +517,24 @@ namespace VPlayer.AudioInfoDownloader
         static bool IsOffical(ReleaseGroup g)
         {
 
-            if (g.FirstReleaseDate == "")
+            try
+            {
+                if (g.FirstReleaseDate == "")
+                    return false;
+                if (g.PrimaryType != null)
+                {
+                    return g.PrimaryType.Equals("album", StringComparison.OrdinalIgnoreCase)
+                           && g.SecondaryTypes.Count == 0
+                           && !string.IsNullOrEmpty(g.FirstReleaseDate);
+                }
+
                 return false;
-            return g.PrimaryType.Equals("album", StringComparison.OrdinalIgnoreCase)
-                   && g.SecondaryTypes.Count == 0
-                   && !string.IsNullOrEmpty(g.FirstReleaseDate);
+            }
+            catch (Exception ex)
+            {
+                Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+                return false;
+            }
         }
 
         //public static async Task<Medium> LookUpMedium(LocalMusicDatabase.Artist artist, Album album)
@@ -591,30 +593,43 @@ namespace VPlayer.AudioInfoDownloader
         /// </summary>
         /// <param name="MBID"></param>
         /// <returns></returns>,
-        private static Task<string> GetAlbumFrontConverURL(string MBID)
+        private static async Task<string> GetAlbumFrontConverURL(string MBID)
         {
-            return Task.Run(() =>
+            return await Task.Run(async () =>
+            {
+                try
                 {
-                    try
+                    string apiURL = "http://coverartarchive.org//release/" + $"{MBID}";
+                    HttpResponse<string> response = await Task.Run(() => Unirest.get(apiURL).asJson<string>());
+
+                    if (response.Code != 200)
                     {
-                        string apiURL = "http://coverartarchive.org//release/" + $"{MBID}";
-                        HttpResponse<string> response = Unirest.get(apiURL).asJson<string>();
+                        if (response.Code == 502)
+                        {
+                            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+                                $"Album cover was not found {MBID} trying again, response code {response.Code}");
+                            return await GetAlbumFrontConverURL(MBID);
+                        }
 
-                        dynamic stuff = JObject.Parse(response.Body);
-
-                        var converUrl = stuff.images[0].thumbnails.small;
-                        if (converUrl == null)
-                            converUrl = stuff.images[0].image;
-
-                        return (string)converUrl.ToString();
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Logger.Instance.Log(typeof(AudioInfoDownloader), ex.Message);
+                        Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+                            $"Album cover was not found {MBID} resposne code {response.Code}");
                         return null;
                     }
+
+                    dynamic stuff = JObject.Parse(response.Body);
+
+                    var converUrl = stuff.images[0].thumbnails.small;
+                    if (converUrl == null)
+                        converUrl = stuff.images[0].image;
+
+                    return (string)converUrl.ToString();
                 }
-            );
+                catch (Exception ex)
+                {
+                    Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+                    return null;
+                }
+            });
         }
 
         /// <summary>
@@ -622,38 +637,60 @@ namespace VPlayer.AudioInfoDownloader
         /// </summary>
         /// <param name="MBID"></param>
         /// <returns></returns>,
-        private static Task<byte[]> GetAlbumFrontConverBLOB(string MBID, string url = null)
+        private static async Task<byte[]> GetAlbumFrontConverBLOB(string MBID, string url = null)
         {
-            return Task.Run(() =>
+            return await Task.Run(async () =>
+            {
+                try
                 {
-                    try
+                    var webClient = new WebClient();
+                    if (url == null)
                     {
-                        var webClient = new WebClient();
-                        if (url == null)
+                        string apiURL = "http://coverartarchive.org//release/" + $"{MBID}";
+                        HttpResponse<string> response = await Task.Run(() => Unirest.get(apiURL).asJson<string>());
+
+                        if (response.Code != 200)
                         {
-                            string apiURL = "http://coverartarchive.org//release/" + $"{MBID}";
-                            HttpResponse<string> response = Unirest.get(apiURL).asJson<string>();
-
-                            dynamic stuff = JObject.Parse(response.Body);
-
-                            var converUrl = stuff.images[0].thumbnails.small;
-                            if (converUrl == null)
-                                converUrl = stuff.images[0].image;
-
-                            return (byte[])webClient.DownloadData(converUrl.ToString());
+                            if (response.Code == 502)
+                            {
+                                Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+                                    $"Album cover was not found {MBID} trying again, response code {response.Code}");
+                                return await GetAlbumFrontConverBLOB(MBID, url);
+                            }
+                            else
+                            {
+                                Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+                                    $"Album cover was not found {MBID} resposne code {response.Code}");
+                                return null;
+                            }
                         }
-                        else
-                        {
-                            return webClient.DownloadData(url);
-                        }
+
+                        dynamic stuff = JObject.Parse(response.Body);
+
+                        var converUrl = stuff.images[0].thumbnails.small;
+                        if (converUrl == null)
+                            converUrl = stuff.images[0].image;
+
+                        return (byte[])webClient.DownloadData(converUrl.ToString());
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        Logger.Logger.Instance.Log(typeof(AudioInfoDownloader), ex.Message);
-                        return null;
+                        try
+                        {
+                            return await webClient.DownloadDataTaskAsync(url);
+                        }
+                        catch (Exception ex)
+                        {
+                            return await GetAlbumFrontConverBLOB(MBID, url);
+                        }
                     }
                 }
-            );
+                catch (Exception ex)
+                {
+                    Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+                    return null;
+                }
+            });
         }
 
         /// <summary>
@@ -683,7 +720,306 @@ namespace VPlayer.AudioInfoDownloader
 
         #endregion
 
-        #region FileLookups
+        #region FingerPrint methods
+
+        /// <summary>
+        /// Return audio info by fingerPrint
+        /// <param name="path"></param>
+        /// </summary>
+        private async Task<AudioInfo> GetAudioInfoByFingerPrint(string path, AudioInfo pAudioInfo = null)
+        {
+            return await Task.Run(async () =>
+            {
+                try
+                {
+                    var audioInfo = await RunFpcalc(path);
+
+                    if (audioInfo != null)
+                    {
+                        var query = $"https://api.acoustid.org/v2/lookup?" +
+                                    $"client={api}&" +
+                                    $"meta={meta}&" +
+                                    $"duration={audioInfo.Duration}&" +
+                                    $"fingerprint={audioInfo.FingerPrint}";
+
+
+                        HttpResponse<string> response = Unirest.get(query).asJson<string>();
+
+                        if (response.Code != 200)
+                        {
+                            Logger.Logger.Instance.Log(Logger.MessageType.Error,
+                                $"Response returns {response.Code} {path}");
+                            throw new Exception($"Response returns {response.Code}");
+                        }
+
+                        dynamic jObject = JObject.Parse(response.Body);
+                        if (jObject.results.Count != 0)
+                        {
+                            var recordings = jObject.results[0].recordings;
+
+
+                            //Sometimes returns more then 1 recording
+                            dynamic bestRecording = null;
+                            var bestRecordingByDuration =
+                                GetBestDurationMatch(recordings, audioInfo.Duration.ToString());
+
+                            if (pAudioInfo != null)
+                            {
+                                bestRecording = GetBestDurationMatch(recordings, pAudioInfo);
+                            }
+                            else
+                            {
+                                bestRecording = bestRecordingByDuration;
+                            }
+
+                            var release = bestRecording.releases[0];
+                            AudioInfo newAudioInfo = new AudioInfo();
+
+
+                            if (bestRecording.artists.Count > 0)
+                            {
+                                newAudioInfo = new AudioInfo()
+                                {
+                                    Title = bestRecording.title.ToString(),
+                                    ArtistMbid = bestRecording.artists[0].id.ToString(),
+                                    Album = release.title.ToString(),
+                                    Artist = bestRecording.artists[0].name.ToString(),
+                                    DiskLocation = path
+                                };
+                            }
+                            else
+                            {
+                                newAudioInfo = new AudioInfo()
+                                {
+                                    Title = bestRecording.title.ToString(),
+                                    Album = release.title.ToString(),
+                                };
+                            }
+
+                            return newAudioInfo;
+                        }
+                    }
+                    else
+                    {
+                        Logger.Logger.Instance.Log(Logger.MessageType.Warning, $"Song was not identified {path}");
+                        return null;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+                }
+
+
+                return null;
+            });
+        }
+
+        /// <summary>
+        /// Returns list of audioinfos from windows directory
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public async Task<List<AudioInfo>> GetAudioInfosByFingerprintDirectoryAsync(string path, bool subDirectories = false)
+        {
+            List<AudioInfo> audioInfos = new List<AudioInfo>();
+
+            if (!subDirectories)
+            {
+                DirectoryInfo d = new DirectoryInfo(path); //Assuming Test is your Folder
+                FileInfo[] Files = d.GetFiles("*.mp3"); //Getting Text files
+
+                foreach (FileInfo file in Files)
+                {
+                    audioInfos.Add(await GetAudioInfoByFingerPrint(file.FullName));
+                }
+            }
+            else
+            {
+                foreach (var directory in await GetSubDirectories(path))
+                {
+                    audioInfos.AddRange(await GetAudioInfosByFingerprintDirectoryAsync(directory));
+                }
+            }
+
+            return audioInfos;
+        }
+
+        /// <summary>
+        /// Gets audio with similar duration as file
+        /// </summary>
+        /// <param name="matchings"></param>
+        /// <param name="fileDuration"></param>
+        /// <returns></returns>
+        private static JToken GetBestDurationMatch(JArray matchings, string fileDuration)
+        {
+            try
+            {
+                if (matchings.Count == 1)
+                {
+                    return matchings[0];
+                }
+                else if (matchings.Count > 1)
+                {
+
+                    List<KeyValuePair<JToken, string>> durations = new List<KeyValuePair<JToken, string>>();
+
+                    for (int i = 0; i < matchings.Count; i++)
+                    {
+                        dynamic asd = matchings[i];
+                        var duration = asd.duration;
+
+                        if (duration != null)
+                            durations.Add(new KeyValuePair<JToken, string>(matchings[i], duration.ToString()));
+                    }
+
+                    return durations.OrderByDescending(a => Levenshtein.Similarity(a.Value, fileDuration)).First().Key;
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// Gets audio with similar duration as file
+        /// </summary>
+        /// <param name="matchings"></param>
+        /// <param name="fileDuration"></param>
+        /// <returns></returns>
+        private static JToken GetBestDurationMatch(JArray matchings, AudioInfo audioInfo)
+        {
+            try
+            {
+                if (matchings.Count == 1)
+                {
+                    return matchings[0];
+                }
+
+                if (matchings.Count > 1)
+                {
+                    if (audioInfo.Artist != null && audioInfo.Album != null)
+                    {
+                        List<KeyValuePair<JToken, string>> candidates = new List<KeyValuePair<JToken, string>>();
+                        for (int i = 0; i < matchings.Count; i++)
+                        {
+                            dynamic jToken = matchings[i];
+                            dynamic property = null;
+                            dynamic property1 = null;
+
+                            if (jToken.artists != null)
+                                property = jToken.artists[0].name;
+
+                            if (property != null)
+                                property = property.ToString();
+
+                            if (jToken.releases != null)
+                                property1 = jToken.releases[0].title;
+
+                            if (property1 != null)
+                            {
+                                property1 = property1.ToString();
+                            }
+
+                            if (property != null && property1 != null)
+                                property += property1;
+
+                            if (property != null)
+                                candidates.Add(new KeyValuePair<JToken, string>(matchings[i], property.ToString()));
+                        }
+
+                        return candidates.OrderByDescending(a => Levenshtein.Similarity(a.Value, audioInfo.Artist + audioInfo.Album))
+                            .First().Key;
+                    }
+                    else if (audioInfo.Artist != null)
+                    {
+
+                        List<KeyValuePair<JToken, string>> candidates = new List<KeyValuePair<JToken, string>>();
+
+                        for (int i = 0; i < matchings.Count; i++)
+                        {
+                            dynamic jToken = matchings[i];
+                            var property = jToken.artists[0].name;
+
+                            if (property != null)
+                                candidates.Add(new KeyValuePair<JToken, string>(matchings[i], property.ToString()));
+                        }
+
+                        return candidates.OrderByDescending(a => Levenshtein.Similarity(a.Value, audioInfo.Artist))
+                            .First().Key;
+                    }
+                    else if (audioInfo.Album != null)
+                    {
+                        List<KeyValuePair<JToken, string>> candidates = new List<KeyValuePair<JToken, string>>();
+
+                        for (int i = 0; i < matchings.Count; i++)
+                        {
+                            dynamic jToken = matchings[i];
+                            var property = jToken.releases[0].title.ToString();
+
+                            if (property != null)
+                                candidates.Add(new KeyValuePair<JToken, string>(matchings[i], property.ToString()));
+                        }
+
+                        return candidates.OrderByDescending(a => Levenshtein.Similarity(a.Value, audioInfo.Album))
+                            .First().Key;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Run fpcal process for getting audio fingerprint
+        /// </summary>
+        /// <param name="trackPath"></param>
+        /// <returns>Fingerprint of file</returns>
+        private async Task<AudioInfo> RunFpcalc(string trackPath)
+        {
+            return await Task.Run(() =>
+            {
+                string fpacl = Environment.CurrentDirectory + "\\ChromaPrint\\fpcalc.exe";
+
+                Process process = new Process();
+                process.StartInfo.FileName = fpacl;
+                process.StartInfo.Arguments = $"\"{trackPath}\"";
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
+                process.Start();
+                //* Read the output (or the error)
+                string output = process.StandardOutput.ReadToEnd();
+                string err = process.StandardError.ReadToEnd();
+
+                if (err != "")
+                {
+                    Logger.Logger.Instance.Log(Logger.MessageType.Error, err);
+                    return null;
+                }
+
+                process.WaitForExit();
+
+                var outputs = output.Split('\n');
+
+                return new AudioInfo()
+                {
+                    FingerPrint = outputs[1].Replace("FINGERPRINT=", ""),
+                    Duration = Convert.ToInt32(outputs[0].Replace("\r", "").Replace("DURATION=", ""))
+                };
+            });
+        }
+
+        #endregion
+
+        #region Windows info methods
 
         /// <summary>
         /// Returns audio info from file info
@@ -692,27 +1028,28 @@ namespace VPlayer.AudioInfoDownloader
         /// <returns></returns>
         private async Task<AudioInfo> GetAudioInfoByWindowsAsync(string path)
         {
-            Logger.Logger.Instance.Log(typeof(AudioInfoDownloader), $"Getting info from windows {path}");
-            var musicProp = await GetAudioWindowsPropertiesAsync(path);
-
-            if ((musicProp.Artist != "" && musicProp.Album != "") || (musicProp.AlbumArtist != "" && musicProp.Album != ""))
+            return await Task.Run(async () =>
             {
-                var newAudioInfo = new AudioInfo()
+                var musicProp = await GetAudioWindowsPropertiesAsync(path);
+
+                if ((musicProp.Artist != "" && musicProp.Album != "") ||
+                    (musicProp.AlbumArtist != "" && musicProp.Album != ""))
                 {
-                    Album = musicProp.Album,
-                    Artist = musicProp.Artist != "" ? musicProp.Artist : musicProp?.AlbumArtist,
-                    Title = musicProp.Title,
-                    DiskLocation = path
-                };
+                    var newAudioInfo = new AudioInfo()
+                    {
+                        Album = musicProp.Album,
+                        Artist = musicProp.Artist != "" ? musicProp.Artist : musicProp?.AlbumArtist,
+                        Title = musicProp.Title,
+                        DiskLocation = path
+                    };
 
-                Logger.Logger.Instance.Log(typeof(AudioInfoDownloader), $"Info was gotten by windows {path} [{newAudioInfo}]");
+                    return newAudioInfo;
+                }
 
-                return newAudioInfo;
-            }
+                Logger.Logger.Instance.Log(Logger.MessageType.Warning, $"Info was not gotten fully {path}");
 
-
-            Logger.Logger.Instance.Log(typeof(AudioInfoDownloader), $"Info was not gotten fully {path}");
-            return null;
+                return null;
+            });
         }
 
         /// <summary>
@@ -722,18 +1059,21 @@ namespace VPlayer.AudioInfoDownloader
         /// <returns></returns>
         private async Task<MusicProperties> GetAudioWindowsPropertiesAsync(string path)
         {
-            try
+            return await Task.Run(async () =>
             {
-                StorageFile file = await StorageFile.GetFileFromPathAsync(path);
-                MusicProperties musicProperties = await file.Properties.GetMusicPropertiesAsync();
+                try
+                {
+                    StorageFile file = await StorageFile.GetFileFromPathAsync(path);
+                    MusicProperties musicProperties = await file.Properties.GetMusicPropertiesAsync();
 
-                return musicProperties;
-            }
-            catch (Exception ex)
-            {
-                Logger.Logger.Instance.Log(typeof(AudioInfoDownloader), ex.Message);
-                return null;
-            }
+                    return musicProperties;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+                    return null;
+                }
+            });
         }
 
         /// <summary>
@@ -743,10 +1083,11 @@ namespace VPlayer.AudioInfoDownloader
         /// <returns></returns>
         public async Task<List<AudioInfo>> GetAudioInfosFromWindowsDirectoryAsync(string path, bool subDirectories = false)
         {
-            List<AudioInfo> audioInfos = new List<AudioInfo>();
-
-            if (!subDirectories)
+            return await Task.Run(async () =>
             {
+                List<AudioInfo> audioInfos = new List<AudioInfo>();
+
+
                 DirectoryInfo d = new DirectoryInfo(path);
                 FileInfo[] Files = d.GetFiles("*.mp3");
 
@@ -754,32 +1095,36 @@ namespace VPlayer.AudioInfoDownloader
                 {
                     audioInfos.Add(await GetAudioInfoByWindowsAsync(file.FullName));
                 }
-            }
-            else
-            {
-                foreach (var directory in GetSubDirectories(path))
-                {
-                    audioInfos.AddRange(await GetAudioInfosFromWindowsDirectoryAsync(directory));
-                }
-            }
 
-            return audioInfos;
+                if (subDirectories)
+                {
+                    foreach (var directory in await GetSubDirectories(path))
+                    {
+                        audioInfos.AddRange(await GetAudioInfosFromWindowsDirectoryAsync(directory));
+                    }
+                }
+
+                return audioInfos;
+            });
         }
 
         #endregion
 
         #region Directory methods
-        public List<string> GetSubDirectories(string rootDirectory)
+        private async Task<List<string>> GetSubDirectories(string rootDirectory)
         {
-            List<string> directories = new List<string>();
-            string[] subdirectoryEntries = Directory.GetDirectories(rootDirectory);
-
-            foreach (string subdirectory in subdirectoryEntries)
+            return await Task.Run(() =>
             {
-                LoadSubDirs(subdirectory, ref directories);
-            }
+                List<string> directories = new List<string>();
+                string[] subdirectoryEntries = Directory.GetDirectories(rootDirectory);
 
-            return directories;
+                foreach (string subdirectory in subdirectoryEntries)
+                {
+                    LoadSubDirs(subdirectory, ref directories);
+                }
+
+                return directories;
+            });
 
         }
 
@@ -795,5 +1140,10 @@ namespace VPlayer.AudioInfoDownloader
 
         }
         #endregion
+
+        protected virtual void OnSubdirectoryLoaded(List<AudioInfo> e)
+        {
+            SubdirectoryLoaded?.Invoke(this, e);
+        }
     }
 }

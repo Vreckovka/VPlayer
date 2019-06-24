@@ -11,7 +11,7 @@
       MinWidth="200"
       Title="PlayerPanelPage">
 
-    <Border Background="{StaticResource TopWindowsColor}" >
+    <Border Background="{StaticResource TopWindowsBrush}" >
         <Border.Effect>
             <DropShadowEffect Color="#FF110D32" 
                               Opacity="0.5" 

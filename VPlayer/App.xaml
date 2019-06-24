@@ -14,7 +14,7 @@
                 <ResourceDictionary Source="StylesDictionaries/TextBlocksStyle.xaml"/>
                 <ResourceDictionary Source="StylesDictionaries/MenusStyle.xaml"/>
                 <ResourceDictionary Source="StylesDictionaries/SlidersStyle.xaml"/>
-               
+                <ResourceDictionary Source="StylesDictionaries/OverlayStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

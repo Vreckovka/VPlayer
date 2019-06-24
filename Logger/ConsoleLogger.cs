@@ -8,9 +8,35 @@ namespace Logger
 {
     public class ConsoleLogger : ILoggerContainer
     {
-        public void Log(string message)
+        public Task Log(MessageType messageType, string message)
         {
-            Console.WriteLine(message);
+          
+            //… makes beep sound
+            return Task.Run(() =>
+            {
+                switch (messageType)
+                {
+                    case MessageType.Inform:
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.WriteLine(message.Replace("…", ""));
+                        break;
+                    case MessageType.Error:
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(message.Replace("…", ""));
+                        break;
+                    case MessageType.Warning:
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine(message.Replace("…", ""));
+                        break;
+                    case MessageType.Success:
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine(message.Replace("…",""));
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(messageType), messageType, null);
+                }
+            });
+
         }
     }
 }

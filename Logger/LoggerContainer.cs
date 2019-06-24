@@ -8,6 +8,6 @@ namespace Logger
 {
     public interface ILoggerContainer
     {
-        void Log(string message);
+        Task Log(MessageType messageType,string message);
     }
 }

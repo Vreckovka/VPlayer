@@ -51,6 +51,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters.cs" />
     <Compile Include="LibraryView.xaml.cs">
       <DependentUpon>LibraryView.xaml</DependentUpon>
     </Compile>
@@ -59,6 +60,9 @@
     <Compile Include="Views\AlbumsView.xaml.cs">
       <DependentUpon>AlbumsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="VirtualList\AlbumGenerator.cs" />
+    <Compile Include="VirtualList\IObjectGenerator.cs" />
+    <Compile Include="VirtualList\VirtualList.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="LibraryView.xaml">
@@ -75,7 +79,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\VPlayer.Database\VPlayer.AudioStorage.csproj">
+    <ProjectReference Include="..\Logger\Logger.csproj">
+      <Project>{6212fadf-45a6-4613-b5a8-5c5a57f3bfb0}</Project>
+      <Name>Logger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj">
       <Project>{b5245008-cfdf-4b83-bf61-b0b26a8e92bf}</Project>
       <Name>VPlayer.AudioStorage</Name>
     </ProjectReference>

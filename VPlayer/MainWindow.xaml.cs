@@ -12,7 +12,9 @@ using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Ninject;
 using VPlayer.AudioStorage;
+using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.Interfaces;
+using VPlayer.AudioStorage.Models;
 using VPlayer.Other;
 using VPlayer.Views;
 using VPlayer.WebPlayer;
@@ -22,9 +24,6 @@ using VPlayer.WindowsPlayer.Views;
 
 namespace VPlayer
 {
-    //TODO:Create pages
-    //TODO: Library
-
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -35,39 +34,31 @@ namespace VPlayer
         public MainWindow()
         {
             InitializeComponent();
-            Test();
+        }
+
+        private void Test()
+        {
+            //var albums = await AudioInfoDownloader.AudioInfoDownloader.Instance.GetAudioInfosFromWindowsDirectoryAsync("D:\\Hudba\\Metallica", true);
+            //await StorageManager.GetStorage().StoreData(albums);
+
+
+            //AudioInfoDownloader.AudioInfoDownloader.Instance.GetAudioInfosFromDirectory(Directory.Text, true);
+
+
+            AudioInfoDownloader.AudioInfoDownloader.Instance.SubdirectoryLoaded += Instance_SubdirectoryLoaded;
 
         }
 
-        private async Task Test()
+        private void Instance_SubdirectoryLoaded(object sender, List<AudioStorage.Models.AudioInfo> e)
         {
-            //await StorageManager.GetStorage().ClearStorage();
+            Task.Run(() =>
+            {
+                using (IStorage storage = StorageManager.GetStorage())
+                {
+                    storage.StoreData(e);
+                }
+            });
 
-            //var album = await AudioInfoDownloader.AudioInfoDownloader.Instance.GetAudioInfosFromWindowsDirectoryAsync("D:\\Hudba\\Drowning pool\\Drowning Pool - Hellelujah (2016)");
-
-            //using (IStorage storage = StorageManager.GetStorage())
-            //{
-            //    await storage.StoreData(album);
-            //}
-
-            //album = await AudioInfoDownloader.AudioInfoDownloader.Instance.GetAudioInfosFromWindowsDirectoryAsync("D:\\Hudba\\Drowning pool\\Drowning_Pool-Desensitize-2004-h8me");
-
-            //using (IStorage storage = StorageManager.GetStorage())
-            //{
-            //    await storage.StoreData(album);
-            //}
-
-            //album = await AudioInfoDownloader.AudioInfoDownloader.Instance.GetAudioInfosFromWindowsDirectoryAsync("D:\\Hudba\\Drowning pool\\Drowning_Pool-Full_Circle-2007-h8me");
-
-            //using (IStorage storage = StorageManager.GetStorage())
-            //{
-            //    await storage.StoreData(album);
-            //}
-
-            // await AudioStorage.StorageManager.Instance.ClearStorage();
-
-            // var audioInfos = await AudioInfoDownloader.AudioInfoDownloader.Instance.GetAudioInfosFromWindowsDirectoryAsync("D:\\Hudba\\Drowning pool\\Drowning Pool - Hellelujah (2016)");
-            // await AudioStorage.StorageManager.Instance.StoreData(audioInfos);
         }
 
         private void ListViewItem_Click(object sender, MouseButtonEventArgs e)
@@ -93,6 +84,46 @@ namespace VPlayer
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             Frame_Players.Content = _windowsPlayerPage;
+        }
+
+        private void ListViewItem_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Test();
+        }
+
+        private async void ListViewItem_PreviewMouseDown1(object sender, MouseButtonEventArgs e)
+        {
+            await StorageManager.GetStorage().ClearStorage();
+        }
+
+        private void ListViewItem_PreviewMouseDown2(object sender, MouseButtonEventArgs e)
+        {
+            Task.Run(async () =>
+            {
+                List<Album> existingAlbums = null;
+
+
+                using (IStorage storage = StorageManager.GetStorage())
+                {
+                    existingAlbums = (from x in storage.Albums
+                                      where x.AlbumFrontCoverBLOB == null
+                                      select x).ToList();
+                }
+
+                List<Album> updatedAlbums = new List<Album>();
+
+                foreach (var album in existingAlbums)
+                {
+                    using (IStorage storage = StorageManager.GetStorage())
+                    {
+                        var updatedAlbum = await AudioInfoDownloader.AudioInfoDownloader.Instance.UpdateAlbum(album);
+
+                        if (updatedAlbum != null)
+                            await storage.UpdateAlbum(updatedAlbum);
+                    }
+                }
+
+            });
         }
     }
 }

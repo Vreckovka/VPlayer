@@ -44,11 +44,21 @@ namespace VPlayer.WindowsPlayer.Views
 
             LibraryView = new LibraryView();
             Frame_Library.Content = LibraryView;
-          
+
+         
+
+
+            this.Loaded += WindowsPlayerPage_Loaded;
+
             //DatabaseManager.UpdateAlbumsConversBLOB();
 
             //Task.Run(() => { AudioTracksViewModel.AddFiles(new string[] { "D:\\Hudba\\Disturbed Discography" }); });
             //Task.Run(() => { AudioTracksViewModel.UpdateDatabaseFromFolder("D:\\Hudba\\Disturbed Discography"); });
+        }
+
+        private void WindowsPlayerPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            MenuItem_Click(null, null);
         }
 
         private void _dispatcherTimer_Tick(object sender, EventArgs e)

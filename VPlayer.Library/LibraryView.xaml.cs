@@ -24,6 +24,7 @@ namespace VPlayer.Library
         public LibraryView()
         {
             InitializeComponent();
+            Frame_LibraryContent.Source = new Uri("Views/AlbumsView.xaml", UriKind.Relative);
             LibraryViewModel.Init();
         }
 

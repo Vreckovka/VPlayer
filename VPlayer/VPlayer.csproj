@@ -227,6 +227,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="StylesDictionaries\OverlayStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="StylesDictionaries\SlidersStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -298,7 +302,7 @@
       <Project>{5700b63d-857d-43fd-b0c4-4b2c88a5a1da}</Project>
       <Name>VPlayer.AudioInfoDownloader</Name>
     </ProjectReference>
-    <ProjectReference Include="..\VPlayer.Database\VPlayer.AudioStorage.csproj">
+    <ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj">
       <Project>{b5245008-cfdf-4b83-bf61-b0b26a8e92bf}</Project>
       <Name>VPlayer.AudioStorage</Name>
     </ProjectReference>

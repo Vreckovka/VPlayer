@@ -4,116 +4,188 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VPlayer.Library.Views"
+             xmlns:converters="clr-namespace:VPlayer.Other.Converters"
+             xmlns:my="ConditionalEventTrigger"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
-    <Grid>
-        <ScrollViewer>
-            <ListView ItemsSource="{Binding Albums}" 
-                      Background="{StaticResource TopWindowsColor}" 
-                      BorderThickness="0" >
+    <ScrollViewer >
+        <ListView ItemsSource="{Binding Albums, Mode=OneWay}" 
+                      Background="{StaticResource BackgroudBrush}" 
+                      BorderThickness="0"
+                      VirtualizingStackPanel.IsVirtualizing = "True"
+                      VirtualizingStackPanel.VirtualizationMode ="Recycling"
+                      >
 
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListViewItem_AlbumStyle}"/>
-                </ListView.ItemContainerStyle>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource ListViewItem_AlbumStyle}"/>
+            </ListView.ItemContainerStyle>
 
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type Page},Mode=FindAncestor},Path=ActualWidth}"/>
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type Page},Mode=FindAncestor},Path=ActualWidth}"/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
 
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Width="200" Height="240" Margin="5" Background="Transparent">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderBrush="{StaticResource 10_WhiteTransparentBrush}" BorderThickness="2.5" CornerRadius="5" Margin="5">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="10" ShadowDepth="5"/>
+                        </Border.Effect>
+
+                        <Grid Width="200" Height="235"  Background="{StaticResource BackgroudBrush}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
 
-                            <Image Source="{Binding AlbumFrontCoverBLOB}"
+                            <Image Source="{Binding AlbumFrontCoverBLOB, Converter={converters:ImageLazyLoadingConverter}, IsAsync=True}"
                                    Grid.Row="0" 
                                    HorizontalAlignment="Center"
-                                   VerticalAlignment="Top"
-                                   Name="Image"
-                                  >
-                                <Image.Style>
-                                    <Style TargetType="Image">
-                                        <Setter Property="Width" Value="200"/>
-                                        <Setter Property="Height" Value="190"/>
-
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}, Mode=FindAncestor},Path=IsMouseOver}" Value="true">
-                                                <DataTrigger.EnterActions>
-                                                    <RemoveStoryboard BeginStoryboardName="SizeDownStoryBoard"/>
-                                                    <BeginStoryboard Name="SizeUpStoryBoard">
-                                                        <Storyboard>
-                                                            <DoubleAnimation Storyboard.TargetProperty="(Image.Height)" From="200" To="210" Duration="0:0:0.35" />
-                                                            <DoubleAnimation Storyboard.TargetProperty="(Image.Width)" From="190" To="200" Duration="0:0:0.35" />
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-                                                </DataTrigger.EnterActions>
-
-                                                <DataTrigger.ExitActions>
-                                                    <RemoveStoryboard BeginStoryboardName="SizeUpStoryBoard"/>
-                                                    <BeginStoryboard Name="SizeDownStoryBoard">
-                                                        <Storyboard>
-                                                            <DoubleAnimation Storyboard.TargetProperty="(Image.Height)" From="210" To="200" Duration="0:0:0.35" />
-                                                            <DoubleAnimation Storyboard.TargetProperty="(Image.Width)" From="200" To="190" Duration="0:0:0.35" />
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-                                                </DataTrigger.ExitActions>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Image.Style>
-                                <Image.Effect>
-                                    <DropShadowEffect BlurRadius="10" ShadowDepth="5"/>
-                                </Image.Effect>
+                                   VerticalAlignment="Top">
+                               
                             </Image>
 
-                            <Label Content="{Binding Name}" 
-                                   Grid.Row="1" 
-                                   HorizontalAlignment="Center"
+                            <Grid Background="{StaticResource GlassGradient}" Grid.Row="0"/>
+
+                            <Grid Style="{StaticResource PlayGridOverlay}"
+                              VerticalAlignment="Top" 
+                              Grid.Row="0" 
+                              Width="200" 
+                              Height="200"
+                              Name="ParentContainer">
+                                <!--<Button Content="{StaticResource MetroButtonRightStyle}" 
+                                    Style="{StaticResource IconButtonStyle}" >
+                                </Button>-->
+                                <Button Style="{StaticResource Play}"/>
+                            </Grid>
+
+                            <Border BorderBrush="{StaticResource BackgroudBrush}" Grid.Row="0" BorderThickness="1" >
+                                <Grid VerticalAlignment="Bottom" Background="{StaticResource BackgroudBrush}" ClipToBounds="True" Name="GridParent">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock 
+                                   Grid.Row="0" 
                                    FontFamily="Arial"
                                    FontSize="20"
-                                   Name="LABELO"
-                                   >
-                                <Label.Effect>
-                                    <DropShadowEffect BlurRadius="5" ShadowDepth="5"/>
-                                </Label.Effect>
-                                <Label.Style>
-                                    <Style TargetType="Label">
-                                        <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}, Mode=FindAncestor},Path=IsMouseOver}" Value="true">
-                                                <DataTrigger.EnterActions>
-                                                    <RemoveStoryboard BeginStoryboardName="SizeDownStoryBoard"/>
-                                                    <BeginStoryboard Name="SizeUpStoryBoard">
-                                                        <Storyboard>
-                                                            <DoubleAnimation Storyboard.TargetProperty="(Label.FontSize)" From="20" To="25" Duration="0:0:0.25" />
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-                                                </DataTrigger.EnterActions>
+                                   Name="NameTxt">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value="{Binding Name}"/>
+                                                <Setter Property="Background" Value="Transparent"/>
+                                                <Setter Property="VerticalAlignment" Value="Top"/>
 
-                                                <DataTrigger.ExitActions>
-                                                    <RemoveStoryboard BeginStoryboardName="SizeUpStoryBoard"/>
-                                                    <BeginStoryboard Name="SizeDownStoryBoard">
-                                                        <Storyboard>
-                                                            <DoubleAnimation Storyboard.TargetProperty="(Label.FontSize)" From="25" To="20" Duration="0:0:0.25" />
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-                                                </DataTrigger.ExitActions>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Label.Style>
-                            </Label>
+                                                <Setter Property="Foreground">
+                                                    <Setter.Value>
+                                                        <SolidColorBrush Color="{StaticResource 200_DefaultWhiteColor}" />
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Setter Property="HorizontalAlignment" Value="Center"/>
+
+                                                <Style.Triggers>
+                                                    <DataTrigger Value="True">
+                                                        <DataTrigger.Binding>
+                                                            <MultiBinding Converter="{converters:IsBiggerConverter}">
+                                                                <Binding ElementName="NameTxt" Path="ActualWidth"/>
+                                                                <Binding ElementName="ParentContainer" Path="Width"/>
+                                                            </MultiBinding>
+                                                        </DataTrigger.Binding>
+                                                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                                                    </DataTrigger>
+
+                                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}, Mode=FindAncestor,AncestorLevel=2},Path=IsMouseOver}" Value="true">
+                                                        <DataTrigger.EnterActions>
+                                                            <RemoveStoryboard BeginStoryboardName="SizeDownStoryBoard"/>
+                                                            <BeginStoryboard Name="SizeUpStoryBoard">
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetProperty="(TextBlock.FontSize)" From="20" To="25" Duration="0:0:0.25" />
+
+                                                                    <ColorAnimation Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)"
+                                                                                    From="{StaticResource 200_DefaultWhiteColor}" 
+                                                                                    To="{StaticResource DefaultWhiteColor}"
+                                                                                    Duration="0:0:0.1" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </DataTrigger.EnterActions>
+
+                                                        <DataTrigger.ExitActions>
+                                                            <RemoveStoryboard BeginStoryboardName="SizeUpStoryBoard"/>
+                                                            <BeginStoryboard Name="SizeDownStoryBoard">
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetProperty="(TextBlock.FontSize)" From="25" To="20" Duration="0:0:0.25" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </DataTrigger.ExitActions>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+
+                                    <TextBlock Text="{Binding Artist.Name}" 
+                                   Grid.Row="1" 
+                                   TextAlignment="Center"
+                                   HorizontalAlignment="Stretch"
+                                   FontFamily="Arial"
+                                   FontSize="15">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" >
+                                                    <Setter.Value>
+                                                        <SolidColorBrush Color="{StaticResource DefaultWhiteColor}" Opacity="0.5"/>
+                                                    </Setter.Value>
+                                                </Setter>
+
+                                                <Setter Property="Background" >
+                                                    <Setter.Value>
+                                                        <SolidColorBrush Color="{StaticResource DefaultWhiteColor}" Opacity="0.02"/>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </Grid>
+                            </Border>
+
+                            <Grid.Triggers>
+                                <EventTrigger RoutedEvent="Grid.MouseEnter">
+                                    <EventTrigger.Actions>
+                                        <BeginStoryboard Name="SlideToLeft">
+                                            <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                                <ThicknessAnimation Storyboard.TargetProperty="Margin" From="5 0 0 0" Storyboard.TargetName="NameTxt" AccelerationRatio="0.5" DecelerationRatio="0.5">
+                                                    <ThicknessAnimation.Duration>
+                                                        <MultiBinding Converter="{converters:ScrollingTextDurationConverter}">
+                                                            <Binding ElementName="ParentContainer" Path="ActualWidth"/>
+                                                            <Binding ElementName="NameTxt" Path="ActualWidth"/>
+                                                        </MultiBinding>
+                                                    </ThicknessAnimation.Duration>
+
+                                                    <ThicknessAnimation.To>
+                                                        <MultiBinding Converter="{converters:ScrollingTextMarginConverter}">
+                                                            <Binding ElementName="ParentContainer" Path="ActualWidth"/>
+                                                            <Binding ElementName="NameTxt" Path="ActualWidth"/>
+                                                        </MultiBinding>
+                                                    </ThicknessAnimation.To>
+
+                                                </ThicknessAnimation>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger.Actions>
+                                </EventTrigger>
+
+                                <EventTrigger RoutedEvent="Grid.MouseLeave">
+                                    <RemoveStoryboard BeginStoryboardName="SlideToLeft"/>
+                                </EventTrigger>
+                            </Grid.Triggers>
                         </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </ScrollViewer>
-    </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </ScrollViewer>
 
 </Page>

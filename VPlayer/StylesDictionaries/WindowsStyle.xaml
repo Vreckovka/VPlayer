@@ -21,7 +21,7 @@
                                         <RowDefinition Height="*"/>
                                     </Grid.RowDefinitions>
 
-                                    <Grid Panel.ZIndex="1" Background="{DynamicResource TopWindowsColor}" x:Name="WindowsChromeGrid">
+                                    <Grid Panel.ZIndex="1" Background="{DynamicResource TopWindowsBrush}" x:Name="WindowsChromeGrid">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="*"/>
