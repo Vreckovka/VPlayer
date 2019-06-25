@@ -57,16 +57,11 @@
 
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
-                    <Border  Name="Border" Background="{TemplateBinding Background}" Padding="5">
+                    <Border  Name="Border" Background="{TemplateBinding Background}" Padding="10">
                         <ContentPresenter Content="{TemplateBinding Content}" />
                     </Border>
 
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Cursor" Value="Hand" />
-                            <Setter Property="Background" Value="{DynamicResource DefaultRedBrush}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
+                 
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

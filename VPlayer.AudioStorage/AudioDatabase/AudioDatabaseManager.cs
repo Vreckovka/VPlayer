@@ -95,7 +95,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
                         StorageManager.OnAlbumStored(album);
                     }
 
-                    Song song = new Song(audioInfo.Title, album, artist)
+                    Song song = new Song(audioInfo.Title, album)
                     {
                         DiskLocation = audioInfo.DiskLocation
                     };
@@ -103,12 +103,11 @@ namespace VPlayer.AudioStorage.AudioDatabase
                     song = (from x in context.Songs
                             where song.Name == x.Name
                             where x.Album.AlbumId == song.Album.AlbumId
-                            where x.Artist.ArtistId == song.Artist.ArtistId
                             select x).SingleOrDefault();
 
                     if (song == null)
                     {
-                        song = new Song(audioInfo.Title, album, artist)
+                        song = new Song(audioInfo.Title, album)
                         {
                             DiskLocation = audioInfo.DiskLocation
                         };

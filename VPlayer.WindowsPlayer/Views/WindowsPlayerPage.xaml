@@ -29,54 +29,60 @@
     </Page.Resources>
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
 
-        <Border BorderThickness="0,0,2,0" BorderBrush="{StaticResource 10_WhiteTransparentBrush}" Margin="-5,0,5,0">
-            <ListView Style="{StaticResource ListView_MenuStyle}" x:Name="ListView_SideMenu">
-                <ListViewItem Content="Library"
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border  BorderBrush="{StaticResource 10_WhiteTransparentBrush}" Margin="0 0 5 0">
+                <ListView Style="{StaticResource ListView_MenuStyle}" x:Name="ListView_SideMenu">
+                    <ListViewItem Content="Library"
                        Foreground="{StaticResource DefaultWhiteBrush}" 
                        PreviewMouseLeftButtonDown="MenuItem_Click"
-                       Style="{StaticResource ListViewItem_MenuStyle}"
-            />
-            </ListView>
-        </Border>
+                       IsSelected="True"
+                />
+                </ListView>
+            </Border>
 
-        <!--Music Player-->
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="auto"/>
-            </Grid.RowDefinitions>
+            <!--Music Player-->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
 
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="5"/>
-                    <ColumnDefinition Width="*" MaxWidth="350" MinWidth="250"/>
-                </Grid.ColumnDefinitions>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="5"/>
+                        <ColumnDefinition Width="*" MaxWidth="350" MinWidth="250"/>
+                    </Grid.ColumnDefinitions>
 
-                <Grid Grid.Column="0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <MediaElement Grid.Row="1" LoadedBehavior="Manual" x:Name="MediaElement_Player" MediaEnded="SongEnd"/>
-                </Grid>
-                <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch"/>
-                <Grid Grid.Column="2" >
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <ContentPresenter 
+                    <Grid Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <MediaElement Grid.Row="1" LoadedBehavior="Manual" x:Name="MediaElement_Player" MediaEnded="SongEnd"/>
+                    </Grid>
+                    <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch"/>
+                    <Grid Grid.Column="2" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <ContentPresenter 
                     ContentTemplate="{StaticResource SongInfoTemplate}" 
                     Content="{Binding ElementName=ListView_Tracks, Path=SelectedItem}"/>
 
 
-                    <ListView 
+                        <ListView 
                   ItemsSource="{Binding AudioTracks}" 
                   ItemTemplate="{StaticResource SoundTrackTemplate}"
                   AllowDrop="True"
@@ -86,55 +92,62 @@
                   Grid.Row="1" 
                   SelectionChanged="ListView_Tracks_SelectionChanged"
                   >
-                    </ListView>
+                        </ListView>
+                    </Grid>
                 </Grid>
-            </Grid>
 
-            <Grid Grid.Row="1" >
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
-                <Slider 
-                Height="25" 
-                Margin="5" 
-                x:Name="Slider_Time"
-                Maximum="100"
-                IsMoveToPointEnabled="True"
-                >
-                    <Slider.Value>
-                        <MultiBinding Converter="{converters:ActualTimeConverter}">
-                            <Binding Path="ActualTime"/>
-                            <Binding Path="ActualTrack.Duration" />
-                        </MultiBinding>
-                    </Slider.Value>
-                </Slider>
-                <Grid Grid.Row="1">
-                    <TextBlock HorizontalAlignment="Left"
+                <Grid Grid.Row="1" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="1">
+                        <TextBlock HorizontalAlignment="Left"
                            Margin="5,0,5,5" 
                            Style="{StaticResource DefaultStyle}"
                           >
-                        <TextBlock.Text>
-                            <MultiBinding Converter="{converters:ActualTimeConverter}">
-                                <Binding ElementName="Slider_Time" Path="Value"/>
-                                <Binding Path="ActualTrack.Duration" />
-                            </MultiBinding>
-                        </TextBlock.Text>
-                    </TextBlock>
-                    <TextBlock Text="{Binding ActualTrack.Duration, StringFormat=hh\\:mm\\:ss}" HorizontalAlignment="Right"
+                            <TextBlock.Text>
+                                <MultiBinding Converter="{converters:ActualTimeConverter}">
+                                    <Binding ElementName="Slider_Time" Path="Value"/>
+                                    <Binding Path="ActualTrack.Duration" />
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                        <TextBlock Text="{Binding ActualTrack.Duration, StringFormat=hh\\:mm\\:ss}" HorizontalAlignment="Right"
                            Margin="5,0,15,5" Style="{StaticResource DefaultStyle}"/>
+                    </Grid>
                 </Grid>
+            </Grid>
+
+            <!--Library-->
+            <!--Source="LibraryViews/LibraryPage.xaml"-->
+            <Grid Grid.Column="1"  ClipToBounds="True">
+                <Frame 
+               x:Name="Frame_Library"
+               NavigationUIVisibility="Hidden"
+               HorizontalAlignment="Left"
+               Opacity="1">
+
+                </Frame>
             </Grid>
         </Grid>
 
-        <!--Library-->
-        <!--Source="LibraryViews/LibraryPage.xaml"-->
-        <Frame Grid.Column="1" 
-               x:Name="Frame_Library"
-               NavigationUIVisibility="Hidden"
-               Width="0"
-               HorizontalAlignment="Left">
-
-        </Frame>
+        <Slider 
+            Height="25" 
+            Margin="5" 
+            x:Name="Slider_Time"
+            Maximum="100"
+            IsMoveToPointEnabled="True"
+            Grid.Row="1"
+        >
+            <Slider.Value>
+                <MultiBinding Converter="{converters:ActualTimeConverter}">
+                    <Binding Path="ActualTime"/>
+                    <Binding Path="ActualTrack.Duration" />
+                </MultiBinding>
+            </Slider.Value>
+        </Slider>
     </Grid>
+
 </Page>

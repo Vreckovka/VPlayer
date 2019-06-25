@@ -8,29 +8,21 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using PropertyChanged;
-using VPlayer.AudioStorage.Models;
-using VPlayer.Library.ViewModels;
 
-namespace VPlayer.Library.Views
+namespace Test
 {
     /// <summary>
-    /// Interaction logic for AlbumsView.xaml
+    /// Interaction logic for UserControl1.xaml
     /// </summary>
-
-
-    public partial class AlbumsView : Page
+    public partial class TestControl : Page
     {
-        public AlbumsView()
+        public TestControl()
         {
             InitializeComponent();
-            DataContext = LibraryViewModel.Instance;
         }
     }
 }
-

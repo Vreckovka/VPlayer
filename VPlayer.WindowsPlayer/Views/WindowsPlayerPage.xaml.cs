@@ -44,11 +44,11 @@ namespace VPlayer.WindowsPlayer.Views
 
             LibraryView = new LibraryView();
             Frame_Library.Content = LibraryView;
+            _isSideMenuUp = true;
 
-         
 
 
-            this.Loaded += WindowsPlayerPage_Loaded;
+            //this.Loaded += WindowsPlayerPage_Loaded;
 
             //DatabaseManager.UpdateAlbumsConversBLOB();
 
@@ -148,30 +148,48 @@ namespace VPlayer.WindowsPlayer.Views
         {
             TimeSpan timeSpan = new TimeSpan(0, 0, 0, 0, 350);
             Frame_Library.HorizontalAlignment = HorizontalAlignment.Left;
+            Frame_Library.Opacity = 1;
+
 
             if (!_isSideMenuUp)
             {
-                DoubleAnimation doubleAnimationWidth = new DoubleAnimation(Frame_Library.ActualWidth, Application.Current.MainWindow.ActualWidth, timeSpan);
+                Frame_Library.Margin = new Thickness(0);
 
-                doubleAnimationWidth.Completed += DoubleAnimationWidth_Completed;
-                Frame_Library.BeginAnimation(FrameworkElement.WidthProperty, doubleAnimationWidth);
+                if (Application.Current.MainWindow != null)
+                {
+                    Frame_Library.Width = Application.Current.MainWindow.ActualWidth;
+                    ThicknessAnimation doubleAnimationWidth = new ThicknessAnimation(new Thickness(-1200, 0, 0, 0),new Thickness(0), timeSpan);
+                   // DoubleAnimation doubleAnimationWidth = new DoubleAnimation(0, Application.Current.MainWindow.ActualWidth, timeSpan);
+
+                    doubleAnimationWidth.Completed += DoubleAnimationWidth_Completed;
+                    Frame_Library.BeginAnimation(FrameworkElement.MarginProperty, doubleAnimationWidth);
+                }
 
                 _isSideMenuUp = true;
             }
             else
             {
-                DoubleAnimation doubleAnimationWidth = new DoubleAnimation(Frame_Library.ActualWidth, 0, timeSpan);
+                Frame_Library.Width = Frame_Library.ActualWidth;
+                ThicknessAnimation doubleAnimationWidth = new ThicknessAnimation(new Thickness(0), new Thickness(-1200, 0, 0, 0), timeSpan);
 
-                Frame_Library.BeginAnimation(FrameworkElement.WidthProperty, doubleAnimationWidth);
+                doubleAnimationWidth.Completed += DoubleAnimationWidth_Completed1;
+                Frame_Library.BeginAnimation(FrameworkElement.MarginProperty, doubleAnimationWidth);
                 _isSideMenuUp = false;
                 ListView_SideMenu.UnselectAll();
                 ListView_SideMenu.Items.Refresh();
             }
         }
 
+        private void DoubleAnimationWidth_Completed1(object sender, EventArgs e)
+        {
+            Frame_Library.BeginAnimation(MarginProperty, null);
+            Frame_Library.Width = 0;
+        }
+
         private void DoubleAnimationWidth_Completed(object sender, EventArgs e)
         {
             Frame_Library.BeginAnimation(WidthProperty, null);
+          
             Frame_Library.HorizontalAlignment = HorizontalAlignment.Stretch;
             Frame_Library.Width = double.NaN;
         }

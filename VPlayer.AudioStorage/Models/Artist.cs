@@ -18,8 +18,6 @@ namespace VPlayer.AudioStorage.Models
         public int ArtistId { get; set; }
         public string Name { get; set; }
         [CanBeNull] public string MusicBrainzId { get; set; }
-        [CanBeNull] public virtual List<Album> Albums { get; set; }
-
-
+        [CanBeNull] public virtual ICollection<Album> Albums { get; set; }
     }
 }

@@ -19,7 +19,7 @@ namespace VPlayer.Library
     /// <summary>
     /// Interaction logic for LibraryView.xaml
     /// </summary>
-    public partial class LibraryView : UserControl
+    public partial class LibraryView : Page
     {
         public LibraryView()
         {
@@ -34,11 +34,6 @@ namespace VPlayer.Library
             {
                 Frame_LibraryContent.Source = new Uri("Views/AlbumsView.xaml", UriKind.Relative);
             }
-        }
-
-        private void Page_Initialized(object sender, EventArgs e)
-        {
-
         }
     }
 }

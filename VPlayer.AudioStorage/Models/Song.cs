@@ -9,11 +9,10 @@ namespace VPlayer.AudioStorage.Models
     public class Song
     {
         public Song() { }
-        public Song(string name, Album album, Artist artist)
+        public Song(string name, Album album)
         {
             Name = name;
             Album = album;
-            Artist = artist;
         }
 
 
@@ -25,7 +24,6 @@ namespace VPlayer.AudioStorage.Models
         [CanBeNull] public string MusicBrainzId { get; set; }
         public virtual Album Album { get; set; }
         [CanBeNull] public virtual Genre Genre { get; set; }
-        public virtual Artist Artist { get; set; }
 
         public override string ToString()
         {

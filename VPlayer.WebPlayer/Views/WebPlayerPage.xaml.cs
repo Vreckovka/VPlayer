@@ -51,7 +51,7 @@ namespace VPlayer.WebPlayer.Views
             PlayerHandler.Play += PlayerHandler_Play;
             PlayerHandler.Pause += PlayerHandler_Play;
 
-            //Xpcom.Initialize("Firefox64");
+           // Xpcom.Initialize("Firefox32");
         }
 
         private void PlayerHandler_Play(object sender, EventArgs e)

@@ -14,7 +14,7 @@
         WindowStartupLocation="CenterScreen"
         Icon="/Includes/VPlayerLogo.png"
         Loaded="Window_Loaded"
-        >
+>
 
     <Grid >
         <Grid.ColumnDefinitions>
@@ -22,19 +22,26 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
+
+
+
         <Border BorderThickness="0,0,2,0" BorderBrush="{StaticResource 10_WhiteTransparentBrush}" Margin="0,0,5,0">
-            <ListView Style="{StaticResource ListView_MenuStyle}" ItemContainerStyle="{StaticResource ListViewItem_MenuStyle}">
-                <!--<ListViewItem Content="Windows player" IsSelected="True" 
+            <ListView Style="{StaticResource ListView_MenuStyle}" >
+
+                <ListViewItem Content="Windows player" IsSelected="True" 
                               PreviewMouseDown="ListViewItem_Click"/>
+
                 <ListViewItem Content="Internet player" 
-                          PreviewMouseDown="ListViewItem_Click"/>
-                <ListViewItem Content="Update" 
+                          PreviewMouseDown="ListViewItem_Click" IsEnabled="False"/>
+
+                <!--<ListViewItem Content="Update" 
                               PreviewMouseDown="ListViewItem_PreviewMouseDown"/>
                 <ListViewItem Content="Clear" 
                               PreviewMouseDown="ListViewItem_PreviewMouseDown1"/>
                 <TextBox Name="Directory" Width="250" Text="D:\Hudba\Metallica"/>
                 <ListViewItem Content="Update existing albums" 
                               PreviewMouseDown="ListViewItem_PreviewMouseDown2"/>-->
+
             </ListView>
         </Border>
 

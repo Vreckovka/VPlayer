@@ -31,6 +31,8 @@ namespace VPlayer
     {
         private WebPlayerPage _webPlayerPage = new WebPlayerPage();
         private WindowsPlayerPage _windowsPlayerPage = new WindowsPlayerPage();
+
+
         public MainWindow()
         {
             InitializeComponent();

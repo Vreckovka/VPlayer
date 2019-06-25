@@ -9,19 +9,87 @@
         <Setter Property="ScrollViewer.CanContentScroll" Value="true" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <!-- Trun off default selection-->
+                            <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                <Border x:Name="Bd"
+                                        Background="{TemplateBinding Background}" 
+                            Padding="20 8 20 8" 
+                            SnapsToDevicePixels="true">
+                                    <ContentPresenter 
+                                 HorizontalAlignment="Center" 
+                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    Margin="{TemplateBinding Margin}"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsEnabled" Value="false">
+                                        <Setter Property="Foreground"
+                                    Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                                    </Trigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding RelativeSource={RelativeSource self}, Path=IsMouseOver}" Value="True"  />
+                                            <Condition Binding="{Binding RelativeSource={RelativeSource self}, Path=IsSelected}" Value="False" />
+                                        </MultiDataTrigger.Conditions>
+                                        <MultiDataTrigger.EnterActions>
+                                            <RemoveStoryboard BeginStoryboardName="B"/>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation Storyboard.TargetProperty="Background.Color" To="{StaticResource 30_DefaultWhiteColor}" Duration="0:0:.25"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </MultiDataTrigger.EnterActions>
+                                        <MultiDataTrigger.ExitActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation Storyboard.TargetProperty="Background.Color" To="Transparent" Duration="0:0:.25"/>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </MultiDataTrigger.ExitActions>
+                                    </MultiDataTrigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Trigger.EnterActions>
+                                            <BeginStoryboard x:Name="A">
+                                                <Storyboard>
+                                                    <ColorAnimation Storyboard.TargetProperty="Background.Color" To="{StaticResource 50_DefaultWhiteColor}" Duration="0:0:0:0.2" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </Trigger.EnterActions>
 
+                                        <Trigger.ExitActions>
+                                            <RemoveStoryboard BeginStoryboardName="A"/>
+                                            <BeginStoryboard x:Name="B">
+                                                <Storyboard>
+                                                    <ColorAnimation Storyboard.TargetProperty="Background.Color" To="Transparent" Duration="0:0:0:.2" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </Trigger.ExitActions>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListView">
                     <Border Name="Border" 
                             BorderThickness="{TemplateBinding BorderThickness}" 
                             BorderBrush="{TemplateBinding BorderBrush}"
-                            Background="{TemplateBinding Background}">
+                            Background="{StaticResource 3_WhiteTransparentBrush}">
                         <ScrollViewer>
                             <ItemsPresenter />
                         </ScrollViewer>
                     </Border>
-
+                    
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsGrouping" Value="true">
                             <Setter Property="ScrollViewer.CanContentScroll" Value="false" />
@@ -32,75 +100,6 @@
                                     <SolidColorBrush Color="{DynamicResource DefaultRedTransparentColor}" />
                                 </Setter.Value>
                             </Setter>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="ListViewItem_MenuStyle" TargetType="{x:Type ListViewItem}">
-        <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <!-- Trun off default selection-->
-                <ControlTemplate TargetType="{x:Type ListViewItem}">
-                    <Border x:Name="Bd" BorderBrush="{DynamicResource DefaultWhiteTransparentBrush}" 
-                            BorderThickness="0,0,0,2" 
-                            Margin="6,0,6,0"
-                            Background="{TemplateBinding Background}" 
-                            Padding="8" 
-                            SnapsToDevicePixels="true"
-                            >
-                        <ContentPresenter 
-                            HorizontalAlignment="Center" 
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            Margin="{TemplateBinding Margin}"/>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="Foreground"
-                                    Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
-                        </Trigger>
-                        <MultiDataTrigger>
-                            <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding RelativeSource={RelativeSource self}, Path=IsMouseOver}" Value="True"  />
-                                <Condition Binding="{Binding RelativeSource={RelativeSource self}, Path=IsSelected}" Value="False" />
-                            </MultiDataTrigger.Conditions>
-                            <MultiDataTrigger.EnterActions>
-                                <RemoveStoryboard BeginStoryboardName="B"/>
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" To="{StaticResource 10_DefaultWhiteColor}" Duration="0:0:.25"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </MultiDataTrigger.EnterActions>
-                            <MultiDataTrigger.ExitActions>
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" To="Transparent" Duration="0:0:.25"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </MultiDataTrigger.ExitActions>
-                        </MultiDataTrigger>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Trigger.EnterActions>
-                                <BeginStoryboard x:Name="A">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" To="{StaticResource 30_DefaultWhiteColor}" Duration="0:0:0:0.2" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.EnterActions>
-
-                            <Trigger.ExitActions>
-                                <RemoveStoryboard BeginStoryboardName="A"/>
-                                <BeginStoryboard x:Name="B">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" To="Transparent" Duration="0:0:0:.2" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.ExitActions>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

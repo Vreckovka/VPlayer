@@ -20,9 +20,8 @@ namespace VPlayer.AudioStorage.Models
         [CanBeNull] public string MusicBrainzId { get; set; }
         [CanBeNull] public string AlbumFrontCoverURI { get; set; }
         [CanBeNull] public byte[] AlbumFrontCoverBLOB { get; set; }
-
-
         public virtual List<Song> Songs { get; set; }
+
         public void UpdateAlbum(Album album)
         {
             Name = album.Name;
