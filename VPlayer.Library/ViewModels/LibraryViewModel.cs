@@ -20,6 +20,18 @@ namespace VPlayer.Library.ViewModels
     [AddINotifyPropertyChangedInterface]
     public class LibraryViewModel
     {
+        public enum Item
+        {
+            Artist,
+            Album
+        }
+        /// <summary>
+        /// Id of actual playing item
+        /// </summary>
+        public static int ItemId { get; set; }
+        public static Item ItemType { get; set; }
+        public Album SelectedAlbum { get; set; }
+
         public VirtualList<Album> Albums
         {
             get { return new VirtualList<Album>(new AlbumGenerator()); }
@@ -39,7 +51,6 @@ namespace VPlayer.Library.ViewModels
         }
 
         private static LibraryViewModel _instance;
-
 
         public LibraryViewModel()
         {

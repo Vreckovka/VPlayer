@@ -18,16 +18,15 @@ namespace VPlayer
         /// Custom startup to load IoC 
         /// </summary>
         /// <param name="e"></param>
-        //protected override void OnStartup(StartupEventArgs e)
-        //{
-        //    base.OnStartup(e);
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+            
+       
 
-        //    //Setup IoC
-        //    //IoC.Configure();
+            var init = AudioInfoDownloader.AudioInfoDownloader.Instance;
 
-        //    //Show main window
-        //    //Current.MainWindow = new MainWindow();
-        //    Current.MainWindow.Show();
-        //}
+            Current.MainWindow?.Show();
+        }
     }
 }

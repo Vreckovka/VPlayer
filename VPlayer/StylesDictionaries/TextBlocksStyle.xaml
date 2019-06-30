@@ -1,12 +1,58 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:VPlayer.StylesDictionaries">
+                    xmlns:local="clr-namespace:VPlayer.StylesDictionaries"
+                    xmlns:converters="clr-namespace:VPlayer.Other.Converters;assembly=VPlayer.Library">
     
-    <Style x:Key="DefaultStyle"
+    <Style x:Key="Base"
            TargetType="{x:Type TextBlock}" 
            BasedOn="{StaticResource {x:Type TextBlock}}">
-        <Setter Property="Foreground" Value="{DynamicResource DefaultWhiteBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}"/>
         <Setter Property="FontFamily" Value="Arial"/>
+    </Style>
+
+    <Style TargetType="TextBlock" x:Key="PanningTextBlock">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="VerticalAlignment" Value="Top"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+
+        <Setter Property="Foreground" Value="{StaticResource 200_WhiteTransparentBrush}"/>
+
+        <Style.Triggers>
+            <DataTrigger Value="True">
+                <DataTrigger.Binding>
+                    <MultiBinding Converter="{converters:IsBiggerConverter}">
+                        <Binding ElementName="NameTxt" Path="ActualWidth"/>
+                        <Binding ElementName="ParentContainer" Path="Width"/>
+                    </MultiBinding>
+                </DataTrigger.Binding>
+                <Setter Property="HorizontalAlignment" Value="Left"/>
+            </DataTrigger>
+
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}, Mode=FindAncestor,AncestorLevel=2},Path=IsMouseOver}" Value="true">
+                <DataTrigger.EnterActions>
+                    <RemoveStoryboard BeginStoryboardName="SizeDownStoryBoard"/>
+                    <BeginStoryboard Name="SizeUpStoryBoard">
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="(TextBlock.FontSize)" From="20" To="25" Duration="0:0:0.25" />
+
+                            <ColorAnimation Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)"
+                                                                                    From="{StaticResource 200_DefaultWhiteColor}" 
+                                                                                    To="{StaticResource DefaultWhiteColor}"
+                                                                                    Duration="0:0:0.1" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.EnterActions>
+
+                <DataTrigger.ExitActions>
+                    <RemoveStoryboard BeginStoryboardName="SizeUpStoryBoard"/>
+                    <BeginStoryboard Name="SizeDownStoryBoard">
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="(TextBlock.FontSize)" From="25" To="20" Duration="0:0:0.25" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.ExitActions>
+            </DataTrigger>
+        </Style.Triggers>
     </Style>
 
 </ResourceDictionary>

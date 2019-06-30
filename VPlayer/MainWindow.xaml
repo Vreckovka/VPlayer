@@ -61,6 +61,7 @@
                    Grid.Row="1" 
                    HorizontalAlignment="Stretch"
                    Margin="5"
+
                    />
         </Grid>
     </Grid>

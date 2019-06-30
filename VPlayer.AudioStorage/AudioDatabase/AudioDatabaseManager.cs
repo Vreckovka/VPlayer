@@ -18,7 +18,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
         {
             get
             {
-                return AudioDatabaseContext.Albums.Include("Artist");
+                return AudioDatabaseContext.Albums.Include("Artist").Include("Songs");
             }
         }
 
@@ -26,7 +26,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
         {
             get
             {
-                return AudioDatabaseContext.Artists;
+                return AudioDatabaseContext.Artists.Include("Albums");
             }
         }
 
@@ -60,6 +60,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
                         await context.SaveChangesAsync();
 
                         Logger.Logger.Instance.Log(Logger.MessageType.Success, $"New artist was added {artist.Name}");
+
+                        StorageManager.OnArtistStored(artist);
                     }
 
                     Album album = new Album()
@@ -184,6 +186,26 @@ namespace VPlayer.AudioStorage.AudioDatabase
                 {
                     Logger.Logger.Instance.Log(Logger.MessageType.Inform, ex.Message);
                 }
+            }
+        }
+
+        public async Task UpdateArtist(Artist artist)
+        {
+            try
+            {
+                var originalArtist = await (from x in AudioDatabaseContext.Artists where x.ArtistId == artist.ArtistId select x).SingleOrDefaultAsync();
+
+                if (originalArtist != null)
+                {
+                    originalArtist.MusicBrainzId = artist.MusicBrainzId;
+                    originalArtist.Name = artist.Name;
+
+                    await AudioDatabaseContext.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Logger.Instance.LogException(ex);
             }
         }
 

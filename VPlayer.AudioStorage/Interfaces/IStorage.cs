@@ -17,6 +17,7 @@ namespace VPlayer.AudioStorage.Interfaces
         Task StoreData(List<AudioInfo> audioInfos);
         Task ClearStorage();
 
+        Task UpdateArtist(Artist artist);
         Task UpdateAlbum(Album album);
         Task UpdateAlbums(List<Album> albumsToUpdate);
     }

@@ -73,7 +73,7 @@ namespace VPlayer.Other.Converters
             if (actualTrackDuration != null)
             {
                 double valueInMilli = ((double) value * actualTrackDuration.TotalMilliseconds) / 100;
-                PlayerHandler.OnChangeTime(valueInMilli);
+                //PlayerHandler.OnChangeTime(valueInMilli);
             }
 
             return null;

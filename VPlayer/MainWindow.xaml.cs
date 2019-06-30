@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,6 +16,7 @@ using VPlayer.AudioStorage;
 using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.Interfaces;
 using VPlayer.AudioStorage.Models;
+using VPlayer.Models;
 using VPlayer.Other;
 using VPlayer.Views;
 using VPlayer.WebPlayer;
@@ -36,6 +38,13 @@ namespace VPlayer
         public MainWindow()
         {
             InitializeComponent();
+
+          
+
+            foreach (var artists in (from x in StorageManager.GetStorage().Artists where x.MusicBrainzId == null select x))
+            {
+                StorageManager.OnArtistStored(artists);
+            }
         }
 
         private void Test()

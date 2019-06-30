@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,7 +27,8 @@ namespace VPlayer.WindowsPlayer.Views
         private bool _isSideMenuUp;
         private DispatcherTimer _dispatcherTimer;
 
-        public LibraryView LibraryView { get; set; }    
+        public LibraryView LibraryView { get; set; }
+      
 
         public WindowsPlayerPage()
         {
@@ -37,18 +40,19 @@ namespace VPlayer.WindowsPlayer.Views
             _dispatcherTimer.Interval = TimeSpan.FromMilliseconds(10);
             _dispatcherTimer.Tick += _dispatcherTimer_Tick;
 
-            PlayerHandler.Play += PlayerHandler_Play;
-            PlayerHandler.Pause += PlayerHandler_Pause;
-            PlayerHandler.ChangeTime += PlayerHandler_ChangeTime;
+            //PlayerHandler.Play += PlayerHandler_Play;
+            //PlayerHandler.Pause += PlayerHandler_Pause;
+            //PlayerHandler.ChangeTime += PlayerHandler_ChangeTime;
 
 
             LibraryView = new LibraryView();
             Frame_Library.Content = LibraryView;
-            _isSideMenuUp = true;
+            _isSideMenuUp = false;
 
 
+           
 
-            //this.Loaded += WindowsPlayerPage_Loaded;
+            this.Loaded += WindowsPlayerPage_Loaded;
 
             //DatabaseManager.UpdateAlbumsConversBLOB();
 
@@ -58,17 +62,17 @@ namespace VPlayer.WindowsPlayer.Views
 
         private void WindowsPlayerPage_Loaded(object sender, RoutedEventArgs e)
         {
-            MenuItem_Click(null, null);
+            // MenuItem_Click(null, null);
+
+           
         }
 
         private void _dispatcherTimer_Tick(object sender, EventArgs e)
         {
-            AudioTracksViewModel.ActualTime = MediaElement_Player.Position;
         }
 
         private void PlayerHandler_ChangeTime(object sender, double e)
         {
-            MediaElement_Player.Position = TimeSpan.FromMilliseconds(e);
             AudioTracksViewModel.ManualChanged = false;
         }
 
@@ -105,8 +109,7 @@ namespace VPlayer.WindowsPlayer.Views
         {
             AudioTracksViewModel.IsPlaying = false;
 
-            MediaElement_Player.Pause();
-            PlayerHandler.OnPause(this);
+            //PlayerHandler.OnPause(this);
         }
         private void Play(Uri uri = null, bool next = false)
         {
@@ -127,7 +130,6 @@ namespace VPlayer.WindowsPlayer.Views
                 //MediaElement_Player.Source = uri;
             }
 
-            MediaElement_Player.Play();
         }
         private void ListViewItem_DoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -150,33 +152,35 @@ namespace VPlayer.WindowsPlayer.Views
             Frame_Library.HorizontalAlignment = HorizontalAlignment.Left;
             Frame_Library.Opacity = 1;
 
-
-            if (!_isSideMenuUp)
+            if (Application.Current.MainWindow != null)
             {
-                Frame_Library.Margin = new Thickness(0);
-
-                if (Application.Current.MainWindow != null)
+                if (!_isSideMenuUp)
                 {
+                    Frame_Library.Margin = new Thickness(0);
+
+
                     Frame_Library.Width = Application.Current.MainWindow.ActualWidth;
-                    ThicknessAnimation doubleAnimationWidth = new ThicknessAnimation(new Thickness(-1200, 0, 0, 0),new Thickness(0), timeSpan);
-                   // DoubleAnimation doubleAnimationWidth = new DoubleAnimation(0, Application.Current.MainWindow.ActualWidth, timeSpan);
+                    ThicknessAnimation doubleAnimationWidth = new ThicknessAnimation(new Thickness(-Application.Current.MainWindow.ActualWidth, 0, 0, 0), new Thickness(0), timeSpan);
 
                     doubleAnimationWidth.Completed += DoubleAnimationWidth_Completed;
                     Frame_Library.BeginAnimation(FrameworkElement.MarginProperty, doubleAnimationWidth);
+
+                    _isSideMenuUp = true;
                 }
+                else
+                {
+                    Frame_Library.Width = Frame_Library.ActualWidth;
 
-                _isSideMenuUp = true;
-            }
-            else
-            {
-                Frame_Library.Width = Frame_Library.ActualWidth;
-                ThicknessAnimation doubleAnimationWidth = new ThicknessAnimation(new Thickness(0), new Thickness(-1200, 0, 0, 0), timeSpan);
+                    ThicknessAnimation doubleAnimationWidth = new ThicknessAnimation(new Thickness(0), new Thickness(-Application.Current.MainWindow.ActualWidth, 0, 0, 0), timeSpan);
 
-                doubleAnimationWidth.Completed += DoubleAnimationWidth_Completed1;
-                Frame_Library.BeginAnimation(FrameworkElement.MarginProperty, doubleAnimationWidth);
-                _isSideMenuUp = false;
-                ListView_SideMenu.UnselectAll();
-                ListView_SideMenu.Items.Refresh();
+                    doubleAnimationWidth.Completed += DoubleAnimationWidth_Completed1;
+                    Frame_Library.BeginAnimation(FrameworkElement.MarginProperty, doubleAnimationWidth);
+
+
+                    _isSideMenuUp = false;
+                    ListView_SideMenu.UnselectAll();
+                    ListView_SideMenu.Items.Refresh();
+                }
             }
         }
 
@@ -189,7 +193,7 @@ namespace VPlayer.WindowsPlayer.Views
         private void DoubleAnimationWidth_Completed(object sender, EventArgs e)
         {
             Frame_Library.BeginAnimation(WidthProperty, null);
-          
+
             Frame_Library.HorizontalAlignment = HorizontalAlignment.Stretch;
             Frame_Library.Width = double.NaN;
         }

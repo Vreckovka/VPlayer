@@ -12,7 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using VPlayer.AudioStorage.Models;
 using VPlayer.Library.ViewModels;
+using VPlayer.Library.Views;
 
 namespace VPlayer.Library
 {
@@ -21,19 +23,68 @@ namespace VPlayer.Library
     /// </summary>
     public partial class LibraryView : Page
     {
+        private static AlbumsView AlbumsView = new AlbumsView();
+        private static ArtistsView ArtistsView = new ArtistsView();
+
+        public static Frame _frame { get; private set; }
+
+        public enum View
+        {
+            Albums,
+            AlbumDetail,
+            AlbumCovers,
+
+            Artists,
+            ArtistDetail,
+
+        }
+
         public LibraryView()
         {
             InitializeComponent();
-            Frame_LibraryContent.Source = new Uri("Views/AlbumsView.xaml", UriKind.Relative);
-            LibraryViewModel.Init();
+            _frame = Frame_LibraryContent;
+
+            Frame_LibraryContent.Content = ArtistsView;
         }
 
-        private void ListViewItem_Click(object sender, MouseButtonEventArgs e)
+        public static void ChangeView(View view, Album album = null, Artist artist = null)
         {
-            if (((ListViewItem)sender).Content.Equals("Albums"))
+            switch (view)
             {
-                Frame_LibraryContent.Source = new Uri("Views/AlbumsView.xaml", UriKind.Relative);
+                case View.Albums:
+                    _frame.Content = AlbumsView;
+                    break;
+                case View.AlbumDetail:
+                    _frame.Content = new AlbumDetailView(album);
+                    break;
+                case View.AlbumCovers:
+                    _frame.Content = new AlbumCoversView(album);
+                    break;
+                case View.Artists:
+                    _frame.Content = ArtistsView;
+                    break;
+                case View.ArtistDetail:
+                    _frame.Content = new ArtistDetailView(artist);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(view), view, null);
             }
+        }
+
+        private void MenuListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedItem = ((ListViewItem)e.AddedItems[0]).Content;
+
+            if (IsLoaded)
+                switch (selectedItem)
+                {
+                    case "Albums":
+                        ChangeView(View.Albums);
+                        break;
+                    case "Artist":
+                        ChangeView(View.Artists);
+                        break;
+                }
         }
     }
 }

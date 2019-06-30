@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using PropertyChanged;
 //using Windows.Storage;
 //using Windows.Storage.FileProperties;
 //using VPlayer.LocalMusicDatabase;
@@ -22,6 +23,7 @@ using FileAttributes = System.IO.FileAttributes;
 
 namespace VPlayer.ViewModels
 {
+    [AddINotifyPropertyChangedInterface]
     public class WindowsPlayerViewModel 
     {
         public ObservableCollection<AudioTrack> AudioTracks { get; } = new ObservableCollection<AudioTrack>();
@@ -29,10 +31,15 @@ namespace VPlayer.ViewModels
         public bool IsPlaying { get; set; }
         public TimeSpan ActualTime { get; set; } = new TimeSpan();
         private int _actualTrackId = 0;
+
+        public double ActualTimePosition { get; set; }
         public bool ManualChanged { get; set; }
         public WindowsPlayerViewModel()
         {
-
+            PlayerHandler.MediaPlayer.PositionChanged += (sender, e) =>
+            {
+                ActualTimePosition = e.NewPosition * 100;
+            };
         }
 
         //public void Play(Uri uri = null, bool next = false)

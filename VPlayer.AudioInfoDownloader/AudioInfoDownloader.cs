@@ -13,6 +13,7 @@ using Hqub.MusicBrainz.API;
 using Hqub.MusicBrainz.API.Entities;
 using Newtonsoft.Json.Linq;
 using unirest_net.http;
+using VPlayer.AudioInfoDownloader.Models;
 using VPlayer.AudioStorage;
 using VPlayer.AudioStorage.Interfaces;
 using VPlayer.AudioStorage.Models;
@@ -44,6 +45,8 @@ namespace VPlayer.AudioInfoDownloader
 
         public event EventHandler<List<AudioInfo>> SubdirectoryLoaded;
 
+        public event EventHandler<List<Cover>> CoversDownloaded;
+
         public static AudioInfoDownloader Instance
         {
             get
@@ -57,9 +60,36 @@ namespace VPlayer.AudioInfoDownloader
             }
         }
 
+
         public AudioInfoDownloader()
         {
             StorageManager.AlbumStored += AudioInfoDownloader_AlbumStored;
+            StorageManager.ArtistStored += StorageManager_ArtistStored; ;
+        }
+
+        private void StorageManager_ArtistStored(object sender, AudioStorage.Models.Artist e)
+        {
+            Task.Run(async () =>
+            {
+                try
+                {
+                    var artist = await UpdateArtist(e.Name);
+
+                    if (artist != null)
+                    {
+                        using (IStorage storage = StorageManager.GetStorage())
+                        {
+                            artist.ArtistId = e.ArtistId;
+                            await storage.UpdateArtist(artist);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+                }
+            });
+
         }
 
         private async void AudioInfoDownloader_AlbumStored(object sender, Album e)
@@ -164,31 +194,42 @@ namespace VPlayer.AudioInfoDownloader
         {
             try
             {
+                await musibrainzAPISempathore.WaitAsync();
+
+                //API rate limit
+                Thread.Sleep(1000);
+
                 var artists = await Artist.SearchAsync(artistName.Quote());
 
                 Artist artist = null;
 
                 if (artists.Items.Any(x => x.Score == 100))
                     artist = artists.Items.OrderByDescending(a => a.Score).First();
-                else
+                else if (artists.Items.Count > 0)
                     artist = artists.Items.OrderByDescending(a => Levenshtein.Similarity(a.Name, artistName)).First();
+                else
+                {
+                    Logger.Logger.Instance.Log(Logger.MessageType.Warning, $"Artist's data was not find {artistName}");
+                    return null;
+                }
 
-
-                Logger.Logger.Instance.Log(Logger.MessageType.Inform, $"Artist's data was updated {artistName}");
-
-
+                Logger.Logger.Instance.Log(Logger.MessageType.Success, $"Artist's data was updated {artistName}");
                 //artist = await Artist.GetAsync(artist.Id, "artist-rels", "url-rels");
 
                 return new AudioStorage.Models.Artist()
                 {
                     Name = artist.Name,
-                    MusicBrainzId = artist.Id
+                    MusicBrainzId = artist.Id,
                 };
             }
             catch (Exception ex)
             {
                 Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
                 return null;
+            }
+            finally
+            {
+                musibrainzAPISempathore.Release();
             }
         }
 
@@ -631,6 +672,132 @@ namespace VPlayer.AudioInfoDownloader
                 }
             });
         }
+
+
+        /// <summary>
+        /// Returns all avaible album covers
+        /// </summary>
+        /// <param name="MBID"></param>
+        /// <returns></returns>
+        public async Task<List<Cover>> GetAlbumFrontCoversUrls(string MBID)
+        {
+            return await Task.Run(async () =>
+            {
+                try
+                {
+                    List<Cover> covers = new List<Cover>();
+                    string apiURL = "http://coverartarchive.org//release/" + $"{MBID}";
+                    HttpResponse<string> response = await Task.Run(() => Unirest.get(apiURL).asJson<string>());
+
+                    if (response.Code != 200)
+                    {
+                        if (response.Code == 502)
+                        {
+                            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+                                $"Album cover was not found {MBID} trying again, response code {response.Code}");
+                            return await GetAlbumFrontCoversUrls(MBID);
+                        }
+
+                        Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+                            $"Album cover was not found {MBID} resposne code {response.Code}");
+                        return null;
+                    }
+
+                    dynamic stuff = JObject.Parse(response.Body);
+
+                    if (stuff.images != null)
+                    {
+                        foreach (var image in stuff.images)
+                        {
+                            foreach (var thumbnail in image.thumbnails)
+                            {
+                                var foo = thumbnail.ToString().Split('\"');
+
+                                covers.Add(new Cover()
+                                {
+                                    Mbid = MBID,
+                                    Type = foo[1],
+                                    Url = foo[3],
+                                  
+                                });
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+                            $"Album cover was not found {MBID}");
+                        return null;
+                    }
+
+                    OnCoversDownloaded(covers);
+                    return covers;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Logger.Instance.LogException(ex);
+                    return null;
+                }
+            });
+        }
+
+        public async Task<List<Cover>> GetAlbumFrontCoversUrls(Album album)
+        {
+            return await Task.Run(async () =>
+            {
+                try
+                {
+                    List<Cover> covers = new List<Cover>();
+
+                    VPlayer.AudioStorage.Models.Artist newArtist = album.Artist;
+
+                    if (album.Artist.MusicBrainzId == null)
+                    {
+                        newArtist = await UpdateArtist(album.Artist.MusicBrainzId);
+
+                       
+                        if (newArtist == null)
+                        {
+                            Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Unable to get album covers, artist was not found");
+                            return null;
+                        }
+                        else
+                            Task.Run(() => AudioStorage.StorageManager.GetStorage().UpdateArtist(newArtist));
+
+                    }
+
+                    // Build an advanced query to search for the release.
+                    var query = new QueryParameters<Release>()
+                    {
+                        {"arid", newArtist.MusicBrainzId},
+                        {"release", album.Name},
+                        {"type", "album"},
+                        {"status", "official"}
+                    };
+
+                    // Search for a release by title.
+                    var releases = await Release.SearchAsync(query);
+
+                    foreach (var realease in releases.Items)
+                    {
+                        var newCovers = await GetAlbumFrontCoversUrls(realease.Id);
+                        if (newCovers != null)
+                        {
+                            covers.AddRange(newCovers);
+                        }
+                    }
+
+                    Logger.Logger.Instance.Log(Logger.MessageType.Success, "Album covers was found");
+                    return covers;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+                    return null;
+                }
+            });
+        }
+
 
         /// <summary>
         /// Returns byte[] for album front image
@@ -1144,6 +1311,11 @@ namespace VPlayer.AudioInfoDownloader
         protected virtual void OnSubdirectoryLoaded(List<AudioInfo> e)
         {
             SubdirectoryLoaded?.Invoke(this, e);
+        }
+
+        protected virtual void OnCoversDownloaded(List<Cover> e)
+        {
+            CoversDownloaded?.Invoke(this, e);
         }
     }
 }

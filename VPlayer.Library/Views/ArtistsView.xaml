@@ -1,0 +1,60 @@
+﻿<Page x:Class="VPlayer.Library.Views.ArtistsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:VPlayer.Library.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBox FontSize="25" Margin="10 0" TextChanged="TextBox_Finder_TextChanged" Name="TextBox_Finder"/>
+            <Grid Grid.Column="1" Margin="10 5" Height="25" Name="Bla" Background="Transparent">
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Cursor" Value="Hand"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <Path Grid.Row="0" Name="NameTxt" Style="{StaticResource MagnifyingGlass}" Fill="#50f9fdff"/>
+                <Grid.Triggers>
+                    <EventTrigger RoutedEvent="Grid.MouseEnter">
+                        <EventTrigger.Actions>
+                            <BeginStoryboard Name="SlideToLeft">
+                                <Storyboard FillBehavior="HoldEnd" >
+                                    <ColorAnimation Storyboard.TargetName="NameTxt" Storyboard.TargetProperty="Fill.(SolidColorBrush.Color)" From="{StaticResource 50_DefaultWhiteColor}" To="{StaticResource DefaultWhiteColor}" Duration="0:0:0.5"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger.Actions>
+                    </EventTrigger>
+
+                    <EventTrigger RoutedEvent="Grid.MouseLeave">
+                        <RemoveStoryboard BeginStoryboardName="SlideToLeft"/>
+                    </EventTrigger>
+                </Grid.Triggers>
+            </Grid>
+        </Grid>
+
+        <ListView  ItemsSource="{Binding Artists, Mode=OneWay}" 
+                   Style="{StaticResource AlbumsPlayGridView}"
+                   ItemTemplate="{StaticResource ArtistPlayView}"
+                   SelectionChanged="ListView_SelectionChanged" 
+                   Name="Artists"
+                   Grid.Row="1">
+
+        </ListView>
+
+    </Grid>
+</Page>

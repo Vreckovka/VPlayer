@@ -25,8 +25,8 @@ namespace VPlayer.Views
         public PlayerPanelPage()
         {
             InitializeComponent();
-            PlayerHandler.Play += PlayerHandler_Play;
-            PlayerHandler.Pause += PlayerHandler_Pause; 
+            //PlayerHandler.Play += PlayerHandler_Play;
+            //PlayerHandler.Pause += PlayerHandler_Pause; 
            
         }
 
@@ -42,14 +42,14 @@ namespace VPlayer.Views
 
         private void Play_Click(object sender, RoutedEventArgs e)
         {
-            if (Play_Button.Tag.Equals("Pause"))
-            {
-                PlayerHandler.OnPlay(this);
-            }
-            else
-            {
-                PlayerHandler.OnPause(this);
-            }
+            //if (Play_Button.Tag.Equals("Pause"))
+            //{
+            //    PlayerHandler.OnPlay(this);
+            //}
+            //else
+            //{
+            //    PlayerHandler.OnPause(this);
+            //}
         }
     }
 }

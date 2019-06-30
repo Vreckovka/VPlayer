@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:VPlayer"
       xmlns:converters="clr-namespace:VPlayer.Other.Converters"
+      xmlns:wpf="clr-namespace:Vlc.DotNet.Wpf;assembly=Vlc.DotNet.Wpf"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Player">
@@ -69,7 +70,7 @@
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <MediaElement Grid.Row="1" LoadedBehavior="Manual" x:Name="MediaElement_Player" MediaEnded="SongEnd"/>
+                        <wpf:VlcControl x:Name="MyControl" />
                     </Grid>
                     <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch"/>
                     <Grid Grid.Column="2" >
@@ -88,7 +89,7 @@
                   AllowDrop="True"
                   Drop="ListView_AudioTracks_Drop"
                   x:Name="ListView_Tracks"
-                  Style="{StaticResource ListView_Tracks}"
+                  Style="{StaticResource AlbumsSongs}"
                   Grid.Row="1" 
                   SelectionChanged="ListView_Tracks_SelectionChanged"
                   >
@@ -105,7 +106,7 @@
                     <Grid Grid.Row="1">
                         <TextBlock HorizontalAlignment="Left"
                            Margin="5,0,5,5" 
-                           Style="{StaticResource DefaultStyle}"
+                          
                           >
                             <TextBlock.Text>
                                 <MultiBinding Converter="{converters:ActualTimeConverter}">
@@ -115,7 +116,7 @@
                             </TextBlock.Text>
                         </TextBlock>
                         <TextBlock Text="{Binding ActualTrack.Duration, StringFormat=hh\\:mm\\:ss}" HorizontalAlignment="Right"
-                           Margin="5,0,15,5" Style="{StaticResource DefaultStyle}"/>
+                           Margin="5,0,15,5" />
                     </Grid>
                 </Grid>
             </Grid>
@@ -140,13 +141,9 @@
             Maximum="100"
             IsMoveToPointEnabled="True"
             Grid.Row="1"
+            Value="{Binding ActualTimePosition}"
         >
-            <Slider.Value>
-                <MultiBinding Converter="{converters:ActualTimeConverter}">
-                    <Binding Path="ActualTime"/>
-                    <Binding Path="ActualTrack.Duration" />
-                </MultiBinding>
-            </Slider.Value>
+           
         </Slider>
     </Grid>
 

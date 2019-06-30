@@ -31,6 +31,11 @@ namespace VPlayer.Library.Views
             InitializeComponent();
             DataContext = LibraryViewModel.Instance;
         }
+
+        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            LibraryView.ChangeView(LibraryView.View.AlbumDetail, (Album)Albums.SelectedItem);
+        }
     }
 }
 

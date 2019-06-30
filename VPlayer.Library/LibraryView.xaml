@@ -9,7 +9,6 @@
 
     <Page.Resources>
         <Style TargetType="ListViewItem" >
-            <EventSetter Event="PreviewMouseDown" Handler="ListViewItem_Click" />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsPlaying}" Value="True">
                     <Setter Property="Foreground" Value="{StaticResource DefaultRedBrush}"/>
@@ -32,18 +31,18 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
+        <Border  BorderBrush="{StaticResource 10_WhiteTransparentBrush}" Margin="0 0 5 0">
+            <ListView SelectionChanged="MenuListView_SelectionChanged" x:Name="MenuListView">
+                <ListView.Style>
+                    <Style TargetType="ListView" BasedOn="{StaticResource ListView_MenuStyle}" />
+                </ListView.Style>
 
-        <ListView >
-            <ListView.Style>
-                <Style TargetType="ListView" BasedOn="{StaticResource ListView_MenuStyle}"/>
-            </ListView.Style>
-
-
-            <ListViewItem Content="Artist" IsEnabled="False"/>
-            <ListViewItem Content="Albums" IsSelected="True"/>
-            <ListViewItem Content="Songs"  IsEnabled="False"/>
-            <ListViewItem Content="Genres" IsEnabled="False"/>
-        </ListView>
+                <ListViewItem Content="Artist"  IsSelected="True"/>
+                <ListViewItem Content="Albums" />
+                <ListViewItem Content="Songs"  IsEnabled="False"/>
+                <ListViewItem Content="Genres" IsEnabled="False"/>
+            </ListView>
+        </Border>
 
         <Frame Grid.Column="1"  Background="Transparent" x:Name="Frame_LibraryContent"/>
 

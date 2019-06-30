@@ -48,8 +48,8 @@ namespace VPlayer.WebPlayer.Views
             _internetPlayersView = new WebPlayersViewModel();
             DataContext = _internetPlayersView;
 
-            PlayerHandler.Play += PlayerHandler_Play;
-            PlayerHandler.Pause += PlayerHandler_Play;
+            //PlayerHandler.Play += PlayerHandler_Play;
+            //PlayerHandler.Pause += PlayerHandler_Play;
 
            // Xpcom.Initialize("Firefox32");
         }

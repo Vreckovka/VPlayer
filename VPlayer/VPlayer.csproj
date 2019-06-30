@@ -199,6 +199,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="AttachedProperties\Player.cs" />
     <Compile Include="Models\LibraryModels\AlbumInfo.cs" />
     <Compile Include="Other\Converters.cs" />
     <Compile Include="Other\Extensions.cs" />
@@ -242,6 +243,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="StylesDictionaries\TextBoxStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="StylesDictionaries\WindowsStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -259,10 +264,10 @@
     <Compile Include="Models\AudioTrack.cs" />
     <Compile Include="Other\IoC.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="StylesDictionaries\DataTemplates.cs" />
     <Compile Include="StylesDictionaries\WindowsStyle.xaml.cs">
       <DependentUpon>WindowsStyle.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\LibraryModels\AlbumsView.cs" />
     <Compile Include="Views\LibraryViews\LibraryPages\AlbumsPage.xaml.cs">
       <DependentUpon>AlbumsPage.xaml</DependentUpon>
     </Compile>

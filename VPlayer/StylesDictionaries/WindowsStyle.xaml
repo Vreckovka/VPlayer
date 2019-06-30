@@ -18,11 +18,14 @@
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            <Grid Panel.ZIndex="1" x:Name="WindowsChromeGrid" >
+                            <Grid Panel.ZIndex="1" x:Name="WindowsChromeGrid">
+                                <Grid.Background>
+                                    <SolidColorBrush Color="{StaticResource DefaultWhiteColor}" Opacity="0.03"/>
+                                </Grid.Background>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
                                     <!--Icon-->
                                     <Image Source="{Binding RelativeSource={RelativeSource AncestorType=Window},Path=Icon}"
-                                               Width="30" Height="30" Margin="15" />
+                                               Width="20" Height="20" Margin="15" />
                                     <!--Title-->
                                     <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=Window},Path=Title}" 
                                                    Foreground="{DynamicResource DefaultWhiteBrush}" 

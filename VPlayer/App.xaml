@@ -16,6 +16,7 @@
                 <ResourceDictionary Source="StylesDictionaries/SlidersStyle.xaml"/>
                 <ResourceDictionary Source="StylesDictionaries/OverlayStyles.xaml"/>
                 <ResourceDictionary Source="StylesDictionaries/ScrollViewerStyles.xaml"/>
+                <ResourceDictionary Source="StylesDictionaries/TextBoxStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

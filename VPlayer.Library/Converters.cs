@@ -2,15 +2,19 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Markup;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using VPlayer.Library.ViewModels;
 
 namespace VPlayer.Other.Converters
 {
@@ -28,8 +32,8 @@ namespace VPlayer.Other.Converters
 
                 if (perc < 0.25)
                     return new Duration(TimeSpan.FromSeconds(2.5));
-                else if(perc < 1)
-                    return new Duration(TimeSpan.FromSeconds((perc * 10 )));
+                else if (perc < 1)
+                    return new Duration(TimeSpan.FromSeconds((perc * 10)));
                 else
                     return new Duration(TimeSpan.FromSeconds((perc * 10) / (perc)));
             }
@@ -82,10 +86,11 @@ namespace VPlayer.Other.Converters
     {
         public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (System.Convert.ToDouble(value[0]) > System.Convert.ToDouble(value[1]))
-                return true;
-            else
-                return false;
+            if (value[0] != DependencyProperty.UnsetValue && value[1] != DependencyProperty.UnsetValue)
+                if (System.Convert.ToDouble(value[0]) > System.Convert.ToDouble(value[1]))
+                    return true;
+
+            return false;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -105,13 +110,13 @@ namespace VPlayer.Other.Converters
         {
             if (value != null)
             {
-                using (var ms = new System.IO.MemoryStream((byte[]) value))
+                using (var ms = new System.IO.MemoryStream((byte[])value))
                 {
                     var image = new BitmapImage();
                     image.DecodePixelHeight = 1;
                     image.DecodePixelWidth = 1;
                     image.BeginInit();
-                    image.CacheOption = BitmapCacheOption.OnLoad; 
+                    image.CacheOption = BitmapCacheOption.OnLoad;
                     image.StreamSource = ms;
                     image.EndInit();
                     image.Freeze();
@@ -134,5 +139,44 @@ namespace VPlayer.Other.Converters
     }
 
 
+    public class IsPlayingConverter : MarkupExtension, IMultiValueConverter
+    {
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this;
+        }
 
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
+        {
+            //Po scrolovani sa zmeni na pause  Pause
+            var hash = value[1].GetHashCode();
+            if (hash == LibraryViewModel.ItemId)
+                return true;
+            else
+                return false;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class FakeConverter : MarkupExtension, IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (bool) value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this;
+        }
+    }
 }

@@ -17,7 +17,7 @@ namespace VPlayer.AudioStorage
         public static event EventHandler<Album> AlbumUpdated;
         public static event EventHandler<Album> AlbumRemoved;
 
-
+        public static event EventHandler<Artist> ArtistStored;
 
         public static event EventHandler<EventArgs> StorageCleared;
 
@@ -53,6 +53,11 @@ namespace VPlayer.AudioStorage
         internal static void OnStorageCleared()
         {
             StorageCleared?.Invoke(null, EventArgs.Empty);
+        }
+
+        public static void OnArtistStored(Artist e)
+        {
+            ArtistStored?.Invoke(null, e);
         }
     }
 }
