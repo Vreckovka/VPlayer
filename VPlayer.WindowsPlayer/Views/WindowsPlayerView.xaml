@@ -1,16 +1,16 @@
-﻿<Page x:Class="VPlayer.WindowsPlayer.Views.WindowsPlayerPage"
+﻿<UserControl x:Class="VPlayer.WindowsPlayer.Views.WindowsPlayerView"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:VPlayer"
       xmlns:converters="clr-namespace:VPlayer.Other.Converters"
       xmlns:wpf="clr-namespace:Vlc.DotNet.Wpf;assembly=Vlc.DotNet.Wpf"
+      xmlns:mvvm="http://prismlibrary.com/"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="Player">
+      mvvm:ViewModelLocator.AutoWireViewModel="True">
 
-    <Page.Resources>
+    <UserControl.Resources>
         <Style TargetType="ListViewItem" BasedOn="{StaticResource ListViewItem_Tracks}" >
             <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_DoubleClick" />
             <Style.Triggers>
@@ -27,7 +27,7 @@
                 </MultiDataTrigger>
             </Style.Triggers>
         </Style>
-    </Page.Resources>
+    </UserControl.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -122,15 +122,8 @@
             </Grid>
 
             <!--Library-->
-            <!--Source="LibraryViews/LibraryPage.xaml"-->
             <Grid Grid.Column="1"  ClipToBounds="True">
-                <Frame 
-               x:Name="Frame_Library"
-               NavigationUIVisibility="Hidden"
-               HorizontalAlignment="Left"
-               Opacity="1">
-
-                </Frame>
+                <ContentControl mvvm:RegionManager.RegionName="LibraryRegion" Name="LibraryRegion"/>
             </Grid>
         </Grid>
 
@@ -147,4 +140,4 @@
         </Slider>
     </Grid>
 
-</Page>
+</UserControl>

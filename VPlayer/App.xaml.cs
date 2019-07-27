@@ -1,32 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
-using VPlayer.Other;
+using Prism.Ioc;
+using Prism.Modularity;
+using Prism.Unity;
+using VPlayer.Library.ViewModels;
+using VPlayer.Library.ViewModels.ArtistsViewModels;
+using VPlayer.Views;
+using VPlayer.WindowsPlayer.ViewModels;
 
 namespace VPlayer
 {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App : PrismApplication
     {
-        /// <summary>
-        /// Custom startup to load IoC 
-        /// </summary>
-        /// <param name="e"></param>
-        protected override void OnStartup(StartupEventArgs e)
+        protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            base.OnStartup(e);
-            
-       
+        }
 
-            var init = AudioInfoDownloader.AudioInfoDownloader.Instance;
+        protected override Window CreateShell()
+        {
+            return Container.Resolve<MainWindow>();
+        }
 
-            Current.MainWindow?.Show();
+        protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
+        {
+            moduleCatalog.AddModule<WindowsPlayerViewModel>();
+            moduleCatalog.AddModule<LibraryViewModel>();
+            moduleCatalog.AddModule<ArtistsViewModel>();
         }
     }
 }

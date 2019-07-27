@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Threading;
+using KeyListener;
+using Prism.Ioc;
+using Prism.Regions;
 using PropertyChanged;
+using VPlayer.Core.ViewModels;
+using VPlayer.WindowsPlayer.Models;
+using VPlayer.WindowsPlayer.Views;
+
 //using Windows.Storage;
 //using Windows.Storage.FileProperties;
 //using VPlayer.LocalMusicDatabase;
@@ -16,15 +15,9 @@ using PropertyChanged;
 //using VPlayer.Other;
 //using VPlayer.Other.AudioInfoDownloader;
 
-
-using VPlayer.Models;
-using VPlayer.WindowsPlayer.Models;
-using FileAttributes = System.IO.FileAttributes;
-
-namespace VPlayer.ViewModels
+namespace VPlayer.WindowsPlayer.ViewModels
 {
-    [AddINotifyPropertyChangedInterface]
-    public class WindowsPlayerViewModel 
+    public class WindowsPlayerViewModel : ModuleViewModel
     {
         public ObservableCollection<AudioTrack> AudioTracks { get; } = new ObservableCollection<AudioTrack>();
         public AudioTrack ActualTrack { get; set; }
@@ -34,12 +27,21 @@ namespace VPlayer.ViewModels
 
         public double ActualTimePosition { get; set; }
         public bool ManualChanged { get; set; }
+
+
         public WindowsPlayerViewModel()
         {
             PlayerHandler.MediaPlayer.PositionChanged += (sender, e) =>
             {
                 ActualTimePosition = e.NewPosition * 100;
             };
+        }
+
+        public override void OnInitialized(IContainerProvider containerProvider)
+        {
+            var regionManager = containerProvider.Resolve<IRegionManager>();
+
+            regionManager.RegisterViewWithRegion("MainRegion", typeof(WindowsPlayerView));
         }
 
         //public void Play(Uri uri = null, bool next = false)
@@ -178,6 +180,7 @@ namespace VPlayer.ViewModels
         //        throw;
         //    }
         //}
+
 
     }
 }

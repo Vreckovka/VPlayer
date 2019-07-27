@@ -7,11 +7,12 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using Prism.Events;
 using PropertyChanged;
-using VPlayer.Models;
-using VPlayer.ViewModels;
 using VPlayer.WindowsPlayer.Models;
 using VPlayer.Library;
+using VPlayer.Library.Views;
+using VPlayer.WindowsPlayer.ViewModels;
 
 
 namespace VPlayer.WindowsPlayer.Views
@@ -20,8 +21,7 @@ namespace VPlayer.WindowsPlayer.Views
     /// <summary>
     /// Interaction logic for Player.xaml
     /// </summary>
-    [AddINotifyPropertyChangedInterface]
-    public partial class WindowsPlayerPage : Page
+    public partial class WindowsPlayerView : UserControl
     {
         public WindowsPlayerViewModel AudioTracksViewModel { get; set; }
         private bool _isSideMenuUp;
@@ -30,7 +30,7 @@ namespace VPlayer.WindowsPlayer.Views
         public LibraryView LibraryView { get; set; }
       
 
-        public WindowsPlayerPage()
+        public WindowsPlayerView()
         {
             InitializeComponent();
             AudioTracksViewModel = new WindowsPlayerViewModel();
@@ -45,8 +45,7 @@ namespace VPlayer.WindowsPlayer.Views
             //PlayerHandler.ChangeTime += PlayerHandler_ChangeTime;
 
 
-            LibraryView = new LibraryView();
-            Frame_Library.Content = LibraryView;
+           // LibraryView = new LibraryView(eventAggregator);
             _isSideMenuUp = false;
 
 
@@ -149,32 +148,32 @@ namespace VPlayer.WindowsPlayer.Views
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             TimeSpan timeSpan = new TimeSpan(0, 0, 0, 0, 350);
-            Frame_Library.HorizontalAlignment = HorizontalAlignment.Left;
-            Frame_Library.Opacity = 1;
+            LibraryRegion.HorizontalAlignment = HorizontalAlignment.Left;
+            LibraryRegion.Opacity = 1;
 
             if (Application.Current.MainWindow != null)
             {
                 if (!_isSideMenuUp)
                 {
-                    Frame_Library.Margin = new Thickness(0);
+                    LibraryRegion.Margin = new Thickness(0);
 
 
-                    Frame_Library.Width = Application.Current.MainWindow.ActualWidth;
+                    LibraryRegion.Width = Application.Current.MainWindow.ActualWidth;
                     ThicknessAnimation doubleAnimationWidth = new ThicknessAnimation(new Thickness(-Application.Current.MainWindow.ActualWidth, 0, 0, 0), new Thickness(0), timeSpan);
 
                     doubleAnimationWidth.Completed += DoubleAnimationWidth_Completed;
-                    Frame_Library.BeginAnimation(FrameworkElement.MarginProperty, doubleAnimationWidth);
+                    LibraryRegion.BeginAnimation(FrameworkElement.MarginProperty, doubleAnimationWidth);
 
                     _isSideMenuUp = true;
                 }
                 else
                 {
-                    Frame_Library.Width = Frame_Library.ActualWidth;
+                    LibraryRegion.Width = LibraryRegion.ActualWidth;
 
                     ThicknessAnimation doubleAnimationWidth = new ThicknessAnimation(new Thickness(0), new Thickness(-Application.Current.MainWindow.ActualWidth, 0, 0, 0), timeSpan);
 
                     doubleAnimationWidth.Completed += DoubleAnimationWidth_Completed1;
-                    Frame_Library.BeginAnimation(FrameworkElement.MarginProperty, doubleAnimationWidth);
+                    LibraryRegion.BeginAnimation(FrameworkElement.MarginProperty, doubleAnimationWidth);
 
 
                     _isSideMenuUp = false;
@@ -186,16 +185,16 @@ namespace VPlayer.WindowsPlayer.Views
 
         private void DoubleAnimationWidth_Completed1(object sender, EventArgs e)
         {
-            Frame_Library.BeginAnimation(MarginProperty, null);
-            Frame_Library.Width = 0;
+            LibraryRegion.BeginAnimation(MarginProperty, null);
+            LibraryRegion.Width = 0;
         }
 
         private void DoubleAnimationWidth_Completed(object sender, EventArgs e)
         {
-            Frame_Library.BeginAnimation(WidthProperty, null);
+            LibraryRegion.BeginAnimation(WidthProperty, null);
 
-            Frame_Library.HorizontalAlignment = HorizontalAlignment.Stretch;
-            Frame_Library.Width = double.NaN;
+            LibraryRegion.HorizontalAlignment = HorizontalAlignment.Stretch;
+            LibraryRegion.Width = double.NaN;
         }
 
         private void SongEnd(object sender, RoutedEventArgs e)

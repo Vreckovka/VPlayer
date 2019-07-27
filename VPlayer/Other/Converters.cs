@@ -11,7 +11,6 @@ using System.Windows.Data;
 using System.Windows.Markup;
 using System.Windows.Media.Imaging;
 using VPlayer.Models;
-using VPlayer.ViewModels;
 
 namespace VPlayer.Other.Converters
 {

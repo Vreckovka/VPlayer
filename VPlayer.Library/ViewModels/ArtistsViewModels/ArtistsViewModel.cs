@@ -1,21 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Gma.DataStructures.StringSearch;
-using PropertyChanged;
+using Prism.Events;
+using Prism.Ioc;
+using Prism.Regions;
 using VPlayer.AudioStorage.Models;
+using VPlayer.Core.ViewModels;
+using VPlayer.Library.ViewModels.ArtistsViewModels;
+using VPlayer.Library.Views;
 
+
+//TODO: PLAYABLE COLLECTION
+//TODO: PRISM REGION NAVIGATION  
 namespace VPlayer.Library.ViewModels
 {
-    [AddINotifyPropertyChangedInterface]
-    public class ArtistsViewModel
+    public class ArtistsViewModel : ModuleViewModel
     {
-        public IEnumerable<Artist> Artists { get; set; }
-        public Trie<Artist> TrieArtist { get; set; } = new Trie<Artist>();
-        public IEnumerable<Artist> SortedArtists { get; set; }
-        public ArtistsViewModel()
+        public IEnumerable<ArtistViewModel> Artists { get; set; }
+        public Trie<ArtistViewModel> TrieArtist { get; set; } = new Trie<ArtistViewModel>();
+        public IEnumerable<ArtistViewModel> SortedArtists { get; set; }
+        public ArtistsViewModel(IEventAggregator eventAggregator)
         {
             List<Artist> artists = new List<Artist>();
 
@@ -48,15 +52,27 @@ namespace VPlayer.Library.ViewModels
             artists.AddRange(artistsWithAlbumId);
             artists.AddRange(artistsWithoutAlbumId);
 
-            SortedArtists = artists.OrderBy(x => x.Name).ToList();
+            SortedArtists = artists.OrderBy(x => x.Name).Select(x => new ArtistViewModel(x, eventAggregator));
 
             foreach (var artist in SortedArtists)
             {
-                TrieArtist.Add(artist.Name.ToLower(), artist);
+                TrieArtist.Add(artist.Model.Name.ToLower(), artist);
             }
 
             Artists = SortedArtists;
 
+        }
+
+        public ArtistsViewModel()
+        {
+        }
+
+        public override void OnInitialized(IContainerProvider containerProvider)
+        {
+            base.OnInitialized(containerProvider);
+
+            var regionManager = containerProvider.Resolve<IRegionManager>();
+            regionManager.RegisterViewWithRegion("LibraryContentRegion", typeof(ArtistsView));
         }
 
         public void SetArtistsByName(string name)

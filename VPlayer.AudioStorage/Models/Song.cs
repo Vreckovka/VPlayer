@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 
 namespace VPlayer.AudioStorage.Models
 {
-    public class Song : BaseEntity
+    public class Song
     {
         public Song() { }
         public Song(string name, Album album)

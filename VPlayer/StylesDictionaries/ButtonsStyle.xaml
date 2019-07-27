@@ -251,13 +251,7 @@
                     </Grid>
 
                     <ControlTemplate.Triggers>
-                        <DataTrigger Value="True" Binding="{Binding Path=IsPlaying, Converter={converters:FakeConverter}}">
-                            <!--<DataTrigger.Binding>
-                                --><!--<MultiBinding Converter="{converters:IsPlayingConverter}">
-                                    <Binding Path="(attachedProperties:Player.IsPlaying)" RelativeSource="{RelativeSource Self}"/>
-                                    <Binding Path="."/> --><!-- this sends the source of the binding --><!--
-                                </MultiBinding>--><!--
-                            </DataTrigger.Binding>-->
+                        <DataTrigger Value="True" Binding="{Binding Path=IsPlaying}">
                             <DataTrigger.EnterActions>
                                 <RemoveStoryboard BeginStoryboardName="ExitLabel"/>
                             </DataTrigger.EnterActions>
@@ -275,7 +269,7 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor},Path=IsMouseOver}" Value="True"/>
-                                <Condition Binding="{Binding Path=IsPlaying, Converter={converters:FakeConverter}}" Value="False"/>
+                                <Condition Binding="{Binding Path=IsPlaying}" Value="False"/>
                             </MultiDataTrigger.Conditions>
                             <MultiDataTrigger.EnterActions>
                                 <RemoveStoryboard BeginStoryboardName="ExitLabel"/>
@@ -372,7 +366,6 @@
             </Setter.Value>
         </Setter>
     </Style>
-
 
     <Style TargetType="Button" x:Key="PlayMiniWithCircle">
         <Setter Property="Template">
@@ -600,9 +593,6 @@
             </Setter.Value>
         </Setter>
     </Style>
-
-
-
 
     <Style x:Key="MetroButtonRightStyle" TargetType="{x:Type Path}">
         <Setter Property="Width" Value="60" />

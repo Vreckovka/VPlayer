@@ -1,30 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
-using Ninject;
+using KeyListener;
+using Prism.Events;
 using VPlayer.AudioStorage;
-using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.Interfaces;
 using VPlayer.AudioStorage.Models;
-using VPlayer.Models;
-using VPlayer.Other;
-using VPlayer.Views;
-using VPlayer.WebPlayer;
 using VPlayer.WebPlayer.Views;
-using VPlayer.WindowsPlayer.Views;
 
-
-namespace VPlayer
+namespace VPlayer.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -32,14 +21,10 @@ namespace VPlayer
     public partial class MainWindow : Window
     {
         private WebPlayerPage _webPlayerPage = new WebPlayerPage();
-        private WindowsPlayerPage _windowsPlayerPage = new WindowsPlayerPage();
-
 
         public MainWindow()
         {
             InitializeComponent();
-
-          
 
             foreach (var artists in (from x in StorageManager.GetStorage().Artists where x.MusicBrainzId == null select x))
             {
@@ -49,15 +34,7 @@ namespace VPlayer
 
         private void Test()
         {
-            //var albums = await AudioInfoDownloader.AudioInfoDownloader.Instance.GetAudioInfosFromWindowsDirectoryAsync("D:\\Hudba\\Metallica", true);
-            //await StorageManager.GetStorage().StoreData(albums);
-
-
-            //AudioInfoDownloader.AudioInfoDownloader.Instance.GetAudioInfosFromDirectory(Directory.Text, true);
-
-
             AudioInfoDownloader.AudioInfoDownloader.Instance.SubdirectoryLoaded += Instance_SubdirectoryLoaded;
-
         }
 
         private void Instance_SubdirectoryLoaded(object sender, List<AudioStorage.Models.AudioInfo> e)
@@ -72,29 +49,12 @@ namespace VPlayer
 
         }
 
-        private void ListViewItem_Click(object sender, MouseButtonEventArgs e)
-        {
-            if (((ListViewItem)sender).Content.Equals("Internet player"))
-            {
-                Frame_Players.Content = _webPlayerPage;
-            }
-            else
-            {
-                Frame_Players.Content = _windowsPlayerPage;
-            }
-        }
-
         private async Task<MusicProperties> GetMusicProperties(string path)
         {
             StorageFile file = await StorageFile.GetFileFromPathAsync(path);
             MusicProperties musicProperties = await file.Properties.GetMusicPropertiesAsync();
 
             return musicProperties;
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            Frame_Players.Content = _windowsPlayerPage;
         }
 
         private void ListViewItem_PreviewMouseDown(object sender, MouseButtonEventArgs e)

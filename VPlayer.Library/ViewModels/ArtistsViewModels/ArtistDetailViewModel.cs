@@ -33,7 +33,6 @@ namespace VPlayer.Library.ViewModels.ArtistsViewModels
         }
         public int TotalNumberOfSongs
         {
-
             get
             {
                 if (Albums != null)

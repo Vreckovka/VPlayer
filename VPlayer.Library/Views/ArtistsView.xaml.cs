@@ -12,8 +12,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Prism.Events;
 using VPlayer.AudioStorage.Models;
 using VPlayer.Library.ViewModels;
+using VPlayer.Library.ViewModels.ArtistsViewModels;
 using WpfToolkit.Controls;
 
 namespace VPlayer.Library.Views
@@ -21,15 +23,12 @@ namespace VPlayer.Library.Views
     /// <summary>
     /// Interaction logic for ArtistsView.xaml
     /// </summary>
-    public partial class ArtistsView : Page
+    public partial class ArtistsView : UserControl
     {
-        private ArtistsViewModel _artistsViewModel;
+        private ViewModels.ArtistsViewModel _artistsViewModel;
         public ArtistsView()
         {
             InitializeComponent();
-            _artistsViewModel = new ArtistsViewModel();
-            DataContext = _artistsViewModel;
-          
         }
 
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -240,7 +240,6 @@
     <Style x:Key="AlbumsPlayGridView" TargetType="ListView">
         <Setter Property="Background" Value="{StaticResource BackgroudBrush}"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="ItemTemplate" Value="{StaticResource AlbumPlayView}"/>
         <Setter Property="ItemContainerStyle" Value="{StaticResource OverridesBase}"/>
 
         <Setter Property="ItemsPanel">

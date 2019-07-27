@@ -137,46 +137,4 @@ namespace VPlayer.Other.Converters
             return this;
         }
     }
-
-
-    public class IsPlayingConverter : MarkupExtension, IMultiValueConverter
-    {
-        public override object ProvideValue(IServiceProvider serviceProvider)
-        {
-            return this;
-        }
-
-        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
-        {
-            //Po scrolovani sa zmeni na pause  Pause
-            var hash = value[1].GetHashCode();
-            if (hash == LibraryViewModel.ItemId)
-                return true;
-            else
-                return false;
-        }
-
-        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class FakeConverter : MarkupExtension, IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return (bool) value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override object ProvideValue(IServiceProvider serviceProvider)
-        {
-            return this;
-        }
-    }
 }

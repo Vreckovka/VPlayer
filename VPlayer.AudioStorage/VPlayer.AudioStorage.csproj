@@ -70,7 +70,6 @@
     <Compile Include="Models\Album.cs" />
     <Compile Include="Models\Artist.cs" />
     <Compile Include="Models\AudioInfo.cs" />
-    <Compile Include="Models\BaseEntity.cs" />
     <Compile Include="Models\Song.cs" />
     <Compile Include="Interfaces\IStorage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

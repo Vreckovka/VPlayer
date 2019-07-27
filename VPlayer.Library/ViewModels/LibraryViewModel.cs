@@ -14,11 +14,14 @@ using VPlayer.AudioStorage.Interfaces;
 using VPlayer.AudioStorage.Models;
 using VPlayer.Library.VirtualList;
 using VirtualListWithPagingTechnique.VirtualLists;
+using VPlayer.Core.ViewModels;
+using Prism.Ioc;
+using Prism.Regions;
+using VPlayer.Library.Views;
 
 namespace VPlayer.Library.ViewModels
 {
-    [AddINotifyPropertyChangedInterface]
-    public class LibraryViewModel
+    public class LibraryViewModel : ModuleViewModel
     {
         public enum Item
         {
@@ -59,6 +62,13 @@ namespace VPlayer.Library.ViewModels
             StorageManager.AlbumRemoved += StorageManager_AlbumRemoved;
 
             StorageManager.StorageCleared += StorageManagerStorageCleared;
+        }
+
+        public override void OnInitialized(IContainerProvider containerProvider)
+        {
+            var regionManager = containerProvider.Resolve<IRegionManager>();
+
+            regionManager.RegisterViewWithRegion("LibraryRegion", typeof(LibraryView));
         }
 
         private void StorageManagerStorageCleared(object sender, EventArgs e)
