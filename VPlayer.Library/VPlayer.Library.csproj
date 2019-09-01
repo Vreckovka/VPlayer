@@ -92,6 +92,8 @@
   <ItemGroup>
     <Compile Include="Converters.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="ViewModels\AlbumsViewModels\AlbumsViewModel.cs" />
+    <Compile Include="ViewModels\AlbumsViewModels\AlbumViewModel.cs" />
     <Compile Include="ViewModels\DesignViewModels\ArtistsDesignViewModel.cs" />
     <Compile Include="ViewModels\LibraryViewModels\LibraryCollection.cs" />
     <Compile Include="ViewModels\PlayableViewModel.cs" />

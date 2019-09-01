@@ -7,6 +7,8 @@ using VPlayer.Core.ViewModels;
 using Prism.Ioc;
 using Prism.Regions;
 using VPlayer.Core;
+using VPlayer.Library.Annotations;
+using VPlayer.Library.ViewModels.AlbumsViewModels;
 using VPlayer.Library.ViewModels.ArtistsViewModels;
 using VPlayer.Library.ViewModels.LibraryViewModels;
 using VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels;
@@ -16,9 +18,14 @@ namespace VPlayer.Library.ViewModels
 {
     public class LibraryViewModel : ModuleViewModel 
     {
+        private readonly AlbumsViewModel albumsViewModel;
+
         public LibraryViewModel(
-            ArtistsViewModel artistsViewModel)
+            ArtistsViewModel artistsViewModel,
+            [NotNull] AlbumsViewModel albumsViewModel)
         {
+            this.albumsViewModel = albumsViewModel ?? throw new ArgumentNullException(nameof(albumsViewModel));
+
             StorageManager.AlbumStored += StorageManager_AlbumStored;
             StorageManager.AlbumUpdated += StorageManager_AlbumUpdated;
             StorageManager.AlbumRemoved += StorageManager_AlbumRemoved;
@@ -46,6 +53,29 @@ namespace VPlayer.Library.ViewModels
         private void OnFinderKeyDown(string phrase)
         {
             ActualCollectionViewModel.Filter(phrase);
+        }
+
+        #endregion
+
+        #region ShowAlbums
+
+        private ActionCommand showAlbums;
+        public ICommand ShowAlbums
+        {
+            get
+            {
+                if (showAlbums == null)
+                {
+                    showAlbums = new ActionCommand(OnShowAlbums);
+                }
+
+                return showAlbums;
+            }
+        }
+
+        private void OnShowAlbums()
+        {
+            ActualCollectionViewModel = albumsViewModel;
         }
 
         #endregion

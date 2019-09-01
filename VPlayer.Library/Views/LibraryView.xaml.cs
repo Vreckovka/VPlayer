@@ -75,5 +75,10 @@ namespace VPlayer.Library.Views
         {
            var asd = ((LibraryViewModel) DataContext).ActualCollectionViewModel.PlayableItems[150];
         }
+
+        private void Image_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+
+        }
     }
 }

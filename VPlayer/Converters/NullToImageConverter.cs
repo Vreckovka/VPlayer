@@ -9,44 +9,34 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using MS.Internal.PresentationFramework;
 using VPlayer.Core.Controls;
+using Image = System.Windows.Controls.Image;
 
 namespace VPlayer.Converters
 {
     public class NullToImageConverter : BaseConverter
     {
-        #region DefaultImage
-
-        public ImageSource DefaultImage
-        {
-            get { return (ImageSource)GetValue(DefaultImageProperty); }
-            set { SetValue(DefaultImageProperty, value); }
-        }
-
-        public static readonly DependencyProperty DefaultImageProperty =
-            DependencyProperty.Register(
-                nameof(DefaultImage),
-                typeof(ImageSource),
-                typeof(NullToImageConverter),
-                new PropertyMetadata(null));
-
-
-        #endregion
-
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (DefaultImage == null)
+            if (value is PlayableWrapPanelItem playableWrapPanelItem)
             {
-                throw new ArgumentNullException("Default image is null");
-            }
+                if (playableWrapPanelItem.ImageThumbnail == null)
+                {
+                    return playableWrapPanelItem.DefaultImage;
+                }
 
-            if (value == null)
+                return playableWrapPanelItem.ImageThumbnail;
+            }
+            else
             {
-                return DefaultImage;
+                throw new ArgumentException("Not valid value");
             }
-
-            return value;
         }
 
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

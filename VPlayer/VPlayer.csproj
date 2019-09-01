@@ -397,9 +397,7 @@
     <Content Include="Firefox\qipcap64.dll" />
     <Content Include="Firefox\softokn3.dll" />
     <Content Include="Firefox\xul.dll" />
-    <Resource Include="Resources\VPlayer_MissingArtist.jpg" />
-    <Resource Include="Resources\VPlayer_missingArtist.png" />
-    <Resource Include="Resources\VPlayer_missingArtist1.png" />
+    <Resource Include="Resources\VPlayer_Artist.png" />
     <Content Include="template\styles\main.css" />
     <Resource Include="VPlayerLogo.ico" />
     <Resource Include="FodyWeavers.xml" />

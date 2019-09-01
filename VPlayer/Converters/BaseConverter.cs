@@ -10,12 +10,12 @@ using System.Windows.Markup;
 
 namespace VPlayer.Converters
 {
-    public abstract class BaseConverter : Control, IValueConverter
+    public abstract class BaseConverter : MarkupExtension, IValueConverter
     {
-        //public override object ProvideValue(IServiceProvider serviceProvider)
-        //{
-        //    return this;
-        //}
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            return this;
+        }
 
         public abstract object Convert(object value, Type targetType, object parameter, CultureInfo culture);
 

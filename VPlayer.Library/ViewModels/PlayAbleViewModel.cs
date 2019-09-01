@@ -43,9 +43,9 @@ namespace VPlayer.Library.ViewModels
 
         #endregion
 
-        public abstract string BottomText { get; set; }
-      
-        public abstract ImageSource ImageThumbnail { get; set; }
+        public abstract string BottomText { get; }
+
+        public abstract byte[] ImageThumbnail { get; }
 
         public string Name => Model.Name;
 
@@ -90,6 +90,6 @@ namespace VPlayer.Library.ViewModels
 
         #endregion
 
-       
+
     }
 }

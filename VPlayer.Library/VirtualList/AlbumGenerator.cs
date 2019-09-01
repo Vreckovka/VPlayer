@@ -55,8 +55,6 @@ namespace VPlayer.Library.VirtualList
         /// <returns>New object instance.</returns>
         public TModel CreateObject(int index)
         {
-            Debug.WriteLine("LOADED:" + index);
-
             return _repository.GetAt(index);
         }
         #endregion
@@ -65,7 +63,7 @@ namespace VPlayer.Library.VirtualList
     public class PagedEmployeeRepository<TModel> where TModel : IPlayableViewModel
     {
         private readonly TModel[] source;
-        private static TModel[] _cache;
+        private  TModel[] _cache;
         public int NumberOfEmployees = -1;
 
         public PagedEmployeeRepository([NotNull] TModel[] source)
@@ -127,7 +125,8 @@ namespace VPlayer.Library.VirtualList
         {
             for (int i = PageCursorStartIndex; i < PageCursorStartIndex + compounds.Count; i++)
             {
-                _cache[i] = compounds[i - PageCursorStartIndex];
+                if (i < _cache.Length)
+                    _cache[i] = compounds[i - PageCursorStartIndex];
             }
         }
 

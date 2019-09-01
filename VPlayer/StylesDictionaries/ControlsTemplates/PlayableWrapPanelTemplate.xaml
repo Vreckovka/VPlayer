@@ -17,32 +17,28 @@
                         BorderBrush="{StaticResource 10_WhiteTransparentBrush}"
                         BorderThickness="2.5"
                         CornerRadius="5">
-
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="10" ShadowDepth="5" />
                         </Border.Effect>
 
                         <Grid
+                            Name="A"
                             Width="200"
                             Height="235"
                             Background="{StaticResource BackgroudBrush}">
-                            <Grid.Resources>
-                                <converters1:NullToImageConverter x:Key="NullToImageConverter" DefaultImage="pack://application:,,,/Resources/VPlayer_missingArtist1.png" />
-                            </Grid.Resources>
+
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="auto" />
                             </Grid.RowDefinitions>
 
-                            <!--  Source="{TemplateBinding ImageThumbnail}"  -->
                             <Image
                                 Grid.Row="0"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Top"
-                                Source="{TemplateBinding ImageThumbnail,
-                                                         Converter={StaticResource NullToImageConverter}}">
-                              
-                            </Image>
+                                Source="{Binding RelativeSource={RelativeSource AncestorType=controls:PlayableWrapPanelItem, Mode=FindAncestor},
+                                Converter={converters1:NullToImageConverter}}" />
+
 
                             <Grid Grid.Row="0" Background="{StaticResource GlassGradient}" />
 

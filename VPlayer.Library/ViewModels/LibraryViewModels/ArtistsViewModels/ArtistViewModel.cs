@@ -24,8 +24,8 @@ namespace VPlayer.Library.ViewModels.ArtistsViewModels
             this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
         }
 
-        public override string BottomText { get; set; }
-        public override ImageSource ImageThumbnail { get; set; }
+        public override string BottomText => Model.Albums.Count.ToString();
+        public override byte[] ImageThumbnail => Model.ArtistCover;
 
         public override IEnumerable<Song> GetSongsToPlay()
         {

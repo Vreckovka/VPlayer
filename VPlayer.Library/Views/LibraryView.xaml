@@ -54,30 +54,37 @@
                 </ListView.Style>
 
                 <ListViewItem Content="Artist" IsSelected="True" />
-                <ListViewItem Content="Albums" />
+                <ListViewItem Content="Albums" >
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseLeftButtonUp">
+                            <i:InvokeCommandAction Command="{Binding ShowAlbums}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ListViewItem>
                 <ListViewItem Content="Songs" IsEnabled="False" />
                 <ListViewItem Content="Genres" IsEnabled="False" />
+
+                
             </ListView>
         </Border>
 
-        <controls:Finder Grid.Row="0" Grid.Column="1" />
+        <controls:Finder Grid.Row="0" Grid.Column="1" Margin="5"/>
 
         <controls:PlayableWrapPanel
             Grid.Row="1"
             Grid.Column="1"
-            ItemsSource="{Binding ActualCollectionViewModel.PlayableItems}">
+            ItemsSource="{Binding ActualCollectionViewModel.PlayableItems}"
+            Margin="5,0">
             <controls:PlayableWrapPanel.ItemTemplate>
                 <DataTemplate>
                     <controls:PlayableWrapPanelItem
-                        BottomText="{Binding Model.Albums.Count, StringFormat={}Albums: {0}}"
-                        DefaultImage="pack://application:,,,/VPlayer;component/Resources/VPlayer_MissingArtist.jpg"
-                        HeaderText="{Binding Model.Name}"
-                        ImageThumbnail="{Binding Model.ArtistCover}"
+                        BottomText="{Binding BottomText}"
+                        DefaultImage="pack://application:,,,/VPlayer;component/Resources/VPlayer_Artist.png"
+                        HeaderText="{Binding Name}"
+                        ImageThumbnail="{Binding ImageThumbnail}"
                         IsPlaying="{Binding IsPlaying}" />
                 </DataTemplate>
             </controls:PlayableWrapPanel.ItemTemplate>
         </controls:PlayableWrapPanel>
-        <!--</StackPanel>-->
-        <!--</ScrollViewer>-->
     </Grid>
 </UserControl>
