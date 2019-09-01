@@ -5,58 +5,56 @@ using VPlayer.AudioStorage.Models;
 using VPlayer.Core.ViewModels;
 using VPlayer.Library.ViewModels;
 using VPlayer.Library.ViewModels.ArtistsViewModels;
-using VPlayer.Library.ViewModels.DesignViewModels;
+using VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels;
 
 namespace VPlayer.Library.Views
 {
-    public class ArtistsDesignViewModel : ArtistsViewModel
-    {
-        private static EventAggregator eventAggregator = new EventAggregator();
-        public ArtistsDesignViewModel()
-        {
-            Artists = new List<ArtistViewModel>()
-            {
-                new ArtistViewModel(new Artist() { Name = "Metallica",
-                                                   ArtistCover = DesignCoverImageSource.StAnger,
-                                                   Albums = new List<Album>()
-                                                   {
-                                                        new Album(),
-                                                        new Album(),
-                                                        new Album(),
-                                                    },
-                                               },
-                    eventAggregator )
-                    {
-                        IsPlaying = false
-                    },
-                new ArtistViewModel(new Artist() { Name = "AC/DC",
-                        ArtistCover = DesignCoverImageSource.StAnger,
-                        Albums = new List<Album>()
-                        {
-                            new Album(),
-                            new Album(),
-                            new Album(),
-                            new Album(),
-                            new Album(),
-                            new Album(),
-                        },
-                    },
-                    eventAggregator )
-                {
-                    IsPlaying = true
-                },
-                new ArtistViewModel(new Artist() { Name = "Unknown",
-                        Albums = new List<Album>()
-                        {
-                            new Album(),
-                        },
-                    },
-                    eventAggregator )
-                {
-                    IsPlaying = false
-                },
+    //public class ArtistsDesignViewModel : ArtistsViewModel
+    //{
+    //    private static EventAggregator eventAggregator = new EventAggregator();
+    //    public ArtistsDesignViewModel()
+    //    {
+    //        //Artists = new List<ArtistViewModel>()
+    //        //{
+    //        //    new ArtistViewModel(new Artist() { Name = "Metallica",
+    //        //                                       Albums = new List<Album>()
+    //        //                                       {
+    //        //                                            new Album(),
+    //        //                                            new Album(),
+    //        //                                            new Album(),
+    //        //                                        },
+    //        //                                   },
+    //        //        eventAggregator )
+    //        //        {
+    //        //            IsPlaying = false
+    //        //        },
+    //        //    new ArtistViewModel(new Artist() { Name = "AC/DC",
+    //        //            Albums = new List<Album>()
+    //        //            {
+    //        //                new Album(),
+    //        //                new Album(),
+    //        //                new Album(),
+    //        //                new Album(),
+    //        //                new Album(),
+    //        //                new Album(),
+    //        //            },
+    //        //        },
+    //        //        eventAggregator )
+    //        //    {
+    //        //        IsPlaying = true
+    //        //    },
+    //        //    new ArtistViewModel(new Artist() { Name = "Unknown",
+    //        //            Albums = new List<Album>()
+    //        //            {
+    //        //                new Album(),
+    //        //            },
+    //        //        },
+    //        //        eventAggregator )
+    //        //    {
+    //        //        IsPlaying = false
+    //        //    },
 
-            };
-        }
-    }
+    //        //};
+    //    }
+    //}
 }

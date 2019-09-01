@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using PropertyChanged;
 using VPlayer.AudioStorage.Models;
+using VPlayer.Core.ViewModels;
 
 namespace VPlayer.Library.ViewModels
 {
-    [AddINotifyPropertyChangedInterface]
-    public class AlbumDetailViewModel
+    public class AlbumDetailViewModel : ViewModel
     {
         public Album ActualAlbum { get; set; }
         public List<Song> AlbumSongs => ActualAlbum.Songs;

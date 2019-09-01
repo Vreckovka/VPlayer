@@ -29,7 +29,6 @@ namespace VPlayer.Library.Views
         public AlbumsView()
         {
             InitializeComponent();
-            DataContext = LibraryViewModel.Instance;
         }
 
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)

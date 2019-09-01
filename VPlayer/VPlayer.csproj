@@ -145,6 +145,9 @@
     <Reference Include="Prism, Version=7.2.0.1367, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
       <HintPath>..\packages\Prism.Core.7.2.0.1367\lib\net45\Prism.dll</HintPath>
     </Reference>
+    <Reference Include="Prism.Ninject.Wpf, Version=7.2.0.1367, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.Ninject.7.2.0.1367\lib\net45\Prism.Ninject.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="Prism.Unity.Wpf, Version=7.2.0.1367, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
       <HintPath>..\packages\Prism.Unity.7.2.0.1367\lib\net45\Prism.Unity.Wpf.dll</HintPath>
     </Reference>
@@ -219,7 +222,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="StylesDictionaries\PlayableWrapPanelStyle.xaml">
+    <Page Include="StylesDictionaries\ControlsTemplates\FinderTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StylesDictionaries\ControlsTemplates\PlayableWrapPanelTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -232,6 +239,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AttachedProperties\Player.cs" />
+    <Compile Include="Converters\BaseConverter.cs" />
+    <Compile Include="Converters\NullToImageConverter.cs" />
     <Compile Include="ViewModels\LibraryModels\AlbumInfo.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Other\Converters.cs" />
@@ -295,7 +304,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ViewModels\AudioTrack.cs" />
-    <Compile Include="Other\IoC.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="StylesDictionaries\WindowsStyle.xaml.cs">
       <DependentUpon>WindowsStyle.xaml</DependentUpon>
@@ -389,6 +397,9 @@
     <Content Include="Firefox\qipcap64.dll" />
     <Content Include="Firefox\softokn3.dll" />
     <Content Include="Firefox\xul.dll" />
+    <Resource Include="Resources\VPlayer_MissingArtist.jpg" />
+    <Resource Include="Resources\VPlayer_missingArtist.png" />
+    <Resource Include="Resources\VPlayer_missingArtist1.png" />
     <Content Include="template\styles\main.css" />
     <Resource Include="VPlayerLogo.ico" />
     <Resource Include="FodyWeavers.xml" />

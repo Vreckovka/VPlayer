@@ -1,31 +1,95 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Media;
 using Prism.Events;
+using VPlayer.AudioStorage.Interfaces;
 using VPlayer.AudioStorage.Models;
 using VPlayer.Core;
 using VPlayer.Core.Events;
 using VPlayer.Core.ViewModels;
+using VPlayer.Library.ViewModels.ArtistsViewModels;
 
 namespace VPlayer.Library.ViewModels
 {
-    public class PlayableViewModel<TModel> : ViewModel<TModel>
+    public abstract class PlayableViewModel<TModel> : ViewModel<TModel>, IPlayableViewModel where TModel : INamedEntity
     {
-        public PlayableViewModel(TModel model) : base(model)
+        #region Fields
+
+        protected readonly IEventAggregator eventAggregator;
+
+        #endregion
+
+        #region Constructors
+
+        protected PlayableViewModel(TModel model, IEventAggregator eventAggregator) : base(model)
         {
-            Play = new ActionCommand(OnPlay);
+            this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
         }
+
+        #endregion
+
+        #region Properties
+
+        #region HeaderText
+
+        public string HeaderText => Model.Name;
+
+        #endregion
+
+        #region IsPlaying
 
         public bool IsPlaying { get; set; }
 
-        public ICommand Play { get; set; }
+        #endregion
 
-        public virtual void OnPlay()
+        public abstract string BottomText { get; set; }
+      
+        public abstract ImageSource ImageThumbnail { get; set; }
+
+        public string Name => Model.Name;
+
+        #endregion
+
+        public abstract IEnumerable<Song> GetSongsToPlay();
+
+        #region Commands
+
+        private ActionCommand play;
+        public ICommand Play
         {
-            IsPlaying = true;
+            get
+            {
+                if (play == null)
+                {
+                    play = new ActionCommand(OnPlayButton);
+                }
+
+                return play;
+            }
         }
+
+        private void OnPlayButton()
+        {
+            if (!IsPlaying)
+            {
+                IsPlaying = true;
+                OnPlay();
+            }
+            else
+            {
+                eventAggregator.GetEvent<PauseEvent>().Publish();
+                IsPlaying = false;
+            }
+        }
+
+        public void OnPlay()
+        {
+            eventAggregator.GetEvent<PlaySongsEvent>().Publish(GetSongsToPlay());
+        }
+
+        #endregion
+
+       
     }
 }

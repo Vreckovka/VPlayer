@@ -2,10 +2,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using JetBrains.Annotations;
+using VPlayer.AudioStorage.Interfaces;
 
 namespace VPlayer.AudioStorage.Models
 {
-    public class Artist 
+    public class Artist : INamedEntity
     {
         public Artist() 
         { }

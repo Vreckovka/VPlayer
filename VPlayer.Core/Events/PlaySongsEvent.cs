@@ -4,7 +4,7 @@ using VPlayer.AudioStorage.Models;
 
 namespace VPlayer.Core.Events
 {
-    public class PlayArtistEvent : PubSubEvent<IEnumerable<Song>>
+    public class PlaySongsEvent : PubSubEvent<IEnumerable<Song>>
     {
     }
 }

@@ -158,7 +158,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
             catch (Exception ex)
             {
 
-                 Logger.Logger.Instance.Log(Logger.MessageType.Error, $"{ex.Message}");
+                Logger.Logger.Instance.Log(Logger.MessageType.Error, $"{ex.Message}");
             }
         }
 
@@ -311,8 +311,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
                             var albums = context.Albums.ToList().OrderBy(x => x.Name);
 
                             originalAlbum = (from x in context.Albums
-                                where x.AlbumId == album.AlbumId
-                                select x).SingleOrDefault();
+                                             where x.AlbumId == album.AlbumId
+                                             select x).SingleOrDefault();
 
                             //Album could be deleted from storage
                             if (originalAlbum != null)
@@ -320,12 +320,12 @@ namespace VPlayer.AudioStorage.AudioDatabase
                                 originalAlbum.UpdateAlbum(album);
 
                                 var duplicates = (from x in albums
-                                    where x.Name == originalAlbum.Name
-                                    where x.Artist.Name == originalAlbum.Artist.Name
-                                    group x by x.Name
+                                                  where x.Name == originalAlbum.Name
+                                                  where x.Artist.Name == originalAlbum.Artist.Name
+                                                  group x by x.Name
                                     into a
-                                    where a.Count() > 1
-                                    select a.ToList()).SingleOrDefault();
+                                                  where a.Count() > 1
+                                                  select a.ToList()).SingleOrDefault();
 
                                 if (duplicates == null)
                                 {
@@ -356,9 +356,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
                             {
                                 originalAlbum =
                                     (from x in context.Albums
-                                        where x.Name == album.Name
-                                        where x.Artist.Name == album.Artist.Name
-                                        select x).SingleOrDefault();
+                                     where x.Name == album.Name
+                                     where x.Artist.Name == album.Artist.Name
+                                     select x).SingleOrDefault();
 
                                 if (originalAlbum != null)
                                     CombineAlbums(originalAlbum, album, context);
@@ -377,6 +377,16 @@ namespace VPlayer.AudioStorage.AudioDatabase
                     }
                 }
             }
+        }
+
+        public IEnumerable<TModel> GetItems<TModel>()
+        {
+            if (typeof(TModel) == typeof(Album))
+                return (IEnumerable<TModel>)Albums;
+            else if (typeof(TModel) == typeof(Artist))
+                return (IEnumerable<TModel>)Artists;
+
+            return null;
         }
 
         private Album CombineAlbums(Album originalAlbum, Album albumToCombine, AudioDatabaseContext context)

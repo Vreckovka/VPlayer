@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using PropertyChanged;
 using VPlayer.AudioStorage.Models;
+using VPlayer.Core.ViewModels;
 
 namespace VPlayer.Library.ViewModels.ArtistsViewModels
 {
-    [AddINotifyPropertyChangedInterface]
-    public class ArtistDetailViewModel
+   
+    public class ArtistDetailViewModel : ViewModel
     {
         public Artist ActualArtist { get; set; }
         public ICollection<Album> Albums => ActualArtist?.Albums;

@@ -95,6 +95,7 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <None Include="app.config" />
     <None Include="Firefox\omni.ja" />
     <None Include="packages.config" />
   </ItemGroup>

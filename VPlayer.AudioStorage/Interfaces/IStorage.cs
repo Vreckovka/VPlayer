@@ -20,5 +20,7 @@ namespace VPlayer.AudioStorage.Interfaces
         Task UpdateArtist(Artist artist);
         Task UpdateAlbum(Album album);
         Task UpdateAlbums(List<Album> albumsToUpdate);
+
+        IEnumerable<TModel> GetItems<TModel>();
     }
 }

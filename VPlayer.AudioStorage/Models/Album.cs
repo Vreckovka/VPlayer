@@ -7,8 +7,7 @@ using VPlayer.AudioStorage.Interfaces;
 
 namespace VPlayer.AudioStorage.Models
 {
-   
-    public class Album 
+    public class Album : INamedEntity
     {
         public Album() { }
 

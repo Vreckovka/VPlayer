@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using Prism.Events;
 using VPlayer.AudioStorage.Models;
+using VPlayer.Library.ViewModels;
 
 namespace VPlayer.Library.Views
 {
@@ -68,6 +69,11 @@ namespace VPlayer.Library.Views
                         ChangeView(View.Artists);
                         break;
                 }
+        }
+
+        private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+           var asd = ((LibraryViewModel) DataContext).ActualCollectionViewModel.PlayableItems[150];
         }
     }
 }

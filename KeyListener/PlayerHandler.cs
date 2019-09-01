@@ -29,8 +29,8 @@ namespace KeyListener
             var libDirectory = new DirectoryInfo(Path.Combine("C:\\Users\\Roman Pecho\\source\\repos\\VPlayer\\KeyListener", "libvlc", IntPtr.Size == 4 ? "win-x86" : "win-x64"));
             MediaPlayer = new VlcMediaPlayer(libDirectory);
 
-
             bool playFinished = false;
+
             MediaPlayer.EncounteredError += (sender, e) =>
             {
                 Console.Error.Write("An error occurred");
@@ -39,9 +39,8 @@ namespace KeyListener
 
             MediaPlayer.EndReached += (sender, e) => { PlayNext(); };
 
-            eventAggregator.GetEvent<PlayArtistEvent>().Subscribe(PlayArtist);
-
-
+            eventAggregator.GetEvent<PlaySongsEvent>().Subscribe(PlayArtist);
+            eventAggregator.GetEvent<PauseEvent>().Subscribe(Pause);
         }
 
         private void PlayArtist(IEnumerable<Song> songs)
@@ -94,7 +93,7 @@ namespace KeyListener
                 if (IsPlaying)
                 {
                     IsPlaying = false;
-                    // Play();
+                    Play();
                 }
                 else
                 {

@@ -3,10 +3,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography;
 using System.Text;
 using JetBrains.Annotations;
+using VPlayer.AudioStorage.Interfaces;
 
 namespace VPlayer.AudioStorage.Models
 {
-    public class Song
+    public class Song : INamedEntity
     {
         public Song() { }
         public Song(string name, Album album)

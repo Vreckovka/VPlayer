@@ -61,6 +61,24 @@ namespace VPlayer.Core.Controls
 
         #endregion
 
+        #region DefaultImage
+
+        public ImageSource DefaultImage
+        {
+            get { return (ImageSource)GetValue(DefaultImageProperty); }
+            set { SetValue(DefaultImageProperty, value); }
+        }
+
+        public static readonly DependencyProperty DefaultImageProperty =
+            DependencyProperty.Register(
+                nameof(DefaultImage),
+                typeof(ImageSource),
+                typeof(PlayableWrapPanelItem),
+                new PropertyMetadata(null));
+
+
+        #endregion
+
         #region IsPlaying
 
         public bool IsPlaying
@@ -78,6 +96,5 @@ namespace VPlayer.Core.Controls
 
 
         #endregion
-
     }
 }

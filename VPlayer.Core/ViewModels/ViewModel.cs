@@ -1,14 +1,16 @@
-﻿using Prism.Mvvm;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using Prism.Mvvm;
 using PropertyChanged;
 
 namespace VPlayer.Core.ViewModels
 {
     [AddINotifyPropertyChangedInterface]
-    public class ViewModel : BindableBase
+    public abstract class ViewModel : BindableBase, IViewModel
     {
     }
 
-    public class ViewModel<TModel> : ViewModel
+    public abstract class ViewModel<TModel> : ViewModel, IParametrizedViewModel
     {
         public ViewModel(TModel model)
         {
@@ -17,4 +19,7 @@ namespace VPlayer.Core.ViewModels
 
         public TModel Model { get; set; }
     }
+
+    public interface IViewModel { }
+    public interface IParametrizedViewModel { }
 }

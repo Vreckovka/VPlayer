@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="AudioDatabase\AudioDatabaseContext.cs" />
     <Compile Include="AudioDatabase\AudioDatabaseManager.cs" />
+    <Compile Include="Interfaces\INamedEntity.cs" />
     <Compile Include="Migrations\201906221241294_initial.cs" />
     <Compile Include="Migrations\201906221241294_initial.Designer.cs">
       <DependentUpon>201906221241294_initial.cs</DependentUpon>

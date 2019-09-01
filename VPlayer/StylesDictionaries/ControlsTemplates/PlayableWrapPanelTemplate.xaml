@@ -4,6 +4,7 @@
     xmlns:controls="clr-namespace:VPlayer.Core.Controls;assembly=VPlayer.Core"
     xmlns:controls1="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
     xmlns:converters="clr-namespace:VPlayer.Other.Converters;assembly=VPlayer.Library"
+    xmlns:converters1="clr-namespace:VPlayer.Converters"
     xmlns:local="clr-namespace:VPlayer.StylesDictionaries">
 
 
@@ -25,16 +26,23 @@
                             Width="200"
                             Height="235"
                             Background="{StaticResource BackgroudBrush}">
+                            <Grid.Resources>
+                                <converters1:NullToImageConverter x:Key="NullToImageConverter" DefaultImage="pack://application:,,,/Resources/VPlayer_missingArtist1.png" />
+                            </Grid.Resources>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="auto" />
                             </Grid.RowDefinitions>
 
+                            <!--  Source="{TemplateBinding ImageThumbnail}"  -->
                             <Image
                                 Grid.Row="0"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Top"
-                                Source="{TemplateBinding ImageThumbnail}" />
+                                Source="{TemplateBinding ImageThumbnail,
+                                                         Converter={StaticResource NullToImageConverter}}">
+                              
+                            </Image>
 
                             <Grid Grid.Row="0" Background="{StaticResource GlassGradient}" />
 
@@ -138,25 +146,29 @@
         </Setter>
     </Style>
 
-
     <Style TargetType="{x:Type controls:PlayableWrapPanel}">
         <Setter Property="Background" Value="{StaticResource BackgroudBrush}" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="controls:PlayableWrapPanel">
-                    <Grid Margin="0,10">
-                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                            <ItemsPresenter />
-                        </ScrollViewer>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
+        <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True" />
+        <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
                     <controls1:VirtualizingWrapPanel Orientation="Vertical" />
                 </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:PlayableWrapPanel">
+                    <Grid
+                        Margin="0,10"
+                        Background="{TemplateBinding Panel.Background}"
+                        SnapsToDevicePixels="True">
+                        <ScrollViewer Padding="{TemplateBinding Control.Padding}" Focusable="False">
+                            <ItemsPresenter SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+                        </ScrollViewer>
+                    </Grid>
+                </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>

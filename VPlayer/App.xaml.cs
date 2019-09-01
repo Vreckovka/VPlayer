@@ -1,12 +1,16 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
+using Ninject;
 using Prism.Ioc;
 using Prism.Modularity;
-using Prism.Unity;
+using Prism.Ninject;
+using Prism.Ninject.Ioc;
+using VPlayer.AudioStorage.AudioDatabase;
+using VPlayer.AudioStorage.Interfaces;
+using VPlayer.Core.Modules;
 using VPlayer.Library.ViewModels;
-using VPlayer.Library.ViewModels.ArtistsViewModels;
 using VPlayer.Views;
 using VPlayer.WindowsPlayer.ViewModels;
+
 
 namespace VPlayer
 {
@@ -15,8 +19,14 @@ namespace VPlayer
     /// </summary>
     public partial class App : PrismApplication
     {
+        private IKernel Kernel;
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
+            Kernel = Container.GetContainer();
+
+            Kernel.Load(new BaseNinjectModule());
+
+            Kernel.Bind<IStorage>().To<AudioDatabaseManager>();
         }
 
         protected override Window CreateShell()
@@ -28,7 +38,7 @@ namespace VPlayer
         {
             moduleCatalog.AddModule<WindowsPlayerViewModel>();
             moduleCatalog.AddModule<LibraryViewModel>();
-            moduleCatalog.AddModule<ArtistsViewModel>();
         }
+      
     }
 }

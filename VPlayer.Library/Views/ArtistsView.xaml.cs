@@ -16,6 +16,7 @@ using Prism.Events;
 using VPlayer.AudioStorage.Models;
 using VPlayer.Library.ViewModels;
 using VPlayer.Library.ViewModels.ArtistsViewModels;
+using VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels;
 using WpfToolkit.Controls;
 
 namespace VPlayer.Library.Views
@@ -25,7 +26,7 @@ namespace VPlayer.Library.Views
     /// </summary>
     public partial class ArtistsView : UserControl
     {
-        private ViewModels.ArtistsViewModel _artistsViewModel;
+        private ArtistsViewModel artistsViewModel;
         public ArtistsView()
         {
             InitializeComponent();
@@ -33,16 +34,11 @@ namespace VPlayer.Library.Views
 
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if ((Artist) Artists.SelectedItem != null)
+            if ((Artist)Artists.SelectedItem != null)
             {
-                LibraryView.ChangeView(LibraryView.View.ArtistDetail, artist: (Artist) Artists.SelectedItem);
+                LibraryView.ChangeView(LibraryView.View.ArtistDetail, artist: (Artist)Artists.SelectedItem);
                 Artists.UnselectAll();
             }
-        }
-
-        private void TextBox_Finder_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            _artistsViewModel.SetArtistsByName(((TextBox)e.Source).Text.ToLower());
         }
     }
 }
