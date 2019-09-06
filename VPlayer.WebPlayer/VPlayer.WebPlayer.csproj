@@ -97,6 +97,9 @@
     </Compile>
     <None Include="app.config" />
     <None Include="Firefox\omni.ja" />
+    <None Include="FodyWeavers.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
