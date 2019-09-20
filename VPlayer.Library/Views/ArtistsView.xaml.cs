@@ -13,9 +13,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Prism.Events;
+using VCore.Modularity.Interfaces;
 using VPlayer.AudioStorage.Models;
 using VPlayer.Library.ViewModels;
-using VPlayer.Library.ViewModels.ArtistsViewModels;
 using VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels;
 using WpfToolkit.Controls;
 
@@ -24,21 +24,11 @@ namespace VPlayer.Library.Views
     /// <summary>
     /// Interaction logic for ArtistsView.xaml
     /// </summary>
-    public partial class ArtistsView : UserControl
+    public partial class ArtistsView : UserControl , IView
     {
-        private ArtistsViewModel artistsViewModel;
         public ArtistsView()
         {
             InitializeComponent();
-        }
-
-        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if ((Artist)Artists.SelectedItem != null)
-            {
-                LibraryView.ChangeView(LibraryView.View.ArtistDetail, artist: (Artist)Artists.SelectedItem);
-                Artists.UnselectAll();
-            }
         }
     }
 }

@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using VPlayer.AudioStorage.Models;
-using VPlayer.Library.ViewModels.ArtistsViewModels;
+using VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels;
 
 namespace VPlayer.Library.Views
 {
@@ -26,16 +26,6 @@ namespace VPlayer.Library.Views
         {
             InitializeComponent();
             DataContext = new ArtistDetailViewModel(artist);
-        }
-
-        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            LibraryView.ChangeView(LibraryView.View.AlbumDetail, album: (Album)Albums.SelectedItem);
-        }
-
-        private void Click_Back(object sender, RoutedEventArgs e)
-        {
-            LibraryView.ChangeView(LibraryView.View.Artists);
         }
     }
 }

@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PropertyChanged;
+﻿using System.Collections.Generic;
+using VCore.ViewModels;
 using VPlayer.AudioStorage.Models;
-using VPlayer.Core.ViewModels;
 
-namespace VPlayer.Library.ViewModels
+namespace VPlayer.Library.ViewModels.AlbumsViewModels
 {
     public class AlbumDetailViewModel : ViewModel
     {

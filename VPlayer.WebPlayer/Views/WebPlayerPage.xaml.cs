@@ -9,7 +9,7 @@ using System.Windows.Media;
 using Gecko;
 using Gecko.DOM;
 using Gecko.WebIDL;
-using VPlayer.Models;
+using VPlayer.WebPlayer.Models;
 using VPlayer.WebPlayer.ViewModels;
 using Console = System.Console;
 using Grid = System.Windows.Controls.Grid;

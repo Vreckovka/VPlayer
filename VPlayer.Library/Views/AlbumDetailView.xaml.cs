@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using VPlayer.AudioStorage;
 using VPlayer.AudioStorage.Models;
 using VPlayer.Library.ViewModels;
+using VPlayer.Library.ViewModels.AlbumsViewModels;
 
 namespace VPlayer.Library.Views
 {
@@ -31,16 +32,6 @@ namespace VPlayer.Library.Views
             DataContext = AlbumDetailViewModel;
 
            
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            LibraryView.ChangeView(LibraryView.View.Albums);
-        }
-
-        private void GetMoreCovers_Click(object sender, RoutedEventArgs e)
-        {
-            LibraryView.ChangeView(LibraryView.View.AlbumCovers, AlbumDetailViewModel.ActualAlbum);
         }
     }
 }

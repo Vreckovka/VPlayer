@@ -7,7 +7,7 @@ using System.Windows.Media;
 using Prism.Events;
 using VPlayer.AudioStorage.Interfaces;
 using VPlayer.AudioStorage.Models;
-using VPlayer.Library.Annotations;
+using VPlayer.Library.Properties;
 
 namespace VPlayer.Library.ViewModels.AlbumsViewModels
 {

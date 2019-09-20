@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
 using System.Windows.Media.Imaging;
 
-namespace VPlayer.Other.Converters
+namespace VPlayer.WindowsPlayer
 {
     public class ImageLazyLoadingConverter : IValueConverter
     {

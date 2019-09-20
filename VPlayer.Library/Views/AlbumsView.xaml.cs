@@ -30,11 +30,7 @@ namespace VPlayer.Library.Views
         {
             InitializeComponent();
         }
-
-        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            LibraryView.ChangeView(LibraryView.View.AlbumDetail, (Album)Albums.SelectedItem);
-        }
+     
     }
 }
 

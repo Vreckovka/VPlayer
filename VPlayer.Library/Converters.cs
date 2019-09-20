@@ -1,22 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Markup;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using VPlayer.Library.ViewModels;
 
-namespace VPlayer.Other.Converters
+namespace VPlayer.Library
 {
     public class ScrollingTextDurationConverter : MarkupExtension, IMultiValueConverter
     {

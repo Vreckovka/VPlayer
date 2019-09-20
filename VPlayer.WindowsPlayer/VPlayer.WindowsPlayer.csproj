@@ -9,13 +9,14 @@
     <OutputType>library</OutputType>
     <RootNamespace>VPlayer.WindowsPlayer</RootNamespace>
     <AssemblyName>VPlayer.WindowsPlayer</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -37,6 +38,10 @@
   <ItemGroup>
     <Reference Include="CommonServiceLocator, Version=2.0.4.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.2.0.4\lib\net46\CommonServiceLocator.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\DLL\Ninject\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="Prism, Version=7.2.0.1367, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
       <HintPath>..\packages\Prism.Core.7.2.0.1367\lib\net45\Prism.dll</HintPath>
@@ -83,7 +88,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converters.cs" />
+    <Compile Include="Design\WindowsPlayerDesignViewModel.cs" />
     <Compile Include="Models\AudioTrack.cs" />
+    <Compile Include="Modularity\NinjectModule\WindowsPlayerNinjectModule.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -126,12 +134,16 @@
       <Project>{ba238278-32d0-4c4e-881a-ad2be152832c}</Project>
       <Name>Listener</Name>
     </ProjectReference>
+    <ProjectReference Include="..\VCore\VCore.csproj">
+      <Project>{5aa43597-fd3d-4f10-89a5-eb77d3b831d9}</Project>
+      <Name>VCore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\VPlayer.AudioInfoDownloader\VPlayer.AudioInfoDownloader.csproj">
       <Project>{5700b63d-857d-43fd-b0c4-4b2c88a5a1da}</Project>
       <Name>VPlayer.AudioInfoDownloader</Name>
     </ProjectReference>
     <ProjectReference Include="..\VPlayer.Core\VPlayer.Core.csproj">
-      <Project>{5aa43597-fd3d-4f10-89a5-eb77d3b831d9}</Project>
+      <Project>{b8d5c40b-3b3d-43e1-95fa-97087581bda2}</Project>
       <Name>VPlayer.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\VPlayer.Library\VPlayer.Library.csproj">

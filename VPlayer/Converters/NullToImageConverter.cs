@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Data;
-using System.Windows.Input;
-using System.Windows.Media;
-using MS.Internal.PresentationFramework;
-using VPlayer.Core.Controls;
-using Image = System.Windows.Controls.Image;
+using VCore.Controls;
 
 namespace VPlayer.Converters
 {
@@ -32,11 +21,6 @@ namespace VPlayer.Converters
             {
                 throw new ArgumentException("Not valid value");
             }
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -2,7 +2,7 @@
 
 
 
-namespace VirtualListWithPagingTechnique
+namespace VPlayer.Library.VirtualList
 {
 	public interface IObjectGenerator<T>
 	{

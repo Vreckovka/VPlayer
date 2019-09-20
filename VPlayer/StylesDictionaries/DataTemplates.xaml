@@ -2,9 +2,8 @@
     x:Class="VPlayer.StylesDictionaries.DataTemplates"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:attached="clr-namespace:VPlayer.AttachedProperties"
-    xmlns:converters="clr-namespace:VPlayer.Other.Converters;assembly=VPlayer.Library"
-    xmlns:local="clr-namespace:VPlayer.StylesDictionaries">
+    xmlns:local="clr-namespace:VPlayer.StylesDictionaries"
+    xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Library">
 
 
     <ResourceDictionary.MergedDictionaries>
@@ -80,7 +79,7 @@
                     Grid.Row="0"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Top"
-                    Source="{Binding AlbumFrontCoverBLOB, Converter={converters:ImageLazyLoadingConverter}, IsAsync=True}" />
+                    Source="{Binding AlbumFrontCoverBLOB, Converter={library:ImageLazyLoadingConverter}, IsAsync=True}" />
 
                 <Grid Grid.Row="0" Background="{StaticResource GlassGradient}" />
 
@@ -126,7 +125,7 @@
                                     <Style.Triggers>
                                         <DataTrigger Value="True">
                                             <DataTrigger.Binding>
-                                                <MultiBinding Converter="{converters:IsBiggerConverter}">
+                                                <MultiBinding Converter="{library:IsBiggerConverter}">
                                                     <Binding ElementName="NameTxt" Path="ActualWidth" />
                                                     <Binding ElementName="ParentContainer" Path="Width" />
                                                 </MultiBinding>
@@ -211,14 +210,14 @@
                                         Storyboard.TargetProperty="Margin"
                                         From="5 0 0 0">
                                         <ThicknessAnimation.Duration>
-                                            <MultiBinding Converter="{converters:ScrollingTextDurationConverter}">
+                                            <MultiBinding Converter="{library:ScrollingTextDurationConverter}">
                                                 <Binding ElementName="ParentContainer" Path="ActualWidth" />
                                                 <Binding ElementName="NameTxt" Path="ActualWidth" />
                                             </MultiBinding>
                                         </ThicknessAnimation.Duration>
 
                                         <ThicknessAnimation.To>
-                                            <MultiBinding Converter="{converters:ScrollingTextMarginConverter}">
+                                            <MultiBinding Converter="{library:ScrollingTextMarginConverter}">
                                                 <Binding ElementName="ParentContainer" Path="ActualWidth" />
                                                 <Binding ElementName="NameTxt" Path="ActualWidth" />
                                             </MultiBinding>
@@ -260,7 +259,7 @@
                     Grid.Row="0"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Top"
-                    Source="{Binding AlbumFrontCoverBLOB, Converter={converters:ImageLazyLoadingConverter}, IsAsync=True}" />
+                    Source="{Binding AlbumFrontCoverBLOB, Converter={library:ImageLazyLoadingConverter}, IsAsync=True}" />
 
                 <Grid Grid.Row="0" Background="{StaticResource GlassGradient}" />
 
@@ -335,14 +334,14 @@
                                         Storyboard.TargetProperty="Margin"
                                         From="5 0 0 0">
                                         <ThicknessAnimation.Duration>
-                                            <MultiBinding Converter="{converters:ScrollingTextDurationConverter}">
+                                            <MultiBinding Converter="{library:ScrollingTextDurationConverter}">
                                                 <Binding ElementName="ParentContainer" Path="ActualWidth" />
                                                 <Binding ElementName="NameTxt" Path="ActualWidth" />
                                             </MultiBinding>
                                         </ThicknessAnimation.Duration>
 
                                         <ThicknessAnimation.To>
-                                            <MultiBinding Converter="{converters:ScrollingTextMarginConverter}">
+                                            <MultiBinding Converter="{library:ScrollingTextMarginConverter}">
                                                 <Binding ElementName="ParentContainer" Path="ActualWidth" />
                                                 <Binding ElementName="NameTxt" Path="ActualWidth" />
                                             </MultiBinding>

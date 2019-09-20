@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using VPlayer.Models;
+using VPlayer.WebPlayer.Models;
 
 namespace VPlayer.WebPlayer.ViewModels
 {

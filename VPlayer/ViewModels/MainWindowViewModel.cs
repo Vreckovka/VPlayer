@@ -1,19 +1,34 @@
-﻿using KeyListener;
-using Prism.Events;
-using VPlayer.Core;
-using VPlayer.Core.ViewModels;
+﻿using System;
+using JetBrains.Annotations;
+using VCore.Factories;
+using VCore.ViewModels;
+using VCore.ViewModels.Navigation;
+using VPlayer.Library.ViewModels;
+using VPlayer.WindowsPlayer.ViewModels;
 
 namespace VPlayer.ViewModels
 {
-    public class MainWindowViewModel : ViewModel
+  public class MainWindowViewModel : BaseMainWindowViewModel
+  {
+    private readonly IViewModelsFactory viewModelsFactory;
+
+    public MainWindowViewModel([NotNull] IViewModelsFactory viewModelsFactory)
     {
-        public string Title { get; set; }
-
-        public MainWindowViewModel(IEventAggregator eventAggregator)
-        {
-            Title = "VPlayer";
-
-            PlayerHandler playerHandler = new PlayerHandler(eventAggregator);
-        }
+      this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
     }
+
+    public override void Initialize()
+    {
+      base.Initialize();
+
+      var windowsPlayer = viewModelsFactory.Create<WindowsPlayerViewModel>();
+      windowsPlayer.IsActive = true;
+      NavigationViewModel.Items.Add(windowsPlayer);
+
+  
+
+    }
+
+    public NavigationViewModel NavigationViewModel { get; set; } = new NavigationViewModel();
+  }
 }

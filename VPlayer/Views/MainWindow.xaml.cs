@@ -8,9 +8,11 @@ using Windows.Storage;
 using Windows.Storage.FileProperties;
 using KeyListener;
 using Prism.Events;
+using VCore.Factories;
 using VPlayer.AudioStorage;
 using VPlayer.AudioStorage.Interfaces;
 using VPlayer.AudioStorage.Models;
+using VPlayer.ViewModels;
 using VPlayer.WebPlayer.Views;
 
 namespace VPlayer.Views
@@ -20,81 +22,74 @@ namespace VPlayer.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        private WebPlayerPage _webPlayerPage = new WebPlayerPage();
-
         public MainWindow()
         {
             InitializeComponent();
-
-            foreach (var artists in (from x in StorageManager.GetStorage().Artists where x.MusicBrainzId == null select x))
-            {
-                StorageManager.OnArtistStored(artists);
-            }
         }
 
-        private void Test()
-        {
-            AudioInfoDownloader.AudioInfoDownloader.Instance.SubdirectoryLoaded += Instance_SubdirectoryLoaded;
-        }
+        //private void Test()
+        //{
+        //    AudioInfoDownloader.AudioInfoDownloader.Instance.SubdirectoryLoaded += Instance_SubdirectoryLoaded;
+        //}
 
-        private void Instance_SubdirectoryLoaded(object sender, List<AudioStorage.Models.AudioInfo> e)
-        {
-            Task.Run(() =>
-            {
-                using (IStorage storage = StorageManager.GetStorage())
-                {
-                    storage.StoreData(e);
-                }
-            });
+        //private void Instance_SubdirectoryLoaded(object sender, List<AudioStorage.Models.AudioInfo> e)
+        //{
+        //    Task.Run(() =>
+        //    {
+        //        using (IStorage storage = StorageManager.GetStorage())
+        //        {
+        //            storage.StoreData(e);
+        //        }
+        //    });
 
-        }
+        //}
 
-        private async Task<MusicProperties> GetMusicProperties(string path)
-        {
-            StorageFile file = await StorageFile.GetFileFromPathAsync(path);
-            MusicProperties musicProperties = await file.Properties.GetMusicPropertiesAsync();
+        //private async Task<MusicProperties> GetMusicProperties(string path)
+        //{
+        //    StorageFile file = await StorageFile.GetFileFromPathAsync(path);
+        //    MusicProperties musicProperties = await file.Properties.GetMusicPropertiesAsync();
 
-            return musicProperties;
-        }
+        //    return musicProperties;
+        //}
 
-        private void ListViewItem_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            Test();
-        }
+        //private void ListViewItem_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        //{
+        //    Test();
+        //}
 
-        private async void ListViewItem_PreviewMouseDown1(object sender, MouseButtonEventArgs e)
-        {
-            await StorageManager.GetStorage().ClearStorage();
-        }
+        //private async void ListViewItem_PreviewMouseDown1(object sender, MouseButtonEventArgs e)
+        //{
+        //    await StorageManager.GetStorage().ClearStorage();
+        //}
 
-        private void ListViewItem_PreviewMouseDown2(object sender, MouseButtonEventArgs e)
-        {
-            Task.Run(async () =>
-            {
-                List<Album> existingAlbums = null;
+        //private void ListViewItem_PreviewMouseDown2(object sender, MouseButtonEventArgs e)
+        //{
+        //    Task.Run(async () =>
+        //    {
+        //        List<Album> existingAlbums = null;
 
 
-                using (IStorage storage = StorageManager.GetStorage())
-                {
-                    existingAlbums = (from x in storage.Albums
-                                      where x.AlbumFrontCoverBLOB == null
-                                      select x).ToList();
-                }
+        //        using (IStorage storage = StorageManager.GetStorage())
+        //        {
+        //            existingAlbums = (from x in storage.Albums
+        //                              where x.AlbumFrontCoverBLOB == null
+        //                              select x).ToList();
+        //        }
 
-                List<Album> updatedAlbums = new List<Album>();
+        //        List<Album> updatedAlbums = new List<Album>();
 
-                foreach (var album in existingAlbums)
-                {
-                    using (IStorage storage = StorageManager.GetStorage())
-                    {
-                        var updatedAlbum = await AudioInfoDownloader.AudioInfoDownloader.Instance.UpdateAlbum(album);
+        //        foreach (var album in existingAlbums)
+        //        {
+        //            using (IStorage storage = StorageManager.GetStorage())
+        //            {
+        //                var updatedAlbum = await AudioInfoDownloader.AudioInfoDownloader.Instance.UpdateAlbum(album);
 
-                        if (updatedAlbum != null)
-                            await storage.UpdateAlbum(updatedAlbum);
-                    }
-                }
+        //                if (updatedAlbum != null)
+        //                    await storage.UpdateAlbum(updatedAlbum);
+        //            }
+        //        }
 
-            });
-        }
+        //    });
+        //}
     }
 }

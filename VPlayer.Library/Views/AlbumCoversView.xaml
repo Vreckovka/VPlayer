@@ -11,7 +11,7 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Button Content="back" Margin="5" Width="150" HorizontalAlignment="Left" Click="Back_Click"/>
+        <Button Content="back" Margin="5" Width="150" HorizontalAlignment="Left" />
 
         <ListView  ItemsSource="{Binding Covers, Mode=OneWay}" 
                    Style="{StaticResource AlbumsPlayGridView}"

@@ -73,10 +73,5 @@ namespace VPlayer.Library.Views
 
             return result;
         }
-
-        private void Back_Click(object sender, RoutedEventArgs e)
-        {
-            LibraryView.ChangeView(LibraryView.View.AlbumDetail, Album);
-        }
     }
 }

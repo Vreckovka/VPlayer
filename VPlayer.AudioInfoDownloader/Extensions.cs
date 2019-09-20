@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
-//using Hqub.MusicBrainz.API.Entities;
 using Newtonsoft.Json.Linq;
+//using Hqub.MusicBrainz.API.Entities;
+
 //using VPlayer.LocalMusicDatabase;
 
-namespace VPlayer.Other
+namespace VPlayer.AudioInfoDownloader
 {
     public static class Extensions
     {

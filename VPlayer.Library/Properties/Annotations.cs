@@ -21,6 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
 using System;
+
 // ReSharper disable InheritdocConsiderUsage
 
 #pragma warning disable 1591
@@ -31,7 +32,7 @@ using System;
 // ReSharper disable MemberCanBeProtected.Global
 // ReSharper disable InconsistentNaming
 
-namespace VPlayer.Library.Annotations
+namespace VPlayer.Library.Properties
 {
   /// <summary>
   /// Indicates that the value of the marked element could be <c>null</c> sometimes,
@@ -762,14 +763,14 @@ namespace VPlayer.Library.Annotations
 
   /// <summary>
   /// ASP.NET MVC attribute. Indicates that the marked parameter is an MVC Master. Use this attribute
-  /// for custom wrappers similar to <c>System.Web.Mvc.Controller.View(String, String)</c>.
+  /// for custom wrappers similar to <c>System.Web.Mvc.Controller.RegistredView(String, String)</c>.
   /// </summary>
   [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Field | AttributeTargets.Property)]
   public sealed class AspMvcMasterAttribute : Attribute { }
 
   /// <summary>
   /// ASP.NET MVC attribute. Indicates that the marked parameter is an MVC model type. Use this attribute
-  /// for custom wrappers similar to <c>System.Web.Mvc.Controller.View(String, Object)</c>.
+  /// for custom wrappers similar to <c>System.Web.Mvc.Controller.RegistredView(String, Object)</c>.
   /// </summary>
   [AttributeUsage(AttributeTargets.Parameter)]
   public sealed class AspMvcModelTypeAttribute : Attribute { }
@@ -817,7 +818,7 @@ namespace VPlayer.Library.Annotations
   /// ASP.NET MVC attribute. If applied to a parameter, indicates that the parameter
   /// is an MVC view component. If applied to a method, the MVC view name is calculated implicitly
   /// from the context. Use this attribute for custom wrappers similar to
-  /// <c>System.Web.Mvc.Controller.View(Object)</c>.
+  /// <c>System.Web.Mvc.Controller.RegistredView(Object)</c>.
   /// </summary>
   [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Method | AttributeTargets.Field | AttributeTargets.Property)]
   public sealed class AspMvcViewAttribute : Attribute { }

@@ -15,8 +15,8 @@
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal">
-            <Button Content="back" Margin="5" Width="150" HorizontalAlignment="Left" Click="Button_Click"/>
-            <Button Content="Get more covers" Margin="5" Width="150" HorizontalAlignment="Left" Click="GetMoreCovers_Click"/>
+            <Button Content="back" Margin="5" Width="150" HorizontalAlignment="Left" />
+            <Button Content="Get more covers" Margin="5" Width="150" HorizontalAlignment="Left" />
         </StackPanel>
 
         <Grid  Grid.Row="1">

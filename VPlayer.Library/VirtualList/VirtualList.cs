@@ -1,12 +1,8 @@
-﻿
-
-
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace VirtualListWithPagingTechnique
+namespace VPlayer.Library.VirtualList
 {
     namespace VirtualLists
     {

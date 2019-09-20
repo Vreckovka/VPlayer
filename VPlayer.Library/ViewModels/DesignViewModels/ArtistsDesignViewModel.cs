@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using Prism.Events;
-using VPlayer.AudioStorage.Models;
-using VPlayer.Core.ViewModels;
-using VPlayer.Library.ViewModels;
-using VPlayer.Library.ViewModels.ArtistsViewModels;
-using VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels;
-
-namespace VPlayer.Library.Views
+﻿namespace VPlayer.Library.ViewModels.DesignViewModels
 {
-    //public class ArtistsDesignViewModel : ArtistsViewModel
+    //public class ArtistsDesignViewModel : ArtistsCollection
     //{
     //    private static EventAggregator eventAggregator = new EventAggregator();
     //    public ArtistsDesignViewModel()

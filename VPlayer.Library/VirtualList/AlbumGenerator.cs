@@ -6,13 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using VirtualListWithPagingTechnique;
 using VPlayer.AudioStorage;
 using VPlayer.AudioStorage.Interfaces;
 using VPlayer.AudioStorage.Models;
-using VPlayer.Library.Annotations;
+using VPlayer.Library.Properties;
 using VPlayer.Library.ViewModels;
-using VPlayer.Library.ViewModels.ArtistsViewModels;
+using VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels;
 
 namespace VPlayer.Library.VirtualList
 {

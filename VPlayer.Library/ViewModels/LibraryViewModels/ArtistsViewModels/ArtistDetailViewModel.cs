@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using PropertyChanged;
+using VCore.ViewModels;
 using VPlayer.AudioStorage.Models;
-using VPlayer.Core.ViewModels;
 
-namespace VPlayer.Library.ViewModels.ArtistsViewModels
+namespace VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels
 {
    
     public class ArtistDetailViewModel : ViewModel
