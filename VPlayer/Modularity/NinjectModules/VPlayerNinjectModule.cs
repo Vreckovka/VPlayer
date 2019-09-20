@@ -9,6 +9,8 @@ namespace VPlayer.Modularity.NinjectModules
     public override void Load()
     {
       base.Load();
+
+      Kernel.Load<WindowsPlayerNinjectModule>();
     }
   }
 }

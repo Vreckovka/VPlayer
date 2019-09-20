@@ -33,7 +33,7 @@ namespace VPlayer
 
       Kernel.Load<CommonNinjectModule>();
       Kernel.Load<VPlayerNinjectModule>();
-      Kernel.Load<WindowsPlayerNinjectModule>();
+    
 
 
       Kernel.Bind<IStorage>().To<AudioDatabaseManager>();

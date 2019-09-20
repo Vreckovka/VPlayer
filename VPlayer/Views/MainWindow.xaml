@@ -31,5 +31,7 @@
     </Border>
     <ContentControl Grid.Column="1"
                     prism:RegionManager.RegionName="{x:Static regions:RegionNames.ContentRegion}" />
+
+    <Button Click="Button_Click" Content="Clear" Height="25"/>
   </Grid>
 </Window>

@@ -67,7 +67,7 @@ namespace VPlayer.Library.ViewModels
 
     #endregion
 
-    #region FinderKeyDown
+    #region FilesDropped
 
     private ActionCommand<object> filesDropped;
     public ICommand FilesDropped
@@ -104,6 +104,7 @@ namespace VPlayer.Library.ViewModels
 
       libraryViewModel.IsActive = true;
       navigationViewModel.Items.Add(libraryViewModel);
+
     }
 
     private void StorageManagerStorageCleared(object sender, EventArgs e)

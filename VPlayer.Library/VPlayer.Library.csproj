@@ -107,6 +107,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converters.cs" />
+    <Compile Include="Modularity\NinjectModule\LibraryNinjectModule.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModels\AlbumsViewModels\AlbumsViewModel.cs" />
     <Compile Include="ViewModels\AlbumsViewModels\AlbumViewModel.cs" />

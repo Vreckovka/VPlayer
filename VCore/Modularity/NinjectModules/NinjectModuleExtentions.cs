@@ -37,5 +37,27 @@ namespace VCore.Modularity.NinjectModules
     }
 
     #endregion
+
+    #region BindToSelfAndInitialize
+
+    public static IBindingOnSyntax<TInitializable> BindToSelfAndInitialize<TInitializable>(this IKernel kernel)
+      where TInitializable : IInitializable
+    {
+      return kernel.BindToSelf<TInitializable>().InTransientScope().InitializeOnActivation();
+    }
+
+    #endregion
+
+    #region InitializeImmediately
+
+    public static TInitializable InitializeImmediately<TInitializable>(this TInitializable initializable)
+      where TInitializable : IInitializable
+    {
+      initializable.Initialize();
+
+      return initializable;
+    }
+
+    #endregion
   }
 }
