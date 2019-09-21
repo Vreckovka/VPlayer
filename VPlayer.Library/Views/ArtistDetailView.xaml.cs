@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using VPlayer.AudioStorage.Models;
+using VPlayer.Core.DomainClasses;
 using VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels;
 
 namespace VPlayer.Library.Views

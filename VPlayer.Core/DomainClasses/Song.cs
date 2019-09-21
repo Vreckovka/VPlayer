@@ -1,11 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Security.Cryptography;
-using System.Text;
-using JetBrains.Annotations;
-using VPlayer.AudioStorage.Interfaces;
 
-namespace VPlayer.AudioStorage.Models
+namespace VPlayer.Core.DomainClasses
 {
     public class Song : INamedEntity
     {
@@ -18,12 +13,12 @@ namespace VPlayer.AudioStorage.Models
 
 
         [Key]
-        public int SongId { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public string DiskLocation { get; set; }
         public int Length { get; set; }
 
-        [CanBeNull] public string MusicBrainzId { get; set; }
+        public string MusicBrainzId { get; set; }
         public virtual Album Album { get; set; }
 
         public override string ToString()

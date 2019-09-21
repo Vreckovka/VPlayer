@@ -150,13 +150,6 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj">
-      <Project>{b5245008-cfdf-4b83-bf61-b0b26a8e92bf}</Project>
-      <Name>VPlayer.AudioStorage</Name>
-      <Private>False</Private>
-    </ProjectReference>
-  </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.4.2.1\build\Fody.targets" Condition="Exists('..\packages\Fody.4.2.1\build\Fody.targets')" />

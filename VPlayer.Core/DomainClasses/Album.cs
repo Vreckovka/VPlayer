@@ -1,24 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using JetBrains.Annotations;
-using PropertyChanged;
-using VPlayer.AudioStorage.Interfaces;
 
-namespace VPlayer.AudioStorage.Models
+namespace VPlayer.Core.DomainClasses
 {
     public class Album : INamedEntity
     {
         public Album() { }
 
-        [Key]
-        public int AlbumId { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public virtual Artist Artist { get; set; }
-        [CanBeNull] public string ReleaseDate { get; set; }
-        [CanBeNull] public string MusicBrainzId { get; set; }
-        [CanBeNull] public string AlbumFrontCoverURI { get; set; }
-        [CanBeNull] public byte[] AlbumFrontCoverBLOB { get; set; }
+        public string ReleaseDate { get; set; }
+        public string MusicBrainzId { get; set; }
+        public string AlbumFrontCoverURI { get; set; }
+        public byte[] AlbumFrontCoverBLOB { get; set; }
         public virtual List<Song> Songs { get; set; }
 
         public void UpdateAlbum(Album album)

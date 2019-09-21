@@ -17,7 +17,7 @@ using System.Windows.Shapes;
 using PropertyChanged;
 using VPlayer.AudioInfoDownloader.Models;
 using VPlayer.AudioStorage;
-using VPlayer.AudioStorage.Models;
+using VPlayer.Core.DomainClasses;
 
 namespace VPlayer.Library.Views
 {
@@ -38,10 +38,10 @@ namespace VPlayer.Library.Views
             DataContext = this;
             Album = album;
 
-            Task.Run(async () => { await AudioInfoDownloader.AudioInfoDownloader.Instance.GetAlbumFrontCoversUrls(album); });
+            //Task.Run(async () => { await AudioInfoDownloader.AudioInfoDownloaderProvider.Instance.GetAlbumFrontCoversUrls(album); });
            
 
-            AudioInfoDownloader.AudioInfoDownloader.Instance.CoversDownloaded += Instance_CoversDownloaded;
+            //AudioInfoDownloader.AudioInfoDownloaderProvider.Instance.CoversDownloaded += Instance_CoversDownloaded;
         }
 
         private async void Instance_CoversDownloaded(object sender, List<Cover> e)

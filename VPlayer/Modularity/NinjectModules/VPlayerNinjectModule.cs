@@ -1,4 +1,5 @@
-﻿using Ninject;
+﻿using KeyListener;
+using Ninject;
 using VCore.Modularity.NinjectModules;
 using VPlayer.WindowsPlayer.Modularity.NinjectModule;
 
@@ -11,6 +12,9 @@ namespace VPlayer.Modularity.NinjectModules
       base.Load();
 
       Kernel.Load<WindowsPlayerNinjectModule>();
+      Kernel.BindToSelfInSingletonScope<PlayerHandler>();
+
+      Kernel.Get<PlayerHandler>();
     }
   }
 }

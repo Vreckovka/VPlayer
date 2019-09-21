@@ -2,7 +2,6 @@
 using System.Windows.Controls;
 using Prism.Events;
 using VCore.Modularity.Interfaces;
-using VPlayer.AudioStorage.Models;
 using VPlayer.Library.ViewModels;
 
 namespace VPlayer.Library.Views

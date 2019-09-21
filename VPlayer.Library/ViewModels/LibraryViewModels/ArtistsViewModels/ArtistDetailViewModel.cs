@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using VCore.ViewModels;
-using VPlayer.AudioStorage.Models;
+using VPlayer.Core.DomainClasses;
 
 namespace VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels
 {

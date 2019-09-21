@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using VPlayer.AudioStorage;
-using VPlayer.AudioStorage.Models;
+using VPlayer.Core.DomainClasses;
 using VPlayer.Library.ViewModels;
 using VPlayer.Library.ViewModels.AlbumsViewModels;
 

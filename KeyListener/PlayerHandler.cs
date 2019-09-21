@@ -5,13 +5,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Prism.Events;
+using VCore.ViewModels;
 using Vlc.DotNet.Core;
-using VPlayer.AudioStorage.Models;
+using VPlayer.Core.DomainClasses;
 using VPlayer.Core.Events;
 
 namespace KeyListener
 {
-  public class PlayerHandler
+  public class PlayerHandler : ViewModel
   {
     public static List<Song> PlayList;
     private static int actualSongIndex = 0;

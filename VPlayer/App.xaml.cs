@@ -33,10 +33,6 @@ namespace VPlayer
 
       Kernel.Load<CommonNinjectModule>();
       Kernel.Load<VPlayerNinjectModule>();
-    
-
-
-      Kernel.Bind<IStorage>().To<AudioDatabaseManager>();
     }
 
     protected override Window CreateShell()

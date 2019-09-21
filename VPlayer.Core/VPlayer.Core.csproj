@@ -35,6 +35,7 @@
       <HintPath>..\DLL\Prism\Prism.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -44,16 +45,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DomainClasses\Album.cs" />
+    <Compile Include="DomainClasses\Artist.cs" />
+    <Compile Include="DomainClasses\AudioInfo.cs" />
+    <Compile Include="DomainClasses\INamedEntity.cs" />
+    <Compile Include="DomainClasses\Song.cs" />
     <Compile Include="Events\Pause.cs" />
     <Compile Include="Events\PlaySongsEvent.cs" />
     <Compile Include="Modularity\Regions\RegionNames.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj">
-      <Project>{b5245008-cfdf-4b83-bf61-b0b26a8e92bf}</Project>
-      <Name>VPlayer.AudioStorage</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

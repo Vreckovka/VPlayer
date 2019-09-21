@@ -1,4 +1,4 @@
-﻿namespace VPlayer.AudioStorage.Models
+﻿namespace VPlayer.Core.DomainClasses
 {
     public class AudioInfo
     {

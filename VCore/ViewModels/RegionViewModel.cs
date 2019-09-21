@@ -4,6 +4,7 @@ using VCore.Modularity.RegionProviders;
 
 namespace VCore.ViewModels
 {
+
   public abstract class RegionViewModel<TView> : ViewModel, IRegionViewModel<TView> where TView : class, IView
   {
     protected readonly IRegionProvider regionProvider;

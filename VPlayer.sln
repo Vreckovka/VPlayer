@@ -7,17 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer", "VPlayer\VPlayer.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener", "KeyListener\Listener.csproj", "{BA238278-32D0-4C4E-881A-AD2BE152832C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LocalMusicDb", "LocalMusicDb", "{4C0F028F-966D-4F94-BA52-49021914E483}"
-	ProjectSection(SolutionItems) = preProject
-		LocalMusicDb\LocalMusicDb.mdf = LocalMusicDb\LocalMusicDb.mdf
-		LocalMusicDb\LocalMusicDb_log.ldf = LocalMusicDb\LocalMusicDb_log.ldf
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer.WebPlayer", "VPlayer.WebPlayer\VPlayer.WebPlayer.csproj", "{2D6B4AAE-1065-4E73-A96A-BDC154F0F4FE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer.WindowsPlayer", "VPlayer.WindowsPlayer\VPlayer.WindowsPlayer.csproj", "{A252EBB2-D31A-4A6A-A77C-A688E303801D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer.AudioInfoDownloader", "VPlayer.AudioInfoDownloader\VPlayer.AudioInfoDownloader.csproj", "{5700B63D-857D-43FD-B0C4-4B2C88A5A1DA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logger", "Logger\Logger.csproj", "{6212FADF-45A6-4613-B5A8-5C5A57F3BFB0}"
 EndProject
@@ -89,18 +81,6 @@ Global
 		{A252EBB2-D31A-4A6A-A77C-A688E303801D}.Release|x64.Build.0 = Release|Any CPU
 		{A252EBB2-D31A-4A6A-A77C-A688E303801D}.Release|x86.ActiveCfg = Release|Any CPU
 		{A252EBB2-D31A-4A6A-A77C-A688E303801D}.Release|x86.Build.0 = Release|Any CPU
-		{5700B63D-857D-43FD-B0C4-4B2C88A5A1DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5700B63D-857D-43FD-B0C4-4B2C88A5A1DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5700B63D-857D-43FD-B0C4-4B2C88A5A1DA}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{5700B63D-857D-43FD-B0C4-4B2C88A5A1DA}.Debug|x64.Build.0 = Debug|Any CPU
-		{5700B63D-857D-43FD-B0C4-4B2C88A5A1DA}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{5700B63D-857D-43FD-B0C4-4B2C88A5A1DA}.Debug|x86.Build.0 = Debug|Any CPU
-		{5700B63D-857D-43FD-B0C4-4B2C88A5A1DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5700B63D-857D-43FD-B0C4-4B2C88A5A1DA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5700B63D-857D-43FD-B0C4-4B2C88A5A1DA}.Release|x64.ActiveCfg = Release|Any CPU
-		{5700B63D-857D-43FD-B0C4-4B2C88A5A1DA}.Release|x64.Build.0 = Release|Any CPU
-		{5700B63D-857D-43FD-B0C4-4B2C88A5A1DA}.Release|x86.ActiveCfg = Release|Any CPU
-		{5700B63D-857D-43FD-B0C4-4B2C88A5A1DA}.Release|x86.Build.0 = Release|Any CPU
 		{6212FADF-45A6-4613-B5A8-5C5A57F3BFB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6212FADF-45A6-4613-B5A8-5C5A57F3BFB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6212FADF-45A6-4613-B5A8-5C5A57F3BFB0}.Debug|x64.ActiveCfg = Debug|Any CPU

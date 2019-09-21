@@ -5,14 +5,14 @@ using Prism.Events;
 using VCore;
 using VCore.ViewModels;
 using VPlayer.AudioStorage.Interfaces;
-using VPlayer.AudioStorage.Models;
+using VPlayer.Core.DomainClasses;
 using VPlayer.Core.Events;
 using VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels;
 
 namespace VPlayer.Library.ViewModels
 {
-  public abstract class PlayableViewModel<TModel> : ViewModel<TModel>, IPlayableViewModel where TModel : INamedEntity
-  {
+  public abstract class PlayableViewModel<TModel> : ViewModel<TModel>, IPlayableViewModel<TModel> where TModel : INamedEntity
+    {
     #region Fields
 
     protected readonly IEventAggregator eventAggregator;
@@ -44,9 +44,11 @@ namespace VPlayer.Library.ViewModels
 
     public abstract string BottomText { get; }
 
-    public abstract byte[] ImageThumbnail { get; }
+    public abstract byte[] ImageThumbnail { get;}
 
     public string Name => Model.Name;
+    public int ModelId => Model.Id;
+    public abstract void Update(TModel updateItem);
 
     #endregion
 
@@ -92,7 +94,6 @@ namespace VPlayer.Library.ViewModels
     #endregion
 
     #endregion
-
 
   }
 }

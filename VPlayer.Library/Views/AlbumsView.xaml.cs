@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using PropertyChanged;
-using VPlayer.AudioStorage.Models;
+using VCore.Modularity.Interfaces;
 using VPlayer.Library.ViewModels;
 
 namespace VPlayer.Library.Views
@@ -24,7 +24,7 @@ namespace VPlayer.Library.Views
     /// </summary>
 
 
-    public partial class AlbumsView : Page
+    public partial class AlbumsView : UserControl, IView
     {
         public AlbumsView()
         {

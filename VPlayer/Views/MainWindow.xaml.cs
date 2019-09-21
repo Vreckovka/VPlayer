@@ -6,12 +6,12 @@ using System.Windows;
 using System.Windows.Input;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
+using JetBrains.Annotations;
 using KeyListener;
 using Prism.Events;
 using VCore.Factories;
 using VPlayer.AudioStorage;
 using VPlayer.AudioStorage.Interfaces;
-using VPlayer.AudioStorage.Models;
 using VPlayer.ViewModels;
 using VPlayer.WebPlayer.Views;
 
@@ -22,8 +22,11 @@ namespace VPlayer.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        private readonly IStorageManager storageManager;
+
+        public MainWindow([NotNull] IStorageManager storageManager)
         {
+            this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
             InitializeComponent();
         }
 
@@ -59,7 +62,7 @@ namespace VPlayer.Views
 
     private async void Button_Click(object sender, RoutedEventArgs e)
     {
-      await StorageManager.GetStorage().ClearStorage();
+      await storageManager.ClearStorage();
     }
 
     //private void ListViewItem_PreviewMouseDown2(object sender, MouseButtonEventArgs e)

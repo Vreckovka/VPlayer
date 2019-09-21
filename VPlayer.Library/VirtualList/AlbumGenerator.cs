@@ -8,16 +8,18 @@ using System.Threading;
 using System.Threading.Tasks;
 using VPlayer.AudioStorage;
 using VPlayer.AudioStorage.Interfaces;
-using VPlayer.AudioStorage.Models;
+using VPlayer.Core.DomainClasses;
 using VPlayer.Library.Properties;
 using VPlayer.Library.ViewModels;
 using VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels;
 
 namespace VPlayer.Library.VirtualList
 {
-    public class PlayableItemsGenerator<TModel> : IObjectGenerator<TModel> where TModel : class, IPlayableViewModel
+    public class PlayableItemsGenerator<TViewModel, TModel> : IObjectGenerator<TViewModel> 
+        where TViewModel : class, IPlayableViewModel<TModel>
+        where TModel : INamedEntity
     {
-        private readonly PagedEmployeeRepository<TModel> _repository;
+        private readonly PagedEmployeeRepository<TViewModel,TModel> _repository;
         //public PlayableItemsGenerator()
         //{
         //    using (IStorage storage = StorageManager.GetStorage())
@@ -29,9 +31,9 @@ namespace VPlayer.Library.VirtualList
         //    }
         //}
 
-        public PlayableItemsGenerator(IEnumerable<TModel> source)
+        public PlayableItemsGenerator(IEnumerable<TViewModel> source)
         {
-            _repository = new PagedEmployeeRepository<TModel>(source.ToArray());
+            _repository = new PagedEmployeeRepository<TViewModel,TModel>(source.ToArray());
         }
 
         #region IObjectGenerator<SampleObject> Members
@@ -52,20 +54,21 @@ namespace VPlayer.Library.VirtualList
         /// </summary>
         /// <param name="index">Object index.</param>
         /// <returns>New object instance.</returns>
-        public TModel CreateObject(int index)
+        public TViewModel CreateObject(int index)
         {
             return _repository.GetAt(index);
         }
         #endregion
     }
 
-    public class PagedEmployeeRepository<TModel> where TModel : IPlayableViewModel
+    public class PagedEmployeeRepository<TViewModel,TModel> where TViewModel : IPlayableViewModel<TModel>
+    where TModel : INamedEntity
     {
-        private readonly TModel[] source;
-        private  TModel[] _cache;
+        private readonly TViewModel[] source;
+        private TViewModel[] _cache;
         public int NumberOfEmployees = -1;
 
-        public PagedEmployeeRepository([NotNull] TModel[] source)
+        public PagedEmployeeRepository([NotNull] TViewModel[] source)
         {
             this.source = source ?? throw new ArgumentNullException(nameof(source));
             NumberOfEmployees = source.Length;
@@ -94,21 +97,21 @@ namespace VPlayer.Library.VirtualList
         public int Count()
         {
             var employees = DoLoadPage();
-            _cache = new TModel[NumberOfEmployees];
+            _cache = new TViewModel[NumberOfEmployees];
             UpdateCache(employees);
             return NumberOfEmployees;
         }
 
-        protected List<TModel> LoadPage()
+        protected List<TViewModel> LoadPage()
         {
             var employees = DoLoadPage();
             UpdateCache(employees);
             return employees;
         }
 
-        protected virtual List<TModel> DoLoadPage()
+        protected virtual List<TViewModel> DoLoadPage()
         {
-            var employees = new List<TModel>();
+            var employees = new List<TViewModel>();
             for (int i = PageCursorStartIndex; i < PageCursorStartIndex + PageSize; i++)
             {
                 if (source.Length > i)
@@ -120,7 +123,7 @@ namespace VPlayer.Library.VirtualList
             return employees;
         }
 
-        private void UpdateCache(List<TModel> compounds)
+        private void UpdateCache(List<TViewModel> compounds)
         {
             for (int i = PageCursorStartIndex; i < PageCursorStartIndex + compounds.Count; i++)
             {
@@ -129,7 +132,7 @@ namespace VPlayer.Library.VirtualList
             }
         }
 
-        public TModel GetAt(int index)
+        public TViewModel GetAt(int index)
         {
             if (index < NumberOfEmployees && _cache[index] == null)
             {
@@ -142,7 +145,7 @@ namespace VPlayer.Library.VirtualList
             return _cache[index];
         }
 
-        public int IndexOf(TModel employee)
+        public int IndexOf(TViewModel employee)
         {
             var result =
                 _cache.Where(each => each != null && each.Name == employee.Name).Select((each, index) => new { Position = index, employee }).

@@ -14,7 +14,6 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Prism.Events;
 using VCore.Modularity.Interfaces;
-using VPlayer.AudioStorage.Models;
 using VPlayer.Library.ViewModels;
 using VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels;
 using WpfToolkit.Controls;

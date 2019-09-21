@@ -49,6 +49,9 @@
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net" />
@@ -79,7 +82,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AudioInfoDownloader.cs" />
+    <Compile Include="AudioInfoDownloaderProvider.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Models\Cover.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -93,9 +96,13 @@
       <Project>{6212fadf-45a6-4613-b5a8-5c5a57f3bfb0}</Project>
       <Name>Logger</Name>
     </ProjectReference>
-    <ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj">
-      <Project>{b5245008-cfdf-4b83-bf61-b0b26a8e92bf}</Project>
-      <Name>VPlayer.AudioStorage</Name>
+    <ProjectReference Include="..\VCore\VCore.csproj">
+      <Project>{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}</Project>
+      <Name>VCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VPlayer.Core\VPlayer.Core.csproj">
+      <Project>{B8D5C40B-3B3D-43E1-95FA-97087581BDA2}</Project>
+      <Name>VPlayer.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
