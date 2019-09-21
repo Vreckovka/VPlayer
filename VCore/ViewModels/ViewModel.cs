@@ -34,4 +34,5 @@ namespace VCore.ViewModels
 
   }
   public interface IParametrizedViewModel { }
+
 }

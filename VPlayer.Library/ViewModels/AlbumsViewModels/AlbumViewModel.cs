@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,7 +34,9 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
         public override IEnumerable<Song> GetSongsToPlay()
         {
-            return null;
+            var songs = storage.GetRepository<Album>().Include(x => x.Songs).SelectMany(z => z.Songs).ToList();
+
+            return songs;
         }
     }
 }

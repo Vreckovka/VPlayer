@@ -1,0 +1,55 @@
+﻿<UserControl
+    x:Class="VPlayer.Player.Views.PlayerView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:VPlayer.Player.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <Grid>
+        <Border Background="{StaticResource TopWindowsBrush}">
+            <Border.Effect>
+                <DropShadowEffect
+                    BlurRadius="8"
+                    Direction="-50"
+                    Opacity="0.5"
+                    ShadowDepth="3"
+                    Color="#FF110D32" />
+            </Border.Effect>
+
+            <Grid HorizontalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Grid HorizontalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Button
+                        Margin="15"
+                        BorderThickness="0"
+                        Style="{StaticResource RefreshButton}"
+                        Tag="Pause" />
+
+                    <Button
+                        x:Name="Play_Button"
+                        Grid.Column="1"
+                        Margin="7"
+                        Padding="15"
+                        BorderThickness="0"
+                        Style="{StaticResource PlayButton}"
+                        Tag="Pause" />
+
+                    <Button
+                        Grid.Column="2"
+                        Margin="15"
+                        BorderThickness="0"
+                        Style="{StaticResource StopButton}" />
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1206,7 +1206,8 @@ namespace VPlayer.AudioInfoDownloader
                         Album = musicProp.Album,
                         Artist = musicProp.Artist != "" ? musicProp.Artist : musicProp?.AlbumArtist,
                         Title = musicProp.Title,
-                        DiskLocation = path
+                        DiskLocation = path,
+                        Duration = (int)musicProp.Duration.TotalSeconds
                     };
 
                     return newAudioInfo;

@@ -199,7 +199,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
                     {
                         song = new Song(audioInfo.Title, album)
                         {
-                            DiskLocation = audioInfo.DiskLocation
+                            DiskLocation = audioInfo.DiskLocation,
+                            Duration = audioInfo.Duration
                         };
 
                         context.Songs.Add(song);

@@ -41,10 +41,6 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Bass.Net, Version=2.4.14.0, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\AudioSpectrum\AudioSpectrum\bin\Debug\Bass.Net.dll</HintPath>
-    </Reference>
     <Reference Include="CommonServiceLocator, Version=2.0.4.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.2.0.4\lib\net47\CommonServiceLocator.dll</HintPath>
     </Reference>
@@ -86,14 +82,25 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="Vlc.DotNet.Core, Version=3.0.0.0, Culture=neutral, PublicKeyToken=84529da31f4eb963, processorArchitecture=MSIL">
+      <HintPath>..\packages\Vlc.DotNet.Core.3.0.0\lib\net45\Vlc.DotNet.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Vlc.DotNet.Core.Interops, Version=3.0.0.0, Culture=neutral, PublicKeyToken=84529da31f4eb963, processorArchitecture=MSIL">
+      <HintPath>..\packages\Vlc.DotNet.Core.Interops.3.0.0\lib\net45\Vlc.DotNet.Core.Interops.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ViewModels\AudioAnalyzer\DeviceViewModel.cs" />
-    <Compile Include="ViewModels\AudioAnalyzer\SpectrumViewModel.cs" />
-    <Compile Include="ViewModels\AudioAnalyzer\AudioAnalyzerViewModel.cs" />
+    <Compile Include="Converters\ActualTimeConverter.cs" />
+    <Compile Include="ViewModels\PlayerViewModel.cs" />
+    <Compile Include="Views\PlayerView.xaml.cs">
+      <DependentUpon>PlayerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WindowsPlayerView.xaml.cs">
+      <DependentUpon>WindowsPlayerView.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -126,6 +133,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\KeyListener\Listener.csproj">
+      <Project>{ba238278-32d0-4c4e-881a-ad2be152832c}</Project>
+      <Name>Listener</Name>
+    </ProjectReference>
     <ProjectReference Include="..\VCore\VCore.csproj">
       <Project>{5aa43597-fd3d-4f10-89a5-eb77d3b831d9}</Project>
       <Name>VCore</Name>
@@ -138,9 +149,21 @@
       <Project>{b5245008-cfdf-4b83-bf61-b0b26a8e92bf}</Project>
       <Name>VPlayer.AudioStorage</Name>
     </ProjectReference>
+    <ProjectReference Include="..\VPlayer.Core\VPlayer.Core.csproj">
+      <Project>{b8d5c40b-3b3d-43e1-95fa-97087581bda2}</Project>
+      <Name>VPlayer.Core</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Views\" />
+    <Page Include="Views\PlayerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\WindowsPlayerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.4.2.1\build\Fody.targets" Condition="Exists('..\packages\Fody.4.2.1\build\Fody.targets')" />

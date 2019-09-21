@@ -143,7 +143,7 @@
     <Compile Include="ViewModels\BaseMainWindowViewModel.cs" />
     <Compile Include="ViewModels\Navigation\INavigationItem.cs" />
     <Compile Include="ViewModels\Navigation\NavigationViewModel.cs" />
-    <Compile Include="ViewModels\RegionViewModel.cs" />
+    <Compile Include="ViewModels\RegionCollectionViewModel.cs" />
     <Compile Include="ViewModels\ViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

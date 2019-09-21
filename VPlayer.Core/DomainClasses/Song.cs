@@ -21,6 +21,7 @@ namespace VPlayer.Core.DomainClasses
         public string MusicBrainzId { get; set; }
         public virtual Album Album { get; set; }
 
+        public int Duration { get; set; }
         public override string ToString()
         {
             return $"{Name}|{Album}";

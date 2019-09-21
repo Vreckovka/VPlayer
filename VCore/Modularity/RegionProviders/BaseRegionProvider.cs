@@ -19,150 +19,180 @@ using VCore.ViewModels;
 
 namespace VCore.Modularity.RegionProviders
 {
-  public class BaseRegionProvider : IRegionProvider
-  {
-    private readonly IRegionManager regionManager;
-    private readonly IViewFactory viewFactory;
-    private readonly IViewModelsFactory viewModelsFactory;
-
-    private List<IRegistredView> Views = new List<IRegistredView>();
-
-    public BaseRegionProvider(
-      IRegionManager regionManager,
-      IViewFactory viewFactory,
-      [NotNull] IViewModelsFactory viewModelsFactory)
+    public class BaseRegionProvider : IRegionProvider
     {
-      this.regionManager = regionManager ?? throw new ArgumentNullException(nameof(regionManager));
-      this.viewFactory = viewFactory ?? throw new ArgumentNullException(nameof(viewFactory));
-      this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+        private readonly IRegionManager regionManager;
+        private readonly IViewFactory viewFactory;
+        private readonly IViewModelsFactory viewModelsFactory;
+
+        private List<IRegistredView> Views = new List<IRegistredView>();
+
+        public BaseRegionProvider(
+          IRegionManager regionManager,
+          IViewFactory viewFactory,
+          [NotNull] IViewModelsFactory viewModelsFactory)
+        {
+            this.regionManager = regionManager ?? throw new ArgumentNullException(nameof(regionManager));
+            this.viewFactory = viewFactory ?? throw new ArgumentNullException(nameof(viewFactory));
+            this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+        }
+
+        #region SubscribeToChanges
+
+        private void SubscribeToChanges<TView, TViewModel>(RegistredView<TView, TViewModel> view)
+          where TView : class, IView
+          where TViewModel : class, INotifyPropertyChanged
+        {
+            view.ViewWasActivated.Subscribe((x) => x.Activate());
+            view.ViewWasDeactivated.Subscribe((x) => x.Deactivate());
+        }
+
+        #endregion
+
+        #region RegisterView
+
+        public Guid RegisterView<TView, TViewModel>(string name, TViewModel viewModel, bool containsNestedRegion)
+          where TView : class, IView
+          where TViewModel : class, INotifyPropertyChanged
+        {
+            var view = CreateView<TView, TViewModel>(name, viewModel, containsNestedRegion);
+
+            SubscribeToChanges(view);
+
+            Views.Add(view);
+
+            return view.Guid;
+        }
+
+        #endregion
+
+        #region CreateView
+
+        public RegistredView<TView, TViewModel> CreateView<TView, TViewModel>(string regionName, TViewModel viewModel, bool initializeImmediately = false)
+          where TViewModel : class, INotifyPropertyChanged
+          where TView : class, IView
+        {
+            return new RegistredView<TView, TViewModel>(regionManager.Regions[regionName], viewFactory, viewModelsFactory, viewModel, initializeImmediately);
+        } 
+
+
+        #endregion
+
+        public void ActivateView(Guid guid)
+        {
+            var view = Views.SingleOrDefault(x => x.Guid == guid);
+            view?.Activate();
+        }
+
+        public void DectivateView(Guid guid)
+        {
+            var view = Views.SingleOrDefault(x => x.Guid == guid);
+            view?.Deactivate();
+        }
     }
-
-    private void SubscribeToChanges<TView, TViewModel>(RegistredView<TView, TViewModel> view)
-      where TView : class, IView
-      where TViewModel : class, IRegionViewModel<TView>
-    {
-      view.ViewWasActivated.Subscribe((x) => x.Activate());
-      view.ViewWasDeactivated.Subscribe((x) => x.Deactivate());
-    }
-
-    public void RegisterView<TView, TViewModel>(string name, TViewModel viewModel, bool containsNestedRegion)
-      where TView : class, IView
-      where TViewModel : class, IRegionViewModel<TView>
-    {
-      var view = CreateView<TView, TViewModel>(name, viewModel, containsNestedRegion);
-
-      SubscribeToChanges(view);
-
-      Views.Add(view);
-    }
-
-
-    public RegistredView<TView, TViewModel> CreateView<TView, TViewModel>(string regionName, TViewModel viewModel, bool initializeImmediately = false)
-      where TViewModel : class, IRegionViewModel<TView>
-      where TView : class, IView
-    {
-      return new RegistredView<TView, TViewModel>(regionManager.Regions[regionName], viewFactory, viewModelsFactory, viewModel, initializeImmediately);
-    }
-  }
 }
-
 
 public class RegistredView<TView, TViewModel> : IRegistredView
   where TView : class, IView
-  where TViewModel : class, IRegionViewModel<TView>
+  where TViewModel : class, INotifyPropertyChanged
 {
-  private readonly IViewFactory viewFactory;
-  private readonly IViewModelsFactory viewModelsFactory;
+    private readonly IViewFactory viewFactory;
+    private readonly IViewModelsFactory viewModelsFactory;
 
-  public RegistredView(
-    IRegion region,
-    [NotNull] IViewFactory viewFactory,
-    [NotNull] IViewModelsFactory viewModelsFactory,
-    TViewModel viewModel = null,
-    bool initializeImmediately = false
-    )
-  {
-    this.viewFactory = viewFactory ?? throw new ArgumentNullException(nameof(viewFactory));
-    this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
-
-    ViewModel = viewModel;
-    ViewName = typeof(TView).Name;
-    Region = region;
-
-    if (initializeImmediately)
+    public RegistredView(
+      IRegion region,
+      [NotNull] IViewFactory viewFactory,
+      [NotNull] IViewModelsFactory viewModelsFactory,
+      TViewModel viewModel = null,
+      bool initializeImmediately = false
+      )
     {
-      View = RegisterView();
+        this.viewFactory = viewFactory ?? throw new ArgumentNullException(nameof(viewFactory));
+        this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+
+        Guid = Guid.NewGuid();
+
+        ViewModel = viewModel;
+        ViewName = typeof(TView).Name;
+        Region = region;
+
+        if (initializeImmediately)
+        {
+            View = RegisterView();
+        }
+
+        Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
+            x => ViewModel.PropertyChanged += x,
+            x => ViewModel.PropertyChanged -= x)
+          .Where(x => x.EventArgs.PropertyName == nameof(RegionViewModel<IView>.IsActive) && ((IActivable)x.Sender).IsActive)
+          .Subscribe((x) => ViewWasActivated.OnNext(this));
+
+        Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
+            x => ViewModel.PropertyChanged += x,
+            x => ViewModel.PropertyChanged -= x)
+          .Where(x => x.EventArgs.PropertyName == nameof(RegionViewModel<IView>.IsActive) && !((IActivable)x.Sender).IsActive)
+          .Subscribe((x) => ViewWasDeactivated.OnNext(this));
+
     }
 
-    Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
-        x => ViewModel.PropertyChanged += x,
-        x => ViewModel.PropertyChanged -= x)
-      .Where(x => x.EventArgs.PropertyName == nameof(RegionViewModel<IView>.IsActive) && ((IActivable)x.Sender).IsActive)
-      .Subscribe((x) => ViewWasActivated.OnNext(this));
+    public string ViewName { get; set; }
+    public IRegion Region { get; set; }
+    public Subject<IRegistredView> ViewWasActivated { get; } = new Subject<IRegistredView>();
+    public Subject<IRegistredView> ViewWasDeactivated { get; } = new Subject<IRegistredView>();
+    public TView View { get; set; }
+    public TViewModel ViewModel { get; set; }
+    public Guid Guid { get; }
 
-    Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
-        x => ViewModel.PropertyChanged += x,
-        x => ViewModel.PropertyChanged -= x)
-      .Where(x => x.EventArgs.PropertyName == nameof(RegionViewModel<IView>.IsActive) && !((IActivable)x.Sender).IsActive)
-      .Subscribe((x) => ViewWasDeactivated.OnNext(this));
-
-  }
-
-  public string ViewName { get; set; }
-  public IRegion Region { get; set; }
-  public Subject<IRegistredView> ViewWasActivated { get; } = new Subject<IRegistredView>();
-  public Subject<IRegistredView> ViewWasDeactivated { get; } = new Subject<IRegistredView>();
-  public TView View { get; set; }
-  public TViewModel ViewModel { get; set; }
-
-  public void Activate()
-  {
-    Region.Activate(RegisterView());
-  }
-
-  public void Deactivate()
-  {
-    Region.Deactivate(View);
-  }
-
-  public TView RegisterView()
-  {
-    if (View == null)
+    public void Activate()
     {
-      View = Create();
-
-      if (ViewModel == null)
-        ViewModel = viewModelsFactory.Create<TViewModel>();
-
-      View.DataContext = ViewModel;
-
-      Region.Add(View, ViewName);
+        Region.Activate(RegisterView());
     }
 
-    return View;
-  }
+    public void Deactivate()
+    {
+        Region.Deactivate(View);
+    }
 
-  public TView Create()
-  {
-    return viewFactory.Create<TView>();
-  }
+    public TView RegisterView()
+    {
+        if (View == null)
+        {
+            View = Create();
 
-  public event PropertyChangedEventHandler PropertyChanged;
+            if (ViewModel == null)
+                ViewModel = viewModelsFactory.Create<TViewModel>();
 
-  [NotifyPropertyChangedInvocator]
-  protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-  {
-    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-  }
+            View.DataContext = ViewModel;
+
+            Region.Add(View, ViewName);
+        }
+
+        return View;
+    }
+
+    public TView Create()
+    {
+        return viewFactory.Create<TView>();
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    [NotifyPropertyChangedInvocator]
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }
 
 public interface IRegistredView
 {
-  Subject<IRegistredView> ViewWasActivated { get; }
-  Subject<IRegistredView> ViewWasDeactivated { get; }
+    Subject<IRegistredView> ViewWasActivated { get; }
+    Subject<IRegistredView> ViewWasDeactivated { get; }
 
-  void Activate();
+    void Activate();
 
-  void Deactivate();
+    void Deactivate();
+
+    Guid Guid { get; }
 }
 

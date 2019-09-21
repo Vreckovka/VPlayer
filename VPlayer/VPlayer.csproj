@@ -304,18 +304,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PlayerPanelPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="StylesDictionaries\WindowsStyle.xaml.cs">
       <DependentUpon>WindowsStyle.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\PlayerPanelPage.xaml.cs">
-      <DependentUpon>PlayerPanelPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -367,6 +360,10 @@
     <ProjectReference Include="..\VPlayer.Library\VPlayer.Library.csproj">
       <Project>{26d6bb81-3f3c-4ddc-857d-2b2dc4c660b8}</Project>
       <Name>VPlayer.Library</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VPlayer.Player\VPlayer.Player.csproj">
+      <Project>{d56e4595-786f-4580-b3e0-eea5871f582f}</Project>
+      <Name>VPlayer.Player</Name>
     </ProjectReference>
     <ProjectReference Include="..\VPlayer.WebPlayer\VPlayer.WebPlayer.csproj">
       <Project>{2d6b4aae-1065-4e73-a96a-bdc154f0f4fe}</Project>

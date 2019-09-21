@@ -46,85 +46,12 @@
         <ListView ItemsSource="{Binding NavigationViewModel.Items}" Style="{StaticResource ListView_MenuStyle}" />
       </Border>
 
-      <!--  Music Player  -->
-      <!--<Grid Grid.Column="1">
-        <Grid.RowDefinitions>
-          <RowDefinition Height="*" />
-          <RowDefinition Height="auto" />
-        </Grid.RowDefinitions>
-
-        <Grid>
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="5" />
-            <ColumnDefinition Width="*"
-                              MinWidth="250"
-                              MaxWidth="350" />
-          </Grid.ColumnDefinitions>
-
-          <Grid Grid.Column="0">
-            <Grid.RowDefinitions>
-              <RowDefinition Height="auto" />
-              <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <wpf:VlcControl x:Name="MyControl" />
-          </Grid>
-          <GridSplitter Grid.Column="1"
-                        Width="5"
-                        HorizontalAlignment="Stretch" />
-          <Grid Grid.Column="2">
-            <Grid.RowDefinitions>
-              <RowDefinition Height="auto" />
-              <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <ContentPresenter Content="{Binding ElementName=ListView_Tracks, Path=SelectedItem}" ContentTemplate="{StaticResource SongInfoTemplate}" />
-
-
-            <ListView x:Name="ListView_Tracks"
-                      Grid.Row="1"
-                      AllowDrop="True"
-                      ItemTemplate="{StaticResource SoundTrackTemplate}"
-                      ItemsSource="{Binding AudioTracks}"
-                      Style="{StaticResource AlbumsSongs}" />
-          </Grid>
-        </Grid>
-
-        <Grid Grid.Row="1">
-          <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-          </Grid.RowDefinitions>
-
-          <Grid Grid.Row="1">
-            <TextBlock Margin="5,0,5,5" HorizontalAlignment="Left">
-              <TextBlock.Text>
-                <MultiBinding Converter="{windowsPlayer:ActualTimeConverter}">
-                  <Binding ElementName="Slider_Time" Path="Value" />
-                  <Binding Path="ActualTrack.Duration" />
-                </MultiBinding>
-              </TextBlock.Text>
-            </TextBlock>
-            <TextBlock Margin="5,0,15,5"
-                       HorizontalAlignment="Right"
-                       Text="{Binding ActualTrack.Duration, StringFormat=hh\\:mm\\:ss}" />
-          </Grid>
-        </Grid>
-      </Grid>-->
-
-      <!--  Library  -->
-
       <ContentControl Name="LibraryRegion"
                       Grid.Column="1"
                       mvvm:RegionManager.RegionName="{x:Static regions:RegionNames.WindowsPlayerContentRegion}" />
     </Grid>
 
-    <Slider x:Name="Slider_Time"
-            Grid.Row="1"
-            Height="25"
-            Margin="5"
-            IsMoveToPointEnabled="True"
-            Maximum="100"
-            Value="{Binding ActualTimePosition}" />
+    
   </Grid>
 
 </UserControl>
