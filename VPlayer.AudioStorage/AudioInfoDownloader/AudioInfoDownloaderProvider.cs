@@ -33,6 +33,7 @@ namespace VPlayer.AudioInfoDownloader
     /// </summary>
     public class AudioInfoDownloaderProvider : IInitializable
     {
+        private string[] supportedItems = new string[] {"*.mp3", "*.flac"};
         private string api = "eJSq8XSeYR";
         private string meta = "recordings+releases+tracks";
 
@@ -153,7 +154,7 @@ namespace VPlayer.AudioInfoDownloader
                     List<AudioInfo> audioInfos = new List<AudioInfo>();
 
                     DirectoryInfo d = new DirectoryInfo(directoryPath);
-                    FileInfo[] Files = d.GetFiles("*.mp3");
+                    FileInfo[] Files = supportedItems.SelectMany(ext => d.GetFiles(ext)).ToArray();
 
                     foreach (FileInfo file in Files)
                     {
@@ -748,7 +749,7 @@ namespace VPlayer.AudioInfoDownloader
 
                     if (album.Artist.MusicBrainzId == null)
                     {
-                        newArtist = await UpdateArtist(album.Artist.MusicBrainzId);
+                        newArtist = await UpdateArtist(album.Artist.Name);
 
 
                         if (newArtist == null)
@@ -991,7 +992,7 @@ namespace VPlayer.AudioInfoDownloader
             if (!subDirectories)
             {
                 DirectoryInfo d = new DirectoryInfo(path); //Assuming Test is your Folder
-                FileInfo[] Files = d.GetFiles("*.mp3"); //Getting Text files
+                FileInfo[] Files = supportedItems.SelectMany(ext => d.GetFiles(ext)).ToArray(); //Getting Text files
 
                 foreach (FileInfo file in Files)
                 {
@@ -1264,7 +1265,7 @@ namespace VPlayer.AudioInfoDownloader
 
 
                 DirectoryInfo d = new DirectoryInfo(path);
-                FileInfo[] Files = d.GetFiles("*.mp3");
+                FileInfo[] Files = supportedItems.SelectMany(ext => d.GetFiles(ext)).ToArray();
 
                 foreach (FileInfo file in Files)
                 {

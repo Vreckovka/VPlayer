@@ -1,16 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
 using VPlayer.Core.DomainClasses;
+using VPlayer.Core.Modularity.Regions;
+using VPlayer.Library.Views;
 
 namespace VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels
 {
    
-    public class ArtistDetailViewModel : ViewModel
+    public class ArtistDetailViewModel : RegionViewModel<ArtistDetailView>
     {
-        public Artist ActualArtist { get; set; }
-        public ICollection<Album> Albums => ActualArtist?.Albums;
+        public ArtistDetailViewModel(IRegionProvider regionProvider, ArtistViewModel artist) : base(regionProvider)
+        {
+            ActualArtist = artist;
+        }
+
+        public override string RegionName => RegionNames.LibraryContentRegion;
+        public override bool ContainsNestedRegions => false;
+
+        public ArtistViewModel ActualArtist { get; set; }
+        public ICollection<Album> Albums => ActualArtist?.Model.Albums;
 
         public IEnumerable<Song> Songs
         {
@@ -40,11 +51,6 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels
                 else
                     return 0;
             }
-        }
-        public ArtistDetailViewModel(Artist artist)
-        {
-            ActualArtist = artist;
-
         }
     }
 }

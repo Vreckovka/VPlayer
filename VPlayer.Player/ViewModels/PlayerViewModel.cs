@@ -4,7 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using KeyListener;
 using Prism.Events;
 using VCore.Annotations;
@@ -20,10 +23,11 @@ namespace VPlayer.Player.ViewModels
 {
     public class SongInPlayList : ViewModel<Song>
     {
-        public float ActualTime { get; set; }
-
+        public TimeSpan ActualTime { get; set; }
+        public float ActualPosition { get; set; }
         public string Name { get; set; }
-        public TimeSpan Duration { get; set; } 
+        public TimeSpan Duration { get; set; }
+        public bool IsPlaying { get; set; }
         public SongInPlayList(Song model) : base(model)
         {
             Name = model.Name;
@@ -34,12 +38,12 @@ namespace VPlayer.Player.ViewModels
     {
         private readonly IEventAggregator eventAggregator;
         public List<SongInPlayList> PlayList { get; set; }
-        private static int actualSongIndex = 0;
-        public static VlcMediaPlayer MediaPlayer { get; private set; }
-
-        public static SongInPlayList ActualSong { get; private set; }
-
+        private int actualSongIndex = 0;
+        public VlcMediaPlayer MediaPlayer { get; private set; }
+        public double ActualTime { get; set; }
+        public SongInPlayList ActualSong { get; private set; }
         public static bool IsPlaying { get; set; }
+        public byte[] ActualImage { get; set; }
         public PlayerViewModel(IRegionProvider regionProvider, [NotNull] IEventAggregator eventAggregator) : base(regionProvider)
         {
             this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
@@ -67,7 +71,7 @@ namespace VPlayer.Player.ViewModels
             KeyListener.KeyListener.OnKeyPressed += KeyListener_OnKeyPressed;
 
             Views[typeof(WindowsPlayerView)].Header = "Player";
-         
+
 
             var path = Path.Combine("C:\\Users\\Roman Pecho\\source\\repos\\VPlayer\\KeyListener", "libvlc", IntPtr.Size == 4 ? "win-x86" : "win-x64");
 
@@ -93,10 +97,14 @@ namespace VPlayer.Player.ViewModels
 
         private void MediaPlayer_TimeChanged(object sender, VlcMediaPlayerTimeChangedEventArgs e)
         {
-            ActualSong.ActualTime = ((VlcMediaPlayer)sender).Position;
+            ActualSong.ActualPosition = ((VlcMediaPlayer)sender).Position;
+            ActualSong.ActualTime = TimeSpan.FromSeconds(((VlcMediaPlayer)sender).Position * ActualSong.Duration.TotalSeconds);
+            ActualTime = ((VlcMediaPlayer) sender).Position;
         }
 
         #endregion
+
+        #region Play
 
         /// <summary>
         /// Plays playlist or play actual song
@@ -107,6 +115,11 @@ namespace VPlayer.Player.ViewModels
             {
                 if (PlayList.Count > 0)
                 {
+                    foreach (var playingSongs in PlayList.Where(x => x.IsPlaying = false))
+                    {
+                        playingSongs.IsPlaying = false;
+                    }
+
                     if (PlayList[actualSongIndex] == ActualSong)
                     {
                         //mediaPlayer.SetMedia(new Uri(PlayList.Peek().DiskLocation));
@@ -117,12 +130,30 @@ namespace VPlayer.Player.ViewModels
                         MediaPlayer.SetMedia(new Uri(PlayList[actualSongIndex].Model.DiskLocation));
                         MediaPlayer.Play();
                         ActualSong = PlayList[actualSongIndex];
+                        ActualSong.IsPlaying = true;
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            ActualImage = ActualSong.Model?.Album.AlbumFrontCoverBLOB;
+                        });
                     }
                 }
             });
         }
 
+        #endregion
 
+        public ImageSource ByteToImage(byte[] imageData)
+        {
+            BitmapImage biImg = new BitmapImage();
+            MemoryStream ms = new MemoryStream(imageData);
+            biImg.BeginInit();
+            biImg.StreamSource = ms;
+            biImg.EndInit();
+
+            ImageSource imgSrc = biImg as ImageSource;
+
+            return imgSrc;
+        }
 
         public void Pause()
         {
@@ -132,7 +163,7 @@ namespace VPlayer.Player.ViewModels
         public void PlayNext()
         {
             actualSongIndex++;
-            //Play();
+            Play();
         }
 
         private void KeyListener_OnKeyPressed(object sender, KeyPressedArgs e)

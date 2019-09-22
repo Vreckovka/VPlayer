@@ -15,6 +15,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using PropertyChanged;
+using VCore.Modularity.Interfaces;
+using VPlayer.AudioInfoDownloader;
 using VPlayer.AudioInfoDownloader.Models;
 using VPlayer.AudioStorage;
 using VPlayer.Core.DomainClasses;
@@ -27,51 +29,13 @@ namespace VPlayer.Library.Views
     ///
 
     [AddINotifyPropertyChangedInterface]
-    public partial class AlbumCoversView : Page
+    public partial class AlbumCoversView : UserControl, IView
     {
-        public ObservableCollection<Cover> Covers { get; set; } = new ObservableCollection<Cover>();
-
-        public Album Album { get; set; }
-        public AlbumCoversView(Album album)
+        public AlbumCoversView()
         {
             InitializeComponent();
-            DataContext = this;
-            Album = album;
-
-            //Task.Run(async () => { await AudioInfoDownloader.AudioInfoDownloaderProvider.Instance.GetAlbumFrontCoversUrls(album); });
-           
-
-            //AudioInfoDownloader.AudioInfoDownloaderProvider.Instance.CoversDownloaded += Instance_CoversDownloaded;
         }
 
-        private async void Instance_CoversDownloaded(object sender, List<Cover> e)
-        {
-        await Dispatcher.InvokeAsync(async () =>
-            {
-                foreach (var cover in e)
-                {
-                    cover.Size = await Task.Run(() => { return GetFileSize(cover.Url); });
-                    Covers.Add(cover);
-                }
-            });
-        }
-
-
-        public async Task<long> GetFileSize(string url)
-        {
-            long result = 0;
-
-            WebRequest req = WebRequest.Create(url);
-            req.Method = "HEAD";
-            using (WebResponse resp = req.GetResponse())
-            {
-                if (long.TryParse(resp.Headers.Get("Content-Length"), out long contentLength))
-                {
-                    result = contentLength;
-                }
-            }
-
-            return result;
-        }
+       
     }
 }

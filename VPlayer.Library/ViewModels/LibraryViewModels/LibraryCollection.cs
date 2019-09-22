@@ -51,6 +51,8 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
             this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
             ViewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
 
+            LoadQuery = storageManager.GetRepository<TModel>();
+
             LoadData = LoadInitilizedData().Concat(Initilize());
         }
 
@@ -89,7 +91,8 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
                 {
                     try
                     {
-                        var query = storageManager.GetRepository<TModel>().ToList();
+                      
+                        var query = LoadQuery.ToList();
 
                         Items = new ObservableCollection<TViewModel>(query.Select(x => ViewModelsFactory.Create<TViewModel>(x)).ToList());
 

@@ -96,7 +96,7 @@ namespace VCore.ViewModels
         #region Fields
 
         protected readonly IRegionProvider regionProvider;
-
+        
         #endregion
 
         #region Constructors

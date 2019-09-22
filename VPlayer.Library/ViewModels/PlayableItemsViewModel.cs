@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reactive.Linq;
 using VCore.Factories;
 using VCore.Modularity.Interfaces;
@@ -51,10 +52,16 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels
         public abstract override string RegionName { get; }
         public abstract override bool ContainsNestedRegions { get; }
         public abstract string Header { get; }
-
+        public virtual IQueryable<TModel> LoadQuery { get; set; }
         public LibraryCollection<TViewModel, TModel> LibraryCollection { get; set; }
 
         #endregion
+        public override void Initialize()
+        {
+            base.Initialize();
+
+            LoadQuery = LibraryCollection.LoadQuery;
+        }
 
         #region ItemsChanged
 
@@ -88,9 +95,9 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels
 
             if (firstActivation)
             {
+                LibraryCollection.LoadQuery = LoadQuery;
                 LibraryCollection.LoadData.Subscribe(_ => { RaisePropertyChanged(nameof(ViewModels)); });
             }
-
         }
 
         #endregion

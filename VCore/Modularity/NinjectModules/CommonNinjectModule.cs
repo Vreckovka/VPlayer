@@ -13,7 +13,7 @@ namespace VCore.Modularity.NinjectModules
   {
     public override void RegisterProviders()
     {
-      Kernel.Bind<IRegionProvider>().To<BaseRegionProvider>();
+      Kernel.Bind<IRegionProvider>().To<BaseRegionProvider>().InSingletonScope();
     }
 
     public override void RegisterFactories()

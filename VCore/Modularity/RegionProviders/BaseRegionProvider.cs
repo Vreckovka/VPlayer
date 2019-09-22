@@ -51,17 +51,31 @@ namespace VCore.Modularity.RegionProviders
 
         #region RegisterView
 
-        public Guid RegisterView<TView, TViewModel>(string name, TViewModel viewModel, bool containsNestedRegion)
+        public Guid RegisterView<TView, TViewModel>(string regionName, TViewModel viewModel, bool containsNestedRegion)
           where TView : class, IView
           where TViewModel : class, INotifyPropertyChanged
         {
-            var view = CreateView<TView, TViewModel>(name, viewModel, containsNestedRegion);
+            var registredView = Views.SingleOrDefault(x => x.ViewName == RegistredView<TView, TViewModel>.GetViewName());
 
-            SubscribeToChanges(view);
+            if (registredView == null)
+            {
+                var view = CreateView<TView, TViewModel>(regionName, viewModel, containsNestedRegion);
 
-            Views.Add(view);
+                SubscribeToChanges(view);
 
-            return view.Guid;
+                Views.Add(view);
+
+                return view.Guid;
+            }
+            else if(registredView is RegistredView<TView, TViewModel> view)
+            {
+                view.ViewModel = viewModel;
+                return view.Guid;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
 
         #endregion
@@ -113,7 +127,7 @@ public class RegistredView<TView, TViewModel> : IRegistredView
         Guid = Guid.NewGuid();
 
         ViewModel = viewModel;
-        ViewName = typeof(TView).Name;
+        ViewName = GetViewName();
         Region = region;
 
         if (initializeImmediately)
@@ -121,17 +135,7 @@ public class RegistredView<TView, TViewModel> : IRegistredView
             View = RegisterView();
         }
 
-        Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
-            x => ViewModel.PropertyChanged += x,
-            x => ViewModel.PropertyChanged -= x)
-          .Where(x => x.EventArgs.PropertyName == nameof(RegionViewModel<IView>.IsActive) && ((IActivable)x.Sender).IsActive)
-          .Subscribe((x) => ViewWasActivated.OnNext(this));
-
-        Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
-            x => ViewModel.PropertyChanged += x,
-            x => ViewModel.PropertyChanged -= x)
-          .Where(x => x.EventArgs.PropertyName == nameof(RegionViewModel<IView>.IsActive) && !((IActivable)x.Sender).IsActive)
-          .Subscribe((x) => ViewWasDeactivated.OnNext(this));
+      
 
     }
 
@@ -140,7 +144,34 @@ public class RegistredView<TView, TViewModel> : IRegistredView
     public Subject<IRegistredView> ViewWasActivated { get; } = new Subject<IRegistredView>();
     public Subject<IRegistredView> ViewWasDeactivated { get; } = new Subject<IRegistredView>();
     public TView View { get; set; }
-    public TViewModel ViewModel { get; set; }
+
+    private TViewModel viewModel;
+    public TViewModel ViewModel
+    {
+        get { return viewModel; }
+        set
+        {
+            if (value != viewModel)
+            {
+                viewModel = value;
+
+                Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
+                        x => ViewModel.PropertyChanged += x,
+                        x => ViewModel.PropertyChanged -= x)
+                    .Where(x => x.EventArgs.PropertyName == nameof(RegionViewModel<IView>.IsActive) &&
+                                ((IActivable) x.Sender).IsActive)
+                    .Subscribe((x) => ViewWasActivated.OnNext(this));
+
+                Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
+                        x => ViewModel.PropertyChanged += x,
+                        x => ViewModel.PropertyChanged -= x)
+                    .Where(x => x.EventArgs.PropertyName == nameof(RegionViewModel<IView>.IsActive) &&
+                                !((IActivable) x.Sender).IsActive)
+                    .Subscribe((x) => ViewWasDeactivated.OnNext(this));
+            }
+        }
+    }
+
     public Guid Guid { get; }
 
     public void Activate()
@@ -182,17 +213,23 @@ public class RegistredView<TView, TViewModel> : IRegistredView
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
+
+    public static string GetViewName()
+    {
+        return typeof(TView).Name + "_" + typeof(TViewModel).Name;
+    }
 }
 
 public interface IRegistredView
 {
     Subject<IRegistredView> ViewWasActivated { get; }
     Subject<IRegistredView> ViewWasDeactivated { get; }
+    Guid Guid { get; }
+    string ViewName { get; set; }
+
 
     void Activate();
-
     void Deactivate();
-
-    Guid Guid { get; }
+    
 }
 

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using VCore.Modularity.Interfaces;
 using VPlayer.AudioStorage;
 using VPlayer.Core.DomainClasses;
 using VPlayer.Library.ViewModels;
@@ -22,16 +23,11 @@ namespace VPlayer.Library.Views
     /// <summary>
     /// Interaction logic for AlbumDetailView.xaml
     /// </summary>
-    public partial class AlbumDetailView : Page
+    public partial class AlbumDetailView : UserControl, IView
     {
-        public AlbumDetailViewModel AlbumDetailViewModel { get; set; }
         public AlbumDetailView(Album album)
         {
             InitializeComponent();
-            AlbumDetailViewModel = new AlbumDetailViewModel(album);
-            DataContext = AlbumDetailViewModel;
-
-           
         }
     }
 }

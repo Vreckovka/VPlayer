@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,8 +30,8 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
         public override string RegionName => RegionNames.LibraryContentRegion;
         public override bool ContainsNestedRegions => false;
         public override string Header => "Albums";
+        public override IQueryable<Album> LoadQuery => base.LoadQuery.Include(x => x.Artist);
 
 
-       
     }
 }

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using VCore.Modularity.Interfaces;
 using VPlayer.Core.DomainClasses;
 using VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels;
 
@@ -20,12 +21,11 @@ namespace VPlayer.Library.Views
     /// <summary>
     /// Interaction logic for ArtistDetail.xaml
     /// </summary>
-    public partial class ArtistDetailView : Page
+    public partial class ArtistDetailView : UserControl, IView
     {
-        public ArtistDetailView(Artist artist)
+        public ArtistDetailView()
         {
             InitializeComponent();
-            DataContext = new ArtistDetailViewModel(artist);
         }
     }
 }

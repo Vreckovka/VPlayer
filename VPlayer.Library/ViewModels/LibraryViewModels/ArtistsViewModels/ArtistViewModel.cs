@@ -12,16 +12,21 @@ using System.ComponentModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Reactive.Linq;
+using VCore.Annotations;
+using VCore.Factories;
 
 namespace VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels
 {
     public class ArtistViewModel : PlayableViewModel<Artist>
     {
         private readonly IStorageManager storage;
+        private readonly IViewModelsFactory viewModelsFactory;
 
-        public ArtistViewModel(Artist artist, IEventAggregator eventAggregator, IStorageManager storage) : base(artist, eventAggregator)
+        public ArtistViewModel(Artist artist, IEventAggregator eventAggregator, IStorageManager storage,
+            [NotNull] IViewModelsFactory viewModelsFactory) : base(artist, eventAggregator)
         {
             this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
+            this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
         }
 
         public override string BottomText => Model.Albums?.Count.ToString();
@@ -34,9 +39,16 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels
 
         public override IEnumerable<Song> GetSongsToPlay()
         {
-            var songs = storage.GetRepository<Artist>().Include(x => x.Albums.Select(y => y.Songs)).SelectMany(z => z.Albums.SelectMany(x => x.Songs)).ToList();
+            var songs = storage.GetRepository<Artist>()
+                .Include(x => x.Albums.Select(y => y.Songs)).ToList();
 
-            return songs;
+            return songs.SelectMany(x => x.Albums.SelectMany(y => y.Songs));
+        }
+
+        protected override void OnDetail()
+        {
+            var asd = viewModelsFactory.Create<ArtistDetailViewModel>(this);
+            asd.IsActive = true;
         }
     }
 

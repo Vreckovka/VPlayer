@@ -353,8 +353,6 @@
                             </MultiDataTrigger.ExitActions>
                         </MultiDataTrigger>
 
-
-
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

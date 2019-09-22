@@ -7,7 +7,7 @@ namespace VCore.Modularity.RegionProviders
 {
   public interface IRegionProvider
   {
-    Guid RegisterView<TView, TViewModel>(string name, TViewModel viewModel, bool containsNestedRegion)
+    Guid RegisterView<TView, TViewModel>(string regionName, TViewModel viewModel, bool containsNestedRegion)
       where TView : class, IView
       where TViewModel : class, INotifyPropertyChanged;
 
