@@ -125,8 +125,9 @@
   </Style>
 
   <Style x:Key="ListViewItem_Tracks" TargetType="{x:Type ListViewItem}">
-    <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource 85_WhiteTransparentBrush}" />
     <Setter Property="FontFamily" Value="Arial" />
+    <Setter Property="FontWeight" Value="Thin"/>
     <Setter Property="FontSize" Value="15" />
     <Setter Property="Template">
       <Setter.Value>
@@ -143,9 +144,6 @@
                               SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
           </Border>
           <ControlTemplate.Triggers>
-            <Trigger Property="IsEnabled" Value="false">
-              <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
-            </Trigger>
             <MultiDataTrigger>
               <MultiDataTrigger.Conditions>
                 <Condition Binding="{Binding RelativeSource={RelativeSource self}, Path=IsMouseOver}" Value="True" />
@@ -172,7 +170,7 @@
               </MultiDataTrigger.ExitActions>
             </MultiDataTrigger>
 
-            <DataTrigger Binding="{Binding Path=IsPlaying}" Value="True">
+            <DataTrigger Binding="{Binding IsPlaying}" Value="True">
               <DataTrigger.EnterActions>
                 <BeginStoryboard x:Name="A1">
                   <Storyboard>
@@ -207,11 +205,8 @@
               <Trigger.EnterActions>
                 <BeginStoryboard x:Name="A">
                   <Storyboard>
-                    <ColorAnimation Storyboard.TargetProperty="Foreground.Color"
-                                    To="{StaticResource DefaultRedColor}"
-                                    Duration="0:0:0:0.2" />
                     <ColorAnimation Storyboard.TargetProperty="Background.Color"
-                                    To="#25050505"
+                                    To="#15FFFFFF"
                                     Duration="0:0:0:0.2" />
                   </Storyboard>
                 </BeginStoryboard>
@@ -221,15 +216,9 @@
                 <RemoveStoryboard BeginStoryboardName="A" />
                 <BeginStoryboard x:Name="B">
                   <Storyboard>
-                    <ColorAnimation Storyboard.TargetProperty="Foreground.Color"
-                                    To="{StaticResource DefaultRedColor}"
-                                    Duration="0:0:0:0.2" />
-                    <ColorAnimation Storyboard.TargetProperty="Foreground.Color"
-                                    To="#10fe1b48"
-                                    Duration="0:0:0:0.2" />
-                    <ColorAnimation Storyboard.TargetProperty="Foreground.Color"
-                                    To="{StaticResource DefaultWhiteColor}"
-                                    Duration="0:0:0:.2" />
+                    <ColorAnimation Storyboard.TargetProperty="Background.Color"
+                                    Duration="0:0:0:0.2"
+                                    To="Transparent"/>
                   </Storyboard>
                 </BeginStoryboard>
               </Trigger.ExitActions>
@@ -239,7 +228,6 @@
       </Setter.Value>
     </Setter>
   </Style>
-
 
   <Style x:Key="AlbumsSongs" TargetType="ListView">
     <Setter Property="Background" Value="Transparent" />

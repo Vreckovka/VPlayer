@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Design\DesingDatabase.cs" />
     <Compile Include="DomainClasses\Album.cs" />
     <Compile Include="DomainClasses\Artist.cs" />
     <Compile Include="DomainClasses\AudioInfo.cs" />
@@ -55,6 +56,12 @@
     <Compile Include="Events\PlaySongsEvent.cs" />
     <Compile Include="Modularity\Regions\RegionNames.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VCore\VCore.csproj">
+      <Project>{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}</Project>
+      <Name>VCore</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

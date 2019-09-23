@@ -6,6 +6,9 @@
     xmlns:local="clr-namespace:VPlayer.Player.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:windowsPlayer="clr-namespace:VPlayer.WindowsPlayer"
+    xmlns:viewModels="clr-namespace:VPlayer.Player.Design"
+    d:DataContext="{d:DesignInstance Type={x:Type viewModels:PlayerDesingViewModel},
+                                              IsDesignTimeCreatable=True}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
