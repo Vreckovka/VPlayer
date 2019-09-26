@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using VCore.ViewModels;
 using VPlayer.Core.Desing;
+using VPlayer.Core.ViewModels;
 using VPlayer.Player.ViewModels;
 
 namespace VPlayer.Player.Design
@@ -13,7 +14,7 @@ namespace VPlayer.Player.Design
 
       foreach (var song in DesingDatabase.Instance.Albums[0].Songs)
       {
-        PlayList.Add(new SongInPlayList(song));
+        PlayList.Add(new SongInPlayList(null,null,song));
       }
 
       PlayList[2].IsPlaying = true;

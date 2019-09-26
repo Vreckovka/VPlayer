@@ -19,40 +19,21 @@ using VPlayer.Core.DomainClasses;
 using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
-using VPlayer.Library.ViewModels.AlbumsViewModels;
 using VPlayer.Player.Views;
 
 namespace VPlayer.Player.ViewModels
 {
-  public class SongInPlayList : ViewModel<Song>
-  {
-    public TimeSpan ActualTime => TimeSpan.FromSeconds(ActualPosition * Duration.TotalSeconds);
-    public float ActualPosition { get; set; }
-    public string Name { get; set; }
-    public TimeSpan Duration { get; set; }
-    public bool IsPlaying { get; set; }
-    public byte[] Image { get; set; }
-    public AlbumViewModel AlbumViewModel { get; set; }
-    public ArtistViewModel ArtistViewModel { get; set; }
-
-    public SongInPlayList(Song model) : base(model)
-    {
-      Name = model.Name;
-      Duration = TimeSpan.FromSeconds(model.Duration);
-      Image = model?.Album.AlbumFrontCoverBLOB;
-    }
-  }
-
   public class PlayerViewModel : RegionCollectionViewModel
   {
+    #region Fields
+
     private readonly IEventAggregator eventAggregator;
-    public List<SongInPlayList> PlayList { get; set; }
     private int actualSongIndex = 0;
-    public VlcMediaPlayer MediaPlayer { get; private set; }
-    public double ActualTime { get; set; }
-    public SongInPlayList ActualSong { get; private set; }
-    public static bool IsPlaying { get; set; }
-    public byte[] ActualImage { get; set; }
+
+    #endregion
+
+    #region Constructors
+
     public PlayerViewModel(IRegionProvider regionProvider, [NotNull] IEventAggregator eventAggregator) : base(regionProvider)
     {
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
@@ -61,17 +42,20 @@ namespace VPlayer.Player.ViewModels
       RegistredViews.Add(typeof(WindowsPlayerView), new Tuple<string, bool>(RegionNames.WindowsPlayerContentRegion, false));
     }
 
-    public IEnumerable<SelfActivableNavigationItem> SelfActivableNavigationItems;
+    #endregion
 
-    private void PlaySongs(IEnumerable<Song> songs)
-    {
-      PlayList = songs.Select(x => new SongInPlayList(x)).ToList();
-      Play();
-    }
-
-    #region Initialize
+    #region Properties
 
     public override Dictionary<Type, Tuple<string, bool>> RegistredViews { get; set; } = new Dictionary<Type, Tuple<string, bool>>();
+    public List<SongInPlayList> PlayList { get; set; }
+    public VlcMediaPlayer MediaPlayer { get; private set; }
+    public SongInPlayList ActualSong { get; private set; }
+
+    #endregion
+
+    #region Methods
+
+    #region Initialize
 
     public override void Initialize()
     {
@@ -81,10 +65,8 @@ namespace VPlayer.Player.ViewModels
 
       Views[typeof(WindowsPlayerView)].Header = "Player";
 
-
       var currentAssembly = Assembly.GetEntryAssembly();
       var currentDirectory = new FileInfo(currentAssembly.Location).DirectoryName;
-      // Default installation path of VideoLAN.LibVLC.Windows
       var path = new DirectoryInfo(Path.Combine(currentDirectory, "libvlc", IntPtr.Size == 4 ? "win-x86" : "win-x64"));
 
       var libDirectory = new DirectoryInfo(path.FullName);
@@ -99,50 +81,48 @@ namespace VPlayer.Player.ViewModels
       };
 
       MediaPlayer.EndReached += (sender, e) => { PlayNext(); };
-      MediaPlayer.TimeChanged += MediaPlayer_TimeChanged;
+      MediaPlayer.TimeChanged += (sender, e) => { ActualSong.ActualPosition = ((VlcMediaPlayer)sender).Position; };
+      MediaPlayer.Paused += (sender, e) => { ActualSong.IsPlaying = false; };
+      MediaPlayer.Playing += (sender, e) => { ActualSong.IsPlaying = true; };
+
       eventAggregator.GetEvent<PlaySongsEvent>().Subscribe(PlaySongs);
       eventAggregator.GetEvent<PauseEvent>().Subscribe(Pause);
     }
 
-    private void MediaPlayer_TimeChanged(object sender, VlcMediaPlayerTimeChangedEventArgs e)
+    #region PlaySongs
+
+    private void PlaySongs(IEnumerable<SongInPlayList> songs)
     {
-      ActualSong.ActualPosition = ((VlcMediaPlayer)sender).Position;
-      ActualTime = ((VlcMediaPlayer)sender).Position;
+      PlayList = songs.ToList();
+      Play();
+
+      if (ActualSong != null ) ActualSong.IsPlaying = false;
     }
+
+    #endregion
 
     #endregion
 
     #region Play
 
-    /// <summary>
-    /// Plays playlist or play actual song
-    /// </summary>
     public void Play()
     {
       Task.Run(() =>
       {
         if (PlayList.Count > 0)
         {
-          foreach (var playingSongs in PlayList.Where(x => x.IsPlaying = false))
-          {
-            playingSongs.IsPlaying = false;
-          }
+          if (ActualSong != null)  ActualSong.IsPlaying = false;
 
           if (PlayList[actualSongIndex] == ActualSong)
           {
-            //mediaPlayer.SetMedia(new Uri(PlayList.Peek().DiskLocation));
             MediaPlayer.Play();
           }
           else
           {
-            MediaPlayer.SetMedia(new Uri(PlayList[actualSongIndex].Model.DiskLocation));
-            MediaPlayer.Play();
             ActualSong = PlayList[actualSongIndex];
-            ActualSong.IsPlaying = true;
-            Application.Current.Dispatcher.Invoke(() =>
-                  {
-                    ActualImage = ActualSong.Model?.Album.AlbumFrontCoverBLOB;
-                  });
+            MediaPlayer.SetMedia(new Uri(PlayList[actualSongIndex].Model.DiskLocation));
+
+            MediaPlayer.Play();
           }
         }
       });
@@ -150,23 +130,16 @@ namespace VPlayer.Player.ViewModels
 
     #endregion
 
-    public ImageSource ByteToImage(byte[] imageData)
-    {
-      BitmapImage biImg = new BitmapImage();
-      MemoryStream ms = new MemoryStream(imageData);
-      biImg.BeginInit();
-      biImg.StreamSource = ms;
-      biImg.EndInit();
-
-      ImageSource imgSrc = biImg as ImageSource;
-
-      return imgSrc;
-    }
+    #region Pause
 
     public void Pause()
     {
       MediaPlayer.Pause();
     }
+
+    #endregion
+
+    #region PlayNext
 
     public void PlayNext()
     {
@@ -174,18 +147,22 @@ namespace VPlayer.Player.ViewModels
       Play();
     }
 
+    #endregion
+
+    #region KeyListener_OnKeyPressed
+
     private void KeyListener_OnKeyPressed(object sender, KeyPressedArgs e)
     {
       if (e.KeyPressed == Key.MediaPlayPause)
       {
-        if (IsPlaying)
+        if (ActualSong.IsPlaying)
         {
-          IsPlaying = false;
+          ActualSong.IsPlaying = false;
           Play();
         }
         else
         {
-          IsPlaying = true;
+          ActualSong.IsPlaying = true;
           Pause();
         }
       }
@@ -194,6 +171,10 @@ namespace VPlayer.Player.ViewModels
         PlayNext();
       }
     }
+
+    #endregion
+
+    #endregion
   }
 }
 

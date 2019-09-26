@@ -5,6 +5,7 @@ using VCore.Factories.Views;
 using VCore.Modularity.RegionProviders;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
+using VPlayer.Core.ViewModels.Artists;
 using VPlayer.Library.ViewModels.AlbumsViewModels;
 using VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels;
 

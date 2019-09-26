@@ -16,7 +16,7 @@
         <Grid>
 
             <controls1:PlayableWrapPanel Margin="5,0"
-                                        ItemsSource="{Binding LibraryCollection.FilteredItems}">
+                                        ItemsSource="{Binding View}">
 
                 <controls1:PlayableWrapPanel.ItemTemplate>
                     <DataTemplate>

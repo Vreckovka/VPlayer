@@ -145,6 +145,7 @@
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\BaseMainWindowViewModel.cs" />
+    <Compile Include="Interfaces\ViewModels\ICollectionViewModel.cs" />
     <Compile Include="ViewModels\Navigation\INavigationItem.cs" />
     <Compile Include="ViewModels\Navigation\NavigationViewModel.cs" />
     <Compile Include="ViewModels\RegionCollectionViewModel.cs" />
