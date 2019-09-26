@@ -2,11 +2,12 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:VPlayer.StylesDictionaries">
 
+  <!--<Color x:Key="asd">#fe2754</Color>-->
   <Color x:Key="BackgroudColor" >#0a0a0a</Color>
   <Color x:Key="BackgroudColor2" R="10" G="10" B="11" A="255"/>
   <Color x:Key="TopWindowsColor" R="10" G="10" B="10" A="255"/>
-  <Color x:Key="DefaultRedColor" >#fe1b48</Color>
-  <Color x:Key="DefaultRedTransparentColor" R="254" G="27" B="72" A="50"/>
+  <Color x:Key="DefaultRedColor" R="254" G="39" B="84" A="255"/>
+  <Color x:Key="DefaultRedTransparentColor" R="254" G="39" B="84" A="50"/>
   <Color x:Key="DefaultWhiteColor" >#f9fdff</Color>
 
 

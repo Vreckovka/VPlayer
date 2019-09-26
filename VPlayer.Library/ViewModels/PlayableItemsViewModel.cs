@@ -130,6 +130,7 @@ namespace VPlayer.Library.ViewModels
           throw new ArgumentOutOfRangeException();
       }
 
+      RaisePropertyChanged(nameof(View));
       RaisePropertyChanged(nameof(ViewModels));
     }
 

@@ -10,11 +10,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using KeyListener;
+using Ninject;
 using Prism.Events;
+using VCore;
 using VCore.Annotations;
 using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
 using Vlc.DotNet.Core;
+using Vlc.DotNet.Core.Interops;
 using VPlayer.Core.DomainClasses;
 using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
@@ -34,10 +37,10 @@ namespace VPlayer.Player.ViewModels
 
     #region Constructors
 
-    public PlayerViewModel(IRegionProvider regionProvider, [NotNull] IEventAggregator eventAggregator) : base(regionProvider)
+    public PlayerViewModel(IRegionProvider regionProvider, [NotNull] IEventAggregator eventAggregator, IKernel kernel) : base(regionProvider)
     {
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
-
+      Kernel = kernel;
       RegistredViews.Add(typeof(PlayerView), new Tuple<string, bool>(RegionNames.PlayerRegion, false));
       RegistredViews.Add(typeof(WindowsPlayerView), new Tuple<string, bool>(RegionNames.WindowsPlayerContentRegion, false));
     }
@@ -46,10 +49,66 @@ namespace VPlayer.Player.ViewModels
 
     #region Properties
 
+    public IKernel Kernel { get; set; }
     public override Dictionary<Type, Tuple<string, bool>> RegistredViews { get; set; } = new Dictionary<Type, Tuple<string, bool>>();
     public List<SongInPlayList> PlayList { get; set; }
     public VlcMediaPlayer MediaPlayer { get; private set; }
     public SongInPlayList ActualSong { get; private set; }
+    public bool IsPlaying { get; set; }
+
+    #endregion
+
+    #region Commands
+
+    #region Play
+
+    private ActionCommand playButton;
+    public ICommand PlayButton
+    {
+      get
+      {
+        if (playButton == null)
+        {
+          playButton = new ActionCommand(OnPlayButton);
+        }
+
+        return playButton;
+      }
+    }
+
+    public void OnPlayButton()
+    {
+      if (IsPlaying)
+        Pause();
+      else
+        Play();
+    }
+
+    #endregion
+
+    #region NextSong
+
+    private ActionCommand<SongInPlayList> nextSong;
+    public ICommand NextSong
+    {
+      get
+      {
+        if (nextSong == null)
+        {
+          nextSong = new ActionCommand<SongInPlayList>(OnNextSong);
+        }
+
+        return nextSong;
+      }
+    }
+
+    public void OnNextSong(SongInPlayList songInPlayList)
+    {
+      PlayNext(songInPlayList);
+    }
+
+    #endregion
+
 
     #endregion
 
@@ -82,11 +141,38 @@ namespace VPlayer.Player.ViewModels
 
       MediaPlayer.EndReached += (sender, e) => { PlayNext(); };
       MediaPlayer.TimeChanged += (sender, e) => { ActualSong.ActualPosition = ((VlcMediaPlayer)sender).Position; };
-      MediaPlayer.Paused += (sender, e) => { ActualSong.IsPlaying = false; };
-      MediaPlayer.Playing += (sender, e) => { ActualSong.IsPlaying = true; };
+
+      MediaPlayer.Paused += (sender, e) =>
+      {
+        ActualSong.IsPaused = true;
+        IsPlaying = false;
+      };
+
+      MediaPlayer.Playing += (sender, e) =>
+      {
+        ActualSong.IsPlaying = true;
+        ActualSong.IsPaused = false;
+        IsPlaying = true;
+      };
 
       eventAggregator.GetEvent<PlaySongsEvent>().Subscribe(PlaySongs);
       eventAggregator.GetEvent<PauseEvent>().Subscribe(Pause);
+      eventAggregator.GetEvent<PlaySongsInPlayListEvent>().Subscribe(PlaySongInPlayList);
+    }
+
+    private void PlaySongInPlayList(SongInPlayList songInPlayList)
+    {
+      if (songInPlayList == ActualSong)
+      {
+        if (!ActualSong.IsPaused)
+          Pause();
+        else
+          Play();
+      }
+      else
+      {
+        PlayNext(songInPlayList);
+      }
     }
 
     #region PlaySongs
@@ -96,7 +182,7 @@ namespace VPlayer.Player.ViewModels
       PlayList = songs.ToList();
       Play();
 
-      if (ActualSong != null ) ActualSong.IsPlaying = false;
+      if (ActualSong != null) ActualSong.IsPlaying = false;
     }
 
     #endregion
@@ -111,7 +197,7 @@ namespace VPlayer.Player.ViewModels
       {
         if (PlayList.Count > 0)
         {
-          if (ActualSong != null)  ActualSong.IsPlaying = false;
+          if (ActualSong != null) ActualSong.IsPlaying = false;
 
           if (PlayList[actualSongIndex] == ActualSong)
           {
@@ -141,9 +227,12 @@ namespace VPlayer.Player.ViewModels
 
     #region PlayNext
 
-    public void PlayNext()
+    public void PlayNext(SongInPlayList nextSong = null)
     {
-      actualSongIndex++;
+      if (nextSong == null)
+        actualSongIndex++;
+      else
+        actualSongIndex = PlayList.FindIndex(x => x.Model.Id == nextSong.Model.Id);
       Play();
     }
 

@@ -1,674 +1,687 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    x:Class="VPlayer.StylesDictionaries.ButtonsStyle"
-                   >
+﻿<ResourceDictionary x:Class="VPlayer.StylesDictionaries.ButtonsStyle"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Style TargetType="{x:Type Button}">
-        <Setter Property="Background" Value="{DynamicResource DefaultRedBrush}"/>
-        <Setter Property="Foreground" Value="{DynamicResource DefaultWhiteBrush}"/>
-        <Setter Property="Padding" Value="6"/>
-        <Setter Property="Effect">
-            <Setter.Value>
-                <DropShadowEffect BlurRadius="5" ShadowDepth="2" Color="#FF110D32" Opacity="1"/>
-            </Setter.Value>
-        </Setter>
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary Source="pack://application:,,,/VPlayer;component/StylesDictionaries/Paths.xaml" />
+  </ResourceDictionary.MergedDictionaries>
 
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
-                    <Border CornerRadius="4" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
-                        <Grid>
-                            <Path x:Name="PathIcon"
-                                  Data="{TemplateBinding Content}"/>
-                            <ContentPresenter x:Name="MyContentPresenter" Content="{TemplateBinding Content}" 
-                                              HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" />
-                        </Grid>
-                    </Border>
+  <Style TargetType="{x:Type Button}">
+    <Setter Property="Background" Value="{DynamicResource DefaultRedBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource DefaultWhiteBrush}" />
+    <Setter Property="Padding" Value="6" />
+    <Setter Property="Effect">
+      <Setter.Value>
+        <DropShadowEffect BlurRadius="5"
+                          Opacity="1"
+                          ShadowDepth="2"
+                          Color="#FF110D32" />
+      </Setter.Value>
+    </Setter>
 
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Cursor" Value="Hand" />
-                        </Trigger>
-
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" Value="Transparent" />
-                            <Setter TargetName="PathIcon" Property="Fill" Value="{DynamicResource DefaultRedBrush}" />
-                        </Trigger>
-
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Background" Value="{DynamicResource DefaultRedTransparentBrush}"/>
-                            <Setter TargetName="PathIcon" Property="Tag" Value="Play" />
-                        </Trigger>
-
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="ButtonStyleWindows" TargetType="{x:Type Button}">
-        <Setter Property="Foreground" Value="{DynamicResource DefaultWhiteBrush}" />
-        <Setter Property="FontSize" Value="15" />
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="HorizontalAlignment" Value="Center"/>
-        <Setter Property="VerticalAlignment" Value="Center"/>
-        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
-        <Setter Property="Template">
-
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
-                    <Border  Name="Border" Background="{TemplateBinding Background}" Padding="10">
-                        <ContentPresenter Content="{TemplateBinding Content}" />
-                    </Border>
-
-
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="PlayButton" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
-                    <Border CornerRadius="4" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
-                        <Grid>
-                            <Path 
-                                x:Name="PathIcon"
-                                Data="{TemplateBinding Content}"/>
-                            <ContentPresenter 
-                                x:Name="MyContentPresenter" 
-                                Content="{TemplateBinding Content}" 
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type Button}">
+          <Border Padding="{TemplateBinding Padding}"
+                  Background="{TemplateBinding Background}"
+                  CornerRadius="4">
+            <Grid>
+              <Path x:Name="PathIcon" Data="{TemplateBinding Content}" />
+              <ContentPresenter x:Name="MyContentPresenter"
+                                Margin="0,0,0,0"
                                 HorizontalAlignment="Center"
-                                VerticalAlignment="Center" 
-                                Margin="0,0,0,0" 
-                                />
-                        </Grid>
+                                VerticalAlignment="Center"
+                                Content="{TemplateBinding Content}" />
+            </Grid>
+          </Border>
 
-                    </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter Property="Cursor" Value="Hand" />
+            </Trigger>
 
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Cursor" Value="Hand" />
-                        </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+              <Setter Property="Background" Value="Transparent" />
+              <Setter TargetName="PathIcon" Property="Fill" Value="{DynamicResource DefaultRedBrush}" />
+            </Trigger>
 
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource DefaultWhiteTransparentBrush}" />
-                        </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="Background" Value="{DynamicResource DefaultRedTransparentBrush}" />
+              <Setter TargetName="PathIcon" Property="Tag" Value="Play" />
+            </Trigger>
 
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Background" Value="{DynamicResource DefaultRedTransparentBrush}"/>
-                            <Setter TargetName="PathIcon" Property="Tag" Value="Play" />
-                        </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
 
-                        <Trigger Property="Tag" Value="Pause">
-                            <Setter Property="Content">
-                                <Setter.Value>
-                                    <Path Data="m 17.34375,7.78125 0,16.90625 0,16.9375 L 30.875,33.21875 44.53125,24.6875 30.875,16.1875 17.34375,7.78125 z"
-                                                          Fill="AliceBlue"
-                                                          Width="20"
-                                                          Height="20"
-                                                          Stretch="Fill"
-                                                          />
-                                </Setter.Value>
-                            </Setter>
-                        </Trigger>
-                        <Trigger Property="Tag" Value="Play">
-                            <Setter Property="Content">
-                                <Setter.Value>
-                                    <Path Data="M282.856,0H169.714c-31.228,0-56.571,25.344-56.571,56.571v678.857c0,31.228,25.344,56.571,
-                                                          56.571,56.571h113.143 
-                                                          c31.256,0,56.572-25.315,56.572-56.571V56.571C339.428,25.344,314.112,0,282.856,0z 
-                                                          M622.285,0H509.143 c-31.256,0-56.572,25.344-56.572,56.571v678.857c0,31.228,25.316,56.571,56.572
-                                                          56.571h113.143 c31.256,0,56.572-25.315,56.572-56.571V56.571C678.857,25.344,653.541,0,622.285,0z"
-                                                          Fill="AliceBlue"
-                                                          Width="20"
-                                                          Height="20"
-                                                          Stretch="Fill"/>
-                                </Setter.Value>
-                            </Setter>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
+  <Style x:Key="ButtonStyleWindows" TargetType="{x:Type Button}">
+    <Setter Property="Foreground" Value="{DynamicResource DefaultWhiteBrush}" />
+    <Setter Property="FontSize" Value="15" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+    <Setter Property="Template">
 
-    <Style x:Key="RefreshButton" TargetType="{x:Type Button}">
-        <Setter Property="OverridesDefaultStyle" Value="True"/>
-        <Setter Property="Effect">
-            <Setter.Value>
-                <DropShadowEffect BlurRadius="5" ShadowDepth="2" Color="Black" Opacity="1"/>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
-                    <Border CornerRadius="4" Background="{TemplateBinding Background}" Padding="7">
-                        <Grid Background="Transparent">
-
-                            <Path x:Name="PathIcon"
-                            Stretch="Fill"
-                            Data="M346.8,61.2C311.1,22.95,260.1,0,204,0C91.8,0,0,91.8,0,204s91.8,204,204,204c94.35,0,173.4-66.3,196.35-153H346.8
-			                      C326.4,313.65,270.3,357,204,357c-84.15,0-153-68.85-153-153c0-84.15,68.85-153,153-153c43.35,0,79.05,17.85,107.1,45.9
-			                      l-81.6,81.6H408V0L346.8,61.2z"
-                            Width="20"
-                            Height="20"
-                            Fill="{DynamicResource DefaultWhiteBrush}"/>
-                            <ContentPresenter x:Name="MyContentPresenter" Content="{TemplateBinding Content}" 
-                                              HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" />
-
-                        </Grid>
-                    </Border>
-
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Cursor" Value="Hand" />
-                            <Setter TargetName="PathIcon" Property="Fill" Value="{DynamicResource DefaultRedBrush}" />
-                        </Trigger>
-
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource DefaultRedBrush}" />
-                            <Setter TargetName="PathIcon" Property="Fill" Value="White" />
-                        </Trigger>
-
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="StopButton" TargetType="{x:Type Button}" >
-        <Setter Property="Effect">
-            <Setter.Value>
-                <DropShadowEffect BlurRadius="5" ShadowDepth="2" Color="Black" Opacity="1"/>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="OverridesDefaultStyle" Value="True"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
-                    <Border CornerRadius="4" Background="{TemplateBinding Background}" Padding="7">
-                        <Grid Background="Transparent">
-                            <Path x:Name="PathIcon"
-                            Stretch="Fill"
-                            Data="M214.781,0H17.898C8.013,0,0,8.014,0,17.898v196.883
-		                                c0,9.885,8.013,17.898,17.898,17.898h196.883c9.886,0,17.898-8.013,17.898-17.898V17.898C232.679,8.014,224.666,0,214.781,0z"
-                            Width="20"
-                            Height="20"
-                            Fill="{DynamicResource DefaultWhiteBrush}"/>
-                            <ContentPresenter x:Name="MyContentPresenter" Content="{TemplateBinding Content}" 
-                                              HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" />
-
-                        </Grid>
-                    </Border>
-
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Cursor" Value="Hand" />
-                            <Setter TargetName="PathIcon" Property="Fill" Value="{DynamicResource DefaultRedBrush}" />
-                        </Trigger>
-
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource DefaultRedBrush}" />
-                            <Setter TargetName="PathIcon" Property="Fill" Value="White" />
-                        </Trigger>
-
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <!--66 / 6 = 11, 11 /2 = 5.5, 11 * 2 = 22-->
-    <Style TargetType="Button" x:Key="Play">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Grid Height="66" Width="66">
-                        <Path  Stretch="Uniform" x:Name="Elipse">
-                            <Path.Style>
-                                <Style TargetType="Path">
-                                    <Setter Property="Fill" Value="Transparent"/>
-                                </Style>
-                            </Path.Style>
-                            <Path.Data>
-                                <EllipseGeometry  RadiusX="11" RadiusY="11" />
-                            </Path.Data>
-                        </Path>
-
-                        <Path Fill="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center"
-                              Data="M203.791,99.628L49.307,2.294c-4.567-2.719-10.238-2.266-14.521-2.266
-		                            c-17.132,0-17.056,13.227-17.056,16.578v198.94c0,2.833-0.075,16.579,17.056,16.579c4.283,0,9.955,0.451,14.521-2.267
-		                            l154.483-97.333c12.68-7.545,10.489-16.449,10.489-16.449S216.471,107.172,203.791,99.628z" Width="22"
-                              Stretch="Uniform" Margin="5.5 0 0 0" Name="PlaySign"/>
-                    </Grid>
-
-                    <ControlTemplate.Triggers>
-                        <DataTrigger Value="True" Binding="{Binding Path=IsPlaying}">
-                            <DataTrigger.EnterActions>
-                                <RemoveStoryboard BeginStoryboardName="ExitLabel"/>
-                            </DataTrigger.EnterActions>
-
-                            <Setter Property="Data" Value="M282.856,0H169.714c-31.228,0-56.571,25.344-56.571,56.571v678.857c0,31.228,25.344,56.571, 
-                                    56.571,56.571h113.143 c31.256,0,56.572-25.315,56.572-56.571V56.571C339.428,25.344,314.112,0,282.856,0z 
-                                    M622.285,0H509.143 c-31.256,0-56.572,25.344-56.572,56.571v678.857c0,31.228,25.316,56.571,56.572
-                                    56.571h113.143 c31.256,0,56.572-25.315,56.572-56.571V56.571C678.857,25.344,653.541,0,622.285,0z" 
-                                    TargetName="PlaySign"/>
-                            <Setter Property="Fill" Value="{StaticResource DefaultRedBrush}" TargetName="PlaySign"/>
-                            <Setter Property="Margin" Value="0 0 0 0" TargetName="PlaySign"/>
-                            <Setter Property="Fill" Value="{StaticResource TopWindowsBrush}" TargetName="Elipse"/>
-                        </DataTrigger>
-
-                        <MultiDataTrigger>
-                            <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor},Path=IsMouseOver}" Value="True"/>
-                                <Condition Binding="{Binding Path=IsPlaying}" Value="False"/>
-                            </MultiDataTrigger.Conditions>
-                            <MultiDataTrigger.EnterActions>
-                                <RemoveStoryboard BeginStoryboardName="ExitLabel"/>
-                                <BeginStoryboard Name="EnterBlackOverlay">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetName="PlaySign" 
-                                                                Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                                From="#10000000" 
-                                                                To="{StaticResource StrongerGrayOverlay}"
-                                                                Duration="0:0:0.2" />
-
-                                        <ColorAnimation Storyboard.TargetName="Elipse" 
-                                                        Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                        From="#10000000" 
-                                                        To="{StaticResource StrongerGrayOverlay}"
-                                                        Duration="0:0:0.2" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </MultiDataTrigger.EnterActions>
-
-                            <MultiDataTrigger.ExitActions>
-                                <RemoveStoryboard BeginStoryboardName="EnterBlackOverlay"/>
-                                <RemoveStoryboard BeginStoryboardName="EnterColorOverlay"/>
-                                <RemoveStoryboard BeginStoryboardName="ExitColorOverlay"/>
-                                <BeginStoryboard Name="ExitLabel">
-                                    <Storyboard FillBehavior="Stop">
-                                        <ColorAnimation Storyboard.TargetName="PlaySign" 
-                                                        Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                        From="{StaticResource StrongerGrayOverlay}" 
-                                                        To="#01000000"
-                                                        Duration="0:0:0.2"/>
-
-                                        <ColorAnimation Storyboard.TargetName="Elipse" 
-                                                        Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                        From="{StaticResource StrongerGrayOverlay}" 
-                                                        To="#01000000"
-                                                        Duration="0:0:0.2"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </MultiDataTrigger.ExitActions>
-                        </MultiDataTrigger>
-
-                        <MultiDataTrigger>
-                            <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding RelativeSource={RelativeSource Self},Path=IsMouseOver}" Value="True"/>
-                            </MultiDataTrigger.Conditions>
-
-                            <Setter Property="Cursor" Value="Hand"/>
-                            <MultiDataTrigger.EnterActions>
-                                <RemoveStoryboard BeginStoryboardName="ExitColorOverlay"/>
-                                <BeginStoryboard Name="EnterColorOverlay">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetName="PlaySign" 
-                                                        Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                        From="{StaticResource StrongerGrayOverlay}" 
-                                                        To="{StaticResource DefaultWhiteColor}"
-                                                        Duration="0:0:0.1" />
-
-                                        <ColorAnimation Storyboard.TargetName="Elipse" 
-                                                        Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                        From="{StaticResource StrongerGrayOverlay}" 
-                                                        To="{StaticResource DefaultRedColor}"
-                                                        Duration="0:0:0.1" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </MultiDataTrigger.EnterActions>
-
-                            <MultiDataTrigger.ExitActions>
-                                <RemoveStoryboard BeginStoryboardName="EnterColorOverlay"/>
-                                <BeginStoryboard Name="ExitColorOverlay" >
-                                    <Storyboard FillBehavior="Stop">
-                                        <ColorAnimation Storyboard.TargetName="PlaySign" 
-                                                        Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                        From="{StaticResource DefaultWhiteColor}" 
-                                                        To="{StaticResource StrongerGrayOverlay}"
-                                                        Duration="0:0:0.1" />
-
-                                        <ColorAnimation Storyboard.TargetName="Elipse" 
-                                                        Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                        From="{StaticResource DefaultRedColor}" 
-                                                        To="{StaticResource StrongerGrayOverlay}"
-                                                        Duration="0:0:0.1" />
-                                    </Storyboard>
-                                </BeginStoryboard>
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type Button}">
+          <Border Name="Border"
+                  Padding="10"
+                  Background="{TemplateBinding Background}">
+            <ContentPresenter Content="{TemplateBinding Content}" />
+          </Border>
 
 
-                            </MultiDataTrigger.ExitActions>
-                        </MultiDataTrigger>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
 
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
+  <Style x:Key="PlayButton"
+         BasedOn="{StaticResource {x:Type Button}}"
+         TargetType="{x:Type Button}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type Button}">
+          <Border Padding="{TemplateBinding Padding}"
+                  Background="{TemplateBinding Background}"
+                  CornerRadius="4">
+            <Grid>
+              <ContentPresenter/>
+            
+            </Grid>
 
-    <Style TargetType="Button" x:Key="PlayMiniWithCircle">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Grid Height="42" Width="42">
-                        <Path Fill="Transparent" Stretch="Uniform" x:Name="Elipse">
-                            <Path.Data>
-                                <EllipseGeometry  RadiusX="7" RadiusY="7" />
-                            </Path.Data>
-                        </Path>
+          </Border>
 
-                        <Path Fill="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center"
-                              Data="M203.791,99.628L49.307,2.294c-4.567-2.719-10.238-2.266-14.521-2.266
-		                            c-17.132,0-17.056,13.227-17.056,16.578v198.94c0,2.833-0.075,16.579,17.056,16.579c4.283,0,9.955,0.451,14.521-2.267
-		                            l154.483-97.333c12.68-7.545,10.489-16.449,10.489-16.449S216.471,107.172,203.791,99.628z" Width="14"
-                              Stretch="Uniform" Margin="3.5 0 0 0" Name="PlaySign"/>
-                    </Grid>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter Property="Cursor" Value="Hand" />
+            </Trigger>
 
-                    <ControlTemplate.Triggers>
-                        <DataTrigger 
-                            Binding="{Binding 
-                            RelativeSource={RelativeSource AncestorType=Grid,
-                            Mode=FindAncestor},Path=IsMouseOver}" Value="True">
-                            <DataTrigger.EnterActions>
-                                <RemoveStoryboard BeginStoryboardName="ExitLabel"/>
-                                <BeginStoryboard Name="EnterBlackOverlay">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetName="PlaySign" 
-                                                                Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                                From="#10000000" 
-                                                                To="{StaticResource StrongerGrayOverlay}"
-                                                                Duration="0:0:0.2" />
+            <Trigger Property="IsPressed" Value="True">
+              <Setter Property="Background" Value="{DynamicResource DefaultWhiteTransparentBrush}" />
+            </Trigger>
 
-                                        <ColorAnimation Storyboard.TargetName="Elipse" 
-                                                        Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                        From="#10000000" 
-                                                        To="{StaticResource StrongerGrayOverlay}"
-                                                        Duration="0:0:0.2" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </DataTrigger.EnterActions>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter Property="Background" Value="{DynamicResource DefaultRedTransparentBrush}" />
+            </Trigger>
 
-                            <DataTrigger.ExitActions>
-                                <RemoveStoryboard BeginStoryboardName="EnterBlackOverlay"/>
-                                <RemoveStoryboard BeginStoryboardName="EnterColorOverlay"/>
-                                <RemoveStoryboard BeginStoryboardName="ExitColorOverlay"/>
-                                <BeginStoryboard Name="ExitLabel">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetName="PlaySign" 
-                                                        Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                        From="{StaticResource StrongerGrayOverlay}" 
-                                                        To="#01000000"
-                                                        Duration="0:0:0.2"/>
+            <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+              <Setter Property="Content">
+                <Setter.Value>
+                  <Path Width="20"
+                        Height="20"
+                        Fill="AliceBlue"
+                        Stretch="Fill"
+                        Style="{StaticResource PausePath}" />
+                </Setter.Value>
+              </Setter>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding IsPlaying}" Value="False">
+              <Setter Property="Content">
+                <Setter.Value>
+                  <Path Width="20"
+                        Height="20"
+                        Fill="AliceBlue"
+                        Stretch="Fill"
+                        Style="{StaticResource PlayPath}" />
+                </Setter.Value>
+              </Setter>
+            </DataTrigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
 
-                                        <ColorAnimation Storyboard.TargetName="Elipse" 
-                                                        Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                        From="{StaticResource StrongerGrayOverlay}" 
-                                                        To="#01000000"
-                                                        Duration="0:0:0.2"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </DataTrigger.ExitActions>
-                        </DataTrigger>
+  <Style x:Key="RefreshButton" TargetType="{x:Type Button}">
+    <Setter Property="OverridesDefaultStyle" Value="True" />
+    <Setter Property="Effect">
+      <Setter.Value>
+        <DropShadowEffect BlurRadius="5"
+                          Opacity="1"
+                          ShadowDepth="2"
+                          Color="Black" />
+      </Setter.Value>
+    </Setter>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type Button}">
+          <Border Padding="7"
+                  Background="{TemplateBinding Background}"
+                  CornerRadius="4">
+            <Grid Background="Transparent">
 
-                        <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Cursor" Value="Hand"/>
-                            <Trigger.EnterActions>
-                                <RemoveStoryboard BeginStoryboardName="ExitColorOverlay"/>
-                                <BeginStoryboard Name="EnterColorOverlay">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetName="PlaySign" 
-                                                        Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                        From="{StaticResource StrongerGrayOverlay}" 
-                                                        To="{StaticResource DefaultWhiteColor}"
-                                                        Duration="0:0:0.1" />
+              <Path x:Name="PathIcon"
+                    Width="20"
+                    Height="20"
+                    Data="M346.8,61.2C311.1,22.95,260.1,0,204,0C91.8,0,0,91.8,0,204s91.8,204,204,204c94.35,0,173.4-66.3,196.35-153H346.8                          C326.4,313.65,270.3,357,204,357c-84.15,0-153-68.85-153-153c0-84.15,68.85-153,153-153c43.35,0,79.05,17.85,107.1,45.9                          l-81.6,81.6H408V0L346.8,61.2z"
+                    Fill="{DynamicResource DefaultWhiteBrush}"
+                    Stretch="Fill" />
+              <ContentPresenter x:Name="MyContentPresenter"
+                                Margin="0,0,0,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Content="{TemplateBinding Content}" />
 
-                                        <ColorAnimation Storyboard.TargetName="Elipse" 
-                                                        Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                        From="{StaticResource StrongerGrayOverlay}" 
-                                                        To="{StaticResource DefaultRedColor}"
-                                                        Duration="0:0:0.1" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.EnterActions>
+            </Grid>
+          </Border>
 
-                            <Trigger.ExitActions>
-                                <RemoveStoryboard BeginStoryboardName="EnterColorOverlay"/>
-                                <BeginStoryboard Name="ExitColorOverlay">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetName="PlaySign" 
-                                                        Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                        From="{StaticResource DefaultWhiteColor}" 
-                                                        To="{StaticResource StrongerGrayOverlay}"
-                                                        Duration="0:0:0.1" />
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter Property="Cursor" Value="Hand" />
+              <Setter TargetName="PathIcon" Property="Fill" Value="{DynamicResource DefaultRedBrush}" />
+            </Trigger>
 
-                                        <ColorAnimation Storyboard.TargetName="Elipse" 
-                                                        Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                        From="{StaticResource DefaultRedColor}" 
-                                                        To="{StaticResource StrongerGrayOverlay}"
-                                                        Duration="0:0:0.1" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.ExitActions>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
+            <Trigger Property="IsPressed" Value="True">
+              <Setter Property="Background" Value="{DynamicResource DefaultRedBrush}" />
+              <Setter TargetName="PathIcon" Property="Fill" Value="White" />
+            </Trigger>
 
-    <Style TargetType="Button" x:Key="PlayMini">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Grid Height="20" Width="20">
-                        <Path Fill="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center"
-                              Data="M203.791,99.628L49.307,2.294c-4.567-2.719-10.238-2.266-14.521-2.266
-		                            c-17.132,0-17.056,13.227-17.056,16.578v198.94c0,2.833-0.075,16.579,17.056,16.579c4.283,0,9.955,0.451,14.521-2.267
-		                            l154.483-97.333c12.68-7.545,10.489-16.449,10.489-16.449S216.471,107.172,203.791,99.628z" 
-                              Stretch="Uniform" Name="PlaySign"/>
-                    </Grid>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
 
-                    <ControlTemplate.Triggers>
-                        <DataTrigger 
-                            Binding="{Binding 
-                            RelativeSource={RelativeSource AncestorType=ListViewItem,
-                            Mode=FindAncestor},Path=IsMouseOver}" Value="True">
-                            <DataTrigger.EnterActions>
-                                <RemoveStoryboard BeginStoryboardName="ExitLabel"/>
-                                <BeginStoryboard Name="EnterBlackOverlay">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetName="PlaySign" 
-                                                                Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                                From="{StaticResource 30_DefaultWhiteColor}" 
-                                                                To="{StaticResource 50_DefaultWhiteColor}"
-                                                                Duration="0:0:0.2" />
+  <Style x:Key="StopButton" TargetType="{x:Type Button}">
+    <Setter Property="Effect">
+      <Setter.Value>
+        <DropShadowEffect BlurRadius="5"
+                          Opacity="1"
+                          ShadowDepth="2"
+                          Color="Black" />
+      </Setter.Value>
+    </Setter>
+    <Setter Property="OverridesDefaultStyle" Value="True" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type Button}">
+          <Border Padding="7"
+                  Background="{TemplateBinding Background}"
+                  CornerRadius="4">
+            <Grid Background="Transparent">
+              <Path x:Name="PathIcon"
+                    Width="20"
+                    Height="20"
+                    Data="M214.781,0H17.898C8.013,0,0,8.014,0,17.898v196.883                                   c0,9.885,8.013,17.898,17.898,17.898h196.883c9.886,0,17.898-8.013,17.898-17.898V17.898C232.679,8.014,224.666,0,214.781,0z"
+                    Fill="{DynamicResource DefaultWhiteBrush}"
+                    Stretch="Fill" />
+              <ContentPresenter x:Name="MyContentPresenter"
+                                Margin="0,0,0,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Content="{TemplateBinding Content}" />
+
+            </Grid>
+          </Border>
+
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter Property="Cursor" Value="Hand" />
+              <Setter TargetName="PathIcon" Property="Fill" Value="{DynamicResource DefaultRedBrush}" />
+            </Trigger>
+
+            <Trigger Property="IsPressed" Value="True">
+              <Setter Property="Background" Value="{DynamicResource DefaultRedBrush}" />
+              <Setter TargetName="PathIcon" Property="Fill" Value="White" />
+            </Trigger>
+
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!--  66 / 6 = 11, 11 /2 = 5.5, 11 * 2 = 22  -->
+  <Style x:Key="Play" TargetType="Button">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Button">
+          <Grid Width="66" Height="66">
+            <Path x:Name="Elipse" Stretch="Uniform">
+              <Path.Style>
+                <Style TargetType="Path">
+                  <Setter Property="Fill" Value="Transparent" />
+                </Style>
+              </Path.Style>
+              <Path.Data>
+                <EllipseGeometry RadiusX="11" RadiusY="11" />
+              </Path.Data>
+            </Path>
+
+            <Path Name="PlaySign"
+                  Width="22"
+                  Margin="5.5,0,0,0"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  Data="M203.791,99.628L49.307,2.294c-4.567-2.719-10.238-2.266-14.521-2.266                               c-17.132,0-17.056,13.227-17.056,16.578v198.94c0,2.833-0.075,16.579,17.056,16.579c4.283,0,9.955,0.451,14.521-2.267                               l154.483-97.333c12.68-7.545,10.489-16.449,10.489-16.449S216.471,107.172,203.791,99.628z"
+                  Fill="Transparent"
+                  Stretch="Uniform" />
+          </Grid>
+
+          <ControlTemplate.Triggers>
+            <DataTrigger Binding="{Binding Path=IsPlaying}" Value="True">
+              <DataTrigger.EnterActions>
+                <RemoveStoryboard BeginStoryboardName="ExitLabel" />
+              </DataTrigger.EnterActions>
+
+              <Setter TargetName="PlaySign" Property="Data" Value="M282.856,0H169.714c-31.228,0-56.571,25.344-56.571,56.571v678.857c0,31.228,25.344,56.571,                                      56.571,56.571h113.143 c31.256,0,56.572-25.315,56.572-56.571V56.571C339.428,25.344,314.112,0,282.856,0z                                      M622.285,0H509.143 c-31.256,0-56.572,25.344-56.572,56.571v678.857c0,31.228,25.316,56.571,56.572                                     56.571h113.143 c31.256,0,56.572-25.315,56.572-56.571V56.571C678.857,25.344,653.541,0,622.285,0z" />
+              <Setter TargetName="PlaySign" Property="Fill" Value="{StaticResource DefaultRedBrush}" />
+              <Setter TargetName="PlaySign" Property="Margin" Value="0,0,0,0" />
+              <Setter TargetName="Elipse" Property="Fill" Value="{StaticResource TopWindowsBrush}" />
+            </DataTrigger>
+
+            <MultiDataTrigger>
+              <MultiDataTrigger.Conditions>
+                <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}, Path=IsMouseOver}" Value="True" />
+                <Condition Binding="{Binding Path=IsPlaying}" Value="False" />
+              </MultiDataTrigger.Conditions>
+              <MultiDataTrigger.EnterActions>
+                <RemoveStoryboard BeginStoryboardName="ExitLabel" />
+                <BeginStoryboard Name="EnterBlackOverlay">
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetName="PlaySign"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="#10000000"
+                                    To="{StaticResource StrongerGrayOverlay}"
+                                    Duration="0:0:0.2" />
+
+                    <ColorAnimation Storyboard.TargetName="Elipse"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="#10000000"
+                                    To="{StaticResource StrongerGrayOverlay}"
+                                    Duration="0:0:0.2" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </MultiDataTrigger.EnterActions>
+
+              <MultiDataTrigger.ExitActions>
+                <RemoveStoryboard BeginStoryboardName="EnterBlackOverlay" />
+                <RemoveStoryboard BeginStoryboardName="EnterColorOverlay" />
+                <RemoveStoryboard BeginStoryboardName="ExitColorOverlay" />
+                <BeginStoryboard Name="ExitLabel">
+                  <Storyboard FillBehavior="Stop">
+                    <ColorAnimation Storyboard.TargetName="PlaySign"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="{StaticResource StrongerGrayOverlay}"
+                                    To="#01000000"
+                                    Duration="0:0:0.2" />
+
+                    <ColorAnimation Storyboard.TargetName="Elipse"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="{StaticResource StrongerGrayOverlay}"
+                                    To="#01000000"
+                                    Duration="0:0:0.2" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </MultiDataTrigger.ExitActions>
+            </MultiDataTrigger>
+
+            <MultiDataTrigger>
+              <MultiDataTrigger.Conditions>
+                <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsMouseOver}" Value="True" />
+              </MultiDataTrigger.Conditions>
+
+              <Setter Property="Cursor" Value="Hand" />
+              <MultiDataTrigger.EnterActions>
+                <RemoveStoryboard BeginStoryboardName="ExitColorOverlay" />
+                <BeginStoryboard Name="EnterColorOverlay">
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetName="PlaySign"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="{StaticResource StrongerGrayOverlay}"
+                                    To="{StaticResource DefaultWhiteColor}"
+                                    Duration="0:0:0.1" />
+
+                    <ColorAnimation Storyboard.TargetName="Elipse"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="{StaticResource StrongerGrayOverlay}"
+                                    To="{StaticResource DefaultRedColor}"
+                                    Duration="0:0:0.1" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </MultiDataTrigger.EnterActions>
+
+              <MultiDataTrigger.ExitActions>
+                <RemoveStoryboard BeginStoryboardName="EnterColorOverlay" />
+                <BeginStoryboard Name="ExitColorOverlay">
+                  <Storyboard FillBehavior="Stop">
+                    <ColorAnimation Storyboard.TargetName="PlaySign"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="{StaticResource DefaultWhiteColor}"
+                                    To="{StaticResource StrongerGrayOverlay}"
+                                    Duration="0:0:0.1" />
+
+                    <ColorAnimation Storyboard.TargetName="Elipse"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="{StaticResource DefaultRedColor}"
+                                    To="{StaticResource StrongerGrayOverlay}"
+                                    Duration="0:0:0.1" />
+                  </Storyboard>
+                </BeginStoryboard>
 
 
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </DataTrigger.EnterActions>
+              </MultiDataTrigger.ExitActions>
+            </MultiDataTrigger>
 
-                            <DataTrigger.ExitActions>
-                                <RemoveStoryboard BeginStoryboardName="EnterBlackOverlay"/>
-                                <RemoveStoryboard BeginStoryboardName="EnterColorOverlay"/>
-                                <RemoveStoryboard BeginStoryboardName="ExitColorOverlay"/>
-                                <BeginStoryboard Name="ExitLabel">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetName="PlaySign" 
-                                                        Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                        From="{StaticResource 50_DefaultWhiteColor}" 
-                                                        To="Transparent"
-                                                        Duration="0:0:0.2"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </DataTrigger.ExitActions>
-                        </DataTrigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
 
-                        <DataTrigger 
-                            Binding="{Binding Path=IsPlaying}" Value="True">
-                            <DataTrigger.EnterActions>
-                                <BeginStoryboard Name="Selected">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetName="PlaySign" 
-                                                Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                From="{StaticResource 50_DefaultWhiteColor}" 
-                                                To="{StaticResource DefaultRedColor}"
-                                                Duration="0:0:0.2" />
+  <Style x:Key="PlayMiniWithCircle" TargetType="Button">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Button">
+          <Grid Width="42" Height="42">
+            <Path x:Name="Elipse"
+                  Fill="Transparent"
+                  Stretch="Uniform">
+              <Path.Data>
+                <EllipseGeometry RadiusX="7" RadiusY="7" />
+              </Path.Data>
+            </Path>
+
+            <Path Name="PlaySign"
+                  Width="14"
+                  Margin="3.5,0,0,0"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  Data="M203.791,99.628L49.307,2.294c-4.567-2.719-10.238-2.266-14.521-2.266                               c-17.132,0-17.056,13.227-17.056,16.578v198.94c0,2.833-0.075,16.579,17.056,16.579c4.283,0,9.955,0.451,14.521-2.267                               l154.483-97.333c12.68-7.545,10.489-16.449,10.489-16.449S216.471,107.172,203.791,99.628z"
+                  Fill="Transparent"
+                  Stretch="Uniform" />
+          </Grid>
+
+          <ControlTemplate.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}, Path=IsMouseOver}" Value="True">
+              <DataTrigger.EnterActions>
+                <RemoveStoryboard BeginStoryboardName="ExitLabel" />
+                <BeginStoryboard Name="EnterBlackOverlay">
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetName="PlaySign"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="#10000000"
+                                    To="{StaticResource StrongerGrayOverlay}"
+                                    Duration="0:0:0.2" />
+
+                    <ColorAnimation Storyboard.TargetName="Elipse"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="#10000000"
+                                    To="{StaticResource StrongerGrayOverlay}"
+                                    Duration="0:0:0.2" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </DataTrigger.EnterActions>
+
+              <DataTrigger.ExitActions>
+                <RemoveStoryboard BeginStoryboardName="EnterBlackOverlay" />
+                <RemoveStoryboard BeginStoryboardName="EnterColorOverlay" />
+                <RemoveStoryboard BeginStoryboardName="ExitColorOverlay" />
+                <BeginStoryboard Name="ExitLabel">
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetName="PlaySign"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="{StaticResource StrongerGrayOverlay}"
+                                    To="#01000000"
+                                    Duration="0:0:0.2" />
+
+                    <ColorAnimation Storyboard.TargetName="Elipse"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="{StaticResource StrongerGrayOverlay}"
+                                    To="#01000000"
+                                    Duration="0:0:0.2" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </DataTrigger.ExitActions>
+            </DataTrigger>
+
+            <Trigger Property="IsMouseOver" Value="true">
+              <Setter Property="Cursor" Value="Hand" />
+              <Trigger.EnterActions>
+                <RemoveStoryboard BeginStoryboardName="ExitColorOverlay" />
+                <BeginStoryboard Name="EnterColorOverlay">
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetName="PlaySign"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="{StaticResource StrongerGrayOverlay}"
+                                    To="{StaticResource DefaultWhiteColor}"
+                                    Duration="0:0:0.1" />
+
+                    <ColorAnimation Storyboard.TargetName="Elipse"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="{StaticResource StrongerGrayOverlay}"
+                                    To="{StaticResource DefaultRedColor}"
+                                    Duration="0:0:0.1" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </Trigger.EnterActions>
+
+              <Trigger.ExitActions>
+                <RemoveStoryboard BeginStoryboardName="EnterColorOverlay" />
+                <BeginStoryboard Name="ExitColorOverlay">
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetName="PlaySign"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="{StaticResource DefaultWhiteColor}"
+                                    To="{StaticResource StrongerGrayOverlay}"
+                                    Duration="0:0:0.1" />
+
+                    <ColorAnimation Storyboard.TargetName="Elipse"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="{StaticResource DefaultRedColor}"
+                                    To="{StaticResource StrongerGrayOverlay}"
+                                    Duration="0:0:0.1" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </Trigger.ExitActions>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="PlayMini" TargetType="Button">
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Button">
+          <Grid Width="20" Height="20" Background="{TemplateBinding Background}">
+            <Path Name="PlaySign"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  Data="M203.791,99.628L49.307,2.294c-4.567-2.719-10.238-2.266-14.521-2.266                               c-17.132,0-17.056,13.227-17.056,16.578v198.94c0,2.833-0.075,16.579,17.056,16.579c4.283,0,9.955,0.451,14.521-2.267                               l154.483-97.333c12.68-7.545,10.489-16.449,10.489-16.449S216.471,107.172,203.791,99.628z"
+                  Fill="Transparent"
+                  Stretch="Uniform" />
+          </Grid>
+
+          <ControlTemplate.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem, Mode=FindAncestor}, Path=IsMouseOver}" Value="True">
+              <DataTrigger.EnterActions>
+                <RemoveStoryboard BeginStoryboardName="ExitLabel" />
+                <BeginStoryboard Name="EnterBlackOverlay">
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetName="PlaySign"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="{StaticResource 30_DefaultWhiteColor}"
+                                    To="{StaticResource 50_DefaultWhiteColor}"
+                                    Duration="0:0:0.2" />
 
 
-                                        <ObjectAnimationUsingKeyFrames Duration="0" Storyboard.TargetName="PlaySign" Storyboard.TargetProperty="Data">
-                                            <DiscreteObjectKeyFrame>
-                                                <DiscreteObjectKeyFrame.Value>
-                                                    <Geometry>M282.856,0H169.714c-31.228,0-56.571,25.344-56.571,56.571v678.857c0,31.228,25.344,56.571,
-                                                        56.571,56.571h113.143 
-                                                        c31.256,0,56.572-25.315,56.572-56.571V56.571C339.428,25.344,314.112,0,282.856,0z 
-                                                        M622.285,0H509.143 c-31.256,0-56.572,25.344-56.572,56.571v678.857c0,31.228,25.316,56.571,56.572
-                                                        56.571h113.143 c31.256,0,56.572-25.315,56.572-56.571V56.571C678.857,25.344,653.541,0,622.285,0z</Geometry>
-                                                </DiscreteObjectKeyFrame.Value>
-                                            </DiscreteObjectKeyFrame>
-                                        </ObjectAnimationUsingKeyFrames>
+                  </Storyboard>
+                </BeginStoryboard>
+              </DataTrigger.EnterActions>
 
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </DataTrigger.EnterActions>
+              <DataTrigger.ExitActions>
+                <RemoveStoryboard BeginStoryboardName="EnterBlackOverlay" />
+                <RemoveStoryboard BeginStoryboardName="EnterColorOverlay" />
+                <RemoveStoryboard BeginStoryboardName="ExitColorOverlay" />
+                <BeginStoryboard Name="ExitLabel">
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetName="PlaySign"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="{StaticResource 50_DefaultWhiteColor}"
+                                    To="Transparent"
+                                    Duration="0:0:0.2" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </DataTrigger.ExitActions>
+            </DataTrigger>
 
-                            <DataTrigger.ExitActions>
-                                <RemoveStoryboard BeginStoryboardName="Selected"/>
-                            </DataTrigger.ExitActions>
-                        </DataTrigger>
+            <DataTrigger Binding="{Binding Path=IsPlaying}" Value="True">
+              <DataTrigger.EnterActions>
+                <BeginStoryboard Name="Selected">
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetName="PlaySign"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="{StaticResource 50_DefaultWhiteColor}"
+                                    To="{StaticResource 85_DefaultWhiteColor}"
+                                    Duration="0:0:0.2" />
 
 
-                        <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Cursor" Value="Hand"/>
-                            <Trigger.EnterActions>
-                                <RemoveStoryboard BeginStoryboardName="ExitColorOverlay"/>
-                                <BeginStoryboard Name="EnterColorOverlay">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetName="PlaySign" 
-                                                        Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                        From="{StaticResource 50_DefaultWhiteColor}" 
-                                                        To="{StaticResource 200_DefaultWhiteColor}"
-                                                        Duration="0:0:0.1" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.EnterActions>
+                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaySign"
+                                                   Storyboard.TargetProperty="Data"
+                                                   Duration="0">
+                      <DiscreteObjectKeyFrame>
+                        <DiscreteObjectKeyFrame.Value>
+                          <Geometry>
+                            M282.856,0H169.714c-31.228,0-56.571,25.344-56.571,56.571v678.857c0,31.228,25.344,56.571,
+                            56.571,56.571h113.143
+                            c31.256,0,56.572-25.315,56.572-56.571V56.571C339.428,25.344,314.112,0,282.856,0z
+                            M622.285,0H509.143 c-31.256,0-56.572,25.344-56.572,56.571v678.857c0,31.228,25.316,56.571,56.572
+                            56.571h113.143 c31.256,0,56.572-25.315,56.572-56.571V56.571C678.857,25.344,653.541,0,622.285,0z
+                          </Geometry>
+                        </DiscreteObjectKeyFrame.Value>
+                      </DiscreteObjectKeyFrame>
+                    </ObjectAnimationUsingKeyFrames>
 
-                            <Trigger.ExitActions>
-                                <RemoveStoryboard BeginStoryboardName="EnterColorOverlay"/>
-                                <BeginStoryboard Name="ExitColorOverlay">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetName="PlaySign" 
-                                                        Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                        From="{StaticResource  200_DefaultWhiteColor}" 
-                                                        To="{StaticResource 50_DefaultWhiteColor}"
-                                                        Duration="0:0:0.1" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </DataTrigger.EnterActions>
 
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.ExitActions>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
+              <DataTrigger.ExitActions>
+                <RemoveStoryboard BeginStoryboardName="Selected" />
+              </DataTrigger.ExitActions>
+            </DataTrigger>
 
-    <Style x:Key="MetroButtonRightStyle" TargetType="{x:Type Path}">
-        <Setter Property="Width" Value="60" />
-        <Setter Property="Height" Value="60" />
-        <Setter Property="Stretch" Value="Fill" />
-        <Setter Property="Data" Value="M30,0C13.458,0,0,13.458,0,30s13.458,30,30,30s30-13.458,30-30S46.542,0,30,0z M45.563,30.826l-22,15
-                C23.394,45.941,23.197,46,23,46c-0.16,0-0.321-0.038-0.467-0.116C22.205,45.711,22,45.371,22,45V15c0-0.371,0.205-0.711,0.533-0.884
-	            c0.328-0.174,0.724-0.15,1.031,0.058l22,15C45.836,29.36,46,29.669,46,30S45.836,30.64,45.563,30.826z" >
 
-        </Setter>
-    </Style>
+            <Trigger Property="IsMouseOver" Value="true">
+              <Setter Property="Cursor" Value="Hand" />
+              <Trigger.EnterActions>
+                <RemoveStoryboard BeginStoryboardName="ExitColorOverlay" />
+                <BeginStoryboard Name="EnterColorOverlay">
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetName="PlaySign"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="{StaticResource 50_DefaultWhiteColor}"
+                                    To="{StaticResource 200_DefaultWhiteColor}"
+                                    Duration="0:0:0.1" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </Trigger.EnterActions>
 
-    <Style x:Key="IconButtonStyle" TargetType="Button">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Path x:Name="buttonPath" Style="{TemplateBinding Content}" Fill="Transparent"/>
+              <Trigger.ExitActions>
+                <RemoveStoryboard BeginStoryboardName="EnterColorOverlay" />
+                <BeginStoryboard Name="ExitColorOverlay">
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetName="PlaySign"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="{StaticResource 200_DefaultWhiteColor}"
+                                    To="{StaticResource 50_DefaultWhiteColor}"
+                                    Duration="0:0:0.1" />
 
-                    <ControlTemplate.Triggers>
-                        <DataTrigger 
-                            Binding="{Binding 
-                            RelativeSource={RelativeSource AncestorType=Grid,
-                            Mode=FindAncestor},Path=IsMouseOver}" Value="True">
-                            <DataTrigger.EnterActions>
-                                <RemoveStoryboard BeginStoryboardName="ExitLabel"/>
-                                <BeginStoryboard Name="EnterBlackOverlay">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetName="buttonPath" 
-                                                                Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                                From="#10000000" 
-                                                                To="{StaticResource StrongerGrayOverlay}"
-                                                                Duration="0:0:0.2" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </DataTrigger.EnterActions>
+                  </Storyboard>
+                </BeginStoryboard>
+              </Trigger.ExitActions>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
 
-                            <DataTrigger.ExitActions>
-                                <RemoveStoryboard BeginStoryboardName="EnterBlackOverlay"/>
-                                <RemoveStoryboard BeginStoryboardName="EnterColorOverlay"/>
-                                <RemoveStoryboard BeginStoryboardName="ExitColorOverlay"/>
-                                <BeginStoryboard Name="ExitLabel">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetName="buttonPath" 
-                                                        Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                        From="{StaticResource StrongerGrayOverlay}" 
-                                                        To="#01000000"
-                                                        Duration="0:0:0.2"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </DataTrigger.ExitActions>
-                        </DataTrigger>
+  <Style x:Key="MetroButtonRightStyle" TargetType="{x:Type Path}">
+    <Setter Property="Width" Value="60" />
+    <Setter Property="Height" Value="60" />
+    <Setter Property="Stretch" Value="Fill" />
+    <Setter Property="Data" Value="M30,0C13.458,0,0,13.458,0,30s13.458,30,30,30s30-13.458,30-30S46.542,0,30,0z M45.563,30.826l-22,15                 C23.394,45.941,23.197,46,23,46c-0.16,0-0.321-0.038-0.467-0.116C22.205,45.711,22,45.371,22,45V15c0-0.371,0.205-0.711,0.533-0.884              c0.328-0.174,0.724-0.15,1.031,0.058l22,15C45.836,29.36,46,29.669,46,30S45.836,30.64,45.563,30.826z" />
+  </Style>
 
-                        <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Cursor" Value="Hand"/>
-                            <Trigger.EnterActions>
-                                <RemoveStoryboard BeginStoryboardName="ExitColorOverlay"/>
-                                <BeginStoryboard Name="EnterColorOverlay">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetName="buttonPath" 
-                                                        Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                        From="{StaticResource StrongerGrayOverlay}" 
-                                                        To="{StaticResource DefaultRedColor}"
-                                                        Duration="0:0:0.2" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.EnterActions>
+  <Style x:Key="IconButtonStyle" TargetType="Button">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Button">
+          <Path x:Name="buttonPath"
+                Fill="Transparent"
+                Style="{TemplateBinding Content}" />
 
-                            <Trigger.ExitActions>
-                                <RemoveStoryboard BeginStoryboardName="EnterColorOverlay"/>
-                                <BeginStoryboard Name="ExitColorOverlay">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetName="buttonPath" 
-                                                        Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                        From="{StaticResource DefaultRedColor}" 
-                                                        To="{StaticResource StrongerGrayOverlay}"
-                                                        Duration="0:0:0.2" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.ExitActions>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
+          <ControlTemplate.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}, Path=IsMouseOver}" Value="True">
+              <DataTrigger.EnterActions>
+                <RemoveStoryboard BeginStoryboardName="ExitLabel" />
+                <BeginStoryboard Name="EnterBlackOverlay">
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetName="buttonPath"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="#10000000"
+                                    To="{StaticResource StrongerGrayOverlay}"
+                                    Duration="0:0:0.2" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </DataTrigger.EnterActions>
+
+              <DataTrigger.ExitActions>
+                <RemoveStoryboard BeginStoryboardName="EnterBlackOverlay" />
+                <RemoveStoryboard BeginStoryboardName="EnterColorOverlay" />
+                <RemoveStoryboard BeginStoryboardName="ExitColorOverlay" />
+                <BeginStoryboard Name="ExitLabel">
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetName="buttonPath"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="{StaticResource StrongerGrayOverlay}"
+                                    To="#01000000"
+                                    Duration="0:0:0.2" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </DataTrigger.ExitActions>
+            </DataTrigger>
+
+            <Trigger Property="IsMouseOver" Value="true">
+              <Setter Property="Cursor" Value="Hand" />
+              <Trigger.EnterActions>
+                <RemoveStoryboard BeginStoryboardName="ExitColorOverlay" />
+                <BeginStoryboard Name="EnterColorOverlay">
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetName="buttonPath"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="{StaticResource StrongerGrayOverlay}"
+                                    To="{StaticResource DefaultRedColor}"
+                                    Duration="0:0:0.2" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </Trigger.EnterActions>
+
+              <Trigger.ExitActions>
+                <RemoveStoryboard BeginStoryboardName="EnterColorOverlay" />
+                <BeginStoryboard Name="ExitColorOverlay">
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetName="buttonPath"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    From="{StaticResource DefaultRedColor}"
+                                    To="{StaticResource StrongerGrayOverlay}"
+                                    Duration="0:0:0.2" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </Trigger.ExitActions>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
 
 </ResourceDictionary>

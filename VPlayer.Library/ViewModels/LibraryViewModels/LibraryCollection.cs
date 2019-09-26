@@ -25,7 +25,7 @@ using VPlayer.Library.VirtualList.VirtualLists;
 namespace VPlayer.Library.ViewModels.LibraryViewModels
 {
   [AddINotifyPropertyChangedInterface]
-  public class LibraryCollection<TViewModel, TModel>
+  public class LibraryCollection<TViewModel, TModel> : BindableBase
   where TViewModel : class, IPlayableViewModel<TModel>
   where TModel : class, INamedEntity
   {
@@ -195,18 +195,20 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
     public void Recreate()
     {
-      FilteredItems = FilteredItems = new VirtualList<TViewModel>(new PlayableItemsGenerator<TViewModel, TModel>(Items));
-
+      FilteredItems = new VirtualList<TViewModel>(new PlayableItemsGenerator<TViewModel, TModel>(Items));
       CreateTrieItems(SortedItems);
-
     }
 
     #endregion
+
+    #region LoadDataImmediately
 
     public void LoadDataImmediately()
     {
       LoadInitilizedDataSync();
       Recreate();
-    }
+    } 
+
+    #endregion
   }
 }

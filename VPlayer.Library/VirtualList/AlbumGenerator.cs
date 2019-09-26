@@ -22,16 +22,6 @@ namespace VPlayer.Library.VirtualList
         where TModel : INamedEntity
     {
         private readonly PagedEmployeeRepository<TViewModel,TModel> _repository;
-        //public PlayableItemsGenerator()
-        //{
-        //    using (IStorage storage = StorageManager.GetStorage())
-        //    {
-        //        var itemsEnumerable = storage.GetItems<TModel>();
-
-        //        if (itemsEnumerable != null)
-        //            _repository = new PagedEmployeeRepository<TModel>(itemsEnumerable.ToArray());
-        //    }
-        //}
 
         public PlayableItemsGenerator(IEnumerable<TViewModel> source)
         {

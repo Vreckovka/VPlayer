@@ -96,6 +96,7 @@
     <Compile Include="DomainClasses\Song.cs" />
     <Compile Include="Events\Pause.cs" />
     <Compile Include="Events\PlaySongsEvent.cs" />
+    <Compile Include="Events\PlaySongsInPlayListEvent.cs" />
     <Compile Include="Interfaces\Storage\IStorageManager.cs" />
     <Compile Include="Interfaces\ViewModels\IAlbumsViewModel.cs" />
     <Compile Include="Interfaces\ViewModels\IArtistsViewModel.cs" />
