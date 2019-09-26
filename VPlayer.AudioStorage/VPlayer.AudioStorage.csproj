@@ -137,7 +137,6 @@
     <Compile Include="AudioInfoDownloader\AudioInfoDownloaderProvider.cs" />
     <Compile Include="AudioInfoDownloader\Extensions.cs" />
     <Compile Include="AudioInfoDownloader\Models\Cover.cs" />
-    <Compile Include="Interfaces\IStorageManager.cs" />
     <Compile Include="Migrations\201909210850186_Initial.cs" />
     <Compile Include="Migrations\201909210850186_Initial.Designer.cs">
       <DependentUpon>201909210850186_Initial.cs</DependentUpon>

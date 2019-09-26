@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using VPlayer.AudioStorage;
 using VPlayer.AudioStorage.Interfaces;
 using VPlayer.Core.DomainClasses;
+using VPlayer.Core.ViewModels;
 using VPlayer.Library.Properties;
 using VPlayer.Library.ViewModels;
 using VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels;

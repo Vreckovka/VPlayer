@@ -140,8 +140,6 @@ namespace VPlayer.AudioInfoDownloader
 
                     return null;
                 }
-
-                return null;
             });
         }
 

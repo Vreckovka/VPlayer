@@ -123,10 +123,10 @@
   <ItemGroup>
     <Compile Include="Converters.cs" />
     <Compile Include="Modularity\NinjectModule\LibraryNinjectModule.cs" />
+    <Compile Include="Modularity\VPlayerLibraryRegionManager.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModels\AlbumsViewModels\AlbumCoversViewModel.cs" />
     <Compile Include="ViewModels\AlbumsViewModels\AlbumsViewModel.cs" />
-    <Compile Include="ViewModels\AlbumsViewModels\AlbumViewModel.cs" />
     <Compile Include="ViewModels\DesignViewModels\ArtistsDesignViewModel.cs" />
     <Compile Include="ViewModels\LibraryViewModels\ArtistsViewModels\ArtistsViewModel.cs" />
     <Compile Include="ViewModels\PlayableItemsViewModel.cs" />
@@ -138,7 +138,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\AlbumsViewModels\AlbumDetailViewModel.cs" />
     <Compile Include="ViewModels\LibraryViewModels\ArtistsViewModels\ArtistDetailViewModel.cs" />
-    <Compile Include="ViewModels\LibraryViewModels\ArtistsViewModels\ArtistViewModel.cs" />
     <Compile Include="ViewModels\LibraryViewModel.cs" />
     <Compile Include="Views\AlbumDetailView.xaml.cs">
       <DependentUpon>AlbumDetailView.xaml</DependentUpon>

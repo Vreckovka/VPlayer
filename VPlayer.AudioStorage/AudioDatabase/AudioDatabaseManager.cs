@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using VCore.Modularity.Events;
 using VPlayer.AudioInfoDownloader;
 using VPlayer.AudioStorage.Interfaces;
 using VPlayer.Core.DomainClasses;
@@ -73,17 +74,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
             _entities.SaveChanges();
         }
     }
-    public enum Changed
-    {
-        Added,
-        Removed,
-        Updated
-    }
-    public class ItemChanged
-    {
-        public object Item { get; set; }
-        public Changed Changed { get; set; }
-    }
 
     public class AudioDatabaseManager : IStorageManager
     {
@@ -137,7 +127,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
                         Logger.Logger.Instance.Log(Logger.MessageType.Success, $"New artist was added {artist.Name}");
 
-                        ItemChanged.OnNext(new AudioDatabase.ItemChanged()
+                        ItemChanged.OnNext(new ItemChanged()
                         {
                             Item = artist,
                             Changed = Changed.Added
@@ -176,7 +166,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
                         Logger.Logger.Instance.Log(Logger.MessageType.Success, $"New album was added {album.Name}");
 
-                        ItemChanged.OnNext(new AudioDatabase.ItemChanged()
+                        ItemChanged.OnNext(new ItemChanged()
                         {
                             Item = album,
                             Changed = Changed.Added
@@ -206,7 +196,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
                         context.Songs.Add(song);
                         await context.SaveChangesAsync();
 
-                        ItemChanged.OnNext(new AudioDatabase.ItemChanged()
+                        ItemChanged.OnNext(new ItemChanged()
                         {
                             Item = song,
                             Changed = Changed.Added
@@ -377,7 +367,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
                         originalArtist.MusicBrainzId = artist.MusicBrainzId;
                         originalArtist.Name = artist.Name;
 
-                        ItemChanged.OnNext(new AudioDatabase.ItemChanged()
+                        ItemChanged.OnNext(new ItemChanged()
                         {
                             Changed = Changed.Updated,
                             Item = originalArtist
@@ -434,7 +424,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
                                 Logger.Logger.Instance.Log(Logger.MessageType.Success,
                                     $"Album was updated in database {album.Name}");
 
-                                ItemChanged.OnNext(new AudioDatabase.ItemChanged()
+                                ItemChanged.OnNext(new ItemChanged()
                                 {
                                     Changed = Changed.Updated,
                                     Item = originalAlbum
@@ -453,7 +443,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
                                 if (originalCopy != null)
                                 {
                                     originalCopy.Id = oldId;
-                                    ItemChanged.OnNext(new AudioDatabase.ItemChanged()
+                                    ItemChanged.OnNext(new ItemChanged()
                                     {
                                         Changed = Changed.Updated,
                                         Item = originalCopy
@@ -532,7 +522,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
                                     Logger.Logger.Instance.Log(Logger.MessageType.Success,
                                         $"Album was updated in database {album.Name}");
 
-                                    ItemChanged.OnNext(new AudioDatabase.ItemChanged()
+                                    ItemChanged.OnNext(new ItemChanged()
                                     {
                                         Changed = Changed.Updated,
                                         Item = originalAlbum
@@ -551,7 +541,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
                                     if (originalCopy != null)
                                     {
                                         originalCopy.Id = oldId;
-                                        ItemChanged.OnNext(new AudioDatabase.ItemChanged()
+                                        ItemChanged.OnNext(new ItemChanged()
                                         {
                                             Changed = Changed.Updated,
                                             Item = originalCopy
@@ -638,7 +628,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
                     context.SaveChanges();
 
 
-                    ItemChanged.OnNext(new AudioDatabase.ItemChanged()
+                    ItemChanged.OnNext(new ItemChanged()
                     {
                         Changed = Changed.Removed,
                         Item = albumToCombine

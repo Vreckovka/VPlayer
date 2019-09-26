@@ -34,7 +34,7 @@
             </Grid>
 
             
-            <Image Source="{Binding ActualImage}" Name="Image"/>
+            <Image Source="{Binding SelectedSong.IsPlaying}" Name="Image"/>
             <Grid Background="{StaticResource GlassGradient}" Width="{Binding ElementName=Image, Path=ActualHeight}" 
                   Height="{Binding ElementName=Image,Path=ActualHeight}"/>
 

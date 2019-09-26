@@ -1,19 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
 using VCore.Factories;
+using VCore.Modularity.Events;
 using VCore.Modularity.Interfaces;
 using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
-using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.Interfaces;
 using VPlayer.Core.DomainClasses;
-using VPlayer.Library.VirtualList.VirtualLists;
+using VPlayer.Core.ViewModels;
+using VPlayer.Library.ViewModels.LibraryViewModels;
 
-namespace VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels
+namespace VPlayer.Library.ViewModels
 {
     public abstract class PlayableItemsViewModel<TView, TViewModel, TModel> : RegionViewModel<TView>, INavigationItem
         where TView : class, IView

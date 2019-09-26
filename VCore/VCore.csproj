@@ -131,6 +131,8 @@
     <Compile Include="Factories\Views\BaseViewFactory.cs" />
     <Compile Include="Factories\Views\IViewFactory.cs" />
     <Compile Include="ItemsCollections\ObservableItems.cs" />
+    <Compile Include="Modularity\Events\Changed.cs" />
+    <Compile Include="Modularity\Events\ItemChanged.cs" />
     <Compile Include="Modularity\Interfaces\IActivable.cs" />
     <Compile Include="Modularity\Interfaces\IView.cs" />
     <Compile Include="Modularity\NinjectModules\BaseNinjectModule.cs" />
@@ -138,6 +140,8 @@
     <Compile Include="Modularity\NinjectModules\NinjectModuleExtentions.cs" />
     <Compile Include="Modularity\RegionProviders\IRegionProvider.cs" />
     <Compile Include="Modularity\RegionProviders\BaseRegionProvider.cs" />
+    <Compile Include="Modularity\Interfaces\IRegistredView.cs" />
+    <Compile Include="Modularity\RegionProviders\RegistredView.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\BaseMainWindowViewModel.cs" />

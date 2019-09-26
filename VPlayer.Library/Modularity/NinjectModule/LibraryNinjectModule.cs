@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Ninject;
 using VCore.Modularity.NinjectModules;
 using VPlayer.AudioStorage.Modularity.NinjectModules;
+using VPlayer.Core.Modularity.Regions;
 
 namespace VPlayer.Library.Modularity.NinjectModule
 {
@@ -15,6 +16,7 @@ namespace VPlayer.Library.Modularity.NinjectModule
         {
             base.Load();
             Kernel.Load<AudioStorageNinjectModule>();
+            Kernel.Bind<IVPlayerRegionManager>().To<VPlayerLibraryRegionManager>();
         }
 
         public override void RegisterViewModels()

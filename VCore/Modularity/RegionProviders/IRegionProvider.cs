@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using VCore.Modularity.Interfaces;
-using VCore.ViewModels;
 
 namespace VCore.Modularity.RegionProviders
 {

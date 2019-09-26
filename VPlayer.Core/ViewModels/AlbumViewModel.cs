@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
 using Prism.Events;
+using VCore.Annotations;
 using VCore.Factories;
 using VPlayer.AudioStorage.Interfaces;
 using VPlayer.Core.DomainClasses;
-using VPlayer.Library.Properties;
-using VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels;
+using VPlayer.Core.Modularity.Regions;
 
 namespace VPlayer.Library.ViewModels.AlbumsViewModels
 {
@@ -18,12 +15,17 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     {
         private readonly IStorageManager storage;
         private readonly IViewModelsFactory viewModelsFactory;
+        private readonly IVPlayerRegionManager vPlayerRegionManager;
 
-        public AlbumViewModel(Album model, IEventAggregator eventAggregator, 
-            [NotNull] IStorageManager storage, [VCore.Annotations.NotNull] IViewModelsFactory viewModelsFactory) : base(model, eventAggregator)
+        public AlbumViewModel(
+          Album model, IEventAggregator eventAggregator, 
+            [NotNull] IStorageManager storage, [VCore.Annotations.NotNull]
+          IViewModelsFactory viewModelsFactory,
+          [NotNull] IVPlayerRegionManager vPlayerRegionManager) : base(model, eventAggregator)
         {
             this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
             this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+            this.vPlayerRegionManager = vPlayerRegionManager ?? throw new ArgumentNullException(nameof(vPlayerRegionManager));
         }
 
 
@@ -48,8 +50,8 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
         protected override void OnDetail()
         {
-            var asd = viewModelsFactory.Create<AlbumDetailViewModel>(this);
-            asd.IsActive = true;
+          vPlayerRegionManager.ShowAlbumDetail(this);
+       
         }
     }
 }

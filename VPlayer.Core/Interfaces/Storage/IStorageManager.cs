@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
-using VPlayer.AudioStorage.AudioDatabase;
+using VCore.Modularity.Events;
 using VPlayer.Core.DomainClasses;
 
 namespace VPlayer.AudioStorage.Interfaces

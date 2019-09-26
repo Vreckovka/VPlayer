@@ -8,7 +8,6 @@ using VPlayer.AudioStorage.Interfaces;
 using VPlayer.Core.DomainClasses;
 using VPlayer.Core.Events;
 using VPlayer.Core.ViewModels;
-using VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels;
 
 namespace VPlayer.Library.ViewModels
 {

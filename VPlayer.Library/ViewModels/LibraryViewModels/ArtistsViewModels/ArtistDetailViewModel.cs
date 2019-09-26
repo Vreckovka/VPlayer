@@ -5,6 +5,7 @@ using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
 using VPlayer.Core.DomainClasses;
 using VPlayer.Core.Modularity.Regions;
+using VPlayer.Core.ViewModels;
 using VPlayer.Library.Views;
 
 namespace VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels

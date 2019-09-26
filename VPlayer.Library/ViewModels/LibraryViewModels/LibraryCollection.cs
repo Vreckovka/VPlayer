@@ -15,6 +15,7 @@ using VCore.Factories;
 using VCore.Modularity.Interfaces;
 using VPlayer.AudioStorage.Interfaces;
 using VPlayer.Core.DomainClasses;
+using VPlayer.Core.ViewModels;
 using VPlayer.Library.Properties;
 using VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels;
 using VPlayer.Library.VirtualList;
