@@ -120,7 +120,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionCommand.cs" />
+    <Compile Include="AttachedProperties\AttachedProperty.cs" />
     <Compile Include="Behaviors\DropBehavior.cs" />
+    <Compile Include="Behaviors\Text\PanningTextWithFontSizeBehavior.cs" />
     <Compile Include="Controls\Finder.cs" />
     <Compile Include="Controls\PlayableWrapPanelItem.cs" />
     <Compile Include="Controls\PlayableWrapPanel.cs" />

@@ -38,7 +38,7 @@ namespace VCore.Behaviors
     /// This appears in XAML with the "Set" stripped off.
     /// XAML usage:
     ///
-    /// <Grid mvvm:DropBehavior.PreviewDropCommand="{Binding DropCommand}" />
+    /// <AttachedProperty mvvm:DropBehavior.PreviewDropCommand="{Binding DropCommand}" />
     ///
     /// </summary>
     /// <param name="inUIElement">A UIElement object. In XAML this is automatically passed

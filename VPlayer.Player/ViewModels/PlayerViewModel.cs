@@ -179,6 +179,7 @@ namespace VPlayer.Player.ViewModels
 
     private void PlaySongs(IEnumerable<SongInPlayList> songs)
     {
+      actualSongIndex = 0;
       PlayList = songs.ToList();
       Play();
 

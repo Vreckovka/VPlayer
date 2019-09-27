@@ -2,7 +2,10 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:controls="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
                     xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Library"
-                    xmlns:local="clr-namespace:VPlayer.StylesDictionaries">
+                    xmlns:local="clr-namespace:VPlayer.StylesDictionaries"
+                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                    xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore"
+                    xmlns:attachedProperties="clr-namespace:VCore.AttachedProperties;assembly=VCore">
 
 
   <ResourceDictionary.MergedDictionaries>
@@ -149,89 +152,17 @@
                       Command="{Binding Play}"
                       Style="{StaticResource PlayMini}" />
               <Grid Grid.Column="1"
-                    Width="180"
                     Margin="5,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    ClipToBounds="True">
-                <TextBlock HorizontalAlignment="Left" Text="{Binding Name}">
-                  <TextBlock.Style>
-                    <Style TargetType="TextBlock">
-                      <Setter Property="Background" Value="Transparent" />
-                      <Setter Property="VerticalAlignment" Value="Top" />
-                      <Setter Property="HorizontalAlignment" Value="Center" />
-                      <Setter Property="FontSize" Value="12" />
-                      <Style.Triggers>
-                        <DataTrigger Value="True">
-                          <DataTrigger.Binding>
-                            <MultiBinding Converter="{library:IsBiggerConverter}">
-                              <Binding ElementName="NameTxt" Path="ActualWidth" />
-                              <Binding ElementName="ParentContainer" Path="Width" />
-                            </MultiBinding>
-                          </DataTrigger.Binding>
-                          <Setter Property="HorizontalAlignment" Value="Left" />
-                        </DataTrigger>
-                        <Trigger Property="IsMouseOver" Value="true">
-                          <Trigger.EnterActions>
-                            <RemoveStoryboard BeginStoryboardName="SizeDownStoryBoard" />
-                            <BeginStoryboard Name="SizeUpStoryBoard">
-                              <Storyboard>
-                                <DoubleAnimation Storyboard.TargetProperty="(TextBlock.FontSize)"
-                                                 From="12"
-                                                 To="15"
-                                                 Duration="0:0:0.25" />
-
-
-                              </Storyboard>
-                            </BeginStoryboard>
-                          </Trigger.EnterActions>
-
-                          <Trigger.ExitActions>
-                            <RemoveStoryboard BeginStoryboardName="SizeUpStoryBoard" />
-                            <BeginStoryboard Name="SizeDownStoryBoard">
-                              <Storyboard>
-                                <DoubleAnimation Storyboard.TargetProperty="(TextBlock.FontSize)"
-                                                 From="15"
-                                                 To="12"
-                                                 Duration="0:0:0.25" />
-                              </Storyboard>
-                            </BeginStoryboard>
-                          </Trigger.ExitActions>
-                        </Trigger>
-                      </Style.Triggers>
-                    </Style>
-                  </TextBlock.Style>
-                  <TextBlock.Triggers>
-                    <EventTrigger RoutedEvent="TextBlock.MouseEnter">
-                      <EventTrigger.Actions>
-                        <BeginStoryboard Name="SlideToLeft">
-                          <Storyboard AutoReverse="True" RepeatBehavior="Forever">
-                            <ThicknessAnimation AccelerationRatio="0.5"
-                                                DecelerationRatio="0.5"
-                                                Storyboard.TargetProperty="Margin"
-                                                From="5 0 0 0">
-                              <ThicknessAnimation.Duration>
-                                <MultiBinding Converter="{library:ScrollingTextDurationConverter}">
-                                  <Binding Path="ActualWidth" RelativeSource="{RelativeSource AncestorType=Grid, Mode=FindAncestor}" />
-                                  <Binding Path="ActualWidth" RelativeSource="{RelativeSource AncestorType=TextBlock, Mode=FindAncestor}" />
-                                </MultiBinding>
-                              </ThicknessAnimation.Duration>
-
-                              <ThicknessAnimation.To>
-                                <MultiBinding Converter="{library:ScrollingTextMarginConverter}">
-                                  <Binding Path="ActualWidth" RelativeSource="{RelativeSource AncestorType=Grid, Mode=FindAncestor}" />
-                                  <Binding Path="ActualWidth" RelativeSource="{RelativeSource AncestorType=TextBlock, Mode=FindAncestor}" />
-                                </MultiBinding>
-                              </ThicknessAnimation.To>
-                            </ThicknessAnimation>
-                          </Storyboard>
-                        </BeginStoryboard>
-                      </EventTrigger.Actions>
-                    </EventTrigger>
-                    <EventTrigger RoutedEvent="Grid.MouseLeave">
-                      <RemoveStoryboard BeginStoryboardName="SlideToLeft" />
-                    </EventTrigger>
-                  </TextBlock.Triggers>
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    ClipToBounds="True"
+                    Name="Container"
+                    Background="Transparent"
+                    >
+                <TextBlock HorizontalAlignment="Left" Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center">
+                  <i:Interaction.Behaviors>
+                    <text:PanningTextWithFontSizeBehavior BiggerFontSize="17" Container="{Binding ElementName=Container}" IsMouseOverRelativeToContainer="True"/>
+                  </i:Interaction.Behaviors>
                 </TextBlock>
               </Grid>
               <TextBlock Grid.Column="2"

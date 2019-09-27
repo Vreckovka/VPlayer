@@ -126,6 +126,15 @@ namespace VPlayer.Core.Desing
 
           Songs.Add(song);
         }
+
+        Songs.Add(new Song()
+        {
+          Name = $"Song with really long name wich should not fit in",
+          Length = 2,
+          Duration = random.Next(400, 800),
+          DiskLocation = "DISK LOCATION",
+          Album = album
+        });
       }
     }
 

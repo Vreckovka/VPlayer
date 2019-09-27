@@ -89,8 +89,8 @@
                   Background="{TemplateBinding Background}"
                   CornerRadius="4">
             <Grid>
-              <ContentPresenter/>
-            
+              <ContentPresenter />
+
             </Grid>
 
           </Border>
@@ -486,11 +486,13 @@
   </Style>
 
   <Style x:Key="PlayMini" TargetType="Button">
-    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="Background" Value="Transparent" />
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="Button">
-          <Grid Width="20" Height="20" Background="{TemplateBinding Background}">
+          <Grid Width="20"
+                Height="20"
+                Background="{TemplateBinding Background}">
             <Path Name="PlaySign"
                   HorizontalAlignment="Center"
                   VerticalAlignment="Center"
@@ -558,7 +560,6 @@
                         </DiscreteObjectKeyFrame.Value>
                       </DiscreteObjectKeyFrame>
                     </ObjectAnimationUsingKeyFrames>
-
                   </Storyboard>
                 </BeginStoryboard>
               </DataTrigger.EnterActions>
@@ -567,6 +568,38 @@
                 <RemoveStoryboard BeginStoryboardName="Selected" />
               </DataTrigger.ExitActions>
             </DataTrigger>
+
+            <DataTrigger Binding="{Binding Path=IsPaused}" Value="True">
+              <DataTrigger.EnterActions>
+                <BeginStoryboard Name="IsPaused">
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetName="PlaySign"
+                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                    To="{StaticResource 85_DefaultWhiteColor}"
+                                    Duration="0:0:0.2" />
+
+
+                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaySign"
+                                                   Storyboard.TargetProperty="Data"
+                                                   Duration="0">
+                      <DiscreteObjectKeyFrame>
+                        <DiscreteObjectKeyFrame.Value>
+                          <Geometry>
+                            M203.791,99.628L49.307,2.294c-4.567-2.719-10.238-2.266-14.521-2.266
+                            c-17.132,0-17.056,13.227-17.056,16.578v198.94c0,2.833-0.075,16.579,17.056,16.579c4.283,0,9.955,0.451,14.521-2.267l154.483-97.333c12.68-7.545,10.489-16.449,10.489-16.449S216.471,107.172,203.791,99.628z
+                          </Geometry>
+                        </DiscreteObjectKeyFrame.Value>
+                      </DiscreteObjectKeyFrame>
+                    </ObjectAnimationUsingKeyFrames>
+                  </Storyboard>
+                </BeginStoryboard>
+              </DataTrigger.EnterActions>
+
+              <DataTrigger.ExitActions>
+                <RemoveStoryboard BeginStoryboardName="IsPaused" />
+              </DataTrigger.ExitActions>
+            </DataTrigger>
+
 
 
             <Trigger Property="IsMouseOver" Value="true">

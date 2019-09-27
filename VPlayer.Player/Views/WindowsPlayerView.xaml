@@ -24,7 +24,7 @@
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*" />
         <ColumnDefinition Width="5" />
-        <ColumnDefinition Width="auto"/>
+        <ColumnDefinition Width="300"/>
       </Grid.ColumnDefinitions>
 
       <Grid Grid.Column="0">
@@ -64,7 +64,7 @@
                   ItemTemplate="{StaticResource SoundTrackTemplate}"
                   ItemsSource="{Binding PlayList}"
                   Style="{StaticResource AlbumsSongs}" 
-                  HorizontalAlignment="Left"
+                  HorizontalAlignment="Stretch"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled">
           <i:Interaction.Triggers>
             <i:EventTrigger EventName="MouseDoubleClick">

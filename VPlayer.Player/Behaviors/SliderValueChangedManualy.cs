@@ -1,20 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 using Ninject;
-using VCore.Controls;
 using VPlayer.Player.ViewModels;
-using System;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using Vlc.DotNet.Core.Interops.Signatures;
 
 namespace VPlayer.Player.Behaviors
 {
