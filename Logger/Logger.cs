@@ -48,7 +48,7 @@ namespace Logger
             }
         }
 
-        public void Log(MessageType type, string message)
+        public void Log(MessageType type, object message)
         {
             try
             {

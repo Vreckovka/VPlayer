@@ -100,6 +100,8 @@ namespace VPlayer.Library.ViewModels
 
     #endregion
 
+    #region Initialize
+
     public override void Initialize()
     {
       base.Initialize();
@@ -111,6 +113,8 @@ namespace VPlayer.Library.ViewModels
       NavigationViewModel.Items.Add(albumsViewModel);
 
       libraryViewModel.IsActive = true;
-    }
+    } 
+
+    #endregion
   }
 }

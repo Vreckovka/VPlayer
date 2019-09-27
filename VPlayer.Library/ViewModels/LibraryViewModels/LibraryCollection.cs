@@ -1,24 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Data.Entity;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Gma.DataStructures.StringSearch;
 using Prism.Mvvm;
 using PropertyChanged;
 using VCore.Factories;
-using VCore.Modularity.Interfaces;
 using VPlayer.AudioStorage.Interfaces;
 using VPlayer.Core.DomainClasses;
-using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.Artists;
-using VPlayer.Library.Properties;
-using VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels;
 using VPlayer.Library.VirtualList;
 using VPlayer.Library.VirtualList.VirtualLists;
 
@@ -48,7 +40,10 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
     #region Constructors
 
-    public LibraryCollection(IViewModelsFactory viewModelsFactory, [VCore.Annotations.NotNull] IStorageManager storageManager)
+    public LibraryCollection(
+      IViewModelsFactory viewModelsFactory, 
+      IStorageManager storageManager
+    )
     {
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       ViewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
@@ -110,6 +105,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
       }
       catch (Exception ex)
       {
+        Logger.Logger.Instance.LogException(ex);
         return false;
       }
     }
@@ -173,19 +169,26 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
     {
       return Observable.FromAsync<bool>(async () =>
       {
-        return await Task.Run(() =>
-              {
-                try
-                {
-                  Recreate();
 
-                  return true;
-                }
-                catch (Exception)
-                {
-                  return false;
-                }
-              });
+        return await Task.Run(() =>
+        {
+          try
+          {
+            if (Items != null)
+            {
+              Recreate();
+
+              return true;
+            }
+
+            return false;
+          }
+          catch (Exception)
+          {
+            return false;
+          }
+        });
+
       });
     }
 
@@ -195,8 +198,11 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
     public void Recreate()
     {
-      FilteredItems = new VirtualList<TViewModel>(new PlayableItemsGenerator<TViewModel, TModel>(Items));
-      CreateTrieItems(SortedItems);
+      if (Items != null)
+      {
+        FilteredItems = new VirtualList<TViewModel>(new PlayableItemsGenerator<TViewModel, TModel>(Items));
+        CreateTrieItems(SortedItems);
+      }
     }
 
     #endregion
@@ -207,7 +213,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
     {
       LoadInitilizedDataSync();
       Recreate();
-    } 
+    }
 
     #endregion
   }

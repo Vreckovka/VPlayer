@@ -10,7 +10,7 @@ using System.Windows.Threading;
 using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
 using VPlayer.AudioInfoDownloader;
-using VPlayer.AudioInfoDownloader.Models;
+using VPlayer.AudioStorage.AudioInfoDownloader.Models;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Library.Views;
 
@@ -18,6 +18,10 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 {
   public class AlbumCoversViewModel : RegionViewModel<AlbumCoversView>
   {
+    public ObservableCollection<AlbumCover> AlbumCovers { get; set; } = new ObservableCollection<AlbumCover>();
+    public double DownloadedProcessValue { get; set; }
+    public int FoundConvers { get; set; }
+
     public AlbumCoversViewModel(
         IRegionProvider regionProvider,
         AudioInfoDownloaderProvider audioInfoDownloaderProvider,
@@ -33,18 +37,29 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     public override string RegionName => RegionNames.LibraryContentRegion;
     public override bool ContainsNestedRegions => false;
 
-    public ObservableCollection<Cover> Covers { get; set; } = new ObservableCollection<Cover>();
-
-    private async void Instance_CoversDownloaded(object sender, List<Cover> e)
+    private object button = new object();
+    private async void Instance_CoversDownloaded(object sender, List<AlbumCover> e)
     {
-      await Application.Current.Dispatcher.InvokeAsync(async () =>
+      FoundConvers += e.Count;
+
+      foreach (var cover in e)
       {
-        foreach (var cover in e)
+        var downloadedCover = await Task.Run(() =>
         {
-          cover.Size = await Task.Run(() => { return GetFileSize(cover.Url); });
-          Covers.Add(cover);
-        }
-      });
+          using (var client = new WebClient())
+          {
+            return client.DownloadData(cover.Url);
+          }
+        });
+
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+          cover.DownloadedCover = downloadedCover;
+          cover.Size = downloadedCover.Length;
+          AlbumCovers.Add(cover);
+          DownloadedProcessValue = (double)(AlbumCovers.Count * 100) / FoundConvers;
+        });
+      }
     }
 
 

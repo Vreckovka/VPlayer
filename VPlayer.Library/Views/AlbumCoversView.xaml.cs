@@ -17,7 +17,6 @@ using System.Windows.Shapes;
 using PropertyChanged;
 using VCore.Modularity.Interfaces;
 using VPlayer.AudioInfoDownloader;
-using VPlayer.AudioInfoDownloader.Models;
 using VPlayer.AudioStorage;
 using VPlayer.Core.DomainClasses;
 

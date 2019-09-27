@@ -348,7 +348,7 @@
         <Image Name="Image"
                HorizontalAlignment="Center"
                VerticalAlignment="Top"
-               Source="{Binding Url}" />
+               Source="{Binding DownloadedCover}" />
 
         <Grid Grid.Row="0" Background="{StaticResource GlassGradient}" />
 
@@ -372,16 +372,6 @@
               <RowDefinition Height="*" />
               <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-
-            <!--<TextBlock
-                                   Grid.Row="0"
-                                   FontFamily="Arial"
-                                   FontSize="20"
-                                   Name="NameTxt"
-                                   Text="{Binding Type}"
-                                   Style="{StaticResource PanningTextBlock}">
-
-                        </TextBlock>-->
 
             <TextBlock Grid.Row="1"
                        HorizontalAlignment="Stretch"
