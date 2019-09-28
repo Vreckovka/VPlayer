@@ -14,10 +14,12 @@ using Ninject;
 using Prism.Events;
 using VCore;
 using VCore.Annotations;
+using VCore.Modularity.Events;
 using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
 using Vlc.DotNet.Core;
 using Vlc.DotNet.Core.Interops;
+using VPlayer.AudioStorage.Interfaces;
 using VPlayer.Core.DomainClasses;
 using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
@@ -37,7 +39,10 @@ namespace VPlayer.Player.ViewModels
 
     #region Constructors
 
-    public PlayerViewModel(IRegionProvider regionProvider, [NotNull] IEventAggregator eventAggregator, IKernel kernel) : base(regionProvider)
+    public PlayerViewModel(
+      IRegionProvider regionProvider,
+      [NotNull] IEventAggregator eventAggregator,
+      IKernel kernel) : base(regionProvider)
     {
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       Kernel = kernel;

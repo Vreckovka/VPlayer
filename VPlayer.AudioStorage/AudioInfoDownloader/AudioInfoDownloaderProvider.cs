@@ -709,6 +709,17 @@ namespace VPlayer.AudioInfoDownloader
 
                 });
               }
+
+              var imageImage = image.image;
+              if (imageImage != null)
+              {
+                covers.Add(new AlbumCover()
+                {
+                  Mbid = MBID,
+                  Type = image.type,
+                  Url = imageImage,
+                });
+              }
             }
           }
           else
@@ -1012,32 +1023,36 @@ namespace VPlayer.AudioInfoDownloader
     {
       try
       {
-        if (matchings.Count == 1)
+        if (matchings != null)
         {
-          return matchings[0];
-        }
-        else if (matchings.Count > 1)
-        {
-
-          List<KeyValuePair<JToken, string>> durations = new List<KeyValuePair<JToken, string>>();
-
-          for (int i = 0; i < matchings.Count; i++)
+          if (matchings.Count == 1)
           {
-            dynamic asd = matchings[i];
-            var duration = asd.duration;
-
-            if (duration != null)
-              durations.Add(new KeyValuePair<JToken, string>(matchings[i], duration.ToString()));
+            return matchings[0];
           }
+          else if (matchings.Count > 1)
+          {
 
-          return durations.OrderByDescending(a => Levenshtein.Similarity(a.Value, fileDuration)).First().Key;
+            List<KeyValuePair<JToken, string>> durations = new List<KeyValuePair<JToken, string>>();
+
+            for (int i = 0; i < matchings.Count; i++)
+            {
+              dynamic asd = matchings[i];
+              var duration = asd.duration;
+
+              if (duration != null)
+                durations.Add(new KeyValuePair<JToken, string>(matchings[i], duration.ToString()));
+            }
+
+            return durations.OrderByDescending(a => Levenshtein.Similarity(a.Value, fileDuration)).First().Key;
+          }
         }
 
         return null;
       }
       catch (Exception ex)
       {
-        throw ex;
+        Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+        return null;
       }
     }
 

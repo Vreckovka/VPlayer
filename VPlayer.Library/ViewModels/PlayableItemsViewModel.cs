@@ -44,7 +44,7 @@ namespace VPlayer.Library.ViewModels
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       LibraryCollection = libraryCollection ?? throw new ArgumentNullException(nameof(libraryCollection));
 
-      this.storageManager.ItemChanged.Where(x => x.Item.GetType() == typeof(TModel)).Subscribe(ItemsChanged);
+     
     }
 
     #endregion
@@ -107,6 +107,7 @@ namespace VPlayer.Library.ViewModels
       base.Initialize();
 
       LibraryCollection.LoadQuery = LoadQuery;
+    
     }
 
     #endregion
@@ -142,13 +143,18 @@ namespace VPlayer.Library.ViewModels
     {
       base.OnActivation(firstActivation);
 
-      if (firstActivation && !LibraryCollection.WasLoaded)
+      if (firstActivation)
       {
-        LibraryCollection.LoadData.Subscribe(_ =>
+        this.storageManager.ItemChanged.Where(x => x.Item.GetType() == typeof(TModel)).Subscribe(ItemsChanged);
+
+        if (!LibraryCollection.WasLoaded)
         {
-          RaisePropertyChanged(nameof(ViewModels));
-          RaisePropertyChanged(nameof(View));
-        });
+          LibraryCollection.LoadData.Subscribe(_ =>
+          {
+            RaisePropertyChanged(nameof(ViewModels));
+            RaisePropertyChanged(nameof(View));
+          });
+        }
       }
     }
 

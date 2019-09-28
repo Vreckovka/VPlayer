@@ -23,7 +23,7 @@
 
         public override string ToString()
         {
-            return $"{Title}|{Album}|{Artist}";
+            return $"{Title}|{Album}";
         }
 
     }

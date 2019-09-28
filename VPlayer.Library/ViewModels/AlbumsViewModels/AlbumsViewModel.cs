@@ -21,6 +21,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
         LibraryCollection<AlbumViewModel, Album> libraryCollection)
         : base(regionProvider, viewModelsFactory, storageManager, libraryCollection)
     {
+      ;
     }
 
     public override string RegionName => RegionNames.LibraryContentRegion;

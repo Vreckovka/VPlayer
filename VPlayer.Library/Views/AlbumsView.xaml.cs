@@ -19,18 +19,18 @@ using VPlayer.Library.ViewModels;
 
 namespace VPlayer.Library.Views
 {
-    /// <summary>
-    /// Interaction logic for AlbumsView.xaml
-    /// </summary>
+  /// <summary>
+  /// Interaction logic for AlbumsView.xaml
+  /// </summary>
 
 
-    public partial class AlbumsView : UserControl, IView
+  public partial class AlbumsView : UserControl, IView
+  {
+    public AlbumsView()
     {
-        public AlbumsView()
-        {
-            InitializeComponent();
-        }
-     
+      InitializeComponent();
+
     }
+  }
 }
 

@@ -10,7 +10,7 @@
     <!-- Brushes used in Styling of ScrollViewer -->
     <SolidColorBrush x:Key="StandardBorderBrush" Color="#888" />
     <SolidColorBrush x:Key="StandardBackgroundBrush" Color="#FFF" />
-    <SolidColorBrush x:Key="HoverBorderBrush" Color="#DDD" />
+    <SolidColorBrush x:Key="HoverBorderBrush" Color="#EEE" />
     <SolidColorBrush x:Key="SelectedBackgroundBrush" Color="Gray" />
     <SolidColorBrush x:Key="SelectedForegroundBrush" Color="White" />
     <SolidColorBrush x:Key="DisabledForegroundBrush" Color="#888" />

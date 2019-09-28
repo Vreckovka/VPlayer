@@ -41,7 +41,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
     #region Constructors
 
     public LibraryCollection(
-      IViewModelsFactory viewModelsFactory, 
+      IViewModelsFactory viewModelsFactory,
       IStorageManager storageManager
     )
     {
@@ -140,11 +140,14 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
     public void Remove(TModel entity)
     {
-      var originalItem = Items.Single(x => x.ModelId == entity.Id);
+      if (WasLoaded)
+      {
+        var originalItem = Items.Single(x => x.ModelId == entity.Id);
 
-      Items.Remove(originalItem);
+        Items.Remove(originalItem);
 
-      Recreate();
+        Recreate();
+      }
     }
 
     #endregion
@@ -158,7 +161,10 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
       originalItem.Update(entity);
 
-      Recreate();
+      if (entity.Name != originalItem.Name)
+      {
+        Recreate();
+      }
     }
 
     #endregion
@@ -201,7 +207,6 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
       if (Items != null)
       {
         FilteredItems = new VirtualList<TViewModel>(new PlayableItemsGenerator<TViewModel, TModel>(Items));
-        CreateTrieItems(SortedItems);
       }
     }
 

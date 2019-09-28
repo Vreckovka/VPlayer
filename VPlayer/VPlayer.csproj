@@ -259,8 +259,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Converters\BaseConverter.cs" />
-    <Compile Include="Converters\NullToImageConverter.cs" />
     <Compile Include="Design\MainWindowDesignViewModel.cs" />
     <Compile Include="Modularity\NinjectModules\VPlayerNinjectModule.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />

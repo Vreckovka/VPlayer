@@ -90,7 +90,8 @@ namespace VCore.Modularity.RegionProviders
       where TViewModel : class, INotifyPropertyChanged
       where TView : class, IView
     {
-      return new RegistredView<TView, TViewModel>(regionManager.Regions[regionName], viewFactory, viewModelsFactory, viewModel, initializeImmediately);
+      var region = regionManager.Regions[regionName];
+      return new RegistredView<TView, TViewModel>(region, viewFactory, viewModelsFactory, viewModel, initializeImmediately);
     }
 
 

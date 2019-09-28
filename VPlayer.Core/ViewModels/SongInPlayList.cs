@@ -16,10 +16,10 @@ namespace VPlayer.Core.ViewModels
   public class SongInPlayList : ViewModel<Song>
   {
     private readonly IEventAggregator eventAggregator;
-    public TimeSpan ActualTime => TimeSpan.FromSeconds(ActualPosition * Duration.TotalSeconds);
+    public TimeSpan ActualTime => TimeSpan.FromSeconds(ActualPosition * Duration);
     public float ActualPosition { get; set; }
-    public string Name { get; set; }
-    public TimeSpan Duration { get; set; }
+    public string Name => Model.Name;
+    public int Duration => Model.Duration;
     
     #region IsPlaying
 
@@ -47,16 +47,13 @@ namespace VPlayer.Core.ViewModels
     #endregion
 
     public bool IsPaused { get; set; }
-    public byte[] Image { get; set; }
+    public byte[] Image => AlbumViewModel.Model?.AlbumFrontCoverBLOB;
     public AlbumViewModel AlbumViewModel { get; set; }
     public ArtistViewModel ArtistViewModel { get; set; }
 
     public SongInPlayList([NotNull] IEventAggregator eventAggregator, IAlbumsViewModel albumsViewModel, IArtistsViewModel artistsViewModel, Song model) : base(model)
     {
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
-      Name = model.Name;
-      Duration = TimeSpan.FromSeconds(model.Duration);
-      Image = model?.Album.AlbumFrontCoverBLOB;
 
       AlbumViewModel = albumsViewModel.ViewModels.Single(x => x.ModelId == model.Album.Id);
       ArtistViewModel = artistsViewModel.ViewModels.Single(x => x.ModelId == AlbumViewModel.Model.Artist.Id);

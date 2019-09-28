@@ -20,11 +20,21 @@ namespace VCore.Modularity.RegionProviders
 
     private readonly IViewFactory viewFactory;
     private readonly IViewModelsFactory viewModelsFactory;
+    private readonly bool initializeImmediately;
     private readonly SerialDisposable viewWasActivatedDisposable;
     private readonly SerialDisposable viewWasDeactivatedDisposable;
     #endregion
 
     #region Constructors
+
+    public RegistredView(
+      IRegion region,
+      [NotNull] IViewFactory viewFactory,
+      [NotNull] IViewModelsFactory viewModelsFactory,
+      TViewModel viewModel = null
+    ) : this(region, viewFactory, viewModelsFactory, viewModel, false)
+    {
+    }
 
     public RegistredView(
       IRegion region,
@@ -36,6 +46,7 @@ namespace VCore.Modularity.RegionProviders
     {
       this.viewFactory = viewFactory ?? throw new ArgumentNullException(nameof(viewFactory));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+      this.initializeImmediately = initializeImmediately;
 
       viewWasActivatedDisposable = new SerialDisposable();
       viewWasDeactivatedDisposable = new SerialDisposable();
@@ -50,8 +61,6 @@ namespace VCore.Modularity.RegionProviders
       {
         View = RegisterView();
       }
-
-
     }
 
     #endregion
@@ -132,10 +141,11 @@ namespace VCore.Modularity.RegionProviders
         if (ViewModel == null)
           ViewModel = viewModelsFactory.Create<TViewModel>();
 
-        View.DataContext = ViewModel;
-
         Region.Add(View, ViewName);
       }
+
+      View.DataContext = null;
+      View.DataContext = ViewModel;
 
       return View;
     }
