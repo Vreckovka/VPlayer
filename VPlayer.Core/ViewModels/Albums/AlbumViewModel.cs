@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using Prism.Events;
-using VCore.Annotations;
 using VCore.Factories;
 using VPlayer.AudioStorage.Interfaces;
 using VPlayer.Core.DomainClasses;
@@ -19,10 +18,11 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     private readonly IVPlayerRegionManager vPlayerRegionManager;
 
     public AlbumViewModel(
-      Album model, IEventAggregator eventAggregator,
-        [NotNull] IStorageManager storage,
-          IViewModelsFactory viewModelsFactory,
-      [NotNull] IVPlayerRegionManager vPlayerRegionManager) : base(model, eventAggregator)
+      Album model, 
+      IEventAggregator eventAggregator,
+      IStorageManager storage,
+      IViewModelsFactory viewModelsFactory,
+      IVPlayerRegionManager vPlayerRegionManager) : base(model, eventAggregator)
     {
       this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));

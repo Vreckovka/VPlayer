@@ -1,49 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using VPlayer.AudioStorage;
 using VCore;
-using VCore.Annotations;
 using VCore.Factories;
 using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
-using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.Interfaces;
-using VPlayer.Core.DomainClasses;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
-using VPlayer.Library.ViewModels.AlbumsViewModels;
-using VPlayer.Library.ViewModels.LibraryViewModels;
-using VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels;
 using VPlayer.Library.Views;
 
 namespace VPlayer.Library.ViewModels
 {
   public class LibraryViewModel : RegionViewModel<LibraryView>, INavigationItem
   {
-    private readonly IViewModelsFactory viewModelsFactory;
+    #region Fields
 
     private readonly IStorageManager storage;
+    private readonly IViewModelsFactory viewModelsFactory;
 
-    public LibraryViewModel(IRegionProvider regionProvider,
-      [VCore.Annotations.NotNull] IViewModelsFactory viewModelsFactory,
-      [VCore.Annotations.NotNull] NavigationViewModel navigationViewModel, [NotNull] IStorageManager storage) : base(
-      regionProvider)
+    #endregion Fields
+
+    #region Constructors
+
+    public LibraryViewModel(
+      IRegionProvider regionProvider,
+      IViewModelsFactory viewModelsFactory,
+      NavigationViewModel navigationViewModel,
+      IStorageManager storage) : base(regionProvider)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.NavigationViewModel = navigationViewModel ?? throw new ArgumentNullException(nameof(navigationViewModel));
       this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
-
     }
 
-    public override string RegionName => RegionNames.WindowsPlayerContentRegion;
+    #endregion Constructors
+
+    #region Properties
+
     public override bool ContainsNestedRegions => true;
     public string Header => "Library";
     public NavigationViewModel NavigationViewModel { get; set; }
+    public override string RegionName => RegionNames.WindowsPlayerContentRegion;
+
+    #endregion Properties
 
     #region FinderKeyDown
 
@@ -67,7 +69,7 @@ namespace VPlayer.Library.ViewModels
       //ActualCollectionViewModel.Filter(phrase);
     }
 
-    #endregion
+    #endregion FinderKeyDown
 
     #region FilesDropped
 
@@ -93,12 +95,10 @@ namespace VPlayer.Library.ViewModels
 
       var draggedFiles = data.GetData(DataFormats.FileDrop) as IEnumerable<string>;
 
-
-
       await storage.StoreData(draggedFiles);
     }
 
-    #endregion
+    #endregion FilesDropped
 
     #region Initialize
 
@@ -113,8 +113,8 @@ namespace VPlayer.Library.ViewModels
       NavigationViewModel.Items.Add(albumsViewModel);
 
       libraryViewModel.IsActive = true;
-    } 
+    }
 
-    #endregion
+    #endregion Initialize
   }
 }

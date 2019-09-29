@@ -1,18 +1,12 @@
-﻿using System;
+﻿using Prism.Regions;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Reactive;
-using System.Runtime.CompilerServices;
-using Ninject;
-using Prism.Mvvm;
-using Prism.Regions;
-using PropertyChanged;
-using VCore.Annotations;
 using VCore.Factories;
 using VCore.Factories.Views;
-using VCore.ItemsCollections;
 using VCore.Modularity.Interfaces;
+using VCore.Modularity.Navigation;
 
 namespace VCore.Modularity.RegionProviders
 {
@@ -20,42 +14,55 @@ namespace VCore.Modularity.RegionProviders
   {
     #region Fields
 
+    protected readonly IViewModelsFactory viewModelsFactory;
+    private readonly INavigationProvider navigationProvider;
     private readonly IRegionManager regionManager;
     private readonly IViewFactory viewFactory;
-    protected readonly IViewModelsFactory viewModelsFactory;
-
     private List<IRegistredView> Views = new List<IRegistredView>();
 
-    #endregion
+    #endregion Fields
 
     #region Constructors
 
     public BaseRegionProvider(
       IRegionManager regionManager,
       IViewFactory viewFactory,
-      [NotNull] IViewModelsFactory viewModelsFactory)
+      IViewModelsFactory viewModelsFactory,
+      INavigationProvider navigationProvider)
     {
       this.regionManager = regionManager ?? throw new ArgumentNullException(nameof(regionManager));
       this.viewFactory = viewFactory ?? throw new ArgumentNullException(nameof(viewFactory));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+      this.navigationProvider = navigationProvider ?? throw new ArgumentNullException(nameof(navigationProvider));
     }
 
-    #endregion
+    #endregion Constructors
+
+    #region Methods
 
     #region SubscribeToChanges
 
-    private void SubscribeToChanges<TView, TViewModel>(RegistredView<TView, TViewModel> view)
+    private void SubscribeToChanges<TView, TViewModel>(
+      RegistredView<TView, TViewModel> view)
       where TView : class, IView
       where TViewModel : class, INotifyPropertyChanged
     {
-      view.ViewWasActivated.Subscribe((x) => x.Activate());
+      view.ViewWasActivated.Subscribe((
+        x) =>
+      {
+        x.Activate();
+        navigationProvider.SetNavigation(x);
+      });
     }
 
-    #endregion
+    #endregion SubscribeToChanges
 
     #region RegisterView
 
-    public Guid RegisterView<TView, TViewModel>(string regionName, TViewModel viewModel, bool containsNestedRegion)
+    public Guid RegisterView<TView, TViewModel>(
+      string regionName,
+      TViewModel viewModel,
+      bool containsNestedRegion)
       where TView : class, IView
       where TViewModel : class, INotifyPropertyChanged
     {
@@ -82,11 +89,14 @@ namespace VCore.Modularity.RegionProviders
       }
     }
 
-    #endregion
+    #endregion RegisterView
 
     #region CreateView
 
-    public RegistredView<TView, TViewModel> CreateView<TView, TViewModel>(string regionName, TViewModel viewModel, bool initializeImmediately = false)
+    public RegistredView<TView, TViewModel> CreateView<TView, TViewModel>(
+      string regionName,
+      TViewModel viewModel,
+      bool initializeImmediately = false)
       where TViewModel : class, INotifyPropertyChanged
       where TView : class, IView
     {
@@ -94,8 +104,7 @@ namespace VCore.Modularity.RegionProviders
       return new RegistredView<TView, TViewModel>(region, viewFactory, viewModelsFactory, viewModel, initializeImmediately);
     }
 
-
-    #endregion
+    #endregion CreateView
 
     #region ActivateView
 
@@ -105,16 +114,26 @@ namespace VCore.Modularity.RegionProviders
       view?.Activate();
     }
 
-    #endregion
+    #endregion ActivateView
 
     #region DectivateView
 
-    public void DectivateView(Guid guid)
+    public void DectivateView(
+      Guid guid)
     {
       var view = Views.SingleOrDefault(x => x.Guid == guid);
       view?.Deactivate();
     }
 
-    #endregion
+    #endregion DectivateView
+
+    public void GoBack(Guid guid)
+    {
+      var view = Views.SingleOrDefault(x => x.Guid == guid);
+      var before = navigationProvider.GetPrevious(view);
+      before?.Activate();
+    }
+
+    #endregion Methods
   }
 }

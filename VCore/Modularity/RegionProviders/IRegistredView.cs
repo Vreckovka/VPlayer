@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Reactive.Subjects;
+using Prism.Regions;
 
-namespace VCore.Modularity.Interfaces
+namespace VCore.Modularity.RegionProviders
 {
   public interface IRegistredView
   {
@@ -9,6 +10,7 @@ namespace VCore.Modularity.Interfaces
     Subject<IRegistredView> ViewWasDeactivated { get; }
     Guid Guid { get; }
     string ViewName { get; set; }
+    IRegion Region { get; set; }
 
     void Activate();
     void Deactivate();

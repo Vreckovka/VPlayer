@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using Prism.Events;
-using VCore.Annotations;
 using VCore.Factories;
 using VPlayer.AudioStorage.Interfaces;
 using VPlayer.Core.DomainClasses;
 using VPlayer.Core.Modularity.Regions;
-using VPlayer.Library.ViewModels;
 
 namespace VPlayer.Core.ViewModels.Artists
 {
@@ -18,8 +16,12 @@ namespace VPlayer.Core.ViewModels.Artists
     private readonly IViewModelsFactory viewModelsFactory;
     private readonly IVPlayerRegionManager vPlayerRegionManager;
 
-    public ArtistViewModel(Artist artist, IEventAggregator eventAggregator, IStorageManager storage,
-        [NotNull] IViewModelsFactory viewModelsFactory, [NotNull] IVPlayerRegionManager vPlayerRegionManager) : base(artist, eventAggregator)
+    public ArtistViewModel(
+      Artist artist,
+      IEventAggregator eventAggregator,
+      IStorageManager storage,
+      IViewModelsFactory viewModelsFactory,
+      IVPlayerRegionManager vPlayerRegionManager) : base(artist, eventAggregator)
     {
       this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));

@@ -1,10 +1,9 @@
-﻿using System;
+﻿using Prism.Regions;
+using System;
 using System.ComponentModel;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using Prism.Regions;
-using VCore.Annotations;
 using VCore.Factories;
 using VCore.Factories.Views;
 using VCore.Modularity.Interfaces;
@@ -18,19 +17,20 @@ namespace VCore.Modularity.RegionProviders
   {
     #region Fields
 
+    private readonly bool initializeImmediately;
     private readonly IViewFactory viewFactory;
     private readonly IViewModelsFactory viewModelsFactory;
-    private readonly bool initializeImmediately;
     private readonly SerialDisposable viewWasActivatedDisposable;
     private readonly SerialDisposable viewWasDeactivatedDisposable;
-    #endregion
+
+    #endregion Fields
 
     #region Constructors
 
     public RegistredView(
       IRegion region,
-      [NotNull] IViewFactory viewFactory,
-      [NotNull] IViewModelsFactory viewModelsFactory,
+      IViewFactory viewFactory,
+      IViewModelsFactory viewModelsFactory,
       TViewModel viewModel = null
     ) : this(region, viewFactory, viewModelsFactory, viewModel, false)
     {
@@ -38,8 +38,8 @@ namespace VCore.Modularity.RegionProviders
 
     public RegistredView(
       IRegion region,
-      [NotNull] IViewFactory viewFactory,
-      [NotNull] IViewModelsFactory viewModelsFactory,
+      IViewFactory viewFactory,
+      IViewModelsFactory viewModelsFactory,
       TViewModel viewModel = null,
       bool initializeImmediately = false
     )
@@ -63,20 +63,21 @@ namespace VCore.Modularity.RegionProviders
       }
     }
 
-    #endregion
+    #endregion Constructors
 
     #region Properties
 
-    public string ViewName { get; set; }
+    public Guid Guid { get; }
     public IRegion Region { get; set; }
+    public TView View { get; set; }
+    public string ViewName { get; set; }
     public Subject<IRegistredView> ViewWasActivated { get; } = new Subject<IRegistredView>();
     public Subject<IRegistredView> ViewWasDeactivated { get; } = new Subject<IRegistredView>();
-    public TView View { get; set; }
-    public Guid Guid { get; }
 
     #region ViewModel
 
     private TViewModel viewModel;
+
     public TViewModel ViewModel
     {
       get { return viewModel; }
@@ -91,14 +92,16 @@ namespace VCore.Modularity.RegionProviders
               x => ViewModel.PropertyChanged -= x)
             .Where(x => x.EventArgs.PropertyName == nameof(RegionViewModel<IView>.IsActive) &&
                         ((IActivable)x.Sender).IsActive)
-            .Subscribe((x) => ViewWasActivated.OnNext(this));
+            .Subscribe((
+              x) => ViewWasActivated.OnNext(this));
 
           viewWasDeactivatedDisposable.Disposable = Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
               x => ViewModel.PropertyChanged += x,
               x => ViewModel.PropertyChanged -= x)
             .Where(x => x.EventArgs.PropertyName == nameof(RegionViewModel<IView>.IsActive) &&
                         !((IActivable)x.Sender).IsActive)
-            .Subscribe((x) => ViewWasDeactivated.OnNext(this));
+            .Subscribe((
+              x) => ViewWasDeactivated.OnNext(this));
 
           if (View != null)
             View.DataContext = viewModel;
@@ -106,9 +109,9 @@ namespace VCore.Modularity.RegionProviders
       }
     }
 
-    #endregion
+    #endregion ViewModel
 
-    #endregion
+    #endregion Properties
 
     #region Methods
 
@@ -117,9 +120,14 @@ namespace VCore.Modularity.RegionProviders
     public void Activate()
     {
       Region.Activate(RegisterView());
+
+      if (ViewModel is IActivable activable && !activable.IsActive)
+      {
+        activable.IsActive = true;
+      }
     }
 
-    #endregion
+    #endregion Activate
 
     #region Deactivate
 
@@ -128,7 +136,7 @@ namespace VCore.Modularity.RegionProviders
       Region.Deactivate(View);
     }
 
-    #endregion
+    #endregion Deactivate
 
     #region RegisterView
 
@@ -150,7 +158,7 @@ namespace VCore.Modularity.RegionProviders
       return View;
     }
 
-    #endregion
+    #endregion RegisterView
 
     #region Create
 
@@ -159,7 +167,7 @@ namespace VCore.Modularity.RegionProviders
       return viewFactory.Create<TView>();
     }
 
-    #endregion
+    #endregion Create
 
     #region GetViewName
 
@@ -168,7 +176,16 @@ namespace VCore.Modularity.RegionProviders
       return typeof(TView).Name + "_" + typeof(TViewModel).Name;
     }
 
-    #endregion
+    #endregion GetViewName
+
+    #region ToString
+
+    public override string ToString()
+    {
+      return ViewName;
+    }
+
+    #endregion ToString
 
     #region Dispose
 
@@ -180,8 +197,8 @@ namespace VCore.Modularity.RegionProviders
       ViewWasDeactivated?.Dispose();
     }
 
-    #endregion
+    #endregion Dispose
 
-    #endregion
+    #endregion Methods
   }
 }

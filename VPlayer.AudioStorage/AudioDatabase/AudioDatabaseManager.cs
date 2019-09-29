@@ -1,16 +1,13 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reactive.Subjects;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 using VCore.Modularity.Events;
-using VPlayer.AudioInfoDownloader;
 using VPlayer.AudioStorage.Interfaces;
 using VPlayer.Core.DomainClasses;
 
@@ -18,74 +15,51 @@ namespace VPlayer.AudioStorage.AudioDatabase
 {
   public interface IGenericRepository<T> where T : class
   {
-    IQueryable<T> GetAll();
-    IQueryable<T> FindBy(Expression<Func<T, bool>> predicate);
+    #region Methods
+
     void Add(T entity);
+
     void Delete(T entity);
+
     void Edit(T entity);
+
+    IQueryable<T> FindBy(Expression<Func<T, bool>> predicate);
+
+    IQueryable<T> GetAll();
+
     void Save();
+
+    #endregion Methods
   }
 
   public class ArtistRepository : GenericRepository<AudioDatabaseContext, Artist>
   {
-
-  }
-
-  public abstract class GenericRepository<C, T> : IGenericRepository<T> where T : class where C : DbContext, new()
-  {
-    private C _entities = new C();
-    public C Context
-    {
-
-      get { return _entities; }
-      set { _entities = value; }
-    }
-
-    public virtual IQueryable<T> GetAll()
-    {
-
-      IQueryable<T> query = _entities.Set<T>();
-      return query;
-    }
-
-    public IQueryable<T> FindBy(System.Linq.Expressions.Expression<Func<T, bool>> predicate)
-    {
-      IQueryable<T> query = _entities.Set<T>().Where(predicate);
-      return query;
-    }
-
-    public virtual void Add(T entity)
-    {
-      _entities.Set<T>().Add(entity);
-    }
-
-    public virtual void Delete(T entity)
-    {
-      _entities.Set<T>().Remove(entity);
-    }
-
-    public virtual void Edit(T entity)
-    {
-      _entities.Entry(entity).State = System.Data.Entity.EntityState.Modified;
-    }
-
-    public virtual void Save()
-    {
-      _entities.SaveChanges();
-    }
   }
 
   public class AudioDatabaseManager : IStorageManager
   {
-    private readonly AudioInfoDownloaderProvider audioInfoDownloader;
-    public Subject<ItemChanged> ItemChanged { get; } = new Subject<ItemChanged>();
+    #region Fields
 
-    public AudioDatabaseManager([NotNull] AudioInfoDownloaderProvider audioInfoDownloader)
+    private readonly VPlayer.AudioInfoDownloader.AudioInfoDownloader audioInfoDownloader;
+
+    #endregion Fields
+
+    #region Constructors
+
+    public AudioDatabaseManager([NotNull] VPlayer.AudioInfoDownloader.AudioInfoDownloader audioInfoDownloader)
     {
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
 
       audioInfoDownloader.ItemUpdated.Subscribe(ItemUpdated);
     }
+
+    #endregion Constructors
+
+    #region Properties
+
+    public Subject<ItemChanged> ItemChanged { get; } = new Subject<ItemChanged>();
+
+    #endregion Properties
 
     #region GetRepository
 
@@ -99,11 +73,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
       return query;
     }
 
-    #endregion
+    #endregion GetRepository
 
-    #region Properties
 
-    #endregion
 
     #region StoreData
 
@@ -209,7 +181,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
             Logger.Logger.Instance.Log(Logger.MessageType.Success, $"New song was added {song.Name}");
           }
-
         }
       }
       catch (Exception ex)
@@ -223,17 +194,13 @@ namespace VPlayer.AudioStorage.AudioDatabase
           }
           else
             Logger.Logger.Instance.Log(Logger.MessageType.Error, $"{ex.InnerException.Message}");
-
         }
         else
         {
           Logger.Logger.Instance.Log(Logger.MessageType.Error, $"{ex.Message}");
-
         }
       }
     }
-
-
 
     public Task<bool> StoreData(IEnumerable<string> audioPath)
     {
@@ -292,19 +259,16 @@ namespace VPlayer.AudioStorage.AudioDatabase
       }
       catch (Exception ex)
       {
-
         Logger.Logger.Instance.Log(Logger.MessageType.Error, $"{ex.Message}");
       }
     }
 
-    #endregion
+    #endregion StoreData
 
     #region ClearStorage
 
     public async Task ClearStorage()
     {
-
-
       using (var context = new AudioDatabaseContext())
       {
         try
@@ -327,7 +291,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
           await context.Database.ExecuteSqlCommandAsync("DELETE FROM Albums");
           Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table Albums cleared succesfuly");
 
-
           foreach (var artist in context.Artists)
           {
             ItemChanged.OnNext(new ItemChanged()
@@ -339,8 +302,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           await context.Database.ExecuteSqlCommandAsync("DELETE FROM Artists");
           Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table Artists cleared succesfuly");
-
-
         }
         catch (Exception ex)
         {
@@ -349,7 +310,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       }
     }
 
-    #endregion
+    #endregion ClearStorage
 
     #region UpdateItem
 
@@ -388,7 +349,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       }
     }
 
-    #endregion
+    #endregion UpdateItem
 
     #region UpdateAlbum
 
@@ -404,7 +365,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
           //Update is first time
           if (originalAlbum == null)
           {
-
             var albums = context.Albums.ToList().OrderBy(x => x.Name);
 
             originalAlbum = (from x in context.Albums.Include(x => x.Artist)
@@ -482,7 +442,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       }
     }
 
-    #endregion
+    #endregion UpdateAlbum
 
     #region UpdateAlbums
 
@@ -501,7 +461,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
             //Update is first time
             if (originalAlbum == null)
             {
-
               var albums = context.Albums.ToList().OrderBy(x => x.Name);
 
               originalAlbum = (from x in context.Albums
@@ -581,7 +540,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       }
     }
 
-    #endregion
+    #endregion UpdateAlbums
 
     #region CombineAlbums
 
@@ -632,7 +591,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
           context.Albums.Add(originalCopy);
           context.SaveChanges();
 
-
           ItemChanged.OnNext(new ItemChanged()
           {
             Changed = Changed.Removed,
@@ -654,7 +612,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       }
     }
 
-    #endregion
+    #endregion CombineAlbums
 
     #region UpdateEntity
 
@@ -678,11 +636,65 @@ namespace VPlayer.AudioStorage.AudioDatabase
       }
     }
 
-    #endregion
+    #endregion UpdateEntity
 
     public void Dispose()
     {
-
     }
+  }
+
+  public abstract class GenericRepository<C, T> : IGenericRepository<T> where T : class where C : DbContext, new()
+  {
+    #region Fields
+
+    private C _entities = new C();
+
+    #endregion Fields
+
+    #region Properties
+
+    public C Context
+    {
+      get { return _entities; }
+      set { _entities = value; }
+    }
+
+    #endregion Properties
+
+    #region Methods
+
+    public virtual void Add(T entity)
+    {
+      _entities.Set<T>().Add(entity);
+    }
+
+    public virtual void Delete(T entity)
+    {
+      _entities.Set<T>().Remove(entity);
+    }
+
+    public virtual void Edit(T entity)
+    {
+      _entities.Entry(entity).State = System.Data.Entity.EntityState.Modified;
+    }
+
+    public IQueryable<T> FindBy(System.Linq.Expressions.Expression<Func<T, bool>> predicate)
+    {
+      IQueryable<T> query = _entities.Set<T>().Where(predicate);
+      return query;
+    }
+
+    public virtual IQueryable<T> GetAll()
+    {
+      IQueryable<T> query = _entities.Set<T>();
+      return query;
+    }
+
+    public virtual void Save()
+    {
+      _entities.SaveChanges();
+    }
+
+    #endregion Methods
   }
 }

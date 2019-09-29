@@ -1,23 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using VCore.Modularity.NinjectModules;
-using VPlayer.AudioInfoDownloader;
+﻿using VCore.Modularity.NinjectModules;
 using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.Interfaces;
 
 namespace VPlayer.AudioStorage.Modularity.NinjectModules
 {
-    public class AudioStorageNinjectModule : BaseNinjectModule
-    {
-        public override void RegisterProviders()
-        {
-            base.RegisterProviders();
+  public class AudioStorageNinjectModule : BaseNinjectModule
+  {
+    #region Methods
 
-            Kernel.Bind<IStorageManager>().To<AudioDatabaseManager>().InSingletonScope();
-            Kernel.BindToSelfInSingletonScope<AudioInfoDownloaderProvider>();
-        }
+    public override void RegisterProviders()
+    {
+      base.RegisterProviders();
+
+      Kernel.Bind<IStorageManager>().To<AudioDatabaseManager>().InSingletonScope();
+      Kernel.BindToSelfAndInitialize<VPlayer.AudioInfoDownloader.AudioInfoDownloader>();
     }
+
+    #endregion Methods
+  }
 }

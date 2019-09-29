@@ -6,12 +6,21 @@ namespace VCore.Modularity.RegionProviders
 {
   public interface IRegionProvider
   {
-    Guid RegisterView<TView, TViewModel>(string regionName, TViewModel viewModel, bool containsNestedRegion)
+    #region Methods
+
+    void ActivateView(Guid guidObject);
+
+    void DectivateView(Guid guidObject);
+
+    Guid RegisterView<TView, TViewModel>(
+      string regionName,
+      TViewModel viewModel,
+      bool containsNestedRegion)
       where TView : class, IView
       where TViewModel : class, INotifyPropertyChanged;
 
+    #endregion Methods
 
-    void ActivateView(Guid guidObject);
-    void DectivateView(Guid guidObject);
+    void GoBack(Guid guid);
   }
 }

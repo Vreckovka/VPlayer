@@ -1,30 +1,205 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using VCore.Annotations;
+using System.Windows.Input;
 using VCore.Modularity.Interfaces;
+using VCore.Modularity.Navigation;
 using VCore.Modularity.RegionProviders;
 using VCore.ViewModels.Navigation;
 
 namespace VCore.ViewModels
 {
-  public class SelfActivableNavigationItem : ViewModel, INavigationItem
+  public interface IRegionViewModel : IActivable
   {
+    #region Properties
+
+    bool ContainsNestedRegions { get; }
+    string RegionName { get; }
+
+    #endregion Properties
+  }
+
+  public abstract class RegionCollectionViewModel : ViewModel
+  {
+    #region Fields
+
     private readonly IRegionProvider regionProvider;
+    private Guid guid1;
+    private Guid guid2;
 
+    #endregion Fields
 
-    public SelfActivableNavigationItem([NotNull] IRegionProvider regionProvider, Guid guid)
+    #region Constructors
+
+    public RegionCollectionViewModel(IRegionProvider regionProvider)
     {
       this.regionProvider = regionProvider ?? throw new ArgumentNullException(nameof(regionProvider));
-      Guid = guid;
     }
+
+    #endregion Constructors
+
+    #region Properties
+
+    public abstract Dictionary<Type, Tuple<string, bool>> RegistredViews { get; set; }
+
+    public Dictionary<Type, SelfActivableNavigationItem> Views { get; } = new Dictionary<Type, SelfActivableNavigationItem>();
+
+    #endregion Properties
+
+    #region Methods
+
+    public void ActivateView(Type viewType)
+    {
+      Views[viewType].IsActive = true;
+    }
+
+    public override void Initialize()
+    {
+      base.Initialize();
+
+      foreach (var registredView in RegistredViews)
+      {
+        var method = regionProvider.GetType().GetMethod("RegisterView");
+
+        var genericMethod = method.MakeGenericMethod(registredView.Key, typeof(RegionCollectionViewModel));
+
+        var result = genericMethod.Invoke(regionProvider, new object[] {registredView.Value.Item1, this, registredView.Value.Item2});
+
+        Views.Add(registredView.Key, new SelfActivableNavigationItem(regionProvider, (Guid) result));
+      }
+    }
+
+    #endregion Methods
+  }
+
+  public abstract class RegionViewModel<TView> : ViewModel, IRegionViewModel where TView : class, IView
+  {
+    #region Fields
+
+    protected readonly IRegionProvider regionProvider;
+    private readonly INavigationProvider navigationProvider;
+
+    #endregion Fields
+
+    #region Constructors
+
+    public RegionViewModel(IRegionProvider regionProvider)
+    {
+      this.regionProvider = regionProvider ?? throw new ArgumentNullException(nameof(regionProvider));
+    }
+
+    #endregion Constructors
+
+    #region Properties
+
+    public abstract bool ContainsNestedRegions { get; }
+    public Guid Guid { get; private set; }
+    public abstract string RegionName { get; }
 
     #region IsActive
 
     private bool isActive;
     private bool wasActivated;
+
+    public bool IsActive
+    {
+      get { return isActive; }
+      set
+      {
+        if (value != isActive)
+        {
+          isActive = value;
+
+          if (isActive)
+          {
+            OnActivation(!wasActivated);
+
+            if (!wasActivated)
+            {
+              wasActivated = true;
+            }
+          }
+
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion IsActive
+
+    #endregion Properties
+
+    #region BackCommand
+
+    private ActionCommand backCommand;
+
+    public ICommand BackCommand
+    {
+      get
+      {
+        if (backCommand == null)
+        {
+          backCommand = new ActionCommand(OnBackCommand);
+        }
+
+        return backCommand;
+      }
+    }
+
+    protected virtual void OnBackCommand()
+    {
+      regionProvider.GoBack(Guid);
+    }
+
+    #endregion BackCommand
+
+    #region Methods
+
+    #region Initialize
+
+    public override void Initialize()
+    {
+      base.Initialize();
+
+      Guid = regionProvider.RegisterView<TView, RegionViewModel<TView>>(RegionName, this, ContainsNestedRegions);
+    }
+
+    #endregion Initialize
+
+    #region OnActivation
+
+    public virtual void OnActivation(
+      bool firstActivation)
+    {
+    }
+
+    #endregion OnActivation
+
+    #endregion Methods
+  }
+
+  public class SelfActivableNavigationItem : ViewModel, INavigationItem
+  {
+    #region Fields
+
+    private readonly IRegionProvider regionProvider;
+
+    #endregion Fields
+
+    #region Constructors
+
+    public SelfActivableNavigationItem(IRegionProvider regionProvider, Guid guid)
+    {
+      this.regionProvider = regionProvider ?? throw new ArgumentNullException(nameof(regionProvider));
+      Guid = guid;
+    }
+
+    #endregion Constructors
+
+    #region IsActive
+
+    private bool isActive;
+    private bool wasActivated;
+
     public bool IsActive
     {
       get { return isActive; }
@@ -48,133 +223,13 @@ namespace VCore.ViewModels
       }
     }
 
-    #endregion
-
-    public string Header { get; set; }
-    public Guid Guid { get; }
-  }
-
-  public abstract class RegionCollectionViewModel : ViewModel
-  {
-    private readonly IRegionProvider regionProvider;
-    private Guid guid1;
-    private Guid guid2;
-
-    public RegionCollectionViewModel(IRegionProvider regionProvider)
-    {
-      this.regionProvider = regionProvider ?? throw new ArgumentNullException(nameof(regionProvider));
-    }
-
-    public abstract Dictionary<Type, Tuple<string, bool>> RegistredViews { get; set; }
-
-    public Dictionary<Type, SelfActivableNavigationItem> Views { get; } = new Dictionary<Type, SelfActivableNavigationItem>();
-
-    public override void Initialize()
-    {
-      base.Initialize();
-
-      foreach (var registredView in RegistredViews)
-      {
-        var method = regionProvider.GetType().GetMethod("RegisterView");
-
-        var genericMethod = method.MakeGenericMethod(registredView.Key, typeof(RegionCollectionViewModel));
-
-        var result = genericMethod.Invoke(regionProvider, new object[] { registredView.Value.Item1, this, registredView.Value.Item2 });
-
-        Views.Add(registredView.Key, new SelfActivableNavigationItem(regionProvider, (Guid)result));
-      }
-    }
-
-    public void ActivateView(Type viewType)
-    {
-      Views[viewType].IsActive = true;
-    }
-  }
-
-  public abstract class RegionViewModel<TView> : ViewModel, IRegionViewModel where TView : class, IView
-  {
-    #region Fields
-
-    protected readonly IRegionProvider regionProvider;
-
-    #endregion
-
-    #region Constructors
-
-    public RegionViewModel(IRegionProvider regionProvider)
-    {
-      this.regionProvider = regionProvider ?? throw new ArgumentNullException(nameof(regionProvider));
-    }
-
-    #endregion
+    #endregion IsActive
 
     #region Properties
 
-    public abstract string RegionName { get; }
-    public abstract bool ContainsNestedRegions { get; }
+    public Guid Guid { get; }
+    public string Header { get; set; }
 
-    #region IsActive
-
-    private bool isActive;
-    private bool wasActivated;
-    public bool IsActive
-    {
-      get { return isActive; }
-      set
-      {
-        if (value != isActive)
-        {
-          isActive = value;
-
-          if (isActive)
-          {
-            OnActivation(!wasActivated);
-
-            if (!wasActivated)
-            {
-              wasActivated = true;
-            }
-
-          }
-
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
-
-    #endregion
-
-    #region Methods
-
-    #region Initialize
-
-    public override void Initialize()
-    {
-      base.Initialize();
-
-      regionProvider.RegisterView<TView, RegionViewModel<TView>>(RegionName, this, ContainsNestedRegions);
-    }
-
-    #endregion
-
-    #region OnActivation
-
-    public virtual void OnActivation(bool firstActivation)
-    {
-    }
-
-    #endregion
-
-    #endregion
+    #endregion Properties
   }
-
-  public interface IRegionViewModel : IActivable
-  {
-    string RegionName { get; }
-    bool ContainsNestedRegions { get; }
-  }
-
-
 }

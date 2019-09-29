@@ -1,26 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using System.Reflection;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using KeyListener;
+﻿using KeyListener;
 using Ninject;
 using Prism.Events;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using VCore;
-using VCore.Annotations;
-using VCore.Modularity.Events;
 using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
 using Vlc.DotNet.Core;
-using Vlc.DotNet.Core.Interops;
-using VPlayer.AudioStorage.Interfaces;
-using VPlayer.Core.DomainClasses;
 using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
@@ -35,14 +26,15 @@ namespace VPlayer.Player.ViewModels
     private readonly IEventAggregator eventAggregator;
     private int actualSongIndex = 0;
 
-    #endregion
+    #endregion Fields
 
     #region Constructors
 
     public PlayerViewModel(
       IRegionProvider regionProvider,
-      [NotNull] IEventAggregator eventAggregator,
-      IKernel kernel) : base(regionProvider)
+      IEventAggregator eventAggregator,
+      IKernel kernel) : base(
+      regionProvider)
     {
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       Kernel = kernel;
@@ -50,24 +42,27 @@ namespace VPlayer.Player.ViewModels
       RegistredViews.Add(typeof(WindowsPlayerView), new Tuple<string, bool>(RegionNames.WindowsPlayerContentRegion, false));
     }
 
-    #endregion
+    #endregion Constructors
 
     #region Properties
 
-    public IKernel Kernel { get; set; }
-    public override Dictionary<Type, Tuple<string, bool>> RegistredViews { get; set; } = new Dictionary<Type, Tuple<string, bool>>();
-    public List<SongInPlayList> PlayList { get; set; }
-    public VlcMediaPlayer MediaPlayer { get; private set; }
     public SongInPlayList ActualSong { get; private set; }
     public bool IsPlaying { get; set; }
+    public IKernel Kernel { get; set; }
+    public VlcMediaPlayer MediaPlayer { get; private set; }
+    public List<SongInPlayList> PlayList { get; set; }
 
-    #endregion
+    public override Dictionary<Type, Tuple<string, bool>> RegistredViews { get; set; } =
+      new Dictionary<Type, Tuple<string, bool>>();
+
+    #endregion Properties
 
     #region Commands
 
     #region Play
 
     private ActionCommand playButton;
+
     public ICommand PlayButton
     {
       get
@@ -89,11 +84,12 @@ namespace VPlayer.Player.ViewModels
         Play();
     }
 
-    #endregion
+    #endregion Play
 
     #region NextSong
 
     private ActionCommand<SongInPlayList> nextSong;
+
     public ICommand NextSong
     {
       get
@@ -107,15 +103,15 @@ namespace VPlayer.Player.ViewModels
       }
     }
 
-    public void OnNextSong(SongInPlayList songInPlayList)
+    public void OnNextSong(
+      SongInPlayList songInPlayList)
     {
       PlayNext(songInPlayList);
     }
 
-    #endregion
+    #endregion NextSong
 
-
-    #endregion
+    #endregion Commands
 
     #region Methods
 
@@ -138,22 +134,38 @@ namespace VPlayer.Player.ViewModels
 
       bool playFinished = false;
 
-      MediaPlayer.EncounteredError += (sender, e) =>
+      MediaPlayer.EncounteredError += (
+        sender,
+        e) =>
       {
         Console.Error.Write("An error occurred");
         playFinished = true;
       };
 
-      MediaPlayer.EndReached += (sender, e) => { PlayNext(); };
-      MediaPlayer.TimeChanged += (sender, e) => { ActualSong.ActualPosition = ((VlcMediaPlayer)sender).Position; };
+      MediaPlayer.EndReached += (
+        sender,
+        e) =>
+      {
+        PlayNext();
+      };
+      MediaPlayer.TimeChanged += (
+        sender,
+        e) =>
+      {
+        ActualSong.ActualPosition = ((VlcMediaPlayer)sender).Position;
+      };
 
-      MediaPlayer.Paused += (sender, e) =>
+      MediaPlayer.Paused += (
+        sender,
+        e) =>
       {
         ActualSong.IsPaused = true;
         IsPlaying = false;
       };
 
-      MediaPlayer.Playing += (sender, e) =>
+      MediaPlayer.Playing += (
+        sender,
+        e) =>
       {
         ActualSong.IsPlaying = true;
         ActualSong.IsPaused = false;
@@ -165,7 +177,8 @@ namespace VPlayer.Player.ViewModels
       eventAggregator.GetEvent<PlaySongsInPlayListEvent>().Subscribe(PlaySongInPlayList);
     }
 
-    private void PlaySongInPlayList(SongInPlayList songInPlayList)
+    private void PlaySongInPlayList(
+      SongInPlayList songInPlayList)
     {
       if (songInPlayList == ActualSong)
       {
@@ -182,7 +195,8 @@ namespace VPlayer.Player.ViewModels
 
     #region PlaySongs
 
-    private void PlaySongs(IEnumerable<SongInPlayList> songs)
+    private void PlaySongs(
+      IEnumerable<SongInPlayList> songs)
     {
       actualSongIndex = 0;
       PlayList = songs.ToList();
@@ -191,9 +205,9 @@ namespace VPlayer.Player.ViewModels
       if (ActualSong != null) ActualSong.IsPlaying = false;
     }
 
-    #endregion
+    #endregion PlaySongs
 
-    #endregion
+    #endregion Initialize
 
     #region Play
 
@@ -220,7 +234,7 @@ namespace VPlayer.Player.ViewModels
       });
     }
 
-    #endregion
+    #endregion Play
 
     #region Pause
 
@@ -229,11 +243,12 @@ namespace VPlayer.Player.ViewModels
       MediaPlayer.Pause();
     }
 
-    #endregion
+    #endregion Pause
 
     #region PlayNext
 
-    public void PlayNext(SongInPlayList nextSong = null)
+    public void PlayNext(
+      SongInPlayList nextSong = null)
     {
       if (nextSong == null)
         actualSongIndex++;
@@ -242,11 +257,13 @@ namespace VPlayer.Player.ViewModels
       Play();
     }
 
-    #endregion
+    #endregion PlayNext
 
     #region KeyListener_OnKeyPressed
 
-    private void KeyListener_OnKeyPressed(object sender, KeyPressedArgs e)
+    private void KeyListener_OnKeyPressed(
+      object sender,
+      KeyPressedArgs e)
     {
       if (e.KeyPressed == Key.MediaPlayPause)
       {
@@ -267,9 +284,8 @@ namespace VPlayer.Player.ViewModels
       }
     }
 
-    #endregion
+    #endregion KeyListener_OnKeyPressed
 
-    #endregion
+    #endregion Methods
   }
 }
-

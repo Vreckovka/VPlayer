@@ -1,48 +1,66 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Net;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 using VCore;
-using VCore.Annotations;
+using VCore.Modularity.Navigation;
 using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
-using VPlayer.AudioInfoDownloader;
 using VPlayer.AudioStorage.AudioInfoDownloader.Models;
 using VPlayer.AudioStorage.Interfaces;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Library.Views;
-using VCore.ExtentionsMethods;
 
 namespace VPlayer.Library.ViewModels.AlbumsViewModels
 {
   public class AlbumCoversViewModel : RegionViewModel<AlbumCoversView>
   {
+    #region Fields
+
     private readonly AlbumViewModel albumViewModel;
+    private readonly INavigationProvider navigationProvider;
     private readonly IStorageManager storage;
-    public ObservableCollection<AlbumCover> AlbumCovers { get; set; } = new ObservableCollection<AlbumCover>();
-    public double DownloadedProcessValue { get; set; }
-    public int FoundConvers { get; set; }
+    private object baton = new object();
+    private CancellationTokenSource cancellationTokenSource;
+
+    #endregion Fields
+
+    #region Constructors
 
     public AlbumCoversViewModel(
-        IRegionProvider regionProvider,
-        AudioInfoDownloaderProvider audioInfoDownloaderProvider,
-        [NotNull] AlbumViewModel albumViewModel,
-        [NotNull] IStorageManager storage) : base(regionProvider)
+      IRegionProvider regionProvider,
+      AudioInfoDownloader.AudioInfoDownloader audioInfoDownloader,
+      AlbumViewModel albumViewModel,
+      IStorageManager storage,
+      INavigationProvider navigationProvider) : base(regionProvider)
     {
       this.albumViewModel = albumViewModel ?? throw new ArgumentNullException(nameof(albumViewModel));
       this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
+      this.navigationProvider = navigationProvider ?? throw new ArgumentNullException(nameof(navigationProvider));
 
-      Task.Run(async () => { await audioInfoDownloaderProvider.GetAlbumFrontCoversUrls(albumViewModel.Model); });
+      cancellationTokenSource = new CancellationTokenSource();
+      var cancellationToken = cancellationTokenSource.Token;
 
+      audioInfoDownloader.GetAlbumFrontCoversUrls(albumViewModel.Model, cancellationToken);
 
-      audioInfoDownloaderProvider.CoversDownloaded += Instance_CoversDownloaded;
+      audioInfoDownloader.CoversDownloaded += Instance_CoversDownloaded;
     }
+
+    #endregion Constructors
+
+    #region Properties
+
+    public ObservableCollection<AlbumCover> AlbumCovers { get; set; } = new ObservableCollection<AlbumCover>();
+    public override bool ContainsNestedRegions => false;
+    public double DownloadedProcessValue { get; set; }
+    public int FoundConvers { get; set; }
+    public override string RegionName => RegionNames.LibraryContentRegion;
+
+    #endregion Properties
 
     #region SelectCover
 
@@ -69,11 +87,33 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
       storage.UpdateEntity(albumViewModel.Model);
     }
 
-    #endregion
-    public override string RegionName => RegionNames.LibraryContentRegion;
-    public override bool ContainsNestedRegions => false;
+    #endregion SelectCover
 
-    private object button = new object();
+    #region Methods
+
+    #region GetFileSize
+
+    public async Task<long> GetFileSize(string url)
+    {
+      long result = 0;
+
+      WebRequest req = WebRequest.Create(url);
+      req.Method = "HEAD";
+      using (WebResponse resp = req.GetResponse())
+      {
+        if (long.TryParse(resp.Headers.Get("Content-Length"), out long contentLength))
+        {
+          result = contentLength;
+        }
+      }
+
+      return result;
+    }
+
+    #endregion GetFileSize
+
+    #region Instance_CoversDownloaded
+
     private async void Instance_CoversDownloaded(object sender, List<AlbumCover> e)
     {
       FoundConvers += e.Count;
@@ -107,22 +147,15 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
       }
     }
 
+    #endregion Instance_CoversDownloaded
 
-    public async Task<long> GetFileSize(string url)
+    protected override void OnBackCommand()
     {
-      long result = 0;
+      base.OnBackCommand();
 
-      WebRequest req = WebRequest.Create(url);
-      req.Method = "HEAD";
-      using (WebResponse resp = req.GetResponse())
-      {
-        if (long.TryParse(resp.Headers.Get("Content-Length"), out long contentLength))
-        {
-          result = contentLength;
-        }
-      }
-
-      return result;
+      cancellationTokenSource.Cancel();
     }
+
+    #endregion Methods
   }
 }

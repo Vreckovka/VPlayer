@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Prism.Events;
+using System;
 using System.Linq;
 using System.Windows.Input;
-using Prism.Events;
 using VCore;
-using VCore.Annotations;
 using VCore.ViewModels;
 using VPlayer.Core.DomainClasses;
 using VPlayer.Core.Events;
@@ -15,15 +14,39 @@ namespace VPlayer.Core.ViewModels
 {
   public class SongInPlayList : ViewModel<Song>
   {
+    #region Fields
+
     private readonly IEventAggregator eventAggregator;
-    public TimeSpan ActualTime => TimeSpan.FromSeconds(ActualPosition * Duration);
+
+    #endregion Fields
+
+    #region Constructors
+
+    public SongInPlayList(EventAggregator eventAggregator, IAlbumsViewModel albumsViewModel, IArtistsViewModel artistsViewModel, Song model) : base(model)
+    {
+      this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
+
+      AlbumViewModel = albumsViewModel.ViewModels.Single(x => x.ModelId == model.Album.Id);
+      ArtistViewModel = artistsViewModel.ViewModels.Single(x => x.ModelId == AlbumViewModel.Model.Artist.Id);
+    }
+
+    #endregion Constructors
+
+    #region Properties
+
     public float ActualPosition { get; set; }
-    public string Name => Model.Name;
+    public TimeSpan ActualTime => TimeSpan.FromSeconds(ActualPosition * Duration);
+    public AlbumViewModel AlbumViewModel { get; set; }
+    public ArtistViewModel ArtistViewModel { get; set; }
     public int Duration => Model.Duration;
-    
+    public byte[] Image => AlbumViewModel.Model?.AlbumFrontCoverBLOB;
+    public bool IsPaused { get; set; }
+    public string Name => Model.Name;
+
     #region IsPlaying
 
     private bool isPlaying;
+
     public bool IsPlaying
     {
       get { return isPlaying; }
@@ -44,24 +67,12 @@ namespace VPlayer.Core.ViewModels
       }
     }
 
-    #endregion
-
-    public bool IsPaused { get; set; }
-    public byte[] Image => AlbumViewModel.Model?.AlbumFrontCoverBLOB;
-    public AlbumViewModel AlbumViewModel { get; set; }
-    public ArtistViewModel ArtistViewModel { get; set; }
-
-    public SongInPlayList([NotNull] IEventAggregator eventAggregator, IAlbumsViewModel albumsViewModel, IArtistsViewModel artistsViewModel, Song model) : base(model)
-    {
-      this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
-
-      AlbumViewModel = albumsViewModel.ViewModels.Single(x => x.ModelId == model.Album.Id);
-      ArtistViewModel = artistsViewModel.ViewModels.Single(x => x.ModelId == AlbumViewModel.Model.Artist.Id);
-    }
+    #endregion IsPlaying
 
     #region Play
 
     private ActionCommand play;
+
     public ICommand Play
     {
       get
@@ -75,6 +86,11 @@ namespace VPlayer.Core.ViewModels
       }
     }
 
+    public void OnPlay()
+    {
+      eventAggregator.GetEvent<PlaySongsInPlayListEvent>().Publish(this);
+    }
+
     private void OnPlayButton()
     {
       if (!IsPlaying)
@@ -86,11 +102,10 @@ namespace VPlayer.Core.ViewModels
         eventAggregator.GetEvent<PauseEvent>().Publish();
       }
     }
+    #endregion Play
 
-    public void OnPlay()
-    {
-      eventAggregator.GetEvent<PlaySongsInPlayListEvent>().Publish(this);
-    }
-    #endregion
+    #endregion Properties
+
+
   }
 }

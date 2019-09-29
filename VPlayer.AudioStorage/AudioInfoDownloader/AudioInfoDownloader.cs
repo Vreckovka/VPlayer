@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Hqub.MusicBrainz.API;
+using Hqub.MusicBrainz.API.Entities;
+using Newtonsoft.Json.Linq;
+using Ninject;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -8,48 +12,56 @@ using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Windows.Storage;
-using Windows.Storage.FileProperties;
-using Hqub.MusicBrainz.API;
-using Hqub.MusicBrainz.API.Entities;
-using Newtonsoft.Json.Linq;
-using Ninject;
 using unirest_net.http;
 using VPlayer.AudioStorage.AudioInfoDownloader.Models;
 using VPlayer.Core.DomainClasses;
+using Windows.Storage;
+using Windows.Storage.FileProperties;
 using Artist = Hqub.MusicBrainz.API.Entities.Artist;
-
 
 namespace VPlayer.AudioInfoDownloader
 {
   /// <summary>
   /// Class for getting info about audio file (music)
   /// </summary>
-  public class AudioInfoDownloaderProvider : IInitializable
+  public class AudioInfoDownloader : IInitializable
   {
-    private string[] supportedItems = new string[] { "*.mp3", "*.flac" };
+    #region Fields
+
+    private static SemaphoreSlim musibrainzAPISempathore = new SemaphoreSlim(1, 1);
     private string api = "eJSq8XSeYR";
-    private string meta = "recordings+releases+tracks";
 
     private string exceedMsg = "Your requests are exceeding the " +
                                "allowable rate limit. " +
                                "Please see http://wiki.musicbrainz.org/XMLWebService " +
                                "for more information.";
 
-    private static AudioInfoDownloaderProvider _instance;
+    private string meta = "recordings+releases+tracks";
+    private string[] supportedItems = new string[] { "*.mp3", "*.flac" };
 
-    static SemaphoreSlim musibrainzAPISempathore = new SemaphoreSlim(1, 1);
+    #endregion Fields
 
-    public event EventHandler<List<AudioInfo>> SubdirectoryLoaded;
+    #region Constructors
 
-    public event EventHandler<List<AlbumCover>> CoversDownloaded;
+    public AudioInfoDownloader()
+    {
+    }
+
+    #endregion Constructors
+
+    #region Properties
 
     public Subject<object> ItemUpdated { get; } = new Subject<object>();
 
+    #endregion Properties
 
-    public AudioInfoDownloaderProvider()
-    {
-    }
+    #region Events
+
+    public event EventHandler<List<AlbumCover>> CoversDownloaded;
+
+    public event EventHandler<List<AudioInfo>> SubdirectoryLoaded;
+
+    #endregion Events
 
     #region UpdateItem
 
@@ -80,7 +92,6 @@ namespace VPlayer.AudioInfoDownloader
       });
     }
 
-
     private void UpdateItem(Core.DomainClasses.Album album)
     {
       Task.Run(async () =>
@@ -103,7 +114,7 @@ namespace VPlayer.AudioInfoDownloader
       });
     }
 
-    #endregion
+    #endregion UpdateItem
 
     #region Info methods
 
@@ -174,9 +185,448 @@ namespace VPlayer.AudioInfoDownloader
       });
     }
 
-    #endregion
+    #endregion Info methods
 
     #region MusicBrainz Lookups
+
+    private KeyValuePair<string, List<Album>> _actualArtist;
+
+    /// <summary>
+    /// Updates information about album
+    /// </summary>
+    /// <param name="album"></param>
+    /// <returns></returns>
+    private bool apiExeed;
+
+    /// <summary>
+    /// Returns all avaible album covers
+    /// </summary>
+    /// <param name="MBID"></param>
+    /// <returns></returns>
+    public Task<List<AlbumCover>> GetAlbumFrontCoversUrls(string MBID, CancellationToken cancellationToken)
+    {
+      return Task.Run(async () =>
+      {
+        try
+        {
+          List<AlbumCover> covers = new List<AlbumCover>();
+          string apiURL = "http://coverartarchive.org//release/" + $"{MBID}";
+          HttpResponse<string> response = await Task.Run(() => Unirest.get(apiURL).asJson<string>());
+
+          if (response.Code != 200)
+          {
+            if (response.Code == 502)
+            {
+              Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+                $"Album cover was not found {MBID} trying again, response code {response.Code}");
+              return await GetAlbumFrontCoversUrls(MBID, cancellationToken);
+            }
+
+            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+              $"Album cover was not found {MBID} resposne code {response.Code}");
+            return null;
+          }
+
+          dynamic stuff = JObject.Parse(response.Body);
+
+          if (stuff.images != null)
+          {
+            foreach (var image in stuff.images)
+            {
+              foreach (var thumbnail in image.thumbnails)
+              {
+                var foo = thumbnail.ToString().Split('\"');
+
+                covers.Add(new AlbumCover()
+                {
+                  Mbid = MBID,
+                  Type = foo[1],
+                  Url = foo[3],
+                });
+              }
+
+              var imageImage = image.image;
+              if (imageImage != null)
+              {
+                covers.Add(new AlbumCover()
+                {
+                  Mbid = MBID,
+                  Type = image.type,
+                  Url = imageImage,
+                });
+              }
+            }
+          }
+          else
+          {
+            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+              $"Album cover was not found {MBID}");
+            return null;
+          }
+
+          OnCoversDownloaded(covers);
+          return covers;
+        }
+        catch (Exception ex)
+        {
+          Logger.Logger.Instance.LogException(ex);
+          return null;
+        }
+      }, cancellationToken);
+    }
+
+    public Task<List<AlbumCover>> GetAlbumFrontCoversUrls(Album album, CancellationToken cancellationToken)
+    {
+      return Task.Run(async () =>
+      {
+        try
+        {
+          List<AlbumCover> covers = new List<AlbumCover>();
+
+          Core.DomainClasses.Artist newArtist = album.Artist;
+
+          if (album.Artist.MusicBrainzId == null)
+          {
+            newArtist = await UpdateArtist(album.Artist.Name);
+
+            if (newArtist == null)
+            {
+              Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+                "Unable to get album covers, artist was not found");
+              return null;
+            }
+            else;
+
+            //Task.Run(() => AudioStorage.StorageManager.GetStorage().UpdateArtist(newArtist));
+          }
+
+          // Build an advanced query to search for the release.
+          var query = new QueryParameters<Release>()
+          {
+            {"arid", newArtist.MusicBrainzId},
+            {"release", album.Name},
+            {"type", "album"},
+            {"status", "official"}
+          };
+
+          // Search for a release by title.
+          var releases = await Release.SearchAsync(query);
+
+          foreach (var realease in releases.Items)
+          {
+            var newCovers = await GetAlbumFrontCoversUrls(realease.Id, cancellationToken);
+            if (newCovers != null)
+            {
+              covers.AddRange(newCovers);
+            }
+          }
+
+          Logger.Logger.Instance.Log(Logger.MessageType.Success, "Album covers was found");
+          return covers;
+        }
+        catch (Exception ex)
+        {
+          Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+          return null;
+        }
+      }, cancellationToken);
+    }
+
+    public async Task<List<Album>> GetArtistsAlbums(string artistMbid)
+    {
+      return await Task.Run(async () =>
+      {
+        try
+        {
+          List<Album> albums = new List<Album>();
+          var groups = await ReleaseGroup.BrowseAsync("artist", artistMbid, 100, 0);
+
+          foreach (var item in groups.Items.Where(g => IsOffical(g)).OrderBy(g => g.FirstReleaseDate))
+          {
+            Album album = new Album()
+            {
+              MusicBrainzId = item.Id,
+              Name = item.Title,
+            };
+
+            albums.Add(album);
+          }
+
+          return albums;
+        }
+        catch (Exception ex)
+        {
+          if (ex.Message == exceedMsg)
+          {
+            return await GetArtistsAlbums(artistMbid);
+          }
+          else
+          {
+            Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+            return null;
+          }
+        }
+      });
+    }
+
+    public async Task<Album> UpdateAlbum(Album album)
+    {
+      try
+      {
+        var albumName = album.Name;
+
+        // The album known sometimes as The Black Album is already in this database,
+        // it is correctly named simply Metallica. This is because The Black Album is only a fan-composed name
+        if (albumName.ToLower().Contains("black album") && album.Artist.Name.ToLower() == "metallica")
+        {
+          albumName = "Metallica";
+        }
+
+        await musibrainzAPISempathore.WaitAsync();
+
+        //API rate limit
+        Thread.Sleep(1000);
+
+        Logger.Logger.Instance.Log(Logger.MessageType.Inform, $"Downloading album info {album.Name}");
+
+        string artistMbid = "";
+        string artistName = "";
+        apiExeed = false;
+
+        if (album.Artist != null)
+        {
+          artistName = album.Artist.Name;
+
+          if (album.Artist.MusicBrainzId == null)
+          {
+            // Search for an artist by name.
+            var artists = await Artist.SearchAsync(artistName.Quote());
+            var artist = artists.Items.FirstOrDefault();
+
+            if (artist == null)
+            {
+              Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+                $"Album info was not downloaded {album.Name} - {artistName}");
+              return null;
+            }
+            else
+            {
+              artistMbid = artist.Id;
+            }
+          }
+          else
+            artistMbid = album.Artist.MusicBrainzId;
+        }
+
+        Release release = null;
+        Album bestAlbum = null;
+
+        // Build an advanced query to search for the release.
+        var query = new QueryParameters<Release>()
+        {
+          {"arid", artistMbid},
+          {"release", albumName},
+          {"type", "album"},
+          {"status", "official"}
+        };
+
+        // Search for a release by title.
+        var releases = await Release.SearchAsync(query);
+
+        if (releases.Count != 0)
+        {
+          // Get the oldest release (remember to sort out items with no date set).
+          release = releases.Items.Where(r => r.Date != null && IsCompactDisc(r)).OrderBy(r => r.Date)
+            .FirstOrDefault();
+
+          if (release == null)
+          {
+            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+              $"Album info was not downloaded {album.Name} - {artistName}");
+            return null;
+          }
+
+          // Get detailed information of the release, including recordings.
+          release = await Release.GetAsync(release.Id, "recordings", "url-rels");
+
+          //// Get the medium associated with the release.
+          //var medium = release.Media.First();
+
+          //release = await Release.GetAsync(release.Id, "recordings", "url-rels");
+        }
+        else
+        {
+          if (_actualArtist.Key == null)
+          {
+            _actualArtist = new KeyValuePair<string, List<Album>>(artistMbid, await GetArtistsAlbums(artistMbid));
+          }
+          else if (_actualArtist.Key != artistMbid)
+          {
+            _actualArtist = new KeyValuePair<string, List<Album>>(artistMbid, await GetArtistsAlbums(artistMbid));
+          }
+
+          if (_actualArtist.Value.Count != 0)
+          {
+            bestAlbum = _actualArtist.Value
+              .OrderByDescending(x => Levenshtein.Similarity(x.Name, album.Name)).First();
+
+            if (bestAlbum.Name.LevenshteinDistance(album.Name) > album.Name.Length / 3)
+            {
+              var split = album.Name.Split('(');
+              var splittedName = split[0];
+
+              var albumsLow = _actualArtist.Value
+                .Select(x => x.Name.ToLower().Replace(" ", "").Replace(".", "").Replace(",", "")).ToList();
+              var albumLow = albumName.ToLower().Replace(" ", "").Replace(".", "").Replace(",", "");
+
+              if (_actualArtist.Value.Any(x =>
+                x.Name.LevenshteinDistance(albumName) < (splittedName.Length / 3)))
+              {
+                bestAlbum.Name = _actualArtist.Value
+                  .Where(x => x.Name.LevenshteinDistance(albumName) < (splittedName.Length / 3))
+                  .Select(x => x.Name).First();
+              }
+              else if (albumsLow.Any(x => x.Contains(albumLow)))
+              {
+                var name = albumsLow
+                  .Where(x => x.Contains(albumLow))
+                  .Select(x => x).First();
+                bestAlbum.Name = _actualArtist.Value
+                  .OrderByDescending(x => Levenshtein.Similarity(x.Name, name)).First().Name;
+              }
+              else if (albumsLow.Any(x => albumLow.Contains(x)))
+              {
+                var name = albumsLow.First(x => albumLow.Contains(x));
+                bestAlbum.Name = _actualArtist.Value
+                  .OrderByDescending(x => Levenshtein.Similarity(x.Name, name)).First().Name;
+              }
+              else
+              {
+                Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+                  $"Unable to find album info {album.Name}");
+
+                return null;
+              }
+            }
+
+            query = new QueryParameters<Release>()
+            {
+              {"arid", artistMbid},
+              {"release", bestAlbum.Name},
+              {"type", "album"},
+              {"status", "official"}
+            };
+
+            releases = await Release.SearchAsync(query);
+
+            release = releases.Items.Where(r => r.Date != null && IsCompactDisc(r)).OrderBy(r => r.Date)
+              .FirstOrDefault();
+
+            if (release == null)
+            {
+              Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+                $"Album info was not downloaded {album.Name} - {artistName}");
+              return null;
+            }
+          }
+          else
+          {
+            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+              $"Album info was not downloaded {album.Name} - {artistName}");
+            return null;
+          }
+        }
+
+        string albumCoverUrl = await GetAlbumFrontConverURL(release.Id);
+
+        if (albumCoverUrl == null)
+        {
+          int releaseIndex = 0;
+
+          while (albumCoverUrl == null)
+          {
+            if (releaseIndex < releases.Items.Count - 1)
+              albumCoverUrl = await GetAlbumFrontConverURL(releases.Items[releaseIndex].Id);
+            else
+              break;
+
+            releaseIndex++;
+          }
+
+          if (albumCoverUrl == null)
+          {
+            album = new Album()
+            {
+              Id = album.Id,
+              Artist = album.Artist,
+              Name = release.Title,
+              MusicBrainzId = release.Id,
+              ReleaseDate = release.Date,
+            };
+
+            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+              $"Album info was download without cover {album.Name} - {artistName}");
+
+            return album;
+          }
+        }
+
+        byte[] albumCoverBlob = await GetAlbumFrontConverBLOB(release.Id, albumCoverUrl);
+
+        albumName = release.Title;
+
+        // The album known sometimes as The Black Album is already in this database,
+        // it is correctly named simply Metallica. This is because The Black Album is only a fan-composed name
+        if (album.Name.ToLower().Contains("black album") && album.Artist.Name.ToLower() == "metallica")
+          albumName = "Metallica (The Black Album)";
+
+        if (bestAlbum != null)
+        {
+          albumName = bestAlbum.Name;
+        }
+
+        album = new Album()
+        {
+          Id = album.Id,
+          Artist = album.Artist,
+          Name = albumName,
+          MusicBrainzId = release.Id,
+          ReleaseDate = release.Date,
+          AlbumFrontCoverURI = albumCoverUrl,
+          AlbumFrontCoverBLOB = albumCoverBlob,
+        };
+
+        Logger.Logger.Instance.Log(Logger.MessageType.Success, $"Album info was succesfully downloaded {album.Name} - {artistName}");
+
+        return album;
+      }
+      catch (Exception ex)
+      {
+        if (ex.Message == exceedMsg)
+        {
+          Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Requests are exceeding, trying again");
+
+          musibrainzAPISempathore.Release();
+
+          Album newAlbum = null;
+
+          await Task.Run(async () => { newAlbum = await UpdateAlbum(album); });
+
+          apiExeed = true;
+          return newAlbum;
+        }
+        else
+        {
+          Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+          return null;
+        }
+      }
+      finally
+      {
+        if (!apiExeed)
+          musibrainzAPISempathore.Release();
+      }
+    }
 
     public async Task<Core.DomainClasses.Artist> UpdateArtist(string artistName)
     {
@@ -222,320 +672,148 @@ namespace VPlayer.AudioInfoDownloader
     }
 
     /// <summary>
-    /// Updates information about album
+    /// Returns byte[] for album front image
     /// </summary>
-    /// <param name="album"></param>
-    /// <returns></returns>
-
-
-    private KeyValuePair<string, List<Album>> _actualArtist;
-
-    private bool apiExeed;
-    public async Task<Album> UpdateAlbum(Album album)
-    {
-      try
-      {
-        var albumName = album.Name;
-
-        // The album known sometimes as The Black Album is already in this database,
-        // it is correctly named simply Metallica. This is because The Black Album is only a fan-composed name
-        if (albumName.ToLower().Contains("black album") && album.Artist.Name.ToLower() == "metallica")
-        {
-          albumName = "Metallica";
-        }
-
-        await musibrainzAPISempathore.WaitAsync();
-
-        //API rate limit
-        Thread.Sleep(1000);
-
-        Logger.Logger.Instance.Log(Logger.MessageType.Inform, $"Downloading album info {album.Name}");
-
-        string artistMbid = "";
-        string artistName = "";
-        apiExeed = false;
-
-        if (album.Artist != null)
-        {
-          artistName = album.Artist.Name;
-
-          if (album.Artist.MusicBrainzId == null)
-          {
-            // Search for an artist by name.
-            var artists = await Artist.SearchAsync(artistName.Quote());
-            var artist = artists.Items.FirstOrDefault();
-
-            if (artist == null)
-            {
-              Logger.Logger.Instance.Log(Logger.MessageType.Warning,
-                  $"Album info was not downloaded {album.Name} - {artistName}");
-              return null;
-            }
-            else
-            {
-              artistMbid = artist.Id;
-            }
-          }
-          else
-            artistMbid = album.Artist.MusicBrainzId;
-        }
-
-        Release release = null;
-        Album bestAlbum = null;
-
-        // Build an advanced query to search for the release.
-        var query = new QueryParameters<Release>()
-                {
-                    {"arid", artistMbid},
-                    {"release", albumName},
-                    {"type", "album"},
-                    {"status", "official"}
-                };
-
-        // Search for a release by title.
-        var releases = await Release.SearchAsync(query);
-
-
-        if (releases.Count != 0)
-        {
-          // Get the oldest release (remember to sort out items with no date set).
-          release = releases.Items.Where(r => r.Date != null && IsCompactDisc(r)).OrderBy(r => r.Date)
-              .FirstOrDefault();
-
-          if (release == null)
-          {
-            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
-                $"Album info was not downloaded {album.Name} - {artistName}");
-            return null;
-          }
-
-          // Get detailed information of the release, including recordings.
-          release = await Release.GetAsync(release.Id, "recordings", "url-rels");
-
-          //// Get the medium associated with the release.
-          //var medium = release.Media.First();
-
-          //release = await Release.GetAsync(release.Id, "recordings", "url-rels");
-
-        }
-        else
-        {
-          if (_actualArtist.Key == null)
-          {
-            _actualArtist = new KeyValuePair<string, List<Album>>(artistMbid, await GetArtistsAlbums(artistMbid));
-          }
-          else if (_actualArtist.Key != artistMbid)
-          {
-            _actualArtist = new KeyValuePair<string, List<Album>>(artistMbid, await GetArtistsAlbums(artistMbid));
-          }
-
-          if (_actualArtist.Value.Count != 0)
-          {
-
-            bestAlbum = _actualArtist.Value
-                .OrderByDescending(x => Levenshtein.Similarity(x.Name, album.Name)).First();
-
-            if (bestAlbum.Name.LevenshteinDistance(album.Name) > album.Name.Length / 3)
-            {
-              var split = album.Name.Split('(');
-              var splittedName = split[0];
-
-              var albumsLow = _actualArtist.Value
-                  .Select(x => x.Name.ToLower().Replace(" ", "").Replace(".", "").Replace(",", "")).ToList();
-              var albumLow = albumName.ToLower().Replace(" ", "").Replace(".", "").Replace(",", "");
-
-              if (_actualArtist.Value.Any(x =>
-                  x.Name.LevenshteinDistance(albumName) < (splittedName.Length / 3)))
-              {
-                bestAlbum.Name = _actualArtist.Value
-                    .Where(x => x.Name.LevenshteinDistance(albumName) < (splittedName.Length / 3))
-                    .Select(x => x.Name).First();
-              }
-              else if (albumsLow.Any(x => x.Contains(albumLow)))
-              {
-                var name = albumsLow
-                    .Where(x => x.Contains(albumLow))
-                    .Select(x => x).First();
-                bestAlbum.Name = _actualArtist.Value
-                    .OrderByDescending(x => Levenshtein.Similarity(x.Name, name)).First().Name;
-              }
-              else if (albumsLow.Any(x => albumLow.Contains(x)))
-              {
-                var name = albumsLow.First(x => albumLow.Contains(x));
-                bestAlbum.Name = _actualArtist.Value
-                    .OrderByDescending(x => Levenshtein.Similarity(x.Name, name)).First().Name;
-              }
-              else
-              {
-                Logger.Logger.Instance.Log(Logger.MessageType.Warning,
-                    $"Unable to find album info {album.Name}");
-
-                return null;
-              }
-            }
-
-            query = new QueryParameters<Release>()
-                        {
-                            {"arid", artistMbid},
-                            {"release", bestAlbum.Name},
-                            {"type", "album"},
-                            {"status", "official"}
-                        };
-
-            releases = await Release.SearchAsync(query);
-
-            release = releases.Items.Where(r => r.Date != null && IsCompactDisc(r)).OrderBy(r => r.Date)
-                .FirstOrDefault();
-
-            if (release == null)
-            {
-              Logger.Logger.Instance.Log(Logger.MessageType.Warning,
-                  $"Album info was not downloaded {album.Name} - {artistName}");
-              return null;
-            }
-          }
-          else
-          {
-            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
-                $"Album info was not downloaded {album.Name} - {artistName}");
-            return null;
-          }
-        }
-
-        string albumCoverUrl = await GetAlbumFrontConverURL(release.Id);
-
-        if (albumCoverUrl == null)
-        {
-          int releaseIndex = 0;
-
-          while (albumCoverUrl == null)
-          {
-            if (releaseIndex < releases.Items.Count - 1)
-              albumCoverUrl = await GetAlbumFrontConverURL(releases.Items[releaseIndex].Id);
-            else
-              break;
-
-            releaseIndex++;
-          }
-
-          if (albumCoverUrl == null)
-          {
-            album = new Album()
-            {
-              Id = album.Id,
-              Artist = album.Artist,
-              Name = release.Title,
-              MusicBrainzId = release.Id,
-              ReleaseDate = release.Date,
-            };
-
-            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
-                $"Album info was download without cover {album.Name} - {artistName}");
-
-            return album;
-          }
-        }
-
-        byte[] albumCoverBlob = await GetAlbumFrontConverBLOB(release.Id, albumCoverUrl);
-
-        albumName = release.Title;
-
-        // The album known sometimes as The Black Album is already in this database,
-        // it is correctly named simply Metallica. This is because The Black Album is only a fan-composed name
-        if (album.Name.ToLower().Contains("black album") && album.Artist.Name.ToLower() == "metallica")
-          albumName = "Metallica (The Black Album)";
-
-        if (bestAlbum != null)
-        {
-          albumName = bestAlbum.Name;
-        }
-
-        album = new Album()
-        {
-          Id = album.Id,
-          Artist = album.Artist,
-          Name = albumName,
-          MusicBrainzId = release.Id,
-          ReleaseDate = release.Date,
-          AlbumFrontCoverURI = albumCoverUrl,
-          AlbumFrontCoverBLOB = albumCoverBlob,
-        };
-
-        Logger.Logger.Instance.Log(Logger.MessageType.Success, $"Album info was succesfully downloaded {album.Name} - {artistName}");
-
-        return album;
-
-
-      }
-      catch (Exception ex)
-      {
-        if (ex.Message == exceedMsg)
-        {
-          Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Requests are exceeding, trying again");
-
-          musibrainzAPISempathore.Release();
-
-          Album newAlbum = null;
-
-          await Task.Run(async () =>
-          {
-            newAlbum = await UpdateAlbum(album);
-          });
-
-          apiExeed = true;
-          return newAlbum;
-        }
-        else
-        {
-          Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
-          return null;
-        }
-      }
-      finally
-      {
-        if (!apiExeed)
-          musibrainzAPISempathore.Release();
-      }
-
-    }
-
-
-    public async Task<List<Album>> GetArtistsAlbums(string artistMbid)
+    /// <param name="MBID"></param>
+    /// <returns></returns>,
+    private static async Task<byte[]> GetAlbumFrontConverBLOB(string MBID, string url = null)
     {
       return await Task.Run(async () =>
       {
         try
         {
-          List<Album> albums = new List<Album>();
-          var groups = await ReleaseGroup.BrowseAsync("artist", artistMbid, 100, 0);
-
-          foreach (var item in groups.Items.Where(g => IsOffical(g)).OrderBy(g => g.FirstReleaseDate))
+          var webClient = new WebClient();
+          if (url == null)
           {
-            Album album = new Album()
+            string apiURL = "http://coverartarchive.org//release/" + $"{MBID}";
+            HttpResponse<string> response = await Task.Run(() => Unirest.get(apiURL).asJson<string>());
+
+            if (response.Code != 200)
             {
-              MusicBrainzId = item.Id,
-              Name = item.Title,
-            };
+              if (response.Code == 502)
+              {
+                Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+                  $"Album cover was not found {MBID} trying again, response code {response.Code}");
+                return await GetAlbumFrontConverBLOB(MBID, url);
+              }
+              else
+              {
+                Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+                  $"Album cover was not found {MBID} resposne code {response.Code}");
+                return null;
+              }
+            }
 
-            albums.Add(album);
-          }
+            dynamic stuff = JObject.Parse(response.Body);
 
-          return albums;
+            var converUrl = stuff.images[0].thumbnails.small;
+            if (converUrl == null)
+              converUrl = stuff.images[0].image;
 
-        }
-        catch (Exception ex)
-        {
-          if (ex.Message == exceedMsg)
-          {
-            return await GetArtistsAlbums(artistMbid);
+            return (byte[])webClient.DownloadData(converUrl.ToString());
           }
           else
           {
-            Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
-            return null;
+            try
+            {
+              return await webClient.DownloadDataTaskAsync(url);
+            }
+            catch (Exception ex)
+            {
+              return await GetAlbumFrontConverBLOB(MBID, url);
+            }
           }
         }
+        catch (Exception ex)
+        {
+          Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+          return null;
+        }
       });
+    }
+
+    /// <summary>
+    /// Returns URL for album front image
+    /// </summary>
+    /// <param name="MBID"></param>
+    /// <returns></returns>,
+    private static async Task<string> GetAlbumFrontConverURL(string MBID)
+    {
+      return await Task.Run(async () =>
+      {
+        try
+        {
+          string apiURL = "http://coverartarchive.org//release/" + $"{MBID}";
+          HttpResponse<string> response = await Task.Run(() => Unirest.get(apiURL).asJson<string>());
+
+          if (response.Code != 200)
+          {
+            if (response.Code == 502)
+            {
+              Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+                $"Album cover was not found {MBID} trying again, response code {response.Code}");
+              return await GetAlbumFrontConverURL(MBID);
+            }
+
+            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+              $"Album cover was not found {MBID} resposne code {response.Code}");
+            return null;
+          }
+
+          dynamic stuff = JObject.Parse(response.Body);
+
+          var converUrl = stuff.images[0].thumbnails.small;
+          if (converUrl == null)
+            converUrl = stuff.images[0].image;
+
+          return (string)converUrl.ToString();
+        }
+        catch (Exception ex)
+        {
+          Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+          return null;
+        }
+      });
+    }
+
+    /// <summary>
+    /// Returns MBID of album
+    /// </summary>
+    private static string GetAlbumMBID(string artist, string album)
+    {
+      var m_strFilePath = "http://musicbrainz.org/ws/2/release/?query=artist:" +
+                          $"{artist}" +
+                          "%20AND%20" +
+                          $"title:{album}";
+      string xmlStr;
+      using (var wc = new WebClient())
+      {
+        //Need meaningful user-agent string.
+        wc.Headers.Add("user-agent", "Hqub.MusicBrainz/2.0");
+        xmlStr = wc.DownloadString(m_strFilePath);
+      }
+
+      XDocument xDocument = XDocument.Parse(xmlStr);
+      var desc = (xDocument.Descendants(XName.Get("release", @"http://musicbrainz.org/ns/mmd-2.0#"))).ToList();
+
+      if (desc.Count > 0)
+        return desc[0].FirstAttribute.Value;
+      return "";
+    }
+
+    /// <summary>
+    /// Define is release is Copact disc
+    /// </summary>
+    /// <param name="r"></param>
+    /// <returns></returns>
+    private static bool IsCompactDisc(Release r)
+    {
+      if (r.Media == null || r.Media.Count == 0)
+      {
+        return false;
+      }
+
+      return r.Media[0].Format == "CD";
     }
 
     /// <summary>
@@ -543,9 +821,8 @@ namespace VPlayer.AudioInfoDownloader
     /// </summary>
     /// <param name="g"></param>
     /// <returns></returns>
-    static bool IsOffical(ReleaseGroup g)
+    private static bool IsOffical(ReleaseGroup g)
     {
-
       try
       {
         if (g.FirstReleaseDate == "")
@@ -587,7 +864,6 @@ namespace VPlayer.AudioInfoDownloader
     //        release = releases.Items.Where(r => r.Date != null && IsCompactDisc(r)).OrderBy(r => r.Date)
     //            .First();
 
-
     //    if (release != null)
     //    {
     //        // Get detailed information of the release, including recordings.
@@ -602,386 +878,9 @@ namespace VPlayer.AudioInfoDownloader
     //    return null;
     //}
 
-    /// <summary>
-    /// Define is release is Copact disc
-    /// </summary>
-    /// <param name="r"></param>
-    /// <returns></returns>
-    private static bool IsCompactDisc(Release r)
-    {
-      if (r.Media == null || r.Media.Count == 0)
-      {
-        return false;
-      }
-
-      return r.Media[0].Format == "CD";
-    }
-
-    /// <summary>
-    /// Returns URL for album front image
-    /// </summary>
-    /// <param name="MBID"></param>
-    /// <returns></returns>,
-    private static async Task<string> GetAlbumFrontConverURL(string MBID)
-    {
-      return await Task.Run(async () =>
-      {
-        try
-        {
-          string apiURL = "http://coverartarchive.org//release/" + $"{MBID}";
-          HttpResponse<string> response = await Task.Run(() => Unirest.get(apiURL).asJson<string>());
-
-          if (response.Code != 200)
-          {
-            if (response.Code == 502)
-            {
-              Logger.Logger.Instance.Log(Logger.MessageType.Warning,
-                        $"Album cover was not found {MBID} trying again, response code {response.Code}");
-              return await GetAlbumFrontConverURL(MBID);
-            }
-
-            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
-                      $"Album cover was not found {MBID} resposne code {response.Code}");
-            return null;
-          }
-
-          dynamic stuff = JObject.Parse(response.Body);
-
-          var converUrl = stuff.images[0].thumbnails.small;
-          if (converUrl == null)
-            converUrl = stuff.images[0].image;
-
-          return (string)converUrl.ToString();
-        }
-        catch (Exception ex)
-        {
-          Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
-          return null;
-        }
-      });
-    }
-
-
-    /// <summary>
-    /// Returns all avaible album covers
-    /// </summary>
-    /// <param name="MBID"></param>
-    /// <returns></returns>
-    public async Task<List<AlbumCover>> GetAlbumFrontCoversUrls(string MBID)
-    {
-      return await Task.Run(async () =>
-      {
-        try
-        {
-          List<AlbumCover> covers = new List<AlbumCover>();
-          string apiURL = "http://coverartarchive.org//release/" + $"{MBID}";
-          HttpResponse<string> response = await Task.Run(() => Unirest.get(apiURL).asJson<string>());
-
-          if (response.Code != 200)
-          {
-            if (response.Code == 502)
-            {
-              Logger.Logger.Instance.Log(Logger.MessageType.Warning,
-                        $"Album cover was not found {MBID} trying again, response code {response.Code}");
-              return await GetAlbumFrontCoversUrls(MBID);
-            }
-
-            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
-                      $"Album cover was not found {MBID} resposne code {response.Code}");
-            return null;
-          }
-
-          dynamic stuff = JObject.Parse(response.Body);
-
-          if (stuff.images != null)
-          {
-            foreach (var image in stuff.images)
-            {
-              foreach (var thumbnail in image.thumbnails)
-              {
-                var foo = thumbnail.ToString().Split('\"');
-
-                covers.Add(new AlbumCover()
-                {
-                  Mbid = MBID,
-                  Type = foo[1],
-                  Url = foo[3],
-
-                });
-              }
-
-              var imageImage = image.image;
-              if (imageImage != null)
-              {
-                covers.Add(new AlbumCover()
-                {
-                  Mbid = MBID,
-                  Type = image.type,
-                  Url = imageImage,
-                });
-              }
-            }
-          }
-          else
-          {
-            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
-                      $"Album cover was not found {MBID}");
-            return null;
-          }
-
-          OnCoversDownloaded(covers);
-          return covers;
-        }
-        catch (Exception ex)
-        {
-          Logger.Logger.Instance.LogException(ex);
-          return null;
-        }
-      });
-    }
-
-    public async Task<List<AlbumCover>> GetAlbumFrontCoversUrls(Album album)
-    {
-      return await Task.Run(async () =>
-      {
-        try
-        {
-          List<AlbumCover> covers = new List<AlbumCover>();
-
-          Core.DomainClasses.Artist newArtist = album.Artist;
-
-          if (album.Artist.MusicBrainzId == null)
-          {
-            newArtist = await UpdateArtist(album.Artist.Name);
-
-
-            if (newArtist == null)
-            {
-              Logger.Logger.Instance.Log(Logger.MessageType.Warning,
-                  "Unable to get album covers, artist was not found");
-              return null;
-            }
-            else;
-                  //Task.Run(() => AudioStorage.StorageManager.GetStorage().UpdateArtist(newArtist));
-
-                }
-
-                // Build an advanced query to search for the release.
-                var query = new QueryParameters<Release>()
-              {
-                        {"arid", newArtist.MusicBrainzId},
-                        {"release", album.Name},
-                        {"type", "album"},
-                        {"status", "official"}
-              };
-
-                // Search for a release by title.
-                var releases = await Release.SearchAsync(query);
-
-          foreach (var realease in releases.Items)
-          {
-            var newCovers = await GetAlbumFrontCoversUrls(realease.Id);
-            if (newCovers != null)
-            {
-              covers.AddRange(newCovers);
-            }
-          }
-
-          Logger.Logger.Instance.Log(Logger.MessageType.Success, "Album covers was found");
-          return covers;
-        }
-        catch (Exception ex)
-        {
-          Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
-          return null;
-        }
-      });
-    }
-
-
-    /// <summary>
-    /// Returns byte[] for album front image
-    /// </summary>
-    /// <param name="MBID"></param>
-    /// <returns></returns>,
-    private static async Task<byte[]> GetAlbumFrontConverBLOB(string MBID, string url = null)
-    {
-      return await Task.Run(async () =>
-      {
-        try
-        {
-          var webClient = new WebClient();
-          if (url == null)
-          {
-            string apiURL = "http://coverartarchive.org//release/" + $"{MBID}";
-            HttpResponse<string> response = await Task.Run(() => Unirest.get(apiURL).asJson<string>());
-
-            if (response.Code != 200)
-            {
-              if (response.Code == 502)
-              {
-                Logger.Logger.Instance.Log(Logger.MessageType.Warning,
-                          $"Album cover was not found {MBID} trying again, response code {response.Code}");
-                return await GetAlbumFrontConverBLOB(MBID, url);
-              }
-              else
-              {
-                Logger.Logger.Instance.Log(Logger.MessageType.Warning,
-                          $"Album cover was not found {MBID} resposne code {response.Code}");
-                return null;
-              }
-            }
-
-            dynamic stuff = JObject.Parse(response.Body);
-
-            var converUrl = stuff.images[0].thumbnails.small;
-            if (converUrl == null)
-              converUrl = stuff.images[0].image;
-
-            return (byte[])webClient.DownloadData(converUrl.ToString());
-          }
-          else
-          {
-            try
-            {
-              return await webClient.DownloadDataTaskAsync(url);
-            }
-            catch (Exception ex)
-            {
-              return await GetAlbumFrontConverBLOB(MBID, url);
-            }
-          }
-        }
-        catch (Exception ex)
-        {
-          Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
-          return null;
-        }
-      });
-    }
-
-    /// <summary>
-    /// Returns MBID of album
-    /// </summary>
-    private static string GetAlbumMBID(string artist, string album)
-    {
-      var m_strFilePath = "http://musicbrainz.org/ws/2/release/?query=artist:" +
-                          $"{artist}" +
-                          "%20AND%20" +
-                          $"title:{album}";
-      string xmlStr;
-      using (var wc = new WebClient())
-      {
-        //Need meaningful user-agent string.
-        wc.Headers.Add("user-agent", "Hqub.MusicBrainz/2.0");
-        xmlStr = wc.DownloadString(m_strFilePath);
-      }
-
-      XDocument xDocument = XDocument.Parse(xmlStr);
-      var desc = (xDocument.Descendants(XName.Get("release", @"http://musicbrainz.org/ns/mmd-2.0#"))).ToList();
-
-      if (desc.Count > 0)
-        return desc[0].FirstAttribute.Value;
-      return "";
-    }
-
-    #endregion
+    #endregion MusicBrainz Lookups
 
     #region FingerPrint methods
-
-    /// <summary>
-    /// Return audio info by fingerPrint
-    /// <param name="path"></param>
-    /// </summary>
-    private async Task<AudioInfo> GetAudioInfoByFingerPrint(string path, AudioInfo pAudioInfo = null)
-    {
-      return await Task.Run(async () =>
-      {
-        try
-        {
-          var audioInfo = await RunFpcalc(path);
-
-          if (audioInfo != null)
-          {
-            var query = $"https://api.acoustid.org/v2/lookup?" +
-                              $"client={api}&" +
-                              $"meta={meta}&" +
-                              $"duration={audioInfo.Duration}&" +
-                              $"fingerprint={audioInfo.FingerPrint}";
-
-
-            HttpResponse<string> response = Unirest.get(query).asJson<string>();
-
-            if (response.Code != 200)
-            {
-              Logger.Logger.Instance.Log(Logger.MessageType.Error,
-                        $"Response returns {response.Code} {path}");
-              throw new Exception($"Response returns {response.Code}");
-            }
-
-            dynamic jObject = JObject.Parse(response.Body);
-            if (jObject.results.Count != 0)
-            {
-              var recordings = jObject.results[0].recordings;
-
-
-                    //Sometimes returns more then 1 recording
-                    dynamic bestRecording = null;
-              var bestRecordingByDuration =
-                        GetBestDurationMatch(recordings, audioInfo.Duration.ToString());
-
-              if (pAudioInfo != null)
-              {
-                bestRecording = GetBestDurationMatch(recordings, pAudioInfo);
-              }
-              else
-              {
-                bestRecording = bestRecordingByDuration;
-              }
-
-              var release = bestRecording.releases[0];
-              AudioInfo newAudioInfo = new AudioInfo();
-
-
-              if (bestRecording.artists.Count > 0)
-              {
-                newAudioInfo = new AudioInfo()
-                {
-                  Title = bestRecording.title.ToString(),
-                  ArtistMbid = bestRecording.artists[0].id.ToString(),
-                  Album = release.title.ToString(),
-                  Artist = bestRecording.artists[0].name.ToString(),
-                  DiskLocation = path,
-                  Duration = audioInfo.Duration
-                };
-              }
-              else
-              {
-                newAudioInfo = new AudioInfo()
-                {
-                  Title = bestRecording.title.ToString(),
-                  Album = release.title.ToString(),
-                };
-              }
-
-              return newAudioInfo;
-            }
-          }
-          else
-          {
-            Logger.Logger.Instance.Log(Logger.MessageType.Warning, $"Song was not identified {path}");
-            return null;
-          }
-        }
-        catch (Exception ex)
-        {
-          Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
-        }
-
-
-        return null;
-      });
-    }
 
     /// <summary>
     /// Returns list of audioinfos from windows directory
@@ -1031,7 +930,6 @@ namespace VPlayer.AudioInfoDownloader
           }
           else if (matchings.Count > 1)
           {
-
             List<KeyValuePair<JToken, string>> durations = new List<KeyValuePair<JToken, string>>();
 
             for (int i = 0; i < matchings.Count; i++)
@@ -1104,11 +1002,10 @@ namespace VPlayer.AudioInfoDownloader
             }
 
             return candidates.OrderByDescending(a => Levenshtein.Similarity(a.Value, audioInfo.Artist + audioInfo.Album))
-                .First().Key;
+              .First().Key;
           }
           else if (audioInfo.Artist != null)
           {
-
             List<KeyValuePair<JToken, string>> candidates = new List<KeyValuePair<JToken, string>>();
 
             for (int i = 0; i < matchings.Count; i++)
@@ -1121,7 +1018,7 @@ namespace VPlayer.AudioInfoDownloader
             }
 
             return candidates.OrderByDescending(a => Levenshtein.Similarity(a.Value, audioInfo.Artist))
-                .First().Key;
+              .First().Key;
           }
           else if (audioInfo.Album != null)
           {
@@ -1137,7 +1034,7 @@ namespace VPlayer.AudioInfoDownloader
             }
 
             return candidates.OrderByDescending(a => Levenshtein.Similarity(a.Value, audioInfo.Album))
-                .First().Key;
+              .First().Key;
           }
         }
       }
@@ -1147,6 +1044,96 @@ namespace VPlayer.AudioInfoDownloader
       }
 
       return null;
+    }
+
+    /// <summary>
+    /// Return audio info by fingerPrint
+    /// <param name="path"></param>
+    /// </summary>
+    private async Task<AudioInfo> GetAudioInfoByFingerPrint(string path, AudioInfo pAudioInfo = null)
+    {
+      return await Task.Run(async () =>
+      {
+        try
+        {
+          var audioInfo = await RunFpcalc(path);
+
+          if (audioInfo != null)
+          {
+            var query = $"https://api.acoustid.org/v2/lookup?" +
+                        $"client={api}&" +
+                        $"meta={meta}&" +
+                        $"duration={audioInfo.Duration}&" +
+                        $"fingerprint={audioInfo.FingerPrint}";
+
+            HttpResponse<string> response = Unirest.get(query).asJson<string>();
+
+            if (response.Code != 200)
+            {
+              Logger.Logger.Instance.Log(Logger.MessageType.Error,
+                $"Response returns {response.Code} {path}");
+              throw new Exception($"Response returns {response.Code}");
+            }
+
+            dynamic jObject = JObject.Parse(response.Body);
+            if (jObject.results.Count != 0)
+            {
+              var recordings = jObject.results[0].recordings;
+
+              //Sometimes returns more then 1 recording
+              dynamic bestRecording = null;
+              var bestRecordingByDuration =
+                GetBestDurationMatch(recordings, audioInfo.Duration.ToString());
+
+              if (pAudioInfo != null)
+              {
+                bestRecording = GetBestDurationMatch(recordings, pAudioInfo);
+              }
+              else
+              {
+                bestRecording = bestRecordingByDuration;
+              }
+
+              var release = bestRecording.releases[0];
+              AudioInfo newAudioInfo = new AudioInfo();
+
+              if (bestRecording.artists.Count > 0)
+              {
+                newAudioInfo = new AudioInfo()
+                {
+                  Title = bestRecording.title.ToString(),
+                  ArtistMbid = bestRecording.artists[0].id.ToString(),
+                  Album = release.title.ToString(),
+                  Artist = bestRecording.artists[0].name.ToString(),
+                  DiskLocation = path,
+                  Duration = audioInfo.Duration
+                };
+              }
+              else
+              {
+                newAudioInfo = new AudioInfo()
+                {
+                  Title = bestRecording.title.ToString(),
+                  Album = release.title.ToString(),
+                };
+              }
+
+              return newAudioInfo;
+            }
+          }
+          else
+          {
+            Logger.Logger.Instance.Log(Logger.MessageType.Warning, $"Song was not identified {path}");
+            return null;
+          }
+        }
+        catch (Exception ex)
+        {
+          Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+        }
+
+        return null;
+      });
     }
 
     /// <summary>
@@ -1167,8 +1154,8 @@ namespace VPlayer.AudioInfoDownloader
         process.StartInfo.RedirectStandardOutput = true;
         process.StartInfo.RedirectStandardError = true;
         process.Start();
-              //* Read the output (or the error)
-              string output = process.StandardOutput.ReadToEnd();
+        //* Read the output (or the error)
+        string output = process.StandardOutput.ReadToEnd();
         string err = process.StandardError.ReadToEnd();
 
         if (err != "")
@@ -1189,7 +1176,7 @@ namespace VPlayer.AudioInfoDownloader
       });
     }
 
-    #endregion
+    #endregion FingerPrint methods
 
     #region Windows info methods
 
@@ -1207,7 +1194,7 @@ namespace VPlayer.AudioInfoDownloader
         var musicProp = await GetAudioWindowsPropertiesAsync(path);
 
         if ((musicProp.Artist != "" && musicProp.Album != "") ||
-                  (musicProp.AlbumArtist != "" && musicProp.Album != ""))
+            (musicProp.AlbumArtist != "" && musicProp.Album != ""))
         {
           var newAudioInfo = new AudioInfo()
           {
@@ -1227,7 +1214,7 @@ namespace VPlayer.AudioInfoDownloader
       });
     }
 
-    #endregion
+    #endregion GetAudioInfoByWindowsAsync
 
     #region GetAudioWindowsPropertiesAsync
 
@@ -1255,7 +1242,7 @@ namespace VPlayer.AudioInfoDownloader
       });
     }
 
-    #endregion
+    #endregion GetAudioWindowsPropertiesAsync
 
     #region GetAudioInfosFromWindowsDirectoryAsync
 
@@ -1269,7 +1256,6 @@ namespace VPlayer.AudioInfoDownloader
       return await Task.Run(async () =>
       {
         List<AudioInfo> audioInfos = new List<AudioInfo>();
-
 
         DirectoryInfo d = new DirectoryInfo(path);
         FileInfo[] Files = supportedItems.SelectMany(ext => d.GetFiles(ext)).ToArray();
@@ -1291,11 +1277,12 @@ namespace VPlayer.AudioInfoDownloader
       });
     }
 
-    #endregion
+    #endregion GetAudioInfosFromWindowsDirectoryAsync
 
-    #endregion
+    #endregion Windows info methods
 
     #region Directory methods
+
     private async Task<List<string>> GetSubDirectories(string rootDirectory)
     {
       return await Task.Run(() =>
@@ -1310,7 +1297,6 @@ namespace VPlayer.AudioInfoDownloader
 
         return directories;
       });
-
     }
 
     private void LoadSubDirs(string dir, ref List<string> directories)
@@ -1322,13 +1308,14 @@ namespace VPlayer.AudioInfoDownloader
       {
         LoadSubDirs(subdirectory, ref directories);
       }
-
     }
-    #endregion
 
-    protected virtual void OnSubdirectoryLoaded(List<AudioInfo> e)
+    #endregion Directory methods
+
+    #region Methods
+
+    public void Initialize()
     {
-      SubdirectoryLoaded?.Invoke(this, e);
     }
 
     protected virtual void OnCoversDownloaded(List<AlbumCover> e)
@@ -1336,9 +1323,11 @@ namespace VPlayer.AudioInfoDownloader
       CoversDownloaded?.Invoke(this, e);
     }
 
-    public void Initialize()
+    protected virtual void OnSubdirectoryLoaded(List<AudioInfo> e)
     {
-
+      SubdirectoryLoaded?.Invoke(this, e);
     }
+
+    #endregion Methods
   }
 }

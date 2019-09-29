@@ -25,6 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,6 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -134,7 +136,7 @@
   <ItemGroup>
     <Compile Include="AudioDatabase\AudioDatabaseContext.cs" />
     <Compile Include="AudioDatabase\AudioDatabaseManager.cs" />
-    <Compile Include="AudioInfoDownloader\AudioInfoDownloaderProvider.cs" />
+    <Compile Include="AudioInfoDownloader\AudioInfoDownloader.cs" />
     <Compile Include="AudioInfoDownloader\Extensions.cs" />
     <Compile Include="AudioInfoDownloader\Models\AlbumCover.cs" />
     <Compile Include="Migrations\201909210850186_Initial.cs" />

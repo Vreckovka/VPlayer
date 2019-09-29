@@ -23,6 +23,7 @@
         <Button
             Width="150"
             Margin="5"
+            Command="{Binding BackCommand}"
             HorizontalAlignment="Left"
             Content="back" />
 
@@ -62,7 +63,8 @@
             ItemsSource="{Binding AlbumCovers, Mode=OneWay}">
             <controls:PlayableWrapPanel.ItemTemplate>
                 <DataTemplate>
-                    <controls:PlayableWrapPanelItem BottomText="{Binding SizeString}" ImageThumbnail="{Binding DownloadedCover}">
+                    <controls:PlayableWrapPanelItem BottomText="{Binding SizeString}"
+                                                    ImageThumbnail="{Binding DownloadedCover}">
                         <controls:PlayableWrapPanelItem.Style>
                             <Style TargetType="{x:Type controls:PlayableWrapPanelItem}">
                                 <Setter Property="Template">
@@ -94,7 +96,6 @@
                                                         VerticalAlignment="Top"
                                                         Source="{Binding RelativeSource={RelativeSource AncestorType=controls:PlayableWrapPanelItem, Mode=FindAncestor}, Converter={converters:NullToImageConverter}}" />
 
-
                                                     <Grid Grid.Row="0" Background="{StaticResource GlassGradient}" />
 
                                                     <Grid
@@ -111,10 +112,14 @@
                                                                 Command="{Binding DataContext.SelectCover, RelativeSource={RelativeSource AncestorType=controls:PlayableWrapPanel,Mode=FindAncestor}}"
                                                                 CommandParameter="{Binding}">
                                                             <Button.Style>
-                                                                <Style TargetType="Button" BasedOn="{StaticResource BorderlessButtonStyle}">
+                                                                <Style TargetType="Button"
+                                                                       BasedOn="{StaticResource BorderlessButtonStyle}">
                                                                     <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}, Path=IsMouseOver}" Value="True">
-                                                                            <Setter Property="Visibility" Value="Visible" />
+                                                                        <DataTrigger
+                                                                            Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}, Path=IsMouseOver}"
+                                                                            Value="True">
+                                                                            <Setter Property="Visibility"
+                                                                                    Value="Visible" />
                                                                         </DataTrigger>
                                                                     </Style.Triggers>
                                                                 </Style>
@@ -144,18 +149,26 @@
                                                                 Text="{TemplateBinding HeaderText}">
                                                                 <TextBlock.Style>
                                                                     <Style TargetType="TextBlock">
-                                                                        <Setter Property="Background" Value="Transparent" />
-                                                                        <Setter Property="VerticalAlignment" Value="Top" />
-                                                                        <Setter Property="HorizontalAlignment" Value="Center" />
+                                                                        <Setter Property="Background"
+                                                                                Value="Transparent" />
+                                                                        <Setter Property="VerticalAlignment"
+                                                                                Value="Top" />
+                                                                        <Setter Property="HorizontalAlignment"
+                                                                                Value="Center" />
                                                                         <Style.Triggers>
                                                                             <DataTrigger Value="True">
                                                                                 <DataTrigger.Binding>
-                                                                                    <MultiBinding Converter="{library:IsBiggerConverter}">
-                                                                                        <Binding ElementName="NameTxt" Path="ActualWidth" />
-                                                                                        <Binding ElementName="GridParent" Path="ActualWidth" />
+                                                                                    <MultiBinding
+                                                                                        Converter="{library:IsBiggerConverter}">
+                                                                                        <Binding ElementName="NameTxt"
+                                                                                                 Path="ActualWidth" />
+                                                                                        <Binding
+                                                                                            ElementName="GridParent"
+                                                                                            Path="ActualWidth" />
                                                                                     </MultiBinding>
                                                                                 </DataTrigger.Binding>
-                                                                                <Setter Property="HorizontalAlignment" Value="Left" />
+                                                                                <Setter Property="HorizontalAlignment"
+                                                                                        Value="Left" />
                                                                             </DataTrigger>
                                                                         </Style.Triggers>
                                                                     </Style>
@@ -179,13 +192,15 @@
                                                                     <Style TargetType="TextBlock">
                                                                         <Setter Property="Foreground">
                                                                             <Setter.Value>
-                                                                                <SolidColorBrush Opacity="0.5" Color="{StaticResource DefaultWhiteColor}" />
+                                                                                <SolidColorBrush Opacity="0.5"
+                                                                                                 Color="{StaticResource DefaultWhiteColor}" />
                                                                             </Setter.Value>
                                                                         </Setter>
 
                                                                         <Setter Property="Background">
                                                                             <Setter.Value>
-                                                                                <SolidColorBrush Opacity="0.02" Color="{StaticResource DefaultWhiteColor}" />
+                                                                                <SolidColorBrush Opacity="0.02"
+                                                                                                 Color="{StaticResource DefaultWhiteColor}" />
                                                                             </Setter.Value>
                                                                         </Setter>
                                                                     </Style>
@@ -204,6 +219,5 @@
                 </DataTemplate>
             </controls:PlayableWrapPanel.ItemTemplate>
         </controls:PlayableWrapPanel>
-
     </Grid>
 </UserControl>

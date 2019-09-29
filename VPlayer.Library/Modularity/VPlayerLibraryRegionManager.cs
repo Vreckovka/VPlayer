@@ -1,10 +1,8 @@
 ﻿using Prism.Regions;
-using VCore.Annotations;
 using VCore.Factories;
 using VCore.Factories.Views;
-using VCore.Modularity.RegionProviders;
+using VCore.Modularity.Navigation;
 using VPlayer.Core.Modularity.Regions;
-using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.Artists;
 using VPlayer.Library.ViewModels.AlbumsViewModels;
 using VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels;
@@ -13,12 +11,19 @@ namespace VPlayer.Library.Modularity
 {
   public partial class VPlayerLibraryRegionManager : VPlayerRegionManager
   {
+    #region Constructors
+
     public VPlayerLibraryRegionManager(
       IRegionManager regionManager,
-      IViewFactory viewFactory, [NotNull]
-      IViewModelsFactory viewModelsFactory) : base(regionManager, viewFactory, viewModelsFactory)
+      IViewFactory viewFactory,
+      IViewModelsFactory viewModelsFactory,
+      INavigationProvider navigationProvider) : base(regionManager, viewFactory, viewModelsFactory, navigationProvider)
     {
     }
+
+    #endregion Constructors
+
+    #region Methods
 
     public override void ShowAlbumDetail(AlbumViewModel albumViewModel)
     {
@@ -31,5 +36,7 @@ namespace VPlayer.Library.Modularity
       var asd = viewModelsFactory.Create<ArtistDetailViewModel>(artistViewModel);
       asd.IsActive = true;
     }
+
+    #endregion Methods
   }
 }
