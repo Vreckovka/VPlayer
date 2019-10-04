@@ -46,7 +46,8 @@
                     <text:PanningTextWithFontSizeBehavior BiggerFontSize="15"
                                                           Container="{Binding ElementName=Bd}"
                                                           IsMouseOverRelativeToContainer="True" 
-                                                          IgnoreAnimation="{Binding IsPlaying}"/>
+                                                          IgnoreSizeAnimation="{Binding IsPlaying}"
+                                                          ContainerSize="{Binding ElementName=Container,Path=ActualWidth}"/>
                   </i:Interaction.Behaviors>
                 </TextBlock>
 

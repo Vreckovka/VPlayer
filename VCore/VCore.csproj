@@ -116,6 +116,7 @@
     <Compile Include="Converters\NullToImageConverter.cs" />
     <Compile Include="Converters\TimeConverter.cs" />
     <Compile Include="Design\DesignTimeRegionProvider.cs" />
+    <Compile Include="Design\DesignTimeViewsProvider.cs" />
     <Compile Include="ExtentionsMethods\ObjectExtentions.cs" />
     <Compile Include="Factories\ViewModels\BaseViewModelFactory.cs" />
     <Compile Include="Extentions.cs" />

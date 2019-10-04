@@ -91,7 +91,7 @@ namespace VPlayer.Core.ViewModels
 
     public void OnPlay()
     {
-      eventAggregator.GetEvent<PlaySongsInPlayListEvent>().Publish(this);
+      eventAggregator.GetEvent<PlaySongsFromPlayListEvent>().Publish(this);
     }
 
     private void OnPlayButton()

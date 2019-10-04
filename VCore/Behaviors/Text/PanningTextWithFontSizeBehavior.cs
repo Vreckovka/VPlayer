@@ -64,17 +64,35 @@ namespace VCore.Behaviors.Text
 
     #endregion
 
-    #region IgnoreAnimation
+    #region Container
 
-    public bool IgnoreAnimation
+    public double? ContainerSize
     {
-      get { return (bool)GetValue(IgnoreAnimationProperty); }
-      set { SetValue(IgnoreAnimationProperty, value); }
+      get { return (double?)GetValue(ContainerSizeProperty); }
+      set { SetValue(ContainerSizeProperty, value); }
     }
 
-    public static readonly DependencyProperty IgnoreAnimationProperty =
+    public static readonly DependencyProperty ContainerSizeProperty =
       DependencyProperty.Register(
-        nameof(IgnoreAnimation),
+        nameof(ContainerSize),
+        typeof(double?),
+        typeof(PanningTextWithFontSizeBehavior),
+        new PropertyMetadata(null));
+
+
+    #endregion
+
+    #region IgnoreSizeAnimation
+
+    public bool IgnoreSizeAnimation
+    {
+      get { return (bool)GetValue(IgnoreSizeAnimationProperty); }
+      set { SetValue(IgnoreSizeAnimationProperty, value); }
+    }
+
+    public static readonly DependencyProperty IgnoreSizeAnimationProperty =
+      DependencyProperty.Register(
+        nameof(IgnoreSizeAnimation),
         typeof(bool),
         typeof(PanningTextWithFontSizeBehavior),
         new PropertyMetadata(false));
@@ -128,9 +146,10 @@ namespace VCore.Behaviors.Text
 
     private void MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
     {
-      if (!IgnoreAnimation)
+      AssociatedObject.BeginAnimation(TextBlock.MarginProperty, null);
+
+      if (!IgnoreSizeAnimation)
       {
-        AssociatedObject.BeginAnimation(TextBlock.MarginProperty, null);
         DoFontSizeAnimation(BiggerFontSize, originalFontSize);
       }
     }
@@ -141,11 +160,12 @@ namespace VCore.Behaviors.Text
 
     private void MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
     {
-      if (!IgnoreAnimation)
+      if (!IgnoreSizeAnimation)
       {
         DoFontSizeAnimation(originalFontSize, BiggerFontSize);
-        DoPanning();
       }
+
+      DoPanning();
     }
 
     #endregion
@@ -171,7 +191,14 @@ namespace VCore.Behaviors.Text
 
       if (desiredSize.Width > Container.ActualWidth)
       {
-        var thickness = new Thickness((Container.ActualWidth - desiredSize.Width - thicknessOffset) + originalMargin.Left, originalMargin.Top, originalMargin.Right, originalMargin.Bottom);
+        double containerSize = 0;
+
+        if (ContainerSize == null)
+          containerSize = Container.ActualWidth;
+        else
+          containerSize = ContainerSize.Value;
+
+        var thickness = new Thickness((containerSize - desiredSize.Width - thicknessOffset) + originalMargin.Left, originalMargin.Top, originalMargin.Right, originalMargin.Bottom);
         var thicknessAnimation = new ThicknessAnimation(thickness, GetPanningDuration(Container.ActualWidth, desiredSize.Width));
         thicknessAnimation.AutoReverse = true;
         thicknessAnimation.RepeatBehavior = RepeatBehavior.Forever;

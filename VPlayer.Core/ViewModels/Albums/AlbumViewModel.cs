@@ -30,7 +30,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     }
 
 
-    public override string BottomText => Model.Songs?.Count.ToString();
+    public override string BottomText => $"{Model.Artist?.Name}\nNumber of song: {Model.Songs?.Count.ToString()}";
     public override byte[] ImageThumbnail => Model.AlbumFrontCoverBLOB;
 
     public override void Update(Album updateItem)

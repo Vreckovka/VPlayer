@@ -59,13 +59,12 @@
   <Style x:Key="BorderlessButtonStyle" TargetType="Button">
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="Foreground" Value="#50FFFFFF" />
-    <Setter Property="Visibility" Value="Hidden" />
+    <Setter Property="Foreground" Value="#90FFFFFF" />
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="Button">
-          <Border>
-            <ContentPresenter Content="{TemplateBinding Content}" />
+          <Border Background="{TemplateBinding Background}">
+            <ContentPresenter Content="{TemplateBinding Content}" Margin="{TemplateBinding Padding}"/>
           </Border>
         </ControlTemplate>
       </Setter.Value>

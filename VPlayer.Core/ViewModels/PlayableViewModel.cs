@@ -119,6 +119,28 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region AddToPlaylist
+
+    private ActionCommand addToPlaylist;
+    public ICommand AddToPlaylist
+    {
+      get
+      {
+        if (addToPlaylist == null)
+        {
+          addToPlaylist = new ActionCommand(OnAddToPlaylist);
+        }
+
+        return addToPlaylist;
+      }
+    }
+   
+    public void OnAddToPlaylist()
+    {
+      eventAggregator.GetEvent<AddSongsEvent>().Publish(GetSongsToPlay());
+    }
+    #endregion
+
     #endregion
 
     #region Methods

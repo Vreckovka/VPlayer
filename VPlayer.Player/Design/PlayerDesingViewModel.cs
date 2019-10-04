@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using VCore.ViewModels;
 using VPlayer.Core.Design;
+using VPlayer.Core.Design.ViewModels;
 using VPlayer.Core.DomainClasses;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.Artists;
@@ -66,34 +67,13 @@ namespace VPlayer.Player.Design
     #endregion
 
     public byte[] Image => Model?.Album.AlbumFrontCoverBLOB;
-    public AlbumDesingViewModel AlbumViewModel { get; set; }
-    public ArtistDesingViewModel ArtistViewModel { get; set; }
+    public AlbumDesignViewModel AlbumViewModel { get; set; }
+    public ArtistDesignViewModel ArtistViewModel { get; set; }
 
     public SongInPlayListDesing(Song model) : base(model)
     {
-      AlbumViewModel = new AlbumDesingViewModel(model.Album);
-      ArtistViewModel = new ArtistDesingViewModel(AlbumViewModel.Model.Artist);
-    }
-  }
-
-  public class ArtistDesingViewModel : ViewModel<Artist>
-  {
-    public string Name => Model.Name;
-
-    public bool IsPlaying { get; set; }
-
-    public ArtistDesingViewModel(Artist model) : base(model)
-    {
-    }
-  }
-
-  public class AlbumDesingViewModel : ViewModel<Album>
-  {
-    public string Name => Model.Name;
-    public bool IsPlaying { get; set; }
-
-    public AlbumDesingViewModel(Album model) : base(model)
-    {
+      AlbumViewModel = new AlbumDesignViewModel(model.Album);
+      ArtistViewModel = new ArtistDesignViewModel(AlbumViewModel.Model.Artist);
     }
   }
 }

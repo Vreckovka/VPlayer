@@ -96,15 +96,18 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Design\ViewModels\AlbumDesignViewModel.cs" />
+    <Compile Include="Design\ViewModels\ArtistDesignViewModel.cs" />
     <Compile Include="Design\DesingDatabase.cs" />
     <Compile Include="DomainClasses\Album.cs" />
     <Compile Include="DomainClasses\Artist.cs" />
     <Compile Include="DomainClasses\AudioInfo.cs" />
     <Compile Include="DomainClasses\INamedEntity.cs" />
     <Compile Include="DomainClasses\Song.cs" />
+    <Compile Include="Events\AddSongsEvent.cs" />
     <Compile Include="Events\Pause.cs" />
     <Compile Include="Events\PlaySongsEvent.cs" />
-    <Compile Include="Events\PlaySongsInPlayListEvent.cs" />
+    <Compile Include="Events\PlaySongsFromPlayListEvent.cs" />
     <Compile Include="Interfaces\Storage\IStorageManager.cs" />
     <Compile Include="Interfaces\ViewModels\IAlbumsViewModel.cs" />
     <Compile Include="Interfaces\ViewModels\IArtistsViewModel.cs" />

@@ -23,7 +23,7 @@
 
   <Grid>
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="auto" />
+      <ColumnDefinition Width="150" />
       <ColumnDefinition Width="*" />
     </Grid.ColumnDefinitions>
 
@@ -41,7 +41,9 @@
       <ListView ItemsSource="{Binding NavigationViewModel.Items}" Style="{StaticResource ListView_MenuStyle}"/>
     </Border>
 
-    <TextBlock Text="Sample text" Margin="0 135 0 0" Background="Green" Grid.Column="0" Grid.Row="0" VerticalAlignment="Top">
+    <TextBlock Text="Ronnie Rising Medley (A Light In The Black / Tarot Woman / Stargazer / Kill The King)" 
+               Margin="0 135 0 0" Background="Green" Grid.Column="0" Grid.Row="0" VerticalAlignment="Top"
+               FontSize="13">
       <i:Interaction.Behaviors>
         <text:PanningTextWithFontSizeBehavior BiggerFontSize="15"
                                               Container="{Binding ElementName=MenuBorder}"

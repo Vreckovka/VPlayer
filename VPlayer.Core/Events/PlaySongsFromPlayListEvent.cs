@@ -3,7 +3,7 @@ using VPlayer.Core.ViewModels;
 
 namespace VPlayer.Core.Events
 {
-  public class PlaySongsInPlayListEvent : PubSubEvent<SongInPlayList>
+  public class PlaySongsFromPlayListEvent : PubSubEvent<SongInPlayList>
   {
   }
 }

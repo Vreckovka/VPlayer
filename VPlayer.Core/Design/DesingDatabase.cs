@@ -111,7 +111,7 @@ namespace VPlayer.Core.Design
       Random random = new Random();
       foreach (var album in Albums)
       {
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < random.Next(5,10); i++)
         {
           var song = new Song()
           {

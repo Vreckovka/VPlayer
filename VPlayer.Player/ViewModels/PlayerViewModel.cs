@@ -3,6 +3,7 @@ using Ninject;
 using Prism.Events;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -51,7 +52,7 @@ namespace VPlayer.Player.ViewModels
     public bool IsPlaying { get; set; }
     public IKernel Kernel { get; set; }
     public VlcMediaPlayer MediaPlayer { get; private set; }
-    public List<SongInPlayList> PlayList { get; set; }
+    public ObservableCollection<SongInPlayList> PlayList { get; set; } = new ObservableCollection<SongInPlayList>();
 
     public override Dictionary<Type, Tuple<string, bool>> RegistredViews { get; set; } =
       new Dictionary<Type, Tuple<string, bool>>();
@@ -166,12 +167,13 @@ namespace VPlayer.Player.ViewModels
 
       eventAggregator.GetEvent<PlaySongsEvent>().Subscribe(PlaySongs);
       eventAggregator.GetEvent<PauseEvent>().Subscribe(Pause);
-      eventAggregator.GetEvent<PlaySongsInPlayListEvent>().Subscribe(PlaySongInPlayList);
+      eventAggregator.GetEvent<PlaySongsFromPlayListEvent>().Subscribe(PlaySongFromPlayList);
+      eventAggregator.GetEvent<AddSongsEvent>().Subscribe(AddSongs);
     }
 
-    #region PlaySongInPlayList
+    #region PlaySongFromPlayList
 
-    private void PlaySongInPlayList(SongInPlayList songInPlayList)
+    private void PlaySongFromPlayList(SongInPlayList songInPlayList)
     {
       if (songInPlayList == ActualSong)
       {
@@ -190,14 +192,23 @@ namespace VPlayer.Player.ViewModels
 
     #region PlaySongs
 
-    private void PlaySongs(
-      IEnumerable<SongInPlayList> songs)
+    private void PlaySongs(IEnumerable<SongInPlayList> songs)
     {
       actualSongIndex = 0;
-      PlayList = songs.ToList();
+      PlayList.Clear();
+      PlayList.AddRange(songs);
       Play();
 
       if (ActualSong != null) ActualSong.IsPlaying = false;
+    }
+
+    #endregion PlaySongs
+
+    #region PlaySongs
+
+    private void AddSongs(IEnumerable<SongInPlayList> songs)
+    {
+      PlayList.AddRange(songs);
     }
 
     #endregion PlaySongs
@@ -251,13 +262,19 @@ namespace VPlayer.Player.ViewModels
       if (nextSong == null)
       {
         actualSongIndex++;
+        Play();
       }
       else
       {
-        actualSongIndex = PlayList.FindIndex(x => x.Model.Id == nextSong.Model.Id);
-      }
 
-      Play();
+        var item = PlayList.Single(x => x.Model.Id == nextSong.Model.Id);
+
+        if (ActualSong != item)
+        {
+          actualSongIndex = PlayList.IndexOf(item);
+          Play();
+        }
+      }
     }
 
     #endregion PlayNext

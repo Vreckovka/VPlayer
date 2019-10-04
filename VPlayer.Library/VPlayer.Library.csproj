@@ -125,6 +125,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converters.cs" />
+    <Compile Include="Desing\LibraryRegionDesingProvider.cs" />
+    <Compile Include="Desing\ViewModels\AlbumsDesignViewModel.cs" />
     <Compile Include="Modularity\NinjectModule\LibraryNinjectModule.cs" />
     <Compile Include="Modularity\VPlayerLibraryRegionManager.cs" />
     <Compile Include="ViewModels\AlbumsViewModels\AlbumCoversViewModel.cs" />
