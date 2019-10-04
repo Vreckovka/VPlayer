@@ -59,7 +59,7 @@ namespace VPlayer.Core.ViewModels
     public string Name => Model.Name;
     public int ModelId => Model.Id;
     public abstract void Update(TModel updateItem);
-   
+    public bool IsInPlaylist  { get; set; }
 
     #endregion
 

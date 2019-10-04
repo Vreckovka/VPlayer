@@ -1,6 +1,7 @@
 ﻿<Window x:Class="VPlayer.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:core="clr-namespace:VCore.AttachedProperties;assembly=VCore"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:design="clr-namespace:VPlayer.Design"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
@@ -8,9 +9,8 @@
         xmlns:prism="http://prismlibrary.com/"
         xmlns:regions="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPlayer.Core"
         xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore"
-        xmlns:core="clr-namespace:VCore.AttachedProperties;assembly=VCore"
         Title="{Binding Title}"
-        Width="1200"
+        Width="1210"
         Height="850"
         MinWidth="500"
         MinHeight="400"
@@ -32,24 +32,16 @@
       <RowDefinition Height="auto" />
     </Grid.RowDefinitions>
 
-    <Border Margin="0,0,5,0"
-            BorderBrush="{StaticResource 10_WhiteTransparentBrush}"
-            BorderThickness="0,0,2,0" 
+    <Border Name="MenuBorder"
+            Margin="0,0,5,0"
             Background="Transparent"
-            Name="MenuBorder">
+            BorderBrush="{StaticResource 10_WhiteTransparentBrush}"
+            BorderThickness="0,0,2,0">
 
-      <ListView ItemsSource="{Binding NavigationViewModel.Items}" Style="{StaticResource ListView_MenuStyle}"/>
+      <ListView ItemsSource="{Binding NavigationViewModel.Items}" Style="{StaticResource ListView_MenuStyle}" />
     </Border>
-
-    <TextBlock Text="Ronnie Rising Medley (A Light In The Black / Tarot Woman / Stargazer / Kill The King)" 
-               Margin="0 135 0 0" Background="Green" Grid.Column="0" Grid.Row="0" VerticalAlignment="Top"
-               FontSize="13">
-      <i:Interaction.Behaviors>
-        <text:PanningTextWithFontSizeBehavior BiggerFontSize="15"
-                                              Container="{Binding ElementName=MenuBorder}"
-                                              IsMouseOverRelativeToContainer="True"/>
-      </i:Interaction.Behaviors>
-    </TextBlock>
+    <Path Margin="0,135"
+          Fill="Red" />
 
     <ContentControl Grid.Row="0"
                     Grid.Column="1"
@@ -61,8 +53,8 @@
             Click="Button_Click"
             Content="Clear" />
 
-   
-    
+
+
 
     <ContentControl Grid.Row="1"
                     Grid.Column="0"

@@ -6,10 +6,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reactive;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using VCore;
+using VCore.ItemsCollections;
 using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
 using Vlc.DotNet.Core;
@@ -52,7 +54,7 @@ namespace VPlayer.Player.ViewModels
     public bool IsPlaying { get; set; }
     public IKernel Kernel { get; set; }
     public VlcMediaPlayer MediaPlayer { get; private set; }
-    public ObservableCollection<SongInPlayList> PlayList { get; set; } = new ObservableCollection<SongInPlayList>();
+    public RxObservableCollection<SongInPlayList> PlayList { get; set; } = new RxObservableCollection<SongInPlayList>();
 
     public override Dictionary<Type, Tuple<string, bool>> RegistredViews { get; set; } =
       new Dictionary<Type, Tuple<string, bool>>();
@@ -123,6 +125,9 @@ namespace VPlayer.Player.ViewModels
     {
       base.Initialize();
 
+      PlayList.ItemAdded.Subscribe(ItemsAdded);
+      PlayList.ItemRemoved.Subscribe(ItemsRemoved);
+
       KeyListener.KeyListener.OnKeyPressed += KeyListener_OnKeyPressed;
 
       Views[typeof(WindowsPlayerView)].Header = "Player";
@@ -170,6 +175,32 @@ namespace VPlayer.Player.ViewModels
       eventAggregator.GetEvent<PlaySongsFromPlayListEvent>().Subscribe(PlaySongFromPlayList);
       eventAggregator.GetEvent<AddSongsEvent>().Subscribe(AddSongs);
     }
+
+    #region ItemsAdded
+
+    private void ItemsAdded(EventPattern<SongInPlayList> eventPattern)
+    {
+      if (eventPattern.EventArgs.AlbumViewModel != null)
+        eventPattern.EventArgs.ArtistViewModel.IsInPlaylist = true;
+
+      if (eventPattern.EventArgs.AlbumViewModel != null)
+        eventPattern.EventArgs.AlbumViewModel.IsInPlaylist = true;
+    }
+
+    #endregion
+
+    #region ItemsRemoved
+
+    private void ItemsRemoved(EventPattern<SongInPlayList> eventPattern)
+    {
+      if (eventPattern.EventArgs.AlbumViewModel != null)
+        eventPattern.EventArgs.ArtistViewModel.IsInPlaylist = false;
+
+      if (eventPattern.EventArgs.AlbumViewModel != null)
+        eventPattern.EventArgs.AlbumViewModel.IsInPlaylist = false;
+    }
+
+    #endregion
 
     #region PlaySongFromPlayList
 

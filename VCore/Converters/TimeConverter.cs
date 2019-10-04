@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using VCore.Behaviors.Text;
-using VPlayer.Converters;
 
 namespace VCore.Converters
 {

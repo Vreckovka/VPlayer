@@ -2,7 +2,7 @@
 using System.Globalization;
 using VCore.Controls;
 
-namespace VPlayer.Converters
+namespace VCore.Converters
 {
     public class NullToImageConverter : BaseConverter
     {

@@ -115,6 +115,7 @@
     <Compile Include="Converters\BaseConverter.cs" />
     <Compile Include="Converters\NullToImageConverter.cs" />
     <Compile Include="Converters\TimeConverter.cs" />
+    <Compile Include="Converters\VisibilityConverter.cs" />
     <Compile Include="Design\DesignTimeRegionProvider.cs" />
     <Compile Include="Design\DesignTimeViewsProvider.cs" />
     <Compile Include="ExtentionsMethods\ObjectExtentions.cs" />
@@ -123,7 +124,7 @@
     <Compile Include="Factories\ViewModels\IViewModelsFactory.cs" />
     <Compile Include="Factories\Views\BaseViewFactory.cs" />
     <Compile Include="Factories\Views\IViewFactory.cs" />
-    <Compile Include="ItemsCollections\ObservableItems.cs" />
+    <Compile Include="ItemsCollections\RxObservableCollection.cs" />
     <Compile Include="Modularity\Events\Changed.cs" />
     <Compile Include="Modularity\Events\ItemChanged.cs" />
     <Compile Include="Modularity\Interfaces\IActivable.cs" />

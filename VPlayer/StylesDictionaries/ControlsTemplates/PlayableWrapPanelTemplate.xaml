@@ -2,11 +2,11 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:controls1="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
                     xmlns:controls2="clr-namespace:VCore.Controls;assembly=VCore"
-                    xmlns:converters="clr-namespace:VPlayer.Converters;assembly=VCore"
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                     xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Library"
                     xmlns:local="clr-namespace:VPlayer.StylesDictionaries"
-                    xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore">
+                    xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore"
+                    xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore">
 
 
   <Style TargetType="{x:Type controls2:PlayableWrapPanelItem}">
@@ -45,9 +45,32 @@
                     VerticalAlignment="Top"
                     Style="{DynamicResource PlayGridOverlay}">
 
+                <Border HorizontalAlignment="Stretch"
+                        VerticalAlignment="Top"
+                        Padding="0 0 0 15">
+                  <Border.Background>
+                    <LinearGradientBrush StartPoint="0,1" EndPoint="0 0">
+                      <GradientStop Color="#80000000" Offset="0.8" />
+                      <GradientStop Color="#30000000" Offset="0.4"/>
+                      <GradientStop Color="#00000000" Offset="0.1"/>
+                    </LinearGradientBrush>
+                  </Border.Background>
+                  <Path Height="30"
+                        HorizontalAlignment="Right"
+                        Fill="#c3ff00"
+                        Style="{StaticResource MusicNote}" 
+                        Margin="5"
+                        Visibility="{Binding IsInPlaylist, Converter={converters:VisibilityConverter}}">
+                    <Path.Effect>
+                      <DropShadowEffect ShadowDepth="1.5" BlurRadius="2"/>
+                    </Path.Effect>
+                  </Path>
+                </Border>
+            
                 <Button Grid.Row="0"
                         Command="{Binding Play}"
                         Style="{StaticResource Play}" />
+
                 <Button Margin="5,0,0,5"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Bottom"
@@ -67,14 +90,14 @@
                 </Button>
 
                 <Button Margin="0,0,5,5"
+                        Padding="3"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Bottom"
-                        Padding="3"
                         Command="{Binding AddToPlaylist}">
                   <Button.Content>
-                    <Path Fill="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}, Path=Foreground}"
-                          Style="{StaticResource AddToList}" 
-                          Height="25"/>
+                    <Path Height="25"
+                          Fill="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}, Path=Foreground}"
+                          Style="{StaticResource AddToList}" />
                   </Button.Content>
                   <Button.Style>
                     <Style BasedOn="{StaticResource BorderlessButtonStyle}" TargetType="Button">
