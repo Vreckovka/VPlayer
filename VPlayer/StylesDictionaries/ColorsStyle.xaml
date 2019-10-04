@@ -11,8 +11,11 @@
   <Color x:Key="DefaultWhiteColor" >#f9fdff</Color>
 
 
+  <Color x:Key="235_DefaultWhiteColor" R="255" G="255" B="255" A="235"/>
   <Color x:Key="220_DefaultWhiteColor" R="255" G="255" B="255" A="220"/>
   <Color x:Key="200_DefaultWhiteColor" R="255" G="255" B="255" A="200"/>
+  <Color x:Key="120_DefaultWhiteColor" R="255" G="255" B="255" A="120"/>
+  <Color x:Key="100_DefaultWhiteColor" R="255" G="255" B="255" A="120"/>
   <Color x:Key="85_DefaultWhiteColor" R="255" G="255" B="255" A="85"/>
   <Color x:Key="50_DefaultWhiteColor" R="255" G="255" B="255" A="50"/>
   <Color x:Key="30_DefaultWhiteColor" R="255" G="255" B="255" A="30"/>
@@ -30,8 +33,11 @@
   <SolidColorBrush x:Key="DefaultRedTransparentBrush" Color="{DynamicResource DefaultRedTransparentColor}"/>
   <SolidColorBrush x:Key="DefaultWhiteBrush" Color="{DynamicResource DefaultWhiteColor}"/>
 
+  <SolidColorBrush x:Key="235_WhiteTransparentBrush" Color="{DynamicResource 235_DefaultWhiteColor}"/>
   <SolidColorBrush x:Key="220_WhiteTransparentBrush" Color="{DynamicResource 220_DefaultWhiteColor}"/>
   <SolidColorBrush x:Key="200_WhiteTransparentBrush" Color="{DynamicResource 200_DefaultWhiteColor}"/>
+  <SolidColorBrush x:Key="120_WhiteTransparentBrush" Color="{DynamicResource 120_DefaultWhiteColor}"/>
+  <SolidColorBrush x:Key="100_WhiteTransparentBrush" Color="{DynamicResource 100_DefaultWhiteColor}"/>
   <SolidColorBrush x:Key="85_WhiteTransparentBrush" Color="{DynamicResource 85_DefaultWhiteColor}"/>
   <SolidColorBrush x:Key="50_WhiteTransparentBrush" Color="{DynamicResource 50_DefaultWhiteColor}"/>
   <SolidColorBrush x:Key="30_WhiteTransparentBrush" Color="{DynamicResource 30_DefaultWhiteColor}"/>

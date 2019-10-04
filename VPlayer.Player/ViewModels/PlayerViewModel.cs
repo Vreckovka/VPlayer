@@ -16,6 +16,7 @@ using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
 using VPlayer.Player.Views;
+using VPlayer.Player.Views.WindowsPlayer;
 
 namespace VPlayer.Player.ViewModels
 {
@@ -134,38 +135,29 @@ namespace VPlayer.Player.ViewModels
 
       bool playFinished = false;
 
-      MediaPlayer.EncounteredError += (
-        sender,
-        e) =>
+      MediaPlayer.EncounteredError += (sender, e) =>
       {
         Console.Error.Write("An error occurred");
         playFinished = true;
       };
 
-      MediaPlayer.EndReached += (
-        sender,
-        e) =>
+      MediaPlayer.EndReached += (sender, e) =>
       {
         PlayNext();
       };
-      MediaPlayer.TimeChanged += (
-        sender,
-        e) =>
+
+      MediaPlayer.TimeChanged += (sender, e) =>
       {
         ActualSong.ActualPosition = ((VlcMediaPlayer)sender).Position;
       };
 
-      MediaPlayer.Paused += (
-        sender,
-        e) =>
+      MediaPlayer.Paused += (sender, e) =>
       {
         ActualSong.IsPaused = true;
         IsPlaying = false;
       };
 
-      MediaPlayer.Playing += (
-        sender,
-        e) =>
+      MediaPlayer.Playing += (sender, e) =>
       {
         ActualSong.IsPlaying = true;
         ActualSong.IsPaused = false;
@@ -177,8 +169,9 @@ namespace VPlayer.Player.ViewModels
       eventAggregator.GetEvent<PlaySongsInPlayListEvent>().Subscribe(PlaySongInPlayList);
     }
 
-    private void PlaySongInPlayList(
-      SongInPlayList songInPlayList)
+    #region PlaySongInPlayList
+
+    private void PlaySongInPlayList(SongInPlayList songInPlayList)
     {
       if (songInPlayList == ActualSong)
       {
@@ -192,6 +185,8 @@ namespace VPlayer.Player.ViewModels
         PlayNext(songInPlayList);
       }
     }
+
+    #endregion
 
     #region PlaySongs
 
@@ -217,7 +212,11 @@ namespace VPlayer.Player.ViewModels
       {
         if (PlayList.Count > 0)
         {
-          if (ActualSong != null) ActualSong.IsPlaying = false;
+          if (ActualSong != null)
+          {
+            ActualSong.IsPlaying = false;
+            ActualSong.IsPaused = false;
+          }
 
           if (PlayList[actualSongIndex] == ActualSong)
           {
@@ -247,13 +246,17 @@ namespace VPlayer.Player.ViewModels
 
     #region PlayNext
 
-    public void PlayNext(
-      SongInPlayList nextSong = null)
+    public void PlayNext(SongInPlayList nextSong = null)
     {
       if (nextSong == null)
+      {
         actualSongIndex++;
+      }
       else
+      {
         actualSongIndex = PlayList.FindIndex(x => x.Model.Id == nextSong.Model.Id);
+      }
+
       Play();
     }
 

@@ -10,7 +10,6 @@ namespace VPlayer.AudioStorage.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
-            AutomaticMigrationDataLossAllowed = true;
         }
 
         protected override void Seed(VPlayer.AudioStorage.AudioDatabase.AudioDatabaseContext context)

@@ -22,7 +22,10 @@ namespace VPlayer.Core.ViewModels
 
     #region Constructors
 
-    public SongInPlayList(EventAggregator eventAggregator, IAlbumsViewModel albumsViewModel, IArtistsViewModel artistsViewModel, Song model) : base(model)
+    public SongInPlayList(
+      IEventAggregator eventAggregator, 
+      IAlbumsViewModel albumsViewModel, 
+      IArtistsViewModel artistsViewModel, Song model) : base(model)
     {
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 using VCore.Factories;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
@@ -14,7 +13,7 @@ namespace VPlayer.ViewModels
     {
         private readonly IViewModelsFactory viewModelsFactory;
 
-        public MainWindowViewModel([NotNull] IViewModelsFactory viewModelsFactory)
+        public MainWindowViewModel(IViewModelsFactory viewModelsFactory)
         {
             this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
         }

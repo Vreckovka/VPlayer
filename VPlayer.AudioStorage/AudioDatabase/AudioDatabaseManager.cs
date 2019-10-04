@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
@@ -46,7 +45,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region Constructors
 
-    public AudioDatabaseManager([NotNull] VPlayer.AudioInfoDownloader.AudioInfoDownloader audioInfoDownloader)
+    public AudioDatabaseManager(VPlayer.AudioInfoDownloader.AudioInfoDownloader audioInfoDownloader)
     {
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
 

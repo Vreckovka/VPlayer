@@ -6,7 +6,6 @@ using System.Windows;
 using System.Windows.Input;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
-using JetBrains.Annotations;
 using KeyListener;
 using Prism.Events;
 using VCore.Factories;
@@ -24,7 +23,7 @@ namespace VPlayer.Views
     {
         private readonly IStorageManager storageManager;
 
-        public MainWindow([NotNull] IStorageManager storageManager)
+        public MainWindow(IStorageManager storageManager)
         {
             this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
             InitializeComponent();

@@ -11,7 +11,6 @@ using VPlayer.AudioStorage.Interfaces;
 using VPlayer.Core.DomainClasses;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.Artists;
-using VPlayer.Library.Properties;
 using VPlayer.Library.ViewModels;
 using VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels;
 
@@ -60,7 +59,7 @@ namespace VPlayer.Library.VirtualList
         private TViewModel[] _cache;
         public int NumberOfEmployees = -1;
 
-        public PagedEmployeeRepository([NotNull] TViewModel[] source)
+        public PagedEmployeeRepository(TViewModel[] source)
         {
             this.source = source ?? throw new ArgumentNullException(nameof(source));
             NumberOfEmployees = source.Length;

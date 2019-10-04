@@ -41,7 +41,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
             libraryViewModel.IsActive = true;
 
             var playerViewModel = viewModelsFactory.Create<PlayerViewModel>();
-            var item = playerViewModel.Views[typeof(Player.Views.WindowsPlayerView)];
+            var item = playerViewModel.Views[typeof(Player.Views.WindowsPlayer.WindowsPlayerView)];
 
             NavigationViewModel.Items.Add(libraryViewModel);
             NavigationViewModel.Items.Add(item);

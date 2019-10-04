@@ -34,9 +34,20 @@
 
     <Border Margin="0,0,5,0"
             BorderBrush="{StaticResource 10_WhiteTransparentBrush}"
-            BorderThickness="0,0,2,0">
-      <ListView ItemsSource="{Binding NavigationViewModel.Items}" Style="{StaticResource ListView_MenuStyle}" />
+            BorderThickness="0,0,2,0" 
+            Background="Transparent"
+            Name="MenuBorder">
+
+      <ListView ItemsSource="{Binding NavigationViewModel.Items}" Style="{StaticResource ListView_MenuStyle}"/>
     </Border>
+
+    <TextBlock Text="Sample text" Margin="0 135 0 0" Background="Green" Grid.Column="0" Grid.Row="0" VerticalAlignment="Top">
+      <i:Interaction.Behaviors>
+        <text:PanningTextWithFontSizeBehavior BiggerFontSize="15"
+                                              Container="{Binding ElementName=MenuBorder}"
+                                              IsMouseOverRelativeToContainer="True"/>
+      </i:Interaction.Behaviors>
+    </TextBlock>
 
     <ContentControl Grid.Row="0"
                     Grid.Column="1"
@@ -48,9 +59,14 @@
             Click="Button_Click"
             Content="Clear" />
 
+   
+    
+
     <ContentControl Grid.Row="1"
                     Grid.Column="0"
                     Grid.ColumnSpan="2"
                     prism:RegionManager.RegionName="{x:Static regions:RegionNames.PlayerRegion}" />
+
+
   </Grid>
 </Window>

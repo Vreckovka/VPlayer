@@ -64,7 +64,29 @@ namespace VCore.Behaviors.Text
 
     #endregion
 
+    #region IgnoreAnimation
+
+    public bool IgnoreAnimation
+    {
+      get { return (bool)GetValue(IgnoreAnimationProperty); }
+      set { SetValue(IgnoreAnimationProperty, value); }
+    }
+
+    public static readonly DependencyProperty IgnoreAnimationProperty =
+      DependencyProperty.Register(
+        nameof(IgnoreAnimation),
+        typeof(bool),
+        typeof(PanningTextWithFontSizeBehavior),
+        new PropertyMetadata(false));
+
+
+    #endregion
+
+    #region IsMouseOverRelativeToContainer
+
     public bool IsMouseOverRelativeToContainer { get; set; }
+
+    #endregion
 
     #endregion
 
@@ -76,6 +98,8 @@ namespace VCore.Behaviors.Text
 
       AssociatedObject.Loaded += AssociatedObject_Loaded;
     }
+
+    #region AssociatedObject_Loaded
 
     private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
     {
@@ -90,7 +114,6 @@ namespace VCore.Behaviors.Text
         AssociatedObject.MouseLeave += MouseLeave;
       }
 
-
       originalFontSize = AssociatedObject.FontSize;
       originalMargin = AssociatedObject.Margin;
 
@@ -99,13 +122,17 @@ namespace VCore.Behaviors.Text
 
     #endregion
 
+    #endregion
+
     #region MouseLeave
 
     private void MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
     {
-      AssociatedObject.BeginAnimation(TextBlock.MarginProperty, null);
-      AssociatedObject.FontSize = originalFontSize;
-      DoFontSizeAnimation(BiggerFontSize, originalFontSize);
+      if (!IgnoreAnimation)
+      {
+        AssociatedObject.BeginAnimation(TextBlock.MarginProperty, null);
+        DoFontSizeAnimation(BiggerFontSize, originalFontSize);
+      }
     }
 
     #endregion
@@ -114,9 +141,11 @@ namespace VCore.Behaviors.Text
 
     private void MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
     {
-      AssociatedObject.FontSize = BiggerFontSize;
-      DoFontSizeAnimation(originalFontSize, BiggerFontSize);
-      DoPanning();
+      if (!IgnoreAnimation)
+      {
+        DoFontSizeAnimation(originalFontSize, BiggerFontSize);
+        DoPanning();
+      }
     }
 
     #endregion

@@ -128,7 +128,7 @@
     </Setter>
   </Style>
 
-  <Style x:Key="ListViewItem_Tracks" TargetType="{x:Type ListViewItem}">
+  <Style x:Key="ListViewItem_AlbumSongs" TargetType="{x:Type ListViewItem}">
     <Setter Property="Foreground" Value="{StaticResource 85_WhiteTransparentBrush}" />
     <Setter Property="FontFamily" Value="Arial" />
     <Setter Property="FontWeight" Value="Light" />
@@ -257,7 +257,6 @@
                   </Storyboard>
                 </BeginStoryboard>
               </DataTrigger.ExitActions>
-
             </DataTrigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
@@ -265,10 +264,12 @@
     </Setter>
   </Style>
 
+ 
+
   <Style x:Key="AlbumsSongs" TargetType="ListView">
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="ItemContainerStyle" Value="{DynamicResource ListViewItem_Tracks}" />
+    <Setter Property="ItemContainerStyle" Value="{StaticResource ListViewItem_AlbumSongs}" />
   </Style>
 
 

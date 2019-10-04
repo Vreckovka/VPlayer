@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using VCore.ViewModels;
-using VPlayer.Core.Desing;
+using VPlayer.Core.Design;
 using VPlayer.Core.DomainClasses;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.Artists;
@@ -35,10 +35,10 @@ namespace VPlayer.Player.Design
 
   public class SongInPlayListDesing : ViewModel<Song>
   {
-    public TimeSpan ActualTime => TimeSpan.FromSeconds(ActualPosition * Duration.TotalSeconds);
+    public TimeSpan ActualTime => TimeSpan.FromSeconds(ActualPosition * Duration);
     public float ActualPosition { get; set; }
-    public string Name { get; set; }
-    public TimeSpan Duration { get; set; }
+    public string Name => Model.Name;
+    public double Duration => Model.Duration;
 
     #region IsPlaying
 
@@ -65,15 +65,35 @@ namespace VPlayer.Player.Design
 
     #endregion
 
-    public byte[] Image { get; set; }
-    public AlbumViewModel AlbumViewModel { get; set; }
-    public ArtistViewModel ArtistViewModel { get; set; }
+    public byte[] Image => Model?.Album.AlbumFrontCoverBLOB;
+    public AlbumDesingViewModel AlbumViewModel { get; set; }
+    public ArtistDesingViewModel ArtistViewModel { get; set; }
 
     public SongInPlayListDesing(Song model) : base(model)
     {
-      Name = model.Name;
-      Duration = TimeSpan.FromSeconds(model.Duration);
-      Image = model?.Album.AlbumFrontCoverBLOB;
+      AlbumViewModel = new AlbumDesingViewModel(model.Album);
+      ArtistViewModel = new ArtistDesingViewModel(AlbumViewModel.Model.Artist);
+    }
+  }
+
+  public class ArtistDesingViewModel : ViewModel<Artist>
+  {
+    public string Name => Model.Name;
+
+    public bool IsPlaying { get; set; }
+
+    public ArtistDesingViewModel(Artist model) : base(model)
+    {
+    }
+  }
+
+  public class AlbumDesingViewModel : ViewModel<Album>
+  {
+    public string Name => Model.Name;
+    public bool IsPlaying { get; set; }
+
+    public AlbumDesingViewModel(Album model) : base(model)
+    {
     }
   }
 }
