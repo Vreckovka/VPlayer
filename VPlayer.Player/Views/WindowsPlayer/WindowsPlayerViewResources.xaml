@@ -4,8 +4,6 @@
                     xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore"
                     xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore">
 
-  <converters:TimeConverter x:Key="TimeConverter"/>
-
   <Style x:Key="ListViewItem_PlayerTrack" TargetType="{x:Type ListViewItem}">
     <Setter Property="Foreground" Value="{StaticResource 100_WhiteTransparentBrush}" />
     <Setter Property="FontFamily" Value="Arial" />
@@ -61,7 +59,7 @@
               <TextBlock Grid.Column="2"
                          HorizontalAlignment="Right"
                          VerticalAlignment="Center"
-                         Text="{Binding Duration, Converter={StaticResource TimeConverter}}" />
+                         Text="{Binding Duration, Converter={converters:TimeConverter TimeType=Second}}" />
             </Grid>
           </Border>
           <ControlTemplate.Triggers>

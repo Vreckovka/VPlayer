@@ -8,6 +8,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:VPlayer.Player.Design"
              xmlns:windowsPlayer="clr-namespace:VPlayer.WindowsPlayer"
+             xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore"
              d:DataContext="{d:DesignInstance Type={x:Type viewModels:PlayerDesingViewModel},
                                               IsDesignTimeCreatable=True}"
              d:DesignHeight="450"
@@ -100,7 +101,7 @@
 
       <Grid Grid.Row="1">
         <TextBlock HorizontalAlignment="Left" Text="{Binding ActualSong.ActualTime, StringFormat=hh\\:mm\\:ss}" Foreground="{StaticResource 120_WhiteTransparentBrush}"/>
-        <TextBlock HorizontalAlignment="Right" Text="{Binding ActualSong.Duration, Converter={StaticResource TimeConverter}}" Foreground="{StaticResource 120_WhiteTransparentBrush}"/>
+        <TextBlock HorizontalAlignment="Right" Text="{Binding ActualSong.Duration, Converter={converters:TimeConverter TimeType=Second}}" Foreground="{StaticResource 120_WhiteTransparentBrush}"/>
       </Grid>
     </Grid>
   </Grid>
