@@ -34,7 +34,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="5" />
-                <ColumnDefinition Width="300" />
+                <ColumnDefinition Width="370" />
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0">
@@ -85,9 +85,9 @@
                 </Grid>
 
                 <Image
-                        Name="Image"
-                        Source="{Binding ActualSong.Image}"
-                        Stretch="Uniform" />
+                    Name="Image"
+                    Source="{Binding ActualSong.Image}"
+                    Stretch="Uniform" />
 
                 <Grid Grid.Row="0">
                     <Grid.Background>

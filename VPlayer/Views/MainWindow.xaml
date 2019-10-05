@@ -10,7 +10,7 @@
         xmlns:regions="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPlayer.Core"
         xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore"
         Title="{Binding Title}"
-        Width="1225"
+        Width="1288"
         Height="830"
         MinWidth="500"
         MinHeight="400"

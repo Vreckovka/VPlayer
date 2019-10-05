@@ -147,15 +147,9 @@ namespace VPlayer.Player.ViewModels
         playFinished = true;
       };
 
-      MediaPlayer.EndReached += (sender, e) =>
-      {
-        PlayNext();
-      };
+      MediaPlayer.EndReached += (sender, e) => { PlayNext(); };
 
-      MediaPlayer.TimeChanged += (sender, e) =>
-      {
-        ActualSong.ActualPosition = ((VlcMediaPlayer)sender).Position;
-      };
+      MediaPlayer.TimeChanged += (sender, e) => { ActualSong.ActualPosition = ((VlcMediaPlayer)sender).Position; };
 
       MediaPlayer.Paused += (sender, e) =>
       {
@@ -187,7 +181,7 @@ namespace VPlayer.Player.ViewModels
         eventPattern.EventArgs.AlbumViewModel.IsInPlaylist = true;
     }
 
-    #endregion
+    #endregion ItemsAdded
 
     #region ItemsRemoved
 
@@ -200,7 +194,7 @@ namespace VPlayer.Player.ViewModels
         eventPattern.EventArgs.AlbumViewModel.IsInPlaylist = false;
     }
 
-    #endregion
+    #endregion ItemsRemoved
 
     #region PlaySongFromPlayList
 
@@ -219,7 +213,7 @@ namespace VPlayer.Player.ViewModels
       }
     }
 
-    #endregion
+    #endregion PlaySongFromPlayList
 
     #region PlaySongs
 
@@ -297,7 +291,6 @@ namespace VPlayer.Player.ViewModels
       }
       else
       {
-
         var item = PlayList.Single(x => x.Model.Id == nextSong.Model.Id);
 
         if (ActualSong != item)
@@ -316,22 +309,23 @@ namespace VPlayer.Player.ViewModels
       object sender,
       KeyPressedArgs e)
     {
-      if (e.KeyPressed == Key.MediaPlayPause)
+      if (ActualSong != null)
       {
-        if (ActualSong.IsPlaying)
+        if (e.KeyPressed == Key.MediaPlayPause)
         {
-          ActualSong.IsPlaying = false;
-          Play();
+          if (ActualSong.IsPaused)
+          {
+            Play();
+          }
+          else
+          {
+            Pause();
+          }
         }
-        else
+        else if (e.KeyPressed == Key.MediaNextTrack)
         {
-          ActualSong.IsPlaying = true;
-          Pause();
+          PlayNext();
         }
-      }
-      else if (e.KeyPressed == Key.MediaNextTrack)
-      {
-        PlayNext();
       }
     }
 

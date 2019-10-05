@@ -185,15 +185,15 @@ namespace VCore.Behaviors.Text
 
       Size desiredSize = MeasureTextSize(AssociatedObject, BiggerFontSize);
 
-      if (desiredSize.Width > Container.ActualWidth)
+      double containerSize = 0;
+
+      if (ContainerSize == null)
+        containerSize = Container.ActualWidth;
+      else
+        containerSize = ContainerSize.Value;
+
+      if (desiredSize.Width > containerSize)
       {
-        double containerSize = 0;
-
-        if (ContainerSize == null)
-          containerSize = Container.ActualWidth;
-        else
-          containerSize = ContainerSize.Value;
-
         var thickness = new Thickness((containerSize - desiredSize.Width - thicknessOffset) + originalMargin.Left, originalMargin.Top, originalMargin.Right, originalMargin.Bottom);
         var thicknessAnimation = new ThicknessAnimation(thickness, GetPanningDuration(Container.ActualWidth, desiredSize.Width));
         thicknessAnimation.AutoReverse = true;
