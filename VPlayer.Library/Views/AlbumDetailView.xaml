@@ -120,7 +120,7 @@
                         <Style BasedOn="{StaticResource AlbumsSongs}" TargetType="ListView">
                             <Setter Property="ItemContainerStyle">
                                 <Setter.Value>
-                                    <Style BasedOn="{StaticResource ListViewItem_Tracks}" TargetType="ListViewItem">
+                                    <Style BasedOn="{StaticResource ListViewItem_AlbumSongs}" TargetType="ListViewItem">
                                         <Setter Property="FontSize" Value="16" />
                                         <Setter Property="Height" Value="55" />
                                     </Style>

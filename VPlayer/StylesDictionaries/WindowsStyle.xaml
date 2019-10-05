@@ -25,12 +25,13 @@
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
                                     <!--Icon-->
                                     <Image Source="{Binding RelativeSource={RelativeSource AncestorType=Window},Path=Icon}"
-                                               Width="20" Height="20" Margin="15" />
+                                               Width="20" Height="20" Margin="8 8 15 0" />
                                     <!--Title-->
                                     <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=Window},Path=Title}" 
                                                    Foreground="{DynamicResource DefaultWhiteBrush}" 
                                                    VerticalAlignment="Center"
-                                                   FontSize="20" />
+                                                   FontSize="20" 
+                                                   Margin="0 3 0 0"/>
                                 </StackPanel>
                                 <!--Window buttons-->
                                 <StackPanel

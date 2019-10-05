@@ -1,7 +1,8 @@
-﻿using System;
+﻿using Prism.Events;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Input;
-using Prism.Events;
 using VCore;
 using VCore.ViewModels;
 using VPlayer.Core.DomainClasses;
@@ -16,7 +17,7 @@ namespace VPlayer.Core.ViewModels
 
     protected readonly IEventAggregator eventAggregator;
 
-    #endregion
+    #endregion Fields
 
     #region Constructors
 
@@ -25,7 +26,7 @@ namespace VPlayer.Core.ViewModels
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
     }
 
-    #endregion
+    #endregion Constructors
 
     #region Properties
 
@@ -33,7 +34,7 @@ namespace VPlayer.Core.ViewModels
 
     public string HeaderText => Model.Name;
 
-    #endregion
+    #endregion HeaderText
 
     #region IsPlaying
 
@@ -41,7 +42,7 @@ namespace VPlayer.Core.ViewModels
 
     public bool IsPlaying
     {
-      get { return isPlaying;}
+      get { return isPlaying; }
       set
       {
         if (value != isPlaying)
@@ -52,22 +53,24 @@ namespace VPlayer.Core.ViewModels
       }
     }
 
-    #endregion
+    #endregion IsPlaying
 
     public abstract string BottomText { get; }
     public abstract byte[] ImageThumbnail { get; }
-    public string Name => Model.Name;
+    public bool IsInPlaylist { get; set; }
     public int ModelId => Model.Id;
-    public abstract void Update(TModel updateItem);
-    public bool IsInPlaylist  { get; set; }
+    public string Name => Model.Name;
 
-    #endregion
+    public abstract void Update(TModel updateItem);
+
+    #endregion Properties
 
     #region Commands
 
     #region Play
 
     private ActionCommand play;
+
     public ICommand Play
     {
       get
@@ -79,6 +82,11 @@ namespace VPlayer.Core.ViewModels
 
         return play;
       }
+    }
+
+    public void OnPlay()
+    {
+      eventAggregator.GetEvent<PlaySongsEvent>().Publish(GetSongsToPlay());
     }
 
     private void OnPlayButton()
@@ -93,15 +101,12 @@ namespace VPlayer.Core.ViewModels
       }
     }
 
-    public void OnPlay()
-    {
-      eventAggregator.GetEvent<PlaySongsEvent>().Publish(GetSongsToPlay());
-    }
-    #endregion
+    #endregion Play
 
     #region Detail
 
     private ActionCommand detail;
+
     public ICommand Detail
     {
       get
@@ -117,11 +122,12 @@ namespace VPlayer.Core.ViewModels
 
     protected abstract void OnDetail();
 
-    #endregion
+    #endregion Detail
 
     #region AddToPlaylist
 
     private ActionCommand addToPlaylist;
+
     public ICommand AddToPlaylist
     {
       get
@@ -134,19 +140,25 @@ namespace VPlayer.Core.ViewModels
         return addToPlaylist;
       }
     }
-   
+
     public void OnAddToPlaylist()
     {
       eventAggregator.GetEvent<AddSongsEvent>().Publish(GetSongsToPlay());
     }
-    #endregion
 
-    #endregion
+    #endregion AddToPlaylist
+
+    #endregion Commands
 
     #region Methods
 
     public abstract IEnumerable<SongInPlayList> GetSongsToPlay();
 
-    #endregion
+    #endregion Methods
+
+    public byte[] ConvertImageToByte(string path)
+    {
+      return File.ReadAllBytes(path);
+    }
   }
 }

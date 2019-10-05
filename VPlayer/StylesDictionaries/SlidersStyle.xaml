@@ -10,7 +10,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="RepeatButton">
-                    <Border  BorderThickness="1" BorderBrush="{StaticResource 10_WhiteTransparentBrush}" Background="{StaticResource 10_WhiteTransparentBrush}" Height="3"/>
+                    <Border  BorderThickness="0" Background="{StaticResource 3_WhiteTransparentBrush}" Height="{TemplateBinding Height}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -22,8 +22,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="RepeatButton">
-                    <Border SnapsToDevicePixels="True" Background="{StaticResource DefaultRedBrush}"  
-                            BorderThickness="1" BorderBrush="{StaticResource DefaultRedBrush}" Height="3"/>
+                    <Border SnapsToDevicePixels="True" Background="{StaticResource DefaultRedBrush}"
+                            BorderThickness="1" BorderBrush="{StaticResource DefaultRedBrush}" Height="{TemplateBinding Height}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -35,7 +35,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
-                    <Ellipse Height="10" Width="10" Fill="{StaticResource DefaultRedBrush}"></Ellipse>
+                    <Ellipse Height="10" Width="10" Fill="{StaticResource DefaultRedBrush}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -43,37 +43,37 @@
 
     <ControlTemplate x:Key="Slider" TargetType="Slider">
         <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Track Grid.Row="1" x:Name="PART_Track"   >
+            <Track x:Name="PART_Track">
                 <Track.DecreaseRepeatButton>
-                    <RepeatButton Style="{StaticResource SliderRepeatButton1}"  Command="Slider.DecreaseLarge" />
+                    <RepeatButton Style="{StaticResource SliderRepeatButton1}"
+                                  Command="Slider.DecreaseLarge"
+                                  Height="{TemplateBinding Height}" />
                 </Track.DecreaseRepeatButton>
                 <Track.Thumb>
-                    <Thumb Style="{StaticResource SliderThumb}"  />
+                    <Thumb Style="{StaticResource SliderThumb}"  Margin="-9 0 0 0" />
                 </Track.Thumb>
                 <Track.IncreaseRepeatButton>
-                    <RepeatButton Style="{StaticResource SliderRepeatButton}" Command="Slider.IncreaseLarge" />
+                    <RepeatButton Style="{StaticResource SliderRepeatButton}"
+                                  Command="Slider.IncreaseLarge"
+                                  Height="{TemplateBinding Height}" />
                 </Track.IncreaseRepeatButton>
             </Track>
         </Grid>
     </ControlTemplate>
 
     <Style TargetType="Slider">
-        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Height" Value="3" />
+        <Setter Property="Focusable" Value="False" />
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="OverridesDefaultStyle" Value="true" />
         <Style.Triggers>
             <Trigger Property="Orientation" Value="Horizontal">
                 <Setter Property="MinHeight" Value="21" />
-                <Setter Property="MinWidth" Value="104" />
+                <Setter Property="MinWidth" Value="10" />
                 <Setter Property="Template" Value="{StaticResource Slider}" />
             </Trigger>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Cursor" Value="Hand" />
             </Trigger>
         </Style.Triggers>
     </Style>

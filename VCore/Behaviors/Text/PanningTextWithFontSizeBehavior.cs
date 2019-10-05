@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using System.Windows.Interactivity;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -19,22 +13,16 @@ namespace VCore.Behaviors.Text
   {
     #region Fields
 
+    private Duration fontSizeAnimationDuration;
     private double originalFontSize;
     private Thickness originalMargin;
     private double thicknessOffset = 10;
-    private Duration fontSizeAnimationDuration;
 
-    #endregion
+    #endregion Fields
 
     #region Properties
 
     #region BiggerFontSize
-
-    public double BiggerFontSize
-    {
-      get { return (double)GetValue(BiggerFontSizeProperty); }
-      set { SetValue(BiggerFontSizeProperty, value); }
-    }
 
     public static readonly DependencyProperty BiggerFontSizeProperty =
       DependencyProperty.Register(
@@ -43,16 +31,15 @@ namespace VCore.Behaviors.Text
         typeof(PanningTextWithFontSizeBehavior),
         new PropertyMetadata(null));
 
+    public double BiggerFontSize
+    {
+      get { return (double)GetValue(BiggerFontSizeProperty); }
+      set { SetValue(BiggerFontSizeProperty, value); }
+    }
 
-    #endregion
+    #endregion BiggerFontSize
 
     #region Container
-
-    public FrameworkElement Container
-    {
-      get { return (FrameworkElement)GetValue(ContainerProperty); }
-      set { SetValue(ContainerProperty, value); }
-    }
 
     public static readonly DependencyProperty ContainerProperty =
       DependencyProperty.Register(
@@ -61,16 +48,15 @@ namespace VCore.Behaviors.Text
         typeof(PanningTextWithFontSizeBehavior),
         new PropertyMetadata(null));
 
+    public FrameworkElement Container
+    {
+      get { return (FrameworkElement)GetValue(ContainerProperty); }
+      set { SetValue(ContainerProperty, value); }
+    }
 
-    #endregion
+    #endregion Container
 
     #region Container
-
-    public double? ContainerSize
-    {
-      get { return (double?)GetValue(ContainerSizeProperty); }
-      set { SetValue(ContainerSizeProperty, value); }
-    }
 
     public static readonly DependencyProperty ContainerSizeProperty =
       DependencyProperty.Register(
@@ -79,10 +65,28 @@ namespace VCore.Behaviors.Text
         typeof(PanningTextWithFontSizeBehavior),
         new PropertyMetadata(null));
 
+    public double? ContainerSize
+    {
+      get { return (double?)GetValue(ContainerSizeProperty); }
+      set { SetValue(ContainerSizeProperty, value); }
+    }
 
-    #endregion
+    #endregion Container
 
     #region IgnoreSizeAnimation
+
+    public static readonly DependencyProperty IgnoreSizeAnimationProperty =
+      DependencyProperty.Register(
+        nameof(IgnoreSizeAnimation),
+        typeof(bool),
+        typeof(PanningTextWithFontSizeBehavior),
+        new PropertyMetadata(false, (x, y) =>
+        {
+          if ((bool)y.NewValue)
+          {
+            ((PanningTextWithFontSizeBehavior)x).AssociatedObject?.BeginAnimation(TextBlock.FontSizeProperty, null);
+          }
+        }));
 
     public bool IgnoreSizeAnimation
     {
@@ -90,23 +94,15 @@ namespace VCore.Behaviors.Text
       set { SetValue(IgnoreSizeAnimationProperty, value); }
     }
 
-    public static readonly DependencyProperty IgnoreSizeAnimationProperty =
-      DependencyProperty.Register(
-        nameof(IgnoreSizeAnimation),
-        typeof(bool),
-        typeof(PanningTextWithFontSizeBehavior),
-        new PropertyMetadata(false));
-
-
-    #endregion
+    #endregion IgnoreSizeAnimation
 
     #region IsMouseOverRelativeToContainer
 
     public bool IsMouseOverRelativeToContainer { get; set; }
 
-    #endregion
+    #endregion IsMouseOverRelativeToContainer
 
-    #endregion
+    #endregion Properties
 
     #region OnAttached
 
@@ -138,9 +134,9 @@ namespace VCore.Behaviors.Text
       fontSizeAnimationDuration = new Duration(TimeSpan.FromSeconds(0.25));
     }
 
-    #endregion
+    #endregion AssociatedObject_Loaded
 
-    #endregion
+    #endregion OnAttached
 
     #region MouseLeave
 
@@ -154,7 +150,7 @@ namespace VCore.Behaviors.Text
       }
     }
 
-    #endregion
+    #endregion MouseLeave
 
     #region MouseEnter
 
@@ -168,7 +164,7 @@ namespace VCore.Behaviors.Text
       DoPanning();
     }
 
-    #endregion
+    #endregion MouseEnter
 
     #region DoFontSizeAnimation
 
@@ -179,7 +175,7 @@ namespace VCore.Behaviors.Text
       AssociatedObject.BeginAnimation(TextBlock.FontSizeProperty, fontAnimation);
     }
 
-    #endregion
+    #endregion DoFontSizeAnimation
 
     #region DoPanning
 
@@ -209,7 +205,7 @@ namespace VCore.Behaviors.Text
       }
     }
 
-    #endregion
+    #endregion DoPanning
 
     #region GetPanningDuration
 
@@ -232,7 +228,7 @@ namespace VCore.Behaviors.Text
         return new Duration(TimeSpan.FromSeconds(0));
     }
 
-    #endregion
+    #endregion GetPanningDuration
 
     #region MeasureTextSize
 
@@ -253,6 +249,6 @@ namespace VCore.Behaviors.Text
       return new Size(formattedText.Width, formattedText.Height);
     }
 
-    #endregion
+    #endregion MeasureTextSize
   }
 }

@@ -13,17 +13,16 @@
 
     <Grid>
 
-    <controls:PlayableWrapPanel Margin="5,0"
-                                ItemsSource="{Binding View}">
-
-      <controls:PlayableWrapPanel.ItemTemplate>
-        <DataTemplate>
-          <controls:PlayableWrapPanelItem BottomText="{Binding BottomText}"
+        <controls:PlayableWrapPanel Margin="5,0" ItemsSource="{Binding View}">
+            <controls:PlayableWrapPanel.ItemTemplate>
+                <DataTemplate>
+                    <controls:PlayableWrapPanelItem BottomText="{Binding BottomText}"
                                           HeaderText="{Binding Name}"
                                           ImageThumbnail="{Binding ImageThumbnail}"
-                                          IsPlaying="{Binding IsPlaying}" />
-        </DataTemplate>
-      </controls:PlayableWrapPanel.ItemTemplate>
-    </controls:PlayableWrapPanel>
-  </Grid>
+                                          IsPlaying="{Binding IsPlaying}"
+                                          DefaultImage="pack://application:,,,/VPlayer;component/Resources/VPlayer_Artist.png" />
+                </DataTemplate>
+            </controls:PlayableWrapPanel.ItemTemplate>
+        </controls:PlayableWrapPanel>
+    </Grid>
 </UserControl>

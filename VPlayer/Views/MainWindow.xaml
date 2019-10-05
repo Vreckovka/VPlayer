@@ -10,8 +10,8 @@
         xmlns:regions="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPlayer.Core"
         xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore"
         Title="{Binding Title}"
-        Width="1210"
-        Height="850"
+        Width="1225"
+        Height="830"
         MinWidth="500"
         MinHeight="400"
         d:DataContext="{d:DesignInstance Type={x:Type design:MainWindowDesignViewModel},
@@ -33,7 +33,6 @@
     </Grid.RowDefinitions>
 
     <Border Name="MenuBorder"
-            Margin="0,0,5,0"
             Background="Transparent"
             BorderBrush="{StaticResource 10_WhiteTransparentBrush}"
             BorderThickness="0,0,2,0">
@@ -53,14 +52,9 @@
             Click="Button_Click"
             Content="Clear" />
 
-
-
-
     <ContentControl Grid.Row="1"
                     Grid.Column="0"
                     Grid.ColumnSpan="2"
                     prism:RegionManager.RegionName="{x:Static regions:RegionNames.PlayerRegion}" />
-
-
   </Grid>
 </Window>

@@ -113,7 +113,6 @@
     <Compile Include="Controls\PlayableWrapPanelItem.cs" />
     <Compile Include="Controls\PlayableWrapPanel.cs" />
     <Compile Include="Converters\BaseConverter.cs" />
-    <Compile Include="Converters\NullToImageConverter.cs" />
     <Compile Include="Converters\TimeConverter.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />
     <Compile Include="Design\DesignTimeRegionProvider.cs" />
