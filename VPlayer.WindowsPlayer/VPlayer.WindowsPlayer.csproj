@@ -81,6 +81,7 @@
     </Reference>
     <Reference Include="PropertyChanged, Version=2.6.1.0, Culture=neutral, PublicKeyToken=ee3ee20bcf148ddd, processorArchitecture=MSIL">
       <HintPath>..\packages\PropertyChanged.Fody.2.6.1\lib\net452\PropertyChanged.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -198,6 +199,7 @@
     <ProjectReference Include="..\VPlayer.Core\VPlayer.Core.csproj">
       <Project>{b8d5c40b-3b3d-43e1-95fa-97087581bda2}</Project>
       <Name>VPlayer.Core</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\VPlayer.Library\VPlayer.Library.csproj">
       <Project>{26d6bb81-3f3c-4ddc-857d-2b2dc4c660b8}</Project>
