@@ -1,10 +1,8 @@
-﻿using PropertyChanged;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace VPlayer.Core.DomainClasses
 {
-  [AddINotifyPropertyChangedInterface]
   public class Album : INamedEntity
   {
     #region Constructors
@@ -18,9 +16,13 @@ namespace VPlayer.Core.DomainClasses
     #region Properties
 
     public byte[] AlbumFrontCoverBLOB { get; set; }
+
     public string AlbumFrontCoverURI { get; set; }
+
     public virtual Artist Artist { get; set; }
+
     [Key] public int Id { get; set; }
+
     public string MusicBrainzId { get; set; }
     public string Name { get; set; }
     public string ReleaseDate { get; set; }

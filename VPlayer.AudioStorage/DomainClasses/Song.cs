@@ -4,44 +4,28 @@ namespace VPlayer.Core.DomainClasses
 {
   public class Song : INamedEntity
   {
-    #region Constructors
-
-    public Song()
-    {
-    }
-
+    public Song() { }
     public Song(string name, Album album)
     {
       Name = name;
       Album = album;
     }
 
-    #endregion Constructors
-
-    #region Properties
-
-    public virtual Album Album { get; set; }
-
-    public string DiskLocation { get; set; }
-
-    public int Duration { get; set; }
 
     [Key]
     public int Id { get; set; }
-
-    public int Length { get; set; }
-    public string MusicBrainzId { get; set; }
     public string Name { get; set; }
+    public string DiskLocation { get; set; }
+    public int Length { get; set; }
 
-    #endregion Properties
+    public string MusicBrainzId { get; set; }
+    public virtual Album Album { get; set; }
 
-    #region Methods
-
+    public int Duration { get; set; }
     public override string ToString()
     {
       return $"{Name}|{Album}";
     }
-
-    #endregion Methods
   }
 }
+

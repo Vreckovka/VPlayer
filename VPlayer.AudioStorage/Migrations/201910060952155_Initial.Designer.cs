@@ -13,12 +13,12 @@ namespace VPlayer.AudioStorage.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201910060804320_Initial"; }
+            get { return "201910060952155_Initial"; }
         }
         
         string IMigrationMetadata.Source
         {
-            get { return Resources.GetString("Source"); }
+            get { return null; }
         }
         
         string IMigrationMetadata.Target

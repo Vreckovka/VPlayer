@@ -5,41 +5,28 @@ namespace VPlayer.Core.DomainClasses
 {
   public class Artist : INamedEntity
   {
-    #region Constructors
-
     public Artist()
     { }
-
     public Artist(string name)
     {
       Name = name;
     }
 
-    #endregion Constructors
-
-    #region Properties
-
-    public int? AlbumIdCover { get; set; }
-
-    public virtual List<Album> Albums { get; set; }
-
-    public byte[] ArtistCover { get; set; }
-
     [Key]
     public int Id { get; set; }
-
-    public string MusicBrainzId { get; set; }
     public string Name { get; set; }
+    public byte[] ArtistCover { get; set; }
 
-    #endregion Properties
-
-    #region Methods
+    /// <summary>
+    /// Album id  wich is used as cover for Artist
+    /// </summary>
+    public int? AlbumIdCover { get; set; }
+    public string MusicBrainzId { get; set; }
+    public virtual ICollection<Album> Albums { get; set; }
 
     public override string ToString()
     {
       return Name;
     }
-
-    #endregion Methods
   }
 }

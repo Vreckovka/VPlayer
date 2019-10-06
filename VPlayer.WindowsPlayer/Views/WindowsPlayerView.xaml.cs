@@ -1,50 +1,48 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media.Animation;
-using VCore.Factories;
+﻿using System.Windows.Controls;
 using VCore.Modularity.Interfaces;
-using VCore.ViewModels.Navigation;
-using VPlayer.Library.ViewModels;
-using VPlayer.WindowsPlayer.Models;
 using VPlayer.Library.Views;
-using VPlayer.WindowsPlayer.Annotations;
-
 
 namespace VPlayer.WindowsPlayer.Views
 {
+  /// <summary>
+  /// Interaction logic for Player.xaml
+  /// </summary>
+  public partial class WindowsPlayerView : UserControl, IView
+  {
+    #region Fields
 
-    /// <summary>
-    /// Interaction logic for Player.xaml
-    /// </summary>
-    public partial class WindowsPlayerView : UserControl, IView
+    private bool _isSideMenuUp;
+
+    #endregion Fields
+
+    #region Constructors
+
+    public WindowsPlayerView()
     {
-      private bool _isSideMenuUp;
+      InitializeComponent();
 
-        public LibraryView LibraryView { get; set; }
+      //PlayerHandler.Play += PlayerHandler_Play;
+      //PlayerHandler.Pause += PlayerHandler_Pause;
+      //PlayerHandler.ChangeTime += PlayerHandler_ChangeTime;
 
-        public WindowsPlayerView()
-        {
-          InitializeComponent();
+      // LibraryView = new LibraryView(eventAggregator);
+      _isSideMenuUp = false;
 
-            //PlayerHandler.Play += PlayerHandler_Play;
-            //PlayerHandler.Pause += PlayerHandler_Pause;
-            //PlayerHandler.ChangeTime += PlayerHandler_ChangeTime;
+      //this.Loaded += WindowsPlayerPage_Loaded;
 
+      //DatabaseManager.UpdateAlbumsConversBLOB();
 
-           // LibraryView = new LibraryView(eventAggregator);
-            _isSideMenuUp = false;
-           
+      //Task.Run(() => { AudioTracksViewModel.AddFiles(new string[] { "D:\\Hudba\\Disturbed Discography" }); });
+      //Task.Run(() => { AudioTracksViewModel.UpdateDatabaseFromFolder("D:\\Hudba\\Disturbed Discography"); });
+    }
 
-            //this.Loaded += WindowsPlayerPage_Loaded;
+    #endregion Constructors
 
-            //DatabaseManager.UpdateAlbumsConversBLOB();
+    #region Properties
 
-            //Task.Run(() => { AudioTracksViewModel.AddFiles(new string[] { "D:\\Hudba\\Disturbed Discography" }); });
-            //Task.Run(() => { AudioTracksViewModel.UpdateDatabaseFromFolder("D:\\Hudba\\Disturbed Discography"); });
-        }
+    public LibraryView LibraryView { get; set; }
 
+    #endregion Properties
 
     //private void WindowsPlayerPage_Loaded(object sender, RoutedEventArgs e)
     //{
@@ -64,7 +62,6 @@ namespace VPlayer.WindowsPlayer.Views
     //}
     //private void PlayerHandler_Play(object sender, EventArgs e)
     //{
-
     //}
     //private void LoadFiles_Click(object sender, RoutedEventArgs e)
     //{
@@ -83,7 +80,6 @@ namespace VPlayer.WindowsPlayer.Views
     //}
     //private void Pause()
     //{
-
     //    //PlayerHandler.OnPause(this);
     //}
     //private void Play(Uri uri = null, bool next = false)
@@ -133,7 +129,6 @@ namespace VPlayer.WindowsPlayer.Views
     //        {
     //            LibraryRegion.Margin = new Thickness(0);
 
-
     //            LibraryRegion.Width = Application.Current.MainWindow.ActualWidth;
     //            ThicknessAnimation doubleAnimationWidth = new ThicknessAnimation(new Thickness(-Application.Current.MainWindow.ActualWidth, 0, 0, 0), new Thickness(0), timeSpan);
 
@@ -150,7 +145,6 @@ namespace VPlayer.WindowsPlayer.Views
 
     //            doubleAnimationWidth.Completed += DoubleAnimationWidth_Completed1;
     //            LibraryRegion.BeginAnimation(FrameworkElement.MarginProperty, doubleAnimationWidth);
-
 
     //            _isSideMenuUp = false;
     //        }
