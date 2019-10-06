@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Gma.DataStructures.StringSearch;
+using Prism.Mvvm;
+using PropertyChanged;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using Gma.DataStructures.StringSearch;
-using Prism.Mvvm;
-using PropertyChanged;
 using VCore.Factories;
-using VPlayer.AudioStorage.Interfaces;
-using VPlayer.Core.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.ViewModels.Artists;
 using VPlayer.Library.VirtualList;
 using VPlayer.Library.VirtualList.VirtualLists;
@@ -24,19 +24,22 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
     #region Fields
 
     protected readonly IStorageManager storageManager;
-    protected IViewModelsFactory ViewModelsFactory { get; }
-
-    private Trie<TViewModel> trieItems = new Trie<TViewModel>();
     private string actualFilter = "";
+    private Trie<TViewModel> trieItems = new Trie<TViewModel>();
+    protected IViewModelsFactory ViewModelsFactory { get; }
 
     private IEnumerable<TViewModel> SortedItems
     {
       get { return Items?.OrderBy(x => x.Name); }
     }
 
-    #endregion
+    #endregion Fields
+
+    #region Properties
 
     public IObservable<bool> LoadData { get; }
+
+    #endregion Properties
 
     #region Constructors
 
@@ -53,19 +56,17 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
       LoadData = LoadInitilizedData().Concat(Initilize());
     }
 
-    #endregion
+    #endregion Constructors
 
     #region Properties
 
-    public ObservableCollection<TViewModel> Items { get; set; }
-
     public VirtualList<TViewModel> FilteredItems { get; set; }
-
+    public ObservableCollection<TViewModel> Items { get; set; }
     public IQueryable<TModel> LoadQuery { get; set; }
 
     public bool WasLoaded { get; private set; }
 
-    #endregion
+    #endregion Properties
 
     #region Filter
 
@@ -79,7 +80,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
       actualFilter = name;
     }
 
-    #endregion
+    #endregion Filter
 
     #region LoadInitilizedData
 
@@ -95,7 +96,6 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
     {
       try
       {
-
         var query = LoadQuery.ToList();
 
         Items = new ObservableCollection<TViewModel>(query.Select(x => ViewModelsFactory.Create<TViewModel>(x)).ToList());
@@ -110,7 +110,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
       }
     }
 
-    #endregion
+    #endregion LoadInitilizedData
 
     #region CreateTrieItems
 
@@ -124,7 +124,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
       }
     }
 
-    #endregion
+    #endregion CreateTrieItems
 
     #region Add
 
@@ -134,7 +134,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
       Recreate();
     }
 
-    #endregion
+    #endregion Add
 
     #region Remove
 
@@ -150,13 +150,12 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
       }
     }
 
-    #endregion
+    #endregion Remove
 
     #region Update
 
     public void Update(TModel entity)
     {
-
       var originalItem = Items.Single(x => x.ModelId == entity.Id);
 
       originalItem.Update(entity);
@@ -167,7 +166,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
       }
     }
 
-    #endregion
+    #endregion Update
 
     #region Initilize
 
@@ -175,7 +174,6 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
     {
       return Observable.FromAsync<bool>(async () =>
       {
-
         return await Task.Run(() =>
         {
           try
@@ -194,11 +192,10 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
             return false;
           }
         });
-
       });
     }
 
-    #endregion
+    #endregion Initilize
 
     #region Recreate
 
@@ -210,7 +207,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
       }
     }
 
-    #endregion
+    #endregion Recreate
 
     #region LoadDataImmediately
 
@@ -220,6 +217,6 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
       Recreate();
     }
 
-    #endregion
+    #endregion LoadDataImmediately
   }
 }

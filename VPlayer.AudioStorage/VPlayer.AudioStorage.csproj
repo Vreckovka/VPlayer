@@ -147,9 +147,9 @@
   <ItemGroup>
     <Compile Include="AudioDatabase\AudioDatabaseContext.cs" />
     <Compile Include="AudioDatabase\AudioDatabaseManager.cs" />
-    <Compile Include="AudioInfoDownloader\AudioInfoDownloader.cs" />
-    <Compile Include="AudioInfoDownloader\Extensions.cs" />
-    <Compile Include="AudioInfoDownloader\Models\AlbumCover.cs" />
+    <Compile Include="InfoDownloader\AudioInfoDownloader.cs" />
+    <Compile Include="InfoDownloader\Extensions.cs" />
+    <Compile Include="InfoDownloader\Models\AlbumCover.cs" />
     <Compile Include="DomainClasses\Album.cs" />
     <Compile Include="DomainClasses\Artist.cs" />
     <Compile Include="DomainClasses\AudioInfo.cs" />

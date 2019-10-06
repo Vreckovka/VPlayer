@@ -1,33 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
-using Windows.Storage;
-using Windows.Storage.FileProperties;
-using KeyListener;
-using Prism.Events;
-using VCore.Factories;
-using VPlayer.AudioStorage;
-using VPlayer.AudioStorage.Interfaces;
-using VPlayer.ViewModels;
-using VPlayer.WebPlayer.Views;
+using VPlayer.AudioStorage.Interfaces.Storage;
 
 namespace VPlayer.Views
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
-    {
-        private readonly IStorageManager storageManager;
+  /// <summary>
+  /// Interaction logic for MainWindow.xaml
+  /// </summary>
+  public partial class MainWindow : Window
+  {
+    #region Fields
 
-        public MainWindow(IStorageManager storageManager)
-        {
-            this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
-            InitializeComponent();
-        }
+    private readonly IStorageManager storageManager;
+
+    #endregion Fields
+
+    #region Constructors
+
+    public MainWindow(IStorageManager storageManager)
+    {
+      this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
+      InitializeComponent();
+    }
+
+    #endregion Constructors
 
     //private void Test()
     //{
@@ -59,17 +55,20 @@ namespace VPlayer.Views
     //    Test();
     //}
 
+    #region Methods
+
     private async void Button_Click(object sender, RoutedEventArgs e)
     {
       await storageManager.ClearStorage();
     }
+
+    #endregion Methods
 
     //private void ListViewItem_PreviewMouseDown2(object sender, MouseButtonEventArgs e)
     //{
     //    Task.Run(async () =>
     //    {
     //        List<Album> existingAlbums = null;
-
 
     //        using (IStorage storage = StorageManager.GetStorage())
     //        {

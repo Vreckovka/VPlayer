@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows.Input;
 using VCore;
 using VCore.ViewModels;
-using VPlayer.Core.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.Core.Events;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.ViewModels.Artists;
@@ -23,9 +23,10 @@ namespace VPlayer.Core.ViewModels
     #region Constructors
 
     public SongInPlayList(
-      IEventAggregator eventAggregator, 
-      IAlbumsViewModel albumsViewModel, 
-      IArtistsViewModel artistsViewModel, Song model) : base(model)
+      IEventAggregator eventAggregator,
+      IAlbumsViewModel albumsViewModel,
+      IArtistsViewModel artistsViewModel,
+      Song model) : base(model)
     {
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
 
@@ -105,10 +106,9 @@ namespace VPlayer.Core.ViewModels
         eventAggregator.GetEvent<PauseEvent>().Publish();
       }
     }
+
     #endregion Play
 
     #endregion Properties
-
-
   }
 }

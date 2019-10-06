@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using Prism.Events;
-using VPlayer.Core.DomainClasses;
+﻿using Prism.Events;
+using System.Collections.Generic;
 using VPlayer.Core.ViewModels;
 
 namespace VPlayer.Core.Events

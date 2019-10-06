@@ -147,7 +147,6 @@
     <Compile Include="Converters.cs" />
     <Compile Include="Design\WindowsPlayerDesignViewModel.cs" />
     <Compile Include="Modularity\NinjectModule\WindowsPlayerNinjectModule.cs" />
-    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

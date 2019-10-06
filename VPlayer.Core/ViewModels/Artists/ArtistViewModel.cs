@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using VCore.Factories;
-using VPlayer.AudioStorage.Interfaces;
-using VPlayer.Core.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Modularity.Regions;
 
 namespace VPlayer.Core.ViewModels.Artists

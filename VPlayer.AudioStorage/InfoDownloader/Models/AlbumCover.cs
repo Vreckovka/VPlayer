@@ -1,25 +1,26 @@
 ﻿using System;
 
-namespace VPlayer.AudioStorage.AudioInfoDownloader.Models
+namespace VPlayer.AudioStorage.InfoDownloader.Models
 {
   public class AlbumCover
   {
-    public string Type { get; set; }
-    public string Url { get; set; }
+    #region Properties
+
+    public byte[] DownloadedCover { get; set; }
     public string Mbid { get; set; }
     public long Size { get; set; }
-    public byte[] DownloadedCover { get; set; }
 
     public string SizeString
     {
       get { return BytesToString(Size); }
     }
 
-    public override string ToString()
-    {
-      return $"{Mbid} {Type} {Url}";
-    }
+    public string Type { get; set; }
+    public string Url { get; set; }
 
+    #endregion Properties
+
+    #region Methods
 
     public string BytesToString(long byteCount)
     {
@@ -31,5 +32,12 @@ namespace VPlayer.AudioStorage.AudioInfoDownloader.Models
       double num = Math.Round(bytes / Math.Pow(1024, place), 1);
       return (Math.Sign(byteCount) * num) + " " + suf[place];
     }
+
+    public override string ToString()
+    {
+      return $"{Mbid} {Type} {Url}";
+    }
+
+    #endregion Methods
   }
 }

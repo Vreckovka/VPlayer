@@ -319,7 +319,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="StylesDictionaries\WindowsStyle.xaml.cs">
       <DependentUpon>WindowsStyle.xaml</DependentUpon>
     </Compile>

@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using VCore.ViewModels;
+using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.Core.Design;
 using VPlayer.Core.Design.ViewModels;
-using VPlayer.Core.DomainClasses;
-using VPlayer.Core.ViewModels;
-using VPlayer.Core.ViewModels.Artists;
-using VPlayer.Library.ViewModels.AlbumsViewModels;
-using VPlayer.Player.ViewModels;
 
 namespace VPlayer.Player.Design
 {
   public class PlayerDesingViewModel : ViewModel
   {
+    #region Constructors
+
     public PlayerDesingViewModel()
     {
       PlayList = new ObservableCollection<SongInPlayListDesing>();
@@ -24,26 +22,50 @@ namespace VPlayer.Player.Design
 
       PlayList[2].IsPlaying = true;
       ActualSong = PlayList[2];
-      ActualSong.ActualPosition = (float)0.37;
+      ActualSong.ActualPosition = (float) 0.37;
 
       SelectedSong = PlayList[3];
     }
 
+    #endregion Constructors
+
+    #region Properties
+
     public SongInPlayListDesing ActualSong { get; set; }
-    public SongInPlayListDesing SelectedSong { get; set; }
     public ObservableCollection<SongInPlayListDesing> PlayList { get; set; }
+    public SongInPlayListDesing SelectedSong { get; set; }
+
+    #endregion Properties
   }
 
   public class SongInPlayListDesing : ViewModel<Song>
   {
-    public TimeSpan ActualTime => TimeSpan.FromSeconds(ActualPosition * Duration);
+    #region Constructors
+
+    public SongInPlayListDesing(Song model) : base(model)
+    {
+      AlbumViewModel = new AlbumDesignViewModel(model.Album);
+      ArtistViewModel = new ArtistDesignViewModel(AlbumViewModel.Model.Artist);
+    }
+
+    #endregion Constructors
+
+    #region Properties
+
     public float ActualPosition { get; set; }
-    public string Name => Model.Name;
+    public TimeSpan ActualTime => TimeSpan.FromSeconds(ActualPosition * Duration);
+    public AlbumDesignViewModel AlbumViewModel { get; set; }
+    public ArtistDesignViewModel ArtistViewModel { get; set; }
     public double Duration => Model.Duration;
+    public byte[] Image => Model?.Album.AlbumFrontCoverBLOB;
+    public string Name => Model.Name;
+
+    #endregion Properties
 
     #region IsPlaying
 
     private bool isPlaying;
+
     public bool IsPlaying
     {
       get { return isPlaying; }
@@ -64,16 +86,6 @@ namespace VPlayer.Player.Design
       }
     }
 
-    #endregion
-
-    public byte[] Image => Model?.Album.AlbumFrontCoverBLOB;
-    public AlbumDesignViewModel AlbumViewModel { get; set; }
-    public ArtistDesignViewModel ArtistViewModel { get; set; }
-
-    public SongInPlayListDesing(Song model) : base(model)
-    {
-      AlbumViewModel = new AlbumDesignViewModel(model.Album);
-      ArtistViewModel = new ArtistDesignViewModel(AlbumViewModel.Model.Artist);
-    }
+    #endregion IsPlaying
   }
 }

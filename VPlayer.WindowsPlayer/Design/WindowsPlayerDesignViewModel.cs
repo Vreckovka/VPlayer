@@ -1,14 +1,21 @@
 ﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using VCore.ViewModels.Navigation;
-using VPlayer.WindowsPlayer.Annotations;
 
 namespace VPlayer.WindowsPlayer.Design
 {
   public class WindowsPlayerDesignViewModel : INavigationItem
   {
+    #region Properties
+
     public string Header => "Windows player";
-    public event PropertyChangedEventHandler PropertyChanged;
     public bool IsActive { get; set; }
+
+    #endregion Properties
+
+    #region Events
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    #endregion Events
   }
 }

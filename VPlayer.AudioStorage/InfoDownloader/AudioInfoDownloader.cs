@@ -13,13 +13,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using unirest_net.http;
-using VPlayer.AudioStorage.AudioInfoDownloader.Models;
-using VPlayer.Core.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.InfoDownloader.Models;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Artist = Hqub.MusicBrainz.API.Entities.Artist;
 
-namespace VPlayer.AudioInfoDownloader
+namespace VPlayer.AudioStorage.InfoDownloader
 {
   /// <summary>
   /// Class for getting info about audio file (music)
@@ -70,7 +70,7 @@ namespace VPlayer.AudioInfoDownloader
       UpdateItem(item);
     }
 
-    private void UpdateItem(Core.DomainClasses.Artist artist)
+    private void UpdateItem(DomainClasses.Artist artist)
     {
       Task.Run(async () =>
       {
@@ -92,7 +92,7 @@ namespace VPlayer.AudioInfoDownloader
       });
     }
 
-    private void UpdateItem(Core.DomainClasses.Album album)
+    private void UpdateItem(Album album)
     {
       Task.Run(async () =>
       {
@@ -283,7 +283,7 @@ namespace VPlayer.AudioInfoDownloader
         {
           List<AlbumCover> covers = new List<AlbumCover>();
 
-          Core.DomainClasses.Artist newArtist = album.Artist;
+          DomainClasses.Artist newArtist = album.Artist;
 
           if (album.Artist.MusicBrainzId == null)
           {
@@ -628,7 +628,7 @@ namespace VPlayer.AudioInfoDownloader
       }
     }
 
-    public async Task<Core.DomainClasses.Artist> UpdateArtist(string artistName)
+    public async Task<DomainClasses.Artist> UpdateArtist(string artistName)
     {
       try
       {
@@ -654,7 +654,7 @@ namespace VPlayer.AudioInfoDownloader
         Logger.Logger.Instance.Log(Logger.MessageType.Success, $"Artist's data was updated {artistName}");
         //artist = await Artist.GetAsync(artist.Id, "artist-rels", "url-rels");
 
-        return new Core.DomainClasses.Artist()
+        return new DomainClasses.Artist()
         {
           Name = artist.Name,
           MusicBrainzId = artist.Id,

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace VPlayer.Core.DomainClasses
+namespace VPlayer.AudioStorage.DomainClasses
 {
   public class Album : INamedEntity
   {

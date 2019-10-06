@@ -3,18 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using VCore.Factories;
-using VCore.Interfaces.ViewModels;
 using VCore.Modularity.Events;
 using VCore.Modularity.Interfaces;
 using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
-using VPlayer.AudioStorage.Interfaces;
-using VPlayer.Core.DomainClasses;
-using VPlayer.Core.Interfaces.ViewModels;
-using VPlayer.Core.ViewModels;
+using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.ViewModels.Artists;
-using VPlayer.Library.ViewModels.AlbumsViewModels;
 using VPlayer.Library.ViewModels.LibraryViewModels;
 
 namespace VPlayer.Library.ViewModels
@@ -26,10 +22,10 @@ namespace VPlayer.Library.ViewModels
   {
     #region Fields
 
-    private readonly IViewModelsFactory viewModelsFactory;
     private readonly IStorageManager storageManager;
+    private readonly IViewModelsFactory viewModelsFactory;
 
-    #endregion
+    #endregion Fields
 
     #region Constructors
 
@@ -43,17 +39,15 @@ namespace VPlayer.Library.ViewModels
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       LibraryCollection = libraryCollection ?? throw new ArgumentNullException(nameof(libraryCollection));
-
-     
     }
 
-    #endregion
+    #endregion Constructors
 
     #region Properties
 
-    public abstract override string RegionName { get; }
     public abstract override bool ContainsNestedRegions { get; }
     public abstract string Header { get; }
+    public LibraryCollection<TViewModel, TModel> LibraryCollection { get; set; }
 
     public virtual IQueryable<TModel> LoadQuery
     {
@@ -61,8 +55,7 @@ namespace VPlayer.Library.ViewModels
       set => LibraryCollection.LoadQuery = value;
     }
 
-
-    public LibraryCollection<TViewModel, TModel> LibraryCollection { get; set; }
+    public abstract override string RegionName { get; }
 
     #region ViewModels
 
@@ -79,7 +72,7 @@ namespace VPlayer.Library.ViewModels
       }
     }
 
-    #endregion
+    #endregion ViewModels
 
     #region View
 
@@ -96,9 +89,9 @@ namespace VPlayer.Library.ViewModels
       }
     }
 
-    #endregion
+    #endregion View
 
-    #endregion
+    #endregion Properties
 
     #region Initialize
 
@@ -107,10 +100,9 @@ namespace VPlayer.Library.ViewModels
       base.Initialize();
 
       LibraryCollection.LoadQuery = LoadQuery;
-    
     }
 
-    #endregion
+    #endregion Initialize
 
     #region ItemsChanged
 
@@ -121,12 +113,15 @@ namespace VPlayer.Library.ViewModels
         case Changed.Added:
           LibraryCollection.Add((TModel)itemChanged.Item);
           break;
+
         case Changed.Removed:
           LibraryCollection.Remove((TModel)itemChanged.Item);
           break;
+
         case Changed.Updated:
           LibraryCollection.Update((TModel)itemChanged.Item);
           break;
+
         default:
           throw new ArgumentOutOfRangeException();
       }
@@ -135,7 +130,7 @@ namespace VPlayer.Library.ViewModels
       RaisePropertyChanged(nameof(ViewModels));
     }
 
-    #endregion
+    #endregion ItemsChanged
 
     #region OnActivation
 
@@ -158,6 +153,6 @@ namespace VPlayer.Library.ViewModels
       }
     }
 
-    #endregion
+    #endregion OnActivation
   }
 }

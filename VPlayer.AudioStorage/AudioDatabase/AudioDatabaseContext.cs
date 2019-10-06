@@ -2,7 +2,7 @@
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.IO;
-using VPlayer.Core.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses;
 
 namespace VPlayer.AudioStorage.AudioDatabase
 {

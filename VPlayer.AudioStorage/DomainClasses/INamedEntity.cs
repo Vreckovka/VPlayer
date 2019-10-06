@@ -1,12 +1,20 @@
-﻿namespace VPlayer.Core.DomainClasses
+﻿namespace VPlayer.AudioStorage.DomainClasses
 {
-  public interface INamedEntity : IEntity
-  {
-    string Name { get; set; }
-  }
-
   public interface IEntity
   {
+    #region Properties
+
     int Id { get; set; }
+
+    #endregion Properties
+  }
+
+  public interface INamedEntity : IEntity
+  {
+    #region Properties
+
+    string Name { get; set; }
+
+    #endregion Properties
   }
 }

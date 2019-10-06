@@ -5,7 +5,7 @@ using VCore;
 using VCore.Factories;
 using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
-using VPlayer.Core.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Library.Views;
 

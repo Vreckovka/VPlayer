@@ -7,10 +7,9 @@ using VCore.Factories;
 using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
-using VPlayer.AudioStorage.Interfaces;
+using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
-using VPlayer.Library.Desing;
 using VPlayer.Library.Desing.ViewModels;
 using VPlayer.Library.Views;
 

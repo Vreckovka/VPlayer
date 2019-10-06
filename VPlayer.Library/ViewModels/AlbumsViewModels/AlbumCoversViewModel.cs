@@ -10,8 +10,9 @@ using VCore;
 using VCore.Modularity.Navigation;
 using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
-using VPlayer.AudioStorage.AudioInfoDownloader.Models;
-using VPlayer.AudioStorage.Interfaces;
+using VPlayer.AudioStorage.InfoDownloader;
+using VPlayer.AudioStorage.InfoDownloader.Models;
+using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Library.Views;
 
@@ -33,7 +34,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
     public AlbumCoversViewModel(
       IRegionProvider regionProvider,
-      AudioInfoDownloader.AudioInfoDownloader audioInfoDownloader,
+      AudioInfoDownloader audioInfoDownloader,
       AlbumViewModel albumViewModel,
       IStorageManager storage,
       INavigationProvider navigationProvider) : base(regionProvider)

@@ -1,6 +1,7 @@
 ﻿using VCore.Modularity.NinjectModules;
 using VPlayer.AudioStorage.AudioDatabase;
-using VPlayer.AudioStorage.Interfaces;
+using VPlayer.AudioStorage.InfoDownloader;
+using VPlayer.AudioStorage.Interfaces.Storage;
 
 namespace VPlayer.AudioStorage.Modularity.NinjectModules
 {
@@ -13,7 +14,7 @@ namespace VPlayer.AudioStorage.Modularity.NinjectModules
       base.RegisterProviders();
 
       Kernel.Bind<IStorageManager>().To<AudioDatabaseManager>().InSingletonScope();
-      Kernel.BindToSelfAndInitialize<VPlayer.AudioInfoDownloader.AudioInfoDownloader>();
+      Kernel.BindToSelfAndInitialize<AudioInfoDownloader>();
     }
 
     #endregion Methods

@@ -1,7 +1,7 @@
 ﻿using VCore.Factories;
 using VCore.Modularity.RegionProviders;
-using VPlayer.AudioStorage.Interfaces;
-using VPlayer.Core.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.Artists;

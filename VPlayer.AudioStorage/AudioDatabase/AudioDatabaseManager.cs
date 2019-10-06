@@ -7,8 +7,9 @@ using System.Linq.Expressions;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using VCore.Modularity.Events;
-using VPlayer.AudioStorage.Interfaces;
-using VPlayer.Core.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.InfoDownloader;
+using VPlayer.AudioStorage.Interfaces.Storage;
 
 namespace VPlayer.AudioStorage.AudioDatabase
 {
@@ -39,13 +40,13 @@ namespace VPlayer.AudioStorage.AudioDatabase
   {
     #region Fields
 
-    private readonly VPlayer.AudioInfoDownloader.AudioInfoDownloader audioInfoDownloader;
+    private readonly AudioInfoDownloader audioInfoDownloader;
 
     #endregion Fields
 
     #region Constructors
 
-    public AudioDatabaseManager(VPlayer.AudioInfoDownloader.AudioInfoDownloader audioInfoDownloader)
+    public AudioDatabaseManager(AudioInfoDownloader audioInfoDownloader)
     {
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
 
@@ -73,8 +74,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
     }
 
     #endregion GetRepository
-
-
 
     #region StoreData
 
@@ -119,9 +118,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
           };
 
           album = (from x in context.Albums
-                   where x.Name == album.Name
-                   where x.Artist.Name == album.Artist.Name
-                   select x).SingleOrDefault();
+            where x.Name == album.Name
+            where x.Artist.Name == album.Artist.Name
+            select x).SingleOrDefault();
 
           if (album == null)
           {
@@ -136,9 +135,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
             //Need albumId from database
             album = (from x in context.Albums
-                     where x.Name == album.Name
-                     where x.Artist.Name == album.Artist.Name
-                     select x).Single();
+              where x.Name == album.Name
+              where x.Artist.Name == album.Artist.Name
+              select x).Single();
 
             Logger.Logger.Instance.Log(Logger.MessageType.Success, $"New album was added {album.Name}");
 
@@ -157,9 +156,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
           };
 
           song = (from x in context.Songs
-                  where song.Name == x.Name
-                  where x.Album.Id == song.Album.Id
-                  select x).SingleOrDefault();
+            where song.Name == x.Name
+            where x.Album.Id == song.Album.Id
+            select x).SingleOrDefault();
 
           if (song == null)
           {
@@ -189,7 +188,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
           if (ex.InnerException.InnerException != null)
           {
             Logger.Logger.Instance.Log(Logger.MessageType.Error,
-                $"{ex.InnerException.InnerException.Message}");
+              $"{ex.InnerException.InnerException.Message}");
           }
           else
             Logger.Logger.Instance.Log(Logger.MessageType.Error, $"{ex.InnerException.Message}");
@@ -325,7 +324,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
         try
         {
           var originalArtist =
-              await (from x in context.Artists where x.Id == artist.Id select x).SingleOrDefaultAsync();
+            await (from x in context.Artists where x.Id == artist.Id select x).SingleOrDefaultAsync();
 
           if (originalArtist != null)
           {
@@ -359,7 +358,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
         try
         {
           var originalAlbum = (from x in context.Albums.Include(x => x.Artist) where x.MusicBrainzId == album.MusicBrainzId select x)
-              .SingleOrDefault();
+            .SingleOrDefault();
 
           //Update is first time
           if (originalAlbum == null)
@@ -367,8 +366,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
             var albums = context.Albums.ToList().OrderBy(x => x.Name);
 
             originalAlbum = (from x in context.Albums.Include(x => x.Artist)
-                             where x.Id == album.Id
-                             select x).SingleOrDefault();
+              where x.Id == album.Id
+              select x).SingleOrDefault();
 
             //Album could be deleted from storage
             if (originalAlbum != null)
@@ -376,17 +375,18 @@ namespace VPlayer.AudioStorage.AudioDatabase
               originalAlbum.UpdateAlbum(album);
 
               var duplicates = (from x in albums
-                                where x.Name == originalAlbum.Name
-                                where x.Artist.Name == originalAlbum.Artist.Name
-                                group x by x.Name into a
-                                where a.Count() > 1
-                                select a.ToList()).SingleOrDefault();
+                where x.Name == originalAlbum.Name
+                where x.Artist.Name == originalAlbum.Artist.Name
+                group x by x.Name
+                into a
+                where a.Count() > 1
+                select a.ToList()).SingleOrDefault();
 
               if (duplicates == null)
               {
                 await context.SaveChangesAsync();
                 Logger.Logger.Instance.Log(Logger.MessageType.Success,
-                    $"Album was updated in database {album.Name}");
+                  $"Album was updated in database {album.Name}");
 
                 ItemChanged.OnNext(new ItemChanged()
                 {
@@ -418,10 +418,10 @@ namespace VPlayer.AudioStorage.AudioDatabase
             else
             {
               originalAlbum =
-                  (from x in context.Albums
-                   where x.Name == album.Name
-                   where x.Artist.Name == album.Artist.Name
-                   select x).SingleOrDefault();
+                (from x in context.Albums
+                  where x.Name == album.Name
+                  where x.Artist.Name == album.Artist.Name
+                  select x).SingleOrDefault();
 
               if (originalAlbum != null)
                 CombineAlbums(originalAlbum, album, context);
@@ -454,8 +454,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
           try
           {
             var originalAlbum =
-                (from x in context.Albums where x.MusicBrainzId == album.MusicBrainzId select x)
-                .SingleOrDefault();
+              (from x in context.Albums where x.MusicBrainzId == album.MusicBrainzId select x)
+              .SingleOrDefault();
 
             //Update is first time
             if (originalAlbum == null)
@@ -463,8 +463,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
               var albums = context.Albums.ToList().OrderBy(x => x.Name);
 
               originalAlbum = (from x in context.Albums
-                               where x.Id == album.Id
-                               select x).SingleOrDefault();
+                where x.Id == album.Id
+                select x).SingleOrDefault();
 
               //Album could be deleted from storage
               if (originalAlbum != null)
@@ -472,18 +472,18 @@ namespace VPlayer.AudioStorage.AudioDatabase
                 originalAlbum.UpdateAlbum(album);
 
                 var duplicates = (from x in albums
-                                  where x.Name == originalAlbum.Name
-                                  where x.Artist.Name == originalAlbum.Artist.Name
-                                  group x by x.Name
-                    into a
-                                  where a.Count() > 1
-                                  select a.ToList()).SingleOrDefault();
+                  where x.Name == originalAlbum.Name
+                  where x.Artist.Name == originalAlbum.Artist.Name
+                  group x by x.Name
+                  into a
+                  where a.Count() > 1
+                  select a.ToList()).SingleOrDefault();
 
                 if (duplicates == null)
                 {
                   await context.SaveChangesAsync();
                   Logger.Logger.Instance.Log(Logger.MessageType.Success,
-                      $"Album was updated in database {album.Name}");
+                    $"Album was updated in database {album.Name}");
 
                   ItemChanged.OnNext(new ItemChanged()
                   {
@@ -515,10 +515,10 @@ namespace VPlayer.AudioStorage.AudioDatabase
               else
               {
                 originalAlbum =
-                    (from x in context.Albums
-                     where x.Name == album.Name
-                     where x.Artist.Name == album.Artist.Name
-                     select x).SingleOrDefault();
+                  (from x in context.Albums
+                    where x.Name == album.Name
+                    where x.Artist.Name == album.Artist.Name
+                    select x).SingleOrDefault();
 
                 if (originalAlbum != null)
                   CombineAlbums(originalAlbum, album, context);
@@ -548,7 +548,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       try
       {
         albumToCombine = (from x in context.Albums where x.Id == albumToCombine.Id select x)
-            .SingleOrDefault();
+          .SingleOrDefault();
 
         //Could be disk 1, disk 2 and renamed without disk index
         if (originalAlbum != null && albumToCombine != null)
@@ -556,20 +556,20 @@ namespace VPlayer.AudioStorage.AudioDatabase
           if (albumToCombine.Songs.Count == 0)
           {
             Logger.Logger.Instance.Log(Logger.MessageType.Warning,
-                $"Album already exists in database, removing album from database {albumToCombine.Name}");
+              $"Album already exists in database, removing album from database {albumToCombine.Name}");
           }
           else
           {
             var songsToAdd =
-                (from x in albumToCombine.Songs
-                 where originalAlbum.Songs.All(y => y.Name != x.Name)
-                 select x)
-                .ToList();
+              (from x in albumToCombine.Songs
+                where originalAlbum.Songs.All(y => y.Name != x.Name)
+                select x)
+              .ToList();
 
             if (songsToAdd.Count == 0)
             {
               Logger.Logger.Instance.Log(Logger.MessageType.Warning,
-                  $"Album already exists in database, removing album from database {albumToCombine.Name}");
+                $"Album already exists in database, removing album from database {albumToCombine.Name}");
             }
             else
             {
@@ -597,7 +597,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
           });
 
           Logger.Logger.Instance.Log(Logger.MessageType.Warning,
-              $"Combining album {albumToCombine.Name} to {originalAlbum.Name}");
+            $"Combining album {albumToCombine.Name} to {originalAlbum.Name}");
 
           return originalCopy;
         }
@@ -637,9 +637,13 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #endregion UpdateEntity
 
+    #region Methods
+
     public void Dispose()
     {
     }
+
+    #endregion Methods
   }
 
   public abstract class GenericRepository<C, T> : IGenericRepository<T> where T : class where C : DbContext, new()

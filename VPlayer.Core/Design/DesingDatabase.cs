@@ -3,13 +3,36 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using VCore.ViewModels;
-using VPlayer.Core.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses;
 
 namespace VPlayer.Core.Design
 {
   public class DesingDatabase : ViewModel
   {
+    #region Fields
+
     private static DesingDatabase instance;
+
+    #endregion Fields
+
+    #region Constructors
+
+    public DesingDatabase()
+    {
+      ServicePointManager.Expect100Continue = true;
+      ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+      CreateArtists();
+      CreateAlbums();
+      CreateSongs();
+
+      WireSongsToAlbums();
+    }
+
+    #endregion Constructors
+
+    #region Properties
+
     public static DesingDatabase Instance
     {
       get
@@ -23,17 +46,7 @@ namespace VPlayer.Core.Design
       }
     }
 
-    public DesingDatabase()
-    {
-      ServicePointManager.Expect100Continue = true;
-      ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
-      CreateArtists();
-      CreateAlbums();
-      CreateSongs();
-
-      WireSongsToAlbums();
-    }
+    #endregion Properties
 
     #region CreateArtists
 
@@ -59,7 +72,7 @@ namespace VPlayer.Core.Design
       };
     }
 
-    #endregion
+    #endregion CreateArtists
 
     #region CreateAlbums
 
@@ -101,7 +114,7 @@ namespace VPlayer.Core.Design
       };
     }
 
-    #endregion
+    #endregion CreateAlbums
 
     #region CreateSongs
 
@@ -111,13 +124,13 @@ namespace VPlayer.Core.Design
       Random random = new Random();
       foreach (var album in Albums)
       {
-        for (int i = 0; i < random.Next(5,10); i++)
+        for (int i = 0; i < random.Next(5, 10); i++)
         {
           var song = new Song()
           {
             Name = $"Song {i}",
             Length = 2,
-            Duration = random.Next(400,800),
+            Duration = random.Next(400, 800),
             DiskLocation = "DISK LOCATION",
             Album = album
           };
@@ -136,7 +149,7 @@ namespace VPlayer.Core.Design
       }
     }
 
-    #endregion
+    #endregion CreateSongs
 
     #region WireSongsToAlbums
 
@@ -148,7 +161,7 @@ namespace VPlayer.Core.Design
       }
     }
 
-    #endregion
+    #endregion WireSongsToAlbums
 
     #region UrlToByteArray
 
@@ -158,10 +171,10 @@ namespace VPlayer.Core.Design
       return webClient.DownloadData(url);
     }
 
-    #endregion
+    #endregion UrlToByteArray
 
-    public List<Artist> Artists { get; set; }
     public List<Album> Albums { get; set; }
+    public List<Artist> Artists { get; set; }
     public List<Song> Songs { get; set; }
   }
 }

@@ -3,32 +3,36 @@ using System.Collections.Generic;
 using System.Linq;
 using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
-using VPlayer.Core.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.Core.Modularity.Regions;
-using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.Artists;
 using VPlayer.Library.Views;
 
 namespace VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels
 {
-
   public class ArtistDetailViewModel : RegionViewModel<ArtistDetailView>
   {
+    #region Constructors
+
     public ArtistDetailViewModel(IRegionProvider regionProvider, ArtistViewModel artist) : base(regionProvider)
     {
       ActualArtist = artist;
     }
 
-    public override string RegionName => RegionNames.LibraryContentRegion;
-    public override bool ContainsNestedRegions => false;
+    #endregion Constructors
+
+    #region Properties
 
     public ArtistViewModel ActualArtist { get; set; }
     public ICollection<Album> Albums => ActualArtist?.Model.Albums;
+    public override bool ContainsNestedRegions => false;
+    public override string RegionName => RegionNames.LibraryContentRegion;
 
     public IEnumerable<Song> Songs
     {
       get { return Albums?.SelectMany(d => d.Songs).ToList(); }
     }
+
     public TimeSpan TotalLength
     {
       get
@@ -42,8 +46,8 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels
 
         return TimeSpan.FromSeconds(0);
       }
-
     }
+
     public int TotalNumberOfSongs
     {
       get
@@ -54,5 +58,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels
           return 0;
       }
     }
+
+    #endregion Properties
   }
 }
