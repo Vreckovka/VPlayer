@@ -6,13 +6,12 @@
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:regions="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPlayer.Core"
              xmlns:windowsPlayer="clr-namespace:VPlayer.WindowsPlayer"
-             xmlns:wpf="clr-namespace:Vlc.DotNet.Wpf;assembly=Vlc.DotNet.Wpf"
              d:DesignHeight="850"
              d:DesignWidth="800"
              mc:Ignorable="d">
 
-  <UserControl.Resources>
-    <!--<Style BasedOn="{StaticResource ListViewItem_Tracks}" TargetType="ListViewItem">
+    <UserControl.Resources>
+        <!--<Style BasedOn="{StaticResource ListViewItem_Tracks}" TargetType="ListViewItem">
       <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_DoubleClick" />
       <Style.Triggers>
         <DataTrigger Binding="{Binding IsPlaying}" Value="True">
@@ -28,30 +27,27 @@
         </MultiDataTrigger>
       </Style.Triggers>
     </Style>-->
-  </UserControl.Resources>
-
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="*" />
-      <RowDefinition Height="auto" />
-    </Grid.RowDefinitions>
+    </UserControl.Resources>
 
     <Grid>
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="auto" />
-        <ColumnDefinition Width="*" />
-      </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
 
-      <Border BorderBrush="{StaticResource 10_WhiteTransparentBrush}">
-        <ListView ItemsSource="{Binding NavigationViewModel.Items}" Style="{StaticResource ListView_MenuStyle}" />
-      </Border>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-      <ContentControl Name="LibraryRegion"
-                      Grid.Column="1"
-                      mvvm:RegionManager.RegionName="{x:Static regions:RegionNames.WindowsPlayerContentRegion}" />
+            <Border BorderBrush="{StaticResource 10_WhiteTransparentBrush}">
+                <ListView ItemsSource="{Binding NavigationViewModel.Items}" Style="{StaticResource ListView_MenuStyle}" />
+            </Border>
+
+            <ContentControl Name="LibraryRegion"
+                            Grid.Column="1"
+                            mvvm:RegionManager.RegionName="{x:Static regions:RegionNames.WindowsPlayerContentRegion}" />
+        </Grid>
     </Grid>
-
-    
-  </Grid>
-
 </UserControl>

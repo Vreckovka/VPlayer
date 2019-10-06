@@ -19,8 +19,7 @@
                     <controls:PlayableWrapPanelItem BottomText="{Binding BottomText}"
                                           HeaderText="{Binding Name}"
                                           ImageThumbnail="{Binding ImageThumbnail}"
-                                          IsPlaying="{Binding IsPlaying}"
-                                          DefaultImage="pack://application:,,,/VPlayer;component/Resources/VPlayer_Artist.png" />
+                                          IsPlaying="{Binding IsPlaying}" />
                 </DataTemplate>
             </controls:PlayableWrapPanel.ItemTemplate>
         </controls:PlayableWrapPanel>
