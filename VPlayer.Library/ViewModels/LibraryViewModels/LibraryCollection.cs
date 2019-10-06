@@ -18,8 +18,8 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 {
   [AddINotifyPropertyChangedInterface]
   public class LibraryCollection<TViewModel, TModel> : BindableBase
-  where TViewModel : class, IPlayableViewModel<TModel>
-  where TModel : class, INamedEntity
+    where TViewModel : class, IPlayableViewModel<TModel>
+    where TModel : class, INamedEntity
   {
     #region Fields
 
@@ -53,7 +53,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
       LoadQuery = storageManager.GetRepository<TModel>();
 
-      LoadData = LoadInitilizedData().Concat(Initilize());
+      LoadData = LoadInitilizedDataAsync().Concat(Initilize());
     }
 
     #endregion Constructors
@@ -63,7 +63,6 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
     public VirtualList<TViewModel> FilteredItems { get; set; }
     public ObservableCollection<TViewModel> Items { get; set; }
     public IQueryable<TModel> LoadQuery { get; set; }
-
     public bool WasLoaded { get; private set; }
 
     #endregion Properties
@@ -82,26 +81,28 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
     #endregion Filter
 
+    private object batton = new object();
+
     #region LoadInitilizedData
 
-    protected IObservable<bool> LoadInitilizedData()
+    protected IObservable<bool> LoadInitilizedDataAsync()
     {
-      return Observable.FromAsync<bool>(async () =>
-      {
-        return await Task.Run(() => { return LoadInitilizedDataSync(); });
-      });
+      return Observable.FromAsync<bool>(async () => { return await Task.Run(() => { return LoadInitilizedData(); }); });
     }
 
-    private bool LoadInitilizedDataSync()
+    private bool LoadInitilizedData()
     {
       try
       {
-        var query = LoadQuery.ToList();
+        lock (batton)
+        {
+          var query = LoadQuery.AsEnumerable();
 
-        Items = new ObservableCollection<TViewModel>(query.Select(x => ViewModelsFactory.Create<TViewModel>(x)).ToList());
-        WasLoaded = true;
+          Items = new ObservableCollection<TViewModel>(query.Select(x => ViewModelsFactory.Create<TViewModel>(x)).ToList());
+          WasLoaded = true;
 
-        return true;
+          return true;
+        }
       }
       catch (Exception ex)
       {
@@ -213,7 +214,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
     public void LoadDataImmediately()
     {
-      LoadInitilizedDataSync();
+      LoadInitilizedData();
       Recreate();
     }
 

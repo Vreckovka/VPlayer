@@ -16,9 +16,9 @@ using VPlayer.Library.ViewModels.LibraryViewModels;
 namespace VPlayer.Library.ViewModels
 {
   public abstract class PlayableItemsViewModel<TView, TViewModel, TModel> : RegionViewModel<TView>, INavigationItem
-      where TView : class, IView
-      where TViewModel : class, IPlayableViewModel<TModel>
-      where TModel : class, INamedEntity
+    where TView : class, IView
+    where TViewModel : class, IPlayableViewModel<TModel>
+    where TModel : class, INamedEntity
   {
     #region Fields
 
@@ -30,10 +30,10 @@ namespace VPlayer.Library.ViewModels
     #region Constructors
 
     public PlayableItemsViewModel(
-        IRegionProvider regionProvider,
-        IViewModelsFactory viewModelsFactory,
-        IStorageManager storageManager,
-        LibraryCollection<TViewModel, TModel> libraryCollection) : base(regionProvider)
+      IRegionProvider regionProvider,
+      IViewModelsFactory viewModelsFactory,
+      IStorageManager storageManager,
+      LibraryCollection<TViewModel, TModel> libraryCollection) : base(regionProvider)
     {
       if (viewModelsFactory == null) throw new ArgumentNullException(nameof(viewModelsFactory));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
@@ -61,15 +61,7 @@ namespace VPlayer.Library.ViewModels
 
     public ICollection<TViewModel> ViewModels
     {
-      get
-      {
-        if (!LibraryCollection.WasLoaded)
-        {
-          LibraryCollection.LoadDataImmediately();
-        }
-
-        return LibraryCollection.Items;
-      }
+      get { return LibraryCollection.Items; }
     }
 
     #endregion ViewModels
@@ -78,15 +70,7 @@ namespace VPlayer.Library.ViewModels
 
     public ICollection<TViewModel> View
     {
-      get
-      {
-        if (!LibraryCollection.WasLoaded)
-        {
-          LibraryCollection.LoadDataImmediately();
-        }
-
-        return LibraryCollection.FilteredItems;
-      }
+      get { return LibraryCollection.FilteredItems; }
     }
 
     #endregion View
