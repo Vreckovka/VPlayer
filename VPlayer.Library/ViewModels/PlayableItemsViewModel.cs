@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using VCore.Factories;
 using VCore.Modularity.Events;
 using VCore.Modularity.Interfaces;
@@ -126,17 +127,29 @@ namespace VPlayer.Library.ViewModels
       {
         this.storageManager.ItemChanged.Where(x => x.Item.GetType() == typeof(TModel)).Subscribe(ItemsChanged);
 
-        if (!LibraryCollection.WasLoaded)
+        LibraryCollection.LoadData.Subscribe(_ =>
         {
-          LibraryCollection.LoadData.Subscribe(_ =>
-          {
-            RaisePropertyChanged(nameof(ViewModels));
-            RaisePropertyChanged(nameof(View));
-          });
-        }
+          RaisePropertyChanged(nameof(ViewModels));
+          RaisePropertyChanged(nameof(View));
+        });
       }
     }
 
     #endregion OnActivation
+
+    #region Methods
+
+    public Task<ICollection<TViewModel>> GetViewModelsAsync()
+    {
+      return Task.Run(() =>
+      {
+        if (!LibraryCollection.WasLoaded)
+          LibraryCollection.LoadInitilizedData();
+
+        return (ICollection<TViewModel>)LibraryCollection.Items;
+      });
+    }
+
+    #endregion Methods
   }
 }

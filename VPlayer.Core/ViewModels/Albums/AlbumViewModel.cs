@@ -40,7 +40,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     #region Properties
 
     public override string BottomText => $"{Model.Artist?.Name}\nNumber of song: {Model.Songs?.Count.ToString()}";
-    public override byte[] ImageThumbnail => Model.AlbumFrontCoverBLOB;
+    public override byte[] ImageThumbnail => Model.AlbumFrontCoverBLOB != null ? Model.AlbumFrontCoverBLOB : GetEmptyImage();
 
     #endregion Properties
 

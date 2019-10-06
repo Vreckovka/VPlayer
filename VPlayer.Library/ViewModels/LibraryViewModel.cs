@@ -10,7 +10,6 @@ using VCore.ViewModels.Navigation;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
-using VPlayer.Library.Desing.ViewModels;
 using VPlayer.Library.Views;
 
 namespace VPlayer.Library.ViewModels
@@ -35,8 +34,6 @@ namespace VPlayer.Library.ViewModels
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.NavigationViewModel = navigationViewModel ?? throw new ArgumentNullException(nameof(navigationViewModel));
       this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
-
-      var asd = new AlbumsDesignViewModel();
     }
 
     #endregion Constructors

@@ -97,9 +97,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="PlayButton"
-         BasedOn="{StaticResource {x:Type Button}}"
-         TargetType="{x:Type Button}">
+    <Style x:Key="PlayButton" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -248,6 +246,7 @@
     </Style>
 
     <!--  66 / 6 = 11, 11 /2 = 5.5, 11 * 2 = 22  -->
+    <!--
     <Style x:Key="Play" TargetType="Button">
         <Setter Property="Template">
             <Setter.Value>
@@ -380,7 +379,7 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>-->
 
     <Style x:Key="PlayMiniWithCircle" TargetType="Button">
         <Setter Property="Template">

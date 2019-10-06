@@ -1,7 +1,8 @@
 ﻿using Prism.Events;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Windows.Input;
 using VCore;
 using VCore.ViewModels;
@@ -156,9 +157,12 @@ namespace VPlayer.Core.ViewModels
 
     #endregion Methods
 
-    public byte[] ConvertImageToByte(string path)
+    public byte[] GetEmptyImage()
     {
-      return File.ReadAllBytes(path);
+      var bitmap = new Bitmap(1, 1, PixelFormat.Format24bppRgb);
+
+      ImageConverter converter = new ImageConverter();
+      return (byte[])converter.ConvertTo(bitmap, typeof(byte[]));
     }
   }
 }

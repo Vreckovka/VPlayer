@@ -85,21 +85,19 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
     #region LoadInitilizedData
 
-    protected IObservable<bool> LoadInitilizedDataAsync()
-    {
-      return Observable.FromAsync<bool>(async () => { return await Task.Run(() => { return LoadInitilizedData(); }); });
-    }
-
-    private bool LoadInitilizedData()
+    public bool LoadInitilizedData()
     {
       try
       {
         lock (batton)
         {
-          var query = LoadQuery.AsEnumerable();
+          if (!WasLoaded)
+          {
+            var query = LoadQuery.AsEnumerable();
 
-          Items = new ObservableCollection<TViewModel>(query.Select(x => ViewModelsFactory.Create<TViewModel>(x)).ToList());
-          WasLoaded = true;
+            Items = new ObservableCollection<TViewModel>(query.Select(x => ViewModelsFactory.Create<TViewModel>(x)).ToList());
+            WasLoaded = true;
+          }
 
           return true;
         }
@@ -109,6 +107,17 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
         Logger.Logger.Instance.LogException(ex);
         return false;
       }
+    }
+
+    protected IObservable<bool> LoadInitilizedDataAsync()
+    {
+      return Observable.FromAsync<bool>(async () =>
+      {
+        if (!WasLoaded)
+          return await Task.Run(() => { return LoadInitilizedData(); });
+
+        return true;
+      });
     }
 
     #endregion LoadInitilizedData
@@ -209,15 +218,5 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
     }
 
     #endregion Recreate
-
-    #region LoadDataImmediately
-
-    public void LoadDataImmediately()
-    {
-      LoadInitilizedData();
-      Recreate();
-    }
-
-    #endregion LoadDataImmediately
   }
 }

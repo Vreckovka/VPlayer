@@ -9,6 +9,121 @@
     xmlns:local="clr-namespace:VPlayer.StylesDictionaries"
     xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore">
 
+    <Duration x:Key="AnimationDuration">0:0:0:0.30</Duration>
+
+    <Style
+        x:Key="PlayableWrapPanelItemButtons"
+        BasedOn="{StaticResource BorderlessButtonStyle}"
+        TargetType="Button">
+        <Setter Property="Opacity" Value="0" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding ElementName=ImageGrid, Path=IsMouseOver}" Value="True">
+                <DataTrigger.EnterActions>
+                    <BeginStoryboard Name="VisibilityStoryboard">
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="Opacity"
+                                From="0.0"
+                                To="1.0"
+                                Duration="{StaticResource AnimationDuration}" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.EnterActions>
+                <DataTrigger.ExitActions>
+                    <RemoveStoryboard BeginStoryboardName="VisibilityStoryboard" />
+                </DataTrigger.ExitActions>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--  66 / 6 = 11, 11 /2 = 5.5, 11 * 2 = 22  -->
+    <Style x:Key="PlayButtonStyle" TargetType="Button">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Opacity" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid Width="66" Height="66">
+                        <Path x:Name="Elipse" Stretch="Uniform">
+                            <Path.Style>
+                                <Style TargetType="Path">
+                                    <Setter Property="Fill" Value="#50FFFFFF" />
+                                </Style>
+                            </Path.Style>
+                            <Path.Data>
+                                <EllipseGeometry RadiusX="11" RadiusY="11" />
+                            </Path.Data>
+                        </Path>
+
+                        <Path
+                            Name="PlaySign"
+                            Width="22"
+                            Margin="5.5,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Fill="#A0FFFFFF"
+                            Style="{StaticResource PlaySign}" />
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding Path=IsPlaying}" Value="True">
+                            <Setter TargetName="PlaySign" Property="Data"
+                                    Value="M282.856,0H169.714c-31.228,0-56.571,25.344-56.571,56.571v678.857c0,31.228,25.344,56.571,                                      56.571,56.571h113.143 c31.256,0,56.572-25.315,56.572-56.571V56.571C339.428,25.344,314.112,0,282.856,0z                                      M622.285,0H509.143 c-31.256,0-56.572,25.344-56.572,56.571v678.857c0,31.228,25.316,56.571,56.572                                     56.571h113.143 c31.256,0,56.572-25.315,56.572-56.571V56.571C678.857,25.344,653.541,0,622.285,0z" />
+                            <Setter TargetName="PlaySign" Property="Fill" Value="{StaticResource DefaultRedBrush}" />
+                            <Setter TargetName="PlaySign" Property="Margin" Value="0,0,0,0" />
+                            <Setter TargetName="Elipse" Property="Fill" Value="{StaticResource TopWindowsBrush}" />
+                        </DataTrigger>
+
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Cursor" Value="Hand" />
+                            <Trigger.EnterActions>
+                                <RemoveStoryboard BeginStoryboardName="ExitColorOverlay" />
+                                <BeginStoryboard Name="EnterColorOverlay">
+                                    <Storyboard>
+                                        <ColorAnimation
+                                            Storyboard.TargetName="PlaySign"
+                                            Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                            From="{StaticResource StrongerGrayOverlay}"
+                                            To="{StaticResource DefaultWhiteColor}"
+                                            Duration="0:0:0.1" />
+
+                                        <ColorAnimation
+                                            Storyboard.TargetName="Elipse"
+                                            Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                            From="{StaticResource StrongerGrayOverlay}"
+                                            To="{StaticResource DefaultRedColor}"
+                                            Duration="0:0:0.1" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+
+                            <Trigger.ExitActions>
+                                <RemoveStoryboard BeginStoryboardName="EnterColorOverlay" />
+                                <BeginStoryboard Name="ExitColorOverlay">
+                                    <Storyboard FillBehavior="Stop">
+                                        <ColorAnimation
+                                            Storyboard.TargetName="PlaySign"
+                                            Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                            From="{StaticResource DefaultWhiteColor}"
+                                            To="{StaticResource StrongerGrayOverlay}"
+                                            Duration="0:0:0.1" />
+
+                                        <ColorAnimation
+                                            Storyboard.TargetName="Elipse"
+                                            Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                            From="{StaticResource DefaultRedColor}"
+                                            To="{StaticResource StrongerGrayOverlay}"
+                                            Duration="0:0:0.1" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="{x:Type controls2:PlayableWrapPanelItem}">
         <Setter Property="Template">
             <Setter.Value>
@@ -42,6 +157,7 @@
                             <Grid Grid.Row="0" Background="{StaticResource GlassGradient}" />
 
                             <Grid
+                                Name="ImageGrid"
                                 Grid.Row="0"
                                 Width="200"
                                 Height="200"
@@ -72,26 +188,37 @@
                                     </Path>
                                 </Border>
 
-                                <Button
-                                    Grid.Row="0"
-                                    Command="{Binding Play}"
-                                    Style="{StaticResource Play}" />
-
-                                <Button
-                                    Margin="5,0,0,5"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Bottom"
-                                    Command="{Binding Detail}"
-                                    Content="Detail"
-                                    FontSize="15">
+                                <Button Grid.Row="0" Command="{Binding Play}">
                                     <Button.Style>
-                                        <Style BasedOn="{StaticResource BorderlessButtonStyle}" TargetType="Button">
-                                            <Setter Property="Visibility" Value="Hidden" />
+                                        <Style BasedOn="{StaticResource PlayButtonStyle}" TargetType="Button">
                                             <Style.Triggers>
-                                                <DataTrigger
-                                                    Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}, Path=IsMouseOver}"
-                                                    Value="True">
-                                                    <Setter Property="Visibility" Value="Visible" />
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition
+                                                            Binding="{Binding ElementName=ImageGrid, Path=IsMouseOver}"
+                                                            Value="True" />
+                                                        <Condition
+                                                            Binding="{Binding IsPlaying}"
+                                                            Value="False" />
+                                                    </MultiDataTrigger.Conditions>
+                                                    <MultiDataTrigger.EnterActions>
+                                                        <BeginStoryboard Name="VisibilityStoryboard">
+                                                            <Storyboard>
+                                                                <DoubleAnimation
+                                                                    Storyboard.TargetProperty="Opacity"
+                                                                    From="0.0"
+                                                                    To="1.0"
+                                                                    Duration="{StaticResource AnimationDuration}" />
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </MultiDataTrigger.EnterActions>
+                                                    <MultiDataTrigger.ExitActions>
+                                                        <RemoveStoryboard BeginStoryboardName="VisibilityStoryboard" />
+                                                    </MultiDataTrigger.ExitActions>
+                                                </MultiDataTrigger>
+
+                                                <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                                    <Setter Property="Opacity" Value="1" />
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
@@ -99,29 +226,27 @@
                                 </Button>
 
                                 <Button
+                                    Margin="5,0,0,5"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Bottom"
+                                    Command="{Binding Detail}"
+                                    Content="Detail"
+                                    FontSize="15"
+                                    Style="{StaticResource PlayableWrapPanelItemButtons}" />
+
+                                <Button
                                     Margin="0,0,5,5"
                                     Padding="3"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Bottom"
-                                    Command="{Binding AddToPlaylist}">
+                                    Command="{Binding AddToPlaylist}"
+                                    Style="{StaticResource PlayableWrapPanelItemButtons}">
                                     <Button.Content>
                                         <Path
                                             Height="25"
                                             Fill="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}, Path=Foreground}"
                                             Style="{StaticResource AddToList}" />
                                     </Button.Content>
-                                    <Button.Style>
-                                        <Style BasedOn="{StaticResource BorderlessButtonStyle}" TargetType="Button">
-                                            <Setter Property="Visibility" Value="Hidden" />
-                                            <Style.Triggers>
-                                                <DataTrigger
-                                                    Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}, Path=IsMouseOver}"
-                                                    Value="True">
-                                                    <Setter Property="Visibility" Value="Visible" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Button.Style>
                                 </Button>
                             </Grid>
 
@@ -168,7 +293,7 @@
                                         <i:Interaction.Behaviors>
                                             <text:PanningTextWithFontSizeBehavior
                                                 BiggerFontSize="25"
-                                                Container="{Binding ElementName=A}"
+                                                Container="{Binding ElementName=GridParent}"
                                                 IsMouseOverRelativeToContainer="True" />
                                         </i:Interaction.Behaviors>
                                     </TextBlock>

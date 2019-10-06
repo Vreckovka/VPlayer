@@ -125,7 +125,6 @@ namespace VPlayer.Player.ViewModels
     {
       base.Initialize();
 
-      PlayList.ItemAdded.Subscribe(ItemsAdded);
       PlayList.ItemRemoved.Subscribe(ItemsRemoved);
 
       KeyListener.KeyListener.OnKeyPressed += KeyListener_OnKeyPressed;
@@ -149,7 +148,7 @@ namespace VPlayer.Player.ViewModels
 
       MediaPlayer.EndReached += (sender, e) => { PlayNext(); };
 
-      MediaPlayer.TimeChanged += (sender, e) => { ActualSong.ActualPosition = ((VlcMediaPlayer)sender).Position; };
+      MediaPlayer.TimeChanged += (sender, e) => { ActualSong.ActualPosition = ((VlcMediaPlayer) sender).Position; };
 
       MediaPlayer.Paused += (sender, e) =>
       {
@@ -170,28 +169,14 @@ namespace VPlayer.Player.ViewModels
       eventAggregator.GetEvent<AddSongsEvent>().Subscribe(AddSongs);
     }
 
-    #region ItemsAdded
-
-    private void ItemsAdded(EventPattern<SongInPlayList> eventPattern)
-    {
-      if (eventPattern.EventArgs.AlbumViewModel != null)
-        eventPattern.EventArgs.ArtistViewModel.IsInPlaylist = true;
-
-      if (eventPattern.EventArgs.AlbumViewModel != null)
-        eventPattern.EventArgs.AlbumViewModel.IsInPlaylist = true;
-    }
-
-    #endregion ItemsAdded
+    #endregion Initialize
 
     #region ItemsRemoved
 
     private void ItemsRemoved(EventPattern<SongInPlayList> eventPattern)
     {
-      if (eventPattern.EventArgs.AlbumViewModel != null)
-        eventPattern.EventArgs.ArtistViewModel.IsInPlaylist = false;
-
-      if (eventPattern.EventArgs.AlbumViewModel != null)
-        eventPattern.EventArgs.AlbumViewModel.IsInPlaylist = false;
+      eventPattern.EventArgs.ArtistViewModel.IsInPlaylist = false;
+      eventPattern.EventArgs.AlbumViewModel.IsInPlaylist = false;
     }
 
     #endregion ItemsRemoved
@@ -237,8 +222,6 @@ namespace VPlayer.Player.ViewModels
     }
 
     #endregion PlaySongs
-
-    #endregion Initialize
 
     #region Play
 

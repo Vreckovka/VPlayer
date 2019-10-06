@@ -16,6 +16,8 @@ namespace VPlayer.Core.ViewModels
   {
     #region Fields
 
+    private readonly IAlbumsViewModel albumsViewModel;
+    private readonly IArtistsViewModel artistsViewModel;
     private readonly IEventAggregator eventAggregator;
 
     #endregion Fields
@@ -29,12 +31,26 @@ namespace VPlayer.Core.ViewModels
       Song model) : base(model)
     {
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
-
-      AlbumViewModel = albumsViewModel.ViewModels.Single(x => x.ModelId == model.Album.Id);
-      ArtistViewModel = artistsViewModel.ViewModels.Single(x => x.ModelId == AlbumViewModel.Model.Artist.Id);
+      this.albumsViewModel = albumsViewModel ?? throw new ArgumentNullException(nameof(albumsViewModel));
+      this.artistsViewModel = artistsViewModel ?? throw new ArgumentNullException(nameof(artistsViewModel));
     }
 
     #endregion Constructors
+
+    #region Methods
+
+    public override async void Initialize()
+    {
+      base.Initialize();
+
+      AlbumViewModel = (await albumsViewModel.GetViewModelsAsync()).Single(x => x.ModelId == Model.Album.Id);
+      ArtistViewModel = (await artistsViewModel.GetViewModelsAsync()).Single(x => x.ModelId == AlbumViewModel.Model.Artist.Id);
+
+      AlbumViewModel.IsInPlaylist = true;
+      ArtistViewModel.IsInPlaylist = true;
+    }
+
+    #endregion Methods
 
     #region Properties
 

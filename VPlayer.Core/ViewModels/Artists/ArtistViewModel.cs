@@ -55,7 +55,7 @@ namespace VPlayer.Core.ViewModels.Artists
     #region Properties
 
     public override string BottomText => Model.Albums?.Count.ToString();
-    public override byte[] ImageThumbnail => Model.ArtistCover != null ? Model.ArtistCover : ConvertImageToByte("C:\\Users\\Roman Pecho\\source\\repos\\VPlayer\\VPlayer\\Resources\\VPlayer_Artist.png");
+    public override byte[] ImageThumbnail => Model.ArtistCover != null ? Model.ArtistCover : GetEmptyImage();
 
     #endregion Properties
 
