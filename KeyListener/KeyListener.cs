@@ -2,10 +2,11 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
+using VCore.ViewModels;
 
-namespace KeyListener
+namespace Listener
 {
-  public static class KeyListener
+  public class KeyListener : ViewModel
   {
     #region Fields
 
@@ -13,15 +14,15 @@ namespace KeyListener
     private const int WM_KEYDOWN = 0x0100;
     private const int WM_SYSKEYDOWN = 0x0104;
 
-    private static IntPtr _hookID = IntPtr.Zero;
+    private IntPtr _hookID = IntPtr.Zero;
 
-    private static LowLevelKeyboardProc _proc;
+    private LowLevelKeyboardProc _proc;
 
     #endregion Fields
 
     #region Constructors
 
-    static KeyListener()
+    public KeyListener()
     {
       _proc = HookCallback;
       HookKeyboard();
@@ -37,18 +38,18 @@ namespace KeyListener
 
     #region Events
 
-    public static event EventHandler<KeyPressedArgs> OnKeyPressed;
+    public event EventHandler<KeyPressedArgs> OnKeyPressed;
 
     #endregion Events
 
     #region Methods
 
-    public static void HookKeyboard()
+    public void HookKeyboard()
     {
       _hookID = SetHook(_proc);
     }
 
-    public static void UnHookKeyboard()
+    public void UnHookKeyboard()
     {
       UnhookWindowsHookEx(_hookID);
     }
@@ -63,7 +64,7 @@ namespace KeyListener
     [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     private static extern IntPtr GetModuleHandle(string lpModuleName);
 
-    private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+    private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
     {
       if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN || wParam == (IntPtr)WM_SYSKEYDOWN)
       {

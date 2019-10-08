@@ -146,15 +146,10 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Behaviors\SliderValueChangedManualy.cs" />
     <Compile Include="Converters\ActualTimeConverter.cs" />
-    <Compile Include="Design\PlayerDesingViewModel.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />
     <Compile Include="Views\PlayerView.xaml.cs">
       <DependentUpon>PlayerView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\WindowsPlayer\WindowsPlayerView.xaml.cs">
-      <DependentUpon>WindowsPlayerView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -203,33 +198,23 @@
       <Name>Logger</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj">
-      <Project>{b5245008-cfdf-4b83-bf61-b0b26a8e92bf}</Project>
-      <Name>VPlayer.AudioStorage</Name>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="..\VPlayer.Core\VPlayer.Core.csproj">
       <Project>{b8d5c40b-3b3d-43e1-95fa-97087581bda2}</Project>
       <Name>VPlayer.Core</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\VPlayer.Library\VPlayer.Library.csproj">
-      <Project>{26d6bb81-3f3c-4ddc-857d-2b2dc4c660b8}</Project>
-      <Name>VPlayer.Library</Name>
-      <Private>False</Private>
+    <ProjectReference Include="..\VPlayer.WebPlayer\VPlayer.WebPlayer.csproj">
+      <Project>{2d6b4aae-1065-4e73-a96a-bdc154f0f4fe}</Project>
+      <Name>VPlayer.WebPlayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VPlayer.WindowsPlayer\VPlayer.WindowsPlayer.csproj">
+      <Project>{a252ebb2-d31a-4a6a-a77c-a688e303801d}</Project>
+      <Name>VPlayer.WindowsPlayer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
     <Page Include="Views\PlayerView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\WindowsPlayer\WindowsPlayerView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\WindowsPlayer\WindowsPlayerViewResources.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

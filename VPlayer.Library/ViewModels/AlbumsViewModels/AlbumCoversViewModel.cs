@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,9 +24,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     #region Fields
 
     private readonly AlbumViewModel albumViewModel;
-    private readonly INavigationProvider navigationProvider;
     private readonly IStorageManager storage;
-    private object baton = new object();
     private CancellationTokenSource cancellationTokenSource;
 
     #endregion Fields
@@ -37,11 +36,10 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
       AudioInfoDownloader audioInfoDownloader,
       AlbumViewModel albumViewModel,
       IStorageManager storage,
-      INavigationProvider navigationProvider) : base(regionProvider)
+      string regionName) : base(regionProvider)
     {
       this.albumViewModel = albumViewModel ?? throw new ArgumentNullException(nameof(albumViewModel));
       this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
-      this.navigationProvider = navigationProvider ?? throw new ArgumentNullException(nameof(navigationProvider));
 
       cancellationTokenSource = new CancellationTokenSource();
       var cancellationToken = cancellationTokenSource.Token;
@@ -49,6 +47,8 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
       audioInfoDownloader.GetAlbumFrontCoversUrls(albumViewModel.Model, cancellationToken);
 
       audioInfoDownloader.CoversDownloaded += Instance_CoversDownloaded;
+
+      RegionName = regionName;
     }
 
     #endregion Constructors
@@ -59,7 +59,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     public override bool ContainsNestedRegions => false;
     public double DownloadedProcessValue { get; set; }
     public int FoundConvers { get; set; }
-    public override string RegionName => RegionNames.LibraryContentRegion;
+    public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
 
     #endregion Properties
 
@@ -115,38 +115,53 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
     #region Instance_CoversDownloaded
 
-    private async void Instance_CoversDownloaded(object sender, List<AlbumCover> e)
+    private object batton = new object();
+    private void Instance_CoversDownloaded(object sender, List<AlbumCover> e)
     {
       FoundConvers += e.Count;
-
-      foreach (var cover in e)
+      try
       {
-        var downloadedCover = await Task.Run(() =>
+        lock (batton)
         {
-          using (var client = new WebClient())
+          Task.Run(async () =>
           {
-            try
+            foreach (var cover in e)
             {
-              return client.DownloadData(cover.Url);
-            }
-            catch (Exception ex)
-            {
-              Logger.Logger.Instance.LogException(ex);
-              return null;
-            }
-          }
-        });
+              try
+              {
+                using (var client = new WebClient())
+                using (var registration = cancellationTokenSource.Token.Register(() => client.CancelAsync()))
+                {
+                  var downloadedCover = await client.DownloadDataTaskAsync(cover.Url);
 
-        if (downloadedCover != null)
-          Application.Current.Dispatcher.Invoke(() =>
-          {
-            cover.DownloadedCover = downloadedCover;
-            cover.Size = downloadedCover.Length;
-            AlbumCovers.Add(cover);
-            DownloadedProcessValue = (double)(AlbumCovers.Count * 100) / FoundConvers;
-          });
+                  if (downloadedCover != null)
+                  {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                      cover.DownloadedCover = downloadedCover;
+                      cover.Size = downloadedCover.Length;
+
+                      AlbumCovers.Add(cover);
+
+                      DownloadedProcessValue = (double) (AlbumCovers.Count * 100) / FoundConvers;
+                    });
+                  }
+                }
+              }
+              catch (Exception ex)
+              {
+                Logger.Logger.Instance.LogException(ex);
+              }
+            }
+          }, cancellationTokenSource.Token);
+        };
+      }
+      catch (WebException ex) when (ex.Status == WebExceptionStatus.RequestCanceled)
+      {
+        Logger.Logger.Instance.Log(Logger.MessageType.Inform, "asd");
       }
     }
+
 
     #endregion Instance_CoversDownloaded
 
@@ -155,6 +170,11 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
       base.OnBackCommand();
 
       cancellationTokenSource.Cancel();
+    }
+
+    public static string GetRegionName()
+    {
+      return RegionNames.LibraryContentRegion;
     }
 
     #endregion Methods

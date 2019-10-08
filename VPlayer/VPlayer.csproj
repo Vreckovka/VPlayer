@@ -442,15 +442,15 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Geckofx60.64.60.0.39\build\Geckofx60.64.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Geckofx60.64.60.0.39\build\Geckofx60.64.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
-    <Error Condition="!Exists('..\packages\VideoLAN.LibVLC.Windows.3.0.8.1\build\VideoLAN.LibVLC.Windows.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\VideoLAN.LibVLC.Windows.3.0.8.1\build\VideoLAN.LibVLC.Windows.targets'))" />
     <Error Condition="!Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.3.0\build\EntityFramework.props'))" />
     <Error Condition="!Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.3.0\build\EntityFramework.targets'))" />
     <Error Condition="!Exists('..\packages\Fody.4.2.1\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.4.2.1\build\Fody.targets'))" />
     <Error Condition="!Exists('..\packages\PropertyChanged.Fody.2.6.1\build\PropertyChanged.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PropertyChanged.Fody.2.6.1\build\PropertyChanged.Fody.props'))" />
+    <Error Condition="!Exists('..\packages\VideoLAN.LibVLC.Windows.3.0.8.1\build\VideoLAN.LibVLC.Windows.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\VideoLAN.LibVLC.Windows.3.0.8.1\build\VideoLAN.LibVLC.Windows.targets'))" />
   </Target>
   <Import Project="..\packages\Geckofx60.64.60.0.39\build\Geckofx60.64.targets" Condition="Exists('..\packages\Geckofx60.64.60.0.39\build\Geckofx60.64.targets')" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
-  <Import Project="..\packages\VideoLAN.LibVLC.Windows.3.0.8.1\build\VideoLAN.LibVLC.Windows.targets" Condition="Exists('..\packages\VideoLAN.LibVLC.Windows.3.0.8.1\build\VideoLAN.LibVLC.Windows.targets')" />
   <Import Project="..\packages\EntityFramework.6.3.0\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.3.0\build\EntityFramework.targets')" />
   <Import Project="..\packages\Fody.4.2.1\build\Fody.targets" Condition="Exists('..\packages\Fody.4.2.1\build\Fody.targets')" />
+  <Import Project="..\packages\VideoLAN.LibVLC.Windows.3.0.8.1\build\VideoLAN.LibVLC.Windows.targets" Condition="Exists('..\packages\VideoLAN.LibVLC.Windows.3.0.8.1\build\VideoLAN.LibVLC.Windows.targets')" />
 </Project>

@@ -145,7 +145,9 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Behaviors\SliderValueChangedManualy.cs" />
     <Compile Include="Converters.cs" />
+    <Compile Include="Design\PlayerDesingViewModel.cs" />
     <Compile Include="Design\WindowsPlayerDesignViewModel.cs" />
     <Compile Include="Modularity\NinjectModule\WindowsPlayerNinjectModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -162,8 +164,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="ViewModels\WindowsPlayerViewModel.cs" />
-    <Compile Include="Views\WindowsPlayerView.xaml.cs">
+    <Compile Include="ViewModels\WindowsViewModel.cs" />
+    <Compile Include="Views\WindowsPlayer\WindowsPlayerView.xaml.cs">
       <DependentUpon>WindowsPlayerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WindowsView.xaml.cs">
+      <DependentUpon>WindowsView.xaml</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -180,7 +186,15 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Views\WindowsPlayerView.xaml">
+    <Page Include="Views\WindowsPlayer\WindowsPlayerView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\WindowsPlayer\WindowsPlayerViewResources.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\WindowsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -196,6 +210,10 @@
       <Name>VCore</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj">
+      <Project>{b5245008-cfdf-4b83-bf61-b0b26a8e92bf}</Project>
+      <Name>VPlayer.AudioStorage</Name>
+    </ProjectReference>
     <ProjectReference Include="..\VPlayer.Core\VPlayer.Core.csproj">
       <Project>{b8d5c40b-3b3d-43e1-95fa-97087581bda2}</Project>
       <Name>VPlayer.Core</Name>
@@ -204,11 +222,6 @@
     <ProjectReference Include="..\VPlayer.Library\VPlayer.Library.csproj">
       <Project>{26d6bb81-3f3c-4ddc-857d-2b2dc4c660b8}</Project>
       <Name>VPlayer.Library</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\VPlayer.Player\VPlayer.Player.csproj">
-      <Project>{d56e4595-786f-4580-b3e0-eea5871f582f}</Project>
-      <Name>VPlayer.Player</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>

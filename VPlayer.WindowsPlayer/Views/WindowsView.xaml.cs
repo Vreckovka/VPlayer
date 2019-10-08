@@ -7,7 +7,7 @@ namespace VPlayer.WindowsPlayer.Views
   /// <summary>
   /// Interaction logic for Player.xaml
   /// </summary>
-  public partial class WindowsPlayerView : UserControl, IView
+  public partial class WindowsView : UserControl, IView
   {
     #region Fields
 
@@ -17,7 +17,7 @@ namespace VPlayer.WindowsPlayer.Views
 
     #region Constructors
 
-    public WindowsPlayerView()
+    public WindowsView()
     {
       InitializeComponent();
 

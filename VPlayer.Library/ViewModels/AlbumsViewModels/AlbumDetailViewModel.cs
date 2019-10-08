@@ -24,10 +24,12 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     public AlbumDetailViewModel(
       IRegionProvider regionProvider,
       IViewModelsFactory viewModelsFactory,
-      AlbumViewModel album) : base(regionProvider)
+      AlbumViewModel album,
+      string regionName) : base(regionProvider)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       ActualAlbum = album;
+      RegionName = regionName;
     }
 
     #endregion Constructors
@@ -36,9 +38,8 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
     public AlbumViewModel ActualAlbum { get; set; }
     public IEnumerable<Song> AlbumSongs => ActualAlbum.Model?.Songs;
-
     public override bool ContainsNestedRegions => false;
-    public override string RegionName => RegionNames.LibraryContentRegion;
+    public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
 
     #endregion Properties
 
@@ -61,10 +62,16 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
     protected void OnGetCovers()
     {
-      var covers = viewModelsFactory.Create<AlbumCoversViewModel>(ActualAlbum);
+      var covers = viewModelsFactory.Create<AlbumCoversViewModel>(ActualAlbum,RegionName);
+
       covers.IsActive = true;
     }
 
     #endregion GetCovers
+
+    public static string GetRegionName()
+    {
+      return RegionNames.LibraryContentRegion;
+    }
   }
 }

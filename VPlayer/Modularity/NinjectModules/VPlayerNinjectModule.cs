@@ -1,7 +1,8 @@
-﻿using KeyListener;
+﻿using Listener;
 using Ninject;
 using VCore.Modularity.NinjectModules;
 using VPlayer.Player.ViewModels;
+using VPlayer.WebPlayer.ViewModels;
 using VPlayer.WindowsPlayer.Modularity.NinjectModule;
 
 namespace VPlayer.Modularity.NinjectModules
@@ -14,7 +15,10 @@ namespace VPlayer.Modularity.NinjectModules
 
       Kernel.Load<WindowsPlayerNinjectModule>();
 
+      Kernel.BindToSelfInSingletonScope<WindowsPlayerViewModel>();
+      Kernel.BindToSelfInSingletonScope<WebPlayerViewModel>();
       Kernel.BindToSelfInSingletonScope<PlayerViewModel>();
+      Kernel.BindToSelfInSingletonScope<KeyListener>();
     }
   }
 }

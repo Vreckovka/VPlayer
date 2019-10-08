@@ -17,7 +17,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
     private readonly IStorageManager storage;
     private readonly IViewModelsFactory viewModelsFactory;
-    private readonly IVPlayerRegionManager vPlayerRegionManager;
+    private readonly IVPlayerRegionProvider ivPlayerRegionProvider;
 
     #endregion Fields
 
@@ -28,11 +28,11 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
       IEventAggregator eventAggregator,
       IStorageManager storage,
       IViewModelsFactory viewModelsFactory,
-      IVPlayerRegionManager vPlayerRegionManager) : base(model, eventAggregator)
+      IVPlayerRegionProvider ivPlayerRegionProvider) : base(model, eventAggregator)
     {
       this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
-      this.vPlayerRegionManager = vPlayerRegionManager ?? throw new ArgumentNullException(nameof(vPlayerRegionManager));
+      this.ivPlayerRegionProvider = ivPlayerRegionProvider ?? throw new ArgumentNullException(nameof(ivPlayerRegionProvider));
     }
 
     #endregion Constructors
@@ -46,6 +46,8 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
     #region Methods
 
+    #region GetSongsToPlay
+
     public override IEnumerable<SongInPlayList> GetSongsToPlay()
     {
       var songs = storage.GetRepository<Song>().Include(x => x.Album).Where(x => x.Album.Id == Model.Id).ToList();
@@ -54,16 +56,26 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
       return playListSong;
     }
 
+    #endregion
+
+    #region Update
+
     public override void Update(Album updateItem)
     {
       Model.AlbumFrontCoverBLOB = updateItem.AlbumFrontCoverBLOB;
       RaisePropertyChanged(nameof(ImageThumbnail));
     }
 
+    #endregion
+
+    #region OnDetail
+
     protected override void OnDetail()
     {
-      vPlayerRegionManager.ShowAlbumDetail(this);
+      ivPlayerRegionProvider.ShowAlbumDetail(this);
     }
+
+    #endregion
 
     #endregion Methods
   }

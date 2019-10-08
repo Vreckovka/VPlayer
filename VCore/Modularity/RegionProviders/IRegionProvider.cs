@@ -19,8 +19,8 @@ namespace VCore.Modularity.RegionProviders
       where TView : class, IView
       where TViewModel : class, INotifyPropertyChanged;
 
-    #endregion Methods
-
     void GoBack(Guid guid);
+
+    #endregion Methods
   }
 }

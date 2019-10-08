@@ -157,12 +157,16 @@ namespace VPlayer.Core.ViewModels
 
     #endregion Methods
 
+    #region GetEmptyImage
+
     public byte[] GetEmptyImage()
     {
       var bitmap = new Bitmap(1, 1, PixelFormat.Format24bppRgb);
 
       ImageConverter converter = new ImageConverter();
       return (byte[])converter.ConvertTo(bitmap, typeof(byte[]));
-    }
+    } 
+
+    #endregion
   }
 }

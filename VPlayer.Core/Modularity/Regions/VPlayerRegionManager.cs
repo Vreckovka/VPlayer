@@ -8,22 +8,22 @@ using VPlayer.Library.ViewModels.AlbumsViewModels;
 
 namespace VPlayer.Core.Modularity.Regions
 {
-  public interface IVPlayerRegionManager : IRegionProvider
+  public interface IVPlayerRegionProvider : IRegionProvider
   {
     #region Methods
 
-    void ShowAlbumDetail(AlbumViewModel albumViewModel);
+    void ShowAlbumDetail(AlbumViewModel albumViewModel,string regionName = null);
 
     void ShowArtistDetail(ArtistViewModel albumViewModel);
 
     #endregion Methods
   }
 
-  public class VPlayerRegionManager : BaseRegionProvider, IVPlayerRegionManager
+  public class VPlayerRegionProvider : BaseRegionProvider, IVPlayerRegionProvider
   {
     #region Constructors
 
-    public VPlayerRegionManager(
+    public VPlayerRegionProvider(
       IRegionManager regionManager,
       IViewFactory viewFactory,
       IViewModelsFactory viewModelsFactory,
@@ -35,7 +35,7 @@ namespace VPlayer.Core.Modularity.Regions
 
     #region Methods
 
-    public virtual void ShowAlbumDetail(AlbumViewModel albumViewModel)
+    public virtual void ShowAlbumDetail(AlbumViewModel albumViewModel, string regionName = null)
     {
     }
 

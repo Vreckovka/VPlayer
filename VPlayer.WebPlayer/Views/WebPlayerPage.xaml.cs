@@ -9,6 +9,7 @@ using System.Windows.Media;
 using Gecko;
 using Gecko.DOM;
 using Gecko.WebIDL;
+using VCore.Modularity.Interfaces;
 using VPlayer.WebPlayer.Models;
 using VPlayer.WebPlayer.ViewModels;
 using Console = System.Console;
@@ -21,9 +22,9 @@ namespace VPlayer.WebPlayer.Views
     /// </summary>
     ///
 
-    public partial class WebPlayerPage : Page
+    public partial class WebPlayerPage : Page, IView
     {
-        private WebPlayersViewModel _internetPlayersView;
+        private WebPlayerViewModel internetPlayerView;
         private GeckoWebBrowser browser;
         private bool _fidingState;
         private string _userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:64.0) Gecko/20100101 Firefox/64.0";
@@ -45,8 +46,6 @@ namespace VPlayer.WebPlayer.Views
         public WebPlayerPage()
         {
             InitializeComponent();
-            _internetPlayersView = new WebPlayersViewModel();
-            DataContext = _internetPlayersView;
 
             //PlayerHandler.Play += PlayerHandler_Play;
             //PlayerHandler.Pause += PlayerHandler_Play;

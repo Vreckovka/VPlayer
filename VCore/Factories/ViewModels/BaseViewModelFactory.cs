@@ -45,7 +45,10 @@ namespace VCore.Factories
 
       foreach (var parameter in parametersTypes)
       {
-        constructorArguments.Add(GetConstructorArgument<TConstructedType>(parameter));
+        var argument = GetConstructorArgument<TConstructedType>(parameter);
+
+        if (argument != null)
+          constructorArguments.Add(argument);
       }
 
       return constructorArguments;
@@ -55,19 +58,24 @@ namespace VCore.Factories
     {
       Type argumentType = null;
 
-      if (argumentValue.GetType().Assembly.IsDynamic)
+      if (argumentValue != null)
       {
-        argumentType = argumentValue.GetType().BaseType;
+        if (argumentValue.GetType().Assembly.IsDynamic)
+        {
+          argumentType = argumentValue.GetType().BaseType;
+        }
+        else
+          argumentType = argumentValue.GetType();
+
+
+        var argumentName = GetConstructorArgumentName<TConstructedType>(argumentType);
+
+        var constructorArgument = new ConstructorArgument(argumentName, argumentValue);
+
+        return constructorArgument;
       }
-      else
-        argumentType = argumentValue.GetType();
 
-
-      var argumentName = GetConstructorArgumentName<TConstructedType>(argumentType);
-
-      var constructorArgument = new ConstructorArgument(argumentName, argumentValue);
-
-      return constructorArgument;
+      return null;
     }
 
     protected string GetConstructorArgumentName<TConstructedType>(Type argumentType)

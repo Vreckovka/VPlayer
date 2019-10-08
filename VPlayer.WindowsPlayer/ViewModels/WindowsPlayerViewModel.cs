@@ -1,205 +1,309 @@
-﻿using System;
-using VCore.Factories;
+﻿using Listener;
+using Ninject;
+using Prism.Events;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using System.Reactive;
+using System.Reflection;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using VCore;
+using VCore.ItemsCollections;
+using VCore.Modularity.Interfaces;
 using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
+using Vlc.DotNet.Core;
+using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
-using VPlayer.Library.ViewModels;
-using VPlayer.Player.ViewModels;
-using VPlayer.WindowsPlayer.Views;
+using VPlayer.Core.ViewModels;
+using VPlayer.Player.Views;
+using VPlayer.Player.Views.WindowsPlayer;
 
-namespace VPlayer.WindowsPlayer.ViewModels
+namespace VPlayer.Player.ViewModels
 {
-  public class WindowsPlayerViewModel : RegionViewModel<WindowsPlayerView>, INavigationItem
+  public class WindowsPlayerViewModel : PlayableRegionViewModel<WindowsPlayerView>, INavigationItem
   {
     #region Fields
 
-    private readonly IViewModelsFactory viewModelsFactory;
+    private readonly IVPlayerRegionProvider regionProvider;
+    private readonly IEventAggregator eventAggregator;
+    private int actualSongIndex = 0;
 
     #endregion Fields
 
     #region Constructors
 
     public WindowsPlayerViewModel(
-      IRegionProvider regionProvider,
-      IViewModelsFactory viewModelsFactory,
-      NavigationViewModel navigationViewModel) : base(regionProvider)
+      IVPlayerRegionProvider regionProvider,
+      IEventAggregator eventAggregator) : base(regionProvider)
     {
-      this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
-      NavigationViewModel = navigationViewModel ?? throw new ArgumentNullException(nameof(navigationViewModel));
+      this.regionProvider = regionProvider ?? throw new ArgumentNullException(nameof(regionProvider));
+      this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
     }
 
     #endregion Constructors
 
     #region Properties
 
-    public override bool ContainsNestedRegions => true;
-    public string Header => "Windows player";
-    public NavigationViewModel NavigationViewModel { get; set; }
-    public override string RegionName => RegionNames.ContentRegion;
-
+    public SongInPlayList ActualSong { get; private set; }
+    public override bool IsPlaying { get; protected set; }
+    public VlcMediaPlayer MediaPlayer { get; private set; }
+    public RxObservableCollection<SongInPlayList> PlayList { get; set; } = new RxObservableCollection<SongInPlayList>();
+    public override bool ContainsNestedRegions => false;
+    public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
+    public string Header => "Player";
+    
     #endregion Properties
 
+    #region Commands
+
+    public void OnPlayButton()
+    {
+      if (IsPlaying)
+        Pause();
+      else
+        Play();
+    }
+
+    #region NextSong
+
+    private ActionCommand<SongInPlayList> nextSong;
+
+    public ICommand NextSong
+    {
+      get
+      {
+        if (nextSong == null)
+        {
+          nextSong = new ActionCommand<SongInPlayList>(OnNextSong);
+        }
+
+        return nextSong;
+      }
+    }
+
+    public void OnNextSong(
+      SongInPlayList songInPlayList)
+    {
+      PlayNext(songInPlayList);
+    }
+
+    #endregion NextSong
+
+    #region AlbumDetail
+
+    private ActionCommand albumDetail;
+
+    public ICommand AlbumDetail
+    {
+      get
+      {
+        if (albumDetail == null)
+        {
+          albumDetail = new ActionCommand(OnAlbumDetail);
+        }
+
+        return albumDetail;
+      }
+    }
+
+    public void OnAlbumDetail()
+    {
+      regionProvider.ShowAlbumDetail(ActualSong.AlbumViewModel, RegionNames.WindowsPlayerContentRegion);
+    }
+
+    #endregion NextSong
+
+    #endregion Commands
+
     #region Methods
+
+    #region Initialize
 
     public override void Initialize()
     {
       base.Initialize();
 
-      var libraryViewModel = viewModelsFactory.Create<LibraryViewModel>();
-      libraryViewModel.IsActive = true;
+      PlayList.ItemRemoved.Subscribe(ItemsRemoved);
 
-      var playerViewModel = viewModelsFactory.Create<PlayerViewModel>();
-      var item = playerViewModel.Views[typeof(Player.Views.WindowsPlayer.WindowsPlayerView)];
+      var currentAssembly = Assembly.GetEntryAssembly();
+      var currentDirectory = new FileInfo(currentAssembly.Location).DirectoryName;
+      var path = new DirectoryInfo(Path.Combine(currentDirectory, "libvlc", IntPtr.Size == 4 ? "win-x86" : "win-x64"));
 
-      NavigationViewModel.Items.Add(libraryViewModel);
-      NavigationViewModel.Items.Add(item);
+      var libDirectory = new DirectoryInfo(path.FullName);
+      MediaPlayer = new VlcMediaPlayer(libDirectory);
+
+      bool playFinished = false;
+
+      MediaPlayer.EncounteredError += (sender, e) =>
+      {
+        Console.Error.Write("An error occurred");
+        playFinished = true;
+      };
+
+      MediaPlayer.EndReached += (sender, e) => { PlayNext(); };
+
+      MediaPlayer.TimeChanged += (sender, e) => { ActualSong.ActualPosition = ((VlcMediaPlayer) sender).Position; };
+
+      MediaPlayer.Paused += (sender, e) =>
+      {
+        ActualSong.IsPaused = true;
+        IsPlaying = false;
+      };
+
+      MediaPlayer.Playing += (sender, e) =>
+      {
+        ActualSong.IsPlaying = true;
+        ActualSong.IsPaused = false;
+        IsPlaying = true;
+      };
+
+      eventAggregator.GetEvent<PlaySongsEvent>().Subscribe(PlaySongs);
+      eventAggregator.GetEvent<PauseEvent>().Subscribe(Pause);
+      eventAggregator.GetEvent<PlaySongsFromPlayListEvent>().Subscribe(PlaySongFromPlayList);
+      eventAggregator.GetEvent<AddSongsEvent>().Subscribe(AddSongs);
     }
+
+    #endregion Initialize
+
+    #region ItemsRemoved
+
+    private void ItemsRemoved(EventPattern<SongInPlayList> eventPattern)
+    {
+      eventPattern.EventArgs.ArtistViewModel.IsInPlaylist = false;
+      eventPattern.EventArgs.AlbumViewModel.IsInPlaylist = false;
+    }
+
+    #endregion ItemsRemoved
+
+    #region PlaySongFromPlayList
+
+    private void PlaySongFromPlayList(SongInPlayList songInPlayList)
+    {
+      if (songInPlayList == ActualSong)
+      {
+        if (!ActualSong.IsPaused)
+          Pause();
+        else
+          Play();
+      }
+      else
+      {
+        PlayNext(songInPlayList);
+      }
+    }
+
+    #endregion PlaySongFromPlayList
+
+    #region PlaySongs
+
+    private void PlaySongs(IEnumerable<SongInPlayList> songs)
+    {
+      actualSongIndex = 0;
+      PlayList.Clear();
+      PlayList.AddRange(songs);
+      Play();
+
+      if (ActualSong != null) ActualSong.IsPlaying = false;
+    }
+
+    #endregion PlaySongs
+
+    #region PlaySongs
+
+    private void AddSongs(IEnumerable<SongInPlayList> songs)
+    {
+      PlayList.AddRange(songs);
+    }
+
+    #endregion PlaySongs
+
+    #region Play
+
+    public override void Play()
+    {
+      Task.Run(() =>
+      {
+        if (PlayList.Count > 0)
+        {
+          if (ActualSong != null)
+          {
+            ActualSong.IsPlaying = false;
+            ActualSong.IsPaused = false;
+          }
+
+          if (PlayList[actualSongIndex] == ActualSong)
+          {
+            MediaPlayer.Play();
+          }
+          else
+          {
+            ActualSong = PlayList[actualSongIndex];
+            MediaPlayer.SetMedia(new Uri(PlayList[actualSongIndex].Model.DiskLocation));
+
+            MediaPlayer.Play();
+          }
+        }
+      });
+    }
+
+    #endregion Play
+
+    #region Pause
+
+    public override void Pause()
+    {
+      MediaPlayer.Pause();
+    }
+
+    public override void PlayNext()
+    {
+      actualSongIndex++;
+    }
+
+    public override void PlayPrevious()
+    {
+      throw new NotImplementedException();
+    }
+
+    public override void Stop()
+    {
+      throw new NotImplementedException();
+    }
+
+    #endregion Pause
+
+    #region PlayNext
+
+    public void PlayNext(SongInPlayList nextSong = null)
+    {
+      if (nextSong == null)
+      {
+        actualSongIndex++;
+        Play();
+      }
+      else
+      {
+        var item = PlayList.Single(x => x.Model.Id == nextSong.Model.Id);
+
+        if (ActualSong != item)
+        {
+          actualSongIndex = PlayList.IndexOf(item);
+          Play();
+        }
+      }
+    }
+
+    #endregion PlayNext
+
+  
 
     #endregion Methods
 
-    //public override  (IContainerProvider containerProvider)
-    //{
-    //    var regionManager = containerProvider.Resolve<IRegionManager>();
-
-    //    regionManager.RegisterViewWithRegion("MainRegion", typeof(WindowsPlayerView));
-    //}
-
-    //public void Play(Uri uri = null, bool next = false)
-    //{
-    //    if (next)
-    //    {
-    //        _actualTrackId++;
-
-    //        ActualTrack.IsPlaying = false;
-
-    //        ActualTrack = AudioTracks[_actualTrackId];
-    //        ActualTrack.IsPlaying = true;
-    //    }
-
-    //    if (uri == null)
-    //    {
-    //        ActualTrack.IsPlaying = true;
-    //    }
-    //    else
-    //    {
-    //        ActualTrack.IsPlaying = false;
-    //        _actualTrackId = AudioTracks.IndexOf((from x in AudioTracks where x.Uri == uri select x).First());
-
-    //        ActualTrack = AudioTracks[_actualTrackId];
-
-    //        ActualTrack.IsPlaying = true;
-    //    }
-
-    //    IsPlaying = true;
-    //    PlayerHandler.OnPlay(this);
-    //}
-    //public void AddFiles(string[] path)
-    //{
-    //    foreach (var file in path)
-    //    {
-    //        FileAttributes attr = File.GetAttributes(file);
-
-    //        if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
-    //            AddFolder(file);
-    //        else
-    //            AddFile(file);
-    //    }
-
-    //    if (ActualTrack == null && AudioTracks.Count > 0)
-    //    {
-    //        ActualTrack = AudioTracks[0];
-    //    }
-    //}
-    //public void AddFolder(string folderPath)
-    //{
-    //    var directories = Directory.GetDirectories(folderPath);
-
-    //    if (directories.Length == 0)
-    //    {
-    //        DirectoryInfo directoryInfo = new DirectoryInfo(folderPath);
-    //        var Files = directoryInfo.GetFiles("*.mp3");
-
-    //        foreach (var file in Files)
-    //        {
-    //            AddFile(file.FullName);
-    //        }
-    //    }
-    //    else
-    //    {
-    //        for (int i = 0; i < directories.Length; i++)
-    //        {
-    //            AddFolder(directories[i]);
-    //        }
-    //    }
-    //}
-    //public void AddFile(string filePath)
-    //{
-    //    var tagLib = TagLib.File.Create(filePath);
-
-    //    AudioTrack audioTrack = new AudioTrack()
-    //    {
-    //        Uri = new Uri(filePath),
-    //        Name = tagLib.Tag.Title,
-    //        Duration = tagLib.Properties.Duration,
-    //        Artist = tagLib.Tag.FirstAlbumArtist,
-    //    };
-
-    //    if (tagLib.Tag.Title == null)
-    //    {
-    //        audioTrack.Name = GetFileName(tagLib);
-    //    }
-
-    //    Application.Current.Dispatcher.Invoke(() => { AudioTracks.Add(audioTrack); });
-
-    //}
-    //public string GetFileName(TagLib.File file)
-    //{
-    //    int temp = file.Name.LastIndexOf('\\');
-    //    return file.Name.Substring(temp + 1, file.Name.Length - temp - 1);
-    //}
-    //public async Task UpdateDatabaseFromFolder(string folderPath)
-    //{
-    //    try
-    //    {
-    //        var directories = Directory.GetDirectories(folderPath);
-    //        if (directories.Length == 0)
-    //        {
-    //            DirectoryInfo directoryInfo = new DirectoryInfo(folderPath);
-    //            var extensions = new[] { "*.mp3", "*.wav" };
-    //            var files = extensions.SelectMany(ext => directoryInfo.GetFiles(ext));
-
-    //            foreach (var file in files)
-    //            {
-    //                AudioInfo audioInfo = null;
-    //                audioInfo = await AudioInfoDownloader.GetSongInfoFromFileAsync(file.FullName);
-
-    //                if (audioInfo == null)
-    //                    audioInfo = await AudioInfoDownloader.GetTrackInfoByFingerPrint(file.FullName);
-
-    //                if (audioInfo != null)
-    //                {
-    //                    await DatabaseManager.UpdateDiscLocationOfSong(audioInfo, file.FullName);
-    //                }
-    //            }
-
-    //            Console.WriteLine("Update done");
-    //        }
-    //        else
-    //        {
-    //            for (int i = 0; i < directories.Length; i++)
-    //            {
-    //                await UpdateDatabaseFromFolder(directories[i]);
-    //            }
-
-    //            Console.WriteLine("Update done");
-    //        }
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        Console.WriteLine(ex.Message);
-    //        throw;
-    //    }
-    //}
+   
   }
 }

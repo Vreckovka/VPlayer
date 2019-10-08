@@ -142,6 +142,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\Albums\AlbumViewModel.cs" />
     <Compile Include="ViewModels\Artists\ArtistViewModel.cs" />
+    <Compile Include="ViewModels\PlayableRegionViewModel.cs" />
     <Compile Include="ViewModels\PlayableViewModel.cs" />
     <Compile Include="ViewModels\SongInPlayList.cs" />
   </ItemGroup>

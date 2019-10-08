@@ -18,7 +18,7 @@ namespace VCore.Modularity.Navigation
 
     IRegistredView GetPrevious(IRegistredView registredView);
 
-    void SetNavigation(IRegistredView registredView);
+    void SetNavigation(IRegistredView registredView, IRegion region = null);
 
     #endregion Methods
   }
@@ -61,9 +61,16 @@ namespace VCore.Modularity.Navigation
       return null;
     }
 
-    public void SetNavigation(IRegistredView registredView)
+    public void SetNavigation(IRegistredView registredView, IRegion region = null)
     {
-      if (NavigationItems.TryGetValue(registredView.Region, out var navigationItems))
+      var requestedRegion = registredView.Region;
+
+      if (region != null)
+      {
+        requestedRegion = region;
+      }
+
+      if (NavigationItems.TryGetValue(requestedRegion, out var navigationItems))
       {
         navigationItems.Add(registredView);
       }

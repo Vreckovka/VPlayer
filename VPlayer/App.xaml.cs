@@ -50,7 +50,7 @@ namespace VPlayer
 
     protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
     {
-      //moduleCatalog.AddModule<WindowsPlayerViewModel>();
+      //moduleCatalog.AddModule<WindowsViewModel>();
       //moduleCatalog.AddModule<LibraryViewModel>();
     }
 

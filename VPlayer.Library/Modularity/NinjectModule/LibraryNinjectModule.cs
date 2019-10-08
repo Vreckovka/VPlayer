@@ -19,7 +19,7 @@ namespace VPlayer.Library.Modularity.NinjectModule
     {
       base.Load();
       Kernel.Load<AudioStorageNinjectModule>();
-      Kernel.Bind<IVPlayerRegionManager>().To<VPlayerLibraryRegionManager>();
+      Kernel.Bind<IVPlayerRegionProvider>().To<VPlayerLibraryRegionProvider>();
 
     }
 
@@ -29,6 +29,12 @@ namespace VPlayer.Library.Modularity.NinjectModule
 
       Kernel.Bind<IAlbumsViewModel>().To<AlbumsViewModel>().InSingletonScope();
       Kernel.Bind<IArtistsViewModel>().To<ArtistsViewModel>().InSingletonScope();
+
+      Kernel.BindToSelf<AlbumDetailViewModel>()
+        .WithConstructorArgument("regionName", AlbumDetailViewModel.GetRegionName());
+
+      Kernel.BindToSelf<AlbumCoversViewModel>()
+        .WithConstructorArgument("regionName", AlbumCoversViewModel.GetRegionName());
     }
   }
 }

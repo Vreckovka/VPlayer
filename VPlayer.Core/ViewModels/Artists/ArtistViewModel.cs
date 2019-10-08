@@ -32,7 +32,7 @@ namespace VPlayer.Core.ViewModels.Artists
 
     private readonly IStorageManager storage;
     private readonly IViewModelsFactory viewModelsFactory;
-    private readonly IVPlayerRegionManager vPlayerRegionManager;
+    private readonly IVPlayerRegionProvider ivPlayerRegionProvider;
 
     #endregion Fields
 
@@ -43,11 +43,11 @@ namespace VPlayer.Core.ViewModels.Artists
       IEventAggregator eventAggregator,
       IStorageManager storage,
       IViewModelsFactory viewModelsFactory,
-      IVPlayerRegionManager vPlayerRegionManager) : base(artist, eventAggregator)
+      IVPlayerRegionProvider ivPlayerRegionProvider) : base(artist, eventAggregator)
     {
       this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
-      this.vPlayerRegionManager = vPlayerRegionManager ?? throw new ArgumentNullException(nameof(vPlayerRegionManager));
+      this.ivPlayerRegionProvider = ivPlayerRegionProvider ?? throw new ArgumentNullException(nameof(ivPlayerRegionProvider));
     }
 
     #endregion Constructors
@@ -74,7 +74,7 @@ namespace VPlayer.Core.ViewModels.Artists
 
     protected override void OnDetail()
     {
-      vPlayerRegionManager.ShowArtistDetail(this);
+      ivPlayerRegionProvider.ShowArtistDetail(this);
     }
 
     #endregion Methods

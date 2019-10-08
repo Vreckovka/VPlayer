@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows.Input;
 using VCore.Modularity.Interfaces;
 using VCore.Modularity.Navigation;
@@ -23,8 +24,6 @@ namespace VCore.ViewModels
     #region Fields
 
     private readonly IRegionProvider regionProvider;
-    private Guid guid1;
-    private Guid guid2;
 
     #endregion Fields
 
@@ -60,11 +59,11 @@ namespace VCore.ViewModels
       {
         var method = regionProvider.GetType().GetMethod("RegisterView");
 
-        var genericMethod = method.MakeGenericMethod(registredView.Key, typeof(RegionCollectionViewModel));
+        var genericMethod = method.MakeGenericMethod(registredView.Key, typeof(SelfActivableNavigationItem));
 
-        var result = genericMethod.Invoke(regionProvider, new object[] {registredView.Value.Item1, this, registredView.Value.Item2});
+        var guid = genericMethod.Invoke(regionProvider, new object[] {registredView.Value.Item1, this, registredView.Value.Item2});
 
-        Views.Add(registredView.Key, new SelfActivableNavigationItem(regionProvider, (Guid) result));
+        Views.Add(registredView.Key, new SelfActivableNavigationItem(regionProvider,(Guid)guid));
       }
     }
 
@@ -93,7 +92,7 @@ namespace VCore.ViewModels
 
     public abstract bool ContainsNestedRegions { get; }
     public Guid Guid { get; private set; }
-    public abstract string RegionName { get; }
+    public abstract string RegionName { get; protected set; }
 
     #region IsActive
 
@@ -195,6 +194,11 @@ namespace VCore.ViewModels
 
     #endregion Constructors
 
+    #region Properties
+
+    public Guid Guid { get; internal set; }
+    public string Header { get; set; }
+
     #region IsActive
 
     private bool isActive;
@@ -224,11 +228,6 @@ namespace VCore.ViewModels
     }
 
     #endregion IsActive
-
-    #region Properties
-
-    public Guid Guid { get; }
-    public string Header { get; set; }
 
     #endregion Properties
   }

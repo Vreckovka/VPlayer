@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Logger
 {
@@ -56,23 +58,11 @@ namespace Logger
 
     #region Methods
 
-    public void Log(MessageType type, object message)
+    public void Log(MessageType type, object message, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string methodName = "")
     {
       try
       {
-        // Get call stack
-        StackTrace stackTrace = new StackTrace();
-
-        // Get calling method name
-
-        var method = stackTrace.GetFrame(1).GetMethod();
-        var cls = method.ReflectedType?.UnderlyingSystemType.Name;
-
-        var methodName = getBetween(cls, "<", ">");
-        var className = method.ReflectedType?.DeclaringType?.Name;
-
-        //var log = $"{DateTime.Now.ToString("hh:mm:ss")}\t{t.Name}\t{message}";
-
+        var className = Path.GetFileNameWithoutExtension(callerFilePath);
         var log = $"[{type}|{DateTime.Now.ToString("hh:mm:ss")}]\t{className}.{methodName}()\t{message}";
         LoggerContainer.Log(type, log);
       }
@@ -82,20 +72,20 @@ namespace Logger
       }
     }
 
-    public void LogException(Exception ex)
+    public void LogException(Exception ex, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string methodName = "")
     {
       if (ex.InnerException != null)
       {
         if (ex.InnerException.InnerException != null)
         {
-          Log(MessageType.Error, $"{ex.InnerException.InnerException.Message}");
+          Log(MessageType.Error, $"{ex.InnerException.InnerException.Message}",callerFilePath,methodName);
         }
         else
-          Log(MessageType.Error, $"{ex.InnerException.Message}");
+          Log(MessageType.Error, $"{ex.InnerException.Message}", callerFilePath, methodName);
       }
       else
       {
-        Log(MessageType.Error, $"{ex.Message}");
+        Log(MessageType.Error, $"{ex.Message}", callerFilePath, methodName);
       }
     }
 

@@ -7,6 +7,7 @@ using VCore.Factories;
 using VCore.Factories.Views;
 using VCore.Modularity.Interfaces;
 using VCore.Modularity.Navigation;
+using VCore.ViewModels;
 
 namespace VCore.Modularity.RegionProviders
 {
@@ -19,6 +20,7 @@ namespace VCore.Modularity.RegionProviders
     private readonly IRegionManager regionManager;
     private readonly IViewFactory viewFactory;
     private List<IRegistredView> Views = new List<IRegistredView>();
+    private Dictionary<IRegistredView,IDisposable> ActivateSubscriptions = new Dictionary<IRegistredView, IDisposable>();
 
     #endregion Fields
 
@@ -42,31 +44,32 @@ namespace VCore.Modularity.RegionProviders
 
     #region SubscribeToChanges
 
-    private void SubscribeToChanges<TView, TViewModel>(
-      RegistredView<TView, TViewModel> view)
+    private void SubscribeToChanges<TView, TViewModel>(RegistredView<TView, TViewModel> view)
       where TView : class, IView
       where TViewModel : class, INotifyPropertyChanged
     {
-      view.ViewWasActivated.Subscribe((
-        x) =>
+      var disposable = view.ViewWasActivated.Subscribe((x) =>
       {
         x.Activate();
         navigationProvider.SetNavigation(x);
       });
+
+      ActivateSubscriptions.Add(view, disposable);
     }
 
     #endregion SubscribeToChanges
 
+
     #region RegisterView
 
-    public Guid RegisterView<TView, TViewModel>(
+      public Guid RegisterView<TView, TViewModel>(
       string regionName,
       TViewModel viewModel,
       bool containsNestedRegion)
       where TView : class, IView
       where TViewModel : class, INotifyPropertyChanged
     {
-      var registredView = Views.SingleOrDefault(x => x.ViewName == RegistredView<TView, TViewModel>.GetViewName());
+      var registredView = Views.SingleOrDefault(x => x.ViewName == RegistredView<TView, TViewModel>.GetViewName(regionName));
 
       if (registredView == null)
       {
@@ -127,12 +130,16 @@ namespace VCore.Modularity.RegionProviders
 
     #endregion DectivateView
 
+    #region GoBack
+
     public void GoBack(Guid guid)
     {
       var view = Views.SingleOrDefault(x => x.Guid == guid);
       var before = navigationProvider.GetPrevious(view);
       before?.Activate();
     }
+
+    #endregion
 
     #endregion Methods
   }

@@ -43,7 +43,7 @@ namespace VPlayer.Library.ViewModels
     public override bool ContainsNestedRegions => true;
     public string Header => "Library";
     public NavigationViewModel NavigationViewModel { get; set; }
-    public override string RegionName => RegionNames.WindowsPlayerContentRegion;
+    public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
 
     #endregion Properties
 

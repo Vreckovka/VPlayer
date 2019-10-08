@@ -67,6 +67,9 @@
       <HintPath>..\packages\Geckofx60.64.60.0.39\lib\net45\Geckofx-Winforms.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Prism, Version=7.2.0.1367, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.Core.7.2.0.1367\lib\net45\Prism.dll</HintPath>
+    </Reference>
     <Reference Include="PropertyChanged, Version=2.6.1.0, Culture=neutral, PublicKeyToken=ee3ee20bcf148ddd, processorArchitecture=MSIL">
       <HintPath>..\packages\PropertyChanged.Fody.2.6.1\lib\net452\PropertyChanged.dll</HintPath>
       <Private>False</Private>
@@ -74,6 +77,9 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -91,7 +97,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\WebPlayer.cs" />
-    <Compile Include="ViewModels\WebPlayersViewModel.cs" />
+    <Compile Include="ViewModels\WebPlayerViewModel.cs" />
     <Compile Include="Views\WebPlayerPage.xaml.cs">
       <DependentUpon>WebPlayerPage.xaml</DependentUpon>
     </Compile>
@@ -116,6 +122,14 @@
       <Project>{ba238278-32d0-4c4e-881a-ad2be152832c}</Project>
       <Name>Listener</Name>
       <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\VCore\VCore.csproj">
+      <Project>{5aa43597-fd3d-4f10-89a5-eb77d3b831d9}</Project>
+      <Name>VCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VPlayer.Core\VPlayer.Core.csproj">
+      <Project>{b8d5c40b-3b3d-43e1-95fa-97087581bda2}</Project>
+      <Name>VPlayer.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

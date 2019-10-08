@@ -32,7 +32,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     public override bool ContainsNestedRegions => false;
     public override string Header => "Albums";
     public override IQueryable<Album> LoadQuery => base.LoadQuery.Include(x => x.Artist).Include(x => x.Songs);
-    public override string RegionName => RegionNames.LibraryContentRegion;
+    public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
 
     #endregion Properties
   }

@@ -28,7 +28,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels
 
     public override bool ContainsNestedRegions => false;
     public override string Header => "Artists";
-    public override string RegionName => RegionNames.LibraryContentRegion;
+    public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
 
     #endregion Properties
   }

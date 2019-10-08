@@ -70,7 +70,7 @@ namespace VPlayer.Player.Behaviors
     {
       if (Mouse.LeftButton == MouseButtonState.Pressed && AssociatedObject.IsMouseOver)
       {
-        if (Kernel != null) Kernel.Get<PlayerViewModel>().MediaPlayer.Position = (float)e.NewValue;
+        if (Kernel != null) Kernel.Get<WindowsPlayerViewModel>().MediaPlayer.Position = (float)e.NewValue;
       }
     }
 

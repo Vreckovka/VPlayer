@@ -15,190 +15,194 @@ namespace VCore.Modularity.RegionProviders
     where TView : class, IView
     where TViewModel : class, INotifyPropertyChanged
   {
-    #region Fields
 
-    private readonly bool initializeImmediately;
-    private readonly IViewFactory viewFactory;
-    private readonly IViewModelsFactory viewModelsFactory;
-    private readonly SerialDisposable viewWasActivatedDisposable;
-    private readonly SerialDisposable viewWasDeactivatedDisposable;
+  #region Fields
 
-    #endregion Fields
+  private readonly bool initializeImmediately;
+  private readonly IViewFactory viewFactory;
+  private readonly IViewModelsFactory viewModelsFactory;
+  private readonly SerialDisposable viewWasActivatedDisposable;
+  private readonly SerialDisposable viewWasDeactivatedDisposable;
 
-    #region Constructors
+  #endregion Fields
 
-    public RegistredView(
-      IRegion region,
-      IViewFactory viewFactory,
-      IViewModelsFactory viewModelsFactory,
-      TViewModel viewModel = null
-    ) : this(region, viewFactory, viewModelsFactory, viewModel, false)
+  #region Constructors
+
+  public RegistredView(
+    IRegion region,
+    IViewFactory viewFactory,
+    IViewModelsFactory viewModelsFactory,
+    TViewModel viewModel = null
+  ) : this(region, viewFactory, viewModelsFactory, viewModel, false)
+  {
+  }
+
+  public RegistredView(
+    IRegion region,
+    IViewFactory viewFactory,
+    IViewModelsFactory viewModelsFactory,
+    TViewModel viewModel = null,
+    bool initializeImmediately = false
+  )
+  {
+    this.viewFactory = viewFactory ?? throw new ArgumentNullException(nameof(viewFactory));
+    this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+    this.initializeImmediately = initializeImmediately;
+
+    viewWasActivatedDisposable = new SerialDisposable();
+    viewWasDeactivatedDisposable = new SerialDisposable();
+
+    Guid = Guid.NewGuid();
+
+    ViewModel = viewModel;
+    ViewName = GetViewName(region.Name);
+    Region = region;
+
+    if (initializeImmediately)
     {
+      View = RegisterView();
     }
+  }
 
-    public RegistredView(
-      IRegion region,
-      IViewFactory viewFactory,
-      IViewModelsFactory viewModelsFactory,
-      TViewModel viewModel = null,
-      bool initializeImmediately = false
-    )
+  #endregion Constructors
+
+  #region Properties
+
+  public Guid Guid { get; }
+  public IRegion Region { get; set; }
+  public TView View { get; set; }
+  public string ViewName { get; set; }
+  public Subject<IRegistredView> ViewWasActivated { get; } = new Subject<IRegistredView>();
+  public Subject<IRegistredView> ViewWasDeactivated { get; } = new Subject<IRegistredView>();
+
+  #region ViewModel
+
+  private TViewModel viewModel;
+
+  public TViewModel ViewModel
+  {
+    get { return viewModel; }
+    set
     {
-      this.viewFactory = viewFactory ?? throw new ArgumentNullException(nameof(viewFactory));
-      this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
-      this.initializeImmediately = initializeImmediately;
-
-      viewWasActivatedDisposable = new SerialDisposable();
-      viewWasDeactivatedDisposable = new SerialDisposable();
-
-      Guid = Guid.NewGuid();
-
-      ViewModel = viewModel;
-      ViewName = GetViewName();
-      Region = region;
-
-      if (initializeImmediately)
+      if (value != viewModel)
       {
-        View = RegisterView();
+        viewModel = value;
+
+        viewWasActivatedDisposable.Disposable = Observable
+          .FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
+            x => ViewModel.PropertyChanged += x,
+            x => ViewModel.PropertyChanged -= x)
+          .Where(x => x.EventArgs.PropertyName == nameof(RegionViewModel<IView>.IsActive) &&
+                      ((IActivable) x.Sender).IsActive)
+          .Subscribe((
+            x) => ViewWasActivated.OnNext(this));
+
+        viewWasDeactivatedDisposable.Disposable = Observable
+          .FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
+            x => ViewModel.PropertyChanged += x,
+            x => ViewModel.PropertyChanged -= x)
+          .Where(x => x.EventArgs.PropertyName == nameof(RegionViewModel<IView>.IsActive) &&
+                      !((IActivable) x.Sender).IsActive)
+          .Subscribe((
+            x) => ViewWasDeactivated.OnNext(this));
+
+        if (View != null)
+          View.DataContext = viewModel;
       }
     }
+  }
 
-    #endregion Constructors
+  #endregion ViewModel
 
-    #region Properties
+  #endregion Properties
 
-    public Guid Guid { get; }
-    public IRegion Region { get; set; }
-    public TView View { get; set; }
-    public string ViewName { get; set; }
-    public Subject<IRegistredView> ViewWasActivated { get; } = new Subject<IRegistredView>();
-    public Subject<IRegistredView> ViewWasDeactivated { get; } = new Subject<IRegistredView>();
+  #region Methods
 
-    #region ViewModel
+  #region Activate
 
-    private TViewModel viewModel;
+  public void Activate()
+  {
+    Region.Activate(RegisterView());
 
-    public TViewModel ViewModel
+    if (ViewModel is IActivable activable && !activable.IsActive)
     {
-      get { return viewModel; }
-      set
-      {
-        if (value != viewModel)
-        {
-          viewModel = value;
+      activable.IsActive = true;
+    }
+  }
 
-          viewWasActivatedDisposable.Disposable = Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
-              x => ViewModel.PropertyChanged += x,
-              x => ViewModel.PropertyChanged -= x)
-            .Where(x => x.EventArgs.PropertyName == nameof(RegionViewModel<IView>.IsActive) &&
-                        ((IActivable)x.Sender).IsActive)
-            .Subscribe((
-              x) => ViewWasActivated.OnNext(this));
+  #endregion Activate
 
-          viewWasDeactivatedDisposable.Disposable = Observable.FromEventPattern<PropertyChangedEventHandler, PropertyChangedEventArgs>(
-              x => ViewModel.PropertyChanged += x,
-              x => ViewModel.PropertyChanged -= x)
-            .Where(x => x.EventArgs.PropertyName == nameof(RegionViewModel<IView>.IsActive) &&
-                        !((IActivable)x.Sender).IsActive)
-            .Subscribe((
-              x) => ViewWasDeactivated.OnNext(this));
+  #region Deactivate
 
-          if (View != null)
-            View.DataContext = viewModel;
-        }
-      }
+  public void Deactivate()
+  {
+    Region.Deactivate(View);
+  }
+
+  #endregion Deactivate
+
+  #region RegisterView
+
+  public TView RegisterView()
+  {
+    if (View == null)
+    {
+      View = Create();
+
+      if (ViewModel == null)
+        ViewModel = viewModelsFactory.Create<TViewModel>();
+
+      Region.Add(View, ViewName);
     }
 
-    #endregion ViewModel
+    View.DataContext = null;
+    View.DataContext = ViewModel;
 
-    #endregion Properties
+    return View;
+  }
 
-    #region Methods
+  #endregion RegisterView
 
-    #region Activate
+  #region Create
 
-    public void Activate()
-    {
-      Region.Activate(RegisterView());
+  public TView Create()
+  {
+    return viewFactory.Create<TView>();
+  }
 
-      if (ViewModel is IActivable activable && !activable.IsActive)
-      {
-        activable.IsActive = true;
-      }
-    }
+  #endregion Create
 
-    #endregion Activate
+  #region GetViewName
 
-    #region Deactivate
+  public static string GetViewName(string regionName)
+  {
+    return typeof(TView).Name + "_" + typeof(TViewModel).Name + "_" + regionName;
+  }
 
-    public void Deactivate()
-    {
-      Region.Deactivate(View);
-    }
+  #endregion GetViewName
 
-    #endregion Deactivate
+  #region ToString
 
-    #region RegisterView
+  public override string ToString()
+  {
+    return ViewName;
+  }
 
-    public TView RegisterView()
-    {
-      if (View == null)
-      {
-        View = Create();
+  #endregion ToString
 
-        if (ViewModel == null)
-          ViewModel = viewModelsFactory.Create<TViewModel>();
+  #region Dispose
 
-        Region.Add(View, ViewName);
-      }
+  public void Dispose()
+  {
+    viewWasActivatedDisposable?.Dispose();
+    viewWasDeactivatedDisposable?.Dispose();
+    ViewWasActivated?.Dispose();
+    ViewWasDeactivated?.Dispose();
+  }
 
-      View.DataContext = null;
-      View.DataContext = ViewModel;
+  #endregion Dispose
 
-      return View;
-    }
+  #endregion Methods
 
-    #endregion RegisterView
-
-    #region Create
-
-    public TView Create()
-    {
-      return viewFactory.Create<TView>();
-    }
-
-    #endregion Create
-
-    #region GetViewName
-
-    public static string GetViewName()
-    {
-      return typeof(TView).Name + "_" + typeof(TViewModel).Name;
-    }
-
-    #endregion GetViewName
-
-    #region ToString
-
-    public override string ToString()
-    {
-      return ViewName;
-    }
-
-    #endregion ToString
-
-    #region Dispose
-
-    public void Dispose()
-    {
-      viewWasActivatedDisposable?.Dispose();
-      viewWasDeactivatedDisposable?.Dispose();
-      ViewWasActivated?.Dispose();
-      ViewWasDeactivated?.Dispose();
-    }
-
-    #endregion Dispose
-
-    #endregion Methods
   }
 }
