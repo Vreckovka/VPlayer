@@ -116,6 +116,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     #region Instance_CoversDownloaded
 
     private object batton = new object();
+    private Semaphore semaphore = new Semaphore(5,5);
     private void Instance_CoversDownloaded(object sender, List<AlbumCover> e)
     {
       FoundConvers += e.Count;
@@ -132,6 +133,11 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
                 using (var client = new WebClient())
                 using (var registration = cancellationTokenSource.Token.Register(() => client.CancelAsync()))
                 {
+                  semaphore.WaitOne();
+
+                  if (cancellationTokenSource.IsCancellationRequested)
+                    return;
+
                   var downloadedCover = await client.DownloadDataTaskAsync(cover.Url);
 
                   if (downloadedCover != null)
@@ -146,7 +152,13 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
                       DownloadedProcessValue = (double) (AlbumCovers.Count * 100) / FoundConvers;
                     });
                   }
+
+                  semaphore.Release();
                 }
+              }
+              catch (WebException ex) when (ex.Status == WebExceptionStatus.RequestCanceled)
+              {
+                Logger.Logger.Instance.Log(Logger.MessageType.Inform, "Downloading was stopped");
               }
               catch (Exception ex)
               {
@@ -158,7 +170,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
       }
       catch (WebException ex) when (ex.Status == WebExceptionStatus.RequestCanceled)
       {
-        Logger.Logger.Instance.Log(Logger.MessageType.Inform, "asd");
+        Logger.Logger.Instance.Log(Logger.MessageType.Inform, "Downloading was stopped");
       }
     }
 

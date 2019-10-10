@@ -64,17 +64,17 @@ namespace VPlayer.Player.ViewModels
 
     public void Play()
     {
-      ActualViewModel.Play();
+      ActualViewModel?.Play();
     }
 
     public void Pause()
     {
-      ActualViewModel.Pause();
+      ActualViewModel?.Pause();
     }
 
     public void PlayNext()
     {
-      ActualViewModel.Pause();
+      ActualViewModel?.PlayNext();
     }
 
     #region KeyListener_OnKeyPressed
