@@ -1,4 +1,9 @@
-﻿using VCore.Factories;
+﻿using System;
+using System.Data.Entity;
+using System.Linq;
+using System.Windows;
+using VCore.Factories;
+using VCore.Modularity.Events;
 using VCore.Modularity.RegionProviders;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -29,7 +34,72 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels
     public override bool ContainsNestedRegions => false;
     public override string Header => "Artists";
     public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
+    public override IQueryable<Artist> LoadQuery => base.LoadQuery.Include(x => x.Albums);
 
     #endregion Properties
+
+    protected override void ItemsChanged(ItemChanged itemChanged)
+    {
+      base.ItemsChanged(itemChanged);
+
+      if (itemChanged.Item is Album album)
+      {
+        ArtistViewModel artist = null;
+
+        if (album.Artist == null)
+        {
+          artist = LibraryCollection.Items.Single(x => x.Model.Albums.Count(y => y.Id == album.Id) != 0);
+        }
+        else
+          artist = LibraryCollection.Items.Single(x => x.ModelId == album.Artist.Id);
+
+        if (!artist.Model.Albums.Contains(album))
+        {
+          switch (itemChanged.Changed)
+          {
+            case Changed.Added:
+              artist.Model.Albums.Add(album);
+              break;
+            case Changed.Removed:
+              artist.Model.Albums.Remove(album);
+              break;
+            case Changed.Updated:
+              break;
+            default:
+              throw new ArgumentOutOfRangeException();
+          }
+        }
+
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+          artist.RaisePropertyChanges();
+        });
+      }
+    }
+
+    protected void SongChange(ItemChanged itemChanged)
+    {
+      if (itemChanged.Item is Song song)
+      {
+        var artist = LibraryCollection.Items.Single(x => x.ModelId == song.Album.Artist.Id);
+        var album = artist.Model.Albums.Single(x => x.Id == song.Album.Id);
+
+        switch (itemChanged.Changed)
+        {
+          case Changed.Added:
+            break;
+          case Changed.Removed:
+            throw new NotImplementedException();
+            break;
+
+          case Changed.Updated:
+            throw new NotImplementedException();
+            break;
+
+          default:
+            throw new ArgumentOutOfRangeException();
+        }
+      }
+    }
   }
 }

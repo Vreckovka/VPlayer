@@ -59,7 +59,6 @@ namespace VCore.Modularity.RegionProviders
 
     #endregion SubscribeToChanges
 
-
     #region RegisterView
 
       public Guid RegisterView<TView, TViewModel>(

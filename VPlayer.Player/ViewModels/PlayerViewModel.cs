@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive.Linq;
 using System.Windows.Input;
 using Listener;
 using VCore;
@@ -28,12 +29,17 @@ namespace VPlayer.Player.ViewModels
       this.keyListener = keyListener ?? throw new ArgumentNullException(nameof(keyListener));
 
       keyListener.OnKeyPressed += KeyListener_OnKeyPressed;
+
+      windowsPlayerViewModel.IsPlayingSubject.Subscribe(x =>
+      {
+        IsPlaying = x;
+      });
     }
 
     public override bool ContainsNestedRegions => false;
     public override string RegionName { get; protected set; } = RegionNames.PlayerRegion;
     public IPlayableRegionViewModel ActualViewModel => windowsPlayerViewModel.IsActive ? (IPlayableRegionViewModel)windowsPlayerViewModel : webPlayerViewModel.IsActive ? webPlayerViewModel : null;
-    public bool IsPlaying => ActualViewModel?.IsPlaying ?? false;
+    public bool IsPlaying { get; set; }
 
     #region Play
 

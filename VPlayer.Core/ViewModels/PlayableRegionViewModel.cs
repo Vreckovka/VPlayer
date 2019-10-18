@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
 using VCore.Modularity.Interfaces;
@@ -22,7 +23,7 @@ namespace VPlayer.Core.ViewModels
     public abstract void PlayPrevious();
     public abstract void Stop();
     public abstract bool IsPlaying { get; protected set; }
-  
+    public Subject<bool> IsPlayingSubject { get; } = new Subject<bool>();
   }
 
   public interface IPlayableRegionViewModel

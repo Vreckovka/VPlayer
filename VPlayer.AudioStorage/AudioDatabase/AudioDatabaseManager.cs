@@ -277,13 +277,15 @@ namespace VPlayer.AudioStorage.AudioDatabase
           //await context.Database.ExecuteSqlCommandAsync("DELETE FROM Genres");
           //Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table Genres cleared succesfuly");
 
-          foreach (var album in context.Albums)
+          foreach (var album in context.Albums.Include(x => x.Artist))
           {
-            ItemChanged.OnNext(new ItemChanged()
+            var itemChange = new ItemChanged()
             {
               Changed = Changed.Removed,
               Item = album
-            });
+            };
+
+            ItemChanged.OnNext(itemChange);
           }
 
           await context.Database.ExecuteSqlCommandAsync("DELETE FROM Albums");
@@ -427,6 +429,20 @@ namespace VPlayer.AudioStorage.AudioDatabase
                 CombineAlbums(originalAlbum, album, context);
               else
                 ;
+            }
+
+            if (originalAlbum.Artist.ArtistCover == null &&
+                originalAlbum.Artist.AlbumIdCover == null && 
+                originalAlbum.AlbumFrontCoverBLOB != null)
+            {
+              originalAlbum.Artist.AlbumIdCover = originalAlbum.Id;
+              context.SaveChanges();
+
+              ItemChanged.OnNext(new ItemChanged()
+              {
+                Changed = Changed.Updated,
+                Item = originalAlbum.Artist
+              });
             }
           }
           else
@@ -625,7 +641,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
         context.SaveChanges();
 
-        Logger.Logger.Instance.Log(Logger.MessageType.Success, $"Album was updated {entity}");
+        Logger.Logger.Instance.Log(Logger.MessageType.Success, $"Entity was updated {entity}");
 
         ItemChanged.OnNext(new ItemChanged()
         {

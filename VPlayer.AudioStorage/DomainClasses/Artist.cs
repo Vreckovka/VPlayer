@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
-  public class Artist : INamedEntity
+  public class Artist : DomainEntity , INamedEntity
   {
     #region Constructors
 
@@ -19,18 +19,9 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     #region Properties
 
-    /// <summary>
-    /// Album id  wich is used as cover for Artist
-    /// </summary>
     public int? AlbumIdCover { get; set; }
-
     public virtual ICollection<Album> Albums { get; set; }
-
     public byte[] ArtistCover { get; set; }
-
-    [Key]
-    public int Id { get; set; }
-
     public string MusicBrainzId { get; set; }
     public string Name { get; set; }
 

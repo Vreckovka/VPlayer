@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
 using VCore.Factories;
 using VCore.Modularity.Events;
 using VCore.Modularity.Interfaces;
@@ -53,7 +55,6 @@ namespace VPlayer.Library.ViewModels
     public virtual IQueryable<TModel> LoadQuery
     {
       get => LibraryCollection.LoadQuery;
-      set => LibraryCollection.LoadQuery = value;
     }
 
     public abstract override string RegionName { get; }
@@ -91,28 +92,43 @@ namespace VPlayer.Library.ViewModels
 
     #region ItemsChanged
 
-    private void ItemsChanged(ItemChanged itemChanged)
+    protected virtual void ItemsChanged(ItemChanged itemChanged)
     {
-      switch (itemChanged.Changed)
+      if (itemChanged.Item is TModel model)
       {
-        case Changed.Added:
-          LibraryCollection.Add((TModel)itemChanged.Item);
-          break;
+        switch (itemChanged.Changed)
+        {
+          case Changed.Added:
+            LibraryCollection.Add(model);
 
-        case Changed.Removed:
-          LibraryCollection.Remove((TModel)itemChanged.Item);
-          break;
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+              RaisePropertyChanged(nameof(View));
+              RaisePropertyChanged(nameof(ViewModels));
+            });
 
-        case Changed.Updated:
-          LibraryCollection.Update((TModel)itemChanged.Item);
-          break;
+            break;
+          case Changed.Removed:
+            LibraryCollection.Remove(model);
 
-        default:
-          throw new ArgumentOutOfRangeException();
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+              RaisePropertyChanged(nameof(View));
+              RaisePropertyChanged(nameof(ViewModels));
+            });
+            break;
+
+          case Changed.Updated:
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+              LibraryCollection.Update(model);
+            });
+            break;
+
+          default:
+            throw new ArgumentOutOfRangeException();
+        }
       }
-
-      RaisePropertyChanged(nameof(View));
-      RaisePropertyChanged(nameof(ViewModels));
     }
 
     #endregion ItemsChanged
@@ -125,7 +141,7 @@ namespace VPlayer.Library.ViewModels
 
       if (firstActivation)
       {
-        this.storageManager.ItemChanged.Where(x => x.Item.GetType() == typeof(TModel)).Subscribe(ItemsChanged);
+        this.storageManager.ItemChanged.Subscribe(ItemsChanged);
 
         LibraryCollection.LoadData.Subscribe(_ =>
         {

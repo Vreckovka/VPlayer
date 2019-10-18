@@ -165,6 +165,16 @@ namespace VPlayer.Core.ViewModels
 
       ImageConverter converter = new ImageConverter();
       return (byte[])converter.ConvertTo(bitmap, typeof(byte[]));
+    }
+
+    #endregion
+
+    #region RaisePropertyChanges
+
+    public virtual void RaisePropertyChanges()
+    {
+      RaisePropertyChanged(nameof(BottomText));
+      RaisePropertyChanged(nameof(ImageThumbnail));
     } 
 
     #endregion

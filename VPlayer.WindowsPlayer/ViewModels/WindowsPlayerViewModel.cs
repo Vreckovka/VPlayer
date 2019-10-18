@@ -153,6 +153,8 @@ namespace VPlayer.Player.ViewModels
       {
         ActualSong.IsPaused = true;
         IsPlaying = false;
+        IsPlayingSubject.OnNext(IsPlaying);
+
       };
 
       MediaPlayer.Playing += (sender, e) =>
@@ -160,6 +162,7 @@ namespace VPlayer.Player.ViewModels
         ActualSong.IsPlaying = true;
         ActualSong.IsPaused = false;
         IsPlaying = true;
+        IsPlayingSubject.OnNext(IsPlaying);
       };
 
       eventAggregator.GetEvent<PlaySongsEvent>().Subscribe(PlaySongs);
@@ -260,6 +263,8 @@ namespace VPlayer.Player.ViewModels
       MediaPlayer.Pause();
     }
 
+    #endregion Pause
+
     public override void PlayNext()
     {
       actualSongIndex++;
@@ -274,8 +279,6 @@ namespace VPlayer.Player.ViewModels
     {
       throw new NotImplementedException();
     }
-
-    #endregion Pause
 
     #region PlayNext
 
@@ -299,7 +302,6 @@ namespace VPlayer.Player.ViewModels
     }
 
     #endregion PlayNext
-
   
 
     #endregion Methods

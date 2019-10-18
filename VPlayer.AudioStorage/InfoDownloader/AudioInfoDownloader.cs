@@ -762,9 +762,10 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
           dynamic stuff = JObject.Parse(response.Body);
 
-          var converUrl = stuff.images[0].thumbnails.small;
+          var converUrl = stuff.images[0].image;
+
           if (converUrl == null)
-            converUrl = stuff.images[0].image;
+            converUrl = stuff.images[0].thumbnails.small;
 
           return (string)converUrl.ToString();
         }

@@ -63,7 +63,9 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     public override void Update(Album updateItem)
     {
       Model.AlbumFrontCoverBLOB = updateItem.AlbumFrontCoverBLOB;
-      RaisePropertyChanged(nameof(ImageThumbnail));
+      Model.Name = updateItem.Name;
+
+      RaisePropertyChanges();
     }
 
     #endregion

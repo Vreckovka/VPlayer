@@ -88,10 +88,10 @@
         <Grid Grid.Row="0">
           <Grid.Background>
             <LinearGradientBrush StartPoint="0,1" EndPoint="0 0">
-              <GradientStop Offset="1" Color="#2AF0F0F0" />
+              <GradientStop Offset="1" Color="#2A000000" />
               <GradientStop Offset="0.85" Color="#00000000" />
               <GradientStop Offset="0.15" Color="#00000000" />
-              <GradientStop Offset="0.0" Color="#2AF0F0F0" />
+              <GradientStop Offset="0.0" Color="#2A000000" />
             </LinearGradientBrush>
           </Grid.Background>
         </Grid>
@@ -101,10 +101,10 @@
               Height="{Binding ElementName=Image, Path=ActualHeight}">
           <Grid.Background>
             <LinearGradientBrush StartPoint="1,0" EndPoint="0 0">
-              <GradientStop Offset="1" Color="#20000000" />
+              <GradientStop Offset="1" Color="#80000000" />
               <GradientStop Offset="0.75" Color="#00000000" />
               <GradientStop Offset="0.2" Color="#00000000" />
-              <GradientStop Offset="0.0" Color="#20000000" />
+              <GradientStop Offset="0.0" Color="#80000000" />
             </LinearGradientBrush>
           </Grid.Background>
         </Grid>
