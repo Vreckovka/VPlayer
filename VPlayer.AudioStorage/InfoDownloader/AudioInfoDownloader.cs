@@ -384,8 +384,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
         await musibrainzAPISempathore.WaitAsync();
 
-        //API rate limit
-        Thread.Sleep(1000);
+       
 
         Logger.Logger.Instance.Log(Logger.MessageType.Inform, $"Downloading album info {album.Name}");
 
@@ -610,7 +609,10 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
           Album newAlbum = null;
 
-          await Task.Run(async () => { newAlbum = await UpdateAlbum(album); });
+          await Task.Run(async () =>
+          {
+            newAlbum = await UpdateAlbum(album);
+          });
 
           apiExeed = true;
           return newAlbum;
@@ -623,6 +625,9 @@ namespace VPlayer.AudioStorage.InfoDownloader
       }
       finally
       {
+        //API rate limit
+        Thread.Sleep(1000);
+
         if (!apiExeed)
           musibrainzAPISempathore.Release();
       }

@@ -10,7 +10,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="RepeatButton">
-                    <Border  BorderThickness="0" Background="{StaticResource 3_WhiteTransparentBrush}" Height="{TemplateBinding Height}" />
+                    <Border  BorderThickness="0" Background="{StaticResource 30_WhiteTransparentBrush}" Height="{TemplateBinding Height}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

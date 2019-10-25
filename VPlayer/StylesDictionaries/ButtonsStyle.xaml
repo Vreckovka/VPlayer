@@ -106,12 +106,12 @@
           <Border Padding="{TemplateBinding Padding}"
                   Background="{TemplateBinding Background}"
                   CornerRadius="4">
-              <Path Name="Icon"
-                    Width="20"
-                    Height="20"
-                    Fill="AliceBlue"
-                    Stretch="Fill"
-                    Style="{StaticResource PlaySign}" />
+            <Path Name="Icon"
+                  Width="20"
+                  Height="20"
+                  Fill="AliceBlue"
+                  Stretch="Fill"
+                  Style="{StaticResource PlaySign}" />
           </Border>
 
           <ControlTemplate.Triggers>
@@ -128,17 +128,16 @@
             </Trigger>
 
             <DataTrigger Binding="{Binding IsPlaying}" Value="True">
-              <Setter Property="Style" TargetName="Icon" Value="{StaticResource PausePath}"/>
+              <Setter TargetName="Icon" Property="Style" Value="{StaticResource PausePath}" />
             </DataTrigger>
-            <DataTrigger Binding="{Binding IsPlaying}" Value="False">
-            </DataTrigger>
+            <DataTrigger Binding="{Binding IsPlaying}" Value="False" />
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
     </Setter>
   </Style>
 
-  <Style x:Key="RefreshButton" TargetType="{x:Type Button}">
+  <Style x:Key="RefreshButton" TargetType="{x:Type ToggleButton}">
     <Setter Property="OverridesDefaultStyle" Value="True" />
     <Setter Property="Effect">
       <Setter.Value>
@@ -150,17 +149,16 @@
     </Setter>
     <Setter Property="Template">
       <Setter.Value>
-        <ControlTemplate TargetType="{x:Type Button}">
+        <ControlTemplate TargetType="{x:Type ToggleButton}">
           <Border Padding="7"
                   Background="{TemplateBinding Background}"
                   CornerRadius="4">
             <Grid Background="Transparent">
-
               <Path x:Name="PathIcon"
                     Width="20"
                     Height="20"
-                    Data="M346.8,61.2C311.1,22.95,260.1,0,204,0C91.8,0,0,91.8,0,204s91.8,204,204,204c94.35,0,173.4-66.3,196.35-153H346.8                          C326.4,313.65,270.3,357,204,357c-84.15,0-153-68.85-153-153c0-84.15,68.85-153,153-153c43.35,0,79.05,17.85,107.1,45.9                          l-81.6,81.6H408V0L346.8,61.2z"
-                    Fill="{DynamicResource DefaultWhiteBrush}"
+                    Data="M346.8,61.2C311.1,22.95,260.1,0,204,0C91.8,0,0,91.8,0,204s91.8,204,204,204c94.35,0,173.4-66.3,196.35-153H346.8                              C326.4,313.65,270.3,357,204,357c-84.15,0-153-68.85-153-153c0-84.15,68.85-153,153-153c43.35,0,79.05,17.85,107.1,45.9                               l-81.6,81.6H408V0L346.8,61.2z"
+                    Fill="{TemplateBinding Foreground}"
                     Stretch="Fill" />
               <ContentPresenter x:Name="MyContentPresenter"
                                 Margin="0,0,0,0"
@@ -171,14 +169,66 @@
           </Border>
 
           <ControlTemplate.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+              <Setter TargetName="PathIcon" Property="Fill" Value="#FFEFDF" />
+            </Trigger>
+
             <Trigger Property="IsMouseOver" Value="True">
               <Setter Property="Cursor" Value="Hand" />
-              <Setter TargetName="PathIcon" Property="Fill" Value="{DynamicResource DefaultRedBrush}" />
             </Trigger>
 
             <Trigger Property="IsPressed" Value="True">
-              <Setter Property="Background" Value="{DynamicResource DefaultRedBrush}" />
-              <Setter TargetName="PathIcon" Property="Fill" Value="White" />
+              <Setter TargetName="PathIcon" Property="Fill" Value="GhostWhite" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+
+  <Style x:Key="ShuffleButton" TargetType="{x:Type ToggleButton}">
+    <Setter Property="OverridesDefaultStyle" Value="True" />
+    <Setter Property="Effect">
+      <Setter.Value>
+        <DropShadowEffect BlurRadius="5"
+                          Opacity="1"
+                          ShadowDepth="2"
+                          Color="Black" />
+      </Setter.Value>
+    </Setter>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ToggleButton}">
+          <Border Padding="7"
+                  Background="{TemplateBinding Background}"
+                  CornerRadius="4">
+            <Grid Background="Transparent">
+              <Path x:Name="PathIcon"
+                    Width="22"
+                    Height="22"
+                    Fill="{TemplateBinding Foreground}"
+                    Stretch="Fill" 
+                    Style="{StaticResource Shuffle}"/>
+              <ContentPresenter x:Name="MyContentPresenter"
+                                Margin="0,0,0,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Content="{TemplateBinding Content}" />
+            </Grid>
+          </Border>
+
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+              <Setter TargetName="PathIcon" Property="Fill" Value="#FFEFDF" />
+            </Trigger>
+
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter Property="Cursor" Value="Hand" />
+            </Trigger>
+
+            <Trigger Property="IsPressed" Value="True">
+              <Setter TargetName="PathIcon" Property="Fill" Value="GhostWhite" />
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>

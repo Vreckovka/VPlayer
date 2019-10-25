@@ -26,11 +26,6 @@
             <ColumnDefinition Width="auto" />
           </Grid.ColumnDefinitions>
 
-          <Button Margin="15"
-                  BorderThickness="0"
-                  Style="{StaticResource RefreshButton}"
-                  Tag="Pause" />
-
           <Button x:Name="Play_Button"
                   Grid.Column="1"
                   Margin="7"

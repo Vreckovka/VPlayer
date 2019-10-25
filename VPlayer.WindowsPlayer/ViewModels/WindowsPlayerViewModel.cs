@@ -39,10 +39,12 @@ namespace VPlayer.Player.ViewModels
 
     public WindowsPlayerViewModel(
       IVPlayerRegionProvider regionProvider,
-      IEventAggregator eventAggregator) : base(regionProvider)
+      IEventAggregator eventAggregator,
+      IKernel kernel) : base(regionProvider)
     {
       this.regionProvider = regionProvider ?? throw new ArgumentNullException(nameof(regionProvider));
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
+      Kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
     }
 
     #endregion Constructors
@@ -56,7 +58,10 @@ namespace VPlayer.Player.ViewModels
     public override bool ContainsNestedRegions => false;
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
     public string Header => "Player";
-    
+    public bool IsRepeate { get; set; }
+    public bool IsShuffle { get; set; }
+    public IKernel Kernel { get; set; }
+
     #endregion Properties
 
     #region Commands
@@ -147,14 +152,22 @@ namespace VPlayer.Player.ViewModels
 
       MediaPlayer.EndReached += (sender, e) => { PlayNext(); };
 
-      MediaPlayer.TimeChanged += (sender, e) => { ActualSong.ActualPosition = ((VlcMediaPlayer) sender).Position; };
+      MediaPlayer.TimeChanged += (sender, e) => { ActualSong.ActualPosition = ((VlcMediaPlayer)sender).Position; };
 
       MediaPlayer.Paused += (sender, e) =>
       {
         ActualSong.IsPaused = true;
         IsPlaying = false;
         IsPlayingSubject.OnNext(IsPlaying);
+      };
 
+      MediaPlayer.Stopped += (sender, e) =>
+      {
+        ActualSong.IsPaused = false;
+        ActualSong = null;
+        actualSongIndex = 0;
+        IsPlaying = false;
+        IsPlayingSubject.OnNext(IsPlaying);
       };
 
       MediaPlayer.Playing += (sender, e) =>
@@ -216,7 +229,7 @@ namespace VPlayer.Player.ViewModels
 
     #endregion PlaySongs
 
-    #region PlaySongs
+    #region AddSongs
 
     private void AddSongs(IEnumerable<SongInPlayList> songs)
     {
@@ -239,6 +252,17 @@ namespace VPlayer.Player.ViewModels
             ActualSong.IsPaused = false;
           }
 
+          if (actualSongIndex == PlayList.Count)
+          {
+            if (IsRepeate)
+              actualSongIndex = 0;
+            else
+            {
+              Stop();
+              return;
+            }
+          }
+
           if (PlayList[actualSongIndex] == ActualSong)
           {
             MediaPlayer.Play();
@@ -250,6 +274,7 @@ namespace VPlayer.Player.ViewModels
 
             MediaPlayer.Play();
           }
+
         }
       });
     }
@@ -277,7 +302,7 @@ namespace VPlayer.Player.ViewModels
 
     public override void Stop()
     {
-      throw new NotImplementedException();
+      MediaPlayer.Stop();
     }
 
     #region PlayNext
@@ -302,10 +327,10 @@ namespace VPlayer.Player.ViewModels
     }
 
     #endregion PlayNext
-  
+
 
     #endregion Methods
 
-   
+
   }
 }

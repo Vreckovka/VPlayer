@@ -21,7 +21,17 @@
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d">
 
-  <Grid>
+  <Window.TaskbarItemInfo>
+    <TaskbarItemInfo>
+      <TaskbarItemInfo.ThumbButtonInfos>
+        <ThumbButtonInfo Description="First Button" />
+        <ThumbButtonInfo Description="Second Button" />
+        <ThumbButtonInfo Description="Third Button" />
+      </TaskbarItemInfo.ThumbButtonInfos>
+    </TaskbarItemInfo>
+  </Window.TaskbarItemInfo>
+
+<Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="150" />
       <ColumnDefinition Width="*" />

@@ -195,7 +195,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListView">
-                    <Border>
+                    <Border Background="{TemplateBinding Background}">
                         <ScrollViewer>
                             <ItemsPresenter />
                         </ScrollViewer>
