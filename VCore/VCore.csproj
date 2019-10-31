@@ -120,6 +120,7 @@
     <Compile Include="Behaviors\DropBehavior.cs" />
     <Compile Include="Behaviors\Text\PanningTextWithFontSizeBehavior.cs" />
     <Compile Include="Controls\Finder.cs" />
+    <Compile Include="Controls\PathButton.cs" />
     <Compile Include="Controls\PlayableWrapPanelItem.cs" />
     <Compile Include="Controls\PlayableWrapPanel.cs" />
     <Compile Include="Converters\BaseConverter.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="Design\DesignTimeRegionProvider.cs" />
     <Compile Include="Design\DesignTimeViewsProvider.cs" />
     <Compile Include="ExtentionsMethods\ObjectExtentions.cs" />
+    <Compile Include="ExtentionsMethods\RxExtentions.cs" />
     <Compile Include="Factories\ViewModels\BaseViewModelFactory.cs" />
     <Compile Include="Extentions.cs" />
     <Compile Include="Factories\ViewModels\IViewModelsFactory.cs" />

@@ -1,6 +1,7 @@
 ﻿<UserControl x:Class="VPlayer.Player.Views.PlayerView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:VPlayer.Player.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -26,18 +27,40 @@
             <ColumnDefinition Width="auto" />
           </Grid.ColumnDefinitions>
 
+          <controls:PathButton Grid.Column="0"
+                               Margin="0 0 5 0"
+                               Width="33"
+                               BorderThickness="0"
+                               PathStyle="{StaticResource NextSong}" 
+                               Foreground="White"
+                               IsToggle="False"
+                               RenderTransformOrigin="0.5,0.5"
+                               Command="{Binding PreviousCommand}"
+                               IsEnabled="{Binding CanPlay}">
+            <controls:PathButton.RenderTransform>
+              <ScaleTransform ScaleX="-1"/>
+            </controls:PathButton.RenderTransform>
+          </controls:PathButton>
+
           <Button x:Name="Play_Button"
                   Grid.Column="1"
                   Margin="7"
                   Padding="15"
                   BorderThickness="0"
                   Command="{Binding PlayButton}"
-                  Style="{StaticResource PlayButton}"/>
+                  Style="{StaticResource PlayButton}" />
 
-          <Button Grid.Column="2"
-                  Margin="15"
-                  BorderThickness="0"
-                  Style="{StaticResource StopButton}" />
+          <controls:PathButton Grid.Column="2"
+                               Margin="5 0 0 0"
+                               Width="33"
+                               BorderThickness="0"
+                               PathStyle="{StaticResource NextSong}" 
+                               Foreground="White"
+                               IsToggle="False"
+                               IsEnabled="{Binding CanPlay}"
+                               Command="{Binding NextCommand}"/>
+
+
         </Grid>
       </Grid>
     </Border>

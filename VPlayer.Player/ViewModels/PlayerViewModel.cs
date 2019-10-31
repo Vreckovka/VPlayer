@@ -1,8 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Reactive.Linq;
 using System.Windows.Input;
 using Listener;
 using VCore;
+using VCore.ExtentionsMethods;
 using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
 using VPlayer.Core.Modularity.Regions;
@@ -30,16 +32,35 @@ namespace VPlayer.Player.ViewModels
 
       keyListener.OnKeyPressed += KeyListener_OnKeyPressed;
 
-      windowsPlayerViewModel.IsPlayingSubject.Subscribe(x =>
-      {
-        IsPlaying = x;
-      });
+
+      windowsPlayerViewModel.ObservePropertyChange(x => x.CanPlay)
+        .Subscribe((x) =>
+        {
+          CanPlay = x;
+        });
+
+      windowsPlayerViewModel.ObservePropertyChange(x => x.IsPlaying)
+        .Subscribe((x) =>
+        {
+          IsPlaying = x;
+        });
+
+      windowsPlayerViewModel.ObservePropertyChange(x => x.IsActive)
+        .Subscribe((x) =>
+        {
+          ActualViewModel = windowsPlayerViewModel;
+        });
+
+      ActualViewModel = windowsPlayerViewModel;
+
     }
 
     public override bool ContainsNestedRegions => false;
     public override string RegionName { get; protected set; } = RegionNames.PlayerRegion;
-    public IPlayableRegionViewModel ActualViewModel => windowsPlayerViewModel.IsActive ? (IPlayableRegionViewModel)windowsPlayerViewModel : webPlayerViewModel.IsActive ? webPlayerViewModel : null;
+    public IPlayableRegionViewModel ActualViewModel { get; set; }
     public bool IsPlaying { get; set; }
+    public bool CanPlay { get; set; }
+
 
     #region Play
 
@@ -68,40 +89,111 @@ namespace VPlayer.Player.ViewModels
 
     #endregion Play
 
+    #region NextCommand
+
+    private ActionCommand nextCommand;
+
+    public ICommand NextCommand
+    {
+      get
+      {
+        if (nextCommand == null)
+        {
+          nextCommand = new ActionCommand(PlayNext);
+        }
+
+        return nextCommand;
+      }
+    }
+
+    #endregion
+
+    #region PreviousCommand
+
+    private ActionCommand previousCommand;
+
+    public ICommand PreviousCommand
+    {
+      get
+      {
+        if (previousCommand == null)
+        {
+          previousCommand = new ActionCommand(PlayPrevious);
+        }
+
+        return previousCommand;
+      }
+    }
+
+    #endregion
+
+    #region Play
+
     public void Play()
     {
       ActualViewModel?.Play();
     }
+
+    #endregion
+
+    #region Pause
 
     public void Pause()
     {
       ActualViewModel?.Pause();
     }
 
+    #endregion
+
+    #region PlayNext
+
     public void PlayNext()
     {
       ActualViewModel?.PlayNext();
     }
 
+    #endregion
+
+    #region PlayPrevious
+
+    public void PlayPrevious()
+    {
+      ActualViewModel?.PlayPrevious();
+    }
+
+    #endregion
+
     #region KeyListener_OnKeyPressed
 
     private void KeyListener_OnKeyPressed(object sender, KeyPressedArgs e)
     {
-        if (e.KeyPressed == Key.MediaPlayPause)
-        {
-          if (!IsPlaying)
+      switch (e.KeyPressed)
+      {
+        case Key.MediaPlayPause:
           {
-            Play();
+            if (!IsPlaying)
+            {
+              Play();
+            }
+            else
+            {
+              Pause();
+            }
+            break;
           }
-          else
+
+        case Key.MediaNextTrack:
           {
-            Pause();
+            PlayNext();
+            break;
           }
-        }
-        else if (e.KeyPressed == Key.MediaNextTrack)
-        {
-          PlayNext();
-        }
+
+        case Key.MediaPreviousTrack:
+          {
+            PlayPrevious();
+            break;
+          }
+      }
     }
 
     #endregion KeyListener_OnKeyPressed

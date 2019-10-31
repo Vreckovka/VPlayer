@@ -53,6 +53,12 @@ namespace VPlayer.Player.ViewModels
 
     public SongInPlayList ActualSong { get; private set; }
     public override bool IsPlaying { get; protected set; }
+
+    public override bool CanPlay
+    {
+      get { return PlayList.Count != 0; }
+    }
+
     public VlcMediaPlayer MediaPlayer { get; private set; }
     public RxObservableCollection<SongInPlayList> PlayList { get; set; } = new RxObservableCollection<SongInPlayList>();
     public override bool ContainsNestedRegions => false;
@@ -225,6 +231,8 @@ namespace VPlayer.Player.ViewModels
       Play();
 
       if (ActualSong != null) ActualSong.IsPlaying = false;
+
+      RaisePropertyChanged(nameof(CanPlay));
     }
 
     #endregion PlaySongs
@@ -234,6 +242,7 @@ namespace VPlayer.Player.ViewModels
     private void AddSongs(IEnumerable<SongInPlayList> songs)
     {
       PlayList.AddRange(songs);
+      RaisePropertyChanged(nameof(CanPlay));
     }
 
     #endregion PlaySongs
@@ -290,20 +299,40 @@ namespace VPlayer.Player.ViewModels
 
     #endregion Pause
 
+    #region PlayNext
+
     public override void PlayNext()
     {
       actualSongIndex++;
+      Play();
     }
+
+    #endregion
+
+    #region PlayPrevious
 
     public override void PlayPrevious()
     {
-      throw new NotImplementedException();
+      actualSongIndex--;
+
+      if (actualSongIndex < 0)
+      {
+        actualSongIndex = 0;
+      }
+
+      Play();
     }
+
+    #endregion
+
+    #region Stop
 
     public override void Stop()
     {
       MediaPlayer.Stop();
     }
+
+    #endregion
 
     #region PlayNext
 

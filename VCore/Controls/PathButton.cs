@@ -24,11 +24,36 @@ namespace VCore.Controls
         nameof(PathStyle),
         typeof(Style),
         typeof(PathButton),
-        new PropertyMetadata(null, (x, y) =>
-        {
-          ((Style) y.NewValue).TargetType = typeof(Path);
-        }));
+        new PropertyMetadata(null));
 
+
+    #endregion
+
+    #region IsToggle
+
+    public bool IsToggle
+    {
+      get { return (bool)GetValue(IsToggleProperty); }
+      set { SetValue(IsToggleProperty, value); }
+    }
+
+    public static readonly DependencyProperty IsToggleProperty =
+      DependencyProperty.Register(
+        nameof(IsToggle),
+        typeof(bool),
+        typeof(PathButton),
+        new PropertyMetadata(false));
+
+
+    #endregion
+
+    #region OnToggle
+
+    protected override void OnToggle()
+    {
+      if (IsToggle)
+        base.OnToggle();
+    }
 
     #endregion
   }

@@ -24,6 +24,7 @@ namespace VPlayer.Core.ViewModels
     public abstract void Stop();
     public abstract bool IsPlaying { get; protected set; }
     public Subject<bool> IsPlayingSubject { get; } = new Subject<bool>();
+    public abstract bool CanPlay { get; }
   }
 
   public interface IPlayableRegionViewModel
@@ -34,5 +35,6 @@ namespace VPlayer.Core.ViewModels
     void PlayPrevious();
     void Stop();
     bool IsPlaying { get; }
+    bool CanPlay { get; }
   }
 }

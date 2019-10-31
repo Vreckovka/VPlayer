@@ -39,6 +39,7 @@ namespace VPlayer.WebPlayer.ViewModels
     }
 
     public override bool IsPlaying { get; protected set; }
+    public override bool CanPlay { get; }
 
     public override bool ContainsNestedRegions => false;
     public override string RegionName { get; protected set; } = RegionNames.ContentRegion;
