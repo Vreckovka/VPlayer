@@ -147,6 +147,114 @@
     <Compile Include="ViewModels\SongInPlayList.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\VPlayer\Resources\Montserrat\Montserrat-Black.otf">
+      <Link>Resources\Fonts\Montserrat\Montserrat-Black.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\Montserrat-BlackItalic.otf">
+      <Link>Resources\Fonts\Montserrat\Montserrat-BlackItalic.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\Montserrat-Bold.otf">
+      <Link>Resources\Fonts\Montserrat\Montserrat-Bold.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\Montserrat-BoldItalic.otf">
+      <Link>Resources\Fonts\Montserrat\Montserrat-BoldItalic.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\Montserrat-ExtraBold.otf">
+      <Link>Resources\Fonts\Montserrat\Montserrat-ExtraBold.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\Montserrat-ExtraBoldItalic.otf">
+      <Link>Resources\Fonts\Montserrat\Montserrat-ExtraBoldItalic.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\Montserrat-ExtraLight.otf">
+      <Link>Resources\Fonts\Montserrat\Montserrat-ExtraLight.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\Montserrat-ExtraLightItalic.otf">
+      <Link>Resources\Fonts\Montserrat\Montserrat-ExtraLightItalic.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\Montserrat-Italic.otf">
+      <Link>Resources\Fonts\Montserrat\Montserrat-Italic.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\Montserrat-Light.otf">
+      <Link>Resources\Fonts\Montserrat\Montserrat-Light.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\Montserrat-LightItalic.otf">
+      <Link>Resources\Fonts\Montserrat\Montserrat-LightItalic.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\Montserrat-Medium.otf">
+      <Link>Resources\Fonts\Montserrat\Montserrat-Medium.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\Montserrat-MediumItalic.otf">
+      <Link>Resources\Fonts\Montserrat\Montserrat-MediumItalic.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\Montserrat-Regular.otf">
+      <Link>Resources\Fonts\Montserrat\Montserrat-Regular.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\Montserrat-SemiBold.otf">
+      <Link>Resources\Fonts\Montserrat\Montserrat-SemiBold.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\Montserrat-SemiBoldItalic.otf">
+      <Link>Resources\Fonts\Montserrat\Montserrat-SemiBoldItalic.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\Montserrat-Thin.otf">
+      <Link>Resources\Fonts\Montserrat\Montserrat-Thin.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\Montserrat-ThinItalic.otf">
+      <Link>Resources\Fonts\Montserrat\Montserrat-ThinItalic.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\MontserratAlternates-Black.otf">
+      <Link>Resources\Fonts\Montserrat\MontserratAlternates-Black.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\MontserratAlternates-BlackItalic.otf">
+      <Link>Resources\Fonts\Montserrat\MontserratAlternates-BlackItalic.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\MontserratAlternates-Bold.otf">
+      <Link>Resources\Fonts\Montserrat\MontserratAlternates-Bold.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\MontserratAlternates-BoldItalic.otf">
+      <Link>Resources\Fonts\Montserrat\MontserratAlternates-BoldItalic.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\MontserratAlternates-ExtraBold.otf">
+      <Link>Resources\Fonts\Montserrat\MontserratAlternates-ExtraBold.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\MontserratAlternates-ExtraBoldItalic.otf">
+      <Link>Resources\Fonts\Montserrat\MontserratAlternates-ExtraBoldItalic.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\MontserratAlternates-ExtraLight.otf">
+      <Link>Resources\Fonts\Montserrat\MontserratAlternates-ExtraLight.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\MontserratAlternates-ExtraLightItalic.otf">
+      <Link>Resources\Fonts\Montserrat\MontserratAlternates-ExtraLightItalic.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\MontserratAlternates-Italic.otf">
+      <Link>Resources\Fonts\Montserrat\MontserratAlternates-Italic.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\MontserratAlternates-Light.otf">
+      <Link>Resources\Fonts\Montserrat\MontserratAlternates-Light.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\MontserratAlternates-LightItalic.otf">
+      <Link>Resources\Fonts\Montserrat\MontserratAlternates-LightItalic.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\MontserratAlternates-Medium.otf">
+      <Link>Resources\Fonts\Montserrat\MontserratAlternates-Medium.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\MontserratAlternates-MediumItalic.otf">
+      <Link>Resources\Fonts\Montserrat\MontserratAlternates-MediumItalic.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\MontserratAlternates-Regular.otf">
+      <Link>Resources\Fonts\Montserrat\MontserratAlternates-Regular.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\MontserratAlternates-SemiBold.otf">
+      <Link>Resources\Fonts\Montserrat\MontserratAlternates-SemiBold.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\MontserratAlternates-SemiBoldItalic.otf">
+      <Link>Resources\Fonts\Montserrat\MontserratAlternates-SemiBoldItalic.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\MontserratAlternates-Thin.otf">
+      <Link>Resources\Fonts\Montserrat\MontserratAlternates-Thin.otf</Link>
+    </None>
+    <None Include="..\VPlayer\Resources\Montserrat\MontserratAlternates-ThinItalic.otf">
+      <Link>Resources\Fonts\Montserrat\MontserratAlternates-ThinItalic.otf</Link>
+    </None>
     <None Include="App.config" />
     <None Include="packages.config">
       <SubType>Designer</SubType>

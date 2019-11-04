@@ -1,252 +1,305 @@
-﻿<UserControl x:Class="VPlayer.Player.Views.WindowsPlayer.WindowsPlayerView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
-             xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:design1="clr-namespace:VPlayer.Player.Design"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:local="clr-namespace:VPlayer.Player.Views"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:windowsPlayer="clr-namespace:VPlayer.WindowsPlayer"
-             d:DataContext="{d:DesignInstance Type={x:Type design1:PlayerDesingViewModel},
-                                              IsDesignTimeCreatable=True}"
-             d:DesignHeight="450"
-             d:DesignWidth="800"
-             Background="{StaticResource BackgroudBrush}"
-             mc:Ignorable="d">
-  <UserControl.Resources>
-    <ResourceDictionary>
-      <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Views/WindowsPlayer/WindowsPlayerViewResources.xaml" />
-      </ResourceDictionary.MergedDictionaries>
-    </ResourceDictionary>
-  </UserControl.Resources>
+﻿<UserControl
+    x:Class="VPlayer.Player.Views.WindowsPlayer.WindowsPlayerView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
+    xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:design1="clr-namespace:VPlayer.Player.Design"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:local="clr-namespace:VPlayer.Player.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:windowsPlayer="clr-namespace:VPlayer.WindowsPlayer"
+    d:DataContext="{d:DesignInstance Type={x:Type design1:PlayerDesingViewModel},
+                                     IsDesignTimeCreatable=True}"
+    d:DesignHeight="450"
+    d:DesignWidth="900"
+    Background="{StaticResource BackgroudBrush}"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Views/WindowsPlayer/WindowsPlayerViewResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
 
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="*" />
-      <RowDefinition Height="auto" />
-      <RowDefinition Height="auto" />
-      <RowDefinition Height="auto" />
-    </Grid.RowDefinitions>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
 
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="*" />
-      <ColumnDefinition Width="5" />
-      <ColumnDefinition Width="370" />
-    </Grid.ColumnDefinitions>
-
-    <Grid Grid.Column="0">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="*" />
-      </Grid.RowDefinitions>
-
-      <Grid VerticalAlignment="Stretch">
         <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="*" />
-          <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="370" />
         </Grid.ColumnDefinitions>
 
-        <Image Grid.Column="0"
-               Source="{Binding ActualSong.Image}"
-               Stretch="UniformToFill" />
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-        <Image Grid.Column="1"
-               Source="{Binding ActualSong.Image}"
-               Stretch="UniformToFill" />
+            <Grid VerticalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-        <Grid Grid.RowSpan="2"
-              Grid.ColumnSpan="2"
-              HorizontalAlignment="Stretch"
-              VerticalAlignment="Stretch">
-          <Grid.Background>
-            <LinearGradientBrush StartPoint="0,1" EndPoint="0 0">
-              <GradientStop Offset="1" Color="#5A000000" />
-              <GradientStop Offset="0.6" Color="#5A000000" />
-              <GradientStop Offset="0.05" Color="#5A000000" />
-            </LinearGradientBrush>
-          </Grid.Background>
-        </Grid>
-      </Grid>
+                <Image
+                    Grid.Column="0"
+                    Source="{Binding ActualSong.Image}"
+                    Stretch="UniformToFill" />
 
-      <Grid Grid.Row="0">
-        <Grid.Background>
-          <LinearGradientBrush StartPoint="1,0" EndPoint="0 0">
-            <GradientStop Offset="1" Color="#AF000000" />
-            <GradientStop Offset="0.7" Color="#00000000" />
-            <GradientStop Offset="0.3" Color="#00000000" />
-            <GradientStop Offset="0.0" Color="#AF000000" />
-          </LinearGradientBrush>
-        </Grid.Background>
-      </Grid>
+                <Image
+                    Grid.Column="1"
+                    Source="{Binding ActualSong.Image}"
+                    Stretch="UniformToFill" />
 
-      <Image Name="Image"
-             Source="{Binding ActualSong.Image}"
-             Stretch="Uniform" />
+                <Grid
+                    Grid.RowSpan="2"
+                    Grid.ColumnSpan="2"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch">
+                    <Grid.Background>
+                        <LinearGradientBrush StartPoint="0,1" EndPoint="0 0">
+                            <GradientStop Offset="1" Color="#5A000000" />
+                            <GradientStop Offset="0.6" Color="#5A000000" />
+                            <GradientStop Offset="0.05" Color="#5A000000" />
+                        </LinearGradientBrush>
+                    </Grid.Background>
+                </Grid>
+            </Grid>
 
+            <Grid Grid.Row="0">
+                <Grid.Background>
+                    <LinearGradientBrush StartPoint="1,0" EndPoint="0 0">
+                        <GradientStop Offset="1" Color="#FF000000" />
+                        <GradientStop Offset="0.5" Color="#00000000" />
+                        <GradientStop Offset="0.0" Color="#00000000" />
+                        <GradientStop Offset="0.0" Color="#FF000000" />
+                    </LinearGradientBrush>
+                </Grid.Background>
+            </Grid>
 
-      <Grid Grid.Row="0">
-        <Grid.Background>
-          <LinearGradientBrush StartPoint="0,1" EndPoint="0 0">
-            <GradientStop Offset="1" Color="#2A000000" />
-            <GradientStop Offset="0.85" Color="#00000000" />
-            <GradientStop Offset="0.15" Color="#00000000" />
-            <GradientStop Offset="0.0" Color="#2A000000" />
-          </LinearGradientBrush>
-        </Grid.Background>
-      </Grid>
+            <Border
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                BorderBrush="#FF080808"
+                BorderThickness="5"
+                Panel.ZIndex="0">
+                <Image
+                    Name="Image"
+                    Source="{Binding ActualSong.Image}"
+                    Stretch="Uniform" />
+                <Border.Effect>
+                    <DropShadowEffect
+                            BlurRadius="20"
+                            Direction="0"
+                            ShadowDepth="15" />
+                </Border.Effect>
+            </Border>
 
-      <Grid Grid.Row="0"
-            Width="{Binding ElementName=Image, Path=ActualWidth}"
-            Height="{Binding ElementName=Image, Path=ActualHeight}">
-        <Grid.Background>
-          <LinearGradientBrush StartPoint="1,0" EndPoint="0 0">
-            <GradientStop Offset="1" Color="#80000000" />
-            <GradientStop Offset="0.75" Color="#00000000" />
-            <GradientStop Offset="0.2" Color="#00000000" />
-            <GradientStop Offset="0.0" Color="#80000000" />
-          </LinearGradientBrush>
-        </Grid.Background>
-      </Grid>
+            <Grid Grid.Row="0">
+                <Grid.Background>
+                    <LinearGradientBrush StartPoint="0,1" EndPoint="0 0">
+                        <GradientStop Offset="1" Color="#2A000000" />
+                        <GradientStop Offset="0.85" Color="#00000000" />
+                        <GradientStop Offset="0.15" Color="#00000000" />
+                        <GradientStop Offset="0.0" Color="#2A000000" />
+                    </LinearGradientBrush>
+                </Grid.Background>
+            </Grid>
 
-      <Grid Height="75"
-            VerticalAlignment="Bottom"
-            Background="#AB000000">
+            <Grid
+                Grid.Row="0"
+                Width="{Binding ElementName=Image, Path=ActualWidth}"
+                Height="{Binding ElementName=Image, Path=ActualHeight}">
+                <Grid.Background>
+                    <LinearGradientBrush StartPoint="1,0" EndPoint="0 1">
+                        <GradientStop Offset="1" Color="#80000000" />
+                        <GradientStop Offset="0.65" Color="#00000000" />
+                        <GradientStop Offset="0.35" Color="#00000000" />
+                        <GradientStop Offset="0.0" Color="#80000000" />
+                    </LinearGradientBrush>
+                </Grid.Background>
+            </Grid>
 
-        <Button Width="50"
-                Margin="10,0,0,15"
-                HorizontalAlignment="Left"
+            <Grid
+                Height="75"
                 VerticalAlignment="Bottom"
-                Command="{Binding AlbumDetail}"
-                FontSize="36">
-          <Button.Style>
-            <Style BasedOn="{StaticResource BorderlessButtonStyle}" TargetType="Button">
-              <Setter Property="FontWeight" Value="Bold" />
-              <Setter Property="Foreground" Value="#FF454555" />
-              <Setter Property="Content">
-                <Setter.Value>
-                  <Grid>
-                    <Grid Width="15"
-                          Height="35"
-                          VerticalAlignment="Center"
-                          Background="White" />
-                    <Path Data="M49.52,38.12c3.06,0,5.52-2.52,5.52-5.58c0-3-2.46-5.52-5.52-5.52S44,29.54,44,32.54C44,35.6,46.46,38.12,49.52,38.12z                             M55.4,45.86c0-2.52-2.04-4.5-4.5-4.5h-4.5c-2.52,0-4.5,1.98-4.5,4.5c0,2.46,1.98,4.5,4.5,4.5V63.5c-2.52,0-4.5,2.04-4.5,4.5                             c0,2.52,1.98,4.5,4.5,4.5h9c2.46,0,4.5-1.98,4.5-4.5c0-2.46-2.04-4.5-4.5-4.5V45.86z M50,5c24.84,0,45,20.16,45,45S74.84,95,50,95                             C25.1,95,5,74.84,5,50S25.1,5,50,5z"
-                          Fill="{Binding RelativeSource={RelativeSource AncestorType=Button, Mode=FindAncestor}, Path=Foreground}"
-                          Stroke="{Binding RelativeSource={RelativeSource AncestorType=Button, Mode=FindAncestor}, Path=Foreground}"
-                          StrokeThickness="0.2"
-                          Style="{StaticResource Information}" />
-                  </Grid>
-                </Setter.Value>
-              </Setter>
-              <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                  <Setter Property="Foreground" Value="{StaticResource DefaultRedBrush}" />
-                </Trigger>
-              </Style.Triggers>
-            </Style>
-          </Button.Style>
-        </Button>
+                Background="#AB000000">
 
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-          <TextBlock Margin="0,-12,0,0"
-                     FontSize="35"
-                     Foreground="#FFEFDF"
-                     Text="{Binding ActualSong.Name}">
-            <TextBlock.Effect>
-              <DropShadowEffect BlurRadius="2" ShadowDepth="3" />
-            </TextBlock.Effect>
-          </TextBlock>
+                <Button
+                    Width="50"
+                    Margin="10,0,0,15"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Command="{Binding AlbumDetail}"
+                    FontSize="36">
+                    <Button.Style>
+                        <Style BasedOn="{StaticResource BorderlessButtonStyle}" TargetType="Button">
+                            <Setter Property="FontWeight" Value="Bold" />
+                            <Setter Property="Foreground" Value="#FF454555" />
+                            <Setter Property="Content">
+                                <Setter.Value>
+                                    <Grid>
+                                        <Grid
+                                            Width="15"
+                                            Height="35"
+                                            VerticalAlignment="Center"
+                                            Background="White" />
+                                        <Path
+                                            Data="M49.52,38.12c3.06,0,5.52-2.52,5.52-5.58c0-3-2.46-5.52-5.52-5.52S44,29.54,44,32.54C44,35.6,46.46,38.12,49.52,38.12z                             M55.4,45.86c0-2.52-2.04-4.5-4.5-4.5h-4.5c-2.52,0-4.5,1.98-4.5,4.5c0,2.46,1.98,4.5,4.5,4.5V63.5c-2.52,0-4.5,2.04-4.5,4.5                             c0,2.52,1.98,4.5,4.5,4.5h9c2.46,0,4.5-1.98,4.5-4.5c0-2.46-2.04-4.5-4.5-4.5V45.86z M50,5c24.84,0,45,20.16,45,45S74.84,95,50,95                             C25.1,95,5,74.84,5,50S25.1,5,50,5z"
+                                            Fill="{Binding RelativeSource={RelativeSource AncestorType=Button, Mode=FindAncestor}, Path=Foreground}"
+                                            Stroke="{Binding RelativeSource={RelativeSource AncestorType=Button, Mode=FindAncestor}, Path=Foreground}"
+                                            StrokeThickness="0.2"
+                                            Style="{StaticResource Information}" />
+                                    </Grid>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Trigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <ColorAnimation
+                                                    Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"
+                                                    From="#FF454555"
+                                                    To="{StaticResource DefaultRedColor}"
+                                                    Duration="0:0:0:0.25" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.EnterActions>
+                                    <!--<Setter Property="Foreground" Value="{StaticResource DefaultRedBrush}" />-->
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    <Button.ToolTip>
+                        <ToolTip
+                            Margin="0"
+                            Padding="5,0,5,0"
+                            Background="#FF202020"
+                            BorderThickness="0"
+                            Content="Info"
+                            FontFamily="pack://application:,,,/VPlayer.VPlayer;component/Resources/#Montserrat-Light"
+                            FontSize="18"
+                            FontWeight="Light"
+                            Foreground="#DCFFFFFF"
+                            IsOpen="False" />
+                    </Button.ToolTip>
+                </Button>
 
-          <TextBlock HorizontalAlignment="Center"
-                     FontSize="19"
-                     Foreground="#D0EFEFDF">
-            <Run Text="{Binding ActualSong.ArtistViewModel.Name, Mode=OneWay}" />
-            <Run Text="{Binding ActualSong.AlbumViewModel.Name, Mode=OneWay, StringFormat={}({0})}" />
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock
+                        Margin="0,-12,0,0"
+                        FontSize="35"
+                        Foreground="#FFFFFF"
+                        FontFamily="pack://application:,,,/VPlayer.Core;component/Resources/Fonts/Montserrat/Montserrat-Light.otf#Montserrat Light"
+                        Text="{Binding ActualSong.Name}">
+                        <TextBlock.Effect>
+                            <DropShadowEffect BlurRadius="2" ShadowDepth="3" />
+                        </TextBlock.Effect>
+                    </TextBlock>
 
-            <TextBlock.Effect>
-              <DropShadowEffect BlurRadius="2" ShadowDepth="2" />
-            </TextBlock.Effect>
-          </TextBlock>
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        FontSize="19"
+                        Foreground="#50EFEFDF"
+                        FontFamily="pack://application:,,,/VPlayer.Core;component/Resources/Fonts/Montserrat/Montserrat-Medium.otf#Montserrat Regular">
+                        <Run Text="{Binding ActualSong.ArtistViewModel.Name, Mode=OneWay}" />
+                        <Run Text="{Binding ActualSong.AlbumViewModel.Name, Mode=OneWay, StringFormat={}({0})}" />
 
-        </StackPanel>
+                        <TextBlock.Effect>
+                            <DropShadowEffect BlurRadius="2" ShadowDepth="2" />
+                        </TextBlock.Effect>
+                    </TextBlock>
+                </StackPanel>
 
+                <ToggleButton
+                    Margin="0,0,5,5"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    BorderThickness="0"
+                    Foreground="#DB505050"
+                    IsChecked="{Binding IsRepeate}"
+                    Style="{StaticResource RefreshButton}" />
 
+                <ToggleButton
+                    Margin="0,0,35,5"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    BorderThickness="0"
+                    Foreground="#DB505050"
+                    IsChecked="{Binding IsShuffle}"
+                    Style="{StaticResource ShuffleButton}" />
+            </Grid>
+        </Grid>
 
-        <ToggleButton Margin="0,0,5,5"
-                      HorizontalAlignment="Right"
-                      VerticalAlignment="Bottom"
-                      BorderThickness="0"
-                      Foreground="#DB505050"
-                      IsChecked="{Binding IsRepeate}"
-                      Style="{StaticResource RefreshButton}" />
+        <GridSplitter
+            Grid.RowSpan="3"
+            Grid.Column="1"
+            Margin="2,0,0,0"
+            HorizontalAlignment="Stretch"
+            IsEnabled="False">
+            <GridSplitter.Style>
+                <Style TargetType="GridSplitter">
+                    <Setter Property="Width" Value="2" />
+                    <Setter Property="Background" Value="{StaticResource 30_WhiteTransparentBrush}" />
+                </Style>
+            </GridSplitter.Style>
+        </GridSplitter>
 
-        <ToggleButton Margin="0,0,35,5"
-                      HorizontalAlignment="Right"
-                      VerticalAlignment="Bottom"
-                      BorderThickness="0"
-                      Foreground="#DB505050"
-                      IsChecked="{Binding IsShuffle}"
-                      Style="{StaticResource ShuffleButton}" />
+        <ListView
+            x:Name="ListView_Tracks"
+            Grid.Row="0"
+            Grid.RowSpan="3"
+            Grid.Column="2"
+            Margin="1,0,0,0"
+            Panel.ZIndex="0"
+            HorizontalAlignment="Stretch"
+            AllowDrop="True"
+            ItemTemplate="{StaticResource SoundTrackTemplate}"
+            ItemsSource="{Binding PlayList}"
+            Background="{StaticResource BackgroudBrush}"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+            Style="{StaticResource WindowsPlayerSongs}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction Command="{Binding NextSong}" CommandParameter="{Binding ElementName=ListView_Tracks, Path=SelectedItem}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </ListView>
 
-      </Grid>
-    </Grid>
-
-    <GridSplitter Grid.RowSpan="3"
-                  Grid.Column="1"
-                  Margin="2,0,0,0"
-                  HorizontalAlignment="Stretch"
-                  IsEnabled="False">
-      <GridSplitter.Style>
-        <Style TargetType="GridSplitter">
-          <Setter Property="Width" Value="2" />
-          <Setter Property="Background" Value="{StaticResource 30_WhiteTransparentBrush}" />
-        </Style>
-      </GridSplitter.Style>
-    </GridSplitter>
-
-    <ListView x:Name="ListView_Tracks"
-              Grid.Row="0"
-              Grid.RowSpan="3"
-              Grid.Column="2"
-              Margin="1,0,0,0"
-              HorizontalAlignment="Stretch"
-              AllowDrop="True"
-              ItemTemplate="{StaticResource SoundTrackTemplate}"
-              ItemsSource="{Binding PlayList}"
-              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-              Style="{StaticResource WindowsPlayerSongs}">
-      <i:Interaction.Triggers>
-        <i:EventTrigger EventName="MouseDoubleClick">
-          <i:InvokeCommandAction Command="{Binding NextSong}" CommandParameter="{Binding ElementName=ListView_Tracks, Path=SelectedItem}" />
-        </i:EventTrigger>
-      </i:Interaction.Triggers>
-    </ListView>
-
-    <Slider x:Name="Slider_Time"
+        <Slider
+            x:Name="Slider_Time"
             Grid.Row="1"
             Margin="0"
             Padding="0"
             IsMoveToPointEnabled="True"
             Maximum="1"
             Value="{Binding ActualSong.ActualPosition}">
-      <i:Interaction.Behaviors>
-        <behaviors:SliderValueChangedManualy Kernel="{Binding Kernel}" Duration="{Binding ActualSong.Duration}" />
-      </i:Interaction.Behaviors>
-    </Slider>
+            <i:Interaction.Behaviors>
+                <behaviors:SliderValueChangedManualy Kernel="{Binding Kernel}" Duration="{Binding ActualSong.Duration}" />
+            </i:Interaction.Behaviors>
+        </Slider>
 
-
-
-    <TextBlock Grid.Row="2"
-               HorizontalAlignment="Left"
-               FontSize="14"
-               Foreground="{StaticResource 120_WhiteTransparentBrush}"
-               Text="{Binding ActualSong.ActualTime, StringFormat=hh\\:mm\\:ss}" />
-    <TextBlock Grid.Row="2"
-               Grid.Column="0"
-               HorizontalAlignment="Right"
-               FontSize="14"
-               Foreground="{StaticResource 120_WhiteTransparentBrush}"
-               Text="{Binding ActualSong.Duration, Converter={converters:TimeConverter TimeType=Second}}" />
-  </Grid>
+        <TextBlock
+            Grid.Row="2"
+            HorizontalAlignment="Left"
+            FontSize="14"
+            Foreground="{StaticResource 120_WhiteTransparentBrush}"
+            Text="{Binding ActualSong.ActualTime, StringFormat=hh\\:mm\\:ss}" />
+        <TextBlock
+            Grid.Row="2"
+            Grid.Column="0"
+            HorizontalAlignment="Right"
+            FontSize="14"
+            Foreground="{StaticResource 120_WhiteTransparentBrush}"
+            Text="{Binding ActualSong.Duration, Converter={converters:TimeConverter TimeType=Second}}" />
+    </Grid>
 </UserControl>
