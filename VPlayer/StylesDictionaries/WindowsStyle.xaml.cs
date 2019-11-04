@@ -46,14 +46,13 @@ namespace VPlayer.StylesDictionaries
 
       Window window = (sender as Button).Tag as Window;
 
-      if (window.WindowState != System.Windows.WindowState.Maximized)
+      if (window.WindowState != WindowState.Maximized)
       {
-        window.WindowState = System.Windows.WindowState.Maximized;
+        window.WindowState = WindowState.Maximized;
       }
       else
       {
-        window.WindowStyle = System.Windows.WindowStyle.SingleBorderWindow;
-        window.WindowState = System.Windows.WindowState.Normal;
+        window.WindowState = WindowState.Normal;
       }
     }
 
