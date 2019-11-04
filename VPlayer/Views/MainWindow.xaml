@@ -9,6 +9,7 @@
         xmlns:prism="http://prismlibrary.com/"
         xmlns:regions="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPlayer.Core"
         xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore"
+        xmlns:controlzex="urn:controlzex"
         Title="{Binding Title}"
         Width="1288"
         Height="830"
