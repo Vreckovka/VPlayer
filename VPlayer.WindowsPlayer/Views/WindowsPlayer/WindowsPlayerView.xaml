@@ -131,7 +131,7 @@
             <Grid
                 Height="75"
                 VerticalAlignment="Bottom"
-                Background="#CB000000">
+                Background="#AB000000">
 
                 <Button
                     Width="50"
@@ -194,15 +194,14 @@
                     </Button.ToolTip>
                 </Button>
 
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 5 0 0">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock
                         Margin="0,-12,0,0"
-                        FontSize="40"
+                        FontSize="35"
                         Foreground="#FFFFFF"
                         FontFamily="pack://application:,,,/VPlayer.Core;component/Resources/Fonts/Montserrat/Montserrat-Light.otf#Montserrat Light"
-                        Text="{Binding ActualSong.Name}"
-                        HorizontalAlignment="Center">
-                      <TextBlock.Effect>
+                        Text="{Binding ActualSong.Name}">
+                        <TextBlock.Effect>
                             <DropShadowEffect BlurRadius="2" ShadowDepth="3" />
                         </TextBlock.Effect>
                     </TextBlock>
@@ -210,7 +209,7 @@
                     <TextBlock
                         HorizontalAlignment="Center"
                         FontSize="19"
-                        Foreground="#80CCCCCC"
+                        Foreground="#50EFEFDF"
                         FontFamily="pack://application:,,,/VPlayer.Core;component/Resources/Fonts/Montserrat/Montserrat-Medium.otf#Montserrat Regular">
                         <Run Text="{Binding ActualSong.ArtistViewModel.Name, Mode=OneWay}" />
                         <Run Text="{Binding ActualSong.AlbumViewModel.Name, Mode=OneWay, StringFormat={}({0})}" />

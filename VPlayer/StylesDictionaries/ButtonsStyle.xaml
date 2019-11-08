@@ -226,20 +226,7 @@
             </Trigger>
 
             <Trigger Property="IsMouseOver" Value="True">
-              <Trigger.EnterActions>
-                <BeginStoryboard Name="MouseOverStoryBoard">
-                  <Storyboard>
-                    <ColorAnimation Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"
-                                    From="#FF454555"
-                                    To="#FF888888"
-                                    Duration="0:0:0:0.25" />
-                  </Storyboard>
-                </BeginStoryboard>
-              </Trigger.EnterActions>
               <Setter Property="Cursor" Value="Hand" />
-              <Trigger.ExitActions>
-                <RemoveStoryboard BeginStoryboardName="MouseOverStoryBoard"/>
-              </Trigger.ExitActions>
             </Trigger>
 
             <Trigger Property="IsPressed" Value="True">
@@ -289,20 +276,7 @@
             </Trigger>
 
             <Trigger Property="IsMouseOver" Value="True">
-              <Trigger.EnterActions>
-                <BeginStoryboard Name="MouseOverStoryBoard">
-                  <Storyboard>
-                    <ColorAnimation Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"
-                                    From="#FF454555"
-                                    To="#FF888888"
-                                    Duration="0:0:0:0.25" />
-                  </Storyboard>
-                </BeginStoryboard>
-              </Trigger.EnterActions>
               <Setter Property="Cursor" Value="Hand" />
-              <Trigger.ExitActions>
-                <RemoveStoryboard BeginStoryboardName="MouseOverStoryBoard"/>
-              </Trigger.ExitActions>
             </Trigger>
 
             <Trigger Property="IsPressed" Value="True">

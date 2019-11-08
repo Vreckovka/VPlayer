@@ -749,8 +749,6 @@ namespace VPlayer.AudioStorage.InfoDownloader
         try
         {
           string apiURL = "http://coverartarchive.org//release/" + $"{MBID}";
-
-
           HttpResponse<string> response = await Task.Run(() => Unirest.get(apiURL).asJson<string>());
 
           if (response.Code != 200)
