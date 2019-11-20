@@ -21,9 +21,7 @@
         Style="{StaticResource {x:Type Window}}"
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d">
-  <Window.Resources>
-    <FontFamily x:Key="Font">pack://application:,,,/VPlayer.Core;component/Resources/Montserrat/Montserrat-Thin.otf#Montserrat Light</FontFamily>
-  </Window.Resources>
+
   <Window.TaskbarItemInfo>
     <TaskbarItemInfo>
       <TaskbarItemInfo.ThumbButtonInfos>
@@ -63,12 +61,6 @@
             Height="25"
             Click="Button_Click"
             Content="Clear" />
-
-    <TextBlock Grid.Row="0"
-               Grid.Column="0"
-               Height="75"
-               FontFamily="{StaticResource Pacifico}"
-               Text="ASDhojsada " />
 
     <ContentControl Grid.Row="1"
                     Grid.Column="0"
