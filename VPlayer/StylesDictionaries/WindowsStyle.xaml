@@ -1,180 +1,135 @@
-﻿<ResourceDictionary
-    x:Class="VPlayer.StylesDictionaries.WindowStyle"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:VPlayer.StylesDictionaries">
+﻿<ResourceDictionary x:Class="VPlayer.StylesDictionaries.WindowStyle"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:VPlayer.StylesDictionaries">
 
-    <Style TargetType="{x:Type Window}">
-        <Setter Property="Foreground" Value="GhostWhite" />
-        <Setter Property="WindowStyle" Value="None" />
-        <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="Background" Value="{StaticResource TopWindowsBrush}" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Window}">
-                    <Border
-                        BorderBrush="Red"
-                        BorderThickness="0">
-                        <Border.Style>
-                            <Style TargetType="Border">
-                                <Setter Property="Padding" Value="10" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=WindowState}" Value="Maximized">
-                                        <Setter Property="Padding" Value="5,5,10,5" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Border.Style>
+  <Style TargetType="{x:Type Window}">
+    <Setter Property="Foreground" Value="GhostWhite" />
+    <Setter Property="WindowStyle" Value="None" />
+    <Setter Property="OverridesDefaultStyle" Value="True" />
+    <Setter Property="Background" Value="{StaticResource TopWindowsBrush}" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type Window}">
+          <Border BorderBrush="Red" BorderThickness="0">
+            <Border.Style>
+              <Style TargetType="Border">
+                <Setter Property="Padding" Value="10" />
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=WindowState}" Value="Maximized">
+                    <Setter Property="Padding" Value="5,5,10,5" />
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </Border.Style>
 
-                        <Grid>
-                            <Border Margin="-1">
-                                <Border
-                                    Name="DropShadowBorder"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch">
-                                    <Border.Style>
-                                        <Style TargetType="Border">
-                                            <Setter Property="Background" Value="Transparent" />
-                                        </Style>
-                                    </Border.Style>
-                                    <Border.Effect>
-                                        <DropShadowEffect
-                                            Direction="0"
-                                            Opacity="1"
-                                            ShadowDepth="0"
-                                            Color="#f57542" />
-                                    </Border.Effect>
-                                </Border>
-                            </Border>
-                            <!--  The main window content  -->
-                            <Grid Background="{TemplateBinding Background}">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="auto" />
-                                    <RowDefinition Height="auto" />
-                                    <RowDefinition Height="*" />
-                                </Grid.RowDefinitions>
-                                <Grid x:Name="WindowsChromeGrid" Panel.ZIndex="1">
-                                    <Grid.Background>
-                                        <SolidColorBrush Opacity="0.03" Color="{StaticResource DefaultWhiteColor}" />
-                                    </Grid.Background>
-                                    <StackPanel
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Top"
-                                        Orientation="Horizontal">
-                                        <!--  Icon  -->
-                                        <Image
-                                            Width="20"
-                                            Height="20"
-                                            Margin="8,8,15,0"
-                                            Source="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Icon}" />
-                                        <!--  Title  -->
-                                        <TextBlock
-                                            Margin="0,3,0,0"
-                                            VerticalAlignment="Center"
-                                            FontSize="20"
-                                            Foreground="{DynamicResource DefaultWhiteBrush}"
-                                            Text="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Title}" />
-                                    </StackPanel>
-                                    <!--  Window buttons  -->
-                                    <StackPanel
-                                        Margin="1"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Stretch"
-                                        Orientation="Horizontal">
-                                        <Grid>
-                                            <Button
-                                                x:Name="MinimizeButt"
-                                                Click="MinimizeButt_Click"
-                                                Content="_"
-                                                Style="{DynamicResource ButtonStyleWindows}"
-                                                Tag="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+            <Grid>
+              <!--  The main window content  -->
+              <Grid Background="{TemplateBinding Background}">
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="auto" />
+                  <RowDefinition Height="auto" />
+                  <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid x:Name="WindowsChromeGrid" Panel.ZIndex="1">
+                  <Grid.Background>
+                    <SolidColorBrush Opacity="0.03" Color="{StaticResource DefaultWhiteColor}" />
+                  </Grid.Background>
+                  <StackPanel HorizontalAlignment="Left"
+                              VerticalAlignment="Top"
+                              Orientation="Horizontal">
+                    <!--  Icon  -->
+                    <Image Width="20"
+                           Height="20"
+                           Margin="8,8,15,0"
+                           Source="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Icon}" />
+                    <!--  Title  -->
+                    <TextBlock Margin="0,3,0,0"
+                               VerticalAlignment="Center"
+                               FontSize="20"
+                               Foreground="{DynamicResource DefaultWhiteBrush}"
+                               Text="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Title}" />
+                  </StackPanel>
+                  <!--  Window buttons  -->
+                  <StackPanel Margin="1"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Stretch"
+                              Orientation="Horizontal">
+                    <Grid>
+                      <Button x:Name="MinimizeButt"
+                              Click="MinimizeButt_Click"
+                              Content="_"
+                              Style="{DynamicResource ButtonStyleWindows}"
+                              Tag="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
 
-                                            <Grid.Style>
-                                                <Style TargetType="Grid">
-                                                    <Style.Triggers>
-                                                        <Trigger Property="IsMouseOver" Value="true">
-                                                            <Setter Property="Cursor" Value="Hand" />
-                                                            <Setter Property="Background" Value="{DynamicResource 50_WhiteTransparentBrush}" />
-                                                        </Trigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Grid.Style>
-                                        </Grid>
+                      <Grid.Style>
+                        <Style TargetType="Grid">
+                          <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                              <Setter Property="Cursor" Value="Hand" />
+                              <Setter Property="Background" Value="{DynamicResource 50_WhiteTransparentBrush}" />
+                            </Trigger>
+                          </Style.Triggers>
+                        </Style>
+                      </Grid.Style>
+                    </Grid>
 
-                                        <Grid>
-                                            <Button
-                                                x:Name="MaximizeButt"
-                                                Click="MaximizeButt_Click"
-                                                Content="[ ]"
-                                                Style="{DynamicResource ButtonStyleWindows}"
-                                                Tag="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+                    <Grid>
+                      <Button x:Name="MaximizeButt"
+                              Click="MaximizeButt_Click"
+                              Content="[ ]"
+                              Style="{DynamicResource ButtonStyleWindows}"
+                              Tag="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
 
-                                            <Grid.Style>
-                                                <Style TargetType="Grid">
-                                                    <Style.Triggers>
-                                                        <Trigger Property="IsMouseOver" Value="true">
-                                                            <Setter Property="Cursor" Value="Hand" />
-                                                            <Setter Property="Background" Value="{DynamicResource 30_WhiteTransparentBrush}" />
-                                                        </Trigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Grid.Style>
-                                        </Grid>
+                      <Grid.Style>
+                        <Style TargetType="Grid">
+                          <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                              <Setter Property="Cursor" Value="Hand" />
+                              <Setter Property="Background" Value="{DynamicResource 30_WhiteTransparentBrush}" />
+                            </Trigger>
+                          </Style.Triggers>
+                        </Style>
+                      </Grid.Style>
+                    </Grid>
 
-                                        <Grid>
-                                            <Button
-                                                x:Name="CloseButt"
-                                                Click="CloseButt_Click"
-                                                Content="X"
-                                                Style="{DynamicResource ButtonStyleWindows}"
-                                                Tag="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+                    <Grid>
+                      <Button x:Name="CloseButt"
+                              Click="CloseButt_Click"
+                              Content="X"
+                              Style="{DynamicResource ButtonStyleWindows}"
+                              Tag="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
 
-                                            <Grid.Style>
-                                                <Style TargetType="Grid">
-                                                    <Style.Triggers>
-                                                        <Trigger Property="IsMouseOver" Value="true">
-                                                            <Setter Property="Cursor" Value="Hand" />
-                                                            <Setter Property="Background" Value="{StaticResource DefaultRedBrush}" />
-                                                        </Trigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Grid.Style>
-                                        </Grid>
-                                    </StackPanel>
-                                </Grid>
+                      <Grid.Style>
+                        <Style TargetType="Grid">
+                          <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                              <Setter Property="Cursor" Value="Hand" />
+                              <Setter Property="Background" Value="{StaticResource DefaultRedBrush}" />
+                            </Trigger>
+                          </Style.Triggers>
+                        </Style>
+                      </Grid.Style>
+                    </Grid>
+                  </StackPanel>
+                </Grid>
 
-                                <Border Grid.Row="2">
-                                    <AdornerDecorator>
-                                        <ContentPresenter Content="{TemplateBinding Content}" />
-                                    </AdornerDecorator>
-                                </Border>
-                            </Grid>
-                            <Grid Name="OverlayGrid">
-                                <Grid.Style>
-                                    <Style TargetType="Grid">
-                                        <Setter Property="Background" Value="#60000000" />
-                                        <Setter Property="IsHitTestVisible" Value="False" />
-                                    </Style>
-                                </Grid.Style>
-                            </Grid>
-                        </Grid>
-                    </Border>
+                <Border Grid.Row="2">
+                  <AdornerDecorator>
+                    <ContentPresenter Content="{TemplateBinding Content}" />
+                  </AdornerDecorator>
+                </Border>
+              </Grid>
+            </Grid>
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
 
-                    <ControlTemplate.Triggers>
-                        <!--  handle active/inactive state  -->
-                        <Trigger Property="IsActive" Value="True">
-                            <Setter TargetName="DropShadowBorder" Property="Background" Value="#15FFFFFF" />
-                            <Setter TargetName="OverlayGrid" Property="Background" Value="Transparent" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-
-        <Setter Property="WindowChrome.WindowChrome">
-            <Setter.Value>
-                <WindowChrome CaptionHeight="35" ResizeBorderThickness="5" />
-            </Setter.Value>
-        </Setter>
-    </Style>
+    <Setter Property="WindowChrome.WindowChrome">
+      <Setter.Value>
+        <WindowChrome CaptionHeight="35" ResizeBorderThickness="5" />
+      </Setter.Value>
+    </Setter>
+  </Style>
 </ResourceDictionary>
