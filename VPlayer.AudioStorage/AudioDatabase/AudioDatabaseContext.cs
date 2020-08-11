@@ -4,6 +4,7 @@ using System.Data.Entity.Migrations;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using SQLite.CodeFirst;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Migrations;
 
@@ -11,9 +12,10 @@ namespace VPlayer.AudioStorage.AudioDatabase
 {
   public class AudioDatabaseContext : DbContext
   {
+    public static object baton = new object();
     #region Constructors
 
-    public AudioDatabaseContext()
+    public AudioDatabaseContext() : base("DataContext")
     {
       this.Configuration.LazyLoadingEnabled = false;
       this.Configuration.ProxyCreationEnabled = false;
@@ -24,18 +26,23 @@ namespace VPlayer.AudioStorage.AudioDatabase
         Directory.CreateDirectory(directory);
       }
 
-      var path = Path.Combine(directory, "VPlayer.AudioDatabase.mdf");
+      var path = Path.Combine(directory, "MojaSkuska.db");
 
-      Database.Connection.ConnectionString =
-        "Data Source=(LocalDB)\\MSSQLLocalDB;" +
-        $"AttachDbFilename={path};" +
-        "Integrated Security=True;" +
-        "MultipleActiveResultSets=true";
 
-      //Database.SetInitializer(new MigrateDatabaseToLatestVersion<AudioDatabaseContext, Configuration>());
+      var asd = Database.Connection.ConnectionString;
+
+
     }
 
     #endregion Constructors
+
+    protected override void OnModelCreating(DbModelBuilder modelBuilder)
+    {
+      var sqliteConnectionInitializer = new SqliteCreateDatabaseIfNotExists<AudioDatabaseContext>(modelBuilder);
+      Database.SetInitializer(sqliteConnectionInitializer);
+    }
+
+
 
     #region Properties
 

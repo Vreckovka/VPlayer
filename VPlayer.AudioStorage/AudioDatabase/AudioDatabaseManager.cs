@@ -423,7 +423,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
                 (from x in context.Albums
                   where x.Name == album.Name
                   where x.Artist.Name == album.Artist.Name
-                  select x).SingleOrDefault();
+                  select x).Include(x => x.Songs).SingleOrDefault();
 
               if (originalAlbum != null)
                 CombineAlbums(originalAlbum, album, context);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Principal;
 using VCore.Factories;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
@@ -16,7 +17,12 @@ namespace VPlayer.ViewModels
 
     public MainWindowViewModel(IViewModelsFactory viewModelsFactory)
     {
+      var aswd = WindowsIdentity.GetCurrent();
+
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+
+
+  
     }
 
     public override void Initialize()

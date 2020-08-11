@@ -28,6 +28,7 @@ using VPlayer.Player.Views.WindowsPlayer;
 //TODO: Hash playlistov, ked zavries appku tak ti vyhodi posledny playlist
 //TODO: Vytvorenie playlistu na + , nezadavat menu ale da nazov interpreta a index playlistu ak ich je viac ako 1
 //TODO: Nacitanie zo suboru
+//TODO: Ak je neidentifkovana skladba, pridanie interpreta zo zoznamu, alebo vytvorit noveho
 
 namespace VPlayer.Player.ViewModels
 {
@@ -80,14 +81,6 @@ namespace VPlayer.Player.ViewModels
     #endregion Properties
 
     #region Commands
-
-    public void OnPlayButton()
-    {
-      if (IsPlaying)
-        Pause();
-      else
-        Play();
-    }
 
     #region NextSong
 
@@ -201,44 +194,6 @@ namespace VPlayer.Player.ViewModels
       eventAggregator.GetEvent<AddSongsEvent>().Subscribe(AddSongs);
     }
 
-    private void PlayList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-    {
-      switch (e.Action)
-      {
-        case NotifyCollectionChangedAction.Add:
-
-          foreach (var item in e.NewItems)
-          {
-            playBookInCycle.Add((SongInPlayList)item, false);
-          }
-
-          break;
-        case NotifyCollectionChangedAction.Remove:
-          foreach (var item in e.OldItems)
-          {
-            playBookInCycle.Remove((SongInPlayList)item);
-          }
-          break;
-        case NotifyCollectionChangedAction.Replace:
-
-          foreach (var item in e.OldItems)
-          {
-            playBookInCycle.Remove((SongInPlayList)item);
-          }
-
-          foreach (var item in e.NewItems)
-          {
-            playBookInCycle.Add((SongInPlayList)item, false);
-          }
-
-          break;
-        case NotifyCollectionChangedAction.Reset:
-          playBookInCycle.Clear();
-          break;
-        default:
-          throw new ArgumentOutOfRangeException();
-      }
-    }
 
     #endregion Initialize
 
@@ -294,6 +249,12 @@ namespace VPlayer.Player.ViewModels
     private void AddSongs(IEnumerable<SongInPlayList> songs)
     {
       PlayList.AddRange(songs);
+
+      if (ActualSong == null)
+      {
+        SetActualSong(0);
+      }
+
       RaisePropertyChanged(nameof(CanPlay));
     }
 
@@ -446,6 +407,49 @@ namespace VPlayer.Player.ViewModels
         {
           playBookInCycle[item.Key] = false;
         }
+      }
+    }
+
+    #endregion
+
+    #region PlayList_CollectionChanged
+
+    private void PlayList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+      switch (e.Action)
+      {
+        case NotifyCollectionChangedAction.Add:
+
+          foreach (var item in e.NewItems)
+          {
+            playBookInCycle.Add((SongInPlayList)item, false);
+          }
+
+          break;
+        case NotifyCollectionChangedAction.Remove:
+          foreach (var item in e.OldItems)
+          {
+            playBookInCycle.Remove((SongInPlayList)item);
+          }
+          break;
+        case NotifyCollectionChangedAction.Replace:
+
+          foreach (var item in e.OldItems)
+          {
+            playBookInCycle.Remove((SongInPlayList)item);
+          }
+
+          foreach (var item in e.NewItems)
+          {
+            playBookInCycle.Add((SongInPlayList)item, false);
+          }
+
+          break;
+        case NotifyCollectionChangedAction.Reset:
+          playBookInCycle.Clear();
+          break;
+        default:
+          throw new ArgumentOutOfRangeException();
       }
     }
 

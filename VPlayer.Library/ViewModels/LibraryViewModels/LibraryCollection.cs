@@ -4,8 +4,10 @@ using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using VCore.Factories;
 using VPlayer.AudioStorage.DomainClasses;
@@ -81,40 +83,46 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
     #endregion Filter
 
-    private object batton = new object();
 
     #region LoadInitilizedData
 
-    public bool LoadInitilizedData()
+    public IObservable<bool> LoadInitilizedDataAsync(IQueryable<TModel> optionalQuery = null)
     {
-      try
+      return Observable.FromAsync<bool>(async () =>
       {
-        lock (batton)
+        try
         {
           if (!WasLoaded)
           {
-            var query = LoadQuery.AsEnumerable();
+            List<TModel> data;
+            if (optionalQuery == null)
+            //Need Enumerable for ViewModelsFactory.Create
+              data = await LoadQuery.ToListAsync();
+            else
+              data = await optionalQuery.ToListAsync();
 
-            Items = new ObservableCollection<TViewModel>(query.Select(x => ViewModelsFactory.Create<TViewModel>(x)).ToList());
+            Items = new ObservableCollection<TViewModel>(data.Select(x => ViewModelsFactory.Create<TViewModel>(x)).ToList());
+
             WasLoaded = true;
           }
 
           return true;
+
         }
-      }
-      catch (Exception ex)
-      {
-        Logger.Logger.Instance.LogException(ex);
-        return false;
-      }
+        catch (Exception ex)
+        {
+          Logger.Logger.Instance.LogException(ex);
+          return false;
+        }
+      });
     }
 
-    protected IObservable<bool> LoadInitilizedDataAsync()
+    public IObservable<bool> GetOrLoadDataAsync(IQueryable<TModel> optionalQuery)
     {
       return Observable.FromAsync<bool>(async () =>
       {
         if (!WasLoaded)
-          return await Task.Run(() => { return LoadInitilizedData(); });
+          return await LoadInitilizedDataAsync(optionalQuery);
 
         return true;
       });

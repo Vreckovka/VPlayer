@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using VCore.Factories;
+using VCore.Interfaces.ViewModels;
 using VCore.Modularity.Events;
 using VCore.Modularity.Interfaces;
 using VCore.Modularity.RegionProviders;
@@ -18,7 +19,7 @@ using VPlayer.Library.ViewModels.LibraryViewModels;
 
 namespace VPlayer.Library.ViewModels
 {
-  public abstract class PlayableItemsViewModel<TView, TViewModel, TModel> : RegionViewModel<TView>, INavigationItem
+  public abstract class PlayableItemsViewModel<TView, TViewModel, TModel> : RegionViewModel<TView>, INavigationItem, ICollectionViewModel<TViewModel, TModel>
     where TView : class, IView
     where TViewModel : class, IPlayableViewModel<TModel>
     where TModel : class, INamedEntity
@@ -155,17 +156,24 @@ namespace VPlayer.Library.ViewModels
 
     #region Methods
 
-    public Task<ICollection<TViewModel>> GetViewModelsAsync()
+    public async Task<ICollection<TViewModel>> GetViewModelsAsync(IQueryable<TModel> optionalQuery = null)
     {
-      return Task.Run(() =>
-      {
-        if (!LibraryCollection.WasLoaded)
-          LibraryCollection.LoadInitilizedData();
 
-        return (ICollection<TViewModel>)LibraryCollection.Items;
-      });
+      if (!LibraryCollection.WasLoaded)
+      {
+         var result = await LibraryCollection.GetOrLoadDataAsync(optionalQuery);
+
+         if (!result)
+         {
+           throw new Exception("Data was not loaded");
+         }
+      }
+
+      return LibraryCollection.Items;
+
     }
 
     #endregion Methods
+
   }
 }
