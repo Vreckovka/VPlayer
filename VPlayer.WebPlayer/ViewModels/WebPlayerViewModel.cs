@@ -23,7 +23,7 @@ namespace VPlayer.WebPlayer.ViewModels
       throw new NotImplementedException();
     }
 
-    public override void PlayNext()
+    public override void PlayNext(int? songIndex)
     {
       throw new NotImplementedException();
     }

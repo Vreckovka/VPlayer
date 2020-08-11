@@ -4,6 +4,7 @@ using Prism.Events;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -23,6 +24,11 @@ using VPlayer.Core.ViewModels;
 using VPlayer.Player.Views;
 using VPlayer.Player.Views.WindowsPlayer;
 
+//TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)
+//TODO: Hash playlistov, ked zavries appku tak ti vyhodi posledny playlist
+//TODO: Vytvorenie playlistu na + , nezadavat menu ale da nazov interpreta a index playlistu ak ich je viac ako 1
+//TODO: Nacitanie zo suboru
+
 namespace VPlayer.Player.ViewModels
 {
   public class WindowsPlayerViewModel : PlayableRegionViewModel<WindowsPlayerView>, INavigationItem
@@ -32,6 +38,8 @@ namespace VPlayer.Player.ViewModels
     private readonly IVPlayerRegionProvider regionProvider;
     private readonly IEventAggregator eventAggregator;
     private int actualSongIndex = 0;
+    private Dictionary<SongInPlayList, bool> playBookInCycle = new Dictionary<SongInPlayList, bool>();
+    private HashSet<SongInPlayList> shuffleList = new HashSet<SongInPlayList>();
 
     #endregion Fields
 
@@ -67,6 +75,7 @@ namespace VPlayer.Player.ViewModels
     public bool IsRepeate { get; set; }
     public bool IsShuffle { get; set; }
     public IKernel Kernel { get; set; }
+    public int Cycle { get; set; }
 
     #endregion Properties
 
@@ -141,6 +150,8 @@ namespace VPlayer.Player.ViewModels
 
       PlayList.ItemRemoved.Subscribe(ItemsRemoved);
 
+      PlayList.CollectionChanged += PlayList_CollectionChanged;
+
       var currentAssembly = Assembly.GetEntryAssembly();
       var currentDirectory = new FileInfo(currentAssembly.Location).DirectoryName;
       var path = new DirectoryInfo(Path.Combine(currentDirectory, "libvlc", IntPtr.Size == 4 ? "win-x86" : "win-x64"));
@@ -190,6 +201,45 @@ namespace VPlayer.Player.ViewModels
       eventAggregator.GetEvent<AddSongsEvent>().Subscribe(AddSongs);
     }
 
+    private void PlayList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+      switch (e.Action)
+      {
+        case NotifyCollectionChangedAction.Add:
+
+          foreach (var item in e.NewItems)
+          {
+            playBookInCycle.Add((SongInPlayList)item, false);
+          }
+
+          break;
+        case NotifyCollectionChangedAction.Remove:
+          foreach (var item in e.OldItems)
+          {
+            playBookInCycle.Remove((SongInPlayList)item);
+          }
+          break;
+        case NotifyCollectionChangedAction.Replace:
+
+          foreach (var item in e.OldItems)
+          {
+            playBookInCycle.Remove((SongInPlayList)item);
+          }
+
+          foreach (var item in e.NewItems)
+          {
+            playBookInCycle.Add((SongInPlayList)item, false);
+          }
+
+          break;
+        case NotifyCollectionChangedAction.Reset:
+          playBookInCycle.Clear();
+          break;
+        default:
+          throw new ArgumentOutOfRangeException();
+      }
+    }
+
     #endregion Initialize
 
     #region ItemsRemoved
@@ -225,12 +275,14 @@ namespace VPlayer.Player.ViewModels
 
     private void PlaySongs(IEnumerable<SongInPlayList> songs)
     {
-      actualSongIndex = 0;
       PlayList.Clear();
       PlayList.AddRange(songs);
-      Play();
 
-      if (ActualSong != null) ActualSong.IsPlaying = false;
+      IsPlaying = true;
+      PlayNext(0);
+
+      if (ActualSong != null)
+        ActualSong.IsPlaying = false;
 
       RaisePropertyChanged(nameof(CanPlay));
     }
@@ -251,41 +303,19 @@ namespace VPlayer.Player.ViewModels
 
     public override void Play()
     {
-      Task.Run(() =>
+      if (ActualSong != null)
       {
-        if (PlayList.Count > 0)
+        var media = MediaPlayer.GetMedia();
+        if (media == null || media.NowPlaying != ActualSong.Model.DiskLocation)
         {
-          if (ActualSong != null)
-          {
-            ActualSong.IsPlaying = false;
-            ActualSong.IsPaused = false;
-          }
-
-          if (actualSongIndex == PlayList.Count)
-          {
-            if (IsRepeate)
-              actualSongIndex = 0;
-            else
-            {
-              Stop();
-              return;
-            }
-          }
-
-          if (PlayList[actualSongIndex] == ActualSong)
-          {
-            MediaPlayer.Play();
-          }
-          else
-          {
-            ActualSong = PlayList[actualSongIndex];
-            MediaPlayer.SetMedia(new Uri(PlayList[actualSongIndex].Model.DiskLocation));
-
-            MediaPlayer.Play();
-          }
-
+          MediaPlayer.SetMedia(new Uri(PlayList[actualSongIndex].Model.DiskLocation));
         }
-      });
+
+        MediaPlayer.Play();
+
+        CheckCycle();
+
+      }
     }
 
     #endregion Play
@@ -299,16 +329,6 @@ namespace VPlayer.Player.ViewModels
 
     #endregion Pause
 
-    #region PlayNext
-
-    public override void PlayNext()
-    {
-      actualSongIndex++;
-      Play();
-    }
-
-    #endregion
-
     #region PlayPrevious
 
     public override void PlayPrevious()
@@ -320,7 +340,7 @@ namespace VPlayer.Player.ViewModels
         actualSongIndex = 0;
       }
 
-      Play();
+      PlayNext(actualSongIndex);
     }
 
     #endregion
@@ -336,12 +356,58 @@ namespace VPlayer.Player.ViewModels
 
     #region PlayNext
 
+    public override void PlayNext(int? songIndex = null)
+    {
+
+      if (IsShuffle)
+      {
+        var random = new Random();
+        var result = PlayList.Where(p => shuffleList.All(p2 => p2 != p)).ToList();
+
+        actualSongIndex = random.Next(0, result.Count);
+      }
+      else if (songIndex == null)
+      {
+        actualSongIndex++;
+      }
+      else
+      {
+        actualSongIndex = songIndex.Value;
+      }
+
+      if (PlayList.Count > actualSongIndex)
+      {
+        if (ActualSong != null)
+        {
+          ActualSong.IsPlaying = false;
+          ActualSong.IsPaused = false;
+        }
+
+        if (actualSongIndex == PlayList.Count)
+        {
+          if (IsRepeate)
+            actualSongIndex = 0;
+          else
+          {
+            Stop();
+            return;
+          }
+        }
+
+        SetActualSong(actualSongIndex);
+
+        if (IsPlaying)
+          Play();
+        else
+          ActualSong.IsPaused = true;
+      }
+    }
+
     public void PlayNext(SongInPlayList nextSong = null)
     {
       if (nextSong == null)
       {
-        actualSongIndex++;
-        Play();
+        PlayNext();
       }
       else
       {
@@ -349,17 +415,42 @@ namespace VPlayer.Player.ViewModels
 
         if (ActualSong != item)
         {
-          actualSongIndex = PlayList.IndexOf(item);
-          Play();
+          PlayNext(PlayList.IndexOf(item));
         }
       }
     }
 
     #endregion PlayNext
 
+    #region SetActualSong
+
+    private void SetActualSong(int index)
+    {
+      ActualSong = PlayList[index];
+      ActualSong.IsPlaying = true;
+
+      shuffleList.Add(ActualSong);
+    }
+
+    #endregion
+
+    #region CheckCycle
+
+    private void CheckCycle()
+    {
+      if (playBookInCycle.Count > 0 && playBookInCycle.All(x => x.Value))
+      {
+        Cycle++;
+
+        foreach (var item in playBookInCycle)
+        {
+          playBookInCycle[item.Key] = false;
+        }
+      }
+    }
+
+    #endregion
 
     #endregion Methods
-
-
   }
 }

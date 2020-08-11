@@ -149,7 +149,7 @@ namespace VPlayer.Player.ViewModels
 
     public void PlayNext()
     {
-      ActualViewModel?.PlayNext();
+      ActualViewModel?.PlayNext(null);
     }
 
     #endregion

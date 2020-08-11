@@ -19,7 +19,7 @@ namespace VPlayer.Core.ViewModels
 
     public abstract void Play();
     public abstract void Pause();
-    public abstract void PlayNext();
+    public abstract void PlayNext(int? songIndex);
     public abstract void PlayPrevious();
     public abstract void Stop();
     public abstract bool IsPlaying { get; protected set; }
@@ -31,7 +31,7 @@ namespace VPlayer.Core.ViewModels
   {
     void Play();
     void Pause();
-    void PlayNext();
+    void PlayNext(int? songIndex);
     void PlayPrevious();
     void Stop();
     bool IsPlaying { get; }
