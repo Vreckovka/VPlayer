@@ -59,6 +59,8 @@ namespace Logger
 
     public List<string> Logs { get; } = new List<string>();
 
+    public bool LogSuccess = false;
+
     #endregion Properties
 
     #region Methods
@@ -69,6 +71,10 @@ namespace Logger
       {
         var className = Path.GetFileNameWithoutExtension(callerFilePath);
         var log = $"[{type}|{DateTime.Now.ToString("hh:mm:ss")}]\t{className}.{methodName}()\t{message}";
+
+        if (type == MessageType.Success && !LogSuccess)
+          return;
+
         LoggerContainer.Log(type, log);
       }
       catch (Exception ex)
@@ -83,7 +89,7 @@ namespace Logger
       {
         if (ex.InnerException.InnerException != null)
         {
-          Log(MessageType.Error, $"{ex.InnerException.InnerException.Message}",callerFilePath,methodName);
+          Log(MessageType.Error, $"{ex.InnerException.InnerException.Message}", callerFilePath, methodName);
         }
         else
           Log(MessageType.Error, $"{ex.InnerException.Message}", callerFilePath, methodName);

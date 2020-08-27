@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reactive.Subjects;
+using System.Threading;
 using System.Threading.Tasks;
 using VCore.Modularity.Events;
 using VPlayer.AudioStorage.DomainClasses;
@@ -207,49 +208,60 @@ namespace VPlayer.AudioStorage.AudioDatabase
       }
     }
 
+    private SemaphoreSlim Semaphore = new SemaphoreSlim(1,1);
     public Task<bool> StoreData(IEnumerable<string> audioPath)
     {
       return Task.Run(async () =>
       {
+        await Semaphore.WaitAsync();
         bool result = true;
 
         foreach (var audio in audioPath)
         {
-          result = result && await StoreData(audio);
+          try
+          {
+            result = result && await StoreData(audio);
+          }
+          catch (Exception ex)
+          {
+
+            throw;
+          }
+          finally
+          {
+            Semaphore.Release();
+          }
         }
 
         return result;
       });
     }
 
-    public Task<bool> StoreData(string audioPath)
+    public async Task<bool> StoreData(string audioPath)
     {
-      return Task.Run(async () =>
+      // get the file attributes for file or directory
+      FileAttributes attr = File.GetAttributes(audioPath);
+
+      //detect whether its a directory or file
+      if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
       {
-        // get the file attributes for file or directory
-        FileAttributes attr = File.GetAttributes(audioPath);
+        var audioInfos = await audioInfoDownloader.GetAudioInfosFromDirectory(audioPath, true);
 
-        //detect whether its a directory or file
-        if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+        await StoreData(audioInfos);
+      }
+      else
+      {
+        var audioInfo = await audioInfoDownloader.GetAudioInfo(audioPath);
+
+        if (audioInfo == null)
         {
-          var audioInfos = await audioInfoDownloader.GetAudioInfosFromDirectory(audioPath, true);
-
-          await StoreData(audioInfos);
-        }
-        else
-        {
-          var audioInfo = await audioInfoDownloader.GetAudioInfo(audioPath);
-
-          if (audioInfo == null)
-          {
-            return false;
-          }
-
-          await StoreData(audioInfo);
+          return false;
         }
 
-        return true;
-      });
+        await StoreData(audioInfo);
+      }
+
+      return true;
     }
 
     public async Task StoreData(List<AudioInfo> audioInfos)
@@ -272,49 +284,52 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region ClearStorage
 
-    public async Task ClearStorage()
+    public Task ClearStorage()
     {
-      using (var context = new AudioDatabaseContext())
+      return Task.Run(async () =>
       {
-        try
+        using (var context = new AudioDatabaseContext())
         {
-          await context.Database.ExecuteSqlCommandAsync("DELETE FROM Songs");
-          Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table Songs cleared succesfuly");
-
-          //await context.Database.ExecuteSqlCommandAsync("DELETE FROM Genres");
-          //Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table Genres cleared succesfuly");
-
-          foreach (var album in context.Albums.Include(x => x.Artist))
+          try
           {
-            var itemChange = new ItemChanged()
+            await context.Database.ExecuteSqlCommandAsync("DELETE FROM Songs");
+            Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table Songs cleared succesfuly");
+
+            //await context.Database.ExecuteSqlCommandAsync("DELETE FROM Genres");
+            //Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table Genres cleared succesfuly");
+
+            foreach (var album in context.Albums.Include(x => x.Artist))
             {
-              Changed = Changed.Removed,
-              Item = album
-            };
+              var itemChange = new ItemChanged()
+              {
+                Changed = Changed.Removed,
+                Item = album
+              };
 
-            ItemChanged.OnNext(itemChange);
+              ItemChanged.OnNext(itemChange);
+            }
+
+            await context.Database.ExecuteSqlCommandAsync("DELETE FROM Albums");
+            Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table Albums cleared succesfuly");
+
+            foreach (var artist in context.Artists)
+            {
+              ItemChanged.OnNext(new ItemChanged()
+              {
+                Changed = Changed.Removed,
+                Item = artist
+              });
+            }
+
+            await context.Database.ExecuteSqlCommandAsync("DELETE FROM Artists");
+            Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table Artists cleared succesfuly");
           }
-
-          await context.Database.ExecuteSqlCommandAsync("DELETE FROM Albums");
-          Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table Albums cleared succesfuly");
-
-          foreach (var artist in context.Artists)
+          catch (Exception ex)
           {
-            ItemChanged.OnNext(new ItemChanged()
-            {
-              Changed = Changed.Removed,
-              Item = artist
-            });
+            Logger.Logger.Instance.Log(Logger.MessageType.Inform, ex.Message);
           }
-
-          await context.Database.ExecuteSqlCommandAsync("DELETE FROM Artists");
-          Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table Artists cleared succesfuly");
         }
-        catch (Exception ex)
-        {
-          Logger.Logger.Instance.Log(Logger.MessageType.Inform, ex.Message);
-        }
-      }
+      });
     }
 
     #endregion ClearStorage

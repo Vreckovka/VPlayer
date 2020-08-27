@@ -103,7 +103,7 @@ namespace VPlayer.Player.ViewModels
     public void OnNextSong(
       SongInPlayList songInPlayList)
     {
-      PlayNext(songInPlayList);
+      PlayNextWithSong(songInPlayList);
     }
 
     #endregion NextSong
@@ -161,7 +161,7 @@ namespace VPlayer.Player.ViewModels
         playFinished = true;
       };
 
-      MediaPlayer.EndReached += (sender, e) => { PlayNext(); };
+      MediaPlayer.EndReached += (sender, e) => { Task.Run(() => PlayNextWithSong()); };
 
       MediaPlayer.TimeChanged += (sender, e) => { ActualSong.ActualPosition = ((VlcMediaPlayer)sender).Position; };
 
@@ -221,7 +221,7 @@ namespace VPlayer.Player.ViewModels
       }
       else
       {
-        PlayNext(songInPlayList);
+        PlayNextWithSong(songInPlayList);
       }
     }
 
@@ -271,8 +271,10 @@ namespace VPlayer.Player.ViewModels
         {
           var media = MediaPlayer.GetMedia();
           if (media == null || media.NowPlaying != ActualSong.Model.DiskLocation)
-          {
-            MediaPlayer.SetMedia(new Uri(PlayList[actualSongIndex].Model.DiskLocation));
+          {//file:///D:/Hudba/2Pac Discography [2007]/--- Other albums ---/1998 - Greatest Hits/2Pac - 102 - 2 Of Amerikaz Most Wanted.mp3
+            var location = new Uri(ActualSong.Model.DiskLocation);
+
+            MediaPlayer.SetMedia(location);
           }
         }
 
@@ -368,7 +370,7 @@ namespace VPlayer.Player.ViewModels
       }
     }
 
-    public void PlayNext(SongInPlayList nextSong = null)
+    public void PlayNextWithSong(SongInPlayList nextSong = null)
     {
       if (nextSong == null)
       {
