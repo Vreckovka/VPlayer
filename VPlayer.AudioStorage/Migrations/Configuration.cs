@@ -1,4 +1,6 @@
-﻿namespace VPlayer.AudioStorage.Migrations
+﻿using System.Data.SQLite.EF6.Migrations;
+
+namespace VPlayer.AudioStorage.Migrations
 {
     using System;
     using System.Data.Entity;
@@ -9,9 +11,11 @@
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = true;
-            AutomaticMigrationDataLossAllowed = true;
-        }
+            AutomaticMigrationsEnabled = false;
+            AutomaticMigrationDataLossAllowed = false;
+
+            SetSqlGenerator("System.Data.SQLite", new SQLiteMigrationSqlGenerator());// the Golden 
+    }
 
         protected override void Seed(VPlayer.AudioStorage.AudioDatabase.AudioDatabaseContext context)
         {

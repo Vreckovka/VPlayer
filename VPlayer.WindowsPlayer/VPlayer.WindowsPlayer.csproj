@@ -63,6 +63,12 @@
       <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAPICodePack-Core.1.1.1\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAPICodePack-Shell.1.1.1\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
@@ -200,14 +206,13 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\CustomLibraries\VCore\VCore.csproj">
+      <Project>{5aa43597-fd3d-4f10-89a5-eb77d3b831d9}</Project>
+      <Name>VCore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\KeyListener\Listener.csproj">
       <Project>{ba238278-32d0-4c4e-881a-ad2be152832c}</Project>
       <Name>Listener</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\VCore\VCore.csproj">
-      <Project>{5aa43597-fd3d-4f10-89a5-eb77d3b831d9}</Project>
-      <Name>VCore</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj">

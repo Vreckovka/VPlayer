@@ -3,6 +3,7 @@ using System.Security.Principal;
 using VCore.Factories;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
+using VPlayer.Core.ViewModels.Settings;
 using VPlayer.Library.ViewModels;
 using VPlayer.Player.ViewModels;
 using VPlayer.Player.Views;
@@ -22,7 +23,7 @@ namespace VPlayer.ViewModels
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
 
 
-  
+
     }
 
     public override void Initialize()

@@ -9,19 +9,16 @@ namespace VPlayer.Views
   /// </summary>
   public partial class MainWindow : Window
   {
-    private readonly IStorageManager storageManager;
 
-    public MainWindow(IStorageManager storageManager)
+    public MainWindow()
     {
       MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
       MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth;
-      this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       InitializeComponent();
     }
 
     private async void Button_Click(object sender, RoutedEventArgs e)
     {
-      await storageManager.ClearStorage();
     }
   }
 }

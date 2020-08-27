@@ -12,7 +12,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
 {
   public class AudioDatabaseContext : DbContext
   {
-    public static object baton = new object();
+    //add-migration migration_1 -ConnectionString "Data Source=C:\Users\Roman Pecho\AppData\Roaming\VPlayer\VPlayerDatabase.db;Version=3;" -connectionProvider "System.Data.SQLite.EF6"
+
     #region Constructors
 
     public AudioDatabaseContext() : base("DataContext")

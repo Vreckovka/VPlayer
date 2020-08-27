@@ -29,6 +29,11 @@ namespace Logger
 
     public Logger()
     {
+      AppDomain.CurrentDomain.UnhandledException += AppDomain_UnhandledException;
+    }
+
+    private void AppDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+    {
     }
 
     #endregion Constructors

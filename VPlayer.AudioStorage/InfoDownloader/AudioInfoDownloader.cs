@@ -98,14 +98,23 @@ namespace VPlayer.AudioStorage.InfoDownloader
       {
         try
         {
+         
+
           var updateAlbum = await UpdateAlbum(album);
 
           if (updateAlbum != null)
           {
             updateAlbum.Id = album.Id;
-          }
 
-          ItemUpdated.OnNext(updateAlbum);
+            updateAlbum.InfoDownloadStatus = InfoDownloadStatus.Downloaded;
+
+            ItemUpdated.OnNext(updateAlbum);
+          }
+          else
+          {
+            album.InfoDownloadStatus = InfoDownloadStatus.UnableToFind;
+            ItemUpdated.OnNext(album);
+          }
         }
         catch (Exception ex)
         {
@@ -384,8 +393,10 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
         await musibrainzAPISempathore.WaitAsync();
 
-       
 
+       
+        album.InfoDownloadStatus = InfoDownloadStatus.Downloading;
+        ItemUpdated.OnNext(album);
         Logger.Logger.Instance.Log(Logger.MessageType.Inform, $"Downloading album info {album.Name}");
 
         string artistMbid = "";
@@ -1199,8 +1210,8 @@ namespace VPlayer.AudioStorage.InfoDownloader
       {
         var musicProp = await GetAudioWindowsPropertiesAsync(path);
 
-        if ((musicProp.Artist != "" && musicProp.Album != "") ||
-            (musicProp.AlbumArtist != "" && musicProp.Album != ""))
+        if (musicProp != null && ((musicProp.Artist != "" && musicProp.Album != "") ||
+            (musicProp.AlbumArtist != "" && musicProp.Album != "")))
         {
           var newAudioInfo = new AudioInfo()
           {

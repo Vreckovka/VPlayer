@@ -3,6 +3,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
+  public enum InfoDownloadStatus
+  {
+    Waiting,
+    Downloading,
+    Downloaded,
+    Failed,
+    UnableToFind
+  }
+
   public class Album : INamedEntity
   {
     #region Constructors
@@ -26,7 +35,11 @@ namespace VPlayer.AudioStorage.DomainClasses
     public string MusicBrainzId { get; set; }
     public string Name { get; set; }
     public string ReleaseDate { get; set; }
+
+    public InfoDownloadStatus InfoDownloadStatus { get; set; }
+
     public virtual List<Song> Songs { get; set; }
+   
 
     #endregion Properties
 
@@ -44,6 +57,7 @@ namespace VPlayer.AudioStorage.DomainClasses
       AlbumFrontCoverURI = album.AlbumFrontCoverURI;
       MusicBrainzId = album.MusicBrainzId;
       ReleaseDate = album.ReleaseDate;
+      InfoDownloadStatus = album.InfoDownloadStatus;
     }
 
     #endregion Methods

@@ -69,6 +69,7 @@
       <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="Prism, Version=7.2.0.1367, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
       <HintPath>..\packages\Prism.Core.7.2.0.1367\lib\net45\Prism.dll</HintPath>
@@ -119,6 +120,7 @@
       <HintPath>..\packages\Prism.Wpf.7.2.0.1367\lib\net45\System.Windows.Interactivity.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -144,7 +146,11 @@
     <Compile Include="ViewModels\Artists\ArtistViewModel.cs" />
     <Compile Include="ViewModels\PlayableRegionViewModel.cs" />
     <Compile Include="ViewModels\PlayableViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsViewModel.cs" />
     <Compile Include="ViewModels\SongInPlayList.cs" />
+    <Compile Include="Views\SettingsView.xaml.cs">
+      <DependentUpon>SettingsView.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\VPlayer\Resources\Montserrat\Montserrat-Black.otf">
@@ -261,16 +267,22 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\VCore\VCore.csproj">
+    <ProjectReference Include="..\..\CustomLibraries\VCore\VCore.csproj">
       <Project>{5aa43597-fd3d-4f10-89a5-eb77d3b831d9}</Project>
       <Name>VCore</Name>
-      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj">
       <Project>{b5245008-cfdf-4b83-bf61-b0b26a8e92bf}</Project>
       <Name>VPlayer.AudioStorage</Name>
       <Private>False</Private>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Page Include="Views\SettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -7,7 +7,8 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Library"
     xmlns:local="clr-namespace:VPlayer.StylesDictionaries"
-    xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore">
+    xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore"
+    xmlns:domainClasses="clr-namespace:VPlayer.AudioStorage.DomainClasses;assembly=VPlayer.AudioStorage">
 
     <Duration x:Key="AnimationDuration">0:0:0:0.30</Duration>
 
@@ -148,6 +149,40 @@
                                 <RowDefinition Height="auto" />
                             </Grid.RowDefinitions>
 
+              <Grid Height="2" Grid.Row="1" Margin="0 2 0 0" x:Name="LoadingBar" >
+                <Grid.Style>
+                  <Style TargetType="Grid">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses:InfoDownloadStatus.Downloading}">
+                        <DataTrigger.EnterActions>
+                          <RemoveStoryboard BeginStoryboardName="RemoveDownloadingStoryboard"/>
+                          <BeginStoryboard x:Name="DownloadingStoryboard">
+                            <Storyboard>
+                              <ColorAnimation Storyboard.TargetProperty="Background.Color" 
+                                              From="#3fe8bb"
+                                              To="#3fade8" 
+                                             RepeatBehavior="Forever" Duration="0:0:0:2"  AutoReverse="True"/>
+                            </Storyboard>
+                          </BeginStoryboard>
+                        </DataTrigger.EnterActions>
+                        <DataTrigger.ExitActions>
+                          <RemoveStoryboard BeginStoryboardName="DownloadingStoryboard"/>
+                          <BeginStoryboard x:Name="RemoveDownloadingStoryboard">
+                            <Storyboard>
+                              <ColorAnimation Storyboard.TargetProperty="Background.Color" 
+                                              To="Transparent" 
+                                              Duration="0:0:0:.3" 
+                                              />
+                            </Storyboard>
+                          </BeginStoryboard>
+                        </DataTrigger.ExitActions>
+                      
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </Grid.Style>
+              </Grid>
                             <Image
                                 Grid.Row="0"
                                 HorizontalAlignment="Center"
@@ -175,17 +210,122 @@
                                             <GradientStop Offset="0.1" Color="#00000000" />
                                         </LinearGradientBrush>
                                     </Border.Background>
-                                    <Path
-                                        Height="30"
-                                        Margin="5"
-                                        HorizontalAlignment="Right"
-                                        Fill="#c3ff00"
-                                        Style="{StaticResource MusicNote}"
-                                        Visibility="{Binding IsInPlaylist, Converter={converters:VisibilityConverter}}">
-                                        <Path.Effect>
-                                            <DropShadowEffect BlurRadius="2" ShadowDepth="1.5" />
-                                        </Path.Effect>
-                                    </Path>
+                  <Grid Opacity="0">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition/>
+                      <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.Style>
+                      <Style TargetType="Grid">
+                        <Style.Triggers>
+                          <DataTrigger Binding="{Binding ElementName=ImageGrid, Path=IsMouseOver}" Value="True">
+                            <DataTrigger.EnterActions>
+                              <BeginStoryboard Name="VisibilityStoryboard1">
+                                <Storyboard>
+                                  <DoubleAnimation
+                                    Storyboard.TargetProperty="Opacity"
+                                    From="0.0"
+                                    To="1.0"
+                                    Duration="{StaticResource AnimationDuration}" />
+                                </Storyboard>
+                              </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+                            <DataTrigger.ExitActions>
+                              <RemoveStoryboard BeginStoryboardName="VisibilityStoryboard1" />
+                            </DataTrigger.ExitActions>
+                          </DataTrigger>
+                        </Style.Triggers>
+                      </Style>
+                    </Grid.Style>
+
+                      <Path
+                        Height="30"
+                        Margin="5"
+                        HorizontalAlignment="Right"
+                        Fill="#c3ff00"
+                        Style="{StaticResource MusicNote}"
+                        Visibility="{Binding IsInPlaylist, Converter={converters:VisibilityConverter}}">
+                        <Path.Effect>
+                          <DropShadowEffect BlurRadius="2" ShadowDepth="1.5" />
+                        </Path.Effect>
+                      </Path>
+
+                    <Grid Margin="5" HorizontalAlignment="Left" Height="30">
+                      <Path 
+                            Stretch="Uniform"  
+                            Margin="5"
+                            >
+                        <Path.Style>
+                          <Style TargetType="Path">
+                            <Setter Property="Fill" Value="White" />
+                            <Style.Triggers>
+                              <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses:InfoDownloadStatus.Downloading}">
+                                <Setter Property="Opacity" Value="0"/>
+                              </DataTrigger>
+                            </Style.Triggers>
+                          </Style>
+                        </Path.Style>
+                        <Path.Data>
+                          <EllipseGeometry RadiusX="1" RadiusY="1" />
+                        </Path.Data>
+                      </Path>
+
+                      <Path>
+                        <Path.Style >
+                          <Style TargetType="Path" BasedOn="{StaticResource GearCircle}">
+                          <Style.Triggers>
+                              <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses:InfoDownloadStatus.Downloaded}">
+                              <Setter Property="Fill" Value="#80e83f"/>
+                              <Setter Property="ToolTip" Value="Downloaded"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses:InfoDownloadStatus.Downloading}">
+                                <Setter Property="Fill" Value="#3fade8"/>
+                                <Setter Property="ToolTip" Value="Downloading"/>
+                            </DataTrigger>
+                              <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses:InfoDownloadStatus.Failed}">
+                              <Setter Property="Fill" Value="#e8453f"/>
+                              <Setter Property="ToolTip" Value="Failed"/>
+                              </DataTrigger>
+                            <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses:InfoDownloadStatus.UnableToFind}">
+                              <Setter Property="Fill" Value="#e8453f"/>
+                              <Setter Property="ToolTip" Value="Unable to find"/>
+                              </DataTrigger>
+                              <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses:InfoDownloadStatus.Waiting}">
+                                <Setter Property="Fill" Value="#e8a43f"/>
+                                <Setter Property="ToolTip" Value="Waiting"/>
+                              </DataTrigger>
+                          
+                            </Style.Triggers>
+                        </Style>
+                      </Path.Style>
+
+                        <Path.Effect>
+                          <DropShadowEffect BlurRadius="0.5" ShadowDepth="0.5" />
+                        </Path.Effect>
+                      </Path>
+
+
+                      <Path 
+                        Fill="BlanchedAlmond"  
+                        Stretch="Uniform"  
+                        Height="15">
+                        <Path.Style>
+                          <Style TargetType="Path">
+                            <Setter Property="Opacity" Value="1"/>
+                            <Setter Property="Data" Value="M 93.148438 80.832031 C 109.5 57.742188 104.03125 25.769531 80.941406 9.421875 C 57.851562 -6.925781 25.878906 -1.460938 9.53125 21.632812 C -6.816406 44.722656 -1.351562 76.691406 21.742188 93.039062 C 38.222656 104.707031 60.011719 105.605469 77.394531 95.339844 L 115.164062 132.882812 C 119.242188 137.175781 126.027344 137.347656 130.320312 133.269531 C 134.613281 129.195312 134.785156 122.410156 130.710938 118.117188 C 130.582031 117.980469 130.457031 117.855469 130.320312 117.726562 Z M 51.308594 84.332031 C 33.0625 84.335938 18.269531 69.554688 18.257812 51.308594 C 18.253906 33.0625 33.035156 18.269531 51.285156 18.261719 C 69.507812 18.253906 84.292969 33.011719 84.328125 51.234375 C 84.359375 69.484375 69.585938 84.300781 51.332031 84.332031 C 51.324219 84.332031 51.320312 84.332031 51.308594 84.332031 Z M 51.308594 84.332031 "/>
+                            <Style.Triggers>
+                              <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses:InfoDownloadStatus.Failed}" >
+                                <Setter Property="Data" Value="m194.800781 164.769531 128.210938-128.214843c8.34375-8.339844 8.34375-21.824219 0-30.164063-8.339844-8.339844-21.824219-8.339844-30.164063 0l-128.214844 128.214844-128.210937-128.214844c-8.34375-8.339844-21.824219-8.339844-30.164063 0-8.34375 8.339844-8.34375 21.824219 0 30.164063l128.210938 128.214843-128.210938 128.214844c-8.34375 8.339844-8.34375 21.824219 0 30.164063 4.15625 4.160156 9.621094 6.25 15.082032 6.25 5.460937 0 10.921875-2.089844 15.082031-6.25l128.210937-128.214844 128.214844 128.214844c4.160156 4.160156 9.621094 6.25 15.082032 6.25 5.460937 0 10.921874-2.089844 15.082031-6.25 8.34375-8.339844 8.34375-21.824219 0-30.164063zm0 0"/>
+                              </DataTrigger>
+                            </Style.Triggers>
+                          </Style>
+                        </Path.Style>
+                      </Path>
+                    </Grid>
+                  </Grid>
+                 
+                              
                                 </Border>
 
                                 <Button Grid.Row="0" Command="{Binding Play}">

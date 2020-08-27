@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer.AudioStorage", "VPl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer.Library", "VPlayer.Library\VPlayer.Library.csproj", "{26D6BB81-3F3C-4DDC-857D-2B2DC4C660B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VCore", "VCore\VCore.csproj", "{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VCore", "..\CustomLibraries\VCore\VCore.csproj", "{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer.Core", "VPlayer.Core\VPlayer.Core.csproj", "{B8D5C40B-3B3D-43E1-95FA-97087581BDA2}"
 EndProject

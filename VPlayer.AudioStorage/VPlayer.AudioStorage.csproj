@@ -100,6 +100,9 @@
     <Reference Include="System.Data.SQLite.EF6, Version=1.0.113.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Data.SQLite.EF6.1.0.113.0\lib\net46\System.Data.SQLite.EF6.dll</HintPath>
     </Reference>
+    <Reference Include="System.Data.SQLite.EF6.Migrations, Version=1.0.112.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.EF6.Migrations.1.0.112\lib\System.Data.SQLite.EF6.Migrations.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data.SQLite.Linq, Version=1.0.113.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Data.SQLite.Linq.1.0.113.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
@@ -169,6 +172,10 @@
     <Compile Include="DomainClasses\AudioInfo.cs" />
     <Compile Include="DomainClasses\INamedEntity.cs" />
     <Compile Include="DomainClasses\Song.cs" />
+    <Compile Include="Migrations\202008270038462_migration_1.cs" />
+    <Compile Include="Migrations\202008270038462_migration_1.designer.cs">
+      <DependentUpon>202008270038462_migration_1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Modularity\NinjectModules\AudioStorageNinjectModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -181,19 +188,23 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\CustomLibraries\VCore\VCore.csproj">
+      <Project>{5aa43597-fd3d-4f10-89a5-eb77d3b831d9}</Project>
+      <Name>VCore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Logger\Logger.csproj">
       <Project>{6212fadf-45a6-4613-b5a8-5c5a57f3bfb0}</Project>
       <Name>Logger</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\VCore\VCore.csproj">
-      <Project>{5aa43597-fd3d-4f10-89a5-eb77d3b831d9}</Project>
-      <Name>VCore</Name>
-      <Private>False</Private>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202008270038462_migration_1.resx">
+      <DependentUpon>202008270038462_migration_1.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

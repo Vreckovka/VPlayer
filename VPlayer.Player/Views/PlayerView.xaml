@@ -48,7 +48,8 @@
                   Padding="15"
                   BorderThickness="0"
                   Command="{Binding PlayButton}"
-                  Style="{StaticResource PlayButton}" />
+                  Style="{StaticResource PlayButton}" 
+                  Background="{StaticResource DefaultRedBrush}"/>
 
           <controls:PathButton Grid.Column="2"
                                Margin="5 0 0 0"

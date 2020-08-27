@@ -56,12 +56,6 @@
                     Grid.Column="1"
                     prism:RegionManager.RegionName="{x:Static regions:RegionNames.ContentRegion}" />
 
-    <Button Grid.Row="0"
-            Grid.Column="0"
-            Height="25"
-            Click="Button_Click"
-            Content="Clear" />
-
     <ContentControl Grid.Row="1"
                     Grid.Column="0"
                     Grid.ColumnSpan="2"

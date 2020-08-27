@@ -139,6 +139,12 @@
     <Reference Include="Microsoft.Threading.Tasks.Extensions.Desktop, Version=1.0.168.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAPICodePack-Core.1.1.1\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAPICodePack-Shell.1.1.1\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Xaml.Behaviors, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.0.30\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
     </Reference>
@@ -175,6 +181,9 @@
     </Reference>
     <Reference Include="System.Data.SQLite.EF6, Version=1.0.113.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Data.SQLite.EF6.1.0.113.0\lib\net46\System.Data.SQLite.EF6.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.EF6.Migrations, Version=1.0.112.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.EF6.Migrations.1.0.112\lib\System.Data.SQLite.EF6.Migrations.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.SQLite.Linq, Version=1.0.113.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Data.SQLite.Linq.1.0.113.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
@@ -256,6 +265,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="StylesDictionaries\ControlsTemplates\ButtonWithIconTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="StylesDictionaries\ControlsTemplates\FinderTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -366,6 +379,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\CustomLibraries\VCore\VCore.csproj">
+      <Project>{5aa43597-fd3d-4f10-89a5-eb77d3b831d9}</Project>
+      <Name>VCore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\KeyListener\Listener.csproj">
       <Project>{ba238278-32d0-4c4e-881a-ad2be152832c}</Project>
       <Name>Listener</Name>
@@ -373,10 +390,6 @@
     <ProjectReference Include="..\Logger\Logger.csproj">
       <Project>{6212fadf-45a6-4613-b5a8-5c5a57f3bfb0}</Project>
       <Name>Logger</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\VCore\VCore.csproj">
-      <Project>{5aa43597-fd3d-4f10-89a5-eb77d3b831d9}</Project>
-      <Name>VCore</Name>
     </ProjectReference>
     <ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj">
       <Project>{b5245008-cfdf-4b83-bf61-b0b26a8e92bf}</Project>

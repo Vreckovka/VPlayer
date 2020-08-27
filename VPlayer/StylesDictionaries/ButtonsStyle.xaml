@@ -8,17 +8,12 @@
   </ResourceDictionary.MergedDictionaries>
 
   <Style TargetType="{x:Type Button}">
-    <Setter Property="Background" Value="{DynamicResource DefaultRedBrush}" />
-    <Setter Property="Foreground" Value="{DynamicResource DefaultWhiteBrush}" />
+    <Setter Property="Background" Value="{StaticResource 10_WhiteTransparentBrush}" />
+    <Setter Property="Foreground" Value="{StaticResource 85_WhiteTransparentBrush}" />
     <Setter Property="Padding" Value="6" />
-    <Setter Property="Effect">
-      <Setter.Value>
-        <DropShadowEffect BlurRadius="5"
-                          Opacity="1"
-                          ShadowDepth="2"
-                          Color="#FF110D32" />
-      </Setter.Value>
-    </Setter>
+    <Setter Property="FontWeight" Value="SemiBold"/>
+    <Setter Property="FontSize" Value="15"/> 
+
 
     <Setter Property="Template">
       <Setter.Value>
@@ -27,21 +22,99 @@
                   Background="{TemplateBinding Background}"
                   CornerRadius="4">
             <Grid>
-              <Path x:Name="PathIcon" Data="{TemplateBinding Content}" />
+              <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+              </Grid.RowDefinitions>
+             
               <ContentPresenter x:Name="MyContentPresenter"
                                 Margin="0,0,0,0"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 Content="{TemplateBinding Content}" />
+              <Border Height="1" 
+                      Background="#85ffffff" 
+                      Grid.Row="1" 
+                      Margin="0 2"
+                      Width="{Binding ElementName=MyContentPresenter, Path=ActualWidth}" 
+                      x:Name="Underline"/>
             </Grid>
           </Border>
 
           <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
               <Setter Property="Cursor" Value="Hand" />
+              <Trigger.EnterActions>
+                <RemoveStoryboard BeginStoryboardName="ResetBackgroundStoryBoard"/>
+                <RemoveStoryboard BeginStoryboardName="ResetBackgroundStoryBoard1"/>
+                <RemoveStoryboard BeginStoryboardName="ResetBackgroundStoryBoard2"/>
+
+                <BeginStoryboard x:Name="ChangeBackgroundStoryBoard">
+                  <Storyboard >
+                    <ColorAnimation
+                      Storyboard.TargetProperty="Background.Color"
+                      To="{StaticResource 30_DefaultWhiteColor}"
+                      Duration="0:0:.3" />
+                  </Storyboard>
+                </BeginStoryboard>
+
+                <BeginStoryboard x:Name="ChangeBackgroundStoryBoard1">
+                  <Storyboard >
+                    <ColorAnimation
+                      Storyboard.TargetName="Underline"
+                      Storyboard.TargetProperty="Background.Color"
+                      To="{StaticResource DefaultRedColor}"
+                      Duration="0:0:.3" />
+                  </Storyboard>
+                </BeginStoryboard>
+
+                <BeginStoryboard x:Name="ChangeBackgroundStoryBoard2">
+                  <Storyboard>
+                    <ColorAnimation
+                      Storyboard.TargetProperty="Foreground.Color"
+                      To="{StaticResource DefaultWhiteColor}"
+                      Duration="0:0:.3" />
+                  </Storyboard>
+                </BeginStoryboard>
+
+              </Trigger.EnterActions>
+              <Trigger.ExitActions>
+                <RemoveStoryboard BeginStoryboardName="ChangeBackgroundStoryBoard"/>
+                <RemoveStoryboard BeginStoryboardName="ChangeBackgroundStoryBoard1"/>
+                <RemoveStoryboard BeginStoryboardName="ChangeBackgroundStoryBoard2"/>
+
+                <BeginStoryboard  x:Name="ResetBackgroundStoryBoard">
+                  <Storyboard>
+                    <ColorAnimation
+                      Storyboard.TargetProperty="Background.Color"
+                      To="{StaticResource 10_DefaultWhiteColor}"
+                      Duration="0:0:.3" />
+                  </Storyboard>
+                </BeginStoryboard>
+
+                <BeginStoryboard  x:Name="ResetBackgroundStoryBoard1">
+                  <Storyboard>
+                    <ColorAnimation
+                      Storyboard.TargetName="Underline"
+                      Storyboard.TargetProperty="Background.Color"
+                      To="{StaticResource 85_DefaultWhiteColor}"
+                      Duration="0:0:.3" />
+                  </Storyboard>
+                </BeginStoryboard>
+
+                <BeginStoryboard  x:Name="ResetBackgroundStoryBoard2">
+                  <Storyboard>
+                    <ColorAnimation
+                      Storyboard.TargetProperty="Foreground.Color"
+                      To="{StaticResource 85_DefaultWhiteColor}"
+                      Duration="0:0:.3" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </Trigger.ExitActions>
             </Trigger>
 
-            <Trigger Property="IsPressed" Value="True">
+
+            <!--<Trigger Property="IsPressed" Value="True">
               <Setter Property="Background" Value="Transparent" />
               <Setter TargetName="PathIcon" Property="Fill" Value="{DynamicResource DefaultRedBrush}" />
             </Trigger>
@@ -49,7 +122,7 @@
             <Trigger Property="IsEnabled" Value="False">
               <Setter Property="Background" Value="{DynamicResource DefaultRedTransparentBrush}" />
               <Setter TargetName="PathIcon" Property="Tag" Value="Play" />
-            </Trigger>
+            </Trigger>-->
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>

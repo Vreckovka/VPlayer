@@ -29,6 +29,7 @@ using VPlayer.Player.Views.WindowsPlayer;
 //TODO: Vytvorenie playlistu na + , nezadavat menu ale da nazov interpreta a index playlistu ak ich je viac ako 1
 //TODO: Nacitanie zo suboru
 //TODO: Ak je neidentifkovana skladba, pridanie interpreta zo zoznamu, alebo vytvorit noveho
+//TODO: Nastavit si hlavnu zlozku a ked spustis z inej, moznost presunut
 
 namespace VPlayer.Player.ViewModels
 {
@@ -266,10 +267,13 @@ namespace VPlayer.Player.ViewModels
     {
       if (ActualSong != null)
       {
-        var media = MediaPlayer.GetMedia();
-        if (media == null || media.NowPlaying != ActualSong.Model.DiskLocation)
+        if (IsPlaying)
         {
-          MediaPlayer.SetMedia(new Uri(PlayList[actualSongIndex].Model.DiskLocation));
+          var media = MediaPlayer.GetMedia();
+          if (media == null || media.NowPlaying != ActualSong.Model.DiskLocation)
+          {
+            MediaPlayer.SetMedia(new Uri(PlayList[actualSongIndex].Model.DiskLocation));
+          }
         }
 
         MediaPlayer.Play();
