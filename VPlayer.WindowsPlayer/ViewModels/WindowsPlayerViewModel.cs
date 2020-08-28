@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using VCore;
+using VCore.ExtentionsMethods;
 using VCore.ItemsCollections;
 using VCore.Modularity.Interfaces;
 using VCore.Modularity.RegionProviders;
@@ -32,6 +33,7 @@ using VPlayer.Player.Views.WindowsPlayer;
 //TODO: Nacitanie zo suboru
 //TODO: Ak je neidentifkovana skladba, pridanie interpreta zo zoznamu, alebo vytvorit noveho
 //TODO: Nastavit si hlavnu zlozku a ked spustis z inej, moznost presunut
+//TODO: Playlist hore pri menu, quick ze prides a uvidis napriklad 5 poslednych hore v rade , ako carusel
 
 namespace VPlayer.Player.ViewModels
 {
@@ -528,12 +530,19 @@ namespace VPlayer.Player.ViewModels
 
       entityPlayList.Name = string.Join(", ", artits.Select(x => x.Key).ToArray()) + " " + DateTime.Now.ToShortDateString() ;
 
+      var songIds = PlayList.Select(x => x.Model.Id);
+
+      var hash = songIds.GetSequenceHashCode();
+      entityPlayList.SongsInPlaylitsHashCode = hash;
+
+      entityPlayList.SongCount = entityPlayList.PlaylistSongs.Count;
 
       storageManager.StoreData(entityPlayList);
 
     }
 
     #endregion
+
 
     #endregion Methods
   }

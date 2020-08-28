@@ -1,7 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
+using System.Data.Entity.ModelConfiguration.Conventions;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using SQLite.CodeFirst;
@@ -13,6 +16,16 @@ namespace VPlayer.AudioStorage.AudioDatabase
   public class AudioDatabaseContext : DbContext
   {
     //add-migration migration_1 -ConnectionString "Data Source=C:\Users\Roman Pecho\AppData\Roaming\VPlayer\VPlayerDatabase.db;Version=3;" -connectionProvider "System.Data.SQLite.EF6"
+
+    #region Properties
+
+    public DbSet<Album> Albums { get; set; }
+    public DbSet<Artist> Artists { get; set; }
+    public DbSet<Song> Songs { get; set; }
+    public DbSet<Playlist> Playlists { get; set; }
+    public DbSet<PlaylistSong> PlaylistSongs { get; set; }
+
+    #endregion Properties
 
     #region Constructors
 
@@ -41,19 +54,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
     {
       var sqliteConnectionInitializer = new SqliteCreateDatabaseIfNotExists<AudioDatabaseContext>(modelBuilder);
       Database.SetInitializer(sqliteConnectionInitializer);
+
     }
-
-
-
-    #region Properties
-
-    public DbSet<Album> Albums { get; set; }
-    public DbSet<Artist> Artists { get; set; }
-    public DbSet<Song> Songs { get; set; }
-    public DbSet<Playlist> Playlists { get; set; }
-    public DbSet<PlaylistSong> PlaylistSongs { get; set; }
-
-    #endregion Properties
 
     public override int SaveChanges()
     {
@@ -68,6 +70,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
       return base.SaveChangesAsync();
     }
+
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken)
     {

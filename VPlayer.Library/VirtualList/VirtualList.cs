@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.Core.ViewModels.Artists;
 
 namespace VPlayer.Library.VirtualList
 {
@@ -65,6 +67,24 @@ namespace VPlayer.Library.VirtualList
       public void RemoveAt(int index)
       {
         throw new NotSupportedException("VirtualList is a read-only collection.");
+      }
+
+      public VirtualList<TViewModel> GetReversed<TModel, TViewModel>() 
+        where TViewModel : class, INamedEntityViewModel<TModel>
+        where TModel : class, INamedEntity
+      {
+        var list = new List<TViewModel>();
+        for (int i = _generator.AllItems.Length - 1; i > -1; i--)
+        {
+          if (_generator.AllItems[i] is TViewModel viewModel)
+          {
+            list.Add(viewModel);
+          }
+          else
+            return null;
+        }
+
+        return new VirtualList<TViewModel>(new PlayableItemsGenerator<TViewModel, TModel>(list));
       }
 
       public T this[int index]

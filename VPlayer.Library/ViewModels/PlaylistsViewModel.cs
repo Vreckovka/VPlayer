@@ -35,8 +35,15 @@ namespace VPlayer.Library.ViewModels
     public override bool ContainsNestedRegions => false;
     public override string Header { get; } = "Playlists";
     public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
-    public override IQueryable<Playlist> LoadQuery => base.LoadQuery;
 
+    public override ICollection<PlaylistViewModel> View
+    {
+      get
+      {
+        var revered = LibraryCollection?.FilteredItems?.GetReversed<Playlist, PlaylistViewModel>();
+        return revered;
+      }
+    }
   }
 
   public class PlaylistViewModel : PlayableViewModel<Playlist>
@@ -49,8 +56,6 @@ namespace VPlayer.Library.ViewModels
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.playlistsRepository = playlistsRepository ?? throw new ArgumentNullException(nameof(playlistsRepository));
     }
-    
-    public List<PlaylistSong> Songs => Model.PlaylistSongs;
 
     public override void Update(Playlist updateItem)
     {

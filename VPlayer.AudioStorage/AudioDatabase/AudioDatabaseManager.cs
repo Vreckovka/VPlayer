@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ninject;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
@@ -41,28 +42,43 @@ namespace VPlayer.AudioStorage.AudioDatabase
   {
   }
 
+  public class AlbumsRepository : GenericRepository<AudioDatabaseContext, Album>
+  {
+  }
+
   public class PlaylistsRepository : GenericRepository<AudioDatabaseContext, Playlist>
   {
   }
 
-  public class AudioDatabaseManager : IStorageManager
+  public class AudioDatabaseManager : IStorageManager, IInitializable
   {
     #region Fields
 
     private readonly AudioInfoDownloader audioInfoDownloader;
     private readonly PlaylistsRepository playlistsRepository;
+    private readonly AlbumsRepository albumsRepository;
 
     #endregion Fields
 
     #region Constructors
 
-    public AudioDatabaseManager(AudioInfoDownloader audioInfoDownloader, PlaylistsRepository playlistsRepository)
+    public AudioDatabaseManager(
+      AudioInfoDownloader audioInfoDownloader, 
+      PlaylistsRepository playlistsRepository,
+      AlbumsRepository albumsRepository)
     {
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
       this.playlistsRepository = playlistsRepository ?? throw new ArgumentNullException(nameof(playlistsRepository));
+      this.albumsRepository = albumsRepository ?? throw new ArgumentNullException(nameof(albumsRepository));
 
       audioInfoDownloader.ItemUpdated.Subscribe(ItemUpdated);
       audioInfoDownloader.SubdirectoryLoaded += AudioInfoDownloader_SubdirectoryLoaded;
+    }
+
+
+    public void Initialize()
+    {
+      Task.Run(() => { UpdateAllNotYetUpdated(); });
     }
 
     #endregion Constructors
@@ -304,16 +320,21 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     public void StoreData(Playlist model)
     {
-      playlistsRepository.Add(model);
-      playlistsRepository.Save();
+      var playlist = playlistsRepository.Context.Playlists.SingleOrDefault(x => x.SongsInPlaylitsHashCode == model.SongsInPlaylitsHashCode);
 
-      ItemChanged.OnNext(new ItemChanged()
+      if (playlist == null)
       {
-        Item = model,
-        Changed = Changed.Added
-      });
+        playlistsRepository.Add(model);
+        playlistsRepository.Save();
 
-      ActionIsDone.OnNext(Unit.Default);
+        ItemChanged.OnNext(new ItemChanged()
+        {
+          Item = model,
+          Changed = Changed.Added
+        });
+
+        ActionIsDone.OnNext(Unit.Default);
+      }
     }
 
     #endregion StoreData
@@ -328,6 +349,27 @@ namespace VPlayer.AudioStorage.AudioDatabase
         {
           try
           {
+
+            await context.Database.ExecuteSqlCommandAsync("DELETE FROM PlaylistSongs");
+            Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table PlaylistSongs cleared succesfuly");
+
+            var playlists = context.Playlists.ToList();
+            await context.Database.ExecuteSqlCommandAsync("DELETE FROM Playlists");
+            Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table Playlists cleared succesfuly");
+
+            foreach (var playlist in playlists)
+            {
+              var itemChange = new ItemChanged()
+              {
+                Changed = Changed.Removed,
+                Item = playlist
+              };
+
+              ItemChanged.OnNext(itemChange);
+            }
+
+            ActionIsDone.OnNext(Unit.Default);
+
             await context.Database.ExecuteSqlCommandAsync("DELETE FROM Songs");
             Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table Songs cleared succesfuly");
 
@@ -696,6 +738,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
         Logger.Logger.Instance.Log(Logger.MessageType.Warning,
             $"Combining album {albumToCombine.Name} to {originalAlbum.Name}");
 
+        ActionIsDone.OnNext(Unit.Default);
+
         return originalAlbum;
       }
       catch (Exception ex)
@@ -731,6 +775,27 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #endregion UpdateEntity
 
+    public void UpdateAllNotYetUpdated()
+    {
+      var notUpdatedAlbums = albumsRepository.Entities.Where(x => x.InfoDownloadStatus == InfoDownloadStatus.Waiting
+                                                                  || x.InfoDownloadStatus == InfoDownloadStatus.Downloading)
+        .Include(x => x.Artist).OrderByDescending(x => x.InfoDownloadStatus);
+
+      foreach (var album in notUpdatedAlbums)
+      {
+        audioInfoDownloader.UpdateItem(album);
+      }
+
+      var brokenAlbums = albumsRepository.Entities.Where(x => x.InfoDownloadStatus == InfoDownloadStatus.Failed
+                                                                  || x.InfoDownloadStatus == InfoDownloadStatus.UnableToFind)
+        .Include(x => x.Artist);
+
+      foreach (var album in brokenAlbums)
+      {
+        audioInfoDownloader.UpdateItem(album);
+      }
+    }
+
     #region Methods
 
     public void Dispose()
@@ -757,6 +822,11 @@ namespace VPlayer.AudioStorage.AudioDatabase
     }
 
     #endregion Properties
+
+    public DbSet<T> Entities
+    {
+      get { return _entities.Set<T>(); }
+    }
 
     #region Methods
 

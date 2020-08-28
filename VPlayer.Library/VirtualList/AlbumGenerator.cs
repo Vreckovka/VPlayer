@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Windows.Navigation;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.Core.ViewModels.Artists;
 
@@ -13,7 +14,7 @@ namespace VPlayer.Library.VirtualList
     #region Fields
 
     public int NumberOfEmployees = -1;
-    private readonly TViewModel[] source;
+    public readonly TViewModel[] source;
     private TViewModel[] _cache;
     private int _pageSize = 40;
 
@@ -121,7 +122,7 @@ namespace VPlayer.Library.VirtualList
   {
     #region Fields
 
-    private readonly PagedEmployeeRepository<TViewModel, TModel> _repository;
+    public readonly PagedEmployeeRepository<TViewModel, TModel> _repository;
 
     #endregion Fields
 
@@ -157,6 +158,8 @@ namespace VPlayer.Library.VirtualList
     {
       return _repository.GetAt(index);
     }
+
+    public TViewModel[] AllItems => _repository.source;
 
     #endregion IObjectGenerator<SampleObject> Members
   }

@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reactive.Subjects;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -62,6 +63,8 @@ namespace VPlayer.AudioStorage.InfoDownloader
     public event EventHandler<List<AudioInfo>> SubdirectoryLoaded;
 
     #endregion Events
+
+   
 
     #region UpdateItem
 
@@ -211,7 +214,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
     /// <returns></returns>
     public Task<List<AlbumCover>> GetAlbumFrontCoversUrls(string MBID, CancellationToken cancellationToken)
     {
-      return Task.Run(async () =>
+      return Task<List<AlbumCover>>.Run(async () =>
       {
         try
         {
@@ -338,14 +341,25 @@ namespace VPlayer.AudioStorage.InfoDownloader
       }, cancellationToken);
     }
 
-    public async Task<List<Album>> GetArtistsAlbums(string artistMbid)
+    public Task<List<Album>> GetArtistsAlbums(string artistMbid)
     {
-      return await Task.Run(async () =>
+      return Task<List<Album>>.Run(async () =>
       {
         try
         {
+          // Make sure that TLS 1.2 is available.
+          ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
+
+          // Get path for local file cache.
+          var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+          var client = new MusicBrainzClient()
+          {
+
+          };
+
           List<Album> albums = new List<Album>();
-          var groups = await ReleaseGroup.BrowseAsync("artist", artistMbid, 100, 0);
+          var groups = await client.ReleaseGroups.BrowseAsync("artist", artistMbid, 100, 0);
 
           foreach (var item in groups.Items.Where(g => IsOffical(g)).OrderBy(g => g.FirstReleaseDate))
           {
@@ -400,6 +414,16 @@ namespace VPlayer.AudioStorage.InfoDownloader
         string artistName = "";
         apiExeed = false;
 
+        ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
+
+        // Get path for local file cache.
+        var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+        var client = new MusicBrainzClient()
+        {
+
+        };
+
         if (album.Artist != null)
         {
           artistName = album.Artist.Name;
@@ -407,7 +431,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
           if (album.Artist.MusicBrainzId == null)
           {
             // Search for an artist by name.
-            var artists = await Artist.SearchAsync(artistName.Quote());
+            var artists = await client.Artists.SearchAsync(artistName.Quote());
             var artist = artists.Items.FirstOrDefault();
 
             if (artist == null)
@@ -425,6 +449,9 @@ namespace VPlayer.AudioStorage.InfoDownloader
             artistMbid = album.Artist.MusicBrainzId;
         }
 
+        // Make sure that TLS 1.2 is available.
+       
+
         Release release = null;
         Album bestAlbum = null;
 
@@ -438,7 +465,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
         };
 
         // Search for a release by title.
-        var releases = await Release.SearchAsync(query);
+        var releases = await client.Releases.SearchAsync(query);
 
         if (releases.Count != 0)
         {
@@ -454,7 +481,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
           }
 
           // Get detailed information of the release, including recordings.
-          release = await Release.GetAsync(release.Id, "recordings", "url-rels");
+          release = await client.Releases.GetAsync(release.Id, "recordings", "url-rels");
 
           //// Get the medium associated with the release.
           //var medium = release.Media.First();
@@ -472,7 +499,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
             _actualArtist = new KeyValuePair<string, List<Album>>(artistMbid, await GetArtistsAlbums(artistMbid));
           }
 
-          if (_actualArtist.Value.Count != 0)
+          if (_actualArtist.Value != null && _actualArtist.Value.Count != 0)
           {
             bestAlbum = _actualArtist.Value
               .OrderByDescending(x => Levenshtein.Similarity(x.Name, album.Name)).First();
@@ -524,7 +551,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
               {"status", "official"}
             };
 
-            releases = await Release.SearchAsync(query);
+            releases = await client.Releases.SearchAsync(query);
 
             release = releases.Items.Where(r => r.Date != null && IsCompactDisc(r)).OrderBy(r => r.Date)
               .FirstOrDefault();
@@ -648,10 +675,21 @@ namespace VPlayer.AudioStorage.InfoDownloader
       {
         await musibrainzAPISempathore.WaitAsync();
 
+        // Make sure that TLS 1.2 is available.
+        ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
+
+        // Get path for local file cache.
+        var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+        var client = new MusicBrainzClient()
+        {
+
+        };
+
         //API rate limit
         Thread.Sleep(1000);
 
-        var artists = await Artist.SearchAsync(artistName.Quote());
+        var artists = await client.Artists.SearchAsync(artistName.Quote());
 
         Artist artist = null;
 
@@ -1065,9 +1103,9 @@ namespace VPlayer.AudioStorage.InfoDownloader
     /// Return audio info by fingerPrint
     /// <param name="path"></param>
     /// </summary>
-    private async Task<AudioInfo> GetAudioInfoByFingerPrint(string path, AudioInfo pAudioInfo = null)
+    private Task<AudioInfo> GetAudioInfoByFingerPrint(string path, AudioInfo pAudioInfo = null)
     {
-      return await Task.Run(async () =>
+      return Task<AudioInfo>.Run(async () =>
       {
         try
         {

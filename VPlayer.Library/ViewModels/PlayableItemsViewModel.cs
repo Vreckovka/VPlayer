@@ -71,7 +71,7 @@ namespace VPlayer.Library.ViewModels
 
     #region View
 
-    public ICollection<TViewModel> View
+    public virtual ICollection<TViewModel> View
     {
       get { return LibraryCollection.FilteredItems; }
     }

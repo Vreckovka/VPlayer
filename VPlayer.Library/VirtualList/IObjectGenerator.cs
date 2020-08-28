@@ -2,6 +2,8 @@
 
 
 
+using System.Collections.Generic;
+
 namespace VPlayer.Library.VirtualList
 {
 	public interface IObjectGenerator<T>
@@ -20,5 +22,8 @@ namespace VPlayer.Library.VirtualList
 		/// <param name="index">Index of the items that must be generated.</param>
 		/// <returns>Fresh new instance.</returns>
 		T CreateObject(int index);
+
+
+		T[] AllItems { get; }
 	}
 }

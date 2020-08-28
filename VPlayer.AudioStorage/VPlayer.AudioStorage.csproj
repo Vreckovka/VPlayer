@@ -164,6 +164,8 @@
     <Compile Include="AudioDatabase\AudioDatabaseContext.cs" />
     <Compile Include="AudioDatabase\AudioDatabaseManager.cs" />
     <Compile Include="DomainClasses\DomainEntity.cs" />
+    <Compile Include="DomainClasses\Playlist.cs" />
+    <Compile Include="DomainClasses\PlaylistSong.cs" />
     <Compile Include="InfoDownloader\AudioInfoDownloader.cs" />
     <Compile Include="InfoDownloader\Extensions.cs" />
     <Compile Include="InfoDownloader\Models\AlbumCover.cs" />
@@ -179,6 +181,14 @@
     <Compile Include="Migrations\202008280123375_migration_4.cs" />
     <Compile Include="Migrations\202008280123375_migration_4.designer.cs">
       <DependentUpon>202008280123375_migration_4.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202008280328305_migration_5.cs" />
+    <Compile Include="Migrations\202008280328305_migration_5.designer.cs">
+      <DependentUpon>202008280328305_migration_5.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202008280528497_migration_6.cs" />
+    <Compile Include="Migrations\202008280528497_migration_6.designer.cs">
+      <DependentUpon>202008280528497_migration_6.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Modularity\NinjectModules\AudioStorageNinjectModule.cs" />
@@ -211,6 +221,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202008280123375_migration_4.resx">
       <DependentUpon>202008280123375_migration_4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202008280328305_migration_5.resx">
+      <DependentUpon>202008280328305_migration_5.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202008280528497_migration_6.resx">
+      <DependentUpon>202008280528497_migration_6.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
