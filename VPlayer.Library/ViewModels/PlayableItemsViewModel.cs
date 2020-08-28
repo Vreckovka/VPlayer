@@ -21,7 +21,7 @@ namespace VPlayer.Library.ViewModels
 {
   public abstract class PlayableItemsViewModel<TView, TViewModel, TModel> : RegionViewModel<TView>, INavigationItem, ICollectionViewModel<TViewModel, TModel>
     where TView : class, IView
-    where TViewModel : class, IPlayableViewModel<TModel>
+    where TViewModel : class, INamedEntityViewModel<TModel>
     where TModel : class, INamedEntity
   {
     #region Fields
@@ -143,6 +143,12 @@ namespace VPlayer.Library.ViewModels
       if (firstActivation)
       {
         this.storageManager.ItemChanged.Subscribe(ItemsChanged);
+        storageManager.ActionIsDone.Subscribe((x) =>
+        {
+          LibraryCollection.Recreate();
+          RaisePropertyChanged(nameof(ViewModels));
+          RaisePropertyChanged(nameof(View));
+        });
 
         LibraryCollection.LoadData.Subscribe(_ =>
         {

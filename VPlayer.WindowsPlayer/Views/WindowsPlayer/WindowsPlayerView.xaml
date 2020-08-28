@@ -264,25 +264,37 @@
       </GridSplitter.Style>
     </GridSplitter>
 
-    <ListView x:Name="ListView_Tracks"
-              Grid.Row="0"
-              Grid.RowSpan="3"
-              Grid.Column="2"
-              Margin="1,0,0,0"
-              HorizontalAlignment="Stretch"
-              Panel.ZIndex="0"
-              AllowDrop="True"
-              Background="{StaticResource BackgroudBrush}"
-              ItemTemplate="{StaticResource SoundTrackTemplate}"
-              ItemsSource="{Binding PlayList}"
-              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-              Style="{StaticResource WindowsPlayerSongs}">
-      <i:Interaction.Triggers>
-        <i:EventTrigger EventName="MouseDoubleClick">
-          <i:InvokeCommandAction Command="{Binding NextSong}" CommandParameter="{Binding ElementName=ListView_Tracks, Path=SelectedItem}" />
-        </i:EventTrigger>
-      </i:Interaction.Triggers>
-    </ListView>
+    <Grid Grid.Row="0"
+          Grid.RowSpan="3"
+          Grid.Column="2">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="auto"/>
+        <RowDefinition/>
+      </Grid.RowDefinitions>
+
+      <Grid Height="55">
+        <Button Content="Save playlist" HorizontalAlignment="Left" Command="{Binding SavePlaylistCommandCommand}"/>
+      </Grid>
+
+      <ListView x:Name="ListView_Tracks"
+               Grid.Row="1"
+                Margin="1,0,0,0"
+                HorizontalAlignment="Stretch"
+                Panel.ZIndex="0"
+                AllowDrop="True"
+                Background="{StaticResource BackgroudBrush}"
+                ItemTemplate="{StaticResource SoundTrackTemplate}"
+                ItemsSource="{Binding PlayList}"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                Style="{StaticResource WindowsPlayerSongs}">
+        <i:Interaction.Triggers>
+          <i:EventTrigger EventName="MouseDoubleClick">
+            <i:InvokeCommandAction Command="{Binding NextSong}" CommandParameter="{Binding ElementName=ListView_Tracks, Path=SelectedItem}" />
+          </i:EventTrigger>
+        </i:Interaction.Triggers>
+      </ListView>
+    </Grid>
+  
 
     <Slider x:Name="Slider_Time"
             Grid.Row="1"

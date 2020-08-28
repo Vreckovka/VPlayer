@@ -112,6 +112,9 @@ namespace VPlayer.Library.ViewModels
       var albumsViewModel = viewModelsFactory.Create<IAlbumsViewModel>();
       NavigationViewModel.Items.Add(albumsViewModel);
 
+      var playlists = viewModelsFactory.Create<PlaylistsViewModel>();
+      NavigationViewModel.Items.Add(playlists);
+
       libraryViewModel.IsActive = true;
     }
 

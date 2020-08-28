@@ -18,6 +18,8 @@ using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
 using Vlc.DotNet.Core;
+using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
@@ -39,6 +41,7 @@ namespace VPlayer.Player.ViewModels
 
     private readonly IVPlayerRegionProvider regionProvider;
     private readonly IEventAggregator eventAggregator;
+    private readonly IStorageManager storageManager;
     private int actualSongIndex = 0;
     private Dictionary<SongInPlayList, bool> playBookInCycle = new Dictionary<SongInPlayList, bool>();
     private HashSet<SongInPlayList> shuffleList = new HashSet<SongInPlayList>();
@@ -50,10 +53,12 @@ namespace VPlayer.Player.ViewModels
     public WindowsPlayerViewModel(
       IVPlayerRegionProvider regionProvider,
       IEventAggregator eventAggregator,
-      IKernel kernel) : base(regionProvider)
+      IKernel kernel,
+      IStorageManager storageManager) : base(regionProvider)
     {
       this.regionProvider = regionProvider ?? throw new ArgumentNullException(nameof(regionProvider));
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
+      this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       Kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
     }
 
@@ -106,7 +111,7 @@ namespace VPlayer.Player.ViewModels
       PlayNextWithSong(songInPlayList);
     }
 
-    #endregion NextSong
+    #endregion 
 
     #region AlbumDetail
 
@@ -130,7 +135,31 @@ namespace VPlayer.Player.ViewModels
       regionProvider.ShowAlbumDetail(ActualSong.AlbumViewModel, RegionNames.WindowsPlayerContentRegion);
     }
 
-    #endregion NextSong
+    #endregion 
+
+    #region SavePlaylist
+
+    private ActionCommand savePlaylistCommand;
+
+    public ICommand SavePlaylistCommandCommand
+    {
+      get
+      {
+        if (savePlaylistCommand == null)
+        {
+          savePlaylistCommand = new ActionCommand(OnSavePlaylist);
+        }
+
+        return savePlaylistCommand;
+      }
+    }
+
+    public void OnSavePlaylist()
+    {
+      SavePlaylist();
+    }
+
+    #endregion 
 
     #endregion Commands
 
@@ -192,7 +221,6 @@ namespace VPlayer.Player.ViewModels
       eventAggregator.GetEvent<PlaySongsEvent>().Subscribe(PlaySongs);
       eventAggregator.GetEvent<PauseEvent>().Subscribe(Pause);
       eventAggregator.GetEvent<PlaySongsFromPlayListEvent>().Subscribe(PlaySongFromPlayList);
-      eventAggregator.GetEvent<AddSongsEvent>().Subscribe(AddSongs);
     }
 
 
@@ -229,7 +257,35 @@ namespace VPlayer.Player.ViewModels
 
     #region PlaySongs
 
-    private void PlaySongs(IEnumerable<SongInPlayList> songs)
+    private void PlaySongs(PlaySongsEventData data)
+    {
+      switch (data.PlaySongsAction)
+      {
+        case PlaySongsAction.Play:
+          PlaySongs(data.Songs);
+          break;
+        case PlaySongsAction.Add:
+          PlayList.AddRange(data.Songs);
+
+          if (ActualSong == null)
+          {
+            SetActualSong(0);
+          }
+
+          RaisePropertyChanged(nameof(CanPlay));
+          SavePlaylist();
+          break;
+        case PlaySongsAction.PlayFromPlaylist:
+          PlaySongs(data.Songs,false);
+          break;
+        default:
+          throw new ArgumentOutOfRangeException();
+      }
+
+      RaisePropertyChanged(nameof(CanPlay));
+    }
+
+    private void PlaySongs(IEnumerable<SongInPlayList> songs, bool savePlaylist = true)
     {
       PlayList.Clear();
       PlayList.AddRange(songs);
@@ -240,26 +296,14 @@ namespace VPlayer.Player.ViewModels
       if (ActualSong != null)
         ActualSong.IsPlaying = false;
 
-      RaisePropertyChanged(nameof(CanPlay));
-    }
-
-    #endregion PlaySongs
-
-    #region AddSongs
-
-    private void AddSongs(IEnumerable<SongInPlayList> songs)
-    {
-      PlayList.AddRange(songs);
-
-      if (ActualSong == null)
+      if (savePlaylist)
       {
-        SetActualSong(0);
+        SavePlaylist();
       }
-
-      RaisePropertyChanged(nameof(CanPlay));
     }
 
     #endregion PlaySongs
+
 
     #region Play
 
@@ -457,6 +501,36 @@ namespace VPlayer.Player.ViewModels
         default:
           throw new ArgumentOutOfRangeException();
       }
+    }
+
+    #endregion
+
+    #region SavePlaylist
+
+    public void SavePlaylist()
+    {
+      var entityPlayList = new Playlist();
+      var songs = new List<PlaylistSong>();
+
+      for (int i = 0; i < PlayList.Count; i++)
+      {
+        var song = PlayList[i];
+
+        songs.Add(new PlaylistSong()
+        {
+          IdSong = song.Model.Id,
+          OrderInPlaylist = (i + 1)
+        });
+      }
+
+      entityPlayList.PlaylistSongs = songs;
+      var artits = PlayList.GroupBy(x => x.ArtistViewModel.Name);
+
+      entityPlayList.Name = string.Join(", ", artits.Select(x => x.Key).ToArray()) + " " + DateTime.Now.ToShortDateString() ;
+
+
+      storageManager.StoreData(entityPlayList);
+
     }
 
     #endregion

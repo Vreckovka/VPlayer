@@ -12,13 +12,31 @@ using VPlayer.Core.ViewModels.Artists;
 
 namespace VPlayer.Core.ViewModels
 {
-  public abstract class PlayableViewModel<TModel> : ViewModel<TModel>, IPlayableViewModel<TModel> where TModel : INamedEntity
+  public abstract class NamedEntityViewModel<TModel> : ViewModel<TModel>, INamedEntityViewModel<TModel> where TModel : INamedEntity
+  {
+    protected NamedEntityViewModel(TModel model) : base(model)
+    {
+    }
+
+    #region Properties
+
+    public int ModelId => Model.Id;
+    public string Name => Model.Name;
+
+    public abstract void Update(TModel updateItem);
+
+    #endregion 
+
+  
+  }
+
+  public abstract class PlayableViewModel<TModel> : NamedEntityViewModel<TModel> where TModel : INamedEntity
   {
     #region Fields
 
     protected readonly IEventAggregator eventAggregator;
 
-    #endregion Fields
+    #endregion
 
     #region Constructors
 
@@ -27,9 +45,7 @@ namespace VPlayer.Core.ViewModels
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
     }
 
-    #endregion Constructors
-
-    #region Properties
+    #endregion
 
     #region HeaderText
 
@@ -59,12 +75,7 @@ namespace VPlayer.Core.ViewModels
     public abstract string BottomText { get; }
     public abstract byte[] ImageThumbnail { get; }
     public bool IsInPlaylist { get; set; }
-    public int ModelId => Model.Id;
-    public string Name => Model.Name;
 
-    public abstract void Update(TModel updateItem);
-
-    #endregion Properties
 
     #region Commands
 
@@ -85,9 +96,17 @@ namespace VPlayer.Core.ViewModels
       }
     }
 
-    public void OnPlay()
+    public virtual void OnPlay()
     {
-      eventAggregator.GetEvent<PlaySongsEvent>().Publish(GetSongsToPlay());
+      var data = GetSongsToPlay();
+
+      var e = new PlaySongsEventData()
+      {
+        PlaySongsAction = PlaySongsAction.Play,
+        Songs = data
+      };
+
+      eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
     }
 
     private void OnPlayButton()
@@ -144,18 +163,25 @@ namespace VPlayer.Core.ViewModels
 
     public void OnAddToPlaylist()
     {
-      eventAggregator.GetEvent<AddSongsEvent>().Publish(GetSongsToPlay());
+      var data = GetSongsToPlay();
+
+      var e = new PlaySongsEventData()
+      {
+        PlaySongsAction = PlaySongsAction.Add,
+        Songs = data
+      };
+
+      eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
     }
 
     #endregion AddToPlaylist
 
-    #endregion Commands
+    #endregion
 
     #region Methods
 
     public abstract IEnumerable<SongInPlayList> GetSongsToPlay();
 
-    #endregion Methods
 
     #region GetEmptyImage
 
@@ -175,7 +201,9 @@ namespace VPlayer.Core.ViewModels
     {
       RaisePropertyChanged(nameof(BottomText));
       RaisePropertyChanged(nameof(ImageThumbnail));
-    } 
+    }
+
+    #endregion
 
     #endregion
   }

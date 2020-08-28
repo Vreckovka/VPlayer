@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using VCore.Modularity.Events;
@@ -17,6 +18,7 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
     #region Properties
 
     Subject<ItemChanged> ItemChanged { get; }
+    Subject<Unit> ActionIsDone { get; }
 
     #endregion Properties
 
@@ -26,13 +28,10 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
 
     IQueryable<T> GetRepository<T>(DbContext dbContext = null) where T : class;
 
-    Task StoreData(AudioInfo audioInfo);
-
     Task<bool> StoreData(IEnumerable<string> audioPath);
-
     Task<bool> StoreData(string audioPath);
 
-    Task StoreData(List<AudioInfo> audioInfos);
+    void StoreData(Playlist playlist);
 
     void UpdateEntity<T>(T entity) where T : class, IEntity;
 

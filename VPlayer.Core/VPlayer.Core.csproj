@@ -133,7 +133,6 @@
     <Compile Include="Design\ViewModels\AlbumDesignViewModel.cs" />
     <Compile Include="Design\ViewModels\ArtistDesignViewModel.cs" />
     <Compile Include="Design\DesingDatabase.cs" />
-    <Compile Include="Events\AddSongsEvent.cs" />
     <Compile Include="Events\Pause.cs" />
     <Compile Include="Events\PlaySongsEvent.cs" />
     <Compile Include="Events\PlaySongsFromPlayListEvent.cs" />

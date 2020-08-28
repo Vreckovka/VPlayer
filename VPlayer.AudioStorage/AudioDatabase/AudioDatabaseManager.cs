@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reactive;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +12,9 @@ using VCore.Modularity.Events;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using Windows.Media.Playlists;
 using Windows.UI.Xaml.Media.Animation;
+using Playlist = VPlayer.AudioStorage.DomainClasses.Playlist;
 
 namespace VPlayer.AudioStorage.AudioDatabase
 {
@@ -38,21 +41,28 @@ namespace VPlayer.AudioStorage.AudioDatabase
   {
   }
 
+  public class PlaylistsRepository : GenericRepository<AudioDatabaseContext, Playlist>
+  {
+  }
+
   public class AudioDatabaseManager : IStorageManager
   {
     #region Fields
 
     private readonly AudioInfoDownloader audioInfoDownloader;
+    private readonly PlaylistsRepository playlistsRepository;
 
     #endregion Fields
 
     #region Constructors
 
-    public AudioDatabaseManager(AudioInfoDownloader audioInfoDownloader)
+    public AudioDatabaseManager(AudioInfoDownloader audioInfoDownloader, PlaylistsRepository playlistsRepository)
     {
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
+      this.playlistsRepository = playlistsRepository ?? throw new ArgumentNullException(nameof(playlistsRepository));
 
       audioInfoDownloader.ItemUpdated.Subscribe(ItemUpdated);
+      audioInfoDownloader.SubdirectoryLoaded += AudioInfoDownloader_SubdirectoryLoaded;
     }
 
     #endregion Constructors
@@ -60,6 +70,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
     #region Properties
 
     public Subject<ItemChanged> ItemChanged { get; } = new Subject<ItemChanged>();
+    public Subject<Unit> ActionIsDone { get; } = new Subject<Unit>();
 
     #endregion Properties
 
@@ -81,7 +92,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     private object storeBatton = new object();
 
-    public async Task StoreData(AudioInfo audioInfo)
+    public void StoreData(AudioInfo audioInfo)
     {
       lock (storeBatton)
       {
@@ -208,32 +219,29 @@ namespace VPlayer.AudioStorage.AudioDatabase
       }
     }
 
-    private SemaphoreSlim Semaphore = new SemaphoreSlim(1,1);
     public Task<bool> StoreData(IEnumerable<string> audioPath)
     {
       return Task.Run(async () =>
       {
-        await Semaphore.WaitAsync();
-        bool result = true;
-
-        foreach (var audio in audioPath)
+        try
         {
-          try
+          bool result = true;
+
+          foreach (var audio in audioPath)
           {
             result = result && await StoreData(audio);
           }
-          catch (Exception ex)
-          {
 
-            throw;
-          }
-          finally
-          {
-            Semaphore.Release();
-          }
+          return result;
         }
-
-        return result;
+        catch (Exception ex)
+        {
+          throw;
+        }
+        finally
+        {
+          ActionIsDone.OnNext(Unit.Default);
+        }
       });
     }
 
@@ -245,9 +253,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       //detect whether its a directory or file
       if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
       {
-        var audioInfos = await audioInfoDownloader.GetAudioInfosFromDirectory(audioPath, true);
-
-        await StoreData(audioInfos);
+        audioInfoDownloader.GetAudioInfosFromDirectory(audioPath, true);
       }
       else
       {
@@ -258,26 +264,56 @@ namespace VPlayer.AudioStorage.AudioDatabase
           return false;
         }
 
-        await StoreData(audioInfo);
+        StoreData(audioInfo);
       }
 
       return true;
     }
 
-    public async Task StoreData(List<AudioInfo> audioInfos)
+    private void AudioInfoDownloader_SubdirectoryLoaded(object sender, List<AudioInfo> e)
+    {
+      if (e?.Count > 0)
+      {
+        Task.Run(() =>
+        {
+          StoreData(e);
+
+        });
+      }
+    }
+
+    public void StoreData(List<AudioInfo> audioInfos)
     {
       try
       {
         foreach (var audioInfo in audioInfos)
         {
           if (audioInfo != null)
-            await StoreData(audioInfo);
+            StoreData(audioInfo);
         }
       }
       catch (Exception ex)
       {
         Logger.Logger.Instance.Log(Logger.MessageType.Error, $"{ex.Message}");
       }
+      finally
+      {
+        ActionIsDone.OnNext(Unit.Default);
+      }
+    }
+
+    public void StoreData(Playlist model)
+    {
+      playlistsRepository.Add(model);
+      playlistsRepository.Save();
+
+      ItemChanged.OnNext(new ItemChanged()
+      {
+        Item = model,
+        Changed = Changed.Added
+      });
+
+      ActionIsDone.OnNext(Unit.Default);
     }
 
     #endregion StoreData
@@ -295,10 +331,11 @@ namespace VPlayer.AudioStorage.AudioDatabase
             await context.Database.ExecuteSqlCommandAsync("DELETE FROM Songs");
             Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table Songs cleared succesfuly");
 
-            //await context.Database.ExecuteSqlCommandAsync("DELETE FROM Genres");
-            //Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table Genres cleared succesfuly");
+            var albums = context.Albums.ToList();
+            await context.Database.ExecuteSqlCommandAsync("DELETE FROM Albums");
+            Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table Albums cleared succesfuly");
 
-            foreach (var album in context.Albums.Include(x => x.Artist))
+            foreach (var album in albums)
             {
               var itemChange = new ItemChanged()
               {
@@ -309,10 +346,14 @@ namespace VPlayer.AudioStorage.AudioDatabase
               ItemChanged.OnNext(itemChange);
             }
 
-            await context.Database.ExecuteSqlCommandAsync("DELETE FROM Albums");
-            Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table Albums cleared succesfuly");
+            ActionIsDone.OnNext(Unit.Default);
 
-            foreach (var artist in context.Artists)
+            var artists = context.Artists.ToList();
+
+            await context.Database.ExecuteSqlCommandAsync("DELETE FROM Artists");
+            Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table Artists cleared succesfuly");
+
+            foreach (var artist in artists)
             {
               ItemChanged.OnNext(new ItemChanged()
               {
@@ -321,8 +362,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
               });
             }
 
-            await context.Database.ExecuteSqlCommandAsync("DELETE FROM Artists");
-            Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table Artists cleared succesfuly");
+            ActionIsDone.OnNext(Unit.Default);
+
           }
           catch (Exception ex)
           {

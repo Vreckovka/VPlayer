@@ -7,7 +7,7 @@ using VPlayer.Core.ViewModels.Artists;
 
 namespace VPlayer.Library.VirtualList
 {
-  public class PagedEmployeeRepository<TViewModel, TModel> where TViewModel : IPlayableViewModel<TModel>
+  public class PagedEmployeeRepository<TViewModel, TModel> where TViewModel : INamedEntityViewModel<TModel>
   where TModel : INamedEntity
   {
     #region Fields
@@ -116,7 +116,7 @@ namespace VPlayer.Library.VirtualList
   }
 
   public class PlayableItemsGenerator<TViewModel, TModel> : IObjectGenerator<TViewModel>
-          where TViewModel : class, IPlayableViewModel<TModel>
+          where TViewModel : class, INamedEntityViewModel<TModel>
         where TModel : INamedEntity
   {
     #region Fields

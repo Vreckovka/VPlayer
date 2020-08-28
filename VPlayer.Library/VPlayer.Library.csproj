@@ -161,7 +161,7 @@
     <Compile Include="ViewModels\ArtistsViewModels\ArtistsViewModel.cs" />
     <Compile Include="ViewModels\PlayableItemsViewModel.cs" />
     <Compile Include="ViewModels\LibraryViewModels\LibraryCollection.cs" />
-    <Compile Include="ViewModels\PlayableViewModel.cs" />
+    <Compile Include="ViewModels\PlaylistsViewModel.cs" />
     <Compile Include="Views\LibraryView.xaml.cs">
       <DependentUpon>LibraryView.xaml</DependentUpon>
     </Compile>
@@ -183,6 +183,9 @@
     </Compile>
     <Compile Include="Views\ArtistsView.xaml.cs">
       <DependentUpon>ArtistsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PlaylistsView.xaml.cs">
+      <DependentUpon>PlaylistsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="VirtualList\AlbumGenerator.cs" />
     <Compile Include="VirtualList\IObjectGenerator.cs" />
@@ -210,6 +213,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ArtistsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PlaylistsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -176,6 +176,10 @@
     <Compile Include="Migrations\202008270038462_migration_1.designer.cs">
       <DependentUpon>202008270038462_migration_1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202008280123375_migration_4.cs" />
+    <Compile Include="Migrations\202008280123375_migration_4.designer.cs">
+      <DependentUpon>202008280123375_migration_4.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Modularity\NinjectModules\AudioStorageNinjectModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -204,6 +208,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202008270038462_migration_1.resx">
       <DependentUpon>202008270038462_migration_1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202008280123375_migration_4.resx">
+      <DependentUpon>202008280123375_migration_4.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

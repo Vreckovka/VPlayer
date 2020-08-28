@@ -157,9 +157,9 @@ namespace VPlayer.AudioStorage.InfoDownloader
       });
     }
 
-    public async Task<List<AudioInfo>> GetAudioInfosFromDirectory(string directoryPath, bool subDirectories = false)
+    public void GetAudioInfosFromDirectory(string directoryPath, bool subDirectories = false)
     {
-      return await Task.Run(async () =>
+      Task.Run(async () =>
       {
         try
         {
@@ -168,28 +168,25 @@ namespace VPlayer.AudioStorage.InfoDownloader
           DirectoryInfo d = new DirectoryInfo(directoryPath);
           FileInfo[] Files = supportedItems.SelectMany(ext => d.GetFiles(ext)).ToArray();
 
-          foreach (FileInfo file in Files)
-          {
-            audioInfos.Add(await GetAudioInfo(file.FullName));
-          }
 
           if (subDirectories)
           {
             foreach (var directory in await GetSubDirectories(directoryPath))
             {
-              var audioInfosSub = await GetAudioInfosFromDirectory(directory);
-              audioInfos.AddRange(audioInfosSub);
-
-              OnSubdirectoryLoaded(audioInfosSub);
+              GetAudioInfosFromDirectory(directory);
             }
           }
 
-          return audioInfos;
+          foreach (FileInfo file in Files)
+          {
+            audioInfos.Add(await GetAudioInfo(file.FullName));
+          }
+
+          OnSubdirectoryLoaded(audioInfos);
         }
         catch (Exception ex)
         {
           Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
-          return null;
         }
       });
     }
@@ -572,6 +569,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
               Name = release.Title,
               MusicBrainzId = release.Id,
               ReleaseDate = release.Date,
+              Songs = new List<Song>()
             };
 
             Logger.Logger.Instance.Log(Logger.MessageType.Warning,

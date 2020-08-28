@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Reactive;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Microsoft.WindowsAPICodePack.Dialogs;
@@ -83,7 +85,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
       {
-        AddFolder(dialog.FileName);
+        Task.Run(() =>
+        {
+          AddFolder(dialog.FileName);
+        });
       }
     }
 
@@ -107,7 +112,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       var settings = viewModelsFactory.Create<SettingsViewModel>();
 
-     
+
       NavigationViewModel.Items.Add(libraryViewModel);
       NavigationViewModel.Items.Add(item);
       NavigationViewModel.Items.Add(settings);
@@ -119,22 +124,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public void AddFolder(string folderPath)
     {
-      var directories = Directory.GetDirectories(folderPath);
-
-      if (directories.Length == 0)
-      {
-        DirectoryInfo directoryInfo = new DirectoryInfo(folderPath);
-        var Files = directoryInfo.GetFiles("*.mp3");
-
-        storageManager.StoreData(Files.Select(x => x.FullName));
-      }
-      else
-      {
-        for (int i = 0; i < directories.Length; i++)
-        {
-          AddFolder(directories[i]);
-        }
-      }
+      storageManager.StoreData(folderPath);
     }
   }
 }

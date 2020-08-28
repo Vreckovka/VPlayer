@@ -9,6 +9,8 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
 using VCore.Factories;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -20,7 +22,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 {
   [AddINotifyPropertyChangedInterface]
   public class LibraryCollection<TViewModel, TModel> : BindableBase
-    where TViewModel : class, IPlayableViewModel<TModel>
+    where TViewModel : class, INamedEntityViewModel<TModel>
     where TModel : class, INamedEntity
   {
     #region Fields
@@ -96,7 +98,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
           {
             List<TModel> data;
             if (optionalQuery == null)
-            //Need Enumerable for ViewModelsFactory.Create
+              //Need Enumerable for ViewModelsFactory.Create
               data = await LoadQuery.ToListAsync();
             else
               data = await optionalQuery.ToListAsync();
@@ -148,8 +150,14 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
     public void Add(TModel entity)
     {
-      Items.Add(ViewModelsFactory.Create<TViewModel>(entity));
-      Recreate();
+      Application.Current.Dispatcher.Invoke(() =>
+      {
+        var viewModel = ViewModelsFactory.Create<TViewModel>(entity);
+        Items.Add(viewModel);
+
+      });
+
+      //Recreate();
     }
 
     #endregion Add
@@ -158,14 +166,20 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
     public void Remove(TModel entity)
     {
-      if (WasLoaded)
+      Application.Current.Dispatcher.Invoke(() =>
       {
-        var originalItem = Items.Single(x => x.ModelId == entity.Id);
+        if (WasLoaded)
+        {
+          var originalItem = Items.SingleOrDefault(x => x.ModelId == entity.Id);
 
-        Items.Remove(originalItem);
+          if (originalItem != null)
+          {
+            Items.Remove(originalItem);
+          }
 
-        Recreate();
-      }
+          //Recreate();
+        }
+      });
     }
 
     #endregion Remove
@@ -174,17 +188,21 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
     public void Update(TModel entity)
     {
-      var originalItem = Items.Single(x => x.ModelId == entity.Id);
+      var originalItem = Items.SingleOrDefault(x => x.ModelId == entity.Id);
 
-      originalItem.Update(entity);
-
-      if (entity.Name != originalItem.Name)
+      if (originalItem != null)
       {
-        Recreate();
+        originalItem.Update(entity);
+
+        if (entity.Name != originalItem.Name)
+        {
+          //Recreate();
+        }
       }
+
     }
 
-    #endregion Update
+    #endregion 
 
     #region Initilize
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
@@ -61,5 +62,23 @@ namespace VPlayer.AudioStorage.DomainClasses
     }
 
     #endregion Methods
+  }
+
+  public class Playlist : DomainEntity, INamedEntity
+  {
+    public virtual List<PlaylistSong> PlaylistSongs { get; set; }
+    public string Name { get; set; }
+
+  }
+
+  public class PlaylistSong : DomainEntity
+  {
+    public int OrderInPlaylist { get; set; }
+
+    [ForeignKey(nameof(Song))]
+    public int IdSong { get; set; }
+    public Song Song { get; set; }
+
+
   }
 }
