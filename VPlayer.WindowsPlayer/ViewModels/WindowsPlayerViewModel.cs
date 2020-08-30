@@ -33,7 +33,8 @@ using VPlayer.Player.Views.WindowsPlayer;
 //TODO: Nacitanie zo suboru
 //TODO: Ak je neidentifkovana skladba, pridanie interpreta zo zoznamu, alebo vytvorit noveho
 //TODO: Nastavit si hlavnu zlozku a ked spustis z inej, moznost presunut
-//TODO: Playlist hore pri menu, quick ze prides a uvidis napriklad 5 poslednych hore v rade , ako carusel
+//TODO: Playlist hore pri menu, quick ze prides a uvidis napriklad 5 poslednych hore v rade , ako carusel (5/5)
+//TODO: Playlist nech sa automaticky nevytvara ak je iba jedna pesnicka (nastavenie pre uzivatela aky pocet sa ma ukladat!) (3/5)
 
 namespace VPlayer.Player.ViewModels
 {

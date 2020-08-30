@@ -32,7 +32,7 @@
     </TaskbarItemInfo>
   </Window.TaskbarItemInfo>
 
-  <Grid>
+  <Grid >
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="150" />
       <ColumnDefinition Width="*" />

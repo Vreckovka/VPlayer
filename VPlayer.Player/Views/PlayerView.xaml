@@ -5,17 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:VPlayer.Player.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d">
+             mc:Ignorable="d"
+             >
   <Grid>
-    <Border Background="{StaticResource TopWindowsBrush}">
-      <Border.Effect>
-        <DropShadowEffect BlurRadius="8"
-                          Direction="-50"
-                          Opacity="0.5"
-                          ShadowDepth="3"
-                          Color="#FF110D32" />
-      </Border.Effect>
-
+    <Border >
       <Grid HorizontalAlignment="Center">
         <Grid.RowDefinitions>
           <RowDefinition Height="auto" />

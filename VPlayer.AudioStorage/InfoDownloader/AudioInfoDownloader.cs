@@ -64,7 +64,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     #endregion Events
 
-   
+
 
     #region UpdateItem
 
@@ -101,7 +101,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
       {
         try
         {
-         
+
 
           var updateAlbum = await UpdateAlbum(album);
 
@@ -143,20 +143,19 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
         audioInfo = await Task.Run(() => GetAudioInfoByWindowsAsync(path));
 
-        if (audioInfo != null)
-          return audioInfo;
-        else
+        if (audioInfo.Artist == null && audioInfo.Album == null && audioInfo.Artist == "" && audioInfo.Album == "")
         {
-          audioInfo = await Task.Run(() => GetAudioInfoByFingerPrint(path));
+          var fingerPrintAudioInfo = await Task.Run(() => GetAudioInfoByFingerPrint(path));
 
-          if (audioInfo != null)
+          if (fingerPrintAudioInfo != null)
           {
             Logger.Logger.Instance.Log(Logger.MessageType.Success, $"Audio info was gotten by fingerprint {path}");
-            return audioInfo;
+            return fingerPrintAudioInfo;
           }
-
-          return null;
         }
+        
+        return audioInfo;
+
       });
     }
 
@@ -405,7 +404,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
         await musibrainzAPISempathore.WaitAsync();
 
 
-       
+
         album.InfoDownloadStatus = InfoDownloadStatus.Downloading;
         ItemUpdated.OnNext(album);
         Logger.Logger.Instance.Log(Logger.MessageType.Inform, $"Downloading album info {album.Name}");
@@ -450,7 +449,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
         }
 
         // Make sure that TLS 1.2 is available.
-       
+
 
         Release release = null;
         Album bestAlbum = null;
@@ -1246,24 +1245,17 @@ namespace VPlayer.AudioStorage.InfoDownloader
       {
         var musicProp = await GetAudioWindowsPropertiesAsync(path);
 
-        if (musicProp != null && ((musicProp.Artist != "" && musicProp.Album != "") ||
-            (musicProp.AlbumArtist != "" && musicProp.Album != "")))
+        var newAudioInfo = new AudioInfo()
         {
-          var newAudioInfo = new AudioInfo()
-          {
-            Album = musicProp.Album,
-            Artist = musicProp.Artist != "" ? musicProp.Artist : musicProp?.AlbumArtist,
-            Title = musicProp.Title,
-            DiskLocation = path,
-            Duration = (int)musicProp.Duration.TotalSeconds
-          };
+          Album = musicProp.Album,
+          Artist = musicProp.Artist != "" ? musicProp.Artist : musicProp?.AlbumArtist,
+          Title = musicProp.Title,
+          DiskLocation = path,
+          Duration = (int)musicProp.Duration.TotalSeconds
+        };
 
-          return newAudioInfo;
-        }
+        return newAudioInfo;
 
-        Logger.Logger.Instance.Log(Logger.MessageType.Warning, $"Info was not gotten fully {path}");
-
-        return null;
       });
     }
 
@@ -1296,41 +1288,6 @@ namespace VPlayer.AudioStorage.InfoDownloader
     }
 
     #endregion GetAudioWindowsPropertiesAsync
-
-    #region GetAudioInfosFromWindowsDirectoryAsync
-
-    /// <summary>
-    /// Returns list of audioinfos from windows directory
-    /// </summary>
-    /// <param name="path"></param>
-    /// <returns></returns>
-    public async Task<List<AudioInfo>> GetAudioInfosFromWindowsDirectoryAsync(string path, bool subDirectories = false)
-    {
-      return await Task.Run(async () =>
-      {
-        List<AudioInfo> audioInfos = new List<AudioInfo>();
-
-        DirectoryInfo d = new DirectoryInfo(path);
-        FileInfo[] Files = supportedItems.SelectMany(ext => d.GetFiles(ext)).ToArray();
-
-        foreach (FileInfo file in Files)
-        {
-          audioInfos.Add(await GetAudioInfoByWindowsAsync(file.FullName));
-        }
-
-        if (subDirectories)
-        {
-          foreach (var directory in await GetSubDirectories(path))
-          {
-            audioInfos.AddRange(await GetAudioInfosFromWindowsDirectoryAsync(directory));
-          }
-        }
-
-        return audioInfos;
-      });
-    }
-
-    #endregion GetAudioInfosFromWindowsDirectoryAsync
 
     #endregion Windows info methods
 

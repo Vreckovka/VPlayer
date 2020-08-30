@@ -13,7 +13,7 @@
 
     <Grid>
 
-        <controls:PlayableWrapPanel Margin="5,0" ItemsSource="{Binding View}">
+        <controls:PlayableWrapPanel Margin="5,0" ItemsSource="{Binding View}" SnapsToDevicePixels="False">
             <controls:PlayableWrapPanel.ItemTemplate>
                 <DataTemplate>
                     <controls:PlayableWrapPanelItem BottomText="{Binding BottomText}"

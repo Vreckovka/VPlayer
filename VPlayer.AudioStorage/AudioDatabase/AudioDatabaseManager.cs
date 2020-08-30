@@ -57,19 +57,22 @@ namespace VPlayer.AudioStorage.AudioDatabase
     private readonly AudioInfoDownloader audioInfoDownloader;
     private readonly PlaylistsRepository playlistsRepository;
     private readonly AlbumsRepository albumsRepository;
+    private readonly ArtistRepository artistRepository;
 
     #endregion Fields
 
     #region Constructors
 
     public AudioDatabaseManager(
-      AudioInfoDownloader audioInfoDownloader, 
+      AudioInfoDownloader audioInfoDownloader,
       PlaylistsRepository playlistsRepository,
-      AlbumsRepository albumsRepository)
+      AlbumsRepository albumsRepository,
+      ArtistRepository artistRepository)
     {
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
       this.playlistsRepository = playlistsRepository ?? throw new ArgumentNullException(nameof(playlistsRepository));
       this.albumsRepository = albumsRepository ?? throw new ArgumentNullException(nameof(albumsRepository));
+      this.artistRepository = artistRepository ?? throw new ArgumentNullException(nameof(artistRepository));
 
       audioInfoDownloader.ItemUpdated.Subscribe(ItemUpdated);
       audioInfoDownloader.SubdirectoryLoaded += AudioInfoDownloader_SubdirectoryLoaded;
@@ -123,7 +126,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
             artist = (from x in context.Artists where x.Name == artist.Name select x).SingleOrDefault();
 
-            if (artist == null)
+            if (artist == null && audioInfo.Artist != null)
             {
               artist = new Artist(audioInfo.Artist)
               {
@@ -155,7 +158,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
                      where x.Artist.Name == album.Artist.Name
                      select x).SingleOrDefault();
 
-            if (album == null)
+            if (album == null && audioInfo.Album != null)
             {
               album = new Album()
               {
@@ -187,6 +190,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
             {
               DiskLocation = audioInfo.DiskLocation
             };
+         
 
             song = (from x in context.Songs
                     where song.Name == x.Name
@@ -201,6 +205,11 @@ namespace VPlayer.AudioStorage.AudioDatabase
                 DiskLocation = audioInfo.DiskLocation,
                 Duration = audioInfo.Duration
               };
+
+              if (string.IsNullOrEmpty(song.Name))
+              {
+                song.Name = song.DiskLocation.Split('\\').Last();
+              }
 
               context.Songs.Add(song);
               context.SaveChanges();
@@ -275,9 +284,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
       {
         var audioInfo = await audioInfoDownloader.GetAudioInfo(audioPath);
 
-        if (audioInfo == null)
+        if (audioInfo.Artist == null)
         {
-          return false;
         }
 
         StoreData(audioInfo);
@@ -293,7 +301,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
         Task.Run(() =>
         {
           StoreData(e);
-
         });
       }
     }
