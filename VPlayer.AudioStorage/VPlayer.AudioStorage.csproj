@@ -161,8 +161,17 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Migrations\202009011056233_migration_1.cs" />
+    <Compile Include="Migrations\202009011056233_migration_1.designer.cs">
+      <DependentUpon>202009011056233_migration_1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Repositories\AlbumsRepository.cs" />
+    <Compile Include="Repositories\ArtistRepository.cs" />
     <Compile Include="AudioDatabase\AudioDatabaseContext.cs" />
     <Compile Include="AudioDatabase\AudioDatabaseManager.cs" />
+    <Compile Include="Repositories\GenericRepository.cs" />
+    <Compile Include="Repositories\IGenericRepository.cs" />
+    <Compile Include="Repositories\PlaylistsRepository.cs" />
     <Compile Include="DomainClasses\DomainEntity.cs" />
     <Compile Include="DomainClasses\Playlist.cs" />
     <Compile Include="DomainClasses\PlaylistSong.cs" />
@@ -174,22 +183,6 @@
     <Compile Include="DomainClasses\AudioInfo.cs" />
     <Compile Include="DomainClasses\INamedEntity.cs" />
     <Compile Include="DomainClasses\Song.cs" />
-    <Compile Include="Migrations\202008270038462_migration_1.cs" />
-    <Compile Include="Migrations\202008270038462_migration_1.designer.cs">
-      <DependentUpon>202008270038462_migration_1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202008280123375_migration_4.cs" />
-    <Compile Include="Migrations\202008280123375_migration_4.designer.cs">
-      <DependentUpon>202008280123375_migration_4.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202008280328305_migration_5.cs" />
-    <Compile Include="Migrations\202008280328305_migration_5.designer.cs">
-      <DependentUpon>202008280328305_migration_5.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202008280528497_migration_6.cs" />
-    <Compile Include="Migrations\202008280528497_migration_6.designer.cs">
-      <DependentUpon>202008280528497_migration_6.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Modularity\NinjectModules\AudioStorageNinjectModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -216,17 +209,8 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202008270038462_migration_1.resx">
-      <DependentUpon>202008270038462_migration_1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202008280123375_migration_4.resx">
-      <DependentUpon>202008280123375_migration_4.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202008280328305_migration_5.resx">
-      <DependentUpon>202008280328305_migration_5.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202008280528497_migration_6.resx">
-      <DependentUpon>202008280528497_migration_6.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202009011056233_migration_1.resx">
+      <DependentUpon>202009011056233_migration_1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

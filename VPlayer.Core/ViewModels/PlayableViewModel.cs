@@ -26,8 +26,51 @@ namespace VPlayer.Core.ViewModels
     public abstract void Update(TModel updateItem);
 
     #endregion 
+  }
 
-  
+  public abstract class PlayableViewModelWithThumbnail<TModel> : PlayableViewModel<TModel> where TModel : DownloadableEntity
+  {
+    protected PlayableViewModelWithThumbnail(TModel model, IEventAggregator eventAggregator) : base(model, eventAggregator)
+    {
+    }
+
+    #region Properties
+
+    #region HeaderText
+
+    public string HeaderText => Model.Name;
+
+    #endregion 
+
+    public abstract string BottomText { get; }
+    public abstract byte[] ImageThumbnail { get; }
+    public bool IsInPlaylist { get; set; }
+    public InfoDownloadStatus InfoDownloadStatus => Model.InfoDownloadStatus;
+
+    #endregion
+
+    #region GetEmptyImage
+
+    public byte[] GetEmptyImage()
+    {
+      var bitmap = new Bitmap(1, 1, PixelFormat.Format24bppRgb);
+
+      ImageConverter converter = new ImageConverter();
+      return (byte[])converter.ConvertTo(bitmap, typeof(byte[]));
+    }
+
+    #endregion
+
+    #region RaisePropertyChanges
+
+    public virtual void RaisePropertyChanges()
+    {
+      RaisePropertyChanged(nameof(BottomText));
+      RaisePropertyChanged(nameof(ImageThumbnail));
+    }
+
+    #endregion
+
   }
 
   public abstract class PlayableViewModel<TModel> : NamedEntityViewModel<TModel> where TModel : INamedEntity
@@ -47,12 +90,6 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region HeaderText
-
-    public string HeaderText => Model.Name;
-
-    #endregion HeaderText
-
     #region IsPlaying
 
     private bool isPlaying;
@@ -71,11 +108,6 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion IsPlaying
-
-    public abstract string BottomText { get; }
-    public abstract byte[] ImageThumbnail { get; }
-    public bool IsInPlaylist { get; set; }
-
 
     #region Commands
 
@@ -181,29 +213,6 @@ namespace VPlayer.Core.ViewModels
     #region Methods
 
     public abstract IEnumerable<SongInPlayList> GetSongsToPlay();
-
-
-    #region GetEmptyImage
-
-    public byte[] GetEmptyImage()
-    {
-      var bitmap = new Bitmap(1, 1, PixelFormat.Format24bppRgb);
-
-      ImageConverter converter = new ImageConverter();
-      return (byte[])converter.ConvertTo(bitmap, typeof(byte[]));
-    }
-
-    #endregion
-
-    #region RaisePropertyChanges
-
-    public virtual void RaisePropertyChanges()
-    {
-      RaisePropertyChanged(nameof(BottomText));
-      RaisePropertyChanged(nameof(ImageThumbnail));
-    }
-
-    #endregion
 
     #endregion
   }

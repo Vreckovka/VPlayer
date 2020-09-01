@@ -14,6 +14,7 @@ using VCore.ViewModels.Navigation;
 using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPlayer.AudioStorage.Repositories;
 using VPlayer.Core.Events;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
@@ -62,8 +63,6 @@ namespace VPlayer.Library.ViewModels
       throw new NotImplementedException();
     }
 
-    public override string BottomText { get; }
-    public override byte[] ImageThumbnail { get; }
     protected override void OnDetail()
     {
       throw new NotImplementedException();

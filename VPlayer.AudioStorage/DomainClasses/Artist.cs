@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
-  public class Artist : DomainEntity , INamedEntity
+  public class Artist : DomainEntity , DownloadableEntity
   {
     #region Constructors
 
@@ -25,6 +25,8 @@ namespace VPlayer.AudioStorage.DomainClasses
     public string MusicBrainzId { get; set; }
     public string Name { get; set; }
 
+    public InfoDownloadStatus InfoDownloadStatus { get; set; }
+
     #endregion Properties
 
     #region Methods
@@ -35,5 +37,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     }
 
     #endregion Methods
+
+   
   }
 }

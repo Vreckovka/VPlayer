@@ -50,6 +50,31 @@ namespace VPlayer.Core.ViewModels.Settings
       await storageManager.ClearStorage();
     }
 
-    #endregion NextSong
+    #endregion 
+
+
+    #region DownloadNotDownloaded
+
+    private ActionCommand downloadNotDownloaded;
+
+    public ICommand DownloadNotDownloaded
+    {
+      get
+      {
+        if (downloadNotDownloaded == null)
+        {
+          downloadNotDownloaded = new ActionCommand(OnDownloadNotDownloaded);
+        }
+
+        return downloadNotDownloaded;
+      }
+    }
+
+    public async void OnDownloadNotDownloaded()
+    {
+      await storageManager.UpdateAllNotYetUpdated();
+    }
+
+    #endregion 
   }
 }

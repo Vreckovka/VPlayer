@@ -27,7 +27,7 @@ namespace VPlayer.Core.ViewModels.Artists
     #endregion Methods
   }
 
-  public class ArtistViewModel : PlayableViewModel<Artist>
+  public class ArtistViewModel : PlayableViewModelWithThumbnail<Artist>
   {
     #region Fields
 

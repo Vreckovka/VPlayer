@@ -153,7 +153,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
             return fingerPrintAudioInfo;
           }
         }
-        
+
         return audioInfo;
 
       });
@@ -413,42 +413,32 @@ namespace VPlayer.AudioStorage.InfoDownloader
         string artistName = "";
         apiExeed = false;
 
+        //Musicbrainz API client need its (not tested if not)
         ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
 
-        // Get path for local file cache.
-        var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        var client = new MusicBrainzClient();
 
-        var client = new MusicBrainzClient()
+        artistName = album.Artist.Name;
+
+        if (!string.IsNullOrEmpty(artistName))
         {
+          // Search for an artist by name.
+          var artists = await client.Artists.SearchAsync(artistName.Quote());
+          var artist = artists.Items.FirstOrDefault();
 
-        };
-
-        if (album.Artist != null)
-        {
-          artistName = album.Artist.Name;
-
-          if (album.Artist.MusicBrainzId == null)
+          if (artist == null)
           {
-            // Search for an artist by name.
-            var artists = await client.Artists.SearchAsync(artistName.Quote());
-            var artist = artists.Items.FirstOrDefault();
-
-            if (artist == null)
-            {
-              Logger.Logger.Instance.Log(Logger.MessageType.Warning,
-                $"Album info was not downloaded {album.Name} - {artistName}");
-              return null;
-            }
-            else
-            {
-              artistMbid = artist.Id;
-            }
+            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+              $"Album info was not downloaded {album.Name} - {artistName}");
+            return null;
           }
           else
-            artistMbid = album.Artist.MusicBrainzId;
+          {
+            artistMbid = artist.Id;
+          }
         }
-
-        // Make sure that TLS 1.2 is available.
+        else if (!string.IsNullOrEmpty(album.Artist.MusicBrainzId))
+          artistMbid = album.Artist.MusicBrainzId;
 
 
         Release release = null;
@@ -462,6 +452,21 @@ namespace VPlayer.AudioStorage.InfoDownloader
           {"type", "album"},
           {"status", "official"}
         };
+
+        if (string.IsNullOrEmpty(artistMbid) && string.IsNullOrEmpty(albumName))
+        {
+          Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Artist and album is null or empty");
+          return null;
+        }
+
+        if (!string.IsNullOrEmpty(artistMbid))
+          query.Add("arid", artistMbid);
+
+        if (!string.IsNullOrEmpty(albumName))
+          query.Add("release", albumName);
+
+        query.Add("type", "album");
+        query.Add("status", "official");
 
         // Search for a release by title.
         var releases = await client.Releases.SearchAsync(query);

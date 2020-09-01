@@ -5,32 +5,39 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VPlayer.Library.Views"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
   <UserControl.Resources>
-    <ControlTemplate x:Key="StronglyRecommended" 
-                     TargetType='{x:Type ListViewItem}'>
-      <Border Padding="10" Name="border" >
-        <Border.Style>
-          <Style TargetType="Border">
-            <Setter Property="Background" Value="{StaticResource 10_WhiteTransparentBrush}" />
-          </Style>
-        </Border.Style>
-        <StackPanel >
-          <GridViewRowPresenter Content="{TemplateBinding Content}"
-                              Columns="{TemplateBinding GridView.ColumnCollection}"/>
-        </StackPanel>
-        <Border.InputBindings>
-          <MouseBinding MouseAction="LeftDoubleClick"
-                      Command="{Binding Play}"/>
-        </Border.InputBindings>
-      </Border>
-      <ControlTemplate.Triggers>
-        <Trigger Property="IsSelected" Value="true">
-          <Setter Property="Background" TargetName="border" Value="{StaticResource 30_WhiteTransparentBrush}"/>
-        </Trigger>
-      </ControlTemplate.Triggers>
-    </ControlTemplate>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/VPlayer;component/StylesDictionaries/ControlsTemplates/ButtonWithIconTemplate.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+
+      <ControlTemplate x:Key="StronglyRecommended" 
+                       TargetType='{x:Type ListViewItem}'>
+        <Border Padding="10" Name="border" >
+          <Border.Style>
+            <Style TargetType="Border">
+              <Setter Property="Background" Value="{StaticResource 10_WhiteTransparentBrush}" />
+            </Style>
+          </Border.Style>
+          <StackPanel >
+            <GridViewRowPresenter Content="{TemplateBinding Content}"
+                                  Columns="{TemplateBinding GridView.ColumnCollection}"/>
+          </StackPanel>
+          <Border.InputBindings>
+            <MouseBinding MouseAction="LeftDoubleClick"
+                          Command="{Binding Play}"/>
+          </Border.InputBindings>
+        </Border>
+        <ControlTemplate.Triggers>
+          <Trigger Property="IsSelected" Value="true">
+            <Setter Property="Background" TargetName="border" Value="{StaticResource 30_WhiteTransparentBrush}"/>
+          </Trigger>
+        </ControlTemplate.Triggers>
+      </ControlTemplate>
+    </ResourceDictionary>
   </UserControl.Resources>
 
 
@@ -40,12 +47,34 @@
         <Style TargetType="{x:Type ListViewItem}"  >
           <Setter Property="Template"
                   Value="{StaticResource StronglyRecommended}"/>
-          
+
         </Style>
       </ListView.ItemContainerStyle>
       <ListView.View>
         <GridView>
           <GridView.Columns>
+            <GridViewColumn Width="100" Header="Play from start" >
+              <GridViewColumn.CellTemplate>
+                <DataTemplate>
+                  <controls:ButtonWithIcon Content="Fresh" IconPathStyle="{StaticResource PlaySign}" 
+                                           Height="30" 
+                                           Width="150"
+                                           IconHoverColor="{StaticResource DefaultRedColor}"
+                                           IconDefaultBrush="#50db515a"/>
+                </DataTemplate>
+              </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+            <GridViewColumn Width="100" Header="Play from last" >
+              <GridViewColumn.CellTemplate>
+                <DataTemplate>
+                  <controls:ButtonWithIcon Content="Last" 
+                                           IconPathStyle="{StaticResource PlaySign}" 
+                                           Height="30"
+                                           IconDefaultBrush="#50f5936c"
+                                           IconHoverColor="{StaticResource OrangeColor}"/>
+                </DataTemplate>
+              </GridViewColumn.CellTemplate>
+            </GridViewColumn>
             <GridViewColumn Width="150" Header="Created -> Prerobit na played (Modified upravit)" DisplayMemberBinding="{Binding Model.Created}"/>
             <GridViewColumn Header="Hash" DisplayMemberBinding="{Binding Model.SongsInPlaylitsHashCode}"/>
             <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
@@ -55,6 +84,6 @@
       </ListView.View>
     </ListView>
 
-    
+
   </Grid>
 </UserControl>

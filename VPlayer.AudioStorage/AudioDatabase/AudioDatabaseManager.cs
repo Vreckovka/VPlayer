@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reactive;
 using System.Reactive.Subjects;
 using System.Threading;
@@ -15,41 +14,11 @@ using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using Windows.Media.Playlists;
 using Windows.UI.Xaml.Media.Animation;
+using VPlayer.AudioStorage.Repositories;
 using Playlist = VPlayer.AudioStorage.DomainClasses.Playlist;
 
 namespace VPlayer.AudioStorage.AudioDatabase
 {
-  public interface IGenericRepository<T> where T : class
-  {
-    #region Methods
-
-    void Add(T entity);
-
-    void Delete(T entity);
-
-    void Edit(T entity);
-
-    IQueryable<T> FindBy(Expression<Func<T, bool>> predicate);
-
-    IQueryable<T> GetAll();
-
-    void Save();
-
-    #endregion Methods
-  }
-
-  public class ArtistRepository : GenericRepository<AudioDatabaseContext, Artist>
-  {
-  }
-
-  public class AlbumsRepository : GenericRepository<AudioDatabaseContext, Album>
-  {
-  }
-
-  public class PlaylistsRepository : GenericRepository<AudioDatabaseContext, Playlist>
-  {
-  }
-
   public class AudioDatabaseManager : IStorageManager, IInitializable
   {
     #region Fields
@@ -73,15 +42,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
       this.playlistsRepository = playlistsRepository ?? throw new ArgumentNullException(nameof(playlistsRepository));
       this.albumsRepository = albumsRepository ?? throw new ArgumentNullException(nameof(albumsRepository));
       this.artistRepository = artistRepository ?? throw new ArgumentNullException(nameof(artistRepository));
-
-      audioInfoDownloader.ItemUpdated.Subscribe(ItemUpdated);
-      audioInfoDownloader.SubdirectoryLoaded += AudioInfoDownloader_SubdirectoryLoaded;
-    }
-
-
-    public void Initialize()
-    {
-      Task.Run(() => { UpdateAllNotYetUpdated(); });
     }
 
     #endregion Constructors
@@ -92,6 +52,20 @@ namespace VPlayer.AudioStorage.AudioDatabase
     public Subject<Unit> ActionIsDone { get; } = new Subject<Unit>();
 
     #endregion Properties
+
+    #region Methods
+
+    #region Initialize
+
+    public void Initialize()
+    {
+      audioInfoDownloader.ItemUpdated.Subscribe(ItemUpdated);
+      audioInfoDownloader.SubdirectoryLoaded += AudioInfoDownloader_SubdirectoryLoaded;
+
+      UpdateAllNotYetUpdated();
+    }
+
+    #endregion
 
     #region GetRepository
 
@@ -105,7 +79,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       return query;
     }
 
-    #endregion GetRepository
+    #endregion 
 
     #region StoreData
 
@@ -190,7 +164,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
             {
               DiskLocation = audioInfo.DiskLocation
             };
-         
+
 
             song = (from x in context.Songs
                     where song.Name == x.Name
@@ -294,6 +268,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       return true;
     }
 
+
     private void AudioInfoDownloader_SubdirectoryLoaded(object sender, List<AudioInfo> e)
     {
       if (e?.Count > 0)
@@ -325,7 +300,11 @@ namespace VPlayer.AudioStorage.AudioDatabase
       }
     }
 
-    public void StoreData(Playlist model)
+
+
+    #region Playlist methods
+
+    public int StoreData(Playlist model)
     {
       var playlist = playlistsRepository.Context.Playlists.SingleOrDefault(x => x.SongsInPlaylitsHashCode == model.SongsInPlaylitsHashCode);
 
@@ -341,8 +320,23 @@ namespace VPlayer.AudioStorage.AudioDatabase
         });
 
         ActionIsDone.OnNext(Unit.Default);
+
+        return model.Id;
       }
+      else
+        return playlist.Id;
     }
+
+    public void UpdateData(Playlist model)
+    {
+      var playlist = playlistsRepository.Context.Playlists.Single(x => x.Id == model.Id);
+
+      playlist.Update(model);
+
+      playlistsRepository.Save();
+    }
+
+    #endregion
 
     #endregion StoreData
 
@@ -782,93 +776,45 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #endregion UpdateEntity
 
-    public void UpdateAllNotYetUpdated()
+    #region UpdateAllNotYetUpdated
+
+    public Task UpdateAllNotYetUpdated()
     {
-      var notUpdatedAlbums = albumsRepository.Entities.Where(x => x.InfoDownloadStatus == InfoDownloadStatus.Waiting
-                                                                  || x.InfoDownloadStatus == InfoDownloadStatus.Downloading)
-        .Include(x => x.Artist).OrderByDescending(x => x.InfoDownloadStatus);
-
-      foreach (var album in notUpdatedAlbums)
+      return Task.Run(() =>
       {
-        audioInfoDownloader.UpdateItem(album);
-      }
+        var notUpdatedAlbums = albumsRepository.Entities.Where(x => x.InfoDownloadStatus == InfoDownloadStatus.Waiting
+                                                                    || x.InfoDownloadStatus == InfoDownloadStatus.Downloading)
+          .Include(x => x.Artist).OrderByDescending(x => x.InfoDownloadStatus).ToList();
 
-      var brokenAlbums = albumsRepository.Entities.Where(x => x.InfoDownloadStatus == InfoDownloadStatus.Failed
-                                                                  || x.InfoDownloadStatus == InfoDownloadStatus.UnableToFind)
-        .Include(x => x.Artist);
+        foreach (var album in notUpdatedAlbums)
+        {
+          audioInfoDownloader.UpdateItem(album);
+        }
 
-      foreach (var album in brokenAlbums)
-      {
-        audioInfoDownloader.UpdateItem(album);
-      }
+        var brokenAlbums = albumsRepository.Entities.Where(x => x.InfoDownloadStatus == InfoDownloadStatus.Failed
+                                                                || x.InfoDownloadStatus == InfoDownloadStatus.UnableToFind)
+          .Include(x => x.Artist);
+
+        foreach (var album in brokenAlbums)
+        {
+          audioInfoDownloader.UpdateItem(album);
+        }
+      });
     }
 
-    #region Methods
+    #endregion
+
+    #region Dispose
 
     public void Dispose()
     {
+      ItemChanged?.Dispose();
+      ActionIsDone?.Dispose();
     }
 
-    #endregion Methods
-  }
+    #endregion
 
-  public abstract class GenericRepository<C, T> : IGenericRepository<T> where T : class where C : DbContext, new()
-  {
-    #region Fields
+    #endregion 
 
-    private C _entities = new C();
-
-    #endregion Fields
-
-    #region Properties
-
-    public C Context
-    {
-      get { return _entities; }
-      set { _entities = value; }
-    }
-
-    #endregion Properties
-
-    public DbSet<T> Entities
-    {
-      get { return _entities.Set<T>(); }
-    }
-
-    #region Methods
-
-    public virtual void Add(T entity)
-    {
-      _entities.Set<T>().Add(entity);
-    }
-
-    public virtual void Delete(T entity)
-    {
-      _entities.Set<T>().Remove(entity);
-    }
-
-    public virtual void Edit(T entity)
-    {
-      _entities.Entry(entity).State = System.Data.Entity.EntityState.Modified;
-    }
-
-    public IQueryable<T> FindBy(System.Linq.Expressions.Expression<Func<T, bool>> predicate)
-    {
-      IQueryable<T> query = _entities.Set<T>().Where(predicate);
-      return query;
-    }
-
-    public virtual IQueryable<T> GetAll()
-    {
-      IQueryable<T> query = _entities.Set<T>();
-      return query;
-    }
-
-    public virtual void Save()
-    {
-      _entities.SaveChanges();
-    }
-
-    #endregion Methods
   }
 }

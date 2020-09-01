@@ -1,30 +1,39 @@
 ﻿using System;
-using System.Security.Principal;
 using VCore.Factories;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
-using VPlayer.Core.ViewModels.Settings;
-using VPlayer.Library.ViewModels;
 using VPlayer.Player.ViewModels;
-using VPlayer.Player.Views;
 using VPlayer.WindowsPlayer.ViewModels;
-using WindowsPlayerViewModel = VPlayer.Player.ViewModels.WindowsPlayerViewModel;
 
 namespace VPlayer.ViewModels
 {
   public class MainWindowViewModel : BaseMainWindowViewModel
   {
+    #region Fields
+
     private readonly IViewModelsFactory viewModelsFactory;
+
+    #endregion
+
+    #region Constructors
 
     public MainWindowViewModel(IViewModelsFactory viewModelsFactory)
     {
-      var aswd = WindowsIdentity.GetCurrent();
-
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
-
-
-
     }
+
+    #endregion
+
+    #region Properties
+
+    public NavigationViewModel NavigationViewModel { get; set; } = new NavigationViewModel();
+    public override string Title => "VPlayer";
+
+    #endregion
+
+    #region Methods
+
+    #region Initilize
 
     public override void Initialize()
     {
@@ -39,6 +48,9 @@ namespace VPlayer.ViewModels
       player.IsActive = true;
     }
 
-    public NavigationViewModel NavigationViewModel { get; set; } = new NavigationViewModel();
+    #endregion
+
+    #endregion
+
   }
 }

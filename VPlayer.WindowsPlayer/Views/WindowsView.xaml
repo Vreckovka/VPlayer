@@ -29,7 +29,10 @@
 
     <Border Padding="10" Background="{StaticResource 10_WhiteTransparentBrush}">
       <StackPanel Orientation="Horizontal">
-        <controls:ButtonWithIcon Content="Load from folder" IconPathStyle="{StaticResource OpenFolder}" Command="{Binding LoadFromFolder}"/>
+        <controls:ButtonWithIcon Content="Load from folder" 
+                                 IconPathStyle="{StaticResource OpenFolder}" 
+                                 Command="{Binding LoadFromFolder}"
+                                 IconHoverColor="{StaticResource DefaultRedColorDim}"/>
       </StackPanel>
     </Border>
 

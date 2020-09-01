@@ -11,7 +11,7 @@ using VPlayer.Core.ViewModels;
 
 namespace VPlayer.Library.ViewModels.AlbumsViewModels
 {
-  public class AlbumViewModel : PlayableViewModel<Album>
+  public class AlbumViewModel : PlayableViewModelWithThumbnail<Album>
   {
     #region Fields
 
@@ -41,8 +41,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
     public override string BottomText => $"{Model.Artist?.Name}\nNumber of song: {Model.Songs?.Count.ToString()}";
     public override byte[] ImageThumbnail => Model.AlbumFrontCoverBLOB != null ? Model.AlbumFrontCoverBLOB : GetEmptyImage();
-    public InfoDownloadStatus InfoDownloadStatus => Model.InfoDownloadStatus;
-
+    
     #endregion Properties
 
     #region Methods

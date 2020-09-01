@@ -19,6 +19,20 @@
 
   <Border Padding="10">
     <Grid>
+      <Grid.Resources>
+        <Style TargetType="TextBlock">
+          <Setter Property="Margin"  Value="5 0 5 0" />
+          <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+          <Setter Property="Margin"  Value="5" />
+          <Setter Property="HorizontalAlignment" Value="Left"/>
+          <Setter Property="VerticalAlignment" Value="Center"/>
+          <Setter Property="Width" Value="150"/>
+        </Style>
+      </Grid.Resources>
+
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="auto"/>
         <ColumnDefinition Width="2"/>
@@ -28,14 +42,31 @@
         <RowDefinition Height="auto"/>
         <RowDefinition Height="auto"/>
         <RowDefinition Height="auto"/>
+        <RowDefinition Height="auto"/>
       </Grid.RowDefinitions>
 
-      <TextBlock Text="Delete all data"  Margin="0 0 5 0" VerticalAlignment="Center"/>
-      <Grid Background="{StaticResource 10_WhiteTransparentBrush}" Grid.Column="1" Grid.RowSpan="2"/>
-      <Button Width="150" Content="Delete all data"  Margin="5 5 5 5" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Command="{Binding DeleteAllData}"/>
 
+      <!--Vertical divader-->
+      <Grid Background="{StaticResource 10_WhiteTransparentBrush}" Grid.Column="1" Grid.RowSpan="3"/>
 
+      <!--First row-->
+      <TextBlock Text="Delete all data"/>
+      <Button Content="Delete all data" Grid.Column="2" Command="{Binding DeleteAllData}"/>
+
+      <!--Horizontal divader row 0 -> grid.row 1 -->
       <Grid Background="{StaticResource 10_WhiteTransparentBrush}" Grid.ColumnSpan="3" Height="2" VerticalAlignment="Top" Grid.Row="1"/>
+
+      <!--Second row-->
+      <TextBlock Text="Download not downloaded info" Grid.Row="2"/>
+
+      <Button Content="Download" 
+              Grid.Column="2" 
+              Grid.Row="2"
+              Command="{Binding DownloadNotDownloaded}"
+              />
+
+      <!--Horizontal divader row 2 -> grid.row 3 -->
+      <Grid Background="{StaticResource 10_WhiteTransparentBrush}" Grid.ColumnSpan="3" Height="2" VerticalAlignment="Top" Grid.Row="3"/>
 
     </Grid>
   </Border>

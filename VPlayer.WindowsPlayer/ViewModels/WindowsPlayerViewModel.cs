@@ -29,12 +29,15 @@ using VPlayer.Player.Views.WindowsPlayer;
 
 //TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)
 //TODO: Hash playlistov, ked zavries appku tak ti vyhodi posledny playlist
-//TODO: Vytvorenie playlistu na + , nezadavat menu ale da nazov interpreta a index playlistu ak ich je viac ako 1
 //TODO: Nacitanie zo suboru
 //TODO: Ak je neidentifkovana skladba, pridanie interpreta zo zoznamu, alebo vytvorit noveho
 //TODO: Nastavit si hlavnu zlozku a ked spustis z inej, moznost presunut
 //TODO: Playlist hore pri menu, quick ze prides a uvidis napriklad 5 poslednych hore v rade , ako carusel (5/5)
-//TODO: Playlist nech sa automaticky nevytvara ak je iba jedna pesnicka (nastavenie pre uzivatela aky pocet sa ma ukladat!) (3/5)
+//TODO: Playlist nech sa automaticky nevytvara ak je niekolko pesniciek (nastavenie pre uzivatela aky pocet sa ma ukladat!) (3/5)
+//TODO: Ulozit playlist s casom a nastaveniami (opakovanie, shuffle)
+//TODO: 2 Druhy playlistov, uzivatelsky(upravitelny) a generovany (readonly)
+//TODO: Hore prenutie medzi windows a browser playermi , zmizne bocne menu
+//TODO: Pridat loading indikator, mozno aj co prave robi
 
 namespace VPlayer.Player.ViewModels
 {
@@ -82,10 +85,50 @@ namespace VPlayer.Player.ViewModels
     public override bool ContainsNestedRegions => false;
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
     public string Header => "Player";
-    public bool IsRepeate { get; set; }
-    public bool IsShuffle { get; set; }
+
+    #region IsRepeate
+
+    private bool isRepeate;
+    public bool IsRepeate
+    {
+      get { return isRepeate; }
+      set
+      {
+        if (value != isRepeate)
+        {
+          isRepeate = value;
+          ActualSavedPlaylist.IsReapting = value;
+          UpdatePlaylist();
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region IsShuffle
+
+    private bool isShuffle;
+    public bool IsShuffle
+    {
+      get { return isShuffle; }
+      set
+      {
+        if (value != isShuffle)
+        {
+          isShuffle = value;
+          ActualSavedPlaylist.IsShuffle = value;
+          UpdatePlaylist();
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     public IKernel Kernel { get; set; }
     public int Cycle { get; set; }
+    public Playlist ActualSavedPlaylist { get; set; } = new Playlist();
 
     #endregion Properties
 
@@ -172,58 +215,66 @@ namespace VPlayer.Player.ViewModels
 
     public override void Initialize()
     {
-      base.Initialize();
-
-      PlayList.ItemRemoved.Subscribe(ItemsRemoved);
-
-      PlayList.CollectionChanged += PlayList_CollectionChanged;
-
-      var currentAssembly = Assembly.GetEntryAssembly();
-      var currentDirectory = new FileInfo(currentAssembly.Location).DirectoryName;
-      var path = new DirectoryInfo(Path.Combine(currentDirectory, "libvlc", IntPtr.Size == 4 ? "win-x86" : "win-x64"));
-
-      var libDirectory = new DirectoryInfo(path.FullName);
-      MediaPlayer = new VlcMediaPlayer(libDirectory);
-
-      bool playFinished = false;
-
-      MediaPlayer.EncounteredError += (sender, e) =>
+      Task.Run(() =>
       {
-        Console.Error.Write("An error occurred");
-        playFinished = true;
-      };
+        base.Initialize();
 
-      MediaPlayer.EndReached += (sender, e) => { Task.Run(() => PlayNextWithSong()); };
+        PlayList.ItemRemoved.Subscribe(ItemsRemoved);
 
-      MediaPlayer.TimeChanged += (sender, e) => { ActualSong.ActualPosition = ((VlcMediaPlayer)sender).Position; };
+        PlayList.CollectionChanged += PlayList_CollectionChanged;
 
-      MediaPlayer.Paused += (sender, e) =>
-      {
-        ActualSong.IsPaused = true;
-        IsPlaying = false;
-        IsPlayingSubject.OnNext(IsPlaying);
-      };
+        var currentAssembly = Assembly.GetEntryAssembly();
+        var currentDirectory = new FileInfo(currentAssembly.Location).DirectoryName;
+        var path = new DirectoryInfo(Path.Combine(currentDirectory, "libvlc", IntPtr.Size == 4 ? "win-x86" : "win-x64"));
 
-      MediaPlayer.Stopped += (sender, e) =>
-      {
-        ActualSong.IsPaused = false;
-        ActualSong = null;
-        actualSongIndex = 0;
-        IsPlaying = false;
-        IsPlayingSubject.OnNext(IsPlaying);
-      };
+        var libDirectory = new DirectoryInfo(path.FullName);
+        MediaPlayer = new VlcMediaPlayer(libDirectory);
 
-      MediaPlayer.Playing += (sender, e) =>
-      {
-        ActualSong.IsPlaying = true;
-        ActualSong.IsPaused = false;
-        IsPlaying = true;
-        IsPlayingSubject.OnNext(IsPlaying);
-      };
+        bool playFinished = false;
 
-      eventAggregator.GetEvent<PlaySongsEvent>().Subscribe(PlaySongs);
-      eventAggregator.GetEvent<PauseEvent>().Subscribe(Pause);
-      eventAggregator.GetEvent<PlaySongsFromPlayListEvent>().Subscribe(PlaySongFromPlayList);
+        MediaPlayer.EncounteredError += (sender, e) =>
+        {
+          Console.Error.Write("An error occurred");
+          playFinished = true;
+        };
+
+        MediaPlayer.EndReached += (sender, e) => { Task.Run(() => PlayNextWithSong()); };
+
+        MediaPlayer.TimeChanged += (sender, e) =>
+        {
+          ActualSong.ActualPosition = ((VlcMediaPlayer)sender).Position;
+          ActualSavedPlaylist.LastSongElapsedTime = ((VlcMediaPlayer) sender).Position;
+        };
+
+        MediaPlayer.Paused += (sender, e) =>
+        {
+          ActualSong.IsPaused = true;
+          IsPlaying = false;
+          IsPlayingSubject.OnNext(IsPlaying);
+        };
+
+        MediaPlayer.Stopped += (sender, e) =>
+        {
+          ActualSong.IsPaused = false;
+          ActualSong = null;
+          actualSongIndex = 0;
+          IsPlaying = false;
+          IsPlayingSubject.OnNext(IsPlaying);
+        };
+
+        MediaPlayer.Playing += (sender, e) =>
+        {
+          ActualSavedPlaylist.LastSongIndex = actualSongIndex;
+          ActualSong.IsPlaying = true;
+          ActualSong.IsPaused = false;
+          IsPlaying = true;
+          IsPlayingSubject.OnNext(IsPlaying);
+        };
+
+        eventAggregator.GetEvent<PlaySongsEvent>().Subscribe(PlaySongs);
+        eventAggregator.GetEvent<PauseEvent>().Subscribe(Pause);
+        eventAggregator.GetEvent<PlaySongsFromPlayListEvent>().Subscribe(PlaySongFromPlayList);
+      });
     }
 
 
@@ -279,7 +330,7 @@ namespace VPlayer.Player.ViewModels
           SavePlaylist();
           break;
         case PlaySongsAction.PlayFromPlaylist:
-          PlaySongs(data.Songs,false);
+          PlaySongs(data.Songs, false);
           break;
         default:
           throw new ArgumentOutOfRangeException();
@@ -306,7 +357,6 @@ namespace VPlayer.Player.ViewModels
     }
 
     #endregion PlaySongs
-
 
     #region Play
 
@@ -512,7 +562,6 @@ namespace VPlayer.Player.ViewModels
 
     public void SavePlaylist()
     {
-      var entityPlayList = new Playlist();
       var songs = new List<PlaylistSong>();
 
       for (int i = 0; i < PlayList.Count; i++)
@@ -526,25 +575,43 @@ namespace VPlayer.Player.ViewModels
         });
       }
 
-      entityPlayList.PlaylistSongs = songs;
-      var artits = PlayList.GroupBy(x => x.ArtistViewModel.Name);
+      var artists = PlayList.GroupBy(x => x.ArtistViewModel.Name);
 
-      entityPlayList.Name = string.Join(", ", artits.Select(x => x.Key).ToArray()) + " " + DateTime.Now.ToShortDateString() ;
-
+      var playlistName = string.Join(", ", artists.Select(x => x.Key).ToArray()) + " " + DateTime.Now.ToShortDateString();
+      
       var songIds = PlayList.Select(x => x.Model.Id);
-
+      
       var hash = songIds.GetSequenceHashCode();
-      entityPlayList.SongsInPlaylitsHashCode = hash;
 
-      entityPlayList.SongCount = entityPlayList.PlaylistSongs.Count;
 
-      storageManager.StoreData(entityPlayList);
+      var entityPlayList = new Playlist()
+      {
+        IsReapting = IsRepeate,
+        IsShuffle = IsShuffle,
+        Name = playlistName,
+        SongsInPlaylitsHashCode = hash,
+        SongCount = songs.Count,
+        PlaylistSongs = songs,
+        
+      };
 
+      var id = storageManager.StoreData(entityPlayList);
+
+      ActualSavedPlaylist = entityPlayList;
+      ActualSavedPlaylist.Id = id;
     }
 
     #endregion
 
+    #region UpdatePlaylist
 
-    #endregion Methods
+    private void UpdatePlaylist()
+    {
+      storageManager.UpdateData(ActualSavedPlaylist);
+    }
+
+    #endregion
+
+    #endregion
   }
 }
