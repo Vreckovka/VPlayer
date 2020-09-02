@@ -1,6 +1,8 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPlayer.ViewModels;
 
 namespace VPlayer.Views
 {
@@ -14,11 +16,14 @@ namespace VPlayer.Views
     {
       MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
       MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth;
+
       InitializeComponent();
     }
 
-    private async void Button_Click(object sender, RoutedEventArgs e)
+
+    private void OnClosing(object sender, CancelEventArgs e)
     {
+      (DataContext as MainWindowViewModel)?.Dispose();
     }
   }
 }

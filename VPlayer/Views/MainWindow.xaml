@@ -20,7 +20,8 @@
         Icon="/Includes/VPlayerLogo.png"
         Style="{StaticResource {x:Type Window}}"
         WindowStartupLocation="CenterScreen"
-        mc:Ignorable="d">
+        mc:Ignorable="d"
+        Closing="OnClosing">
 
   <Window.TaskbarItemInfo>
     <TaskbarItemInfo>

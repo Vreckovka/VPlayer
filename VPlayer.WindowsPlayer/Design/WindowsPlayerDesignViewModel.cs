@@ -17,5 +17,9 @@ namespace VPlayer.WindowsPlayer.Design
     public event PropertyChangedEventHandler PropertyChanged;
 
     #endregion Events
+
+    public void Dispose()
+    {
+    }
   }
 }

@@ -23,7 +23,7 @@ namespace VPlayer.AudioStorage.DomainClasses
       IsReapting = other.IsReapting;
       IsShuffle = other.IsShuffle;
       LastSongElapsedTime = other.LastSongElapsedTime;
-      LastSongIndex = LastSongIndex;
+      LastSongIndex = other.LastSongIndex;
     }
   }
 }

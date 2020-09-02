@@ -126,5 +126,15 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       storageManager.StoreData(folderPath);
     }
+
+    public override void Dispose()
+    {
+      base.Dispose();
+
+      foreach (var item in NavigationViewModel.Items)
+      {
+        item?.Dispose();
+      }
+    }
   }
 }

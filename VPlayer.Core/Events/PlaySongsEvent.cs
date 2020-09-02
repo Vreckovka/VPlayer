@@ -9,13 +9,18 @@ namespace VPlayer.Core.Events
   {
     Play,
     Add,
-    PlayFromPlaylist
+    PlayFromPlaylist,
+    PlayFromPlaylistLast,
   }
 
   public class PlaySongsEventData
   {
     public IEnumerable<SongInPlayList> Songs { get; set; }
     public PlaySongsAction PlaySongsAction { get; set; }
+    public bool IsShufle { get; set; }
+    public bool IsRepeat { get; set; }
+    public float? SetPostion { get; set; }
+    public int IdModel { get; set; }
   }
 
   public class PlaySongsEvent : PubSubEvent<PlaySongsEventData>

@@ -70,7 +70,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels
           }
         }
 
-        Application.Current.Dispatcher.Invoke(() =>
+        Application.Current?.Dispatcher.Invoke(() =>
         {
           artist.RaisePropertyChanges();
         });

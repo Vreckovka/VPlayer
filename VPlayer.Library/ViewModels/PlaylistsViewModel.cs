@@ -74,17 +74,22 @@ namespace VPlayer.Library.ViewModels
       return songs.PlaylistSongs.Select(x => viewModelsFactory.Create<SongInPlayList>(x.Song));
     }
 
-    public override void OnPlay()
+    protected override void OnPlay(PlaySongsAction action)
     {
       var data = GetSongsToPlay();
 
       var e = new PlaySongsEventData()
       {
-        PlaySongsAction = PlaySongsAction.PlayFromPlaylist,
-        Songs = data
+        PlaySongsAction = action,
+        Songs = data,
+        IsRepeat = Model.IsReapting,
+        IsShufle = Model.IsShuffle,
+        SetPostion = Model.LastSongElapsedTime,
+        IdModel = Model.Id
       };
 
       eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
     }
+
   }
 }

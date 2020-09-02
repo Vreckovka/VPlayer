@@ -113,7 +113,7 @@ namespace VPlayer.Core.ViewModels
 
     #region Play
 
-    private ActionCommand play;
+    private ActionCommand<PlaySongsAction> play;
 
     public ICommand Play
     {
@@ -121,31 +121,31 @@ namespace VPlayer.Core.ViewModels
       {
         if (play == null)
         {
-          play = new ActionCommand(OnPlayButton);
+          play = new ActionCommand<PlaySongsAction>(OnPlayButton, PlaySongsAction.Play);
         }
 
         return play;
       }
     }
 
-    public virtual void OnPlay()
+    protected virtual void OnPlay(PlaySongsAction o)
     {
       var data = GetSongsToPlay();
 
       var e = new PlaySongsEventData()
       {
-        PlaySongsAction = PlaySongsAction.Play,
+        PlaySongsAction = o,
         Songs = data
       };
 
       eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
     }
 
-    private void OnPlayButton()
+    protected virtual void OnPlayButton(PlaySongsAction o)
     {
       if (!IsPlaying)
       {
-        OnPlay();
+        OnPlay(o);
       }
       else
       {
