@@ -57,7 +57,7 @@ namespace VPlayer.Player.Design
     public AlbumDesignViewModel AlbumViewModel { get; set; }
     public ArtistDesignViewModel ArtistViewModel { get; set; }
     public double Duration => Model.Duration;
-    public byte[] Image => Model?.Album.AlbumFrontCoverBLOB;
+    public string ImagePath => Model?.Album.AlbumFrontCoverFilePath;
     public string Name => Model.Name;
 
     #endregion Properties

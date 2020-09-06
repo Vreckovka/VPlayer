@@ -2,28 +2,44 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:VPlayer.StylesDictionaries">
 
+
+
+  <Style TargetType="ContextMenu">
+    <Setter Property="Background" Value="{StaticResource TopWindowsBrush}"/>
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ContextMenu}">
+          <Border x:Name="Border"
+                  Background="{TemplateBinding Background}" BorderBrush="{StaticResource 30_WhiteTransparentBrush}" BorderThickness="1">
+            <StackPanel IsItemsHost="True"
+                        KeyboardNavigation.DirectionalNavigation="Cycle" />
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
     <Style TargetType="Menu">
         <Setter Property="Background" Value="Transparent"/>
     </Style>
 
     <Style TargetType="MenuItem">
         <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}"/>
-        <Setter Property="FontFamily" Value="Arial"/>
         <Setter Property="Template">
             <Setter.Value>
                 <!-- Trun off default selection-->
                 <ControlTemplate TargetType="{x:Type MenuItem}">
                     <Border x:Name="Bd" 
                             Background="{TemplateBinding Background}" 
-                            Padding="5" 
+                            Padding="10" 
                             SnapsToDevicePixels="true"
                             >
                         <ContentPresenter 
                             ContentSource="Header"
-                            HorizontalAlignment="Center" 
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            Margin="{TemplateBinding Margin}"/>
+                            Margin="{TemplateBinding Margin}"
+                            HorizontalAlignment="Left"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsEnabled" Value="false">

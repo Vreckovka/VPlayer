@@ -8,6 +8,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:my="ConditionalEventTrigger"
              xmlns:viewModels="clr-namespace:VPlayer.Library.Desing.ViewModels"
+             xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:behaviors="clr-namespace:VPlayer.Library.Behaviors"
              d:DataContext="{d:DesignInstance Type={x:Type viewModels:AlbumsDesignViewModel},
                                               IsDesignTimeCreatable=True}"
              d:DesignHeight="650"
@@ -25,7 +28,10 @@
                                                          IsPlaying="{Binding IsPlaying}" />
                     </DataTemplate>
                 </controls1:PlayableWrapPanel.ItemTemplate>
-            </controls1:PlayableWrapPanel>
+        <i:Interaction.Behaviors>
+          <behaviors:DeletePictureItemBehavior EventAggregator="{Binding EventAggregator}"/>
+        </i:Interaction.Behaviors>
+      </controls1:PlayableWrapPanel>
         </Grid>
     </Grid>
 </UserControl>

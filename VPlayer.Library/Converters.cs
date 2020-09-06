@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace VPlayer.Library
@@ -43,6 +44,44 @@ namespace VPlayer.Library
     public override object ProvideValue(IServiceProvider serviceProvider)
     {
       return this;
+    }
+  }
+
+  public class CacheImageConverter : MarkupExtension, IValueConverter
+  {
+    public override object ProvideValue(IServiceProvider serviceProvider)
+    {
+      return this;
+    }
+
+    public object Convert(
+      object value,
+      Type targetType,
+      object parameter,
+      CultureInfo culture)
+    {
+      if (value != DependencyProperty.UnsetValue && value != null )
+      {
+        // new Uri(value.ToString());
+        var bitmap = new BitmapImage();
+        bitmap.BeginInit();
+        bitmap.UriSource = new Uri(value.ToString());
+        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+        bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+        bitmap.EndInit();
+        return bitmap;
+      }
+
+      return DependencyProperty.UnsetValue;
+    }
+
+    public object ConvertBack(
+      object value,
+      Type targetType,
+      object parameter,
+      CultureInfo culture)
+    {
+      throw new NotImplementedException();
     }
   }
 
@@ -137,4 +176,5 @@ namespace VPlayer.Library
       return this;
     }
   }
+  
 }

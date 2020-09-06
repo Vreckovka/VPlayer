@@ -26,7 +26,7 @@ namespace VPlayer.Library.ViewModels
   {
     #region Fields
 
-    private readonly IStorageManager storageManager;
+    protected readonly IStorageManager storageManager;
     private readonly IViewModelsFactory viewModelsFactory;
 
     #endregion Fields
@@ -80,6 +80,9 @@ namespace VPlayer.Library.ViewModels
 
     #endregion Properties
 
+    #region Methods
+
+
     #region Initialize
 
     public override void Initialize()
@@ -110,13 +113,7 @@ namespace VPlayer.Library.ViewModels
 
             break;
           case Changed.Removed:
-            LibraryCollection.Remove(model);
-
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-              RaisePropertyChanged(nameof(View));
-              RaisePropertyChanged(nameof(ViewModels));
-            });
+            OnDeleteItemChange(model);
             break;
 
           case Changed.Updated:
@@ -132,7 +129,22 @@ namespace VPlayer.Library.ViewModels
       }
     }
 
-    #endregion ItemsChanged
+    #endregion
+
+    #region OnDeleteItemChange
+
+    protected virtual void OnDeleteItemChange(TModel model)
+    {
+      LibraryCollection.Remove(model);
+
+      Application.Current.Dispatcher.Invoke(() =>
+      {
+        RaisePropertyChanged(nameof(View));
+        RaisePropertyChanged(nameof(ViewModels));
+      });
+    }
+
+    #endregion
 
     #region OnActivation
 
@@ -142,7 +154,7 @@ namespace VPlayer.Library.ViewModels
 
       if (firstActivation)
       {
-        this.storageManager.ItemChanged.Subscribe(ItemsChanged);
+        this.storageManager.ItemChanged.Where(x => x.Item.GetType() == typeof(TModel)).Subscribe(ItemsChanged);
         storageManager.ActionIsDone.Subscribe((x) =>
         {
           LibraryCollection.Recreate();
@@ -160,24 +172,25 @@ namespace VPlayer.Library.ViewModels
 
     #endregion OnActivation
 
-    #region Methods
+    #region GetViewModelsAsync
 
     public async Task<ICollection<TViewModel>> GetViewModelsAsync(IQueryable<TModel> optionalQuery = null)
     {
 
       if (!LibraryCollection.WasLoaded)
       {
-         var result = await LibraryCollection.GetOrLoadDataAsync(optionalQuery);
+        var result = await LibraryCollection.GetOrLoadDataAsync(optionalQuery);
 
-         if (!result)
-         {
-           throw new Exception("Data was not loaded");
-         }
+        if (!result)
+        {
+          throw new Exception("Data was not loaded");
+        }
       }
 
       return LibraryCollection.Items;
-
     }
+
+    #endregion
 
     #endregion Methods
 

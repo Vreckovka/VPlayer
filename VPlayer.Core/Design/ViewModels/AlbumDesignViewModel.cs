@@ -17,7 +17,7 @@ namespace VPlayer.Core.Design.ViewModels
 
     public string BottomText => $"{Model.Artist?.Name}\nNumber of song: {Model.Songs?.Count.ToString()}";
     public string HeaderText => Model.Name;
-    public byte[] ImageThumbnail => Model.AlbumFrontCoverBLOB;
+    public string ImageThumbnailPath => Model.AlbumFrontCoverFilePath;
     public bool IsPlaying { get; set; }
     public string Name => Model.Name;
 

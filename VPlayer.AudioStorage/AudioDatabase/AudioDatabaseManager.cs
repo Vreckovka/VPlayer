@@ -87,6 +87,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     public void StoreData(AudioInfo audioInfo)
     {
+     
       lock (storeBatton)
       {
         try
@@ -128,9 +129,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
             };
 
             album = (from x in context.Albums
-                     where x.Name == album.Name
-                     where x.Artist.Name == album.Artist.Name
-                     select x).SingleOrDefault();
+              where x.Name == album.Name
+              where x.Artist.Name == album.Artist.Name
+              select x).SingleOrDefault();
 
             if (album == null && audioInfo.Album != null)
             {
@@ -142,12 +143,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
               context.Albums.Add(album);
               context.SaveChanges();
-
-              //Need albumId from database
-              album = (from x in context.Albums
-                       where x.Name == album.Name
-                       where x.Artist.Name == album.Artist.Name
-                       select x).Single();
 
               Logger.Logger.Instance.Log(Logger.MessageType.Success, $"New album was added {album.Name}");
 
@@ -167,9 +162,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
 
             song = (from x in context.Songs
-                    where song.Name == x.Name
-                    where x.Album.Id == song.Album.Id
-                    select x).SingleOrDefault();
+              where song.Name == x.Name
+              where x.Album.Id == song.Album.Id
+              select x).SingleOrDefault();
 
 
             if (song == null)
@@ -256,7 +251,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       }
       else
       {
-        var audioInfo = await audioInfoDownloader.GetAudioInfo(audioPath);
+        var audioInfo = audioInfoDownloader.GetAudioInfo(audioPath);
 
         if (audioInfo.Artist == null)
         {
@@ -304,7 +299,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region Playlist methods
 
-    public int StoreData(Playlist model)
+    public bool StoreData(Playlist model, out int playlistIndex)
     {
       var playlist = playlistsRepository.Context.Playlists.SingleOrDefault(x => x.SongsInPlaylitsHashCode == model.SongsInPlaylitsHashCode);
 
@@ -321,10 +316,15 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
         ActionIsDone.OnNext(Unit.Default);
 
-        return model.Id;
+        playlistIndex = model.Id;
+        return true;
       }
       else
-        return playlist.Id;
+      {
+        playlistIndex = playlist.Id;
+        return false;
+      }
+
     }
 
     public void UpdateData(Playlist model)
@@ -334,6 +334,12 @@ namespace VPlayer.AudioStorage.AudioDatabase
       playlist.Update(model);
 
       playlistsRepository.Save();
+
+      ItemChanged.OnNext(new ItemChanged()
+      {
+        Item = model,
+        Changed = Changed.Updated
+      });
     }
 
     #endregion
@@ -451,7 +457,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
         }
         catch (Exception ex)
         {
-          Logger.Logger.Instance.LogException(ex);
+          Logger.Logger.Instance.Log(ex);
         }
       }
     }
@@ -543,7 +549,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
             if (originalAlbum.Artist.ArtistCover == null &&
                 originalAlbum.Artist.AlbumIdCover == null &&
-                originalAlbum.AlbumFrontCoverBLOB != null)
+                originalAlbum.AlbumFrontCoverFilePath != null)
             {
               originalAlbum.Artist.AlbumIdCover = originalAlbum.Id;
               context.SaveChanges();
@@ -560,6 +566,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
             if (album.Songs == null)
             {
               var dbAlbum = context.Albums.Where(x => x.Id == album.Id).Include(x => x.Songs).Include(x => x.Artist).SingleOrDefault();
+              
+            
 
               if (dbAlbum == null)
               {
@@ -567,7 +575,11 @@ namespace VPlayer.AudioStorage.AudioDatabase
                   $"Failed to combine, album was removed from database {album.Name}");
               }
               else
+              {
+                dbAlbum.UpdateAlbum(album);
                 CombineAlbums(originalAlbum, dbAlbum, context);
+              }
+               
             }
             else
               CombineAlbums(originalAlbum, album, context);
@@ -575,7 +587,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
         }
         catch (Exception ex)
         {
-          Logger.Logger.Instance.LogException(ex);
+          Logger.Logger.Instance.Log(ex);
         }
       }
     }
@@ -676,7 +688,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
           }
           catch (Exception ex)
           {
-            Logger.Logger.Instance.LogException(ex);
+            Logger.Logger.Instance.Log(ex);
           }
         }
       }
@@ -745,7 +757,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       }
       catch (Exception ex)
       {
-        Logger.Logger.Instance.LogException(ex);
+        Logger.Logger.Instance.Log(ex);
         return null;
       }
     }

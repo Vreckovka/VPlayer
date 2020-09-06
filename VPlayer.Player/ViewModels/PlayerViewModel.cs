@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 using System.Windows.Input;
 using Listener;
 using VCore;
-using VCore.ExtentionsMethods;
+using VCore.Helpers;
 using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
 using VPlayer.Core.Modularity.Regions;

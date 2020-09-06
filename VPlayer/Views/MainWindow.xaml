@@ -53,6 +53,7 @@
     </Border>
     <Path Margin="0,135" Fill="Red" />
 
+    <Button Content="DELETE ALL" Click="Button_Click"/>
     <ContentControl Grid.Row="0"
                     Grid.Column="1"
                     prism:RegionManager.RegionName="{x:Static regions:RegionNames.ContentRegion}" />

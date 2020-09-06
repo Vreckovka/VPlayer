@@ -21,7 +21,7 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     public int? AlbumIdCover { get; set; }
     public virtual ICollection<Album> Albums { get; set; }
-    public byte[] ArtistCover { get; set; }
+    public string ArtistCover { get; set; }
     public string MusicBrainzId { get; set; }
     public string Name { get; set; }
 

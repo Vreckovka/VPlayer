@@ -37,21 +37,6 @@ namespace VPlayer.Core.ViewModels
 
     #endregion Constructors
 
-    #region Methods
-
-    public override async void Initialize()
-    {
-      base.Initialize();
-
-      AlbumViewModel = (await albumsViewModel.GetViewModelsAsync()).Single(x => x.ModelId == Model.Album.Id);
-      ArtistViewModel = (await artistsViewModel.GetViewModelsAsync()).Single(x => x.ModelId == AlbumViewModel.Model.Artist.Id);
-
-      AlbumViewModel.IsInPlaylist = true;
-      ArtistViewModel.IsInPlaylist = true;
-    }
-
-    #endregion Methods
-
     #region Properties
 
     public float ActualPosition { get; set; }
@@ -59,7 +44,7 @@ namespace VPlayer.Core.ViewModels
     public AlbumViewModel AlbumViewModel { get; set; }
     public ArtistViewModel ArtistViewModel { get; set; }
     public int Duration => Model.Duration;
-    public byte[] Image => AlbumViewModel.Model?.AlbumFrontCoverBLOB;
+    public string ImagePath => AlbumViewModel.Model?.AlbumFrontCoverFilePath;
     public bool IsPaused { get; set; }
     public string Name => Model.Name;
 
@@ -126,5 +111,85 @@ namespace VPlayer.Core.ViewModels
     #endregion Play
 
     #endregion Properties
+
+    #region Commands
+
+    #region DeleteSongFromPlaylist
+
+    private ActionCommand deleteSongFromPlaylist;
+
+    public ICommand DeleteSongFromPlaylist
+    {
+      get
+      {
+        if (deleteSongFromPlaylist == null)
+        {
+          deleteSongFromPlaylist = new ActionCommand(OnDeleteSongFromPlaylist);
+        }
+
+        return deleteSongFromPlaylist;
+      }
+    }
+
+    public void OnDeleteSongFromPlaylist()
+    {
+      var songs = new System.Collections.Generic.List<Song>() { Model };
+
+      eventAggregator.GetEvent<DeleteSongEvent>().Publish(new DeleteEventArgs()
+      {
+        DeleteType = DeleteType.SingleFromPlaylist,
+        SongsToDelete = songs
+      });
+    }
+
+    #endregion
+
+
+    #region DeleteSongFromPlaylist
+
+    private ActionCommand deleteSongFromPlaylistWithAlbum;
+
+    public ICommand DeleteSongFromPlaylistWithAlbum
+    {
+      get
+      {
+        if (deleteSongFromPlaylistWithAlbum == null)
+        {
+          deleteSongFromPlaylistWithAlbum = new ActionCommand(OnDeleteSongFromPlaylistWithAlbum);
+        }
+
+        return deleteSongFromPlaylistWithAlbum;
+      }
+    }
+
+    public void OnDeleteSongFromPlaylistWithAlbum()
+    {
+      var songs = new System.Collections.Generic.List<Song>() { Model };
+
+      eventAggregator.GetEvent<DeleteSongEvent>().Publish(new DeleteEventArgs()
+      {
+        DeleteType = DeleteType.AlbumFromPlaylist,
+        SongsToDelete = songs
+      });
+    }
+
+    #endregion
+
+    #endregion
+
+    #region Methods
+
+    public override async void Initialize()
+    {
+      base.Initialize();
+
+      AlbumViewModel = (await albumsViewModel.GetViewModelsAsync()).Single(x => x.ModelId == Model.Album.Id);
+      ArtistViewModel = (await artistsViewModel.GetViewModelsAsync()).Single(x => x.ModelId == AlbumViewModel.Model.Artist.Id);
+
+      AlbumViewModel.IsInPlaylist = true;
+      ArtistViewModel.IsInPlaylist = true;
+    }
+
+    #endregion Methods
   }
 }

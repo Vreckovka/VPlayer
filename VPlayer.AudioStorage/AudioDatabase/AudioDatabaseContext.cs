@@ -53,8 +53,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
     protected override void OnModelCreating(DbModelBuilder modelBuilder)
     {
       var sqliteConnectionInitializer = new SqliteCreateDatabaseIfNotExists<AudioDatabaseContext>(modelBuilder);
+      
       Database.SetInitializer(sqliteConnectionInitializer);
-
     }
 
     public override int SaveChanges()

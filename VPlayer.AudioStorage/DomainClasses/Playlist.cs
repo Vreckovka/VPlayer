@@ -15,7 +15,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     public bool IsShuffle { get; set; }
     public float LastSongElapsedTime { get; set; }
     public int LastSongIndex { get; set; }
-
+    public bool IsUserCreated { get; set; }
 
     public void Update(Playlist other)
     {
@@ -24,6 +24,7 @@ namespace VPlayer.AudioStorage.DomainClasses
       IsShuffle = other.IsShuffle;
       LastSongElapsedTime = other.LastSongElapsedTime;
       LastSongIndex = other.LastSongIndex;
+      IsUserCreated = other.IsUserCreated;
     }
   }
 }

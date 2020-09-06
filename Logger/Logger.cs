@@ -83,7 +83,7 @@ namespace Logger
       }
     }
 
-    public void LogException(Exception ex, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string methodName = "")
+    public void Log(Exception ex, [CallerFilePath]string callerFilePath = null, [CallerMemberName]string methodName = "")
     {
       if (ex.InnerException != null)
       {
@@ -100,21 +100,6 @@ namespace Logger
       }
     }
 
-    private static string getBetween(string strSource, string strStart, string strEnd)
-    {
-      int Start, End;
-      if (strSource.Contains(strStart) && strSource.Contains(strEnd))
-      {
-        Start = strSource.IndexOf(strStart, 0) + strStart.Length;
-        End = strSource.IndexOf(strEnd, Start);
-        return strSource.Substring(Start, End - Start);
-      }
-      else
-      {
-        return "";
-      }
-    }
-
-    #endregion Methods
+    #endregion 
   }
 }

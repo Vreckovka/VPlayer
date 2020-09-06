@@ -82,7 +82,8 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
     private void OnSelectCover(AlbumCover albumCover)
     {
-      albumViewModel.Model.AlbumFrontCoverBLOB = albumCover.DownloadedCover;
+      throw new NotImplementedException();
+      //albumViewModel.Model.AlbumFrontCoverBLOB = albumCover.DownloadedCover;
       albumViewModel.Model.AlbumFrontCoverURI = albumCover.Url;
 
       storage.UpdateEntity(albumViewModel.Model);
@@ -162,7 +163,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
               }
               catch (Exception ex)
               {
-                Logger.Logger.Instance.LogException(ex);
+                Logger.Logger.Instance.Log(ex);
               }
             }
           }, cancellationTokenSource.Token);

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Drawing;
+using System.IO;
 using VCore.Factories;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
@@ -60,6 +62,7 @@ namespace VPlayer.ViewModels
       {
         item?.Dispose();
       }
+
     }
 
   }

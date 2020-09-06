@@ -3,10 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Windows.Input;
 using VCore;
 using VCore.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.Core.Events;
 using VPlayer.Core.ViewModels.Artists;
 
@@ -43,7 +45,7 @@ namespace VPlayer.Core.ViewModels
     #endregion 
 
     public abstract string BottomText { get; }
-    public abstract byte[] ImageThumbnail { get; }
+    public abstract string ImageThumbnail { get; }
     public bool IsInPlaylist { get; set; }
     public InfoDownloadStatus InfoDownloadStatus => Model.InfoDownloadStatus;
 
@@ -51,12 +53,26 @@ namespace VPlayer.Core.ViewModels
 
     #region GetEmptyImage
 
-    public byte[] GetEmptyImage()
+    public string GetEmptyImage()
     {
-      var bitmap = new Bitmap(1, 1, PixelFormat.Format24bppRgb);
+      var directory = Path.Combine(AudioInfoDownloader.GetDefaultPicturesPath(), "Misc");
 
-      ImageConverter converter = new ImageConverter();
-      return (byte[])converter.ConvertTo(bitmap, typeof(byte[]));
+      if (!Directory.Exists(directory))
+      {
+        Directory.CreateDirectory(directory);
+      }
+
+      var finalPath = Path.Combine(directory, "emptyImage.jpg");
+
+      if (!File.Exists(finalPath))
+      {
+        var bitmap = new Bitmap(1, 1, PixelFormat.Format24bppRgb);
+
+        bitmap.Save(finalPath, ImageFormat.Jpeg);
+      }
+
+
+      return finalPath;
     }
 
     #endregion

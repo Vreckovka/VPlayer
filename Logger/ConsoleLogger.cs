@@ -38,6 +38,8 @@ namespace Logger
           default:
             throw new ArgumentOutOfRangeException(nameof(messageType), messageType, null);
         }
+
+        Console.ForegroundColor = ConsoleColor.White;
       });
     }
 

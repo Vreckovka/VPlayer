@@ -24,7 +24,7 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     #region Properties
 
-    public byte[] AlbumFrontCoverBLOB { get; set; }
+    public string AlbumFrontCoverFilePath { get; set; }
 
     public string AlbumFrontCoverURI { get; set; }
 
@@ -53,7 +53,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     public void UpdateAlbum(Album album)
     {
       Name = album.Name;
-      AlbumFrontCoverBLOB = album.AlbumFrontCoverBLOB;
+      AlbumFrontCoverFilePath = album.AlbumFrontCoverFilePath;
       AlbumFrontCoverURI = album.AlbumFrontCoverURI;
       MusicBrainzId = album.MusicBrainzId;
       ReleaseDate = album.ReleaseDate;

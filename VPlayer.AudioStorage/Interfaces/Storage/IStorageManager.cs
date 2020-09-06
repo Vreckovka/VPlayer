@@ -29,7 +29,7 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
     IQueryable<T> GetRepository<T>(DbContext dbContext = null) where T : class;
     Task<bool> StoreData(IEnumerable<string> audioPath);
     Task<bool> StoreData(string audioPath);
-    int StoreData( Playlist playlist);
+    bool StoreData(Playlist model, out int playlistIndex);
     void UpdateData(Playlist playlist);
     void UpdateEntity<T>(T entity) where T : class, IEntity;
 

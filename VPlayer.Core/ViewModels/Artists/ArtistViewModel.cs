@@ -56,7 +56,7 @@ namespace VPlayer.Core.ViewModels.Artists
     #region Properties
 
     public override string BottomText => Model.Albums?.Count.ToString();
-    public override byte[] ImageThumbnail => GetArtistCover();
+    public override string ImageThumbnail => GetArtistCover();
 
     #endregion Properties
 
@@ -92,20 +92,23 @@ namespace VPlayer.Core.ViewModels.Artists
     }
 
     private byte[] albumCover = null;
-    private byte[] GetArtistCover()
+    private string GetArtistCover()
     {
-      if (Model.AlbumIdCover != null && albumCover == null)
-      {
-        var album = storage.GetRepository<Album>().Where(x => x.Id == Model.AlbumIdCover).Single();
-        albumCover = album.AlbumFrontCoverBLOB;
-        return albumCover;
-      }
-      else if (albumCover != null)
-      {
-        return albumCover;
-      }
-      else
-        return Model.ArtistCover != null ? Model.ArtistCover : GetEmptyImage();
+      //if (Model.AlbumIdCover != null && albumCover == null)
+      //{
+      //  var album = storage.GetRepository<Album>().Where(x => x.Id == Model.AlbumIdCover).Single();
+      //  albumCover = album.AlbumFrontCoverFilePath;
+      //  return albumCover;
+      //}
+      //else if (albumCover != null)
+      //{
+      //  return albumCover;
+      //}
+      //else
+      //  return Model.ArtistCover != null ? Model.ArtistCover : GetEmptyImage();
+
+
+      return null;
     }
 
     #endregion Methods

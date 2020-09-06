@@ -7,23 +7,44 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore"
              xmlns:events="clr-namespace:VPlayer.Core.Events;assembly=VPlayer.Core"
+             xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="1800">
   <UserControl.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/VPlayer;component/StylesDictionaries/ControlsTemplates/ButtonWithIconTemplate.xaml" />
       </ResourceDictionary.MergedDictionaries>
 
+      <Style x:Key="GridViewColumnHeaderGripper" TargetType="{x:Type Thumb}">
+        <Setter Property="Canvas.Right" Value="-9"/>
+        <Setter Property="Width" Value="18"/>
+        <Setter Property="Height" Value="{Binding ActualHeight, RelativeSource={RelativeSource TemplatedParent}}"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Template">
+          <Setter.Value>
+            <ControlTemplate TargetType="{x:Type Thumb}">
+              <Border Background="Transparent" Padding="{TemplateBinding Padding}">
+                <Rectangle Fill="{TemplateBinding Background}" 
+                           HorizontalAlignment="Center"
+                           Width="2"
+                           Margin="0 0 0 0" 
+                           IsHitTestVisible="False"/>
+              </Border>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
+      </Style>
+
       <ControlTemplate x:Key="StronglyRecommended" 
                        TargetType='{x:Type ListViewItem}'>
-        <Border Padding="10" Name="border" >
+        <Border Padding="10" Name="border" Margin="-10 0 0 0" >
           <Border.Style>
             <Style TargetType="Border">
               <Setter Property="Background" Value="{StaticResource 10_WhiteTransparentBrush}" />
             </Style>
           </Border.Style>
-          <StackPanel >
+          <StackPanel>
             <GridViewRowPresenter Content="{TemplateBinding Content}"
                                   Columns="{TemplateBinding GridView.ColumnCollection}"/>
           </StackPanel>
@@ -35,16 +56,43 @@
         </Border>
         <ControlTemplate.Triggers>
           <Trigger Property="IsSelected" Value="true">
-            <Setter Property="Background" TargetName="border" Value="{StaticResource 30_WhiteTransparentBrush}"/>
+            <Setter Property="Background" TargetName="border" Value="#15ffffff"/>
+          </Trigger>
+          <Trigger Property="IsMouseOver" Value="true">
+            <Setter Property="Background" TargetName="border" Value="#10ffffff"/>
           </Trigger>
         </ControlTemplate.Triggers>
       </ControlTemplate>
+
+
+      <CollectionViewSource Source="{Binding View}" x:Key="scheduledItems" IsLiveGroupingRequested="True">
+
+        <CollectionViewSource.SortDescriptions>
+          <!--This will sort groups-->
+          <componentModel:SortDescription PropertyName="IsUserCreated" Direction="Descending"/>
+          <!--This will items-->
+          <componentModel:SortDescription PropertyName="Model.Created" Direction="Descending"/>
+        </CollectionViewSource.SortDescriptions>
+
+        <CollectionViewSource.GroupDescriptions>
+          <PropertyGroupDescription PropertyName="IsUserCreated" />
+        </CollectionViewSource.GroupDescriptions>
+      </CollectionViewSource>
+
     </ResourceDictionary>
   </UserControl.Resources>
 
 
-  <Grid >
-    <ListView ItemsSource="{Binding View}" Name="playlists" Background="Transparent"  Foreground="White" BorderThickness="0">
+  <Grid>
+
+    <ListView DataContext="{StaticResource scheduledItems}"
+              ItemsSource="{Binding}"
+              Background="Transparent"  
+              Foreground="White" 
+              BorderThickness="0" 
+              Name="playlists"
+              Margin="5"
+              >
       <ListView.ItemContainerStyle>
         <Style TargetType="{x:Type ListViewItem}"  >
           <Setter Property="Template"
@@ -53,9 +101,41 @@
         </Style>
       </ListView.ItemContainerStyle>
       <ListView.View>
-        <GridView>
+        <GridView AllowsColumnReorder="False" >
+          <GridView.ColumnHeaderContainerStyle>
+            <Style TargetType="GridViewColumnHeader">
+              <Setter Property="Background" Value="#10ffffff"/>
+              <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}"/>
+              <Setter Property="BorderBrush" Value="Red"/>
+              <Setter Property="BorderThickness" Value="0"/>
+              <Setter Property="Padding" Value="0 10"/>
+              <Setter Property="FontSize" Value="15"/>
+              <Setter Property="Template">
+                <Setter.Value>
+                  <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
+                    <Grid Background="{TemplateBinding Background}" Margin="-2 0 0 0">
+                      <DockPanel HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                 VerticalAlignment="Center">
+                        <TextBlock Text="{TemplateBinding Content}" 
+                                   FontSize="{TemplateBinding FontSize}" 
+                                   Foreground="{TemplateBinding Foreground}"
+                                   Margin="{TemplateBinding Padding}"/>
+                      </DockPanel>
+                      <Canvas>
+                        <Thumb x:Name="PART_HeaderGripper"
+                               Style="{StaticResource GridViewColumnHeaderGripper}"
+                               Background="{StaticResource 30_WhiteTransparentBrush}"
+                               IsHitTestVisible="False"
+                        />
+                      </Canvas>
+                    </Grid>
+                  </ControlTemplate>
+                </Setter.Value>
+              </Setter>
+            </Style>
+          </GridView.ColumnHeaderContainerStyle>
           <GridView.Columns>
-            <GridViewColumn Width="100" Header="Play from start" >
+            <GridViewColumn Width="125" Header="Play from start" >
               <GridViewColumn.CellTemplate>
                 <DataTemplate>
                   <controls:ButtonWithIcon Content="Fresh" IconPathStyle="{StaticResource PlaySign}" 
@@ -67,7 +147,7 @@
                 </DataTemplate>
               </GridViewColumn.CellTemplate>
             </GridViewColumn>
-            <GridViewColumn Width="100" Header="Play from last" >
+            <GridViewColumn Width="120" Header="Play from last" >
               <GridViewColumn.CellTemplate>
                 <DataTemplate>
                   <controls:ButtonWithIcon Content="Last" 
@@ -80,13 +160,70 @@
                 </DataTemplate>
               </GridViewColumn.CellTemplate>
             </GridViewColumn>
-            <GridViewColumn Width="150" Header="Created -> Prerobit na played (Modified upravit)" DisplayMemberBinding="{Binding Model.Created}"/>
-            <GridViewColumn Header="Hash" DisplayMemberBinding="{Binding Model.SongsInPlaylitsHashCode}"/>
-            <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
-            <GridViewColumn Header="Song count" DisplayMemberBinding="{Binding Model.SongCount}"/>
+            <GridViewColumn Width="200" Header="Name" DisplayMemberBinding="{Binding Name}"/>
+            <GridViewColumn Width="150" Header="Last played" 
+                            DisplayMemberBinding="{Binding Model.Created}"/>
+            <GridViewColumn Width="150" Header="Hash" DisplayMemberBinding="{Binding Model.SongsInPlaylitsHashCode}"/>
+          
+            <GridViewColumn Width="95" Header="Song count" DisplayMemberBinding="{Binding Model.SongCount}"/>
+            <GridViewColumn Width="150" Header="Playlist settings">
+              <GridViewColumn.CellTemplate>
+                <DataTemplate>
+                  <StackPanel Orientation="Horizontal">
+                    <ToggleButton Margin="0,0,5,5"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Bottom"
+                                  BorderThickness="0"
+                                  Foreground="#DB505050"
+                                  IsChecked="{Binding IsRepeating}"
+                                  Style="{StaticResource RefreshButton}" />
+
+                    <ToggleButton Margin="0,0,35,5"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Bottom"
+                                  BorderThickness="0"
+                                  Foreground="#DB505050"
+                                  IsChecked="{Binding IsShuffle}"
+                                  Style="{StaticResource ShuffleButton}" />
+                  </StackPanel>
+                </DataTemplate>
+              </GridViewColumn.CellTemplate>
+            </GridViewColumn>
           </GridView.Columns>
         </GridView>
       </ListView.View>
+
+
+      <ListView.GroupStyle>
+        <GroupStyle>
+          <GroupStyle.HeaderTemplate>
+            <DataTemplate>
+              <Border Background="#10ffffff"
+                      Margin="0 5 0 0"
+                      Padding="10">
+                <TextBlock FontWeight="Normal" 
+                           FontSize="15"
+                           Foreground="{StaticResource DefaultWhiteBrush}"
+                           >
+                  <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding Name}" Value="True">
+                          <Setter Property="Text" Value="User created"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Name}" Value="False">
+                          <Setter Property="Text" Value="Generated"/>
+                        </DataTrigger>
+                      </Style.Triggers>
+                    </Style>
+                  </TextBlock.Style>
+                </TextBlock>
+              </Border>
+
+            </DataTemplate>
+          </GroupStyle.HeaderTemplate>
+        </GroupStyle>
+      </ListView.GroupStyle>
     </ListView>
 
 

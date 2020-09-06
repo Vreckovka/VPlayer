@@ -5,6 +5,7 @@
                     xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Library"
                     xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore">
 
+
   <Style x:Key="ListViewItem_PlayerTrack" TargetType="{x:Type ListViewItem}">
     <Setter Property="Foreground" Value="{StaticResource 100_WhiteTransparentBrush}" />
     <Setter Property="FontFamily" Value="Arial" />
@@ -17,7 +18,17 @@
           <Border x:Name="Bd"
                   Padding="0,5,8,0"
                   Background="{TemplateBinding Background}">
+            <Border.ContextMenu>
+              <ContextMenu>
+                <MenuItem Header="Delete song from playlist" Command="{Binding DeleteSongFromPlaylist}"/>
+                <MenuItem Header="Delete song album from playlist" Command="{Binding DeleteSongFromPlaylistWithAlbum}"/>
+              </ContextMenu>
+            </Border.ContextMenu>
             <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="auto"/>
+              </Grid.RowDefinitions>
               <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="*" />
@@ -96,6 +107,17 @@
                          HorizontalAlignment="Right"
                          VerticalAlignment="Top"
                          Text="{Binding Duration, Converter={converters:TimeConverter TimeType=Second}}" />
+
+              <!--<Image Source="{Binding Image}" 
+                     Grid.Row="0" 
+                     Grid.RowSpan="2"
+                     
+                     Grid.ColumnSpan="4" Stretch="UniformToFill"
+                     Opacity="0.05">
+                <Image.Effect>
+                  <BlurEffect Radius="10"/>
+                </Image.Effect>
+              </Image>-->
             </Grid>
           </Border>
           <ControlTemplate.Triggers>

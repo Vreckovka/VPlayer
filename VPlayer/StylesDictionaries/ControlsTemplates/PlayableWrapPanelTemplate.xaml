@@ -187,7 +187,8 @@
                                 Grid.Row="0"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Top"
-                                Source="{TemplateBinding ImageThumbnail}" />
+                                Source="{TemplateBinding ImageThumbnail,Converter={library:CacheImageConverter}}" 
+                                Name="coverImage"/>
 
               <Grid Grid.Row="0" Background="{StaticResource GlassGradient}" />
 

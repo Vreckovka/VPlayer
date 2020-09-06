@@ -40,7 +40,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     #region Properties
 
     public override string BottomText => $"{Model.Artist?.Name}\nNumber of song: {Model.Songs?.Count.ToString()}";
-    public override byte[] ImageThumbnail => Model.AlbumFrontCoverBLOB != null ? Model.AlbumFrontCoverBLOB : GetEmptyImage();
+    public override string ImageThumbnail => !string.IsNullOrEmpty(Model.AlbumFrontCoverFilePath) ? Model.AlbumFrontCoverFilePath : GetEmptyImage();
     
     #endregion Properties
 
@@ -62,7 +62,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
     public override void Update(Album updateItem)
     {
-      Model.AlbumFrontCoverBLOB = updateItem.AlbumFrontCoverBLOB;
+      Model.AlbumFrontCoverFilePath = updateItem.AlbumFrontCoverFilePath;
       Model.Name = updateItem.Name;
       Model.InfoDownloadStatus = updateItem.InfoDownloadStatus;
       Model.Songs = updateItem.Songs;
@@ -72,12 +72,16 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
     #endregion
 
+    #region RaisePropertyChanges
+
     public override void RaisePropertyChanges()
     {
       base.RaisePropertyChanges();
 
       RaisePropertyChanged(nameof(InfoDownloadStatus));
     }
+
+    #endregion
 
     #region OnDetail
 

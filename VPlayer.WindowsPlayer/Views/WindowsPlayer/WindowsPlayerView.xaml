@@ -14,7 +14,7 @@
              d:DataContext="{d:DesignInstance Type={x:Type design1:PlayerDesingViewModel},
                                               IsDesignTimeCreatable=True}"
              d:DesignHeight="450"
-             d:DesignWidth="900"
+             d:DesignWidth="1900"
              Background="{StaticResource BackgroudBrush}"
              mc:Ignorable="d">
   <UserControl.Resources>
@@ -53,11 +53,11 @@
         </Grid.ColumnDefinitions>
 
         <Image Grid.Column="0"
-               Source="{Binding ActualSong.Image}"
+               Source="{Binding ActualSong.ImagePath}"
                Stretch="UniformToFill" />
 
         <Image Grid.Column="1"
-               Source="{Binding ActualSong.Image}"
+               Source="{Binding ActualSong.ImagePath}"
                Stretch="UniformToFill" />
 
         <Grid Grid.RowSpan="2"
@@ -91,7 +91,7 @@
               BorderBrush="#FF080808"
               BorderThickness="5">
         <Image Name="Image"
-               Source="{Binding ActualSong.Image}"
+               Source="{Binding ActualSong.ImagePath}"
                Stretch="Uniform" />
         <Border.Effect>
           <DropShadowEffect BlurRadius="20"
@@ -185,7 +185,7 @@
         </Button>
 
         <StackPanel Name="Container"
-                    Width="450"
+                    
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     ClipToBounds="True">

@@ -12,7 +12,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using VCore;
-using VCore.ExtentionsMethods;
+using VCore.Helpers;
 using VCore.ItemsCollections;
 using VCore.Modularity.Interfaces;
 using VCore.Modularity.RegionProviders;
@@ -212,7 +212,11 @@ namespace VPlayer.Player.ViewModels
 
     public void OnSavePlaylist()
     {
-      SavePlaylist();
+      if (!SavePlaylist(true))
+      {
+        ActualSavedPlaylist.IsUserCreated = true;
+        UpdatePlaylist();
+      }
     }
 
     #endregion 
@@ -288,11 +292,55 @@ namespace VPlayer.Player.ViewModels
         eventAggregator.GetEvent<PlaySongsEvent>().Subscribe(PlaySongs);
         eventAggregator.GetEvent<PauseEvent>().Subscribe(Pause);
         eventAggregator.GetEvent<PlaySongsFromPlayListEvent>().Subscribe(PlaySongFromPlayList);
+        eventAggregator.GetEvent<DeleteSongEvent>().Subscribe(DeleteSongs);
       });
     }
 
 
     #endregion Initialize
+
+    #region DeleteSongs
+
+    private void DeleteSongs(DeleteEventArgs obj)
+    {
+      switch (obj.DeleteType)
+      {
+        case DeleteType.Database:
+          throw new NotImplementedException();
+          break;
+        case DeleteType.SingleFromPlaylist:
+          foreach (var songToDelete in obj.SongsToDelete)
+          {
+            var songInPlaylist = PlayList.SingleOrDefault(x => x.Model.Id == songToDelete.Id);
+
+            if (songInPlaylist != null)
+            {
+              PlayList.Remove(songInPlaylist);
+            }
+          }
+
+          SavePlaylist();
+
+          break;
+        case DeleteType.AlbumFromPlaylist:
+          foreach (var songToDelete in obj.SongsToDelete)
+          {
+            var albumSongs = PlayList.Where(x => x.Model.Album.Id == songToDelete.Album.Id).ToList();
+
+            foreach (var albumSong in albumSongs)
+            {
+              PlayList.Remove(albumSong);
+            }
+          }
+
+          SavePlaylist();
+          break;
+        default:
+          throw new ArgumentOutOfRangeException();
+      }
+    }
+
+    #endregion
 
     #region ItemsRemoved
 
@@ -593,7 +641,7 @@ namespace VPlayer.Player.ViewModels
 
     #region SavePlaylist
 
-    public void SavePlaylist()
+    public bool SavePlaylist(bool isUserCreated = false)
     {
       var songs = new List<PlaylistSong>();
 
@@ -626,13 +674,16 @@ namespace VPlayer.Player.ViewModels
         SongCount = songs.Count,
         PlaylistSongs = songs,
         LastSongElapsedTime = ActualSavedPlaylist.LastSongElapsedTime,
-        LastSongIndex = ActualSavedPlaylist.LastSongIndex
+        LastSongIndex = ActualSavedPlaylist.LastSongIndex,
+        IsUserCreated = isUserCreated
       };
 
-      var id = storageManager.StoreData(entityPlayList);
+      var success = storageManager.StoreData(entityPlayList, out var id);
 
       ActualSavedPlaylist = entityPlayList;
       ActualSavedPlaylist.Id = id;
+
+      return success;
     }
 
     #endregion

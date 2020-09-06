@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Mime;
 using System.Reactive.Subjects;
 using System.Reflection;
 using System.Threading;
@@ -19,6 +20,11 @@ using VPlayer.AudioStorage.InfoDownloader.Models;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Artist = Hqub.MusicBrainz.API.Entities.Artist;
+using System.Drawing;
+using System.Drawing.Imaging;
+using Windows.Media;
+using Windows.ApplicationModel.Contacts;
+using VCore.Helpers;
 
 namespace VPlayer.AudioStorage.InfoDownloader
 {
@@ -63,8 +69,6 @@ namespace VPlayer.AudioStorage.InfoDownloader
     public event EventHandler<List<AudioInfo>> SubdirectoryLoaded;
 
     #endregion Events
-
-
 
     #region UpdateItem
 
@@ -135,62 +139,79 @@ namespace VPlayer.AudioStorage.InfoDownloader
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
-    public async Task<AudioInfo> GetAudioInfo(string path)
+    public AudioInfo GetAudioInfo(string path)
     {
-      return await Task.Run(async () =>
+      AudioInfo audioInfo = null;
+
+      audioInfo = GetAudioInfoByWindowsAsync(path);
+      //GetMediaInfoo();
+
+      if (audioInfo == null || (audioInfo.Artist == null && audioInfo.Album == null && audioInfo.Artist == "" && audioInfo.Album == ""))
       {
-        AudioInfo audioInfo = null;
+        Console.WriteLine(path + " NIC");
+        //var fingerPrintAudioInfo = await Task.Run(() => GetAudioInfoByFingerPrint(path));
 
-        audioInfo = await Task.Run(() => GetAudioInfoByWindowsAsync(path));
+        //if (fingerPrintAudioInfo != null)
+        //{
+        //  Logger.Logger.Instance.Log(Logger.MessageType.Success, $"Audio info was gotten by fingerprint {path}");
+        //  return fingerPrintAudioInfo;
+        //}
+      }
 
-        if (audioInfo.Artist == null && audioInfo.Album == null && audioInfo.Artist == "" && audioInfo.Album == "")
-        {
-          var fingerPrintAudioInfo = await Task.Run(() => GetAudioInfoByFingerPrint(path));
-
-          if (fingerPrintAudioInfo != null)
-          {
-            Logger.Logger.Instance.Log(Logger.MessageType.Success, $"Audio info was gotten by fingerprint {path}");
-            return fingerPrintAudioInfo;
-          }
-        }
-
-        return audioInfo;
-
-      });
+      return audioInfo;
     }
 
-    public void GetAudioInfosFromDirectory(string directoryPath, bool subDirectories = false)
+    private Semaphore semaphore = new Semaphore(15,15);
+    public void GetAudioInfosFromDirectory(string directoryPath, bool getSubDirectories = false)
     {
-      Task.Run(async () =>
+      try
       {
-        try
+
+        //semaphore.WaitOne();
+
+        List<AudioInfo> audioInfos = new List<AudioInfo>();
+
+        List<Task> tasks = new List<Task>();
+
+        DirectoryInfo d = new DirectoryInfo(directoryPath);
+
+        FileInfo[] files = supportedItems.SelectMany(ext => d.GetFiles(ext)).ToArray();
+
+        if (getSubDirectories)
         {
-          List<AudioInfo> audioInfos = new List<AudioInfo>();
+          var subDirectories = Directory.GetDirectories(directoryPath);
 
-          DirectoryInfo d = new DirectoryInfo(directoryPath);
-          FileInfo[] Files = supportedItems.SelectMany(ext => d.GetFiles(ext)).ToArray();
-
-
-          if (subDirectories)
+          foreach (var directory in subDirectories)
           {
-            foreach (var directory in await GetSubDirectories(directoryPath))
-            {
-              GetAudioInfosFromDirectory(directory);
-            }
+            GetAudioInfosFromDirectory(directory, true);
+            //var task = GetAudioInfosFromDirectory(directory, true);
+            //tasks.Add(task);
           }
-
-          foreach (FileInfo file in Files)
-          {
-            audioInfos.Add(await GetAudioInfo(file.FullName));
-          }
-
-          OnSubdirectoryLoaded(audioInfos);
         }
-        catch (Exception ex)
+
+        foreach (FileInfo file in files)
         {
-          Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+          audioInfos.Add(GetAudioInfo(file.FullName));
         }
-      });
+
+        OnSubdirectoryLoaded(audioInfos);
+
+        foreach (var task in tasks)
+        {
+          task.Start();
+        }
+
+
+        Task.WaitAll(tasks.ToArray());
+      }
+      catch (Exception ex)
+      {
+        Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+      }
+      finally
+      {
+        //semaphore.Release();
+      }
     }
 
     #endregion Info methods
@@ -213,7 +234,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
     /// <returns></returns>
     public Task<List<AlbumCover>> GetAlbumFrontCoversUrls(string MBID, CancellationToken cancellationToken)
     {
-      return Task<List<AlbumCover>>.Run(async () =>
+      return Task.Run<List<AlbumCover>>(async () =>
       {
         try
         {
@@ -277,7 +298,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
         }
         catch (Exception ex)
         {
-          Logger.Logger.Instance.LogException(ex);
+          Logger.Logger.Instance.Log(ex);
           return null;
         }
       }, cancellationToken);
@@ -612,6 +633,8 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
         byte[] albumCoverBlob = await GetAlbumFrontConverBLOB(release.Id, albumCoverUrl);
 
+        var coverPath = SaveAlbumCover(album, albumCoverBlob);
+
         albumName = release.Title;
 
         // The album known sometimes as The Black Album is already in this database,
@@ -632,7 +655,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
           MusicBrainzId = release.Id,
           ReleaseDate = release.Date,
           AlbumFrontCoverURI = albumCoverUrl,
-          AlbumFrontCoverBLOB = albumCoverBlob,
+          AlbumFrontCoverFilePath = coverPath,
         };
 
         Logger.Logger.Instance.Log(Logger.MessageType.Success, $"Album info was succesfully downloaded {album.Name} - {artistName}");
@@ -671,6 +694,35 @@ namespace VPlayer.AudioStorage.InfoDownloader
         if (!apiExeed)
           musibrainzAPISempathore.Release();
       }
+    }
+
+    public static string GetDefaultPicturesPath()
+    {
+      var directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VPlayer/Pictures");
+      if (!Directory.Exists(directory))
+      {
+        Directory.CreateDirectory(directory);
+      }
+
+      return directory;
+    }
+    private string SaveAlbumCover(Album album, byte[] blob)
+    {
+      MemoryStream ms = new MemoryStream(blob);
+      Image i = Image.FromStream(ms);
+
+      var directory = Path.Combine(GetDefaultPicturesPath(), $"Albums/{album.Id}");
+      var finalPath = Path.Combine(directory, "frontConver.jpg");
+
+
+      if (!Directory.Exists(directory))
+      {
+        Directory.CreateDirectory(directory);
+      }
+
+      i.Save(finalPath, ImageFormat.Jpeg);
+
+      return finalPath;
     }
 
     public async Task<DomainClasses.Artist> UpdateArtist(string artistName)
@@ -1109,7 +1161,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
     /// </summary>
     private Task<AudioInfo> GetAudioInfoByFingerPrint(string path, AudioInfo pAudioInfo = null)
     {
-      return Task<AudioInfo>.Run(async () =>
+      return Task.Run<AudioInfo>(async () =>
       {
         try
         {
@@ -1237,6 +1289,52 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     #region Windows info methods
 
+    private object mediaInfoBatton = new object();
+    private void GetMediaInfoo()
+    {
+      lock (mediaInfoBatton)
+      {
+        byte[] b = new byte[128];
+        string sTitle;
+        string sSinger;
+        string sAlbum;
+        string sYear;
+        string sComm;
+
+        FileStream fs = new FileStream("D:\\Downloads\\Creedence Clearwater Revival - Chronicle Vol. 1 & 2 [FLAC] vtwin88cube\\Creedence Clearwater Revival - Chronicle The 20 Greatest Hits (1991) [FLAC]\\01.-Susie Q.flac", FileMode.Open);
+        fs.Seek(-128, SeekOrigin.End);
+        fs.Read(b, 0, 128);
+        bool isSet = false;
+        String sFlag = System.Text.Encoding.Default.GetString(b, 0, 3);
+        if (sFlag.CompareTo("TAG") == 0)
+        {
+          System.Console.WriteLine("Tag   is   setted! ");
+          isSet = true;
+        }
+
+        if (isSet)
+        {
+          //get   title   of   song;
+          sTitle = System.Text.Encoding.Default.GetString(b, 3, 30);
+          System.Console.WriteLine("Title: " + sTitle);
+          //get   singer;
+          sSinger = System.Text.Encoding.Default.GetString(b, 33, 30);
+          System.Console.WriteLine("Singer: " + sSinger);
+          //get   album;
+          sAlbum = System.Text.Encoding.Default.GetString(b, 63, 30);
+          System.Console.WriteLine("Album: " + sAlbum);
+          //get   Year   of   publish;
+          sYear = System.Text.Encoding.Default.GetString(b, 93, 4);
+          System.Console.WriteLine("Year: " + sYear);
+          //get   Comment;
+          sComm = System.Text.Encoding.Default.GetString(b, 97, 30);
+          System.Console.WriteLine("Comment: " + sComm);
+        }
+        System.Console.WriteLine("Any   key   to   exit! ");
+        System.Console.Read();
+      }
+    }
+
     #region GetAudioInfoByWindowsAsync
 
     /// <summary>
@@ -1244,12 +1342,12 @@ namespace VPlayer.AudioStorage.InfoDownloader
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
-    private async Task<AudioInfo> GetAudioInfoByWindowsAsync(string path)
+    private AudioInfo GetAudioInfoByWindowsAsync(string path)
     {
-      return await Task.Run(async () =>
-      {
-        var musicProp = await GetAudioWindowsPropertiesAsync(path);
+      var musicProp = GetAudioWindowsPropertiesAsync(path);
 
+      if (musicProp != null)
+      {
         var newAudioInfo = new AudioInfo()
         {
           Album = musicProp.Album,
@@ -1260,8 +1358,10 @@ namespace VPlayer.AudioStorage.InfoDownloader
         };
 
         return newAudioInfo;
+      }
 
-      });
+
+      return null;
     }
 
     #endregion GetAudioInfoByWindowsAsync
@@ -1273,23 +1373,20 @@ namespace VPlayer.AudioStorage.InfoDownloader
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
-    private async Task<MusicProperties> GetAudioWindowsPropertiesAsync(string path)
+    private MusicProperties GetAudioWindowsPropertiesAsync(string path)
     {
-      return await Task.Run(async () =>
+      try
       {
-        try
-        {
-          StorageFile file = await StorageFile.GetFileFromPathAsync(path);
-          MusicProperties musicProperties = await file.Properties.GetMusicPropertiesAsync();
-
-          return musicProperties;
-        }
-        catch (Exception ex)
-        {
-          Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
-          return null;
-        }
-      });
+        StorageFile file = AsyncHelpers.RunSync(() => StorageFile.GetFileFromPathAsync(path).AsTask());
+        MusicProperties musicProperties = AsyncHelpers.RunSync(() => file.Properties.GetMusicPropertiesAsync().AsTask());
+        
+        return musicProperties;
+      }
+      catch (Exception ex)
+      {
+        Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+        return null;
+      }
     }
 
     #endregion GetAudioWindowsPropertiesAsync
@@ -1331,6 +1428,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     public void Initialize()
     {
+
     }
 
     protected virtual void OnCoversDownloaded(List<AlbumCover> e)
@@ -1344,5 +1442,8 @@ namespace VPlayer.AudioStorage.InfoDownloader
     }
 
     #endregion Methods
+
+
+
   }
 }

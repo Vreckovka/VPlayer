@@ -36,21 +36,24 @@ namespace VPlayer.Library.ViewModels
     public override bool ContainsNestedRegions => false;
     public override string Header { get; } = "Playlists";
     public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
+  }
 
-    public override ICollection<PlaylistViewModel> View
-    {
-      get
-      {
-        var revered = LibraryCollection?.FilteredItems?.GetReversed<Playlist, PlaylistViewModel>();
-        return revered;
-      }
-    }
+  public enum PlaylistCreation
+  {
+    UserCreated,
+    Automatic
   }
 
   public class PlaylistViewModel : PlayableViewModel<Playlist>
   {
+    #region Fields
+
     private readonly IViewModelsFactory viewModelsFactory;
     private readonly PlaylistsRepository playlistsRepository;
+
+    #endregion
+
+    #region Constructors
 
     public PlaylistViewModel(Playlist model, IEventAggregator eventAggregator, IViewModelsFactory viewModelsFactory, PlaylistsRepository playlistsRepository) : base(model, eventAggregator)
     {
@@ -58,10 +61,72 @@ namespace VPlayer.Library.ViewModels
       this.playlistsRepository = playlistsRepository ?? throw new ArgumentNullException(nameof(playlistsRepository));
     }
 
+    #endregion
+
+    #region Properties
+
+    public bool IsUserCreated => Model.IsUserCreated;
+
+    #region IsRepeating
+
+    public bool IsRepeating
+    {
+      get
+      {
+        return Model.IsReapting;
+      }
+      set
+      {
+        if (value != Model.IsReapting)
+        {
+          Model.IsReapting = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region IsShuffle
+
+    public bool IsShuffle
+    {
+      get
+      {
+        return Model.IsShuffle;
+      }
+      set
+      {
+        if (value != Model.IsShuffle)
+        {
+          Model.IsShuffle = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #endregion
+
     public override void Update(Playlist updateItem)
     {
-      throw new NotImplementedException();
+      this.Model.Update(updateItem);
+      RaisePropertyChanges();
     }
+
+    #region RaisePropertyChanges
+
+    public virtual void RaisePropertyChanges()
+    {
+      Random random = new Random();
+
+      Model.Name = "Pregenerovan" + random.Next(0, 1000);
+      RaisePropertyChanged(nameof(Name));
+      RaisePropertyChanged(nameof(IsUserCreated));
+    }
+
+    #endregion
 
     protected override void OnDetail()
     {
@@ -82,8 +147,8 @@ namespace VPlayer.Library.ViewModels
       {
         PlaySongsAction = action,
         Songs = data,
-        IsRepeat = Model.IsReapting,
-        IsShufle = Model.IsShuffle,
+        IsRepeat = IsRepeating,
+        IsShufle = IsShuffle,
         SetPostion = Model.LastSongElapsedTime,
         IdModel = Model.Id
       };

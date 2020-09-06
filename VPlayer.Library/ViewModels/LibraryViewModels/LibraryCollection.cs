@@ -85,7 +85,6 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
     #endregion Filter
 
-
     #region LoadInitilizedData
 
     public IObservable<bool> LoadInitilizedDataAsync(IQueryable<TModel> optionalQuery = null)
@@ -113,7 +112,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
         }
         catch (Exception ex)
         {
-          Logger.Logger.Instance.LogException(ex);
+          Logger.Logger.Instance.Log(ex);
           return false;
         }
       });
@@ -177,7 +176,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
             Items.Remove(originalItem);
           }
 
-          //Recreate();
+          Recreate();
         }
       });
     }
