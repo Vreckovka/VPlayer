@@ -45,7 +45,8 @@
             <Grid Grid.Row="1"
             behaviors:DropBehavior.PreviewDropCommand="{Binding FilesDropped}"
             AllowDrop="True">
-                <ContentControl regions:RegionManager.RegionName="{x:Static regions1:RegionNames.LibraryContentRegion}"
+                <ContentControl
+                        regions:RegionManager.RegionName="{x:Static regions1:RegionNames.LibraryContentRegion}"
                         design:DesignTimeRegionProvider.ViewProvider="{StaticResource LibraryRegionDesingProvider}" />
             </Grid>
         </Grid>

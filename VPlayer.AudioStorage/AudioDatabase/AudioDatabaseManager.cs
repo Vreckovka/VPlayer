@@ -790,7 +790,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region UpdateAllNotYetUpdated
 
-    public Task UpdateAllNotYetUpdated()
+    public Task UpdateAllNotYetUpdated(bool tryDownloadBroken = false)
     {
       return Task.Run(() =>
       {
@@ -803,13 +803,16 @@ namespace VPlayer.AudioStorage.AudioDatabase
           audioInfoDownloader.UpdateItem(album);
         }
 
-        var brokenAlbums = albumsRepository.Entities.Where(x => x.InfoDownloadStatus == InfoDownloadStatus.Failed
-                                                                || x.InfoDownloadStatus == InfoDownloadStatus.UnableToFind)
-          .Include(x => x.Artist);
-
-        foreach (var album in brokenAlbums)
+        if (tryDownloadBroken)
         {
-          audioInfoDownloader.UpdateItem(album);
+          var brokenAlbums = albumsRepository.Entities.Where(x => x.InfoDownloadStatus == InfoDownloadStatus.Failed
+                                                                  || x.InfoDownloadStatus == InfoDownloadStatus.UnableToFind)
+            .Include(x => x.Artist);
+
+          foreach (var album in brokenAlbums)
+          {
+            audioInfoDownloader.UpdateItem(album);
+          }
         }
       });
     }

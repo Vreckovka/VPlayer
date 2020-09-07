@@ -25,7 +25,7 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
     #region Methods
 
     Task ClearStorage();
-    Task UpdateAllNotYetUpdated();
+    Task UpdateAllNotYetUpdated(bool tryDownloadBroken = false);
     IQueryable<T> GetRepository<T>(DbContext dbContext = null) where T : class;
     Task<bool> StoreData(IEnumerable<string> audioPath);
     Task<bool> StoreData(string audioPath);

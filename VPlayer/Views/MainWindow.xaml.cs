@@ -28,9 +28,9 @@ namespace VPlayer.Views
       (DataContext as MainWindowViewModel)?.Dispose();
     }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-          storageManager.ClearStorage();
-        }
+    private void Button_Click(object sender, RoutedEventArgs e)
+    {
+      storageManager.ClearStorage();
     }
+  }
 }

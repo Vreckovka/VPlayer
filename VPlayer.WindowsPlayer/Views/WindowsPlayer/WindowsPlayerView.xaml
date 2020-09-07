@@ -11,6 +11,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore"
              xmlns:windowsPlayer="clr-namespace:VPlayer.WindowsPlayer"
+             xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore"
              d:DataContext="{d:DesignInstance Type={x:Type design1:PlayerDesingViewModel},
                                               IsDesignTimeCreatable=True}"
              d:DesignHeight="450"
@@ -235,21 +236,18 @@
           </TextBlock>
         </StackPanel>
 
-        <ToggleButton Margin="0,0,5,5"
+        <controls:PathButton Margin="0,0,5,5"
                       HorizontalAlignment="Right"
                       VerticalAlignment="Bottom"
-                      BorderThickness="0"
-                      Foreground="#DB505050"
                       IsChecked="{Binding IsRepeate}"
-                      Style="{StaticResource RefreshButton}" />
+                      PathStyle="{StaticResource Repeate}" />
 
-        <ToggleButton Margin="0,0,35,5"
-                      HorizontalAlignment="Right"
-                      VerticalAlignment="Bottom"
-                      BorderThickness="0"
-                      Foreground="#DB505050"
-                      IsChecked="{Binding IsShuffle}"
-                      Style="{StaticResource ShuffleButton}" />
+        <controls:PathButton Margin="0,0,35,5"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    BorderThickness="0"
+                    IsChecked="{Binding IsShuffle}"
+                    PathStyle="{StaticResource Shuffle}" />
       </Grid>
     </Grid>
 

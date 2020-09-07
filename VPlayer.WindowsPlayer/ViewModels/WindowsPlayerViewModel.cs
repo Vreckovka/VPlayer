@@ -697,6 +697,8 @@ namespace VPlayer.Player.ViewModels
 
     #endregion
 
+    #region Dispose
+
 
     public override void Dispose()
     {
@@ -705,6 +707,8 @@ namespace VPlayer.Player.ViewModels
 
       base.Dispose();
     }
+
+    #endregion
 
     #endregion
   }

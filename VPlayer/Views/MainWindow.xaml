@@ -9,6 +9,7 @@
         xmlns:prism="http://prismlibrary.com/"
         xmlns:regions="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPlayer.Core"
         xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore"
+        xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore"
         Title="{Binding Title}"
         Width="1288"
         Height="830"
@@ -34,33 +35,45 @@
   </Window.TaskbarItemInfo>
 
   <Grid >
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="150" />
-      <ColumnDefinition Width="*" />
-    </Grid.ColumnDefinitions>
-
     <Grid.RowDefinitions>
+      <RowDefinition Height="auto" />
       <RowDefinition />
       <RowDefinition Height="auto" />
     </Grid.RowDefinitions>
 
-    <Border Name="MenuBorder"
+    <Border Background="#06ffffff" Height="45" >
+      <StackPanel Orientation="Horizontal">
+        <TextBlock Text="Selected player: " FontSize="17" VerticalAlignment="Center" Foreground="{StaticResource 100_WhiteTransparentBrush}" Margin="5,0"/>
+
+        <controls:PathButton Margin="0,0,35,5"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    BorderThickness="0"
+                    Foreground="#DB505050"
+                    IsChecked="{Binding IsWindows}"
+                    IsEnabled="False"
+                    PathStyle="{StaticResource Windows}"/>
+
+     
+      </StackPanel>
+   
+    </Border>
+
+    <!--<Border Name="MenuBorder"
             Background="Transparent"
             BorderBrush="{StaticResource 10_WhiteTransparentBrush}"
             BorderThickness="0,0,2,0">
 
       <ListView ItemsSource="{Binding NavigationViewModel.Items}" Style="{StaticResource ListView_MenuStyle}" />
-    </Border>
-    <Path Margin="0,135" Fill="Red" />
+    </Border>-->
 
-    <Button Content="DELETE ALL" Click="Button_Click"/>
-    <ContentControl Grid.Row="0"
-                    Grid.Column="1"
-                    prism:RegionManager.RegionName="{x:Static regions:RegionNames.ContentRegion}" />
+    <Button Content="DELETE ALL" Click="Button_Click" Visibility="Collapsed"/>
 
     <ContentControl Grid.Row="1"
+                    prism:RegionManager.RegionName="{x:Static regions:RegionNames.ContentRegion}" />
+
+    <ContentControl Grid.Row="2"
                     Grid.Column="0"
-                    Grid.ColumnSpan="2"
                     prism:RegionManager.RegionName="{x:Static regions:RegionNames.PlayerRegion}" />
   </Grid>
 </Window>

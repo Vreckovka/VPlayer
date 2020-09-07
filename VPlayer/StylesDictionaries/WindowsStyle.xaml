@@ -11,13 +11,13 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type Window}">
-          <Border BorderBrush="Red" BorderThickness="0" >
+          <Border>
             <Border.Style>
               <Style TargetType="Border">
                 <Setter Property="Padding" Value="0" />
                 <Style.Triggers>
                   <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Path=WindowState}" Value="Maximized">
-                    <Setter Property="Padding" Value="5,5,10,5" />
+                    <Setter Property="Padding" Value="5" />
                   </DataTrigger>
                 </Style.Triggers>
               </Style>
@@ -46,7 +46,7 @@
                     <!--  Title  -->
                     <TextBlock Margin="0,3,0,0"
                                VerticalAlignment="Center"
-                               FontSize="20"
+                               FontSize="17"
                                Foreground="{DynamicResource DefaultWhiteBrush}"
                                Text="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Title}" />
                   </StackPanel>

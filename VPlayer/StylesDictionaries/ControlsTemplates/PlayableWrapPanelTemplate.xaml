@@ -8,7 +8,8 @@
     xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Library"
     xmlns:local="clr-namespace:VPlayer.StylesDictionaries"
     xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore"
-    xmlns:domainClasses="clr-namespace:VPlayer.AudioStorage.DomainClasses;assembly=VPlayer.AudioStorage">
+    xmlns:domainClasses="clr-namespace:VPlayer.AudioStorage.DomainClasses;assembly=VPlayer.AudioStorage"
+    xmlns:attachedProperties="clr-namespace:VCore.AttachedProperties;assembly=VCore">
 
   <Duration x:Key="AnimationDuration">0:0:0:0.30</Duration>
 
@@ -495,7 +496,7 @@
                         Margin="0,10"
                         Background="{TemplateBinding Panel.Background}"
                         SnapsToDevicePixels="True">
-            <ScrollViewer Padding="{TemplateBinding Control.Padding}" Focusable="False">
+            <ScrollViewer Padding="{TemplateBinding Control.Padding}" Focusable="False" attachedProperties:AttachedProperty.ScrollSpeed="5">
               <ItemsPresenter SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
             </ScrollViewer>
           </Grid>

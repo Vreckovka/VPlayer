@@ -31,6 +31,24 @@ namespace VPlayer.ViewModels
     public NavigationViewModel NavigationViewModel { get; set; } = new NavigationViewModel();
     public override string Title => "VPlayer";
 
+    #region IsWindows
+
+    private bool isWindows;
+    public bool IsWindows
+    {
+      get { return isWindows; }
+      set
+      {
+        if (value != isWindows)
+        {
+          isWindows = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #endregion
 
     #region Methods
@@ -43,6 +61,7 @@ namespace VPlayer.ViewModels
 
       var windowsPlayer = viewModelsFactory.Create<WindowsViewModel>();
       windowsPlayer.IsActive = true;
+      isWindows = true;
       NavigationViewModel.Items.Add(windowsPlayer);
 
 
@@ -54,6 +73,8 @@ namespace VPlayer.ViewModels
 
     #endregion
 
+    #region MyRegion
+
     public override void Dispose()
     {
       base.Dispose();
@@ -62,8 +83,8 @@ namespace VPlayer.ViewModels
       {
         item?.Dispose();
       }
-
     }
 
+    #endregion
   }
 }
