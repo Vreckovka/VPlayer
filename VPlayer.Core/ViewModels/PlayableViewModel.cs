@@ -148,11 +148,7 @@ namespace VPlayer.Core.ViewModels
     {
       var data = GetSongsToPlay();
 
-      var e = new PlaySongsEventData()
-      {
-        PlaySongsAction = o,
-        Songs = data
-      };
+      var e = new PlaySongsEventData(data, o, this);
 
       eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
     }
@@ -213,11 +209,7 @@ namespace VPlayer.Core.ViewModels
     {
       var data = GetSongsToPlay();
 
-      var e = new PlaySongsEventData()
-      {
-        PlaySongsAction = PlaySongsAction.Add,
-        Songs = data
-      };
+      var e = new PlaySongsEventData(data, PlaySongsAction.Add, this);
 
       eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
     }

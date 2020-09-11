@@ -27,6 +27,7 @@
   </UserControl.Resources>
 
   <Grid>
+ 
     <Grid.RowDefinitions>
       <RowDefinition Height="*" />
       <RowDefinition Height="auto" />
@@ -44,10 +45,12 @@
 
     <Grid Grid.Column="0" Grid.ColumnSpan="2">
       <Grid.RowDefinitions>
+        <RowDefinition Height="2*" />
         <RowDefinition Height="*" />
+        <RowDefinition Height="auto" />
       </Grid.RowDefinitions>
 
-      <Grid VerticalAlignment="Stretch">
+      <Grid VerticalAlignment="Stretch" Grid.RowSpan="3">
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="*" />
           <ColumnDefinition Width="*" />
@@ -75,7 +78,7 @@
         </Grid>
       </Grid>
 
-      <Grid Grid.Row="0">
+      <Grid Grid.RowSpan="3">
         <Grid.Background>
           <LinearGradientBrush StartPoint="1,0" EndPoint="0 0">
             <GradientStop Offset="1" Color="#FF000000" />
@@ -90,10 +93,16 @@
               VerticalAlignment="Center"
               Panel.ZIndex="0"
               BorderBrush="#FF080808"
-              BorderThickness="5">
-        <Image Name="Image"
+              BorderThickness="5"
+              Grid.RowSpan="3"
+              Margin="0 15 0 15">
+        <Grid>
+          <Image Name="Image"
                Source="{Binding ActualSong.ImagePath}"
                Stretch="Uniform" />
+       
+        </Grid>
+
         <Border.Effect>
           <DropShadowEffect BlurRadius="20"
                             Direction="0"
@@ -101,7 +110,7 @@
         </Border.Effect>
       </Border>
 
-      <Grid Grid.Row="0">
+      <Grid Grid.Row="0" >
         <Grid.Background>
           <LinearGradientBrush StartPoint="0,1" EndPoint="0 0">
             <GradientStop Offset="1" Color="#2A000000" />
@@ -114,7 +123,8 @@
 
       <Grid Grid.Row="0"
             Width="{Binding ElementName=Image, Path=ActualWidth}"
-            Height="{Binding ElementName=Image, Path=ActualHeight}">
+            Height="{Binding ElementName=Image, Path=ActualHeight}"
+            Grid.RowSpan="2">
         <Grid.Background>
           <LinearGradientBrush StartPoint="1,0" EndPoint="0 1">
             <GradientStop Offset="1" Color="#80000000" />
@@ -125,9 +135,27 @@
         </Grid.Background>
       </Grid>
 
+      <Border
+              Grid.Row="1"  Background="#80000000"       
+              Margin="0 0 0 -2"
+              > 
+        <Grid >
+          <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
+            <TextBox Text="{Binding ActualSong.Lyrics, Mode=OneWay}"
+                     FontSize="24"
+                     HorizontalContentAlignment="Center"
+                     HorizontalAlignment="Center"
+                     Foreground="{StaticResource YellowBrush}"
+                     Padding="0 15 0 15"
+                     IsReadOnly="True"/>
+          </ScrollViewer>
+        </Grid>
+      </Border>
+
       <Grid Height="75"
             VerticalAlignment="Bottom"
-            Background="#AB000000">
+            Background="#DD000000"
+            Grid.Row="2">
 
         <Button Width="50"
                 Margin="10,0,0,15"
@@ -190,11 +218,12 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     ClipToBounds="True">
-          <TextBlock Margin="0,-12,0,0"
+          <TextBlock Margin="0,0,0,0"
                      FontSize="35"
                      Foreground="#FFFFFF"
                      Name="NameTxt"
-                     Text="{Binding ActualSong.Name}">
+                     Text="{Binding ActualSong.Name}"
+                     FontFamily="{StaticResource Roboto}">
             <TextBlock.Style>
               <Style TargetType="TextBlock">
                 <Setter Property="HorizontalAlignment" Value="Center" />
@@ -224,7 +253,7 @@
           </TextBlock>
 
           <TextBlock HorizontalAlignment="Center"
-                     FontFamily="{StaticResource Montserrat_Thin}"
+                     FontFamily="{StaticResource Roboto}"
                      FontSize="16"
                      Foreground="#AAEFEFDF">
             <Run Text="{Binding ActualSong.ArtistViewModel.Name, Mode=OneWay}" />
@@ -250,6 +279,8 @@
                     PathStyle="{StaticResource Shuffle}" />
       </Grid>
     </Grid>
+
+   
 
     <GridSplitter Grid.RowSpan="3"
                   Grid.Column="2"

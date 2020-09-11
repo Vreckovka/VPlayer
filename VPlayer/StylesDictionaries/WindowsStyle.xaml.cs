@@ -9,8 +9,14 @@ namespace VPlayer.StylesDictionaries
 
     private void CloseButt_Click(object sender, System.Windows.RoutedEventArgs e)
     {
-      Window window = (sender as Button).Tag as Window;
-      window.Close();
+      try
+      {
+        Window window = (sender as Button).Tag as Window;
+        window.Close();
+      }
+      catch (System.Exception)
+      {
+      }
     }
 
     /// <summary>

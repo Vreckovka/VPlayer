@@ -14,7 +14,7 @@ namespace VPlayer.AudioStorage.Modularity.NinjectModules
       base.RegisterProviders();
 
       Kernel.Bind<IStorageManager>().To<AudioDatabaseManager>().InSingletonScope();
-      Kernel.BindToSelfAndInitialize<AudioInfoDownloader>();
+      Kernel.BindToSelf<AudioInfoDownloader>().InSingletonScope().InitializeOnActivation();
     }
 
     #endregion Methods

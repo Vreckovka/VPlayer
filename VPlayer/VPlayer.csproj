@@ -386,6 +386,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Resource Include="Resources\Roboto\Roboto-Black.otf" />
     <None Include="VPlayer_TemporaryKey.pfx" />
     <Resource Include="Resources\Montserrat\Montserrat-Thin.otf" />
   </ItemGroup>

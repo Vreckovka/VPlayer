@@ -11,7 +11,8 @@
     <Color x:Key="DefaultRedTransparentColor" R="254" G="39" B="84" A="50" />
     <Color x:Key="DefaultWhiteColor" >#f9fdff</Color>
     <Color x:Key="OrangeColor">#f57542</Color>
-    <Color x:Key="DefaultRedColorDim">#db515a</Color>
+  <Color x:Key="YellowColor">#edd209</Color>
+  <Color x:Key="DefaultRedColorDim">#db515a</Color>
 
     <Color x:Key="235_DefaultWhiteColor" R="255" G="255" B="255" A="235" />
     <Color x:Key="220_DefaultWhiteColor" R="255" G="255" B="255" A="220" />
@@ -28,7 +29,10 @@
     <Color x:Key="StrongerGrayOverlay">#A0FFFFFF</Color>
 
     <SolidColorBrush x:Key="OrangeBrush" Color="{StaticResource OrangeColor}" />
-    <SolidColorBrush x:Key="StrongerGrayOverlayBrush" Color="{DynamicResource StrongerGrayOverlay}" />
+  <SolidColorBrush x:Key="YellowBrush" Color="{StaticResource YellowColor}" />
+
+
+  <SolidColorBrush x:Key="StrongerGrayOverlayBrush" Color="{DynamicResource StrongerGrayOverlay}" />
     <SolidColorBrush x:Key="TopWindowsBrush" Color="{DynamicResource TopWindowsColor}" />
     <SolidColorBrush x:Key="DefaultRedBrush" Color="{DynamicResource DefaultRedColor}" />
     <SolidColorBrush x:Key="DefaultRedBrushDim" Color="{DynamicResource DefaultRedColorDim}" />

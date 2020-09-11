@@ -57,12 +57,14 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region Initialize
 
+    private IDisposable disposable;
+
     public void Initialize()
     {
-      audioInfoDownloader.ItemUpdated.Subscribe(ItemUpdated);
+      disposable = audioInfoDownloader.ItemUpdated.Subscribe(ItemUpdated);
       audioInfoDownloader.SubdirectoryLoaded += AudioInfoDownloader_SubdirectoryLoaded;
 
-      UpdateAllNotYetUpdated();
+      //UpdateAllNotYetUpdated(true);
     }
 
     #endregion
@@ -593,7 +595,30 @@ namespace VPlayer.AudioStorage.AudioDatabase
     }
     public async Task UpdateItem(Song song)
     {
+      using (var context = new AudioDatabaseContext())
+      {
+        try
+        {
+          var originalEntity = await (from x in context.Songs where x.Id == song.Id select x).SingleOrDefaultAsync();
 
+          if (originalEntity != null)
+          {
+            originalEntity.Update(song);
+
+            ItemChanged.OnNext(new ItemChanged()
+            {
+              Changed = Changed.Updated,
+              Item = originalEntity
+            });
+
+            await context.SaveChangesAsync();
+          }
+        }
+        catch (Exception ex)
+        {
+          Logger.Logger.Instance.Log(ex);
+        }
+      }
     }
 
     #endregion 

@@ -47,6 +47,7 @@ namespace VPlayer.Core.ViewModels
     public string ImagePath => AlbumViewModel.Model?.AlbumFrontCoverFilePath;
     public bool IsPaused { get; set; }
     public string Name => Model.Name;
+    public string Lyrics => Model.Chartlyrics_Lyric;
 
     #region IsPlaying
 
@@ -190,6 +191,14 @@ namespace VPlayer.Core.ViewModels
       ArtistViewModel.IsInPlaylist = true;
     }
 
-    #endregion Methods
+    public void Update(Song song)
+    {
+      Model.Update(song);
+
+      RaisePropertyChanged(nameof(Name));
+      RaisePropertyChanged(nameof(Lyrics));
+    }
+
+    #endregion 
   }
 }

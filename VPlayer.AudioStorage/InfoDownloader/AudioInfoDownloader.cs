@@ -22,9 +22,16 @@ using Windows.Storage.FileProperties;
 using Artist = Hqub.MusicBrainz.API.Entities.Artist;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Net.Http;
+using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 using Windows.Media;
 using Windows.ApplicationModel.Contacts;
+using Windows.System;
 using VCore.Helpers;
+using VPlayer.AudioStorage.InfoDownloader.Clients.Chartlyrics;
+using Xml2CSharp;
 
 namespace VPlayer.AudioStorage.InfoDownloader
 {
@@ -58,7 +65,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     #region Properties
 
-    public Subject<object> ItemUpdated { get; } = new Subject<object>();
+    public ReplaySubject<object> ItemUpdated { get; } = new ReplaySubject<object>(10);
 
     #endregion Properties
 
@@ -161,7 +168,8 @@ namespace VPlayer.AudioStorage.InfoDownloader
       return audioInfo;
     }
 
-    private Semaphore semaphore = new Semaphore(15,15);
+    private Semaphore semaphore = new Semaphore(15, 15);
+
     public void GetAudioInfosFromDirectory(string directoryPath, bool getSubDirectories = false)
     {
       try
@@ -672,10 +680,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
           Album newAlbum = null;
 
-          await Task.Run(async () =>
-          {
-            newAlbum = await UpdateAlbum(album);
-          });
+          await Task.Run(async () => { newAlbum = await UpdateAlbum(album); });
 
           apiExeed = true;
           return newAlbum;
@@ -706,6 +711,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
       return directory;
     }
+
     private string SaveAlbumCover(Album album, byte[] blob)
     {
       MemoryStream ms = new MemoryStream(blob);
@@ -1290,6 +1296,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
     #region Windows info methods
 
     private object mediaInfoBatton = new object();
+
     private void GetMediaInfoo()
     {
       lock (mediaInfoBatton)
@@ -1330,6 +1337,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
           sComm = System.Text.Encoding.Default.GetString(b, 97, 30);
           System.Console.WriteLine("Comment: " + sComm);
         }
+
         System.Console.WriteLine("Any   key   to   exit! ");
         System.Console.Read();
       }
@@ -1379,7 +1387,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
       {
         StorageFile file = AsyncHelpers.RunSync(() => StorageFile.GetFileFromPathAsync(path).AsTask());
         MusicProperties musicProperties = AsyncHelpers.RunSync(() => file.Properties.GetMusicPropertiesAsync().AsTask());
-        
+
         return musicProperties;
       }
       catch (Exception ex)
@@ -1441,9 +1449,82 @@ namespace VPlayer.AudioStorage.InfoDownloader
       SubdirectoryLoaded?.Invoke(this, e);
     }
 
+
     #endregion Methods
 
+    public async void UpdateSongLyrics(string artistName, string songName, Song song)
+    {
+      var url = $"http://api.chartlyrics.com/apiv1.asmx/SearchLyric?artist={artistName}&song={songName}";
+
+      var client = new HttpClient();
+      var resutl = await client.GetStringAsync(url);
+
+      var xmlNode = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n\n";
+
+      var validResult = resutl.Substring(xmlNode.Length - 1, resutl.Length - xmlNode.Length) + ">";
+
+      XmlDocument doc = new XmlDocument();
+      doc.LoadXml(validResult);
+
+      ArrayOfSearchLyricResult obj;
+
+      using (TextReader textReader = new StringReader(doc.OuterXml))
+      {
+        using (XmlTextReader reader = new XmlTextReader(textReader))
+        {
+          XmlSerializer serializer = new XmlSerializer(typeof(ArrayOfSearchLyricResult));
+          obj = (ArrayOfSearchLyricResult)serializer.Deserialize(reader);
+        }
+      }
 
 
+      var searchLyricResult = obj.SearchLyricResult.Where(x => !string.IsNullOrEmpty(x.Artist) && !string.IsNullOrEmpty(x.Song))
+        .OrderBy(x => x.Artist.LevenshteinDistance(artistName) + x.Song.LevenshteinDistance(songName));
+
+      var bestResult = searchLyricResult.FirstOrDefault();
+
+      if (bestResult != null && bestResult.Artist.Similarity(artistName, true) > 0.9 && bestResult.Song.Similarity(songName, true) > 0.9)
+      {
+
+        var lyricsUrl = $"http://api.chartlyrics.com/apiv1.asmx/GetLyric?lyricId={bestResult.LyricId}&lyricCheckSum={bestResult.LyricChecksum}";
+
+        var lyrics = await GetAttributes(lyricsUrl);
+
+        if (!string.IsNullOrEmpty(lyrics))
+        {
+          song.Chartlyrics_Lyric = lyrics;
+          song.Chartlyrics_LyricCheckSum = bestResult.LyricChecksum;
+          song.Chartlyrics_LyricId = bestResult.LyricId;
+
+          ItemUpdated.OnNext(song);
+        }
+      }
+    }
+
+    private async Task<string> GetAttributes(string url)
+    {
+      var client = new HttpClient();
+      var resutl = await client.GetStringAsync(url);
+
+      var xmlNode = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n\n";
+
+      var validResult = resutl.Substring(xmlNode.Length - 1, resutl.Length - xmlNode.Length) + ">";
+
+      XmlDocument doc = new XmlDocument();
+      doc.LoadXml(validResult);
+
+      GetLyricResult obj;
+
+      using (TextReader textReader = new StringReader(doc.OuterXml))
+      {
+        using (XmlTextReader reader = new XmlTextReader(textReader))
+        {
+          XmlSerializer serializer = new XmlSerializer(typeof(GetLyricResult));
+          obj = (GetLyricResult)serializer.Deserialize(reader);
+        }
+      }
+
+      return obj.Lyric;
+    }
   }
 }

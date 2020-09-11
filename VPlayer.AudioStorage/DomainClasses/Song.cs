@@ -33,6 +33,11 @@ namespace VPlayer.AudioStorage.DomainClasses
     public string MusicBrainzId { get; set; }
     public string Name { get; set; }
 
+    public string Chartlyrics_Lyric { get; set; }
+    public string Chartlyrics_LyricId { get; set; }
+    public string Chartlyrics_LyricCheckSum { get; set; }
+
+
     #endregion Properties
 
     #region Methods
@@ -40,6 +45,14 @@ namespace VPlayer.AudioStorage.DomainClasses
     public override string ToString()
     {
       return $"{Name}|{Album}";
+    }
+
+    public void Update(Song other)
+    {
+      Chartlyrics_Lyric = other.Chartlyrics_Lyric;
+      Chartlyrics_LyricCheckSum = other.Chartlyrics_LyricCheckSum;
+      Chartlyrics_LyricId = other.Chartlyrics_LyricId;
+
     }
 
     #endregion Methods

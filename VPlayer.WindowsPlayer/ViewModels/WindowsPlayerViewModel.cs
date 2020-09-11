@@ -8,18 +8,21 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using VCore;
 using VCore.Helpers;
 using VCore.ItemsCollections;
+using VCore.Modularity.Events;
 using VCore.Modularity.Interfaces;
 using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
 using Vlc.DotNet.Core;
 using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
@@ -48,6 +51,7 @@ namespace VPlayer.Player.ViewModels
     private readonly IVPlayerRegionProvider regionProvider;
     private readonly IEventAggregator eventAggregator;
     private readonly IStorageManager storageManager;
+    private readonly AudioInfoDownloader audioInfoDownloader;
     private int actualSongIndex = 0;
     private Dictionary<SongInPlayList, bool> playBookInCycle = new Dictionary<SongInPlayList, bool>();
     private HashSet<SongInPlayList> shuffleList = new HashSet<SongInPlayList>();
@@ -60,12 +64,15 @@ namespace VPlayer.Player.ViewModels
       IVPlayerRegionProvider regionProvider,
       IEventAggregator eventAggregator,
       IKernel kernel,
-      IStorageManager storageManager) : base(regionProvider)
+      IStorageManager storageManager,
+      AudioInfoDownloader audioInfoDownloader) : base(regionProvider)
     {
       this.regionProvider = regionProvider ?? throw new ArgumentNullException(nameof(regionProvider));
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
+      this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
       Kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
+      this.storageManager.ItemChanged.Where(x => x.Item.GetType() == typeof(Song)).Subscribe(SongChange);
     }
 
     #endregion Constructors
@@ -140,6 +147,7 @@ namespace VPlayer.Player.ViewModels
     public int Cycle { get; set; }
     public Playlist ActualSavedPlaylist { get; set; } = new Playlist() { Id = -1 };
     public bool IsPlayFnished { get; private set; }
+
     #endregion Properties
 
     #region Commands
@@ -299,6 +307,24 @@ namespace VPlayer.Player.ViewModels
 
     #endregion Initialize
 
+    private void SongChange(ItemChanged itemChanged)
+    {
+      if (itemChanged.Item is Song song)
+      {
+        var playlistSong = PlayList.SingleOrDefault(x => x.Model.Id == song.Id);
+
+        if (playlistSong != null)
+        {
+          playlistSong.Update(song);
+
+          if (ActualSong.Model.Id == song.Id)
+          {
+            ActualSong.Update(song);
+          }
+        }
+      }
+    }
+
     #region DeleteSongs
 
     private void DeleteSongs(DeleteEventArgs obj)
@@ -371,6 +397,33 @@ namespace VPlayer.Player.ViewModels
 
     #endregion PlaySongFromPlayList
 
+    #region PlayPlaylist
+
+    private void PlayPlaylist(PlaySongsEventData data, int? lastSongIndex = null)
+    {
+      ActualSavedPlaylist = data.GetModel<Playlist>();
+
+      ActualSavedPlaylist.LastPlayed = DateTime.Now;
+
+      if (lastSongIndex == null)
+      {
+        PlaySongs(data.Songs, false);
+      }
+      else
+      {
+        PlaySongs(data.Songs, false, lastSongIndex.Value);
+
+        if (data.SetPostion.HasValue)
+          MediaPlayer.Position = data.SetPostion.Value;
+      }
+
+
+      UpdatePlaylist();
+
+    }
+
+    #endregion
+
     #region PlaySongs
 
     private void PlaySongs(PlaySongsEventData data)
@@ -395,13 +448,11 @@ namespace VPlayer.Player.ViewModels
           SavePlaylist();
           break;
         case PlaySongsAction.PlayFromPlaylist:
-          ActualSavedPlaylist = storageManager.GetRepository<Playlist>().Single(x => x.Id == data.IdModel);
-          PlaySongs(data.Songs, false);
+          PlayPlaylist(data);
+
           break;
         case PlaySongsAction.PlayFromPlaylistLast:
-          ActualSavedPlaylist = storageManager.GetRepository<Playlist>().Single(x => x.Id == data.IdModel);
-          PlaySongs(data.Songs, false, ActualSavedPlaylist.LastSongIndex);
-          MediaPlayer.Position = data.SetPostion.Value;
+          PlayPlaylist(data, data.GetModel<Playlist>().LastSongIndex);
           break;
         default:
           throw new ArgumentOutOfRangeException();
@@ -453,6 +504,15 @@ namespace VPlayer.Player.ViewModels
               var location = new Uri(ActualSong.Model.DiskLocation);
 
               MediaPlayer.SetMedia(location);
+
+              Task.Run(() =>
+              {
+                if (string.IsNullOrEmpty(ActualSong.Lyrics) &&
+                    !string.IsNullOrEmpty(ActualSong.ArtistViewModel.Name))
+                {
+                  audioInfoDownloader.UpdateSongLyrics(ActualSong.ArtistViewModel.Name, ActualSong.Name, ActualSong.Model);
+                }
+              });
             }
           }
 
@@ -675,7 +735,8 @@ namespace VPlayer.Player.ViewModels
         PlaylistSongs = songs,
         LastSongElapsedTime = ActualSavedPlaylist.LastSongElapsedTime,
         LastSongIndex = ActualSavedPlaylist.LastSongIndex,
-        IsUserCreated = isUserCreated
+        IsUserCreated = isUserCreated,
+        LastPlayed = DateTime.Now
       };
 
       var success = storageManager.StoreData(entityPlayList, out var id);

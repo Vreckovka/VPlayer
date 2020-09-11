@@ -71,7 +71,7 @@
           <!--This will sort groups-->
           <componentModel:SortDescription PropertyName="IsUserCreated" Direction="Descending"/>
           <!--This will items-->
-          <componentModel:SortDescription PropertyName="Model.Created" Direction="Descending"/>
+          <componentModel:SortDescription PropertyName="LastPlayed" Direction="Descending"/>
         </CollectionViewSource.SortDescriptions>
 
         <CollectionViewSource.GroupDescriptions>
@@ -162,7 +162,7 @@
             </GridViewColumn>
             <GridViewColumn Width="200" Header="Name" DisplayMemberBinding="{Binding Name}"/>
             <GridViewColumn Width="150" Header="Last played" 
-                            DisplayMemberBinding="{Binding Model.Created}"/>
+                            DisplayMemberBinding="{Binding LastPlayed}"/>
             <GridViewColumn Width="150" Header="Hash" DisplayMemberBinding="{Binding Model.SongsInPlaylitsHashCode}"/>
           
             <GridViewColumn Width="95" Header="Song count" DisplayMemberBinding="{Binding Model.SongCount}"/>

@@ -64,7 +64,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     {
       if (itemChanged.Item is Song song)
       {
-        if (LibraryCollection.WasLoaded)
+        if (LibraryCollection.WasLoaded && song.Album != null)
         {
           var album = LibraryCollection.Items.Single(x => x.ModelId == song.Album.Id);
 
@@ -84,7 +84,6 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
               break;
 
             case Changed.Updated:
-              throw new NotImplementedException();
               break;
 
             default:

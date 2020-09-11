@@ -123,8 +123,15 @@ namespace VPlayer.AudioStorage.InfoDownloader
     /// <param name="s">The first string.</param>
     /// <param name="t">The second string.</param>
     /// <returns>A floating point value between 0.0 and 1.0</returns>
-    public static float Similarity(string s, string t)
+    public static float Similarity(this string s, string t, bool useAbsoluteString = false)
     {
+      if (useAbsoluteString)
+      {
+        s = s.ToLower().Replace(" ", string.Empty);
+        t = t.ToLower().Replace(" ", string.Empty);
+      }
+
+
       int maxLen = Math.Max(s.Length, t.Length);
 
       if (maxLen == 0)

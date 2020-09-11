@@ -107,6 +107,23 @@ namespace VPlayer.Library.ViewModels
 
     #endregion
 
+    #region LastPlayed
+
+    public DateTime LastPlayed
+    {
+      get { return Model.LastPlayed; }
+      set
+      {
+        if (value != Model.LastPlayed)
+        {
+          Model.LastPlayed = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #endregion
 
     public override void Update(Playlist updateItem)
@@ -119,9 +136,7 @@ namespace VPlayer.Library.ViewModels
 
     public virtual void RaisePropertyChanges()
     {
-      Random random = new Random();
-
-      Model.Name = "Pregenerovan" + random.Next(0, 1000);
+      RaisePropertyChanged(nameof(LastPlayed));
       RaisePropertyChanged(nameof(Name));
       RaisePropertyChanged(nameof(IsUserCreated));
     }
@@ -143,15 +158,7 @@ namespace VPlayer.Library.ViewModels
     {
       var data = GetSongsToPlay();
 
-      var e = new PlaySongsEventData()
-      {
-        PlaySongsAction = action,
-        Songs = data,
-        IsRepeat = IsRepeating,
-        IsShufle = IsShuffle,
-        SetPostion = Model.LastSongElapsedTime,
-        IdModel = Model.Id
-      };
+      var e = new PlaySongsEventData(data, action, IsShuffle, IsRepeating, Model.LastSongElapsedTime, Model);
 
       eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
     }

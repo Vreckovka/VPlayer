@@ -15,12 +15,53 @@ namespace VPlayer.Core.Events
 
   public class PlaySongsEventData
   {
-    public IEnumerable<SongInPlayList> Songs { get; set; }
-    public PlaySongsAction PlaySongsAction { get; set; }
-    public bool IsShufle { get; set; }
-    public bool IsRepeat { get; set; }
-    public float? SetPostion { get; set; }
-    public int IdModel { get; set; }
+    public PlaySongsEventData(
+      IEnumerable<SongInPlayList> songs,
+      PlaySongsAction playSongsAction, 
+      object model)
+
+    {
+      Songs = songs;
+      PlaySongsAction = playSongsAction;
+      Model = model;
+    }
+    public PlaySongsEventData(
+      IEnumerable<SongInPlayList> songs,
+      PlaySongsAction playSongsAction, 
+      bool isShufle, 
+      bool isRepeat,
+      float? setPostion,
+      object model)
+    {
+      PlaySongsAction = playSongsAction;
+      Songs = songs;
+      IsShufle = isShufle;
+      IsRepeat = isRepeat;
+      SetPostion = setPostion;
+      Model = model;
+   
+    }
+
+    public IEnumerable<SongInPlayList> Songs { get;  }
+    public PlaySongsAction PlaySongsAction { get; }
+    public bool IsShufle { get;  }
+    public bool IsRepeat { get;  }
+    public float? SetPostion { get;  }
+    public object Model { get; }
+
+    #region GetData
+
+    public TData GetModel<TData>() where TData : class
+    {
+      if (Model is TData data)
+      {
+        return data;
+      }
+
+      return null;
+    } 
+
+    #endregion
   }
 
   public class PlaySongsEvent : PubSubEvent<PlaySongsEventData>

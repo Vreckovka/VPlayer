@@ -16,6 +16,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     public float LastSongElapsedTime { get; set; }
     public int LastSongIndex { get; set; }
     public bool IsUserCreated { get; set; }
+    public DateTime LastPlayed { get; set; }
 
     public void Update(Playlist other)
     {
@@ -25,6 +26,7 @@ namespace VPlayer.AudioStorage.DomainClasses
       LastSongElapsedTime = other.LastSongElapsedTime;
       LastSongIndex = other.LastSongIndex;
       IsUserCreated = other.IsUserCreated;
+      LastPlayed = other.LastPlayed;
     }
   }
 }

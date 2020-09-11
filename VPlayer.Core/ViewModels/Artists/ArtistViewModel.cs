@@ -34,6 +34,7 @@ namespace VPlayer.Core.ViewModels.Artists
     private readonly IStorageManager storage;
     private readonly IViewModelsFactory viewModelsFactory;
     private readonly IVPlayerRegionProvider ivPlayerRegionProvider;
+    string albumCoverPath = null;
 
     #endregion Fields
 
@@ -62,11 +63,17 @@ namespace VPlayer.Core.ViewModels.Artists
 
     #region Methods
 
+    #region GetSongsToPlay
+
     public override IEnumerable<SongInPlayList> GetSongsToPlay()
     {
       var songs = storage.GetRepository<Artist>().Include(x => x.Albums.Select(y => y.Songs)).Where(x => x.Id == Model.Id).ToList();
       return songs.SelectMany(x => x.Albums.SelectMany(y => y.Songs)).Select(x => viewModelsFactory.Create<SongInPlayList>(x));
     }
+
+    #endregion
+
+    #region Update
 
     public override void Update(Artist updateItem)
     {
@@ -76,7 +83,7 @@ namespace VPlayer.Core.ViewModels.Artists
 
         if (Model.AlbumIdCover != updateItem.AlbumIdCover)
         {
-          albumCover = null;
+          albumCoverPath = null;
           Model.AlbumIdCover = updateItem.AlbumIdCover;
         }
 
@@ -86,31 +93,39 @@ namespace VPlayer.Core.ViewModels.Artists
       }
     }
 
+    #endregion
+
+    #region OnDetail
+
     protected override void OnDetail()
     {
       ivPlayerRegionProvider.ShowArtistDetail(this);
     }
 
-    private byte[] albumCover = null;
+    #endregion
+
+    #region GetArtistCover
+
     private string GetArtistCover()
     {
-      //if (Model.AlbumIdCover != null && albumCover == null)
-      //{
-      //  var album = storage.GetRepository<Album>().Where(x => x.Id == Model.AlbumIdCover).Single();
-      //  albumCover = album.AlbumFrontCoverFilePath;
-      //  return albumCover;
-      //}
-      //else if (albumCover != null)
-      //{
-      //  return albumCover;
-      //}
-      //else
-      //  return Model.ArtistCover != null ? Model.ArtistCover : GetEmptyImage();
+      if (!string.IsNullOrEmpty(albumCoverPath))
+      {
+        return albumCoverPath;
+      }
+      else if (Model.AlbumIdCover != null && albumCoverPath == null)
+      {
+        var album = storage.GetRepository<Album>().Single(x => x.Id == Model.AlbumIdCover);
 
+        albumCoverPath = album.AlbumFrontCoverFilePath;
 
-      return null;
+        return albumCoverPath;
+      }
+      else
+        return Model.ArtistCover != null ? Model.ArtistCover : GetEmptyImage();
     }
 
-    #endregion Methods
+    #endregion
+
+    #endregion 
   }
 }
