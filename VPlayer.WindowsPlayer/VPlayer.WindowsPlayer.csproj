@@ -151,6 +151,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Behaviors\AutoScrollBehavior.cs" />
     <Compile Include="Behaviors\SliderValueChangedManualy.cs" />
     <Compile Include="Converters.cs" />
     <Compile Include="Design\PlayerDesingViewModel.cs" />

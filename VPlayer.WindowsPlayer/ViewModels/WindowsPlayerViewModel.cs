@@ -5,10 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -79,7 +81,24 @@ namespace VPlayer.Player.ViewModels
 
     #region Properties
 
-    public SongInPlayList ActualSong { get; private set; }
+    #region ActualSong
+
+    private SongInPlayList actualSong;
+    public SongInPlayList ActualSong
+    {
+      get { return actualSong; }
+      private set
+      {
+        if (value != actualSong)
+        {
+          actualSong = value;
+          actualSongSubject.OnNext(PlayList.IndexOf(actualSong));
+          RaisePropertyChanged();
+        }
+      }
+    } 
+    #endregion
+
     public override bool IsPlaying { get; protected set; }
 
     public override bool CanPlay
@@ -147,6 +166,17 @@ namespace VPlayer.Player.ViewModels
     public int Cycle { get; set; }
     public Playlist ActualSavedPlaylist { get; set; } = new Playlist() { Id = -1 };
     public bool IsPlayFnished { get; private set; }
+
+    #region ActualSongChanged
+
+    private ReplaySubject<int> actualSongSubject = new ReplaySubject<int>(1);
+
+    public IObservable<int> ActualSongChanged
+    {
+      get { return actualSongSubject.AsObservable(); }
+    }
+
+    #endregion
 
     #endregion Properties
 
@@ -304,6 +334,7 @@ namespace VPlayer.Player.ViewModels
       });
     }
 
+   
 
     #endregion Initialize
 
@@ -602,6 +633,8 @@ namespace VPlayer.Player.ViewModels
         SetActualSong(actualSongIndex);
 
         if (IsPlaying || forcePlay)
+          Play();
+        else if (!IsPlaying && songIndex != null)
           Play();
         else
           ActualSong.IsPaused = true;

@@ -27,7 +27,7 @@
   </UserControl.Resources>
 
   <Grid>
- 
+
     <Grid.RowDefinitions>
       <RowDefinition Height="*" />
       <RowDefinition Height="auto" />
@@ -100,7 +100,7 @@
           <Image Name="Image"
                Source="{Binding ActualSong.ImagePath}"
                Stretch="Uniform" />
-       
+
         </Grid>
 
         <Border.Effect>
@@ -138,7 +138,7 @@
       <Border
               Grid.Row="1"  Background="#95000000"       
               Margin="0 0 0 -2"
-              > 
+              >
         <Grid >
           <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden" >
             <TextBox Text="{Binding ActualSong.Lyrics, Mode=OneWay}"
@@ -293,7 +293,7 @@
       </Grid>
     </Grid>
 
-   
+
 
     <GridSplitter Grid.RowSpan="3"
                   Grid.Column="2"
@@ -332,15 +332,19 @@
                 ItemTemplate="{StaticResource SoundTrackTemplate}"
                 ItemsSource="{Binding PlayList}"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+               ScrollViewer.CanContentScroll="False"
                 Style="{StaticResource WindowsPlayerSongs}">
         <i:Interaction.Triggers>
           <i:EventTrigger EventName="MouseDoubleClick">
             <i:InvokeCommandAction Command="{Binding NextSong}" CommandParameter="{Binding ElementName=ListView_Tracks, Path=SelectedItem}" />
           </i:EventTrigger>
         </i:Interaction.Triggers>
+        <i:Interaction.Behaviors>
+          <behaviors:AutoScrollBehavior Kernel="{Binding Kernel}" />
+        </i:Interaction.Behaviors>
       </ListView>
     </Grid>
-  
+
 
     <Slider x:Name="Slider_Time"
             Grid.Row="1"
