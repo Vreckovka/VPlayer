@@ -707,8 +707,8 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="Button">
-          <Grid Width="20"
-                Height="20"
+          <Grid Width="22"
+                Height="22"
                 Background="{TemplateBinding Background}">
             <Path Name="PlaySign"
                   HorizontalAlignment="Center"
@@ -722,14 +722,13 @@
 
             <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem, Mode=FindAncestor}, Path=IsMouseOver}" Value="True">
               <DataTrigger.EnterActions>
-                <RemoveStoryboard BeginStoryboardName="ExitLabel" />
+                <!--<RemoveStoryboard BeginStoryboardName="ExitLabel" />-->
                 <BeginStoryboard Name="EnterBlackOverlay">
                   <Storyboard>
                     <ColorAnimation Storyboard.TargetName="PlaySign"
                                     Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                    From="{StaticResource 30_DefaultWhiteColor}"
-                                    To="{StaticResource 50_DefaultWhiteColor}"
-                                    Duration="0:0:0.2" />
+                                    To="{StaticResource 30_DefaultWhiteColor}"
+                                    Duration="0:0:0.1" />
                   </Storyboard>
                 </BeginStoryboard>
               </DataTrigger.EnterActions>
@@ -738,15 +737,14 @@
                 <RemoveStoryboard BeginStoryboardName="EnterBlackOverlay" />
                 <RemoveStoryboard BeginStoryboardName="EnterColorOverlay" />
                 <RemoveStoryboard BeginStoryboardName="ExitColorOverlay" />
-                <BeginStoryboard Name="ExitLabel">
+                <!--<BeginStoryboard Name="ExitLabel">
                   <Storyboard>
                     <ColorAnimation Storyboard.TargetName="PlaySign"
                                     Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                    From="{StaticResource 50_DefaultWhiteColor}"
                                     To="Transparent"
-                                    Duration="0:0:0.2" />
+                                    Duration="0:0:0.1" />
                   </Storyboard>
-                </BeginStoryboard>
+                </BeginStoryboard>-->
               </DataTrigger.ExitActions>
             </DataTrigger>
 
@@ -756,7 +754,7 @@
                   <Storyboard>
                     <ColorAnimation Storyboard.TargetName="PlaySign"
                                     Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                    To="{StaticResource 85_DefaultWhiteColor}"
+                                    To="#24140c"
                                     Duration="0:0:0.2" />
 
                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaySign"
@@ -789,7 +787,7 @@
                   <Storyboard>
                     <ColorAnimation Storyboard.TargetName="PlaySign"
                                     Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                    To="{StaticResource 85_DefaultWhiteColor}"
+                                    To="#24140c"
                                     Duration="0:0:0.2" />
 
                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaySign"
@@ -813,33 +811,72 @@
               </DataTrigger.ExitActions>
             </DataTrigger>
 
-            <Trigger Property="IsMouseOver" Value="true">
-              <Setter Property="Cursor" Value="Hand" />
-              <Trigger.EnterActions>
+            <MultiDataTrigger>
+              <MultiDataTrigger.Conditions>
+                <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsMouseOver}" Value="True" />
+                <Condition Binding="{Binding Path=IsPlaying}" Value="True"/>
+              </MultiDataTrigger.Conditions>
+
+              <MultiDataTrigger.EnterActions>
+                  <RemoveStoryboard BeginStoryboardName="ExitColorOverlay1" />
+                  <BeginStoryboard Name="EnterColorOverlay1">
+                    <Storyboard>
+                      <ColorAnimation Storyboard.TargetName="PlaySign"
+                                      Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                      To="#421a04"
+                                      Duration="0:0:0.1" />
+                    </Storyboard>
+                  </BeginStoryboard>
+              </MultiDataTrigger.EnterActions>
+
+                <MultiDataTrigger.ExitActions>
+                  <RemoveStoryboard BeginStoryboardName="EnterColorOverlay1" />
+                  <BeginStoryboard Name="ExitColorOverlay1">
+                    <Storyboard>
+                      <ColorAnimation Storyboard.TargetName="PlaySign"
+                                      Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                      To="#24140c"
+                                      Duration="0:0:0.1" />
+                    </Storyboard>
+                  </BeginStoryboard>
+                </MultiDataTrigger.ExitActions>
+
+            </MultiDataTrigger>
+
+            <MultiDataTrigger>
+              <MultiDataTrigger.Conditions>
+                <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsMouseOver}" Value="True" />
+                <Condition Binding="{Binding Path=IsPlaying}" Value="false"/>
+              </MultiDataTrigger.Conditions>
+
+              <MultiDataTrigger.EnterActions>
                 <RemoveStoryboard BeginStoryboardName="ExitColorOverlay" />
                 <BeginStoryboard Name="EnterColorOverlay">
                   <Storyboard>
                     <ColorAnimation Storyboard.TargetName="PlaySign"
                                     Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                    From="{StaticResource 50_DefaultWhiteColor}"
-                                    To="{StaticResource 200_DefaultWhiteColor}"
+                                    To="{StaticResource DefaultRedColor}"
                                     Duration="0:0:0.1" />
                   </Storyboard>
                 </BeginStoryboard>
-              </Trigger.EnterActions>
+              </MultiDataTrigger.EnterActions>
 
-              <Trigger.ExitActions>
+              <MultiDataTrigger.ExitActions>
                 <RemoveStoryboard BeginStoryboardName="EnterColorOverlay" />
                 <BeginStoryboard Name="ExitColorOverlay">
                   <Storyboard>
                     <ColorAnimation Storyboard.TargetName="PlaySign"
                                     Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                    From="{StaticResource 200_DefaultWhiteColor}"
-                                    To="{StaticResource 50_DefaultWhiteColor}"
+                                    To="{StaticResource 30_DefaultWhiteColor}"
                                     Duration="0:0:0.1" />
                   </Storyboard>
                 </BeginStoryboard>
-              </Trigger.ExitActions>
+              </MultiDataTrigger.ExitActions>
+
+            </MultiDataTrigger>
+
+            <Trigger Property="IsMouseOver" Value="true">
+              <Setter Property="Cursor" Value="Hand" />
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>

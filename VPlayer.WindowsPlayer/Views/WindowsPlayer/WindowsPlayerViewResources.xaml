@@ -51,6 +51,7 @@
                     <Setter Property="VerticalAlignment" Value="Center" />
                     <Setter Property="TextTrimming" Value="CharacterEllipsis" />
                     <Setter Property="Text" Value="{Binding Name}" />
+                    <Setter Property="Foreground" Value="#decfca"/>
                   </Style>
                 </Grid.Resources>
                 <Grid.RowDefinitions>
@@ -58,26 +59,34 @@
                   <RowDefinition />
                 </Grid.RowDefinitions>
                 <TextBlock Name="NonPlayingTextBlock"
-                           FontSize="14"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           FontFamily="{StaticResource Roboto}"
                            Style="{StaticResource ListViewTextBlockStyle}">
                 
                   <i:Interaction.Behaviors>
-                    <text:PanningTextWithFontSizeBehavior BiggerFontSize="15"
-                                                          Container="{Binding ElementName=Container}"
+                    <text:PanningTextWithFontSizeBehavior BiggerFontSize="21"
+                                                          Container="{Binding ElementName=Bd}"
                                                           IgnoreSizeAnimation="{Binding IsPlaying}"
                                                           IsMouseOverRelativeToContainer="True" />
                   </i:Interaction.Behaviors>
                 </TextBlock>
 
-                <TextBlock Name="PlayingTextBlock">
+                <TextBlock Name="PlayingTextBlock" FontFamily="{StaticResource Roboto}" FontWeight="Bold">
                   <TextBlock.Style>
                     <Style BasedOn="{StaticResource ListViewTextBlockStyle}" TargetType="TextBlock">
-                      <Setter Property="FontSize" Value="15" />
+                      <Setter Property="FontSize" Value="21" />
                       <Setter Property="Visibility" Value="Hidden" />
+
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                          <Setter Property="Foreground" Value="#24140c" />
+                        </DataTrigger>
+                      </Style.Triggers>
                     </Style>
                   </TextBlock.Style>
                   <i:Interaction.Behaviors>
-                    <text:PanningTextWithFontSizeBehavior BiggerFontSize="19"
+                    <text:PanningTextWithFontSizeBehavior BiggerFontSize="21"
                                                           Container="{Binding ElementName=Container}"
                                                           IgnoreSizeAnimation="{Binding IsPlaying}"
                                                           IsMouseOverRelativeToContainer="True" />
@@ -85,16 +94,47 @@
                 </TextBlock>
 
 
-                <TextBlock Grid.Row="1" FontSize="11">
-                  <Run Text="{Binding ArtistViewModel.Name, Mode=OneWay}" />
-                  <Run Text="{Binding AlbumViewModel.Name, Mode=OneWay, StringFormat={}({0})}" />
+                <TextBlock Grid.Row="1" 
+                           FontSize="12" 
+                           FontFamily="{StaticResource Roboto}" 
+                           >
+                  <Run Text="{Binding ArtistViewModel.Name, Mode=OneWay}" FontSize="13">
+                    <Run.Style>
+                      <Style TargetType="Run">
+                        <Setter Property="Foreground" Value="#f2e0cb" />
+                        <Setter Property="FontWeight" Value="Bold" />
+                        <Style.Triggers>
+                          <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                            <!--<Setter Property="Foreground" Value="#e8c59e" />-->
+                            <Setter Property="Foreground" Value="#24140c" />
+                            <Setter Property="FontWeight" Value="Bold" />
+                          </DataTrigger>
+                        </Style.Triggers>
+                      </Style>
+                    </Run.Style>
+                  </Run>
+                  <Run Text="{Binding AlbumViewModel.Name, Mode=OneWay, StringFormat={}({0})}">
+                    <Run.Style>
+                      <Style TargetType="Run">
+                        <Setter Property="Foreground" Value="#edfffa" />
+                        <Setter Property="FontWeight" Value="DemiBold" />
+                        <Style.Triggers>
+                          <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                            <!--<Setter Property="Foreground" Value="White" />-->
+                            <Setter Property="Foreground" Value="#24140c" />
+                          </DataTrigger>
+                        </Style.Triggers>
+                      </Style>
+                    </Run.Style>
+                  </Run>
 
                   <TextBlock.Style>
                     <Style TargetType="TextBlock">
-                      <Setter Property="Foreground" Value="{StaticResource 50_WhiteTransparentBrush}" />
-                      <Style.Triggers>
+                      <Setter Property="Foreground" Value="{StaticResource OrangeBrush}" />
+                      <Setter Property="Opacity" Value="0.35"/>
+                        <Style.Triggers>
                         <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-                          <Setter Property="Foreground" Value="{StaticResource 100_WhiteTransparentBrush}" />
+                          <Setter Property="Opacity" Value="0.75" />
                         </DataTrigger>
                       </Style.Triggers>
                     </Style>
@@ -106,18 +146,22 @@
                          Margin="0,5,0,0"
                          HorizontalAlignment="Right"
                          VerticalAlignment="Top"
-                         Text="{Binding Duration, Converter={converters:TimeConverter TimeType=Second}}" />
-
-              <!--<Image Source="{Binding Image}" 
-                     Grid.Row="0" 
-                     Grid.RowSpan="2"
-                     
-                     Grid.ColumnSpan="4" Stretch="UniformToFill"
-                     Opacity="0.05">
-                <Image.Effect>
-                  <BlurEffect Radius="10"/>
-                </Image.Effect>
-              </Image>-->
+                         FontWeight="Bold"
+                         FontSize="13"
+                         FontFamily="{StaticResource Roboto}"
+                         Text="{Binding Duration, Converter={converters:TimeConverter TimeType=Second}}" >
+                <TextBlock.Style>
+                  <Style TargetType="TextBlock">
+                    <Setter Property="Opacity" Value="0.35"/>
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                        <Setter Property="Opacity" Value="0.75" />
+                         <Setter Property="Foreground" Value="Black" />
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </TextBlock.Style>
+              </TextBlock>
             </Grid>
           </Border>
           <ControlTemplate.Triggers>
@@ -132,7 +176,7 @@
                 <BeginStoryboard Name="As">
                   <Storyboard>
                     <ColorAnimation Storyboard.TargetProperty="Background.Color"
-                                    To="#15b3adcd"
+                                    To="#07cfbeb8"
                                     Duration="0:0:.10" />
 
                     <ColorAnimation Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)"
@@ -159,7 +203,7 @@
                 <BeginStoryboard x:Name="A">
                   <Storyboard>
                     <ColorAnimation Storyboard.TargetProperty="Background.Color"
-                                    To="#15FFFFFF"
+                                    To="#15cfbeb8"
                                     Duration="0:0:0:0.2" />
 
                     <ColorAnimation Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)"
@@ -195,15 +239,15 @@
                                     To="{StaticResource 235_DefaultWhiteColor}"
                                     Duration="0:0:0:0.2" />
                     <ColorAnimation Storyboard.TargetProperty="Background.Color"
-                                    To="#dafe2754"
+                                    To="#decfca"
                                     Duration="0:0:0:0.2" />
                     <DoubleAnimation Storyboard.TargetName="PlayingTextBlock"
                                      Storyboard.TargetProperty="(TextBlock.FontSize)"
-                                     To="19"
+                                     To="21"
                                      Duration="0:0:0:0.2" />
                     <DoubleAnimation Storyboard.TargetName="DurationTextBlock"
                                      Storyboard.TargetProperty="(TextBlock.FontSize)"
-                                     To="15"
+                                     To="16"
                                      Duration="0:0:0:0.2" />
 
                   </Storyboard>

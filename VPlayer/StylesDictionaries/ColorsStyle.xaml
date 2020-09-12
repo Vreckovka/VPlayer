@@ -11,7 +11,8 @@
     <Color x:Key="DefaultRedTransparentColor" R="254" G="39" B="84" A="50" />
     <Color x:Key="DefaultWhiteColor" >#f9fdff</Color>
     <Color x:Key="OrangeColor">#f57542</Color>
-  <Color x:Key="YellowColor">#edd209</Color>
+
+  <Color x:Key="YellowColor">#fec827</Color>
   <Color x:Key="DefaultRedColorDim">#db515a</Color>
 
     <Color x:Key="235_DefaultWhiteColor" R="255" G="255" B="255" A="235" />

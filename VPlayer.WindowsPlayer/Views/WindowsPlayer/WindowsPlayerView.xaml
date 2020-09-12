@@ -136,18 +136,24 @@
       </Grid>
 
       <Border
-              Grid.Row="1"  Background="#80000000"       
+              Grid.Row="1"  Background="#95000000"       
               Margin="0 0 0 -2"
               > 
         <Grid >
-          <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
+          <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden" >
             <TextBox Text="{Binding ActualSong.Lyrics, Mode=OneWay}"
                      FontSize="24"
                      HorizontalContentAlignment="Center"
                      HorizontalAlignment="Center"
                      Foreground="{StaticResource YellowBrush}"
+                     FontFamily="{StaticResource Roboto}"
                      Padding="0 15 0 15"
-                     IsReadOnly="True"/>
+                     FontWeight="DemiBold"
+                     IsReadOnly="True">
+              <TextBox.Effect>
+                <DropShadowEffect BlurRadius="0.05" ShadowDepth="5" RenderingBias="Quality" ></DropShadowEffect>
+              </TextBox.Effect>
+            </TextBox>
           </ScrollViewer>
         </Grid>
       </Border>
@@ -218,14 +224,19 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     ClipToBounds="True">
-          <TextBlock Margin="0,0,0,0"
-                     FontSize="35"
-                     Foreground="#FFFFFF"
+          <TextBox Margin="0,0,0,0"
+                     FontSize="43"
+                     Foreground="#f7ede1"
                      Name="NameTxt"
-                     Text="{Binding ActualSong.Name}"
-                     FontFamily="{StaticResource Roboto}">
-            <TextBlock.Style>
-              <Style TargetType="TextBlock">
+                     Text="{Binding ActualSong.Name, Mode=OneWay}"
+                     FontFamily="{StaticResource Roboto}"
+                     FontWeight="Bold"
+                     IsReadOnly="True"
+                     BorderThickness="0"
+                     >
+
+            <TextBox.Style>
+              <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
                 <Setter Property="HorizontalAlignment" Value="Center" />
                 <Style.Triggers>
                   <DataTrigger Value="True">
@@ -239,23 +250,25 @@
                   </DataTrigger>
                 </Style.Triggers>
               </Style>
-            </TextBlock.Style>
-            <TextBlock.Effect>
+            </TextBox.Style>
+            <TextBox.Effect>
               <DropShadowEffect BlurRadius="2" ShadowDepth="3" />
-            </TextBlock.Effect>
+            </TextBox.Effect>
 
-            <i:Interaction.Behaviors>
+            <!--<i:Interaction.Behaviors>
               <text:PanningTextWithFontSizeBehavior BiggerFontSize="35"
                                                     Container="{Binding ElementName=Container}"
                                                     IgnoreSizeAnimation="{Binding IsPlaying}"
                                                     IsMouseOverRelativeToContainer="True" />
-            </i:Interaction.Behaviors>
-          </TextBlock>
+            </i:Interaction.Behaviors>-->
+          </TextBox>
 
           <TextBlock HorizontalAlignment="Center"
                      FontFamily="{StaticResource Roboto}"
-                     FontSize="16"
-                     Foreground="#AAEFEFDF">
+                     FontWeight="DemiBold"
+                     FontSize="15"
+                     Opacity="0.5"
+                     Foreground="#f2e0cb">
             <Run Text="{Binding ActualSong.ArtistViewModel.Name, Mode=OneWay}" />
             <Run Text="{Binding ActualSong.AlbumViewModel.Name, Mode=OneWay, StringFormat={}({0})}" />
 
@@ -337,7 +350,8 @@
             Maximum="1"
             Grid.Column="0"
             Grid.ColumnSpan="2"
-            Value="{Binding ActualSong.ActualPosition}">
+            Value="{Binding ActualSong.ActualPosition}"
+            >
       <i:Interaction.Behaviors>
         <behaviors:SliderValueChangedManualy Kernel="{Binding Kernel}" Duration="{Binding ActualSong.Duration}" />
       </i:Interaction.Behaviors>

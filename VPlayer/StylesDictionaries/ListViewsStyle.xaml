@@ -22,6 +22,9 @@
     <Setter Property="ScrollViewer.CanContentScroll" Value="true" />
     <Setter Property="VerticalContentAlignment" Value="Center" />
     <Setter Property="OverridesDefaultStyle" Value="True" />
+    <Setter Property="FontWeight" Value="Bold"/>
+    <Setter Property="FontSize" Value="14"/>
+    <Setter Property="FontFamily" Value="{StaticResource Roboto}"/>
     <Setter Property="ItemContainerStyle">
       <Setter.Value>
         <Style TargetType="ListViewItem">
@@ -36,7 +39,7 @@
                         Background="{TemplateBinding Background}"
                         SnapsToDevicePixels="true">
                   <ContentPresenter Margin="{TemplateBinding Margin}"
-                                    HorizontalAlignment="Center"
+                                    HorizontalAlignment="Left"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                     Content="{Binding Header}"
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
