@@ -141,7 +141,7 @@
                   <controls:ButtonWithIcon Content="Fresh" IconPathStyle="{StaticResource PlaySign}" 
                                            Height="30" 
                                            IconHoverColor="{StaticResource DefaultRedColor}"
-                                           IconDefaultBrush="#50db515a"
+                                           IconDefaultColor="#50db515a"
                                            Command="{Binding Play}"
                                            CommandParameter="{x:Static events:PlaySongsAction.PlayFromPlaylist}"/>
                 </DataTemplate>
@@ -153,7 +153,7 @@
                   <controls:ButtonWithIcon Content="Last" 
                                            IconPathStyle="{StaticResource PlaySign}" 
                                            Height="30"
-                                           IconDefaultBrush="#50f5936c"
+                                           IconDefaultColor="#50f5936c"
                                            IconHoverColor="{StaticResource OrangeColor}"
                                            Command="{Binding Play}"
                                            CommandParameter="{x:Static events:PlaySongsAction.PlayFromPlaylistLast}"/>

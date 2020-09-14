@@ -13,7 +13,6 @@
     <Setter Property="Padding" Value="0" />
     <Setter Property="VerticalContentAlignment" Value="Stretch"/>
     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-    <Setter Property="IconDefaultBrush" Value="{StaticResource 85_WhiteTransparentBrush}"/>
     <Setter Property="IconDefaultColor" Value="{StaticResource 85_DefaultWhiteColor}"/>
     <Setter Property="Template">
       <Setter.Value>
@@ -34,7 +33,7 @@
               <Path Width="{TemplateBinding IconWidth}" 
                     Height="{TemplateBinding IconHeight}"
                     Style="{TemplateBinding IconPathStyle}" 
-                    Fill="{TemplateBinding IconDefaultBrush}" 
+                    Fill="{TemplateBinding IconBrush}" 
                     Name="ButtonIcon"
                     Margin="0 0 5 0"/>
               <ContentPresenter Grid.Column="1" VerticalAlignment="Center" />
