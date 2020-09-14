@@ -192,7 +192,8 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics
         }
         else
         {
-          return TimeSpan.Parse(item);
+          if (TimeSpan.TryParse(item, out var formatProvider))
+            return formatProvider;
         }
       }
 
@@ -246,9 +247,9 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics
       var list = new List<LRCLyricLine>();
       if (!string.IsNullOrEmpty(line))
       {
-        var split = line.Split(']');
+        var split = line.Split(']').ToList();
 
-        if (split.Length == 2)
+        if (split.Count == 2)
         {
           var timeStamp = split[0].Substring(1, split[0].Length - 1);
           var text = split[1];
@@ -262,16 +263,31 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics
         }
         else
         {
-          var timeStamps = split.Where(x => !string.IsNullOrEmpty(x) && x[0] == '[').Select(x => x.Substring(1, x.Length - 1)).ToList();
+          var timeStamps = split.Where(x => !string.IsNullOrEmpty(x) && x[0] == '[' && IsTimestamp(x + "]")).Select(x => x).ToList();
 
-          var text = split.SingleOrDefault(x => !string.IsNullOrEmpty(x) && x[0] != '[');
+          string text = null;
+
+          if (timeStamps.Count > 0)
+          {
+            var textIndex = split.IndexOf(timeStamps.Last()) + 1;
+            text = split[textIndex];
+
+            if (textIndex + 1 == split.Count - 1 && string.IsNullOrEmpty(split[textIndex + 1]))
+            {
+              text += "]";
+            }
+          }
+          else
+          {
+            text = split.FirstOrDefault();
+          }
 
           foreach (var timeStamp in timeStamps)
           {
             list.Add(new LRCLyricLine()
             {
               Text = text,
-              Timestamp = ParseTime(timeStamp),
+              Timestamp = ParseTime(timeStamp.Substring(1, timeStamp.Length - 1)),
               OriginalLine = line
             });
           }

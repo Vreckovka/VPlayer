@@ -50,12 +50,17 @@ namespace VPlayer.Library.ViewModels
 
     private readonly IViewModelsFactory viewModelsFactory;
     private readonly PlaylistsRepository playlistsRepository;
+    private readonly IRegionProvider regionProvider;
 
     #endregion
 
     #region Constructors
 
-    public PlaylistViewModel(Playlist model, IEventAggregator eventAggregator, IViewModelsFactory viewModelsFactory, PlaylistsRepository playlistsRepository) : base(model, eventAggregator)
+    public PlaylistViewModel(
+      Playlist model, 
+      IEventAggregator eventAggregator, 
+      IViewModelsFactory viewModelsFactory, 
+      PlaylistsRepository playlistsRepository) : base(model, eventAggregator)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.playlistsRepository = playlistsRepository ?? throw new ArgumentNullException(nameof(playlistsRepository));

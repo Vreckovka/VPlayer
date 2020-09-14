@@ -19,6 +19,7 @@ using VCore.Helpers;
 using VCore.ItemsCollections;
 using VCore.Modularity.Events;
 using VCore.Modularity.Interfaces;
+using VCore.Modularity.Navigation;
 using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
@@ -55,6 +56,7 @@ namespace VPlayer.Player.ViewModels
     private readonly IEventAggregator eventAggregator;
     private readonly IStorageManager storageManager;
     private readonly AudioInfoDownloader audioInfoDownloader;
+    private readonly INavigationProvider navigationProvider;
     private int actualSongIndex = 0;
     private Dictionary<SongInPlayList, bool> playBookInCycle = new Dictionary<SongInPlayList, bool>();
     private HashSet<SongInPlayList> shuffleList = new HashSet<SongInPlayList>();
@@ -68,12 +70,14 @@ namespace VPlayer.Player.ViewModels
       IEventAggregator eventAggregator,
       IKernel kernel,
       IStorageManager storageManager,
-      AudioInfoDownloader audioInfoDownloader) : base(regionProvider)
+      AudioInfoDownloader audioInfoDownloader,
+      INavigationProvider navigationProvider) : base(regionProvider)
     {
       this.regionProvider = regionProvider ?? throw new ArgumentNullException(nameof(regionProvider));
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
+      this.navigationProvider = navigationProvider ?? throw new ArgumentNullException(nameof(navigationProvider));
       Kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
       this.storageManager.ItemChanged.Where(x => x.Item.GetType() == typeof(Song)).Subscribe(SongChange);
     }
@@ -277,7 +281,7 @@ namespace VPlayer.Player.ViewModels
 
         PlayList.CollectionChanged += PlayList_CollectionChanged;
 
-       
+
 
         var currentAssembly = Assembly.GetEntryAssembly();
         var currentDirectory = new FileInfo(currentAssembly.Location).DirectoryName;
@@ -324,7 +328,6 @@ namespace VPlayer.Player.ViewModels
 
         MediaPlayer.Playing += (sender, e) =>
         {
-          ActualSavedPlaylist.LastSongIndex = actualSongIndex;
           ActualSong.IsPlaying = true;
           ActualSong.IsPaused = false;
           IsPlaying = true;
@@ -409,10 +412,10 @@ namespace VPlayer.Player.ViewModels
       eventPattern.EventArgs.AlbumViewModel.IsInPlaylist = false;
     }
 
-    
+
     private void ItemsAdded(EventPattern<SongInPlayList> eventPattern)
     {
-      
+
     }
 
     #endregion ItemsRemoved
@@ -467,6 +470,8 @@ namespace VPlayer.Player.ViewModels
 
     private void PlaySongs(PlaySongsEventData data)
     {
+      IsActive = true;
+
       if (ActualSavedPlaylist.Id > 0)
         UpdatePlaylist();
 
@@ -474,6 +479,8 @@ namespace VPlayer.Player.ViewModels
       {
         case PlaySongsAction.Play:
           PlaySongs(data.Songs);
+          SavePlaylist();
+
           break;
         case PlaySongsAction.Add:
           PlayList.AddRange(data.Songs);
@@ -558,7 +565,9 @@ namespace VPlayer.Player.ViewModels
 
               MediaPlayer.SetMedia(location);
 
-              Task.Run(async() =>
+
+
+              Task.Run(async () =>
               {
                 if (string.IsNullOrEmpty(ActualSong.Lyrics) && !string.IsNullOrEmpty(ActualSong.ArtistViewModel?.Name))
                 {
@@ -690,6 +699,12 @@ namespace VPlayer.Player.ViewModels
       ActualSong = PlayList[index];
       ActualSong.IsPlaying = true;
 
+      if (ActualSavedPlaylist != null)
+      {
+        ActualSavedPlaylist.LastSongIndex = PlayList.IndexOf(ActualSong);
+        UpdatePlaylist();
+      }
+
       shuffleList.Add(ActualSong);
     }
 
@@ -795,10 +810,11 @@ namespace VPlayer.Player.ViewModels
         LastPlayed = DateTime.Now
       };
 
-      var success = storageManager.StoreData(entityPlayList, out var id);
+      var success = storageManager.StoreData(entityPlayList, out var entityPlaylist);
+
+      entityPlayList.Update(entityPlaylist);
 
       ActualSavedPlaylist = entityPlayList;
-      ActualSavedPlaylist.Id = id;
 
       return success;
     }

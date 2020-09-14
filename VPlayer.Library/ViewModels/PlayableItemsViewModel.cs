@@ -27,7 +27,7 @@ namespace VPlayer.Library.ViewModels
     #region Fields
 
     protected readonly IStorageManager storageManager;
-    private readonly IViewModelsFactory viewModelsFactory;
+    protected readonly IViewModelsFactory viewModelsFactory;
 
     #endregion Fields
 

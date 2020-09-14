@@ -301,7 +301,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region Playlist methods
 
-    public bool StoreData(Playlist model, out int playlistIndex)
+    public bool StoreData(Playlist model, out Playlist entityModel)
     {
       var playlist = playlistsRepository.Context.Playlists.SingleOrDefault(x => x.SongsInPlaylitsHashCode == model.SongsInPlaylitsHashCode);
 
@@ -318,12 +318,12 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
         ActionIsDone.OnNext(Unit.Default);
 
-        playlistIndex = model.Id;
+        entityModel = model;
         return true;
       }
       else
       {
-        playlistIndex = playlist.Id;
+        entityModel = playlist;
         return false;
       }
 

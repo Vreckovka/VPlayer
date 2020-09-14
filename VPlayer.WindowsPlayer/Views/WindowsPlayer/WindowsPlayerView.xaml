@@ -62,6 +62,7 @@
                     Background="Transparent"
                     BorderThickness="0"
                     ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                     ScrollViewer.CanContentScroll="False">
             <ListView.Style>
               <Style TargetType="ListView">
@@ -72,15 +73,16 @@
                         <Setter.Value>
                           <ControlTemplate TargetType="{x:Type ListViewItem}">
                             <Border Margin="0">
-                              <TextBox Text="{Binding Text, Mode=OneWay}" >
+                              <TextBox Text="{Binding Text, Mode=OneWay}"  >
                                 <TextBox.Style>
-                                  <Style TargetType="TextBox" BasedOn="{StaticResource LyricsStyle}">
+                                  <Style TargetType="TextBox" BasedOn="{StaticResource LyricsStyle}" >
                                     <Style.Triggers>
                                       <DataTrigger Binding="{Binding IsActual}" Value="true">
-                                        <Setter Property="FontSize" Value="42"/>
+                                        <Setter Property="FontSize" Value="32"/>
                                         <Setter Property="Margin" Value="25"/>
                                         <Setter Property="Padding" Value="10"/>
                                         <Setter Property="Background" Value="#80000000"/>
+                                        <Setter Property="TextWrapping" Value="Wrap"/>
                                       </DataTrigger>
                                     </Style.Triggers>
                                   </Style>
@@ -392,7 +394,23 @@
       </Grid.RowDefinitions>
 
       <Grid Height="55">
-        <Button Content="Save playlist" HorizontalAlignment="Left" Command="{Binding SavePlaylistCommandCommand}"/>
+        <controls:ButtonWithIcon IconPathStyle="{StaticResource Playlist}"
+                                 Content="Save playlist" 
+                                 HorizontalAlignment="Left" 
+                                 Command="{Binding SavePlaylistCommandCommand}" 
+                                 Margin="10 0 0 0">
+          <controls:ButtonWithIcon.Style >
+            <Style TargetType="controls:ButtonWithIcon" BasedOn="{StaticResource {x:Type controls:ButtonWithIcon}}">
+              <Setter Property="IconDefaultColor" Value="{StaticResource 30_DefaultWhiteColor}"/>
+              <Setter Property="IconHoverColor" Value="{StaticResource YellowColor}"/>
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding ActualSavedPlaylist.IsUserCreated }" Value="True">
+                  <Setter Property="IconDefaultColor" Value="{StaticResource DefaultRedColor}"/>
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </controls:ButtonWithIcon.Style>
+        </controls:ButtonWithIcon>
       </Grid>
 
       <ListView x:Name="ListView_Tracks"

@@ -219,7 +219,13 @@ namespace VPlayer.Core.ViewModels
 
     public void OnRefresh()
     {
-      TryGetLRCLyrics();
+      if (!string.IsNullOrEmpty(Model.DiskLocation))
+      {
+        var lrc = audioInfoDownloader.TryUpdateSyncedLyrics(System.IO.Path.GetFileNameWithoutExtension(Model.DiskLocation), ArtistViewModel?.Name, Model);
+
+        if (lrc != null)
+          LRCFile = new LRCFileViewModel(lrc);
+      }
     }
 
 
