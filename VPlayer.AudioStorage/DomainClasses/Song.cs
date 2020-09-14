@@ -37,6 +37,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     public string Chartlyrics_LyricId { get; set; }
     public string Chartlyrics_LyricCheckSum { get; set; }
 
+    public string LRCLyrics { get; set; }
 
     #endregion Properties
 
@@ -52,7 +53,7 @@ namespace VPlayer.AudioStorage.DomainClasses
       Chartlyrics_Lyric = other.Chartlyrics_Lyric;
       Chartlyrics_LyricCheckSum = other.Chartlyrics_LyricCheckSum;
       Chartlyrics_LyricId = other.Chartlyrics_LyricId;
-
+      LRCLyrics = other.LRCLyrics;
     }
 
     #endregion Methods

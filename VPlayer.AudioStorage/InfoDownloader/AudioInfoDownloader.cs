@@ -31,7 +31,7 @@ using Windows.ApplicationModel.Contacts;
 using Windows.System;
 using VCore.Helpers;
 using VPlayer.AudioStorage.InfoDownloader.Clients.Chartlyrics;
-using Xml2CSharp;
+using VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics;
 
 namespace VPlayer.AudioStorage.InfoDownloader
 {
@@ -1449,117 +1449,49 @@ namespace VPlayer.AudioStorage.InfoDownloader
       SubdirectoryLoaded?.Invoke(this, e);
     }
 
-
-    #endregion Methods
-
-    public async void UpdateSongLyrics(string artistName, string songName, Song song)
+    public async Task UpdateSongLyricsAsync(string artistName, string songName, Song song)
     {
-      try
-      {
-        if (!string.IsNullOrEmpty(artistName) && !string.IsNullOrEmpty(artistName))
-        {
-          var url = $"http://api.chartlyrics.com/apiv1.asmx/SearchLyric?artist={artistName}&song={songName}";
+      var chartClient = new ChartLyricsClient();
 
-          var client = new HttpClient();
-          var resutl = await client.GetStringAsync(url);
+      var updatedSong = await chartClient.UpdateSongLyrics(artistName, songName, song);
 
-          var xmlNode = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n\n";
+      if (updatedSong != null)
+        ItemUpdated.OnNext(updatedSong);
 
-          var validResult = resutl.Substring(xmlNode.Length - 1, resutl.Length - xmlNode.Length) + ">";
-
-          XmlDocument doc = new XmlDocument();
-          doc.LoadXml(validResult);
-
-          ArrayOfSearchLyricResult obj;
-
-          using (TextReader textReader = new StringReader(doc.OuterXml))
-          {
-            using (XmlTextReader reader = new XmlTextReader(textReader))
-            {
-              XmlSerializer serializer = new XmlSerializer(typeof(ArrayOfSearchLyricResult));
-              obj = (ArrayOfSearchLyricResult)serializer.Deserialize(reader);
-            }
-          }
-
-
-          var searchLyricResult = obj.SearchLyricResult.Where(x => !string.IsNullOrEmpty(x.Artist) && !string.IsNullOrEmpty(x.Song))
-            .OrderBy(x => x.Artist.LevenshteinDistance(artistName) + x.Song.LevenshteinDistance(songName)).ToList();
-
-          var bestResult = searchLyricResult.FirstOrDefault(x => x.LyricChecksum != null);
-
-          if (bestResult != null)
-          {
-
-            bool isValid = bestResult.Artist.Similarity(artistName, true) > 0.9 && bestResult.Song.Similarity(songName, true) > 0.9;
-
-            if (!isValid)
-            {
-              isValid = bestResult.Artist.LevenshteinDistance(artistName) == 0 && bestResult.Song.Contains(songName);
-
-              if (!isValid)
-              {
-                isValid = bestResult.Artist.LevenshteinDistance(artistName) == 0 && bestResult.Song.Similarity(songName, true) > 0.5;
-              }
-            }
-
-            if (isValid)
-            {
-
-              var lyricsUrl = $"http://api.chartlyrics.com/apiv1.asmx/GetLyric?lyricId={bestResult.LyricId}&lyricCheckSum={bestResult.LyricChecksum}";
-
-              var lyrics = await GetAttributes(lyricsUrl);
-
-              if (!string.IsNullOrEmpty(lyrics))
-              {
-                song.Chartlyrics_Lyric = lyrics;
-                song.Chartlyrics_LyricCheckSum = bestResult.LyricChecksum;
-                song.Chartlyrics_LyricId = bestResult.LyricId;
-
-                ItemUpdated.OnNext(song);
-              }
-            }
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Logger.Logger.Instance.Log(ex);
-      }
     }
 
-
-    private async Task<string> GetAttributes(string url)
+    public LRCFile TryUpdateSyncedLyrics(string lrcFileName, string artistName, Song song)
     {
       try
       {
-        var client = new HttpClient();
-        var resutl = await client.GetStringAsync(url);
+        var client = new MiniLyricsClient();
 
-        var xmlNode = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n\n";
+        var updatedSong = client.UpdateSongWithLrc(lrcFileName, artistName, song, out var lRCFile);
 
-        var validResult = resutl.Substring(xmlNode.Length - 1, resutl.Length - xmlNode.Length) + ">";
-
-        XmlDocument doc = new XmlDocument();
-        doc.LoadXml(validResult);
-
-        GetLyricResult obj;
-
-        using (TextReader textReader = new StringReader(doc.OuterXml))
+        if (updatedSong != null)
         {
-          using (XmlTextReader reader = new XmlTextReader(textReader))
-          {
-            XmlSerializer serializer = new XmlSerializer(typeof(GetLyricResult));
-            obj = (GetLyricResult)serializer.Deserialize(reader);
-          }
+          ItemUpdated.OnNext(updatedSong);
         }
 
-        return obj.Lyric;
+        return lRCFile;
+
       }
       catch (Exception ex)
       {
-        Logger.Logger.Instance.Log(ex);
+        if (ex.Message.Contains("NOT FOUND LRC FILE FOR"))
+        {
+        }
+        else
+        {
+          Logger.Logger.Instance.Log(ex);
+        }
+        
         return null;
       }
     }
+
+
+    #endregion Methods
+
   }
 }

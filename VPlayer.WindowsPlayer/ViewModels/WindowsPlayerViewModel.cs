@@ -25,6 +25,7 @@ using VCore.ViewModels.Navigation;
 using Vlc.DotNet.Core;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
+using VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
@@ -96,7 +97,7 @@ namespace VPlayer.Player.ViewModels
           RaisePropertyChanged();
         }
       }
-    } 
+    }
     #endregion
 
     public override bool IsPlaying { get; protected set; }
@@ -272,8 +273,11 @@ namespace VPlayer.Player.ViewModels
         base.Initialize();
 
         PlayList.ItemRemoved.Subscribe(ItemsRemoved);
+        PlayList.ItemAdded.Subscribe(ItemsAdded);
 
         PlayList.CollectionChanged += PlayList_CollectionChanged;
+
+       
 
         var currentAssembly = Assembly.GetEntryAssembly();
         var currentDirectory = new FileInfo(currentAssembly.Location).DirectoryName;
@@ -334,8 +338,6 @@ namespace VPlayer.Player.ViewModels
       });
     }
 
-   
-
     #endregion Initialize
 
     private void SongChange(ItemChanged itemChanged)
@@ -348,7 +350,7 @@ namespace VPlayer.Player.ViewModels
         {
           playlistSong.Update(song);
 
-          if (ActualSong.Model.Id == song.Id)
+          if (ActualSong != null && ActualSong.Model.Id == song.Id)
           {
             ActualSong.Update(song);
           }
@@ -405,6 +407,12 @@ namespace VPlayer.Player.ViewModels
     {
       eventPattern.EventArgs.ArtistViewModel.IsInPlaylist = false;
       eventPattern.EventArgs.AlbumViewModel.IsInPlaylist = false;
+    }
+
+    
+    private void ItemsAdded(EventPattern<SongInPlayList> eventPattern)
+    {
+      
     }
 
     #endregion ItemsRemoved
@@ -492,6 +500,20 @@ namespace VPlayer.Player.ViewModels
       RaisePropertyChanged(nameof(CanPlay));
       IsShuffle = data.IsShufle;
       IsRepeate = data.IsRepeat;
+
+      Task.Run(async () =>
+      {
+        foreach (var song in PlayList)
+        {
+          if (string.IsNullOrEmpty(song.Lyrics) && !string.IsNullOrEmpty(song.ArtistViewModel?.Name))
+          {
+            await audioInfoDownloader.UpdateSongLyricsAsync(song.ArtistViewModel.Name, song.Name, song.Model);
+          }
+
+          song.TryGetLRCLyrics();
+        }
+      });
+
     }
 
     private void PlaySongs(IEnumerable<SongInPlayList> songs, bool savePlaylist = true, int songIndex = 0)
@@ -536,13 +558,14 @@ namespace VPlayer.Player.ViewModels
 
               MediaPlayer.SetMedia(location);
 
-              Task.Run(() =>
+              Task.Run(async() =>
               {
-                if (string.IsNullOrEmpty(ActualSong.Lyrics) &&
-                    !string.IsNullOrEmpty(ActualSong.ArtistViewModel.Name))
+                if (string.IsNullOrEmpty(ActualSong.Lyrics) && !string.IsNullOrEmpty(ActualSong.ArtistViewModel?.Name))
                 {
-                  audioInfoDownloader.UpdateSongLyrics(ActualSong.ArtistViewModel.Name, ActualSong.Name, ActualSong.Model);
+                  await audioInfoDownloader.UpdateSongLyricsAsync(ActualSong.ArtistViewModel.Name, ActualSong.Name, ActualSong.Model);
                 }
+
+                ActualSong.TryGetLRCLyrics();
               });
             }
           }
@@ -649,9 +672,9 @@ namespace VPlayer.Player.ViewModels
       }
       else
       {
-        var item = PlayList.Single(x => x.Model.Id == nextSong.Model.Id);
+        var item = PlayList.SingleOrDefault(x => x.Model.Id == nextSong.Model.Id);
 
-        if (ActualSong != item)
+        if (ActualSong != item && item != null)
         {
           PlayNext(PlayList.IndexOf(item));
         }

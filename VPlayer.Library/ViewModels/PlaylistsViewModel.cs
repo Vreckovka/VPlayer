@@ -150,8 +150,14 @@ namespace VPlayer.Library.ViewModels
 
     public override IEnumerable<SongInPlayList> GetSongsToPlay()
     {
-      var songs = playlistsRepository.Context.Playlists.Where(x => x.Id == ModelId).Include(x => x.PlaylistSongs.Select(y => y.Song.Album)).Single();
-      return songs.PlaylistSongs.Select(x => viewModelsFactory.Create<SongInPlayList>(x.Song));
+      var songs = playlistsRepository.Context.Playlists.Where(x => x.Id == ModelId).Include(x => x.PlaylistSongs.Select(y => y.Song.Album)).SingleOrDefault();
+
+      if (songs != null)
+      {
+        return songs.PlaylistSongs.Select(x => viewModelsFactory.Create<SongInPlayList>(x.Song));
+      }
+
+      return new List<SongInPlayList>(); ;
     }
 
     protected override void OnPlay(PlaySongsAction action)

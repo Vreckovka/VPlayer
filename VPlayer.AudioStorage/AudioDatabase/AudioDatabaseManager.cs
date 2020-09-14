@@ -331,17 +331,20 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     public void UpdateData(Playlist model)
     {
-      var playlist = playlistsRepository.Context.Playlists.Single(x => x.Id == model.Id);
+      var playlist = playlistsRepository.Context.Playlists.SingleOrDefault(x => x.Id == model.Id);
 
-      playlist.Update(model);
-
-      playlistsRepository.Save();
-
-      ItemChanged.OnNext(new ItemChanged()
+      if (playlist != null)
       {
-        Item = model,
-        Changed = Changed.Updated
-      });
+        playlist.Update(model);
+
+        playlistsRepository.Save();
+
+        ItemChanged.OnNext(new ItemChanged()
+        {
+          Item = model,
+          Changed = Changed.Updated
+        });
+      }
     }
 
     #endregion
@@ -795,19 +798,22 @@ namespace VPlayer.AudioStorage.AudioDatabase
     {
       using (var context = new AudioDatabaseContext())
       {
-        var foundEntity = GetRepository<T>(context).Single(x => x.Id == entity.Id);
+        var foundEntity = GetRepository<T>(context).SingleOrDefault(x => x.Id == entity.Id);
 
-        context.Entry(foundEntity).CurrentValues.SetValues(entity);
-
-        context.SaveChanges();
-
-        Logger.Logger.Instance.Log(Logger.MessageType.Success, $"Entity was updated {entity}");
-
-        ItemChanged.OnNext(new ItemChanged()
+        if (foundEntity != null)
         {
-          Item = foundEntity,
-          Changed = Changed.Updated
-        });
+          context.Entry(foundEntity).CurrentValues.SetValues(entity);
+
+          context.SaveChanges();
+
+          Logger.Logger.Instance.Log(Logger.MessageType.Success, $"Entity was updated {entity}");
+
+          ItemChanged.OnNext(new ItemChanged()
+          {
+            Item = foundEntity,
+            Changed = Changed.Updated
+          });
+        }
       }
     }
 

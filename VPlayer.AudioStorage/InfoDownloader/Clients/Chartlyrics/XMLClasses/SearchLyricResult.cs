@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace VPlayer.AudioStorage.InfoDownloader.Clients.Chartlyrics
+namespace VPlayer.AudioStorage.InfoDownloader.Clients.Chartlyrics.XMLClasses
 {
   [XmlRoot(ElementName = "SearchLyricResult", Namespace = "http://api.chartlyrics.com/")]
   public class SearchLyricResult

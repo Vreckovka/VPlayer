@@ -3,10 +3,10 @@
 
  http://www.apache.org/licenses/LICENSE-2.0
  */
-using System;
+
 using System.Xml.Serialization;
-using System.Collections.Generic;
-namespace Xml2CSharp
+
+namespace VPlayer.AudioStorage.InfoDownloader.Clients.Chartlyrics.XMLClasses
 {
   [XmlRoot(ElementName = "GetLyricResult", Namespace = "http://api.chartlyrics.com/")]
   public class GetLyricResult

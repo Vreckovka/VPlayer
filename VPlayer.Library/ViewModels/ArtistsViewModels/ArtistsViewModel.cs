@@ -48,12 +48,12 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels
 
         if (album.Artist == null)
         {
-          artist = LibraryCollection.Items.Single(x => x.Model.Albums.Count(y => y.Id == album.Id) != 0);
+          artist = LibraryCollection.Items.SingleOrDefault(x => x.Model.Albums.Count(y => y.Id == album.Id) != 0);
         }
         else
-          artist = LibraryCollection.Items.Single(x => x.ModelId == album.Artist.Id);
+          artist = LibraryCollection.Items.SingleOrDefault(x => x.ModelId == album.Artist.Id);
 
-        if (!artist.Model.Albums.Contains(album))
+        if (artist != null && !artist.Model.Albums.Contains(album))
         {
           switch (itemChanged.Changed)
           {
@@ -68,12 +68,12 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels
             default:
               throw new ArgumentOutOfRangeException();
           }
-        }
 
-        Application.Current?.Dispatcher.Invoke(() =>
-        {
-          artist.RaisePropertyChanges();
-        });
+          Application.Current?.Dispatcher.Invoke(() =>
+          {
+            artist.RaisePropertyChanges();
+          });
+        }
       }
     }
 
@@ -81,8 +81,8 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels
     {
       if (itemChanged.Item is Song song)
       {
-        var artist = LibraryCollection.Items.Single(x => x.ModelId == song.Album.Artist.Id);
-        var album = artist.Model.Albums.Single(x => x.Id == song.Album.Id);
+        //var artist = LibraryCollection.Items.SingleOrDefault(x => x.ModelId == song.Album.Artist.Id);
+        //var album = artist?.Model.Albums.SingleOrDefault(x => x.Id == song.Album.Id);
 
         switch (itemChanged.Changed)
         {

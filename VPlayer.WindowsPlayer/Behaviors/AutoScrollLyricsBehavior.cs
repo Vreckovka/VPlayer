@@ -1,65 +1,49 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reactive.Disposables;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Interactivity;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Ninject;
 using VPlayer.Core.ViewModels;
 using VPlayer.Player.ViewModels;
-using Application = System.Windows.Application;
-using Console = System.Console;
-using Decorator = System.Windows.Controls.Decorator;
-using DependencyProperty = System.Windows.DependencyProperty;
-using DispatcherTimer = System.Windows.Threading.DispatcherTimer;
-using Exception = System.Exception;
-using IKernel = Ninject.IKernel;
-using ListView = System.Windows.Controls.ListView;
-using PropertyMetadata = System.Windows.PropertyMetadata;
-using RoutedEventArgs = System.Windows.RoutedEventArgs;
-using ScrollViewer = System.Windows.Controls.ScrollViewer;
-using TimeSpan = System.TimeSpan;
-using VisualTreeHelper = System.Windows.Media.VisualTreeHelper;
-using WindowsPlayerViewModel = VPlayer.Player.ViewModels.WindowsPlayerViewModel;
 
 namespace VPlayer.Player.Behaviors
 {
-  public class AutoScrollBehavior : Behavior<ListView>
+  public class AutoScrollLyricsBehavior : System.Windows.Interactivity.Behavior<ListView>
   {
-    #region Kernel
-
-    public static readonly DependencyProperty KernelProperty =
-      DependencyProperty.Register(
-        nameof(Kernel),
-        typeof(IKernel),
-        typeof(AutoScrollBehavior),
-        new PropertyMetadata(null));
-
-    public IKernel Kernel
-    {
-      get { return (IKernel)GetValue(KernelProperty); }
-      set { SetValue(KernelProperty, value); }
-    }
-
-    #endregion Kernel
-
     public double StepSize { get; set; } = 1;
-
-    private WindowsPlayerViewModel windowsPlayerViewModel;
 
     protected override void OnAttached()
     {
       base.OnAttached();
+
       AssociatedObject.Loaded += AssociatedObject_Loaded;
+      AssociatedObject.DataContextChanged += AssociatedObject_DataContextChanged;
+    }
+
+    private void AssociatedObject_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      Application.Current.Dispatcher.Invoke(() =>
+      {
+        // Get the border of the listview (first child of a listview)
+        Decorator border = VisualTreeHelper.GetChild(AssociatedObject, 0) as Decorator;
+
+        // Get scrollviewer
+        ScrollViewer scrollViewer = border?.Child as ScrollViewer;
+
+        scrollViewer?.ScrollToTop();
+      });
+
+      SubcsribeToSongChange();
     }
 
     protected override void OnDetaching()
     {
       base.OnDetaching();
+
       AssociatedObject.Loaded -= AssociatedObject_Loaded;
+      AssociatedObject.DataContextChanged -= AssociatedObject_DataContextChanged;
       serialDisposable.Dispose();
     }
 
@@ -72,17 +56,18 @@ namespace VPlayer.Player.Behaviors
     private SerialDisposable serialDisposable = new SerialDisposable();
     private void SubcsribeToSongChange()
     {
-      if (Kernel != null)
+      if (AssociatedObject.DataContext != null)
       {
-        if (windowsPlayerViewModel == null)
-          windowsPlayerViewModel = Kernel.Get<WindowsPlayerViewModel>();
-
-        serialDisposable.Disposable = windowsPlayerViewModel.ActualSongChanged.Subscribe(OnSongChanged);
+        if (AssociatedObject.DataContext is LRCFileViewModel lRCFileViewModel)
+        {
+          serialDisposable.Disposable = lRCFileViewModel.ActualLineChanged.Subscribe(OnSongChanged);
+        }
       }
     }
 
     DispatcherTimer scrollTimer = new DispatcherTimer();
     double animationLengthMiliseconds = 3500;
+
     private void OnSongChanged(int songInPlayListIndex)
     {
       try
@@ -96,14 +81,12 @@ namespace VPlayer.Player.Behaviors
           ScrollViewer scrollViewer = border?.Child as ScrollViewer;
 
 
-          var scrollIndexOffset = (songInPlayListIndex - 3 < 0 ? 0 : songInPlayListIndex - 3) * StepSize;
-
-          //scrollViewer?.ScrollToVerticalOffset(scrollIndex);
+          var scrollIndexOffset = (songInPlayListIndex - 1 < 0 ? 0 : songInPlayListIndex - 1) * StepSize;
 
 
           if (scrollViewer != null)
           {
-           {
+            {
               bool isNewIndexGreater = scrollIndexOffset > scrollViewer.VerticalOffset;
 
               scrollTimer.Stop();
@@ -143,5 +126,5 @@ namespace VPlayer.Player.Behaviors
         Console.WriteLine(ex);
       }
     }
-}
+  }
 }

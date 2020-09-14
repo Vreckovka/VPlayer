@@ -162,9 +162,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="InfoDownloader\Clients\Chartlyrics\ArrayOfSearchLyricResult.cs" />
-    <Compile Include="InfoDownloader\Clients\Chartlyrics\GetLyricResult.cs" />
-    <Compile Include="InfoDownloader\Clients\Chartlyrics\SearchLyricResult.cs" />
+    <Compile Include="InfoDownloader\Clients\Chartlyrics\XMLClasses\ArrayOfSearchLyricResult.cs" />
+    <Compile Include="InfoDownloader\Clients\Chartlyrics\ChartLyricsClient.cs" />
+    <Compile Include="InfoDownloader\Clients\Chartlyrics\XMLClasses\GetLyricResult.cs" />
+    <Compile Include="InfoDownloader\Clients\Chartlyrics\XMLClasses\SearchLyricResult.cs" />
+    <Compile Include="InfoDownloader\Clients\MiniLyrics\MiniLyrics.cs" />
     <Compile Include="Migrations\202009111345049_migration_2.cs" />
     <Compile Include="Migrations\202009111345049_migration_2.designer.cs">
       <DependentUpon>202009111345049_migration_2.cs</DependentUpon>
@@ -172,6 +174,10 @@
     <Compile Include="Migrations\202009112022424_migration_3.cs" />
     <Compile Include="Migrations\202009112022424_migration_3.designer.cs">
       <DependentUpon>202009112022424_migration_3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202009131846578_migration_31.cs" />
+    <Compile Include="Migrations\202009131846578_migration_31.designer.cs">
+      <DependentUpon>202009131846578_migration_31.cs</DependentUpon>
     </Compile>
     <Compile Include="Repositories\AlbumsRepository.cs" />
     <Compile Include="Repositories\ArtistRepository.cs" />
@@ -223,6 +229,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202009112022424_migration_3.resx">
       <DependentUpon>202009112022424_migration_3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202009131846578_migration_31.resx">
+      <DependentUpon>202009131846578_migration_31.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />

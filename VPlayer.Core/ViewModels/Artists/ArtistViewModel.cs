@@ -114,14 +114,17 @@ namespace VPlayer.Core.ViewModels.Artists
       }
       else if (Model.AlbumIdCover != null && albumCoverPath == null)
       {
-        var album = storage.GetRepository<Album>().Single(x => x.Id == Model.AlbumIdCover);
+        var album = storage.GetRepository<Album>().SingleOrDefault(x => x.Id == Model.AlbumIdCover);
 
-        albumCoverPath = album.AlbumFrontCoverFilePath;
+        if (album != null)
+        {
+          albumCoverPath = album.AlbumFrontCoverFilePath;
 
-        return albumCoverPath;
+          return albumCoverPath;
+        }
       }
-      else
-        return Model.ArtistCover != null ? Model.ArtistCover : GetEmptyImage();
+
+      return Model.ArtistCover != null ? Model.ArtistCover : GetEmptyImage();
     }
 
     #endregion

@@ -12,6 +12,8 @@
              xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore"
              xmlns:windowsPlayer="clr-namespace:VPlayer.WindowsPlayer"
              xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore"
+             xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
+             xmlns:global="clr-namespace:"
              d:DataContext="{d:DesignInstance Type={x:Type design1:PlayerDesingViewModel},
                                               IsDesignTimeCreatable=True}"
              d:DesignHeight="450"
@@ -22,7 +24,89 @@
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Views/WindowsPlayer/WindowsPlayerViewResources.xaml" />
+
+
       </ResourceDictionary.MergedDictionaries>
+
+      <Style TargetType="TextBox" x:Key="LyricsStyle">
+        <Setter Property="FontSize" Value="24"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="Foreground" Value="{StaticResource YellowBrush}"/>
+        <Setter Property="FontFamily" Value="{StaticResource Roboto}"/>
+        <Setter Property="Padding" Value="0 15 0 15"/>
+        <Setter Property="FontWeight" Value="DemiBold"/>
+        <Setter Property="IsReadOnly" Value="True"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Effect">
+          <Setter.Value>
+            <DropShadowEffect BlurRadius="0.05" ShadowDepth="5" RenderingBias="Quality" />
+          </Setter.Value>
+        </Setter>
+      </Style>
+
+      <DataTemplate x:Key="LyricsDataTemplate">
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden" >
+          <TextBox Text="{Binding Mode=OneWay}"
+                   Style="{StaticResource LyricsStyle}">
+          </TextBox>
+        </ScrollViewer>
+      </DataTemplate>
+
+      <DataTemplate x:Key="SyncedLyricsDataTemplate">
+        <Grid>
+          <TextBlock Text="SYNCED"/>
+          <ListView ItemsSource="{Binding Lines}" 
+                    Background="Transparent"
+                    BorderThickness="0"
+                    ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                    ScrollViewer.CanContentScroll="False">
+            <ListView.Style>
+              <Style TargetType="ListView">
+                <Setter Property="ItemContainerStyle">
+                  <Setter.Value>
+                    <Style TargetType="ListViewItem">
+                      <Setter Property="Template">
+                        <Setter.Value>
+                          <ControlTemplate TargetType="{x:Type ListViewItem}">
+                            <Border Margin="0">
+                              <TextBox Text="{Binding Text, Mode=OneWay}" >
+                                <TextBox.Style>
+                                  <Style TargetType="TextBox" BasedOn="{StaticResource LyricsStyle}">
+                                    <Style.Triggers>
+                                      <DataTrigger Binding="{Binding IsActual}" Value="true">
+                                        <Setter Property="FontSize" Value="42"/>
+                                        <Setter Property="Margin" Value="25"/>
+                                        <Setter Property="Padding" Value="10"/>
+                                        <Setter Property="Background" Value="#80000000"/>
+                                      </DataTrigger>
+                                    </Style.Triggers>
+                                  </Style>
+                                </TextBox.Style>
+                              </TextBox>
+                            </Border>
+                          </ControlTemplate>
+                        </Setter.Value>
+                      </Setter>
+                    </Style>
+                  </Setter.Value>
+                </Setter>
+              </Style>
+            </ListView.Style>
+
+            <i:Interaction.Behaviors>
+              <behaviors:AutoScrollLyricsBehavior StepSize="29" />
+            </i:Interaction.Behaviors>
+          </ListView>
+        </Grid>
+      </DataTemplate>
+
+
+      <templateSelectors:LyricsTemplateSelector x:Key="LyricsTemplateSelector" 
+                                                LyricsDataTemplate="{StaticResource LyricsDataTemplate}"
+                                                SyncLyricsDataTemplate="{StaticResource SyncedLyricsDataTemplate}"/>
     </ResourceDictionary>
   </UserControl.Resources>
 
@@ -137,24 +221,13 @@
 
       <Border
               Grid.Row="1"  Background="#95000000"       
-              Margin="0 0 0 -2"
-              >
-        <Grid >
-          <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden" >
-            <TextBox Text="{Binding ActualSong.Lyrics, Mode=OneWay}"
-                     FontSize="24"
-                     HorizontalContentAlignment="Center"
-                     HorizontalAlignment="Center"
-                     Foreground="{StaticResource YellowBrush}"
-                     FontFamily="{StaticResource Roboto}"
-                     Padding="0 15 0 15"
-                     FontWeight="DemiBold"
-                     IsReadOnly="True">
-              <TextBox.Effect>
-                <DropShadowEffect BlurRadius="0.05" ShadowDepth="5" RenderingBias="Quality" ></DropShadowEffect>
-              </TextBox.Effect>
-            </TextBox>
-          </ScrollViewer>
+              Margin="0 0 0 -2">
+        <Grid>
+          <ContentControl 
+            Content="{Binding ActualSong.LyricsObject}" 
+            ContentTemplateSelector="{StaticResource LyricsTemplateSelector}" 
+            BorderThickness="0"/>
+         
         </Grid>
       </Border>
 
@@ -340,7 +413,7 @@
           </i:EventTrigger>
         </i:Interaction.Triggers>
         <i:Interaction.Behaviors>
-          <behaviors:AutoScrollBehavior Kernel="{Binding Kernel}" />
+          <behaviors:AutoScrollBehavior Kernel="{Binding Kernel}" StepSize="50"/>
         </i:Interaction.Behaviors>
       </ListView>
     </Grid>

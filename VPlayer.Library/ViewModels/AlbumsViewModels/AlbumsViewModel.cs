@@ -66,31 +66,34 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
       {
         if (LibraryCollection.WasLoaded && song.Album != null)
         {
-          var album = LibraryCollection.Items.Single(x => x.ModelId == song.Album.Id);
+          var album = LibraryCollection.Items.SingleOrDefault(x => x.ModelId == song.Album.Id);
 
-          switch (itemChanged.Changed)
+          if (album != null)
           {
-            case Changed.Added:
+            switch (itemChanged.Changed)
+            {
+              case Changed.Added:
 
-              if (!album.Model.Songs.Contains(song))
-              {
-                album.Model.Songs.Add(song);
-                album.RaisePropertyChanges();
-              }
+                if (!album.Model.Songs.Contains(song))
+                {
+                  album.Model.Songs.Add(song);
+                  album.RaisePropertyChanges();
+                }
 
-              break;
-            case Changed.Removed:
-              throw new NotImplementedException();
-              break;
+                break;
+              case Changed.Removed:
+                throw new NotImplementedException();
+                break;
 
-            case Changed.Updated:
-              break;
+              case Changed.Updated:
+                break;
 
-            default:
-              throw new ArgumentOutOfRangeException();
+              default:
+                throw new ArgumentOutOfRangeException();
+            }
+
+            Application.Current.Dispatcher.Invoke(() => { album.RaisePropertyChanges(); });
           }
-
-          Application.Current.Dispatcher.Invoke(() => { album.RaisePropertyChanges(); });
         }
       }
     }

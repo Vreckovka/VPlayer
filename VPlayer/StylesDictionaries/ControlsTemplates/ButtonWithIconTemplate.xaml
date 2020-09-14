@@ -10,12 +10,20 @@
 
   <Style TargetType="{x:Type controls:ButtonWithIcon}" BasedOn="{StaticResource {x:Type Button}}">
     <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+    <Setter Property="IconDefaultBrush" Value="{StaticResource 85_WhiteTransparentBrush}"/>
+    <Setter Property="IconDefaultColor" Value="{StaticResource 85_DefaultWhiteColor}"/>
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type controls:ButtonWithIcon}">
-          <Border Background="{TemplateBinding Background}" Padding="5" 
+          <Border Background="{TemplateBinding Background}"
                   VerticalAlignment="{TemplateBinding VerticalAlignment}"
-                  HorizontalAlignment="{TemplateBinding HorizontalAlignment}">
+                  HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                  Width="{TemplateBinding Width}"
+                  Height="{TemplateBinding Height}"
+                  Padding="{TemplateBinding Padding}">
             <Grid VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                   HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}">
               <Grid.ColumnDefinitions>
@@ -23,11 +31,12 @@
                 <ColumnDefinition/>
               </Grid.ColumnDefinitions>
 
-              <Path Width="25" 
-                              Style="{TemplateBinding IconPathStyle}" 
-                              Fill="{TemplateBinding IconDefaultBrush}" 
-                              Name="ButtonIcon"
-                              Margin="0 0 5 0"/>
+              <Path Width="{TemplateBinding IconWidth}" 
+                    Height="{TemplateBinding IconHeight}"
+                    Style="{TemplateBinding IconPathStyle}" 
+                    Fill="{TemplateBinding IconDefaultBrush}" 
+                    Name="ButtonIcon"
+                    Margin="0 0 5 0"/>
               <ContentPresenter Grid.Column="1" VerticalAlignment="Center" />
             </Grid>
 
@@ -46,9 +55,9 @@
             <Trigger Property="IsMouseOver" Value="True">
               <Setter Property="Cursor" Value="Hand" />
               <Trigger.EnterActions>
-                <RemoveStoryboard BeginStoryboardName="ResetBackgroundStoryBoard1"/>
+                <RemoveStoryboard BeginStoryboardName="ResetForegroundStoryBoard"/>
 
-                <BeginStoryboard x:Name="ChangeBackgroundStoryBoard">
+                <BeginStoryboard x:Name="ChangeForegroundStoryBoard">
                   <Storyboard >
                     <ColorAnimation
                                 Storyboard.TargetProperty="Foreground.Color"
@@ -60,18 +69,8 @@
 
               </Trigger.EnterActions>
               <Trigger.ExitActions>
-
-                <BeginStoryboard  x:Name="ResetBackgroundStoryBoard1">
-                  <Storyboard>
-                    <ColorAnimation
-                                  Storyboard.TargetName="ButtonIcon"
-                                  Storyboard.TargetProperty="Fill.Color"
-                                  To="{StaticResource 30_DefaultWhiteColor}"
-                                  Duration="0:0:.15" />
-                  </Storyboard>
-                </BeginStoryboard>
-
-                <BeginStoryboard  x:Name="ResetBackgroundStoryBoard">
+                <RemoveStoryboard BeginStoryboardName="ChangeForegroundStoryBoard"/>
+                <BeginStoryboard  x:Name="ResetForegroundStoryBoard">
                   <Storyboard>
                     <ColorAnimation
                                 Storyboard.TargetProperty="Foreground.Color"
