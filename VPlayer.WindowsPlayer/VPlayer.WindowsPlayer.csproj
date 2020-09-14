@@ -171,6 +171,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="TemplateSelectors\LyricsProviderTemplateSelector.cs" />
     <Compile Include="TemplateSelectors\LyricsTemplateSelector.cs" />
     <Compile Include="ViewModels\WindowsPlayerViewModel.cs" />
     <Compile Include="ViewModels\WindowsViewModel.cs" />

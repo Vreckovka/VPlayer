@@ -31,7 +31,8 @@ using Windows.ApplicationModel.Contacts;
 using Windows.System;
 using VCore.Helpers;
 using VPlayer.AudioStorage.InfoDownloader.Clients.Chartlyrics;
-using VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics;
+using VPlayer.AudioStorage.InfoDownloader.LRC;
+using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;
 
 namespace VPlayer.AudioStorage.InfoDownloader
 {
@@ -1460,36 +1461,22 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     }
 
-    public LRCFile TryUpdateSyncedLyrics(string lrcFileName, string artistName, Song song)
+    public Task<LRCFile> TryGetLRCLyricsAsync<TClient>(TClient client, Song song, string artistName, string albumName) where TClient : ILrcProvider
     {
-      try
+      return Task.Run(async () =>
       {
-        var client = new MiniLyricsClient();
+        var lrcFile = await client.TryGetLrcAsync(song.Name, artistName, albumName);
 
-        var updatedSong = client.UpdateSongWithLrc(lrcFileName, artistName, song, out var lRCFile);
-
-        if (updatedSong != null)
+        if (lrcFile != null)
         {
-          ItemUpdated.OnNext(updatedSong);
+          song.LRCLyrics = (int)client.LRCProvider + ";" + lrcFile.GetString();
+
+          ItemUpdated.OnNext(song);
         }
 
-        return lRCFile;
-
-      }
-      catch (Exception ex)
-      {
-        if (ex.Message.Contains("NOT FOUND LRC FILE FOR"))
-        {
-        }
-        else
-        {
-          Logger.Logger.Instance.Log(ex);
-        }
-        
-        return null;
-      }
+        return lrcFile;
+      });
     }
-
 
     #endregion Methods
 

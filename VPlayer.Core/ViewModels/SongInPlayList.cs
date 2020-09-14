@@ -5,12 +5,15 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using VCore;
 using VCore.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
-using VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics;
+using VPlayer.AudioStorage.InfoDownloader.LRC;
+using VPlayer.AudioStorage.InfoDownloader.LRC.Clients;
+using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;
 using VPlayer.Core.Events;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.ViewModels.Artists;
@@ -75,7 +78,6 @@ namespace VPlayer.Core.ViewModels
     public string ImagePath => AlbumViewModel.Model?.AlbumFrontCoverFilePath;
     public bool IsPaused { get; set; }
     public string Name => Model.Name;
-
     public string LRCLyrics => Model.LRCLyrics;
 
     #region Lyrics
@@ -164,73 +166,6 @@ namespace VPlayer.Core.ViewModels
 
     #endregion IsPlaying
 
-    #region Play
-
-    private ActionCommand play;
-
-    public ICommand Play
-    {
-      get
-      {
-        if (play == null)
-        {
-          play = new ActionCommand(OnPlayButton);
-        }
-
-        return play;
-      }
-    }
-
-    public void OnPlay()
-    {
-      eventAggregator.GetEvent<PlaySongsFromPlayListEvent>().Publish(this);
-    }
-
-    private void OnPlayButton()
-    {
-      if (!IsPlaying)
-      {
-        OnPlay();
-      }
-      else
-      {
-        eventAggregator.GetEvent<PauseEvent>().Publish();
-      }
-    }
-
-    #endregion Play
-
-    #region Refresh
-
-    private ActionCommand refresh;
-
-    public ICommand Refresh
-    {
-      get
-      {
-        if (refresh == null)
-        {
-          refresh = new ActionCommand(OnRefresh);
-        }
-
-        return refresh;
-      }
-    }
-
-    public void OnRefresh()
-    {
-      if (!string.IsNullOrEmpty(Model.DiskLocation))
-      {
-        var lrc = audioInfoDownloader.TryUpdateSyncedLyrics(System.IO.Path.GetFileNameWithoutExtension(Model.DiskLocation), ArtistViewModel?.Name, Model);
-
-        if (lrc != null)
-          LRCFile = new LRCFileViewModel(lrc);
-      }
-    }
-
-
-    #endregion 
-
     #endregion Properties
 
     #region Commands
@@ -265,8 +200,7 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-
-    #region DeleteSongFromPlaylist
+    #region DeleteSongFromPlaylistWithAlbum
 
     private ActionCommand deleteSongFromPlaylistWithAlbum;
 
@@ -295,6 +229,77 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
+
+    #region Play
+
+    private ActionCommand play;
+
+    public ICommand Play
+    {
+      get
+      {
+        if (play == null)
+        {
+          play = new ActionCommand(OnPlayButton);
+        }
+
+        return play;
+      }
+    }
+
+    public void OnPlay()
+    {
+      eventAggregator.GetEvent<PlaySongsFromPlayListEvent>().Publish(this);
+    }
+
+    private void OnPlayButton()
+    {
+      if (!IsPlaying)
+      {
+        OnPlay();
+      }
+      else
+      {
+        eventAggregator.GetEvent<PauseEvent>().Publish();
+      }
+    }
+
+    #endregion 
+
+    #region Refresh
+
+    private ActionCommand refresh;
+
+    public ICommand Refresh
+    {
+      get
+      {
+        if (refresh == null)
+        {
+          refresh = new ActionCommand(OnRefresh);
+        }
+
+        return refresh;
+      }
+    }
+
+    #region OnRefresh
+
+    public async void OnRefresh()
+    {
+      LRCFile = null;
+
+      await LoadLRCFromGoogleDrive();
+
+      if (LRCFile == null)
+        await LoadLRCFromLocal();
+
+    }
+
+    #endregion
+
+    #endregion
+
 
     #endregion
 
@@ -333,26 +338,65 @@ namespace VPlayer.Core.ViewModels
 
     #region TryGetLRCLyrics
 
-    public void TryGetLRCLyrics()
+    public async void TryGetLRCLyrics()
     {
-      if (!string.IsNullOrEmpty(Model.DiskLocation) && LRCLyrics == null)
-      {
-        var lrc = audioInfoDownloader.TryUpdateSyncedLyrics(System.IO.Path.GetFileNameWithoutExtension(Model.DiskLocation), ArtistViewModel?.Name, Model);
-
-        if (lrc != null)
-          LRCFile = new LRCFileViewModel(lrc);
-
-
-      }
-      else if (LRCLyrics != null)
+      if (LRCLyrics != null)
       {
         var parser = new LRCParser();
+
+        var provider = LRCProviders.NotIdentified;
+
+        if (int.TryParse(LRCLyrics.Split(';').First(), out var providerNum))
+        {
+          provider = (LRCProviders)providerNum;
+        }
 
         var lrc = parser.Parse(LRCLyrics.Split('\n').ToList());
 
         if (lrc != null)
-          LRCFile = new LRCFileViewModel(lrc);
+          LRCFile = new LRCFileViewModel(lrc, provider);
       }
+      else
+      {
+        await LoadLRCFromGoogleDrive();
+
+        if (LRCFile == null)
+          await LoadLRCFromLocal();
+
+      }
+    }
+
+    #endregion
+
+    #region LoadLRCFromLocal
+
+    private async Task LoadLRCFromLocal()
+    {
+      if (!string.IsNullOrEmpty(Model.DiskLocation))
+      {
+        var provider = new LocalLrcProvider("C:\\Lyrics");
+
+        var lrc = await audioInfoDownloader.TryGetLRCLyricsAsync(provider, Model, ArtistViewModel?.Name, AlbumViewModel?.Name);
+
+        if (lrc != null)
+          LRCFile = new LRCFileViewModel(lrc, provider.LRCProvider);
+
+      }
+    }
+
+    #endregion
+
+    #region LoadLRCFromGoogleDrive
+
+    private async Task LoadLRCFromGoogleDrive()
+    {
+      var provider = new GoogleDriveLrcProvider();
+
+      var lrc = await audioInfoDownloader.TryGetLRCLyricsAsync(provider, Model, ArtistViewModel?.Name, AlbumViewModel?.Name);
+
+      if (lrc != null)
+        LRCFile = new LRCFileViewModel(lrc, provider.LRCProvider);
+
     }
 
     #endregion
@@ -372,11 +416,22 @@ namespace VPlayer.Core.ViewModels
     #endregion
   }
 
+
+
   public class LRCFileViewModel : ViewModel<LRCFile>
   {
+    #region Fields
 
-    public LRCFileViewModel(LRCFile model) : base(model)
+    private readonly ILrcProvider sourceProvider;
+
+    #endregion
+
+    #region Constructors
+
+    public LRCFileViewModel(LRCFile model, LRCProviders lRcProvider) : base(model)
     {
+      Provider = lRcProvider;
+
       Lines = model?.Lines.Select(x => new LRCLyricLineViewModel(x)).ToList();
 
       if (Lines != null)
@@ -405,6 +460,8 @@ namespace VPlayer.Core.ViewModels
       }
     }
 
+    #endregion
+
     #region ActualSongChanged
 
     private ReplaySubject<int> actualLineSubject = new ReplaySubject<int>(1);
@@ -415,6 +472,8 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
+
+    public LRCProviders Provider { get; private set; }
 
     public List<LRCLyricLineViewModel> Lines { get; }
     public LRCLyricLineViewModel ActualLine { get; private set; }

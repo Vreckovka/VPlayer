@@ -5,11 +5,144 @@
                     xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Library"
                     xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore"
                     xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
-                    xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore">
+                    xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore"
+                    xmlns:clients="clr-namespace:VPlayer.AudioStorage.InfoDownloader.LRC.Clients;assembly=VPlayer.AudioStorage"
+                    xmlns:lrc="clr-namespace:VPlayer.AudioStorage.InfoDownloader.LRC;assembly=VPlayer.AudioStorage"
+                    xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/VPlayer;component/StylesDictionaries/ControlsTemplates/ButtonWithIconTemplate.xaml" />
   </ResourceDictionary.MergedDictionaries>
+
+  <Style TargetType="TextBox" x:Key="LyricsStyle">
+    <Setter Property="FontSize" Value="24"/>
+    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    <Setter Property="HorizontalAlignment" Value="Center"/>
+    <Setter Property="Foreground" Value="{StaticResource YellowBrush}"/>
+    <Setter Property="FontFamily" Value="{StaticResource Roboto}"/>
+    <Setter Property="Padding" Value="0 15 0 15"/>
+    <Setter Property="FontWeight" Value="DemiBold"/>
+    <Setter Property="IsReadOnly" Value="True"/>
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="Padding" Value="0"/>
+    <Setter Property="Effect">
+      <Setter.Value>
+        <DropShadowEffect BlurRadius="0.05" ShadowDepth="5" RenderingBias="Quality" />
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <DataTemplate x:Key="LyricsDataTemplate">
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden" >
+      <TextBox Text="{Binding Mode=OneWay}"
+                   Style="{StaticResource LyricsStyle}">
+      </TextBox>
+    </ScrollViewer>
+  </DataTemplate>
+
+  <DataTemplate x:Key="SyncedLyricsDataTemplate">
+    <Grid>
+      <TextBlock Text="SYNCED"/>
+      <ListView ItemsSource="{Binding Lines}" 
+                    Background="Transparent"
+                    BorderThickness="0"
+                    ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    ScrollViewer.CanContentScroll="False">
+        <ListView.Style>
+          <Style TargetType="ListView">
+            <Setter Property="ItemContainerStyle">
+              <Setter.Value>
+                <Style TargetType="ListViewItem">
+                  <Setter Property="Template">
+                    <Setter.Value>
+                      <ControlTemplate TargetType="{x:Type ListViewItem}">
+                        <Border Margin="0">
+                          <TextBox Text="{Binding Text, Mode=OneWay}"  >
+                            <TextBox.Style>
+                              <Style TargetType="TextBox" BasedOn="{StaticResource LyricsStyle}" >
+                                <Style.Triggers>
+                                  <DataTrigger Binding="{Binding IsActual}" Value="true">
+                                    <Setter Property="FontSize" Value="32"/>
+                                    <Setter Property="Margin" Value="25"/>
+                                    <Setter Property="Padding" Value="10"/>
+                                    <Setter Property="Background" Value="#80000000"/>
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                  </DataTrigger>
+                                </Style.Triggers>
+                              </Style>
+                            </TextBox.Style>
+                          </TextBox>
+                        </Border>
+                      </ControlTemplate>
+                    </Setter.Value>
+                  </Setter>
+                </Style>
+              </Setter.Value>
+            </Setter>
+          </Style>
+        </ListView.Style>
+
+        <i:Interaction.Behaviors>
+          <behaviors:AutoScrollLyricsBehavior StepSize="29" />
+        </i:Interaction.Behaviors>
+      </ListView>
+    </Grid>
+  </DataTemplate>
+
+
+  <DataTemplate x:Key="GoogleLyricsDataTemplate">
+    <Path 
+      Height="10" 
+      Width="10"
+      Opacity="0.5" 
+      Margin="0 -6 0 0"
+      ToolTip="Local file">
+      <Path.Style>
+        <Style TargetType="Path" BasedOn="{StaticResource GoogleDrive}">
+          <Setter Property="Fill" Value="#4285f4"/>
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+              <Setter Property="Fill" Value="#FF050505"/>
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </Path.Style>
+    </Path>
+  </DataTemplate>
+
+  <DataTemplate x:Key="LocalLyricsDataTemplate">
+    <Path 
+          Height="9" 
+          Width="9"
+          Opacity="0.5" 
+          Margin="0 -6 0 0"
+          ToolTip="Local file">
+      <Path.Style>
+        <Style TargetType="Path" BasedOn="{StaticResource Folder}">
+          <Setter Property="Fill" Value="#debc4b"/>
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+              <Setter Property="Fill" Value="#FF050505"/>
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </Path.Style>
+    </Path>
+  </DataTemplate>
+
+
+
+
+
+  <templateSelectors:LyricsTemplateSelector x:Key="LyricsTemplateSelector" 
+                                            LyricsDataTemplate="{StaticResource LyricsDataTemplate}"
+                                            SyncLyricsDataTemplate="{StaticResource SyncedLyricsDataTemplate}"/>
+
+  <templateSelectors:LyricsProviderTemplateSelector x:Key="LyricsProviderTemplateSelector" 
+                                                    GoogleDataTemplate="{StaticResource GoogleLyricsDataTemplate}"
+                                                    LocalDataTemplate="{StaticResource LocalLyricsDataTemplate}"/>
 
 
   <Style x:Key="ListViewItem_PlayerTrack" TargetType="{x:Type ListViewItem}">
@@ -99,7 +232,7 @@
                 </TextBlock>
 
 
-             
+
               </Grid>
 
               <TextBlock   Grid.Row="1" 
@@ -165,7 +298,7 @@
                     <Style.Triggers>
                       <DataTrigger Binding="{Binding IsPlaying}" Value="true">
                         <Setter Property="Opacity" Value="0.75" />
-                         <Setter Property="Foreground" Value="Black" />
+                        <Setter Property="Foreground" Value="Black" />
                       </DataTrigger>
                     </Style.Triggers>
                   </Style>
@@ -180,13 +313,12 @@
                   <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0 15 0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0 15 3">
                   <controls:ButtonWithIcon IconPathStyle="{StaticResource TextLyrics}" 
                                            HorizontalAlignment="Right"
                                            IconHeight="11"
                                            IconWidth="11"
                                            ToolTip="Lyrics"
-                                           Command="{Binding Refresh}"
                   >
                     <controls:ButtonWithIcon.Style>
                       <Style TargetType="{x:Type controls:ButtonWithIcon}" 
@@ -197,7 +329,7 @@
                         <Style.Triggers>
                           <DataTrigger Binding="{Binding IsPlaying}" Value="true">
                             <Setter Property="IconHoverColor" Value="#522e05"/>
-                            <Setter Property="IconDefaultColor" Value="Black"/>
+                            <Setter Property="IconDefaultColor" Value="#FF050505"/>
                           </DataTrigger>
 
                           <DataTrigger Binding="{Binding Lyrics}" Value="{x:Null}">
@@ -220,19 +352,104 @@
                                            HorizontalAlignment="Right"
                                            IconHeight="11"
                                            IconWidth="11"
+                                           Margin="0 0 0 -6"
                                            ToolTip="Synced lyrics"
-                                           Command="{Binding Refresh}"
-                  >
+                                           VerticalAlignment="Center">
+
                     <controls:ButtonWithIcon.Style>
                       <Style TargetType="{x:Type controls:ButtonWithIcon}" 
                              BasedOn="{StaticResource {x:Type controls:ButtonWithIcon}}">
                         <Setter Property="IconHoverColor" Value="#40a8e6"/>
                         <Setter Property="IconDefaultColor" Value="#27404f"/>
                         <Setter Property="Opacity" Value="1"/>
+                        <Setter Property="Template">
+                          <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type controls:ButtonWithIcon}">
+                              <Border Background="{TemplateBinding Background}"
+                                      VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                                      HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                      Width="{TemplateBinding Width}"
+                                      Height="{TemplateBinding Height}"
+                                      Padding="{TemplateBinding Padding}">
+                                <Grid VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}">
+                                  <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition/>
+                                  </Grid.ColumnDefinitions>
+
+                                  <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                  </Grid.RowDefinitions>
+
+                                  <Path Width="{TemplateBinding IconWidth}" 
+                                        Height="{TemplateBinding IconHeight}"
+                                        Style="{TemplateBinding IconPathStyle}" 
+                                        Fill="{TemplateBinding IconBrush}" 
+                                        Name="ButtonIcon"
+                                        Margin="0"/>
+
+                                  
+                                    <ContentControl 
+                                      Grid.Row="1" Grid.Column="1"
+                                     
+                                      Content="{Binding }" 
+                                      ContentTemplateSelector="{StaticResource LyricsProviderTemplateSelector}" 
+                                      BorderThickness="0"/>
+                                
+
+                                </Grid>
+
+                                <i:Interaction.Triggers>
+                                  <i:EventTrigger EventName="MouseEnter" >
+                                    <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AnimateHoverColor}" />
+                                  </i:EventTrigger>
+
+                                  <i:EventTrigger EventName="MouseLeave" >
+                                    <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AnimateDefaultColor}" />
+                                  </i:EventTrigger>
+                                </i:Interaction.Triggers>
+
+                              </Border>
+                              <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                  <Setter Property="Cursor" Value="Hand" />
+                                  <Trigger.EnterActions>
+                                    <RemoveStoryboard BeginStoryboardName="ResetForegroundStoryBoard"/>
+
+                                    <BeginStoryboard x:Name="ChangeForegroundStoryBoard">
+                                      <Storyboard >
+                                        <ColorAnimation
+                                                Storyboard.TargetProperty="Foreground.Color"
+                                                To="{StaticResource DefaultWhiteColor}"
+                                                Duration="0:0:.15" />
+                                      </Storyboard>
+                                    </BeginStoryboard>
+
+
+                                  </Trigger.EnterActions>
+                                  <Trigger.ExitActions>
+                                    <RemoveStoryboard BeginStoryboardName="ChangeForegroundStoryBoard"/>
+                                    <BeginStoryboard  x:Name="ResetForegroundStoryBoard">
+                                      <Storyboard>
+                                        <ColorAnimation
+                                              Storyboard.TargetProperty="Foreground.Color"
+                                              To="{StaticResource 85_DefaultWhiteColor}"
+                                              Duration="0:0:.15" />
+                                      </Storyboard>
+                                    </BeginStoryboard>
+                                  </Trigger.ExitActions>
+                                </Trigger>
+                              </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                          </Setter.Value>
+                        </Setter>
+
                         <Style.Triggers>
                           <DataTrigger Binding="{Binding IsPlaying}" Value="true">
                             <Setter Property="IconHoverColor" Value="#522e05"/>
-                            <Setter Property="IconDefaultColor" Value="Black"/>
+                            <Setter Property="IconDefaultColor" Value="#FF050505"/>
                           </DataTrigger>
 
                           <DataTrigger Binding="{Binding LRCFile}" Value="{x:Null}">
@@ -240,6 +457,7 @@
                             <Setter Property="IsHitTestVisible" Value="False"/>
                           </DataTrigger>
                         </Style.Triggers>
+
                       </Style>
                     </controls:ButtonWithIcon.Style>
 
@@ -261,7 +479,7 @@
                       <Style.Triggers>
                         <DataTrigger Binding="{Binding IsPlaying}" Value="true">
                           <Setter Property="IconHoverColor" Value="#522e05"/>
-                          <Setter Property="IconDefaultColor" Value="Black"/>
+                          <Setter Property="IconDefaultColor" Value="#FF050505"/>
                         </DataTrigger>
                       </Style.Triggers>
                     </Style>
@@ -270,7 +488,7 @@
                 </controls:ButtonWithIcon>
 
               </Grid>
-           
+
             </Grid>
           </Border>
           <ControlTemplate.Triggers>
@@ -377,6 +595,8 @@
     </Setter>
   </Style>
 
+
+
   <Style x:Key="WindowsPlayerSongs" TargetType="ListView">
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="BorderThickness" Value="0" />
@@ -394,6 +614,7 @@
       </Setter.Value>
     </Setter>
   </Style>
+
 
 
 
