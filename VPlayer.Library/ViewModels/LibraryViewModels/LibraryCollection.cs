@@ -12,11 +12,11 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using VCore.Factories;
+using VCore.ItemsCollections.VirtualList;
+using VCore.ItemsCollections.VirtualList.VirtualLists;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.ViewModels.Artists;
-using VPlayer.Library.VirtualList;
-using VPlayer.Library.VirtualList.VirtualLists;
 
 namespace VPlayer.Library.ViewModels.LibraryViewModels
 {
@@ -76,9 +76,9 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
     public void Filter(string name)
     {
       if (!string.IsNullOrEmpty(name.ToLower()))
-        FilteredItems = new VirtualList<TViewModel>(new PlayableItemsGenerator<TViewModel, TModel>(trieItems.Retrieve(name)));
+        FilteredItems = new VirtualList<TViewModel>(new ItemsGenerator<TViewModel>(trieItems.Retrieve(name)));
       else
-        FilteredItems = new VirtualList<TViewModel>(new PlayableItemsGenerator<TViewModel, TModel>(Items));
+        FilteredItems = new VirtualList<TViewModel>(new ItemsGenerator<TViewModel>(Items));
 
       actualFilter = name;
     }
@@ -238,7 +238,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
     {
       if (Items != null)
       {
-        FilteredItems = new VirtualList<TViewModel>(new PlayableItemsGenerator<TViewModel, TModel>(Items));
+        FilteredItems = new VirtualList<TViewModel>(new ItemsGenerator<TViewModel>(Items));
       }
     }
 

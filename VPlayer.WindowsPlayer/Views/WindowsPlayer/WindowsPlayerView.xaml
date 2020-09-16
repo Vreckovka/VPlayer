@@ -14,6 +14,9 @@
              xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore"
              xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
              xmlns:global="clr-namespace:"
+             xmlns:attachedBehaviors="clr-namespace:ScrollAnimateBehavior.AttachedBehaviors;assembly=VCore"
+             xmlns:e="http://schemas.epsiloner.git/wpf/"
+             xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
              d:DataContext="{d:DesignInstance Type={x:Type design1:PlayerDesingViewModel},
                                               IsDesignTimeCreatable=True}"
              d:DesignHeight="450"
@@ -24,16 +27,14 @@
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Views/WindowsPlayer/WindowsPlayerViewResources.xaml" />
-
-
       </ResourceDictionary.MergedDictionaries>
+
 
 
     </ResourceDictionary>
   </UserControl.Resources>
 
   <Grid>
-
     <Grid.RowDefinitions>
       <RowDefinition Height="*" />
       <RowDefinition Height="auto" />
@@ -48,6 +49,8 @@
       <ColumnDefinition Width="370" />
       <ColumnDefinition Width="170" />
     </Grid.ColumnDefinitions>
+
+
 
     <Grid Grid.Column="0" Grid.ColumnSpan="2">
       <Grid.RowDefinitions>
@@ -149,7 +152,7 @@
             Content="{Binding ActualSong.LyricsObject}" 
             ContentTemplateSelector="{StaticResource LyricsTemplateSelector}" 
             BorderThickness="0"/>
-         
+
         </Grid>
       </Border>
 
@@ -236,7 +239,7 @@
                 <Style.Triggers>
                   <DataTrigger Value="True">
                     <DataTrigger.Binding>
-                      <MultiBinding Converter="{library:IsBiggerConverter}">
+                      <MultiBinding Converter="{library1:IsBiggerConverter}">
                         <Binding ElementName="NameTxt" Path="ActualWidth" />
                         <Binding ElementName="Container" Path="ActualWidth" />
                       </MultiBinding>
@@ -313,25 +316,54 @@
         <RowDefinition/>
       </Grid.RowDefinitions>
 
-      <Grid Height="55">
-        <controls:ButtonWithIcon IconPathStyle="{StaticResource Playlist}"
-                                 Content="Save playlist" 
-                                 HorizontalAlignment="Left" 
-                                 Command="{Binding SavePlaylistCommandCommand}" 
-                                 Margin="10 0 0 0">
-          <controls:ButtonWithIcon.Style >
-            <Style TargetType="controls:ButtonWithIcon" BasedOn="{StaticResource {x:Type controls:ButtonWithIcon}}">
-              <Setter Property="IconDefaultColor" Value="{StaticResource 30_DefaultWhiteColor}"/>
-              <Setter Property="IconHoverColor" Value="{StaticResource YellowColor}"/>
-              <Style.Triggers>
-                <DataTrigger Binding="{Binding ActualSavedPlaylist.IsUserCreated }" Value="True">
-                  <Setter Property="IconDefaultColor" Value="{StaticResource DefaultRedColor}"/>
-                </DataTrigger>
-              </Style.Triggers>
-            </Style>
-          </controls:ButtonWithIcon.Style>
-        </controls:ButtonWithIcon>
-      </Grid>
+      <Border BorderThickness="0 0 0 1" 
+              BorderBrush="#10ffffff" 
+              Margin="0 0 0 0" 
+              Padding="0,2">
+        <Grid Height="35">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+          </Grid.ColumnDefinitions>
+
+          <StackPanel Orientation="Horizontal">
+            <controls:ButtonWithIcon IconPathStyle="{StaticResource Playlist}"
+                                     HorizontalAlignment="Left" 
+                                     Command="{Binding SavePlaylistCommandCommand}" 
+                                     Margin="19 0 0 0"
+                                     ToolTip="Save playlist">
+              <controls:ButtonWithIcon.Style >
+                <Style TargetType="controls:ButtonWithIcon" BasedOn="{StaticResource {x:Type controls:ButtonWithIcon}}">
+                  <Setter Property="IconDefaultColor" Value="{StaticResource 30_DefaultWhiteColor}"/>
+                  <Setter Property="IconHoverColor" Value="{StaticResource YellowColor}"/>
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding ActualSavedPlaylist.IsUserCreated }" Value="True">
+                      <Setter Property="IconDefaultColor" Value="{StaticResource DefaultRedColor}"/>
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </controls:ButtonWithIcon.Style>
+            </controls:ButtonWithIcon>
+          </StackPanel>
+
+          <StackPanel Grid.Column="1" Orientation="Horizontal" 
+                      VerticalAlignment="Center" 
+                      HorizontalAlignment="Right"
+                      Margin="5,0">
+            <TextBlock Foreground="#25ffffff" Margin="0 0 5 0">
+              <Run Text="Number of song:"/>
+              <Run Text="{Binding PlayList.Count, Mode=OneWay}"/>
+            </TextBlock>
+
+            <TextBlock Foreground="#25ffffff" Margin="0 0 5 0">
+              <Run Text="Duration:"/>
+              <Run Text="{Binding TotalPlaylistDuration, Mode=OneWay}"/>
+            </TextBlock>
+          </StackPanel>
+
+        </Grid>
+      </Border>
+
 
       <ListView x:Name="ListView_Tracks"
                Grid.Row="1"
@@ -341,15 +373,11 @@
                 AllowDrop="True"
                 Background="{StaticResource BackgroudBrush}"
                 ItemTemplate="{StaticResource SoundTrackTemplate}"
-                ItemsSource="{Binding PlayList}"
+                ItemsSource="{Binding VirtualizedPlayList}"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-               ScrollViewer.CanContentScroll="False"
+                attachedBehaviors:ScrollAnimationBehavior.IsEnabled="True"
+
                 Style="{StaticResource WindowsPlayerSongs}">
-        <i:Interaction.Triggers>
-          <i:EventTrigger EventName="MouseDoubleClick">
-            <i:InvokeCommandAction Command="{Binding NextSong}" CommandParameter="{Binding ElementName=ListView_Tracks, Path=SelectedItem}" />
-          </i:EventTrigger>
-        </i:Interaction.Triggers>
         <i:Interaction.Behaviors>
           <behaviors:AutoScrollBehavior Kernel="{Binding Kernel}" StepSize="50"/>
         </i:Interaction.Behaviors>
@@ -386,5 +414,7 @@
                Grid.ColumnSpan="2"
                Foreground="{StaticResource 120_WhiteTransparentBrush}"
                Text="{Binding ActualSong.Duration, Converter={converters:TimeConverter TimeType=Second}}" />
+
+
   </Grid>
 </UserControl>

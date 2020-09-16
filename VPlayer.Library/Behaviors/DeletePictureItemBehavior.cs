@@ -2,7 +2,6 @@
 using Prism.Events;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -107,44 +106,5 @@ namespace VPlayer.Library.Behaviors
   public class ImageDeleteRequestEvent : PubSubEvent<ImageDeleteRequestEventArgs>
   {
 
-  }
-
-  public static class Help
-  {
-
-    public static IEnumerable<PlayableWrapPanelItem> GetListViewItemsFromList(this PlayableWrapPanel lv)
-    {
-      return FindChildrenOfType<PlayableWrapPanelItem>(lv);
-    }
-
-    public static IEnumerable<T> FindChildrenOfType<T>(this DependencyObject ob)
-      where T : class
-    {
-      foreach (var child in GetChildren(ob))
-      {
-        T castedChild = child as T;
-        if (castedChild != null)
-        {
-          yield return castedChild;
-        }
-        else
-        {
-          foreach (var internalChild in FindChildrenOfType<T>(child))
-          {
-            yield return internalChild;
-          }
-        }
-      }
-    }
-
-    public static IEnumerable<DependencyObject> GetChildren(this DependencyObject ob)
-    {
-      int childCount = VisualTreeHelper.GetChildrenCount(ob);
-
-      for (int i = 0; i < childCount; i++)
-      {
-        yield return VisualTreeHelper.GetChild(ob, i);
-      }
-    }
   }
 }

@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Reactive.Disposables;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Interactivity;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Ninject;
+using ScrollAnimateBehavior.AttachedBehaviors;
 using VPlayer.Core.ViewModels;
 using VPlayer.Player.ViewModels;
 using Application = System.Windows.Application;
@@ -47,6 +49,7 @@ namespace VPlayer.Player.Behaviors
     #endregion Kernel
 
     public double StepSize { get; set; } = 1;
+    public TimeSpan AnimationTime { get; set; } = TimeSpan.FromSeconds(1);
 
     private WindowsPlayerViewModel windowsPlayerViewModel;
 
@@ -81,67 +84,46 @@ namespace VPlayer.Player.Behaviors
       }
     }
 
-    DispatcherTimer scrollTimer = new DispatcherTimer();
-    double animationLengthMiliseconds = 3500;
+    private int last_songInPlayListIndex;
     private void OnSongChanged(int songInPlayListIndex)
     {
-      try
+      // Get the border of the listview (first child of a listview)
+      Decorator border = VisualTreeHelper.GetChild(AssociatedObject, 0) as Decorator;
+
+      // Get scrollviewer
+      ScrollViewer scrollViewer = border?.Child as ScrollViewer;
+
+      var scrollIndexOffset = (songInPlayListIndex - 3 < 0 ? 0 : songInPlayListIndex - 3) * StepSize;
+
+
+
+      if (scrollViewer != null )
       {
-        Application.Current.Dispatcher.Invoke(() =>
+        DoubleAnimation verticalAnimation = new DoubleAnimation();
+
+        verticalAnimation.From = scrollViewer.VerticalOffset;
+        verticalAnimation.To = scrollIndexOffset;
+
+        if (last_songInPlayListIndex == songInPlayListIndex - 1)
         {
-          // Get the border of the listview (first child of a listview)
-          Decorator border = VisualTreeHelper.GetChild(AssociatedObject, 0) as Decorator;
+          verticalAnimation.Duration = new Duration(AnimationTime);
+        }
+        else
+        {
+          verticalAnimation.Duration = new Duration(TimeSpan.FromSeconds(0.50));
+        }
 
-          // Get scrollviewer
-          ScrollViewer scrollViewer = border?.Child as ScrollViewer;
+        Storyboard storyboard = new Storyboard();
 
+        storyboard.Children.Add(verticalAnimation);
+        Storyboard.SetTarget(verticalAnimation, scrollViewer);
+        Storyboard.SetTargetProperty(verticalAnimation, new PropertyPath(ScrollAnimationBehavior.VerticalOffsetProperty));
+        storyboard.Begin();
 
-          var scrollIndexOffset = (songInPlayListIndex - 3 < 0 ? 0 : songInPlayListIndex - 3) * StepSize;
-
-          //scrollViewer?.ScrollToVerticalOffset(scrollIndex);
-
-
-          if (scrollViewer != null)
-          {
-           {
-              bool isNewIndexGreater = scrollIndexOffset > scrollViewer.VerticalOffset;
-
-              scrollTimer.Stop();
-              scrollTimer = new DispatcherTimer();
-
-              double fps = 100;
-              var difference = scrollIndexOffset - scrollViewer.VerticalOffset;
-              var change = difference / (animationLengthMiliseconds / fps);
-
-              scrollTimer.Start();
-
-              scrollTimer.Interval = TimeSpan.FromMilliseconds(1000.0 / fps);
-
-              var value = scrollViewer.VerticalOffset;
-              scrollTimer.Tick += (s, e) =>
-              {
-                value = value + change > scrollIndexOffset ? scrollIndexOffset : value + change;
-
-                scrollViewer.ScrollToVerticalOffset(value);
-
-                if ((scrollViewer.VerticalOffset >= scrollIndexOffset && isNewIndexGreater) || (scrollViewer.VerticalOffset <= scrollIndexOffset && !isNewIndexGreater))
-                {
-                  scrollTimer.Stop();
-                }
-
-                if (scrollViewer.VerticalOffset == scrollViewer.ScrollableHeight)
-                {
-                  scrollTimer.Stop();
-                }
-              };
-            }
-          }
-        });
       }
-      catch (Exception ex)
-      {
-        Console.WriteLine(ex);
-      }
+     
+
+      last_songInPlayListIndex = songInPlayListIndex;
     }
-}
+  }
 }

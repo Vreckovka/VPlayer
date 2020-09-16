@@ -856,6 +856,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
     {
       ItemChanged?.Dispose();
       ActionIsDone?.Dispose();
+      disposable?.Dispose();
     }
 
     #endregion

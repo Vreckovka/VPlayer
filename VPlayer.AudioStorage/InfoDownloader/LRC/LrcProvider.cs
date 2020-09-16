@@ -15,7 +15,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC
     Local
   }
 
-  public abstract class LrcProvider<TFileOutput> : ILrcProvider
+  public abstract class LrcProvider<TFileOutput> : ILrcProvider, IInitializable
   {
     #region ParseLRCFile
 
@@ -88,6 +88,9 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC
 
     public abstract LRCProviders LRCProvider { get; }
 
+    public void Initialize()
+    {
+    }
   }
 
   public class GoogleDriveFile

@@ -3,8 +3,10 @@ using System.Reactive.Disposables;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Ninject;
+using ScrollAnimateBehavior.AttachedBehaviors;
 using VPlayer.Core.ViewModels;
 using VPlayer.Player.ViewModels;
 
@@ -13,6 +15,7 @@ namespace VPlayer.Player.Behaviors
   public class AutoScrollLyricsBehavior : System.Windows.Interactivity.Behavior<ListView>
   {
     public double StepSize { get; set; } = 1;
+    public TimeSpan AnimationTime { get; set; } = TimeSpan.FromSeconds(1);
 
     protected override void OnAttached()
     {
@@ -65,9 +68,7 @@ namespace VPlayer.Player.Behaviors
       }
     }
 
-    DispatcherTimer scrollTimer = new DispatcherTimer();
-    double animationLengthMiliseconds = 3500;
-
+  
     private void OnSongChanged(int songInPlayListIndex)
     {
       try
@@ -83,42 +84,29 @@ namespace VPlayer.Player.Behaviors
 
           var scrollIndexOffset = (songInPlayListIndex - 1 < 0 ? 0 : songInPlayListIndex - 1) * StepSize;
 
+         
 
-          if (scrollViewer != null)
+          if (scrollViewer != null )
           {
-            {
-              bool isNewIndexGreater = scrollIndexOffset > scrollViewer.VerticalOffset;
+            DoubleAnimation verticalAnimation = new DoubleAnimation();
 
-              scrollTimer.Stop();
-              scrollTimer = new DispatcherTimer();
+            verticalAnimation.From = scrollViewer.VerticalOffset;
+            verticalAnimation.To = scrollIndexOffset;
+            verticalAnimation.Duration = new Duration(AnimationTime);
 
-              double fps = 100;
-              var difference = scrollIndexOffset - scrollViewer.VerticalOffset;
-              var change = difference / (animationLengthMiliseconds / fps);
+            Storyboard storyboard = new Storyboard();
 
-              scrollTimer.Start();
-
-              scrollTimer.Interval = TimeSpan.FromMilliseconds(1000.0 / fps);
-
-              var value = scrollViewer.VerticalOffset;
-              scrollTimer.Tick += (s, e) =>
-              {
-                value = value + change > scrollIndexOffset ? scrollIndexOffset : value + change;
-
-                scrollViewer.ScrollToVerticalOffset(value);
-
-                if ((scrollViewer.VerticalOffset >= scrollIndexOffset && isNewIndexGreater) || (scrollViewer.VerticalOffset <= scrollIndexOffset && !isNewIndexGreater))
-                {
-                  scrollTimer.Stop();
-                }
-
-                if (scrollViewer.VerticalOffset == scrollViewer.ScrollableHeight)
-                {
-                  scrollTimer.Stop();
-                }
-              };
-            }
+            storyboard.Children.Add(verticalAnimation);
+            Storyboard.SetTarget(verticalAnimation, scrollViewer);
+            Storyboard.SetTargetProperty(verticalAnimation, new PropertyPath(ScrollAnimationBehavior.VerticalOffsetProperty));
+            storyboard.Begin();
           }
+
+
+
+
+
+         
         });
       }
       catch (Exception ex)

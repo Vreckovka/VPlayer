@@ -152,7 +152,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behaviors\DeletePictureItemBehavior.cs" />
-    <Compile Include="Converters.cs" />
     <Compile Include="Desing\LibraryRegionDesingProvider.cs" />
     <Compile Include="Desing\ViewModels\AlbumsDesignViewModel.cs" />
     <Compile Include="Modularity\NinjectModule\LibraryNinjectModule.cs" />
@@ -189,9 +188,6 @@
     <Compile Include="Views\PlaylistsView.xaml.cs">
       <DependentUpon>PlaylistsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VirtualList\AlbumGenerator.cs" />
-    <Compile Include="VirtualList\IObjectGenerator.cs" />
-    <Compile Include="VirtualList\VirtualList.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\LibraryView.xaml">

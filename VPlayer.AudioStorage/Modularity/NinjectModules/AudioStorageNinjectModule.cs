@@ -1,6 +1,7 @@
 ﻿using VCore.Modularity.NinjectModules;
 using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.InfoDownloader;
+using VPlayer.AudioStorage.InfoDownloader.LRC;
 using VPlayer.AudioStorage.Interfaces.Storage;
 
 namespace VPlayer.AudioStorage.Modularity.NinjectModules
@@ -14,7 +15,9 @@ namespace VPlayer.AudioStorage.Modularity.NinjectModules
       base.RegisterProviders();
 
       Kernel.Bind<IStorageManager>().To<AudioDatabaseManager>().InSingletonScope();
-      Kernel.BindToSelf<AudioInfoDownloader>().InSingletonScope().InitializeOnActivation();
+
+      Kernel.BindToSelf<GoogleDriveLrcProvider>().InSingletonScope();
+      Kernel.BindToSelf<AudioInfoDownloader>().InSingletonScope();
     }
 
     #endregion Methods

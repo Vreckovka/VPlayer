@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Google.Apis.Drive.v3;
 using File = Google.Apis.Drive.v3.Data.File;
@@ -41,6 +42,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC
 
     #region LoadArtists
 
+
     private void LoadArtists()
     {
       var artists = GetFilesInFolder(BaseFolder, GoogleMimeTypes.GoogleDriveFolder);
@@ -51,6 +53,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC
       {
         Artists.Add(notAddedFolder.Name, new GoogleDriveFile(notAddedFolder));
       }
+
     }
 
     #endregion
@@ -75,33 +78,48 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC
 
     #region GetFile
 
+    private Semaphore batton = new Semaphore(1,1);
     protected override GoogleDriveFile GetFile(string songName, string artistName, string albumName)
     {
-      GoogleDriveFile artistFolder;
-
-      if (!Artists.TryGetValue(artistName, out artistFolder))
+      try
       {
-        LoadArtists();
-      }
+        batton.WaitOne();
 
-      if (Artists.TryGetValue(artistName, out artistFolder))
-      {
-        var album = TryGetValueFromFolder(albumName, artistFolder, GoogleDriveLrcProvider.GoogleMimeTypes.GoogleDriveFolder);
+        GoogleDriveFile artistFolder;
 
-        if (album != null)
+        if (!Artists.TryGetValue(artistName, out artistFolder))
         {
-          var fileName = GetFileName(artistName, songName) + ".lrc";
-
-          var lyricsFile = TryGetValueFromFolder(fileName, album, GoogleDriveLrcProvider.GoogleMimeTypes.GoogleDriveFile);
-
-          return lyricsFile;
+          LoadArtists();
         }
-      }
 
-      return null;
+        if (Artists.TryGetValue(artistName, out artistFolder))
+        {
+          var album = TryGetValueFromFolder(albumName, artistFolder, GoogleDriveLrcProvider.GoogleMimeTypes.GoogleDriveFolder);
+
+          if (album != null)
+          {
+            var fileName = GetFileName(artistName, songName) + ".lrc";
+
+            var lyricsFile = TryGetValueFromFolder(fileName, album, GoogleDriveLrcProvider.GoogleMimeTypes.GoogleDriveFile);
+
+            return lyricsFile;
+          }
+        }
+
+        return null;
+      }
+      catch (Exception)
+      {
+        throw;
+      }
+      finally
+      {
+        batton.Release();
+      }
+      
     }
 
-    
+
 
     #endregion
 
@@ -119,7 +137,9 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC
           {
             using (var reader = new StreamReader(stream))
             {
-              var lines = reader.ReadToEnd().Split('\n');
+              var text = reader.ReadToEnd().Replace("\r\n", "\n").Replace("\r", "");
+
+              var lines = text.Split('\n');
 
               return lines;
             }
@@ -187,7 +207,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC
           listRequest.Fields = "nextPageToken, files(id, name)";
 
           IList<Google.Apis.Drive.v3.Data.File> files = listRequest.Execute().Files;
-      
+
           return files;
         }
       }

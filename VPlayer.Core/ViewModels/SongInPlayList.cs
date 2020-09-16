@@ -28,6 +28,7 @@ namespace VPlayer.Core.ViewModels
     private readonly IAlbumsViewModel albumsViewModel;
     private readonly IArtistsViewModel artistsViewModel;
     private readonly AudioInfoDownloader audioInfoDownloader;
+    private readonly GoogleDriveLrcProvider googleDriveLrcProvider;
     private readonly IEventAggregator eventAggregator;
 
     #endregion Fields
@@ -39,12 +40,14 @@ namespace VPlayer.Core.ViewModels
       IAlbumsViewModel albumsViewModel,
       IArtistsViewModel artistsViewModel,
       AudioInfoDownloader audioInfoDownloader,
-      Song model) : base(model)
+      Song model,
+      GoogleDriveLrcProvider googleDriveLrcProvider) : base(model)
     {
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.albumsViewModel = albumsViewModel ?? throw new ArgumentNullException(nameof(albumsViewModel));
       this.artistsViewModel = artistsViewModel ?? throw new ArgumentNullException(nameof(artistsViewModel));
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
+      this.googleDriveLrcProvider = googleDriveLrcProvider ?? throw new ArgumentNullException(nameof(googleDriveLrcProvider));
     }
 
     #endregion Constructors
@@ -285,15 +288,11 @@ namespace VPlayer.Core.ViewModels
 
     #region OnRefresh
 
-    public async void OnRefresh()
+    public void OnRefresh()
     {
       LRCFile = null;
 
-      await LoadLRCFromGoogleDrive();
-
-      if (LRCFile == null)
-        await LoadLRCFromLocal();
-
+      TryToUpdateLyrics();
     }
 
     #endregion
@@ -338,7 +337,7 @@ namespace VPlayer.Core.ViewModels
 
     #region TryGetLRCLyrics
 
-    public async void TryGetLRCLyrics()
+    public void LoadLRCFromEnitityLyrics()
     {
       if (LRCLyrics != null)
       {
@@ -355,14 +354,6 @@ namespace VPlayer.Core.ViewModels
 
         if (lrc != null)
           LRCFile = new LRCFileViewModel(lrc, provider);
-      }
-      else
-      {
-        await LoadLRCFromGoogleDrive();
-
-        if (LRCFile == null)
-          await LoadLRCFromLocal();
-
       }
     }
 
@@ -390,12 +381,10 @@ namespace VPlayer.Core.ViewModels
 
     private async Task LoadLRCFromGoogleDrive()
     {
-      var provider = new GoogleDriveLrcProvider();
-
-      var lrc = await audioInfoDownloader.TryGetLRCLyricsAsync(provider, Model, ArtistViewModel?.Name, AlbumViewModel?.Name);
+      var lrc = await audioInfoDownloader.TryGetLRCLyricsAsync(googleDriveLrcProvider, Model, ArtistViewModel?.Name, AlbumViewModel?.Name);
 
       if (lrc != null)
-        LRCFile = new LRCFileViewModel(lrc, provider.LRCProvider);
+        LRCFile = new LRCFileViewModel(lrc, googleDriveLrcProvider.LRCProvider);
 
     }
 
@@ -409,6 +398,22 @@ namespace VPlayer.Core.ViewModels
       {
         LRCFile.SetActualLine(ActualTime);
       }
+    }
+
+    #endregion
+
+    #region TryToUpdateLyrics
+
+    public async Task TryToUpdateLyrics()
+    {
+      if (LRCFile == null)
+        await LoadLRCFromGoogleDrive();
+
+      if (LRCFile == null)
+        await LoadLRCFromLocal();
+
+      if (LRCFile == null)
+        LoadLRCFromEnitityLyrics();
     }
 
     #endregion
