@@ -54,9 +54,6 @@
     <Reference Include="Epsiloner.Core, Version=1.0.18.0, Culture=neutral, PublicKeyToken=9da3ace43b578b82, processorArchitecture=MSIL">
       <HintPath>..\packages\Epsiloner.Core.1.0.18\lib\net461\Epsiloner.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Epsiloner.Wpf.Core, Version=1.0.16.0, Culture=neutral, PublicKeyToken=9da3ace43b578b82, processorArchitecture=MSIL">
-      <HintPath>..\packages\Epsiloner.Wpf.Core.1.0.16\lib\net471\Epsiloner.Wpf.Core.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Threading.Tasks, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll</HintPath>
       <Private>False</Private>

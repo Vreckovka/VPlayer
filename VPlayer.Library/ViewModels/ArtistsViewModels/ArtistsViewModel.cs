@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.Entity;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Windows;
 using VCore.Factories;
 using VCore.Modularity.Events;
@@ -10,9 +11,10 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.Artists;
+using VPlayer.Library.ViewModels.LibraryViewModels;
 using VPlayer.Library.Views;
 
-namespace VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels
+namespace VPlayer.Library.ViewModels.ArtistsViewModels
 {
   public class ArtistsViewModel : PlayableItemsViewModel<ArtistsView, ArtistViewModel, Artist>, IArtistsViewModel
   {
@@ -25,6 +27,8 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels
       LibraryCollection<ArtistViewModel, Artist> libraryCollection) :
       base(regionProvider, viewModelsFactory, storageManager, libraryCollection)
     {
+      //this.storageManager.ItemChanged.Where(x => x.Item.GetType() == typeof(Song)).Subscribe(SongChange);
+      this.storageManager.ItemChanged.Where(x => x.Item.GetType() == typeof(Album)).Subscribe(AlbumChange);
     }
 
     #endregion Constructors
@@ -36,12 +40,12 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels
     public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
     public override IQueryable<Artist> LoadQuery => base.LoadQuery.Include(x => x.Albums.Select(y => y.Songs));
 
-    #endregion Properties
+    #endregion 
 
-    protected override void ItemsChanged(ItemChanged itemChanged)
+    #region AlbumChange
+
+    private void AlbumChange(ItemChanged itemChanged)
     {
-      base.ItemsChanged(itemChanged);
-
       if (itemChanged.Item is Album album)
       {
         ArtistViewModel artist = null;
@@ -76,6 +80,8 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels
         }
       }
     }
+
+    #endregion
 
     protected void SongChange(ItemChanged itemChanged)
     {

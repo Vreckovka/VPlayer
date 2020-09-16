@@ -28,8 +28,8 @@ namespace VPlayer.Core.Events
     public PlaySongsEventData(
       IEnumerable<SongInPlayList> songs,
       PlaySongsAction playSongsAction, 
-      bool isShufle, 
-      bool isRepeat,
+      bool? isShufle, 
+      bool? isRepeat,
       float? setPostion,
       object model)
     {
@@ -44,8 +44,8 @@ namespace VPlayer.Core.Events
 
     public IEnumerable<SongInPlayList> Songs { get;  }
     public PlaySongsAction PlaySongsAction { get; }
-    public bool IsShufle { get;  }
-    public bool IsRepeat { get;  }
+    public bool? IsShufle { get;  }
+    public bool? IsRepeat { get;  }
     public float? SetPostion { get;  }
     public object Model { get; }
 

@@ -148,11 +148,26 @@ namespace VPlayer.Library.ViewModels
 
     #region OnActivation
 
+   
     public override void OnActivation(bool firstActivation)
     {
       base.OnActivation(firstActivation);
 
       if (firstActivation)
+      {
+        SubscribeToChanges();
+      }
+    }
+
+    #endregion
+
+    #region SubscribeToChanges
+
+
+    private bool wasSubscribed;
+    private void SubscribeToChanges()
+    {
+      if (!wasSubscribed)
       {
         this.storageManager.ItemChanged.Where(x => x.Item.GetType() == typeof(TModel)).Subscribe(ItemsChanged);
         storageManager.ActionIsDone.Subscribe((x) =>
@@ -170,15 +185,15 @@ namespace VPlayer.Library.ViewModels
       }
     }
 
-    #endregion OnActivation
+    #endregion
 
     #region GetViewModelsAsync
 
     public async Task<ICollection<TViewModel>> GetViewModelsAsync(IQueryable<TModel> optionalQuery = null)
     {
-
       if (!LibraryCollection.WasLoaded)
       {
+        SubscribeToChanges();
         var result = await LibraryCollection.GetOrLoadDataAsync(optionalQuery);
 
         if (!result)

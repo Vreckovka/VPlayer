@@ -71,19 +71,6 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
     #endregion Properties
 
-    #region Filter
-
-    public void Filter(string name)
-    {
-      if (!string.IsNullOrEmpty(name.ToLower()))
-        FilteredItems = new VirtualList<TViewModel>(new ItemsGenerator<TViewModel>(trieItems.Retrieve(name)));
-      else
-        FilteredItems = new VirtualList<TViewModel>(new ItemsGenerator<TViewModel>(Items));
-
-      actualFilter = name;
-    }
-
-    #endregion Filter
 
     #region LoadInitilizedData
 
@@ -118,6 +105,8 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
       });
     }
 
+    #endregion 
+
     public IObservable<bool> GetOrLoadDataAsync(IQueryable<TModel> optionalQuery)
     {
       return Observable.FromAsync<bool>(async () =>
@@ -129,7 +118,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
       });
     }
 
-    #endregion LoadInitilizedData
+
 
     #region CreateTrieItems
 
@@ -174,9 +163,13 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
           if (originalItem != null)
           {
             Items.Remove(originalItem);
+            Recreate();
+          }
+          else
+          {
           }
 
-          Recreate();
+         
         }
       });
     }
@@ -238,9 +231,14 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
     {
       if (Items != null)
       {
-        FilteredItems = new VirtualList<TViewModel>(new ItemsGenerator<TViewModel>(Items));
+        var generator = new ItemsGenerator<TViewModel>(Items);
+        generator._repository.PageSize = 21;
+
+        FilteredItems = new VirtualList<TViewModel>(generator);
       }
     }
+
+    
 
     #endregion Recreate
   }

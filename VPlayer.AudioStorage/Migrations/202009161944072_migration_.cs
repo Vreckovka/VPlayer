@@ -3,7 +3,7 @@
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class migration_2 : DbMigration
+    public partial class migration_ : DbMigration
     {
         public override void Up()
         {
@@ -49,6 +49,11 @@
                         Length = c.Int(nullable: false),
                         MusicBrainzId = c.String(maxLength: 2147483647),
                         Name = c.String(maxLength: 2147483647),
+                        Chartlyrics_Lyric = c.String(maxLength: 2147483647),
+                        Chartlyrics_LyricId = c.String(maxLength: 2147483647),
+                        Chartlyrics_LyricCheckSum = c.String(maxLength: 2147483647),
+                        LRCLyrics = c.String(maxLength: 2147483647),
+                        IsFavorite = c.Boolean(nullable: false),
                         Album_Id = c.Int(),
                     })
                 .PrimaryKey(t => t.Id)

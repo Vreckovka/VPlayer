@@ -25,15 +25,16 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
     #region Methods
 
     Task ClearStorage();
-    Task UpdateAllNotYetUpdated(bool tryDownloadBroken = false);
+    Task DownloadAllNotYetDownloaded(bool tryDownloadBroken = false);
     IQueryable<T> GetRepository<T>(DbContext dbContext = null) where T : class;
     Task<bool> StoreData(IEnumerable<string> audioPath);
     Task<bool> StoreData(string audioPath);
     bool StoreData(Playlist model, out Playlist entityModel);
     void UpdateData(Playlist playlist);
-    void UpdateEntity<T>(T entity) where T : class, IEntity;
+    void RewriteEntity<T>(T entity) where T : class, IEntity;
+    Task<bool> UpdateEntity<TEntity>(TEntity newVersion) where TEntity : class, IEntity, IUpdateable<TEntity>;
 
-    
+
 
     #endregion Methods
   }

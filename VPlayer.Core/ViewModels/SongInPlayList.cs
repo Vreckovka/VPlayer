@@ -1,6 +1,8 @@
 ﻿using Prism.Events;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -13,7 +15,9 @@ using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.InfoDownloader.LRC;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Clients;
+using VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;
+using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.ViewModels.Artists;
@@ -29,6 +33,7 @@ namespace VPlayer.Core.ViewModels
     private readonly IArtistsViewModel artistsViewModel;
     private readonly AudioInfoDownloader audioInfoDownloader;
     private readonly GoogleDriveLrcProvider googleDriveLrcProvider;
+    private readonly IStorageManager storageManager;
     private readonly IEventAggregator eventAggregator;
 
     #endregion Fields
@@ -41,13 +46,15 @@ namespace VPlayer.Core.ViewModels
       IArtistsViewModel artistsViewModel,
       AudioInfoDownloader audioInfoDownloader,
       Song model,
-      GoogleDriveLrcProvider googleDriveLrcProvider) : base(model)
+      GoogleDriveLrcProvider googleDriveLrcProvider,
+      IStorageManager storageManager) : base(model)
     {
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.albumsViewModel = albumsViewModel ?? throw new ArgumentNullException(nameof(albumsViewModel));
       this.artistsViewModel = artistsViewModel ?? throw new ArgumentNullException(nameof(artistsViewModel));
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
       this.googleDriveLrcProvider = googleDriveLrcProvider ?? throw new ArgumentNullException(nameof(googleDriveLrcProvider));
+      this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
     }
 
     #endregion Constructors
@@ -81,7 +88,38 @@ namespace VPlayer.Core.ViewModels
     public string ImagePath => AlbumViewModel.Model?.AlbumFrontCoverFilePath;
     public bool IsPaused { get; set; }
     public string Name => Model.Name;
+
     public string LRCLyrics => Model.LRCLyrics;
+
+    #region IsFavorite
+
+    public bool IsFavorite
+    {
+      get { return Model.IsFavorite; }
+      set { UpdateIsFavorite(value); }
+    }
+
+    private async void UpdateIsFavorite(bool value)
+    {
+      if (value != Model.IsFavorite)
+      {
+        var oldVAlue = Model.IsFavorite;
+        Model.IsFavorite = value;
+
+        var updated = await storageManager.UpdateEntity(Model);
+
+        if (updated)
+        {
+          RaisePropertyChanged(nameof(IsFavorite));
+        }
+        else
+        {
+          Model.IsFavorite = oldVAlue;
+        }
+      }
+    }
+
+    #endregion
 
     #region Lyrics
 
@@ -288,17 +326,49 @@ namespace VPlayer.Core.ViewModels
 
     #region OnRefresh
 
-    public void OnRefresh()
+    private void OnRefresh()
     {
-      LRCFile = null;
-
-      TryToUpdateLyrics();
+      TryToRefreshUpdateLyrics();
     }
 
     #endregion
 
     #endregion
 
+    #region OpenContainingFolder
+
+    private ActionCommand openContainingFolder;
+
+    public ICommand OpenContainingFolder
+    {
+      get
+      {
+        if (openContainingFolder == null)
+        {
+          openContainingFolder = new ActionCommand(OnOpenContainingFolder);
+        }
+
+        return openContainingFolder;
+      }
+    }
+
+
+    private void OnOpenContainingFolder()
+    {
+      
+      if (!string.IsNullOrEmpty(Model.DiskLocation))
+      {
+        var folder = Path.GetDirectoryName(Model.DiskLocation);
+
+        if (!string.IsNullOrEmpty(folder))
+        {
+          Process.Start(folder);
+        }
+      }
+    }
+
+
+    #endregion
 
     #endregion
 
@@ -402,10 +472,13 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region TryToUpdateLyrics
+    #region TryToRefreshUpdateLyrics
 
-    public async Task TryToUpdateLyrics()
+    public async Task TryToRefreshUpdateLyrics()
     {
+      LRCFile = null;
+      Lyrics = null;
+
       if (LRCFile == null)
         await LoadLRCFromGoogleDrive();
 
@@ -414,6 +487,11 @@ namespace VPlayer.Core.ViewModels
 
       if (LRCFile == null)
         LoadLRCFromEnitityLyrics();
+
+      if (!string.IsNullOrEmpty(ArtistViewModel?.Name))
+      {
+        await audioInfoDownloader.UpdateSongLyricsAsync(ArtistViewModel.Name, Name, Model);
+      }
     }
 
     #endregion

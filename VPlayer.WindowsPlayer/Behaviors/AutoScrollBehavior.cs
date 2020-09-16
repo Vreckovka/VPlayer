@@ -73,6 +73,8 @@ namespace VPlayer.Player.Behaviors
 
 
     private SerialDisposable serialDisposable = new SerialDisposable();
+    private int last_songInPlayListIndex;
+
     private void SubcsribeToSongChange()
     {
       if (Kernel != null)
@@ -80,11 +82,15 @@ namespace VPlayer.Player.Behaviors
         if (windowsPlayerViewModel == null)
           windowsPlayerViewModel = Kernel.Get<WindowsPlayerViewModel>();
 
-        serialDisposable.Disposable = windowsPlayerViewModel.ActualSongChanged.Subscribe(OnSongChanged);
+        if (windowsPlayerViewModel != null)
+        {
+          last_songInPlayListIndex = 0;
+          serialDisposable.Disposable = windowsPlayerViewModel.ActualSongChanged.Subscribe(OnSongChanged);
+        }
       }
     }
 
-    private int last_songInPlayListIndex;
+    
     private void OnSongChanged(int songInPlayListIndex)
     {
       // Get the border of the listview (first child of a listview)
@@ -96,32 +102,40 @@ namespace VPlayer.Player.Behaviors
       var scrollIndexOffset = (songInPlayListIndex - 3 < 0 ? 0 : songInPlayListIndex - 3) * StepSize;
 
 
-
+      int max = 10;
       if (scrollViewer != null )
       {
-        DoubleAnimation verticalAnimation = new DoubleAnimation();
-
-        verticalAnimation.From = scrollViewer.VerticalOffset;
-        verticalAnimation.To = scrollIndexOffset;
-
-        if (last_songInPlayListIndex == songInPlayListIndex - 1)
+        if ((songInPlayListIndex > last_songInPlayListIndex + max &&
+            songInPlayListIndex > last_songInPlayListIndex) ||
+            (songInPlayListIndex < last_songInPlayListIndex - max &&
+             songInPlayListIndex < last_songInPlayListIndex))
         {
-          verticalAnimation.Duration = new Duration(AnimationTime);
+          scrollViewer.ScrollToVerticalOffset(scrollIndexOffset);
         }
-        else
+        else if(songInPlayListIndex != last_songInPlayListIndex)
         {
-          verticalAnimation.Duration = new Duration(TimeSpan.FromSeconds(0.50));
+          DoubleAnimation verticalAnimation = new DoubleAnimation();
+
+          verticalAnimation.From = scrollViewer.VerticalOffset;
+          verticalAnimation.To = scrollIndexOffset;
+
+          if (last_songInPlayListIndex == songInPlayListIndex - 1)
+          {
+            verticalAnimation.Duration = new Duration(AnimationTime);
+          }
+          else
+          {
+            verticalAnimation.Duration = new Duration(TimeSpan.FromSeconds(0.50));
+          }
+
+          Storyboard storyboard = new Storyboard();
+
+          storyboard.Children.Add(verticalAnimation);
+          Storyboard.SetTarget(verticalAnimation, scrollViewer);
+          Storyboard.SetTargetProperty(verticalAnimation, new PropertyPath(ScrollAnimationBehavior.VerticalOffsetProperty));
+          storyboard.Begin();
         }
-
-        Storyboard storyboard = new Storyboard();
-
-        storyboard.Children.Add(verticalAnimation);
-        Storyboard.SetTarget(verticalAnimation, scrollViewer);
-        Storyboard.SetTargetProperty(verticalAnimation, new PropertyPath(ScrollAnimationBehavior.VerticalOffsetProperty));
-        storyboard.Begin();
-
       }
-     
 
       last_songInPlayListIndex = songInPlayListIndex;
     }

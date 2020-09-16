@@ -183,25 +183,18 @@
     <Compile Include="InfoDownloader\Clients\Chartlyrics\ChartLyricsClient.cs" />
     <Compile Include="InfoDownloader\Clients\Chartlyrics\XMLClasses\GetLyricResult.cs" />
     <Compile Include="InfoDownloader\Clients\Chartlyrics\XMLClasses\SearchLyricResult.cs" />
-    <Compile Include="InfoDownloader\LRC\GoogleDriveLrcProvider.cs" />
-    <Compile Include="InfoDownloader\LRC\GoogleDriveServiceProvider.cs" />
+    <Compile Include="InfoDownloader\LRC\Clients\Google\GoogleDriveFile.cs" />
+    <Compile Include="InfoDownloader\LRC\Clients\Google\GoogleDriveLrcProvider.cs" />
+    <Compile Include="InfoDownloader\LRC\Clients\Google\GoogleDriveServiceProvider.cs" />
     <Compile Include="InfoDownloader\LRC\ILrcProvider.cs" />
     <Compile Include="InfoDownloader\LRC\LrcProvider.cs" />
     <Compile Include="InfoDownloader\LRC\Domain\LRCFile.cs" />
     <Compile Include="InfoDownloader\LRC\Domain\LRCLyricLine.cs" />
     <Compile Include="InfoDownloader\LRC\LRCParser.cs" />
-    <Compile Include="InfoDownloader\LRC\Clients\LocalLrcProvider.cs" />
-    <Compile Include="Migrations\202009111345049_migration_2.cs" />
-    <Compile Include="Migrations\202009111345049_migration_2.designer.cs">
-      <DependentUpon>202009111345049_migration_2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202009112022424_migration_3.cs" />
-    <Compile Include="Migrations\202009112022424_migration_3.designer.cs">
-      <DependentUpon>202009112022424_migration_3.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202009131846578_migration_31.cs" />
-    <Compile Include="Migrations\202009131846578_migration_31.designer.cs">
-      <DependentUpon>202009131846578_migration_31.cs</DependentUpon>
+    <Compile Include="InfoDownloader\LRC\Clients\Local\LocalLrcProvider.cs" />
+    <Compile Include="Migrations\202009161944072_migration_.cs" />
+    <Compile Include="Migrations\202009161944072_migration_.designer.cs">
+      <DependentUpon>202009161944072_migration_.cs</DependentUpon>
     </Compile>
     <Compile Include="Repositories\AlbumsRepository.cs" />
     <Compile Include="Repositories\ArtistRepository.cs" />
@@ -248,18 +241,12 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202009111345049_migration_2.resx">
-      <DependentUpon>202009111345049_migration_2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202009112022424_migration_3.resx">
-      <DependentUpon>202009112022424_migration_3.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202009131846578_migration_31.resx">
-      <DependentUpon>202009131846578_migration_31.cs</DependentUpon>
-    </EmbeddedResource>
+    <Folder Include="InfoDownloader\Clients\MiniLyrics\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="InfoDownloader\Clients\MiniLyrics\" />
+    <EmbeddedResource Include="Migrations\202009161944072_migration_.resx">
+      <DependentUpon>202009161944072_migration_.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

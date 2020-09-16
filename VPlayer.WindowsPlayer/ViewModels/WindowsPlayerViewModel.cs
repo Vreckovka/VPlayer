@@ -113,7 +113,7 @@ namespace VPlayer.Player.ViewModels
 
     public VlcMediaPlayer MediaPlayer { get; private set; }
     public RxObservableCollection<SongInPlayList> PlayList { get; set; } = new RxObservableCollection<SongInPlayList>();
-    public VirtualList<SongInPlayList> VirtualizedPlayList { get; set; } 
+    public VirtualList<SongInPlayList> VirtualizedPlayList { get; set; }
 
     public override bool ContainsNestedRegions => false;
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
@@ -126,7 +126,7 @@ namespace VPlayer.Player.ViewModels
 
     #region IsRepeate
 
-    private bool isRepeate;
+    private bool isRepeate = true;
     public bool IsRepeate
     {
       get { return isRepeate; }
@@ -351,6 +351,8 @@ namespace VPlayer.Player.ViewModels
 
     #endregion Initialize
 
+    #region SongChange
+
     private void SongChange(ItemChanged itemChanged)
     {
       if (itemChanged.Item is Song song)
@@ -368,6 +370,8 @@ namespace VPlayer.Player.ViewModels
         }
       }
     }
+
+    #endregion
 
     #region DeleteSongs
 
@@ -480,8 +484,6 @@ namespace VPlayer.Player.ViewModels
 
     private void PlaySongs(PlaySongsEventData data)
     {
-      IsActive = true;
-
       if (ActualSavedPlaylist.Id > 0)
         UpdatePlaylist();
 
@@ -491,7 +493,7 @@ namespace VPlayer.Player.ViewModels
           PlaySongs(data.Songs);
           SavePlaylist();
 
-        
+
           break;
         case PlaySongsAction.Add:
           PlayList.AddRange(data.Songs);
@@ -501,7 +503,7 @@ namespace VPlayer.Player.ViewModels
             SetActualSong(0);
           }
 
-          VirtualizedPlayList = new VirtualList<SongInPlayList>(new ItemsGenerator<SongInPlayList>(PlayList));
+          ReloadVirtulizedPlaylist();
           RaisePropertyChanged(nameof(CanPlay));
           SavePlaylist();
           break;
@@ -517,8 +519,12 @@ namespace VPlayer.Player.ViewModels
       }
 
       RaisePropertyChanged(nameof(CanPlay));
-      IsShuffle = data.IsShufle;
-      IsRepeate = data.IsRepeat;
+
+      if (data.IsShufle.HasValue)
+        IsShuffle = data.IsShufle.Value;
+
+      if (data.IsRepeat.HasValue)
+        IsRepeate = data.IsRepeat.Value;
 
       Task.Run(async () =>
       {
@@ -532,11 +538,11 @@ namespace VPlayer.Player.ViewModels
 
     private void PlaySongs(IEnumerable<SongInPlayList> songs, bool savePlaylist = true, int songIndex = 0)
     {
+      IsActive = true;
+
       PlayList.Clear();
       PlayList.AddRange(songs);
       ReloadVirtulizedPlaylist();
-
-
 
       IsPlaying = true;
 
@@ -553,12 +559,16 @@ namespace VPlayer.Player.ViewModels
 
     #endregion PlaySongs
 
+    #region ReloadVirtulizedPlaylist
+
     private void ReloadVirtulizedPlaylist()
     {
       var generator = new ItemsGenerator<SongInPlayList>(PlayList);
       generator._repository.PageSize = 15;
       VirtualizedPlayList = new VirtualList<SongInPlayList>(generator);
     }
+
+    #endregion
 
     #region Play
 
@@ -587,8 +597,11 @@ namespace VPlayer.Player.ViewModels
                 if (string.IsNullOrEmpty(ActualSong.Lyrics) && !string.IsNullOrEmpty(ActualSong.ArtistViewModel?.Name))
                 {
                   await audioInfoDownloader.UpdateSongLyricsAsync(ActualSong.ArtistViewModel.Name, ActualSong.Name, ActualSong.Model);
+                }
 
-                  await ActualSong.TryToUpdateLyrics();
+                if (string.IsNullOrEmpty(ActualSong.LRCLyrics))
+                {
+                  await ActualSong.TryToRefreshUpdateLyrics();
                 }
 
               });
@@ -798,7 +811,7 @@ namespace VPlayer.Player.ViewModels
           throw new ArgumentOutOfRangeException();
       }
 
-     
+
     }
 
     #endregion

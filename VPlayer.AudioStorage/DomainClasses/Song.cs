@@ -2,7 +2,12 @@
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
-  public class Song : INamedEntity
+  public interface IUpdateable<TEntity>
+  {
+    void Update(TEntity other);
+  }
+
+  public class Song : INamedEntity, IUpdateable<Song>
   {
     #region Constructors
 
@@ -39,7 +44,9 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     public string LRCLyrics { get; set; }
 
-    #endregion Properties
+    public bool IsFavorite { get; set; }
+
+    #endregion 
 
     #region Methods
 

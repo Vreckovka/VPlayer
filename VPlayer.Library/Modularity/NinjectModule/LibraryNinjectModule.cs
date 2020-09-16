@@ -10,7 +10,7 @@ using VPlayer.AudioStorage.Modularity.NinjectModules;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Library.ViewModels.AlbumsViewModels;
-using VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels;
+using VPlayer.Library.ViewModels.ArtistsViewModels;
 
 namespace VPlayer.Library.Modularity.NinjectModule
 {

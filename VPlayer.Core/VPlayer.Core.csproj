@@ -285,18 +285,6 @@
     <Content Include="template\styles\main.css" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="ControlsTemplates\ButtonWithIconTemplate.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ControlsTemplates\FinderTemplate.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ControlsTemplates\PlayableWrapPanelTemplate.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\SettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

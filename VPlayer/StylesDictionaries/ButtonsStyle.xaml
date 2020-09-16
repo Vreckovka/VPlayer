@@ -1,7 +1,8 @@
 ﻿<ResourceDictionary x:Class="VPlayer.StylesDictionaries.ButtonsStyle"
                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore">
+                    xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore"
+                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/VPlayer;component/StylesDictionaries/Paths.xaml" />
@@ -176,14 +177,9 @@
     <Setter Property="Foreground" Value="#DB505050"/>
     <Setter Property="Width" Value="20"/>
     <Setter Property="Height" Value="20"/>
-    <Setter Property="Effect">
-      <Setter.Value>
-        <DropShadowEffect BlurRadius="5"
-                          Opacity="1"
-                          ShadowDepth="2"
-                          Color="Black" />
-      </Setter.Value>
-    </Setter>
+    <Setter Property="PathCheckedBrush" Value="#FFEFDF"/>
+    <Setter Property="IconDefaultColor" Value="#50FFEFDF"/>
+
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="{x:Type controls:PathButton}">
@@ -198,8 +194,7 @@
                     Height="{TemplateBinding Height}"
                     Style="{TemplateBinding PathStyle}"
                     Fill="{TemplateBinding Foreground}"
-                    Stretch="Fill" 
-                    />
+                    Stretch="Fill" />
 
               <ContentPresenter x:Name="MyContentPresenter"
                                 Margin="0,0,0,0"
@@ -207,30 +202,26 @@
                                 VerticalAlignment="Center"
                                 Content="{TemplateBinding Content}" />
             </Grid>
+
+            <i:Interaction.Triggers>
+              <i:EventTrigger EventName="MouseEnter" >
+                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AnimateHoverColor}" />
+              </i:EventTrigger>
+
+              <i:EventTrigger EventName="MouseLeave" >
+                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AnimateDefaultColor}" />
+              </i:EventTrigger>
+            </i:Interaction.Triggers>
           </Border>
 
           <ControlTemplate.Triggers>
             <Trigger Property="IsChecked" Value="True">
-              <Setter TargetName="PathIcon" Property="Fill" Value="#FFEFDF" />
+              <Setter TargetName="PathIcon" Property="Fill" 
+                      Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=PathCheckedBrush}" />
             </Trigger>
 
             <Trigger Property="IsMouseOver" Value="True">
               <Setter Property="Cursor" Value="Hand" />
-
-              <Trigger.EnterActions>
-                <BeginStoryboard Name="ColorHover">
-                  <Storyboard >
-                    <ColorAnimation To="#aaFFEFDF" 
-                                    Duration="0:0:0:0.15"
-                                    Storyboard.TargetProperty="Fill.Color"
-                                    Storyboard.TargetName="PathIcon"/>
-                  </Storyboard>
-                </BeginStoryboard>
-              </Trigger.EnterActions>
-
-              <Trigger.ExitActions>
-                <RemoveStoryboard BeginStoryboardName="ColorHover"/>
-              </Trigger.ExitActions>
             </Trigger>
 
             <Trigger Property="IsPressed" Value="True">
@@ -282,182 +273,6 @@
     </Setter>
   </Style>
 
-  <Style x:Key="RefreshButton" TargetType="{x:Type ToggleButton}">
-    <Setter Property="OverridesDefaultStyle" Value="True" />
-    <Setter Property="Effect">
-      <Setter.Value>
-        <DropShadowEffect BlurRadius="5"
-                          Opacity="1"
-                          ShadowDepth="2"
-                          Color="Black" />
-      </Setter.Value>
-    </Setter>
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="{x:Type ToggleButton}">
-          <Border Padding="7"
-                  Background="{TemplateBinding Background}"
-                  CornerRadius="4">
-            <Grid Background="Transparent">
-              <Path x:Name="PathIcon"
-                    Width="20"
-                    Height="20"
-                    Data=""
-                    Fill="{TemplateBinding Foreground}"
-                    Stretch="Fill" />
-
-              <ContentPresenter x:Name="MyContentPresenter"
-                                Margin="0,0,0,0"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Content="{TemplateBinding Content}" />
-            </Grid>
-          </Border>
-
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsChecked" Value="True">
-              <Setter TargetName="PathIcon" Property="Fill" Value="#FFEFDF" />
-            </Trigger>
-
-            <Trigger Property="IsMouseOver" Value="True">
-              <Setter Property="Cursor" Value="Hand" />
-
-              <Trigger.EnterActions>
-                <BeginStoryboard Name="ColorHover">
-                  <Storyboard >
-                    <ColorAnimation To="#aaFFEFDF" 
-                                    Duration="0:0:0:0.75"
-                                    Storyboard.TargetProperty="Fill.Color"
-                                    Storyboard.TargetName="PathIcon"/>
-                  </Storyboard>
-                </BeginStoryboard>
-              </Trigger.EnterActions>
-
-              <Trigger.ExitActions>
-                <RemoveStoryboard BeginStoryboardName="ColorHover"/>
-              </Trigger.ExitActions>
-            </Trigger>
-
-            <Trigger Property="IsPressed" Value="True">
-              <Setter TargetName="PathIcon" Property="Fill" Value="GhostWhite" />
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
-
-  <!--#region NewRegion -->
-  <Style x:Key="ShuffleButton" TargetType="{x:Type ToggleButton}">
-    <Setter Property="OverridesDefaultStyle" Value="True" />
-    <Setter Property="Effect">
-      <Setter.Value>
-        <DropShadowEffect BlurRadius="5"
-                          Opacity="1"
-                          ShadowDepth="2"
-                          Color="Black" />
-      </Setter.Value>
-    </Setter>
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="{x:Type ToggleButton}">
-          <Border Padding="7"
-                  Background="{TemplateBinding Background}"
-                  CornerRadius="4">
-            <Grid Background="Transparent">
-              <Path x:Name="PathIcon"
-                    Width="22"
-                    Height="22"
-                    Fill="{TemplateBinding Foreground}"
-                    Stretch="Fill"
-                    Style="{StaticResource Shuffle}" />
-              <ContentPresenter x:Name="MyContentPresenter"
-                                Margin="0,0,0,0"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Content="{TemplateBinding Content}" />
-            </Grid>
-          </Border>
-
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsChecked" Value="True">
-              <Setter TargetName="PathIcon" Property="Fill" Value="#FFEFDF" />
-            </Trigger>
-
-            <Trigger Property="IsMouseOver" Value="True">
-              <Setter Property="Cursor" Value="Hand" />
-
-              <Trigger.EnterActions>
-                <BeginStoryboard Name="ColorHover">
-                  <Storyboard >
-                    <ColorAnimation To="#aaFFEFDF" 
-                                    Duration="0:0:0:.75"
-                                    Storyboard.TargetProperty="Fill.Color"
-                                    Storyboard.TargetName="PathIcon"/>
-                  </Storyboard>
-                </BeginStoryboard>
-              </Trigger.EnterActions>
-
-              <Trigger.ExitActions>
-                <RemoveStoryboard BeginStoryboardName="ColorHover"/>
-              </Trigger.ExitActions>
-            </Trigger>
-
-            <Trigger Property="IsPressed" Value="True">
-              <Setter TargetName="PathIcon" Property="Fill" Value="GhostWhite" />
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
-  <!--#endregion-->
-  <Style x:Key="StopButton" TargetType="{x:Type Button}">
-    <Setter Property="Effect">
-      <Setter.Value>
-        <DropShadowEffect BlurRadius="5"
-                          Opacity="1"
-                          ShadowDepth="2"
-                          Color="Black" />
-      </Setter.Value>
-    </Setter>
-    <Setter Property="OverridesDefaultStyle" Value="True" />
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="{x:Type Button}">
-          <Border Padding="7"
-                  Background="{TemplateBinding Background}"
-                  CornerRadius="4">
-            <Grid Background="Transparent">
-              <Path x:Name="PathIcon"
-                    Width="20"
-                    Height="20"
-                    Data="M214.781,0H17.898C8.013,0,0,8.014,0,17.898v196.883                                   c0,9.885,8.013,17.898,17.898,17.898h196.883c9.886,0,17.898-8.013,17.898-17.898V17.898C232.679,8.014,224.666,0,214.781,0z"
-                    Fill="{DynamicResource DefaultWhiteBrush}"
-                    Stretch="Fill" />
-              <ContentPresenter x:Name="MyContentPresenter"
-                                Margin="0,0,0,0"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Content="{TemplateBinding Content}" />
-            </Grid>
-          </Border>
-
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-              <Setter Property="Cursor" Value="Hand" />
-              <Setter TargetName="PathIcon" Property="Fill" Value="{DynamicResource DefaultRedBrush}" />
-            </Trigger>
-
-            <Trigger Property="IsPressed" Value="True">
-              <Setter Property="Background" Value="{DynamicResource DefaultRedBrush}" />
-              <Setter TargetName="PathIcon" Property="Fill" Value="White" />
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
 
   <Style x:Key="PlayMiniWithCircle" TargetType="Button">
     <Setter Property="Template">

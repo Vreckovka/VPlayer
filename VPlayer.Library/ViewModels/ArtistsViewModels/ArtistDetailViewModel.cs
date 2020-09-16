@@ -8,7 +8,7 @@ using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.Artists;
 using VPlayer.Library.Views;
 
-namespace VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels
+namespace VPlayer.Library.ViewModels.ArtistsViewModels
 {
   public class ArtistDetailViewModel : RegionViewModel<ArtistDetailView>
   {

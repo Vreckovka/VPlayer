@@ -10,7 +10,7 @@
     xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore"
     xmlns:domainClasses="clr-namespace:VPlayer.AudioStorage.DomainClasses;assembly=VPlayer.AudioStorage"
     xmlns:attachedProperties="clr-namespace:VCore.AttachedProperties;assembly=VCore"
-    xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.Core">
+    xmlns:library2="clr-namespace:VPlayer.Library;assembly=VPlayer.Core">
 
   <Duration x:Key="AnimationDuration">0:0:0:0.30</Duration>
 
@@ -189,7 +189,7 @@
                                 Grid.Row="0"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Top"
-                                Source="{TemplateBinding ImageThumbnail,Converter={library1:CacheImageConverter}}" 
+                                Source="{TemplateBinding ImageThumbnail,Converter={library2:CacheImageConverter}}" 
                                 Name="coverImage"/>
 
               <Grid Grid.Row="0" Background="{StaticResource GlassGradient}" />
@@ -432,7 +432,7 @@
                         <Style.Triggers>
                           <DataTrigger Value="True">
                             <DataTrigger.Binding>
-                              <MultiBinding Converter="{library1:IsBiggerConverter}">
+                              <MultiBinding Converter="{library2:IsBiggerConverter}">
                                 <Binding ElementName="NameTxt" Path="ActualWidth" />
                                 <Binding ElementName="GridParent" Path="ActualWidth" />
                               </MultiBinding>

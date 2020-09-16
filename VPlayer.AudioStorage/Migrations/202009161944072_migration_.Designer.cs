@@ -7,13 +7,13 @@ namespace VPlayer.AudioStorage.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.0")]
-    public sealed partial class migration_2 : IMigrationMetadata
+    public sealed partial class migration_ : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(migration_2));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(migration_));
         
         string IMigrationMetadata.Id
         {
-            get { return "202009111345049_migration_2"; }
+            get { return "202009161944072_migration_"; }
         }
         
         string IMigrationMetadata.Source

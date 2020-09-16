@@ -35,8 +35,7 @@
                     Height="{TemplateBinding IconHeight}"
                     Style="{TemplateBinding IconPathStyle}" 
                     Fill="{TemplateBinding IconBrush}" 
-                    Name="ButtonIcon"
-                    Margin="0 0 5 0"/>
+                    Name="ButtonIcon"/>
 
               <ContentPresenter Grid.Column="1" VerticalAlignment="Center" />
             </Grid>
@@ -55,31 +54,6 @@
           <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
               <Setter Property="Cursor" Value="Hand" />
-              <Trigger.EnterActions>
-                <RemoveStoryboard BeginStoryboardName="ResetForegroundStoryBoard"/>
-
-                <BeginStoryboard x:Name="ChangeForegroundStoryBoard">
-                  <Storyboard >
-                    <ColorAnimation
-                                Storyboard.TargetProperty="Foreground.Color"
-                                To="{StaticResource DefaultWhiteColor}"
-                                Duration="0:0:.15" />
-                  </Storyboard>
-                </BeginStoryboard>
-
-
-              </Trigger.EnterActions>
-              <Trigger.ExitActions>
-                <RemoveStoryboard BeginStoryboardName="ChangeForegroundStoryBoard"/>
-                <BeginStoryboard  x:Name="ResetForegroundStoryBoard">
-                  <Storyboard>
-                    <ColorAnimation
-                                Storyboard.TargetProperty="Foreground.Color"
-                                To="{StaticResource 85_DefaultWhiteColor}"
-                                Duration="0:0:.15" />
-                  </Storyboard>
-                </BeginStoryboard>
-              </Trigger.ExitActions>
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>

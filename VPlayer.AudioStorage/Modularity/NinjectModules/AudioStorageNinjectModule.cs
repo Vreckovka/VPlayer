@@ -2,6 +2,7 @@
 using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.InfoDownloader.LRC;
+using VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google;
 using VPlayer.AudioStorage.Interfaces.Storage;
 
 namespace VPlayer.AudioStorage.Modularity.NinjectModules

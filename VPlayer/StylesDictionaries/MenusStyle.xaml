@@ -31,7 +31,7 @@
                 <ControlTemplate TargetType="{x:Type MenuItem}">
                     <Border x:Name="Bd" 
                             Background="{TemplateBinding Background}" 
-                            Padding="10" 
+                            Padding="5,10" 
                             SnapsToDevicePixels="true"
                             >
                         <ContentPresenter 
@@ -39,7 +39,7 @@
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                             Margin="{TemplateBinding Margin}"
-                            HorizontalAlignment="Left"/>
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsEnabled" Value="false">

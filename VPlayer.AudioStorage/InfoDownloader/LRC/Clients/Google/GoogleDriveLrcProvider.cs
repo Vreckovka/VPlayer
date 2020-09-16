@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Google.Apis.Drive.v3;
 using File = Google.Apis.Drive.v3.Data.File;
 
-namespace VPlayer.AudioStorage.InfoDownloader.LRC
+namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 {
   public class GoogleDriveLrcProvider : LrcProvider<GoogleDriveFile>
   {
@@ -17,21 +17,21 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC
       public const string GoogleDriveFile = "application/octet-stream";
     }
 
-    public Dictionary<string, GoogleDriveFile> Artists = new Dictionary<string, GoogleDriveFile>();
     public override LRCProviders LRCProvider => LRCProviders.Google;
 
     #region BaseFolder
 
     private string baseFolderName = "Lyrics database";
 
-    private Google.Apis.Drive.v3.Data.File baseFolder;
-    private Google.Apis.Drive.v3.Data.File BaseFolder
+    private GoogleDriveFile baseFolder;
+    private GoogleDriveFile BaseFolder
     {
       get
       {
         if (baseFolder == null)
         {
-          baseFolder = GetFolder(baseFolderName);
+          var fileFolder = GetFolder(baseFolderName);
+          baseFolder = new GoogleDriveFile(fileFolder);
         }
 
         return baseFolder;
@@ -40,67 +40,26 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC
 
     #endregion
 
-    #region LoadArtists
-
-
-    private void LoadArtists()
-    {
-      var artists = GetFilesInFolder(BaseFolder, GoogleMimeTypes.GoogleDriveFolder);
-
-      var notAdded = artists.Where(p => !Artists.Any(p2 => p2.Key == p.Name));
-
-      foreach (var notAddedFolder in notAdded)
-      {
-        Artists.Add(notAddedFolder.Name, new GoogleDriveFile(notAddedFolder));
-      }
-
-    }
-
-    #endregion
-
-    #region TryGetValueFromFolder
-
-    private GoogleDriveFile TryGetValueFromFolder(string fileName, GoogleDriveFile googleDriveFile, string mimeType)
-    {
-      GoogleDriveFile requestedFile = null;
-
-      if (!googleDriveFile.Subitems.TryGetValue(fileName, out requestedFile))
-      {
-        googleDriveFile.LoadFiles(mimeType);
-      }
-
-      googleDriveFile.Subitems.TryGetValue(fileName, out requestedFile);
-
-      return requestedFile;
-    }
-
-    #endregion
-
     #region GetFile
 
-    private Semaphore batton = new Semaphore(1,1);
+    private Semaphore batton = new Semaphore(1, 1);
     protected override GoogleDriveFile GetFile(string songName, string artistName, string albumName)
     {
       try
       {
         batton.WaitOne();
 
-        GoogleDriveFile artistFolder;
+        var artistFolder = BaseFolder.TryGetValueFromFolder(artistName, GoogleMimeTypes.GoogleDriveFolder);
 
-        if (!Artists.TryGetValue(artistName, out artistFolder))
+        if (artistFolder != null)
         {
-          LoadArtists();
-        }
+          var albumFolder = artistFolder.TryGetValueFromFolder(albumName, GoogleMimeTypes.GoogleDriveFolder);
 
-        if (Artists.TryGetValue(artistName, out artistFolder))
-        {
-          var album = TryGetValueFromFolder(albumName, artistFolder, GoogleDriveLrcProvider.GoogleMimeTypes.GoogleDriveFolder);
-
-          if (album != null)
+          if (albumFolder != null)
           {
             var fileName = GetFileName(artistName, songName) + ".lrc";
 
-            var lyricsFile = TryGetValueFromFolder(fileName, album, GoogleDriveLrcProvider.GoogleMimeTypes.GoogleDriveFile);
+            var lyricsFile = albumFolder.TryGetValueFromFolder(fileName, GoogleMimeTypes.GoogleDriveFile);
 
             return lyricsFile;
           }
@@ -108,7 +67,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC
 
         return null;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
         throw;
       }
@@ -116,7 +75,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC
       {
         batton.Release();
       }
-      
+
     }
 
 
@@ -154,7 +113,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC
 
     #region GetFolder
 
-    private Google.Apis.Drive.v3.Data.File GetFolder(string folderName)
+    private global::Google.Apis.Drive.v3.Data.File GetFolder(string folderName)
     {
       if (GoogleDriveServiceProvider.DriveService == null)
       {
@@ -174,7 +133,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC
         listRequest.Fields = "nextPageToken, files(id, name)";
 
         // List files.
-        IList<Google.Apis.Drive.v3.Data.File> files = listRequest.Execute().Files;
+        IList<global::Google.Apis.Drive.v3.Data.File> files = listRequest.Execute().Files;
 
 
         return files.FirstOrDefault();
@@ -187,7 +146,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC
 
     #region GetFilesInFolder
 
-    public static IEnumerable<Google.Apis.Drive.v3.Data.File> GetFilesInFolder(Google.Apis.Drive.v3.Data.File folder, string mimeType)
+    public static IEnumerable<global::Google.Apis.Drive.v3.Data.File> GetFilesInFolder(global::Google.Apis.Drive.v3.Data.File folder, string mimeType)
     {
       if (folder != null)
       {
@@ -206,7 +165,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC
 
           listRequest.Fields = "nextPageToken, files(id, name)";
 
-          IList<Google.Apis.Drive.v3.Data.File> files = listRequest.Execute().Files;
+          IList<global::Google.Apis.Drive.v3.Data.File> files = listRequest.Execute().Files;
 
           return files;
         }

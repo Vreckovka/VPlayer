@@ -86,7 +86,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
       //albumViewModel.Model.AlbumFrontCoverBLOB = albumCover.DownloadedCover;
       albumViewModel.Model.AlbumFrontCoverURI = albumCover.Url;
 
-      storage.UpdateEntity(albumViewModel.Model);
+      storage.RewriteEntity(albumViewModel.Model);
     }
 
     #endregion SelectCover

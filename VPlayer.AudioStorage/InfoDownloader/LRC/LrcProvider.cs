@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Ninject;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;
-using File = Google.Apis.Drive.v3.Data.File;
 
 namespace VPlayer.AudioStorage.InfoDownloader.LRC
 {
@@ -90,31 +88,6 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC
 
     public void Initialize()
     {
-    }
-  }
-
-  public class GoogleDriveFile
-  {
-    private readonly File file;
-
-    public GoogleDriveFile(File file)
-    {
-      this.file = file ?? throw new ArgumentNullException(nameof(file));
-    }
-
-    public Google.Apis.Drive.v3.Data.File File => file;
-    public Dictionary<string, GoogleDriveFile> Subitems { get; } = new Dictionary<string, GoogleDriveFile>();
-
-    public void LoadFiles(string mimeType)
-    {
-      var albums = GoogleDriveLrcProvider.GetFilesInFolder(file, mimeType);
-
-      var notAdded = albums.Where(p => !Subitems.Any(p2 => p2.Key == p.Name));
-
-      foreach (var notAddedFolder in notAdded)
-      {
-        Subitems.Add(notAddedFolder.Name, new GoogleDriveFile(notAddedFolder));
-      }
     }
   }
 }

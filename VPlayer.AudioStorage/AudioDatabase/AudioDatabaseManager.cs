@@ -89,7 +89,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     public void StoreData(AudioInfo audioInfo)
     {
-     
+
       lock (storeBatton)
       {
         try
@@ -131,9 +131,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
             };
 
             album = (from x in context.Albums
-              where x.Name == album.Name
-              where x.Artist.Name == album.Artist.Name
-              select x).SingleOrDefault();
+                     where x.Name == album.Name
+                     where x.Artist.Name == album.Artist.Name
+                     select x).SingleOrDefault();
 
             if (album == null && audioInfo.Album != null)
             {
@@ -164,9 +164,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
 
             song = (from x in context.Songs
-              where song.Name == x.Name
-              where x.Album.Id == song.Album.Id
-              select x).SingleOrDefault();
+                    where song.Name == x.Name
+                    where x.Album.Id == song.Album.Id
+                    select x).SingleOrDefault();
 
 
             if (song == null)
@@ -433,40 +433,27 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     public void ItemUpdated(dynamic item)
     {
-      if (item != null)
-        UpdateItem(item);
-    }
-
-    public async Task UpdateItem(Artist artist)
-    {
-      using (var context = new AudioDatabaseContext())
+      Task.Run(() =>
       {
-        try
+        if (item != null)
         {
-          var originalArtist =
-            await (from x in context.Artists where x.Id == artist.Id select x).SingleOrDefaultAsync();
-
-          if (originalArtist != null)
+          if (item is Album album)
           {
-            originalArtist.MusicBrainzId = artist.MusicBrainzId;
-            originalArtist.Name = artist.Name;
-
-            ItemChanged.OnNext(new ItemChanged()
-            {
-              Changed = Changed.Updated,
-              Item = originalArtist
-            });
-
-            await context.SaveChangesAsync();
+            UpdateAlbum(album);
+          }
+          else
+          {
+            UpdateEntity(item);
           }
         }
-        catch (Exception ex)
-        {
-          Logger.Logger.Instance.Log(ex);
-        }
-      }
+      });
     }
-    public async Task UpdateItem(Album album)
+
+    #endregion
+
+    #region UpdateAlbum
+
+    public async void UpdateAlbum(Album album)
     {
       using (var context = new AudioDatabaseContext())
       {
@@ -571,8 +558,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
             if (album.Songs == null)
             {
               var dbAlbum = context.Albums.Where(x => x.Id == album.Id).Include(x => x.Songs).Include(x => x.Artist).SingleOrDefault();
-              
-            
+
+
 
               if (dbAlbum == null)
               {
@@ -584,7 +571,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
                 dbAlbum.UpdateAlbum(album);
                 CombineAlbums(originalAlbum, dbAlbum, context);
               }
-               
+
             }
             else
               CombineAlbums(originalAlbum, album, context);
@@ -596,133 +583,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
         }
       }
     }
-    public async Task UpdateItem(Song song)
-    {
-      using (var context = new AudioDatabaseContext())
-      {
-        try
-        {
-          var originalEntity = await (from x in context.Songs where x.Id == song.Id select x).SingleOrDefaultAsync();
 
-          if (originalEntity != null)
-          {
-            originalEntity.Update(song);
-
-            ItemChanged.OnNext(new ItemChanged()
-            {
-              Changed = Changed.Updated,
-              Item = originalEntity
-            });
-
-            await context.SaveChangesAsync();
-          }
-        }
-        catch (Exception ex)
-        {
-          Logger.Logger.Instance.Log(ex);
-        }
-      }
-    }
-
-    #endregion 
-
-    #region UpdateAlbums
-
-    public async Task UpdateAlbums(List<Album> albumsToUpdate)
-    {
-      using (var context = new AudioDatabaseContext())
-      {
-        foreach (var album in albumsToUpdate)
-        {
-          try
-          {
-            var originalAlbum =
-              (from x in context.Albums where x.MusicBrainzId == album.MusicBrainzId select x)
-              .SingleOrDefault();
-
-            //Update is first time
-            if (originalAlbum == null)
-            {
-              var albums = context.Albums.ToList().OrderBy(x => x.Name);
-
-              originalAlbum = (from x in context.Albums
-                               where x.Id == album.Id
-                               select x).SingleOrDefault();
-
-              //Album could be deleted from storage
-              if (originalAlbum != null)
-              {
-                originalAlbum.UpdateAlbum(album);
-
-                var duplicates = (from x in albums
-                                  where x.Name == originalAlbum.Name
-                                  where x.Artist.Name == originalAlbum.Artist.Name
-                                  group x by x.Name
-                  into a
-                                  where a.Count() > 1
-                                  select a.ToList()).SingleOrDefault();
-
-                if (duplicates == null)
-                {
-                  await context.SaveChangesAsync();
-                  Logger.Logger.Instance.Log(Logger.MessageType.Success,
-                    $"Album was updated in database {album.Name}");
-
-                  ItemChanged.OnNext(new ItemChanged()
-                  {
-                    Changed = Changed.Updated,
-                    Item = originalAlbum
-                  });
-                }
-                else
-                {
-                  Album originalCopy = null;
-                  int oldId = duplicates[0].Id;
-
-                  for (int i = 1; i < duplicates.Count; i++)
-                  {
-                    originalCopy = CombineAlbums(duplicates[0], duplicates[i], context);
-                  }
-
-                  if (originalCopy != null)
-                  {
-                    originalCopy.Id = oldId;
-                    ItemChanged.OnNext(new ItemChanged()
-                    {
-                      Changed = Changed.Updated,
-                      Item = originalCopy
-                    });
-                  }
-                }
-              }
-              else
-              {
-                originalAlbum =
-                  (from x in context.Albums
-                   where x.Name == album.Name
-                   where x.Artist.Name == album.Artist.Name
-                   select x).SingleOrDefault();
-
-                if (originalAlbum != null)
-                  CombineAlbums(originalAlbum, album, context);
-                else
-                  ;
-              }
-            }
-            else
-            {
-              CombineAlbums(originalAlbum, album, context);
-            }
-          }
-          catch (Exception ex)
-          {
-            Logger.Logger.Instance.Log(ex);
-          }
-        }
-      }
-    }
-
-    #endregion UpdateAlbums
+    #endregion
 
     #region CombineAlbums
 
@@ -792,9 +654,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #endregion CombineAlbums
 
-    #region UpdateEntity
+    #region RewriteEntity
 
-    public void UpdateEntity<T>(T entity) where T : class, IEntity
+    public void RewriteEntity<T>(T entity) where T : class, IEntity
     {
       using (var context = new AudioDatabaseContext())
       {
@@ -819,9 +681,43 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #endregion UpdateEntity
 
-    #region UpdateAllNotYetUpdated
+    #region UpdateEntity
 
-    public Task UpdateAllNotYetUpdated(bool tryDownloadBroken = false)
+    public Task<bool> UpdateEntity<TEntity>(TEntity newVersion) where TEntity : class, IEntity, IUpdateable<TEntity>
+    {
+      return Task.Run(() =>
+      {
+        using (var context = new AudioDatabaseContext())
+        {
+          var foundEntity = GetRepository<TEntity>(context).SingleOrDefault(x => x.Id == newVersion.Id);
+
+          if (foundEntity != null)
+          {
+            foundEntity.Update(newVersion);
+
+            context.SaveChanges();
+
+            Logger.Logger.Instance.Log(Logger.MessageType.Success, $"Entity was updated {newVersion}");
+
+            ItemChanged.OnNext(new ItemChanged()
+            {
+              Item = foundEntity,
+              Changed = Changed.Updated
+            });
+
+            return true;
+          }
+
+          return false;
+        }
+      });
+    }
+
+    #endregion
+
+    #region DownloadAllNotYetDownloaded
+
+    public Task DownloadAllNotYetDownloaded(bool tryDownloadBroken = false)
     {
       return Task.Run(() =>
       {
@@ -861,7 +757,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #endregion
 
-    #endregion 
+    #endregion
 
   }
 }

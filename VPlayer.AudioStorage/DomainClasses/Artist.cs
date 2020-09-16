@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
-  public class Artist : DomainEntity , DownloadableEntity
+  public class Artist : DomainEntity , DownloadableEntity, IUpdateable<Artist>
   {
     #region Constructors
 
@@ -30,6 +30,14 @@ namespace VPlayer.AudioStorage.DomainClasses
     #endregion Properties
 
     #region Methods
+
+    public void Update(Artist other)
+    {
+      Name = other.Name;
+      MusicBrainzId = other.MusicBrainzId;
+      AlbumIdCover = other.AlbumIdCover;
+      InfoDownloadStatus = other.InfoDownloadStatus;
+    }
 
     public override string ToString()
     {

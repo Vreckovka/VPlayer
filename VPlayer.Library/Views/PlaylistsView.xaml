@@ -170,17 +170,21 @@
               <GridViewColumn.CellTemplate>
                 <DataTemplate>
                   <StackPanel Orientation="Horizontal">
-                    <controls:PathButton Margin="0,0,5,5"
+                    <controls:PathButton Margin="0,0,10,5"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Bottom"
                                 IsChecked="{Binding IsRepeating}"
-                                PathStyle="{StaticResource Repeate}" />
+                                PathStyle="{StaticResource Repeate}" 
+                                Height="15"
+                                Width="15"/>
 
                     <controls:PathButton Margin="0,0,35,5"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Bottom"
                                 IsChecked="{Binding IsShuffle}"
-                                PathStyle="{StaticResource Shuffle}" />
+                                PathStyle="{StaticResource Shuffle}"  
+                                Height="15"
+                                Width="15"/>
                   </StackPanel>
                 </DataTemplate>
               </GridViewColumn.CellTemplate>

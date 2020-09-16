@@ -15,7 +15,6 @@ using System.Windows.Shapes;
 using Prism.Events;
 using VCore.Modularity.Interfaces;
 using VPlayer.Library.ViewModels;
-using VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels;
 using WpfToolkit.Controls;
 
 namespace VPlayer.Library.Views

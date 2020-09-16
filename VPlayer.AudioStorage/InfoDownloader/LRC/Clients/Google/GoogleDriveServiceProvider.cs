@@ -6,7 +6,7 @@ using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
 
-namespace VPlayer.AudioStorage.InfoDownloader.LRC
+namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 {
   public class GoogleDriveServiceProvider
   {

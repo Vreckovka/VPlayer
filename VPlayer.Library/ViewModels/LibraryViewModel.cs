@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using VCore;
@@ -46,6 +47,29 @@ namespace VPlayer.Library.ViewModels
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
 
     #endregion Properties
+
+    #region Methods
+
+    #region Initialize
+
+    public override void Initialize()
+    {
+      base.Initialize();
+
+      var playlists = viewModelsFactory.Create<PlaylistsViewModel>();
+      NavigationViewModel.Items.Add(playlists);
+
+      var artistsViewModel = viewModelsFactory.Create<IArtistsViewModel>();
+      NavigationViewModel.Items.Add(artistsViewModel);
+
+      var albumsViewModel = viewModelsFactory.Create<IAlbumsViewModel>();
+      NavigationViewModel.Items.Add(albumsViewModel);
+
+
+      NavigationViewModel.Items.First().IsActive = true;
+    }
+
+    #endregion Initialize
 
     #region FinderKeyDown
 
@@ -100,24 +124,7 @@ namespace VPlayer.Library.ViewModels
 
     #endregion FilesDropped
 
-    #region Initialize
+    #endregion
 
-    public override void Initialize()
-    {
-      base.Initialize();
-
-      var libraryViewModel = viewModelsFactory.Create<IArtistsViewModel>();
-      NavigationViewModel.Items.Add(libraryViewModel);
-
-      var albumsViewModel = viewModelsFactory.Create<IAlbumsViewModel>();
-      NavigationViewModel.Items.Add(albumsViewModel);
-
-      var playlists = viewModelsFactory.Create<PlaylistsViewModel>();
-      NavigationViewModel.Items.Add(playlists);
-
-      libraryViewModel.IsActive = true;
-    }
-
-    #endregion Initialize
   }
 }

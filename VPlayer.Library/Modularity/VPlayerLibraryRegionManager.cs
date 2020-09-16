@@ -5,7 +5,7 @@ using VCore.Modularity.Navigation;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.Artists;
 using VPlayer.Library.ViewModels.AlbumsViewModels;
-using VPlayer.Library.ViewModels.LibraryViewModels.ArtistsViewModels;
+using VPlayer.Library.ViewModels.ArtistsViewModels;
 
 namespace VPlayer.Library.Modularity
 {
