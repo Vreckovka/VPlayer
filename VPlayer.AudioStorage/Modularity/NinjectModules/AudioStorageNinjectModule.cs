@@ -9,6 +9,8 @@ namespace VPlayer.AudioStorage.Modularity.NinjectModules
 {
   public class AudioStorageNinjectModule : BaseNinjectModule
   {
+    private string googleApi = "C:\\Users\\Roman Pecho\\Desktop\\vplayer-289518-7ec8818053a1.json";
+
     #region Methods
 
     public override void RegisterProviders()
@@ -16,6 +18,8 @@ namespace VPlayer.AudioStorage.Modularity.NinjectModules
       base.RegisterProviders();
 
       Kernel.Bind<IStorageManager>().To<AudioDatabaseManager>().InSingletonScope();
+
+      Kernel.Bind<IGoogleDriveServiceProvider>().To<GoogleDriveServiceProvider>().InSingletonScope().WithConstructorArgument("keyPath", googleApi);
 
       Kernel.BindToSelf<GoogleDriveLrcProvider>().InSingletonScope();
       Kernel.BindToSelf<AudioInfoDownloader>().InSingletonScope();

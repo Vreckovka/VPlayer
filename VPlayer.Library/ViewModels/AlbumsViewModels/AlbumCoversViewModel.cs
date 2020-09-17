@@ -7,7 +7,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Logger;
 using VCore;
+using VCore.Annotations;
 using VCore.Modularity.Navigation;
 using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
@@ -25,6 +27,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
     private readonly AlbumViewModel albumViewModel;
     private readonly IStorageManager storage;
+    private readonly ILogger logger;
     private CancellationTokenSource cancellationTokenSource;
 
     #endregion Fields
@@ -36,10 +39,12 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
       AudioInfoDownloader audioInfoDownloader,
       AlbumViewModel albumViewModel,
       IStorageManager storage,
-      string regionName) : base(regionProvider)
+      string regionName,
+      ILogger logger) : base(regionProvider)
     {
       this.albumViewModel = albumViewModel ?? throw new ArgumentNullException(nameof(albumViewModel));
       this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
       cancellationTokenSource = new CancellationTokenSource();
       var cancellationToken = cancellationTokenSource.Token;
@@ -159,11 +164,11 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
               }
               catch (WebException ex) when (ex.Status == WebExceptionStatus.RequestCanceled)
               {
-                Logger.Logger.Instance.Log(Logger.MessageType.Inform, "Downloading was stopped");
+                logger.Log(Logger.MessageType.Inform, "Downloading was stopped");
               }
               catch (Exception ex)
               {
-                Logger.Logger.Instance.Log(ex);
+                logger.Log(ex);
               }
             }
           }, cancellationTokenSource.Token);
@@ -171,7 +176,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
       }
       catch (WebException ex) when (ex.Status == WebExceptionStatus.RequestCanceled)
       {
-        Logger.Logger.Instance.Log(Logger.MessageType.Inform, "Downloading was stopped");
+        logger.Log(Logger.MessageType.Inform, "Downloading was stopped");
       }
     }
 

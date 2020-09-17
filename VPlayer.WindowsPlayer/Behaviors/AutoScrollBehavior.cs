@@ -57,12 +57,20 @@ namespace VPlayer.Player.Behaviors
     {
       base.OnAttached();
       AssociatedObject.Loaded += AssociatedObject_Loaded;
+      AssociatedObject.DataContextChanged += AssociatedObject_DataContextChanged;
+    }
+
+    private void AssociatedObject_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      last_songInPlayListIndex = 0;
     }
 
     protected override void OnDetaching()
     {
       base.OnDetaching();
+
       AssociatedObject.Loaded -= AssociatedObject_Loaded;
+      AssociatedObject.DataContextChanged -= AssociatedObject_DataContextChanged;
       serialDisposable.Dispose();
     }
 
@@ -70,7 +78,6 @@ namespace VPlayer.Player.Behaviors
     {
       SubcsribeToSongChange();
     }
-
 
     private SerialDisposable serialDisposable = new SerialDisposable();
     private int last_songInPlayListIndex;
@@ -84,7 +91,7 @@ namespace VPlayer.Player.Behaviors
 
         if (windowsPlayerViewModel != null)
         {
-          last_songInPlayListIndex = 0;
+         
           serialDisposable.Disposable = windowsPlayerViewModel.ActualSongChanged.Subscribe(OnSongChanged);
         }
       }

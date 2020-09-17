@@ -72,7 +72,7 @@ namespace VPlayer.Core.ViewModels.Settings
 
     public async void OnDownloadNotDownloaded()
     {
-      await storageManager.DownloadAllNotYetDownloaded();
+      await storageManager.DownloadAllNotYetDownloaded(true);
     }
 
     #endregion 

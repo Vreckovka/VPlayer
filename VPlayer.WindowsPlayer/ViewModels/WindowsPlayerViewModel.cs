@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Data.Entity.Infrastructure.Interception;
 using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
@@ -15,7 +16,9 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Logger;
 using VCore;
+using VCore.Annotations;
 using VCore.Helpers;
 using VCore.ItemsCollections;
 using VCore.ItemsCollections.VirtualList;
@@ -59,6 +62,7 @@ namespace VPlayer.Player.ViewModels
     private readonly IEventAggregator eventAggregator;
     private readonly IStorageManager storageManager;
     private readonly AudioInfoDownloader audioInfoDownloader;
+    private readonly ILogger logger;
     private int actualSongIndex = 0;
     private Dictionary<SongInPlayList, bool> playBookInCycle = new Dictionary<SongInPlayList, bool>();
     private HashSet<SongInPlayList> shuffleList = new HashSet<SongInPlayList>();
@@ -72,14 +76,18 @@ namespace VPlayer.Player.ViewModels
       IEventAggregator eventAggregator,
       IKernel kernel,
       IStorageManager storageManager,
-      AudioInfoDownloader audioInfoDownloader) : base(regionProvider)
+      AudioInfoDownloader audioInfoDownloader,
+      [NotNull] ILogger logger) : base(regionProvider)
     {
       this.regionProvider = regionProvider ?? throw new ArgumentNullException(nameof(regionProvider));
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
       Kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
-      this.storageManager.ItemChanged.Where(x => x.Item.GetType() == typeof(Song)).Subscribe(SongChange);
+
+     
     }
 
     #endregion Constructors
@@ -112,8 +120,8 @@ namespace VPlayer.Player.ViewModels
     }
 
     public VlcMediaPlayer MediaPlayer { get; private set; }
-    public RxObservableCollection<SongInPlayList> PlayList { get; set; } = new RxObservableCollection<SongInPlayList>();
-    public VirtualList<SongInPlayList> VirtualizedPlayList { get; set; }
+    public RxObservableCollection<SongInPlayList> PlayList { get; } = new RxObservableCollection<SongInPlayList>();
+    public VirtualList<SongInPlayList> VirtualizedPlayList { get; private set; }
 
     public override bool ContainsNestedRegions => false;
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
@@ -284,21 +292,32 @@ namespace VPlayer.Player.ViewModels
       {
         base.Initialize();
 
-        PlayList.ItemRemoved.Subscribe(ItemsRemoved);
-        PlayList.ItemAdded.Subscribe(ItemsAdded);
+        storageManager.SubscribeToItemChange<Song>(OnSongChange).DisposeWith(this);
+        storageManager.SubscribeToItemChange<Album>(OnAlbumChange).DisposeWith(this);
+
+        PlayList.ItemRemoved.Subscribe(ItemsRemoved).DisposeWith(this);
+        PlayList.ItemAdded.Subscribe(ItemsAdded).DisposeWith(this);
+        PlayList.DisposeWith(this);
 
         //PlayList.CollectionChanged += PlayList_CollectionChanged;
 
-
-
         var currentAssembly = Assembly.GetEntryAssembly();
-        var currentDirectory = new FileInfo(currentAssembly.Location).DirectoryName;
-        var path = new DirectoryInfo(Path.Combine(currentDirectory, "libvlc", IntPtr.Size == 4 ? "win-x86" : "win-x64"));
 
-        var libDirectory = new DirectoryInfo(path.FullName);
-        MediaPlayer = new VlcMediaPlayer(libDirectory);
+        if (currentAssembly != null)
+        {
+          var currentDirectory = new FileInfo(currentAssembly.Location).DirectoryName;
+          var path = new DirectoryInfo(Path.Combine(currentDirectory, "libvlc", IntPtr.Size == 4 ? "win-x86" : "win-x64"));
 
+          var libDirectory = new DirectoryInfo(path.FullName);
+         
+          MediaPlayer = new VlcMediaPlayer(libDirectory);
+        }
 
+        if (MediaPlayer == null)
+        {
+          logger.Log(Logger.MessageType.Error,"VLC was not initlized!");
+          return;
+        }
 
         MediaPlayer.EncounteredError += (sender, e) =>
         {
@@ -342,31 +361,47 @@ namespace VPlayer.Player.ViewModels
           IsPlayingSubject.OnNext(IsPlaying);
         };
 
-        eventAggregator.GetEvent<PlaySongsEvent>().Subscribe(PlaySongs);
-        eventAggregator.GetEvent<PauseEvent>().Subscribe(Pause);
-        eventAggregator.GetEvent<PlaySongsFromPlayListEvent>().Subscribe(PlaySongFromPlayList);
-        eventAggregator.GetEvent<DeleteSongEvent>().Subscribe(DeleteSongs);
+        eventAggregator.GetEvent<PlaySongsEvent>().Subscribe(PlaySongs).DisposeWith(this);
+        eventAggregator.GetEvent<PauseEvent>().Subscribe(Pause).DisposeWith(this);
+        eventAggregator.GetEvent<PlaySongsFromPlayListEvent>().Subscribe(PlaySongFromPlayList).DisposeWith(this);
+        eventAggregator.GetEvent<DeleteSongEvent>().Subscribe(DeleteSongs).DisposeWith(this);
       });
     }
 
     #endregion Initialize
 
-    #region SongChange
+    #region OnAlbumChange
 
-    private void SongChange(ItemChanged itemChanged)
+    private void OnAlbumChange(ItemChanged<Album> change)
     {
-      if (itemChanged.Item is Song song)
+      var album = change.Item;
+
+      var songsInPlaylist = PlayList.Where(x => x.AlbumViewModel != null && x.AlbumViewModel.ModelId == album.Id);
+
+      foreach (var song in songsInPlaylist)
       {
-        var playlistSong = PlayList.SingleOrDefault(x => x.Model.Id == song.Id);
+        song.UpdateAlbumViewModel(album);
+      }
 
-        if (playlistSong != null)
+    }
+
+    #endregion
+
+    #region OnSongChange
+
+    private void OnSongChange(ItemChanged<Song> itemChanged)
+    {
+      var song = itemChanged.Item;
+
+      var playlistSong = PlayList.SingleOrDefault(x => x.Model.Id == song.Id);
+
+      if (playlistSong != null)
+      {
+        playlistSong.Update(song);
+
+        if (ActualSong != null && ActualSong.Model.Id == song.Id)
         {
-          playlistSong.Update(song);
-
-          if (ActualSong != null && ActualSong.Model.Id == song.Id)
-          {
-            ActualSong.Update(song);
-          }
+          ActualSong.Update(song);
         }
       }
     }
@@ -877,7 +912,6 @@ namespace VPlayer.Player.ViewModels
     #endregion
 
     #region Dispose
-
 
     public override void Dispose()
     {

@@ -220,6 +220,10 @@
       <Name>Listener</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\Logger\Logger.csproj">
+      <Project>{6212fadf-45a6-4613-b5a8-5c5a57f3bfb0}</Project>
+      <Name>Logger</Name>
+    </ProjectReference>
     <ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj">
       <Project>{b5245008-cfdf-4b83-bf61-b0b26a8e92bf}</Project>
       <Name>VPlayer.AudioStorage</Name>

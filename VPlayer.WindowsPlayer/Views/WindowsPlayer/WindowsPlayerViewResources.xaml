@@ -11,7 +11,8 @@
                     xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
                     xmlns:attachedProperties="clr-namespace:VCore.AttachedProperties;assembly=VCore"
                     xmlns:e="http://schemas.epsiloner.git/wpf/"
-                    xmlns:controls1="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel">
+                    xmlns:controls1="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
+                    xmlns:lrc1="clr-namespace:VPlayer.AudioStorage.InfoDownloader.LRC;assembly=VCore">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/VPlayer;component/StylesDictionaries/ControlsTemplates/ButtonWithIconTemplate.xaml" />
@@ -579,11 +580,11 @@
                             <Setter Property="Visibility" Value="Collapsed"/>
                           </DataTrigger>
 
-                          <DataTrigger Binding="{Binding LRCFile.Provider}" Value="{x:Static lrc:LRCProviders.Google }">
+                          <DataTrigger Binding="{Binding LRCFile.Provider}" Value="{x:Static lrc1:LRCProviders.Google }">
                             <Setter Property="Margin" Value="2 -7 0 -9"/>
                           </DataTrigger>
 
-                          <DataTrigger Binding="{Binding LRCFile.Provider}" Value="{x:Static lrc:LRCProviders.Local }">
+                          <DataTrigger Binding="{Binding LRCFile.Provider}" Value="{x:Static lrc1:LRCProviders.Local }">
                             <Setter Property="Margin" Value="2 -7 0 -9"/>
                           </DataTrigger>
                         </Style.Triggers>

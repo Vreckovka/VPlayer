@@ -5,16 +5,18 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Google.Apis.Drive.v3;
+using VCore.Annotations;
 using File = Google.Apis.Drive.v3.Data.File;
 
 namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 {
   public class GoogleDriveLrcProvider : LrcProvider<GoogleDriveFile>
   {
-    public class GoogleMimeTypes
+    private readonly IGoogleDriveServiceProvider googleDriveServiceProvider;
+
+    public GoogleDriveLrcProvider(IGoogleDriveServiceProvider googleDriveServiceProvider)
     {
-      public const string GoogleDriveFolder = "application/vnd.google-apps.folder";
-      public const string GoogleDriveFile = "application/octet-stream";
+      this.googleDriveServiceProvider = googleDriveServiceProvider ?? throw new ArgumentNullException(nameof(googleDriveServiceProvider));
     }
 
     public override LRCProviders LRCProvider => LRCProviders.Google;
@@ -31,7 +33,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
         if (baseFolder == null)
         {
           var fileFolder = GetFolder(baseFolderName);
-          baseFolder = new GoogleDriveFile(fileFolder);
+          baseFolder = new GoogleDriveFile(fileFolder, googleDriveServiceProvider);
         }
 
         return baseFolder;
@@ -113,16 +115,11 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
     #region GetFolder
 
-    private global::Google.Apis.Drive.v3.Data.File GetFolder(string folderName)
+    private File GetFolder(string folderName)
     {
-      if (GoogleDriveServiceProvider.DriveService == null)
+      if (googleDriveServiceProvider.DriveService != null)
       {
-        GoogleDriveServiceProvider.RegisterService();
-      }
-
-      if (GoogleDriveServiceProvider.DriveService != null)
-      {
-        FilesResource.ListRequest listRequest = GoogleDriveServiceProvider.DriveService.Files.List();
+        FilesResource.ListRequest listRequest = googleDriveServiceProvider.DriveService.Files.List();
 
         folderName = folderName.Replace("\'", "\\'");
         var qs = $"name contains '{folderName}' and mimeType='" + GoogleMimeTypes.GoogleDriveFolder + "'";
@@ -144,52 +141,17 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
     #endregion
 
-    #region GetFilesInFolder
-
-    public static IEnumerable<global::Google.Apis.Drive.v3.Data.File> GetFilesInFolder(global::Google.Apis.Drive.v3.Data.File folder, string mimeType)
-    {
-      if (folder != null)
-      {
-        if (GoogleDriveServiceProvider.DriveService == null)
-        {
-          GoogleDriveServiceProvider.RegisterService();
-        }
-
-        if (GoogleDriveServiceProvider.DriveService != null)
-        {
-          FilesResource.ListRequest listRequest = GoogleDriveServiceProvider.DriveService.Files.List();
-
-          var qs = $"parents='{folder.Id}' and mimeType='{mimeType}'";
-
-          listRequest.Q = qs;
-
-          listRequest.Fields = "nextPageToken, files(id, name)";
-
-          IList<global::Google.Apis.Drive.v3.Data.File> files = listRequest.Execute().Files;
-
-          return files;
-        }
-      }
-
-      return null;
-    }
-
-    #endregion
+   
 
     #region Download
 
     private async Task<Stream> Download(File file)
     {
-      if (GoogleDriveServiceProvider.DriveService == null)
-      {
-        GoogleDriveServiceProvider.RegisterService();
-      }
-
-      if (GoogleDriveServiceProvider.DriveService != null)
+      if (googleDriveServiceProvider.DriveService != null)
       {
         Stream outputstream = new MemoryStream();
 
-        var request = GoogleDriveServiceProvider.DriveService.Files.Get(file.Id);
+        var request = googleDriveServiceProvider.DriveService.Files.Get(file.Id);
 
         await request.DownloadAsync(outputstream);
 

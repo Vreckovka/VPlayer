@@ -17,10 +17,9 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
   {
     #region Properties
 
-    Subject<ItemChanged> ItemChanged { get; }
     Subject<Unit> ActionIsDone { get; }
 
-    #endregion Properties
+    #endregion 
 
     #region Methods
 
@@ -33,8 +32,8 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
     void UpdateData(Playlist playlist);
     void RewriteEntity<T>(T entity) where T : class, IEntity;
     Task<bool> UpdateEntity<TEntity>(TEntity newVersion) where TEntity : class, IEntity, IUpdateable<TEntity>;
-
-
+    
+    IDisposable SubscribeToItemChange<TModel>(Action<ItemChanged<TModel>> observer);
 
     #endregion Methods
   }

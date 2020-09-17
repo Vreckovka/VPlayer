@@ -143,11 +143,13 @@
     <Compile Include="Events\PlaySongsFromPlayListEvent.cs" />
     <Compile Include="Interfaces\ViewModels\IAlbumsViewModel.cs" />
     <Compile Include="Interfaces\ViewModels\IArtistsViewModel.cs" />
+    <Compile Include="Modularity\Ninject\VPlayerCoreModule.cs" />
     <Compile Include="Modularity\Regions\RegionNames.cs" />
     <Compile Include="Modularity\Regions\VPlayerRegionManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\Albums\AlbumViewModel.cs" />
     <Compile Include="ViewModels\Artists\ArtistViewModel.cs" />
+    <Compile Include="ViewModels\LRCFileViewModel.cs" />
     <Compile Include="ViewModels\PlayableRegionViewModel.cs" />
     <Compile Include="ViewModels\PlayableViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsViewModel.cs" />
@@ -275,6 +277,14 @@
       <Project>{5aa43597-fd3d-4f10-89a5-eb77d3b831d9}</Project>
       <Name>VCore</Name>
     </ProjectReference>
+    <ProjectReference Include="..\KeyListener\Listener.csproj">
+      <Project>{ba238278-32d0-4c4e-881a-ad2be152832c}</Project>
+      <Name>Listener</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Logger\Logger.csproj">
+      <Project>{6212fadf-45a6-4613-b5a8-5c5a57f3bfb0}</Project>
+      <Name>Logger</Name>
+    </ProjectReference>
     <ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj">
       <Project>{b5245008-cfdf-4b83-bf61-b0b26a8e92bf}</Project>
       <Name>VPlayer.AudioStorage</Name>
@@ -290,6 +300,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

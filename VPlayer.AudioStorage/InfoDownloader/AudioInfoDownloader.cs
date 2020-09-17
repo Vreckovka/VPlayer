@@ -29,6 +29,8 @@ using System.Xml.Serialization;
 using Windows.Media;
 using Windows.ApplicationModel.Contacts;
 using Windows.System;
+using Logger;
+using VCore.Annotations;
 using VCore.Helpers;
 using VPlayer.AudioStorage.InfoDownloader.Clients.Chartlyrics;
 using VPlayer.AudioStorage.InfoDownloader.LRC;
@@ -41,6 +43,8 @@ namespace VPlayer.AudioStorage.InfoDownloader
   /// </summary>
   public class AudioInfoDownloader : IInitializable
   {
+    private readonly ILogger logger;
+
     #region Fields
 
     private static SemaphoreSlim musibrainzAPISempathore = new SemaphoreSlim(1, 1);
@@ -58,8 +62,9 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     #region Constructors
 
-    public AudioInfoDownloader()
+    public AudioInfoDownloader(ILogger logger)
     {
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     #endregion Constructors
@@ -102,7 +107,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
         }
         catch (Exception ex)
         {
-          Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+          logger.Log(Logger.MessageType.Error, ex.Message);
         }
       });
     }
@@ -133,7 +138,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
         }
         catch (Exception ex)
         {
-          Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+          logger.Log(Logger.MessageType.Error, ex.Message);
         }
       });
     }
@@ -161,7 +166,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
         //if (fingerPrintAudioInfo != null)
         //{
-        //  Logger.Logger.Instance.Log(Logger.MessageType.Success, $"Audio info was gotten by fingerprint {path}");
+        //  logger.Log(Logger.MessageType.Success, $"Audio info was gotten by fingerprint {path}");
         //  return fingerPrintAudioInfo;
         //}
       }
@@ -215,7 +220,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
       }
       catch (Exception ex)
       {
-        Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+        logger.Log(Logger.MessageType.Error, ex.Message);
       }
       finally
       {
@@ -255,12 +260,12 @@ namespace VPlayer.AudioStorage.InfoDownloader
           {
             if (response.Code == 502)
             {
-              Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+              logger.Log(Logger.MessageType.Warning,
                 $"Album cover was not found {MBID} trying again, response code {response.Code}");
               return await GetAlbumFrontCoversUrls(MBID, cancellationToken);
             }
 
-            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+            logger.Log(Logger.MessageType.Warning,
               $"Album cover was not found {MBID} resposne code {response.Code}");
             return null;
           }
@@ -297,7 +302,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
           }
           else
           {
-            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+            logger.Log(Logger.MessageType.Warning,
               $"Album cover was not found {MBID}");
             return null;
           }
@@ -307,7 +312,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
         }
         catch (Exception ex)
         {
-          Logger.Logger.Instance.Log(ex);
+          logger.Log(ex);
           return null;
         }
       }, cancellationToken);
@@ -329,7 +334,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
             if (newArtist == null)
             {
-              Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+              logger.Log(Logger.MessageType.Warning,
                 "Unable to get album covers, artist was not found");
               return null;
             }
@@ -359,12 +364,12 @@ namespace VPlayer.AudioStorage.InfoDownloader
             }
           }
 
-          Logger.Logger.Instance.Log(Logger.MessageType.Success, "Album covers was found");
+          logger.Log(Logger.MessageType.Success, "Album covers was found");
           return covers;
         }
         catch (Exception ex)
         {
-          Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+          logger.Log(Logger.MessageType.Error, ex.Message);
           return null;
         }
       }, cancellationToken);
@@ -411,7 +416,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
           }
           else
           {
-            Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+            logger.Log(Logger.MessageType.Error, ex.Message);
             return null;
           }
         }
@@ -437,7 +442,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
         album.InfoDownloadStatus = InfoDownloadStatus.Downloading;
         ItemUpdated.OnNext(album);
-        Logger.Logger.Instance.Log(Logger.MessageType.Inform, $"Downloading album info {album.Name}");
+        logger.Log(Logger.MessageType.Inform, $"Downloading album info {album.Name}");
 
         string artistMbid = "";
         string artistName = "";
@@ -458,7 +463,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
           if (artist == null)
           {
-            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+            logger.Log(Logger.MessageType.Warning,
               $"Album info was not downloaded {album.Name} - {artistName}");
             return null;
           }
@@ -485,7 +490,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
         if (string.IsNullOrEmpty(artistMbid) && string.IsNullOrEmpty(albumName))
         {
-          Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Artist and album is null or empty");
+          logger.Log(Logger.MessageType.Warning, "Artist and album is null or empty");
           return null;
         }
 
@@ -499,7 +504,11 @@ namespace VPlayer.AudioStorage.InfoDownloader
         query.Add("status", "official");
 
         // Search for a release by title.
+
+        var textWriter = Console.Out;
+        Console.SetOut(TextWriter.Null);
         var releases = await client.Releases.SearchAsync(query);
+        Console.SetOut(textWriter);
 
         if (releases.Count != 0)
         {
@@ -509,7 +518,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
           if (release == null)
           {
-            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+            logger.Log(Logger.MessageType.Warning,
               $"Album info was not downloaded {album.Name} - {artistName}");
             return null;
           }
@@ -570,7 +579,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
               }
               else
               {
-                Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+                logger.Log(Logger.MessageType.Warning,
                   $"Unable to find album info {album.Name}");
 
                 return null;
@@ -592,14 +601,14 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
             if (release == null)
             {
-              Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+              logger.Log(Logger.MessageType.Warning,
                 $"Album info was not downloaded {album.Name} - {artistName}");
               return null;
             }
           }
           else
           {
-            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+            logger.Log(Logger.MessageType.Warning,
               $"Album info was not downloaded {album.Name} - {artistName}");
             return null;
           }
@@ -633,7 +642,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
               Songs = new List<Song>()
             };
 
-            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+            logger.Log(Logger.MessageType.Warning,
               $"Album info was download without cover {album.Name} - {artistName}");
 
             return album;
@@ -667,7 +676,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
           AlbumFrontCoverFilePath = coverPath,
         };
 
-        Logger.Logger.Instance.Log(Logger.MessageType.Success, $"Album info was succesfully downloaded {album.Name} - {artistName}");
+        logger.Log(Logger.MessageType.Success, $"Album info was succesfully downloaded {album.Name} - {artistName}");
 
         return album;
       }
@@ -675,7 +684,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
       {
         if (ex.Message == exceedMsg)
         {
-          Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Requests are exceeding, trying again");
+          logger.Log(Logger.MessageType.Warning, "Requests are exceeding, trying again");
 
           musibrainzAPISempathore.Release();
 
@@ -688,7 +697,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
         }
         else
         {
-          Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+          logger.Log(Logger.MessageType.Error, ex.Message);
           return null;
         }
       }
@@ -762,11 +771,11 @@ namespace VPlayer.AudioStorage.InfoDownloader
           artist = artists.Items.OrderByDescending(a => Levenshtein.Similarity(a.Name, artistName)).First();
         else
         {
-          Logger.Logger.Instance.Log(Logger.MessageType.Warning, $"Artist's data was not find {artistName}");
+          logger.Log(Logger.MessageType.Warning, $"Artist's data was not find {artistName}");
           return null;
         }
 
-        Logger.Logger.Instance.Log(Logger.MessageType.Success, $"Artist's data was updated {artistName}");
+        logger.Log(Logger.MessageType.Success, $"Artist's data was updated {artistName}");
         //artist = await Artist.GetAsync(artist.Id, "artist-rels", "url-rels");
 
         return new DomainClasses.Artist()
@@ -777,7 +786,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
       }
       catch (Exception ex)
       {
-        Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+        logger.Log(Logger.MessageType.Error, ex.Message);
         return null;
       }
       finally
@@ -791,7 +800,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
     /// </summary>
     /// <param name="MBID"></param>
     /// <returns></returns>,
-    private static async Task<byte[]> GetAlbumFrontConverBLOB(string MBID, string url = null)
+    private async Task<byte[]> GetAlbumFrontConverBLOB(string MBID, string url = null)
     {
       return await Task.Run(async () =>
       {
@@ -807,13 +816,12 @@ namespace VPlayer.AudioStorage.InfoDownloader
             {
               if (response.Code == 502)
               {
-                Logger.Logger.Instance.Log(Logger.MessageType.Warning,
-                  $"Album cover was not found {MBID} trying again, response code {response.Code}");
+                logger.Log(Logger.MessageType.Warning, $"Album cover was not found {MBID} trying again, response code {response.Code}");
                 return await GetAlbumFrontConverBLOB(MBID, url);
               }
               else
               {
-                Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+                logger.Log(Logger.MessageType.Warning,
                   $"Album cover was not found {MBID} resposne code {response.Code}");
                 return null;
               }
@@ -841,7 +849,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
         }
         catch (Exception ex)
         {
-          Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+          logger.Log(Logger.MessageType.Error, ex.Message);
           return null;
         }
       });
@@ -852,7 +860,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
     /// </summary>
     /// <param name="MBID"></param>
     /// <returns></returns>,
-    private static async Task<string> GetAlbumFrontConverURL(string MBID)
+    private async Task<string> GetAlbumFrontConverURL(string MBID)
     {
       return await Task.Run(async () =>
       {
@@ -865,12 +873,12 @@ namespace VPlayer.AudioStorage.InfoDownloader
           {
             if (response.Code == 502)
             {
-              Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+              logger.Log(Logger.MessageType.Warning,
                 $"Album cover was not found {MBID} trying again, response code {response.Code}");
               return await GetAlbumFrontConverURL(MBID);
             }
 
-            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+            logger.Log(Logger.MessageType.Warning,
               $"Album cover was not found {MBID} resposne code {response.Code}");
             return null;
           }
@@ -886,7 +894,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
         }
         catch (Exception ex)
         {
-          Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+          logger.Log(Logger.MessageType.Error, ex.Message);
           return null;
         }
       });
@@ -937,7 +945,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
     /// </summary>
     /// <param name="g"></param>
     /// <returns></returns>
-    private static bool IsOffical(ReleaseGroup g)
+    private bool IsOffical(ReleaseGroup g)
     {
       try
       {
@@ -954,47 +962,12 @@ namespace VPlayer.AudioStorage.InfoDownloader
       }
       catch (Exception ex)
       {
-        Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+        logger.Log(Logger.MessageType.Error, ex.Message);
         return false;
       }
     }
 
-    //public static async Task<Medium> LookUpMedium(LocalMusicDatabase.Artist artist, Album album)
-    //{
-    //    // Build an advanced query to search for the release.
-    //    var query = new QueryParameters<Release>()
-    //            {
-    //                {"arid", artist.MusicBrainzId},
-    //                {"release", album.Name},
-    //                {"type", "album"},
-    //                {"status", "official"}
-    //            };
-
-    //    // Search for a release by title.
-    //    var releases = await Release.SearchAsync(query);
-
-    //    Release release = null;
-
-    //    if (releases.Count > 0)
-    //        // Get the oldest release (remember to sort out items with no date set).
-    //        release = releases.Items.Where(r => r.Date != null && IsCompactDisc(r)).OrderBy(r => r.Date)
-    //            .First();
-
-    //    if (release != null)
-    //    {
-    //        // Get detailed information of the release, including recordings.
-    //        release = await Release.GetAsync(release.Id, "recordings", "url-rels");
-
-    //        // Get the medium associated with the release.
-    //        var medium = release.Media.First();
-
-    //        return medium;
-    //    }
-
-    //    return null;
-    //}
-
-    #endregion MusicBrainz Lookups
+    #endregion 
 
     #region FingerPrint methods
 
@@ -1034,7 +1007,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
     /// <param name="matchings"></param>
     /// <param name="fileDuration"></param>
     /// <returns></returns>
-    private static JToken GetBestDurationMatch(JArray matchings, string fileDuration)
+    private JToken GetBestDurationMatch(JArray matchings, string fileDuration)
     {
       try
       {
@@ -1065,7 +1038,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
       }
       catch (Exception ex)
       {
-        Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+        logger.Log(Logger.MessageType.Error, ex.Message);
         return null;
       }
     }
@@ -1186,7 +1159,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
             if (response.Code != 200)
             {
-              Logger.Logger.Instance.Log(Logger.MessageType.Error,
+              logger.Log(Logger.MessageType.Error,
                 $"Response returns {response.Code} {path}");
               throw new Exception($"Response returns {response.Code}");
             }
@@ -1239,13 +1212,13 @@ namespace VPlayer.AudioStorage.InfoDownloader
           }
           else
           {
-            Logger.Logger.Instance.Log(Logger.MessageType.Warning, $"Song was not identified {path}");
+            logger.Log(Logger.MessageType.Warning, $"Song was not identified {path}");
             return null;
           }
         }
         catch (Exception ex)
         {
-          Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+          logger.Log(Logger.MessageType.Error, ex.Message);
         }
 
         return null;
@@ -1276,7 +1249,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
         if (err != "")
         {
-          Logger.Logger.Instance.Log(Logger.MessageType.Error, err);
+          logger.Log(Logger.MessageType.Error, err);
           return null;
         }
 
@@ -1393,7 +1366,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
       }
       catch (Exception ex)
       {
-        Logger.Logger.Instance.Log(Logger.MessageType.Error, ex.Message);
+        logger.Log(Logger.MessageType.Error, ex.Message);
         return null;
       }
     }
@@ -1452,7 +1425,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     public async Task UpdateSongLyricsAsync(string artistName, string songName, Song song)
     {
-      var chartClient = new ChartLyricsClient();
+      var chartClient = new ChartLyricsClient(logger);
 
       var updatedSong = await chartClient.UpdateSongLyrics(artistName, songName, song);
 

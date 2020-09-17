@@ -5,7 +5,9 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using VCore.Annotations;
 using VCore.Factories;
+using VCore.Helpers;
 using VCore.Interfaces.ViewModels;
 using VCore.Modularity.Events;
 using VCore.Modularity.Interfaces;
@@ -39,7 +41,6 @@ namespace VPlayer.Library.ViewModels
       IStorageManager storageManager,
       LibraryCollection<TViewModel, TModel> libraryCollection) : base(regionProvider)
     {
-      if (viewModelsFactory == null) throw new ArgumentNullException(nameof(viewModelsFactory));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       LibraryCollection = libraryCollection ?? throw new ArgumentNullException(nameof(libraryCollection));
@@ -96,37 +97,45 @@ namespace VPlayer.Library.ViewModels
 
     #region ItemsChanged
 
-    protected virtual void ItemsChanged(ItemChanged itemChanged)
+    protected virtual void ItemsChanged(ItemChanged<TModel> itemChanged)
     {
-      if (itemChanged.Item is TModel model)
+      var model = itemChanged.Item;
+
+      switch (itemChanged.Changed)
       {
-        switch (itemChanged.Changed)
-        {
-          case Changed.Added:
-            LibraryCollection.Add(model);
+        case Changed.Added:
+          LibraryCollection.Add(model);
 
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-              RaisePropertyChanged(nameof(View));
-              RaisePropertyChanged(nameof(ViewModels));
-            });
+          Application.Current.Dispatcher.Invoke(() =>
+          {
+            RaisePropertyChanged(nameof(View));
+            RaisePropertyChanged(nameof(ViewModels));
+          });
 
-            break;
-          case Changed.Removed:
-            OnDeleteItemChange(model);
-            break;
+          break;
+        case Changed.Removed:
+          OnDeleteItemChange(model);
+          break;
 
-          case Changed.Updated:
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-              LibraryCollection.Update(model);
-            });
-            break;
+        case Changed.Updated:
+          OnUpdateItemChange(model);
+          break;
 
-          default:
-            throw new ArgumentOutOfRangeException();
-        }
+        default:
+          throw new ArgumentOutOfRangeException();
       }
+    }
+
+    #endregion
+
+    #region OnUpdate
+
+    protected virtual void OnUpdateItemChange(TModel model)
+    {
+      Application.Current.Dispatcher.Invoke(() =>
+      {
+        LibraryCollection.Update(model);
+      });
     }
 
     #endregion
@@ -148,7 +157,7 @@ namespace VPlayer.Library.ViewModels
 
     #region OnActivation
 
-   
+
     public override void OnActivation(bool firstActivation)
     {
       base.OnActivation(firstActivation);
@@ -163,25 +172,27 @@ namespace VPlayer.Library.ViewModels
 
     #region SubscribeToChanges
 
-
     private bool wasSubscribed;
     private void SubscribeToChanges()
     {
       if (!wasSubscribed)
       {
-        this.storageManager.ItemChanged.Where(x => x.Item.GetType() == typeof(TModel)).Subscribe(ItemsChanged);
+        this.storageManager.SubscribeToItemChange<TModel>(ItemsChanged).DisposeWith(this);
+
         storageManager.ActionIsDone.Subscribe((x) =>
         {
           LibraryCollection.Recreate();
           RaisePropertyChanged(nameof(ViewModels));
           RaisePropertyChanged(nameof(View));
-        });
+        }).DisposeWith(this);
 
         LibraryCollection.LoadData.Subscribe(_ =>
         {
           RaisePropertyChanged(nameof(ViewModels));
           RaisePropertyChanged(nameof(View));
-        });
+        }).DisposeWith(this);
+
+        wasSubscribed = true;
       }
     }
 

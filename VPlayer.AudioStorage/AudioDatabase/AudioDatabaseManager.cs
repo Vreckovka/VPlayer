@@ -5,6 +5,7 @@ using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,6 +15,8 @@ using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using Windows.Media.Playlists;
 using Windows.UI.Xaml.Media.Animation;
+using Logger;
+using VCore.Annotations;
 using VPlayer.AudioStorage.Repositories;
 using Playlist = VPlayer.AudioStorage.DomainClasses.Playlist;
 
@@ -27,6 +30,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
     private readonly PlaylistsRepository playlistsRepository;
     private readonly AlbumsRepository albumsRepository;
     private readonly ArtistRepository artistRepository;
+    private readonly ILogger logger;
+
+    private Subject<ItemChanged> ItemChanged { get; } = new Subject<ItemChanged>();
 
     #endregion Fields
 
@@ -36,19 +42,20 @@ namespace VPlayer.AudioStorage.AudioDatabase
       AudioInfoDownloader audioInfoDownloader,
       PlaylistsRepository playlistsRepository,
       AlbumsRepository albumsRepository,
-      ArtistRepository artistRepository)
+      ArtistRepository artistRepository,
+      ILogger logger)
     {
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
       this.playlistsRepository = playlistsRepository ?? throw new ArgumentNullException(nameof(playlistsRepository));
       this.albumsRepository = albumsRepository ?? throw new ArgumentNullException(nameof(albumsRepository));
       this.artistRepository = artistRepository ?? throw new ArgumentNullException(nameof(artistRepository));
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     #endregion Constructors
 
     #region Properties
-
-    public Subject<ItemChanged> ItemChanged { get; } = new Subject<ItemChanged>();
+   
     public Subject<Unit> ActionIsDone { get; } = new Subject<Unit>();
 
     #endregion Properties
@@ -64,7 +71,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       disposable = audioInfoDownloader.ItemUpdated.Subscribe(ItemUpdated);
       audioInfoDownloader.SubdirectoryLoaded += AudioInfoDownloader_SubdirectoryLoaded;
 
-      //UpdateAllNotYetUpdated(true);
+      DownloadAllNotYetDownloaded(false);
     }
 
     #endregion
@@ -113,7 +120,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
               context.Artists.Add(artist);
               context.SaveChanges();
 
-              Logger.Logger.Instance.Log(Logger.MessageType.Success, $"New artist was added {artist.Name}");
+              logger.Log(Logger.MessageType.Success, $"New artist was added {artist.Name}");
 
               ItemChanged.OnNext(new ItemChanged()
               {
@@ -146,7 +153,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
               context.Albums.Add(album);
               context.SaveChanges();
 
-              Logger.Logger.Instance.Log(Logger.MessageType.Success, $"New album was added {album.Name}");
+              logger.Log(Logger.MessageType.Success, $"New album was added {album.Name}");
 
               ItemChanged.OnNext(new ItemChanged()
               {
@@ -191,7 +198,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
                 Changed = Changed.Added
               });
 
-              Logger.Logger.Instance.Log(Logger.MessageType.Success, $"New song was added {song.Name}");
+              logger.Log(Logger.MessageType.Success, $"New song was added {song.Name}");
             }
           }
         }
@@ -201,15 +208,14 @@ namespace VPlayer.AudioStorage.AudioDatabase
           {
             if (ex.InnerException.InnerException != null)
             {
-              Logger.Logger.Instance.Log(Logger.MessageType.Error,
-                $"{ex.InnerException.InnerException.Message}");
+              logger.Log(Logger.MessageType.Error, $"{ex.InnerException.InnerException.Message}");
             }
             else
-              Logger.Logger.Instance.Log(Logger.MessageType.Error, $"{ex.InnerException.Message}");
+              logger.Log(Logger.MessageType.Error, $"{ex.InnerException.Message}");
           }
           else
           {
-            Logger.Logger.Instance.Log(Logger.MessageType.Error, $"{ex.Message}");
+            logger.Log(Logger.MessageType.Error, $"{ex.Message}");
           }
         }
       }
@@ -289,7 +295,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       }
       catch (Exception ex)
       {
-        Logger.Logger.Instance.Log(Logger.MessageType.Error, $"{ex.Message}");
+        logger.Log(Logger.MessageType.Error, $"{ex.Message}");
       }
       finally
       {
@@ -363,11 +369,11 @@ namespace VPlayer.AudioStorage.AudioDatabase
           {
 
             await context.Database.ExecuteSqlCommandAsync("DELETE FROM PlaylistSongs");
-            Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table PlaylistSongs cleared succesfuly");
+            logger.Log(Logger.MessageType.Warning, "Table PlaylistSongs cleared succesfuly");
 
             var playlists = context.Playlists.ToList();
             await context.Database.ExecuteSqlCommandAsync("DELETE FROM Playlists");
-            Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table Playlists cleared succesfuly");
+            logger.Log(Logger.MessageType.Warning, "Table Playlists cleared succesfuly");
 
             foreach (var playlist in playlists)
             {
@@ -383,11 +389,11 @@ namespace VPlayer.AudioStorage.AudioDatabase
             ActionIsDone.OnNext(Unit.Default);
 
             await context.Database.ExecuteSqlCommandAsync("DELETE FROM Songs");
-            Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table Songs cleared succesfuly");
+            logger.Log(Logger.MessageType.Warning, "Table Songs cleared succesfuly");
 
             var albums = context.Albums.ToList();
             await context.Database.ExecuteSqlCommandAsync("DELETE FROM Albums");
-            Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table Albums cleared succesfuly");
+            logger.Log(Logger.MessageType.Warning, "Table Albums cleared succesfuly");
 
             foreach (var album in albums)
             {
@@ -405,7 +411,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
             var artists = context.Artists.ToList();
 
             await context.Database.ExecuteSqlCommandAsync("DELETE FROM Artists");
-            Logger.Logger.Instance.Log(Logger.MessageType.Warning, "Table Artists cleared succesfuly");
+            logger.Log(Logger.MessageType.Warning, "Table Artists cleared succesfuly");
 
             foreach (var artist in artists)
             {
@@ -421,7 +427,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
           }
           catch (Exception ex)
           {
-            Logger.Logger.Instance.Log(Logger.MessageType.Inform, ex.Message);
+            logger.Log(Logger.MessageType.Inform, ex.Message);
           }
         }
       });
@@ -490,7 +496,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
               if (duplicates == null)
               {
                 await context.SaveChangesAsync();
-                Logger.Logger.Instance.Log(Logger.MessageType.Success,
+               logger.Log(Logger.MessageType.Success,
                   $"Album was updated in database {album.Name}");
 
                 ItemChanged.OnNext(new ItemChanged()
@@ -563,7 +569,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
               if (dbAlbum == null)
               {
-                Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+               logger.Log(Logger.MessageType.Warning,
                   $"Failed to combine, album was removed from database {album.Name}");
               }
               else
@@ -579,7 +585,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
         }
         catch (Exception ex)
         {
-          Logger.Logger.Instance.Log(ex);
+         logger.Log(ex);
         }
       }
     }
@@ -595,7 +601,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
         //Could be disk 1, disk 2 and renamed without disk index
         if (albumToCombine.Songs.Count == 0)
         {
-          Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+          logger.Log(Logger.MessageType.Warning,
             $"No songs to combine {albumToCombine.Name}");
 
           return null;
@@ -610,7 +616,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           if (songsToAdd.Count == 0)
           {
-            Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+            logger.Log(Logger.MessageType.Warning,
               $"No songs to combine {albumToCombine.Name}");
 
             return null;
@@ -638,7 +644,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
           Item = originalAlbum
         });
 
-        Logger.Logger.Instance.Log(Logger.MessageType.Warning,
+        logger.Log(Logger.MessageType.Warning,
             $"Combining album {albumToCombine.Name} to {originalAlbum.Name}");
 
         ActionIsDone.OnNext(Unit.Default);
@@ -647,7 +653,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       }
       catch (Exception ex)
       {
-        Logger.Logger.Instance.Log(ex);
+        logger.Log(ex);
         return null;
       }
     }
@@ -668,7 +674,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           context.SaveChanges();
 
-          Logger.Logger.Instance.Log(Logger.MessageType.Success, $"Entity was updated {entity}");
+         logger.Log(Logger.MessageType.Success, $"Entity was updated {entity}");
 
           ItemChanged.OnNext(new ItemChanged()
           {
@@ -697,7 +703,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
             context.SaveChanges();
 
-            Logger.Logger.Instance.Log(Logger.MessageType.Success, $"Entity was updated {newVersion}");
+           logger.Log(Logger.MessageType.Success, $"Entity was updated {newVersion}");
 
             ItemChanged.OnNext(new ItemChanged()
             {
@@ -742,6 +748,16 @@ namespace VPlayer.AudioStorage.AudioDatabase
           }
         }
       });
+    }
+
+    #endregion
+
+    #region SubscribeToItemChange
+
+    public IDisposable SubscribeToItemChange<TModel>(Action<ItemChanged<TModel>> observer)
+    {
+      return ItemChanged.Where(x => x.Item.GetType() == typeof(TModel))
+        .Select(x => new ItemChanged<TModel>((TModel)x.Item, x.Changed)).Subscribe(observer);
     }
 
     #endregion

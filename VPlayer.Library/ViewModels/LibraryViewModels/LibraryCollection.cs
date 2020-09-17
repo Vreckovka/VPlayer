@@ -1,4 +1,5 @@
 ﻿using Gma.DataStructures.StringSearch;
+using Logger;
 using Prism.Mvvm;
 using PropertyChanged;
 using System;
@@ -11,6 +12,7 @@ using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using VCore.Annotations;
 using VCore.Factories;
 using VCore.ItemsCollections.VirtualList;
 using VCore.ItemsCollections.VirtualList.VirtualLists;
@@ -28,6 +30,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
     #region Fields
 
     protected readonly IStorageManager storageManager;
+    private readonly ILogger logger;
     private string actualFilter = "";
     private Trie<TViewModel> trieItems = new Trie<TViewModel>();
     protected IViewModelsFactory ViewModelsFactory { get; }
@@ -49,10 +52,13 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
     public LibraryCollection(
       IViewModelsFactory viewModelsFactory,
-      IStorageManager storageManager
+      IStorageManager storageManager,
+      ILogger logger
     )
     {
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
       ViewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
 
       LoadQuery = storageManager.GetRepository<TModel>();
@@ -99,7 +105,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
         }
         catch (Exception ex)
         {
-          Logger.Logger.Instance.Log(ex);
+          logger.Log(ex);
           return false;
         }
       });

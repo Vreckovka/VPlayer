@@ -183,15 +183,11 @@
     <Compile Include="InfoDownloader\Clients\Chartlyrics\ChartLyricsClient.cs" />
     <Compile Include="InfoDownloader\Clients\Chartlyrics\XMLClasses\GetLyricResult.cs" />
     <Compile Include="InfoDownloader\Clients\Chartlyrics\XMLClasses\SearchLyricResult.cs" />
-    <Compile Include="InfoDownloader\LRC\Clients\Google\GoogleDriveFile.cs" />
-    <Compile Include="InfoDownloader\LRC\Clients\Google\GoogleDriveLrcProvider.cs" />
-    <Compile Include="InfoDownloader\LRC\Clients\Google\GoogleDriveServiceProvider.cs" />
-    <Compile Include="InfoDownloader\LRC\ILrcProvider.cs" />
-    <Compile Include="InfoDownloader\LRC\LrcProvider.cs" />
-    <Compile Include="InfoDownloader\LRC\Domain\LRCFile.cs" />
-    <Compile Include="InfoDownloader\LRC\Domain\LRCLyricLine.cs" />
-    <Compile Include="InfoDownloader\LRC\LRCParser.cs" />
-    <Compile Include="InfoDownloader\LRC\Clients\Local\LocalLrcProvider.cs" />
+    <Compile Include="InfoDownloader\Clients\LRC\Google\GoogleDriveLrcProvider.cs" />
+    <Compile Include="InfoDownloader\Clients\LRC\Google\GoogleDrive\GoogleDriveFile.cs" />
+    <Compile Include="InfoDownloader\Clients\LRC\Google\GoogleDrive\GoogleDriveServiceProvider.cs" />
+    <Compile Include="InfoDownloader\Clients\LRC\Google\GoogleDrive\GoogleMimeTypes.cs" />
+    <Compile Include="InfoDownloader\Clients\LRC\Local\LocalLrcProvider.cs" />
     <Compile Include="Migrations\202009161944072_migration_.cs" />
     <Compile Include="Migrations\202009161944072_migration_.designer.cs">
       <DependentUpon>202009161944072_migration_.cs</DependentUpon>
@@ -240,9 +236,7 @@
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="InfoDownloader\Clients\MiniLyrics\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202009161944072_migration_.resx">
       <DependentUpon>202009161944072_migration_.cs</DependentUpon>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Windows;
 using VCore.Factories;
+using VCore.Helpers;
 using VCore.Modularity.Events;
 using VCore.Modularity.RegionProviders;
 using VPlayer.AudioStorage.DomainClasses;
@@ -28,10 +29,13 @@ namespace VPlayer.Library.ViewModels.ArtistsViewModels
       base(regionProvider, viewModelsFactory, storageManager, libraryCollection)
     {
       //this.storageManager.ItemChanged.Where(x => x.Item.GetType() == typeof(Song)).Subscribe(SongChange);
-      this.storageManager.ItemChanged.Where(x => x.Item.GetType() == typeof(Album)).Subscribe(AlbumChange);
+
+      this.storageManager.SubscribeToItemChange<Album>(AlbumChange).DisposeWith(this);
+
+      //this.storageManager.ItemChanged.Where(x => x.Item.GetType() == typeof(Album));
     }
 
-    #endregion Constructors
+    #endregion 
 
     #region Properties
 
@@ -44,9 +48,9 @@ namespace VPlayer.Library.ViewModels.ArtistsViewModels
 
     #region AlbumChange
 
-    private void AlbumChange(ItemChanged itemChanged)
+    private void AlbumChange(ItemChanged<Album> itemChanged)
     {
-      if (itemChanged.Item is Album album)
+      if (itemChanged.Item is Album album && LibraryCollection.WasLoaded)
       {
         ArtistViewModel artist = null;
 

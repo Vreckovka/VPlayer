@@ -1,17 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Google.Apis.Drive.v3.Data;
+using VCore.Annotations;
 
 namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 {
   public class GoogleDriveFile
   {
     private readonly File file;
+    private readonly IGoogleDriveServiceProvider googleDriveServiceProvider;
 
-    public GoogleDriveFile(File file)
+    public GoogleDriveFile(File file, IGoogleDriveServiceProvider googleDriveServiceProvider)
     {
       this.file = file ?? throw new ArgumentNullException(nameof(file));
+      this.googleDriveServiceProvider = googleDriveServiceProvider ?? throw new ArgumentNullException(nameof(googleDriveServiceProvider));
     }
 
     public global::Google.Apis.Drive.v3.Data.File File => file;
@@ -21,13 +25,13 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
     private void LoadFiles(string mimeType)
     {
-      var albums = GoogleDriveLrcProvider.GetFilesInFolder(file, mimeType);
+      var albums = googleDriveServiceProvider.GetFilesInFolder(file, mimeType);
 
       var notAdded = albums.Where(googleItem => !Subitems.Any(cachedItem => cachedItem.Key == GetNormalizedName(googleItem.Name)));
 
       foreach (var notAddedFolder in notAdded)
       {
-        Subitems.Add(GetNormalizedName(notAddedFolder.Name), new GoogleDriveFile(notAddedFolder));
+        Subitems.Add(GetNormalizedName(notAddedFolder.Name), new GoogleDriveFile(notAddedFolder, googleDriveServiceProvider));
       }
     }
 
@@ -49,10 +53,10 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
         if (requestedFile == null)
         {
-          requestedFile = Subitems.FirstOrDefault(x => x.Key.Contains(GoogleDriveFile.GetNormalizedName(fileName))).Value;
+          requestedFile = Subitems.FirstOrDefault(x => x.Key.Contains(normalizedName)).Value;
 
           if (requestedFile == null)
-            requestedFile = Subitems.FirstOrDefault(x => GoogleDriveFile.GetNormalizedName(fileName).Contains(x.Key)).Value;
+            requestedFile = Subitems.FirstOrDefault(x => normalizedName.Contains(x.Key)).Value;
         }
       }
 
@@ -65,7 +69,9 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
     public static string GetNormalizedName(string input)
     {
-      return input.ToLower().Replace(" ", "").Replace("_", "");
+      Regex rgx = new Regex("[^a-zA-Z0-9 -]");
+
+      return rgx.Replace(input.ToLower(), "");
     }
 
     #endregion

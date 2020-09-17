@@ -7,5 +7,6 @@ namespace VPlayer.Core.Interfaces.ViewModels
 {
   public interface IAlbumsViewModel : ICollectionViewModel<AlbumViewModel, Album>, INavigationItem
   {
+     
   }
 }

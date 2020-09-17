@@ -19,7 +19,7 @@ namespace VPlayer.Core.Modularity.Regions
     #endregion Methods
   }
 
-  public class VPlayerRegionProvider : BaseRegionProvider, IVPlayerRegionProvider
+  public class VPlayerRegionProvider : RegionProvider, IVPlayerRegionProvider
   {
     #region Constructors
 

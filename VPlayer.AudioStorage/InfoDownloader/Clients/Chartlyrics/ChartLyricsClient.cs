@@ -9,11 +9,20 @@ using System.Xml;
 using System.Xml.Serialization;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader.Clients.Chartlyrics.XMLClasses;
+using Windows.Security.Cryptography.Certificates;
+using Logger;
+using VCore.Annotations;
 
 namespace VPlayer.AudioStorage.InfoDownloader.Clients.Chartlyrics
 {
   public class ChartLyricsClient
   {
+    private readonly ILogger logger;
+
+    public ChartLyricsClient([NotNull] ILogger logger)
+    {
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
 
     public async Task<Song> UpdateSongLyrics(string artistName, string songName, Song song)
     {
@@ -95,14 +104,14 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.Chartlyrics
         }
         else
         {
-          Logger.Logger.Instance.Log(ex);
+          logger.Log(ex);
         }
 
         return null;
       }
       catch (Exception ex)
       {
-        Logger.Logger.Instance.Log(ex);
+        logger.Log(ex);
         return null;
       }
     }
@@ -136,7 +145,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.Chartlyrics
       }
       catch (Exception ex)
       {
-        Logger.Logger.Instance.Log(ex);
+        logger.Log(ex);
         return null;
       }
     }
