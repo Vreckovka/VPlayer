@@ -218,6 +218,22 @@ namespace VPlayer.Library.ViewModels
 
     #endregion
 
+    #region RecreateCollection
+
+    public void RecreateCollection()
+    {
+      if (LibraryCollection.WasLoaded)
+      {
+        LibraryCollection.Recreate();
+
+        regionProvider.RefreshView(Guid);
+
+        GC.Collect();
+      }
+    }
+
+    #endregion
+
     #endregion Methods
 
   }

@@ -1,16 +1,15 @@
 ﻿<UserControl x:Class="VPlayer.Library.Views.AlbumsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:controls="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
+
              xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:VPlayer.Library.Views"
+
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:my="ConditionalEventTrigger"
+
              xmlns:viewModels="clr-namespace:VPlayer.Library.Desing.ViewModels"
-             xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:behaviors="clr-namespace:VPlayer.Library.Behaviors"
+
+
              d:DataContext="{d:DesignInstance Type={x:Type viewModels:AlbumsDesignViewModel},
                                               IsDesignTimeCreatable=True}"
              d:DesignHeight="650"
@@ -28,10 +27,7 @@
                                                          IsPlaying="{Binding IsPlaying}" />
                     </DataTemplate>
                 </controls1:PlayableWrapPanel.ItemTemplate>
-        <i:Interaction.Behaviors>
-          <behaviors:DeletePictureItemBehavior EventAggregator="{Binding EventAggregator}"/>
-        </i:Interaction.Behaviors>
-      </controls1:PlayableWrapPanel>
+            </controls1:PlayableWrapPanel>
         </Grid>
     </Grid>
 </UserControl>

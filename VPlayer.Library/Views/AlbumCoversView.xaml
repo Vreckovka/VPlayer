@@ -6,15 +6,17 @@
     xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-    xmlns:library="clr-namespace:VPlayer.Library"
     xmlns:local="clr-namespace:VPlayer.Library.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore"
-    xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
+    xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <Grid>
+
+
+  
+  <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
@@ -162,7 +164,7 @@
                                                                             <DataTrigger Value="True">
                                                                                 <DataTrigger.Binding>
                                                                                     <MultiBinding
-                                                                                        Converter="{library1:IsBiggerConverter}">
+                                                                                        Converter="{library:IsBiggerConverter}">
                                                                                         <Binding ElementName="NameTxt"
                                                                                                  Path="ActualWidth" />
                                                                                         <Binding

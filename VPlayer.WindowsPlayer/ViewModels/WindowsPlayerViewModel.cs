@@ -1,12 +1,7 @@
-﻿using Listener;
-using Ninject;
-using Prism.Events;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Data.Entity.Infrastructure.Interception;
-using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -17,27 +12,23 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Logger;
+using Ninject;
+using Prism.Events;
 using VCore;
-using VCore.Annotations;
 using VCore.Helpers;
 using VCore.ItemsCollections;
 using VCore.ItemsCollections.VirtualList;
 using VCore.ItemsCollections.VirtualList.VirtualLists;
 using VCore.Modularity.Events;
-using VCore.Modularity.Interfaces;
-using VCore.Modularity.Navigation;
-using VCore.Modularity.RegionProviders;
-using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
 using Vlc.DotNet.Core;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
+using VPlayer.Core.Messages.ImageDelete;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
-using VPlayer.Core.ViewModels.Artists;
-using VPlayer.Player.Views;
 using VPlayer.Player.Views.WindowsPlayer;
 
 //TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)
@@ -52,13 +43,13 @@ using VPlayer.Player.Views.WindowsPlayer;
 //TODO: Hore prenutie medzi windows a browser playermi , zmizne bocne menu
 //TODO: Pridat loading indikator, mozno aj co prave robi
 
-namespace VPlayer.Player.ViewModels
+namespace VPlayer.WindowsPlayer.ViewModels
 {
   public class WindowsPlayerViewModel : PlayableRegionViewModel<WindowsPlayerView>, INavigationItem
   {
     #region Fields
 
-    private readonly IVPlayerRegionProvider regionProvider;
+    private readonly IVPlayerRegionProvider vPlayerRegionProvider;
     private readonly IEventAggregator eventAggregator;
     private readonly IStorageManager storageManager;
     private readonly AudioInfoDownloader audioInfoDownloader;
@@ -79,7 +70,7 @@ namespace VPlayer.Player.ViewModels
       AudioInfoDownloader audioInfoDownloader,
       ILogger logger) : base(regionProvider)
     {
-      this.regionProvider = regionProvider ?? throw new ArgumentNullException(nameof(regionProvider));
+      this.vPlayerRegionProvider = regionProvider ?? throw new ArgumentNullException(nameof(regionProvider));
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
@@ -246,7 +237,7 @@ namespace VPlayer.Player.ViewModels
 
     public void OnAlbumDetail()
     {
-      regionProvider.ShowAlbumDetail(ActualSong.AlbumViewModel, RegionNames.WindowsPlayerContentRegion);
+      vPlayerRegionProvider.ShowAlbumDetail(ActualSong.AlbumViewModel, RegionNames.WindowsPlayerContentRegion);
     }
 
     #endregion 
@@ -365,10 +356,17 @@ namespace VPlayer.Player.ViewModels
         eventAggregator.GetEvent<PauseEvent>().Subscribe(Pause).DisposeWith(this);
         eventAggregator.GetEvent<PlaySongsFromPlayListEvent>().Subscribe(PlaySongFromPlayList).DisposeWith(this);
         eventAggregator.GetEvent<DeleteSongEvent>().Subscribe(DeleteSongs).DisposeWith(this);
+
+        eventAggregator.GetEvent<ImageDeleteRequestEvent>().Subscribe(OnImageDeleted).DisposeWith(this);
       });
     }
 
     #endregion Initialize
+
+    private void OnImageDeleted(ImageDeleteRequestEventArgs imageDeleteDoneEventArgs)
+    {
+
+    }
 
     #region OnAlbumChange
 

@@ -17,7 +17,6 @@ using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.Settings;
 using VPlayer.Library.ViewModels;
-using VPlayer.Player.ViewModels;
 using VPlayer.WindowsPlayer.Views;
 
 namespace VPlayer.WindowsPlayer.ViewModels
@@ -107,7 +106,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       var libraryViewModel = viewModelsFactory.Create<LibraryViewModel>();
       libraryViewModel.IsActive = true;
 
-      var playerViewModel = viewModelsFactory.Create<Player.ViewModels.WindowsPlayerViewModel>();
+      var playerViewModel = viewModelsFactory.Create<WindowsPlayerViewModel>();
       var item = playerViewModel;
 
       var settings = viewModelsFactory.Create<SettingsViewModel>();

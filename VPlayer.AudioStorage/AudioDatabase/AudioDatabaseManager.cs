@@ -484,7 +484,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
             //Album could be deleted from storage
             if (originalAlbum != null)
             {
-              originalAlbum.UpdateAlbum(album);
+              originalAlbum.Update(album);
 
               var duplicates = (from x in albums
                                 where x.Name == originalAlbum.Name
@@ -574,7 +574,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
               }
               else
               {
-                dbAlbum.UpdateAlbum(album);
+                dbAlbum.Update(album);
                 CombineAlbums(originalAlbum, dbAlbum, context);
               }
 

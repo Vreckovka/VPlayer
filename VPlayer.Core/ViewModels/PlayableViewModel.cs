@@ -87,6 +87,15 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region RaisePropertyChange
+
+    public virtual void RaisePropertyChange(string propertyName)
+    {
+      RaisePropertyChanged(propertyName);
+    }
+
+    #endregion
+
   }
 
   public abstract class PlayableViewModel<TModel> : NamedEntityViewModel<TModel> where TModel : INamedEntity

@@ -5,6 +5,7 @@ using VPlayer.Core.Modularity.Ninject;
 using VPlayer.Player.ViewModels;
 using VPlayer.WebPlayer.ViewModels;
 using VPlayer.WindowsPlayer.Modularity.NinjectModule;
+using VPlayer.WindowsPlayer.ViewModels;
 
 namespace VPlayer.Modularity.NinjectModules
 {

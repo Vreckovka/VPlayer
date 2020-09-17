@@ -5,7 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Listener;
 using Logger;
+using Ninject;
+using Prism.Events;
 using VCore.Modularity.NinjectModules;
+using VPlayer.Core.Managers;
 
 namespace VPlayer.Core.Modularity.Ninject
 {
@@ -25,6 +28,8 @@ namespace VPlayer.Core.Modularity.Ninject
 
 
       Kernel.Bind<FileLoggerContainer>().ToSelf().WithConstructorArgument("logFilePath", logFilePath);
+
+      
     }
   }
 }

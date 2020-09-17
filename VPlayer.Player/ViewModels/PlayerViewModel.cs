@@ -11,6 +11,7 @@ using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
 using VPlayer.Player.Views;
 using VPlayer.WebPlayer.ViewModels;
+using VPlayer.WindowsPlayer.ViewModels;
 
 namespace VPlayer.Player.ViewModels
 {

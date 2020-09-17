@@ -4,8 +4,8 @@
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
 
   <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="pack://application:,,,/VPlayer;component/StylesDictionaries/DataTemplates.xaml" />
-    <ResourceDictionary Source="pack://application:,,,/VPlayer;component/StylesDictionaries/ColorsStyle.xaml" />
+    <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/DataTemplates.xaml" />
+    <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/ColorsStyle.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <Style x:Key="MagnifyingGlass" TargetType="Path">

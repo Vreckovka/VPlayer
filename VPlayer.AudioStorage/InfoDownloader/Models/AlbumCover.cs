@@ -22,6 +22,8 @@ namespace VPlayer.AudioStorage.InfoDownloader.Models
 
     #region Methods
 
+    #region BytesToString
+
     public string BytesToString(long byteCount)
     {
       string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" }; //Longs run out around EB
@@ -33,10 +35,16 @@ namespace VPlayer.AudioStorage.InfoDownloader.Models
       return (Math.Sign(byteCount) * num) + " " + suf[place];
     }
 
+    #endregion
+
+    #region ToString
+
     public override string ToString()
     {
       return $"{Mbid} {Type} {Url}";
     }
+
+    #endregion
 
     #endregion Methods
   }

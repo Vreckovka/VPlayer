@@ -151,7 +151,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Behaviors\DeletePictureItemBehavior.cs" />
     <Compile Include="Desing\LibraryRegionDesingProvider.cs" />
     <Compile Include="Desing\ViewModels\AlbumsDesignViewModel.cs" />
     <Compile Include="Modularity\NinjectModule\LibraryNinjectModule.cs" />

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
@@ -60,16 +62,25 @@ namespace VPlayer.Library
       object parameter,
       CultureInfo culture)
     {
-      if (value != DependencyProperty.UnsetValue && value != null )
+      if (value != DependencyProperty.UnsetValue && value != null)
       {
-        // new Uri(value.ToString());
-        var bitmap = new BitmapImage();
-        bitmap.BeginInit();
-        bitmap.UriSource = new Uri(value.ToString());
-        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-        bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-        bitmap.EndInit();
-        return bitmap;
+        // do this so that the image file can be moved in the file system
+        BitmapImage result = new BitmapImage();
+        // Create new BitmapImage   
+        Stream stream = new MemoryStream(); // Create new MemoryStream   
+        var asd = value.ToString();
+        var ddd = new Uri(value.ToString());
+        Bitmap bitmap = new Bitmap(ddd.LocalPath);
+        // Create new Bitmap (System.Drawing.Bitmap) from the existing image file (albumArtSource set to its path name)   
+        bitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+        // Save the loaded Bitmap into the MemoryStream - Png format was the only one I tried that didn't cause an error (tried Jpg, Bmp, MemoryBmp)   
+        bitmap.Dispose(); // Dispose bitmap so it releases the source image file   
+        result.BeginInit(); // Begin the BitmapImage's initialisation   
+        result.StreamSource = stream;
+        // Set the BitmapImage's StreamSource to the MemoryStream containing the image   
+        result.EndInit(); // End the BitmapImage's initialisation   
+                          // return result; // Finally, set the WPF Image component's source to the BitmapImage
+
       }
 
       return DependencyProperty.UnsetValue;
@@ -176,5 +187,5 @@ namespace VPlayer.Library
       return this;
     }
   }
-  
+
 }

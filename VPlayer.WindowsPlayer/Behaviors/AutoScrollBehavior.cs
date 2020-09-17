@@ -11,7 +11,6 @@ using System.Windows.Threading;
 using Ninject;
 using ScrollAnimateBehavior.AttachedBehaviors;
 using VPlayer.Core.ViewModels;
-using VPlayer.Player.ViewModels;
 using Application = System.Windows.Application;
 using Console = System.Console;
 using Decorator = System.Windows.Controls.Decorator;
@@ -25,7 +24,7 @@ using RoutedEventArgs = System.Windows.RoutedEventArgs;
 using ScrollViewer = System.Windows.Controls.ScrollViewer;
 using TimeSpan = System.TimeSpan;
 using VisualTreeHelper = System.Windows.Media.VisualTreeHelper;
-using WindowsPlayerViewModel = VPlayer.Player.ViewModels.WindowsPlayerViewModel;
+using WindowsPlayerViewModel = VPlayer.WindowsPlayer.ViewModels.WindowsPlayerViewModel;
 
 namespace VPlayer.Player.Behaviors
 {

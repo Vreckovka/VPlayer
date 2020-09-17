@@ -499,7 +499,7 @@ namespace VPlayer.Core.ViewModels
     {
       if (AlbumViewModel != null && AlbumViewModel.Model != null)
       {
-        AlbumViewModel.Model.UpdateAlbum(album);
+        AlbumViewModel.Model.Update(album);
         RaisePropertyChanged(nameof(ImagePath));
       }
     }

@@ -16,8 +16,8 @@ using VCore.Modularity.RegionProviders;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Interfaces.ViewModels;
+using VPlayer.Core.Messages.ImageDelete;
 using VPlayer.Core.Modularity.Regions;
-using VPlayer.Library.Behaviors;
 using VPlayer.Library.ViewModels.LibraryViewModels;
 using VPlayer.Library.Views;
 
@@ -54,14 +54,16 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
     #endregion Properties
 
+    #region Methods
+
     #region Initialize
 
     public override void Initialize()
     {
       base.Initialize();
 
-      this.storageManager.SubscribeToItemChange<Song>(SongChange).DisposeWith(this); 
-      EventAggregator.GetEvent<ImageDeleteDoneEvent>().Subscribe(OnImageDeleted).DisposeWith(this);
+      this.storageManager.SubscribeToItemChange<Song>(SongChange).DisposeWith(this);
+
     }
 
     #endregion
@@ -124,10 +126,13 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
       {
         try
         {
-          EventAggregator.GetEvent<ImageDeleteRequestEvent>().Publish(new ImageDeleteDoneEventArgs()
+          var viewModel = LibraryCollection.Items.SingleOrDefault(x => x.ModelId == model.Id);
+
+          if (viewModel != null)
           {
-            Model = model,
-          });
+            viewModel.PublishDeleteImage(OnImageDeleted);
+          }
+
         }
         catch (Exception ex)
         {
@@ -149,26 +154,24 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     {
       try
       {
-
-        var model = ViewModels.SingleOrDefault(x => x.ModelId == imageDeleteDoneEventArgs.Model.Id)?.Model;
-
-        if (model != null)
+        if (imageDeleteDoneEventArgs.Result)
         {
-          var path = imageDeleteDoneEventArgs.Model.AlbumFrontCoverFilePath;
-          model.AlbumFrontCoverFilePath = null;
+          var model = ViewModels.SingleOrDefault(x => x.ModelId == imageDeleteDoneEventArgs.Model.Id)?.Model;
 
-          Application.Current.Dispatcher.Invoke(() =>
+          if (model != null)
           {
-            base.OnDeleteItemChange(imageDeleteDoneEventArgs.Model);
+            var path = imageDeleteDoneEventArgs.Model.AlbumFrontCoverFilePath;
+            model.AlbumFrontCoverFilePath = null;
 
-            LibraryCollection.Recreate();
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+              base.OnDeleteItemChange(imageDeleteDoneEventArgs.Model);
 
-            regionProvider.RefreshView(Guid);
+              RecreateCollection();
 
-            GC.Collect();
-
-            Task.Run(() =>
+              Task.Run(() =>
               {
+                //Wait for windows
                 Thread.Sleep(2500);
 
                 var fileNameLength = path.Split('\\').Last().Length;
@@ -195,7 +198,8 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
                   throw;
                 }
               });
-          });
+            });
+          }
         }
       }
       catch (Exception ex)
@@ -206,6 +210,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     }
     #endregion
 
+    #endregion
 
   }
 }

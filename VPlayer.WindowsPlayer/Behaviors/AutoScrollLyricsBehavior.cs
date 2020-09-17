@@ -8,7 +8,6 @@ using System.Windows.Threading;
 using Ninject;
 using ScrollAnimateBehavior.AttachedBehaviors;
 using VPlayer.Core.ViewModels;
-using VPlayer.Player.ViewModels;
 
 namespace VPlayer.Player.Behaviors
 {

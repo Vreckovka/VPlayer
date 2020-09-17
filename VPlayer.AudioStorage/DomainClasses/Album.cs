@@ -12,7 +12,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     UnableToFind
   }
 
-  public class Album : DownloadableEntity
+  public class Album : DownloadableEntity, IUpdateable<Album>
   {
     #region Constructors
 
@@ -39,18 +39,15 @@ namespace VPlayer.AudioStorage.DomainClasses
     public InfoDownloadStatus InfoDownloadStatus { get; set; }
 
     public virtual List<Song> Songs { get; set; }
-   
+
 
     #endregion Properties
 
     #region Methods
 
-    public override string ToString()
-    {
-      return $"{Name}|{Artist}";
-    }
+    #region UpdateAlbum
 
-    public void UpdateAlbum(Album album)
+    public void Update(Album album)
     {
       Name = album.Name;
       AlbumFrontCoverFilePath = album.AlbumFrontCoverFilePath;
@@ -59,6 +56,17 @@ namespace VPlayer.AudioStorage.DomainClasses
       ReleaseDate = album.ReleaseDate;
       InfoDownloadStatus = album.InfoDownloadStatus;
     }
+
+    #endregion
+
+    #region ToString
+
+    public override string ToString()
+    {
+      return $"{Name}|{Artist}";
+    }
+
+    #endregion
 
     #endregion Methods
   }

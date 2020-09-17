@@ -7,20 +7,20 @@
   <Application.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="StylesDictionaries/ColorsStyle.xaml" />
-        <ResourceDictionary Source="StylesDictionaries/WindowsStyle.xaml" />
-        <ResourceDictionary Source="StylesDictionaries/ListViewsStyle.xaml" />
-        <ResourceDictionary Source="StylesDictionaries/ButtonsStyle.xaml" />
-        <ResourceDictionary Source="StylesDictionaries/DataTemplates.xaml" />
-        <ResourceDictionary Source="StylesDictionaries/TextBlocksStyle.xaml" />
-        <ResourceDictionary Source="StylesDictionaries/MenusStyle.xaml" />
-        <ResourceDictionary Source="StylesDictionaries/SlidersStyle.xaml" />
-        <ResourceDictionary Source="StylesDictionaries/OverlayStyles.xaml" />
-        <ResourceDictionary Source="StylesDictionaries/ScrollViewerStyles.xaml" />
-        <ResourceDictionary Source="StylesDictionaries/TextBoxStyle.xaml" />
-        <ResourceDictionary Source="StylesDictionaries/Paths.xaml" />
-        <ResourceDictionary Source="StylesDictionaries/ControlsTemplates/PlayableWrapPanelTemplate.xaml" />
-        <ResourceDictionary Source="StylesDictionaries/ControlsTemplates/FinderTemplate.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/ColorsStyle.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/WindowsStyle.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/ListViewsStyle.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/ButtonsStyle.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/DataTemplates.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/TextBlocksStyle.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/MenusStyle.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/SlidersStyle.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/OverlayStyles.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/ScrollViewerStyles.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/TextBoxStyle.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/Paths.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/ControlsTemplates/PlayableWrapPanelTemplate.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/ControlsTemplates/FinderTemplate.xaml" />
       </ResourceDictionary.MergedDictionaries>
 
       <FontFamily x:Key="Montserrat_Thin">pack://application:,,,/VPlayer;component/Resources/Montserrat/Montserrat-Thin.otf#Montserrat Thin</FontFamily>

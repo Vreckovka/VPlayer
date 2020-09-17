@@ -2,12 +2,10 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore"
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-                    xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Library"
                     xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore"
                     xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
                     xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore"
                     xmlns:clients="clr-namespace:VPlayer.AudioStorage.InfoDownloader.LRC.Clients;assembly=VPlayer.AudioStorage"
-                    xmlns:lrc="clr-namespace:VPlayer.AudioStorage.InfoDownloader.LRC;assembly=VPlayer.AudioStorage"
                     xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
                     xmlns:attachedProperties="clr-namespace:VCore.AttachedProperties;assembly=VCore"
                     xmlns:e="http://schemas.epsiloner.git/wpf/"
@@ -15,7 +13,7 @@
                     xmlns:lrc1="clr-namespace:VPlayer.AudioStorage.InfoDownloader.LRC;assembly=VCore">
 
   <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="pack://application:,,,/VPlayer;component/StylesDictionaries/ControlsTemplates/ButtonWithIconTemplate.xaml" />
+    <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/ControlsTemplates/ButtonWithIconTemplate.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <Style TargetType="TextBox" x:Key="LyricsStyle">
