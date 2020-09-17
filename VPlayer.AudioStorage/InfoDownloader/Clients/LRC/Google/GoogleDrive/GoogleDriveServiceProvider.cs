@@ -63,7 +63,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
     {
       lock (this)
       {
-        if (DriveService == null)
+        if (driveService == null)
         {
           try
           {

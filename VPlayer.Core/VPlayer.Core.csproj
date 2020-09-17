@@ -273,6 +273,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\CustomLibraries\Logger\Logger.csproj">
+      <Project>{6212fadf-45a6-4613-b5a8-5c5a57f3bfb0}</Project>
+      <Name>Logger</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\CustomLibraries\VCore\VCore.csproj">
       <Project>{5aa43597-fd3d-4f10-89a5-eb77d3b831d9}</Project>
       <Name>VCore</Name>
@@ -280,10 +284,6 @@
     <ProjectReference Include="..\KeyListener\Listener.csproj">
       <Project>{ba238278-32d0-4c4e-881a-ad2be152832c}</Project>
       <Name>Listener</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Logger\Logger.csproj">
-      <Project>{6212fadf-45a6-4613-b5a8-5c5a57f3bfb0}</Project>
-      <Name>Logger</Name>
     </ProjectReference>
     <ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj">
       <Project>{b5245008-cfdf-4b83-bf61-b0b26a8e92bf}</Project>

@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer.WebPlayer", "VPlaye
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer.WindowsPlayer", "VPlayer.WindowsPlayer\VPlayer.WindowsPlayer.csproj", "{A252EBB2-D31A-4A6A-A77C-A688E303801D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logger", "Logger\Logger.csproj", "{6212FADF-45A6-4613-B5A8-5C5A57F3BFB0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logger", "..\CustomLibraries\Logger\Logger.csproj", "{6212FADF-45A6-4613-B5A8-5C5A57F3BFB0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer.AudioStorage", "VPlayer.AudioStorage\VPlayer.AudioStorage.csproj", "{B5245008-CFDF-4B83-BF61-B0B26A8E92BF}"
 EndProject

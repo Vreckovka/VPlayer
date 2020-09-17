@@ -77,7 +77,7 @@ namespace VPlayer.Player.ViewModels
       IKernel kernel,
       IStorageManager storageManager,
       AudioInfoDownloader audioInfoDownloader,
-      [NotNull] ILogger logger) : base(regionProvider)
+      ILogger logger) : base(regionProvider)
     {
       this.regionProvider = regionProvider ?? throw new ArgumentNullException(nameof(regionProvider));
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
