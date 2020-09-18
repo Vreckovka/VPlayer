@@ -61,6 +61,7 @@ namespace VPlayer.AudioStorage.DomainClasses
       Chartlyrics_LyricCheckSum = other.Chartlyrics_LyricCheckSum;
       Chartlyrics_LyricId = other.Chartlyrics_LyricId;
       LRCLyrics = other.LRCLyrics;
+      IsFavorite = other.IsFavorite;
     }
 
     #endregion Methods
