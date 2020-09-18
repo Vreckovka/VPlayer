@@ -360,17 +360,15 @@
 
 
       <ListView x:Name="ListView_Tracks"
-               Grid.Row="1"
+                Grid.Row="1"
                 Margin="1,0,0,0"
                 HorizontalAlignment="Stretch"
                 Panel.ZIndex="0"
                 AllowDrop="True"
                 Background="{StaticResource BackgroudBrush}"
                 ItemTemplate="{StaticResource SoundTrackTemplate}"
-                ItemsSource="{Binding VirtualizedPlayList}"
+                ItemsSource="{Binding PlayList}"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                attachedBehaviors:ScrollAnimationBehavior.IsEnabled="True"
-
                 Style="{StaticResource WindowsPlayerSongs}">
         <i:Interaction.Behaviors>
           <behaviors:AutoScrollBehavior Kernel="{Binding Kernel}" StepSize="50"/>

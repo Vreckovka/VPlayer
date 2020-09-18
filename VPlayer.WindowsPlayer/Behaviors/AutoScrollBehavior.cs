@@ -70,7 +70,13 @@ namespace VPlayer.Player.Behaviors
 
       AssociatedObject.Loaded -= AssociatedObject_Loaded;
       AssociatedObject.DataContextChanged -= AssociatedObject_DataContextChanged;
-      serialDisposable.Dispose();
+      AssociatedObject.Initialized += AssociatedObject_Initialized;
+
+      disposable.Dispose();
+    }
+
+    private void AssociatedObject_Initialized(object sender, EventArgs e)
+    {
     }
 
     private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
@@ -78,38 +84,69 @@ namespace VPlayer.Player.Behaviors
       SubcsribeToSongChange();
     }
 
-    private SerialDisposable serialDisposable = new SerialDisposable();
-    private int last_songInPlayListIndex;
+    private SerialDisposable disposable = new SerialDisposable();
+
 
     private void SubcsribeToSongChange()
     {
       if (Kernel != null)
       {
+        if (lastDatacontext != AssociatedObject.DataContext)
+        {
+          last_songInPlayListIndex = null;
+          lastDatacontext = AssociatedObject.DataContext;
+        }
+        else if (last_songInPlayListIndex != null)
+        {
+          var verticalOffset = GetScrollOffset(last_songInPlayListIndex.Value);
+
+          if (scrollViewer.VerticalOffset != verticalOffset)
+            scrollViewer.ScrollToVerticalOffset(verticalOffset);
+        }
+
+
         if (windowsPlayerViewModel == null)
+        {
           windowsPlayerViewModel = Kernel.Get<WindowsPlayerViewModel>();
 
-        if (windowsPlayerViewModel != null)
-        {
-         
-          serialDisposable.Disposable = windowsPlayerViewModel.ActualSongChanged.Subscribe(OnSongChanged);
+          if (windowsPlayerViewModel != null)
+          {
+            disposable.Disposable = windowsPlayerViewModel.ActualSongChanged.Subscribe(OnSongChanged);
+          }
         }
       }
     }
 
-    
+
+    private ScrollViewer scrollViewer;
+    private Decorator border;
+    private int? last_songInPlayListIndex = null;
+    private object lastDatacontext = null;
+
+    private double GetScrollOffset(int songIndex)
+    {
+      return (songIndex - 3 < 0 ? 0 : songIndex - 3) * StepSize;
+    }
+
     private void OnSongChanged(int songInPlayListIndex)
     {
-      // Get the border of the listview (first child of a listview)
-      Decorator border = VisualTreeHelper.GetChild(AssociatedObject, 0) as Decorator;
 
-      // Get scrollviewer
-      ScrollViewer scrollViewer = border?.Child as ScrollViewer;
+      if (border == null)
+      {
+        border = VisualTreeHelper.GetChild(AssociatedObject, 0) as Decorator;
+      }
 
-      var scrollIndexOffset = (songInPlayListIndex - 3 < 0 ? 0 : songInPlayListIndex - 3) * StepSize;
+      if (scrollViewer == null)
+      {
+        scrollViewer = border?.Child as ScrollViewer;
+      }
 
+
+      var scrollIndexOffset = GetScrollOffset(songInPlayListIndex);
 
       int max = 10;
-      if (scrollViewer != null )
+
+      if (scrollViewer != null)
       {
         if ((songInPlayListIndex > last_songInPlayListIndex + max &&
             songInPlayListIndex > last_songInPlayListIndex) ||
@@ -118,7 +155,7 @@ namespace VPlayer.Player.Behaviors
         {
           scrollViewer.ScrollToVerticalOffset(scrollIndexOffset);
         }
-        else if(songInPlayListIndex != last_songInPlayListIndex)
+        else if (songInPlayListIndex != last_songInPlayListIndex)
         {
           DoubleAnimation verticalAnimation = new DoubleAnimation();
 

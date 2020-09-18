@@ -67,23 +67,26 @@ namespace VPlayer.Player.Behaviors
       }
     }
 
-  
+    private Decorator border;
+    private ScrollViewer scrollViewer;
     private void OnSongChanged(int songInPlayListIndex)
     {
       try
       {
         Application.Current.Dispatcher.Invoke(() =>
         {
-          // Get the border of the listview (first child of a listview)
-          Decorator border = VisualTreeHelper.GetChild(AssociatedObject, 0) as Decorator;
 
-          // Get scrollviewer
-          ScrollViewer scrollViewer = border?.Child as ScrollViewer;
+          if (border == null)
+          {
+            border = VisualTreeHelper.GetChild(AssociatedObject, 0) as Decorator;
+          }
 
+          if (scrollViewer == null)
+          {
+            scrollViewer = border?.Child as ScrollViewer;
+          }
 
           var scrollIndexOffset = (songInPlayListIndex - 1 < 0 ? 0 : songInPlayListIndex - 1) * StepSize;
-
-         
 
           if (scrollViewer != null )
           {
@@ -100,12 +103,6 @@ namespace VPlayer.Player.Behaviors
             Storyboard.SetTargetProperty(verticalAnimation, new PropertyPath(ScrollAnimationBehavior.VerticalOffsetProperty));
             storyboard.Begin();
           }
-
-
-
-
-
-         
         });
       }
       catch (Exception ex)
