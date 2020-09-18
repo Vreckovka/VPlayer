@@ -19,7 +19,7 @@
                 <DataTemplate>
                     <controls:PlayableWrapPanelItem BottomText="{Binding BottomText}"
                                           HeaderText="{Binding Name}"
-                                          ImageThumbnail="{Binding ImageThumbnail,Converter={library:CacheImageConverter}}"
+                                          ImageThumbnail="{Binding ImageThumbnail,Converter={library:CacheImageConverter}, ConverterParameter=250,IsAsync=True}"
                                           IsPlaying="{Binding IsPlaying}" />
                 </DataTemplate>
             </controls:PlayableWrapPanel.ItemTemplate>

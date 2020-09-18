@@ -88,8 +88,17 @@ namespace VPlayer.Library
      
 
       var bitmapImage = new BitmapImage();
+
+     
+
       bitmapImage.BeginInit();
       bitmapImage.StreamSource = new FileStream(path, FileMode.Open, FileAccess.Read);
+
+      if (parameter is int pixelWidth)
+      {
+        bitmapImage.DecodePixelWidth = pixelWidth;
+      }
+     
       bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
       bitmapImage.EndInit();
       bitmapImage.StreamSource.Dispose();

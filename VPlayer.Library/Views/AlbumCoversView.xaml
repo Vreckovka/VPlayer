@@ -67,7 +67,7 @@
             <controls:PlayableWrapPanel.ItemTemplate>
                 <DataTemplate>
                     <controls:PlayableWrapPanelItem BottomText="{Binding SizeString}"
-                                                    ImageThumbnail="{Binding DownloadedCover , Converter={library:ImageLazyLoadingConverter}}">
+                                                    ImageThumbnail="{Binding DownloadedCover}">
                         <controls:PlayableWrapPanelItem.Style>
                             <Style TargetType="{x:Type controls:PlayableWrapPanelItem}">
                                 <Setter Property="Template">
