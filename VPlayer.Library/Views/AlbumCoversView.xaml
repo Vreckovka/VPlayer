@@ -67,7 +67,7 @@
             <controls:PlayableWrapPanel.ItemTemplate>
                 <DataTemplate>
                     <controls:PlayableWrapPanelItem BottomText="{Binding SizeString}"
-                                                    ImageThumbnail="{Binding DownloadedCover}">
+                                                    ImageThumbnail="{Binding DownloadedCover , Converter={library:ImageLazyLoadingConverter}}">
                         <controls:PlayableWrapPanelItem.Style>
                             <Style TargetType="{x:Type controls:PlayableWrapPanelItem}">
                                 <Setter Property="Template">
@@ -97,7 +97,7 @@
                                                         Grid.Row="0"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Top"
-                                                        Source="{TemplateBinding ImageThumbnail}" />
+                                                        Source="{TemplateBinding ImageThumbnail,  Converter={library:CacheImageConverter}}" />
 
                                                     <Grid Grid.Row="0" Background="{StaticResource GlassGradient}" />
 

@@ -53,7 +53,7 @@ namespace VPlayer.Core.ViewModels
 
     #region GetEmptyImage
 
-    public string GetEmptyImage()
+    public static string GetEmptyImage()
     {
       var directory = Path.Combine(AudioInfoDownloader.GetDefaultPicturesPath(), "Misc");
 
@@ -95,6 +95,26 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
+
+    protected string GetThumbnailPath()
+    {
+      string path = "";
+
+      if (Model is Album album)
+      {
+        path = album.AlbumFrontCoverFilePath;
+      }
+      else if (Model is Artist artist)
+      {
+        path = artist.ArtistCover;
+      }
+
+      var directory = Path.GetDirectoryName(path);
+
+      path = directory +  "\\thumbnail.jpg";
+
+      return path;
+    }
 
   }
 

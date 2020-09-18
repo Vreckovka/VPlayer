@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -91,66 +93,17 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     private async void OnSelectCover(AlbumCover albumCover)
     {
       SelectedCover = albumCover;
-
-      try
-      {
-        await TryDeleteImage();
-      }
-      catch (Exception ex)
-      {
-        albumViewModel.PublishDeleteImage(OnImageDeleted);
-      }
+      SaveImage(SelectedCover);
     }
 
-    private async void OnImageDeleted(ImageDeleteDoneEventArgs imageDeleteDoneEventArgs)
-    {
-      if (imageDeleteDoneEventArgs.Result)
-      {
-        try
-        {
-          await Task.Run(() => { Thread.Sleep(1000); });
-
-          await TryDeleteImage();
-        }
-        catch (Exception ex)
-        {
-          logger.Log(ex);
-        }
-      }
-      else
-      {
-        logger.Log(MessageType.Warning, "IMAGE WAS NOT DELTED " + path);
-      }
-    }
-
-    private async Task TryDeleteImage()
-    {
-      try
-      {
-        path.EnsureDirectoryExists();
-
-        File.WriteAllBytes(path, SelectedCover.DownloadedCover);
-
-        albumViewModel.Model.AlbumFrontCoverFilePath = path;
-
-        await storage.UpdateEntity(albumViewModel.Model);
-
-        albumViewModel.RaisePropertyChange(nameof(AlbumViewModel.ImageThumbnail));
-
-        logger.Log(MessageType.Inform, "Image was replaced");
-      }
-      catch (Exception ex)
-      {
-        throw;
-      }
-
-    }
 
     #endregion SelectCover
 
     #endregion
 
     #region Methods
+
+    #region Initialize
 
     public override void Initialize()
     {
@@ -164,6 +117,27 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
       audioInfoDownloader.CoversDownloaded += Instance_CoversDownloaded;
 
       audioInfoDownloader.GetAlbumFrontCoversUrls(albumViewModel.Model, cancellationToken);
+    }
+
+    #endregion
+
+    private void SaveImage(AlbumCover albumCover)
+    {
+      MemoryStream ms = new MemoryStream(albumCover.DownloadedCover);
+      Image i = Image.FromStream(ms);
+
+      var directory = Path.Combine(AudioInfoDownloader.GetDefaultPicturesPath(), $"Albums\\{albumViewModel.Model.Id}");
+      var finalPath = Path.Combine(directory, "frontConver.jpg");
+
+      finalPath.EnsureDirectoryExists();
+
+      if (File.Exists(finalPath))
+        File.Delete(finalPath);
+
+      i.Save(finalPath, ImageFormat.Jpeg);
+
+      albumViewModel.RaisePropertyChange(nameof(AlbumViewModel.ImageThumbnail));
+      albumViewModel.RaisePropertyChange(nameof(AlbumViewModel.Image));
     }
 
     #region GetFileSize

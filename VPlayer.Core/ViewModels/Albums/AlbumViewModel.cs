@@ -44,6 +44,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
     public override string BottomText => $"{Model.Artist?.Name}\nNumber of song: {Model.Songs?.Count.ToString()}";
     public override string ImageThumbnail => !string.IsNullOrEmpty(Model.AlbumFrontCoverFilePath) ? Model.AlbumFrontCoverFilePath : GetEmptyImage();
+    public string Image => !string.IsNullOrEmpty(Model.AlbumFrontCoverFilePath) ? Model.AlbumFrontCoverFilePath : GetEmptyImage();
 
     #endregion Properties
 
@@ -91,33 +92,6 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     protected override void OnDetail()
     {
       ivPlayerRegionProvider.ShowAlbumDetail(this);
-    }
-
-    #endregion
-
-    #region PublishDeleteImage
-
-    private SubscriptionToken subscriptionToken = null;
-    public void PublishDeleteImage(Action<ImageDeleteDoneEventArgs> actionOnDeleted)
-    {
-      if (subscriptionToken == null)
-        subscriptionToken = eventAggregator.GetEvent<ImageDeleteDoneEvent>().Subscribe(actionOnDeleted);
-
-      eventAggregator.GetEvent<ImageDeleteRequestEvent>().Publish(new ImageDeleteRequestEventArgs()
-      {
-        Model = Model,
-      });
-    }
-
-    #endregion
-
-    #region Dispose
-
-    public override void Dispose()
-    {
-      base.Dispose();
-
-      subscriptionToken?.Dispose();
     }
 
     #endregion

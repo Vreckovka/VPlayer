@@ -35,6 +35,7 @@ using VCore.Helpers;
 using VPlayer.AudioStorage.InfoDownloader.Clients.Chartlyrics;
 using VPlayer.AudioStorage.InfoDownloader.LRC;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;
+using VCore;
 
 namespace VPlayer.AudioStorage.InfoDownloader
 {
@@ -727,16 +728,15 @@ namespace VPlayer.AudioStorage.InfoDownloader
       MemoryStream ms = new MemoryStream(blob);
       Image i = Image.FromStream(ms);
 
-      var directory = Path.Combine(GetDefaultPicturesPath(), $"Albums/{album.Id}");
+      var directory = Path.Combine(GetDefaultPicturesPath(), $"Albums\\{album.Id}");
       var finalPath = Path.Combine(directory, "frontConver.jpg");
 
 
-      if (!Directory.Exists(directory))
-      {
-        Directory.CreateDirectory(directory);
-      }
+      finalPath.EnsureDirectoryExists();
 
       i.Save(finalPath, ImageFormat.Jpeg);
+  
+
 
       return finalPath;
     }
@@ -1269,53 +1269,6 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     #region Windows info methods
 
-    private object mediaInfoBatton = new object();
-
-    private void GetMediaInfoo()
-    {
-      lock (mediaInfoBatton)
-      {
-        byte[] b = new byte[128];
-        string sTitle;
-        string sSinger;
-        string sAlbum;
-        string sYear;
-        string sComm;
-
-        FileStream fs = new FileStream("D:\\Downloads\\Creedence Clearwater Revival - Chronicle Vol. 1 & 2 [FLAC] vtwin88cube\\Creedence Clearwater Revival - Chronicle The 20 Greatest Hits (1991) [FLAC]\\01.-Susie Q.flac", FileMode.Open);
-        fs.Seek(-128, SeekOrigin.End);
-        fs.Read(b, 0, 128);
-        bool isSet = false;
-        String sFlag = System.Text.Encoding.Default.GetString(b, 0, 3);
-        if (sFlag.CompareTo("TAG") == 0)
-        {
-          System.Console.WriteLine("Tag   is   setted! ");
-          isSet = true;
-        }
-
-        if (isSet)
-        {
-          //get   title   of   song;
-          sTitle = System.Text.Encoding.Default.GetString(b, 3, 30);
-          System.Console.WriteLine("Title: " + sTitle);
-          //get   singer;
-          sSinger = System.Text.Encoding.Default.GetString(b, 33, 30);
-          System.Console.WriteLine("Singer: " + sSinger);
-          //get   album;
-          sAlbum = System.Text.Encoding.Default.GetString(b, 63, 30);
-          System.Console.WriteLine("Album: " + sAlbum);
-          //get   Year   of   publish;
-          sYear = System.Text.Encoding.Default.GetString(b, 93, 4);
-          System.Console.WriteLine("Year: " + sYear);
-          //get   Comment;
-          sComm = System.Text.Encoding.Default.GetString(b, 97, 30);
-          System.Console.WriteLine("Comment: " + sComm);
-        }
-
-        System.Console.WriteLine("Any   key   to   exit! ");
-        System.Console.Read();
-      }
-    }
 
     #region GetAudioInfoByWindowsAsync
 

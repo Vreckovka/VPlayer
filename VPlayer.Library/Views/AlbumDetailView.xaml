@@ -4,6 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:VPlayer.Library.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
              d:DesignHeight="936"
              d:DesignWidth="1596"
              Background="{StaticResource BackgroudBrush}"
@@ -48,7 +49,7 @@
                     </Border.Effect>
 
                     <Grid>
-                        <Image VerticalAlignment="Top" Source="{Binding ActualAlbum.Model.AlbumFrontCoverBLOB}" />
+            <Image VerticalAlignment="Top" Source="{Binding ActualAlbum.ImageThumbnail, Converter={library:CacheImageConverter}, IsAsync=True}" />
                         <Grid Background="{StaticResource GlassGradient}" />
                     </Grid>
                 </Border>

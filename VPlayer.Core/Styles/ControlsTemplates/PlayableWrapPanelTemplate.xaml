@@ -8,10 +8,9 @@
     xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore"
     xmlns:domainClasses="clr-namespace:VPlayer.AudioStorage.DomainClasses;assembly=VPlayer.AudioStorage"
     xmlns:attachedProperties="clr-namespace:VCore.AttachedProperties;assembly=VCore"
-    xmlns:behaviors="clr-namespace:VPlayer.Core.Behaviors"
     xmlns:library="clr-namespace:VPlayer.Library">
 
-  <Duration x:Key="AnimationDuration">0:0:0:0.30</Duration>
+  <Duration x:Key="AnimationDuration">0:0:0:0.15</Duration>
 
   <Style
         x:Key="PlayableWrapPanelItemButtons"
@@ -190,9 +189,6 @@
                                 VerticalAlignment="Top"
                                 Source="{TemplateBinding ImageThumbnail,Converter={library:CacheImageConverter}}" 
                                 Name="coverImage">
-                <i:Interaction.Behaviors>
-                  <behaviors:SubscribeToDeteleImageBehavior />
-                </i:Interaction.Behaviors>
               </Image>
 
               <Grid Grid.Row="0" Background="{StaticResource GlassGradient}" />

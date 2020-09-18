@@ -10,7 +10,6 @@
              xmlns:attachedBehaviors="clr-namespace:ScrollAnimateBehavior.AttachedBehaviors;assembly=VCore"
              xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
              xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
-             xmlns:behaviors1="clr-namespace:VPlayer.Core.Behaviors;assembly=VPlayer.Core"
              d:DataContext="{d:DesignInstance Type={x:Type design1:PlayerDesingViewModel},
                                               IsDesignTimeCreatable=True}"
              d:DesignHeight="450"
@@ -57,19 +56,14 @@
         </Grid.ColumnDefinitions>
 
         <Image Grid.Column="0"
-               Source="{Binding ActualSong.ImagePath}"
+               Source="{Binding ActualSong.ImagePath,Converter={library1:CacheImageConverter}, IsAsync=True}"
                Stretch="UniformToFill" >
-          <i:Interaction.Behaviors>
-            <behaviors1:SubscribeToDeteleImageBehavior />
-          </i:Interaction.Behaviors>
         </Image>
 
         <Image Grid.Column="1"
-               Source="{Binding ActualSong.ImagePath}"
+               Source="{Binding ActualSong.ImagePath, Converter={library1:CacheImageConverter}, IsAsync=True}"
                Stretch="UniformToFill" >
-          <i:Interaction.Behaviors>
-            <behaviors1:SubscribeToDeteleImageBehavior />
-          </i:Interaction.Behaviors>
+ 
         </Image>
 
         <Grid Grid.RowSpan="2"
@@ -106,11 +100,8 @@
               Margin="0 15 0 15">
         <Grid>
           <Image Name="Image"
-               Source="{Binding ActualSong.ImagePath}"
+               Source="{Binding ActualSong.ImagePath,  Converter={library1:CacheImageConverter}, IsAsync=True}"
                Stretch="Uniform" >
-            <i:Interaction.Behaviors>
-              <behaviors1:SubscribeToDeteleImageBehavior />
-            </i:Interaction.Behaviors>
           </Image>
 
         </Grid>

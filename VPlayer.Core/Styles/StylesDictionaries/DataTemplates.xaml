@@ -220,7 +220,7 @@
                 <Image Grid.Row="0"
                HorizontalAlignment="Center"
                VerticalAlignment="Top"
-               Source="{Binding AlbumFrontCoverBLOB, Converter={library:ImageLazyLoadingConverter}, IsAsync=True}" />
+               Source="{Binding ImageThumbnail, Converter={library:CacheImageConverter}}" />
 
                 <Grid Grid.Row="0" Background="{StaticResource GlassGradient}" />
 

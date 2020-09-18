@@ -7,6 +7,8 @@ using System.Windows.Data;
 using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.Core.ViewModels;
 
 namespace VPlayer.Library
 {
@@ -62,28 +64,36 @@ namespace VPlayer.Library
       object parameter,
       CultureInfo culture)
     {
-      if (value != DependencyProperty.UnsetValue && value != null)
+      if (value is BitmapImage bitmapImage1)
       {
-        // do this so that the image file can be moved in the file system
-        BitmapImage result = new BitmapImage();
-        // Create new BitmapImage   
-        Stream stream = new MemoryStream(); // Create new MemoryStream   
-        var asd = value.ToString();
-        var ddd = new Uri(value.ToString());
-        Bitmap bitmap = new Bitmap(ddd.LocalPath);
-        // Create new Bitmap (System.Drawing.Bitmap) from the existing image file (albumArtSource set to its path name)   
-        bitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-        // Save the loaded Bitmap into the MemoryStream - Png format was the only one I tried that didn't cause an error (tried Jpg, Bmp, MemoryBmp)   
-        bitmap.Dispose(); // Dispose bitmap so it releases the source image file   
-        result.BeginInit(); // Begin the BitmapImage's initialisation   
-        result.StreamSource = stream;
-        // Set the BitmapImage's StreamSource to the MemoryStream containing the image   
-        result.EndInit(); // End the BitmapImage's initialisation   
-                          // return result; // Finally, set the WPF Image component's source to the BitmapImage
-
+        return bitmapImage1;
       }
 
-      return DependencyProperty.UnsetValue;
+      string path = "";
+
+      if (value != DependencyProperty.UnsetValue && value != null)
+      {
+        path = value.ToString().Replace("file:///", "");
+      }
+      else
+      {
+        path = PlayableViewModelWithThumbnail<Album>.GetEmptyImage();
+      }
+
+      if (!System.IO.File.Exists(path))
+      {
+        path = PlayableViewModelWithThumbnail<Album>.GetEmptyImage();
+      }
+
+     
+
+      var bitmapImage = new BitmapImage();
+      bitmapImage.BeginInit();
+      bitmapImage.StreamSource = new FileStream(path, FileMode.Open, FileAccess.Read);
+      bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+      bitmapImage.EndInit();
+      bitmapImage.StreamSource.Dispose();
+      return bitmapImage;
     }
 
     public object ConvertBack(

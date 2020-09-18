@@ -134,7 +134,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Managers\ImageDeleteManager.cs" />
-    <Compile Include="Behaviors\SubscribeToDeteleImageBehavior.cs" />
     <Compile Include="Converters.cs" />
     <Compile Include="Design\ViewModels\AlbumDesignViewModel.cs" />
     <Compile Include="Design\ViewModels\ArtistDesignViewModel.cs" />
