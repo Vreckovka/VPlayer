@@ -1,17 +1,14 @@
-﻿using Prism.Events;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using Prism.Events;
 using VCore.Factories;
-using VCore.Helpers;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
-using VPlayer.Core.Messages.ImageDelete;
 using VPlayer.Core.Modularity.Regions;
-using VPlayer.Core.ViewModels;
 
-namespace VPlayer.Library.ViewModels.AlbumsViewModels
+namespace VPlayer.Core.ViewModels.Albums
 {
   public class AlbumViewModel : PlayableViewModelWithThumbnail<Album>
   {

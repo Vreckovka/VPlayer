@@ -16,8 +16,8 @@ using VCore.Modularity.RegionProviders;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Interfaces.ViewModels;
-using VPlayer.Core.Messages.ImageDelete;
 using VPlayer.Core.Modularity.Regions;
+using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Library.ViewModels.LibraryViewModels;
 using VPlayer.Library.Views;
 

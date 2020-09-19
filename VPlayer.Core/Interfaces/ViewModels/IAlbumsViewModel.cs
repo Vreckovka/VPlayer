@@ -2,7 +2,7 @@
 using VCore.Interfaces.ViewModels;
 using VCore.ViewModels.Navigation;
 using VPlayer.AudioStorage.DomainClasses;
-using VPlayer.Library.ViewModels.AlbumsViewModels;
+using VPlayer.Core.ViewModels.Albums;
 
 namespace VPlayer.Core.Interfaces.ViewModels
 {

@@ -1,16 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Windows;
 using System.Windows.Input;
 using VCore;
 using VCore.Factories;
+using VCore.Helpers;
 using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
+using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
+using VPlayer.Core.ViewModels;
 using VPlayer.Library.Views;
 
 namespace VPlayer.Library.ViewModels
@@ -46,6 +51,28 @@ namespace VPlayer.Library.ViewModels
     public NavigationViewModel NavigationViewModel { get; set; }
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
 
+    #region ActualSearch
+
+    private ReplaySubject<string> actualSearchSubject;
+    private string actualSearch;
+    public string ActualSearch
+    {
+      get { return actualSearch; }
+      set
+      {
+        if (value != actualSearch)
+        {
+          actualSearch = value;
+
+          actualSearchSubject.OnNext(actualSearch);
+
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #endregion Properties
 
     #region Methods
@@ -55,6 +82,11 @@ namespace VPlayer.Library.ViewModels
     public override void Initialize()
     {
       base.Initialize();
+
+      actualSearchSubject = new ReplaySubject<string>(1);
+      actualSearchSubject.DisposeWith(this);
+
+      actualSearchSubject.Throttle(TimeSpan.FromMilliseconds(150)).Subscribe(Filter).DisposeWith(this);
 
       var playlists = viewModelsFactory.Create<PlaylistsViewModel>();
       NavigationViewModel.Items.Add(playlists);
@@ -71,29 +103,19 @@ namespace VPlayer.Library.ViewModels
 
     #endregion Initialize
 
-    #region FinderKeyDown
+    #region Filter
 
-    private ActionCommand<string> finderKeyDown;
-
-    public ICommand FinderKeyDown
+    private void Filter(string phrase)
     {
-      get
-      {
-        if (finderKeyDown == null)
-        {
-          finderKeyDown = new ActionCommand<string>(OnFinderKeyDown);
-        }
+      var acutal = NavigationViewModel.Items.SingleOrDefault(x => x.IsActive);
 
-        return finderKeyDown;
+      if (acutal != null && acutal is IPlayableItemsViewModel playableItemsViewModel)
+      {
+        playableItemsViewModel.Filter(phrase);
       }
     }
 
-    private void OnFinderKeyDown(string phrase)
-    {
-      //ActualCollectionViewModel.Filter(phrase);
-    }
-
-    #endregion FinderKeyDown
+    #endregion 
 
     #region FilesDropped
 

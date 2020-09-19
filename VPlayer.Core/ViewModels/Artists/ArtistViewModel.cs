@@ -7,7 +7,6 @@ using VCore.Factories;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Modularity.Regions;
-using VPlayer.Library.ViewModels;
 
 namespace VPlayer.Core.ViewModels.Artists
 {

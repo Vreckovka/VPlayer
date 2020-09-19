@@ -1,7 +1,9 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using Microsoft.Win32.SafeHandles;
 using VCore.Factories;
 using VCore.ViewModels;
@@ -72,7 +74,10 @@ namespace VPlayer.ViewModels
       player.IsActive = true;
 
 #if DEBUG
-      WinConsole.Initialize();
+      WinConsole.CreateConsole();
+
+      Console.ForegroundColor = ConsoleColor.Green;
+      Console.WriteLine("TU JE MOJ TEXT");
 #endif
 
     }
@@ -99,96 +104,117 @@ namespace VPlayer.ViewModels
 
   static class WinConsole
   {
-    public static void Initialize(bool alwaysCreateNewConsole = true)
+    [DllImport("kernel32.dll")]
+    public static extern bool AllocConsole();
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern IntPtr GetStdHandle(int nStdHandle);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern bool SetStdHandle(int nStdHandle, IntPtr hHandle);
+
+    public const int STD_OUTPUT_HANDLE = -11;
+    public const int STD_INPUT_HANDLE = -10;
+    public const int STD_ERROR_HANDLE = -12;
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern IntPtr CreateFile([MarshalAs(UnmanagedType.LPTStr)] string filename,
+      [MarshalAs(UnmanagedType.U4)] uint access,
+      [MarshalAs(UnmanagedType.U4)] FileShare share,
+      IntPtr securityAttributes,
+      [MarshalAs(UnmanagedType.U4)] FileMode creationDisposition,
+      [MarshalAs(UnmanagedType.U4)] FileAttributes flagsAndAttributes,
+      IntPtr templateFile);
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern IntPtr CreateFileW(
+      [MarshalAs(UnmanagedType.LPWStr)] string filename,
+      [MarshalAs(UnmanagedType.U4)] uint access,
+      [MarshalAs(UnmanagedType.U4)] uint share,
+      IntPtr securityAttributes,
+      [MarshalAs(UnmanagedType.U4)] uint creationDisposition,
+      [MarshalAs(UnmanagedType.U4)] uint flagsAndAttributes,
+      IntPtr templateFile);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
+
+    public const uint GENERIC_WRITE = 0x40000000;
+    public const uint GENERIC_READ = 0x80000000;
+    private const int MY_CODE_PAGE = 437;
+    private const uint FILE_SHARE_WRITE = 0x2;
+    private const uint OPEN_EXISTING = 0x3;
+    private const uint ENABLE_VIRTUAL_TERMINAL_INPUT = 0x0200;
+
+    public static void OverrideRedirection()
     {
-      bool consoleAttached = true;
-      if (alwaysCreateNewConsole
-          || (AttachConsole(ATTACH_PARRENT) == 0
-          && Marshal.GetLastWin32Error() != ERROR_ACCESS_DENIED))
+      AllocConsole();
+
+      var hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+      var hRealOut = CreateFile("CONOUT$", GENERIC_READ | GENERIC_WRITE, FileShare.Write, IntPtr.Zero, FileMode.OpenOrCreate, 0, IntPtr.Zero);
+      if (hRealOut != hOut)
       {
-        consoleAttached = AllocConsole() != 0;
+        SetStdHandle(STD_OUTPUT_HANDLE, hRealOut);
+        Console.SetOut(new StreamWriter(Console.OpenStandardOutput(), Console.OutputEncoding) { AutoFlush = true });
       }
 
-      if (consoleAttached)
-      {
-        InitializeOutStream();
-        InitializeInStream();
-      }
+      if (GetConsoleMode(hRealOut, out var cMode))
+        SetConsoleMode(hRealOut, cMode | ENABLE_VIRTUAL_TERMINAL_INPUT);
     }
 
-    private static void InitializeOutStream()
+    public static void CreateConsole1()
     {
-      var fs = CreateFileStream("CONOUT$", GENERIC_WRITE, FILE_SHARE_WRITE, FileAccess.Write);
-      if (fs != null)
-      {
-        var writer = new StreamWriter(fs) { AutoFlush = true };
+      AllocConsole();
 
-        Console.SetOut(writer);
-        Console.SetError(writer);
-      }
+      var outFile = CreateFileW("CONOUT$", GENERIC_WRITE | GENERIC_READ, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, /*FILE_ATTRIBUTE_NORMAL*/0, IntPtr.Zero);
+      var safeHandle = new SafeFileHandle(outFile, true);
+      SetStdHandle(STD_OUTPUT_HANDLE, outFile);
+      var fs = new FileStream(safeHandle, FileAccess.Write);
+      var writer = new StreamWriter(fs) { AutoFlush = true };
+      Console.SetOut(writer);
+      if (GetConsoleMode(outFile, out var cMode))
+        SetConsoleMode(outFile, cMode | ENABLE_VIRTUAL_TERMINAL_INPUT);
+
+      Console.Write("This will show up in the Console window.");
     }
 
-    private static void InitializeInStream()
+   
+
+    private enum StdHandle : int
     {
-      var fs = CreateFileStream("CONIN$", GENERIC_READ, FILE_SHARE_READ, FileAccess.Read);
-      if (fs != null)
-      {
-        Console.SetIn(new StreamReader(fs));
-      }
+      Input = -10,
+      Output = -11,
+      Error = -12
     }
 
-    private static FileStream CreateFileStream(string name, uint win32DesiredAccess, uint win32ShareMode,
-                            FileAccess dotNetFileAccess)
+    public static void CreateConsole()
     {
-      var file = new SafeFileHandle(CreateFileW(name, win32DesiredAccess, win32ShareMode, IntPtr.Zero, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, IntPtr.Zero), true);
-      if (!file.IsInvalid)
+      if (AllocConsole())
       {
-        var fs = new FileStream(file, dotNetFileAccess);
-        return fs;
+        //https://developercommunity.visualstudio.com/content/problem/12166/console-output-is-gone-in-vs2017-works-fine-when-d.html
+        // Console.OpenStandardOutput eventually calls into GetStdHandle. As per MSDN documentation of GetStdHandle: http://msdn.microsoft.com/en-us/library/windows/desktop/ms683231(v=vs.85).aspx will return the redirected handle and not the allocated console:
+        // "The standard handles of a process may be redirected by a call to  SetStdHandle, in which case  GetStdHandle returns the redirected handle. If the standard handles have been redirected, you can specify the CONIN$ value in a call to the CreateFile function to get a handle to a console's input buffer. Similarly, you can specify the CONOUT$ value to get a handle to a console's active screen buffer."
+        // Get the handle to CONOUT$.    
+        var stdOutHandle = CreateFile("CONOUT$", GENERIC_READ | GENERIC_WRITE, FileShare.ReadWrite, IntPtr.Zero, FileMode.CreateNew, FileAttributes.Normal, IntPtr.Zero);
+
+        if (stdOutHandle == new IntPtr(-1))
+        {
+          throw new Win32Exception(Marshal.GetLastWin32Error());
+        }
+
+        if (!SetStdHandle((int)StdHandle.Output, stdOutHandle))
+        {
+          throw new Win32Exception(Marshal.GetLastWin32Error());
+        }
+
+        var standardOutput = new StreamWriter(Console.OpenStandardOutput());
+        standardOutput.AutoFlush = true;
+        Console.SetOut(standardOutput);
       }
-      return null;
     }
-
-    #region Win API Functions and Constants
-    [DllImport("kernel32.dll",
-        EntryPoint = "AllocConsole",
-        SetLastError = true,
-        CharSet = CharSet.Auto,
-        CallingConvention = CallingConvention.StdCall)]
-    private static extern int AllocConsole();
-
-    [DllImport("kernel32.dll",
-        EntryPoint = "AttachConsole",
-        SetLastError = true,
-        CharSet = CharSet.Auto,
-        CallingConvention = CallingConvention.StdCall)]
-    private static extern UInt32 AttachConsole(UInt32 dwProcessId);
-
-    [DllImport("kernel32.dll",
-        EntryPoint = "CreateFileW",
-        SetLastError = true,
-        CharSet = CharSet.Auto,
-        CallingConvention = CallingConvention.StdCall)]
-    private static extern IntPtr CreateFileW(
-          string lpFileName,
-          UInt32 dwDesiredAccess,
-          UInt32 dwShareMode,
-          IntPtr lpSecurityAttributes,
-          UInt32 dwCreationDisposition,
-          UInt32 dwFlagsAndAttributes,
-          IntPtr hTemplateFile
-        );
-
-    private const UInt32 GENERIC_WRITE = 0x40000000;
-    private const UInt32 GENERIC_READ = 0x80000000;
-    private const UInt32 FILE_SHARE_READ = 0x00000001;
-    private const UInt32 FILE_SHARE_WRITE = 0x00000002;
-    private const UInt32 OPEN_EXISTING = 0x00000003;
-    private const UInt32 FILE_ATTRIBUTE_NORMAL = 0x80;
-    private const UInt32 ERROR_ACCESS_DENIED = 5;
-
-    private const UInt32 ATTACH_PARRENT = 0xFFFFFFFF;
-
-    #endregion
   }
 }
+

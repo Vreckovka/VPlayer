@@ -133,7 +133,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Managers\ImageDeleteManager.cs" />
     <Compile Include="Converters.cs" />
     <Compile Include="Design\ViewModels\AlbumDesignViewModel.cs" />
     <Compile Include="Design\ViewModels\ArtistDesignViewModel.cs" />
@@ -144,10 +143,6 @@
     <Compile Include="Events\PlaySongsFromPlayListEvent.cs" />
     <Compile Include="Interfaces\ViewModels\IAlbumsViewModel.cs" />
     <Compile Include="Interfaces\ViewModels\IArtistsViewModel.cs" />
-    <Compile Include="Messages\ImageDelete\ImageDeleteDoneEvent.cs" />
-    <Compile Include="Messages\ImageDelete\ImageDeleteDoneEventArgs.cs" />
-    <Compile Include="Messages\ImageDelete\ImageDeleteRequestEvent.cs" />
-    <Compile Include="Messages\ImageDelete\ImageDeleteRequestEventArgs.cs" />
     <Compile Include="Modularity\Ninject\VPlayerCoreModule.cs" />
     <Compile Include="Modularity\Regions\RegionNames.cs" />
     <Compile Include="Modularity\Regions\VPlayerRegionManager.cs" />

@@ -31,7 +31,9 @@
         <controls:ButtonWithIcon Content="Load from folder" 
                                  IconPathStyle="{StaticResource OpenFolder}" 
                                  Command="{Binding LoadFromFolder}"
-                                 IconHoverColor="{StaticResource DefaultRedColorDim}"/>
+                                 IconHoverColor="{StaticResource DefaultRedColorDim}"
+                                 IconMargin="0 0 5 0"
+                                 Margin="1 0 0 0"/>
       </StackPanel>
     </Border>
 

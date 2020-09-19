@@ -21,8 +21,8 @@ using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.InfoDownloader.Models;
 using VPlayer.AudioStorage.Interfaces.Storage;
-using VPlayer.Core.Messages.ImageDelete;
 using VPlayer.Core.Modularity.Regions;
+using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Library.Views;
 
 namespace VPlayer.Library.ViewModels.AlbumsViewModels

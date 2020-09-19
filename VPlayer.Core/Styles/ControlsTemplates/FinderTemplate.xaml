@@ -18,61 +18,57 @@
   </Style>
 
   <Style TargetType="controls:Finder">
+    <Setter Property="Padding" Value="0,10"/>
+    <Setter Property="Height" Value="50"/>
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="controls:Finder">
-          <Grid>
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="*" />
-              <ColumnDefinition Width="auto" />
-            </Grid.ColumnDefinitions>
+          <Border Padding="{TemplateBinding Padding}" 
+                  BorderThickness="{TemplateBinding BorderThickness}" 
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  Background="{TemplateBinding Background}">
+            <Grid >
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+              </Grid.ColumnDefinitions>
 
-            <TextBox Name="SearchBox"
-                     Margin="10,0"
-                     FontSize="25">
-              <i:Interaction.Triggers>
-                <i:EventTrigger EventName="KeyUp">
-                  <i:InvokeCommandAction Command="{Binding FinderKeyDown}" CommandParameter="{Binding Text, ElementName=SearchBox}" />
-                </i:EventTrigger>
-              </i:Interaction.Triggers>
-            </TextBox>
-            <Grid Grid.Column="1"
-                  Height="25"
-                  Margin="10,5"
-                  Background="Transparent">
-              <Grid.Style>
-                <Style TargetType="Grid">
-                  <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                      <Setter Property="Cursor" Value="Hand" />
-                    </Trigger>
-                  </Style.Triggers>
-                </Style>
-              </Grid.Style>
+              <TextBox Name="SearchBox"
+                       Margin="0 0 10 0"
+                       FontSize="{TemplateBinding FontSize}"
+                       FontWeight="{TemplateBinding FontWeight}"
+                       FontFamily="{TemplateBinding FontFamily}"
+                       Foreground="{TemplateBinding Foreground}"
+                       Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Text, UpdateSourceTrigger=PropertyChanged}">
+              </TextBox>
+
               <Path Name="NameTxt"
                     Grid.Row="0"
+                    Grid.Column="1"
                     Fill="#50f9fdff"
                     Style="{StaticResource MagnifyingGlass}" />
-              <Grid.Triggers>
-                <EventTrigger RoutedEvent="Grid.MouseEnter">
-                  <EventTrigger.Actions>
-                    <BeginStoryboard Name="SlideToLeft">
-                      <Storyboard FillBehavior="HoldEnd">
-                        <ColorAnimation Storyboard.TargetName="NameTxt"
-                                        Storyboard.TargetProperty="Fill.(SolidColorBrush.Color)"
-                                        From="{StaticResource 50_DefaultWhiteColor}"
-                                        To="{StaticResource DefaultWhiteColor}"
-                                        Duration="0:0:0.5" />
-                      </Storyboard>
-                    </BeginStoryboard>
-                  </EventTrigger.Actions>
-                </EventTrigger>
-                <EventTrigger RoutedEvent="Grid.MouseLeave">
-                  <RemoveStoryboard BeginStoryboardName="SlideToLeft" />
-                </EventTrigger>
-              </Grid.Triggers>
             </Grid>
-          </Grid>
+          </Border>
+        
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Trigger.EnterActions>
+                <BeginStoryboard Name="SlideToLeft">
+                  <Storyboard FillBehavior="HoldEnd">
+                    <ColorAnimation Storyboard.TargetName="NameTxt"
+                                    Storyboard.TargetProperty="Fill.(SolidColorBrush.Color)"
+                                    From="{StaticResource 50_DefaultWhiteColor}"
+                                    To="{StaticResource DefaultWhiteColor}"
+                                    Duration="0:0:0.15" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </Trigger.EnterActions>
+
+              <Trigger.ExitActions>
+                <RemoveStoryboard BeginStoryboardName="SlideToLeft" />
+              </Trigger.ExitActions>
+            </Trigger>
+          </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
     </Setter>

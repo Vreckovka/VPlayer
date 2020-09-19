@@ -88,9 +88,12 @@
     <ListView DataContext="{StaticResource scheduledItems}"
               ItemsSource="{Binding}"
               Background="Transparent"  
-              Foreground="White" 
+              Foreground="#30ffffff" 
               BorderThickness="0" 
               Name="playlists"
+              FontSize="15"
+              FontFamily="{StaticResource Roboto}"
+              FontWeight="Bold"
               Margin="5"
               >
       <ListView.ItemContainerStyle>
@@ -105,11 +108,13 @@
           <GridView.ColumnHeaderContainerStyle>
             <Style TargetType="GridViewColumnHeader">
               <Setter Property="Background" Value="#10ffffff"/>
-              <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}"/>
+              <Setter Property="Foreground" Value="#80ffffff"/>
               <Setter Property="BorderBrush" Value="Red"/>
               <Setter Property="BorderThickness" Value="0"/>
               <Setter Property="Padding" Value="0 10"/>
               <Setter Property="FontSize" Value="15"/>
+              <Setter Property="FontWeight" Value="DemiBold"/>
+              <Setter Property="FontFamily" Value="{StaticResource Roboto}"/>
               <Setter Property="Template">
                 <Setter.Value>
                   <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
@@ -135,24 +140,15 @@
             </Style>
           </GridView.ColumnHeaderContainerStyle>
           <GridView.Columns>
-            <GridViewColumn Width="125" Header="Play from start" >
-              <GridViewColumn.CellTemplate>
-                <DataTemplate>
-                  <controls:ButtonWithIcon Content="Fresh" IconPathStyle="{StaticResource PlaySign}" 
-                                           Height="30" 
-                                           IconHoverColor="{StaticResource DefaultRedColor}"
-                                           IconDefaultColor="#50db515a"
-                                           Command="{Binding Play}"
-                                           CommandParameter="{x:Static events:PlaySongsAction.PlayFromPlaylist}"/>
-                </DataTemplate>
-              </GridViewColumn.CellTemplate>
-            </GridViewColumn>
             <GridViewColumn Width="120" Header="Play from last" >
               <GridViewColumn.CellTemplate>
                 <DataTemplate>
                   <controls:ButtonWithIcon Content="Last" 
                                            IconPathStyle="{StaticResource PlaySign}" 
-                                           Height="30"
+                                           IconMargin="0 0 5 0"
+                                           IconHeight="20"
+                                           Width="90"
+                                           HorizontalContentAlignment="Center"
                                            IconDefaultColor="#50f5936c"
                                            IconHoverColor="{StaticResource OrangeColor}"
                                            Command="{Binding Play}"
@@ -160,13 +156,35 @@
                 </DataTemplate>
               </GridViewColumn.CellTemplate>
             </GridViewColumn>
-            <GridViewColumn Width="200" Header="Name" DisplayMemberBinding="{Binding Name}"/>
-            <GridViewColumn Width="150" Header="Last played" 
-                            DisplayMemberBinding="{Binding LastPlayed}"/>
+            <GridViewColumn Width="125" Header="Play from start" >
+              <GridViewColumn.CellTemplate>
+                <DataTemplate>
+                  <controls:ButtonWithIcon Content="Fresh" IconPathStyle="{StaticResource PlaySign}" 
+                                           IconHeight="20"
+                                           IconMargin="0 0 5 0"
+                                           Width="90"
+                                           HorizontalContentAlignment="Center"
+                                           IconHoverColor="{StaticResource DefaultRedColor}"
+                                           IconDefaultColor="#50db515a"
+                                           Command="{Binding Play}"
+                                           CommandParameter="{x:Static events:PlaySongsAction.PlayFromPlaylist}"/>
+                </DataTemplate>
+              </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+
+            <GridViewColumn Width="200" Header="Name" >
+              <GridViewColumn.CellTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding Name}" Foreground="#80ffffff"/>
+                </DataTemplate>
+              </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+            <GridViewColumn Width="180" Header="Last played" 
+                            DisplayMemberBinding="{Binding LastPlayed, StringFormat={}dd.MM:yy / hh:mm:ss}"/>
             <GridViewColumn Width="150" Header="Hash" DisplayMemberBinding="{Binding Model.SongsInPlaylitsHashCode}"/>
           
-            <GridViewColumn Width="95" Header="Song count" DisplayMemberBinding="{Binding Model.SongCount}"/>
-            <GridViewColumn Width="150" Header="Playlist settings">
+            <GridViewColumn Width="100" Header="Song count" DisplayMemberBinding="{Binding Model.SongCount}"/>
+            <GridViewColumn Width="75" Header="Settings">
               <GridViewColumn.CellTemplate>
                 <DataTemplate>
                   <StackPanel Orientation="Horizontal">
@@ -189,10 +207,23 @@
                 </DataTemplate>
               </GridViewColumn.CellTemplate>
             </GridViewColumn>
+
+            <GridViewColumn Width="75" Header="Actions">
+              <GridViewColumn.CellTemplate>
+                <DataTemplate>
+                  <StackPanel Orientation="Horizontal">
+                    <controls:ButtonWithIcon IconPathStyle="{StaticResource Delete}" 
+                                             IconDefaultColor="#783734"
+                                             IconHoverColor="#f04d46"
+                                             IconHeight="12"
+                                             Padding="0"/>
+                  </StackPanel>
+                </DataTemplate>
+              </GridViewColumn.CellTemplate>
+            </GridViewColumn>
           </GridView.Columns>
         </GridView>
       </ListView.View>
-
 
       <ListView.GroupStyle>
         <GroupStyle>
@@ -201,9 +232,11 @@
               <Border Background="#10ffffff"
                       Margin="0 5 0 0"
                       Padding="10">
-                <TextBlock FontWeight="Normal" 
+                <TextBlock 
                            FontSize="15"
-                           Foreground="{StaticResource DefaultWhiteBrush}"
+                           FontWeight="Bold"
+                           FontFamily="{StaticResource Roboto}"
+                           Foreground="#a7b5b4"
                            >
                   <TextBlock.Style>
                     <Style TargetType="TextBlock">

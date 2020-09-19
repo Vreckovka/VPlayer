@@ -118,7 +118,7 @@
     <Path 
       Height="10" 
       Width="10"
-      Margin="0 -6 0 0"
+      Margin="-2 -6 0 0"
       ToolTip="Google drive">
       <Path.Style>
         <Style TargetType="Path" 
@@ -271,6 +271,7 @@
                                          IconWidth="11"
                                          Grid.Column="0"
                                          Margin="0 0 3 0"
+                                         Padding="2"
                                          ToolTip="{Binding Model.DiskLocation}">
 
                   <controls:ButtonWithIcon.Style>
@@ -472,6 +473,7 @@
                                            HorizontalAlignment="Right"
                                            IconHeight="11"
                                            IconWidth="11"
+                                           Padding="0"
                                            ToolTip="Synced lyrics"
                                            VerticalAlignment="Center"
                                            Grid.Column="1">
@@ -482,7 +484,8 @@
                         <Setter Property="IconHoverColor" Value="#85876d"/>
                         <Setter Property="IconDefaultColor" Value="#414236"/>
                         <Setter Property="Opacity" Value="1"/>
-                        <Setter Property="Margin" Value="2 -5 0 -5"/>
+                        <Setter Property="Margin" Value="2 -8 0 -7"/>
+                       
                         <Setter Property="Template">
                           <Setter.Value>
                             <ControlTemplate TargetType="{x:Type controls:ButtonWithIcon}">
@@ -579,7 +582,7 @@
                           </DataTrigger>
 
                           <DataTrigger Binding="{Binding LRCFile.Provider}" Value="{x:Static lrc1:LRCProviders.Google }">
-                            <Setter Property="Margin" Value="2 -7 0 -9"/>
+                            <Setter Property="Margin" Value="2 -5 0 -9"/>
                           </DataTrigger>
 
                           <DataTrigger Binding="{Binding LRCFile.Provider}" Value="{x:Static lrc1:LRCProviders.Local }">
@@ -603,6 +606,7 @@
                                          HorizontalAlignment="Right"
                                         IconHeight="11"
                                          IconWidth="11"
+                                        Padding="0"
                                          ToolTip="Reload data"
                                          Command="{Binding Refresh}"
                 >

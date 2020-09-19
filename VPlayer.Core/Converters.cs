@@ -7,6 +7,7 @@ using System.Windows.Data;
 using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using VCore.Converters;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.Core.ViewModels;
 
@@ -205,6 +206,16 @@ namespace VPlayer.Library
     {
       return this;
     }
+  }
+
+  public class IsNullConverter : BaseConverter
+  {
+    public override object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+
+      return value == null;
+    }
+   
   }
 
 }

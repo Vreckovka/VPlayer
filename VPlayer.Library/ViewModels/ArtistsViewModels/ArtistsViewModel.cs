@@ -87,6 +87,8 @@ namespace VPlayer.Library.ViewModels.ArtistsViewModels
 
     #endregion
 
+    #region SongChange
+
     protected void SongChange(ItemChanged itemChanged)
     {
       if (itemChanged.Item is Song song)
@@ -110,6 +112,8 @@ namespace VPlayer.Library.ViewModels.ArtistsViewModels
             throw new ArgumentOutOfRangeException();
         }
       }
-    }
+    } 
+
+    #endregion
   }
 }

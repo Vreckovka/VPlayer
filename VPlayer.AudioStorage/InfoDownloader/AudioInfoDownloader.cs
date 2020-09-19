@@ -546,7 +546,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
           if (_actualArtist.Value != null && _actualArtist.Value.Count != 0)
           {
             bestAlbum = _actualArtist.Value
-              .OrderByDescending(x => Levenshtein.Similarity(x.Name, album.Name)).First();
+              .OrderByDescending(x => x.Name.Similarity(album.Name)).First();
 
             if (bestAlbum.Name.LevenshteinDistance(album.Name) > album.Name.Length / 3)
             {
@@ -570,13 +570,13 @@ namespace VPlayer.AudioStorage.InfoDownloader
                   .Where(x => x.Contains(albumLow))
                   .Select(x => x).First();
                 bestAlbum.Name = _actualArtist.Value
-                  .OrderByDescending(x => Levenshtein.Similarity(x.Name, name)).First().Name;
+                  .OrderByDescending(x => x.Name.Similarity(name)).First().Name;
               }
               else if (albumsLow.Any(x => albumLow.Contains(x)))
               {
                 var name = albumsLow.First(x => albumLow.Contains(x));
                 bestAlbum.Name = _actualArtist.Value
-                  .OrderByDescending(x => Levenshtein.Similarity(x.Name, name)).First().Name;
+                  .OrderByDescending(x => x.Name.Similarity(name)).First().Name;
               }
               else
               {
@@ -768,7 +768,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
         if (artists.Items.Any(x => x.Score == 100))
           artist = artists.Items.OrderByDescending(a => a.Score).First();
         else if (artists.Items.Count > 0)
-          artist = artists.Items.OrderByDescending(a => Levenshtein.Similarity(a.Name, artistName)).First();
+          artist = artists.Items.OrderByDescending(a => a.Name.Similarity(artistName)).First();
         else
         {
           logger.Log(Logger.MessageType.Warning, $"Artist's data was not find {artistName}");
@@ -1030,7 +1030,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
                 durations.Add(new KeyValuePair<JToken, string>(matchings[i], duration.ToString()));
             }
 
-            return durations.OrderByDescending(a => Levenshtein.Similarity(a.Value, fileDuration)).First().Key;
+            return durations.OrderByDescending(a => a.Value.Similarity(fileDuration)).First().Key;
           }
         }
 
@@ -1090,7 +1090,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
                 candidates.Add(new KeyValuePair<JToken, string>(matchings[i], property.ToString()));
             }
 
-            return candidates.OrderByDescending(a => Levenshtein.Similarity(a.Value, audioInfo.Artist + audioInfo.Album))
+            return candidates.OrderByDescending(a => a.Value.Similarity(audioInfo.Artist + audioInfo.Album))
               .First().Key;
           }
           else if (audioInfo.Artist != null)
@@ -1106,7 +1106,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
                 candidates.Add(new KeyValuePair<JToken, string>(matchings[i], property.ToString()));
             }
 
-            return candidates.OrderByDescending(a => Levenshtein.Similarity(a.Value, audioInfo.Artist))
+            return candidates.OrderByDescending(a => a.Value.Similarity(audioInfo.Artist))
               .First().Key;
           }
           else if (audioInfo.Album != null)
@@ -1122,7 +1122,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
                 candidates.Add(new KeyValuePair<JToken, string>(matchings[i], property.ToString()));
             }
 
-            return candidates.OrderByDescending(a => Levenshtein.Similarity(a.Value, audioInfo.Album))
+            return candidates.OrderByDescending(a => a.Value.Similarity(audioInfo.Album))
               .First().Key;
           }
         }

@@ -4,7 +4,9 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Threading;
+using VCore;
 using VCore.Annotations;
 using VCore.Factories;
 using VCore.Helpers;
@@ -16,12 +18,14 @@ using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.Artists;
 using VPlayer.Library.ViewModels.LibraryViewModels;
 
 namespace VPlayer.Library.ViewModels
 {
-  public abstract class PlayableItemsViewModel<TView, TViewModel, TModel> : RegionViewModel<TView>, INavigationItem, ICollectionViewModel<TViewModel, TModel>
+  public abstract class PlayableItemsViewModel<TView, TViewModel, TModel> : 
+    RegionViewModel<TView>, INavigationItem, ICollectionViewModel<TViewModel, TModel>, IPlayableItemsViewModel
     where TView : class, IView
     where TViewModel : class, INamedEntityViewModel<TModel>
     where TModel : class, INamedEntity
@@ -72,7 +76,7 @@ namespace VPlayer.Library.ViewModels
 
     #region View
 
-    public virtual ICollection<TViewModel> View
+    public virtual IEnumerable<TViewModel> View
     {
       get { return LibraryCollection.FilteredItems; }
     }
@@ -81,8 +85,8 @@ namespace VPlayer.Library.ViewModels
 
     #endregion Properties
 
-    #region Methods
 
+    #region Methods
 
     #region Initialize
 
@@ -234,7 +238,23 @@ namespace VPlayer.Library.ViewModels
 
     #endregion
 
+    #region Filter
+
+    public void Filter(string predictate)
+    {
+      LibraryCollection.Filter(predictate);
+
+      RaisePropertyChanged(nameof(View));
+    }
+
+    #endregion
+
     #endregion Methods
 
+  }
+
+  public interface IPlayableItemsViewModel
+  {
+    void Filter(string predictate);
   }
 }

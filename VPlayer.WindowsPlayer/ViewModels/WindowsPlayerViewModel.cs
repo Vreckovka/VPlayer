@@ -26,7 +26,6 @@ using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
-using VPlayer.Core.Messages.ImageDelete;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
 using VPlayer.Player.Views.WindowsPlayer;
@@ -78,7 +77,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       Kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
 
-     
+
     }
 
     #endregion Constructors
@@ -112,7 +111,24 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public VlcMediaPlayer MediaPlayer { get; private set; }
     public RxObservableCollection<SongInPlayList> PlayList { get; } = new RxObservableCollection<SongInPlayList>();
-    public VirtualList<SongInPlayList> VirtualizedPlayList { get; private set; }
+
+    #region VirtualizedPlayList
+
+    private VirtualList<SongInPlayList> virtualizedPlayList;
+    public VirtualList<SongInPlayList> VirtualizedPlayList
+    {
+      get { return virtualizedPlayList; }
+      private set
+      {
+        if (value != virtualizedPlayList)
+        {
+          virtualizedPlayList = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     public override bool ContainsNestedRegions => false;
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
@@ -138,7 +154,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           if (ActualSavedPlaylist.IsReapting != value)
           {
             ActualSavedPlaylist.IsReapting = value;
-            UpdatePlaylist();
+            UpdateActualSavedPlaylistPlaylist();
           }
 
           RaisePropertyChanged();
@@ -163,7 +179,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           if (ActualSavedPlaylist.IsShuffle != value)
           {
             ActualSavedPlaylist.IsShuffle = value;
-            UpdatePlaylist();
+            UpdateActualSavedPlaylistPlaylist();
           }
 
           RaisePropertyChanged();
@@ -177,6 +193,28 @@ namespace VPlayer.WindowsPlayer.ViewModels
     public int Cycle { get; set; }
     public Playlist ActualSavedPlaylist { get; set; } = new Playlist() { Id = -1 };
     public bool IsPlayFnished { get; private set; }
+
+    #region ActualSearch
+
+    private ReplaySubject<string> actualSearchSubject;
+    private string actualSearch;
+    public string ActualSearch
+    {
+      get { return actualSearch; }
+      set
+      {
+        if (value != actualSearch)
+        {
+          actualSearch = value;
+
+          actualSearchSubject.OnNext(actualSearch);
+
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     #region ActualSongChanged
 
@@ -264,12 +302,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
       if (!SavePlaylist(true))
       {
         ActualSavedPlaylist.IsUserCreated = true;
-        UpdatePlaylist();
+        UpdateActualSavedPlaylistPlaylist();
         RaisePropertyChanged(nameof(ActualSavedPlaylist));
       }
     }
 
-    #endregion 
+    #endregion
 
     #endregion Commands
 
@@ -283,12 +321,18 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         base.Initialize();
 
+        actualSearchSubject = new ReplaySubject<string>(1);
+        actualSearchSubject.DisposeWith(this);
+
+
         storageManager.SubscribeToItemChange<Song>(OnSongChange).DisposeWith(this);
         storageManager.SubscribeToItemChange<Album>(OnAlbumChange).DisposeWith(this);
 
         PlayList.ItemRemoved.Subscribe(ItemsRemoved).DisposeWith(this);
         PlayList.ItemAdded.Subscribe(ItemsAdded).DisposeWith(this);
         PlayList.DisposeWith(this);
+
+        actualSearchSubject.Throttle(TimeSpan.FromMilliseconds(150)).Subscribe(FilterByActualSearch).DisposeWith(this);
 
         //PlayList.CollectionChanged += PlayList_CollectionChanged;
 
@@ -300,13 +344,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
           var path = new DirectoryInfo(Path.Combine(currentDirectory, "libvlc", IntPtr.Size == 4 ? "win-x86" : "win-x64"));
 
           var libDirectory = new DirectoryInfo(path.FullName);
-         
+
           MediaPlayer = new VlcMediaPlayer(libDirectory);
         }
 
         if (MediaPlayer == null)
         {
-          logger.Log(Logger.MessageType.Error,"VLC was not initlized!");
+          logger.Log(Logger.MessageType.Error, "VLC was not initlized!");
           return;
         }
 
@@ -356,17 +400,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
         eventAggregator.GetEvent<PauseEvent>().Subscribe(Pause).DisposeWith(this);
         eventAggregator.GetEvent<PlaySongsFromPlayListEvent>().Subscribe(PlaySongFromPlayList).DisposeWith(this);
         eventAggregator.GetEvent<DeleteSongEvent>().Subscribe(DeleteSongs).DisposeWith(this);
-
-        eventAggregator.GetEvent<ImageDeleteRequestEvent>().Subscribe(OnImageDeleted).DisposeWith(this);
       });
     }
 
     #endregion Initialize
-
-    private void OnImageDeleted(ImageDeleteRequestEventArgs imageDeleteDoneEventArgs)
-    {
-
-    }
 
     #region OnAlbumChange
 
@@ -507,7 +544,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       }
 
 
-      UpdatePlaylist();
+      UpdateActualSavedPlaylistPlaylist();
 
     }
 
@@ -518,7 +555,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private void PlaySongs(PlaySongsEventData data)
     {
       if (ActualSavedPlaylist.Id > 0)
-        UpdatePlaylist();
+        UpdateActualSavedPlaylistPlaylist();
 
       switch (data.PlaySongsAction)
       {
@@ -596,8 +633,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     private void ReloadVirtulizedPlaylist()
     {
-      var generator = new ItemsGenerator<SongInPlayList>(PlayList);
-      generator._repository.PageSize = 15;
+      var generator = new ItemsGenerator<SongInPlayList>(PlayList, 15);
       VirtualizedPlayList = new VirtualList<SongInPlayList>(generator);
     }
 
@@ -690,6 +726,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       Application.Current?.Dispatcher?.Invoke(() =>
       {
+        if (!string.IsNullOrEmpty(actualSearch))
+        {
+          ActualSearch = null;
+        }
+
         IsPlayFnished = false;
 
         if (IsShuffle && songIndex == null)
@@ -716,26 +757,24 @@ namespace VPlayer.WindowsPlayer.ViewModels
           {
             IsPlayFnished = true;
             Stop();
+            return;
           }
         }
-        else if (PlayList.Count > actualSongIndex)
+
+        if (ActualSong != null)
         {
-          if (ActualSong != null)
-          {
-            ActualSong.IsPlaying = false;
-            ActualSong.IsPaused = false;
-          }
-
-
-          SetActualSong(actualSongIndex);
-
-          if (IsPlaying || forcePlay)
-            Play();
-          else if (!IsPlaying && songIndex != null)
-            Play();
-          else
-            ActualSong.IsPaused = true;
+          ActualSong.IsPlaying = false;
+          ActualSong.IsPaused = false;
         }
+
+        SetActualSong(actualSongIndex);
+
+        if (IsPlaying || forcePlay)
+          Play();
+        else if (!IsPlaying && songIndex != null)
+          Play();
+        else
+          ActualSong.IsPaused = true;
       });
     }
 
@@ -770,7 +809,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         if (ActualSavedPlaylist != null)
         {
           ActualSavedPlaylist.LastSongIndex = PlayList.IndexOf(ActualSong);
-          UpdatePlaylist();
+          UpdateActualSavedPlaylistPlaylist();
         }
 
         shuffleList.Add(ActualSong);
@@ -868,7 +907,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       var artists = PlayList.GroupBy(x => x.ArtistViewModel.Name);
 
-      var playlistName = string.Join(", ", artists.Select(x => x.Key).ToArray()) + " " + DateTime.Now.ToShortDateString();
+      var playlistName = string.Join(", ", artists.Select(x => x.Key).ToArray());
 
       var songIds = PlayList.Select(x => x.Model.Id);
 
@@ -889,11 +928,29 @@ namespace VPlayer.WindowsPlayer.ViewModels
         LastPlayed = DateTime.Now
       };
 
-      var success = storageManager.StoreData(entityPlayList, out var entityPlaylist);
+      bool success = false;
 
-      entityPlayList.Update(entityPlaylist);
+      if (ActualSavedPlaylist.IsUserCreated && hash != ActualSavedPlaylist.SongsInPlaylitsHashCode)
+      {
+        ActualSavedPlaylist.SongsInPlaylitsHashCode = hash;
+        ActualSavedPlaylist.PlaylistSongs = songs;
 
-      ActualSavedPlaylist = entityPlayList;
+        UpdateActualSavedPlaylistPlaylist();
+      }
+      else
+      {
+        success = storageManager.StoreData(entityPlayList, out var entityPlaylist);
+
+        entityPlayList.Update(entityPlaylist);
+
+        ActualSavedPlaylist = entityPlayList;
+
+        if (!success)
+        {
+          ActualSavedPlaylist.LastPlayed = DateTime.Now;
+          UpdateActualSavedPlaylistPlaylist();
+        }
+      }
 
       return success;
     }
@@ -902,9 +959,42 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region UpdatePlaylist
 
-    private void UpdatePlaylist()
+    private void UpdateActualSavedPlaylistPlaylist()
     {
       storageManager.UpdateData(ActualSavedPlaylist);
+    }
+
+    #endregion
+
+    #region FilterByActualSearch
+
+    private void FilterByActualSearch(string predictate )
+    {
+      if (!string.IsNullOrEmpty(predictate))
+      {
+        var items = PlayList.Where(x =>
+          IsInFind(x.Name, predictate) ||
+          IsInFind(x.AlbumViewModel.Name, predictate) ||
+          IsInFind(x.ArtistViewModel.Name, predictate));
+
+        var generator = new ItemsGenerator<SongInPlayList>(items, 15);
+
+        VirtualizedPlayList = new VirtualList<SongInPlayList>(generator);
+
+      }
+      else
+      {
+        ReloadVirtulizedPlaylist();
+      }
+    }
+
+    #endregion
+
+    #region IsInFind
+
+    private bool IsInFind(string original, string phrase)
+    {
+      return original.ToLower().Contains(phrase) || original.Similarity(phrase) > 0.8;
     }
 
     #endregion
@@ -914,7 +1004,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     public override void Dispose()
     {
       if (ActualSavedPlaylist != null)
-        UpdatePlaylist();
+        UpdateActualSavedPlaylistPlaylist();
 
       base.Dispose();
     }

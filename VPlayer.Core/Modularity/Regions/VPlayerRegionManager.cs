@@ -3,8 +3,8 @@ using VCore.Factories;
 using VCore.Factories.Views;
 using VCore.Modularity.Navigation;
 using VCore.Modularity.RegionProviders;
+using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Core.ViewModels.Artists;
-using VPlayer.Library.ViewModels.AlbumsViewModels;
 
 namespace VPlayer.Core.Modularity.Regions
 {

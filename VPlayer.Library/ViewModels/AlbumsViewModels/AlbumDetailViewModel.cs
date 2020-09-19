@@ -7,6 +7,7 @@ using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.Core.Modularity.Regions;
+using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Library.Views;
 
 namespace VPlayer.Library.ViewModels.AlbumsViewModels

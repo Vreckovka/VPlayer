@@ -17,8 +17,8 @@ using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Interfaces.ViewModels;
+using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Core.ViewModels.Artists;
-using VPlayer.Library.ViewModels.AlbumsViewModels;
 
 namespace VPlayer.Core.ViewModels
 {

@@ -12,6 +12,7 @@ using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using VCore;
 using VCore.Annotations;
 using VCore.Factories;
 using VCore.ItemsCollections.VirtualList;
@@ -42,12 +43,6 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
     #endregion Fields
 
-    #region Properties
-
-    public IObservable<bool> LoadData { get; }
-
-    #endregion Properties
-
     #region Constructors
 
     public LibraryCollection(
@@ -70,13 +65,15 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
     #region Properties
 
-    public VirtualList<TViewModel> FilteredItems { get; set; }
+    public IEnumerable<TViewModel> FilteredItems { get; set; }
     public ObservableCollection<TViewModel> Items { get; set; }
     public IQueryable<TModel> LoadQuery { get; set; }
+    public IObservable<bool> LoadData { get; }
     public bool WasLoaded { get; private set; }
 
     #endregion Properties
 
+    #region Methods
 
     #region LoadInitilizedData
 
@@ -111,7 +108,9 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
       });
     }
 
-    #endregion 
+    #endregion
+
+    #region GetOrLoadDataAsync
 
     public IObservable<bool> GetOrLoadDataAsync(IQueryable<TModel> optionalQuery)
     {
@@ -124,21 +123,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
       });
     }
 
-
-
-    #region CreateTrieItems
-
-    private void CreateTrieItems(IEnumerable<TViewModel> items)
-    {
-      trieItems = new Trie<TViewModel>();
-
-      foreach (var artist in items)
-      {
-        trieItems.Add(artist.Name.ToLower(), artist);
-      }
-    }
-
-    #endregion CreateTrieItems
+    #endregion
 
     #region Add
 
@@ -175,7 +160,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
           {
           }
 
-         
+
         }
       });
     }
@@ -237,15 +222,31 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
     {
       if (Items != null)
       {
-        var generator = new ItemsGenerator<TViewModel>(Items);
-        generator._repository.PageSize = 21;
+        var generator = new ItemsGenerator<TViewModel>(Items,21);
 
         FilteredItems = new VirtualList<TViewModel>(generator);
       }
     }
 
-    
 
-    #endregion Recreate
+    #endregion Filter
+
+    #region Filter
+
+    public void Filter(string name)
+    {
+      if (!string.IsNullOrEmpty(name))
+      {
+        FilteredItems = Items.Where(x => x.Name.ToLower().Contains(name) || x.Name.Similarity(name) > 0.8);
+      }
+      else
+      {
+        Recreate();
+      }
+    }
+
+    #endregion
+
+    #endregion
   }
 }

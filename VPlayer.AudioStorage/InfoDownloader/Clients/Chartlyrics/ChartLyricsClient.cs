@@ -11,6 +11,7 @@ using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader.Clients.Chartlyrics.XMLClasses;
 using Windows.Security.Cryptography.Certificates;
 using Logger;
+using VCore;
 using VCore.Annotations;
 
 namespace VPlayer.AudioStorage.InfoDownloader.Clients.Chartlyrics

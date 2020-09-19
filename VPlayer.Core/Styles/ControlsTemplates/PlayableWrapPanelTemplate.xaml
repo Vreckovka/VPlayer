@@ -154,7 +154,7 @@
                   <Style TargetType="Grid">
                     <Setter Property="Background" Value="Transparent"/>
                     <Style.Triggers>
-                      <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses:InfoDownloadStatus.Downloading}">
+                      <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses:InfoDownloadStatus.Downloading}" >
                         <DataTrigger.EnterActions>
                           <RemoveStoryboard BeginStoryboardName="RemoveDownloadingStoryboard"/>
                           <BeginStoryboard x:Name="DownloadingStoryboard">
