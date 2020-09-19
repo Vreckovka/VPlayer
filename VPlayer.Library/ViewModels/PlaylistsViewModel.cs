@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Prism.Events;
 using VCore;
+using VCore.Annotations;
 using VCore.Factories;
 using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
@@ -50,6 +51,7 @@ namespace VPlayer.Library.ViewModels
 
     private readonly IViewModelsFactory viewModelsFactory;
     private readonly PlaylistsRepository playlistsRepository;
+    private readonly IStorageManager storageManager;
     private readonly IRegionProvider regionProvider;
 
     #endregion
@@ -60,13 +62,39 @@ namespace VPlayer.Library.ViewModels
       Playlist model, 
       IEventAggregator eventAggregator, 
       IViewModelsFactory viewModelsFactory, 
-      PlaylistsRepository playlistsRepository) : base(model, eventAggregator)
+      PlaylistsRepository playlistsRepository,
+      IStorageManager storageManager) : base(model, eventAggregator)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.playlistsRepository = playlistsRepository ?? throw new ArgumentNullException(nameof(playlistsRepository));
+      this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
     }
 
     #endregion
+
+    #region Delete
+
+    private ActionCommand delete;
+
+    public ICommand Delete
+    {
+      get
+      {
+        if (delete == null)
+        {
+          delete = new ActionCommand(OnDelete);
+        }
+
+        return delete;
+      }
+    }
+
+    public void OnDelete()
+    {
+      storageManager.DeletePlaylist(Model);
+    }
+
+    #endregion 
 
     #region Properties
 
@@ -129,6 +157,9 @@ namespace VPlayer.Library.ViewModels
 
     #endregion
 
+    public int? SongCount => Model.SongCount;
+    public long? SongsInPlaylitsHashCode => Model.SongsInPlaylitsHashCode;
+
     #endregion
 
     public override void Update(Playlist updateItem)
@@ -144,6 +175,10 @@ namespace VPlayer.Library.ViewModels
       RaisePropertyChanged(nameof(LastPlayed));
       RaisePropertyChanged(nameof(Name));
       RaisePropertyChanged(nameof(IsUserCreated));
+      RaisePropertyChanged(nameof(SongCount));
+      RaisePropertyChanged(nameof(SongsInPlaylitsHashCode));
+      RaisePropertyChanged(nameof(IsShuffle));
+      RaisePropertyChanged(nameof(IsRepeating));
     }
 
     #endregion
@@ -173,6 +208,8 @@ namespace VPlayer.Library.ViewModels
 
       eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
     }
+
+
 
   }
 }

@@ -2,6 +2,8 @@
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
@@ -216,6 +218,43 @@ namespace VPlayer.Library
       return value == null;
     }
    
+  }
+
+  public class HashConverter : BaseConverter
+  {
+    public override object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+      int? subString = null;
+      if (parameter is int it)
+      {
+        subString = it;
+      }
+
+      if(subString != null)
+      {
+        return GetHashString(value.ToString()).Substring(0, subString.Value);
+      }
+      else
+      {
+        return GetHashString(value.ToString());
+      }
+    
+    }
+
+    public static byte[] GetHash(string inputString)
+    {
+      using (HashAlgorithm algorithm = SHA256.Create())
+        return algorithm.ComputeHash(Encoding.UTF8.GetBytes(inputString));
+    }
+
+    public static string GetHashString(string inputString)
+    {
+      StringBuilder sb = new StringBuilder();
+      foreach (byte b in GetHash(inputString))
+        sb.Append(b.ToString("X2"));
+
+      return sb.ToString();
+    }
   }
 
 }

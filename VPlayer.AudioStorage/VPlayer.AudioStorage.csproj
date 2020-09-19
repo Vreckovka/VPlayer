@@ -188,9 +188,9 @@
     <Compile Include="InfoDownloader\Clients\LRC\Google\GoogleDrive\GoogleDriveServiceProvider.cs" />
     <Compile Include="InfoDownloader\Clients\LRC\Google\GoogleDrive\GoogleMimeTypes.cs" />
     <Compile Include="InfoDownloader\Clients\LRC\Local\LocalLrcProvider.cs" />
-    <Compile Include="Migrations\202009161944072_migration_.cs" />
-    <Compile Include="Migrations\202009161944072_migration_.designer.cs">
-      <DependentUpon>202009161944072_migration_.cs</DependentUpon>
+    <Compile Include="Migrations\202009190746022_migration_.cs" />
+    <Compile Include="Migrations\202009190746022_migration_.designer.cs">
+      <DependentUpon>202009190746022_migration_.cs</DependentUpon>
     </Compile>
     <Compile Include="Repositories\AlbumsRepository.cs" />
     <Compile Include="Repositories\ArtistRepository.cs" />
@@ -235,10 +235,9 @@
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202009161944072_migration_.resx">
-      <DependentUpon>202009161944072_migration_.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202009190746022_migration_.resx">
+      <DependentUpon>202009190746022_migration_.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

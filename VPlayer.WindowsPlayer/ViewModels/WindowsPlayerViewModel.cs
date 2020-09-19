@@ -8,6 +8,8 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -15,6 +17,7 @@ using Logger;
 using Ninject;
 using Prism.Events;
 using VCore;
+using VCore.Annotations;
 using VCore.Helpers;
 using VCore.ItemsCollections;
 using VCore.ItemsCollections.VirtualList;
@@ -26,6 +29,7 @@ using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
+using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
 using VPlayer.Player.Views.WindowsPlayer;
@@ -53,6 +57,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private readonly IStorageManager storageManager;
     private readonly AudioInfoDownloader audioInfoDownloader;
     private readonly ILogger logger;
+    private readonly IAlbumsViewModel albumsViewModel;
     private int actualSongIndex = 0;
     private Dictionary<SongInPlayList, bool> playBookInCycle = new Dictionary<SongInPlayList, bool>();
     private HashSet<SongInPlayList> shuffleList = new HashSet<SongInPlayList>();
@@ -67,13 +72,15 @@ namespace VPlayer.WindowsPlayer.ViewModels
       IKernel kernel,
       IStorageManager storageManager,
       AudioInfoDownloader audioInfoDownloader,
-      ILogger logger) : base(regionProvider)
+      ILogger logger,
+      IAlbumsViewModel albumsViewModel) : base(regionProvider)
     {
       this.vPlayerRegionProvider = regionProvider ?? throw new ArgumentNullException(nameof(regionProvider));
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+      this.albumsViewModel = albumsViewModel ?? throw new ArgumentNullException(nameof(albumsViewModel));
 
       Kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
 
@@ -399,7 +406,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         eventAggregator.GetEvent<PlaySongsEvent>().Subscribe(PlaySongs).DisposeWith(this);
         eventAggregator.GetEvent<PauseEvent>().Subscribe(Pause).DisposeWith(this);
         eventAggregator.GetEvent<PlaySongsFromPlayListEvent>().Subscribe(PlaySongFromPlayList).DisposeWith(this);
-        eventAggregator.GetEvent<DeleteSongEvent>().Subscribe(DeleteSongs).DisposeWith(this);
+        eventAggregator.GetEvent<RemoveFromPlaylistEvent>().Subscribe(DeleteSongs).DisposeWith(this);
       });
     }
 
@@ -445,17 +452,14 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region DeleteSongs
 
-    private void DeleteSongs(DeleteEventArgs obj)
+    private void DeleteSongs(RemoveFromPlaylistEventArgs obj)
     {
       switch (obj.DeleteType)
       {
-        case DeleteType.Database:
-          throw new NotImplementedException();
-          break;
         case DeleteType.SingleFromPlaylist:
           foreach (var songToDelete in obj.SongsToDelete)
           {
-            var songInPlaylist = PlayList.SingleOrDefault(x => x.Model.Id == songToDelete.Id);
+            var songInPlaylist = PlayList.SingleOrDefault(x => x == songToDelete);
 
             if (songInPlaylist != null)
             {
@@ -467,17 +471,20 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
           break;
         case DeleteType.AlbumFromPlaylist:
-          foreach (var songToDelete in obj.SongsToDelete)
+
+          var albumId = obj.SongsToDelete.FirstOrDefault(x => x.AlbumViewModel != null)?.AlbumViewModel.ModelId;
+
+          if (albumId != null)
           {
-            var albumSongs = PlayList.Where(x => x.Model.Album.Id == songToDelete.Album.Id).ToList();
+            var albumSongs = PlayList.Where(x => x.Model.Album.Id == albumId).ToList();
 
             foreach (var albumSong in albumSongs)
             {
               PlayList.Remove(albumSong);
             }
-          }
 
-          SavePlaylist();
+            SavePlaylist();
+          }
           break;
         default:
           throw new ArgumentOutOfRangeException();
@@ -490,19 +497,43 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region ItemsRemoved
 
-    private void ItemsRemoved(EventPattern<SongInPlayList> eventPattern)
+    private async void ItemsRemoved(EventPattern<SongInPlayList> eventPattern)
     {
-      eventPattern.EventArgs.ArtistViewModel.IsInPlaylist = false;
-      eventPattern.EventArgs.AlbumViewModel.IsInPlaylist = false;
+      var anyAlbum = PlayList.Any(x => x.AlbumViewModel.ModelId == eventPattern.EventArgs.AlbumViewModel.ModelId);
+
+      if (!anyAlbum)
+      {
+        eventPattern.EventArgs.AlbumViewModel.IsInPlaylist = false;
+      }
+
+
+      var anyArtist = PlayList.Any(x => x.ArtistViewModel.ModelId == eventPattern.EventArgs.ArtistViewModel.ModelId);
+
+      if (!anyArtist)
+      {
+        eventPattern.EventArgs.ArtistViewModel.IsInPlaylist = false;
+      }
+
+
+      shuffleList.Remove(eventPattern.EventArgs);
+
+      if (ActualSong == eventPattern.EventArgs)
+      {
+        PlayNext(actualSongIndex);
+      }
+
     }
 
+    #endregion ItemsRemoved
+
+    #region ItemsAdded
 
     private void ItemsAdded(EventPattern<SongInPlayList> eventPattern)
     {
 
     }
 
-    #endregion ItemsRemoved
+    #endregion
 
     #region PlaySongFromPlayList
 
@@ -761,19 +792,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
           }
         }
 
-        if (ActualSong != null)
-        {
-          ActualSong.IsPlaying = false;
-          ActualSong.IsPaused = false;
-        }
-
         SetActualSong(actualSongIndex);
 
         if (IsPlaying || forcePlay)
           Play();
         else if (!IsPlaying && songIndex != null)
           Play();
-        else
+        else if (ActualSong != null)
           ActualSong.IsPaused = true;
       });
     }
@@ -803,21 +828,46 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       try
       {
-        ActualSong = PlayList[index];
-        ActualSong.IsPlaying = true;
-
-        if (ActualSavedPlaylist != null)
+        if (actualSongIndex < PlayList.Count && actualSongIndex >= 0)
         {
-          ActualSavedPlaylist.LastSongIndex = PlayList.IndexOf(ActualSong);
-          UpdateActualSavedPlaylistPlaylist();
-        }
+          if (ActualSong != null)
+          {
+            ActualSong.IsPlaying = false;
+            ActualSong.IsPaused = false;
+            ActualSong.AlbumViewModel.IsPlaying = false;
+            ActualSong.ArtistViewModel.IsPlaying = false;
+          }
 
-        shuffleList.Add(ActualSong);
+          ActualSong = PlayList[index];
+          ActualSong.IsPlaying = true;
+
+          ActualSong.AlbumViewModel.IsPlaying = true;
+          ActualSong.ArtistViewModel.IsPlaying = true;
+
+          if (ActualSavedPlaylist != null)
+          {
+            ActualSavedPlaylist.LastSongIndex = PlayList.IndexOf(ActualSong);
+            UpdateActualSavedPlaylistPlaylist();
+          }
+
+          shuffleList.Add(ActualSong);
+        }
+        else
+        {
+          if (ActualSong != null)
+          {
+            ActualSong.IsPlaying = false;
+            ActualSong.IsPaused = false;
+            ActualSong.AlbumViewModel.IsPlaying = false;
+            ActualSong.ArtistViewModel.IsPlaying = false;
+          }
+
+          ActualSong = null;
+        }
       }
       catch (Exception ex)
       {
-
-        throw;
+        logger.Log(ex);
       }
     }
 
@@ -911,15 +961,14 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       var songIds = PlayList.Select(x => x.Model.Id);
 
-      var hash = songIds.GetSequenceHashCode();
-
+      var hashCode = songIds.GetSequenceHashCode();
 
       var entityPlayList = new Playlist()
       {
         IsReapting = IsRepeate,
         IsShuffle = IsShuffle,
         Name = playlistName,
-        SongsInPlaylitsHashCode = hash,
+        SongsInPlaylitsHashCode = hashCode,
         SongCount = songs.Count,
         PlaylistSongs = songs,
         LastSongElapsedTime = ActualSavedPlaylist.LastSongElapsedTime,
@@ -930,10 +979,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       bool success = false;
 
-      if (ActualSavedPlaylist.IsUserCreated && hash != ActualSavedPlaylist.SongsInPlaylitsHashCode)
+      if (ActualSavedPlaylist.IsUserCreated && hashCode != ActualSavedPlaylist.SongsInPlaylitsHashCode)
       {
-        ActualSavedPlaylist.SongsInPlaylitsHashCode = hash;
+        ActualSavedPlaylist.SongsInPlaylitsHashCode = hashCode;
         ActualSavedPlaylist.PlaylistSongs = songs;
+        ActualSavedPlaylist.SongCount = songs.Count;
 
         UpdateActualSavedPlaylistPlaylist();
       }
@@ -957,7 +1007,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-    #region UpdatePlaylist
+
+   
+
+    #region UpdateActualSavedPlaylistPlaylist
 
     private void UpdateActualSavedPlaylistPlaylist()
     {
@@ -968,7 +1021,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region FilterByActualSearch
 
-    private void FilterByActualSearch(string predictate )
+    private void FilterByActualSearch(string predictate)
     {
       if (!string.IsNullOrEmpty(predictate))
       {

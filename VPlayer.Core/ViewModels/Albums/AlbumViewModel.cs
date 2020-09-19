@@ -63,10 +63,7 @@ namespace VPlayer.Core.ViewModels.Albums
 
     public override void Update(Album updateItem)
     {
-      Model.AlbumFrontCoverFilePath = updateItem.AlbumFrontCoverFilePath;
-      Model.Name = updateItem.Name;
-      Model.InfoDownloadStatus = updateItem.InfoDownloadStatus;
-      Model.Songs = updateItem.Songs;
+      Model.Update(updateItem);
 
       RaisePropertyChanges();
     }

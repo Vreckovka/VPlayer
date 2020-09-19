@@ -55,7 +55,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
     #endregion Constructors
 
     #region Properties
-   
+
     public Subject<Unit> ActionIsDone { get; } = new Subject<Unit>();
 
     #endregion Properties
@@ -459,133 +459,138 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region UpdateAlbum
 
-    public async void UpdateAlbum(Album album)
+    private static object batton = new object();
+    public void UpdateAlbum(Album album)
     {
-      using (var context = new AudioDatabaseContext())
+      lock (batton)
       {
-
-        try
+        using (var context = new AudioDatabaseContext())
         {
-          var originalAlbum =
+
+          try
+          {
+            var originalAlbum =
               (from x in context.Albums.Include(x => x.Artist)
                where x.MusicBrainzId != null
                where x.MusicBrainzId == album.MusicBrainzId
                select x).Include(x => x.Songs).Include(x => x.Artist).SingleOrDefault();
 
-          //Update is first time
-          if (originalAlbum == null)
-          {
-            var albums = context.Albums.Include(x => x.Songs).Include(x => x.Artist).ToList();
-
-            originalAlbum = (from x in albums
-                             where x.Id == album.Id
-                             select x).SingleOrDefault();
-
-            //Album could be deleted from storage
-            if (originalAlbum != null)
+            //Update is first time
+            if (originalAlbum == null)
             {
-              originalAlbum.Update(album);
+              var albums = context.Albums.Include(x => x.Songs).Include(x => x.Artist).ToList();
 
-              var duplicates = (from x in albums
-                                where x.Name == originalAlbum.Name
-                                where x.Artist.Name == originalAlbum.Artist.Name
-                                group x by x.Name into a
-                                where a.Count() > 1
-                                select a.ToList()).SingleOrDefault();
+              originalAlbum = (from x in albums
+                               where x.Id == album.Id
+                               select x).SingleOrDefault();
 
-              if (duplicates == null)
+              //Album could be deleted from storage
+              if (originalAlbum != null)
               {
-                await context.SaveChangesAsync();
-               logger.Log(Logger.MessageType.Success,
-                  $"Album was updated in database {album.Name}");
+                originalAlbum.Update(album);
+
+                var duplicates = (from x in albums
+                                  where x.Name == originalAlbum.Name
+                                  where x.Artist.Name == originalAlbum.Artist.Name
+                                  group x by x.Name
+                  into a
+                                  where a.Count() > 1
+                                  select a.ToList()).SingleOrDefault();
+
+                if (duplicates == null)
+                {
+                  context.SaveChanges();
+                  logger.Log(Logger.MessageType.Success,
+                    $"Album was updated in database {album.Name}");
+
+                  ItemChanged.OnNext(new ItemChanged()
+                  {
+                    Changed = Changed.Updated,
+                    Item = originalAlbum
+                  });
+                }
+                else
+                {
+                  Album originalCopy = null;
+                  int oldId = duplicates[0].Id;
+
+                  for (int i = 1; i < duplicates.Count; i++)
+                  {
+                    originalCopy = CombineAlbums(duplicates[0], duplicates[i], context);
+                  }
+
+                  if (originalCopy != null)
+                  {
+                    originalCopy.Id = oldId;
+                    ItemChanged.OnNext(new ItemChanged()
+                    {
+                      Changed = Changed.Updated,
+                      Item = originalCopy
+                    });
+                  }
+                }
+              }
+              else
+              {
+                originalAlbum =
+                  (from x in context.Albums
+                   where x.Name == album.Name
+                   where x.Artist.Name == album.Artist.Name
+                   select x).Include(x => x.Songs).Include(x => x.Artist).SingleOrDefault();
+
+                if (originalAlbum != null)
+                  CombineAlbums(originalAlbum, album, context);
+                else
+                  ;
+              }
+
+              if (originalAlbum == null || originalAlbum.Artist == null)
+              {
+                return;
+              }
+
+              if (originalAlbum.Artist.ArtistCover == null &&
+                  originalAlbum.Artist.AlbumIdCover == null &&
+                  originalAlbum.AlbumFrontCoverFilePath != null)
+              {
+                originalAlbum.Artist.AlbumIdCover = originalAlbum.Id;
+                context.SaveChanges();
 
                 ItemChanged.OnNext(new ItemChanged()
                 {
                   Changed = Changed.Updated,
-                  Item = originalAlbum
+                  Item = originalAlbum.Artist
                 });
               }
-              else
-              {
-                Album originalCopy = null;
-                int oldId = duplicates[0].Id;
-
-                for (int i = 1; i < duplicates.Count; i++)
-                {
-                  originalCopy = CombineAlbums(duplicates[0], duplicates[i], context);
-                }
-
-                if (originalCopy != null)
-                {
-                  originalCopy.Id = oldId;
-                  ItemChanged.OnNext(new ItemChanged()
-                  {
-                    Changed = Changed.Updated,
-                    Item = originalCopy
-                  });
-                }
-              }
             }
             else
             {
-              originalAlbum =
-                (from x in context.Albums
-                 where x.Name == album.Name
-                 where x.Artist.Name == album.Artist.Name
-                 select x).Include(x => x.Songs).Include(x => x.Artist).SingleOrDefault();
+              if (album.Songs == null)
+              {
+                var dbAlbum = context.Albums.Where(x => x.Id == album.Id).Include(x => x.Songs).Include(x => x.Artist).SingleOrDefault();
 
-              if (originalAlbum != null)
+
+
+                if (dbAlbum == null)
+                {
+                  logger.Log(Logger.MessageType.Warning,
+                    $"Failed to combine, album was removed from database {album.Name}");
+                }
+                else
+                {
+                  dbAlbum.Update(album);
+                  CombineAlbums(originalAlbum, dbAlbum, context);
+                }
+
+              }
+              else
                 CombineAlbums(originalAlbum, album, context);
-              else
-                ;
-            }
-
-            if (originalAlbum == null || originalAlbum.Artist == null)
-            {
-              return;
-            }
-
-            if (originalAlbum.Artist.ArtistCover == null &&
-                originalAlbum.Artist.AlbumIdCover == null &&
-                originalAlbum.AlbumFrontCoverFilePath != null)
-            {
-              originalAlbum.Artist.AlbumIdCover = originalAlbum.Id;
-              context.SaveChanges();
-
-              ItemChanged.OnNext(new ItemChanged()
-              {
-                Changed = Changed.Updated,
-                Item = originalAlbum.Artist
-              });
             }
           }
-          else
+          catch (Exception ex)
           {
-            if (album.Songs == null)
-            {
-              var dbAlbum = context.Albums.Where(x => x.Id == album.Id).Include(x => x.Songs).Include(x => x.Artist).SingleOrDefault();
-
-
-
-              if (dbAlbum == null)
-              {
-               logger.Log(Logger.MessageType.Warning,
-                  $"Failed to combine, album was removed from database {album.Name}");
-              }
-              else
-              {
-                dbAlbum.Update(album);
-                CombineAlbums(originalAlbum, dbAlbum, context);
-              }
-
-            }
-            else
-              CombineAlbums(originalAlbum, album, context);
+            logger.Log(ex);
           }
-        }
-        catch (Exception ex)
-        {
-         logger.Log(ex);
         }
       }
     }
@@ -598,35 +603,14 @@ namespace VPlayer.AudioStorage.AudioDatabase
     {
       try
       {
-        //Could be disk 1, disk 2 and renamed without disk index
-        if (albumToCombine.Songs.Count == 0)
-        {
-          logger.Log(Logger.MessageType.Warning,
-            $"No songs to combine {albumToCombine.Name}");
 
-          return null;
-        }
-        else
-        {
-          var songsToAdd =
-            (from x in albumToCombine.Songs
-             where originalAlbum.Songs.All(y => y.Name != x.Name)
-             select x)
-            .ToList();
+        var songsToAdd =
+          (from x in albumToCombine.Songs
+           where originalAlbum.Songs.All(y => y.Name != x.Name)
+           select x)
+          .ToList();
 
-          if (songsToAdd.Count == 0)
-          {
-            logger.Log(Logger.MessageType.Warning,
-              $"No songs to combine {albumToCombine.Name}");
-
-            return null;
-          }
-          else
-          {
-            originalAlbum.Songs.AddRange(albumToCombine.Songs);
-          }
-        }
-
+        originalAlbum.Songs.AddRange(songsToAdd);
 
         context.Albums.Remove(albumToCombine);
 
@@ -644,8 +628,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
           Item = originalAlbum
         });
 
-        logger.Log(Logger.MessageType.Warning,
-            $"Combining album {albumToCombine.Name} to {originalAlbum.Name}");
+        logger.Log(Logger.MessageType.Warning, $"Combining album {albumToCombine.Name} to {originalAlbum.Name}");
 
         ActionIsDone.OnNext(Unit.Default);
 
@@ -674,7 +657,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           context.SaveChanges();
 
-         logger.Log(Logger.MessageType.Success, $"Entity was updated {entity}");
+          logger.Log(Logger.MessageType.Success, $"Entity was updated {entity}");
 
           ItemChanged.OnNext(new ItemChanged()
           {
@@ -703,7 +686,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
             context.SaveChanges();
 
-           logger.Log(Logger.MessageType.Success, $"Entity was updated {newVersion}");
+            logger.Log(Logger.MessageType.Success, $"Entity was updated {newVersion}");
 
             ItemChanged.OnNext(new ItemChanged()
             {
@@ -715,6 +698,42 @@ namespace VPlayer.AudioStorage.AudioDatabase
           }
 
           return false;
+        }
+      });
+    }
+
+    #endregion
+
+    #region DeletePlaylist
+
+    //TODO: GetRepository<TEntity>(context) toto spravit genericky pre repository patern
+    //TODO: Cely repository prerobit
+    public Task DeletePlaylist(Playlist playlist)
+    {
+      return Task.Run(() =>
+      {
+        try
+        {
+          using (var context = new AudioDatabaseContext())
+          {
+            var entityPlaylist = context.Playlists.SingleOrDefault(x => x.Id == playlist.Id);
+
+            if (entityPlaylist != null)
+            {
+              context.Playlists.Remove(entityPlaylist);
+              context.SaveChanges();
+
+              ItemChanged.OnNext(new ItemChanged()
+              {
+                Item = playlist,
+                Changed = Changed.Removed
+              });
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          logger.Log(ex);
         }
       });
     }
@@ -759,6 +778,15 @@ namespace VPlayer.AudioStorage.AudioDatabase
       return ItemChanged.Where(x => x.Item.GetType() == typeof(TModel))
         .Select(x => new ItemChanged<TModel>((TModel)x.Item, x.Changed)).Subscribe(observer);
     }
+
+    #endregion
+
+    #region PushAction
+
+    public void PushAction(ItemChanged itemChanged)
+    {
+      ItemChanged.OnNext(itemChanged);
+    } 
 
     #endregion
 

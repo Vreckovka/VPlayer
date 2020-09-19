@@ -32,8 +32,9 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
     void UpdateData(Playlist playlist);
     void RewriteEntity<T>(T entity) where T : class, IEntity;
     Task<bool> UpdateEntity<TEntity>(TEntity newVersion) where TEntity : class, IEntity, IUpdateable<TEntity>;
-    
     IDisposable SubscribeToItemChange<TModel>(Action<ItemChanged<TModel>> observer);
+    Task DeletePlaylist(Playlist playlist);
+    void PushAction(ItemChanged itemChanged);
 
     #endregion Methods
   }

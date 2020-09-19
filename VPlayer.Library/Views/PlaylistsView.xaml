@@ -8,6 +8,7 @@
              xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore"
              xmlns:events="clr-namespace:VPlayer.Core.Events;assembly=VPlayer.Core"
              xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+             xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="1800">
   <UserControl.Resources>
@@ -181,9 +182,9 @@
             </GridViewColumn>
             <GridViewColumn Width="180" Header="Last played" 
                             DisplayMemberBinding="{Binding LastPlayed, StringFormat={}dd.MM:yy / hh:mm:ss}"/>
-            <GridViewColumn Width="150" Header="Hash" DisplayMemberBinding="{Binding Model.SongsInPlaylitsHashCode}"/>
+            <GridViewColumn Width="150" Header="Hash" DisplayMemberBinding="{Binding SongsInPlaylitsHashCode,Converter={library:HashConverter}}"/>
           
-            <GridViewColumn Width="100" Header="Song count" DisplayMemberBinding="{Binding Model.SongCount}"/>
+            <GridViewColumn Width="100" Header="Song count" DisplayMemberBinding="{Binding SongCount}"/>
             <GridViewColumn Width="75" Header="Settings">
               <GridViewColumn.CellTemplate>
                 <DataTemplate>
@@ -216,7 +217,8 @@
                                              IconDefaultColor="#783734"
                                              IconHoverColor="#f04d46"
                                              IconHeight="12"
-                                             Padding="0"/>
+                                             Padding="0"
+                                             Command="{Binding Delete}"/>
                   </StackPanel>
                 </DataTemplate>
               </GridViewColumn.CellTemplate>

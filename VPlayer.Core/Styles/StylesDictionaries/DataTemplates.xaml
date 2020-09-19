@@ -2,7 +2,9 @@
                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:VPlayer.StylesDictionaries"
-                    xmlns:library="clr-namespace:VPlayer.Library">
+                    xmlns:library="clr-namespace:VPlayer.Library"
+                    xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore"
+                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="OverlayStyles.xaml" />
@@ -246,12 +248,18 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Name="NameTxt"
+            <TextBlock Name="NameTxt"
                        Grid.Row="0"
                        FontFamily="Arial"
                        FontSize="20"
-                       Style="{StaticResource PanningTextBlock}"
-                       Text="{Binding Name}" />
+                       Text="{Binding Name}" >
+              <i:Interaction.Behaviors>
+                <text:PanningTextWithFontSizeBehavior
+                  BiggerFontSize="25"
+                  Container="{Binding ElementName=ParentContainer}"
+                  IsMouseOverRelativeToContainer="True" />
+              </i:Interaction.Behaviors>
+            </TextBlock>
 
                         <TextBlock Grid.Row="1"
                        HorizontalAlignment="Stretch"

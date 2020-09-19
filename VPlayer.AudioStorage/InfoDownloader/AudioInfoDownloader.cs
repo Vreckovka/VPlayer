@@ -506,10 +506,12 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
         // Search for a release by title.
 
-        var textWriter = Console.Out;
-        Console.SetOut(TextWriter.Null);
+       // var textWriter = Console.Out;
+       // Console.SetOut(TextWriter.Null);
+
         var releases = await client.Releases.SearchAsync(query);
-        Console.SetOut(textWriter);
+
+       // Console.SetOut(textWriter);
 
         if (releases.Count != 0)
         {

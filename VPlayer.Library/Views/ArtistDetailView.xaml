@@ -19,7 +19,8 @@
                 Width="150"
                 Margin="5"
                 HorizontalAlignment="Left"
-                Content="back" />
+                Content="back" 
+                Command="{Binding BackCommand}"/>
         </StackPanel>
 
         <Grid Grid.Row="1">

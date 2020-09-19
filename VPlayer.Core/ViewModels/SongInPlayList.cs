@@ -227,9 +227,9 @@ namespace VPlayer.Core.ViewModels
 
     public void OnDeleteSongFromPlaylist()
     {
-      var songs = new System.Collections.Generic.List<Song>() { Model };
+      var songs = new System.Collections.Generic.List<SongInPlayList>() { this };
 
-      eventAggregator.GetEvent<DeleteSongEvent>().Publish(new DeleteEventArgs()
+      eventAggregator.GetEvent<RemoveFromPlaylistEvent>().Publish(new RemoveFromPlaylistEventArgs()
       {
         DeleteType = DeleteType.SingleFromPlaylist,
         SongsToDelete = songs
@@ -257,9 +257,9 @@ namespace VPlayer.Core.ViewModels
 
     public void OnDeleteSongFromPlaylistWithAlbum()
     {
-      var songs = new System.Collections.Generic.List<Song>() { Model };
+      var songs = new System.Collections.Generic.List<SongInPlayList>() { this };
 
-      eventAggregator.GetEvent<DeleteSongEvent>().Publish(new DeleteEventArgs()
+      eventAggregator.GetEvent<RemoveFromPlaylistEvent>().Publish(new RemoveFromPlaylistEventArgs()
       {
         DeleteType = DeleteType.AlbumFromPlaylist,
         SongsToDelete = songs

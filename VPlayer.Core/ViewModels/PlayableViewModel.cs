@@ -46,7 +46,26 @@ namespace VPlayer.Core.ViewModels
 
     public abstract string BottomText { get; }
     public abstract string ImageThumbnail { get; }
-    public bool IsInPlaylist { get; set; }
+
+    #region IsInPlaylist
+
+    private bool isInPlaylist;
+
+    public bool IsInPlaylist
+    {
+      get { return isInPlaylist; }
+      set
+      {
+        if (value != isInPlaylist)
+        {
+          isInPlaylist = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     public InfoDownloadStatus InfoDownloadStatus => Model.InfoDownloadStatus;
 
     #endregion
@@ -95,26 +114,6 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
-
-    protected string GetThumbnailPath()
-    {
-      string path = "";
-
-      if (Model is Album album)
-      {
-        path = album.AlbumFrontCoverFilePath;
-      }
-      else if (Model is Artist artist)
-      {
-        path = artist.ArtistCover;
-      }
-
-      var directory = Path.GetDirectoryName(path);
-
-      path = directory +  "\\thumbnail.jpg";
-
-      return path;
-    }
 
   }
 

@@ -138,6 +138,12 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
       albumViewModel.RaisePropertyChange(nameof(AlbumViewModel.ImageThumbnail));
       albumViewModel.RaisePropertyChange(nameof(AlbumViewModel.Image));
+
+      storage.PushAction(new VCore.Modularity.Events.ItemChanged()
+      {
+        Changed = VCore.Modularity.Events.Changed.Updated,
+        Item = albumViewModel.Model
+      });
     }
 
     #region GetFileSize

@@ -1,22 +1,22 @@
 ﻿using Prism.Events;
 using System.Collections.Generic;
 using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.Core.ViewModels;
 
 namespace VPlayer.Core.Events
 {
   public enum DeleteType
   {
-    Database,
     SingleFromPlaylist,
     AlbumFromPlaylist
   }
-  public class DeleteEventArgs
+  public class RemoveFromPlaylistEventArgs
   {
     public DeleteType DeleteType { get; set; }
-    public List<Song> SongsToDelete { get; set; }
+    public List<SongInPlayList> SongsToDelete { get; set; }
   }
 
-  public class DeleteSongEvent : PubSubEvent<DeleteEventArgs>
+  public class RemoveFromPlaylistEvent : PubSubEvent<RemoveFromPlaylistEventArgs>
   {
 
   }

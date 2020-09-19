@@ -53,7 +53,7 @@ namespace VPlayer.AudioStorage.Repositories
 
     public virtual void Delete(TEntity entity)
     {
-      context.Set<TEntity>().Remove(entity);
+     context.Set<TEntity>().Remove(entity);
     }
 
     public virtual void Edit(TEntity entity)
