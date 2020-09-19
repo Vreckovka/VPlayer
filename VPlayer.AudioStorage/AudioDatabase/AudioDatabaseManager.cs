@@ -478,6 +478,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
             //Update is first time
             if (originalAlbum == null)
             {
+             
               var albums = context.Albums.Include(x => x.Songs).Include(x => x.Artist).ToList();
 
               originalAlbum = (from x in albums
@@ -487,6 +488,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
               //Album could be deleted from storage
               if (originalAlbum != null)
               {
+                album.Songs = null;
                 originalAlbum.Update(album);
 
                 var duplicates = (from x in albums
@@ -499,6 +501,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
                 if (duplicates == null)
                 {
+                  
                   context.SaveChanges();
                   logger.Log(Logger.MessageType.Success,
                     $"Album was updated in database {album.Name}");

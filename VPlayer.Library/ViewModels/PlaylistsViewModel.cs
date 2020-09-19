@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Logger;
 using Prism.Events;
 using VCore;
 using VCore.Annotations;
@@ -52,6 +53,7 @@ namespace VPlayer.Library.ViewModels
     private readonly IViewModelsFactory viewModelsFactory;
     private readonly PlaylistsRepository playlistsRepository;
     private readonly IStorageManager storageManager;
+    private readonly ILogger logger;
     private readonly IRegionProvider regionProvider;
 
     #endregion
@@ -63,11 +65,14 @@ namespace VPlayer.Library.ViewModels
       IEventAggregator eventAggregator, 
       IViewModelsFactory viewModelsFactory, 
       PlaylistsRepository playlistsRepository,
-      IStorageManager storageManager) : base(model, eventAggregator)
+      SongsRepository songsRepository,
+      IStorageManager storageManager,
+      ILogger logger) : base(model, eventAggregator)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.playlistsRepository = playlistsRepository ?? throw new ArgumentNullException(nameof(playlistsRepository));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     #endregion
@@ -190,11 +195,18 @@ namespace VPlayer.Library.ViewModels
 
     public override IEnumerable<SongInPlayList> GetSongsToPlay()
     {
-      var songs = playlistsRepository.Context.Playlists.Where(x => x.Id == ModelId).Include(x => x.PlaylistSongs.Select(y => y.Song.Album)).SingleOrDefault();
+      var playlist = playlistsRepository.Context.Playlists.Where(x => x.Id == ModelId).Include(x => x.PlaylistSongs.Select(y => y.Song.Album)).SingleOrDefault();
 
-      if (songs != null)
+      if (playlist != null)
       {
-        return songs.PlaylistSongs.Select(x => viewModelsFactory.Create<SongInPlayList>(x.Song));
+        var validSongs = playlist.PlaylistSongs.Where(x => x.Song.Album != null).ToList();
+
+        if (validSongs.Count != playlist.PlaylistSongs.Count)
+        {
+          logger.Log(MessageType.Error, $"SONGS WITH NULL ALBUM! {ModelId} {Name}");
+        }
+
+        return validSongs.Select(x => viewModelsFactory.Create<SongInPlayList>(x.Song));
       }
 
       return new List<SongInPlayList>(); ;

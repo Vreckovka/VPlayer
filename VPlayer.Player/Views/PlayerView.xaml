@@ -5,15 +5,17 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:VPlayer.Player.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:userControls="clr-namespace:VPlayer.Player.UserControls"
              mc:Ignorable="d"
              >
   <Grid>
     <Border >
-      <Grid HorizontalAlignment="Center">
-        <Grid.RowDefinitions>
-          <RowDefinition Height="auto" />
-        </Grid.RowDefinitions>
-        <Grid HorizontalAlignment="Center">
+      <Grid HorizontalAlignment="Center" >
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="auto" />
+          <ColumnDefinition Width="auto" />
+        </Grid.ColumnDefinitions>
+        <Grid HorizontalAlignment="Center" Grid.ColumnSpan="2">
           <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="auto" />
@@ -56,8 +58,14 @@
                                IsEnabled="{Binding CanPlay}"
                                Command="{Binding NextCommand}"/>
 
+         
 
         </Grid>
+
+        <userControls:SoundVizualizer NumberOfColumns="16" 
+                                      Grid.Column="1"
+                                      Margin="350 10 0 0"
+                                      ColumnBrush="{StaticResource DefaultRedBrush}"/>
       </Grid>
     </Border>
   </Grid>

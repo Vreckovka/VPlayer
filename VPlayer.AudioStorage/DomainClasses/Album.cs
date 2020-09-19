@@ -55,7 +55,9 @@ namespace VPlayer.AudioStorage.DomainClasses
       MusicBrainzId = album.MusicBrainzId;
       ReleaseDate = album.ReleaseDate;
       InfoDownloadStatus = album.InfoDownloadStatus;
-      Songs = album.Songs;
+
+      if (album.Songs != null)
+        Songs = album.Songs;
     }
 
     #endregion

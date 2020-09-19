@@ -48,6 +48,9 @@
       <HintPath>..\packages\CommonServiceLocator.2.0.4\lib\net47\CommonServiceLocator.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="CSCore, Version=1.2.1.2, Culture=neutral, PublicKeyToken=5a08f2b6f4415dea, processorArchitecture=MSIL">
+      <HintPath>..\packages\CSCore.1.2.1.2\lib\net35-client\CSCore.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.3.0\lib\net45\EntityFramework.dll</HintPath>
       <Private>False</Private>
@@ -91,6 +94,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Net" />
     <Reference Include="System.Net.Http.Extensions, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Extensions.dll</HintPath>
@@ -146,6 +150,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converters\ActualTimeConverter.cs" />
+    <Compile Include="SoundVizualization\BasicSpectrumProvider.cs" />
+    <Compile Include="SoundVizualization\GradientCalculator.cs" />
+    <Compile Include="SoundVizualization\ISpectrumProvider.cs" />
+    <Compile Include="SoundVizualization\LineSpectrum.cs" />
+    <Compile Include="SoundVizualization\ScalingStrategy.cs" />
+    <Compile Include="SoundVizualization\SpectrumBase.cs" />
+    <Compile Include="SoundVizualization\VoicePrint3DSpectrum.cs" />
+    <Compile Include="UserControls\SoundVizualizer.xaml.cs">
+      <DependentUpon>SoundVizualizer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\PlayerViewModel.cs" />
     <Compile Include="Views\PlayerView.xaml.cs">
       <DependentUpon>PlayerView.xaml</DependentUpon>
@@ -212,6 +226,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Page Include="UserControls\SoundVizualizer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\PlayerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
