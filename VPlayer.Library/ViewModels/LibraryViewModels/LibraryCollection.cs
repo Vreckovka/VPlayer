@@ -129,7 +129,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
     public void Add(TModel entity)
     {
-      Application.Current.Dispatcher.Invoke(() =>
+      Application.Current?.Dispatcher?.Invoke(() =>
       {
         var viewModel = ViewModelsFactory.Create<TViewModel>(entity);
         Items.Add(viewModel);
@@ -145,7 +145,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
     public void Remove(TModel entity)
     {
-      Application.Current.Dispatcher.Invoke(() =>
+      Application.Current?.Dispatcher?.Invoke(() =>
       {
         if (WasLoaded)
         {

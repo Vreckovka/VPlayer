@@ -196,7 +196,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
                   if (downloadedCover != null)
                   {
-                    Application.Current.Dispatcher.Invoke(() =>
+                    Application.Current?.Dispatcher?.Invoke(() =>
                     {
                       cover.DownloadedCover = downloadedCover;
                       cover.Size = downloadedCover.Length;

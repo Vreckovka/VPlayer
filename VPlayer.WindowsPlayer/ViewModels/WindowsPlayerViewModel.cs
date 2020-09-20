@@ -353,6 +353,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           var libDirectory = new DirectoryInfo(path.FullName);
 
           MediaPlayer = new VlcMediaPlayer(libDirectory);
+          MediaPlayer.DisposeWith(this);
         }
 
         if (MediaPlayer == null)
@@ -371,13 +372,20 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         MediaPlayer.TimeChanged += (sender, e) =>
         {
-          ActualSong.ActualPosition = ((VlcMediaPlayer)sender).Position;
-          ActualSavedPlaylist.LastSongElapsedTime = ((VlcMediaPlayer)sender).Position;
+          if (ActualSong != null)
+          {
+            ActualSong.ActualPosition = ((VlcMediaPlayer)sender).Position;
+            ActualSavedPlaylist.LastSongElapsedTime = ((VlcMediaPlayer)sender).Position;
+          }
         };
 
         MediaPlayer.Paused += (sender, e) =>
         {
-          ActualSong.IsPaused = true;
+          if (ActualSong != null)
+          {
+            ActualSong.IsPaused = true;
+          }
+
           IsPlaying = false;
           IsPlayingSubject.OnNext(IsPlaying);
         };
@@ -467,7 +475,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
             }
           }
 
-          SavePlaylist();
+          SavePlaylist(editSaved: true);
 
           break;
         case DeleteType.AlbumFromPlaylist:
@@ -483,7 +491,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
               PlayList.Remove(albumSong);
             }
 
-            SavePlaylist();
+            SavePlaylist(editSaved: true);
           }
           break;
         default:
@@ -497,7 +505,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region ItemsRemoved
 
-    private async void ItemsRemoved(EventPattern<SongInPlayList> eventPattern)
+    private void ItemsRemoved(EventPattern<SongInPlayList> eventPattern)
     {
       var anyAlbum = PlayList.Any(x => x.AlbumViewModel.ModelId == eventPattern.EventArgs.AlbumViewModel.ModelId);
 
@@ -592,8 +600,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         case PlaySongsAction.Play:
           PlaySongs(data.Songs);
-          SavePlaylist();
-
 
           break;
         case PlaySongsAction.Add:
@@ -606,7 +612,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
           ReloadVirtulizedPlaylist();
           RaisePropertyChanged(nameof(CanPlay));
-          SavePlaylist();
+          SavePlaylist(editSaved: true);
           break;
         case PlaySongsAction.PlayFromPlaylist:
           PlayPlaylist(data);
@@ -637,7 +643,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     }
 
-    private void PlaySongs(IEnumerable<SongInPlayList> songs, bool savePlaylist = true, int songIndex = 0)
+    private void PlaySongs(IEnumerable<SongInPlayList> songs, bool savePlaylist = true, int songIndex = 0, bool editSaved = false)
     {
       IsActive = true;
 
@@ -654,7 +660,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       if (savePlaylist)
       {
-        SavePlaylist();
+        SavePlaylist(editSaved: editSaved);
       }
     }
 
@@ -847,6 +853,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           if (ActualSavedPlaylist != null)
           {
             ActualSavedPlaylist.LastSongIndex = PlayList.IndexOf(ActualSong);
+            ActualSavedPlaylist.LastSongElapsedTime = 0;
             UpdateActualSavedPlaylistPlaylist();
           }
 
@@ -940,7 +947,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region SavePlaylist
 
-    public bool SavePlaylist(bool isUserCreated = false)
+    public bool SavePlaylist(bool isUserCreated = false, bool editSaved = false)
     {
       var songs = new List<PlaylistSong>();
 
@@ -979,7 +986,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       bool success = false;
 
-      if (ActualSavedPlaylist.IsUserCreated && hashCode != ActualSavedPlaylist.SongsInPlaylitsHashCode)
+      if (editSaved && ActualSavedPlaylist.IsUserCreated && hashCode != ActualSavedPlaylist.SongsInPlaylitsHashCode)
       {
         ActualSavedPlaylist.SongsInPlaylitsHashCode = hashCode;
         ActualSavedPlaylist.PlaylistSongs = songs;
@@ -1006,9 +1013,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
 
     #endregion
-
-
-   
 
     #region UpdateActualSavedPlaylistPlaylist
 
@@ -1058,6 +1062,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       if (ActualSavedPlaylist != null)
         UpdateActualSavedPlaylistPlaylist();
+
 
       base.Dispose();
     }

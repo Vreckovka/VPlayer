@@ -110,7 +110,7 @@ namespace VPlayer.Library.ViewModels
         case Changed.Added:
           LibraryCollection.Add(model);
 
-          Application.Current.Dispatcher.Invoke(() =>
+          Application.Current?.Dispatcher?.Invoke(() =>
           {
             RaisePropertyChanged(nameof(View));
             RaisePropertyChanged(nameof(ViewModels));
@@ -136,7 +136,7 @@ namespace VPlayer.Library.ViewModels
 
     protected virtual void OnUpdateItemChange(TModel model)
     {
-      Application.Current.Dispatcher.Invoke(() =>
+      Application.Current?.Dispatcher?.Invoke(() =>
       {
         LibraryCollection.Update(model);
       });
@@ -150,7 +150,7 @@ namespace VPlayer.Library.ViewModels
     {
       LibraryCollection.Remove(model);
 
-      Application.Current.Dispatcher.Invoke(() =>
+      Application.Current?.Dispatcher?.Invoke(() =>
       {
         RaisePropertyChanged(nameof(View));
         RaisePropertyChanged(nameof(ViewModels));

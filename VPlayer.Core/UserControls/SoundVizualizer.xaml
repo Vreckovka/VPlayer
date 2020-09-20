@@ -7,10 +7,16 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
-  <StackPanel Name="mainStackPanel">
+  <Grid>
+    <Image x:Name="Image" Width="2000"/>
+
+    <StackPanel Name="mainStackPanel" HorizontalAlignment="Right" VerticalAlignment="Bottom" Visibility="Collapsed">
     <StackPanel.LayoutTransform>
       <RotateTransform Angle="-90"/>
     </StackPanel.LayoutTransform>
   </StackPanel>
+  </Grid>
+ 
+ 
 
 </UserControl>

@@ -10,6 +10,7 @@
              xmlns:attachedBehaviors="clr-namespace:ScrollAnimateBehavior.AttachedBehaviors;assembly=VCore"
              xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
              xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
+             xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
              d:DataContext="{d:DesignInstance Type={x:Type design1:PlayerDesingViewModel},
                                               IsDesignTimeCreatable=True}"
              d:DesignHeight="450"
@@ -41,6 +42,10 @@
     </Grid.ColumnDefinitions>
 
 
+  
+  
+
+
 
     <Grid Grid.Column="0" Grid.ColumnSpan="2">
       <Grid.RowDefinitions>
@@ -55,6 +60,9 @@
           <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
+
+     
+
         <Image Grid.Column="0"
                Source="{Binding ActualSong.ImagePath,Converter={library1:CacheImageConverter}, IsAsync=True}"
                Stretch="UniformToFill" >
@@ -65,6 +73,7 @@
                Stretch="UniformToFill" >
 
         </Image>
+
 
         <Grid Grid.RowSpan="2"
               Grid.ColumnSpan="2"
@@ -113,6 +122,7 @@
         </Border.Effect>
       </Border>
 
+
       <Grid Grid.Row="0" >
         <Grid.Background>
           <LinearGradientBrush StartPoint="0,1" EndPoint="0 0">
@@ -138,10 +148,15 @@
         </Grid.Background>
       </Grid>
 
-      <Border
-              Grid.Row="1"  Background="#95000000"       
+      <Border Grid.Row="1"  
+              Background="#95000000"       
               Margin="0 0 0 -2">
         <Grid>
+
+         
+           
+          
+
           <ContentControl 
             Content="{Binding ActualSong.LyricsObject}" 
             ContentTemplateSelector="{StaticResource LyricsTemplateSelector}" 
@@ -150,10 +165,23 @@
         </Grid>
       </Border>
 
+   
+
       <Grid Height="75"
             VerticalAlignment="Bottom"
             Background="#DD000000"
             Grid.Row="2">
+
+        <userControls:SoundVizualizer 
+          HorizontalAlignment="Stretch"
+          Grid.Row="0"
+          Grid.Column="0"
+          NumberOfColumns="135" 
+          Opacity="1"
+          BottomColor="#251f3338"
+          TopColor="#808bcde0">
+
+        </userControls:SoundVizualizer>
 
         <Button Width="50"
                 Margin="10,0,0,15"
@@ -259,7 +287,7 @@
                      FontFamily="{StaticResource Roboto}"
                      FontWeight="DemiBold"
                      FontSize="15"
-                     Opacity="0.5"
+                     Opacity="0.7"
                      Foreground="#f2e0cb">
             <Run Text="{Binding ActualSong.ArtistViewModel.Name, Mode=OneWay}" />
             <Run Text="{Binding ActualSong.AlbumViewModel.Name, Mode=OneWay, StringFormat={}({0})}" />
@@ -283,9 +311,12 @@
                     IsChecked="{Binding IsShuffle}"
                     PathStyle="{StaticResource Shuffle}" />
       </Grid>
+
+     
     </Grid>
 
 
+  
 
     <GridSplitter Grid.RowSpan="3"
                   Grid.Column="2"

@@ -150,16 +150,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converters\ActualTimeConverter.cs" />
-    <Compile Include="SoundVizualization\BasicSpectrumProvider.cs" />
-    <Compile Include="SoundVizualization\GradientCalculator.cs" />
-    <Compile Include="SoundVizualization\ISpectrumProvider.cs" />
-    <Compile Include="SoundVizualization\LineSpectrum.cs" />
-    <Compile Include="SoundVizualization\ScalingStrategy.cs" />
-    <Compile Include="SoundVizualization\SpectrumBase.cs" />
-    <Compile Include="SoundVizualization\VoicePrint3DSpectrum.cs" />
-    <Compile Include="UserControls\SoundVizualizer.xaml.cs">
-      <DependentUpon>SoundVizualizer.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ViewModels\PlayerViewModel.cs" />
     <Compile Include="Views\PlayerView.xaml.cs">
       <DependentUpon>PlayerView.xaml</DependentUpon>
@@ -205,7 +195,7 @@
       <Name>Listener</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\Logger\Logger.csproj">
+    <ProjectReference Include="..\..\CustomLibraries\Logger\Logger.csproj">
       <Project>{6212fadf-45a6-4613-b5a8-5c5a57f3bfb0}</Project>
       <Name>Logger</Name>
       <Private>False</Private>
@@ -226,10 +216,6 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Page Include="UserControls\SoundVizualizer.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\PlayerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

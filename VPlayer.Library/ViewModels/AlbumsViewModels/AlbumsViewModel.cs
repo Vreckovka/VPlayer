@@ -102,7 +102,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
               throw new ArgumentOutOfRangeException();
           }
 
-          Application.Current.Dispatcher.Invoke(() => { album.RaisePropertyChanges(); });
+          Application.Current?.Dispatcher?.Invoke(() => { album.RaisePropertyChanges(); });
         }
       }
     }

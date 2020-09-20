@@ -26,7 +26,7 @@ namespace VPlayer.Player.Behaviors
 
     private void AssociatedObject_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      Application.Current.Dispatcher.Invoke(() =>
+      Application.Current?.Dispatcher?.Invoke(() =>
       {
         // Get the border of the listview (first child of a listview)
         Decorator border = VisualTreeHelper.GetChild(AssociatedObject, 0) as Decorator;
@@ -73,7 +73,7 @@ namespace VPlayer.Player.Behaviors
     {
       try
       {
-        Application.Current.Dispatcher.Invoke(() =>
+        Application.Current?.Dispatcher?.Invoke(() =>
         {
 
           if (border == null)

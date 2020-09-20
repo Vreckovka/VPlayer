@@ -111,9 +111,7 @@ namespace WinformsVisualization.Visualization
       if (!UpdateFrequencyMappingIfNessesary(size))
         return null;
 
-      using (
-          Brush brush = new LinearGradientBrush(new RectangleF(0, 0, (float)_barWidth, size.Height), color2,
-              color1, LinearGradientMode.Vertical))
+      using (Brush brush = new LinearGradientBrush(new RectangleF(0, 0, (float)_barWidth, size.Height), color2, color1, LinearGradientMode.Vertical))
       {
         return CreateSpectrumLine(size, brush, background, highQuality);
       }
