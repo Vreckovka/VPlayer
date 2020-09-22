@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Google.Apis.Drive.v3;
 using VCore.Annotations;
+using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;
 using File = Google.Apis.Drive.v3.Data.File;
 
 namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
@@ -41,6 +42,8 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
     }
 
     #endregion
+
+    #region Methods
 
     #region GetFile
 
@@ -86,7 +89,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
     #region GetLinesLrcFileAsync
 
-    protected override async Task<string[]> GetLinesLrcFileAsync(string songName, string artistName, string albumName)
+    protected override async Task<KeyValuePair<string[], ILRCFile>> GetLinesLrcFileAsync(string songName, string artistName, string albumName)
     {
       var lyricsFile = GetFile(songName, artistName, albumName);
 
@@ -102,13 +105,18 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
               var lines = text.Split('\n');
 
-              return lines;
+              var lRCFile = new GoogleLRCFile(null)
+              {
+                GoogleDriveFileId = lyricsFile.File.Id
+              };
+
+              return new KeyValuePair<string[], ILRCFile>(lines, lRCFile);
             }
           }
         }
       }
 
-      return null;
+      return new KeyValuePair<string[], ILRCFile>(null,null);
     }
 
     #endregion
@@ -141,8 +149,6 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
     #endregion
 
-   
-
     #region Download
 
     private async Task<Stream> Download(File file)
@@ -161,6 +167,32 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
       }
 
       return null;
+    }
+
+    #endregion
+
+    public override void Update(ILRCFile lRCFile)
+    {
+      if (lRCFile is GoogleLRCFile googleLRCFile)
+      {
+        var file = googleDriveServiceProvider.GetFile(googleLRCFile.GoogleDriveFileId);
+
+        Stream stream = GenerateStreamFromString(lRCFile.GetString());
+
+        googleDriveServiceProvider.UpdateFile(file,file.Id,stream, file.MimeType);
+
+
+      }
+    }
+
+    public static Stream GenerateStreamFromString(string s)
+    {
+      var stream = new MemoryStream();
+      var writer = new StreamWriter(stream);
+      writer.Write(s);
+      writer.Flush();
+      stream.Position = 0;
+      return stream;
     }
 
     #endregion

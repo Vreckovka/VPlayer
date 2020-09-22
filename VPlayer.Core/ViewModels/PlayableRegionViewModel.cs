@@ -22,7 +22,26 @@ namespace VPlayer.Core.ViewModels
     public abstract void PlayNext(int? songIndex, bool forcePlay = false);
     public abstract void PlayPrevious();
     public abstract void Stop();
-    public abstract bool IsPlaying { get; protected set; }
+
+    #region IsPlaying
+
+    private bool isPlaying;
+
+    public virtual bool IsPlaying
+    {
+      get { return isPlaying; }
+      protected set
+      {
+        if (value != isPlaying)
+        {
+          isPlaying = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     public Subject<bool> IsPlayingSubject { get; } = new Subject<bool>();
     public abstract bool CanPlay { get; }
   }

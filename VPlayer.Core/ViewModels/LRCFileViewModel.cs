@@ -3,14 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Windows.Input;
+using VCore;
+using VCore.Annotations;
 using VCore.ViewModels;
+using VPlayer.AudioStorage.InfoDownloader.Clients.GIfs;
 using VPlayer.AudioStorage.InfoDownloader.LRC;
+using VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;
 
 namespace VPlayer.Core.ViewModels
 {
-  public class LRCFileViewModel : ViewModel<LRCFile>
+  public class LRCFileViewModel : ViewModel<ILRCFile>
   {
+    private readonly ILrcProvider lrcProvider;
+
     #region Fields
 
     private readonly ILrcProvider sourceProvider;
@@ -19,8 +26,10 @@ namespace VPlayer.Core.ViewModels
 
     #region Constructors
 
-    public LRCFileViewModel(LRCFile model, LRCProviders lRcProvider) : base(model)
+    public LRCFileViewModel(ILRCFile model, LRCProviders lRcProvider, [NotNull] ILrcProvider lrcProvider) : base(model)
     {
+      this.lrcProvider = lrcProvider ?? throw new ArgumentNullException(nameof(lrcProvider));
+
       Provider = lRcProvider;
 
       Lines = model?.Lines.Select(x => new LRCLyricLineViewModel(x)).ToList();
@@ -65,9 +74,28 @@ namespace VPlayer.Core.ViewModels
     #endregion
 
     public LRCProviders Provider { get; private set; }
-
     public List<LRCLyricLineViewModel> Lines { get; }
     public LRCLyricLineViewModel ActualLine { get; private set; }
+
+    #region TimeAdjustment
+
+    private double timeAdjustment;
+    public double TimeAdjustment
+    {
+      get { return timeAdjustment; }
+      set
+      {
+        if (value != timeAdjustment)
+        {
+          timeAdjustment = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region SetActualLine
 
     private TimeSpan? lastTimestamp;
     private TimeSpan? nextTimestamp;
@@ -77,16 +105,16 @@ namespace VPlayer.Core.ViewModels
     {
       lock (batton)
       {
-        if (lastTimestamp == null ||
-            (lastTimestamp <= timeSpan &&
-             nextTimestamp <= timeSpan) || (lastTimestamp > timeSpan))
+        if (lastTimestamp == null || 
+            (lastTimestamp <= timeSpan && nextTimestamp <= timeSpan) || 
+            (lastTimestamp > timeSpan))
         {
           if (ActualLine != null)
           {
             ActualLine.IsActual = false;
           }
 
-          var newLine = Lines.Where(x => x.Model.Timestamp <= timeSpan).OrderByDescending(x => x.Model.Timestamp).FirstOrDefault();
+          var newLine = Lines.Where(x => x.Model.Timestamp.Value.TotalMilliseconds + TimeAdjustment <= timeSpan.TotalMilliseconds).OrderByDescending(x => x.Model.Timestamp).FirstOrDefault();
 
           if (newLine != null && ActualLine != newLine)
           {
@@ -103,9 +131,11 @@ namespace VPlayer.Core.ViewModels
               {
                 nextTimestampIndex++;
 
-                if (nextTimestampIndex < Lines.Count)
+                var nextLineTimestamp = Lines[nextTimestampIndex].Model.Timestamp;
+
+                if (nextTimestampIndex < Lines.Count && nextLineTimestamp.HasValue)
                 {
-                  nextTimestamp = Lines[nextTimestampIndex].Model.Timestamp;
+                  nextTimestamp = TimeSpan.FromMilliseconds(nextLineTimestamp.Value.TotalMilliseconds + TimeAdjustment);
                 }
                 else
                 {
@@ -134,5 +164,45 @@ namespace VPlayer.Core.ViewModels
         }
       }
     }
+
+    #endregion
+
+    #region ApplyPernamently
+
+    private ActionCommand applyPernamently;
+
+    public ICommand ApplyPernamently
+    {
+      get
+      {
+        if (applyPernamently == null)
+        {
+          applyPernamently = new ActionCommand(OnApplyPernamently);
+        }
+
+        return applyPernamently;
+      }
+    }
+
+    public async void OnApplyPernamently()
+    {
+      Model.Lines.ForEach(x => x.Timestamp += TimeSpan.FromMilliseconds(TimeAdjustment));
+
+      if (Model is GoogleLRCFile google && Provider == LRCProviders.Google)
+      {
+        lrcProvider.Update(Model);
+      }
+      else
+      {
+       var lrcFile = await lrcProvider.TryGetLrcAsync(Model., Model.Artist, Model.Album);
+      
+       Model = lrcFile;
+
+       lrcProvider.Update(lrcFile);
+      }
+    
+    }
+
+    #endregion
   }
 }

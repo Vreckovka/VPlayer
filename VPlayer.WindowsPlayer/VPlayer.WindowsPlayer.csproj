@@ -151,10 +151,14 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WpfAnimatedGif">
+      <HintPath>..\packages\WpfAnimatedGif.2.0.0\lib\net40\WpfAnimatedGif.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Behaviors\AutoScrollBehavior.cs" />
     <Compile Include="Behaviors\AutoScrollLyricsBehavior.cs" />
+    <Compile Include="Behaviors\ImageToGifBehavior.cs" />
     <Compile Include="Behaviors\SliderValueChangedManualy.cs" />
     <Compile Include="Design\PlayerDesingViewModel.cs" />
     <Compile Include="Design\WindowsPlayerDesignViewModel.cs" />
@@ -174,6 +178,7 @@
     </Compile>
     <Compile Include="TemplateSelectors\LyricsProviderTemplateSelector.cs" />
     <Compile Include="TemplateSelectors\LyricsTemplateSelector.cs" />
+    <Compile Include="TemplateSelectors\SongImageTemplateSelector.cs" />
     <Compile Include="ViewModels\WindowsPlayerViewModel.cs" />
     <Compile Include="ViewModels\WindowsViewModel.cs" />
     <Compile Include="Views\WindowsPlayer\WindowsPlayerView.xaml.cs">

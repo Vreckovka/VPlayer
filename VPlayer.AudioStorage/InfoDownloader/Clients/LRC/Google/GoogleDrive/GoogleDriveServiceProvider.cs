@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
@@ -17,6 +18,14 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
     DriveService DriveService { get; }
 
     IEnumerable<File> GetFilesInFolder(File folder, string mimeType);
+
+    void UpdateFile(
+      File body,
+      string originalFileId,
+      Stream stream,
+      string mimeType);
+
+    File GetFile(string fileId);
   }
 
   public class GoogleDriveServiceProvider : IGoogleDriveServiceProvider
@@ -56,23 +65,20 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
     #region Methods
 
-
     #region RegisterService
-
+    UserCredential credential;
     private DriveService RegisterService(string[] scopes = null)
     {
       lock (this)
       {
-        if (driveService == null)
+        if (driveService == null || scopes != null)
         {
           try
           {
             if (scopes == null)
             {
-              scopes = new[] { DriveService.Scope.DriveReadonly };
+              scopes = new[] { DriveService.Scope.Drive };
             }
-
-            UserCredential credential;
 
             using (var stream = new FileStream(keyPath, FileMode.Open, FileAccess.Read))
             {
@@ -132,7 +138,52 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
       return null;
     }
 
-    #endregion 
+    #endregion
+
+    #region UpdateFile
+
+    public async void UpdateFile(File body, string originalFileId, Stream stream, string mimeType)
+    {
+      var asd = DriveService.Files.Update(null, originalFileId,stream,mimeType);
+
+      asd.ProgressChanged += Asd_ProgressChanged;
+      asd.ResponseReceived += Asd_ResponseReceived;
+      asd.UploadSessionData += Asd_UploadSessionData;
+
+      asd.Upload();
+    }
+
+    private void Asd_UploadSessionData(global::Google.Apis.Upload.IUploadSessionData obj)
+    {
+    }
+
+    private void Asd_ResponseReceived(File obj)
+    {
+    }
+
+    private void Asd_ProgressChanged(global::Google.Apis.Upload.IUploadProgress obj)
+    {
+    }
+
+    #endregion
+
+    #region GetFile
+
+    public File GetFile(string fileId)
+    {
+      if (DriveService != null)
+      {
+        var request = DriveService.Files.Get(fileId);
+
+        var file = request.Execute();
+
+        return file;
+      }
+
+      return null;
+    }
+
+    #endregion
 
     #endregion
   }

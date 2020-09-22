@@ -73,13 +73,6 @@ namespace VPlayer.ViewModels
       var player = viewModelsFactory.Create<PlayerViewModel>();
       player.IsActive = true;
 
-#if DEBUG
-      WinConsole.CreateConsole();
-
-      Console.ForegroundColor = ConsoleColor.Green;
-      Console.WriteLine("TU JE MOJ TEXT");
-#endif
-
     }
 
     #endregion

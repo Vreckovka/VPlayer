@@ -11,6 +11,9 @@
              xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
              xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
              xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
+             xmlns:gif="http://wpfanimatedgif.codeplex.com"
+             xmlns:behaviors1="clr-namespace:VPlayer.WindowsPlayer.Behaviors"
+             xmlns:windowsPlayer="clr-namespace:VPlayer.Player.Views.WindowsPlayer"
              d:DataContext="{d:DesignInstance Type={x:Type design1:PlayerDesingViewModel},
                                               IsDesignTimeCreatable=True}"
              d:DesignHeight="450"
@@ -31,6 +34,7 @@
       <RowDefinition Height="auto" />
       <RowDefinition Height="auto" />
       <RowDefinition Height="auto" />
+      <RowDefinition Height="auto" />
     </Grid.RowDefinitions>
 
     <Grid.ColumnDefinitions>
@@ -41,121 +45,26 @@
       <ColumnDefinition Width="170" />
     </Grid.ColumnDefinitions>
 
+    <Grid Grid.RowSpan="3" Grid.Column="0" Grid.ColumnSpan="2">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="2*" />
+          <RowDefinition Height="*" />
+          <RowDefinition Height="auto" />
 
-  
-  
-
-
-
-    <Grid Grid.Column="0" Grid.ColumnSpan="2">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="2*" />
-        <RowDefinition Height="*" />
-        <RowDefinition Height="auto" />
-      </Grid.RowDefinitions>
-
-      <Grid VerticalAlignment="Stretch" Grid.RowSpan="3">
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="*" />
-          <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-
-
-     
-
-        <Image Grid.Column="0"
-               Source="{Binding ActualSong.ImagePath,Converter={library1:CacheImageConverter}, IsAsync=True}"
-               Stretch="UniformToFill" >
-        </Image>
-
-        <Image Grid.Column="1"
-               Source="{Binding ActualSong.ImagePath, Converter={library1:CacheImageConverter}, IsAsync=True}"
-               Stretch="UniformToFill" >
-
-        </Image>
-
-
-        <Grid Grid.RowSpan="2"
-              Grid.ColumnSpan="2"
-              HorizontalAlignment="Stretch"
-              VerticalAlignment="Stretch">
-          <Grid.Background>
-            <LinearGradientBrush StartPoint="0,1" EndPoint="0 0">
-              <GradientStop Offset="1" Color="#5A000000" />
-              <GradientStop Offset="0.6" Color="#5A000000" />
-              <GradientStop Offset="0.05" Color="#5A000000" />
-            </LinearGradientBrush>
-          </Grid.Background>
-        </Grid>
-      </Grid>
+        </Grid.RowDefinitions>
 
       <Grid Grid.RowSpan="3">
-        <Grid.Background>
-          <LinearGradientBrush StartPoint="1,0" EndPoint="0 0">
-            <GradientStop Offset="1" Color="#FF000000" />
-            <GradientStop Offset="0.5" Color="#00000000" />
-            <GradientStop Offset="0.0" Color="#00000000" />
-            <GradientStop Offset="0.0" Color="#FF000000" />
-          </LinearGradientBrush>
-        </Grid.Background>
+          <ContentControl 
+            Content="{Binding UseGif}" 
+            ContentTemplateSelector="{StaticResource SongImageTemplateSelector}" 
+            BorderThickness="0"/>
       </Grid>
-
-      <Border HorizontalAlignment="Center"
-              VerticalAlignment="Center"
-              Panel.ZIndex="0"
-              BorderBrush="#FF080808"
-              BorderThickness="5"
-              Grid.RowSpan="3"
-              Margin="0 15 0 15">
-        <Grid>
-          <Image Name="Image"
-               Source="{Binding ActualSong.ImagePath,  Converter={library1:CacheImageConverter}, IsAsync=True}"
-               Stretch="Uniform" >
-          </Image>
-
-        </Grid>
-
-        <Border.Effect>
-          <DropShadowEffect BlurRadius="20"
-                            Direction="0"
-                            ShadowDepth="15" />
-        </Border.Effect>
-      </Border>
-
-
-      <Grid Grid.Row="0" >
-        <Grid.Background>
-          <LinearGradientBrush StartPoint="0,1" EndPoint="0 0">
-            <GradientStop Offset="1" Color="#2A000000" />
-            <GradientStop Offset="0.85" Color="#00000000" />
-            <GradientStop Offset="0.15" Color="#00000000" />
-            <GradientStop Offset="0.0" Color="#2A000000" />
-          </LinearGradientBrush>
-        </Grid.Background>
-      </Grid>
-
-      <Grid Grid.Row="0"
-            Width="{Binding ElementName=Image, Path=ActualWidth}"
-            Height="{Binding ElementName=Image, Path=ActualHeight}"
-            Grid.RowSpan="2">
-        <Grid.Background>
-          <LinearGradientBrush StartPoint="1,0" EndPoint="0 1">
-            <GradientStop Offset="1" Color="#80000000" />
-            <GradientStop Offset="0.65" Color="#00000000" />
-            <GradientStop Offset="0.35" Color="#00000000" />
-            <GradientStop Offset="0.0" Color="#80000000" />
-          </LinearGradientBrush>
-        </Grid.Background>
-      </Grid>
+     
 
       <Border Grid.Row="1"  
               Background="#95000000"       
               Margin="0 0 0 -2">
         <Grid>
-
-         
-           
-          
 
           <ContentControl 
             Content="{Binding ActualSong.LyricsObject}" 
@@ -165,7 +74,21 @@
         </Grid>
       </Border>
 
-   
+
+      <Grid Grid.Row="0" Grid.RowSpan="3">
+        <controls:PathButton 
+          PathStyle="{StaticResource Gif}"
+          IsChecked="{Binding UseGif, Mode=TwoWay}" 
+          Height="50"
+          Width="50"
+          IconHoverColor="{StaticResource YellowColor}"
+          PathCheckedBrush="{StaticResource YellowBrush}"
+          HorizontalAlignment="Left" 
+          VerticalAlignment="Top"
+          Margin="10"/>
+
+      </Grid>
+
 
       <Grid Height="75"
             VerticalAlignment="Bottom"
@@ -176,10 +99,24 @@
           HorizontalAlignment="Stretch"
           Grid.Row="0"
           Grid.Column="0"
-          NumberOfColumns="135" 
-          Opacity="1"
+          NumberOfColumns="200" 
+          Opacity="0.8"
           BottomColor="#251f3338"
-          TopColor="#808bcde0">
+          TopColor="#8bcde0"
+          MiddleColor="#101b1f"
+          MaxFrequency="8000"
+          IsEnabled="{Binding IsPlaying}">
+
+          <userControls:SoundVizualizer.Style>
+            <Style TargetType="userControls:SoundVizualizer">
+              <Setter Property="Visibility" Value="Collapsed"/>
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                  <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </userControls:SoundVizualizer.Style>
 
         </userControls:SoundVizualizer>
 
@@ -188,7 +125,8 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Bottom"
                 Command="{Binding AlbumDetail}"
-                FontSize="36">
+                FontSize="36"
+                Grid.Row="0">
           <Button.Style>
             <Style BasedOn="{StaticResource BorderlessButtonStyle}" TargetType="Button">
               <Setter Property="FontWeight" Value="Bold" />
@@ -302,7 +240,7 @@
                       HorizontalAlignment="Right"
                       VerticalAlignment="Bottom"
                       IsChecked="{Binding IsRepeate}"
-                      PathStyle="{StaticResource Repeate}" />
+                      PathStyle="{StaticResource Repeate}"/>
 
         <controls:PathButton Margin="0,0,35,5"
                     HorizontalAlignment="Right"
@@ -314,9 +252,6 @@
 
      
     </Grid>
-
-
-  
 
     <GridSplitter Grid.RowSpan="3"
                   Grid.Column="2"
@@ -332,7 +267,7 @@
     </GridSplitter>
 
     <Grid Grid.Row="0"
-          Grid.RowSpan="3"
+          Grid.RowSpan="5"
           Grid.Column="3"
           Grid.ColumnSpan="2"
          MinWidth="170">
@@ -426,7 +361,7 @@
 
 
     <Slider x:Name="Slider_Time"
-            Grid.Row="1"
+            Grid.Row="3"
             Margin="0"
             Padding="0"
             IsMoveToPointEnabled="True"
@@ -440,14 +375,14 @@
       </i:Interaction.Behaviors>
     </Slider>
 
-    <TextBlock Grid.Row="2"
+    <TextBlock Grid.Row="4"
                HorizontalAlignment="Left"
                FontSize="14"
                Grid.Column="0"
                Grid.ColumnSpan="2"
                Foreground="{StaticResource 120_WhiteTransparentBrush}"
                Text="{Binding ActualSong.ActualTime, StringFormat=hh\\:mm\\:ss}" />
-    <TextBlock Grid.Row="2"
+    <TextBlock Grid.Row="4"
                HorizontalAlignment="Right"
                FontSize="14"
                Grid.Column="0"

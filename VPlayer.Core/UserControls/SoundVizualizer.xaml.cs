@@ -17,6 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CSCore;
+using CSCore.CoreAudioAPI;
 using CSCore.DSP;
 using CSCore.SoundIn;
 using CSCore.Streams;
@@ -34,7 +35,9 @@ namespace VPlayer.Player.UserControls
   /// </summary>
   public partial class SoundVizualizer : UserControl
   {
-    public LineSpectrum lineSpectrum;
+    #region Fields
+
+    private LineSpectrum lineSpectrum;
     private IWaveSource waveSource;
     private int width;
     private int height;
@@ -42,6 +45,8 @@ namespace VPlayer.Player.UserControls
     System.Drawing.Color bottomColor = System.Drawing.Color.Green;
     System.Drawing.Color topColor = System.Drawing.Color.Red;
     System.Drawing.Color middleColor = System.Drawing.Color.Black;
+
+    #endregion
 
     #region Constructors
 
@@ -51,14 +56,10 @@ namespace VPlayer.Player.UserControls
 
       this.Loaded += SoundVizualizer_Loaded;
       this.SizeChanged += SoundVizualizer_SizeChanged;
+      this.IsEnabledChanged += SoundVizualizer_IsEnabledChanged;
 
     }
 
-    private void SoundVizualizer_SizeChanged(object sender, SizeChangedEventArgs e)
-    {
-      width = (int)e.NewSize.Width;
-      height = (int)e.NewSize.Height;
-    }
 
     #endregion
 
@@ -169,21 +170,86 @@ namespace VPlayer.Player.UserControls
 
     #endregion
 
+    #region MaxFrequency
+
+    public int MaxFrequency
+    {
+      get { return (int)GetValue(MaxFrequencyProperty); }
+      set { SetValue(MaxFrequencyProperty, value); }
+    }
+
+    public static readonly DependencyProperty MaxFrequencyProperty =
+      DependencyProperty.Register(
+        nameof(MaxFrequencyProperty),
+        typeof(int),
+        typeof(SoundVizualizer),
+        new PropertyMetadata(20000, (x, y) =>
+        {
+          if (x is SoundVizualizer soundVizualizer && y.NewValue is int number && soundVizualizer.lineSpectrum != null)
+          {
+            soundVizualizer.lineSpectrum.MaximumFrequency = number;
+          }
+        }));
+
+
     #endregion
 
+    #endregion
+
+    #region Methods
+
     #region SoundVizualizer_Loaded
+
+    private void SoundVizualizer_Loaded(object sender, RoutedEventArgs e)
+    {
+      InitlizeSoundVizualizer();
+    }
+
+    #endregion
+
+    #region SoundVizualizer_IsEnabledChanged
+
+    private void SoundVizualizer_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      if (e.NewValue is bool newValue && newValue)
+      {
+        InitlizeSoundVizualizer();
+      }
+      else
+      {
+        DisposeSoundVizualizer();
+      }
+    }
+
+    #endregion
+
+    #region SoundVizualizer_SizeChanged
+
+    private void SoundVizualizer_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+      width = (int)e.NewSize.Width;
+      height = (int)e.NewSize.Height;
+    }
+
+    #endregion
+
+    #region InitlizeSoundVizualizer
 
     private Timer timer;
     private ISampleSource source;
     private WasapiLoopbackCapture _soundIn;
-    private void SoundVizualizer_Loaded(object sender, RoutedEventArgs e)
+
+
+    private void InitlizeSoundVizualizer()
     {
       timer = new Timer(40);
 
       //open the default device
       _soundIn = new WasapiLoopbackCapture();
+
       //Our loopback capture opens the default render device by default so the following is not needed
       //_soundIn.Device = MMDeviceEnumerator.DefaultAudioEndpoint(DataFlow.Render, Role.Console);
+
       _soundIn.Initialize();
 
       var soundInSource = new SoundInSource(_soundIn);
@@ -191,7 +257,7 @@ namespace VPlayer.Player.UserControls
 
       SetupSampleSource(source);
 
-     // We need to read from our source otherwise SingleBlockRead is never called and our spectrum provider is not populated
+      // We need to read from our source otherwise SingleBlockRead is never called and our spectrum provider is not populated
       byte[] buffer = new byte[waveSource.WaveFormat.BytesPerSecond / 2];
       soundInSource.DataAvailable += (s, aEvent) =>
       {
@@ -207,9 +273,26 @@ namespace VPlayer.Player.UserControls
       timer.Elapsed += timer2_Tick;
 
       Application.Current.Dispatcher.ShutdownStarted += Dispatcher_ShutdownStarted;
-
     }
 
+
+    #endregion
+
+    #region DisposeSoundVizualizer
+
+    private void DisposeSoundVizualizer()
+    {
+      _soundIn?.Dispose();
+      source?.Dispose();
+
+      if (timer != null)
+      {
+        timer.Elapsed -= timer2_Tick;
+        timer?.Dispose();
+      }
+
+      Application.Current.Dispatcher.ShutdownStarted -= Dispatcher_ShutdownStarted;
+    }
 
     #endregion
 
@@ -217,10 +300,7 @@ namespace VPlayer.Player.UserControls
 
     private void Dispatcher_ShutdownStarted(object sender, EventArgs e)
     {
-      _soundIn?.Dispose();
-      source?.Dispose();
-      timer.Elapsed -= timer2_Tick;
-      timer?.Dispose();
+      DisposeSoundVizualizer();
     }
 
     #endregion
@@ -242,7 +322,9 @@ namespace VPlayer.Player.UserControls
         BarCount = NumberOfColumns,
         BarSpacing = 2,
         IsXLogScale = true,
-        ScalingStrategy = ScalingStrategy.Sqrt
+        ScalingStrategy = ScalingStrategy.Sqrt,
+        MaximumFrequency = MaxFrequency,
+        MinimumFrequency = 0
       };
 
       var notificationSource = new SingleBlockNotificationStream(aSampleSource);
@@ -255,9 +337,11 @@ namespace VPlayer.Player.UserControls
 
     #endregion
 
+    #region timer2_Tick
+
     private void timer2_Tick(object sender, EventArgs e)
     {
-      var newImage = lineSpectrum.CreateSpectrumLine(new System.Drawing.Size(width,height),
+      var newImage = lineSpectrum.CreateSpectrumLine(new System.Drawing.Size(width, height),
         bottomColor,
         topColor,
         middleColor, true);
@@ -265,10 +349,14 @@ namespace VPlayer.Player.UserControls
       {
         newImage.MakeTransparent();
 
-        Application.Current.Dispatcher.Invoke(() => Image.Source = BitmapToImageSource(newImage)
+        Application.Current?.Dispatcher?.Invoke(() => Image.Source = BitmapToImageSource(newImage)
       );
       }
     }
+
+    #endregion
+
+    #region BitmapToImageSource
 
     BitmapImage BitmapToImageSource(Bitmap bitmap)
     {
@@ -285,5 +373,9 @@ namespace VPlayer.Player.UserControls
         return bitmapimage;
       }
     }
+
+    #endregion
+
+    #endregion
   }
 }

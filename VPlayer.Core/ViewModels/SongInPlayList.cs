@@ -352,7 +352,7 @@ namespace VPlayer.Core.ViewModels
 
     private void OnOpenContainingFolder()
     {
-      
+
       if (!string.IsNullOrEmpty(Model.DiskLocation))
       {
         var folder = Path.GetDirectoryName(Model.DiskLocation);
@@ -420,7 +420,24 @@ namespace VPlayer.Core.ViewModels
         var lrc = parser.Parse(LRCLyrics.Split('\n').ToList());
 
         if (lrc != null)
-          LRCFile = new LRCFileViewModel(lrc, provider);
+        {
+          switch (provider)
+          {
+            case LRCProviders.NotIdentified:
+              break;
+            case LRCProviders.Google:
+              LRCFile = new LRCFileViewModel(lrc, provider, googleDriveLrcProvider);
+              break;
+            case LRCProviders.Local:
+              var localProvider = new LocalLrcProvider("C:\\Lyrics");
+              LRCFile = new LRCFileViewModel(lrc, provider, localProvider);
+              break;
+            default:
+              throw new ArgumentOutOfRangeException();
+          }
+         
+        }
+         
       }
     }
 
@@ -437,7 +454,7 @@ namespace VPlayer.Core.ViewModels
         var lrc = await audioInfoDownloader.TryGetLRCLyricsAsync(provider, Model, ArtistViewModel?.Name, AlbumViewModel?.Name);
 
         if (lrc != null)
-          LRCFile = new LRCFileViewModel(lrc, provider.LRCProvider);
+          LRCFile = new LRCFileViewModel(lrc, provider.LRCProvider, provider);
 
       }
     }
@@ -448,10 +465,10 @@ namespace VPlayer.Core.ViewModels
 
     private async Task LoadLRCFromGoogleDrive()
     {
-      var lrc = await audioInfoDownloader.TryGetLRCLyricsAsync(googleDriveLrcProvider, Model, ArtistViewModel?.Name, AlbumViewModel?.Name);
+      var lrc = (GoogleLRCFile)await audioInfoDownloader.TryGetLRCLyricsAsync(googleDriveLrcProvider, Model, ArtistViewModel?.Name, AlbumViewModel?.Name);
 
       if (lrc != null)
-        LRCFile = new LRCFileViewModel(lrc, googleDriveLrcProvider.LRCProvider);
+        LRCFile = new LRCFileViewModel(lrc, googleDriveLrcProvider.LRCProvider,googleDriveLrcProvider);
 
     }
 

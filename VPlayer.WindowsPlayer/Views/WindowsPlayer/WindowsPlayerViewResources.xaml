@@ -10,11 +10,11 @@
                     xmlns:attachedProperties="clr-namespace:VCore.AttachedProperties;assembly=VCore"
                     xmlns:e="http://schemas.epsiloner.git/wpf/"
                     xmlns:controls1="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
-                    xmlns:lrc1="clr-namespace:VPlayer.AudioStorage.InfoDownloader.LRC;assembly=VCore">
+                    xmlns:lrc1="clr-namespace:VPlayer.AudioStorage.InfoDownloader.LRC;assembly=VCore"
+                    xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
+                    xmlns:behaviors1="clr-namespace:VPlayer.WindowsPlayer.Behaviors"
+                    xmlns:windowsPlayer="clr-namespace:VPlayer.Player.Views.WindowsPlayer">
 
-  <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/ControlsTemplates/ButtonWithIconTemplate.xaml" />
-  </ResourceDictionary.MergedDictionaries>
 
   <Style TargetType="TextBox" x:Key="LyricsStyle">
     <Setter Property="FontSize" Value="24"/>
@@ -33,7 +33,6 @@
       </Setter.Value>
     </Setter>
   </Style>
-
 
   <DataTemplate x:Key="LyricsDataTemplate">
     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden" >
@@ -99,6 +98,13 @@
           <behaviors:AutoScrollLyricsBehavior StepSize="29" AnimationTime="0:0:0:0.6"/>
         </i:Interaction.Behaviors>
       </ListView>
+
+      <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center" Width="100">
+
+        <TextBlock Text="Adjust lyrics (ms)"/>
+        <TextBox Text="{Binding TimeAdjustment, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+        <Button Content="Update" Command="{Binding ApplyPernamently}" Width="70" Margin="5"/>
+      </StackPanel>
     </Grid>
   </DataTemplate>
 
@@ -111,7 +117,6 @@
       </DataTrigger>
     </Style.Triggers>
   </Style>
-
 
 
   <DataTemplate x:Key="GoogleLyricsDataTemplate">
@@ -193,7 +198,123 @@
     </Path>
   </DataTemplate>
 
+  <DataTemplate x:Key="AlbumImageDatatemplate">
+    <Grid>
+      <Grid VerticalAlignment="Stretch">
 
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+
+          <Image Grid.Column="0"
+                 Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualSong.ImagePath,Converter={library:CacheImageConverter}}"
+                 Stretch="UniformToFill" />
+
+          <Image Grid.Column="1"
+                 Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualSong.ImagePath, Converter={library:CacheImageConverter}}"
+                 Stretch="UniformToFill" />
+        </Grid>
+
+        <Grid>
+          <Grid.Background>
+            <LinearGradientBrush StartPoint="1,0" EndPoint="0 0">
+              <GradientStop Offset="1" Color="#FF000000" />
+              <GradientStop Offset="0.5" Color="#00000000" />
+              <GradientStop Offset="0.0" Color="#00000000" />
+              <GradientStop Offset="0.0" Color="#FF000000" />
+            </LinearGradientBrush>
+          </Grid.Background>
+        </Grid>
+  
+        <Grid HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch">
+          <Grid.Background>
+            <LinearGradientBrush StartPoint="0,1" EndPoint="0 0">
+              <GradientStop Offset="1" Color="#5A000000" />
+              <GradientStop Offset="0.6" Color="#5A000000" />
+              <GradientStop Offset="0.05" Color="#5A000000" />
+            </LinearGradientBrush>
+          </Grid.Background>
+        </Grid>
+      </Grid>
+
+
+      <Border HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+              Panel.ZIndex="0"
+              BorderBrush="#FF080808"
+              BorderThickness="5"
+              Margin="0 15 0 15">
+        <Image Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualSong.ImagePath,Converter={library:CacheImageConverter}}" />
+
+        <Border.Effect>
+          <DropShadowEffect BlurRadius="20"
+                            Direction="0"
+                            ShadowDepth="15" />
+        </Border.Effect>
+      </Border>
+
+      <Grid Grid.Row="0" >
+          <Grid.Background>
+            <LinearGradientBrush StartPoint="0,1" EndPoint="0 0">
+              <GradientStop Offset="1" Color="#2A000000" />
+              <GradientStop Offset="0.85" Color="#00000000" />
+              <GradientStop Offset="0.15" Color="#00000000" />
+              <GradientStop Offset="0.0" Color="#2A000000" />
+            </LinearGradientBrush>
+          </Grid.Background>
+        </Grid>
+
+      <Grid>
+          <Grid.Background>
+            <LinearGradientBrush StartPoint="1,0" EndPoint="0 1">
+              <GradientStop Offset="1" Color="#80000000" />
+              <GradientStop Offset="0.65" Color="#00000000" />
+              <GradientStop Offset="0.35" Color="#00000000" />
+              <GradientStop Offset="0.0" Color="#80000000" />
+            </LinearGradientBrush>
+          </Grid.Background>
+        </Grid>
+    </Grid>
+ 
+  </DataTemplate>
+
+  <DataTemplate x:Key="GifImageDatatemplate">
+    <Grid>
+      <Image Name="Image"
+             Stretch="Uniform" 
+             behaviors1:ImageBehavior.AnimatedSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.RandomGifUrl}"/>
+
+    <Grid  Grid.RowSpan="2">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="auto"/>
+        <ColumnDefinition />
+      </Grid.ColumnDefinitions>
+
+
+      <StackPanel Orientation="Horizontal" Margin="80 10 0 0" VerticalAlignment="Top">
+        <TextBlock Text="GIF tag: "/>
+        <TextBox Text="AHoj" Visibility="Visible"  Margin="0 -10 0 0"/>
+      </StackPanel>
+
+      <controls:ButtonWithIcon  
+              HorizontalAlignment="Right"
+              Margin="25"
+              IconPathStyle="{StaticResource NextInCircle}"
+              IconHeight="30"
+              IconWidth="30"
+              Content="Next GIF"
+              IconMargin="0 0 5 0"
+              VerticalAlignment="Center" 
+              Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.NextGif}" 
+              Grid.Column="1"/>
+    </Grid>
+
+    </Grid>
+
+  </DataTemplate>
 
   <templateSelectors:LyricsTemplateSelector x:Key="LyricsTemplateSelector" 
                                             LyricsDataTemplate="{StaticResource LyricsDataTemplate}"
@@ -202,6 +323,10 @@
   <templateSelectors:LyricsProviderTemplateSelector x:Key="LyricsProviderTemplateSelector" 
                                                     GoogleDataTemplate="{StaticResource GoogleLyricsDataTemplate}"
                                                     LocalDataTemplate="{StaticResource LocalLyricsDataTemplate}"/>
+
+  <templateSelectors:SongImageTemplateSelector x:Key="SongImageTemplateSelector"
+                                               AlbumDataTemplate="{StaticResource AlbumImageDatatemplate}"
+                                               GifDataTemplate="{StaticResource GifImageDatatemplate}"/>
 
 
   <Style x:Key="ListViewItem_PlayerTrack" TargetType="{x:Type ListViewItem}">

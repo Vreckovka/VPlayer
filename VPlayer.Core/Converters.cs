@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
@@ -12,9 +13,12 @@ using System.Windows.Media.Imaging;
 using VCore.Converters;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.Core.ViewModels;
+using WpfAnimatedGif;
 
 namespace VPlayer.Library
 {
+  #region ScrollingTextDurationConverter
+
   public class ScrollingTextDurationConverter : MarkupExtension, IMultiValueConverter
   {
     public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
@@ -54,6 +58,10 @@ namespace VPlayer.Library
     }
   }
 
+  #endregion
+
+  #region CacheImageConverter
+
   public class CacheImageConverter : MarkupExtension, IValueConverter
   {
     public override object ProvideValue(IServiceProvider serviceProvider)
@@ -88,12 +96,7 @@ namespace VPlayer.Library
         path = PlayableViewModelWithThumbnail<Album>.GetEmptyImage();
       }
 
-     
-
       var bitmapImage = new BitmapImage();
-
-     
-
       bitmapImage.BeginInit();
       bitmapImage.StreamSource = new FileStream(path, FileMode.Open, FileAccess.Read);
 
@@ -101,7 +104,7 @@ namespace VPlayer.Library
       {
         bitmapImage.DecodePixelWidth = pixelWidth;
       }
-     
+
       bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
       bitmapImage.EndInit();
       bitmapImage.StreamSource.Dispose();
@@ -117,6 +120,10 @@ namespace VPlayer.Library
       throw new NotImplementedException();
     }
   }
+
+  #endregion
+
+  #region ScrollingTextMarginConverter
 
   public class ScrollingTextMarginConverter : MarkupExtension, IMultiValueConverter
   {
@@ -154,6 +161,10 @@ namespace VPlayer.Library
     }
   }
 
+  #endregion
+
+  #region IsBiggerConverter
+
   public class IsBiggerConverter : MarkupExtension, IMultiValueConverter
   {
     public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
@@ -175,6 +186,10 @@ namespace VPlayer.Library
       return this;
     }
   }
+
+  #endregion
+
+  #region ImageLazyLoadingConverter
 
   public class ImageLazyLoadingConverter : MarkupExtension, IValueConverter
   {
@@ -210,15 +225,9 @@ namespace VPlayer.Library
     }
   }
 
-  public class IsNullConverter : BaseConverter
-  {
-    public override object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-    {
+  #endregion
 
-      return value == null;
-    }
-   
-  }
+  #region HashConverter
 
   public class HashConverter : BaseConverter
   {
@@ -230,7 +239,7 @@ namespace VPlayer.Library
         subString = it;
       }
 
-      if(subString != null)
+      if (subString != null)
       {
         return GetHashString(value.ToString()).Substring(0, subString.Value);
       }
@@ -238,7 +247,7 @@ namespace VPlayer.Library
       {
         return GetHashString(value.ToString());
       }
-    
+
     }
 
     public static byte[] GetHash(string inputString)
@@ -256,5 +265,7 @@ namespace VPlayer.Library
       return sb.ToString();
     }
   }
+
+  #endregion
 
 }

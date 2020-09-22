@@ -27,6 +27,7 @@ using VCore.ViewModels.Navigation;
 using Vlc.DotNet.Core;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
+using VPlayer.AudioStorage.InfoDownloader.Clients.GIfs;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Interfaces.ViewModels;
@@ -104,12 +105,72 @@ namespace VPlayer.WindowsPlayer.ViewModels
           actualSong = value;
           actualSongSubject.OnNext(PlayList.IndexOf(actualSong));
           RaisePropertyChanged();
+
+          if (actualSong != null && string.IsNullOrEmpty(actualSong.ImagePath))
+          {
+            UseGif = true;
+          }
+        }
+      }
+    }
+
+    #endregion
+
+    #region RandomGifUrl
+
+    private string randomGifUrl;
+
+    public string RandomGifUrl
+    {
+      get { return randomGifUrl; }
+      set
+      {
+        if (value != randomGifUrl)
+        {
+          randomGifUrl = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region GifTag
+
+    private string gifTag = "random";
+
+    public string GifTag
+    {
+      get { return gifTag; }
+      set
+      {
+        if (value != gifTag)
+        {
+          gifTag = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region UseGif
+
+    private bool useGif;
+    public bool UseGif
+    {
+      get { return useGif; }
+      set
+      {
+        if (value != useGif)
+        {
+          useGif = value;
+          RaisePropertyChanged();
         }
       }
     }
     #endregion
 
-    public override bool IsPlaying { get; protected set; }
 
     public override bool CanPlay
     {
@@ -316,6 +377,31 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region NextGif
+
+    private ActionCommand nextGif;
+
+    public ICommand NextGif
+    {
+      get
+      {
+        if (nextGif == null)
+        {
+          nextGif = new ActionCommand(OnNextGif);
+        }
+
+        return nextGif;
+      }
+    }
+
+    public async void OnNextGif()
+    {
+      GiphyClient giphyClient = new GiphyClient();
+      RandomGifUrl = (await giphyClient.GetRandomGif(GifTag)).Url.Replace("&","&amp;");
+    }
+
+    #endregion
+
     #endregion Commands
 
     #region Methods
@@ -324,9 +410,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public override void Initialize()
     {
-      Task.Run(() =>
+      Task.Run(async () =>
       {
         base.Initialize();
+
+        OnNextGif();
 
         actualSearchSubject = new ReplaySubject<string>(1);
         actualSearchSubject.DisposeWith(this);
@@ -680,45 +768,48 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public override void Play()
     {
-      if (IsPlayFnished)
+      Task.Run(() =>
       {
-        PlayNext(0, true);
-      }
-      else
-      {
-        if (ActualSong != null)
+        if (IsPlayFnished)
         {
-          if (IsPlaying)
-          {
-            var media = MediaPlayer.GetMedia();
-            if (media == null || media.NowPlaying != ActualSong.Model.DiskLocation)
-            {
-              //file:///D:/Hudba/2Pac Discography [2007]/--- Other albums ---/1998 - Greatest Hits/2Pac - 102 - 2 Of Amerikaz Most Wanted.mp3
-              var location = new Uri(ActualSong.Model.DiskLocation);
-
-              MediaPlayer.SetMedia(location);
-
-              Task.Run(async () =>
-              {
-                if (string.IsNullOrEmpty(ActualSong.Lyrics) && !string.IsNullOrEmpty(ActualSong.ArtistViewModel?.Name))
-                {
-                  await audioInfoDownloader.UpdateSongLyricsAsync(ActualSong.ArtistViewModel.Name, ActualSong.Name, ActualSong.Model);
-                }
-
-                if (string.IsNullOrEmpty(ActualSong.LRCLyrics))
-                {
-                  await ActualSong.TryToRefreshUpdateLyrics();
-                }
-
-              });
-            }
-          }
-
-          MediaPlayer.Play();
-          CheckCycle();
-
+          PlayNext(0, true);
         }
-      }
+        else
+        {
+          if (ActualSong != null)
+          {
+            if (IsPlaying)
+            {
+              var media = MediaPlayer.GetMedia();
+              if (media == null || media.NowPlaying != ActualSong.Model.DiskLocation)
+              {
+                //file:///D:/Hudba/2Pac Discography [2007]/--- Other albums ---/1998 - Greatest Hits/2Pac - 102 - 2 Of Amerikaz Most Wanted.mp3
+                var location = new Uri(ActualSong.Model.DiskLocation);
+
+                MediaPlayer.SetMedia(location);
+
+                Task.Run(async () =>
+                {
+                  if (string.IsNullOrEmpty(ActualSong.Lyrics) && !string.IsNullOrEmpty(ActualSong.ArtistViewModel?.Name))
+                  {
+                    await audioInfoDownloader.UpdateSongLyricsAsync(ActualSong.ArtistViewModel.Name, ActualSong.Name, ActualSong.Model);
+                  }
+
+                  if (string.IsNullOrEmpty(ActualSong.LRCLyrics))
+                  {
+                    await ActualSong.TryToRefreshUpdateLyrics();
+                  }
+
+                });
+              }
+            }
+
+            MediaPlayer.Play();
+            CheckCycle();
+
+          }
+        }
+      });
     }
 
     #endregion Play
@@ -727,7 +818,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public override void Pause()
     {
-      MediaPlayer.Pause();
+      Task.Run(() => { MediaPlayer.Pause(); });
     }
 
     #endregion Pause
@@ -806,6 +897,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
           Play();
         else if (ActualSong != null)
           ActualSong.IsPaused = true;
+
+        UpdateActualSavedPlaylistPlaylist();
       });
     }
 

@@ -1389,7 +1389,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     }
 
-    public Task<LRCFile> TryGetLRCLyricsAsync<TClient>(TClient client, Song song, string artistName, string albumName) where TClient : ILrcProvider
+    public Task<ILRCFile> TryGetLRCLyricsAsync<TClient>(TClient client, Song song, string artistName, string albumName) where TClient : ILrcProvider
     {
       return Task.Run(async () =>
       {

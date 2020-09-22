@@ -10,8 +10,6 @@ namespace VPlayer.WindowsPlayer.TemplateSelectors
     public DataTemplate GoogleDataTemplate { get; set; }
     public DataTemplate LocalDataTemplate { get; set; }
 
-    public DataTemplate DatabaseDataTemplate { get; set; }
-
     public override DataTemplate SelectTemplate(object item, DependencyObject container)
     {
       if (item is LRCFileViewModel lRCFileViewModel)

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using Ninject;
 using Prism.Events;
 using Prism.Ioc;
@@ -26,6 +27,13 @@ namespace VPlayer
 
       Kernel.Load<CommonNinjectModule>();
       Kernel.Load<VPlayerNinjectModule>();
+
+#if DEBUG
+      WinConsole.CreateConsole();
+
+      Console.ForegroundColor = ConsoleColor.Green;
+      Console.WriteLine("TU JE MOJ TEXT");
+#endif
     }
 
     protected override Window CreateShell()

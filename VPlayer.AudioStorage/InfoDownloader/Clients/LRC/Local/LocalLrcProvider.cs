@@ -72,21 +72,26 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients
 
     #region GetLinesLrcFileAsync
 
-    protected override Task<string[]> GetLinesLrcFileAsync(string songName, string artistName, string albumName)
+    protected override Task<KeyValuePair<string[],ILRCFile>> GetLinesLrcFileAsync(string songName, string artistName, string albumName)
     {
-      return Task.Run(() =>
+      return Task.Run<KeyValuePair<string[], ILRCFile>>(() =>
       {
         var lrcFile = GetFile(songName, artistName, albumName)?.FullName;
 
         if (!string.IsNullOrEmpty(lrcFile))
         {
-          return File.ReadAllLines(lrcFile);
+          return new KeyValuePair<string[], ILRCFile>(File.ReadAllLines(lrcFile),new LRCFile(null));
         }
 
-        return null;
+        return new KeyValuePair<string[], ILRCFile>(null,null);
       });
     }
 
     #endregion
+
+    public override void Update(ILRCFile lRCFile)
+    {
+      throw new NotImplementedException();
+    }
   }
 }
