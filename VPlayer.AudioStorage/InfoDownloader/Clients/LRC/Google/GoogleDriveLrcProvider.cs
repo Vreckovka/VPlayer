@@ -171,6 +171,8 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
     #endregion
 
+    #region Update
+
     public override void Update(ILRCFile lRCFile)
     {
       if (lRCFile is GoogleLRCFile googleLRCFile)
@@ -179,11 +181,13 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
         Stream stream = GenerateStreamFromString(lRCFile.GetString());
 
-        googleDriveServiceProvider.UpdateFile(file,file.Id,stream, file.MimeType);
+        googleDriveServiceProvider.UpdateFile(file, file.Id, stream, file.MimeType);
 
 
       }
     }
+
+    #endregion
 
     public static Stream GenerateStreamFromString(string s)
     {

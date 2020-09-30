@@ -99,12 +99,12 @@
           HorizontalAlignment="Stretch"
           Grid.Row="0"
           Grid.Column="0"
-          NumberOfColumns="200" 
+          NumberOfColumns="250" 
           Opacity="0.8"
           BottomColor="#251f3338"
           TopColor="#8bcde0"
           MiddleColor="#101b1f"
-          MaxFrequency="8000"
+          MaxFrequency="9500"
           IsEnabled="{Binding IsPlaying}">
 
           <userControls:SoundVizualizer.Style>

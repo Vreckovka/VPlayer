@@ -194,7 +194,7 @@ namespace VPlayer.Core.ViewModels
       }
       else
       {
-       var lrcFile = await lrcProvider.TryGetLrcAsync(Model., Model.Artist, Model.Album);
+       var lrcFile = await lrcProvider.TryGetLrcAsync(Model.Title, Model.Artist, Model.Album);
       
        Model = lrcFile;
 
