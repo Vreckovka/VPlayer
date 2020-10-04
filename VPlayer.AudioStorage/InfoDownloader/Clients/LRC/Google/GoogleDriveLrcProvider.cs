@@ -34,7 +34,9 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
         if (baseFolder == null)
         {
           var fileFolder = GetFolder(baseFolderName);
-          baseFolder = new GoogleDriveFile(fileFolder, googleDriveServiceProvider);
+
+          if (fileFolder != null)
+            baseFolder = new GoogleDriveFile(fileFolder, googleDriveServiceProvider);
         }
 
         return baseFolder;
@@ -54,7 +56,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
       {
         batton.WaitOne();
 
-        var artistFolder = BaseFolder.TryGetValueFromFolder(artistName, GoogleMimeTypes.GoogleDriveFolder);
+        var artistFolder = BaseFolder?.TryGetValueFromFolder(artistName, GoogleMimeTypes.GoogleDriveFolder);
 
         if (artistFolder != null)
         {
@@ -116,7 +118,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
         }
       }
 
-      return new KeyValuePair<string[], ILRCFile>(null,null);
+      return new KeyValuePair<string[], ILRCFile>(null, null);
     }
 
     #endregion

@@ -14,25 +14,32 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.GIfs
   {
     public async Task<Gif> GetRandomGif(string tag = "random")
     {
-      var apiURL = $"https://api.giphy.com/v1/gifs/random?api_key=iA3jx8eEs3I13Jj9VvF3MGGvQ1rmGiXe&tag={tag}&rating=g";
-      HttpResponse<string> response = await Task.Run(() => Unirest.get(apiURL).asJson<string>());
-
-      if (response.Code == 200)
+      try
       {
-        dynamic jsonObject = JObject.Parse(response.Body);
+        var apiURL = $"https://api.giphy.com/v1/gifs/random?api_key=iA3jx8eEs3I13Jj9VvF3MGGvQ1rmGiXe&tag={tag}&rating=g";
+        HttpResponse<string> response = await Task.Run(() => Unirest.get(apiURL).asJson<string>());
 
-        var data = jsonObject.data;
-        var images = data.images;
-        var largeImage = images.downsized_large;
-        var url = largeImage.url;
-
-        return new Gif()
+        if (response.Code == 200)
         {
-          Url = url
-        };
-      }
+          dynamic jsonObject = JObject.Parse(response.Body);
 
-      return null;
+          var data = jsonObject.data;
+          var images = data.images;
+          var largeImage = images.downsized_large;
+          var url = largeImage.url;
+
+          return new Gif()
+          {
+            Url = url
+          };
+        }
+
+        return null;
+      }
+      catch (Exception ex)
+      {
+        return null;
+      }
     }
   }
 }

@@ -110,9 +110,9 @@ namespace VPlayer.Player.UserControls
         typeof(SoundVizualizer),
         new PropertyMetadata(Colors.Black, (x, y) =>
         {
-          if(x is SoundVizualizer soundVizualizer)
+          if (x is SoundVizualizer soundVizualizer)
           {
-            var windowsCOlor = (Color) y.NewValue;
+            var windowsCOlor = (Color)y.NewValue;
             soundVizualizer.topColor = System.Drawing.Color.FromArgb(windowsCOlor.A, windowsCOlor.R, windowsCOlor.G, windowsCOlor.B);
           }
         }));
@@ -262,7 +262,13 @@ namespace VPlayer.Player.UserControls
       soundInSource.DataAvailable += (s, aEvent) =>
       {
         int read;
-        while ((read = waveSource.Read(buffer, 0, buffer.Length)) > 0) ;
+        try
+        {
+          while ((read = waveSource.Read(buffer, 0, buffer.Length)) > 0) ;
+        }
+        catch (Exception ex)
+        {
+        };
       };
 
       //play the audio

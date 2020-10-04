@@ -397,7 +397,17 @@ namespace VPlayer.WindowsPlayer.ViewModels
     public async void OnNextGif()
     {
       GiphyClient giphyClient = new GiphyClient();
-      RandomGifUrl = (await giphyClient.GetRandomGif(GifTag)).Url.Replace("&","&amp;");
+
+      var gif = await giphyClient.GetRandomGif(GifTag);
+
+      if (gif != null)
+      {
+        RandomGifUrl = gif.Url.Replace("&", "&amp;");
+      }
+      else
+      {
+        logger.Log(MessageType.Error, "GIF IS NULL");
+      }
     }
 
     #endregion
