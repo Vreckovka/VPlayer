@@ -3,8 +3,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:VPlayer.StylesDictionaries"
                     xmlns:library="clr-namespace:VPlayer.Library"
-                    xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore"
-                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
+                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                    xmlns:text1="clr-namespace:VCore.Behaviors.Text;assembly=VCore.WPF">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="OverlayStyles.xaml" />
@@ -254,7 +254,7 @@
                        FontSize="20"
                        Text="{Binding Name}" >
               <i:Interaction.Behaviors>
-                <text:PanningTextWithFontSizeBehavior
+                <text1:PanningTextWithFontSizeBehavior
                   BiggerFontSize="25"
                   Container="{Binding ElementName=ParentContainer}"
                   IsMouseOverRelativeToContainer="True" />

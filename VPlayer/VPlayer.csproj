@@ -362,9 +362,9 @@
       <Project>{a7210679-60d5-4b26-bc34-9e22c91ef175}</Project>
       <Name>VCore.Standard</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\CustomLibraries\VCore\VCore.csproj">
+    <ProjectReference Include="..\..\CustomLibraries\VCore\VCore.WPF.csproj">
       <Project>{5aa43597-fd3d-4f10-89a5-eb77d3b831d9}</Project>
-      <Name>VCore</Name>
+      <Name>VCore.WPF</Name>
     </ProjectReference>
     <ProjectReference Include="..\KeyListener\Listener.csproj">
       <Project>{ba238278-32d0-4c4e-881a-ad2be152832c}</Project>

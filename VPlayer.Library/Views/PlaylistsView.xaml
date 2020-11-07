@@ -9,6 +9,7 @@
              xmlns:events="clr-namespace:VPlayer.Core.Events;assembly=VPlayer.Core"
              xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
+             xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="1800">
   <UserControl.Resources>
@@ -144,7 +145,7 @@
             <GridViewColumn Width="120" Header="Play from last" >
               <GridViewColumn.CellTemplate>
                 <DataTemplate>
-                  <controls:ButtonWithIcon Content="Last" 
+                  <controls1:ButtonWithIcon Content="Last" 
                                            IconPathStyle="{StaticResource PlaySign}" 
                                            IconMargin="0 0 5 0"
                                            IconHeight="20"
@@ -160,7 +161,7 @@
             <GridViewColumn Width="125" Header="Play from start" >
               <GridViewColumn.CellTemplate>
                 <DataTemplate>
-                  <controls:ButtonWithIcon Content="Fresh" IconPathStyle="{StaticResource PlaySign}" 
+                  <controls1:ButtonWithIcon Content="Fresh" IconPathStyle="{StaticResource PlaySign}" 
                                            IconHeight="20"
                                            IconMargin="0 0 5 0"
                                            Width="90"
@@ -189,7 +190,7 @@
               <GridViewColumn.CellTemplate>
                 <DataTemplate>
                   <StackPanel Orientation="Horizontal">
-                    <controls:PathButton Margin="0,0,10,5"
+                    <controls1:PathButton Margin="0,0,10,5"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Bottom"
                                 IsChecked="{Binding IsRepeating}"
@@ -197,7 +198,7 @@
                                 Height="15"
                                 Width="15"/>
 
-                    <controls:PathButton Margin="0,0,35,5"
+                    <controls1:PathButton Margin="0,0,35,5"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Bottom"
                                 IsChecked="{Binding IsShuffle}"
@@ -213,7 +214,7 @@
               <GridViewColumn.CellTemplate>
                 <DataTemplate>
                   <StackPanel Orientation="Horizontal">
-                    <controls:ButtonWithIcon IconPathStyle="{StaticResource Delete}" 
+                    <controls1:ButtonWithIcon IconPathStyle="{StaticResource Delete}" 
                                              IconDefaultColor="#783734"
                                              IconHoverColor="#f04d46"
                                              IconHeight="12"

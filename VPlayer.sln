@@ -17,8 +17,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer.AudioStorage", "VPl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer.Library", "VPlayer.Library\VPlayer.Library.csproj", "{26D6BB81-3F3C-4DDC-857D-2B2DC4C660B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VCore", "..\CustomLibraries\VCore\VCore.csproj", "{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer.Core", "VPlayer.Core\VPlayer.Core.csproj", "{B8D5C40B-3B3D-43E1-95FA-97087581BDA2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer.Player", "VPlayer.Player\VPlayer.Player.csproj", "{D56E4595-786F-4580-B3E0-EEA5871F582F}"
@@ -26,6 +24,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01.Common", "01.Common", "{E90D9EBC-6FA1-471C-84A9-CFC5B30756E4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VCore.Standard", "..\CustomLibraries\VCore.Standard\VCore.Standard.csproj", "{A7210679-60D5-4B26-BC34-9E22C91EF175}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VCore.WPF", "..\CustomLibraries\VCore\VCore.WPF.csproj", "{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -121,18 +121,6 @@ Global
 		{26D6BB81-3F3C-4DDC-857D-2B2DC4C660B8}.Release|x64.Build.0 = Release|Any CPU
 		{26D6BB81-3F3C-4DDC-857D-2B2DC4C660B8}.Release|x86.ActiveCfg = Release|Any CPU
 		{26D6BB81-3F3C-4DDC-857D-2B2DC4C660B8}.Release|x86.Build.0 = Release|Any CPU
-		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Debug|x64.Build.0 = Debug|Any CPU
-		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Debug|x86.Build.0 = Debug|Any CPU
-		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Release|x64.ActiveCfg = Release|Any CPU
-		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Release|x64.Build.0 = Release|Any CPU
-		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Release|x86.ActiveCfg = Release|Any CPU
-		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Release|x86.Build.0 = Release|Any CPU
 		{B8D5C40B-3B3D-43E1-95FA-97087581BDA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B8D5C40B-3B3D-43E1-95FA-97087581BDA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B8D5C40B-3B3D-43E1-95FA-97087581BDA2}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -169,13 +157,25 @@ Global
 		{A7210679-60D5-4B26-BC34-9E22C91EF175}.Release|x64.Build.0 = Release|Any CPU
 		{A7210679-60D5-4B26-BC34-9E22C91EF175}.Release|x86.ActiveCfg = Release|Any CPU
 		{A7210679-60D5-4B26-BC34-9E22C91EF175}.Release|x86.Build.0 = Release|Any CPU
+		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Debug|x64.ActiveCfg = Debug|x64
+		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Debug|x64.Build.0 = Debug|x64
+		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Debug|x86.Build.0 = Debug|Any CPU
+		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Release|x64.ActiveCfg = Release|x64
+		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Release|x64.Build.0 = Release|x64
+		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Release|x86.ActiveCfg = Release|Any CPU
+		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9} = {E90D9EBC-6FA1-471C-84A9-CFC5B30756E4}
 		{A7210679-60D5-4B26-BC34-9E22C91EF175} = {E90D9EBC-6FA1-471C-84A9-CFC5B30756E4}
+		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9} = {E90D9EBC-6FA1-471C-84A9-CFC5B30756E4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7757B067-0629-4B99-BC33-50BF3898A109}

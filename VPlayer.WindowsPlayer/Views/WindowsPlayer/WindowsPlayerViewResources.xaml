@@ -1,19 +1,19 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore"
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-                    xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore"
                     xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
-                    xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore"
                     xmlns:clients="clr-namespace:VPlayer.AudioStorage.InfoDownloader.LRC.Clients;assembly=VPlayer.AudioStorage"
                     xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
-                    xmlns:attachedProperties="clr-namespace:VCore.AttachedProperties;assembly=VCore"
                     xmlns:e="http://schemas.epsiloner.git/wpf/"
                     xmlns:controls1="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
-                    xmlns:lrc1="clr-namespace:VPlayer.AudioStorage.InfoDownloader.LRC;assembly=VCore"
                     xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
                     xmlns:behaviors1="clr-namespace:VPlayer.WindowsPlayer.Behaviors"
-                    xmlns:windowsPlayer="clr-namespace:VPlayer.Player.Views.WindowsPlayer">
+                    xmlns:windowsPlayer="clr-namespace:VPlayer.Player.Views.WindowsPlayer"
+                    xmlns:controls2="clr-namespace:VCore.Controls;assembly=VCore.WPF"
+                    xmlns:lrc="clr-namespace:VPlayer.AudioStorage.InfoDownloader.LRC;assembly=VCore.WPF"
+                    xmlns:converters1="clr-namespace:VCore.Converters;assembly=VCore.WPF"
+                    xmlns:text1="clr-namespace:VCore.Behaviors.Text;assembly=VCore.WPF"
+                    xmlns:attachedProperties1="clr-namespace:VCore.AttachedProperties;assembly=VCore.WPF">
 
 
   <Style TargetType="TextBox" x:Key="LyricsStyle">
@@ -112,8 +112,8 @@
     <Setter Property="Opacity" Value="0.3"/>
     <Style.Triggers>
       <DataTrigger 
-        Binding="{Binding RelativeSource={RelativeSource AncestorType=controls:ButtonWithIcon}, Path=DataContext.IsPlaying}" Value="true">
-        <Setter Property="Fill" Value="{Binding RelativeSource={RelativeSource AncestorType=controls:ButtonWithIcon}, Path=IconBrush}"/>
+        Binding="{Binding RelativeSource={RelativeSource AncestorType=controls2:ButtonWithIcon}, Path=DataContext.IsPlaying}" Value="true">
+        <Setter Property="Fill" Value="{Binding RelativeSource={RelativeSource AncestorType=controls2:ButtonWithIcon}, Path=IconBrush}"/>
       </DataTrigger>
     </Style.Triggers>
   </Style>
@@ -127,11 +127,11 @@
       ToolTip="Google drive">
       <Path.Style>
         <Style TargetType="Path" 
-               BasedOn="{attachedProperties:MultiStyle GoogleDrive SyncLyricsSubIconStyle}">
+               BasedOn="{attachedProperties1:MultiStyle GoogleDrive SyncLyricsSubIconStyle}">
           <Setter Property="Fill" Value="#4285f4"/>
 
           <Style.Triggers>
-            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=controls:ButtonWithIcon}, Path=IsMouseOver}" Value="true">
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=controls2:ButtonWithIcon}, Path=IsMouseOver}" Value="true">
               <DataTrigger.EnterActions>
                 <RemoveStoryboard BeginStoryboardName="HoverStoryboardEnd"/>
                 <BeginStoryboard x:Name="HoverStoryboardStart">
@@ -167,11 +167,11 @@
 
       <Path.Style>
         <Style TargetType="Path" 
-               BasedOn="{attachedProperties:MultiStyle Folder SyncLyricsSubIconStyle}">
+               BasedOn="{attachedProperties1:MultiStyle Folder SyncLyricsSubIconStyle}">
           <Setter Property="Fill" Value="#f4d642"/>
 
           <Style.Triggers>
-            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=controls:ButtonWithIcon}, Path=IsMouseOver}" Value="true">
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=controls2:ButtonWithIcon}, Path=IsMouseOver}" Value="true">
               <DataTrigger.EnterActions>
                 <RemoveStoryboard BeginStoryboardName="HoverStoryboardEnd"/>
                 <BeginStoryboard x:Name="HoverStoryboardStart">
@@ -299,7 +299,7 @@
         <TextBox Text="AHoj" Visibility="Visible"  Margin="0 -10 0 0"/>
       </StackPanel>
 
-      <controls:ButtonWithIcon  
+      <controls2:ButtonWithIcon  
               HorizontalAlignment="Right"
               Margin="25"
               IconPathStyle="{StaticResource NextInCircle}"
@@ -390,7 +390,7 @@
                   <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
-                <controls:ButtonWithIcon IconPathStyle="{StaticResource Info}" 
+                <controls2:ButtonWithIcon IconPathStyle="{StaticResource Info}" 
                                          HorizontalAlignment="Left"
                                          IconHeight="11"
                                          IconWidth="11"
@@ -399,9 +399,9 @@
                                          Padding="2"
                                          ToolTip="{Binding Model.DiskLocation}">
 
-                  <controls:ButtonWithIcon.Style>
-                    <Style TargetType="{x:Type controls:ButtonWithIcon}" 
-                           BasedOn="{StaticResource {x:Type controls:ButtonWithIcon}}">
+                  <controls2:ButtonWithIcon.Style>
+                    <Style TargetType="{x:Type controls2:ButtonWithIcon}" 
+                           BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}">
                       <Setter Property="IconHoverColor" Value="#40a8e6"/>
                       <Setter Property="IconDefaultColor" Value="#27404f"/>
                       <Setter Property="Opacity" Value="1"/>
@@ -415,9 +415,9 @@
                       </Style.Triggers>
 
                     </Style>
-                  </controls:ButtonWithIcon.Style>
+                  </controls2:ButtonWithIcon.Style>
 
-                </controls:ButtonWithIcon>
+                </controls2:ButtonWithIcon>
 
                 <TextBlock Name="NonPlayingTextBlock"
                            FontSize="18"
@@ -429,7 +429,7 @@
                            Style="{StaticResource ListViewTextBlockStyle}">
                 
                   <i:Interaction.Behaviors>
-                    <text:PanningTextWithFontSizeBehavior BiggerFontSize="21"
+                    <text1:PanningTextWithFontSizeBehavior BiggerFontSize="21"
                                                           Container="{Binding ElementName=Bd}"
                                                           IgnoreSizeAnimation="{Binding IsPlaying}"
                                                           IsMouseOverRelativeToContainer="True" />
@@ -455,7 +455,7 @@
                     </Style>
                   </TextBlock.Style>
                   <i:Interaction.Behaviors>
-                    <text:PanningTextWithFontSizeBehavior BiggerFontSize="21"
+                    <text1:PanningTextWithFontSizeBehavior BiggerFontSize="21"
                                                           Container="{Binding ElementName=Container}"
                                                           IgnoreSizeAnimation="{Binding IsPlaying}"
                                                           IsMouseOverRelativeToContainer="True" />
@@ -520,7 +520,7 @@
                          FontWeight="Bold"
                          FontSize="13"
                          FontFamily="{StaticResource Roboto}"
-                         Text="{Binding Duration, Converter={converters:TimeConverter TimeType=Second}}" >
+                         Text="{Binding Duration, Converter={converters1:TimeConverter TimeType=Second}}" >
                 <TextBlock.Style>
                   <Style TargetType="TextBlock">
                     <Setter Property="Opacity" Value="0.35"/>
@@ -545,7 +545,7 @@
                 <Grid       HorizontalAlignment="Right"
                             Margin="5 0 15 3">
                   <Grid.Resources>
-                    <Style TargetType="controls:ButtonWithIcon" BasedOn="{StaticResource {x:Type controls:ButtonWithIcon}}">
+                    <Style TargetType="controls2:ButtonWithIcon" BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}">
                       <Setter Property="IconHeight" Value="11"/>
                       <Setter Property="IconWidth" Value="11"/>
                     </Style>
@@ -560,7 +560,7 @@
 
                  
 
-                  <controls:ButtonWithIcon IconPathStyle="{StaticResource TextLyrics}" 
+                  <controls2:ButtonWithIcon IconPathStyle="{StaticResource TextLyrics}" 
                                            HorizontalAlignment="Right"
                                            IconHeight="11"
                                            IconWidth="11"
@@ -568,9 +568,9 @@
                                            Margin="0 0 0 0"
                                            Padding="0"
                   >
-                    <controls:ButtonWithIcon.Style>
-                      <Style TargetType="{x:Type controls:ButtonWithIcon}" 
-                             BasedOn="{StaticResource {x:Type controls:ButtonWithIcon}}">
+                    <controls2:ButtonWithIcon.Style>
+                      <Style TargetType="{x:Type controls2:ButtonWithIcon}" 
+                             BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}">
                         <Setter Property="IconHoverColor" Value="#59ad55"/>
                         <Setter Property="IconDefaultColor" Value="#2b5229"/>
                         <Setter Property="Opacity" Value="1"/>
@@ -590,11 +590,11 @@
 
                         </Style.Triggers>
                       </Style>
-                    </controls:ButtonWithIcon.Style>
+                    </controls2:ButtonWithIcon.Style>
 
-                  </controls:ButtonWithIcon>
+                  </controls2:ButtonWithIcon>
 
-                  <controls:ButtonWithIcon IconPathStyle="{StaticResource Microphone}" 
+                  <controls2:ButtonWithIcon IconPathStyle="{StaticResource Microphone}" 
                                            HorizontalAlignment="Right"
                                            IconHeight="11"
                                            IconWidth="11"
@@ -603,9 +603,9 @@
                                            VerticalAlignment="Center"
                                            Grid.Column="1">
 
-                    <controls:ButtonWithIcon.Style>
-                      <Style TargetType="{x:Type controls:ButtonWithIcon}" 
-                             BasedOn="{StaticResource {x:Type controls:ButtonWithIcon}}">
+                    <controls2:ButtonWithIcon.Style>
+                      <Style TargetType="{x:Type controls2:ButtonWithIcon}" 
+                             BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}">
                         <Setter Property="IconHoverColor" Value="#85876d"/>
                         <Setter Property="IconDefaultColor" Value="#414236"/>
                         <Setter Property="Opacity" Value="1"/>
@@ -613,7 +613,7 @@
                        
                         <Setter Property="Template">
                           <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type controls:ButtonWithIcon}">
+                            <ControlTemplate TargetType="{x:Type controls2:ButtonWithIcon}">
                               <Border Background="{TemplateBinding Background}"
                                       VerticalAlignment="{TemplateBinding VerticalAlignment}"
                                       HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
@@ -706,19 +706,19 @@
                             <Setter Property="Visibility" Value="Collapsed"/>
                           </DataTrigger>
 
-                          <DataTrigger Binding="{Binding LRCFile.Provider}" Value="{x:Static lrc1:LRCProviders.Google }">
+                          <DataTrigger Binding="{Binding LRCFile.Provider}" Value="{x:Static lrc:LRCProviders.Google }">
                             <Setter Property="Margin" Value="2 -5 0 -9"/>
                           </DataTrigger>
 
-                          <DataTrigger Binding="{Binding LRCFile.Provider}" Value="{x:Static lrc1:LRCProviders.Local }">
+                          <DataTrigger Binding="{Binding LRCFile.Provider}" Value="{x:Static lrc:LRCProviders.Local }">
                             <Setter Property="Margin" Value="2 -7 0 -9"/>
                           </DataTrigger>
                         </Style.Triggers>
 
                       </Style>
-                    </controls:ButtonWithIcon.Style>
+                    </controls2:ButtonWithIcon.Style>
 
-                  </controls:ButtonWithIcon>
+                  </controls2:ButtonWithIcon>
 
 
                   
@@ -726,7 +726,7 @@
 
 
 
-                <controls:ButtonWithIcon IconPathStyle="{StaticResource Repeate}" 
+                <controls2:ButtonWithIcon IconPathStyle="{StaticResource Repeate}" 
                                         Grid.Column="1"
                                          HorizontalAlignment="Right"
                                         IconHeight="11"
@@ -735,9 +735,9 @@
                                          ToolTip="Reload data"
                                          Command="{Binding Refresh}"
                 >
-                  <controls:ButtonWithIcon.Style>
-                    <Style TargetType="{x:Type controls:ButtonWithIcon}" 
-                           BasedOn="{StaticResource {x:Type controls:ButtonWithIcon}}">
+                  <controls2:ButtonWithIcon.Style>
+                    <Style TargetType="{x:Type controls2:ButtonWithIcon}" 
+                           BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}">
                       <Setter Property="IconHoverColor" Value="Gold"/>
                       <Style.Triggers>
                         <DataTrigger Binding="{Binding IsPlaying}" Value="true">
@@ -746,13 +746,13 @@
                         </DataTrigger>
                       </Style.Triggers>
                     </Style>
-                  </controls:ButtonWithIcon.Style>
+                  </controls2:ButtonWithIcon.Style>
 
-                </controls:ButtonWithIcon>
+                </controls2:ButtonWithIcon>
 
               </Grid>
 
-              <controls:PathButton PathStyle="{StaticResource Favorite}" 
+              <controls2:PathButton PathStyle="{StaticResource Favorite}" 
                                    Width="13"
                                    Height="13"
                                    VerticalAlignment="Center"
@@ -762,8 +762,8 @@
                                    IsChecked="{Binding IsFavorite}"
                                    ToolTip="Favorite"
                                   >
-                <controls:PathButton.Style>
-                  <Style TargetType="controls:PathButton" BasedOn="{StaticResource {x:Type controls:PathButton}}">
+                <controls2:PathButton.Style>
+                  <Style TargetType="controls2:PathButton" BasedOn="{StaticResource {x:Type controls2:PathButton}}">
                     <Setter Property="IconDefaultColor" Value="#10ffffff"/>
                     <Setter Property="IconHoverColor" Value="#8fd4f2"/>
                     <Setter Property="PathCheckedBrush" Value="#aa39b2e6"/>
@@ -776,9 +776,9 @@
 
                     </Style.Triggers>
                   </Style>
-                </controls:PathButton.Style>
+                </controls2:PathButton.Style>
 
-              </controls:PathButton>
+              </controls2:PathButton>
 
             </Grid>
 

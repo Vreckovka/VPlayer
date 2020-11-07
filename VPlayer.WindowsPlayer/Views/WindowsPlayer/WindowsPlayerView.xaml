@@ -1,19 +1,18 @@
 ﻿<UserControl x:Class="VPlayer.Player.Views.WindowsPlayer.WindowsPlayerView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:design1="clr-namespace:VPlayer.Player.Design"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore"
-             xmlns:attachedBehaviors="clr-namespace:ScrollAnimateBehavior.AttachedBehaviors;assembly=VCore"
              xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
              xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
              xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
              xmlns:gif="http://wpfanimatedgif.codeplex.com"
              xmlns:behaviors1="clr-namespace:VPlayer.WindowsPlayer.Behaviors"
              xmlns:windowsPlayer="clr-namespace:VPlayer.Player.Views.WindowsPlayer"
+             xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
+             xmlns:converters1="clr-namespace:VCore.Converters;assembly=VCore.WPF"
              d:DataContext="{d:DesignInstance Type={x:Type design1:PlayerDesingViewModel},
                                               IsDesignTimeCreatable=True}"
              d:DesignHeight="450"
@@ -76,7 +75,7 @@
 
 
       <Grid Grid.Row="0" Grid.RowSpan="3">
-        <controls:PathButton 
+        <controls1:PathButton 
           PathStyle="{StaticResource Gif}"
           IsChecked="{Binding UseGif, Mode=TwoWay}" 
           Height="50"
@@ -236,13 +235,13 @@
           </TextBlock>
         </StackPanel>
 
-        <controls:PathButton Margin="0,0,5,5"
+        <controls1:PathButton Margin="0,0,5,5"
                       HorizontalAlignment="Right"
                       VerticalAlignment="Bottom"
                       IsChecked="{Binding IsRepeate}"
                       PathStyle="{StaticResource Repeate}"/>
 
-        <controls:PathButton Margin="0,0,35,5"
+        <controls1:PathButton Margin="0,0,35,5"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
                     BorderThickness="0"
@@ -292,14 +291,14 @@
           </Grid.RowDefinitions>
 
           <StackPanel Orientation="Horizontal">
-            <controls:ButtonWithIcon IconPathStyle="{StaticResource Playlist}"
+            <controls1:ButtonWithIcon IconPathStyle="{StaticResource Playlist}"
                                      HorizontalAlignment="Left" 
                                      Command="{Binding SavePlaylistCommandCommand}" 
                                      Margin="19 0 0 0"
                                      Padding="0"
                                      ToolTip="Save playlist">
-              <controls:ButtonWithIcon.Style >
-                <Style TargetType="controls:ButtonWithIcon" BasedOn="{StaticResource {x:Type controls:ButtonWithIcon}}">
+              <controls1:ButtonWithIcon.Style >
+                <Style TargetType="controls1:ButtonWithIcon" BasedOn="{StaticResource {x:Type controls1:ButtonWithIcon}}">
                   <Setter Property="IconDefaultColor" Value="{StaticResource 30_DefaultWhiteColor}"/>
                   <Setter Property="IconHoverColor" Value="{StaticResource YellowColor}"/>
                   <Style.Triggers>
@@ -308,8 +307,8 @@
                     </DataTrigger>
                   </Style.Triggers>
                 </Style>
-              </controls:ButtonWithIcon.Style>
-            </controls:ButtonWithIcon>
+              </controls1:ButtonWithIcon.Style>
+            </controls1:ButtonWithIcon>
           </StackPanel>
 
           <StackPanel Grid.Column="1" Orientation="Horizontal" 
@@ -328,7 +327,7 @@
             </TextBlock>
           </StackPanel>
 
-          <controls:Finder Grid.Row="1" 
+          <controls1:Finder Grid.Row="1" 
                            Grid.ColumnSpan="2" 
                            Grid.Column="0"
                            Margin="15 7 15 0"
@@ -388,7 +387,7 @@
                Grid.Column="0"
                Grid.ColumnSpan="2"
                Foreground="{StaticResource 120_WhiteTransparentBrush}"
-               Text="{Binding ActualSong.Duration, Converter={converters:TimeConverter TimeType=Second}}" />
+               Text="{Binding ActualSong.Duration, Converter={converters1:TimeConverter TimeType=Second}}" />
 
 
   </Grid>

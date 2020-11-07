@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
-using VCore.ViewModels;
+using VCore.Standard;
 
 namespace Listener
 {

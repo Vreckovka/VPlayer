@@ -2,8 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:controls="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-                    xmlns:text="clr-namespace:VCore.Behaviors.Text;assembly=VCore"
-                    xmlns:attachedProperties="clr-namespace:VCore.AttachedProperties;assembly=VCore">
+                    xmlns:text1="clr-namespace:VCore.Behaviors.Text;assembly=VCore.WPF">
 
 
   <ResourceDictionary.MergedDictionaries>
@@ -162,7 +161,7 @@
                     >
                 <TextBlock HorizontalAlignment="Left" Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center">
                   <i:Interaction.Behaviors>
-                    <text:PanningTextWithFontSizeBehavior BiggerFontSize="17" Container="{Binding ElementName=Container}" IsMouseOverRelativeToContainer="True"/>
+                    <text1:PanningTextWithFontSizeBehavior BiggerFontSize="17" Container="{Binding ElementName=Container}" IsMouseOverRelativeToContainer="True"/>
                   </i:Interaction.Behaviors>
                 </TextBlock>
               </Grid>

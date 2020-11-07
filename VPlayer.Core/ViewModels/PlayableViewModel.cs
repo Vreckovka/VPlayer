@@ -6,6 +6,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Input;
 using VCore;
+using VCore.Standard;
 using VCore.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;

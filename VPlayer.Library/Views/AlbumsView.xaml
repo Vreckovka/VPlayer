@@ -6,6 +6,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:VPlayer.Library.Desing.ViewModels"
              xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
+             xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore.WPF"
              d:DataContext="{d:DesignInstance Type={x:Type viewModels:AlbumsDesignViewModel},
                                               IsDesignTimeCreatable=True}"
              d:DesignHeight="650"
@@ -14,16 +15,16 @@
 
     <Grid>
         <Grid>
-            <controls1:PlayableWrapPanel Margin="5,0" ItemsSource="{Binding View}">
-                <controls1:PlayableWrapPanel.ItemTemplate>
+            <controls:PlayableWrapPanel Margin="5,0" ItemsSource="{Binding View}">
+                <controls:PlayableWrapPanel.ItemTemplate>
                     <DataTemplate>
-                        <controls1:PlayableWrapPanelItem BottomText="{Binding BottomText}"
+                        <controls:PlayableWrapPanelItem BottomText="{Binding BottomText}"
                                                          HeaderText="{Binding Name}"
                                                          ImageThumbnail="{Binding ImageThumbnail,Converter={library:CacheImageConverter},ConverterParameter=250, IsAsync=True}"
                                                          IsPlaying="{Binding IsPlaying}" />
                     </DataTemplate>
-                </controls1:PlayableWrapPanel.ItemTemplate>
-            </controls1:PlayableWrapPanel>
+                </controls:PlayableWrapPanel.ItemTemplate>
+            </controls:PlayableWrapPanel>
         </Grid>
     </Grid>
 </UserControl>

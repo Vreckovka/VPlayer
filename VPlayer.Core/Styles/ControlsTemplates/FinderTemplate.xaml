@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore"
-                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
+                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                    xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/DataTemplates.xaml" />
@@ -17,12 +17,12 @@
     </Setter>
   </Style>
 
-  <Style TargetType="controls:Finder">
+  <Style TargetType="controls1:Finder">
     <Setter Property="Padding" Value="0,10"/>
     <Setter Property="Height" Value="50"/>
     <Setter Property="Template">
       <Setter.Value>
-        <ControlTemplate TargetType="controls:Finder">
+        <ControlTemplate TargetType="controls1:Finder">
           <Border Padding="{TemplateBinding Padding}" 
                   BorderThickness="{TemplateBinding BorderThickness}" 
                   BorderBrush="{TemplateBinding BorderBrush}"

@@ -1,16 +1,16 @@
 ﻿<UserControl x:Class="VPlayer.Library.Views.LibraryView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:behaviors="clr-namespace:VCore.Behaviors;assembly=VCore"
-             xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore"
              xmlns:controls1="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:regions="http://prismlibrary.com/"
              xmlns:regions1="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPlayer.Core"
-             xmlns:design="clr-namespace:VCore.Design;assembly=VCore"
              xmlns:desing="clr-namespace:VPlayer.Library.Desing"
+             xmlns:controls2="clr-namespace:VCore.Controls;assembly=VCore.WPF"
+             xmlns:behaviors1="clr-namespace:VCore.Behaviors;assembly=VCore.WPF"
+             xmlns:design1="clr-namespace:VCore.Design;assembly=VCore.WPF"
              d:DesignHeight="650"
              d:DesignWidth="800"
              Background="{StaticResource BackgroudPageBrush}"
@@ -40,15 +40,15 @@
         <RowDefinition />
       </Grid.RowDefinitions>
 
-      <controls:Finder Grid.Row="0" Margin="5" 
+      <controls2:Finder Grid.Row="0" Margin="5" 
                        Text="{Binding ActualSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
       <Grid Grid.Row="1"
-            behaviors:DropBehavior.PreviewDropCommand="{Binding FilesDropped}"
+            behaviors1:DropBehavior.PreviewDropCommand="{Binding FilesDropped}"
             AllowDrop="True">
         <ContentControl
                         regions:RegionManager.RegionName="{x:Static regions1:RegionNames.LibraryContentRegion}"
-                        design:DesignTimeRegionProvider.ViewProvider="{StaticResource LibraryRegionDesingProvider}" />
+                        design1:DesignTimeRegionProvider.ViewProvider="{StaticResource LibraryRegionDesingProvider}" />
       </Grid>
     </Grid>
   </Grid>

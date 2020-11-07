@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:VPlayer.Player.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:userControls1="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
+             xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
              mc:Ignorable="d"
              >
 
@@ -25,7 +26,7 @@
             <ColumnDefinition Width="auto" />
           </Grid.ColumnDefinitions>
 
-          <controls:ButtonWithIcon Grid.Column="0"
+          <controls1:ButtonWithIcon Grid.Column="0"
                                Margin="0 0 5 0"
                                IconWidth="25"
                                IconHeight="25"
@@ -34,10 +35,10 @@
                                RenderTransformOrigin="0.5,0.5"
                                Command="{Binding PreviousCommand}"
                                IsEnabled="{Binding CanPlay}">
-            <controls:ButtonWithIcon.RenderTransform>
+            <controls1:ButtonWithIcon.RenderTransform>
               <ScaleTransform ScaleX="-1"/>
-            </controls:ButtonWithIcon.RenderTransform>
-          </controls:ButtonWithIcon>
+            </controls1:ButtonWithIcon.RenderTransform>
+          </controls1:ButtonWithIcon>
 
           <Button x:Name="Play_Button"
                   Grid.Column="1"
@@ -49,7 +50,7 @@
                   Background="{StaticResource DefaultRedBrush}"/>
 
 
-          <controls:ButtonWithIcon Grid.Column="2"
+          <controls1:ButtonWithIcon Grid.Column="2"
                                    Margin="0 0 5 0"
                                    IconWidth="25"
                                    IconHeight="25"
@@ -59,7 +60,7 @@
                                    Command="{Binding NextCommand}"
                                    IsEnabled="{Binding CanPlay}">
 
-          </controls:ButtonWithIcon>
+          </controls1:ButtonWithIcon>
 
 
 
