@@ -1,6 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Reactive.Linq;
 using System.Windows.Input;
 using Listener;
 using VCore;

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Windows.Input;
 using VCore;
-using VCore.Factories;
 using VCore.Modularity.RegionProviders;
+using VCore.Standard.Factories.ViewModels;
 using VCore.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.Core.Modularity.Regions;

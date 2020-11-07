@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Drawing;
 using System.Linq;
-using System.Windows.Media;
 using Color = System.Drawing.Color;
 
 namespace WinformsVisualization.Visualization

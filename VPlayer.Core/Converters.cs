@@ -1,19 +1,15 @@
 ﻿using System;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using VCore.Converters;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.Core.ViewModels;
-using WpfAnimatedGif;
 
 namespace VPlayer.Library
 {

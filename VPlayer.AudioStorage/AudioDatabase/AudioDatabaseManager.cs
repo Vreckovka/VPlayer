@@ -7,16 +7,12 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using System.Threading;
 using System.Threading.Tasks;
 using VCore.Modularity.Events;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.Interfaces.Storage;
-using Windows.Media.Playlists;
-using Windows.UI.Xaml.Media.Animation;
 using Logger;
-using VCore.Annotations;
 using VPlayer.AudioStorage.Repositories;
 using Playlist = VPlayer.AudioStorage.DomainClasses.Playlist;
 

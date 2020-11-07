@@ -1,6 +1,5 @@
-﻿using PropertyChanged;
-using System.Windows.Controls;
-using VCore.Modularity.Interfaces;
+﻿using System.Windows.Controls;
+using VCore.Standard.Modularity.Interfaces;
 
 namespace VPlayer.Library.Views
 {
@@ -9,7 +8,6 @@ namespace VPlayer.Library.Views
   /// </summary>
   ///
 
-  [AddINotifyPropertyChangedInterface]
   public partial class AlbumCoversView : UserControl, IView
   {
     #region Constructors

@@ -227,6 +227,10 @@
       <Project>{6212fadf-45a6-4613-b5a8-5c5a57f3bfb0}</Project>
       <Name>Logger</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\CustomLibraries\VCore.Standard\VCore.Standard.csproj">
+      <Project>{a7210679-60d5-4b26-bc34-9e22c91ef175}</Project>
+      <Name>VCore.Standard</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\CustomLibraries\VCore\VCore.csproj">
       <Project>{5aa43597-fd3d-4f10-89a5-eb77d3b831d9}</Project>
       <Name>VCore</Name>

@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Listener;
+﻿using Listener;
 using Logger;
-using Ninject;
-using Prism.Events;
-using VCore.Modularity.NinjectModules;
+using VCore.Standard.Modularity.NinjectModules;
 
 namespace VPlayer.Core.Modularity.Ninject
 {

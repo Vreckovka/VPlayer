@@ -1,6 +1,5 @@
-﻿using Listener;
-using Ninject;
-using VCore.Modularity.NinjectModules;
+﻿using Ninject;
+using VCore.Standard.Modularity.NinjectModules;
 using VPlayer.Core.Modularity.Ninject;
 using VPlayer.Player.ViewModels;
 using VPlayer.WebPlayer.ViewModels;

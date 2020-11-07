@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader.Clients.Chartlyrics.XMLClasses;
-using Windows.Security.Cryptography.Certificates;
 using Logger;
 using VCore;
 using VCore.Annotations;

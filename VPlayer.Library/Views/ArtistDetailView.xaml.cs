@@ -1,5 +1,5 @@
 ﻿using System.Windows.Controls;
-using VCore.Modularity.Interfaces;
+using VCore.Standard.Modularity.Interfaces;
 
 namespace VPlayer.Library.Views
 {

@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
-using CSCore.Codecs;
 using CSCore.DSP;
 
 namespace WinformsVisualization.Visualization

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Subjects;
-using System.Text;
-using System.Threading.Tasks;
-using VCore.Modularity.Interfaces;
+﻿using System.Reactive.Subjects;
 using VCore.Modularity.RegionProviders;
+using VCore.Standard.Modularity.Interfaces;
 using VCore.ViewModels;
 
 namespace VPlayer.Core.ViewModels

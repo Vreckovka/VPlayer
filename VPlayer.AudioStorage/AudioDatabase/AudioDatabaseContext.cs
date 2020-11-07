@@ -1,15 +1,11 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
-using System.Data.Entity.ModelConfiguration.Conventions;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using SQLite.CodeFirst;
 using VPlayer.AudioStorage.DomainClasses;
-using VPlayer.AudioStorage.Migrations;
 
 namespace VPlayer.AudioStorage.AudioDatabase
 {

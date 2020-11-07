@@ -1,6 +1,5 @@
 ﻿using Prism.Events;
 using System.Collections.Generic;
-using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.Core.ViewModels;
 
 namespace VPlayer.Core.Events

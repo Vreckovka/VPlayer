@@ -1,8 +1,5 @@
-﻿using System;
-using System.Windows.Controls;
-using Prism.Events;
-using VCore.Modularity.Interfaces;
-using VPlayer.Library.ViewModels;
+﻿using System.Windows.Controls;
+using VCore.Standard.Modularity.Interfaces;
 
 namespace VPlayer.Library.Views
 {

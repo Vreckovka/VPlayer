@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using VCore.Modularity.RegionProviders;
-using VCore.ViewModels;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
 using VPlayer.WebPlayer.Models;

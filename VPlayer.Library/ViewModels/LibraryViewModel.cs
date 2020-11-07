@@ -6,16 +6,14 @@ using System.Reactive.Subjects;
 using System.Windows;
 using System.Windows.Input;
 using VCore;
-using VCore.Factories;
-using VCore.Helpers;
 using VCore.Modularity.RegionProviders;
+using VCore.Standard.Factories.ViewModels;
+using VCore.Standard.Helpers;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
-using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
-using VPlayer.Core.ViewModels;
 using VPlayer.Library.Views;
 
 namespace VPlayer.Library.ViewModels

@@ -1,5 +1,5 @@
 ﻿using Ninject;
-using VCore.Modularity.NinjectModules;
+using VCore.Standard.Modularity.NinjectModules;
 using VPlayer.Library.Modularity.NinjectModule;
 
 namespace VPlayer.WindowsPlayer.Modularity.NinjectModule

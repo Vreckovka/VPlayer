@@ -1,5 +1,4 @@
-﻿using System;
-using VCore.Interfaces.ViewModels;
+﻿using VCore.Interfaces.ViewModels;
 using VCore.ViewModels.Navigation;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.Core.ViewModels.Albums;

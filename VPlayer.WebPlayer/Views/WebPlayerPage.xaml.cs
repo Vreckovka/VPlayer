@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms.Integration;
@@ -9,7 +7,7 @@ using System.Windows.Media;
 using Gecko;
 using Gecko.DOM;
 using Gecko.WebIDL;
-using VCore.Modularity.Interfaces;
+using VCore.Standard.Modularity.Interfaces;
 using VPlayer.WebPlayer.Models;
 using VPlayer.WebPlayer.ViewModels;
 using Console = System.Console;

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+﻿using System.Collections.Generic;
 using VCore.Design;
-using VCore.Modularity.Interfaces;
+using VCore.Standard.Modularity.Interfaces;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Library.Desing.ViewModels;
 using VPlayer.Library.Views;

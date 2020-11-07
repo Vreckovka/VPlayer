@@ -1,5 +1,4 @@
 ﻿using System;
-using PropertyChanged;
 
 namespace VPlayer.WebPlayer.Models
 {

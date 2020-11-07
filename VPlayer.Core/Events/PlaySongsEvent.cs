@@ -1,6 +1,5 @@
 ﻿using Prism.Events;
 using System.Collections.Generic;
-using System.Data.Entity.Migrations.Model;
 using VPlayer.Core.ViewModels;
 
 namespace VPlayer.Core.Events

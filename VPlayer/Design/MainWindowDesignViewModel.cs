@@ -1,8 +1,6 @@
 ﻿using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
-using VPlayer.ViewModels;
 using VPlayer.WindowsPlayer.Design;
-using VPlayer.WindowsPlayer.ViewModels;
 
 namespace VPlayer.Design
 {

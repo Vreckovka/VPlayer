@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Google.Apis.Drive.v3.Data;
-using VCore.Annotations;
 
 namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 {

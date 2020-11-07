@@ -7,9 +7,7 @@ using System.Windows.Input;
 using VCore;
 using VCore.Annotations;
 using VCore.ViewModels;
-using VPlayer.AudioStorage.InfoDownloader.Clients.GIfs;
 using VPlayer.AudioStorage.InfoDownloader.LRC;
-using VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;
 
 namespace VPlayer.Core.ViewModels

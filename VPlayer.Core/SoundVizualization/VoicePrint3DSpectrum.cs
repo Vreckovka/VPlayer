@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Drawing;
-using System.Windows.Media;
 using CSCore.DSP;
 using Color = System.Drawing.Color;
 

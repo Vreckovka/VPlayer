@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Windows;
 using Ninject;
-using Prism.Events;
 using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Ninject;
 using Prism.Regions;
 using VCore.Modularity.NinjectModules;
-using VCore.Modularity.RegionProviders;
+using VCore.Other;
+using VCore.Standard.Modularity.NinjectModules;
 using VPlayer.Modularity.NinjectModules;
 using VPlayer.ViewModels;
 using VPlayer.Views;
@@ -26,6 +26,7 @@ namespace VPlayer
       Kernel = Container.GetContainer();
 
       Kernel.Load<CommonNinjectModule>();
+      Kernel.Load<WPFNinjectModule>();
       Kernel.Load<VPlayerNinjectModule>();
 
 #if DEBUG

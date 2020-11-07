@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using Windows.Foundation.Metadata;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {

@@ -1,6 +1,4 @@
-﻿using Windows.UI.Xaml.Documents;
-
-namespace VPlayer.AudioStorage.DomainClasses
+﻿namespace VPlayer.AudioStorage.DomainClasses
 {
   public class AudioInfo
   {

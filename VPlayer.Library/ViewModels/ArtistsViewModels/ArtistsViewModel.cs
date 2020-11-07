@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Data.Entity;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Windows;
-using VCore.Factories;
-using VCore.Helpers;
 using VCore.Modularity.Events;
 using VCore.Modularity.RegionProviders;
+using VCore.Standard.Factories.ViewModels;
+using VCore.Standard.Helpers;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Interfaces.ViewModels;
