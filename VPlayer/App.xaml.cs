@@ -21,6 +21,7 @@ namespace VPlayer
   public partial class App : PrismApplication
   {
     private IKernel Kernel;
+    private bool isConsoleUp = false;
     protected override void RegisterTypes(IContainerRegistry containerRegistry)
     {
       Kernel = Container.GetContainer();
@@ -30,7 +31,8 @@ namespace VPlayer
       Kernel.Load<VPlayerNinjectModule>();
 
 #if DEBUG
-      WinConsole.CreateConsole();
+
+      isConsoleUp = WinConsole.CreateConsole();
 
       Console.ForegroundColor = ConsoleColor.Green;
       Console.WriteLine("TU JE MOJ TEXT");
@@ -56,9 +58,12 @@ namespace VPlayer
       //moduleCatalog.AddModule<LibraryViewModel>();
     }
 
-    protected override void OnInitialized()
+    protected override void OnExit(ExitEventArgs e)
     {
-      base.OnInitialized();
+      if (isConsoleUp)
+        isConsoleUp = !WinConsole.FreeConsole();
+
+      base.OnExit(e);
     }
   }
 }

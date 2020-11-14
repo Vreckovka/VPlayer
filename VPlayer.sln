@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VCore.Standard", "..\Custom
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VCore.WPF", "..\CustomLibraries\VCore\VCore.WPF.csproj", "{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer.DarkTheme", "VPlayer.DarkTheme\VPlayer.DarkTheme.csproj", "{219D618D-ED68-4076-813C-B9C8DB4FF49C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -169,6 +171,18 @@ Global
 		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Release|x64.Build.0 = Release|x64
 		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Release|x86.ActiveCfg = Release|Any CPU
 		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}.Release|x86.Build.0 = Release|Any CPU
+		{219D618D-ED68-4076-813C-B9C8DB4FF49C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{219D618D-ED68-4076-813C-B9C8DB4FF49C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{219D618D-ED68-4076-813C-B9C8DB4FF49C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{219D618D-ED68-4076-813C-B9C8DB4FF49C}.Debug|x64.Build.0 = Debug|Any CPU
+		{219D618D-ED68-4076-813C-B9C8DB4FF49C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{219D618D-ED68-4076-813C-B9C8DB4FF49C}.Debug|x86.Build.0 = Debug|Any CPU
+		{219D618D-ED68-4076-813C-B9C8DB4FF49C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{219D618D-ED68-4076-813C-B9C8DB4FF49C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{219D618D-ED68-4076-813C-B9C8DB4FF49C}.Release|x64.ActiveCfg = Release|Any CPU
+		{219D618D-ED68-4076-813C-B9C8DB4FF49C}.Release|x64.Build.0 = Release|Any CPU
+		{219D618D-ED68-4076-813C-B9C8DB4FF49C}.Release|x86.ActiveCfg = Release|Any CPU
+		{219D618D-ED68-4076-813C-B9C8DB4FF49C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -176,6 +190,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{A7210679-60D5-4B26-BC34-9E22C91EF175} = {E90D9EBC-6FA1-471C-84A9-CFC5B30756E4}
 		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9} = {E90D9EBC-6FA1-471C-84A9-CFC5B30756E4}
+		{219D618D-ED68-4076-813C-B9C8DB4FF49C} = {E90D9EBC-6FA1-471C-84A9-CFC5B30756E4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7757B067-0629-4B99-BC33-50BF3898A109}

@@ -60,6 +60,7 @@ namespace VPlayer.ViewModels
 
       var windowsPlayer = viewModelsFactory.Create<WindowsViewModel>();
       windowsPlayer.IsActive = true;
+
       isWindows = true;
       NavigationViewModel.Items.Add(windowsPlayer);
 
@@ -73,7 +74,7 @@ namespace VPlayer.ViewModels
 
     #endregion
 
-    #region MyRegion
+    #region Dispose
 
     public override void Dispose()
     {

@@ -57,14 +57,7 @@
    
     </Border>
 
-    <!--<Border Name="MenuBorder"
-            Background="Transparent"
-            BorderBrush="{StaticResource 10_WhiteTransparentBrush}"
-            BorderThickness="0,0,2,0">
-
-      <ListView ItemsSource="{Binding NavigationViewModel.Items}" Style="{StaticResource ListView_MenuStyle}" />
-    </Border>-->
-
+  
     <Button Content="DELETE ALL" Click="Button_Click" Visibility="Collapsed"/>
 
     <ContentControl Grid.Row="1"

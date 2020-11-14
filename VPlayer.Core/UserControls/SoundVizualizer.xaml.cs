@@ -24,7 +24,6 @@ namespace VPlayer.Player.UserControls
     #region Fields
 
     private LineSpectrum lineSpectrum;
-    private IWaveSource waveSource;
     private int width;
     private int height;
 
@@ -224,6 +223,7 @@ namespace VPlayer.Player.UserControls
     private Timer timer;
     private ISampleSource source;
     private WasapiLoopbackCapture _soundIn;
+    private SoundInSource soundInSource;
 
 
     private void InitlizeSoundVizualizer()
@@ -238,24 +238,15 @@ namespace VPlayer.Player.UserControls
 
       _soundIn.Initialize();
 
-      var soundInSource = new SoundInSource(_soundIn);
+      soundInSource = new SoundInSource(_soundIn);
       source = soundInSource.ToSampleSource().AppendSource(x => new PitchShifter(x), out var _pitchShifter);
 
-      SetupSampleSource(source);
 
-      // We need to read from our source otherwise SingleBlockRead is never called and our spectrum provider is not populated
-      byte[] buffer = new byte[waveSource.WaveFormat.BytesPerSecond / 2];
-      soundInSource.DataAvailable += (s, aEvent) =>
-      {
-        int read;
-        try
-        {
-          while ((read = waveSource.Read(buffer, 0, buffer.Length)) > 0) ;
-        }
-        catch (Exception ex)
-        {
-        };
-      };
+      waveSource = SetupSampleSource(source);
+
+      buffer = new byte[waveSource.WaveFormat.BytesPerSecond / 2];
+
+      soundInSource.DataAvailable += ReadData;
 
       //play the audio
       _soundIn.Start();
@@ -269,13 +260,22 @@ namespace VPlayer.Player.UserControls
 
 
     #endregion
+    private byte[] buffer;
+    private IWaveSource waveSource;
+    private void ReadData(object s, DataAvailableEventArgs dataAvailableEventArgs)
+    {
+      int read;
+      while ((read = waveSource.Read(buffer, 0, buffer.Length)) > 0) ;
+    }
 
     #region DisposeSoundVizualizer
 
     private void DisposeSoundVizualizer()
     {
+      soundInSource.DataAvailable -= ReadData;
       _soundIn?.Dispose();
       source?.Dispose();
+
 
       if (timer != null)
       {
@@ -283,7 +283,8 @@ namespace VPlayer.Player.UserControls
         timer?.Dispose();
       }
 
-      Application.Current.Dispatcher.ShutdownStarted -= Dispatcher_ShutdownStarted;
+      if (Application.Current != null)
+        Application.Current.Dispatcher.ShutdownStarted -= Dispatcher_ShutdownStarted;
     }
 
     #endregion
@@ -299,7 +300,7 @@ namespace VPlayer.Player.UserControls
 
     #region SetupSampleSource
 
-    private void SetupSampleSource(ISampleSource aSampleSource)
+    private IWaveSource SetupSampleSource(ISampleSource aSampleSource)
     {
       const FftSize fftSize = FftSize.Fft4096;
       //create a spectrum provider which provides fft data based on some input
@@ -323,7 +324,7 @@ namespace VPlayer.Player.UserControls
 
       notificationSource.SingleBlockRead += (s, a) => spectrumProvider.Add(a.Left, a.Right);
 
-      waveSource = notificationSource.ToWaveSource(16);
+      return notificationSource.ToWaveSource(16);
 
     }
 

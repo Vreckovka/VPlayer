@@ -1,0 +1,18 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:VPlayer.StylesDictionaries">
+
+    <Style x:Key="Base"
+           TargetType="{x:Type TextBlock}"
+           BasedOn="{StaticResource {x:Type TextBlock}}">
+        <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}" />
+        <Setter Property="FontFamily" Value="Arial" />
+    </Style>
+
+    <Style x:Key="Base1"
+           TargetType="{x:Type TextBlock}"
+           BasedOn="{StaticResource {x:Type TextBlock}}">
+        <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}" />
+        <Setter Property="FontFamily" Value="pack://application:,,,/VPlayer;component/Resources/Montserrat/Montserrat-Thin.otf#Montserrat Thin" />
+    </Style>
+</ResourceDictionary>

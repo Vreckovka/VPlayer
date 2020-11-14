@@ -305,7 +305,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     public bool StoreData(Playlist model, out Playlist entityModel)
     {
-      var playlist = playlistsRepository.Context.Playlists.SingleOrDefault(x => x.SongsInPlaylitsHashCode == model.SongsInPlaylitsHashCode);
+      var playlist = playlistsRepository.Entities.Include(x => x.PlaylistSongs).SingleOrDefault(x => x.SongsInPlaylitsHashCode == model.SongsInPlaylitsHashCode);
 
       if (playlist == null)
       {
@@ -333,7 +333,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     public void UpdateData(Playlist model)
     {
-      var playlist = playlistsRepository.Context.Playlists.SingleOrDefault(x => x.Id == model.Id);
+      var playlist = playlistsRepository.Entities.SingleOrDefault(x => x.Id == model.Id);
 
       if (playlist != null)
       {

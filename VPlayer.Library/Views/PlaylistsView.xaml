@@ -5,11 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VPlayer.Library.Views"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore"
              xmlns:events="clr-namespace:VPlayer.Core.Events;assembly=VPlayer.Core"
              xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
              xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="1800">
   <UserControl.Resources>
@@ -86,8 +86,7 @@
 
 
   <Grid>
-
-    <ListView DataContext="{StaticResource scheduledItems}"
+   <ListView DataContext="{StaticResource scheduledItems}"
               ItemsSource="{Binding}"
               Background="Transparent"  
               Foreground="#30ffffff" 
@@ -97,7 +96,7 @@
               FontFamily="{StaticResource Roboto}"
               FontWeight="Bold"
               Margin="5"
-              >
+    >
       <ListView.ItemContainerStyle>
         <Style TargetType="{x:Type ListViewItem}"  >
           <Setter Property="Template"
@@ -184,7 +183,7 @@
             <GridViewColumn Width="180" Header="Last played" 
                             DisplayMemberBinding="{Binding LastPlayed, StringFormat={}dd.MM:yy / hh:mm:ss}"/>
             <GridViewColumn Width="150" Header="Hash" DisplayMemberBinding="{Binding SongsInPlaylitsHashCode,Converter={library:HashConverter}}"/>
-          
+
             <GridViewColumn Width="100" Header="Song count" DisplayMemberBinding="{Binding SongCount}"/>
             <GridViewColumn Width="75" Header="Settings">
               <GridViewColumn.CellTemplate>
@@ -262,6 +261,23 @@
       </ListView.GroupStyle>
     </ListView>
 
+    <Grid Background="#cc151515">
 
+      <Border Background="#202020" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10 5 10 5">
+        <TextBlock Text="Loading" FontSize="15" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+      </Border>
+     
+      <Grid.Style>
+        <Style TargetType="Grid">
+          <Setter Property="Visibility" Value="Collapsed"/>
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding IsBusy}" Value="True">
+              <Setter Property="Visibility" Value="Visible"/>
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </Grid.Style>
+
+    </Grid>
   </Grid>
 </UserControl>

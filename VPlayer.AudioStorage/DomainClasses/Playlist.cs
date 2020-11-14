@@ -30,5 +30,7 @@ namespace VPlayer.AudioStorage.DomainClasses
       SongCount = other.SongCount;
       PlaylistSongs = other.PlaylistSongs;
     }
+
+   
   }
 }

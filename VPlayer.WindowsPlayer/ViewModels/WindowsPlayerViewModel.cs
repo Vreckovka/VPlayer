@@ -102,12 +102,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
         {
           actualSong = value;
           actualSongSubject.OnNext(PlayList.IndexOf(actualSong));
-          RaisePropertyChanged();
 
-          if (actualSong != null && string.IsNullOrEmpty(actualSong.ImagePath))
-          {
-            UseGif = true;
-          }
+          RaisePropertyChanged();
         }
       }
     }
@@ -168,7 +164,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
       }
     }
     #endregion
-
 
     public override bool CanPlay
     {
@@ -488,7 +483,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         MediaPlayer.Stopped += (sender, e) =>
         {
-          if (IsPlayFnished)
+          if (IsPlayFnished && ActualSong != null)
           {
             ActualSong.IsPlaying = false;
             ActualSong.IsPaused = false;
@@ -501,10 +496,14 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         MediaPlayer.Playing += (sender, e) =>
         {
-          ActualSong.IsPlaying = true;
-          ActualSong.IsPaused = false;
-          IsPlaying = true;
-          IsPlayingSubject.OnNext(IsPlaying);
+          if (ActualSong != null)
+          {
+            ActualSong.IsPlaying = true;
+            ActualSong.IsPaused = false;
+            IsPlaying = true;
+            IsPlayingSubject.OnNext(IsPlaying);
+          }
+
         };
 
         eventAggregator.GetEvent<PlaySongsEvent>().Subscribe(PlaySongs).DisposeWith(this);
@@ -594,7 +593,15 @@ namespace VPlayer.WindowsPlayer.ViewModels
           throw new ArgumentOutOfRangeException();
       }
 
+
       ReloadVirtulizedPlaylist();
+
+      if (obj.SongsToDelete.Count(x => x.Model.Id == ActualSong.Model.Id) > 0)
+      {
+        ActualSong = null;
+      }
+
+      PlayNext(actualSongIndex);
     }
 
     #endregion
@@ -621,10 +628,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       shuffleList.Remove(eventPattern.EventArgs);
 
-      if (ActualSong == eventPattern.EventArgs)
-      {
-        PlayNext(actualSongIndex);
-      }
+     
 
     }
 
@@ -677,10 +681,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
         if (data.SetPostion.HasValue)
           MediaPlayer.Position = data.SetPostion.Value;
       }
-
-
-      UpdateActualSavedPlaylistPlaylist();
-
     }
 
     #endregion
@@ -741,23 +741,31 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     private void PlaySongs(IEnumerable<SongInPlayList> songs, bool savePlaylist = true, int songIndex = 0, bool editSaved = false)
     {
-      IsActive = true;
-
-      PlayList.Clear();
-      PlayList.AddRange(songs);
-      ReloadVirtulizedPlaylist();
-
-      IsPlaying = true;
-
-      PlayNext(songIndex);
-
-      if (ActualSong != null)
-        ActualSong.IsPlaying = false;
-
-      if (savePlaylist)
+      Application.Current.Dispatcher.Invoke(() =>
       {
-        SavePlaylist(editSaved: editSaved);
-      }
+        IsActive = true;
+
+        PlayList.Clear();
+        PlayList.AddRange(songs);
+        ReloadVirtulizedPlaylist();
+
+        IsPlaying = true;
+
+        PlayNext(songIndex);
+
+        if (ActualSong != null)
+          ActualSong.IsPlaying = false;
+
+        Task.Run(() =>
+        {
+          if (savePlaylist)
+          {
+            SavePlaylist(editSaved: editSaved);
+          }
+        });
+
+      });
+
     }
 
     #endregion PlaySongs
@@ -906,7 +914,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
         else if (ActualSong != null)
           ActualSong.IsPaused = true;
 
-        UpdateActualSavedPlaylistPlaylist();
       });
     }
 
@@ -918,8 +925,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
       }
       else
       {
-        var item = PlayList.SingleOrDefault(x => x.Model.Id == nextSong.Model.Id);
+        var items = PlayList.Where(x => x == nextSong);
 
+
+        var item = items.FirstOrDefault();
         if (ActualSong != item && item != null)
         {
           PlayNext(PlayList.IndexOf(item));
@@ -1097,9 +1106,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
       }
       else
       {
-        success = storageManager.StoreData(entityPlayList, out var entityPlaylist);
+        success = storageManager.StoreData(entityPlayList, out var entityPlaylistDb);
 
-        entityPlayList.Update(entityPlaylist);
+        UpdateNonUserCreatedPlaylist(entityPlayList, entityPlaylistDb);
 
         ActualSavedPlaylist = entityPlayList;
 
@@ -1114,6 +1123,20 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
 
     #endregion
+
+    private void UpdateNonUserCreatedPlaylist(Playlist playlistToUpdate, Playlist other)
+    {
+      if (playlistToUpdate.Id == 0)
+        playlistToUpdate.Id = other.Id;
+
+
+      playlistToUpdate.Name = other.Name;
+      playlistToUpdate.IsReapting = other.IsReapting;
+      playlistToUpdate.IsShuffle = other.IsShuffle;
+
+
+      playlistToUpdate.IsUserCreated = other.IsUserCreated;
+    }
 
     #region UpdateActualSavedPlaylistPlaylist
 

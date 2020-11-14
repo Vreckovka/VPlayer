@@ -311,7 +311,6 @@
     <ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj">
       <Project>{b5245008-cfdf-4b83-bf61-b0b26a8e92bf}</Project>
       <Name>VPlayer.AudioStorage</Name>
-      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

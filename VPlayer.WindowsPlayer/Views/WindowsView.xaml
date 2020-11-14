@@ -5,7 +5,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:regions="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPlayer.Core"
-             xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore"
              xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
              d:DesignHeight="850"
              d:DesignWidth="800"

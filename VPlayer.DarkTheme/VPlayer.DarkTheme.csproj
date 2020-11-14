@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Update="Styles\StylesDictionaries\WindowsStyle.xaml.cs">
+      <DependentUpon>WindowsStyle.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Styles\StylesDictionaries\ButtonsStyle.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\StylesDictionaries\ColorsStyle.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\StylesDictionaries\DataTemplates.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\StylesDictionaries\ListViewsStyle.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\StylesDictionaries\MenusStyle.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\StylesDictionaries\OverlayStyles.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\StylesDictionaries\Paths.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\StylesDictionaries\ScrollViewerStyles.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\StylesDictionaries\SlidersStyle.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\StylesDictionaries\TextBlocksStyle.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\StylesDictionaries\TextBoxStyle.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\StylesDictionaries\WindowsStyle.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
+</Project>
