@@ -36,12 +36,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
         Directory.CreateDirectory(directory);
       }
 
-      var path = Path.Combine(directory, "MojaSkuska.db");
-
-
-      var asd = Database.Connection.ConnectionString;
-
-
+      var _ = System.Data.Entity.SqlServer.SqlProviderServices.Instance;
     }
 
     #endregion Constructors

@@ -85,21 +85,36 @@ namespace VPlayer.Library.ViewModels
       actualSearchSubject.DisposeWith(this);
 
       actualSearchSubject.Throttle(TimeSpan.FromMilliseconds(150)).Subscribe(Filter).DisposeWith(this);
-
-      var playlists = viewModelsFactory.Create<PlaylistsViewModel>();
-      NavigationViewModel.Items.Add(playlists);
-
-      var artistsViewModel = viewModelsFactory.Create<IArtistsViewModel>();
-      NavigationViewModel.Items.Add(artistsViewModel);
-
-      var albumsViewModel = viewModelsFactory.Create<IAlbumsViewModel>();
-      NavigationViewModel.Items.Add(albumsViewModel);
-
-
-      NavigationViewModel.Items.First().IsActive = true;
+     
     }
 
     #endregion Initialize
+
+    public override void OnActivation(bool firstActivation)
+    {
+      base.OnActivation(firstActivation);
+
+      if (firstActivation)
+      {
+        var playlists = viewModelsFactory.Create<PlaylistsViewModel>();
+        playlists.RegionManager = RegionManager;
+
+        var artistsViewModel = viewModelsFactory.Create<IArtistsViewModel>();
+        artistsViewModel.RegionManager = RegionManager;
+
+        var albumsViewModel = viewModelsFactory.Create<IAlbumsViewModel>();
+        albumsViewModel.RegionManager = RegionManager;
+
+        Application.Current?.Dispatcher?.Invoke(() =>
+        {
+          NavigationViewModel.Items.Add(playlists);
+          NavigationViewModel.Items.Add(albumsViewModel);
+          NavigationViewModel.Items.Add(artistsViewModel);
+
+          NavigationViewModel.Items.First().IsActive = true;
+        });
+      }
+    }
 
     #region Filter
 

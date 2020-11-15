@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Data.Common;
+using System.Diagnostics;
 using System.Windows;
 using Ninject;
 using Prism.Ioc;
@@ -22,8 +24,19 @@ namespace VPlayer
   {
     private IKernel Kernel;
     private bool isConsoleUp = false;
+    private Stopwatch stopWatch;
     protected override void RegisterTypes(IContainerRegistry containerRegistry)
     {
+      stopWatch = new Stopwatch();
+      stopWatch.Start();
+
+      var sQLiteProviderFactory = new System.Data.SQLite.EF6.SQLiteProviderFactory();
+      var sQLiteFactory = new System.Data.SQLite.SQLiteFactory();
+
+
+      DbProviderFactories.RegisterFactory("System.Data.SQLite.EF6", sQLiteProviderFactory);
+      DbProviderFactories.RegisterFactory("System.Data.SQLite", sQLiteFactory);
+
       Kernel = Container.GetContainer();
 
       Kernel.Load<CommonNinjectModule>();
@@ -50,6 +63,14 @@ namespace VPlayer
       shell.DataContext = dataContext;
 
       return shell;
+    }
+
+    protected override void OnInitialized()
+    {
+      base.OnInitialized();
+      stopWatch.Stop();
+
+      Console.WriteLine(stopWatch.Elapsed);
     }
 
     protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)

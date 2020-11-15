@@ -93,25 +93,34 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region Initialize
 
-    public override void Initialize()
-    {
-      base.Initialize();
-
-      var libraryViewModel = viewModelsFactory.Create<LibraryViewModel>();
-      libraryViewModel.IsActive = true;
-
-      var playerViewModel = viewModelsFactory.Create<WindowsPlayerViewModel>();
-      var item = playerViewModel;
-
-      var settings = viewModelsFactory.Create<SettingsViewModel>();
-
-
-      NavigationViewModel.Items.Add(libraryViewModel);
-      NavigationViewModel.Items.Add(item);
-      NavigationViewModel.Items.Add(settings);
-    }
-
+  
     #endregion
+
+    public override void OnActivation(bool firstActivation)
+    {
+      base.OnActivation(firstActivation);
+
+
+      if (firstActivation)
+      {
+        var libraryViewModel = viewModelsFactory.Create<LibraryViewModel>();
+
+        libraryViewModel.RegionManager = RegionManager;
+        libraryViewModel.IsActive = true;
+
+        var playerViewModel = viewModelsFactory.Create<WindowsPlayerViewModel>();
+        playerViewModel.RegionManager = RegionManager;
+
+        var settings = viewModelsFactory.Create<SettingsViewModel>();
+        settings.RegionManager = RegionManager;
+
+        NavigationViewModel.Items.Add(libraryViewModel);
+        NavigationViewModel.Items.Add(playerViewModel);
+        NavigationViewModel.Items.Add(settings);
+      }
+
+    
+    }
 
     #endregion Methods
 

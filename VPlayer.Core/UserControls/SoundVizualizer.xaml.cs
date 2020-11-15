@@ -272,7 +272,9 @@ namespace VPlayer.Player.UserControls
 
     private void DisposeSoundVizualizer()
     {
-      soundInSource.DataAvailable -= ReadData;
+      if (soundInSource != null)
+        soundInSource.DataAvailable -= ReadData;
+
       _soundIn?.Dispose();
       source?.Dispose();
 

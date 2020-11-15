@@ -32,7 +32,7 @@ namespace VPlayer.ViewModels
 
     #region IsWindows
 
-    private bool isWindows;
+    private bool isWindows = true;
     public bool IsWindows
     {
       get { return isWindows; }
@@ -59,11 +59,10 @@ namespace VPlayer.ViewModels
       base.Initialize();
 
       var windowsPlayer = viewModelsFactory.Create<WindowsViewModel>();
+   
       windowsPlayer.IsActive = true;
-
-      isWindows = true;
+   
       NavigationViewModel.Items.Add(windowsPlayer);
-
 
       var player = viewModelsFactory.Create<PlayerViewModel>();
       player.IsActive = true;

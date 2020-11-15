@@ -201,7 +201,15 @@ namespace VPlayer.Library.ViewModels
 
         var e = new PlaySongsEventData(data, action, IsShuffle, IsRepeating, Model.LastSongElapsedTime, Model);
 
-        eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
+        try
+        {
+          eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
+        }
+        catch (Exception ex)
+        {
+
+          throw;
+        }
 
         Application.Current.Dispatcher.Invoke(() =>
         {

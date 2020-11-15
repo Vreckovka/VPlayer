@@ -12,7 +12,7 @@ namespace VPlayer.StylesDictionaries
       try
       {
         Window window = (sender as Button).Tag as Window;
-        window.Close();
+        window?.Close();
       }
       catch (System.Exception)
       {
@@ -26,31 +26,7 @@ namespace VPlayer.StylesDictionaries
     /// <param name="e"></param>
     private void MaximizeButt_Click(object sender, System.Windows.RoutedEventArgs e)
     {
-      //public bool IsFullscreen
-      //{
-      //  get
-      //  {
-      //    return WindowState == System.Windows.WindowState.Maximized
-      //           && ResizeMode == System.Windows.ResizeMode.NoResize
-      //           && WindowStyle == System.Windows.WindowStyle.None;
-      //  }
-      //  set
-      //  {
-      //    if (value)
-      //    {
-      //      ResizeMode = System.Windows.ResizeMode.NoResize;
-      //      WindowStyle = System.Windows.WindowStyle.None;
-      //      WindowState = System.Windows.WindowState.Maximized;
-      //    }
-      //    else
-      //    {
-      //      ResizeMode = System.Windows.ResizeMode.CanResize;
-      //      WindowStyle = System.Windows.WindowStyle.SingleBorderWindow;
-      //      WindowState = System.Windows.WindowState.Normal;
-      //    }
-      //  }
-
-      Window window = (sender as Button).Tag as Window;
+     Window window = (sender as Button).Tag as Window;
 
       if (window.WindowState != WindowState.Maximized)
       {
