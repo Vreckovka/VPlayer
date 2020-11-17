@@ -5,7 +5,7 @@
                     xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore.WPF">
 
   <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/Paths.xaml" />
+    <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Paths.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <Style TargetType="{x:Type Button}">
@@ -43,9 +43,15 @@
           </Border>
 
           <ControlTemplate.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
+            <MultiTrigger >
+              <MultiTrigger.Conditions>
+                <Condition Property="IsMouseOver" Value="True"/>
+                <Condition Property="IsHitTestVisible" Value="True"/>
+              </MultiTrigger.Conditions>
+
               <Setter Property="Cursor" Value="Hand" />
-              <Trigger.EnterActions>
+
+              <MultiTrigger.EnterActions>
                 <RemoveStoryboard BeginStoryboardName="ResetBackgroundStoryBoard"/>
                 <RemoveStoryboard BeginStoryboardName="ResetBackgroundStoryBoard1"/>
                 <RemoveStoryboard BeginStoryboardName="ResetBackgroundStoryBoard2"/>
@@ -78,8 +84,9 @@
                   </Storyboard>
                 </BeginStoryboard>
 
-              </Trigger.EnterActions>
-              <Trigger.ExitActions>
+              </MultiTrigger.EnterActions>
+
+              <MultiTrigger.ExitActions>
                 <RemoveStoryboard BeginStoryboardName="ChangeBackgroundStoryBoard"/>
                 <RemoveStoryboard BeginStoryboardName="ChangeBackgroundStoryBoard1"/>
                 <RemoveStoryboard BeginStoryboardName="ChangeBackgroundStoryBoard2"/>
@@ -111,20 +118,25 @@
                       Duration="0:0:.3" />
                   </Storyboard>
                 </BeginStoryboard>
-              </Trigger.ExitActions>
-            </Trigger>
+              </MultiTrigger.ExitActions>
+            </MultiTrigger>
 
-
-            <!--<Trigger Property="IsPressed" Value="True">
-              <Setter Property="Background" Value="Transparent" />
-              <Setter TargetName="PathIcon" Property="Fill" Value="{DynamicResource DefaultRedBrush}" />
-            </Trigger>
 
             <Trigger Property="IsEnabled" Value="False">
-              <Setter Property="Background" Value="{DynamicResource DefaultRedTransparentBrush}" />
-              <Setter TargetName="PathIcon" Property="Tag" Value="Play" />
-            </Trigger>-->
+              <Setter Property="Background" Value="#353535" />
+              <Setter Property="IsHitTestVisible" Value="False" />
+              <Trigger.EnterActions>
+                <RemoveStoryboard BeginStoryboardName="ResetBackgroundStoryBoard"/>
+                <RemoveStoryboard BeginStoryboardName="ResetBackgroundStoryBoard2"/>
+                <RemoveStoryboard BeginStoryboardName="ResetBackgroundStoryBoard1"/>
+              
+                <RemoveStoryboard BeginStoryboardName="ChangeBackgroundStoryBoard"/>
+                <RemoveStoryboard BeginStoryboardName="ChangeBackgroundStoryBoard1"/>
+                <RemoveStoryboard BeginStoryboardName="ChangeBackgroundStoryBoard2"/>
+              </Trigger.EnterActions>
+            </Trigger>
           </ControlTemplate.Triggers>
+
         </ControlTemplate>
       </Setter.Value>
     </Setter>

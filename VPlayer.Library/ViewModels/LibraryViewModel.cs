@@ -107,9 +107,9 @@ namespace VPlayer.Library.ViewModels
 
         Application.Current?.Dispatcher?.Invoke(() =>
         {
-          NavigationViewModel.Items.Add(playlists);
-          NavigationViewModel.Items.Add(albumsViewModel);
-          NavigationViewModel.Items.Add(artistsViewModel);
+          NavigationViewModel.Items.Add(new NavigationItem(playlists));
+          NavigationViewModel.Items.Add(new NavigationItem(albumsViewModel));
+          NavigationViewModel.Items.Add(new NavigationItem(artistsViewModel));
 
           NavigationViewModel.Items.First().IsActive = true;
         });

@@ -8,7 +8,7 @@ namespace VPlayer.Design
   {
     public MainWindowDesignViewModel()
     {
-      NavigationViewModel.Items.Add(new WindowsPlayerDesignViewModel());
+      NavigationViewModel.Items.Add(new NavigationItem(new WindowsPlayerDesignViewModel()));
     }
 
     public NavigationViewModel NavigationViewModel { get; set; } = new NavigationViewModel();

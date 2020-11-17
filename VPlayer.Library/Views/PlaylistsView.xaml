@@ -38,7 +38,7 @@
         </Setter>
       </Style>
 
-      <ControlTemplate x:Key="StronglyRecommended" 
+      <ControlTemplate x:Key="ListViewItemTemplate" 
                        TargetType='{x:Type ListViewItem}'>
         <Border Padding="10" Name="border" Margin="-10 0 0 0" >
           <Border.Style>
@@ -100,7 +100,7 @@
       <ListView.ItemContainerStyle>
         <Style TargetType="{x:Type ListViewItem}"  >
           <Setter Property="Template"
-                  Value="{StaticResource StronglyRecommended}"/>
+                  Value="{StaticResource ListViewItemTemplate}"/>
 
         </Style>
       </ListView.ItemContainerStyle>

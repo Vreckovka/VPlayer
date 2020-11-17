@@ -116,4 +116,10 @@
     <ProjectReference Include="..\VPlayer.WindowsPlayer\VPlayer.WindowsPlayer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Hqub.MusicBrainz.API">
+      <HintPath>..\DLL\Hqub.MusicBrainz.API.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

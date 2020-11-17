@@ -114,9 +114,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
         var settings = viewModelsFactory.Create<SettingsViewModel>();
         settings.RegionManager = RegionManager;
 
-        NavigationViewModel.Items.Add(libraryViewModel);
-        NavigationViewModel.Items.Add(playerViewModel);
-        NavigationViewModel.Items.Add(settings);
+        NavigationViewModel.Items.Add(new NavigationItem(libraryViewModel));
+        NavigationViewModel.Items.Add(new NavigationItem(playerViewModel));
+        NavigationViewModel.Items.Add(new NavigationItem(settings));
       }
 
     

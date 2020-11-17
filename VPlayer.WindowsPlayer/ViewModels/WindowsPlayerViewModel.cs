@@ -44,6 +44,7 @@ using VPlayer.Player.Views.WindowsPlayer;
 //TODO: 2 Druhy playlistov, uzivatelsky(upravitelny) a generovany (readonly)
 //TODO: Hore prenutie medzi windows a browser playermi , zmizne bocne menu
 //TODO: Pridat loading indikator, mozno aj co prave robi
+//TODO: Hviezdicky pocet 
 
 namespace VPlayer.WindowsPlayer.ViewModels
 {
