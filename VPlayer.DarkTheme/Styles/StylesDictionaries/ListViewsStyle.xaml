@@ -23,6 +23,21 @@
         <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="FontFamily" Value="{StaticResource Roboto}" />
+        <Setter Property="Background">
+            <Setter.Value>
+
+                <LinearGradientBrush Opacity="0.9" StartPoint="1,0" EndPoint="0,0">
+
+                    <GradientStop Offset="0.5" Color="#97e879" />
+
+                    <GradientStop Offset="-1" Color="#30a9ff" />
+
+                    <GradientStop Offset="0.5" Color="Wheat" />
+
+
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
                 <Style TargetType="ListViewItem">

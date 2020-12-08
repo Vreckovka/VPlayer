@@ -1,4 +1,6 @@
-﻿using Prism.Regions;
+﻿using System;
+using Prism.Regions;
+using VCore.Annotations;
 using VCore.Modularity.Navigation;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Factories.Views;
@@ -15,7 +17,7 @@ namespace VPlayer.Library.Modularity
     #region Constructors
 
     public VPlayerLibraryRegionProvider(
-      IRegionManager regionManager,
+      [NotNull] IRegionManager regionManager,
       IViewFactory viewFactory,
       IViewModelsFactory viewModelsFactory,
       INavigationProvider navigationProvider) : base(regionManager, viewFactory, viewModelsFactory, navigationProvider)
@@ -28,9 +30,11 @@ namespace VPlayer.Library.Modularity
 
     public override void ShowAlbumDetail(AlbumViewModel albumViewModel, string regionName = null)
     {
-      var asd = viewModelsFactory.Create<AlbumDetailViewModel>(albumViewModel, regionName);
+      var albumDetailViewModel = viewModelsFactory.Create<AlbumDetailViewModel>(albumViewModel);
 
-      asd.IsActive = true;
+      albumDetailViewModel.RegionManager = RegionManager;
+
+      albumDetailViewModel.IsActive = true;
     }
 
     public override void ShowArtistDetail(ArtistViewModel artistViewModel)

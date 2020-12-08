@@ -38,6 +38,8 @@ namespace VPlayer.Library.ViewModels
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.NavigationViewModel = navigationViewModel ?? throw new ArgumentNullException(nameof(navigationViewModel));
       this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
+
+    
     }
 
     #endregion Constructors
@@ -108,11 +110,14 @@ namespace VPlayer.Library.ViewModels
         Application.Current?.Dispatcher?.Invoke(() =>
         {
           NavigationViewModel.Items.Add(new NavigationItem(playlists));
-          NavigationViewModel.Items.Add(new NavigationItem(albumsViewModel));
           NavigationViewModel.Items.Add(new NavigationItem(artistsViewModel));
+          NavigationViewModel.Items.Add(new NavigationItem(albumsViewModel));
+       
 
           NavigationViewModel.Items.First().IsActive = true;
         });
+
+        regionProvider.RegionManager = RegionManager;
       }
     }
 
@@ -122,7 +127,7 @@ namespace VPlayer.Library.ViewModels
     {
       var acutal = NavigationViewModel.Items.SingleOrDefault(x => x.IsActive);
 
-      if (acutal != null && acutal is IPlayableItemsViewModel playableItemsViewModel)
+      if (acutal != null && acutal.navigationItem is IPlayableItemsViewModel playableItemsViewModel)
       {
         playableItemsViewModel.Filter(phrase);
       }

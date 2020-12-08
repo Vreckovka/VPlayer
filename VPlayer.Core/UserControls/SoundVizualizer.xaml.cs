@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Security.Permissions;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,6 +21,9 @@ namespace VPlayer.Player.UserControls
   /// <summary>
   /// Interaction logic for SoundVizualizer.xaml
   /// </summary>
+  ///
+
+  [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
   public partial class SoundVizualizer : UserControl
   {
     #region Fields
@@ -43,10 +48,20 @@ namespace VPlayer.Player.UserControls
       this.SizeChanged += SoundVizualizer_SizeChanged;
       this.IsEnabledChanged += SoundVizualizer_IsEnabledChanged;
 
+      AppDomain currentDomain = AppDomain.CurrentDomain;
+      currentDomain.UnhandledException += new UnhandledExceptionEventHandler(MyHandler);
+
+
     }
 
 
     #endregion
+
+    static void MyHandler(object sender, UnhandledExceptionEventArgs args)
+    {
+      Exception e = (Exception)args.ExceptionObject;
+      Console.WriteLine("MyHandler caught : " + e.Message);
+    }
 
     #region Properties
 
@@ -260,18 +275,30 @@ namespace VPlayer.Player.UserControls
 
 
     #endregion
+
+    #region ReadData
+
     private byte[] buffer;
     private IWaveSource waveSource;
     private void ReadData(object s, DataAvailableEventArgs dataAvailableEventArgs)
     {
-      int read;
-      while ((read = waveSource.Read(buffer, 0, buffer.Length)) > 0) ;
+      Task.Run(() =>
+      {
+        int read;
+        
+        while ((read = waveSource.Read(buffer, 0, buffer.Length)) > 0) ;
+      });
+
     }
+
+    #endregion
 
     #region DisposeSoundVizualizer
 
     private void DisposeSoundVizualizer()
     {
+      waveSource?.Dispose();
+
       if (soundInSource != null)
         soundInSource.DataAvailable -= ReadData;
 

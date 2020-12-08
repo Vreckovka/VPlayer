@@ -10,6 +10,7 @@ using VCore.Standard;
 using VCore.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
+using VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics;
 using VPlayer.AudioStorage.InfoDownloader.LRC;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Clients;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google;
@@ -435,9 +436,7 @@ namespace VPlayer.Core.ViewModels
             default:
               throw new ArgumentOutOfRangeException();
           }
-         
         }
-         
       }
     }
 
@@ -468,7 +467,7 @@ namespace VPlayer.Core.ViewModels
       var lrc = (GoogleLRCFile)await audioInfoDownloader.TryGetLRCLyricsAsync(googleDriveLrcProvider, Model, ArtistViewModel?.Name, AlbumViewModel?.Name);
 
       if (lrc != null)
-        LRCFile = new LRCFileViewModel(lrc, googleDriveLrcProvider.LRCProvider,googleDriveLrcProvider);
+        LRCFile = new LRCFileViewModel(lrc, googleDriveLrcProvider.LRCProvider, googleDriveLrcProvider);
 
     }
 
@@ -486,6 +485,26 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    private async Task LoadLRCFromMiniLyrics()
+    {
+      var client = new MiniLyricsLRCProvider();
+
+      var lrcString = await client.FindLRC(ArtistViewModel.Name, Name);
+
+      var parser = new LRCParser();
+
+      if (lrcString != null)
+      {
+
+        var lrc = parser.Parse(lrcString.Replace("\r", "").Split('\n').ToList());
+
+        Model.LRCLyrics = lrcString;
+
+        LRCFile = new LRCFileViewModel(lrc, LRCProviders.MiniLyrics, client);
+      }
+
+    }
+
     #region TryToRefreshUpdateLyrics
 
     public async Task TryToRefreshUpdateLyrics()
@@ -497,12 +516,15 @@ namespace VPlayer.Core.ViewModels
         await LoadLRCFromGoogleDrive();
 
       if (LRCFile == null)
+        await LoadLRCFromMiniLyrics();
+
+      if (LRCFile == null)
         await LoadLRCFromLocal();
 
       if (LRCFile == null)
         LoadLRCFromEnitityLyrics();
 
-      if (!string.IsNullOrEmpty(ArtistViewModel?.Name))
+      if (LRCFile == null && Lyrics == null && !string.IsNullOrEmpty(ArtistViewModel?.Name))
       {
         await audioInfoDownloader.UpdateSongLyricsAsync(ArtistViewModel.Name, Name, Model);
       }

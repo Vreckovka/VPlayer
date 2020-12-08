@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Reflection;
@@ -253,7 +254,28 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public IKernel Kernel { get; set; }
     public int Cycle { get; set; }
-    public Playlist ActualSavedPlaylist { get; set; } = new Playlist() { Id = -1 };
+
+
+
+    #region ActualSavedPlaylist
+
+    private Playlist actualSavedPlaylist = new Playlist() { Id = -1 };
+
+    public Playlist ActualSavedPlaylist
+    {
+      get { return actualSavedPlaylist; }
+      set
+      {
+        if (value != actualSavedPlaylist)
+        {
+          actualSavedPlaylist = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+    
+    #endregion
+
     public bool IsPlayFnished { get; private set; }
 
     #region ActualSearch
@@ -507,6 +529,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         };
 
+
         eventAggregator.GetEvent<PlaySongsEvent>().Subscribe(PlaySongs).DisposeWith(this);
         eventAggregator.GetEvent<PauseEvent>().Subscribe(Pause).DisposeWith(this);
         eventAggregator.GetEvent<PlaySongsFromPlayListEvent>().Subscribe(PlaySongFromPlayList).DisposeWith(this);
@@ -691,7 +714,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private void PlaySongs(PlaySongsEventData data)
     {
       if (ActualSavedPlaylist.Id > 0)
+      {
         UpdateActualSavedPlaylistPlaylist();
+        ActualSavedPlaylist = new Playlist() { Id = -1 };
+      }
+      
 
       switch (data.PlaySongsAction)
       {
@@ -918,6 +945,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
       });
     }
 
+    #region PlayNextWithSong
+
     public void PlayNextWithSong(SongInPlayList nextSong = null)
     {
       if (nextSong == null)
@@ -936,6 +965,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
       }
     }
+
+    #endregion
 
     #endregion PlayNext
 
@@ -1097,15 +1128,18 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       bool success = false;
 
-      if (editSaved && ActualSavedPlaylist.IsUserCreated && hashCode != ActualSavedPlaylist.SongsInPlaylitsHashCode)
+      if (editSaved && ActualSavedPlaylist.IsUserCreated)
       {
-        ActualSavedPlaylist.SongsInPlaylitsHashCode = hashCode;
-        ActualSavedPlaylist.PlaylistSongs = songs;
-        ActualSavedPlaylist.SongCount = songs.Count;
+        if (hashCode != ActualSavedPlaylist.SongsInPlaylitsHashCode)
+        {
+          ActualSavedPlaylist.SongsInPlaylitsHashCode = hashCode;
+          ActualSavedPlaylist.PlaylistSongs = songs;
+          ActualSavedPlaylist.SongCount = songs.Count;
+        }
 
         UpdateActualSavedPlaylistPlaylist();
       }
-      else
+      else if(!ActualSavedPlaylist.IsUserCreated)
       {
         success = storageManager.StoreData(entityPlayList, out var entityPlaylistDb);
 
@@ -1125,6 +1159,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region UpdateNonUserCreatedPlaylist
+
     private void UpdateNonUserCreatedPlaylist(Playlist playlistToUpdate, Playlist other)
     {
       if (playlistToUpdate.Id == 0)
@@ -1138,6 +1174,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       playlistToUpdate.IsUserCreated = other.IsUserCreated;
     }
+
+    #endregion
 
     #region UpdateActualSavedPlaylistPlaylist
 
@@ -1188,8 +1226,19 @@ namespace VPlayer.WindowsPlayer.ViewModels
       if (ActualSavedPlaylist != null)
         UpdateActualSavedPlaylistPlaylist();
 
+      try
+      {
+        MediaPlayer.ResetMedia();
+        MediaPlayer.Stop();
+      }
+      catch (Exception ex)
+      {
+
+        throw;
+      }
 
       base.Dispose();
+
     }
 
     #endregion

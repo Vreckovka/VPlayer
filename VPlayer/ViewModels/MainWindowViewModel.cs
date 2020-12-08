@@ -2,6 +2,7 @@
 using VCore.Standard.Factories.ViewModels;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
+using VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics;
 using VPlayer.Player.ViewModels;
 using VPlayer.WindowsPlayer.ViewModels;
 
@@ -21,7 +22,7 @@ namespace VPlayer.ViewModels
     public MainWindowViewModel(IViewModelsFactory viewModelsFactory)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
-    }
+      }
 
     #endregion
 

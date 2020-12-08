@@ -333,10 +333,27 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     public void UpdateData(Playlist model)
     {
-      var playlist = playlistsRepository.Entities.SingleOrDefault(x => x.Id == model.Id);
+      var playlist = playlistsRepository.Entities.Include(x => x.PlaylistSongs).SingleOrDefault(x => x.Id == model.Id);
 
       if (playlist != null)
       {
+        if (model.SongsInPlaylitsHashCode != playlist.SongsInPlaylitsHashCode)
+        {
+          if (model.PlaylistSongs.Count > 0 && playlist.PlaylistSongs != null)
+          {
+            playlist.PlaylistSongs.Clear();
+
+            playlist.Update(model);
+
+            foreach (var song in model.PlaylistSongs)
+            {
+              playlist.PlaylistSongs.Add(song);
+            }
+
+            playlist.Update(model);
+          }
+        }
+
         playlist.Update(model);
 
         playlistsRepository.Save();
@@ -474,7 +491,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
             //Update is first time
             if (originalAlbum == null)
             {
-             
+
               var albums = context.Albums.Include(x => x.Songs).Include(x => x.Artist).ToList();
 
               originalAlbum = (from x in albums
@@ -497,7 +514,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
                 if (duplicates == null)
                 {
-                  
+
                   context.SaveChanges();
                   logger.Log(Logger.MessageType.Success,
                     $"Album was updated in database {album.Name}");
@@ -785,7 +802,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
     public void PushAction(ItemChanged itemChanged)
     {
       ItemChanged.OnNext(itemChanged);
-    } 
+    }
 
     #endregion
 

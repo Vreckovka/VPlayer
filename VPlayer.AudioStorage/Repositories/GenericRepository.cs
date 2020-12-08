@@ -37,7 +37,12 @@ namespace VPlayer.AudioStorage.Repositories
 
     public DbSet<TEntity> Entities
     {
-      get { return context.Set<TEntity>(); }
+      get
+      {
+        context = new TContext();
+        return context.Set<TEntity>(); 
+
+      }
     }
 
     #endregion

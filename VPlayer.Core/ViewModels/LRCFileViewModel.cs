@@ -113,7 +113,8 @@ namespace VPlayer.Core.ViewModels
             ActualLine.IsActual = false;
           }
 
-          var newLine = Lines.Where(x => x.Model.Timestamp.Value.TotalMilliseconds + TimeAdjustment <= timeSpan.TotalMilliseconds).OrderByDescending(x => x.Model.Timestamp).FirstOrDefault();
+          var newLine = Lines.Where(x => x.Model.Timestamp != null &&
+                                         x.Model.Timestamp.Value.TotalMilliseconds + TimeAdjustment <= timeSpan.TotalMilliseconds).OrderByDescending(x => x.Model.Timestamp).FirstOrDefault();
 
           if (newLine != null && ActualLine != newLine)
           {

@@ -25,12 +25,10 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     public AlbumDetailViewModel(
       IRegionProvider regionProvider,
       IViewModelsFactory viewModelsFactory,
-      AlbumViewModel album,
-      string regionName) : base(regionProvider)
+      AlbumViewModel album) : base(regionProvider)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       ActualAlbum = album;
-      RegionName = regionName;
     }
 
     #endregion Constructors
@@ -69,10 +67,6 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     }
 
     #endregion GetCovers
-
-    public static string GetRegionName()
-    {
-      return RegionNames.LibraryContentRegion;
-    }
+    
   }
 }

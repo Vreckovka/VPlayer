@@ -28,9 +28,8 @@ namespace VPlayer.AudioStorage.DomainClasses
       LastPlayed = other.LastPlayed;
       SongsInPlaylitsHashCode = other.SongsInPlaylitsHashCode;
       SongCount = other.SongCount;
-      PlaylistSongs = other.PlaylistSongs;
-    }
 
-   
+    
+    }
   }
 }
