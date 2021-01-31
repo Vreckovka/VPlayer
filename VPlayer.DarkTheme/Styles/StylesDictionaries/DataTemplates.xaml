@@ -5,7 +5,8 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:library="clr-namespace:VPlayer.Library"
     xmlns:local="clr-namespace:VPlayer.StylesDictionaries"
-    xmlns:text1="clr-namespace:VCore.Behaviors.Text;assembly=VCore.WPF">
+    xmlns:text1="clr-namespace:VCore.Behaviors.Text;assembly=VCore.WPF"
+    xmlns:library1="clr-namespace:VPlayer.Library;assembly=VCore.WPF">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="OverlayStyles.xaml" />
@@ -106,7 +107,7 @@
                                     <Style.Triggers>
                                         <DataTrigger Value="True">
                                             <DataTrigger.Binding>
-                                                <MultiBinding Converter="{library:IsBiggerConverter}">
+                                                <MultiBinding Converter="{library1:IsBiggerConverter}">
                                                     <Binding ElementName="NameTxt" Path="ActualWidth" />
                                                     <Binding ElementName="ParentContainer" Path="Width" />
                                                 </MultiBinding>

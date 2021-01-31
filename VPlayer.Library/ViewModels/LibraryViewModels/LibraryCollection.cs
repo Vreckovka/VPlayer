@@ -55,7 +55,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
       LoadQuery = storageManager.GetRepository<TModel>();
 
-      LoadData = LoadInitilizedDataAsync().Concat(Initilize());
+      LoadData = LoadInitilizedDataAsync();
     }
 
     #endregion Constructors
@@ -90,6 +90,8 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
               data = await optionalQuery.ToListAsync();
 
             Items = new ObservableCollection<TViewModel>(data.Select(x => ViewModelsFactory.Create<TViewModel>(x)).ToList());
+
+            Recreate();
 
             WasLoaded = true;
           }
@@ -183,35 +185,6 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
     }
 
     #endregion 
-
-    #region Initilize
-
-    private IObservable<bool> Initilize()
-    {
-      return Observable.FromAsync<bool>(async () =>
-      {
-        return await Task.Run(() =>
-        {
-          try
-          {
-            if (Items != null)
-            {
-              Recreate();
-
-              return true;
-            }
-
-            return false;
-          }
-          catch (Exception)
-          {
-            return false;
-          }
-        });
-      });
-    }
-
-    #endregion Initilize
 
     #region Recreate
 

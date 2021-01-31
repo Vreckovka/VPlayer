@@ -190,7 +190,7 @@ namespace VPlayer.Core.ViewModels
       }
       else
       {
-        eventAggregator.GetEvent<PauseEvent>().Publish();
+        eventAggregator.GetEvent<PlayPauseEvent>().Publish();
       }
     }
 

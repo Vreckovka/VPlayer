@@ -13,7 +13,7 @@ namespace VPlayer.Core.ViewModels
     }
 
     public abstract void Play();
-    public abstract void Pause();
+    public abstract void PlayPause();
     public abstract void PlayNext(int? songIndex, bool forcePlay = false);
     public abstract void PlayPrevious();
     public abstract void Stop();
@@ -44,7 +44,7 @@ namespace VPlayer.Core.ViewModels
   public interface IPlayableRegionViewModel
   {
     void Play();
-    void Pause();
+    void PlayPause();
     void PlayNext(int? songIndex, bool forcePlay = false);
     void PlayPrevious();
     void Stop();

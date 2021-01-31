@@ -256,7 +256,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
     public int Cycle { get; set; }
 
 
-
     #region ActualSavedPlaylist
 
     private Playlist actualSavedPlaylist = new Playlist() { Id = -1 };
@@ -273,7 +272,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
       }
     }
-    
+
     #endregion
 
     public bool IsPlayFnished { get; private set; }
@@ -531,7 +530,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
 
         eventAggregator.GetEvent<PlaySongsEvent>().Subscribe(PlaySongs).DisposeWith(this);
-        eventAggregator.GetEvent<PauseEvent>().Subscribe(Pause).DisposeWith(this);
+        eventAggregator.GetEvent<PlayPauseEvent>().Subscribe(PlayPause).DisposeWith(this);
         eventAggregator.GetEvent<PlaySongsFromPlayListEvent>().Subscribe(PlaySongFromPlayList).DisposeWith(this);
         eventAggregator.GetEvent<RemoveFromPlaylistEvent>().Subscribe(DeleteSongs).DisposeWith(this);
       });
@@ -652,7 +651,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       shuffleList.Remove(eventPattern.EventArgs);
 
-     
+
 
     }
 
@@ -674,7 +673,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       if (songInPlayList == ActualSong)
       {
         if (!ActualSong.IsPaused)
-          Pause();
+          PlayPause();
         else
           Play();
       }
@@ -718,7 +717,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         UpdateActualSavedPlaylistPlaylist();
         ActualSavedPlaylist = new Playlist() { Id = -1 };
       }
-      
+
 
       switch (data.PlaySongsAction)
       {
@@ -827,7 +826,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
               var media = MediaPlayer.GetMedia();
               if (media == null || media.NowPlaying != ActualSong.Model.DiskLocation)
               {
-                //file:///D:/Hudba/2Pac Discography [2007]/--- Other albums ---/1998 - Greatest Hits/2Pac - 102 - 2 Of Amerikaz Most Wanted.mp3
                 var location = new Uri(ActualSong.Model.DiskLocation);
 
                 MediaPlayer.SetMedia(location);
@@ -850,7 +848,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
             MediaPlayer.Play();
             CheckCycle();
-
           }
         }
       });
@@ -860,9 +857,15 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region Pause
 
-    public override void Pause()
+    public override void PlayPause()
     {
-      Task.Run(() => { MediaPlayer.Pause(); });
+      Task.Run(() =>
+      {
+        if (IsPlaying)
+          MediaPlayer.Pause();
+        else
+          Play();
+      });
     }
 
     #endregion Pause
@@ -1139,7 +1142,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         UpdateActualSavedPlaylistPlaylist();
       }
-      else if(!ActualSavedPlaylist.IsUserCreated)
+      else if (!ActualSavedPlaylist.IsUserCreated)
       {
         success = storageManager.StoreData(entityPlayList, out var entityPlaylistDb);
 

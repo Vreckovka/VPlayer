@@ -139,7 +139,7 @@ namespace VPlayer.Player.ViewModels
 
     public void Pause()
     {
-      ActualViewModel?.Pause();
+      ActualViewModel?.PlayPause();
     }
 
     #endregion

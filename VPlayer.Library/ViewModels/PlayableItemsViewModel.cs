@@ -19,7 +19,7 @@ using VPlayer.Library.ViewModels.LibraryViewModels;
 
 namespace VPlayer.Library.ViewModels
 {
-  public abstract class PlayableItemsViewModel<TView, TViewModel, TModel> : 
+  public abstract class PlayableItemsViewModel<TView, TViewModel, TModel> :
     RegionViewModel<TView>, INavigationItem, ICollectionViewModel<TViewModel, TModel>, IPlayableItemsViewModel
     where TView : class, IView
     where TViewModel : class, INamedEntityViewModel<TModel>
@@ -163,7 +163,7 @@ namespace VPlayer.Library.ViewModels
 
       if (firstActivation)
       {
-        SubscribeToChanges();
+        Task.Run(() => SubscribeToChanges());
       }
     }
 
@@ -176,22 +176,31 @@ namespace VPlayer.Library.ViewModels
     {
       if (!wasSubscribed)
       {
+        wasSubscribed = true;
+
         this.storageManager.SubscribeToItemChange<TModel>(ItemsChanged).DisposeWith(this);
 
         storageManager.ActionIsDone.Subscribe((x) =>
         {
-          LibraryCollection.Recreate();
-          RaisePropertyChanged(nameof(ViewModels));
-          RaisePropertyChanged(nameof(View));
+          Application.Current.Dispatcher.Invoke(() =>
+          {
+            LibraryCollection.Recreate();
+            RaisePropertyChanged(nameof(ViewModels));
+            RaisePropertyChanged(nameof(View));
+          });
         }).DisposeWith(this);
 
         LibraryCollection.LoadData.Subscribe(_ =>
         {
-          RaisePropertyChanged(nameof(ViewModels));
-          RaisePropertyChanged(nameof(View));
+          Application.Current.Dispatcher.Invoke(() =>
+          {
+            RaisePropertyChanged(nameof(ViewModels));
+            RaisePropertyChanged(nameof(View));
+          });
+
         }).DisposeWith(this);
 
-        wasSubscribed = true;
+
       }
     }
 

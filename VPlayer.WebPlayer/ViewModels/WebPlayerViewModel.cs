@@ -17,7 +17,7 @@ namespace VPlayer.WebPlayer.ViewModels
       throw new NotImplementedException();
     }
 
-    public override void Pause()
+    public override void PlayPause()
     {
       throw new NotImplementedException();
     }

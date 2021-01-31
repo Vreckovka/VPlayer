@@ -16,10 +16,12 @@
   <ItemGroup>
     <None Remove="Includes\VPlayerLogo.ico" />
     <None Remove="Includes\VPlayerLogo.png" />
+    <None Remove="Resources\play-and-pause-button.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Includes\VPlayerLogo.ico" />
     <Resource Include="Includes\VPlayerLogo.png" />
+    <Resource Include="Resources\play-and-pause-button.png" />
   </ItemGroup>
 
   <ItemGroup>

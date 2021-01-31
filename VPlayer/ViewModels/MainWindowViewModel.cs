@@ -1,8 +1,14 @@
 ﻿using System;
+using System.Windows.Input;
+using Prism.Events;
+using VCore;
+using VCore.Annotations;
 using VCore.Standard.Factories.ViewModels;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
 using VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics;
+using VPlayer.Core.Events;
+using VPlayer.Core.ViewModels;
 using VPlayer.Player.ViewModels;
 using VPlayer.WindowsPlayer.ViewModels;
 
@@ -14,15 +20,17 @@ namespace VPlayer.ViewModels
     #region Fields
 
     private readonly IViewModelsFactory viewModelsFactory;
+    private readonly IEventAggregator eventAggregator;
 
     #endregion
 
     #region Constructors
 
-    public MainWindowViewModel(IViewModelsFactory viewModelsFactory)
+    public MainWindowViewModel(IViewModelsFactory viewModelsFactory, [NotNull] IEventAggregator eventAggregator)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
-      }
+      this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
+    }
 
     #endregion
 
@@ -51,6 +59,30 @@ namespace VPlayer.ViewModels
 
     #endregion
 
+    #region PlayStop
+
+    private ActionCommand playStop;
+
+    public ICommand PlayStop
+    {
+      get
+      {
+        if (playStop == null)
+        {
+          playStop = new ActionCommand(OnPlayStop);
+        }
+
+        return playStop;
+      }
+    }
+
+    public void OnPlayStop()
+    {
+      eventAggregator.GetEvent<PlayPauseEvent>().Publish();
+    }
+
+    #endregion 
+
     #region Methods
 
     #region Initilize
@@ -72,8 +104,6 @@ namespace VPlayer.ViewModels
 
     #endregion
 
-    #endregion
-
     #region Dispose
 
     public override void Dispose()
@@ -87,6 +117,10 @@ namespace VPlayer.ViewModels
     }
 
     #endregion
+
+    #endregion
+
+
 
   }
 }

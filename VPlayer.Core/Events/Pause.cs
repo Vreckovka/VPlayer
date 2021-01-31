@@ -2,7 +2,7 @@
 
 namespace VPlayer.Core.Events
 {
-    public class PauseEvent : PubSubEvent
+    public class PlayPauseEvent : PubSubEvent
     {
     }
 
