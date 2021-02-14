@@ -14,6 +14,7 @@ using VCore.ViewModels.Navigation;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
+using VPlayer.Library.ViewModels.AlbumsViewModels;
 using VPlayer.Library.Views;
 
 namespace VPlayer.Library.ViewModels
@@ -98,7 +99,7 @@ namespace VPlayer.Library.ViewModels
 
       if (firstActivation)
       {
-        var playlists = viewModelsFactory.Create<PlaylistsViewModel>();
+        var playlists = viewModelsFactory.Create<SongPlaylistsViewModel>();
         playlists.RegionManager = RegionManager;
 
         var artistsViewModel = viewModelsFactory.Create<IArtistsViewModel>();
@@ -107,12 +108,21 @@ namespace VPlayer.Library.ViewModels
         var albumsViewModel = viewModelsFactory.Create<IAlbumsViewModel>();
         albumsViewModel.RegionManager = RegionManager;
 
+        var tvShowPlaylistsViewModel = viewModelsFactory.Create<TvShowPlaylistsViewModel>();
+        tvShowPlaylistsViewModel.RegionManager = RegionManager;
+
+        var tvShowsViewModel = viewModelsFactory.Create<TvShowsViewModel>();
+        tvShowsViewModel.RegionManager = RegionManager;
+
+
         Application.Current?.Dispatcher?.Invoke(() =>
         {
           NavigationViewModel.Items.Add(new NavigationItem(playlists));
+          NavigationViewModel.Items.Add(new NavigationItem(tvShowPlaylistsViewModel));
+
           NavigationViewModel.Items.Add(new NavigationItem(artistsViewModel));
           NavigationViewModel.Items.Add(new NavigationItem(albumsViewModel));
-       
+          NavigationViewModel.Items.Add(new NavigationItem(tvShowsViewModel));
 
           NavigationViewModel.Items.First().IsActive = true;
         });

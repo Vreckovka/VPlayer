@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
-  public class Playlist : DomainEntity, INamedEntity
+  public class Playlist : DomainEntity, INamedEntity, IPlaylist
   {
-    public virtual List<PlaylistSong> PlaylistSongs { get; set; }
+    
     public string Name { get; set; }
-    public long? SongsInPlaylitsHashCode { get; set; }
-    public int? SongCount { get; set; }
+    public long? HashCode { get; set; }
+    public int? ItemCount { get; set; }
     public bool IsReapting { get; set; }
     public bool IsShuffle { get; set; }
-    public float LastSongElapsedTime { get; set; }
-    public int LastSongIndex { get; set; }
+    public float LastItemElapsedTime { get; set; }
+    public int LastItemIndex { get; set; }
     public bool IsUserCreated { get; set; }
     public DateTime LastPlayed { get; set; }
 
@@ -22,14 +21,12 @@ namespace VPlayer.AudioStorage.DomainClasses
       Name = other.Name;
       IsReapting = other.IsReapting;
       IsShuffle = other.IsShuffle;
-      LastSongElapsedTime = other.LastSongElapsedTime;
-      LastSongIndex = other.LastSongIndex;
+      LastItemElapsedTime = other.LastItemElapsedTime;
+      LastItemIndex = other.LastItemIndex;
       IsUserCreated = other.IsUserCreated;
       LastPlayed = other.LastPlayed;
-      SongsInPlaylitsHashCode = other.SongsInPlaylitsHashCode;
-      SongCount = other.SongCount;
-
-    
+      HashCode = other.HashCode;
+      ItemCount = other.ItemCount;
     }
   }
 }

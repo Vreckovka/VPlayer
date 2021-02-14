@@ -1,57 +1,32 @@
 ﻿using System;
 using System.Windows.Input;
 using Listener;
+using Ninject;
 using VCore;
+using VCore.Annotations;
 using VCore.Helpers;
 using VCore.Modularity.RegionProviders;
+using VCore.Standard.Helpers;
 using VCore.ViewModels;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
 using VPlayer.Player.Views;
-using VPlayer.WebPlayer.ViewModels;
 using VPlayer.WindowsPlayer.ViewModels;
 
 namespace VPlayer.Player.ViewModels
 {
   public class PlayerViewModel : RegionViewModel<PlayerView>
   {
-    private readonly WindowsPlayerViewModel windowsPlayerViewModel;
-    private readonly WebPlayerViewModel webPlayerViewModel;
+    private readonly IKernel kernel;
     private readonly KeyListener keyListener;
 
     public PlayerViewModel(
       IRegionProvider regionProvider,
-      WindowsPlayerViewModel windowsPlayerViewModel,
-      WebPlayerViewModel webPlayerViewModel,
+      [NotNull] IKernel kernel,
       KeyListener keyListener) : base(regionProvider)
     {
-      this.windowsPlayerViewModel = windowsPlayerViewModel ?? throw new ArgumentNullException(nameof(windowsPlayerViewModel));
-      this.webPlayerViewModel = webPlayerViewModel ?? throw new ArgumentNullException(nameof(webPlayerViewModel));
+      this.kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
       this.keyListener = keyListener ?? throw new ArgumentNullException(nameof(keyListener));
-
-      keyListener.OnKeyPressed += KeyListener_OnKeyPressed;
-
-
-      windowsPlayerViewModel.ObservePropertyChange(x => x.CanPlay)
-        .Subscribe((x) =>
-        {
-          CanPlay = x;
-        });
-
-      windowsPlayerViewModel.ObservePropertyChange(x => x.IsPlaying)
-        .Subscribe((x) =>
-        {
-          IsPlaying = x;
-        });
-
-      windowsPlayerViewModel.ObservePropertyChange(x => x.IsActive)
-        .Subscribe((x) =>
-        {
-          ActualViewModel = windowsPlayerViewModel;
-        });
-
-      ActualViewModel = windowsPlayerViewModel;
-
     }
 
     public override bool ContainsNestedRegions => false;
@@ -60,6 +35,40 @@ namespace VPlayer.Player.ViewModels
     public bool IsPlaying { get; set; }
     public bool CanPlay { get; set; }
 
+
+    public override void Initialize()
+    {
+      base.Initialize();
+
+      SubscribeToPlayers();
+    }
+
+    private void SubscribeToPlayers()
+    {
+      var allPlayers = kernel.GetAll<IPlayableRegionViewModel>();
+
+      keyListener.OnKeyPressed += KeyListener_OnKeyPressed;
+
+      foreach (var player in allPlayers)
+      {
+        player.ObservePropertyChange(x => x.CanPlay).Subscribe(x =>
+        {
+          CanPlay = x;
+        }).DisposeWith(this);
+
+
+        player.ObservePropertyChange(x => x.IsPlaying).Subscribe((x) =>
+          {
+            IsPlaying = x;
+          }).DisposeWith(this);
+
+        player.ObservePropertyChange(x => x.IsActive).Subscribe(x =>
+        {
+          if (x)
+            ActualViewModel = player;
+        }).DisposeWith(this);
+      }
+    }
 
     #region Play
 

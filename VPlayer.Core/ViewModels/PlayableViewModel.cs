@@ -31,7 +31,7 @@ namespace VPlayer.Core.ViewModels
     #endregion 
   }
 
-  public abstract class PlayableViewModelWithThumbnail<TModel> : PlayableViewModel<TModel> where TModel : DownloadableEntity
+  public abstract class PlayableViewModelWithThumbnail<TViewModel, TModel> : PlayableViewModel<TViewModel, TModel> where TModel : DownloadableEntity
   {
     protected PlayableViewModelWithThumbnail(TModel model, IEventAggregator eventAggregator) : base(model, eventAggregator)
     {
@@ -118,7 +118,7 @@ namespace VPlayer.Core.ViewModels
 
   }
 
-  public abstract class PlayableViewModel<TModel> : NamedEntityViewModel<TModel> where TModel : INamedEntity
+  public abstract class PlayableViewModel<TViewModelInPlaylist, TModel> : NamedEntityViewModel<TModel> where TModel : INamedEntity
   {
     #region Fields
 
@@ -158,7 +158,7 @@ namespace VPlayer.Core.ViewModels
 
     #region Play
 
-    private ActionCommand<PlaySongsAction> play;
+    private ActionCommand<EventAction> play;
 
     public ICommand Play
     {
@@ -166,23 +166,22 @@ namespace VPlayer.Core.ViewModels
       {
         if (play == null)
         {
-          play = new ActionCommand<PlaySongsAction>(OnPlayButton, PlaySongsAction.Play);
+          play = new ActionCommand<EventAction>(OnPlayButton, EventAction.Play);
         }
 
         return play;
       }
     }
 
-    protected virtual void OnPlay(PlaySongsAction o)
+    protected virtual void OnPlay(EventAction o)
     {
-      var data = GetSongsToPlay();
+      var data = GetItemsToPlay();
 
-      var e = new PlaySongsEventData(data, o, this);
-
-      eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
+      if (data != null)
+        PublishPlayEvent(data, o);
     }
 
-    protected virtual void OnPlayButton(PlaySongsAction o)
+    protected virtual void OnPlayButton(EventAction o)
     {
       if (!IsPlaying)
       {
@@ -236,11 +235,11 @@ namespace VPlayer.Core.ViewModels
 
     public void OnAddToPlaylist()
     {
-      var data = GetSongsToPlay();
+      var data = GetItemsToPlay();
 
-      var e = new PlaySongsEventData(data, PlaySongsAction.Add, this);
+      if (data != null)
+        PublishAddToPlaylistEvent(data);
 
-      eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
     }
 
     #endregion AddToPlaylist
@@ -249,7 +248,10 @@ namespace VPlayer.Core.ViewModels
 
     #region Methods
 
-    public abstract IEnumerable<SongInPlayList> GetSongsToPlay();
+
+    public abstract IEnumerable<TViewModelInPlaylist> GetItemsToPlay();
+    public abstract void PublishPlayEvent(IEnumerable<TViewModelInPlaylist> viewModels, EventAction eventAction );
+    public abstract void PublishAddToPlaylistEvent(IEnumerable<TViewModelInPlaylist> viewModels);
 
     #endregion
   }

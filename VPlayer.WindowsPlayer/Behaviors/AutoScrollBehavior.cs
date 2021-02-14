@@ -5,6 +5,7 @@ using System.Windows.Interactivity;
 using System.Windows.Media.Animation;
 using Ninject;
 using ScrollAnimateBehavior.AttachedBehaviors;
+using VPlayer.Core.ViewModels;
 using Decorator = System.Windows.Controls.Decorator;
 using DependencyProperty = System.Windows.DependencyProperty;
 using IKernel = Ninject.IKernel;
@@ -20,6 +21,8 @@ namespace VPlayer.Player.Behaviors
 {
   public class AutoScrollBehavior : Behavior<ListView>
   {
+    private IPlayableRegionViewModel playableRegionViewModel;
+
     #region Kernel
 
     public static readonly DependencyProperty KernelProperty =
@@ -39,8 +42,6 @@ namespace VPlayer.Player.Behaviors
 
     public double StepSize { get; set; } = 1;
     public TimeSpan AnimationTime { get; set; } = TimeSpan.FromSeconds(1);
-
-    private WindowsPlayerViewModel windowsPlayerViewModel;
 
     protected override void OnAttached()
     {
@@ -76,7 +77,7 @@ namespace VPlayer.Player.Behaviors
 
     private SerialDisposable disposable = new SerialDisposable();
 
-
+ 
     private void SubcsribeToSongChange()
     {
       if (Kernel != null)
@@ -95,13 +96,13 @@ namespace VPlayer.Player.Behaviors
         }
 
 
-        if (windowsPlayerViewModel == null)
+        if (playableRegionViewModel == null)
         {
-          windowsPlayerViewModel = Kernel.Get<WindowsPlayerViewModel>();
+          playableRegionViewModel = AssociatedObject.DataContext as IPlayableRegionViewModel;
 
-          if (windowsPlayerViewModel != null)
+          if (playableRegionViewModel != null)
           {
-            disposable.Disposable = windowsPlayerViewModel.ActualSongChanged.Subscribe(OnSongChanged);
+            disposable.Disposable = playableRegionViewModel.ActualItemChanged.Subscribe(OnSongChanged);
           }
         }
       }

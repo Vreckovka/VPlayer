@@ -8,15 +8,15 @@ using VPlayer.Library.Views;
 
 namespace VPlayer.Library.ViewModels
 {
-  public class PlaylistsViewModel : PlayableItemsViewModel<PlaylistsView, PlaylistViewModel, Playlist>
+  public class SongPlaylistsViewModel : PlayableItemsViewModel<PlaylistsView, PlaylistViewModel, SongsPlaylist>
   {
-    public PlaylistsViewModel(IRegionProvider regionProvider, IViewModelsFactory viewModelsFactory, IStorageManager storageManager,
-      LibraryCollection<PlaylistViewModel, Playlist> libraryCollection) : base(regionProvider, viewModelsFactory, storageManager, libraryCollection)
+    public SongPlaylistsViewModel(IRegionProvider regionProvider, IViewModelsFactory viewModelsFactory, IStorageManager storageManager,
+      LibraryCollection<PlaylistViewModel, SongsPlaylist> libraryCollection) : base(regionProvider, viewModelsFactory, storageManager, libraryCollection)
     {
     }
 
     public override bool ContainsNestedRegions => false;
-    public override string Header { get; } = "Playlists";
+    public override string Header { get; } = "Songs Playlists";
     public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
 
     #region IsBusy
@@ -37,11 +37,5 @@ namespace VPlayer.Library.ViewModels
     }
 
     #endregion
-  }
-
-  public enum PlaylistCreation
-  {
-    UserCreated,
-    Automatic
   }
 }

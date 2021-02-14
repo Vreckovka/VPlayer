@@ -9,13 +9,13 @@ namespace VPlayer.Core.Events
     SingleFromPlaylist,
     AlbumFromPlaylist
   }
-  public class RemoveFromPlaylistEventArgs
+  public class RemoveFromPlaylistEventArgs<TModel>
   {
     public DeleteType DeleteType { get; set; }
-    public List<SongInPlayList> SongsToDelete { get; set; }
+    public List<TModel> ItemsToRemove { get; set; }
   }
 
-  public class RemoveFromPlaylistEvent : PubSubEvent<RemoveFromPlaylistEventArgs>
+  public class RemoveFromPlaylistEvent<TModel> : PubSubEvent<RemoveFromPlaylistEventArgs<TModel>>
   {
 
   }

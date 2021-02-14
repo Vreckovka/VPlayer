@@ -9,7 +9,5 @@ namespace VPlayer.AudioStorage.DomainClasses
     [ForeignKey(nameof(Song))]
     public int IdSong { get; set; }
     public Song Song { get; set; }
-
-
   }
 }

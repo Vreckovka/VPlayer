@@ -175,12 +175,15 @@
     <Compile Include="Modularity\VPlayerLibraryRegionManager.cs" />
     <Compile Include="ViewModels\AlbumsViewModels\AlbumCoversViewModel.cs" />
     <Compile Include="ViewModels\AlbumsViewModels\AlbumsViewModel.cs" />
+    <Compile Include="ViewModels\TvShow\TvShowPlaylistViewModel.cs" />
+    <Compile Include="ViewModels\TvShow\TvShowsViewModel.cs" />
     <Compile Include="ViewModels\DesignViewModels\ArtistsDesignViewModel.cs" />
     <Compile Include="ViewModels\ArtistsViewModels\ArtistsViewModel.cs" />
     <Compile Include="ViewModels\PlayableItemsViewModel.cs" />
     <Compile Include="ViewModels\LibraryViewModels\LibraryCollection.cs" />
-    <Compile Include="ViewModels\PlaylistsViewModel.cs" />
+    <Compile Include="ViewModels\SongPlaylistsViewModel.cs" />
     <Compile Include="ViewModels\PlaylistViewModel.cs" />
+    <Compile Include="ViewModels\TvShow\TvShowPlaylistsViewModel.cs" />
     <Compile Include="Views\LibraryView.xaml.cs">
       <DependentUpon>LibraryView.xaml</DependentUpon>
     </Compile>
@@ -205,6 +208,12 @@
     </Compile>
     <Compile Include="Views\PlaylistsView.xaml.cs">
       <DependentUpon>PlaylistsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TvShowPlaylistsView.xaml.cs">
+      <DependentUpon>TvShowPlaylistsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TvShowsView.xaml.cs">
+      <DependentUpon>TvShowsView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -233,6 +242,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PlaylistsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TvShowPlaylistsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TvShowsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

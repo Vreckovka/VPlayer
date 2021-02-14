@@ -84,12 +84,12 @@ namespace VPlayer.Library
       }
       else
       {
-        path = PlayableViewModelWithThumbnail<Album>.GetEmptyImage();
+        path = PlayableViewModelWithThumbnail<SongInPlayList,Album>.GetEmptyImage();
       }
 
       if (!System.IO.File.Exists(path))
       {
-        path = PlayableViewModelWithThumbnail<Album>.GetEmptyImage();
+        path = PlayableViewModelWithThumbnail<SongInPlayList, Album>.GetEmptyImage();
       }
 
       var bitmapImage = new BitmapImage();

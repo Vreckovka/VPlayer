@@ -19,13 +19,13 @@ using VPlayer.Core.ViewModels;
 
 namespace VPlayer.Library.ViewModels
 {
-  public class PlaylistViewModel : PlayableViewModel<Playlist>
+  public class PlaylistViewModel : PlayableViewModel<SongInPlayList,SongsPlaylist>
   {
     #region Fields
 
     private readonly IViewModelsFactory viewModelsFactory;
     private readonly PlaylistsRepository playlistsRepository;
-    [NotNull] private readonly PlaylistsViewModel playlistsViewModel;
+    [NotNull] private readonly SongPlaylistsViewModel songPlaylistsViewModel;
     private readonly IStorageManager storageManager;
     private readonly ILogger logger;
     private readonly IRegionProvider regionProvider;
@@ -35,18 +35,18 @@ namespace VPlayer.Library.ViewModels
     #region Constructors
 
     public PlaylistViewModel(
-      Playlist model,
+      SongsPlaylist model,
       IEventAggregator eventAggregator,
       IViewModelsFactory viewModelsFactory,
       PlaylistsRepository playlistsRepository,
       SongsRepository songsRepository,
-      [NotNull] PlaylistsViewModel playlistsViewModel,
+      [NotNull] SongPlaylistsViewModel songPlaylistsViewModel,
         IStorageManager storageManager,
       ILogger logger) : base(model, eventAggregator)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.playlistsRepository = playlistsRepository ?? throw new ArgumentNullException(nameof(playlistsRepository));
-      this.playlistsViewModel = playlistsViewModel ?? throw new ArgumentNullException(nameof(playlistsViewModel));
+      this.songPlaylistsViewModel = songPlaylistsViewModel ?? throw new ArgumentNullException(nameof(songPlaylistsViewModel));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -138,13 +138,13 @@ namespace VPlayer.Library.ViewModels
 
     #endregion
 
-    public int? SongCount => Model.SongCount;
-    public long? SongsInPlaylitsHashCode => Model.SongsInPlaylitsHashCode;
+    public int? SongCount => Model.ItemCount;
+    public long? SongsInPlaylitsHashCode => Model.HashCode;
 
 
     #endregion
 
-    public override void Update(Playlist updateItem)
+    public override void Update(SongsPlaylist updateItem)
     {
       this.Model.Update(updateItem);
       RaisePropertyChanges();
@@ -170,17 +170,17 @@ namespace VPlayer.Library.ViewModels
       throw new NotImplementedException();
     }
 
-    public override IEnumerable<SongInPlayList> GetSongsToPlay()
+    public override IEnumerable<SongInPlayList> GetItemsToPlay()
     {
       var playlist = playlistsRepository.Entities.Where(x => x.Id == ModelId)
-        .Include(x => x.PlaylistSongs.Select( y => y.Song.Album))
+        .Include(x => x.PlaylistItems.Select( y => y.Song.Album))
         .SingleOrDefault();
 
       if (playlist != null)
       {
-        var validSongs = playlist.PlaylistSongs.Where(x => x.Song.Album != null).ToList();
+        var validSongs = playlist.PlaylistItems.Where(x => x.Song.Album != null).ToList();
 
-        if (validSongs.Count != playlist.PlaylistSongs.Count)
+        if (validSongs.Count != playlist.PlaylistItems.Count)
         {
           logger.Log(MessageType.Error, $"SONGS WITH NULL ALBUM! {ModelId} {Name}");
         }
@@ -191,15 +191,31 @@ namespace VPlayer.Library.ViewModels
       return new List<SongInPlayList>(); ;
     }
 
-    protected override void OnPlay(PlaySongsAction action)
+    public override void PublishPlayEvent(IEnumerable<SongInPlayList> viewModels, EventAction eventAction )
     {
-      playlistsViewModel.IsBusy = true;
+      var e = new PlaySongsEventData(viewModels, eventAction, this);
+
+      eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
+    }
+
+    public override void PublishAddToPlaylistEvent(IEnumerable<SongInPlayList> viewModels)
+    {
+      var e = new PlaySongsEventData(viewModels, EventAction.Add, this);
+
+      eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
+    }
+
+    #region OnPlay
+
+    protected override void OnPlay(EventAction action)
+    {
+      songPlaylistsViewModel.IsBusy = true;
 
       Task.Run(() =>
       {
-        var data = GetSongsToPlay().ToList();
+        var data = GetItemsToPlay().ToList();
 
-        var e = new PlaySongsEventData(data, action, IsShuffle, IsRepeating, Model.LastSongElapsedTime, Model);
+        var e = new PlaySongsEventData(data, action, IsShuffle, IsRepeating, Model.LastItemElapsedTime, Model);
 
         try
         {
@@ -213,11 +229,12 @@ namespace VPlayer.Library.ViewModels
 
         Application.Current.Dispatcher.Invoke(() =>
         {
-          playlistsViewModel.IsBusy = false;
+          songPlaylistsViewModel.IsBusy = false;
         });
       });
     }
 
+    #endregion
 
 
   }

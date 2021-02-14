@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using VPlayer.Core.ViewModels;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
@@ -7,7 +8,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     void Update(TEntity other);
   }
 
-  public class Song : INamedEntity, IUpdateable<Song>
+  public class Song : INamedEntity, IUpdateable<Song>, IPlayableModel
   {
     #region Constructors
 

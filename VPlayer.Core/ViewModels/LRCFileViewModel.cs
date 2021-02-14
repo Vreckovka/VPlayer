@@ -126,7 +126,7 @@ namespace VPlayer.Core.ViewModels
               var oldTimestamp = Lines[oldIndex].Model.Timestamp;
 
               var nextTimestampIndex = oldIndex;
-
+              
               do
               {
                 nextTimestampIndex++;
@@ -144,7 +144,7 @@ namespace VPlayer.Core.ViewModels
                 }
 
 
-              } while (nextTimestamp == oldTimestamp);
+              } while (nextTimestamp == oldTimestamp && nextTimestampIndex + 1 < Lines.Count);
 
 
             }

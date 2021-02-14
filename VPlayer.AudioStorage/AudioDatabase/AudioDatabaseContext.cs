@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using SQLite.CodeFirst;
 using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses.Video;
 
 namespace VPlayer.AudioStorage.AudioDatabase
 {
@@ -13,13 +14,22 @@ namespace VPlayer.AudioStorage.AudioDatabase
   {
     //add-migration migration_ -ConnectionString "Data Source=C:\Users\Roman Pecho\AppData\Roaming\VPlayer\VPlayerDatabase.db;Version=3;" -connectionProvider "System.Data.SQLite.EF6"
 
+    //https://stackoverflow.com/questions/56226978/no-migrationsqlgenerator-found-for-provider-system-data-sqlite
+    //Zevraj nepodporuje migracie
+
     #region Properties
 
     public DbSet<Album> Albums { get; set; }
     public DbSet<Artist> Artists { get; set; }
     public DbSet<Song> Songs { get; set; }
-    public DbSet<Playlist> Playlists { get; set; }
+    public DbSet<SongsPlaylist> SongPlaylists { get; set; }
     public DbSet<PlaylistSong> PlaylistSongs { get; set; }
+
+
+    public DbSet<TvShow> TvShows { get; set; }
+    public DbSet<TvShowEpisode> TvShowEpisodes { get; set; }
+    public DbSet<PlaylistTvShowEpisode> PlaylistsTvShowEpisode { get; set; }
+    public DbSet<TvShowPlaylist> TvShowPlaylists { get; set; }
 
     #endregion Properties
 

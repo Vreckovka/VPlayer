@@ -57,7 +57,7 @@
                     <Border.InputBindings>
                         <MouseBinding
                             Command="{Binding Play}"
-                            CommandParameter="{x:Static events:PlaySongsAction.PlayFromPlaylist}"
+                            CommandParameter="{x:Static events:EventAction.PlayFromPlaylist}"
                             MouseAction="LeftDoubleClick" />
                     </Border.InputBindings>
                 </Border>
@@ -156,7 +156,7 @@
                                         Width="90"
                                         HorizontalContentAlignment="Center"
                                         Command="{Binding Play}"
-                                        CommandParameter="{x:Static events:PlaySongsAction.PlayFromPlaylistLast}"
+                                        CommandParameter="{x:Static events:EventAction.PlayFromPlaylistLast}"
                                         Content="Last"
                                         IconDefaultColor="#50f5936c"
                                         IconHeight="20"
@@ -173,7 +173,7 @@
                                         Width="90"
                                         HorizontalContentAlignment="Center"
                                         Command="{Binding Play}"
-                                        CommandParameter="{x:Static events:PlaySongsAction.PlayFromPlaylist}"
+                                        CommandParameter="{x:Static events:EventAction.PlayFromPlaylist}"
                                         Content="Fresh"
                                         IconDefaultColor="#50db515a"
                                         IconHeight="20"

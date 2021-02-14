@@ -7,6 +7,7 @@ using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using VCore.Modularity.Events;
 using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses.Video;
 
 namespace VPlayer.AudioStorage.Interfaces.Storage
 {
@@ -28,13 +29,14 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
     IQueryable<T> GetRepository<T>(DbContext dbContext = null) where T : class;
     Task<bool> StoreData(IEnumerable<string> audioPath);
     Task<bool> StoreData(string audioPath);
-    bool StoreData(Playlist model, out Playlist entityModel);
-    void UpdateData(Playlist playlist);
+    bool StorePlaylist<TPlaylist>(TPlaylist model, out TPlaylist entityModel) where TPlaylist : class, IPlaylist;
+    void UpdateData<TPlaylist>(TPlaylist playlist) where TPlaylist : class, IPlaylist;
     void RewriteEntity<T>(T entity) where T : class, IEntity;
     Task<bool> UpdateEntity<TEntity>(TEntity newVersion) where TEntity : class, IEntity, IUpdateable<TEntity>;
     IDisposable SubscribeToItemChange<TModel>(Action<ItemChanged<TModel>> observer);
-    Task DeletePlaylist(Playlist playlist);
+    Task DeletePlaylist(SongsPlaylist songsPlaylist);
     void PushAction(ItemChanged itemChanged);
+    Task StoreTvShow(TvShow tvShow);
 
     #endregion Methods
   }

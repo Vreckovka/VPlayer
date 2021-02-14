@@ -143,6 +143,11 @@
     <Compile Include="Design\ViewModels\AlbumDesignViewModel.cs" />
     <Compile Include="Design\ViewModels\ArtistDesignViewModel.cs" />
     <Compile Include="Design\DesingDatabase.cs" />
+    <Compile Include="Events\EventAction.cs" />
+    <Compile Include="Events\PlayItemEventData.cs" />
+    <Compile Include="Events\PlaySongsEventData.cs" />
+    <Compile Include="Events\PlayTvShowEvent.cs" />
+    <Compile Include="Events\PlayTvShowEventData.cs" />
     <Compile Include="Events\RemoveFromPlaylistEvent.cs" />
     <Compile Include="Events\Pause.cs" />
     <Compile Include="Events\PlaySongsEvent.cs" />
@@ -168,11 +173,17 @@
     </Compile>
     <Compile Include="ViewModels\Albums\AlbumViewModel.cs" />
     <Compile Include="ViewModels\Artists\ArtistViewModel.cs" />
+    <Compile Include="ViewModels\IItemInPlayList.cs" />
+    <Compile Include="ViewModels\ItemInPlayList.cs" />
     <Compile Include="ViewModels\LRCFileViewModel.cs" />
-    <Compile Include="ViewModels\PlayableRegionViewModel.cs" />
+    <Compile Include="ViewModels\LRCLyricLineViewModel.cs" />
     <Compile Include="ViewModels\PlayableViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsViewModel.cs" />
     <Compile Include="ViewModels\SongInPlayList.cs" />
+    <Compile Include="ViewModels\TvShow\TvShowEpisodeInPlaylistViewModel.cs" />
+    <Compile Include="ViewModels\TvShow\TvShowVideoViewModel.cs" />
+    <Compile Include="ViewModels\TvShow\TvShowViewModel.cs" />
+    <Compile Include="ViewModels\TvShow\VideoViewModel.cs" />
     <Compile Include="Views\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>

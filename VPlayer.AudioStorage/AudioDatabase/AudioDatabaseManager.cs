@@ -13,8 +13,9 @@ using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using Logger;
+using VCore.Annotations;
+using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Repositories;
-using Playlist = VPlayer.AudioStorage.DomainClasses.Playlist;
 
 namespace VPlayer.AudioStorage.AudioDatabase
 {
@@ -25,7 +26,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
     private readonly AudioInfoDownloader audioInfoDownloader;
     private readonly PlaylistsRepository playlistsRepository;
     private readonly AlbumsRepository albumsRepository;
-    private readonly ArtistRepository artistRepository;
+    private readonly TvShowRepository tvShowRepository;
+    private readonly TvShowPlaylistRepository tvShowPlaylistRepository;
+
     private readonly ILogger logger;
 
     private Subject<ItemChanged> ItemChanged { get; } = new Subject<ItemChanged>();
@@ -38,13 +41,15 @@ namespace VPlayer.AudioStorage.AudioDatabase
       AudioInfoDownloader audioInfoDownloader,
       PlaylistsRepository playlistsRepository,
       AlbumsRepository albumsRepository,
-      ArtistRepository artistRepository,
+      [NotNull] TvShowRepository tvShowRepository,
+      [NotNull] TvShowPlaylistRepository tvShowPlaylistRepository,
       ILogger logger)
     {
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
       this.playlistsRepository = playlistsRepository ?? throw new ArgumentNullException(nameof(playlistsRepository));
       this.albumsRepository = albumsRepository ?? throw new ArgumentNullException(nameof(albumsRepository));
-      this.artistRepository = artistRepository ?? throw new ArgumentNullException(nameof(artistRepository));
+      this.tvShowRepository = tvShowRepository ?? throw new ArgumentNullException(nameof(tvShowRepository));
+      this.tvShowPlaylistRepository = tvShowPlaylistRepository ?? throw new ArgumentNullException(nameof(tvShowPlaylistRepository));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -303,9 +308,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region Playlist methods
 
-    public bool StoreData(Playlist model, out Playlist entityModel)
+    public bool StoreData(SongsPlaylist model, out SongsPlaylist entityModel)
     {
-      var playlist = playlistsRepository.Entities.Include(x => x.PlaylistSongs).SingleOrDefault(x => x.SongsInPlaylitsHashCode == model.SongsInPlaylitsHashCode);
+      var playlist = playlistsRepository.Entities.Include(x => x.PlaylistItems).SingleOrDefault(x => x.HashCode == model.HashCode);
 
       if (playlist == null)
       {
@@ -328,26 +333,89 @@ namespace VPlayer.AudioStorage.AudioDatabase
         entityModel = playlist;
         return false;
       }
-
     }
 
-    public void UpdateData(Playlist model)
+    public bool StoreData(TvShowPlaylist model, out TvShowPlaylist entityModel)
     {
-      var playlist = playlistsRepository.Entities.Include(x => x.PlaylistSongs).SingleOrDefault(x => x.Id == model.Id);
+      var playlist = tvShowPlaylistRepository.Entities.Include(x => x.PlaylistItems).SingleOrDefault(x => x.HashCode == model.HashCode);
+
+      if (playlist == null)
+      {
+        tvShowPlaylistRepository.Add(model);
+        tvShowPlaylistRepository.Save();
+
+        ItemChanged.OnNext(new ItemChanged()
+        {
+          Item = model,
+          Changed = Changed.Added
+        });
+
+        ActionIsDone.OnNext(Unit.Default);
+
+        entityModel = model;
+        return true;
+      }
+      else
+      {
+        entityModel = playlist;
+        return false;
+      }
+    }
+
+
+    public bool StorePlaylist<TPlaylist>(TPlaylist model, out TPlaylist entityModel) where TPlaylist : class, IPlaylist
+    {
+      if (model is SongsPlaylist playlist1)
+      {
+        var result = StoreData(playlist1, out var playlist);
+
+        entityModel = playlist as TPlaylist;
+
+        return result;
+      }
+      else if(model is TvShowPlaylist playlist2)
+      {
+        var result = StoreData(playlist2, out var playlist);
+
+        entityModel = playlist as TPlaylist;
+
+        return result;
+      }
+
+      entityModel = null;
+      return false;
+    }
+
+    public void UpdateData<TPlaylist>(TPlaylist playlist) where TPlaylist : class, IPlaylist
+    {
+      if (playlist is SongsPlaylist playlist1)
+      {
+        UpdateData(playlist1);
+      }
+      else if (playlist is TvShowPlaylist playlist2)
+      {
+        UpdateData(playlist2);
+      }
+    }
+
+
+    public void UpdateData(SongsPlaylist model)
+    {
+      var playlist = playlistsRepository.Entities.Include(x => x.PlaylistItems).SingleOrDefault(x => x.Id == model.Id);
 
       if (playlist != null)
       {
-        if (model.SongsInPlaylitsHashCode != playlist.SongsInPlaylitsHashCode)
+        if (model.HashCode != playlist.HashCode)
         {
-          if (model.PlaylistSongs.Count > 0 && playlist.PlaylistSongs != null)
+          if (model.PlaylistItems.Count > 0 && playlist.PlaylistItems != null)
           {
-            playlist.PlaylistSongs.Clear();
+            playlist.PlaylistItems.Clear();
 
             playlist.Update(model);
 
-            foreach (var song in model.PlaylistSongs)
+            foreach (var song in model.PlaylistItems)
             {
-              playlist.PlaylistSongs.Add(song);
+              playlist.PlaylistItems.Add(song);
             }
 
             playlist.Update(model);
@@ -357,6 +425,41 @@ namespace VPlayer.AudioStorage.AudioDatabase
         playlist.Update(model);
 
         playlistsRepository.Save();
+
+        ItemChanged.OnNext(new ItemChanged()
+        {
+          Item = model,
+          Changed = Changed.Updated
+        });
+      }
+    }
+
+    public void UpdateData(TvShowPlaylist model)
+    {
+      var playlist = tvShowPlaylistRepository.Entities.Include(x => x.PlaylistItems).SingleOrDefault(x => x.Id == model.Id);
+
+      if (playlist != null)
+      {
+        if (model.HashCode != playlist.HashCode)
+        {
+          if (model.PlaylistItems.Count > 0 && playlist.PlaylistItems != null)
+          {
+            playlist.PlaylistItems.Clear();
+
+            playlist.Update(model);
+
+            foreach (var song in model.PlaylistItems)
+            {
+              playlist.PlaylistItems.Add(song);
+            }
+
+            playlist.Update(model);
+          }
+        }
+
+        playlist.Update(model);
+
+        tvShowPlaylistRepository.Save();
 
         ItemChanged.OnNext(new ItemChanged()
         {
@@ -384,7 +487,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
             await context.Database.ExecuteSqlCommandAsync("DELETE FROM PlaylistSongs");
             logger.Log(Logger.MessageType.Warning, "Table PlaylistSongs cleared succesfuly");
 
-            var playlists = context.Playlists.ToList();
+            var playlists = context.SongPlaylists.ToList();
             await context.Database.ExecuteSqlCommandAsync("DELETE FROM Playlists");
             logger.Log(Logger.MessageType.Warning, "Table Playlists cleared succesfuly");
 
@@ -724,7 +827,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     //TODO: GetRepository<TEntity>(context) toto spravit genericky pre repository patern
     //TODO: Cely repository prerobit
-    public Task DeletePlaylist(Playlist playlist)
+    public Task DeletePlaylist(SongsPlaylist songsPlaylist)
     {
       return Task.Run(() =>
       {
@@ -732,16 +835,16 @@ namespace VPlayer.AudioStorage.AudioDatabase
         {
           using (var context = new AudioDatabaseContext())
           {
-            var entityPlaylist = context.Playlists.SingleOrDefault(x => x.Id == playlist.Id);
+            var entityPlaylist = context.SongPlaylists.SingleOrDefault(x => x.Id == songsPlaylist.Id);
 
             if (entityPlaylist != null)
             {
-              context.Playlists.Remove(entityPlaylist);
+              context.SongPlaylists.Remove(entityPlaylist);
               context.SaveChanges();
 
               ItemChanged.OnNext(new ItemChanged()
               {
-                Item = playlist,
+                Item = songsPlaylist,
                 Changed = Changed.Removed
               });
             }
@@ -802,6 +905,26 @@ namespace VPlayer.AudioStorage.AudioDatabase
     public void PushAction(ItemChanged itemChanged)
     {
       ItemChanged.OnNext(itemChanged);
+    }
+
+    #endregion
+
+    #region StoreTvShow
+
+    public Task StoreTvShow(TvShow tvShow)
+    {
+      return Task.Run(() =>
+      {
+        tvShowRepository.Add(tvShow);
+
+        ItemChanged.OnNext(new ItemChanged()
+        {
+          Item = tvShow,
+          Changed = Changed.Added
+        });
+
+        tvShowRepository.Save();
+      });
     }
 
     #endregion

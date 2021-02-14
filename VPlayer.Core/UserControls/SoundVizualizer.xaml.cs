@@ -49,7 +49,7 @@ namespace VPlayer.Player.UserControls
       this.IsEnabledChanged += SoundVizualizer_IsEnabledChanged;
 
       AppDomain currentDomain = AppDomain.CurrentDomain;
-      currentDomain.UnhandledException += new UnhandledExceptionEventHandler(MyHandler);
+      //currentDomain.UnhandledException += new UnhandledExceptionEventHandler(MyHandler);
 
 
     }

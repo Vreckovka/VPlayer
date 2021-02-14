@@ -9,7 +9,6 @@ using Gecko.DOM;
 using Gecko.WebIDL;
 using VCore.Standard.Modularity.Interfaces;
 using VPlayer.WebPlayer.Models;
-using VPlayer.WebPlayer.ViewModels;
 using Console = System.Console;
 using Grid = System.Windows.Controls.Grid;
 
@@ -22,7 +21,6 @@ namespace VPlayer.WebPlayer.Views
 
     public partial class WebPlayerPage : Page, IView
     {
-        private WebPlayerViewModel internetPlayerView;
         private GeckoWebBrowser browser;
         private bool _fidingState;
         private string _userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:64.0) Gecko/20100101 Firefox/64.0";

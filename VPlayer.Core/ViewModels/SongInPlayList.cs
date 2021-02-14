@@ -1,12 +1,12 @@
 ﻿using Prism.Events;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using VCore;
-using VCore.Standard;
 using VCore.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
@@ -23,7 +23,7 @@ using VPlayer.Core.ViewModels.Artists;
 
 namespace VPlayer.Core.ViewModels
 {
-  public class SongInPlayList : ViewModel<Song>
+  public class SongInPlayList : ItemInPlayList<Song>
   {
     #region Fields
 
@@ -32,7 +32,6 @@ namespace VPlayer.Core.ViewModels
     private readonly AudioInfoDownloader audioInfoDownloader;
     private readonly GoogleDriveLrcProvider googleDriveLrcProvider;
     private readonly IStorageManager storageManager;
-    private readonly IEventAggregator eventAggregator;
 
     #endregion Fields
 
@@ -45,9 +44,8 @@ namespace VPlayer.Core.ViewModels
       AudioInfoDownloader audioInfoDownloader,
       Song model,
       GoogleDriveLrcProvider googleDriveLrcProvider,
-      IStorageManager storageManager) : base(model)
+      IStorageManager storageManager) : base(model, eventAggregator)
     {
-      this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.albumsViewModel = albumsViewModel ?? throw new ArgumentNullException(nameof(albumsViewModel));
       this.artistsViewModel = artistsViewModel ?? throw new ArgumentNullException(nameof(artistsViewModel));
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
@@ -58,46 +56,17 @@ namespace VPlayer.Core.ViewModels
     #endregion Constructors
 
     #region Properties
-
-    #region ActualPosition
-
-    private float actualPosition;
-
-    public float ActualPosition
-    {
-      get { return actualPosition; }
-      set
-      {
-        if (value != actualPosition)
-        {
-          actualPosition = value;
-          RaisePropertyChanged();
-
-          UpdateSyncedLyrics();
-        }
-      }
-    }
-    #endregion
-
-    public TimeSpan ActualTime => TimeSpan.FromSeconds(ActualPosition * Duration);
+   
     public AlbumViewModel AlbumViewModel { get; set; }
     public ArtistViewModel ArtistViewModel { get; set; }
-    public int Duration => Model.Duration;
+   
     public string ImagePath => AlbumViewModel.Model?.AlbumFrontCoverFilePath;
-    public bool IsPaused { get; set; }
-    public string Name => Model.Name;
 
     public string LRCLyrics => Model.LRCLyrics;
 
-    #region IsFavorite
-
-    public bool IsFavorite
-    {
-      get { return Model.IsFavorite; }
-      set { UpdateIsFavorite(value); }
-    }
-
-    private async void UpdateIsFavorite(bool value)
+    #region UpdateIsFavorite
+    
+    protected override async void UpdateIsFavorite(bool value)
     {
       if (value != Model.IsFavorite)
       {
@@ -115,6 +84,28 @@ namespace VPlayer.Core.ViewModels
           Model.IsFavorite = oldVAlue;
         }
       }
+    }
+
+    #endregion
+
+    #region OnActualPositionChanged
+
+    protected override void OnActualPositionChanged(float value)
+    {
+      UpdateSyncedLyrics();
+    }
+
+    #endregion
+
+    #region OnIsPlayingChanged
+
+    protected override void OnIsPlayingChanged(bool value)
+    {
+      if (ArtistViewModel != null)
+        ArtistViewModel.IsPlaying = value;
+
+      if (AlbumViewModel != null)
+        AlbumViewModel.IsPlaying = value;
     }
 
     #endregion
@@ -179,131 +170,9 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region IsPlaying
-
-    private bool isPlaying;
-
-    public bool IsPlaying
-    {
-      get { return isPlaying; }
-      set
-      {
-        if (value != isPlaying)
-        {
-          isPlaying = value;
-
-          if (ArtistViewModel != null)
-            ArtistViewModel.IsPlaying = isPlaying;
-
-          if (AlbumViewModel != null)
-            AlbumViewModel.IsPlaying = isPlaying;
-
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion IsPlaying
-
-    #endregion Properties
+    #endregion
 
     #region Commands
-
-    #region DeleteSongFromPlaylist
-
-    private ActionCommand deleteSongFromPlaylist;
-
-    public ICommand DeleteSongFromPlaylist
-    {
-      get
-      {
-        if (deleteSongFromPlaylist == null)
-        {
-          deleteSongFromPlaylist = new ActionCommand(OnDeleteSongFromPlaylist);
-        }
-
-        return deleteSongFromPlaylist;
-      }
-    }
-
-    public void OnDeleteSongFromPlaylist()
-    {
-      var songs = new System.Collections.Generic.List<SongInPlayList>() { this };
-
-      eventAggregator.GetEvent<RemoveFromPlaylistEvent>().Publish(new RemoveFromPlaylistEventArgs()
-      {
-        DeleteType = DeleteType.SingleFromPlaylist,
-        SongsToDelete = songs
-      });
-    }
-
-    #endregion
-
-    #region DeleteSongFromPlaylistWithAlbum
-
-    private ActionCommand deleteSongFromPlaylistWithAlbum;
-
-    public ICommand DeleteSongFromPlaylistWithAlbum
-    {
-      get
-      {
-        if (deleteSongFromPlaylistWithAlbum == null)
-        {
-          deleteSongFromPlaylistWithAlbum = new ActionCommand(OnDeleteSongFromPlaylistWithAlbum);
-        }
-
-        return deleteSongFromPlaylistWithAlbum;
-      }
-    }
-
-    public void OnDeleteSongFromPlaylistWithAlbum()
-    {
-      var songs = new System.Collections.Generic.List<SongInPlayList>() { this };
-
-      eventAggregator.GetEvent<RemoveFromPlaylistEvent>().Publish(new RemoveFromPlaylistEventArgs()
-      {
-        DeleteType = DeleteType.AlbumFromPlaylist,
-        SongsToDelete = songs
-      });
-    }
-
-    #endregion
-
-    #region Play
-
-    private ActionCommand play;
-
-    public ICommand Play
-    {
-      get
-      {
-        if (play == null)
-        {
-          play = new ActionCommand(OnPlayButton);
-        }
-
-        return play;
-      }
-    }
-
-    public void OnPlay()
-    {
-      eventAggregator.GetEvent<PlaySongsFromPlayListEvent>().Publish(this);
-    }
-
-    private void OnPlayButton()
-    {
-      if (!IsPlaying)
-      {
-        OnPlay();
-      }
-      else
-      {
-        eventAggregator.GetEvent<PlayPauseEvent>().Publish();
-      }
-    }
-
-    #endregion 
 
     #region Refresh
 
@@ -333,38 +202,33 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region OpenContainingFolder
+    #region DeleteSongFromPlaylistWithAlbum
 
-    private ActionCommand openContainingFolder;
+    private ActionCommand deleteSongFromPlaylistWithAlbum;
 
-    public ICommand OpenContainingFolder
+    public ICommand DeleteSongFromPlaylistWithAlbum
     {
       get
       {
-        if (openContainingFolder == null)
+        if (deleteSongFromPlaylistWithAlbum == null)
         {
-          openContainingFolder = new ActionCommand(OnOpenContainingFolder);
+          deleteSongFromPlaylistWithAlbum = new ActionCommand(OnDeleteSongFromPlaylistWithAlbum);
         }
 
-        return openContainingFolder;
+        return deleteSongFromPlaylistWithAlbum;
       }
     }
 
-
-    private void OnOpenContainingFolder()
+    public void OnDeleteSongFromPlaylistWithAlbum()
     {
+      var songs = new System.Collections.Generic.List<SongInPlayList>() { this };
 
-      if (!string.IsNullOrEmpty(Model.DiskLocation))
+      eventAggregator.GetEvent<RemoveFromPlaylistEvent<SongInPlayList>>().Publish(new RemoveFromPlaylistEventArgs<SongInPlayList>()
       {
-        var folder = Path.GetDirectoryName(Model.DiskLocation);
-
-        if (!string.IsNullOrEmpty(folder))
-        {
-          Process.Start(folder);
-        }
-      }
+        DeleteType = DeleteType.AlbumFromPlaylist,
+        ItemsToRemove = songs
+      });
     }
-
 
     #endregion
 
@@ -389,6 +253,33 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
+
+    #region PublishPlayEvent
+
+    protected override void PublishPlayEvent()
+    {
+      eventAggregator.GetEvent<PlaySongsFromPlayListEvent<SongInPlayList>>().Publish(this);
+    }
+
+    #endregion
+
+    #region PublishRemoveFromPlaylist
+
+    protected override void PublishRemoveFromPlaylist()
+    {
+      var songs = new List<SongInPlayList>() { this };
+
+      var args = new RemoveFromPlaylistEventArgs<SongInPlayList>()
+      {
+        DeleteType = DeleteType.SingleFromPlaylist,
+        ItemsToRemove = songs
+      };
+
+      eventAggregator.GetEvent<RemoveFromPlaylistEvent<SongInPlayList>>().Publish(args);
+    }
+
+    #endregion
+
 
     #region Update
 
@@ -485,6 +376,8 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region LoadLRCFromMiniLyrics
+
     private async Task LoadLRCFromMiniLyrics()
     {
       var client = new MiniLyricsLRCProvider();
@@ -504,6 +397,8 @@ namespace VPlayer.Core.ViewModels
       }
 
     }
+
+    #endregion
 
     #region TryToRefreshUpdateLyrics
 
@@ -546,16 +441,5 @@ namespace VPlayer.Core.ViewModels
     #endregion
 
     #endregion
-  }
-
-
-  public class LRCLyricLineViewModel : ViewModel<LRCLyricLine>
-  {
-    public bool IsActual { get; set; }
-    public string Text => Model.Text;
-
-    public LRCLyricLineViewModel(LRCLyricLine model) : base(model)
-    {
-    }
   }
 }

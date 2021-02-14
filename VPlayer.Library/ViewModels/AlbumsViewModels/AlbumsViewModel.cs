@@ -103,15 +103,6 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     }
 
     #endregion
-
-    #region OnUpdateItemChange
-
-    protected override void OnUpdateItemChange(Album model)
-    {
-      base.OnUpdateItemChange(model);
-    }
-
-    #endregion
     
     #endregion
 

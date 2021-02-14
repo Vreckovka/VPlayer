@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30503.244
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer", "VPlayer\VPlayer.csproj", "{1FB08EAF-397B-4682-AFC9-73B3D1FA2CA5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPlayer", "VPlayer\VPlayer.csproj", "{1FB08EAF-397B-4682-AFC9-73B3D1FA2CA5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener", "KeyListener\Listener.csproj", "{BA238278-32D0-4C4E-881A-AD2BE152832C}"
 EndProject
@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VCore.Standard", "..\Custom
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VCore.WPF", "..\CustomLibraries\VCore\VCore.WPF.csproj", "{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer.DarkTheme", "VPlayer.DarkTheme\VPlayer.DarkTheme.csproj", "{219D618D-ED68-4076-813C-B9C8DB4FF49C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPlayer.DarkTheme", "VPlayer.DarkTheme\VPlayer.DarkTheme.csproj", "{219D618D-ED68-4076-813C-B9C8DB4FF49C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

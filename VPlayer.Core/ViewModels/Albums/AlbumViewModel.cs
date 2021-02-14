@@ -6,11 +6,12 @@ using Prism.Events;
 using VCore.Standard.Factories.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
 
 namespace VPlayer.Core.ViewModels.Albums
 {
-  public class AlbumViewModel : PlayableViewModelWithThumbnail<Album>
+  public class AlbumViewModel : PlayableViewModelWithThumbnail<SongInPlayList, Album>
   {
     #region Fields
 
@@ -49,7 +50,7 @@ namespace VPlayer.Core.ViewModels.Albums
 
     #region GetSongsToPlay
 
-    public override IEnumerable<SongInPlayList> GetSongsToPlay()
+    public override IEnumerable<SongInPlayList> GetItemsToPlay()
     {
       var songs = storage.GetRepository<Song>().Include(x => x.Album).Where(x => x.Album.Id == Model.Id).ToList();
       var playListSong = songs.Select(x => viewModelsFactory.Create<SongInPlayList>(x));
@@ -57,7 +58,22 @@ namespace VPlayer.Core.ViewModels.Albums
       return playListSong;
     }
 
-    #endregion
+  #endregion
+
+
+    public override void PublishPlayEvent(IEnumerable<SongInPlayList> viewModels, EventAction eventAction)
+    {
+      var e = new PlaySongsEventData(viewModels, eventAction, this);
+
+      eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
+    }
+
+    public override void PublishAddToPlaylistEvent(IEnumerable<SongInPlayList> viewModels)
+    {
+      var e = new PlaySongsEventData(viewModels, EventAction.Add, this);
+
+      eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
+    }
 
     #region Update
 

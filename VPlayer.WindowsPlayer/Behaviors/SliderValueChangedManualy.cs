@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interactivity;
+using VPlayer.Core.ViewModels;
 using VPlayer.WindowsPlayer.ViewModels;
 
 namespace VPlayer.Player.Behaviors
@@ -66,17 +67,17 @@ namespace VPlayer.Player.Behaviors
       AssociatedObject.ValueChanged -= AssociatedObject_ValueChanged;
     }
 
-    private WindowsPlayerViewModel windowsPlayerViewModel;
     private void AssociatedObject_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
     {
       if (Mouse.LeftButton == MouseButtonState.Pressed && AssociatedObject.IsMouseOver)
       {
         if (Kernel != null)
         {
-          if (windowsPlayerViewModel == null)
-            windowsPlayerViewModel = Kernel.Get<WindowsPlayerViewModel>();
-
-          windowsPlayerViewModel.MediaPlayer.Position = (float)e.NewValue;
+          if(AssociatedObject.DataContext is IPlayableRegionViewModel playableRegionViewModel)
+          {
+            playableRegionViewModel.VlcControl.SourceProvider.MediaPlayer.Position = (float)e.NewValue;
+          }
+         
         }
       }
     }
