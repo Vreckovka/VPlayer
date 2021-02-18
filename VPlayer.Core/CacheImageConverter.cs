@@ -7,6 +7,7 @@ using System.Windows.Markup;
 using System.Windows.Media.Imaging;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.Core.ViewModels;
+using VPlayer.Core.ViewModels.Albums;
 
 namespace VPlayer.Library
 {
@@ -36,12 +37,12 @@ namespace VPlayer.Library
       }
       else
       {
-        path = PlayableViewModelWithThumbnail<Album>.GetEmptyImage();
+        path = PlayableViewModelWithThumbnail<AlbumViewModel,Album>.GetEmptyImage();
       }
 
       if (!System.IO.File.Exists(path))
       {
-        path = PlayableViewModelWithThumbnail<Album>.GetEmptyImage();
+        path = PlayableViewModelWithThumbnail<AlbumViewModel,Album>.GetEmptyImage();
       }
 
       var bitmapImage = new BitmapImage();

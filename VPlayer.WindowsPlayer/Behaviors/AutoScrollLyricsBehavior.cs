@@ -4,12 +4,13 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using Microsoft.Xaml.Behaviors;
 using ScrollAnimateBehavior.AttachedBehaviors;
 using VPlayer.Core.ViewModels;
 
 namespace VPlayer.Player.Behaviors
 {
-  public class AutoScrollLyricsBehavior : System.Windows.Interactivity.Behavior<ListView>
+  public class AutoScrollLyricsBehavior : Behavior<ListView>
   {
     public double StepSize { get; set; } = 1;
     public TimeSpan AnimationTime { get; set; } = TimeSpan.FromSeconds(1);

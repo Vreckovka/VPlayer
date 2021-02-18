@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Data.Entity;
 using System.Linq;
 using System.Windows;
+using Microsoft.EntityFrameworkCore;
 using VCore.Modularity.Events;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
@@ -41,7 +41,7 @@ namespace VPlayer.Library.ViewModels.ArtistsViewModels
     public override bool ContainsNestedRegions => false;
     public override string Header => "Artists";
     public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
-    public override IQueryable<Artist> LoadQuery => base.LoadQuery.Include(x => x.Albums.Select(y => y.Songs));
+    public override IQueryable<Artist> LoadQuery => base.LoadQuery.Include(x => x.Albums).ThenInclude(x => x.Songs);
 
     #endregion 
 

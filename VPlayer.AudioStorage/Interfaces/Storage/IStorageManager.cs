@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using VCore.Modularity.Events;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.Video;

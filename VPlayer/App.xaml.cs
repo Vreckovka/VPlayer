@@ -30,13 +30,6 @@ namespace VPlayer
       stopWatch = new Stopwatch();
       stopWatch.Start();
 
-      var sQLiteProviderFactory = new System.Data.SQLite.EF6.SQLiteProviderFactory();
-      var sQLiteFactory = new System.Data.SQLite.SQLiteFactory();
-
-
-      DbProviderFactories.RegisterFactory("System.Data.SQLite.EF6", sQLiteProviderFactory);
-      DbProviderFactories.RegisterFactory("System.Data.SQLite", sQLiteFactory);
-
       Kernel = Container.GetContainer();
 
       Kernel.Load<CommonNinjectModule>();

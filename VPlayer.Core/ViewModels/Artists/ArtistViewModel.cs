@@ -1,8 +1,8 @@
 ﻿using Prism.Events;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using VCore.Standard.Factories.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -67,7 +67,7 @@ namespace VPlayer.Core.ViewModels.Artists
 
     public override IEnumerable<SongInPlayList> GetItemsToPlay()
     {
-      var songs = storage.GetRepository<Artist>().Include(x => x.Albums.Select(y => y.Songs)).Where(x => x.Id == Model.Id).ToList();
+      var songs = storage.GetRepository<Artist>().Include(x => x.Albums).ThenInclude(x => x.Songs).Where(x => x.Id == Model.Id).ToList();
 
       return songs.SelectMany(x => x.Albums.SelectMany(y => y.Songs)).Select(x => viewModelsFactory.Create<SongInPlayList>(x));
     }

@@ -15,8 +15,6 @@ using System.Windows.Input;
 using Logger;
 using Ninject;
 using Prism.Events;
-using UPnP;
-using UPnP.AVTransport;
 using VCore;
 using VCore.Helpers;
 using VCore.ItemsCollections;
@@ -142,25 +140,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
     public override string Header => "Music Player";
     public int Cycle { get; set; }
-
-    #region UNPNDevice
-
-    private Device uNPNDevice;
-
-    public Device UNPNDevice
-    {
-      get { return uNPNDevice; }
-      set
-      {
-        if (value != uNPNDevice)
-        {
-          uNPNDevice = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
 
     #endregion Properties
 
@@ -311,24 +290,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
         IdSong = song.Model.Id,
         OrderInPlaylist = (index + 1)
       };
-    }
-
-    #endregion
-
-    #region SearchUNPNDevices
-
-    private async Task SearchUNPNDevices()
-    {
-      var controlPoint = new AVTransportControlPoint();
-
-      // Gets the list of the media renderers
-      var mediaRenderers = await controlPoint.GetMediaRenderersAsync();
-
-      UNPNDevice = mediaRenderers.FirstOrDefault();
-
-      // Play the Big Buck Bunny video to a media renderer
-      await controlPoint.PlayAsync(UNPNDevice, "http://192.168.1.15:10243/WMPNSSv4/2988159691/1_NC0xMTgwMDk.mp3");
-
     }
 
     #endregion

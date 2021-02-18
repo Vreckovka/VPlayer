@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Data.Entity;
-using System.Data.Entity.Migrations;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using SQLite.CodeFirst;
+using Microsoft.EntityFrameworkCore;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.Video;
 
@@ -14,8 +12,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
   {
     //add-migration migration_ -ConnectionString "Data Source=C:\Users\Roman Pecho\AppData\Roaming\VPlayer\VPlayerDatabase.db;Version=3;" -connectionProvider "System.Data.SQLite.EF6"
 
-    //https://stackoverflow.com/questions/56226978/no-migrationsqlgenerator-found-for-provider-system-data-sqlite
-    //Zevraj nepodporuje migracie
 
     #region Properties
 
@@ -35,28 +31,31 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region Constructors
 
-    public AudioDatabaseContext() : base("DataContext")
+    public AudioDatabaseContext() : base()
     {
-      this.Configuration.LazyLoadingEnabled = false;
-      this.Configuration.ProxyCreationEnabled = false;
-
       var directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VPlayer");
       if (!Directory.Exists(directory))
       {
         Directory.CreateDirectory(directory);
       }
 
-      var _ = System.Data.Entity.SqlServer.SqlProviderServices.Instance;
     }
 
-    #endregion Constructors
+    #endregion
 
-    protected override void OnModelCreating(DbModelBuilder modelBuilder)
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-      var sqliteConnectionInitializer = new SqliteCreateDatabaseIfNotExists<AudioDatabaseContext>(modelBuilder);
-      
-      Database.SetInitializer(sqliteConnectionInitializer);
+      base.OnConfiguring(optionsBuilder);
+
+      optionsBuilder.UseSqlite("Data Source=C:\\Users\\Roman Pecho\\AppData\\Roaming\\VPlayer\\VPlayerDatabase_Skuska_1.db;");
     }
+
+    //protected override void OnModelCreating(DbModelBuilder modelBuilder)
+    //{
+    //  var sqliteConnectionInitializer = new SqliteCreateDatabaseIfNotExists<AudioDatabaseContext>(modelBuilder);
+
+    //  Database.SetInitializer(sqliteConnectionInitializer);
+    //}
 
     public override int SaveChanges()
     {
@@ -65,12 +64,12 @@ namespace VPlayer.AudioStorage.AudioDatabase
       return base.SaveChanges();
     }
 
-    public override Task<int> SaveChangesAsync()
-    {
-      OnBeforeSaving();
+    //public override Task<int> SaveChangesAsync()
+    //{
+    //  OnBeforeSaving();
 
-      return base.SaveChangesAsync();
-    }
+    //  return base.SaveChangesAsync();
+    //}
 
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken)
@@ -102,17 +101,5 @@ namespace VPlayer.AudioStorage.AudioDatabase
         }
       }
     }
-  }
-
-  public partial class RenameKey : DbMigration
-  {
-    #region Methods
-
-    public override void Up()
-    {
-      RenameColumn("dbo.Album", "AlbumId", "Id");
-    }
-
-    #endregion Methods
   }
 }

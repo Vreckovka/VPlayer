@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:controls="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
-                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                     xmlns:text1="clr-namespace:VCore.Behaviors.Text;assembly=VCore.WPF">
 
 
@@ -19,9 +19,9 @@
     <Setter Property="ScrollViewer.CanContentScroll" Value="true" />
     <Setter Property="VerticalContentAlignment" Value="Center" />
     <Setter Property="OverridesDefaultStyle" Value="True" />
-    <Setter Property="FontWeight" Value="Bold"/>
-    <Setter Property="FontSize" Value="14"/>
-    <Setter Property="FontFamily" Value="{StaticResource Roboto}"/>
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontFamily" Value="{StaticResource Roboto}" />
     <Setter Property="ItemContainerStyle">
       <Setter.Value>
         <Style TargetType="ListViewItem">
@@ -151,18 +151,22 @@
               <Button Margin="2.5,0,8,0"
                       Command="{Binding Play}"
                       Style="{StaticResource PlayMini}" />
-              <Grid Grid.Column="1"
+              <Grid Name="Container"
+                    Grid.Column="1"
                     Margin="5,0"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
-                    ClipToBounds="True"
-                    Name="Container"
                     Background="Transparent"
-                    >
-                <TextBlock HorizontalAlignment="Left" Text="{Binding Name}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center">
-                  <i:Interaction.Behaviors>
-                    <text1:PanningTextWithFontSizeBehavior BiggerFontSize="17" Container="{Binding ElementName=Container}" IsMouseOverRelativeToContainer="True"/>
-                  </i:Interaction.Behaviors>
+                    ClipToBounds="True">
+                <TextBlock HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           Text="{Binding Name}"
+                           TextTrimming="CharacterEllipsis">
+                  <b:Interaction.Behaviors>
+                    <text1:PanningTextWithFontSizeBehavior BiggerFontSize="17"
+                                                           Container="{Binding ElementName=Container}"
+                                                           IsMouseOverRelativeToContainer="True" />
+                  </b:Interaction.Behaviors>
                 </TextBlock>
               </Grid>
               <TextBlock Grid.Column="2"
@@ -264,7 +268,7 @@
     </Setter>
   </Style>
 
- 
+
 
   <Style x:Key="AlbumsSongs" TargetType="ListView">
     <Setter Property="Background" Value="Transparent" />

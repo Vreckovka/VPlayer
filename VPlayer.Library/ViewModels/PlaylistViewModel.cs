@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Logger;
+using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore;
 using VCore.Annotations;
@@ -173,7 +173,7 @@ namespace VPlayer.Library.ViewModels
     public override IEnumerable<SongInPlayList> GetItemsToPlay()
     {
       var playlist = playlistsRepository.Entities.Where(x => x.Id == ModelId)
-        .Include(x => x.PlaylistItems.Select( y => y.Song.Album))
+        .Include(x => x.PlaylistItems).ThenInclude(x => x.Song).ThenInclude(x => x.Album)
         .SingleOrDefault();
 
       if (playlist != null)

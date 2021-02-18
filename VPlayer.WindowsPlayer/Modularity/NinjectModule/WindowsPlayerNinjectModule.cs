@@ -1,8 +1,6 @@
 ﻿using Ninject;
 using Ninject.Activation;
 using Ninject.Activation.Strategies;
-using Ninject.Extensions.Interception;
-using Ninject.Extensions.Interception.Infrastructure.Language;
 using VCore.Standard.Modularity.NinjectModules;
 using VPlayer.Core.ViewModels;
 using VPlayer.Library.Modularity.NinjectModule;

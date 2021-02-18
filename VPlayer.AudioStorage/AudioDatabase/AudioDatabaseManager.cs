@@ -1,7 +1,6 @@
 ﻿using Ninject;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -13,6 +12,7 @@ using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using Logger;
+using Microsoft.EntityFrameworkCore;
 using VCore.Annotations;
 using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Repositories;
@@ -41,8 +41,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
       AudioInfoDownloader audioInfoDownloader,
       PlaylistsRepository playlistsRepository,
       AlbumsRepository albumsRepository,
-      [NotNull] TvShowRepository tvShowRepository,
-      [NotNull] TvShowPlaylistRepository tvShowPlaylistRepository,
+      TvShowRepository tvShowRepository,
+      TvShowPlaylistRepository tvShowPlaylistRepository,
       ILogger logger)
     {
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
@@ -477,76 +477,77 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     public Task ClearStorage()
     {
-      return Task.Run(async () =>
-      {
-        using (var context = new AudioDatabaseContext())
-        {
-          try
-          {
+      throw new NotImplementedException();
+      //return Task.Run(async () =>
+      //{
+      //  using (var context = new AudioDatabaseContext())
+      //  {
+      //    try
+      //    {
 
-            await context.Database.ExecuteSqlCommandAsync("DELETE FROM PlaylistSongs");
-            logger.Log(Logger.MessageType.Warning, "Table PlaylistSongs cleared succesfuly");
+      //      await context.Database.ExecuteSqlCommandAsync("DELETE FROM PlaylistSongs");
+      //      logger.Log(Logger.MessageType.Warning, "Table PlaylistSongs cleared succesfuly");
 
-            var playlists = context.SongPlaylists.ToList();
-            await context.Database.ExecuteSqlCommandAsync("DELETE FROM Playlists");
-            logger.Log(Logger.MessageType.Warning, "Table Playlists cleared succesfuly");
+      //      var playlists = context.SongPlaylists.ToList();
+      //      await context.Database.ExecuteSqlCommandAsync("DELETE FROM Playlists");
+      //      logger.Log(Logger.MessageType.Warning, "Table Playlists cleared succesfuly");
 
-            foreach (var playlist in playlists)
-            {
-              var itemChange = new ItemChanged()
-              {
-                Changed = Changed.Removed,
-                Item = playlist
-              };
+      //      foreach (var playlist in playlists)
+      //      {
+      //        var itemChange = new ItemChanged()
+      //        {
+      //          Changed = Changed.Removed,
+      //          Item = playlist
+      //        };
 
-              ItemChanged.OnNext(itemChange);
-            }
+      //        ItemChanged.OnNext(itemChange);
+      //      }
 
-            ActionIsDone.OnNext(Unit.Default);
+      //      ActionIsDone.OnNext(Unit.Default);
 
-            await context.Database.ExecuteSqlCommandAsync("DELETE FROM Songs");
-            logger.Log(Logger.MessageType.Warning, "Table Songs cleared succesfuly");
+      //      await context.Database.ExecuteSqlCommandAsync("DELETE FROM Songs");
+      //      logger.Log(Logger.MessageType.Warning, "Table Songs cleared succesfuly");
 
-            var albums = context.Albums.ToList();
-            await context.Database.ExecuteSqlCommandAsync("DELETE FROM Albums");
-            logger.Log(Logger.MessageType.Warning, "Table Albums cleared succesfuly");
+      //      var albums = context.Albums.ToList();
+      //      await context.Database.ExecuteSqlCommandAsync("DELETE FROM Albums");
+      //      logger.Log(Logger.MessageType.Warning, "Table Albums cleared succesfuly");
 
-            foreach (var album in albums)
-            {
-              var itemChange = new ItemChanged()
-              {
-                Changed = Changed.Removed,
-                Item = album
-              };
+      //      foreach (var album in albums)
+      //      {
+      //        var itemChange = new ItemChanged()
+      //        {
+      //          Changed = Changed.Removed,
+      //          Item = album
+      //        };
 
-              ItemChanged.OnNext(itemChange);
-            }
+      //        ItemChanged.OnNext(itemChange);
+      //      }
 
-            ActionIsDone.OnNext(Unit.Default);
+      //      ActionIsDone.OnNext(Unit.Default);
 
-            var artists = context.Artists.ToList();
+      //      var artists = context.Artists.ToList();
 
-            await context.Database.ExecuteSqlCommandAsync("DELETE FROM Artists");
-            logger.Log(Logger.MessageType.Warning, "Table Artists cleared succesfuly");
+      //      await context.Database.ExecuteSqlCommandAsync("DELETE FROM Artists");
+      //      logger.Log(Logger.MessageType.Warning, "Table Artists cleared succesfuly");
 
-            foreach (var artist in artists)
-            {
-              ItemChanged.OnNext(new ItemChanged()
-              {
-                Changed = Changed.Removed,
-                Item = artist
-              });
-            }
+      //      foreach (var artist in artists)
+      //      {
+      //        ItemChanged.OnNext(new ItemChanged()
+      //        {
+      //          Changed = Changed.Removed,
+      //          Item = artist
+      //        });
+      //      }
 
-            ActionIsDone.OnNext(Unit.Default);
+      //      ActionIsDone.OnNext(Unit.Default);
 
-          }
-          catch (Exception ex)
-          {
-            logger.Log(Logger.MessageType.Inform, ex.Message);
-          }
-        }
-      });
+      //    }
+      //    catch (Exception ex)
+      //    {
+      //      logger.Log(Logger.MessageType.Inform, ex.Message);
+      //    }
+      //  }
+      //});
     }
 
     #endregion ClearStorage
@@ -865,8 +866,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
     {
       return Task.Run(() =>
       {
-        var notUpdatedAlbums = albumsRepository.Entities.Where(x => x.InfoDownloadStatus == InfoDownloadStatus.Waiting
-                                                                    || x.InfoDownloadStatus == InfoDownloadStatus.Downloading)
+        var notUpdatedAlbums = albumsRepository.Entities
+          .Where(x => x.InfoDownloadStatus == InfoDownloadStatus.Waiting || x.InfoDownloadStatus == InfoDownloadStatus.Downloading)
           .Include(x => x.Artist).OrderByDescending(x => x.InfoDownloadStatus).ToList();
 
         foreach (var album in notUpdatedAlbums)

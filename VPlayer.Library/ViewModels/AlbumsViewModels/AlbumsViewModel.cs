@@ -1,9 +1,9 @@
 ﻿using Logger;
 using Prism.Events;
 using System;
-using System.Data.Entity;
 using System.Linq;
 using System.Windows;
+using Microsoft.EntityFrameworkCore;
 using VCore.Modularity.Events;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;

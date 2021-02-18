@@ -1,22 +1,20 @@
 ﻿<UserControl x:Class="VPlayer.Player.Views.PlayerView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:VPlayer.Player.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:userControls1="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
-             xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
-             mc:Ignorable="d"
-             >
+             mc:Ignorable="d">
 
   <Grid>
-    <Border >
-      <Grid HorizontalAlignment="Center" >
+    <Border>
+      <Grid HorizontalAlignment="Center">
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="auto" />
           <ColumnDefinition Width="auto" />
         </Grid.ColumnDefinitions>
-        <Grid HorizontalAlignment="Center" Grid.ColumnSpan="2">
+        <Grid Grid.ColumnSpan="2" HorizontalAlignment="Center">
           <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="auto" />
@@ -24,16 +22,16 @@
           </Grid.ColumnDefinitions>
 
           <controls1:ButtonWithIcon Grid.Column="0"
-                               Margin="0 0 5 0"
-                               IconWidth="25"
-                               IconHeight="25"
-                               BorderThickness="0"
-                               IconPathStyle="{StaticResource NextSong}" 
-                               RenderTransformOrigin="0.5,0.5"
-                               Command="{Binding PreviousCommand}"
-                               IsEnabled="{Binding CanPlay}">
+                                    Margin="0,0,5,0"
+                                    BorderThickness="0"
+                                    Command="{Binding PreviousCommand}"
+                                    IconHeight="25"
+                                    IconPathStyle="{StaticResource NextSong}"
+                                    IconWidth="25"
+                                    IsEnabled="{Binding CanPlay}"
+                                    RenderTransformOrigin="0.5,0.5">
             <controls1:ButtonWithIcon.RenderTransform>
-              <ScaleTransform ScaleX="-1"/>
+              <ScaleTransform ScaleX="-1" />
             </controls1:ButtonWithIcon.RenderTransform>
           </controls1:ButtonWithIcon>
 
@@ -41,29 +39,27 @@
                   Grid.Column="1"
                   Margin="7"
                   Padding="15"
+                  Background="{StaticResource DefaultRedBrush}"
                   BorderThickness="0"
                   Command="{Binding PlayButton}"
-                  Style="{StaticResource PlayButton}" 
-                  Background="{StaticResource DefaultRedBrush}"/>
+                  Style="{StaticResource PlayButton}" />
 
 
           <controls1:ButtonWithIcon Grid.Column="2"
-                                   Margin="0 0 5 0"
-                                   IconWidth="25"
-                                   IconHeight="25"
-                                   BorderThickness="0"
-                                   IconPathStyle="{StaticResource NextSong}" 
-                                   RenderTransformOrigin="0.5,0.5"
-                                   Command="{Binding NextCommand}"
-                                   IsEnabled="{Binding CanPlay}">
-
-          </controls1:ButtonWithIcon>
+                                    Margin="0,0,5,0"
+                                    BorderThickness="0"
+                                    Command="{Binding NextCommand}"
+                                    IconHeight="25"
+                                    IconPathStyle="{StaticResource NextSong}"
+                                    IconWidth="25"
+                                    IsEnabled="{Binding CanPlay}"
+                                    RenderTransformOrigin="0.5,0.5" />
 
 
 
         </Grid>
 
-        
+
       </Grid>
     </Border>
   </Grid>

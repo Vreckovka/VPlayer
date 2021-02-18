@@ -1,15 +1,13 @@
-﻿using Gma.DataStructures.StringSearch;
-using Logger;
+﻿using Logger;
 using Prism.Mvvm;
-using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data.Entity;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using Microsoft.EntityFrameworkCore;
 using VCore;
 using VCore.ItemsCollections.VirtualList;
 using VCore.ItemsCollections.VirtualList.VirtualLists;
@@ -20,7 +18,6 @@ using VPlayer.Core.ViewModels.Artists;
 
 namespace VPlayer.Library.ViewModels.LibraryViewModels
 {
-  [AddINotifyPropertyChangedInterface]
   public class LibraryCollection<TViewModel, TModel> : BindableBase
     where TViewModel : class, INamedEntityViewModel<TModel>
     where TModel : class, INamedEntity
@@ -30,7 +27,6 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
     protected readonly IStorageManager storageManager;
     private readonly ILogger logger;
     private string actualFilter = "";
-    private Trie<TViewModel> trieItems = new Trie<TViewModel>();
     protected IViewModelsFactory ViewModelsFactory { get; }
 
     private IEnumerable<TViewModel> SortedItems

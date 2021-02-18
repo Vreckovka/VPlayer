@@ -32,8 +32,44 @@ namespace VPlayer.Player.ViewModels
     public override bool ContainsNestedRegions => false;
     public override string RegionName { get; protected set; } = RegionNames.PlayerRegion;
     public IPlayableRegionViewModel ActualViewModel { get; set; }
-    public bool IsPlaying { get; set; }
-    public bool CanPlay { get; set; }
+
+    #region IsPlaying
+
+    private bool isPlaying;
+
+    public bool IsPlaying
+    {
+      get { return isPlaying; }
+      set
+      {
+        if (value != isPlaying)
+        {
+          isPlaying = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region CanPlay
+
+    private bool camPlay;
+
+    public bool CanPlay
+    {
+      get { return camPlay; }
+      set
+      {
+        if (value != camPlay)
+        {
+          camPlay = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
 
     public override void Initialize()

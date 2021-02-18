@@ -154,8 +154,8 @@ namespace VPlayer.AudioStorage.DataLoader
 
     private TimeSpan GetFileDuration(string path)
     {
-      StorageFile file = AsyncHelpers.RunSync(() => StorageFile.GetFileFromPathAsync(path).AsTask());
-      var videoProperties = AsyncHelpers.RunSync(() => file.Properties.GetVideoPropertiesAsync().AsTask());
+      StorageFile file = StorageFile.GetFileFromPathAsync(path).GetResults();
+      var videoProperties = file.Properties.GetVideoPropertiesAsync().GetResults();
 
       return videoProperties.Duration;
     }

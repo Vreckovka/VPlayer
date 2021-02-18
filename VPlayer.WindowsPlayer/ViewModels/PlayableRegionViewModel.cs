@@ -69,6 +69,8 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region Properties
+
     #region ActualItem
 
     private TItemViewModel actualItem;
@@ -221,7 +223,6 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-
     #region VlcControl
 
     private VlcControl vlcControl = new VlcControl();
@@ -283,6 +284,8 @@ namespace VPlayer.Core.ViewModels
     {
       get { return actualItemSubject.AsObservable(); }
     }
+
+    #endregion
 
     #endregion
 
@@ -375,11 +378,20 @@ namespace VPlayer.Core.ViewModels
       if (currentAssembly != null)
       {
         var currentDirectory = new FileInfo(currentAssembly.Location).DirectoryName;
+
         var path = new DirectoryInfo(Path.Combine(currentDirectory, "libvlc", IntPtr.Size == 4 ? "win-x86" : "win-x64"));
 
         var libDirectory = new DirectoryInfo(path.FullName);
 
-        VlcControl.SourceProvider.CreatePlayer(libDirectory);
+        try
+        {
+          VlcControl.SourceProvider.CreatePlayer(libDirectory);
+        }
+        catch (Exception ex)
+        {
+
+          throw;
+        }
       }
     }
 
@@ -480,9 +492,15 @@ namespace VPlayer.Core.ViewModels
         SetActualItem(actualItemIndex);
 
         if (IsPlaying || forcePlay)
+        {
+          SetVlcMedia(ActualItem.Model);
           Play();
+        }
         else if (!IsPlaying && songIndex != null)
+        {
+          SetVlcMedia(ActualItem.Model);
           Play();
+        }
         else if (ActualItem != null)
           ActualItem.IsPaused = true;
 
@@ -501,14 +519,30 @@ namespace VPlayer.Core.ViewModels
       }
       else
       {
-        var items = PlayList.Where(x => x == nextItem);
+        var item = PlayList.SingleOrDefault(x => x == nextItem);
 
-
-        var item = items.FirstOrDefault();
         if (ActualItem != item && item != null)
         {
           PlayNext(PlayList.IndexOf(item));
         }
+      }
+    }
+
+    #endregion
+
+    #region SetVlcMedia
+
+    private void SetVlcMedia(TModel model)
+    {
+      var media = VlcControl.SourceProvider.MediaPlayer.GetMedia();
+
+      if (media == null || media.NowPlaying != model.DiskLocation)
+      {
+        var location = new Uri(model.DiskLocation);
+
+        VlcControl.SourceProvider.MediaPlayer.SetMedia(location);
+
+        OnNewItemPlay();
       }
     }
 
@@ -530,16 +564,7 @@ namespace VPlayer.Core.ViewModels
           {
             if (IsPlaying)
             {
-              var media = VlcControl.SourceProvider.MediaPlayer.GetMedia();
-
-              if (media == null || media.NowPlaying != ActualItem.Model.DiskLocation)
-              {
-                var location = new Uri(ActualItem.Model.DiskLocation);
-
-                VlcControl.SourceProvider.MediaPlayer.SetMedia(location);
-
-                OnNewItemPlay();
-              }
+              SetVlcMedia(ActualItem.Model);
             }
 
             VlcControl.SourceProvider.MediaPlayer.Play();
@@ -874,9 +899,7 @@ namespace VPlayer.Core.ViewModels
 
       try
       {
-        VlcControl.SourceProvider.MediaPlayer.ResetMedia();
         VlcControl.Dispose();
-        //VlcControl.SourceProvider.MediaPlayer.Stop();
       }
       catch (Exception ex)
       {

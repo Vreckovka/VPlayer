@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using Logger;
+using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore.Modularity.Events;
 using VCore.Modularity.RegionProviders;

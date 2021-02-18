@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Data.Entity;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace VPlayer.AudioStorage.Repositories
 {
@@ -63,7 +63,7 @@ namespace VPlayer.AudioStorage.Repositories
 
     public virtual void Edit(TEntity entity)
     {
-      context.Entry(entity).State = System.Data.Entity.EntityState.Modified;
+      context.Entry(entity).State = EntityState.Modified;
     }
 
     public IQueryable<TEntity> FindBy(System.Linq.Expressions.Expression<Func<TEntity, bool>> predicate)
