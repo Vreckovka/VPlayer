@@ -1,10 +1,11 @@
 ﻿<UserControl x:Class="VPlayer.WindowsPlayer.Views.WindowsPlayer.VideoPlayerView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
+             xmlns:behaviors1="clr-namespace:VPlayer.WindowsPlayer.Behaviors"
              xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:local="clr-namespace:VPlayer.WindowsPlayer.Views.WindowsPlayer"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vlc="clr-namespace:Vlc.DotNet.Wpf;assembly=Vlc.DotNet.Wpf"
@@ -31,7 +32,11 @@
       <ColumnDefinition Width="450" />
     </Grid.ColumnDefinitions>
 
-    <ContentControl Content="{Binding VlcControl}" />
+    <ContentControl Content="{Binding VlcControl}">
+      <b:Interaction.Behaviors>
+        <behaviors1:FullScreenBehavior EventAggregator="{Binding EventAggregator}" />
+      </b:Interaction.Behaviors>
+    </ContentControl>
 
     <ListView x:Name="ListView_Tracks"
               Grid.RowSpan="2"
@@ -45,9 +50,9 @@
               ItemsSource="{Binding VirtualizedPlayList}"
               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
               Style="{StaticResource WindowsPlayerSongs}">
-      <i:Interaction.Behaviors>
+      <b:Interaction.Behaviors>
         <behaviors:AutoScrollBehavior Kernel="{Binding Kernel}" StepSize="50" />
-      </i:Interaction.Behaviors>
+      </b:Interaction.Behaviors>
     </ListView>
 
     <Slider x:Name="Slider_Time"
@@ -58,9 +63,9 @@
             IsMoveToPointEnabled="True"
             Maximum="1"
             Value="{Binding ActualItem.ActualPosition}">
-      <i:Interaction.Behaviors>
+      <b:Interaction.Behaviors>
         <behaviors:SliderValueChangedManualy Kernel="{Binding Kernel}" Duration="{Binding ActualItem.Duration}" />
-      </i:Interaction.Behaviors>
+      </b:Interaction.Behaviors>
     </Slider>
 
     <TextBlock Grid.Row="2"

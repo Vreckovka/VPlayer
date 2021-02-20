@@ -31,7 +31,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
         LibraryCollection<AlbumViewModel, Album> libraryCollection, 
         IEventAggregator eventAggregator,
         ILogger logger)
-        : base(regionProvider, viewModelsFactory, storageManager, libraryCollection)
+        : base(regionProvider, viewModelsFactory, storageManager, libraryCollection, eventAggregator)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       EventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));

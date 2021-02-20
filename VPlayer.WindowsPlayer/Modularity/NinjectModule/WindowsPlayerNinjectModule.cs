@@ -11,7 +11,7 @@ namespace VPlayer.WindowsPlayer.Modularity.NinjectModule
   public class WindowsPlayerNinjectModule : BaseNinjectModule
   {
     private VideoPlayerViewModel videoPlayerViewModel;
-    private WindowsPlayerViewModel windowsPlayerViewModel;
+    private MusicPlayerViewModel musicPlayerViewModel;
 
     #region Methods
 
@@ -27,14 +27,14 @@ namespace VPlayer.WindowsPlayer.Modularity.NinjectModule
       base.RegisterViewModels();
 
       Kernel.Bind<VideoPlayerViewModel>().ToSelf().InSingletonScope();
-      Kernel.Bind<WindowsPlayerViewModel>().ToSelf().InSingletonScope();
+      Kernel.Bind<MusicPlayerViewModel>().ToSelf().InSingletonScope();
 
 
       videoPlayerViewModel = Kernel.Get<VideoPlayerViewModel>();
-      windowsPlayerViewModel = Kernel.Get<WindowsPlayerViewModel>();
+      musicPlayerViewModel = Kernel.Get<MusicPlayerViewModel>();
 
       Kernel.Bind<IPlayableRegionViewModel>().ToConstant(videoPlayerViewModel);
-      Kernel.Bind<IPlayableRegionViewModel>().ToConstant(windowsPlayerViewModel);
+      Kernel.Bind<IPlayableRegionViewModel>().ToConstant(musicPlayerViewModel);
 
 
     }

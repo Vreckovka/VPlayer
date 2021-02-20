@@ -31,7 +31,7 @@ namespace VPlayer.Library.ViewModels
     #region Constructors
 
     public LibraryViewModel(
-      IRegionProvider regionProvider,
+      IVPlayerRegionProvider regionProvider,
       IViewModelsFactory viewModelsFactory,
       NavigationViewModel navigationViewModel,
       IStorageManager storage) : base(regionProvider)
@@ -93,6 +93,8 @@ namespace VPlayer.Library.ViewModels
 
     #endregion Initialize
 
+    #region OnActivation
+
     public override void OnActivation(bool firstActivation)
     {
       base.OnActivation(firstActivation);
@@ -100,20 +102,10 @@ namespace VPlayer.Library.ViewModels
       if (firstActivation)
       {
         var playlists = viewModelsFactory.Create<SongPlaylistsViewModel>();
-        playlists.RegionManager = RegionManager;
-
         var artistsViewModel = viewModelsFactory.Create<IArtistsViewModel>();
-        artistsViewModel.RegionManager = RegionManager;
-
         var albumsViewModel = viewModelsFactory.Create<IAlbumsViewModel>();
-        albumsViewModel.RegionManager = RegionManager;
-
         var tvShowPlaylistsViewModel = viewModelsFactory.Create<TvShowPlaylistsViewModel>();
-        tvShowPlaylistsViewModel.RegionManager = RegionManager;
-
         var tvShowsViewModel = viewModelsFactory.Create<TvShowsViewModel>();
-        tvShowsViewModel.RegionManager = RegionManager;
-
 
         Application.Current?.Dispatcher?.Invoke(() =>
         {
@@ -127,9 +119,11 @@ namespace VPlayer.Library.ViewModels
           NavigationViewModel.Items.First().IsActive = true;
         });
 
-        regionProvider.RegionManager = RegionManager;
+       
       }
     }
+
+    #endregion
 
     #region Filter
 

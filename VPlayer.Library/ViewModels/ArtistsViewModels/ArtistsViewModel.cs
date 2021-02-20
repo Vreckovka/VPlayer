@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using Microsoft.EntityFrameworkCore;
+using Prism.Events;
 using VCore.Modularity.Events;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
@@ -24,8 +25,9 @@ namespace VPlayer.Library.ViewModels.ArtistsViewModels
       IRegionProvider regionProvider,
       IViewModelsFactory viewModelsFactory,
       IStorageManager storageManager,
-      LibraryCollection<ArtistViewModel, Artist> libraryCollection) :
-      base(regionProvider, viewModelsFactory, storageManager, libraryCollection)
+      LibraryCollection<ArtistViewModel, Artist> libraryCollection,
+      IEventAggregator eventAggregator) :
+      base(regionProvider, viewModelsFactory, storageManager, libraryCollection, eventAggregator)
     {
       //this.storageManager.ItemChanged.Where(x => x.Item.GetType() == typeof(Song)).Subscribe(SongChange);
 

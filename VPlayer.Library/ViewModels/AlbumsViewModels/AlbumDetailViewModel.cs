@@ -38,7 +38,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     public AlbumViewModel ActualAlbum { get; set; }
     public IEnumerable<Song> AlbumSongs => ActualAlbum.Model?.Songs;
     public override bool ContainsNestedRegions => false;
-    public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
+    public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
 
     #endregion Properties
 

@@ -136,7 +136,7 @@ namespace VPlayer.Library.ViewModels
 
     public override IEnumerable<TvShowEpisodeInPlaylistViewModel> GetItemsToPlay()
     {
-      var playlist = storage.GetRepository<TvShowPlaylist>().Include(x => x.PlaylistItems.Select(y => y.TvShowEpisode)).SingleOrDefault(x => x.Id == Model.Id);
+      var playlist = storage.GetRepository<TvShowPlaylist>().Include(x => x.PlaylistItems).ThenInclude(x => x.TvShowEpisode).SingleOrDefault(x => x.Id == Model.Id);
 
       if(playlist != null)
       {

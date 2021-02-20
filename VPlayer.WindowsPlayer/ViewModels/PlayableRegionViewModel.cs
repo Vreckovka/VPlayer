@@ -44,7 +44,6 @@ namespace VPlayer.Core.ViewModels
 
     protected readonly ILogger logger;
     protected readonly IStorageManager storageManager;
-    protected readonly IEventAggregator eventAggregator;
     private int actualItemIndex;
     protected HashSet<TItemViewModel> shuffleList = new HashSet<TItemViewModel>();
 
@@ -61,7 +60,7 @@ namespace VPlayer.Core.ViewModels
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
-      this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
+      EventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
 
 
       Kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
@@ -70,6 +69,25 @@ namespace VPlayer.Core.ViewModels
     #endregion
 
     #region Properties
+
+    #region EventAgreggator
+
+    private IEventAggregator eventAggregator;
+
+    public IEventAggregator EventAggregator
+    {
+      get { return eventAggregator; }
+      set
+      {
+        if (value != eventAggregator)
+        {
+          eventAggregator = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     #region ActualItem
 
@@ -365,6 +383,7 @@ namespace VPlayer.Core.ViewModels
 
       eventAggregator.GetEvent<RemoveFromPlaylistEvent<TItemViewModel>>().Subscribe(RemoveItemsFromPlaylist).DisposeWith(this);
       eventAggregator.GetEvent<PlaySongsFromPlayListEvent<TItemViewModel>>().Subscribe(PlayItemFromPlayList).DisposeWith(this);
+      eventAggregator.GetEvent<PlayPauseEvent>().Subscribe(PlayPause).DisposeWith(this);
     }
 
     #endregion
@@ -792,6 +811,9 @@ namespace VPlayer.Core.ViewModels
 
     protected void PlayItemsFromEvent(TPlayItemEventData data)
     {
+      if (!data.Items.Any())
+        return;
+
       if (ActualSavedPlaylist.Id > 0)
       {
         UpdateActualSavedPlaylistPlaylist();
@@ -899,7 +921,9 @@ namespace VPlayer.Core.ViewModels
 
       try
       {
+        VlcControl.SourceProvider.Dispose();
         VlcControl.Dispose();
+        
       }
       catch (Exception ex)
       {
@@ -971,28 +995,14 @@ namespace VPlayer.Core.ViewModels
       }
     }
 
-    #endregion 
+    #endregion
 
+   
     protected abstract void OnRemoveItemsFromPlaylist(DeleteType deleteType, RemoveFromPlaylistEventArgs<TItemViewModel> args);
     protected abstract void ItemsRemoved(EventPattern<TItemViewModel> eventPattern);
     protected abstract void FilterByActualSearch(string predictate);
     protected abstract TPlaylistModel GetNewPlaylistModel(List<TPlaylistItemModel> playlistModels, bool isUserCreated);
 
     #endregion
-  }
-
-  public interface IPlayableRegionViewModel : IRegionViewModel
-  {
-    void Play();
-    void PlayPause();
-    void PlayNext(int? songIndex, bool forcePlay = false);
-    void PlayPrevious();
-    void Stop();
-    bool IsPlaying { get; }
-    bool CanPlay { get; }
-    VlcControl VlcControl { get; }
-
-    IObservable<int> ActualItemChanged { get; }
-
   }
 }

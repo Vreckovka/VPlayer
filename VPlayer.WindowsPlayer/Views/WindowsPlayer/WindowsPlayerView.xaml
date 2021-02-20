@@ -1,20 +1,14 @@
 ﻿<UserControl x:Class="VPlayer.Player.Views.WindowsPlayer.WindowsPlayerView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:design1="clr-namespace:VPlayer.Player.Design"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
-             xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
-             xmlns:gif="http://wpfanimatedgif.codeplex.com"
-             xmlns:behaviors1="clr-namespace:VPlayer.WindowsPlayer.Behaviors"
-             xmlns:windowsPlayer="clr-namespace:VPlayer.Player.Views.WindowsPlayer"
              xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
              xmlns:converters1="clr-namespace:VCore.Converters;assembly=VCore.WPF"
-             d:DataContext="{d:DesignInstance Type={x:Type design1:PlayerDesingViewModel},
-                                              IsDesignTimeCreatable=True}"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
              d:DesignHeight="450"
              d:DesignWidth="1900"
              Background="{StaticResource BackgroudBrush}"
@@ -44,74 +38,72 @@
       <ColumnDefinition Width="170" />
     </Grid.ColumnDefinitions>
 
-    <Grid Grid.RowSpan="3" Grid.Column="0" Grid.ColumnSpan="2">
-        <Grid.RowDefinitions>
-          <RowDefinition Height="2*" />
-          <RowDefinition Height="*" />
-          <RowDefinition Height="auto" />
+    <Grid Grid.RowSpan="3"
+          Grid.Column="0"
+          Grid.ColumnSpan="2">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="2*" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="auto" />
 
-        </Grid.RowDefinitions>
+      </Grid.RowDefinitions>
 
       <Grid Grid.RowSpan="3">
-          <ContentControl 
-            Content="{Binding UseGif}" 
-            ContentTemplateSelector="{StaticResource SongImageTemplateSelector}" 
-            BorderThickness="0"/>
+        <ContentControl BorderThickness="0"
+                        Content="{Binding UseGif}"
+                        ContentTemplateSelector="{StaticResource SongImageTemplateSelector}" />
       </Grid>
-     
 
-      <Border Grid.Row="1"  
-              Background="#95000000"       
-              Margin="0 0 0 -2">
+
+      <Border Grid.Row="1"
+              Margin="0,0,0,-2"
+              Background="#95000000">
         <Grid>
 
-          <ContentControl 
-            Content="{Binding ActualSong.LyricsObject}" 
-            ContentTemplateSelector="{StaticResource LyricsTemplateSelector}" 
-            BorderThickness="0"/>
+          <ContentControl BorderThickness="0"
+                          Content="{Binding ActualItem.LyricsObject}"
+                          ContentTemplateSelector="{StaticResource LyricsTemplateSelector}" />
 
         </Grid>
       </Border>
 
 
       <Grid Grid.Row="0" Grid.RowSpan="3">
-        <controls1:PathButton 
-          PathStyle="{StaticResource Gif}"
-          IsChecked="{Binding UseGif, Mode=TwoWay}" 
-          Height="50"
-          Width="50"
-          IconHoverColor="{StaticResource YellowColor}"
-          PathCheckedBrush="{StaticResource YellowBrush}"
-          HorizontalAlignment="Left" 
-          VerticalAlignment="Top"
-          Margin="10"/>
+        <controls1:PathButton Width="50"
+                              Height="50"
+                              Margin="10"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Top"
+                              IconHoverColor="{StaticResource YellowColor}"
+                              IsChecked="{Binding UseGif, Mode=TwoWay}"
+                              PathCheckedBrush="{StaticResource YellowBrush}"
+                              PathStyle="{StaticResource Gif}" />
 
       </Grid>
 
 
-      <Grid Height="75"
+      <Grid Grid.Row="2"
+            Height="75"
             VerticalAlignment="Bottom"
-            Background="#DD000000"
-            Grid.Row="2">
+            Background="#DD000000">
 
-        <userControls:SoundVizualizer 
-          HorizontalAlignment="Stretch"
-          Grid.Row="0"
-          Grid.Column="0"
-          NumberOfColumns="250" 
-          Opacity="0.8"
-          BottomColor="#251f3338"
-          TopColor="#8bcde0"
-          MiddleColor="#101b1f"
-          MaxFrequency="9500"
-          IsEnabled="{Binding IsPlaying}">
+        <userControls:SoundVizualizer Grid.Row="0"
+                                      Grid.Column="0"
+                                      HorizontalAlignment="Stretch"
+                                      BottomColor="#251f3338"
+                                      IsEnabled="{Binding IsPlaying}"
+                                      MaxFrequency="9500"
+                                      MiddleColor="#101b1f"
+                                      NumberOfColumns="250"
+                                      Opacity="0.8"
+                                      TopColor="#8bcde0">
 
           <userControls:SoundVizualizer.Style>
             <Style TargetType="userControls:SoundVizualizer">
-              <Setter Property="Visibility" Value="Collapsed"/>
+              <Setter Property="Visibility" Value="Collapsed" />
               <Style.Triggers>
                 <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-                  <Setter Property="Visibility" Value="Visible"/>
+                  <Setter Property="Visibility" Value="Visible" />
                 </DataTrigger>
               </Style.Triggers>
             </Style>
@@ -119,13 +111,13 @@
 
         </userControls:SoundVizualizer>
 
-        <Button Width="50"
+        <Button Grid.Row="0"
+                Width="50"
                 Margin="10,0,0,15"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Bottom"
                 Command="{Binding AlbumDetail}"
-                FontSize="36"
-                Grid.Row="0">
+                FontSize="36">
           <Button.Style>
             <Style BasedOn="{StaticResource BorderlessButtonStyle}" TargetType="Button">
               <Setter Property="FontWeight" Value="Bold" />
@@ -177,23 +169,21 @@
         </Button>
 
         <StackPanel Name="Container"
-                    
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     ClipToBounds="True">
-          <TextBox Margin="0,0,0,0"
-                     FontSize="43"
-                     Foreground="#f7ede1"
-                     Name="NameTxt"
-                     Text="{Binding ActualSong.Name, Mode=OneWay}"
-                     FontFamily="{StaticResource Roboto}"
-                     FontWeight="Bold"
-                     IsReadOnly="True"
-                     BorderThickness="0"
-                     >
+          <TextBox Name="NameTxt"
+                   Margin="0,0,0,0"
+                   BorderThickness="0"
+                   FontFamily="{StaticResource Roboto}"
+                   FontSize="43"
+                   FontWeight="Bold"
+                   Foreground="#f7ede1"
+                   IsReadOnly="True"
+                   Text="{Binding ActualItem.Name, Mode=OneWay}">
 
             <TextBox.Style>
-              <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+              <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
                 <Setter Property="HorizontalAlignment" Value="Center" />
                 <Style.Triggers>
                   <DataTrigger Value="True">
@@ -222,12 +212,12 @@
 
           <TextBlock HorizontalAlignment="Center"
                      FontFamily="{StaticResource Roboto}"
-                     FontWeight="DemiBold"
                      FontSize="15"
-                     Opacity="0.7"
-                     Foreground="#f2e0cb">
-            <Run Text="{Binding ActualSong.ArtistViewModel.Name, Mode=OneWay}" />
-            <Run Text="{Binding ActualSong.AlbumViewModel.Name, Mode=OneWay, StringFormat={}({0})}" />
+                     FontWeight="DemiBold"
+                     Foreground="#f2e0cb"
+                     Opacity="0.7">
+            <Run Text="{Binding ActualItem.ArtistViewModel.Name, Mode=OneWay}" />
+            <Run Text="{Binding ActualItem.AlbumViewModel.Name, Mode=OneWay, StringFormat={}({0})}" />
 
             <TextBlock.Effect>
               <DropShadowEffect BlurRadius="2" ShadowDepth="2" />
@@ -236,20 +226,20 @@
         </StackPanel>
 
         <controls1:PathButton Margin="0,0,5,5"
-                      HorizontalAlignment="Right"
-                      VerticalAlignment="Bottom"
-                      IsChecked="{Binding IsRepeate}"
-                      PathStyle="{StaticResource Repeate}"/>
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Bottom"
+                              IsChecked="{Binding IsRepeate}"
+                              PathStyle="{StaticResource Repeate}" />
 
         <controls1:PathButton Margin="0,0,35,5"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Bottom"
-                    BorderThickness="0"
-                    IsChecked="{Binding IsShuffle}"
-                    PathStyle="{StaticResource Shuffle}" />
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Bottom"
+                              BorderThickness="0"
+                              IsChecked="{Binding IsShuffle}"
+                              PathStyle="{StaticResource Shuffle}" />
       </Grid>
 
-     
+
     </Grid>
 
     <GridSplitter Grid.RowSpan="3"
@@ -269,16 +259,16 @@
           Grid.RowSpan="5"
           Grid.Column="3"
           Grid.ColumnSpan="2"
-         MinWidth="170">
+          MinWidth="170">
       <Grid.RowDefinitions>
-        <RowDefinition Height="auto"/>
-        <RowDefinition/>
+        <RowDefinition Height="auto" />
+        <RowDefinition />
       </Grid.RowDefinitions>
 
-      <Border BorderThickness="0 0 0 1" 
-              BorderBrush="#10ffffff" 
-              Margin="0 0 0 0" 
-              Padding="0,5">
+      <Border Margin="0,0,0,0"
+              Padding="0,5"
+              BorderBrush="#10ffffff"
+              BorderThickness="0,0,0,1">
         <Grid>
           <Grid.ColumnDefinitions>
             <ColumnDefinition />
@@ -286,24 +276,24 @@
           </Grid.ColumnDefinitions>
 
           <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition/>
+            <RowDefinition Height="auto" />
+            <RowDefinition />
           </Grid.RowDefinitions>
 
           <StackPanel Orientation="Horizontal">
-            <controls1:ButtonWithIcon IconPathStyle="{StaticResource Playlist}"
-                                     HorizontalAlignment="Left" 
-                                     Command="{Binding SavePlaylistCommandCommand}" 
-                                     Margin="19 0 0 0"
-                                     Padding="0"
-                                     ToolTip="Save playlist">
-              <controls1:ButtonWithIcon.Style >
-                <Style TargetType="controls1:ButtonWithIcon" BasedOn="{StaticResource {x:Type controls1:ButtonWithIcon}}">
-                  <Setter Property="IconDefaultColor" Value="{StaticResource 30_DefaultWhiteColor}"/>
-                  <Setter Property="IconHoverColor" Value="{StaticResource YellowColor}"/>
+            <controls1:ButtonWithIcon Margin="19,0,0,0"
+                                      Padding="0"
+                                      HorizontalAlignment="Left"
+                                      Command="{Binding SavePlaylistCommand}"
+                                      IconPathStyle="{StaticResource Playlist}"
+                                      ToolTip="Save playlist">
+              <controls1:ButtonWithIcon.Style>
+                <Style BasedOn="{StaticResource {x:Type controls1:ButtonWithIcon}}" TargetType="controls1:ButtonWithIcon">
+                  <Setter Property="IconDefaultColor" Value="{StaticResource 30_DefaultWhiteColor}" />
+                  <Setter Property="IconHoverColor" Value="{StaticResource YellowColor}" />
                   <Style.Triggers>
-                    <DataTrigger Binding="{Binding ActualSavedPlaylist.IsUserCreated }" Value="True">
-                      <Setter Property="IconDefaultColor" Value="{StaticResource DefaultRedColor}"/>
+                    <DataTrigger Binding="{Binding ActualSavedPlaylist.IsUserCreated}" Value="True">
+                      <Setter Property="IconDefaultColor" Value="{StaticResource DefaultRedColor}" />
                     </DataTrigger>
                   </Style.Triggers>
                 </Style>
@@ -311,31 +301,32 @@
             </controls1:ButtonWithIcon>
           </StackPanel>
 
-          <StackPanel Grid.Column="1" Orientation="Horizontal" 
-                      VerticalAlignment="Center" 
-                      HorizontalAlignment="Right"
+          <StackPanel Grid.Row="0"
+                      Grid.Column="1"
                       Margin="5,0"
-                      Grid.Row="0">
-            <TextBlock Foreground="#25ffffff" Margin="0 0 5 0">
-              <Run Text="Number of song:"/>
-              <Run Text="{Binding PlayList.Count, Mode=OneWay}"/>
+                      HorizontalAlignment="Right"
+                      VerticalAlignment="Center"
+                      Orientation="Horizontal">
+            <TextBlock Margin="0,0,5,0" Foreground="#25ffffff">
+              <Run Text="Number of song:" />
+              <Run Text="{Binding PlayList.Count, Mode=OneWay}" />
             </TextBlock>
 
-            <TextBlock Foreground="#25ffffff" Margin="0 0 5 0">
-              <Run Text="Duration:"/>
-              <Run Text="{Binding TotalPlaylistDuration, Mode=OneWay}"/>
+            <TextBlock Margin="0,0,5,0" Foreground="#25ffffff">
+              <Run Text="Duration:" />
+              <Run Text="{Binding TotalPlaylistDuration, Mode=OneWay}" />
             </TextBlock>
           </StackPanel>
 
-          <controls1:Finder Grid.Row="1" 
-                           Grid.ColumnSpan="2" 
-                           Grid.Column="0"
-                           Margin="15 7 15 0"
-                           FontSize="14"
-                           FontFamily="{StaticResource Roboto}"
-                           Height="40"
-                           KeyDownCommand="{Binding FinderKeyDown}"
-                           Text="{Binding ActualSearch, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+          <controls1:Finder Grid.Row="1"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            Height="40"
+                            Margin="15,7,15,0"
+                            FontFamily="{StaticResource Roboto}"
+                            FontSize="14"
+                            KeyDownCommand="{Binding FinderKeyDown}"
+                            Text="{Binding ActualSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         </Grid>
       </Border>
@@ -352,42 +343,41 @@
                 ItemsSource="{Binding VirtualizedPlayList}"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 Style="{StaticResource WindowsPlayerSongs}">
-        <i:Interaction.Behaviors>
-          <behaviors:AutoScrollBehavior Kernel="{Binding Kernel}" StepSize="50"/>
-        </i:Interaction.Behaviors>
+        <b:Interaction.Behaviors>
+          <behaviors:AutoScrollBehavior Kernel="{Binding Kernel}" StepSize="50" />
+        </b:Interaction.Behaviors>
       </ListView>
     </Grid>
 
 
     <Slider x:Name="Slider_Time"
             Grid.Row="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
             Margin="0"
             Padding="0"
             IsMoveToPointEnabled="True"
             Maximum="1"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            Value="{Binding ActualSong.ActualPosition}"
-            >
-      <i:Interaction.Behaviors>
-        <behaviors:SliderValueChangedManualy Kernel="{Binding Kernel}" Duration="{Binding ActualSong.Duration}" />
-      </i:Interaction.Behaviors>
+            Value="{Binding ActualItem.ActualPosition}">
+      <b:Interaction.Behaviors>
+        <behaviors:SliderValueChangedManualy Kernel="{Binding Kernel}" Duration="{Binding ActualItem.Duration}" />
+      </b:Interaction.Behaviors>
     </Slider>
 
     <TextBlock Grid.Row="4"
+               Grid.Column="0"
+               Grid.ColumnSpan="2"
                HorizontalAlignment="Left"
                FontSize="14"
+               Foreground="{StaticResource 120_WhiteTransparentBrush}"
+               Text="{Binding ActualItem.ActualTime, StringFormat=hh\\:mm\\:ss}" />
+    <TextBlock Grid.Row="4"
                Grid.Column="0"
                Grid.ColumnSpan="2"
-               Foreground="{StaticResource 120_WhiteTransparentBrush}"
-               Text="{Binding ActualSong.ActualTime, StringFormat=hh\\:mm\\:ss}" />
-    <TextBlock Grid.Row="4"
                HorizontalAlignment="Right"
                FontSize="14"
-               Grid.Column="0"
-               Grid.ColumnSpan="2"
                Foreground="{StaticResource 120_WhiteTransparentBrush}"
-               Text="{Binding ActualSong.Duration, Converter={converters1:TimeConverter TimeType=Second}}" />
+               Text="{Binding ActualItem.Duration, Converter={converters1:TimeConverter TimeType=Second}}" />
 
 
   </Grid>

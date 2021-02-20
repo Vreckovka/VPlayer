@@ -279,8 +279,7 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
-
-
+    
     #region Update
 
     public void Update(Song song)

@@ -58,7 +58,7 @@ namespace VPlayer.Core.ViewModels.Albums
       return playListSong;
     }
 
-  #endregion
+    #endregion
 
 
     public override void PublishPlayEvent(IEnumerable<SongInPlayList> viewModels, EventAction eventAction)

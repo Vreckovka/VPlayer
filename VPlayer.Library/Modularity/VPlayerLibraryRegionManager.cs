@@ -28,11 +28,9 @@ namespace VPlayer.Library.Modularity
 
     #region Methods
 
-    public override void ShowAlbumDetail(AlbumViewModel albumViewModel, string regionName = null)
+    public override void ShowAlbumDetail(AlbumViewModel albumViewModel)
     {
       var albumDetailViewModel = viewModelsFactory.Create<AlbumDetailViewModel>(albumViewModel);
-
-      albumDetailViewModel.RegionManager = RegionManager;
 
       albumDetailViewModel.IsActive = true;
     }
@@ -44,6 +42,6 @@ namespace VPlayer.Library.Modularity
       asd.IsActive = true;
     }
 
-    #endregion Methods
+    #endregion
   }
 }

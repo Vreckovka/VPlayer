@@ -1,4 +1,5 @@
 ﻿using Ninject;
+using VCore.Modularity.RegionProviders;
 using VCore.Standard.Modularity.NinjectModules;
 using VPlayer.AudioStorage.Modularity.NinjectModules;
 using VPlayer.Core.Interfaces.ViewModels;
@@ -15,7 +16,12 @@ namespace VPlayer.Library.Modularity.NinjectModule
     {
       base.Load();
       Kernel.Load<AudioStorageNinjectModule>();
-      Kernel.Bind<IVPlayerRegionProvider>().To<VPlayerLibraryRegionProvider>().InSingletonScope();
+
+      Kernel.Rebind<IRegionProvider>().To<VPlayerLibraryRegionProvider>().InSingletonScope();
+
+      var provider = Kernel.Get<IRegionProvider>() as IVPlayerRegionProvider;
+
+      Kernel.Bind<IVPlayerRegionProvider>().ToConstant(provider);
 
     }
 

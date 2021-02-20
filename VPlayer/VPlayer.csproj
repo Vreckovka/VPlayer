@@ -6,6 +6,8 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 
     <ApplicationIcon>Includes/VPlayerLogo.ico</ApplicationIcon>
+
+
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -38,6 +40,7 @@
     <ProjectReference Include="..\KeyListener\Listener.csproj" />
     <ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj" />
     <ProjectReference Include="..\VPlayer.Core\VPlayer.Core.csproj" />
+    <ProjectReference Include="..\VPlayer.DarkTheme\VPlayer.DarkTheme.csproj" />
     <ProjectReference Include="..\VPlayer.Library\VPlayer.Library.csproj" />
     <ProjectReference Include="..\VPlayer.Player\VPlayer.Player.csproj" />
     <ProjectReference Include="..\VPlayer.WindowsPlayer\VPlayer.WindowsPlayer.csproj" />

@@ -8,7 +8,7 @@ namespace VPlayer.AudioStorage.Modularity.NinjectModules
 {
   public class AudioStorageNinjectModule : BaseNinjectModule
   {
-    private string googleApi = "C:\\Users\\Roman Pecho\\Desktop\\vplayer-289518-7ec8818053a1.json";
+    private string googleApi = "D:\\Google drive API\\client_secret_907316640180-haiji0coibj73q45gk9tdern7i1f5hsd.apps.googleusercontent.com.json";
 
     #region Methods
 

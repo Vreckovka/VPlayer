@@ -1,4 +1,5 @@
-﻿using Prism.Regions;
+﻿using System.Collections.Generic;
+using Prism.Regions;
 using VCore.Modularity.Navigation;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
@@ -12,15 +13,18 @@ namespace VPlayer.Core.Modularity.Regions
   {
     #region Methods
 
-    void ShowAlbumDetail(AlbumViewModel albumViewModel,string regionName = null);
+
+    void ShowAlbumDetail(AlbumViewModel albumViewModel);
 
     void ShowArtistDetail(ArtistViewModel albumViewModel);
 
-    #endregion Methods
+    #endregion 
   }
 
   public class VPlayerRegionProvider : RegionProvider, IVPlayerRegionProvider
   {
+   
+
     #region Constructors
 
     public VPlayerRegionProvider(
@@ -35,7 +39,9 @@ namespace VPlayer.Core.Modularity.Regions
 
     #region Methods
 
-    public virtual void ShowAlbumDetail(AlbumViewModel albumViewModel, string regionName = null)
+  
+
+    public virtual void ShowAlbumDetail(AlbumViewModel albumViewModel)
     {
     }
 

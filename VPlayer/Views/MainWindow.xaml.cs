@@ -16,8 +16,6 @@ namespace VPlayer.Views
     public MainWindow(IStorageManager storageManager)
     {
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
-      MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
-      MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth;
 
       InitializeComponent();
     }

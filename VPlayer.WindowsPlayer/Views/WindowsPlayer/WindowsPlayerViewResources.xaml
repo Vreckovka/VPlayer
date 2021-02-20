@@ -212,11 +212,11 @@
           </Grid.ColumnDefinitions>
 
           <Image Grid.Column="0"
-                 Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualSong.ImagePath, Converter={library:CacheImageConverter}}"
+                 Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualItem.ImagePath, Converter={library:CacheImageConverter}}"
                  Stretch="UniformToFill" />
 
           <Image Grid.Column="1"
-                 Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualSong.ImagePath, Converter={library:CacheImageConverter}}"
+                 Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualItem.ImagePath, Converter={library:CacheImageConverter}}"
                  Stretch="UniformToFill" />
         </Grid>
 
@@ -249,7 +249,7 @@
               Panel.ZIndex="0"
               BorderBrush="#FF080808"
               BorderThickness="5">
-        <Image Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualSong.ImagePath, Converter={library:CacheImageConverter}}" />
+        <Image Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualItem.ImagePath, Converter={library:CacheImageConverter}}" />
 
         <Border.Effect>
           <DropShadowEffect BlurRadius="20"

@@ -1,4 +1,5 @@
-﻿using VCore.Modularity.RegionProviders;
+﻿using Prism.Events;
+using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -10,8 +11,13 @@ namespace VPlayer.Library.ViewModels
 {
   public class SongPlaylistsViewModel : PlayableItemsViewModel<PlaylistsView, PlaylistViewModel, SongsPlaylist>
   {
-    public SongPlaylistsViewModel(IRegionProvider regionProvider, IViewModelsFactory viewModelsFactory, IStorageManager storageManager,
-      LibraryCollection<PlaylistViewModel, SongsPlaylist> libraryCollection) : base(regionProvider, viewModelsFactory, storageManager, libraryCollection)
+    public SongPlaylistsViewModel(
+      IRegionProvider regionProvider,
+      IViewModelsFactory viewModelsFactory, 
+      IStorageManager storageManager,
+      LibraryCollection<PlaylistViewModel, SongsPlaylist> libraryCollection,
+      IEventAggregator eventAggregator) : 
+      base(regionProvider, viewModelsFactory, storageManager, libraryCollection, eventAggregator)
     {
     }
 

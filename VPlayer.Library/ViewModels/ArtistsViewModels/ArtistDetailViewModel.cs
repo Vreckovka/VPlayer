@@ -26,7 +26,7 @@ namespace VPlayer.Library.ViewModels.ArtistsViewModels
     public ArtistViewModel ActualArtist { get; set; }
     public ICollection<Album> Albums => ActualArtist?.Model.Albums;
     public override bool ContainsNestedRegions => false;
-    public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
+    public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
 
     public IEnumerable<Song> Songs
     {

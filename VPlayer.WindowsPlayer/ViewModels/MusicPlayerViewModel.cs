@@ -32,6 +32,7 @@ using VPlayer.Core.Events;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
+using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Player.Views.WindowsPlayer;
 
 //TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)
@@ -50,7 +51,7 @@ using VPlayer.Player.Views.WindowsPlayer;
 namespace VPlayer.WindowsPlayer.ViewModels
 {
 
-  public class WindowsPlayerViewModel : PlayableRegionViewModel<WindowsPlayerView, SongInPlayList, PlaySongsEventData, SongsPlaylist, PlaylistSong, Song>
+  public class MusicPlayerViewModel : PlayableRegionViewModel<WindowsPlayerView, SongInPlayList, PlaySongsEventData, SongsPlaylist, PlaylistSong, Song>
   {
     #region Fields
 
@@ -64,7 +65,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region Constructors
 
-    public WindowsPlayerViewModel(
+    public MusicPlayerViewModel(
       IVPlayerRegionProvider regionProvider,
       IEventAggregator eventAggregator,
       IKernel kernel,
@@ -188,7 +189,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public void OnAlbumDetail()
     {
-      vPlayerRegionProvider.ShowAlbumDetail(ActualItem.AlbumViewModel, RegionNames.WindowsPlayerContentRegion);
+      vPlayerRegionProvider.ShowAlbumDetail(ActualItem.AlbumViewModel);
     }
 
     #endregion 
@@ -242,7 +243,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       storageManager.SubscribeToItemChange<Album>(OnAlbumChange).DisposeWith(this);
 
       eventAggregator.GetEvent<PlaySongsEvent>().Subscribe(PlayItemsFromEvent).DisposeWith(this);
-      eventAggregator.GetEvent<PlayPauseEvent>().Subscribe(PlayPause).DisposeWith(this);
+      eventAggregator.GetEvent<ItemUpdatedEvent<AlbumViewModel>>().Subscribe(OnAlbumUpdated).DisposeWith(this);
 
       PlayList.ItemRemoved.Subscribe(ItemsRemoved).DisposeWith(this);
       PlayList.ItemAdded.Subscribe(ItemsAdded).DisposeWith(this);
@@ -518,10 +519,23 @@ namespace VPlayer.WindowsPlayer.ViewModels
       }
     }
 
-   
+
 
     #endregion
 
+    #region OnAlbumUpdated
+
+    private void OnAlbumUpdated(ItemUpdatedEventArgs<AlbumViewModel> itemUpdatedEventArgs)
+    {
+      var songsInAlbum = PlayList.Where(x => x.AlbumViewModel.ModelId == itemUpdatedEventArgs.Model.ModelId);
+
+      foreach (var songInAlbum in songsInAlbum)
+      {
+        songInAlbum.AlbumViewModel = itemUpdatedEventArgs.Model;
+      }
+    }
+
+    #endregion
 
     #endregion
   }

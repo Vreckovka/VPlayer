@@ -47,7 +47,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       base.Initialize();
 
-      eventAggregator.GetEvent<PlayTvShowEvent>().Subscribe(PlayItemsFromEvent).DisposeWith(this);
+      EventAggregator.GetEvent<PlayTvShowEvent>().Subscribe(PlayItemsFromEvent).DisposeWith(this);
     }
 
     #endregion

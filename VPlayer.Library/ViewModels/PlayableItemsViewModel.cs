@@ -4,6 +4,9 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using Prism.Events;
+using Prism.Regions;
+using VCore.Annotations;
 using VCore.Interfaces.ViewModels;
 using VCore.Modularity.Events;
 using VCore.Modularity.RegionProviders;
@@ -14,13 +17,15 @@ using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPlayer.Core.Events;
+using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Core.ViewModels.Artists;
 using VPlayer.Library.ViewModels.LibraryViewModels;
 
 namespace VPlayer.Library.ViewModels
 {
   public abstract class PlayableItemsViewModel<TView, TViewModel, TModel> :
-    RegionViewModel<TView>, INavigationItem, ICollectionViewModel<TViewModel, TModel>, IPlayableItemsViewModel
+    RegionViewModel<TView>, ICollectionViewModel<TViewModel, TModel>, IPlayableItemsViewModel
     where TView : class, IView
     where TViewModel : class, INamedEntityViewModel<TModel>
     where TModel : class, INamedEntity
@@ -28,6 +33,7 @@ namespace VPlayer.Library.ViewModels
     #region Fields
 
     protected readonly IStorageManager storageManager;
+    private readonly IEventAggregator eventAggregator;
     protected readonly IViewModelsFactory viewModelsFactory;
 
     #endregion Fields
@@ -38,10 +44,12 @@ namespace VPlayer.Library.ViewModels
       IRegionProvider regionProvider,
       IViewModelsFactory viewModelsFactory,
       IStorageManager storageManager,
-      LibraryCollection<TViewModel, TModel> libraryCollection) : base(regionProvider)
+      LibraryCollection<TViewModel, TModel> libraryCollection,
+      IEventAggregator eventAggregator) : base(regionProvider)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
+      this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       LibraryCollection = libraryCollection ?? throw new ArgumentNullException(nameof(libraryCollection));
     }
 
@@ -50,7 +58,6 @@ namespace VPlayer.Library.ViewModels
     #region Properties
 
     public abstract override bool ContainsNestedRegions { get; }
-    public abstract string Header { get; }
     public LibraryCollection<TViewModel, TModel> LibraryCollection { get; set; }
 
     public virtual IQueryable<TModel> LoadQuery
@@ -78,7 +85,7 @@ namespace VPlayer.Library.ViewModels
 
     #endregion View
 
-    #endregion Properties
+    #endregion 
 
 
     #region Methods
@@ -135,6 +142,19 @@ namespace VPlayer.Library.ViewModels
       {
         LibraryCollection.Update(model);
       });
+
+      var vm = LibraryCollection.Items.SingleOrDefault(x => x.ModelId == model.Id);
+
+      if(vm != null)
+      {
+        var newItemUpdatedArgs = new ItemUpdatedEventArgs<TViewModel>()
+        {
+          Model = vm
+        };
+
+        eventAggregator.GetEvent<ItemUpdatedEvent<TViewModel>>().Publish(newItemUpdatedArgs);
+      }
+     
     }
 
     #endregion
@@ -240,7 +260,7 @@ namespace VPlayer.Library.ViewModels
       }
     }
 
-    #endregion
+  #endregion
 
     #region Filter
 

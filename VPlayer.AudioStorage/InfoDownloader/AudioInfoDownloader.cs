@@ -718,21 +718,17 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     private string SaveAlbumCover(Album album, byte[] blob)
     {
-      throw new NotImplementedException();
-      //MemoryStream ms = new MemoryStream(blob);
-      //Image i = Image.FromStream(ms);
+      MemoryStream ms = new MemoryStream(blob);
+      Image i = Image.FromStream(ms);
 
-      //var directory = Path.Combine(GetDefaultPicturesPath(), $"Albums\\{album.Id}");
-      //var finalPath = Path.Combine(directory, "frontConver.jpg");
+      var directory = Path.Combine(GetDefaultPicturesPath(), $"Albums\\{album.Id}");
+      var finalPath = Path.Combine(directory, "frontConver.jpg");
 
+      finalPath.EnsureDirectoryExists();
 
-      //finalPath.EnsureDirectoryExists();
+      i.Save(finalPath, ImageFormat.Jpeg);
 
-      //i.Save(finalPath, ImageFormat.Jpeg);
-
-
-
-      //return finalPath;
+      return finalPath;
     }
 
     public async Task<DomainClasses.Artist> UpdateArtist(string artistName)

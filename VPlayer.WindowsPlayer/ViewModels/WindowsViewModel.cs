@@ -120,11 +120,22 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         Task.Run(async () =>
         {
-          var tvShow = dataLoader.LoadTvShow("The Simpsons", dialog.FileName);
+          try
+          {
+            Console.WriteLine("Loading tv show");
+            var tvShow = dataLoader.LoadTvShow("The Simpsons", dialog.FileName);
 
-          await storageManager.StoreTvShow(tvShow);
+            Console.WriteLine("Tv show loaded");
 
-          Console.WriteLine("TV show stored");
+            await storageManager.StoreTvShow(tvShow);
+
+            Console.WriteLine("TV show stored");
+          }
+          catch (Exception ex)
+          {
+
+            Console.WriteLine(ex);
+          }
         });
       }
     }
@@ -151,22 +162,20 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         var libraryViewModel = viewModelsFactory.Create<LibraryViewModel>();
 
-        libraryViewModel.RegionManager = RegionManager;
-        libraryViewModel.IsActive = true;
-
-        var playerViewModel = viewModelsFactory.Create<WindowsPlayerViewModel>();
-        playerViewModel.RegionManager = RegionManager;
+        var playerViewModel = viewModelsFactory.Create<MusicPlayerViewModel>();
 
         var settings = viewModelsFactory.Create<SettingsViewModel>();
-        settings.RegionManager = RegionManager;
 
          var videoPlayer = viewModelsFactory.Create<VideoPlayerViewModel>();
-         videoPlayer.RegionManager = RegionManager;
+       
 
         NavigationViewModel.Items.Add(new NavigationItem(libraryViewModel));
         NavigationViewModel.Items.Add(new NavigationItem(playerViewModel));
         NavigationViewModel.Items.Add(new NavigationItem(videoPlayer));
         NavigationViewModel.Items.Add(new NavigationItem(settings));
+
+
+        libraryViewModel.IsActive = true;
       }
     }
 

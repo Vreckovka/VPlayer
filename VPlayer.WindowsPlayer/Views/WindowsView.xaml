@@ -55,9 +55,7 @@
         <ListView ItemsSource="{Binding NavigationViewModel.Items}" Style="{StaticResource ListView_MenuStyle}" />
       </Border>
 
-      <ContentControl Name="LibraryRegion"
-                      Grid.Column="1"
-                      mvvm:RegionManager.RegionName="{x:Static regions:RegionNames.WindowsPlayerContentRegion}" />
+      <ContentControl Grid.Column="1" mvvm:RegionManager.RegionName="{x:Static regions:RegionNames.WindowsPlayerContentRegion}" />
     </Grid>
   </Grid>
 </UserControl>

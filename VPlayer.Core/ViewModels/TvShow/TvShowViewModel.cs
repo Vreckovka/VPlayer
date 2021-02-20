@@ -20,8 +20,8 @@ namespace VPlayer.Core.ViewModels.TvShow
     private readonly IViewModelsFactory viewModelsFactory;
 
     public TvShowViewModel(
-      AudioStorage.DomainClasses.Video.TvShow model, 
-      IEventAggregator eventAggregator, 
+      AudioStorage.DomainClasses.Video.TvShow model,
+      IEventAggregator eventAggregator,
       [NotNull] IStorageManager storage,
       [NotNull] IViewModelsFactory viewModelsFactory
       ) : base(model, eventAggregator)
@@ -50,7 +50,10 @@ namespace VPlayer.Core.ViewModels.TvShow
 
       if (tvShow != null)
       {
-        var tvShowEpisodes = tvShow.Episodes.Select(x => viewModelsFactory.Create<TvShowEpisodeInPlaylistViewModel>(x)).ToList();
+        var tvShowEpisodes = tvShow.Episodes.
+          OrderBy(x => x.SeasonNumber)
+          .ThenBy(x => x.EpisodeNumber)
+          .Select(x => viewModelsFactory.Create<TvShowEpisodeInPlaylistViewModel>(x)).ToList();
 
         tvShowEpisodes.ForEach(x => x.TvShow = this.Model);
 
@@ -77,6 +80,6 @@ namespace VPlayer.Core.ViewModels.TvShow
     public override string BottomText { get; }
     public override string ImageThumbnail { get; }
 
-   
+
   }
 }

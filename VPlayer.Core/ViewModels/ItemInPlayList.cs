@@ -68,7 +68,9 @@ namespace VPlayer.Core.ViewModels
         if (value != actualPosition)
         {
           actualPosition = value;
+
           RaisePropertyChanged();
+          RaisePropertyChanged(nameof(ActualTime));
 
           OnActualPositionChanged(value);
         }
