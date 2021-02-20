@@ -79,14 +79,12 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region GetRepository
 
-    public IQueryable<T> GetRepository<T>(DbContext dbContext = null) where T : class
+    public DbSet<T> GetRepository<T>(DbContext dbContext = null) where T : class
     {
       if (dbContext == null)
         dbContext = new AudioDatabaseContext();
 
-      IQueryable<T> query = dbContext.Set<T>();
-
-      return query;
+      return dbContext.Set<T>();
     }
 
     #endregion 
@@ -828,7 +826,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     //TODO: GetRepository<TEntity>(context) toto spravit genericky pre repository patern
     //TODO: Cely repository prerobit
-    public Task DeletePlaylist(SongsPlaylist songsPlaylist)
+    public Task DeletePlaylist<TPlaylist, TPlaylistItem>(TPlaylist songsPlaylist) 
+      where TPlaylist : class, IPlaylist<TPlaylistItem>
+     where TPlaylistItem : class
     {
       return Task.Run(() =>
       {
@@ -836,11 +836,19 @@ namespace VPlayer.AudioStorage.AudioDatabase
         {
           using (var context = new AudioDatabaseContext())
           {
-            var entityPlaylist = context.SongPlaylists.SingleOrDefault(x => x.Id == songsPlaylist.Id);
+            var playlistRepo = GetRepository<TPlaylist>(context);
+            var itemsRepo = GetRepository<TPlaylistItem>(context);
+
+            var entityPlaylist = playlistRepo.Include(x => x.PlaylistItems).SingleOrDefault(x => x.Id == songsPlaylist.Id);
 
             if (entityPlaylist != null)
             {
-              context.SongPlaylists.Remove(entityPlaylist);
+              foreach (var songInPlaylist in entityPlaylist.PlaylistItems)
+              {
+                itemsRepo.Remove(songInPlaylist);
+              }
+
+              playlistRepo.Remove(entityPlaylist);
               context.SaveChanges();
 
               ItemChanged.OnNext(new ItemChanged()
@@ -917,6 +925,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
       return Task.Run(() =>
       {
         tvShowRepository.Add(tvShow);
+       
+        tvShowRepository.Save();
 
         ItemChanged.OnNext(new ItemChanged()
         {
@@ -924,7 +934,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
           Changed = Changed.Added
         });
 
-        tvShowRepository.Save();
       });
     }
 

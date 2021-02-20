@@ -1,9 +1,21 @@
-﻿using VPlayer.Core.ViewModels;
+﻿using VPlayer.AudioStorage.DomainClasses.Video;
+using VPlayer.Core.ViewModels;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
   public class TvShowEpisode : IUpdateable<TvShowEpisode>, IPlayableModel, DownloadableEntity
   {
+    public TvShowEpisode()
+    {
+      
+    }
+
+    public TvShowEpisode(TvShow tvShow)
+    {
+      TvShow = tvShow;
+    }
+
+    public TvShow TvShow { get; set; }
     public string DiskLocation { get; set; }
     public int Duration { get; set; }
     public int Id { get; set; }

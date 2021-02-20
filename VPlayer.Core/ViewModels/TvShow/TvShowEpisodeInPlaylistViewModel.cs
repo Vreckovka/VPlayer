@@ -1,20 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Prism.Events;
 using VCore.Annotations;
 using VCore.Standard;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.Core.Events;
+using VPlayer.Core.Interfaces.ViewModels;
 
 namespace VPlayer.Core.ViewModels.TvShow
 {
   public class TvShowEpisodeInPlaylistViewModel : ItemInPlayList<TvShowEpisode>
   {
-    public TvShowEpisodeInPlaylistViewModel(TvShowEpisode model, [NotNull] IEventAggregator eventAggregator) : base(model, eventAggregator)
+    private readonly ITvShowsViewModel tvShowsViewModel;
+
+    public TvShowEpisodeInPlaylistViewModel(
+      TvShowEpisode model,
+      IEventAggregator eventAggregator,
+      ITvShowsViewModel tvShowsViewModel) : base(model, eventAggregator)
     {
+      this.tvShowsViewModel = tvShowsViewModel ?? throw new ArgumentNullException(nameof(tvShowsViewModel));
     }
 
-    public AudioStorage.DomainClasses.Video.TvShow TvShow { get; set; }
+    public TvShowViewModel TvShow { get; set; }
+
+    public override async void Initialize()
+    {
+      base.Initialize();
+
+      if (TvShow == null)
+        TvShow = (await tvShowsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == Model.TvShow.Id);
+    }
 
     protected override void UpdateIsFavorite(bool value)
     {

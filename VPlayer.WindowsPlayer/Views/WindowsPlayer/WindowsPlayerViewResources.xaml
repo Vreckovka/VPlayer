@@ -365,7 +365,7 @@
               <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="20" />
                 <ColumnDefinition Width="80" />
               </Grid.ColumnDefinitions>
 
@@ -535,7 +535,9 @@
                 </TextBlock.Style>
               </TextBlock>
 
-              <Grid Grid.Row="1" Grid.Column="3">
+              <Grid Grid.Row="1"
+                    Grid.Column="3"
+                    >
 
                 <Grid.ColumnDefinitions>
                   <ColumnDefinition Width="*" />
@@ -554,9 +556,6 @@
                     <ColumnDefinition />
                     <ColumnDefinition />
                   </Grid.ColumnDefinitions>
-
-
-
 
 
                   <controls2:ButtonWithIcon Margin="0,0,0,0"
@@ -883,7 +882,385 @@
     </Setter>
   </Style>
 
+  <Style x:Key="VideoListViewItem_PlayerTrack"
+         BasedOn="{StaticResource ListViewItem_PlayerTrack}"
+         TargetType="{x:Type ListViewItem}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ListViewItem}">
+          <Border x:Name="Bd"
+                  Padding="0,5,8,0"
+                  Background="{TemplateBinding Background}">
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="20" />
+              </Grid.RowDefinitions>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="80" />
+              </Grid.ColumnDefinitions>
 
+              <Button Grid.RowSpan="2"
+                      Margin="8,0"
+                      Command="{Binding Play}"
+                      Style="{StaticResource PlayMini}" />
+
+              <Grid Name="Container"
+                    Grid.Column="1"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    ClipToBounds="True">
+                <Grid.Resources>
+                  <Style x:Key="ListViewTextBlockStyle" TargetType="TextBlock">
+                    <Setter Property="HorizontalAlignment" Value="Left" />
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+                    <Setter Property="Text" Value="{Binding Name}" />
+                    <Setter Property="Foreground" Value="#decfca" />
+                  </Style>
+                </Grid.Resources>
+
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="auto" />
+                  <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <controls2:ButtonWithIcon Grid.Column="0"
+                                          Margin="0,0,3,0"
+                                          Padding="2"
+                                          HorizontalAlignment="Left"
+                                          IconHeight="11"
+                                          IconPathStyle="{StaticResource Info}"
+                                          IconWidth="11"
+                                          ToolTip="{Binding Model.DiskLocation}">
+
+                  <controls2:ButtonWithIcon.Style>
+                    <Style BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}" TargetType="{x:Type controls2:ButtonWithIcon}">
+                      <Setter Property="IconHoverColor" Value="#40a8e6" />
+                      <Setter Property="IconDefaultColor" Value="#27404f" />
+                      <Setter Property="Opacity" Value="1" />
+                      <Setter Property="Margin" Value="0,-5,0,-5" />
+
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                          <Setter Property="IconHoverColor" Value="#522e05" />
+                          <Setter Property="IconDefaultColor" Value="#80050505" />
+                        </DataTrigger>
+                      </Style.Triggers>
+
+                    </Style>
+                  </controls2:ButtonWithIcon.Style>
+
+                </controls2:ButtonWithIcon>
+
+                <TextBlock Name="NonPlayingTextBlock"
+                           Grid.Column="1"
+                           Padding="0"
+                           HorizontalAlignment="Left"
+                           FontFamily="{StaticResource Roboto}"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           Style="{StaticResource ListViewTextBlockStyle}">
+
+                  <b:Interaction.Behaviors>
+                    <text1:PanningTextWithFontSizeBehavior BiggerFontSize="21"
+                                                           Container="{Binding ElementName=Bd}"
+                                                           IgnoreSizeAnimation="{Binding IsPlaying}"
+                                                           IsMouseOverRelativeToContainer="True" />
+                  </b:Interaction.Behaviors>
+                </TextBlock>
+
+                <TextBlock Name="PlayingTextBlock"
+                           Grid.Column="1"
+                           HorizontalAlignment="Left"
+                           FontFamily="{StaticResource Roboto}"
+                           FontWeight="Bold">
+                  <TextBlock.Style>
+                    <Style BasedOn="{StaticResource ListViewTextBlockStyle}" TargetType="TextBlock">
+                      <Setter Property="FontSize" Value="21" />
+                      <Setter Property="Visibility" Value="Hidden" />
+
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                          <Setter Property="Foreground" Value="#24140c" />
+                        </DataTrigger>
+                      </Style.Triggers>
+                    </Style>
+                  </TextBlock.Style>
+                  <b:Interaction.Behaviors>
+                    <text1:PanningTextWithFontSizeBehavior BiggerFontSize="21"
+                                                           Container="{Binding ElementName=Container}"
+                                                           IgnoreSizeAnimation="{Binding IsPlaying}"
+                                                           IsMouseOverRelativeToContainer="True" />
+                  </b:Interaction.Behaviors>
+                </TextBlock>
+
+              </Grid>
+
+              <TextBlock Grid.Row="1"
+                         Grid.Column="1"
+                         FontFamily="{StaticResource Roboto}"
+                         FontSize="12">
+                <Run FontSize="13" Text="{Binding TvShow.Name, Mode=OneWay}">
+                  <Run.Style>
+                    <Style TargetType="Run">
+                      <Setter Property="Foreground" Value="#f2e0cb" />
+                      <Setter Property="FontWeight" Value="Bold" />
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                          <!--<Setter Property="Foreground" Value="#e8c59e" />-->
+                          <Setter Property="Foreground" Value="#24140c" />
+                          <Setter Property="FontWeight" Value="Bold" />
+                        </DataTrigger>
+                      </Style.Triggers>
+                    </Style>
+                  </Run.Style>
+                </Run>
+                <Run Text="{Binding Model.SeasonNumber, Mode=OneWay, StringFormat={}(S{0:00}}">
+                  <Run.Style>
+                    <Style TargetType="Run">
+                      <Setter Property="Foreground" Value="#edfffa" />
+                      <Setter Property="FontWeight" Value="DemiBold" />
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                          <!--<Setter Property="Foreground" Value="White" />-->
+                          <Setter Property="Foreground" Value="#24140c" />
+                        </DataTrigger>
+                      </Style.Triggers>
+                    </Style>
+                  </Run.Style>
+                </Run>
+                <Run Text="x">
+                  <Run.Style>
+                    <Style TargetType="Run">
+                      <Setter Property="Foreground" Value="#edfffa" />
+                      <Setter Property="FontWeight" Value="DemiBold" />
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                          <!--<Setter Property="Foreground" Value="White" />-->
+                          <Setter Property="Foreground" Value="#24140c" />
+                        </DataTrigger>
+                      </Style.Triggers>
+                    </Style>
+                  </Run.Style>
+                </Run>
+                <Run Text="{Binding Model.EpisodeNumber, Mode=OneWay, StringFormat={}E{0:00})}">
+                  <Run.Style>
+                    <Style TargetType="Run">
+                      <Setter Property="Foreground" Value="#edfffa" />
+                      <Setter Property="FontWeight" Value="DemiBold" />
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                          <!--<Setter Property="Foreground" Value="White" />-->
+                          <Setter Property="Foreground" Value="#24140c" />
+                        </DataTrigger>
+                      </Style.Triggers>
+                    </Style>
+                  </Run.Style>
+                </Run>
+
+                <TextBlock.Style>
+                  <Style TargetType="TextBlock">
+                    <Setter Property="Foreground" Value="{StaticResource OrangeBrush}" />
+                    <Setter Property="Opacity" Value="0.35" />
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                        <Setter Property="Opacity" Value="0.75" />
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </TextBlock.Style>
+              </TextBlock>
+
+              <TextBlock Name="DurationTextBlock"
+                         Grid.Column="3"
+                         Margin="0,5,0,0"
+                         HorizontalAlignment="Right"
+                         VerticalAlignment="Top"
+                         FontFamily="{StaticResource Roboto}"
+                         FontSize="13"
+                         FontWeight="Bold"
+                         Text="{Binding Duration, Converter={converters1:TimeConverter TimeType=Second}}">
+                <TextBlock.Style>
+                  <Style TargetType="TextBlock">
+                    <Setter Property="Opacity" Value="0.35" />
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                        <Setter Property="Opacity" Value="0.75" />
+                        <Setter Property="Foreground" Value="Black" />
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </TextBlock.Style>
+              </TextBlock>
+
+              <Grid Grid.Row="1" Grid.Column="3">
+
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+
+                <Grid Margin="5,0,15,3" HorizontalAlignment="Right">
+                  <Grid.Resources>
+                    <Style BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}" TargetType="controls2:ButtonWithIcon">
+                      <Setter Property="IconHeight" Value="11" />
+                      <Setter Property="IconWidth" Value="11" />
+                    </Style>
+                  </Grid.Resources>
+
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                  </Grid.ColumnDefinitions>
+                </Grid>
+
+                <controls2:PathButton Grid.Row="0"
+                                      Grid.RowSpan="2"
+                                      Grid.Column="2"
+                                      Width="13"
+                                      Height="13"
+                                      Margin="5,0,0,0"
+                                      VerticalAlignment="Center"
+                                      IsChecked="{Binding IsFavorite}"
+                                      PathStyle="{StaticResource Favorite}"
+                                      ToolTip="Favorite">
+                  <controls2:PathButton.Style>
+                    <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
+                      <Setter Property="IconDefaultColor" Value="#10ffffff" />
+                      <Setter Property="IconHoverColor" Value="#8fd4f2" />
+                      <Setter Property="PathCheckedBrush" Value="#aa39b2e6" />
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                          <Setter Property="IconDefaultColor" Value="#30522e05" />
+                          <Setter Property="IconHoverColor" Value="#79b1c9" />
+                          <Setter Property="PathCheckedBrush" Value="#39b2e6" />
+                        </DataTrigger>
+
+                      </Style.Triggers>
+                    </Style>
+                  </controls2:PathButton.Style>
+
+                </controls2:PathButton>
+              </Grid>
+
+
+
+            </Grid>
+
+
+            <Border.InputBindings>
+              <MouseBinding Command="{Binding Play}" MouseAction="LeftDoubleClick" />
+            </Border.InputBindings>
+
+          </Border>
+          <ControlTemplate.Triggers>
+            <MultiDataTrigger>
+              <MultiDataTrigger.Conditions>
+                <Condition Binding="{Binding RelativeSource={RelativeSource self}, Path=IsMouseOver}" Value="True" />
+                <Condition Binding="{Binding RelativeSource={RelativeSource self}, Path=IsSelected}" Value="False" />
+                <Condition Binding="{Binding IsPlaying}" Value="False" />
+              </MultiDataTrigger.Conditions>
+              <MultiDataTrigger.EnterActions>
+                <RemoveStoryboard BeginStoryboardName="B" />
+                <BeginStoryboard Name="As">
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetProperty="Background.Color"
+                                    To="#07cfbeb8"
+                                    Duration="0:0:.10" />
+
+                    <ColorAnimation Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)"
+                                    From="{StaticResource 235_DefaultWhiteColor}"
+                                    To="{StaticResource DefaultWhiteColor}"
+                                    Duration="0:0:0.1" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </MultiDataTrigger.EnterActions>
+              <MultiDataTrigger.ExitActions>
+                <RemoveStoryboard BeginStoryboardName="As" />
+                <BeginStoryboard>
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetProperty="Background.Color"
+                                    To="Transparent"
+                                    Duration="0:0:.10" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </MultiDataTrigger.ExitActions>
+            </MultiDataTrigger>
+
+            <Trigger Property="IsSelected" Value="True">
+              <Trigger.EnterActions>
+                <BeginStoryboard x:Name="A">
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetProperty="Background.Color"
+                                    To="#15cfbeb8"
+                                    Duration="0:0:0:0.2" />
+
+                    <ColorAnimation Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)"
+                                    From="{StaticResource 200_DefaultWhiteColor}"
+                                    To="{StaticResource DefaultWhiteColor}"
+                                    Duration="0:0:0.1" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </Trigger.EnterActions>
+
+              <Trigger.ExitActions>
+                <RemoveStoryboard BeginStoryboardName="A" />
+                <RemoveStoryboard BeginStoryboardName="As" />
+                <BeginStoryboard x:Name="B">
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetProperty="Background.Color"
+                                    To="Transparent"
+                                    Duration="0:0:0:0.2" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </Trigger.ExitActions>
+            </Trigger>
+
+            <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+              <Setter TargetName="NonPlayingTextBlock" Property="Visibility" Value="Hidden" />
+              <Setter TargetName="PlayingTextBlock" Property="Visibility" Value="Visible" />
+              <DataTrigger.EnterActions>
+                <RemoveStoryboard BeginStoryboardName="A" />
+                <RemoveStoryboard BeginStoryboardName="B" />
+                <BeginStoryboard x:Name="A1">
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)"
+                                    To="{StaticResource 235_DefaultWhiteColor}"
+                                    Duration="0:0:0:0.2" />
+                    <ColorAnimation Storyboard.TargetProperty="Background.Color"
+                                    To="#decfca"
+                                    Duration="0:0:0:0.2" />
+                    <DoubleAnimation Storyboard.TargetName="PlayingTextBlock"
+                                     Storyboard.TargetProperty="(TextBlock.FontSize)"
+                                     To="21"
+                                     Duration="0:0:0:0.2" />
+                    <DoubleAnimation Storyboard.TargetName="DurationTextBlock"
+                                     Storyboard.TargetProperty="(TextBlock.FontSize)"
+                                     To="16"
+                                     Duration="0:0:0:0.2" />
+
+                  </Storyboard>
+                </BeginStoryboard>
+              </DataTrigger.EnterActions>
+              <DataTrigger.ExitActions>
+                <RemoveStoryboard BeginStoryboardName="A1" />
+              </DataTrigger.ExitActions>
+            </DataTrigger>
+
+            <DataTrigger Binding="{Binding IsPlaying}" Value="False">
+              <Setter TargetName="NonPlayingTextBlock" Property="Visibility" Value="Visible" />
+              <Setter TargetName="PlayingTextBlock" Property="Visibility" Value="Hidden" />
+            </DataTrigger>
+          </ControlTemplate.Triggers>
+
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
 
   <Style x:Key="WindowsPlayerSongs" TargetType="ListView">
     <Setter Property="Background" Value="Transparent" />
@@ -915,6 +1292,12 @@
         </ItemsPanelTemplate>
       </Setter.Value>
     </Setter>
+  </Style>
+
+  <Style x:Key="WindowsPlayerVideos"
+         BasedOn="{StaticResource WindowsPlayerSongs}"
+         TargetType="ListView">
+    <Setter Property="ItemContainerStyle" Value="{StaticResource VideoListViewItem_PlayerTrack}" />
   </Style>
 
 

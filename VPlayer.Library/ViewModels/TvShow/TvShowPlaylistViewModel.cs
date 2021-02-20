@@ -13,7 +13,7 @@ using VPlayer.Core.ViewModels.TvShow;
 
 namespace VPlayer.Library.ViewModels
 {
-  public class TvShowPlaylistViewModel : PlayableViewModel<TvShowEpisodeInPlaylistViewModel, TvShowPlaylist>
+  public class TvShowPlaylistViewModel : PlaylistViewModel<TvShowEpisodeInPlaylistViewModel, TvShowPlaylist, PlaylistTvShowEpisode>
   {
     #region Fields
 
@@ -28,105 +28,14 @@ namespace VPlayer.Library.ViewModels
       TvShowPlaylist model,
       IEventAggregator eventAggregator,
       [NotNull] IStorageManager storage,
-      [NotNull] IViewModelsFactory viewModelsFactory) : base(model, eventAggregator)
+      [NotNull] IViewModelsFactory viewModelsFactory) : base(model, eventAggregator, storage)
     {
       this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
     }
 
     #endregion
-
-    #region Properties
-
-    public bool IsUserCreated => Model.IsUserCreated;
-
-    #region IsRepeating
-
-    public bool IsRepeating
-    {
-      get
-      {
-        return Model.IsReapting;
-      }
-      set
-      {
-        if (value != Model.IsReapting)
-        {
-          Model.IsReapting = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
-
-    #region IsShuffle
-
-    public bool IsShuffle
-    {
-      get
-      {
-        return Model.IsShuffle;
-      }
-      set
-      {
-        if (value != Model.IsShuffle)
-        {
-          Model.IsShuffle = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
-
-    #region LastPlayed
-
-    public DateTime LastPlayed
-    {
-      get { return Model.LastPlayed; }
-      set
-      {
-        if (value != Model.LastPlayed)
-        {
-          Model.LastPlayed = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
-
-    public int? SongCount => Model.ItemCount;
-    public long? SongsInPlaylitsHashCode => Model.HashCode;
-
-    #endregion
-
-    #region RaisePropertyChanges
-
-    public virtual void RaisePropertyChanges()
-    {
-      RaisePropertyChanged(nameof(LastPlayed));
-      RaisePropertyChanged(nameof(Name));
-      RaisePropertyChanged(nameof(IsUserCreated));
-      RaisePropertyChanged(nameof(SongCount));
-      RaisePropertyChanged(nameof(SongsInPlaylitsHashCode));
-      RaisePropertyChanged(nameof(IsShuffle));
-      RaisePropertyChanged(nameof(IsRepeating));
-    }
-
-    #endregion
-
-    #region Update
-
-    public override void Update(TvShowPlaylist updateItem)
-    {
-      this.Model.Update(updateItem);
-      RaisePropertyChanges();
-    }
-
-    #endregion
-
+   
     protected override void OnDetail()
     {
       throw new NotImplementedException();
@@ -136,11 +45,15 @@ namespace VPlayer.Library.ViewModels
 
     public override IEnumerable<TvShowEpisodeInPlaylistViewModel> GetItemsToPlay()
     {
-      var playlist = storage.GetRepository<TvShowPlaylist>().Include(x => x.PlaylistItems).ThenInclude(x => x.TvShowEpisode).SingleOrDefault(x => x.Id == Model.Id);
+      var playlist = storage.GetRepository<TvShowPlaylist>()
+        .Include(x => x.PlaylistItems)
+        .ThenInclude(x => x.TvShowEpisode)
+        .ThenInclude(x => x.TvShow)
+        .SingleOrDefault(x => x.Id == Model.Id);
 
       if(playlist != null)
       {
-        var playListSong = playlist.PlaylistItems.Select(x => viewModelsFactory.Create<TvShowEpisodeInPlaylistViewModel>(x.TvShowEpisode));
+        var playListSong = playlist.PlaylistItems.OrderBy(x => x.OrderInPlaylist).Select(x => viewModelsFactory.Create<TvShowEpisodeInPlaylistViewModel>(x.TvShowEpisode));
 
         return playListSong;
       }

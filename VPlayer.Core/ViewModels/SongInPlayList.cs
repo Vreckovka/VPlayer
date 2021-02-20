@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using VCore;
 using VCore.ViewModels;
@@ -369,7 +370,10 @@ namespace VPlayer.Core.ViewModels
     {
       if (LRCFile != null)
       {
-        LRCFile.SetActualLine(ActualTime);
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+          LRCFile.SetActualLine(ActualTime);
+        });
       }
     }
 

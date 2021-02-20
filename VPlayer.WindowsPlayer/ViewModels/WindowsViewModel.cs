@@ -91,7 +91,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-    #region LoadFromFolder
+    #region LoadTvShow
 
     private ActionCommand loadTvShow;
 
@@ -123,6 +123,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           try
           {
             Console.WriteLine("Loading tv show");
+
             var tvShow = dataLoader.LoadTvShow("The Simpsons", dialog.FileName);
 
             Console.WriteLine("Tv show loaded");

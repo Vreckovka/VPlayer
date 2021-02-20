@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using VPlayer.AudioStorage.DomainClasses.Video;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
@@ -9,5 +10,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     [ForeignKey(nameof(TvShowEpisode))]
     public int IdTvShowEpisode { get; set; }
     public TvShowEpisode TvShowEpisode { get; set; }
+
+    public TvShow TvShow { get; set; }
   }
 }

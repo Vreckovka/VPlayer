@@ -26,7 +26,9 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
 
     Task ClearStorage();
     Task DownloadAllNotYetDownloaded(bool tryDownloadBroken = false);
-    IQueryable<T> GetRepository<T>(DbContext dbContext = null) where T : class;
+    DbSet<T> GetRepository<T>(DbContext dbContext = null) where T : class;
+
+
     Task<bool> StoreData(IEnumerable<string> audioPath);
     Task<bool> StoreData(string audioPath);
     bool StorePlaylist<TPlaylist>(TPlaylist model, out TPlaylist entityModel) where TPlaylist : class, IPlaylist;
@@ -34,7 +36,10 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
     void RewriteEntity<T>(T entity) where T : class, IEntity;
     Task<bool> UpdateEntity<TEntity>(TEntity newVersion) where TEntity : class, IEntity, IUpdateable<TEntity>;
     IDisposable SubscribeToItemChange<TModel>(Action<ItemChanged<TModel>> observer);
-    Task DeletePlaylist(SongsPlaylist songsPlaylist);
+
+    Task DeletePlaylist<TPlaylist, TPlaylistItem>(TPlaylist songsPlaylist)
+      where TPlaylist : class, IPlaylist<TPlaylistItem>
+      where TPlaylistItem : class;
     void PushAction(ItemChanged itemChanged);
     Task StoreTvShow(TvShow tvShow);
 

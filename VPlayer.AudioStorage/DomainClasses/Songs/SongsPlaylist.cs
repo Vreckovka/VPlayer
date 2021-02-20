@@ -2,9 +2,8 @@
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
-  public class SongsPlaylist : Playlist, IPlaylist<PlaylistSong>
+  public class SongsPlaylist : Playlist<PlaylistSong>
   {
-    public virtual List<PlaylistSong> PlaylistItems { get; set; }
   }
 }
 

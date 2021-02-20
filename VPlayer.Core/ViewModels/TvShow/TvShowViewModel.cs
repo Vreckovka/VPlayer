@@ -55,7 +55,7 @@ namespace VPlayer.Core.ViewModels.TvShow
           .ThenBy(x => x.EpisodeNumber)
           .Select(x => viewModelsFactory.Create<TvShowEpisodeInPlaylistViewModel>(x)).ToList();
 
-        tvShowEpisodes.ForEach(x => x.TvShow = this.Model);
+        tvShowEpisodes.ForEach(x => x.TvShow = this);
 
         return tvShowEpisodes;
       }

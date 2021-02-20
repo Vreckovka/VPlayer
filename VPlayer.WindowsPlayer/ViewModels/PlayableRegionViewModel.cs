@@ -405,6 +405,7 @@ namespace VPlayer.Core.ViewModels
         try
         {
           VlcControl.SourceProvider.CreatePlayer(libDirectory);
+          Console.WriteLine("VLC PLAYER LOADED");
         }
         catch (Exception ex)
         {
@@ -609,18 +610,21 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
-    
+
     #region PlayPause
 
     public void PlayPause()
     {
-      Task.Run(() =>
+      if (IsActive)
       {
-        if (IsPlaying)
-          VlcControl.SourceProvider.MediaPlayer.Pause();
-        else
-          Play();
-      });
+        Task.Run(() =>
+        {
+          if (IsPlaying)
+            VlcControl.SourceProvider.MediaPlayer.Pause();
+          else
+            Play();
+        });
+      }
     }
 
     #endregion
@@ -916,23 +920,13 @@ namespace VPlayer.Core.ViewModels
 
     public override void Dispose()
     {
+      VlcControl.SourceProvider.Dispose();
+      VlcControl.Dispose();
+
       if (ActualSavedPlaylist != null)
         UpdateActualSavedPlaylistPlaylist();
 
-      try
-      {
-        VlcControl.SourceProvider.Dispose();
-        VlcControl.Dispose();
-        
-      }
-      catch (Exception ex)
-      {
-
-        throw;
-      }
-
       base.Dispose();
-
     }
 
     #endregion
@@ -958,13 +952,13 @@ namespace VPlayer.Core.ViewModels
 
           break;
         case DeleteType.AlbumFromPlaylist:
-          OnRemoveItemsFromPlaylist(DeleteType.AlbumFromPlaylist,obj);
+          OnRemoveItemsFromPlaylist(DeleteType.AlbumFromPlaylist, obj);
 
           break;
         default:
           throw new ArgumentOutOfRangeException();
       }
-      
+
 
       ReloadVirtulizedPlaylist();
 
@@ -997,7 +991,7 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-   
+
     protected abstract void OnRemoveItemsFromPlaylist(DeleteType deleteType, RemoveFromPlaylistEventArgs<TItemViewModel> args);
     protected abstract void ItemsRemoved(EventPattern<TItemViewModel> eventPattern);
     protected abstract void FilterByActualSearch(string predictate);

@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
-  public class Playlist : DomainEntity, INamedEntity, IPlaylist
+  public class Playlist<TPlaylistItems> : DomainEntity, INamedEntity, IPlaylist<TPlaylistItems>
   {
-    
     public string Name { get; set; }
+    public List<TPlaylistItems> PlaylistItems { get; set; }
     public long? HashCode { get; set; }
     public int? ItemCount { get; set; }
     public bool IsReapting { get; set; }
@@ -15,7 +16,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     public bool IsUserCreated { get; set; }
     public DateTime LastPlayed { get; set; }
 
-    public void Update(Playlist other)
+    public void Update(IPlaylist other)
     {
       Id = other.Id;
       Name = other.Name;

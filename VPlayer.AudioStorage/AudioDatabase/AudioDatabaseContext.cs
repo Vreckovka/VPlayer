@@ -47,7 +47,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
     {
       base.OnConfiguring(optionsBuilder);
 
-      optionsBuilder.UseSqlite("Data Source=C:\\Users\\Roman Pecho\\AppData\\Roaming\\VPlayer\\VPlayerDatabase_Skuska_1.db;");
+      optionsBuilder.UseSqlite("Data Source=C:\\Users\\Roman Pecho\\AppData\\Roaming\\VPlayer\\VPlayerDatabase.db;");
     }
 
     //protected override void OnModelCreating(DbModelBuilder modelBuilder)

@@ -49,7 +49,7 @@
               ItemTemplate="{StaticResource SoundTrackTemplate}"
               ItemsSource="{Binding VirtualizedPlayList}"
               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-              Style="{StaticResource WindowsPlayerSongs}">
+              Style="{StaticResource WindowsPlayerVideos}">
       <b:Interaction.Behaviors>
         <behaviors:AutoScrollBehavior Kernel="{Binding Kernel}" StepSize="50" />
       </b:Interaction.Behaviors>

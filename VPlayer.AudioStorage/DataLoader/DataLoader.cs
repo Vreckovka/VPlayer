@@ -99,7 +99,8 @@ namespace VPlayer.AudioStorage.DataLoader
         {
           DiskLocation = file.FullName,
           Duration = (int)GetFileDuration(file.FullName).TotalSeconds,
-          Name = file.Name
+          Name = file.Name,
+          TvShow = tvShow
         };
 
         if (seriesNumber.Key != -1)

@@ -9,7 +9,7 @@ using VPlayer.Library.Views;
 
 namespace VPlayer.Library.ViewModels
 {
-  public class TvShowPlaylistsViewModel : PlayableItemsViewModel<TvShowPlaylistsView, TvShowPlaylistViewModel, TvShowPlaylist>
+  public class TvShowPlaylistsViewModel : PlayableItemsViewModel<PlaylistsView, TvShowPlaylistViewModel, TvShowPlaylist>
   {
     public TvShowPlaylistsViewModel(
       IRegionProvider regionProvider, 

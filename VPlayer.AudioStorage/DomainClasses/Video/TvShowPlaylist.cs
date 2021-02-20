@@ -2,8 +2,7 @@
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
-  public class TvShowPlaylist : Playlist, IPlaylist<PlaylistTvShowEpisode>
+  public class TvShowPlaylist : Playlist<PlaylistTvShowEpisode>
   {
-    public virtual List<PlaylistTvShowEpisode> PlaylistItems { get; set; }
   }
 }

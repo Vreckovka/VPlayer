@@ -34,7 +34,7 @@
       <ColumnDefinition Width="300" />
       <ColumnDefinition Width="*" />
       <ColumnDefinition Width="5" />
-      <ColumnDefinition Width="370" />
+      <ColumnDefinition Width="230" MinWidth="110" />
       <ColumnDefinition Width="170" />
     </Grid.ColumnDefinitions>
 
@@ -258,8 +258,7 @@
     <Grid Grid.Row="0"
           Grid.RowSpan="5"
           Grid.Column="3"
-          Grid.ColumnSpan="2"
-          MinWidth="170">
+          Grid.ColumnSpan="2">
       <Grid.RowDefinitions>
         <RowDefinition Height="auto" />
         <RowDefinition />
@@ -272,7 +271,7 @@
         <Grid>
           <Grid.ColumnDefinitions>
             <ColumnDefinition />
-            <ColumnDefinition />
+            <ColumnDefinition Width="auto" />
           </Grid.ColumnDefinitions>
 
           <Grid.RowDefinitions>
@@ -280,26 +279,25 @@
             <RowDefinition />
           </Grid.RowDefinitions>
 
-          <StackPanel Orientation="Horizontal">
-            <controls1:ButtonWithIcon Margin="19,0,0,0"
-                                      Padding="0"
-                                      HorizontalAlignment="Left"
-                                      Command="{Binding SavePlaylistCommand}"
-                                      IconPathStyle="{StaticResource Playlist}"
-                                      ToolTip="Save playlist">
-              <controls1:ButtonWithIcon.Style>
-                <Style BasedOn="{StaticResource {x:Type controls1:ButtonWithIcon}}" TargetType="controls1:ButtonWithIcon">
-                  <Setter Property="IconDefaultColor" Value="{StaticResource 30_DefaultWhiteColor}" />
-                  <Setter Property="IconHoverColor" Value="{StaticResource YellowColor}" />
-                  <Style.Triggers>
-                    <DataTrigger Binding="{Binding ActualSavedPlaylist.IsUserCreated}" Value="True">
-                      <Setter Property="IconDefaultColor" Value="{StaticResource DefaultRedColor}" />
-                    </DataTrigger>
-                  </Style.Triggers>
-                </Style>
-              </controls1:ButtonWithIcon.Style>
-            </controls1:ButtonWithIcon>
-          </StackPanel>
+          <controls1:ButtonWithIcon Grid.Column="0"
+                                    Margin="0,0,5,0"
+                                    Padding="0"
+                                    HorizontalAlignment="Right"
+                                    Command="{Binding SavePlaylistCommand}"
+                                    IconPathStyle="{StaticResource Playlist}"
+                                    ToolTip="Save playlist">
+            <controls1:ButtonWithIcon.Style>
+              <Style BasedOn="{StaticResource {x:Type controls1:ButtonWithIcon}}" TargetType="controls1:ButtonWithIcon">
+                <Setter Property="IconDefaultColor" Value="{StaticResource 30_DefaultWhiteColor}" />
+                <Setter Property="IconHoverColor" Value="{StaticResource YellowColor}" />
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding ActualSavedPlaylist.IsUserCreated}" Value="True">
+                    <Setter Property="IconDefaultColor" Value="{StaticResource DefaultRedColor}" />
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </controls1:ButtonWithIcon.Style>
+          </controls1:ButtonWithIcon>
 
           <StackPanel Grid.Row="0"
                       Grid.Column="1"
@@ -348,7 +346,6 @@
         </b:Interaction.Behaviors>
       </ListView>
     </Grid>
-
 
     <Slider x:Name="Slider_Time"
             Grid.Row="3"

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
-  public class DomainEntity : ITrackable
+  public class DomainEntity : ITrackable, IEntity
   {
     [Key]
     public int Id { get; set; }

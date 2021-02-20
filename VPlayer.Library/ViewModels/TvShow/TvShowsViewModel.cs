@@ -11,6 +11,7 @@ using VCore.Standard.Helpers;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Core.ViewModels.TvShow;
@@ -20,7 +21,7 @@ using VPlayer.WindowsPlayer.ViewModels;
 
 namespace VPlayer.Library.ViewModels.AlbumsViewModels
 {
-  public class TvShowsViewModel : PlayableItemsViewModel<TvShowsView, TvShowViewModel, TvShow>
+  public class TvShowsViewModel : PlayableItemsViewModel<TvShowsView, TvShowViewModel, TvShow>, ITvShowsViewModel
   {
     private readonly ILogger logger;
 
@@ -50,48 +51,6 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     public IEventAggregator EventAggregator { get; }
 
     #endregion Properties
-
-    #region Methods
-
-    #region Initialize
-
-    public override void Initialize()
-    {
-      base.Initialize();
-
-      this.storageManager.SubscribeToItemChange<TvShow>(TvShowChange).DisposeWith(this);
-
-    }
-
-    #endregion
-
-    #region TvShowChange
-
-    protected void TvShowChange(ItemChanged<TvShow> itemChanged)
-    {
-      var tvShow = itemChanged.Item;
-
-      if (LibraryCollection.WasLoaded)
-      {
-        switch (itemChanged.Changed)
-        {
-          case Changed.Added:
-            throw new NotImplementedException();
-          case Changed.Removed:
-            throw new NotImplementedException();
-
-          case Changed.Updated:
-            throw new NotImplementedException();
-
-          default:
-            throw new ArgumentOutOfRangeException();
-        }
-      }
-    }
-
-    #endregion
-
-    #endregion
-
+    
   }
 }

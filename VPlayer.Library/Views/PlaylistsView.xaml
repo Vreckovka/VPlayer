@@ -185,12 +185,12 @@
                             DisplayMemberBinding="{Binding LastPlayed, StringFormat={}dd.MM.yy / HH:mm:ss}"
                             Header="Last played" />
             <GridViewColumn Width="150"
-                            DisplayMemberBinding="{Binding SongsInPlaylitsHashCode, Converter={library:HashConverter}}"
+                            DisplayMemberBinding="{Binding HashCode, Converter={library:HashConverter}}"
                             Header="Hash" />
 
             <GridViewColumn Width="100"
-                            DisplayMemberBinding="{Binding SongCount}"
-                            Header="Song count" />
+                            DisplayMemberBinding="{Binding ItemsCount}"
+                            Header="Items count" />
             <GridViewColumn Width="75" Header="Settings">
               <GridViewColumn.CellTemplate>
                 <DataTemplate>

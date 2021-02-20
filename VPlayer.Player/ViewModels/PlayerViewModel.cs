@@ -29,7 +29,6 @@ namespace VPlayer.Player.ViewModels
       this.keyListener = keyListener ?? throw new ArgumentNullException(nameof(keyListener));
     }
 
-    public override bool ContainsNestedRegions => false;
     public override string RegionName { get; protected set; } = RegionNames.PlayerRegion;
     public IPlayableRegionViewModel ActualViewModel { get; set; }
 
@@ -79,6 +78,8 @@ namespace VPlayer.Player.ViewModels
       SubscribeToPlayers();
     }
 
+    #region SubscribeToPlayers
+
     private void SubscribeToPlayers()
     {
       var allPlayers = kernel.GetAll<IPlayableRegionViewModel>();
@@ -89,22 +90,34 @@ namespace VPlayer.Player.ViewModels
       {
         player.ObservePropertyChange(x => x.CanPlay).Subscribe(x =>
         {
-          CanPlay = x;
+          if (ActualViewModel == player)
+          {
+            CanPlay = x;
+          }
         }).DisposeWith(this);
 
 
         player.ObservePropertyChange(x => x.IsPlaying).Subscribe((x) =>
           {
-            IsPlaying = x;
+            if (ActualViewModel == player)
+            {
+              IsPlaying = x;
+            }
           }).DisposeWith(this);
 
         player.ObservePropertyChange(x => x.IsActive).Subscribe(x =>
         {
           if (x)
+          {
             ActualViewModel = player;
+            IsPlaying = ActualViewModel.IsPlaying;
+          }
+
         }).DisposeWith(this);
       }
     }
+
+    #endregion
 
     #region Play
 
@@ -125,10 +138,7 @@ namespace VPlayer.Player.ViewModels
 
     public void OnPlayButton()
     {
-      if (IsPlaying)
-        Pause();
-      else
-        Play();
+      ActualViewModel?.PlayPause();
     }
 
     #endregion Play
@@ -171,24 +181,6 @@ namespace VPlayer.Player.ViewModels
 
     #endregion
 
-    #region Play
-
-    public void Play()
-    {
-      ActualViewModel?.Play();
-    }
-
-    #endregion
-
-    #region Pause
-
-    public void Pause()
-    {
-      ActualViewModel?.PlayPause();
-    }
-
-    #endregion
-
     #region PlayNext
 
     public void PlayNext()
@@ -215,14 +207,7 @@ namespace VPlayer.Player.ViewModels
       {
         case Key.MediaPlayPause:
           {
-            if (!IsPlaying)
-            {
-              Play();
-            }
-            else
-            {
-              Pause();
-            }
+            ActualViewModel?.PlayPause();
             break;
           }
 

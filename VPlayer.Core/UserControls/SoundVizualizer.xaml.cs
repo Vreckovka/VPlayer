@@ -243,6 +243,7 @@ namespace VPlayer.Player.UserControls
 
     private void InitlizeSoundVizualizer()
     {
+      isDispoed = false;
       timer = new Timer(40);
 
       //open the default device
@@ -278,6 +279,7 @@ namespace VPlayer.Player.UserControls
 
     #region ReadData
 
+    private bool isDispoed;
     private byte[] buffer;
     private IWaveSource waveSource;
     private void ReadData(object s, DataAvailableEventArgs dataAvailableEventArgs)
@@ -286,7 +288,7 @@ namespace VPlayer.Player.UserControls
       {
         int read;
         
-        while ((read = waveSource.Read(buffer, 0, buffer.Length)) > 0) ;
+        while (!isDispoed && (read = waveSource.Read(buffer, 0, buffer.Length)) > 0) ;
       });
 
     }
@@ -297,6 +299,7 @@ namespace VPlayer.Player.UserControls
 
     private void DisposeSoundVizualizer()
     {
+      isDispoed = true;
       waveSource?.Dispose();
 
       if (soundInSource != null)
