@@ -34,6 +34,7 @@ using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Player.Views.WindowsPlayer;
+using VPlayer.WindowsPlayer.Providers;
 
 //TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)
 //TODO: Hash playlistov, ked zavries appku tak ti vyhodi posledny playlist
@@ -71,7 +72,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
       IKernel kernel,
       IStorageManager storageManager,
       AudioInfoDownloader audioInfoDownloader,
-      ILogger logger) : base(regionProvider, kernel, logger, storageManager, eventAggregator)
+      ILogger logger,
+      IVlcProvider vlcProvider) : base(regionProvider, kernel, logger, storageManager, eventAggregator, vlcProvider)
     {
       this.vPlayerRegionProvider = regionProvider ?? throw new ArgumentNullException(nameof(regionProvider));
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));

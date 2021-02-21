@@ -13,10 +13,14 @@ namespace VPlayer.Library
 {
   public class CacheImageConverter : MarkupExtension, IValueConverter
   {
+
     public override object ProvideValue(IServiceProvider serviceProvider)
     {
       return this;
     }
+
+    string lastLoadedImagePath;
+    BitmapImage lastLoadedImage;
 
     public object Convert(
       object value,
@@ -45,6 +49,11 @@ namespace VPlayer.Library
         path = PlayableViewModelWithThumbnail<AlbumViewModel,Album>.GetEmptyImage();
       }
 
+      if(lastLoadedImagePath == path)
+      {
+        return lastLoadedImage;
+      }
+
       var bitmapImage = new BitmapImage();
       bitmapImage.BeginInit();
       bitmapImage.StreamSource = new FileStream(path, FileMode.Open, FileAccess.Read);
@@ -57,6 +66,10 @@ namespace VPlayer.Library
       bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
       bitmapImage.EndInit();
       bitmapImage.StreamSource.Dispose();
+
+      lastLoadedImagePath = path;
+      lastLoadedImage = bitmapImage;
+
       return bitmapImage;
     }
 

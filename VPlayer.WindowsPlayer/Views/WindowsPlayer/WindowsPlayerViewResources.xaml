@@ -15,6 +15,7 @@
                     xmlns:text1="clr-namespace:VCore.Behaviors.Text;assembly=VCore.WPF"
                     xmlns:windowsPlayer="clr-namespace:VPlayer.Player.Views.WindowsPlayer">
 
+  <library:CacheImageConverter x:Key="CacheImageConverter" />
 
   <Style x:Key="LyricsStyle" TargetType="TextBox">
     <Setter Property="FontSize" Value="24" />
@@ -212,11 +213,11 @@
           </Grid.ColumnDefinitions>
 
           <Image Grid.Column="0"
-                 Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualItem.ImagePath, Converter={library:CacheImageConverter}}"
+                 Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualItem.ImagePath, Converter={StaticResource CacheImageConverter}, IsAsync=True}"
                  Stretch="UniformToFill" />
 
           <Image Grid.Column="1"
-                 Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualItem.ImagePath, Converter={library:CacheImageConverter}}"
+                 Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualItem.ImagePath, Converter={StaticResource CacheImageConverter}, IsAsync=True}"
                  Stretch="UniformToFill" />
         </Grid>
 
@@ -249,7 +250,7 @@
               Panel.ZIndex="0"
               BorderBrush="#FF080808"
               BorderThickness="5">
-        <Image Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualItem.ImagePath, Converter={library:CacheImageConverter}}" />
+        <Image Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualItem.ImagePath, Converter={StaticResource CacheImageConverter}, IsAsync=True}" />
 
         <Border.Effect>
           <DropShadowEffect BlurRadius="20"
@@ -535,9 +536,7 @@
                 </TextBlock.Style>
               </TextBlock>
 
-              <Grid Grid.Row="1"
-                    Grid.Column="3"
-                    >
+              <Grid Grid.Row="1" Grid.Column="3">
 
                 <Grid.ColumnDefinitions>
                   <ColumnDefinition Width="*" />

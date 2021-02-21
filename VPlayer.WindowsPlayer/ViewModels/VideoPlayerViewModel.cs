@@ -22,6 +22,7 @@ using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.TvShow;
+using VPlayer.WindowsPlayer.Providers;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer;
 
 namespace VPlayer.WindowsPlayer.ViewModels
@@ -33,7 +34,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
       [NotNull] IKernel kernel,
       [NotNull] ILogger logger,
       [NotNull] IStorageManager storageManager,
-      [NotNull] IEventAggregator eventAggregator) : base(regionProvider, kernel, logger, storageManager, eventAggregator)
+      [NotNull] IEventAggregator eventAggregator,
+      IVlcProvider vlcProvider) :
+      base(regionProvider, kernel, logger, storageManager, eventAggregator, vlcProvider)
     {
     }
 

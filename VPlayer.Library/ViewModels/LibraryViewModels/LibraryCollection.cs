@@ -131,7 +131,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
       });
 
-      //Recreate();
+      Recreate();
     }
 
     #endregion Add

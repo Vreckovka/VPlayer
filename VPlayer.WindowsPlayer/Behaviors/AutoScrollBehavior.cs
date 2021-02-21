@@ -120,57 +120,62 @@ namespace VPlayer.Player.Behaviors
 
     private void OnSongChanged(int songInPlayListIndex)
     {
-
-      if (border == null)
+      Application.Current.Dispatcher.Invoke(() =>
       {
-        border = VisualTreeHelper.GetChild(AssociatedObject, 0) as Decorator;
-      }
-
-      if (scrollViewer == null)
-      {
-        scrollViewer = border?.Child as ScrollViewer;
-      }
 
 
-      var scrollIndexOffset = GetScrollOffset(songInPlayListIndex);
 
-      int max = 10;
-
-      if (scrollViewer != null)
-      {
-        if ((songInPlayListIndex > last_songInPlayListIndex + max &&
-            songInPlayListIndex > last_songInPlayListIndex) ||
-            (songInPlayListIndex < last_songInPlayListIndex - max &&
-             songInPlayListIndex < last_songInPlayListIndex))
+        if (border == null)
         {
-          scrollViewer.ScrollToVerticalOffset(scrollIndexOffset);
+          border = VisualTreeHelper.GetChild(AssociatedObject, 0) as Decorator;
         }
-        else if (songInPlayListIndex != last_songInPlayListIndex)
+
+        if (scrollViewer == null)
         {
-          DoubleAnimation verticalAnimation = new DoubleAnimation();
-
-          verticalAnimation.From = scrollViewer.VerticalOffset;
-          verticalAnimation.To = scrollIndexOffset;
-
-          if (last_songInPlayListIndex == songInPlayListIndex - 1)
-          {
-            verticalAnimation.Duration = new Duration(AnimationTime);
-          }
-          else
-          {
-            verticalAnimation.Duration = new Duration(TimeSpan.FromSeconds(0.50));
-          }
-
-          Storyboard storyboard = new Storyboard();
-
-          storyboard.Children.Add(verticalAnimation);
-          Storyboard.SetTarget(verticalAnimation, scrollViewer);
-          Storyboard.SetTargetProperty(verticalAnimation, new PropertyPath(ScrollAnimationBehavior.VerticalOffsetProperty));
-          storyboard.Begin();
+          scrollViewer = border?.Child as ScrollViewer;
         }
-      }
 
-      last_songInPlayListIndex = songInPlayListIndex;
+
+        var scrollIndexOffset = GetScrollOffset(songInPlayListIndex);
+
+        int max = 10;
+
+        if (scrollViewer != null)
+        {
+          if ((songInPlayListIndex > last_songInPlayListIndex + max &&
+               songInPlayListIndex > last_songInPlayListIndex) ||
+              (songInPlayListIndex < last_songInPlayListIndex - max &&
+               songInPlayListIndex < last_songInPlayListIndex))
+          {
+            scrollViewer.ScrollToVerticalOffset(scrollIndexOffset);
+          }
+          else if (songInPlayListIndex != last_songInPlayListIndex)
+          {
+            DoubleAnimation verticalAnimation = new DoubleAnimation();
+
+            verticalAnimation.From = scrollViewer.VerticalOffset;
+            verticalAnimation.To = scrollIndexOffset;
+
+            if (last_songInPlayListIndex == songInPlayListIndex - 1)
+            {
+              verticalAnimation.Duration = new Duration(AnimationTime);
+            }
+            else
+            {
+              verticalAnimation.Duration = new Duration(TimeSpan.FromSeconds(0.50));
+            }
+
+            Storyboard storyboard = new Storyboard();
+
+            storyboard.Children.Add(verticalAnimation);
+            Storyboard.SetTarget(verticalAnimation, scrollViewer);
+            Storyboard.SetTargetProperty(verticalAnimation, new PropertyPath(ScrollAnimationBehavior.VerticalOffsetProperty));
+            storyboard.Begin();
+          }
+        }
+
+        last_songInPlayListIndex = songInPlayListIndex;
+      });
     }
   }
 }

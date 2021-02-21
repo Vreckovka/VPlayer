@@ -8,10 +8,11 @@ namespace VPlayer.Core.ViewModels
   {
     void Play();
     void PlayPause();
-    void PlayNext(int? songIndex, bool forcePlay = false);
+    void SetItemAndPlay(int? songIndex, bool forcePlay = false);
     void PlayPrevious();
-    void Stop();
-    bool IsPlaying { get; }
+    void PlayNext();
+    void Pause();
+    bool IsPlaying { get; set; }
     bool CanPlay { get; }
     VlcControl VlcControl { get; }
 

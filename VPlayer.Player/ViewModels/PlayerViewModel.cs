@@ -70,6 +70,7 @@ namespace VPlayer.Player.ViewModels
 
     #endregion
 
+    #region Initialize
 
     public override void Initialize()
     {
@@ -77,6 +78,8 @@ namespace VPlayer.Player.ViewModels
 
       SubscribeToPlayers();
     }
+
+    #endregion
 
     #region SubscribeToPlayers
 
@@ -102,6 +105,15 @@ namespace VPlayer.Player.ViewModels
             if (ActualViewModel == player)
             {
               IsPlaying = x;
+
+              if (IsPlaying)
+                foreach (var player1 in allPlayers)
+                {
+                  if (ActualViewModel != player1)
+                  {
+                    player1.Pause();
+                  }
+                }
             }
           }).DisposeWith(this);
 
@@ -110,9 +122,9 @@ namespace VPlayer.Player.ViewModels
           if (x)
           {
             ActualViewModel = player;
+
             IsPlaying = ActualViewModel.IsPlaying;
           }
-
         }).DisposeWith(this);
       }
     }
@@ -185,7 +197,7 @@ namespace VPlayer.Player.ViewModels
 
     public void PlayNext()
     {
-      ActualViewModel?.PlayNext(null);
+      ActualViewModel?.PlayNext();
     }
 
     #endregion

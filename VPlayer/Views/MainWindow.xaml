@@ -17,6 +17,7 @@
         Icon="/Includes/VPlayerLogo.png"
         Style="{StaticResource {x:Type Window}}"
         WindowStartupLocation="CenterScreen"
+        WindowStyle="SingleBorderWindow"
         mc:Ignorable="d">
 
   <Window.Resources>
@@ -94,7 +95,7 @@
   </Grid>
 
 
-  <!--<b:Interaction.Behaviors>
-    <behaviors:ProperMaximizeWindowBehavior />
-  </b:Interaction.Behaviors>-->
+  <b:Interaction.Behaviors>
+    <behaviors:ProperMaximizeWindowBehavior1 />
+  </b:Interaction.Behaviors>
 </Window>

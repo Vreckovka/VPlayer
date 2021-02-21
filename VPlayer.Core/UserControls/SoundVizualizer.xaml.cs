@@ -31,6 +31,13 @@ namespace VPlayer.Player.UserControls
     private LineSpectrum lineSpectrum;
     private int width;
     private int height;
+    private ISampleSource source;
+    private WasapiLoopbackCapture _soundIn;
+    private SoundInSource soundInSource;
+    private Timer timer;
+    private bool isTimerDisposed = true;
+    private byte[] buffer;
+    private IWaveSource waveSource;
 
     System.Drawing.Color bottomColor = System.Drawing.Color.Green;
     System.Drawing.Color topColor = System.Drawing.Color.Red;
@@ -48,20 +55,26 @@ namespace VPlayer.Player.UserControls
       this.SizeChanged += SoundVizualizer_SizeChanged;
       this.IsEnabledChanged += SoundVizualizer_IsEnabledChanged;
 
-      AppDomain currentDomain = AppDomain.CurrentDomain;
-      //currentDomain.UnhandledException += new UnhandledExceptionEventHandler(MyHandler);
+      Application.Current.Dispatcher.ShutdownStarted += Dispatcher_ShutdownStarted;
 
+      _soundIn = new WasapiLoopbackCapture();
 
+      _soundIn.Initialize();
+
+      soundInSource = new SoundInSource(_soundIn);
+      source = soundInSource.ToSampleSource().AppendSource(x => new PitchShifter(x), out var _pitchShifter);
+
+      waveSource = SetupSampleSource(source);
+
+      buffer = new byte[waveSource.WaveFormat.BytesPerSecond / 2];
+
+      _soundIn.Start();
+
+      soundInSource.DataAvailable += ReadData;
     }
 
 
     #endregion
-
-    static void MyHandler(object sender, UnhandledExceptionEventArgs args)
-    {
-      Exception e = (Exception)args.ExceptionObject;
-      Console.WriteLine("MyHandler caught : " + e.Message);
-    }
 
     #region Properties
 
@@ -202,7 +215,8 @@ namespace VPlayer.Player.UserControls
 
     private void SoundVizualizer_Loaded(object sender, RoutedEventArgs e)
     {
-      InitlizeSoundVizualizer();
+      if (isTimerDisposed)
+        InitlizeTimer();
     }
 
     #endregion
@@ -211,14 +225,18 @@ namespace VPlayer.Player.UserControls
 
     private void SoundVizualizer_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (e.NewValue is bool newValue && newValue)
+      if (e.NewValue is bool isEnabled)
       {
-        InitlizeSoundVizualizer();
+        if (isEnabled && isTimerDisposed)
+        {
+          InitlizeTimer();
+        }
+        else if (!isTimerDisposed && !isEnabled)
+        {
+          DisposeTimer();
+        }
       }
-      else
-      {
-        DisposeSoundVizualizer();
-      }
+
     }
 
     #endregion
@@ -233,81 +251,38 @@ namespace VPlayer.Player.UserControls
 
     #endregion
 
-    #region InitlizeSoundVizualizer
+    #region InitlizeTimer
 
-    private Timer timer;
-    private ISampleSource source;
-    private WasapiLoopbackCapture _soundIn;
-    private SoundInSource soundInSource;
-
-
-    private void InitlizeSoundVizualizer()
+    private void InitlizeTimer()
     {
-      isDispoed = false;
+      isTimerDisposed = false;
+
       timer = new Timer(40);
-
-      //open the default device
-      _soundIn = new WasapiLoopbackCapture();
-
-      //Our loopback capture opens the default render device by default so the following is not needed
-      //_soundIn.Device = MMDeviceEnumerator.DefaultAudioEndpoint(DataFlow.Render, Role.Console);
-
-      _soundIn.Initialize();
-
-      soundInSource = new SoundInSource(_soundIn);
-      source = soundInSource.ToSampleSource().AppendSource(x => new PitchShifter(x), out var _pitchShifter);
-
-
-      waveSource = SetupSampleSource(source);
-
-      buffer = new byte[waveSource.WaveFormat.BytesPerSecond / 2];
-
-      soundInSource.DataAvailable += ReadData;
-
-      //play the audio
-      _soundIn.Start();
 
       timer.Start();
 
       timer.Elapsed += timer2_Tick;
-
-      Application.Current.Dispatcher.ShutdownStarted += Dispatcher_ShutdownStarted;
     }
 
 
     #endregion
 
     #region ReadData
-
-    private bool isDispoed;
-    private byte[] buffer;
-    private IWaveSource waveSource;
+  
     private void ReadData(object s, DataAvailableEventArgs dataAvailableEventArgs)
     {
-      Task.Run(() =>
-      {
-        int read;
-        
-        while (!isDispoed && (read = waveSource.Read(buffer, 0, buffer.Length)) > 0) ;
-      });
+      int read;
 
+      while (!isTimerDisposed && (read = waveSource.Read(buffer, 0, buffer.Length)) > 0) ;
     }
 
     #endregion
 
-    #region DisposeSoundVizualizer
+    #region DisposeTimer
 
-    private void DisposeSoundVizualizer()
+    private void DisposeTimer()
     {
-      isDispoed = true;
-      waveSource?.Dispose();
-
-      if (soundInSource != null)
-        soundInSource.DataAvailable -= ReadData;
-
-      _soundIn?.Dispose();
-      source?.Dispose();
-
+      isTimerDisposed = true;
 
       if (timer != null)
       {
@@ -315,8 +290,6 @@ namespace VPlayer.Player.UserControls
         timer?.Dispose();
       }
 
-      if (Application.Current != null)
-        Application.Current.Dispatcher.ShutdownStarted -= Dispatcher_ShutdownStarted;
     }
 
     #endregion
@@ -325,7 +298,14 @@ namespace VPlayer.Player.UserControls
 
     private void Dispatcher_ShutdownStarted(object sender, EventArgs e)
     {
-      DisposeSoundVizualizer();
+      waveSource?.Dispose();
+      source?.Dispose();
+      _soundIn?.Dispose();
+
+      if (soundInSource != null)
+        soundInSource.DataAvailable -= ReadData;
+
+      DisposeTimer();
     }
 
     #endregion

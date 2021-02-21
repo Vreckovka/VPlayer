@@ -124,7 +124,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           {
             Console.WriteLine("Loading tv show");
 
-            var tvShow = dataLoader.LoadTvShow("The Simpsons", dialog.FileName);
+            var tvShow = dataLoader.LoadTvShow("American dad", dialog.FileName);
 
             Console.WriteLine("Tv show loaded");
 
