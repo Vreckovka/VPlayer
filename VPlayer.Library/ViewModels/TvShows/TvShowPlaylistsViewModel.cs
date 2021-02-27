@@ -7,7 +7,7 @@ using VPlayer.Core.Modularity.Regions;
 using VPlayer.Library.ViewModels.LibraryViewModels;
 using VPlayer.Library.Views;
 
-namespace VPlayer.Library.ViewModels
+namespace VPlayer.Library.ViewModels.TvShows
 {
   public class TvShowPlaylistsViewModel : PlayableItemsViewModel<PlaylistsView, TvShowPlaylistViewModel, TvShowPlaylist>
   {

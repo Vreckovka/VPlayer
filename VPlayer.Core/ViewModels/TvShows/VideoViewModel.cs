@@ -1,8 +1,7 @@
 ﻿using System;
 using VCore.Standard;
-using VPlayer.Core.ViewModels;
 
-namespace VPlayer.WindowsPlayer.ViewModels
+namespace VPlayer.Core.ViewModels.TvShows
 {
   public abstract class VideoViewModel<TModel> : ViewModel<TModel>, IItemInPlayList<TModel> 
     where TModel : IPlayableModel

@@ -7,6 +7,7 @@ using VPlayer.Core.Modularity.Regions;
 using VPlayer.Library.ViewModels;
 using VPlayer.Library.ViewModels.AlbumsViewModels;
 using VPlayer.Library.ViewModels.ArtistsViewModels;
+using VPlayer.Library.ViewModels.TvShows;
 
 namespace VPlayer.Library.Modularity.NinjectModule
 {

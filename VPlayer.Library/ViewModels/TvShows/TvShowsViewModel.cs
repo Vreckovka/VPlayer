@@ -1,27 +1,20 @@
 ﻿using System;
 using System.Linq;
-using System.Windows;
 using Logger;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
-using VCore.Modularity.Events;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
-using VCore.Standard.Helpers;
-using VPlayer.AudioStorage.DomainClasses;
-using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
-using VPlayer.Core.ViewModels.Albums;
-using VPlayer.Core.ViewModels.TvShow;
+using VPlayer.Core.ViewModels.TvShows;
 using VPlayer.Library.ViewModels.LibraryViewModels;
 using VPlayer.Library.Views;
-using VPlayer.WindowsPlayer.ViewModels;
 
-namespace VPlayer.Library.ViewModels.AlbumsViewModels
+namespace VPlayer.Library.ViewModels.TvShows
 {
-  public class TvShowsViewModel : PlayableItemsViewModel<TvShowsView, TvShowViewModel, TvShow>, ITvShowsViewModel
+  public class TvShowsViewModel : PlayableItemsViewModel<TvShowsView, TvShowViewModel, AudioStorage.DomainClasses.Video.TvShow>, ITvShowsViewModel
   {
     private readonly ILogger logger;
 
@@ -31,7 +24,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
       IRegionProvider regionProvider,
       IViewModelsFactory viewModelsFactory,
       IStorageManager storageManager,
-      LibraryCollection<TvShowViewModel, TvShow> libraryCollection,
+      LibraryCollection<TvShowViewModel, AudioStorage.DomainClasses.Video.TvShow> libraryCollection,
       IEventAggregator eventAggregator,
       ILogger logger)
       : base(regionProvider, viewModelsFactory, storageManager, libraryCollection, eventAggregator)
@@ -46,7 +39,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
     public override bool ContainsNestedRegions => false;
     public override string Header => "Tv shows";
-    public override IQueryable<TvShow> LoadQuery => base.LoadQuery.Include(x => x.Episodes);
+    public override IQueryable<AudioStorage.DomainClasses.Video.TvShow> LoadQuery => base.LoadQuery.Include(x => x.Episodes);
     public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
     public IEventAggregator EventAggregator { get; }
 

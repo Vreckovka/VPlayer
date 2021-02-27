@@ -4,6 +4,7 @@ using System.Windows.Input;
 using VCore;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
+using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.ViewModels.Albums;
@@ -11,7 +12,7 @@ using VPlayer.Library.Views;
 
 namespace VPlayer.Library.ViewModels.AlbumsViewModels
 {
-  public class AlbumDetailViewModel : DetailViewModel<AlbumDetailView>
+  public class AlbumDetailViewModel : DetailViewModel<AlbumViewModel,Album,AlbumDetailView>
   {
     #region Fields
 
@@ -26,18 +27,17 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
       IRegionProvider regionProvider,
       IViewModelsFactory viewModelsFactory,
       AlbumViewModel album,
-      IStorageManager storageManager) : base(regionProvider, storageManager)
+      IStorageManager storageManager,
+      IWindowManager windowManager) : base(regionProvider, storageManager, album, windowManager)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
-      ActualAlbum = album;
     }
 
     #endregion Constructors
 
     #region Properties
 
-    public AlbumViewModel ActualAlbum { get; set; }
-    public IEnumerable<Song> AlbumSongs => ActualAlbum.Model?.Songs;
+    public IEnumerable<Song> AlbumSongs => ViewModel?.Model?.Songs;
     
     #endregion Properties
 
@@ -60,7 +60,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
     protected void OnGetCovers()
     {
-      var covers = viewModelsFactory.Create<AlbumCoversViewModel>(ActualAlbum,RegionName);
+      var covers = viewModelsFactory.Create<AlbumCoversViewModel>(ViewModel,RegionName);
 
       covers.IsActive = true;
     }

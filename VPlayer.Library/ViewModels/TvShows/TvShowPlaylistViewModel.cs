@@ -8,10 +8,9 @@ using VCore.Standard.Factories.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
-using VPlayer.Core.ViewModels;
-using VPlayer.Core.ViewModels.TvShow;
+using VPlayer.Core.ViewModels.TvShows;
 
-namespace VPlayer.Library.ViewModels
+namespace VPlayer.Library.ViewModels.TvShows
 {
   public class TvShowPlaylistViewModel : PlaylistViewModel<TvShowEpisodeInPlaylistViewModel, TvShowPlaylist, PlaylistTvShowEpisode>
   {

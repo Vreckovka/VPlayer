@@ -6,6 +6,7 @@ using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Factories.Views;
 using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Core.ViewModels.Artists;
+using VPlayer.Core.ViewModels.TvShows;
 
 namespace VPlayer.Core.Modularity.Regions
 {
@@ -13,42 +14,12 @@ namespace VPlayer.Core.Modularity.Regions
   {
     #region Methods
 
-
     void ShowAlbumDetail(AlbumViewModel albumViewModel);
 
     void ShowArtistDetail(ArtistViewModel albumViewModel);
 
-    #endregion 
-  }
+    void ShowTvShowDetail(TvShowViewModel tvShowViewModel);
 
-  public class VPlayerRegionProvider : RegionProvider, IVPlayerRegionProvider
-  {
-   
-
-    #region Constructors
-
-    public VPlayerRegionProvider(
-      IRegionManager regionManager,
-      IViewFactory viewFactory,
-      IViewModelsFactory viewModelsFactory,
-      INavigationProvider navigationProvider) : base(regionManager, viewFactory, viewModelsFactory, navigationProvider)
-    {
-    }
-
-    #endregion Constructors
-
-    #region Methods
-
-  
-
-    public virtual void ShowAlbumDetail(AlbumViewModel albumViewModel)
-    {
-    }
-
-    public virtual void ShowArtistDetail(ArtistViewModel albumViewModel)
-    {
-    }
-
-    #endregion Methods
+    #endregion
   }
 }

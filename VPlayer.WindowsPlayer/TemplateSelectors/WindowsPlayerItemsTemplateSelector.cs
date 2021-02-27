@@ -4,7 +4,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using VPlayer.Core.ViewModels;
-using VPlayer.Core.ViewModels.TvShow;
+using VPlayer.Core.ViewModels.TvShows;
 
 namespace VPlayer.WindowsPlayer.TemplateSelectors
 {

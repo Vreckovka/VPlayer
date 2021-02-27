@@ -56,8 +56,7 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
 
     IDisposable SubscribeToItemChange<TModel>(Action<ItemChanged<TModel>> observer);
     Task<bool> UpdateWholeTvShow(TvShow newVersion);
-
-  
+    bool DeleteTvShow(TvShow tvShow);
 
     void PushAction(ItemChanged itemChanged);
     Task<int> StoreTvShow(TvShow tvShow);

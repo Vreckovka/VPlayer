@@ -74,6 +74,8 @@ namespace VPlayer.Core.ViewModels.Artists
 
     #endregion
 
+    #region PublishPlayEvent
+
     public override void PublishPlayEvent(IEnumerable<SongInPlayListViewModel> viewModels, EventAction eventAction)
     {
       var e = new PlaySongsEventData(viewModels, eventAction, this);
@@ -81,12 +83,18 @@ namespace VPlayer.Core.ViewModels.Artists
       eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
     }
 
+    #endregion
+
+    #region PublishAddToPlaylistEvent
+
     public override void PublishAddToPlaylistEvent(IEnumerable<SongInPlayListViewModel> viewModels)
     {
       var e = new PlaySongsEventData(viewModels, EventAction.Add, this);
 
       eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
     }
+
+    #endregion
 
     #region Update
 

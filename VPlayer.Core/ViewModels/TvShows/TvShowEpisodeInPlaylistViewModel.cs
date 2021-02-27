@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Prism.Events;
-using VCore.Annotations;
-using VCore.Standard;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Interfaces.ViewModels;
 
-namespace VPlayer.Core.ViewModels.TvShow
+namespace VPlayer.Core.ViewModels.TvShows
 {
   public class TvShowEpisodeInPlaylistViewModel : ItemInPlayList<TvShowEpisode>
   {

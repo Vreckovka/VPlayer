@@ -21,7 +21,7 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
-using VPlayer.Core.ViewModels.TvShow;
+using VPlayer.Core.ViewModels.TvShows;
 using VPlayer.Player.Views.WindowsPlayer;
 using VPlayer.WindowsPlayer.Providers;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer;

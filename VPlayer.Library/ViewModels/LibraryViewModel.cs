@@ -15,6 +15,7 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Library.ViewModels.AlbumsViewModels;
+using VPlayer.Library.ViewModels.TvShows;
 using VPlayer.Library.Views;
 
 namespace VPlayer.Library.ViewModels

@@ -88,8 +88,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
       return dbContext.Set<T>();
     }
-    
-    #endregion 
+
+    #endregion
 
     #region StoreData
 
@@ -671,27 +671,34 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     public bool DeleteEntity<TEntity>(TEntity entity) where TEntity : class, IEntity
     {
-      using (var context = new AudioDatabaseContext())
+      if (entity is TvShow tvShow)
       {
-        var foundEntity = GetRepository<TEntity>(context).SingleOrDefault(x => x.Id == entity.Id);
-        EntityEntry<TEntity> deletedEntity = null;
-
-        if (foundEntity != null)
+        return DeleteTvShow(tvShow);
+      }
+      else
+      {
+        using (var context = new AudioDatabaseContext())
         {
-          deletedEntity = context.Remove(foundEntity);
+          var foundEntity = GetRepository<TEntity>(context).SingleOrDefault(x => x.Id == entity.Id);
+          bool result = false;
 
-          context.SaveChanges();
-
-          logger.Log(Logger.MessageType.Success, $"Entity was updated {foundEntity}");
-
-          ItemChanged.OnNext(new ItemChanged()
+          if (foundEntity != null)
           {
-            Item = foundEntity,
-            Changed = Changed.Updated
-          });
-        }
+            context.Remove(foundEntity);
 
-        return deletedEntity != null;
+            result = context.SaveChanges() > 0;
+
+            logger.Log(Logger.MessageType.Success, $"Entity was updated {foundEntity}");
+
+            ItemChanged.OnNext(new ItemChanged()
+            {
+              Item = foundEntity,
+              Changed = Changed.Updated
+            });
+          }
+
+          return result;
+        }
       }
     }
 
@@ -722,8 +729,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
       }
     }
 
-    #endregion 
-    
+    #endregion
+
 
     #region Playlist methods
 
@@ -815,6 +822,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #endregion
 
+    #region TvShow methods
+
     #region UpdateWholeTvShow
 
     public Task<bool> UpdateWholeTvShow(TvShow newVersion)
@@ -846,6 +855,45 @@ namespace VPlayer.AudioStorage.AudioDatabase
         }
       });
     }
+
+    #endregion
+
+    #region DeleteTvShow
+
+    public bool DeleteTvShow(TvShow tvShow)
+    {
+      using (var context = new AudioDatabaseContext())
+      {
+        var tvShowRepo = GetRepository<TvShow>(context);
+
+        var foundEntity = tvShowRepo.Include(x => x.Episodes).SingleOrDefault(x => x.Id == tvShow.Id);
+        bool result = false;
+
+        if (foundEntity != null)
+        {
+          foreach (var tvShowEpisode in foundEntity.Episodes)
+          {
+            context.Remove(tvShowEpisode);
+          }
+
+          context.Remove(foundEntity);
+
+          result = context.SaveChanges() > 0;
+
+          logger.Log(Logger.MessageType.Success, $"Entity TVSHOW was deleted {tvShow.Name}");
+
+          ItemChanged.OnNext(new ItemChanged()
+          {
+            Item = foundEntity,
+            Changed = Changed.Removed
+          });
+        }
+
+        return result;
+      }
+    }
+
+    #endregion
 
     #endregion
 

@@ -1,46 +1,69 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore.Annotations;
 using VCore.Standard.Factories.ViewModels;
+using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
-using VPlayer.Core.ViewModels.Artists;
+using VPlayer.Core.Modularity.Regions;
 
-namespace VPlayer.Core.ViewModels.TvShow
+namespace VPlayer.Core.ViewModels.TvShows
 {
-  public class TvShowViewModel : PlayableViewModelWithThumbnail<TvShowEpisodeInPlaylistViewModel, AudioStorage.DomainClasses.Video.TvShow>
+  public class TvShowViewModel : PlayableViewModelWithThumbnail<TvShowEpisodeInPlaylistViewModel, TvShow>
   {
     private readonly IStorageManager storage;
     private readonly IViewModelsFactory viewModelsFactory;
+    private readonly IVPlayerRegionProvider vPlayerRegionProvider;
 
     public TvShowViewModel(
-      AudioStorage.DomainClasses.Video.TvShow model,
+      TvShow model,
       IEventAggregator eventAggregator,
       [NotNull] IStorageManager storage,
-      [NotNull] IViewModelsFactory viewModelsFactory
+      [NotNull] IViewModelsFactory viewModelsFactory,
+      [NotNull] IVPlayerRegionProvider vPlayerRegionProvider
       ) : base(model, eventAggregator)
     {
       this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+      this.vPlayerRegionProvider = vPlayerRegionProvider ?? throw new ArgumentNullException(nameof(vPlayerRegionProvider));
     }
 
-    public override void Update(AudioStorage.DomainClasses.Video.TvShow updateItem)
+    #region BottomText
+
+    public override string BottomText
+    {
+      get
+      {
+        return Model.Episodes?.Count.ToString();
+      }
+    }
+
+    #endregion
+
+    public override string ImageThumbnail { get; }
+
+    #region Update
+
+    public override void Update(TvShow updateItem)
     {
       Model.Update(updateItem);
 
       RaisePropertyChanges();
     }
 
+    #endregion
+
+    #region OnDetail
+
     protected override void OnDetail()
     {
-      throw new NotImplementedException();
+      vPlayerRegionProvider.ShowTvShowDetail(this);
     }
+
+    #endregion
 
     #region GetItemsToPlay
 
@@ -67,6 +90,8 @@ namespace VPlayer.Core.ViewModels.TvShow
 
     #endregion
 
+    #region PublishPlayEvent
+
     public override void PublishPlayEvent(IEnumerable<TvShowEpisodeInPlaylistViewModel> viewModels, EventAction eventAction)
     {
       var e = new PlayTvShowEventData(viewModels, eventAction, this);
@@ -74,14 +99,15 @@ namespace VPlayer.Core.ViewModels.TvShow
       eventAggregator.GetEvent<PlayTvShowEvent>().Publish(e);
     }
 
+    #endregion
+
+  
+
     public override void PublishAddToPlaylistEvent(IEnumerable<TvShowEpisodeInPlaylistViewModel> viewModels)
     {
       throw new NotImplementedException();
-    }
+    } 
 
-    public override string BottomText { get; }
-    public override string ImageThumbnail { get; }
-
-
+  
   }
 }

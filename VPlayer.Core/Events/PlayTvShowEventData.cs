@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using VPlayer.Core.ViewModels.TvShow;
+using VPlayer.Core.ViewModels.TvShows;
 
 namespace VPlayer.Core.Events
 {

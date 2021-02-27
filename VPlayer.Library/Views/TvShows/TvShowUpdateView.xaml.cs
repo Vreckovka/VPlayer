@@ -15,11 +15,11 @@ using VCore.Standard.Modularity.Interfaces;
 namespace VPlayer.Library.Views.TvShows
 {
   /// <summary>
-  /// Interaction logic for TvShowDetailView.xaml
+  /// Interaction logic for TvShowUpdateView.xaml
   /// </summary>
-  public partial class TvShowDetailView : UserControl, IView
+  public partial class TvShowUpdateView : UserControl, IView
   {
-    public TvShowDetailView()
+    public TvShowUpdateView()
     {
       InitializeComponent();
     }

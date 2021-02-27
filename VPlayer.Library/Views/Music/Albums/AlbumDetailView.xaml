@@ -49,7 +49,7 @@
           </Border.Effect>
 
           <Grid>
-            <Image VerticalAlignment="Top" Source="{Binding ActualAlbum.ImageThumbnail, Converter={library:CacheImageConverter}, IsAsync=True}" />
+            <Image VerticalAlignment="Top" Source="{Binding ViewModel.ImageThumbnail, Converter={library:CacheImageConverter}, IsAsync=True}" />
             <Grid Background="{StaticResource GlassGradient}" />
           </Grid>
         </Border>
@@ -66,12 +66,12 @@
                        HorizontalAlignment="Center"
                        FontSize="30"
                        Style="{StaticResource Base}"
-                       Text="{Binding ActualAlbum.Name}" />
+                       Text="{Binding ViewModel.Name}" />
             <TextBlock Margin="5,5,5,10"
                        HorizontalAlignment="Center"
                        FontSize="25"
                        Foreground="{StaticResource 200_WhiteTransparentBrush}"
-                       Text="{Binding ActualAlbum.Model.Artist.Name}" />
+                       Text="{Binding ViewModel.Model.Artist.Name}" />
           </StackPanel>
 
           <Border Grid.Row="1"
@@ -103,7 +103,7 @@
               </StackPanel>
 
               <StackPanel Grid.Column="1">
-                <TextBlock Text="{Binding ActualAlbum.Model.ReleaseDate}" />
+                <TextBlock Text="{Binding ViewModel.Model.ReleaseDate}" />
                 <TextBlock Text="{Binding AlbumSongs.Count}" />
                 <TextBlock Text="01:24:38" />
               </StackPanel>
