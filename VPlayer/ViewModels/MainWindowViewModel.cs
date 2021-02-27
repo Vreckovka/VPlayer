@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Prism.Events;
 using Prism.Regions;
@@ -11,7 +13,9 @@ using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
+using VCore.WPF.Behaviors;
 using VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics;
+using VPlayer.AudioStorage.Parsers;
 using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
@@ -36,14 +40,24 @@ namespace VPlayer.ViewModels
     public MainWindowViewModel(
       IViewModelsFactory viewModelsFactory,
       IEventAggregator eventAggregator,
-      IRegionManager regionManager)
+      IRegionManager regionManager,
+      ICSFDWebsiteScrapper cSFDWebsiteScrapper)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.regionManager = regionManager ?? throw new ArgumentNullException(nameof(regionManager));
 
       eventAggregator.GetEvent<ContentFullScreenEvent>().Subscribe(OnContentFullScreenEvent).DisposeWith(this);
+
+      //Task.Run(async () =>
+      //{
+      //  var movie = "https://www.csfd.cz/film/69516-cerveny-trpaslik/komentare/";
+
+      //  var tvShow = cSFDWebsiteScrapper.LoadTvShow(movie);
+      //});
     }
+
+
 
     #endregion
 
@@ -169,27 +183,42 @@ namespace VPlayer.ViewModels
     #region ChangeFullScreen
 
     private ResizeMode oldResizeMode;
+    private WindowStyle oldWindowStyle;
     private void ChangeFullScreen(bool isFullScreen)
     {
       var mainWindow = Application.Current.MainWindow;
 
-      if (isFullScreen)
+      if (mainWindow != null)
       {
-        oldResizeMode = mainWindow.ResizeMode;
-        mainWindow.WindowStyle = WindowStyle.None;
-        mainWindow.ResizeMode = ResizeMode.NoResize;
-        WindowChromeVisiblity = Visibility.Collapsed;
+        if (isFullScreen)
+        {
+          oldResizeMode = mainWindow.ResizeMode;
+          oldWindowStyle = mainWindow.WindowStyle;
 
-        mainWindow.WindowState = WindowState.Maximized;
-      }
-      else
-      {
-        mainWindow.ResizeMode = oldResizeMode;
-        WindowChromeVisiblity = Visibility.Visible;
+          mainWindow.WindowStyle = WindowStyle.None;
+          mainWindow.ResizeMode = ResizeMode.NoResize;
+          WindowChromeVisiblity = Visibility.Collapsed;
 
-        mainWindow.WindowState = WindowState.Normal;
+          if (mainWindow.WindowState == WindowState.Maximized)
+          {
+            mainWindow.Hide();
+            mainWindow.Show();
+          }
+
+          mainWindow.WindowState = WindowState.Maximized;
+        }
+        else
+        {
+          mainWindow.ResizeMode = oldResizeMode;
+          mainWindow.WindowStyle = oldWindowStyle;
+
+          WindowChromeVisiblity = Visibility.Visible;
+
+          mainWindow.WindowState = WindowState.Normal;
+        }
       }
     }
+
 
     #endregion
 
@@ -212,5 +241,7 @@ namespace VPlayer.ViewModels
 
 
   }
+
+
 }
 

@@ -13,6 +13,8 @@ using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using Logger;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Query;
 using VCore.Annotations;
 using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Repositories;
@@ -31,7 +33,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     private readonly ILogger logger;
 
-    private Subject<ItemChanged> ItemChanged { get; } = new Subject<ItemChanged>();
+    public ReplaySubject<ItemChanged> ItemChanged { get; } = new ReplaySubject<ItemChanged>(1);
 
     #endregion Fields
 
@@ -86,7 +88,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
       return dbContext.Set<T>();
     }
-
+    
     #endregion 
 
     #region StoreData
@@ -302,172 +304,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
       }
     }
 
-
-
-    #region Playlist methods
-
-    public bool StoreData(SongsPlaylist model, out SongsPlaylist entityModel)
-    {
-      var playlist = playlistsRepository.Entities.Include(x => x.PlaylistItems).SingleOrDefault(x => x.HashCode == model.HashCode);
-
-      if (playlist == null)
-      {
-        playlistsRepository.Add(model);
-        playlistsRepository.Save();
-
-        ItemChanged.OnNext(new ItemChanged()
-        {
-          Item = model,
-          Changed = Changed.Added
-        });
-
-        ActionIsDone.OnNext(Unit.Default);
-
-        entityModel = model;
-        return true;
-      }
-      else
-      {
-        entityModel = playlist;
-        return false;
-      }
-    }
-
-    public bool StoreData(TvShowPlaylist model, out TvShowPlaylist entityModel)
-    {
-      var playlist = tvShowPlaylistRepository.Entities.Include(x => x.PlaylistItems).SingleOrDefault(x => x.HashCode == model.HashCode);
-
-      if (playlist == null)
-      {
-        tvShowPlaylistRepository.Add(model);
-        tvShowPlaylistRepository.Save();
-
-        ItemChanged.OnNext(new ItemChanged()
-        {
-          Item = model,
-          Changed = Changed.Added
-        });
-
-        ActionIsDone.OnNext(Unit.Default);
-
-        entityModel = model;
-        return true;
-      }
-      else
-      {
-        entityModel = playlist;
-        return false;
-      }
-    }
-
-
-    public bool StorePlaylist<TPlaylist>(TPlaylist model, out TPlaylist entityModel) where TPlaylist : class, IPlaylist
-    {
-      if (model is SongsPlaylist playlist1)
-      {
-        var result = StoreData(playlist1, out var playlist);
-
-        entityModel = playlist as TPlaylist;
-
-        return result;
-      }
-      else if(model is TvShowPlaylist playlist2)
-      {
-        var result = StoreData(playlist2, out var playlist);
-
-        entityModel = playlist as TPlaylist;
-
-        return result;
-      }
-
-      entityModel = null;
-      return false;
-    }
-
-    public void UpdateData<TPlaylist>(TPlaylist playlist) where TPlaylist : class, IPlaylist
-    {
-      if (playlist is SongsPlaylist playlist1)
-      {
-        UpdateData(playlist1);
-      }
-      else if (playlist is TvShowPlaylist playlist2)
-      {
-        UpdateData(playlist2);
-      }
-    }
-
-
-    public void UpdateData(SongsPlaylist model)
-    {
-      var playlist = playlistsRepository.Entities.Include(x => x.PlaylistItems).SingleOrDefault(x => x.Id == model.Id);
-
-      if (playlist != null)
-      {
-        if (model.HashCode != playlist.HashCode)
-        {
-          if (model.PlaylistItems.Count > 0 && playlist.PlaylistItems != null)
-          {
-            playlist.PlaylistItems.Clear();
-
-            playlist.Update(model);
-
-            foreach (var song in model.PlaylistItems)
-            {
-              playlist.PlaylistItems.Add(song);
-            }
-
-            playlist.Update(model);
-          }
-        }
-
-        playlist.Update(model);
-
-        playlistsRepository.Save();
-
-        ItemChanged.OnNext(new ItemChanged()
-        {
-          Item = model,
-          Changed = Changed.Updated
-        });
-      }
-    }
-
-    public void UpdateData(TvShowPlaylist model)
-    {
-      var playlist = tvShowPlaylistRepository.Entities.Include(x => x.PlaylistItems).SingleOrDefault(x => x.Id == model.Id);
-
-      if (playlist != null)
-      {
-        if (model.HashCode != playlist.HashCode)
-        {
-          if (model.PlaylistItems.Count > 0 && playlist.PlaylistItems != null)
-          {
-            playlist.PlaylistItems.Clear();
-
-            playlist.Update(model);
-
-            foreach (var song in model.PlaylistItems)
-            {
-              playlist.PlaylistItems.Add(song);
-            }
-
-            playlist.Update(model);
-          }
-        }
-
-        playlist.Update(model);
-
-        tvShowPlaylistRepository.Save();
-
-        ItemChanged.OnNext(new ItemChanged()
-        {
-          Item = model,
-          Changed = Changed.Updated
-        });
-      }
-    }
-
-    #endregion
 
     #endregion StoreData
 
@@ -761,32 +597,41 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #endregion CombineAlbums
 
-    #region RewriteEntity
+    #region Generic methods
 
-    public void RewriteEntity<T>(T entity) where T : class, IEntity
+    #region StoreEntity
+
+    public bool StoreEntity<TEntity>(TEntity entity, out TEntity entityModel) where TEntity : class, IEntity
     {
       using (var context = new AudioDatabaseContext())
       {
-        var foundEntity = GetRepository<T>(context).SingleOrDefault(x => x.Id == entity.Id);
+        var foundEntity = GetRepository<TEntity>(context).SingleOrDefault(x => x.Id == entity.Id);
 
-        if (foundEntity != null)
+        if (foundEntity == null)
         {
-          context.Entry(foundEntity).CurrentValues.SetValues(entity);
+          context.Add(entity);
 
           context.SaveChanges();
+
+          entityModel = entity;
 
           logger.Log(Logger.MessageType.Success, $"Entity was updated {entity}");
 
           ItemChanged.OnNext(new ItemChanged()
           {
-            Item = foundEntity,
-            Changed = Changed.Updated
+            Item = entity,
+            Changed = Changed.Added
           });
+
+          return true;
         }
+
+        entityModel = null;
+        return false;
       }
     }
 
-    #endregion UpdateEntity
+    #endregion
 
     #region UpdateEntity
 
@@ -822,13 +667,71 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #endregion
 
+    #region DeleteEntity
+
+    public bool DeleteEntity<TEntity>(TEntity entity) where TEntity : class, IEntity
+    {
+      using (var context = new AudioDatabaseContext())
+      {
+        var foundEntity = GetRepository<TEntity>(context).SingleOrDefault(x => x.Id == entity.Id);
+        EntityEntry<TEntity> deletedEntity = null;
+
+        if (foundEntity != null)
+        {
+          deletedEntity = context.Remove(foundEntity);
+
+          context.SaveChanges();
+
+          logger.Log(Logger.MessageType.Success, $"Entity was updated {foundEntity}");
+
+          ItemChanged.OnNext(new ItemChanged()
+          {
+            Item = foundEntity,
+            Changed = Changed.Updated
+          });
+        }
+
+        return deletedEntity != null;
+      }
+    }
+
+    #endregion
+
+    #region RewriteEntity
+
+    public void RewriteEntity<T>(T entity) where T : class, IEntity
+    {
+      using (var context = new AudioDatabaseContext())
+      {
+        var foundEntity = GetRepository<T>(context).SingleOrDefault(x => x.Id == entity.Id);
+
+        if (foundEntity != null)
+        {
+          context.Entry(foundEntity).CurrentValues.SetValues(entity);
+
+          context.SaveChanges();
+
+          logger.Log(Logger.MessageType.Success, $"Entity was updated {entity}");
+
+          ItemChanged.OnNext(new ItemChanged()
+          {
+            Item = foundEntity,
+            Changed = Changed.Updated
+          });
+        }
+      }
+    }
+
+    #endregion 
+    
+
+    #region Playlist methods
+
     #region DeletePlaylist
 
-    //TODO: GetRepository<TEntity>(context) toto spravit genericky pre repository patern
-    //TODO: Cely repository prerobit
-    public Task DeletePlaylist<TPlaylist, TPlaylistItem>(TPlaylist songsPlaylist) 
+    public Task DeletePlaylist<TPlaylist, TPlaylistItem>(TPlaylist songsPlaylist)
       where TPlaylist : class, IPlaylist<TPlaylistItem>
-     where TPlaylistItem : class
+      where TPlaylistItem : class
     {
       return Task.Run(() =>
       {
@@ -862,6 +765,84 @@ namespace VPlayer.AudioStorage.AudioDatabase
         catch (Exception ex)
         {
           logger.Log(ex);
+        }
+      });
+    }
+
+    #endregion
+
+    #region UpdatePlaylist
+
+    public void UpdatePlaylist<TPlaylist, TPlaliystModel>(TPlaylist playlist) where TPlaylist : class, IPlaylist<TPlaliystModel>
+    {
+      using (var context = new AudioDatabaseContext())
+      {
+        var foundPlaylist = GetRepository<TPlaylist>(context).Include(x => x.PlaylistItems).SingleOrDefault(x => x.Id == playlist.Id);
+
+        if (foundPlaylist != null)
+        {
+          if (playlist.HashCode != foundPlaylist.HashCode)
+          {
+            if (playlist.PlaylistItems.Count > 0 && foundPlaylist.PlaylistItems != null)
+            {
+              foundPlaylist.PlaylistItems.Clear();
+
+              foundPlaylist.Update(playlist);
+
+              foreach (var song in playlist.PlaylistItems)
+              {
+                foundPlaylist.PlaylistItems.Add(song);
+              }
+            }
+          }
+
+          foundPlaylist.Update(playlist);
+
+          context.SaveChanges();
+
+          ItemChanged.OnNext(new ItemChanged()
+          {
+            Item = playlist,
+            Changed = Changed.Updated
+          });
+        }
+      }
+    }
+
+    #endregion
+
+    #endregion
+
+    #endregion
+
+    #region UpdateWholeTvShow
+
+    public Task<bool> UpdateWholeTvShow(TvShow newVersion)
+    {
+      return Task.Run(() =>
+      {
+        using (var context = new AudioDatabaseContext())
+        {
+          var foundEntity = GetRepository<TvShow>(context).Include(x => x.Episodes).SingleOrDefault(x => x.Id == newVersion.Id);
+
+          if (foundEntity != null)
+          {
+            foundEntity.Update(newVersion);
+
+            context.SaveChanges();
+
+            logger.Log(Logger.MessageType.Success, $"Entity was updated {newVersion}");
+
+            ItemChanged.OnNext(new ItemChanged()
+            {
+              Item = foundEntity,
+              Changed = Changed.Updated
+            });
+
+            return true;
+          }
+
+          return false;
         }
       });
     }
@@ -920,12 +901,12 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region StoreTvShow
 
-    public Task StoreTvShow(TvShow tvShow)
+    public Task<int> StoreTvShow(TvShow tvShow)
     {
       return Task.Run(() =>
       {
         tvShowRepository.Add(tvShow);
-       
+
         tvShowRepository.Save();
 
         ItemChanged.OnNext(new ItemChanged()
@@ -934,6 +915,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
           Changed = Changed.Added
         });
 
+        return tvShow.Id;
       });
     }
 

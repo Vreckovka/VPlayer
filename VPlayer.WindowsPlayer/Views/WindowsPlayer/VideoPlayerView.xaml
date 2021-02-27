@@ -4,6 +4,7 @@
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
              xmlns:behaviors1="clr-namespace:VPlayer.WindowsPlayer.Behaviors"
+             xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore.WPF"
              xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:VPlayer.WindowsPlayer.Views.WindowsPlayer"
@@ -12,74 +13,12 @@
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
-  <UserControl.Resources>
-    <ResourceDictionary>
-      <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Views/WindowsPlayer/WindowsPlayerViewResources.xaml" />
-      </ResourceDictionary.MergedDictionaries>
-    </ResourceDictionary>
-  </UserControl.Resources>
 
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition />
-      <RowDefinition Height="auto" />
-      <RowDefinition Height="auto" />
-    </Grid.RowDefinitions>
 
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition />
-      <ColumnDefinition Width="450" />
-    </Grid.ColumnDefinitions>
+  <ContentControl Background="Yellow" Content="{Binding VlcControl}">
+    <b:Interaction.Behaviors>
+      <behaviors1:FullScreenBehavior EventAggregator="{Binding EventAggregator}" />
+    </b:Interaction.Behaviors>
+  </ContentControl>
 
-    <ContentControl Content="{Binding VlcControl}">
-      <b:Interaction.Behaviors>
-        <behaviors1:FullScreenBehavior EventAggregator="{Binding EventAggregator}" />
-      </b:Interaction.Behaviors>
-    </ContentControl>
-
-    <ListView x:Name="ListView_Tracks"
-              Grid.RowSpan="2"
-              Grid.Column="1"
-              Margin="1,0,0,0"
-              HorizontalAlignment="Stretch"
-              Panel.ZIndex="0"
-              AllowDrop="True"
-              Background="{StaticResource BackgroudBrush}"
-              ItemTemplate="{StaticResource SoundTrackTemplate}"
-              ItemsSource="{Binding VirtualizedPlayList}"
-              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-              Style="{StaticResource WindowsPlayerVideos}">
-      <b:Interaction.Behaviors>
-        <behaviors:AutoScrollBehavior Kernel="{Binding Kernel}" StepSize="50" />
-      </b:Interaction.Behaviors>
-    </ListView>
-
-    <Slider x:Name="Slider_Time"
-            Grid.Row="1"
-            Grid.Column="0"
-            Margin="0"
-            Padding="0"
-            IsMoveToPointEnabled="True"
-            Maximum="1"
-            Value="{Binding ActualItem.ActualPosition}">
-      <b:Interaction.Behaviors>
-        <behaviors:SliderValueChangedManualy Kernel="{Binding Kernel}" Duration="{Binding ActualItem.Duration}" />
-      </b:Interaction.Behaviors>
-    </Slider>
-
-    <TextBlock Grid.Row="2"
-               Grid.Column="0"
-               HorizontalAlignment="Left"
-               FontSize="14"
-               Foreground="{StaticResource 120_WhiteTransparentBrush}"
-               Text="{Binding ActualItem.ActualTime, StringFormat=hh\\:mm\\:ss}" />
-
-    <TextBlock Grid.Row="2"
-               Grid.Column="0"
-               HorizontalAlignment="Right"
-               FontSize="14"
-               Foreground="{StaticResource 120_WhiteTransparentBrush}"
-               Text="{Binding ActualItem.Duration, Converter={converters:TimeConverter TimeType=Second}}" />
-  </Grid>
 </UserControl>

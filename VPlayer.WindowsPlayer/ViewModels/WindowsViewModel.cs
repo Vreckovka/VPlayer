@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using VCore;
@@ -13,7 +14,9 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.Settings;
 using VPlayer.Library.ViewModels;
+using VPlayer.WindowsPlayer.ViewModels.Windows;
 using VPlayer.WindowsPlayer.Views;
+using VPlayer.WindowsPlayer.Windows.TvShow;
 
 namespace VPlayer.WindowsPlayer.ViewModels
 {
@@ -110,35 +113,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public void OnLoadLoadTvShow()
     {
-      CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+      var window = new AddNewTvShowWindow();
 
-      dialog.AllowNonFileSystemItems = true;
-      dialog.IsFolderPicker = true;
-      dialog.Title = "Select folders with tv show";
+      var vm = viewModelsFactory.Create<AddNewTvShowViewModel>();
 
-      if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
-      {
-        Task.Run(async () =>
-        {
-          try
-          {
-            Console.WriteLine("Loading tv show");
+      window.DataContext = vm;
 
-            var tvShow = dataLoader.LoadTvShow("American dad", dialog.FileName);
-
-            Console.WriteLine("Tv show loaded");
-
-            await storageManager.StoreTvShow(tvShow);
-
-            Console.WriteLine("TV show stored");
-          }
-          catch (Exception ex)
-          {
-
-            Console.WriteLine(ex);
-          }
-        });
-      }
+      window.ShowDialog();
     }
 
     #endregion

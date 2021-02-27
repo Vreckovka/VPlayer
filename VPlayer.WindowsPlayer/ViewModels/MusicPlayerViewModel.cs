@@ -35,6 +35,7 @@ using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Player.Views.WindowsPlayer;
 using VPlayer.WindowsPlayer.Providers;
+using VPlayer.WindowsPlayer.Views.WindowsPlayer;
 
 //TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)
 //TODO: Hash playlistov, ked zavries appku tak ti vyhodi posledny playlist
@@ -52,7 +53,7 @@ using VPlayer.WindowsPlayer.Providers;
 namespace VPlayer.WindowsPlayer.ViewModels
 {
 
-  public class MusicPlayerViewModel : PlayableRegionViewModel<WindowsPlayerView, SongInPlayList, PlaySongsEventData, SongsPlaylist, PlaylistSong, Song>
+  public class MusicPlayerViewModel : PlayableRegionViewModel<WindowsPlayerView, SongInPlayListViewModel, PlaySongsEventData, SongsPlaylist, PlaylistSong, Song>
   {
     #region Fields
 
@@ -60,7 +61,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private readonly IEventAggregator eventAggregator;
     private readonly AudioInfoDownloader audioInfoDownloader;
     private int actualSongIndex = 0;
-    private Dictionary<SongInPlayList, bool> playBookInCycle = new Dictionary<SongInPlayList, bool>();
+    private Dictionary<SongInPlayListViewModel, bool> playBookInCycle = new Dictionary<SongInPlayListViewModel, bool>();
 
     #endregion Fields
 
@@ -139,7 +140,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
     #endregion
 
-    public override bool ContainsNestedRegions => false;
+    public override bool ContainsNestedRegions => true;
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
     public override string Header => "Music Player";
     public int Cycle { get; set; }
@@ -150,7 +151,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region NextSong
 
-    private ActionCommand<SongInPlayList> nextSong;
+    private ActionCommand<SongInPlayListViewModel> nextSong;
 
     public ICommand NextSong
     {
@@ -158,16 +159,16 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         if (nextSong == null)
         {
-          nextSong = new ActionCommand<SongInPlayList>(OnNextSong);
+          nextSong = new ActionCommand<SongInPlayListViewModel>(OnNextSong);
         }
 
         return nextSong;
       }
     }
 
-    public void OnNextSong(SongInPlayList songInPlayList)
+    public void OnNextSong(SongInPlayListViewModel songInPlayListViewModel)
     {
-      PlayNextWithItem(songInPlayList);
+      PlayNextWithItem(songInPlayListViewModel);
     }
 
     #endregion 
@@ -234,12 +235,14 @@ namespace VPlayer.WindowsPlayer.ViewModels
     #endregion 
 
     #region Methods
-
+    
     #region Initialize
 
     public override void Initialize()
     {
       base.Initialize();
+
+      
 
       storageManager.SubscribeToItemChange<Song>(OnSongChange).DisposeWith(this);
       storageManager.SubscribeToItemChange<Album>(OnAlbumChange).DisposeWith(this);
@@ -252,6 +255,16 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
 
     #endregion
+
+    public override void OnActivation(bool firstActivation)
+    {
+      base.OnActivation(firstActivation);
+
+      if(firstActivation)
+      {
+        var view = regionProvider.RegisterView<SongPlayerView, MusicPlayerViewModel>(RegionNames.PlayerContentRegion, this, false, out var guid, RegionManager);
+      }
+    }
 
     #region OnNewItemPlay
 
@@ -276,7 +289,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region OnSetActualItem
 
-    public override void OnSetActualItem(SongInPlayList itemViewModel, bool isPlaying)
+    public override void OnSetActualItem(SongInPlayListViewModel itemViewModel, bool isPlaying)
     {
       itemViewModel.AlbumViewModel.IsPlaying = isPlaying;
       itemViewModel.ArtistViewModel.IsPlaying = isPlaying;
@@ -286,7 +299,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region GetNewPlaylistItemViewModel
 
-    protected override PlaylistSong GetNewPlaylistItemViewModel(SongInPlayList song, int index)
+    protected override PlaylistSong GetNewPlaylistItemViewModel(SongInPlayListViewModel song, int index)
     {
       return new PlaylistSong()
       {
@@ -337,7 +350,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region OnRemoveItemsFromPlaylist
 
-    protected override void OnRemoveItemsFromPlaylist(DeleteType deleteType, RemoveFromPlaylistEventArgs<SongInPlayList> args)
+    protected override void OnRemoveItemsFromPlaylist(DeleteType deleteType, RemoveFromPlaylistEventArgs<SongInPlayListViewModel> args)
     {
       var albumId = args.ItemsToRemove.FirstOrDefault(x => x.AlbumViewModel != null)?.AlbumViewModel.ModelId;
 
@@ -358,7 +371,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region ItemsRemoved
 
-    protected override void ItemsRemoved(EventPattern<SongInPlayList> eventPattern)
+    protected override void ItemsRemoved(EventPattern<SongInPlayListViewModel> eventPattern)
     {
       var anyAlbum = PlayList.Any(x => x.AlbumViewModel.ModelId == eventPattern.EventArgs.AlbumViewModel.ModelId);
 
@@ -383,7 +396,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region ItemsAdded
 
-    private void ItemsAdded(EventPattern<SongInPlayList> eventPattern)
+    private void ItemsAdded(EventPattern<SongInPlayListViewModel> eventPattern)
     {
 
     }
@@ -425,54 +438,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-    #region PlayList_CollectionChanged
-
-    private void PlayList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-    {
-
-      RaisePropertyChanged(nameof(TotalPlaylistDuration));
-
-      switch (e.Action)
-      {
-        case NotifyCollectionChangedAction.Add:
-
-          foreach (var item in e.NewItems)
-          {
-            playBookInCycle.Add((SongInPlayList)item, false);
-          }
-
-          break;
-        case NotifyCollectionChangedAction.Remove:
-          foreach (var item in e.OldItems)
-          {
-            playBookInCycle.Remove((SongInPlayList)item);
-          }
-          break;
-        case NotifyCollectionChangedAction.Replace:
-
-          foreach (var item in e.OldItems)
-          {
-            playBookInCycle.Remove((SongInPlayList)item);
-          }
-
-          foreach (var item in e.NewItems)
-          {
-            playBookInCycle.Add((SongInPlayList)item, false);
-          }
-
-          break;
-        case NotifyCollectionChangedAction.Reset:
-          playBookInCycle.Clear();
-          break;
-        default:
-          throw new ArgumentOutOfRangeException();
-      }
-
-
-    }
-
-    #endregion
-
     #region GetNewPlaylistModel
 
     protected override SongsPlaylist GetNewPlaylistModel(List<PlaylistSong> playlistModels, bool isUserCreated)
@@ -510,9 +475,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
           IsInFind(x.AlbumViewModel.Name, predictate) ||
           IsInFind(x.ArtistViewModel.Name, predictate));
 
-        var generator = new ItemsGenerator<SongInPlayList>(items, 15);
+        var generator = new ItemsGenerator<SongInPlayListViewModel>(items, 15);
 
-        VirtualizedPlayList = new VirtualList<SongInPlayList>(generator);
+        VirtualizedPlayList = new VirtualList<SongInPlayListViewModel>(generator);
 
       }
       else

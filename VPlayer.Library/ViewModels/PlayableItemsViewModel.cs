@@ -276,9 +276,4 @@ namespace VPlayer.Library.ViewModels
     #endregion Methods
 
   }
-
-  public interface IPlayableItemsViewModel
-  {
-    void Filter(string predictate);
-  }
 }

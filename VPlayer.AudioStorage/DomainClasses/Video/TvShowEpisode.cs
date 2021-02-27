@@ -29,9 +29,9 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     public void Update(TvShowEpisode other)
     {
-      throw new System.NotImplementedException();
+      Name = other.Name;
+      InfoDownloadStatus = other.InfoDownloadStatus;
+      IsFavorite = other.IsFavorite;
     }
-
-   
   }
 }

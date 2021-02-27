@@ -5,6 +5,7 @@ using Prism.Events;
 using VCore.Annotations;
 using VCore.Standard;
 using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Interfaces.ViewModels;
 
@@ -17,7 +18,8 @@ namespace VPlayer.Core.ViewModels.TvShow
     public TvShowEpisodeInPlaylistViewModel(
       TvShowEpisode model,
       IEventAggregator eventAggregator,
-      ITvShowsViewModel tvShowsViewModel) : base(model, eventAggregator)
+      ITvShowsViewModel tvShowsViewModel,
+      IStorageManager storageManager) : base(model, eventAggregator, storageManager)
     {
       this.tvShowsViewModel = tvShowsViewModel ?? throw new ArgumentNullException(nameof(tvShowsViewModel));
     }
@@ -32,9 +34,6 @@ namespace VPlayer.Core.ViewModels.TvShow
         TvShow = (await tvShowsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == Model.TvShow.Id);
     }
 
-    protected override void UpdateIsFavorite(bool value)
-    {
-    }
 
     protected override void OnActualPositionChanged(float value)
     {

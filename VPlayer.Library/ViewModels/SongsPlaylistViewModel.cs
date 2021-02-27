@@ -17,7 +17,7 @@ using VPlayer.Core.ViewModels;
 
 namespace VPlayer.Library.ViewModels
 {
-  public class SongsPlaylistViewModel : PlaylistViewModel<SongInPlayList, SongsPlaylist, PlaylistSong>
+  public class SongsPlaylistViewModel : PlaylistViewModel<SongInPlayListViewModel, SongsPlaylist, PlaylistSong>
 {
     #region Fields
 
@@ -53,7 +53,7 @@ namespace VPlayer.Library.ViewModels
 
     #region GetItemsToPlay
 
-    public override IEnumerable<SongInPlayList> GetItemsToPlay()
+    public override IEnumerable<SongInPlayListViewModel> GetItemsToPlay()
     {
       var playlist = storageManager.GetRepository< SongsPlaylist>().Where(x => x.Id == ModelId)
         .Include(x => x.PlaylistItems).ThenInclude(x => x.Song).ThenInclude(x => x.Album)
@@ -68,22 +68,22 @@ namespace VPlayer.Library.ViewModels
           logger.Log(MessageType.Error, $"SONGS WITH NULL ALBUM! {ModelId} {Name}");
         }
 
-        return validSongs.OrderBy(x => x.OrderInPlaylist).Select(x => viewModelsFactory.Create<SongInPlayList>(x.Song));
+        return validSongs.OrderBy(x => x.OrderInPlaylist).Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x.Song));
       }
 
-      return new List<SongInPlayList>(); ;
+      return new List<SongInPlayListViewModel>(); ;
     }
 
     #endregion
 
-    public override void PublishPlayEvent(IEnumerable<SongInPlayList> viewModels, EventAction eventAction )
+    public override void PublishPlayEvent(IEnumerable<SongInPlayListViewModel> viewModels, EventAction eventAction )
     {
       var e = new PlaySongsEventData(viewModels, eventAction, this);
 
       eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
     }
 
-    public override void PublishAddToPlaylistEvent(IEnumerable<SongInPlayList> viewModels)
+    public override void PublishAddToPlaylistEvent(IEnumerable<SongInPlayListViewModel> viewModels)
     {
       var e = new PlaySongsEventData(viewModels, EventAction.Add, this);
 

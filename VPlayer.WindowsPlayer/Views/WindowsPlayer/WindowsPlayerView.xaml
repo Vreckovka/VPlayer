@@ -3,11 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
+             xmlns:behaviors1="clr-namespace:VPlayer.WindowsPlayer.Behaviors"
              xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
              xmlns:converters1="clr-namespace:VCore.Converters;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:regions="http://prismlibrary.com/"
+             xmlns:regions1="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPlayer.Core"
              xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
              d:DesignHeight="450"
              d:DesignWidth="1900"
@@ -22,228 +25,47 @@
   </UserControl.Resources>
 
   <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="*" />
-      <RowDefinition Height="auto" />
-      <RowDefinition Height="auto" />
-      <RowDefinition Height="auto" />
-      <RowDefinition Height="auto" />
-    </Grid.RowDefinitions>
-
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="300" />
       <ColumnDefinition Width="*" />
       <ColumnDefinition Width="5" />
-      <ColumnDefinition Width="230" MinWidth="110" />
-      <ColumnDefinition Width="170" />
+      <ColumnDefinition Width="390" MinWidth="280" />
     </Grid.ColumnDefinitions>
 
-    <Grid Grid.RowSpan="3"
-          Grid.Column="0"
-          Grid.ColumnSpan="2">
+    <Grid Grid.Column="0">
       <Grid.RowDefinitions>
-        <RowDefinition Height="2*" />
         <RowDefinition Height="*" />
         <RowDefinition Height="auto" />
-
+        <RowDefinition Height="auto" />
       </Grid.RowDefinitions>
 
-      <Grid Grid.RowSpan="3">
-        <ContentControl BorderThickness="0"
-                        Content="{Binding UseGif}"
-                        ContentTemplateSelector="{StaticResource SongImageTemplateSelector}" />
-      </Grid>
+      <ContentControl regions:RegionManager.RegionName="{x:Static regions1:RegionNames.PlayerContentRegion}" />
 
+      <Slider x:Name="Slider_Time"
+              Grid.Row="1"
+              Margin="10,0,0,0"
+              Padding="0"
+              IsMoveToPointEnabled="True"
+              Maximum="1"
+              Value="{Binding ActualItem.ActualPosition}">
+        <b:Interaction.Behaviors>
+          <behaviors:SliderValueChangedManualy Kernel="{Binding Kernel}" Duration="{Binding ActualItem.Duration}" />
+        </b:Interaction.Behaviors>
+      </Slider>
 
-      <Border Grid.Row="1"
-              Margin="0,0,0,-2"
-              Background="#95000000">
-        <Grid>
-
-          <ContentControl BorderThickness="0"
-                          Content="{Binding ActualItem.LyricsObject}"
-                          ContentTemplateSelector="{StaticResource LyricsTemplateSelector}" />
-
-        </Grid>
-      </Border>
-
-
-      <Grid Grid.Row="0" Grid.RowSpan="3">
-        <controls1:PathButton Width="50"
-                              Height="50"
-                              Margin="10"
-                              HorizontalAlignment="Left"
-                              VerticalAlignment="Top"
-                              IconHoverColor="{StaticResource YellowColor}"
-                              IsChecked="{Binding UseGif, Mode=TwoWay}"
-                              PathCheckedBrush="{StaticResource YellowBrush}"
-                              PathStyle="{StaticResource Gif}" />
-
-      </Grid>
-
-
-      <Grid Grid.Row="2"
-            Height="75"
-            VerticalAlignment="Bottom"
-            Background="#DD000000">
-
-        <userControls:SoundVizualizer Grid.Row="0"
-                                      Grid.Column="0"
-                                      HorizontalAlignment="Stretch"
-                                      BottomColor="#251f3338"
-                                      IsEnabled="{Binding IsPlaying}"
-                                      MaxFrequency="9500"
-                                      MiddleColor="#101b1f"
-                                      NumberOfColumns="250"
-                                      Opacity="0.8"
-                                      TopColor="#8bcde0">
-
-          <userControls:SoundVizualizer.Style>
-            <Style TargetType="userControls:SoundVizualizer">
-              <Setter Property="Visibility" Value="Collapsed" />
-              <Style.Triggers>
-                <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-                  <Setter Property="Visibility" Value="Visible" />
-                </DataTrigger>
-              </Style.Triggers>
-            </Style>
-          </userControls:SoundVizualizer.Style>
-
-        </userControls:SoundVizualizer>
-
-        <Button Grid.Row="0"
-                Width="50"
-                Margin="10,0,0,15"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Bottom"
-                Command="{Binding AlbumDetail}"
-                FontSize="36">
-          <Button.Style>
-            <Style BasedOn="{StaticResource BorderlessButtonStyle}" TargetType="Button">
-              <Setter Property="FontWeight" Value="Bold" />
-              <Setter Property="Foreground" Value="#FF454555" />
-              <Setter Property="Content">
-                <Setter.Value>
-                  <Grid>
-                    <Grid Width="15"
-                          Height="35"
-                          VerticalAlignment="Center"
-                          Background="White" />
-                    <Path Data="M49.52,38.12c3.06,0,5.52-2.52,5.52-5.58c0-3-2.46-5.52-5.52-5.52S44,29.54,44,32.54C44,35.6,46.46,38.12,49.52,38.12z                             M55.4,45.86c0-2.52-2.04-4.5-4.5-4.5h-4.5c-2.52,0-4.5,1.98-4.5,4.5c0,2.46,1.98,4.5,4.5,4.5V63.5c-2.52,0-4.5,2.04-4.5,4.5                             c0,2.52,1.98,4.5,4.5,4.5h9c2.46,0,4.5-1.98,4.5-4.5c0-2.46-2.04-4.5-4.5-4.5V45.86z M50,5c24.84,0,45,20.16,45,45S74.84,95,50,95                             C25.1,95,5,74.84,5,50S25.1,5,50,5z"
-                          Fill="{Binding RelativeSource={RelativeSource AncestorType=Button, Mode=FindAncestor}, Path=Foreground}"
-                          Stroke="{Binding RelativeSource={RelativeSource AncestorType=Button, Mode=FindAncestor}, Path=Foreground}"
-                          StrokeThickness="0.2"
-                          Style="{StaticResource Information}" />
-                  </Grid>
-                </Setter.Value>
-              </Setter>
-              <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                  <Trigger.EnterActions>
-                    <BeginStoryboard>
-                      <Storyboard>
-                        <ColorAnimation Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"
-                                        From="#FF454555"
-                                        To="{StaticResource DefaultRedColor}"
-                                        Duration="0:0:0:0.25" />
-                      </Storyboard>
-                    </BeginStoryboard>
-                  </Trigger.EnterActions>
-                  <!--<Setter Property="Foreground" Value="{StaticResource DefaultRedBrush}" />-->
-                </Trigger>
-              </Style.Triggers>
-            </Style>
-          </Button.Style>
-          <Button.ToolTip>
-            <ToolTip Margin="0"
-                     Padding="5,0,5,0"
-                     Background="#FF202020"
-                     BorderThickness="0"
-                     Content="Info"
-                     FontFamily="pack://application:,,,/VPlayer.VPlayer;component/Resources/#Montserrat-Light"
-                     FontSize="18"
-                     FontWeight="Light"
-                     Foreground="#DCFFFFFF"
-                     IsOpen="False" />
-          </Button.ToolTip>
-        </Button>
-
-        <StackPanel Name="Container"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    ClipToBounds="True">
-          <TextBox Name="NameTxt"
-                   Margin="0,0,0,0"
-                   BorderThickness="0"
-                   FontFamily="{StaticResource Roboto}"
-                   FontSize="43"
-                   FontWeight="Bold"
-                   Foreground="#f7ede1"
-                   IsReadOnly="True"
-                   Text="{Binding ActualItem.Name, Mode=OneWay}">
-
-            <TextBox.Style>
-              <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
-                <Setter Property="HorizontalAlignment" Value="Center" />
-                <Style.Triggers>
-                  <DataTrigger Value="True">
-                    <DataTrigger.Binding>
-                      <MultiBinding Converter="{library1:IsBiggerConverter}">
-                        <Binding ElementName="NameTxt" Path="ActualWidth" />
-                        <Binding ElementName="Container" Path="ActualWidth" />
-                      </MultiBinding>
-                    </DataTrigger.Binding>
-                    <Setter Property="HorizontalAlignment" Value="Left" />
-                  </DataTrigger>
-                </Style.Triggers>
-              </Style>
-            </TextBox.Style>
-            <TextBox.Effect>
-              <DropShadowEffect BlurRadius="2" ShadowDepth="3" />
-            </TextBox.Effect>
-
-            <!--<i:Interaction.Behaviors>
-              <text:PanningTextWithFontSizeBehavior BiggerFontSize="35"
-                                                    Container="{Binding ElementName=Container}"
-                                                    IgnoreSizeAnimation="{Binding IsPlaying}"
-                                                    IsMouseOverRelativeToContainer="True" />
-            </i:Interaction.Behaviors>-->
-          </TextBox>
-
-          <TextBlock HorizontalAlignment="Center"
-                     FontFamily="{StaticResource Roboto}"
-                     FontSize="15"
-                     FontWeight="DemiBold"
-                     Foreground="#f2e0cb"
-                     Opacity="0.7">
-            <Run Text="{Binding ActualItem.ArtistViewModel.Name, Mode=OneWay}" />
-            <Run Text="{Binding ActualItem.AlbumViewModel.Name, Mode=OneWay, StringFormat={}({0})}" />
-
-            <TextBlock.Effect>
-              <DropShadowEffect BlurRadius="2" ShadowDepth="2" />
-            </TextBlock.Effect>
-          </TextBlock>
-        </StackPanel>
-
-        <controls1:PathButton Margin="0,0,5,5"
-                              HorizontalAlignment="Right"
-                              VerticalAlignment="Bottom"
-                              IsChecked="{Binding IsRepeate}"
-                              PathStyle="{StaticResource Repeate}" />
-
-        <controls1:PathButton Margin="0,0,35,5"
-                              HorizontalAlignment="Right"
-                              VerticalAlignment="Bottom"
-                              BorderThickness="0"
-                              IsChecked="{Binding IsShuffle}"
-                              PathStyle="{StaticResource Shuffle}" />
-      </Grid>
-
-
+      <TextBlock Grid.Row="2"
+                 Margin="10,0,0,0"
+                 HorizontalAlignment="Left"
+                 FontSize="14"
+                 Foreground="{StaticResource 120_WhiteTransparentBrush}"
+                 Text="{Binding ActualItem.ActualTime, StringFormat=hh\\:mm\\:ss}" />
+      <TextBlock Grid.Row="2"
+                 HorizontalAlignment="Right"
+                 FontSize="14"
+                 Foreground="{StaticResource 120_WhiteTransparentBrush}"
+                 Text="{Binding ActualItem.Duration, Converter={converters1:TimeConverter TimeType=Second}}" />
     </Grid>
 
-    <GridSplitter Grid.RowSpan="3"
-                  Grid.Column="2"
+    <GridSplitter Grid.Column="1"
                   Margin="2,0,0,0"
                   HorizontalAlignment="Stretch"
                   IsEnabled="True">
@@ -255,10 +77,7 @@
       </GridSplitter.Style>
     </GridSplitter>
 
-    <Grid Grid.Row="0"
-          Grid.RowSpan="5"
-          Grid.Column="3"
-          Grid.ColumnSpan="2">
+    <Grid Grid.Column="2">
       <Grid.RowDefinitions>
         <RowDefinition Height="auto" />
         <RowDefinition />
@@ -306,7 +125,7 @@
                       VerticalAlignment="Center"
                       Orientation="Horizontal">
             <TextBlock Margin="0,0,5,0" Foreground="#25ffffff">
-              <Run Text="Number of song:" />
+              <Run Text="Number of items:" />
               <Run Text="{Binding PlayList.Count, Mode=OneWay}" />
             </TextBlock>
 
@@ -337,45 +156,14 @@
                 Panel.ZIndex="0"
                 AllowDrop="True"
                 Background="{StaticResource BackgroudBrush}"
-                ItemTemplate="{StaticResource SoundTrackTemplate}"
                 ItemsSource="{Binding VirtualizedPlayList}"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 Style="{StaticResource WindowsPlayerSongs}">
         <b:Interaction.Behaviors>
           <behaviors:AutoScrollBehavior Kernel="{Binding Kernel}" StepSize="50" />
+          <behaviors1:FixListViewItemResizeBehavior ValueDecrease="25" />
         </b:Interaction.Behaviors>
       </ListView>
     </Grid>
-
-    <Slider x:Name="Slider_Time"
-            Grid.Row="3"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            Margin="0"
-            Padding="0"
-            IsMoveToPointEnabled="True"
-            Maximum="1"
-            Value="{Binding ActualItem.ActualPosition}">
-      <b:Interaction.Behaviors>
-        <behaviors:SliderValueChangedManualy Kernel="{Binding Kernel}" Duration="{Binding ActualItem.Duration}" />
-      </b:Interaction.Behaviors>
-    </Slider>
-
-    <TextBlock Grid.Row="4"
-               Grid.Column="0"
-               Grid.ColumnSpan="2"
-               HorizontalAlignment="Left"
-               FontSize="14"
-               Foreground="{StaticResource 120_WhiteTransparentBrush}"
-               Text="{Binding ActualItem.ActualTime, StringFormat=hh\\:mm\\:ss}" />
-    <TextBlock Grid.Row="4"
-               Grid.Column="0"
-               Grid.ColumnSpan="2"
-               HorizontalAlignment="Right"
-               FontSize="14"
-               Foreground="{StaticResource 120_WhiteTransparentBrush}"
-               Text="{Binding ActualItem.Duration, Converter={converters1:TimeConverter TimeType=Second}}" />
-
-
   </Grid>
 </UserControl>

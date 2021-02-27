@@ -4,19 +4,19 @@ using System.Windows.Input;
 using VCore;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
-using VCore.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
-using VPlayer.Core.Modularity.Regions;
+using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Library.Views;
 
 namespace VPlayer.Library.ViewModels.AlbumsViewModels
 {
-  public class AlbumDetailViewModel : RegionViewModel<AlbumDetailView>
+  public class AlbumDetailViewModel : DetailViewModel<AlbumDetailView>
   {
     #region Fields
 
     private readonly IViewModelsFactory viewModelsFactory;
+    private readonly IStorageManager storageManager;
 
     #endregion Fields
 
@@ -25,7 +25,8 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     public AlbumDetailViewModel(
       IRegionProvider regionProvider,
       IViewModelsFactory viewModelsFactory,
-      AlbumViewModel album) : base(regionProvider)
+      AlbumViewModel album,
+      IStorageManager storageManager) : base(regionProvider, storageManager)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       ActualAlbum = album;
@@ -37,9 +38,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
     public AlbumViewModel ActualAlbum { get; set; }
     public IEnumerable<Song> AlbumSongs => ActualAlbum.Model?.Songs;
-    public override bool ContainsNestedRegions => false;
-    public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
-
+    
     #endregion Properties
 
     #region GetCovers

@@ -3,6 +3,7 @@ using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPlayer.AudioStorage.Parsers;
 
 namespace VPlayer.AudioStorage.Modularity.NinjectModules
 {
@@ -22,6 +23,8 @@ namespace VPlayer.AudioStorage.Modularity.NinjectModules
 
       Kernel.BindToSelf<GoogleDriveLrcProvider>().InSingletonScope();
       Kernel.BindToSelf<AudioInfoDownloader>().InSingletonScope();
+
+      Kernel.Bind<ICSFDWebsiteScrapper>().To<CSFDWebsiteScrapper>();
     }
 
     #endregion Methods

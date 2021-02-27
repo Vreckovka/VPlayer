@@ -24,7 +24,7 @@ using VPlayer.Core.ViewModels.Artists;
 
 namespace VPlayer.Core.ViewModels
 {
-  public class SongInPlayList : ItemInPlayList<Song>
+  public class SongInPlayListViewModel : ItemInPlayList<Song>
   {
     #region Fields
 
@@ -38,14 +38,14 @@ namespace VPlayer.Core.ViewModels
 
     #region Constructors
 
-    public SongInPlayList(
+    public SongInPlayListViewModel(
       IEventAggregator eventAggregator,
       IAlbumsViewModel albumsViewModel,
       IArtistsViewModel artistsViewModel,
       AudioInfoDownloader audioInfoDownloader,
       Song model,
       GoogleDriveLrcProvider googleDriveLrcProvider,
-      IStorageManager storageManager) : base(model, eventAggregator)
+      IStorageManager storageManager) : base(model, eventAggregator, storageManager)
     {
       this.albumsViewModel = albumsViewModel ?? throw new ArgumentNullException(nameof(albumsViewModel));
       this.artistsViewModel = artistsViewModel ?? throw new ArgumentNullException(nameof(artistsViewModel));
@@ -65,29 +65,6 @@ namespace VPlayer.Core.ViewModels
 
     public string LRCLyrics => Model.LRCLyrics;
 
-    #region UpdateIsFavorite
-    
-    protected override async void UpdateIsFavorite(bool value)
-    {
-      if (value != Model.IsFavorite)
-      {
-        var oldVAlue = Model.IsFavorite;
-        Model.IsFavorite = value;
-
-        var updated = await storageManager.UpdateEntity(Model);
-
-        if (updated)
-        {
-          RaisePropertyChanged(nameof(IsFavorite));
-        }
-        else
-        {
-          Model.IsFavorite = oldVAlue;
-        }
-      }
-    }
-
-    #endregion
 
     #region OnActualPositionChanged
 
@@ -222,9 +199,9 @@ namespace VPlayer.Core.ViewModels
 
     public void OnDeleteSongFromPlaylistWithAlbum()
     {
-      var songs = new System.Collections.Generic.List<SongInPlayList>() { this };
+      var songs = new System.Collections.Generic.List<SongInPlayListViewModel>() { this };
 
-      eventAggregator.GetEvent<RemoveFromPlaylistEvent<SongInPlayList>>().Publish(new RemoveFromPlaylistEventArgs<SongInPlayList>()
+      eventAggregator.GetEvent<RemoveFromPlaylistEvent<SongInPlayListViewModel>>().Publish(new RemoveFromPlaylistEventArgs<SongInPlayListViewModel>()
       {
         DeleteType = DeleteType.AlbumFromPlaylist,
         ItemsToRemove = songs
@@ -259,7 +236,7 @@ namespace VPlayer.Core.ViewModels
 
     protected override void PublishPlayEvent()
     {
-      eventAggregator.GetEvent<PlaySongsFromPlayListEvent<SongInPlayList>>().Publish(this);
+      eventAggregator.GetEvent<PlaySongsFromPlayListEvent<SongInPlayListViewModel>>().Publish(this);
     }
 
     #endregion
@@ -268,15 +245,15 @@ namespace VPlayer.Core.ViewModels
 
     protected override void PublishRemoveFromPlaylist()
     {
-      var songs = new List<SongInPlayList>() { this };
+      var songs = new List<SongInPlayListViewModel>() { this };
 
-      var args = new RemoveFromPlaylistEventArgs<SongInPlayList>()
+      var args = new RemoveFromPlaylistEventArgs<SongInPlayListViewModel>()
       {
         DeleteType = DeleteType.SingleFromPlaylist,
         ItemsToRemove = songs
       };
 
-      eventAggregator.GetEvent<RemoveFromPlaylistEvent<SongInPlayList>>().Publish(args);
+      eventAggregator.GetEvent<RemoveFromPlaylistEvent<SongInPlayListViewModel>>().Publish(args);
     }
 
     #endregion
@@ -294,7 +271,7 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region TryGetLRCLyrics
+    #region LoadLRCFromEnitityLyrics
 
     public void LoadLRCFromEnitityLyrics()
     {

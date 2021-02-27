@@ -107,7 +107,7 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
     #region GetOrLoadDataAsync
 
-    public IObservable<bool> GetOrLoadDataAsync(IQueryable<TModel> optionalQuery)
+    public IObservable<bool> GetOrLoadDataAsync(IQueryable<TModel> optionalQuery = null)
     {
       return Observable.FromAsync<bool>(async () =>
       {
@@ -164,8 +164,13 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
     #region Update
 
-    public void Update(TModel entity)
+    public async void Update(TModel entity)
     {
+      if(!WasLoaded)
+      {
+        await GetOrLoadDataAsync();
+      }
+
       var originalItem = Items.SingleOrDefault(x => x.ModelId == entity.Id);
 
       if (originalItem != null)

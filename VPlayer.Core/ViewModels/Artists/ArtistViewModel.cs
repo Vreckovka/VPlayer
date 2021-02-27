@@ -27,7 +27,7 @@ namespace VPlayer.Core.ViewModels.Artists
     #endregion Methods
   }
 
-  public class ArtistViewModel : PlayableViewModelWithThumbnail<SongInPlayList,Artist>
+  public class ArtistViewModel : PlayableViewModelWithThumbnail<SongInPlayListViewModel,Artist>
   {
     #region Fields
 
@@ -65,23 +65,23 @@ namespace VPlayer.Core.ViewModels.Artists
 
     #region GetSongsToPlay
 
-    public override IEnumerable<SongInPlayList> GetItemsToPlay()
+    public override IEnumerable<SongInPlayListViewModel> GetItemsToPlay()
     {
       var songs = storage.GetRepository<Artist>().Include(x => x.Albums).ThenInclude(x => x.Songs).Where(x => x.Id == Model.Id).ToList();
 
-      return songs.SelectMany(x => x.Albums.SelectMany(y => y.Songs)).Select(x => viewModelsFactory.Create<SongInPlayList>(x));
+      return songs.SelectMany(x => x.Albums.SelectMany(y => y.Songs)).Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x));
     }
 
     #endregion
 
-    public override void PublishPlayEvent(IEnumerable<SongInPlayList> viewModels, EventAction eventAction)
+    public override void PublishPlayEvent(IEnumerable<SongInPlayListViewModel> viewModels, EventAction eventAction)
     {
       var e = new PlaySongsEventData(viewModels, eventAction, this);
 
       eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
     }
 
-    public override void PublishAddToPlaylistEvent(IEnumerable<SongInPlayList> viewModels)
+    public override void PublishAddToPlaylistEvent(IEnumerable<SongInPlayListViewModel> viewModels)
     {
       var e = new PlaySongsEventData(viewModels, EventAction.Add, this);
 

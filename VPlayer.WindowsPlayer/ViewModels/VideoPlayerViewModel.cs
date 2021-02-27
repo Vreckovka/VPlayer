@@ -22,12 +22,13 @@ using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.TvShow;
+using VPlayer.Player.Views.WindowsPlayer;
 using VPlayer.WindowsPlayer.Providers;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer;
 
 namespace VPlayer.WindowsPlayer.ViewModels
 {
-  public class VideoPlayerViewModel : PlayableRegionViewModel<VideoPlayerView, TvShowEpisodeInPlaylistViewModel, PlayTvShowEventData, TvShowPlaylist, PlaylistTvShowEpisode, TvShowEpisode>
+  public class VideoPlayerViewModel : PlayableRegionViewModel<WindowsPlayerView, TvShowEpisodeInPlaylistViewModel, PlayTvShowEventData, TvShowPlaylist, PlaylistTvShowEpisode, TvShowEpisode>
   {
     public VideoPlayerViewModel(
       IRegionProvider regionProvider,
@@ -41,7 +42,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
 
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
-
+    public override bool ContainsNestedRegions => true;
     public override string Header => "Video Player";
 
     #region Initialize
@@ -54,6 +55,16 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
 
     #endregion
+
+    public override void OnActivation(bool firstActivation)
+    {
+      base.OnActivation(firstActivation);
+
+      if (firstActivation)
+      {
+        var view = regionProvider.RegisterView<VideoPlayerView, VideoPlayerViewModel>(RegionNames.PlayerContentRegion, this, false, out var guid, RegionManager);
+      }
+    }
 
     protected override void OnRemoveItemsFromPlaylist(DeleteType deleteType, RemoveFromPlaylistEventArgs<TvShowEpisodeInPlaylistViewModel> args)
     {

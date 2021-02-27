@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
-  public class Playlist<TPlaylistItems> : DomainEntity, INamedEntity, IPlaylist<TPlaylistItems>
+  public class Playlist<TPlaylistItems> : DomainEntity, IPlaylist<TPlaylistItems>
   {
     public string Name { get; set; }
     public List<TPlaylistItems> PlaylistItems { get; set; }

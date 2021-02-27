@@ -126,6 +126,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics
 
       string mainArtist = "";
       string mainTitle = "";
+      bool isXmlShifted = false;
 
       for (int i = startIndex; i < stringsToParse.Count; i++)
       {
@@ -171,7 +172,6 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics
 
               results.Add(newResult);
 
-
               if (int.TryParse(stringsToParse[i + 1], out var downloads))
               {
                 newResult.DownloadCount = downloads;
@@ -186,14 +186,34 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics
                 Title = stringsToParse[i + 2]
               };
 
-              results.Add(newResult);
+              //Shifted xml
+              if (newResult.Artist == "uploader" || newResult.Title == "uploader" ||  isXmlShifted)
+              {
+                isXmlShifted = true;
+                var firstResult = results.FirstOrDefault();
 
-              if (int.TryParse(stringsToParse[i + 3], out var downloads))
+                if (firstResult != null)
+                {
+                  newResult.Artist = firstResult.Artist;
+                  newResult.Title = firstResult.Title;
+
+                  for (int j = i; j < stringsToParse.Count; j++)
+                  {
+                    if (int.TryParse(stringsToParse[j], out var downloadCount))
+                    {
+                      newResult.DownloadCount = downloadCount;
+                      break;
+                    }
+                  }
+                }
+              }
+              else if (int.TryParse(stringsToParse[i + 3], out var downloads))
               {
                 newResult.DownloadCount = downloads;
               }
-            }
 
+              results.Add(newResult);
+            }
           }
         }
       }

@@ -15,6 +15,12 @@
       <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/ControlsTemplates/ButtonWithIconTemplate.xaml" />
       </ResourceDictionary.MergedDictionaries>
+
+      <Style x:Key="MenuuStyle" TargetType="MenuItem">
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="FontWeight" Value="Bold" />
+      </Style>
     </ResourceDictionary>
   </UserControl.Resources>
 
@@ -24,38 +30,50 @@
       <RowDefinition Height="*" />
     </Grid.RowDefinitions>
 
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="auto" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
 
 
-    <Border Padding="10" Background="{StaticResource 10_WhiteTransparentBrush}">
-      <StackPanel Orientation="Horizontal">
-        <controls1:ButtonWithIcon Margin="1,0,0,0"
-                                  Command="{Binding LoadFromFolder}"
-                                  Content="Load from folder"
-                                  IconHoverColor="{StaticResource DefaultRedColorDim}"
-                                  IconMargin="0 0 5 0"
-                                  IconPathStyle="{StaticResource OpenFolder}" />
+    <ListView Grid.Row="0"
+              ItemsSource="{Binding NavigationViewModel.Items}"
+              Style="{StaticResource ListView_MenuStyle}">
+      <ListView.ItemsPanel>
+        <ItemsPanelTemplate>
+          <StackPanel Orientation="Horizontal" />
+        </ItemsPanelTemplate>
+      </ListView.ItemsPanel>
+    </ListView>
 
-        <controls1:ButtonWithIcon Margin="1,0,0,0"
-                                  Command="{Binding LoadTvShow}"
-                                  Content="Load tv show"
-                                  IconHoverColor="{StaticResource DefaultRedColorDim}"
-                                  IconMargin="0 0 5 0"
-                                  IconPathStyle="{StaticResource OpenFolder}" />
-      </StackPanel>
+    <Menu Grid.Column="1"
+          Padding="10"
+          Background="{StaticResource 10_WhiteTransparentBrush}">
+      <MenuItem BorderThickness="0"
+                Header="Load"
+                Style="{StaticResource MenuuStyle}">
+
+        <MenuItem Background="{StaticResource TopWindowsBrush}"
+                  Command="{Binding LoadFromFolder}"
+                  Header="Music"
+                  Style="{StaticResource MenuuStyle}" />
+        <MenuItem Background="{StaticResource TopWindowsBrush}"
+                  Command="{Binding LoadTvShow}"
+                  Header="Tv show"
+                  Style="{StaticResource MenuuStyle}" />
+      </MenuItem>
+    </Menu>
+
+
+
+
+    <Border Grid.Row="1"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            BorderBrush="{StaticResource 10_WhiteTransparentBrush}"
+            BorderThickness="0,3,0,0">
+      <ContentControl mvvm:RegionManager.RegionName="{x:Static regions:RegionNames.WindowsPlayerContentRegion}" />
     </Border>
 
-
-    <Grid Grid.Row="1">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="auto" />
-        <ColumnDefinition Width="*" />
-      </Grid.ColumnDefinitions>
-
-      <Border BorderBrush="{StaticResource 10_WhiteTransparentBrush}">
-        <ListView ItemsSource="{Binding NavigationViewModel.Items}" Style="{StaticResource ListView_MenuStyle}" />
-      </Border>
-
-      <ContentControl Grid.Column="1" mvvm:RegionManager.RegionName="{x:Static regions:RegionNames.WindowsPlayerContentRegion}" />
-    </Grid>
   </Grid>
 </UserControl>

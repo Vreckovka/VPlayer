@@ -17,6 +17,7 @@
         Icon="/Includes/VPlayerLogo.png"
         Style="{StaticResource {x:Type Window}}"
         WindowStartupLocation="CenterScreen"
+        WindowStyle="SingleBorderWindow"
         mc:Ignorable="d">
 
   <Window.Resources>
@@ -44,28 +45,7 @@
       <RowDefinition Height="auto" />
     </Grid.RowDefinitions>
 
-    <Border Height="45" Background="#06ffffff">
-      <StackPanel Orientation="Horizontal">
-        <TextBlock Margin="5,0"
-                   VerticalAlignment="Center"
-                   FontSize="17"
-                   Foreground="{StaticResource 100_WhiteTransparentBrush}"
-                   Text="Selected player: " />
-
-        <controls1:PathButton Margin="0,0,35,5"
-                              HorizontalAlignment="Left"
-                              VerticalAlignment="Bottom"
-                              BorderThickness="0"
-                              Foreground="#DB505050"
-                              IsChecked="{Binding IsWindows}"
-                              IsEnabled="False"
-                              PathStyle="{StaticResource Windows}" />
-
-
-      </StackPanel>
-
-    </Border>
-
+    
 
     <Button Click="Button_Click"
             Content="DELETE ALL"

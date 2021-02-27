@@ -9,25 +9,27 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener", "KeyListener\Lis
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer.WebPlayer", "VPlayer.WebPlayer\VPlayer.WebPlayer.csproj", "{2D6B4AAE-1065-4E73-A96A-BDC154F0F4FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer.WindowsPlayer", "VPlayer.WindowsPlayer\VPlayer.WindowsPlayer.csproj", "{A252EBB2-D31A-4A6A-A77C-A688E303801D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPlayer.WindowsPlayer", "VPlayer.WindowsPlayer\VPlayer.WindowsPlayer.csproj", "{A252EBB2-D31A-4A6A-A77C-A688E303801D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logger", "..\CustomLibraries\Logger\Logger.csproj", "{6212FADF-45A6-4613-B5A8-5C5A57F3BFB0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logger", "..\CustomLibraries\Logger\Logger.csproj", "{6212FADF-45A6-4613-B5A8-5C5A57F3BFB0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer.AudioStorage", "VPlayer.AudioStorage\VPlayer.AudioStorage.csproj", "{B5245008-CFDF-4B83-BF61-B0B26A8E92BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPlayer.AudioStorage", "VPlayer.AudioStorage\VPlayer.AudioStorage.csproj", "{B5245008-CFDF-4B83-BF61-B0B26A8E92BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer.Library", "VPlayer.Library\VPlayer.Library.csproj", "{26D6BB81-3F3C-4DDC-857D-2B2DC4C660B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPlayer.Library", "VPlayer.Library\VPlayer.Library.csproj", "{26D6BB81-3F3C-4DDC-857D-2B2DC4C660B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer.Core", "VPlayer.Core\VPlayer.Core.csproj", "{B8D5C40B-3B3D-43E1-95FA-97087581BDA2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPlayer.Core", "VPlayer.Core\VPlayer.Core.csproj", "{B8D5C40B-3B3D-43E1-95FA-97087581BDA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer.Player", "VPlayer.Player\VPlayer.Player.csproj", "{D56E4595-786F-4580-B3E0-EEA5871F582F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPlayer.Player", "VPlayer.Player\VPlayer.Player.csproj", "{D56E4595-786F-4580-B3E0-EEA5871F582F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01.Common", "01.Common", "{E90D9EBC-6FA1-471C-84A9-CFC5B30756E4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VCore.Standard", "..\CustomLibraries\VCore.Standard\VCore.Standard.csproj", "{A7210679-60D5-4B26-BC34-9E22C91EF175}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VCore.WPF", "..\CustomLibraries\VCore\VCore.WPF.csproj", "{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VCore.WPF", "..\CustomLibraries\VCore\VCore.WPF.csproj", "{5AA43597-FD3D-4F10-89A5-EB77D3B831D9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPlayer.DarkTheme", "VPlayer.DarkTheme\VPlayer.DarkTheme.csproj", "{219D618D-ED68-4076-813C-B9C8DB4FF49C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebsiteParser", "..\CustomLibraries\WebsiteParser\WebsiteParser.csproj", "{FD6EC0C9-A961-49D9-83EE-5FA6020650C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -183,6 +185,18 @@ Global
 		{219D618D-ED68-4076-813C-B9C8DB4FF49C}.Release|x64.Build.0 = Release|Any CPU
 		{219D618D-ED68-4076-813C-B9C8DB4FF49C}.Release|x86.ActiveCfg = Release|Any CPU
 		{219D618D-ED68-4076-813C-B9C8DB4FF49C}.Release|x86.Build.0 = Release|Any CPU
+		{FD6EC0C9-A961-49D9-83EE-5FA6020650C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD6EC0C9-A961-49D9-83EE-5FA6020650C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD6EC0C9-A961-49D9-83EE-5FA6020650C9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FD6EC0C9-A961-49D9-83EE-5FA6020650C9}.Debug|x64.Build.0 = Debug|Any CPU
+		{FD6EC0C9-A961-49D9-83EE-5FA6020650C9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FD6EC0C9-A961-49D9-83EE-5FA6020650C9}.Debug|x86.Build.0 = Debug|Any CPU
+		{FD6EC0C9-A961-49D9-83EE-5FA6020650C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD6EC0C9-A961-49D9-83EE-5FA6020650C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD6EC0C9-A961-49D9-83EE-5FA6020650C9}.Release|x64.ActiveCfg = Release|Any CPU
+		{FD6EC0C9-A961-49D9-83EE-5FA6020650C9}.Release|x64.Build.0 = Release|Any CPU
+		{FD6EC0C9-A961-49D9-83EE-5FA6020650C9}.Release|x86.ActiveCfg = Release|Any CPU
+		{FD6EC0C9-A961-49D9-83EE-5FA6020650C9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -191,6 +205,7 @@ Global
 		{A7210679-60D5-4B26-BC34-9E22C91EF175} = {E90D9EBC-6FA1-471C-84A9-CFC5B30756E4}
 		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9} = {E90D9EBC-6FA1-471C-84A9-CFC5B30756E4}
 		{219D618D-ED68-4076-813C-B9C8DB4FF49C} = {E90D9EBC-6FA1-471C-84A9-CFC5B30756E4}
+		{FD6EC0C9-A961-49D9-83EE-5FA6020650C9} = {E90D9EBC-6FA1-471C-84A9-CFC5B30756E4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7757B067-0629-4B99-BC33-50BF3898A109}

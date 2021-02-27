@@ -32,7 +32,9 @@ namespace VPlayer.Core.ViewModels.TvShow
 
     public override void Update(AudioStorage.DomainClasses.Video.TvShow updateItem)
     {
-      throw new NotImplementedException();
+      Model.Update(updateItem);
+
+      RaisePropertyChanges();
     }
 
     protected override void OnDetail()

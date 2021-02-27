@@ -20,6 +20,8 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
 
     Subject<Unit> ActionIsDone { get; }
 
+    ReplaySubject<ItemChanged> ItemChanged { get; }
+
     #endregion 
 
     #region Methods
@@ -28,21 +30,38 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
     Task DownloadAllNotYetDownloaded(bool tryDownloadBroken = false);
     DbSet<T> GetRepository<T>(DbContext dbContext = null) where T : class;
 
+    #region Generic methods
 
-    Task<bool> StoreData(IEnumerable<string> audioPath);
-    Task<bool> StoreData(string audioPath);
-    bool StorePlaylist<TPlaylist>(TPlaylist model, out TPlaylist entityModel) where TPlaylist : class, IPlaylist;
-    void UpdateData<TPlaylist>(TPlaylist playlist) where TPlaylist : class, IPlaylist;
-    void RewriteEntity<T>(T entity) where T : class, IEntity;
+    bool StoreEntity<TEntity>(TEntity model, out TEntity entityModel) where TEntity : class, IEntity;
+    bool DeleteEntity<TEntity>(TEntity entity) where TEntity : class, IEntity;
     Task<bool> UpdateEntity<TEntity>(TEntity newVersion) where TEntity : class, IEntity, IUpdateable<TEntity>;
-    IDisposable SubscribeToItemChange<TModel>(Action<ItemChanged<TModel>> observer);
+    void RewriteEntity<T>(T entity) where T : class, IEntity;
+   
+
+
 
     Task DeletePlaylist<TPlaylist, TPlaylistItem>(TPlaylist songsPlaylist)
       where TPlaylist : class, IPlaylist<TPlaylistItem>
       where TPlaylistItem : class;
-    void PushAction(ItemChanged itemChanged);
-    Task StoreTvShow(TvShow tvShow);
 
-    #endregion Methods
+    void UpdatePlaylist<TPlaylist, TPlaliystModel>(TPlaylist playlist) where TPlaylist : class, IPlaylist<TPlaliystModel>;
+
+    #endregion
+
+    Task<bool> StoreData(IEnumerable<string> audioPath);
+    Task<bool> StoreData(string audioPath);
+
+   
+   
+
+    IDisposable SubscribeToItemChange<TModel>(Action<ItemChanged<TModel>> observer);
+    Task<bool> UpdateWholeTvShow(TvShow newVersion);
+
+  
+
+    void PushAction(ItemChanged itemChanged);
+    Task<int> StoreTvShow(TvShow tvShow);
+
+    #endregion 
   }
 }

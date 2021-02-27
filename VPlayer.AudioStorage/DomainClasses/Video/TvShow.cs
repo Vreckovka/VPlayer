@@ -14,7 +14,15 @@ namespace VPlayer.AudioStorage.DomainClasses.Video
 
     public void Update(TvShow other)
     {
-      throw new NotImplementedException();
+      Name = other.Name;
+      InfoDownloadStatus = other.InfoDownloadStatus;
+
+      foreach(var episode in other.Episodes)
+      {
+        var mineEpisode = Episodes.Single(x => x.Id == episode.Id);
+
+        mineEpisode.Update(episode);
+      }
     }
   }
 }

@@ -7,17 +7,22 @@ using Prism.Events;
 using VCore;
 using VCore.Annotations;
 using VCore.Standard;
+using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 
 namespace VPlayer.Core.ViewModels
 {
-  public abstract class ItemInPlayList<TModel> : ViewModel<TModel>, IItemInPlayList<TModel> where TModel : IPlayableModel
+  public abstract class ItemInPlayList<TModel> : ViewModel<TModel>, IItemInPlayList<TModel>
+    where TModel : class, IPlayableModel, IUpdateable<TModel>, IEntity
   {
     protected readonly IEventAggregator eventAggregator;
+    private readonly IStorageManager storageManager;
 
-    protected ItemInPlayList(TModel model, [NotNull] IEventAggregator eventAggregator) : base(model)
+    protected ItemInPlayList(TModel model, IEventAggregator eventAggregator, [NotNull] IStorageManager storageManager) : base(model)
     {
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
+      this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
     }
 
     #region Properties
@@ -83,30 +88,30 @@ namespace VPlayer.Core.ViewModels
 
     #region Commands
 
-    #region DeleteSongFromPlaylist
+    #region DeleteItemFromPlaylist
 
-    private ActionCommand deleteSongFromPlaylist;
+    private ActionCommand deleteItemFromPlaylist;
 
-    public ICommand DeleteSongFromPlaylist
+    public ICommand DeleteItemFromPlaylist
     {
       get
       {
-        if (deleteSongFromPlaylist == null)
+        if (deleteItemFromPlaylist == null)
         {
-          deleteSongFromPlaylist = new ActionCommand(OnDeleteSongFromPlaylist);
+          deleteItemFromPlaylist = new ActionCommand(OnDeleteSongFromPlaylist);
         }
 
-        return deleteSongFromPlaylist;
+        return deleteItemFromPlaylist;
       }
     }
 
     public void OnDeleteSongFromPlaylist()
     {
       PublishRemoveFromPlaylist();
-   }
+    }
 
     #endregion
-    
+
     #region Play
 
     private ActionCommand play;
@@ -124,7 +129,7 @@ namespace VPlayer.Core.ViewModels
       }
     }
 
-   
+
     private void OnPlayButton()
     {
       if (!IsPlaying)
@@ -137,9 +142,9 @@ namespace VPlayer.Core.ViewModels
       }
     }
 
-   
 
-    #endregion 
+
+    #endregion
 
     #region OpenContainingFolder
 
@@ -161,14 +166,18 @@ namespace VPlayer.Core.ViewModels
 
     private void OnOpenContainingFolder()
     {
-
       if (!string.IsNullOrEmpty(Model.DiskLocation))
       {
         var folder = Path.GetDirectoryName(Model.DiskLocation);
 
         if (!string.IsNullOrEmpty(folder))
         {
-          Process.Start(folder);
+          Process.Start(new System.Diagnostics.ProcessStartInfo()
+          {
+            FileName = folder,
+            UseShellExecute = true,
+            Verb = "open"
+          });
         }
       }
     }
@@ -178,7 +187,30 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    protected abstract void UpdateIsFavorite(bool value);
+    #region UpdateIsFavorite
+
+    protected async void UpdateIsFavorite(bool value)
+    {
+      if (value != Model.IsFavorite)
+      {
+        var oldVAlue = Model.IsFavorite;
+        Model.IsFavorite = value;
+
+        var updated = await storageManager.UpdateEntity(Model);
+
+        if (updated)
+        {
+          RaisePropertyChanged(nameof(IsFavorite));
+        }
+        else
+        {
+          Model.IsFavorite = oldVAlue;
+        }
+      }
+    }
+
+    #endregion
+
     protected abstract void OnActualPositionChanged(float value);
     protected abstract void OnIsPlayingChanged(bool value);
     protected abstract void PublishPlayEvent();

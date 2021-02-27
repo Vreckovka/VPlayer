@@ -103,6 +103,7 @@ namespace VPlayer.Core.ViewModels
     {
       RaisePropertyChanged(nameof(BottomText));
       RaisePropertyChanged(nameof(ImageThumbnail));
+      RaisePropertyChanged(nameof(InfoDownloadStatus));
     }
 
     #endregion

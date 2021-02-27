@@ -12,19 +12,7 @@
     <ResourceDictionary Source="ButtonsStyle.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
-  <DataTemplate x:Key="SoundTrackTemplate">
-    <Grid>
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*" MaxWidth="150" />
-        <ColumnDefinition Width="*" />
-      </Grid.ColumnDefinitions>
-      <TextBlock HorizontalAlignment="Left" Text="{Binding Name}" />
-      <TextBlock Grid.Column="1"
-                 HorizontalAlignment="Right"
-                 Text="{Binding Duration, StringFormat=hh\\:mm\\:ss}" />
-    </Grid>
-  </DataTemplate>
-
+  
   <DataTemplate x:Key="InternetPlayerTemplate">
     <StackPanel Width="180">
       <TextBlock HorizontalAlignment="Center" Text="{Binding Title}" />

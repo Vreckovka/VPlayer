@@ -10,6 +10,7 @@
     <Setter Property="FontSize" Value="25" />
     <Setter Property="BorderThickness" Value="0" />
     <Setter Property="Foreground" Value="#616161" />
+    <Setter Property="Width" Value="50" />
     <Setter Property="CommandParameter" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
     <Setter Property="Template">
       <Setter.Value>
@@ -38,6 +39,7 @@
     <Setter Property="Foreground" Value="GhostWhite" />
     <Setter Property="WindowStyle" Value="None" />
     <Setter Property="OverridesDefaultStyle" Value="True" />
+    <Setter Property="Topmost" Value="{Binding TopMost}" />
     <Setter Property="Background" Value="{StaticResource TopWindowsBrush}" />
     <Setter Property="Template">
       <Setter.Value>
@@ -52,6 +54,7 @@
                   <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <Grid x:Name="WindowsChromeGrid"
+                      Height="35"
                       Panel.ZIndex="1"
                       Visibility="{Binding WindowChromeVisiblity}">
                   <Grid.Background>
@@ -153,21 +156,16 @@
                             CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}}"
                             Content="X">
                       <Button.Style>
-                        <Style TargetType="Button">
-                          <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
-                          <Setter Property="Background" Value="Transparent" />
-                          <Setter Property="HorizontalAlignment" Value="Center" />
+                        <Style BasedOn="{StaticResource WindowsChromeButtonStyle}" TargetType="Button">
                           <Setter Property="FontSize" Value="15" />
-                          <Setter Property="BorderThickness" Value="0" />
-                          <Setter Property="Foreground" Value="#616161" />
-                          <Setter Property="CommandParameter" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
                           <Setter Property="Template">
                             <Setter.Value>
                               <ControlTemplate TargetType="{x:Type Button}">
                                 <Border Name="Border"
                                         Padding="15,0"
                                         Background="{TemplateBinding Background}">
-                                  <TextBlock VerticalAlignment="Center"
+                                  <TextBlock HorizontalAlignment="Center"
+                                             VerticalAlignment="Center"
                                              FontWeight="Bold"
                                              Foreground="{TemplateBinding Foreground}"
                                              Text="{TemplateBinding Content}" />

@@ -3,7 +3,7 @@ using VPlayer.Core.ViewModels;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
-  public interface IUpdateable<TEntity>
+  public interface IUpdateable<TEntity> 
   {
     void Update(TEntity other);
   }

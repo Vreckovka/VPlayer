@@ -119,6 +119,10 @@ namespace VPlayer.WindowsPlayer.Behaviors
       {
         panel.Children.Add(AssociatedObject);
       }
+      else if (originalParent is ContentPresenter contentPresenter)
+      {
+        contentPresenter.Content = AssociatedObject;
+      }
 
     }
 

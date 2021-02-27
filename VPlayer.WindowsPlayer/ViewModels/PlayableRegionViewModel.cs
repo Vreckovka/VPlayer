@@ -327,12 +327,19 @@ namespace VPlayer.Core.ViewModels
 
       PlayList.DisposeWith(this);
 
+      PlayList.CollectionChanged += PlayList_CollectionChanged;
+
       actualSearchSubject.Throttle(TimeSpan.FromMilliseconds(150)).Subscribe(FilterByActualSearch).DisposeWith(this);
 
       HookToVlcEvents();
 
 
       HookToPubSubEvents();
+    }
+
+    private void PlayList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+      RaisePropertyChanged(nameof(TotalPlaylistDuration));
     }
 
     #endregion
@@ -758,17 +765,22 @@ namespace VPlayer.Core.ViewModels
       }
       else if (!ActualSavedPlaylist.IsUserCreated)
       {
-        success = storageManager.StorePlaylist(entityPlayList, out var entityPlaylistDb);
-
-        UpdateNonUserCreatedPlaylist(entityPlayList, entityPlaylistDb);
-
-        ActualSavedPlaylist = entityPlayList;
-
-        if (!success)
+        if (ActualSavedPlaylist.Id <= 0)
         {
+          storageManager.StoreEntity(entityPlayList, out var dbEntityPlalist);
+
+          UpdateNonUserCreatedPlaylist(entityPlayList, dbEntityPlalist);
+
+          ActualSavedPlaylist = entityPlayList;
+
           ActualSavedPlaylist.LastPlayed = DateTime.Now;
-          UpdateActualSavedPlaylistPlaylist();
         }
+        else
+        {
+          storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(ActualSavedPlaylist);
+        }
+        
+        UpdateActualSavedPlaylistPlaylist();
       }
 
       return success;
@@ -804,7 +816,8 @@ namespace VPlayer.Core.ViewModels
 
     protected void UpdateActualSavedPlaylistPlaylist()
     {
-      storageManager.UpdateData(ActualSavedPlaylist);
+      storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(ActualSavedPlaylist);
+
     }
 
     #endregion
@@ -953,26 +966,6 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region Dispose
-
-    public override void Dispose()
-    {
-      VlcControl.SourceProvider.MediaPlayer.TimeChanged -= OnVlcTimeChanged;
-      VlcControl.SourceProvider.MediaPlayer.Playing -= OnVlcPlayingChanged;
-
-      VlcControl.SourceProvider.Dispose();
-      VlcControl.Dispose();
-
-      if (ActualSavedPlaylist != null)
-        UpdateActualSavedPlaylistPlaylist();
-
-
-
-      base.Dispose();
-    }
-
-    #endregion
-
     #region RemoveItemsFromPlaylist
 
     private void RemoveItemsFromPlaylist(RemoveFromPlaylistEventArgs<TItemViewModel> obj)
@@ -1033,10 +1026,32 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+
     protected abstract void OnRemoveItemsFromPlaylist(DeleteType deleteType, RemoveFromPlaylistEventArgs<TItemViewModel> args);
     protected abstract void ItemsRemoved(EventPattern<TItemViewModel> eventPattern);
     protected abstract void FilterByActualSearch(string predictate);
     protected abstract TPlaylistModel GetNewPlaylistModel(List<TPlaylistItemModel> playlistModels, bool isUserCreated);
+
+    #region Dispose
+
+    public override void Dispose()
+    {
+      VlcControl.SourceProvider.MediaPlayer.TimeChanged -= OnVlcTimeChanged;
+      VlcControl.SourceProvider.MediaPlayer.Playing -= OnVlcPlayingChanged;
+
+      VlcControl.SourceProvider.Dispose();
+      VlcControl.Dispose();
+
+      if (ActualSavedPlaylist != null)
+        UpdateActualSavedPlaylistPlaylist();
+
+
+      PlayList.CollectionChanged -= PlayList_CollectionChanged;
+
+      base.Dispose();
+    }
+
+    #endregion
 
     #endregion
   }

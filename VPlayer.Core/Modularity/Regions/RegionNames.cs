@@ -6,6 +6,7 @@
     public const string PlayerRegion = "PlayerRegion";
     public const string FullscreenRegion = nameof(FullscreenRegion);
     public const string WindowsPlayerContentRegion = "WindowsPlayerContentRegion";
+    public const string PlayerContentRegion = "PlayerContentRegion";
     public const string LibraryContentRegion = "LibraryContentRegion";
   }
 }
