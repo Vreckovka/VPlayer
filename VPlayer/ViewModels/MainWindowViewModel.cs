@@ -182,8 +182,6 @@ namespace VPlayer.ViewModels
 
     #region ChangeFullScreen
 
-    private ResizeMode oldResizeMode;
-    private WindowStyle oldWindowStyle;
     private void ChangeFullScreen(bool isFullScreen)
     {
       var mainWindow = Application.Current.MainWindow;
@@ -192,26 +190,12 @@ namespace VPlayer.ViewModels
       {
         if (isFullScreen)
         {
-          oldResizeMode = mainWindow.ResizeMode;
-          oldWindowStyle = mainWindow.WindowStyle;
-
-          mainWindow.WindowStyle = WindowStyle.None;
-          mainWindow.ResizeMode = ResizeMode.NoResize;
           WindowChromeVisiblity = Visibility.Collapsed;
-
-          if (mainWindow.WindowState == WindowState.Maximized)
-          {
-            mainWindow.Hide();
-            mainWindow.Show();
-          }
 
           mainWindow.WindowState = WindowState.Maximized;
         }
         else
         {
-          mainWindow.ResizeMode = oldResizeMode;
-          mainWindow.WindowStyle = oldWindowStyle;
-
           WindowChromeVisiblity = Visibility.Visible;
 
           mainWindow.WindowState = WindowState.Normal;

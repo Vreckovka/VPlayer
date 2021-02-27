@@ -6,7 +6,7 @@
                     xmlns:lrc="clr-namespace:VPlayer.AudioStorage.InfoDownloader.LRC;assembly=VCore.WPF">
 
   <DataTemplate x:Key="VideoDataTemplate">
-    <Grid>
+    <Grid Background="Transparent">
       <Border Padding="0,0,5,5">
         <Grid VerticalAlignment="Bottom">
           <Grid.ColumnDefinitions>

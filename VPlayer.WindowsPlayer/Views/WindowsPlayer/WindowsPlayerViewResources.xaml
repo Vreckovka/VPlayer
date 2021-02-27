@@ -20,9 +20,9 @@
     <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Views/WindowsPlayer/VideoPlayerViewResources.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
-  <templateSelectors:WindowsPlayerItemsTemplateSelector x:Key="WindowsPlayerItemsTemplateSelector" 
-                                                        SongDataTemplate="{StaticResource SongDataTemplate}" 
-                                                        VideoDataTemplate="{StaticResource VideoDataTemplate}"/>
+  <templateSelectors:WindowsPlayerItemsTemplateSelector x:Key="WindowsPlayerItemsTemplateSelector"
+                                                        SongDataTemplate="{StaticResource SongDataTemplate}"
+                                                        VideoDataTemplate="{StaticResource VideoDataTemplate}" />
 
   <Style x:Key="ListViewItem_PlayerTrack" TargetType="{x:Type ListViewItem}">
     <Setter Property="Foreground" Value="{StaticResource 100_WhiteTransparentBrush}" />
@@ -48,10 +48,6 @@
                       Command="{Binding Play}"
                       Style="{StaticResource PlayMini}" />
 
-              <ContentPresenter Grid.Row="0"
-                                Grid.Column="1"
-                                Grid.ColumnSpan="2"
-                                ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}" />
 
               <Grid Name="Container"
                     Grid.Column="1"
@@ -79,8 +75,8 @@
                 </Grid.ColumnDefinitions>
 
                 <controls2:ButtonWithIcon Grid.Column="0"
+                                          Margin="0,0,5,0"
                                           Padding="2"
-                                          Margin="0 0 5 0"
                                           HorizontalAlignment="Left"
                                           IconHeight="11"
                                           IconPathStyle="{StaticResource Info}"
@@ -197,6 +193,12 @@
                   </Style>
                 </TextBlock.Style>
               </TextBlock>
+
+              <ContentPresenter Grid.Row="0"
+                                Grid.Column="1"
+                                Grid.ColumnSpan="2"
+                                ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}" />
+
 
             </Grid>
 

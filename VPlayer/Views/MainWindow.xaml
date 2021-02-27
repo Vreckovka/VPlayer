@@ -17,7 +17,7 @@
         Icon="/Includes/VPlayerLogo.png"
         Style="{StaticResource {x:Type Window}}"
         WindowStartupLocation="CenterScreen"
-        WindowStyle="SingleBorderWindow"
+        WindowStyle="None"
         mc:Ignorable="d">
 
   <Window.Resources>
