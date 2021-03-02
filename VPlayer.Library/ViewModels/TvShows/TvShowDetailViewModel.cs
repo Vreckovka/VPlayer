@@ -31,24 +31,9 @@ namespace VPlayer.Library.ViewModels.TvShows
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
     }
 
-    #region Update
+    #region OnUpdate
 
-    private ActionCommand update;
-
-    public ICommand Update
-    {
-      get
-      {
-        if (update == null)
-        {
-          update = new ActionCommand(OnUpdate);
-        }
-
-        return update;
-      }
-    }
-
-    protected virtual async void OnUpdate()
+    protected override void OnUpdate()
     {
       var vm = viewModelsFactory.Create< UpdateTvShowViewModel>(ViewModel.Model);
 

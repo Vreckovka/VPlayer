@@ -1,22 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
+using Logger;
+using Prism.Events;
 using VCore;
+using VCore.Annotations;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
 using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPlayer.Core.Managers.Status;
 using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Library.Views;
 
 namespace VPlayer.Library.ViewModels.AlbumsViewModels
 {
-  public class AlbumDetailViewModel : DetailViewModel<AlbumViewModel,Album,AlbumDetailView>
+  public class AlbumDetailViewModel : DetailViewModel<AlbumViewModel, Album, AlbumDetailView>
   {
     #region Fields
 
     private readonly IViewModelsFactory viewModelsFactory;
+    private readonly AudioInfoDownloader audioInfoDownloader;
+    private readonly IStatusManager statusManager;
+    private readonly ILogger logger;
     private readonly IStorageManager storageManager;
 
     #endregion Fields
@@ -28,9 +39,17 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
       IViewModelsFactory viewModelsFactory,
       AlbumViewModel album,
       IStorageManager storageManager,
-      IWindowManager windowManager) : base(regionProvider, storageManager, album, windowManager)
+      IWindowManager windowManager,
+      AudioInfoDownloader audioInfoDownloader,
+      [NotNull] IStatusManager statusManager,
+      [NotNull] ILogger logger
+      ) : base(regionProvider, storageManager, album, windowManager)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+      this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
+      this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
+      this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     #endregion Constructors
@@ -38,7 +57,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     #region Properties
 
     public IEnumerable<Song> AlbumSongs => ViewModel?.Model?.Songs;
-    
+
     #endregion Properties
 
     #region GetCovers
@@ -60,12 +79,70 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
     protected void OnGetCovers()
     {
-      var covers = viewModelsFactory.Create<AlbumCoversViewModel>(ViewModel,RegionName);
+      var covers = viewModelsFactory.Create<AlbumCoversViewModel>(ViewModel, RegionName);
 
       covers.IsActive = true;
     }
 
     #endregion GetCovers
-    
+
+    #region OnUpdate
+
+    protected override void OnUpdate()
+    {
+      Task.Run(() =>
+      {
+        var songs = AlbumSongs.ToList();
+
+        var statusMessage = new StatusMessage(songs.Count)
+        {
+          ActualMessageStatusState = MessageStatusState.Processing,
+          Message = "Updating album songs from fingerprint"
+        };
+
+        statusManager.UpdateMessage(statusMessage);
+
+        if (songs.Count == 0)
+        {
+          statusMessage.ActualMessageStatusState = MessageStatusState.Failed;
+          statusMessage.FailedMessage = "Album has no songs";
+
+          statusManager.UpdateMessage(statusMessage);
+          return;
+        }
+
+        try
+        {
+          foreach (var song in songs)
+          {
+            var audioInfo = audioInfoDownloader.GetAudioInfoByFingerPrint(song.DiskLocation);
+
+            if (audioInfo != null)
+            {
+              song.Name = audioInfo.Title;
+            }
+
+            storageManager.UpdateEntity(song);
+
+            statusMessage.ProcessedCount++;
+
+            statusManager.UpdateMessage(statusMessage);
+          }
+
+          statusMessage.ActualMessageStatusState = MessageStatusState.Done;
+          statusManager.UpdateMessage(statusMessage);
+        }
+        catch (Exception ex)
+        {
+          statusMessage.ActualMessageStatusState = MessageStatusState.Failed;
+          statusManager.UpdateMessage(statusMessage);
+
+          logger.Log(ex);
+        }
+      });
+    }
+
+    #endregion
+
   }
 }

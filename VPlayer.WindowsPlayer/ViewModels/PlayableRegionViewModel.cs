@@ -262,6 +262,8 @@ namespace VPlayer.Core.ViewModels
       }
     }
 
+   
+
     #endregion
 
     #region TotalPlaylistDuration
@@ -694,6 +696,35 @@ namespace VPlayer.Core.ViewModels
         VlcControl.SourceProvider.MediaPlayer.Pause();
         IsPlaying = false;
       }
+    }
+
+    #endregion
+
+    #region SeekForward
+
+    public void SeekForward(int seekSize)
+    {
+      VlcControl.SourceProvider.MediaPlayer.Position = VlcControl.SourceProvider.MediaPlayer.Position + GetSeekSize(seekSize);
+      ActualItem.ActualPosition = VlcControl.SourceProvider.MediaPlayer.Position;
+    }
+
+    #endregion
+
+    #region SeekBackward
+
+    public void SeekBackward(int seekSize)
+    {
+      VlcControl.SourceProvider.MediaPlayer.Position = VlcControl.SourceProvider.MediaPlayer.Position - GetSeekSize(seekSize);
+      ActualItem.ActualPosition = VlcControl.SourceProvider.MediaPlayer.Position;
+    }
+
+    #endregion
+
+    #region GetSeekSize
+
+    private float GetSeekSize(int seconds)
+    {
+      return seconds * (float)100.0 / VlcControl.SourceProvider.MediaPlayer.Length;
     }
 
     #endregion

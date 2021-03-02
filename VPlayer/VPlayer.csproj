@@ -56,4 +56,10 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="ChromaPrint\fpcalc.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

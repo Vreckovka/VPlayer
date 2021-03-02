@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Timers;
@@ -21,8 +20,7 @@ namespace VPlayer.WindowsPlayer.Behaviors
   {
     private bool isFullScreen;
     private DependencyObject originalParent;
-    private Timer cursorTimer;
-    private ElapsedEventHandler hideCursorDelegate;
+   
 
     #region EventAggregator
 
@@ -47,24 +45,11 @@ namespace VPlayer.WindowsPlayer.Behaviors
 
       AssociatedObject.MouseLeftButtonDown += AssociatedObject_MouseLeftButtonDown;
       AssociatedObject.MouseMove += AssociatedObject_MouseMove;
-
-      cursorTimer = new Timer(1500);
-      cursorTimer.AutoReset = false;
-
-      hideCursorDelegate = (s, e) =>
-      {
-        if (isFullScreen)
-          MouseExt.SafeOverrideCursor(Cursors.None);
-      };
-
-      cursorTimer.Elapsed += hideCursorDelegate;
     }
 
     private void AssociatedObject_MouseMove(object sender, MouseEventArgs e)
     {
-      cursorTimer.Stop();
-      Mouse.OverrideCursor = null; //Show cursor
-      cursorTimer.Start();
+      ShowHideMouseManager.ResetMouse();
     }
 
     private void AssociatedObject_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -154,22 +139,10 @@ namespace VPlayer.WindowsPlayer.Behaviors
     {
       base.OnDetaching();
 
-      cursorTimer.Elapsed -= hideCursorDelegate;
       AssociatedObject.MouseLeftButtonDown -= AssociatedObject_MouseLeftButtonDown;
       AssociatedObject.MouseMove -= AssociatedObject_MouseMove;
     }
 
     #endregion
-  }
-
-  public static class MouseExt
-  {
-    public static void SafeOverrideCursor(Cursor cursor)
-    {
-      Application.Current.Dispatcher.Invoke(new Action(() =>
-      {
-        Mouse.OverrideCursor = cursor;
-      }));
-    }
   }
 }

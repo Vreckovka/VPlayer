@@ -2,18 +2,116 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
+             xmlns:converters="clr-namespace:VPlayer.Player.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:VPlayer.Player.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:status="clr-namespace:VPlayer.Core.Managers.Status;assembly=VPlayer.Core"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviors="clr-namespace:VPlayer.WindowsPlayer.Behaviors;assembly=VPlayer.WindowsPlayer"
+             xmlns:behaviors1="clr-namespace:VPlayer.Player.Behaviors"
              mc:Ignorable="d">
 
+  <UserControl.Resources>
+    <converters:DataContextChangedConverter x:Key="DataContextChangedConverter" />
+    <DataTemplate x:Key="StatusMessageDataTemplate">
+      <Border Padding="10">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+          </Grid.RowDefinitions>
+
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+          </Grid.ColumnDefinitions>
+
+          <TextBlock Grid.Column="0"
+                     Foreground="#555555"
+                     Text="{Binding Message, Mode=OneWay}" />
+
+          <TextBlock Grid.Row="1">
+            <TextBlock.Style>
+              <Style TargetType="TextBlock" />
+            </TextBlock.Style>
+            <Run Text="{Binding ActualMessageStatusState, Mode=OneWay}">
+              <Run.Style>
+                <Style TargetType="Run">
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status:MessageStatusState.Beggining}">
+                      <Setter Property="Foreground" Value="Yellow" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status:MessageStatusState.Processing}">
+                      <Setter Property="Foreground" Value="YellowGreen" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status:MessageStatusState.Done}">
+                      <Setter Property="Foreground" Value="Green" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status:MessageStatusState.Failed}">
+                      <Setter Property="Foreground" Value="Red" />
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </Run.Style>
+            </Run>
+            <Run Foreground="#858585" Text="{Binding Process, StringFormat={}{0:N2}%, Mode=OneWay}" />
+          </TextBlock>
+
+          <TextBlock Grid.Row="2" Foreground="#454545">
+            <Run Text="{Binding ProcessedCount, Mode=OneWay}" />
+            <Run Text="/" />
+            <Run Text="{Binding NumberOfProcesses, Mode=OneWay}" />
+          </TextBlock>
+          <Grid.Style>
+            <Style TargetType="Grid">
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status:MessageStatusState.Done}">
+                  <DataTrigger.EnterActions>
+                    <RemoveStoryboard BeginStoryboardName="ShowMessageStoryBoard" />
+                    <BeginStoryboard x:Name="HideMessageStoryBoard">
+                      <Storyboard>
+                        <DoubleAnimation BeginTime="0:0:2"
+                                         Storyboard.TargetProperty="Opacity"
+                                         From="1.0"
+                                         To="0.0"
+                                         Duration="0:0:0:0.5" />
+                      </Storyboard>
+                    </BeginStoryboard>
+                  </DataTrigger.EnterActions>
+
+                </DataTrigger>
+
+                <DataTrigger Binding="{Binding Converter={StaticResource DataContextChangedConverter}}" Value="True">
+                  <DataTrigger.EnterActions>
+                    <RemoveStoryboard BeginStoryboardName="HideMessageStoryBoard" />
+                    <BeginStoryboard x:Name="ShowMessageStoryBoard">
+                      <Storyboard>
+                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                         From="0.0"
+                                         To="1.0"
+                                         Duration="0:0:0:0.2" />
+                      </Storyboard>
+                    </BeginStoryboard>
+                  </DataTrigger.EnterActions>
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </Grid.Style>
+        </Grid>
+      </Border>
+    </DataTemplate>
+  </UserControl.Resources>
+
   <Grid>
-    <Border>
-      <Grid HorizontalAlignment="Center">
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="auto" />
-          <ColumnDefinition Width="auto" />
-        </Grid.ColumnDefinitions>
+    <Border Padding="55,0"
+            Margin="0 0 0 3"
+            HorizontalAlignment="Center"
+            Background="#45090909"
+            CornerRadius="5">
+      <Grid>
         <Grid Grid.ColumnSpan="2" HorizontalAlignment="Center">
           <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto" />
@@ -54,13 +152,15 @@
                                     IconWidth="25"
                                     IsEnabled="{Binding CanPlay}"
                                     RenderTransformOrigin="0.5,0.5" />
-
-
-
         </Grid>
 
-
+        <ContentPresenter HorizontalAlignment="Right"
+                          Content="{Binding StatusMessage}"
+                          ContentTemplate="{StaticResource StatusMessageDataTemplate}" />
       </Grid>
+      <b:Interaction.Behaviors>
+        <behaviors1:ShowHideMouseBehavior />
+      </b:Interaction.Behaviors>
     </Border>
   </Grid>
 </UserControl>

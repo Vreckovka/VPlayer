@@ -30,7 +30,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics
   public class MiniLyricsLRCProvider : ILrcProvider
   {
     private string url = "http://search.crintsoft.com/searchlyrics.htm";
-    
+
     private string magickeyStr = "Mlv1clt4.0";
 
     #region FindLRC
@@ -186,26 +186,25 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics
                 Title = stringsToParse[i + 2]
               };
 
+              var firstResult = results.FirstOrDefault();
+
               //Shifted xml
-              if (newResult.Artist == "uploader" || newResult.Title == "uploader" ||  isXmlShifted)
+              if (firstResult != null && (newResult.Artist != firstResult.Artist || isXmlShifted))
               {
                 isXmlShifted = true;
-                var firstResult = results.FirstOrDefault();
 
-                if (firstResult != null)
+                newResult.Artist = firstResult.Artist;
+                newResult.Title = firstResult.Title;
+
+                for (int j = i; j < stringsToParse.Count; j++)
                 {
-                  newResult.Artist = firstResult.Artist;
-                  newResult.Title = firstResult.Title;
-
-                  for (int j = i; j < stringsToParse.Count; j++)
+                  if (int.TryParse(stringsToParse[j], out var downloadCount))
                   {
-                    if (int.TryParse(stringsToParse[j], out var downloadCount))
-                    {
-                      newResult.DownloadCount = downloadCount;
-                      break;
-                    }
+                    newResult.DownloadCount = downloadCount;
+                    break;
                   }
                 }
+
               }
               else if (int.TryParse(stringsToParse[i + 3], out var downloads))
               {

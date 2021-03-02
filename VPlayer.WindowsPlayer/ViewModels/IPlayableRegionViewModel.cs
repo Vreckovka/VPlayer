@@ -15,7 +15,8 @@ namespace VPlayer.Core.ViewModels
     bool IsPlaying { get; set; }
     bool CanPlay { get; }
     VlcControl VlcControl { get; }
-
+    void SeekForward(int seekSize);
+    void SeekBackward(int seekSize);
     IObservable<int> ActualItemChanged { get; }
 
   }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -20,6 +21,7 @@ using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
 using VPlayer.Player.ViewModels;
+using VPlayer.WindowsPlayer.Behaviors;
 using VPlayer.WindowsPlayer.ViewModels;
 
 namespace VPlayer.ViewModels
@@ -146,6 +148,7 @@ namespace VPlayer.ViewModels
       var player = viewModelsFactory.Create<PlayerViewModel>();
       player.IsActive = true;
 
+
     }
 
     #endregion
@@ -182,9 +185,12 @@ namespace VPlayer.ViewModels
 
     #region ChangeFullScreen
 
+
     private void ChangeFullScreen(bool isFullScreen)
     {
       var mainWindow = Application.Current.MainWindow;
+
+      ShowHideMouseManager.IsFullscreen = isFullScreen;
 
       if (mainWindow != null)
       {
@@ -192,12 +198,13 @@ namespace VPlayer.ViewModels
         {
           WindowChromeVisiblity = Visibility.Collapsed;
 
+          mainWindow.ResizeMode = ResizeMode.NoResize;
           mainWindow.WindowState = WindowState.Maximized;
         }
         else
         {
           WindowChromeVisiblity = Visibility.Visible;
-
+          mainWindow.ResizeMode = ResizeMode.CanResize;
           mainWindow.WindowState = WindowState.Normal;
         }
       }
@@ -221,11 +228,6 @@ namespace VPlayer.ViewModels
     #endregion
 
     #endregion
-
-
-
   }
-
-
 }
 

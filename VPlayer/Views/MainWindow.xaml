@@ -53,9 +53,7 @@
 
     <ContentControl Grid.Row="1" prism:RegionManager.RegionName="{x:Static regions:RegionNames.ContentRegion}" />
 
-    <ContentControl Grid.Row="2"
-                    Grid.Column="0"
-                    prism:RegionManager.RegionName="{x:Static regions:RegionNames.PlayerRegion}" />
+   
 
     <ContentControl Grid.Row="0"
                     Grid.RowSpan="3"
@@ -71,6 +69,10 @@
         </Style>
       </ContentControl.Style>
     </ContentControl>
+
+    <ContentControl Grid.Row="2"
+                    Grid.Column="0"
+                    prism:RegionManager.RegionName="{x:Static regions:RegionNames.PlayerRegion}" />
   </Grid>
 
 

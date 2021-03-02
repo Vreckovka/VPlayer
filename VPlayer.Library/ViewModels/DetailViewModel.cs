@@ -96,7 +96,26 @@ namespace VPlayer.Library.ViewModels
 
     #endregion
 
-    
+    #region Update
+
+    private ActionCommand update;
+
+    public ICommand Update
+    {
+      get
+      {
+        if (update == null)
+        {
+          update = new ActionCommand(OnUpdate);
+        }
+
+        return update;
+      }
+    }
+
+    protected abstract void OnUpdate();
+
+    #endregion
 
     #endregion
   }

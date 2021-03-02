@@ -149,18 +149,20 @@ namespace VPlayer.AudioStorage.InfoDownloader
       AudioInfo audioInfo = null;
 
       audioInfo = GetAudioInfoByWindowsAsync(path);
-      //GetMediaInfoo();
 
-      if (audioInfo == null || (audioInfo.Artist == null && audioInfo.Album == null && audioInfo.Artist == "" && audioInfo.Album == ""))
+      if (audioInfo == null || 
+          (audioInfo.Artist == null &&
+           audioInfo.Album == null &&
+           audioInfo.Artist == "" && 
+           audioInfo.Album == ""))
       {
-        Console.WriteLine(path + " NIC");
-        //var fingerPrintAudioInfo = await Task.Run(() => GetAudioInfoByFingerPrint(path));
+        var fingerPrintAudioInfo = GetAudioInfoByFingerPrint(path);
 
-        //if (fingerPrintAudioInfo != null)
-        //{
-        //  logger.Log(Logger.MessageType.Success, $"Audio info was gotten by fingerprint {path}");
-        //  return fingerPrintAudioInfo;
-        //}
+        if (fingerPrintAudioInfo != null)
+        {
+          logger.Log(Logger.MessageType.Success, $"Audio info was gotten by fingerprint {path}");
+          return fingerPrintAudioInfo;
+        }
       }
 
       return audioInfo;
@@ -497,12 +499,12 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
         // Search for a release by title.
 
-       // var textWriter = Console.Out;
-       // Console.SetOut(TextWriter.Null);
+        // var textWriter = Console.Out;
+        // Console.SetOut(TextWriter.Null);
 
         var releases = await client.Releases.SearchAsync(query);
 
-       // Console.SetOut(textWriter);
+        // Console.SetOut(textWriter);
 
         if (releases.Count != 0)
         {
@@ -977,7 +979,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
         foreach (FileInfo file in Files)
         {
-          audioInfos.Add(await GetAudioInfoByFingerPrint(file.FullName));
+          audioInfos.Add(GetAudioInfoByFingerPrint(file.FullName));
         }
       }
       else
@@ -1129,90 +1131,87 @@ namespace VPlayer.AudioStorage.InfoDownloader
     /// Return audio info by fingerPrint
     /// <param name="path"></param>
     /// </summary>
-    private Task<AudioInfo> GetAudioInfoByFingerPrint(string path, AudioInfo pAudioInfo = null)
+    public AudioInfo GetAudioInfoByFingerPrint(string path, AudioInfo pAudioInfo = null)
     {
-      return Task.Run<AudioInfo>(async () =>
+      try
       {
-        try
+        var audioInfo = RunFpcalc(path);
+
+        if (audioInfo != null)
         {
-          var audioInfo = await RunFpcalc(path);
+          var query = $"https://api.acoustid.org/v2/lookup?" +
+                      $"client={api}&" +
+                      $"meta={meta}&" +
+                      $"duration={audioInfo.Duration}&" +
+                      $"fingerprint={audioInfo.FingerPrint}";
 
-          if (audioInfo != null)
+          HttpResponse<string> response = Unirest.get(query).asJson<string>();
+
+          if (response.Code != 200)
           {
-            var query = $"https://api.acoustid.org/v2/lookup?" +
-                        $"client={api}&" +
-                        $"meta={meta}&" +
-                        $"duration={audioInfo.Duration}&" +
-                        $"fingerprint={audioInfo.FingerPrint}";
+            logger.Log(Logger.MessageType.Error,
+              $"Response returns {response.Code} {path}");
+            throw new Exception($"Response returns {response.Code}");
+          }
 
-            HttpResponse<string> response = Unirest.get(query).asJson<string>();
+          dynamic jObject = JObject.Parse(response.Body);
+          if (jObject.results.Count != 0)
+          {
+            var recordings = jObject.results[0].recordings;
 
-            if (response.Code != 200)
+            //Sometimes returns more then 1 recording
+            dynamic bestRecording = null;
+            var bestRecordingByDuration =
+              GetBestDurationMatch(recordings, audioInfo.Duration.ToString());
+
+            if (pAudioInfo != null)
             {
-              logger.Log(Logger.MessageType.Error,
-                $"Response returns {response.Code} {path}");
-              throw new Exception($"Response returns {response.Code}");
+              bestRecording = GetBestDurationMatch(recordings, pAudioInfo);
+            }
+            else
+            {
+              bestRecording = bestRecordingByDuration;
             }
 
-            dynamic jObject = JObject.Parse(response.Body);
-            if (jObject.results.Count != 0)
+            var release = bestRecording.releases[0];
+            AudioInfo newAudioInfo = new AudioInfo();
+
+            if (bestRecording.artists.Count > 0)
             {
-              var recordings = jObject.results[0].recordings;
-
-              //Sometimes returns more then 1 recording
-              dynamic bestRecording = null;
-              var bestRecordingByDuration =
-                GetBestDurationMatch(recordings, audioInfo.Duration.ToString());
-
-              if (pAudioInfo != null)
+              newAudioInfo = new AudioInfo()
               {
-                bestRecording = GetBestDurationMatch(recordings, pAudioInfo);
-              }
-              else
-              {
-                bestRecording = bestRecordingByDuration;
-              }
-
-              var release = bestRecording.releases[0];
-              AudioInfo newAudioInfo = new AudioInfo();
-
-              if (bestRecording.artists.Count > 0)
-              {
-                newAudioInfo = new AudioInfo()
-                {
-                  Title = bestRecording.title.ToString(),
-                  ArtistMbid = bestRecording.artists[0].id.ToString(),
-                  Album = release.title.ToString(),
-                  Artist = bestRecording.artists[0].name.ToString(),
-                  DiskLocation = path,
-                  Duration = audioInfo.Duration
-                };
-              }
-              else
-              {
-                newAudioInfo = new AudioInfo()
-                {
-                  Title = bestRecording.title.ToString(),
-                  Album = release.title.ToString(),
-                };
-              }
-
-              return newAudioInfo;
+                Title = bestRecording.title.ToString(),
+                ArtistMbid = bestRecording.artists[0].id.ToString(),
+                Album = release.title.ToString(),
+                Artist = bestRecording.artists[0].name.ToString(),
+                DiskLocation = path,
+                Duration = audioInfo.Duration
+              };
             }
-          }
-          else
-          {
-            logger.Log(Logger.MessageType.Warning, $"Song was not identified {path}");
-            return null;
-          }
-        }
-        catch (Exception ex)
-        {
-          logger.Log(Logger.MessageType.Error, ex.Message);
-        }
+            else
+            {
+              newAudioInfo = new AudioInfo()
+              {
+                Title = bestRecording.title.ToString(),
+                Album = release.title.ToString(),
+              };
+            }
 
-        return null;
-      });
+            return newAudioInfo;
+          }
+        }
+        else
+        {
+          logger.Log(Logger.MessageType.Warning, $"Song was not identified {path}");
+          return null;
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Log(Logger.MessageType.Error, ex.Message);
+      }
+
+      return null;
     }
 
     /// <summary>
@@ -1220,39 +1219,39 @@ namespace VPlayer.AudioStorage.InfoDownloader
     /// </summary>
     /// <param name="trackPath"></param>
     /// <returns>Fingerprint of file</returns>
-    private async Task<AudioInfo> RunFpcalc(string trackPath)
+    private AudioInfo RunFpcalc(string trackPath)
     {
-      return await Task.Run(() =>
+      string fpacl = Environment.CurrentDirectory + "\\ChromaPrint\\fpcalc.exe";
+
+      Process process = new Process();
+
+      process.StartInfo.FileName = fpacl;
+      process.StartInfo.Arguments = $"\"{trackPath}\"";
+      process.StartInfo.UseShellExecute = false;
+      process.StartInfo.RedirectStandardOutput = true;
+      process.StartInfo.RedirectStandardError = true;
+      process.StartInfo.CreateNoWindow = true;
+
+      process.Start();
+      //* Read the output (or the error)
+      string output = process.StandardOutput.ReadToEnd();
+      string err = process.StandardError.ReadToEnd();
+
+      if (err != "")
       {
-        string fpacl = Environment.CurrentDirectory + "\\ChromaPrint\\fpcalc.exe";
+        logger.Log(Logger.MessageType.Error, err);
+        return null;
+      }
 
-        Process process = new Process();
-        process.StartInfo.FileName = fpacl;
-        process.StartInfo.Arguments = $"\"{trackPath}\"";
-        process.StartInfo.UseShellExecute = false;
-        process.StartInfo.RedirectStandardOutput = true;
-        process.StartInfo.RedirectStandardError = true;
-        process.Start();
-        //* Read the output (or the error)
-        string output = process.StandardOutput.ReadToEnd();
-        string err = process.StandardError.ReadToEnd();
+      process.WaitForExit();
 
-        if (err != "")
-        {
-          logger.Log(Logger.MessageType.Error, err);
-          return null;
-        }
+      var outputs = output.Split('\n');
 
-        process.WaitForExit();
-
-        var outputs = output.Split('\n');
-
-        return new AudioInfo()
-        {
-          FingerPrint = outputs[1].Replace("FINGERPRINT=", ""),
-          Duration = Convert.ToInt32(outputs[0].Replace("\r", "").Replace("DURATION=", ""))
-        };
-      });
+      return new AudioInfo()
+      {
+        FingerPrint = outputs[1].Replace("FINGERPRINT=", ""),
+        Duration = Convert.ToInt32(outputs[0].Replace("\r", "").Replace("DURATION=", ""))
+      };
     }
 
     #endregion FingerPrint methods

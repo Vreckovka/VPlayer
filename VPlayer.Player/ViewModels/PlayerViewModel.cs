@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Input;
 using Listener;
 using Ninject;
@@ -8,6 +9,7 @@ using VCore.Helpers;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Helpers;
 using VCore.ViewModels;
+using VPlayer.Core.Managers.Status;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
 using VPlayer.Player.Views;
@@ -19,15 +21,23 @@ namespace VPlayer.Player.ViewModels
   {
     private readonly IKernel kernel;
     private readonly KeyListener keyListener;
+    private readonly IStatusManager statusManager;
+    private Window mainWindow;
 
     public PlayerViewModel(
       IRegionProvider regionProvider,
       [NotNull] IKernel kernel,
-      KeyListener keyListener) : base(regionProvider)
+      KeyListener keyListener,
+      [NotNull] IStatusManager statusManager) : base(regionProvider)
     {
       this.kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
       this.keyListener = keyListener ?? throw new ArgumentNullException(nameof(keyListener));
+      this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
+
+      mainWindow = Application.Current.MainWindow;
     }
+
+    #region Properties
 
     public override string RegionName { get; protected set; } = RegionNames.PlayerRegion;
     public IPlayableRegionViewModel ActualViewModel { get; set; }
@@ -70,6 +80,22 @@ namespace VPlayer.Player.ViewModels
 
     #endregion
 
+    #region StatusMessage
+
+    public StatusMessage StatusMessage
+    {
+      get
+      {
+        return statusManager.ActualMessage;
+      }
+    }
+
+    #endregion
+
+    #endregion
+
+    #region Methods
+
     #region Initialize
 
     public override void Initialize()
@@ -77,9 +103,19 @@ namespace VPlayer.Player.ViewModels
       base.Initialize();
 
       SubscribeToPlayers();
+
+      statusManager.OnStatusMessageUpdated.Subscribe(x =>
+      {
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+          RaisePropertyChanged(nameof(StatusMessage));
+        });
+
+      }).DisposeWith(this);
     }
 
     #endregion
+
 
     #region SubscribeToPlayers
 
@@ -213,6 +249,7 @@ namespace VPlayer.Player.ViewModels
 
     #region KeyListener_OnKeyPressed
 
+    private int seekSize = 50;
     private void KeyListener_OnKeyPressed(object sender, KeyPressedArgs e)
     {
       switch (e.KeyPressed)
@@ -234,10 +271,27 @@ namespace VPlayer.Player.ViewModels
             PlayPrevious();
             break;
           }
+        case Key.Left:
+          {
+            if (mainWindow.IsActive)
+            {
+              ActualViewModel.SeekBackward(seekSize);
+            }
+            break;
+          }
+        case Key.Right:
+          {
+            if (mainWindow.IsActive)
+            {
+              ActualViewModel.SeekForward(seekSize);
+            }
+            break;
+          }
       }
     }
 
     #endregion KeyListener_OnKeyPressed
 
+    #endregion
   }
 }

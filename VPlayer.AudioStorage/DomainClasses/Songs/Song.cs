@@ -58,6 +58,7 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     public void Update(Song other)
     {
+      Name = other.Name;
       Chartlyrics_Lyric = other.Chartlyrics_Lyric;
       Chartlyrics_LyricCheckSum = other.Chartlyrics_LyricCheckSum;
       Chartlyrics_LyricId = other.Chartlyrics_LyricId;
