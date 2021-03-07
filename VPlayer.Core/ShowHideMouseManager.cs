@@ -14,6 +14,7 @@ namespace VPlayer.WindowsPlayer.Behaviors
     private static ElapsedEventHandler hideCursorDelegate;
     private static ReplaySubject<Unit> resetMouseSubject = new ReplaySubject<Unit>(1);
     private static ReplaySubject<Unit> hideMouseSubject = new ReplaySubject<Unit>(1);
+    private static ReplaySubject<bool> fullsScreenSubject = new ReplaySubject<bool>(1);
 
     static ShowHideMouseManager()
     {
@@ -57,6 +58,18 @@ namespace VPlayer.WindowsPlayer.Behaviors
 
     #endregion
 
+    #region OnFullScreen
+
+    public static IObservable<bool> OnFullScreen
+    {
+      get
+      {
+        return fullsScreenSubject.AsObservable();
+      }
+    }
+
+    #endregion
+
     #region IsFullscreen
 
     private static bool isFullscreen;
@@ -77,6 +90,8 @@ namespace VPlayer.WindowsPlayer.Behaviors
           }
 
           ResetMouse();
+
+          fullsScreenSubject.OnNext(value);
         }
       }
     }

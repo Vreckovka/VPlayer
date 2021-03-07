@@ -57,10 +57,47 @@ namespace VPlayer.Core.ViewModels
     #endregion Constructors
 
     #region Properties
-   
-    public AlbumViewModel AlbumViewModel { get; set; }
-    public ArtistViewModel ArtistViewModel { get; set; }
-   
+
+    #region AlbumViewModel
+
+    private AlbumViewModel albumViewModel;
+
+    public AlbumViewModel AlbumViewModel
+    {
+      get { return albumViewModel; }
+      set
+      {
+        if (value != albumViewModel)
+        {
+          albumViewModel = value;
+
+          RaisePropertyChanged(nameof(ImagePath));
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region ArtistViewModel
+
+    private ArtistViewModel artistViewModel;
+
+    public ArtistViewModel ArtistViewModel
+    {
+      get { return artistViewModel; }
+      set
+      {
+        if (value != artistViewModel)
+        {
+          artistViewModel = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     public string ImagePath => AlbumViewModel.Model?.AlbumFrontCoverFilePath;
 
     public string LRCLyrics => Model.LRCLyrics;

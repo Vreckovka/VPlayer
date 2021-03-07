@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Windows;
@@ -13,14 +14,21 @@ namespace VPlayer.Library
 {
   public class CacheImageConverter : MarkupExtension, IValueConverter
   {
+    public static Dictionary<string, List<CacheImageConverter>> AllConverters = new Dictionary<string, List<CacheImageConverter>>();
+    string lastLoadedImagePath;
+    BitmapImage lastLoadedImage;
+
+    public CacheImageConverter()
+    {
+      //AllConverters.Add(null, this);
+    }
 
     public override object ProvideValue(IServiceProvider serviceProvider)
     {
       return this;
     }
 
-    string lastLoadedImagePath;
-    BitmapImage lastLoadedImage;
+    #region Convert
 
     public object Convert(
       object value,
@@ -41,15 +49,15 @@ namespace VPlayer.Library
       }
       else
       {
-        path = PlayableViewModelWithThumbnail<AlbumViewModel,Album>.GetEmptyImage();
+        path = PlayableViewModelWithThumbnail<AlbumViewModel, Album>.GetEmptyImage();
       }
 
       if (!System.IO.File.Exists(path))
       {
-        path = PlayableViewModelWithThumbnail<AlbumViewModel,Album>.GetEmptyImage();
+        path = PlayableViewModelWithThumbnail<AlbumViewModel, Album>.GetEmptyImage();
       }
 
-      if(lastLoadedImagePath == path)
+      if (lastLoadedImagePath == path)
       {
         return lastLoadedImage;
       }
@@ -70,7 +78,34 @@ namespace VPlayer.Library
       lastLoadedImagePath = path;
       lastLoadedImage = bitmapImage;
 
+
+
       return bitmapImage;
+    }
+
+    #endregion
+
+    #region RefreshDictionary
+
+    public static void RefreshDictionary(string imagePath)
+    {
+      if (AllConverters.TryGetValue(imagePath, out var converters))
+      {
+        foreach(var converter in converters)
+        {
+          converter.lastLoadedImage = null;
+          converter.lastLoadedImagePath = null;
+        }
+
+        AllConverters[imagePath] = null;
+      }
+    }
+
+    #endregion
+
+    private void AddConverterToDictionary()
+    {
+     
     }
 
     public object ConvertBack(

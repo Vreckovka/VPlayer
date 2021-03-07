@@ -232,17 +232,17 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-    #endregion 
+    #endregion
 
     #region Methods
-    
+
     #region Initialize
 
     public override void Initialize()
     {
       base.Initialize();
 
-      
+
 
       storageManager.SubscribeToItemChange<Song>(OnSongChange).DisposeWith(this);
       storageManager.SubscribeToItemChange<Album>(OnAlbumChange).DisposeWith(this);
@@ -260,7 +260,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       base.OnActivation(firstActivation);
 
-      if(firstActivation)
+      if (firstActivation)
       {
         var view = regionProvider.RegisterView<SongPlayerView, MusicPlayerViewModel>(RegionNames.PlayerContentRegion, this, false, out var guid, RegionManager);
       }
@@ -402,7 +402,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
 
     #endregion
-    
+
     #region OnPlayEvent
 
     protected override void OnPlayEvent()
@@ -498,7 +498,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       foreach (var songInAlbum in songsInAlbum)
       {
-        songInAlbum.AlbumViewModel = itemUpdatedEventArgs.Model;
+        if (songInAlbum.AlbumViewModel != itemUpdatedEventArgs.Model)
+          songInAlbum.AlbumViewModel = itemUpdatedEventArgs.Model;
+        else
+          songInAlbum.UpdateAlbumViewModel(itemUpdatedEventArgs.Model.Model);
       }
     }
 

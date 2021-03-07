@@ -57,9 +57,13 @@ namespace VPlayer.AudioStorage.InfoDownloader
     public AudioInfoDownloader(ILogger logger)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    
+
+   
     }
 
     #endregion Constructors
+
 
     #region Properties
 
@@ -1352,7 +1356,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     public void Initialize()
     {
-
+     
     }
 
     protected virtual void OnCoversDownloaded(List<AlbumCover> e)

@@ -176,6 +176,7 @@
                   </Style>
                 </Grid.Style>
               </Grid>
+
               <Image Name="coverImage"
                      Grid.Row="0"
                      HorizontalAlignment="Center"

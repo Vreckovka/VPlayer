@@ -11,22 +11,6 @@ namespace VPlayer.Player.Behaviors
 {
   public class SliderValueChangedManualy : Behavior<Slider>
   {
-    #region Kernel
-
-    public static readonly DependencyProperty KernelProperty =
-      DependencyProperty.Register(
-        nameof(Kernel),
-        typeof(IKernel),
-        typeof(SliderValueChangedManualy),
-        new PropertyMetadata(null));
-
-    public IKernel Kernel
-    {
-      get { return (IKernel)GetValue(KernelProperty); }
-      set { SetValue(KernelProperty, value); }
-    }
-
-    #endregion Kernel
 
     #region Duration
 
@@ -71,13 +55,9 @@ namespace VPlayer.Player.Behaviors
     {
       if (Mouse.LeftButton == MouseButtonState.Pressed && AssociatedObject.IsMouseOver)
       {
-        if (Kernel != null)
+        if (AssociatedObject.DataContext is IPlayableRegionViewModel playableRegionViewModel)
         {
-          if(AssociatedObject.DataContext is IPlayableRegionViewModel playableRegionViewModel)
-          {
-            playableRegionViewModel.VlcControl.SourceProvider.MediaPlayer.Position = (float)e.NewValue;
-          }
-         
+          playableRegionViewModel.VlcControl.SourceProvider.MediaPlayer.Position = (float)e.NewValue;
         }
       }
     }

@@ -262,7 +262,7 @@ namespace VPlayer.Core.ViewModels
       }
     }
 
-   
+
 
     #endregion
 
@@ -409,7 +409,7 @@ namespace VPlayer.Core.ViewModels
     {
       eventAggregator.GetEvent<RemoveFromPlaylistEvent<TItemViewModel>>().Subscribe(RemoveItemsFromPlaylist).DisposeWith(this);
       eventAggregator.GetEvent<PlaySongsFromPlayListEvent<TItemViewModel>>().Subscribe(PlayItemFromPlayList).DisposeWith(this);
-      eventAggregator.GetEvent<PlayPauseEvent>().Subscribe(PlayPause).DisposeWith(this);
+      eventAggregator.GetEvent<PlayPauseEvent>().Subscribe(PlayPauseFromEvent).DisposeWith(this);
     }
 
     #endregion
@@ -636,20 +636,29 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region PlayPause
+    #region PlayPauseFromEvent
 
-    public void PlayPause()
+    public void PlayPauseFromEvent()
     {
       if (IsActive)
       {
-        Task.Run(() =>
-        {
-          if (IsPlaying)
-            Pause();
-          else
-            Play();
-        });
+        PlayPause();
       }
+    }
+
+    #endregion
+
+    #region PlayPuse
+
+    public void PlayPause()
+    {
+      Task.Run(() =>
+      {
+        if (IsPlaying)
+          Pause();
+        else
+          Play();
+      });
     }
 
     #endregion
@@ -810,7 +819,7 @@ namespace VPlayer.Core.ViewModels
         {
           storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(ActualSavedPlaylist);
         }
-        
+
         UpdateActualSavedPlaylistPlaylist();
       }
 
@@ -1045,7 +1054,7 @@ namespace VPlayer.Core.ViewModels
       if (viewModel == ActualItem)
       {
         if (!ActualItem.IsPaused)
-          PlayPause();
+          PlayPauseFromEvent();
         else
           Play();
       }

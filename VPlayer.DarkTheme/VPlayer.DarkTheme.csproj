@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Styles\StylesDictionaries\WindowsStyle.xaml~RF282db4.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Windows.Interactivity.WPF" Version="2.0.20525" />
     <PackageReference Include="VirtualizingWrapPanel" Version="1.5.3" />
   </ItemGroup>
@@ -13,12 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\CustomLibraries\VCore\VCore.WPF.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Styles\StylesDictionaries\WindowsStyle.xaml.cs">
-      <DependentUpon>WindowsStyle.xaml</DependentUpon>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>

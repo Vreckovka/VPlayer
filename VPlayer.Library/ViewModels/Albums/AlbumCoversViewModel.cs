@@ -131,6 +131,8 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
       i.Save(finalPath, ImageFormat.Jpeg);
 
+      CacheImageConverter.RefreshDictionary(finalPath);
+
       albumViewModel.RaisePropertyChange(nameof(AlbumViewModel.ImageThumbnail));
       albumViewModel.RaisePropertyChange(nameof(AlbumViewModel.Image));
 

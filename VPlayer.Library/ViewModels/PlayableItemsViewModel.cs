@@ -154,7 +154,6 @@ namespace VPlayer.Library.ViewModels
 
         eventAggregator.GetEvent<ItemUpdatedEvent<TViewModel>>().Publish(newItemUpdatedArgs);
       }
-     
     }
 
     #endregion

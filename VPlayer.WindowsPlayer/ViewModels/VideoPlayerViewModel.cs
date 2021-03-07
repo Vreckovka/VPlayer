@@ -11,6 +11,7 @@ using Logger;
 using Ninject;
 using Prism.Events;
 using VCore.Annotations;
+using VCore.Helpers;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Helpers;
 using VCore.ViewModels;
@@ -47,11 +48,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region Initialize
 
-    public override void Initialize()
+    public override async void Initialize()
     {
       base.Initialize();
 
       EventAggregator.GetEvent<PlayTvShowEvent>().Subscribe(PlayItemsFromEvent).DisposeWith(this);
+
+     
     }
 
     #endregion

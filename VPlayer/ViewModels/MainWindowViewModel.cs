@@ -105,7 +105,11 @@ namespace VPlayer.ViewModels
 
     #endregion
 
+    public ICommand SwitchBehaviorCommand { get; set; }
+
     #endregion
+
+    #region Commads
 
     #region PlayStop
 
@@ -129,7 +133,29 @@ namespace VPlayer.ViewModels
       eventAggregator.GetEvent<PlayPauseEvent>().Publish();
     }
 
-    #endregion 
+    #endregion
+
+    #region SwitchScreenCommand
+
+    private ActionCommand switchScreenCommand;
+
+    public ICommand SwitchScreenCommand
+    {
+      get
+      {
+        return switchScreenCommand ??= new ActionCommand(SwitchScreen);
+      }
+    }
+
+
+    private void SwitchScreen()
+    {
+      SwitchBehaviorCommand?.Execute(null);
+    }
+
+    #endregion
+
+    #endregion
 
     #region Methods
 
@@ -185,7 +211,6 @@ namespace VPlayer.ViewModels
 
     #region ChangeFullScreen
 
-
     private void ChangeFullScreen(bool isFullScreen)
     {
       var mainWindow = Application.Current.MainWindow;
@@ -199,6 +224,12 @@ namespace VPlayer.ViewModels
           WindowChromeVisiblity = Visibility.Collapsed;
 
           mainWindow.ResizeMode = ResizeMode.NoResize;
+
+          if (mainWindow.WindowState == WindowState.Maximized)
+          {
+            mainWindow.WindowState = WindowState.Normal;
+          }
+
           mainWindow.WindowState = WindowState.Maximized;
         }
         else

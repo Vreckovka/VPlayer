@@ -32,8 +32,11 @@
     <TaskbarItemInfo>
       <TaskbarItemInfo.ThumbButtonInfos>
         <ThumbButtonInfo Command="{Binding PlayStop}"
-                         Description="Second Button"
+                         Description="Play Stop"
                          ImageSource="pack://application:,,,/Resources/play-and-pause-button.png" />
+        <ThumbButtonInfo Command="{Binding SwitchScreenCommand}"
+                         Description="Move to active screen"
+                         ImageSource="pack://application:,,,/VCore.WPF;component/Resources/window_switch.png" />
       </TaskbarItemInfo.ThumbButtonInfos>
     </TaskbarItemInfo>
   </Window.TaskbarItemInfo>
@@ -45,7 +48,7 @@
       <RowDefinition Height="auto" />
     </Grid.RowDefinitions>
 
-    
+
 
     <Button Click="Button_Click"
             Content="DELETE ALL"
@@ -53,7 +56,7 @@
 
     <ContentControl Grid.Row="1" prism:RegionManager.RegionName="{x:Static regions:RegionNames.ContentRegion}" />
 
-   
+
 
     <ContentControl Grid.Row="0"
                     Grid.RowSpan="3"
@@ -78,5 +81,6 @@
 
   <b:Interaction.Behaviors>
     <behaviors:ProperMaximizeWindowBehavior />
+    <behaviors:MoveToActiveScreenBehavior SwitchCommnd="{Binding SwitchBehaviorCommand, Mode=TwoWay}" />
   </b:Interaction.Behaviors>
 </Window>

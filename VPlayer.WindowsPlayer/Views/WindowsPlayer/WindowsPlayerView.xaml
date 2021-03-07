@@ -48,7 +48,7 @@
               Maximum="1"
               Value="{Binding ActualItem.ActualPosition}">
         <b:Interaction.Behaviors>
-          <behaviors:SliderValueChangedManualy Kernel="{Binding Kernel}" Duration="{Binding ActualItem.Duration}" />
+          <behaviors:SliderValueChangedManualy Duration="{Binding ActualItem.Duration}" />
         </b:Interaction.Behaviors>
       </Slider>
 

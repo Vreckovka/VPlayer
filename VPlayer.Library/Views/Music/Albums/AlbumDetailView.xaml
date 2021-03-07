@@ -51,7 +51,8 @@
           </Border.Effect>
 
           <Grid>
-            <Image VerticalAlignment="Top" Source="{Binding ViewModel.ImageThumbnail, Converter={library:CacheImageConverter}, IsAsync=True}" />
+            <Image VerticalAlignment="Top" Source="{Binding ViewModel.ImageThumbnail, 
+              Converter={library:CacheImageConverter}, IsAsync=True}" />
             <Grid Background="{StaticResource GlassGradient}" />
           </Grid>
         </Border>

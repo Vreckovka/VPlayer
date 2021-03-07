@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Listener;
@@ -13,6 +15,7 @@ using VPlayer.Core.Managers.Status;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
 using VPlayer.Player.Views;
+using VPlayer.WindowsPlayer.Behaviors;
 using VPlayer.WindowsPlayer.ViewModels;
 
 namespace VPlayer.Player.ViewModels
@@ -40,7 +43,25 @@ namespace VPlayer.Player.ViewModels
     #region Properties
 
     public override string RegionName { get; protected set; } = RegionNames.PlayerRegion;
-    public IPlayableRegionViewModel ActualViewModel { get; set; }
+
+    #region ActualViewModel
+
+    private IPlayableRegionViewModel actualViewModel;
+
+    public IPlayableRegionViewModel ActualViewModel
+    {
+      get { return actualViewModel; }
+      set
+      {
+        if (value != actualViewModel)
+        {
+          actualViewModel = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     #region IsPlaying
 
@@ -92,6 +113,44 @@ namespace VPlayer.Player.ViewModels
 
     #endregion
 
+    #region IsFullScreen
+
+    private bool isFullScreen;
+
+    public bool IsFullScreen
+    {
+      get { return isFullScreen; }
+      set
+      {
+        if (value != isFullScreen)
+        {
+          isFullScreen = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region ActualItem
+
+    private IItemInPlayList actuaĺItem;
+
+    public IItemInPlayList ActualItem
+    {
+      get { return actuaĺItem; }
+      set
+      {
+        if (value != actuaĺItem)
+        {
+          actuaĺItem = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #endregion
 
     #region Methods
@@ -108,17 +167,33 @@ namespace VPlayer.Player.ViewModels
       {
         Application.Current.Dispatcher.Invoke(() =>
         {
-          RaisePropertyChanged(nameof(StatusMessage));
+          try
+          {
+            RaisePropertyChanged(nameof(StatusMessage));
+          }
+          catch (Exception ex)
+          {
+
+            throw;
+          }
         });
 
       }).DisposeWith(this);
+
+      ShowHideMouseManager.OnFullScreen.Subscribe((x) =>
+      {
+        Application.Current.Dispatcher.Invoke(() =>
+          {
+            IsFullScreen = x;
+          });
+      });
     }
 
     #endregion
 
-
     #region SubscribeToPlayers
 
+    private SerialDisposable actualItemSerialDisposable = new SerialDisposable();
     private void SubscribeToPlayers()
     {
       var allPlayers = kernel.GetAll<IPlayableRegionViewModel>();
@@ -134,7 +209,6 @@ namespace VPlayer.Player.ViewModels
             CanPlay = x;
           }
         }).DisposeWith(this);
-
 
         player.ObservePropertyChange(x => x.IsPlaying).Subscribe((x) =>
           {
@@ -160,6 +234,27 @@ namespace VPlayer.Player.ViewModels
             ActualViewModel = player;
 
             IsPlaying = ActualViewModel.IsPlaying;
+
+            actualItemSerialDisposable.Disposable?.Dispose();
+
+            if (ActualViewModel is MusicPlayerViewModel musicPlayer)
+            {
+              ActualItem = musicPlayer.ActualItem;
+
+              if (ActualItem == null)
+              {
+                actualItemSerialDisposable.Disposable = musicPlayer.ActualItemChanged.Subscribe((x) => { ActualItem = musicPlayer.ActualItem; });
+              }
+            }
+            else if (ActualViewModel is VideoPlayerViewModel videoPlayerViewModel)
+            {
+              ActualItem = videoPlayerViewModel.ActualItem;
+
+              if (ActualItem == null)
+              {
+                actualItemSerialDisposable.Disposable = videoPlayerViewModel.ActualItemChanged.Subscribe((x) => { ActualItem = videoPlayerViewModel.ActualItem; });
+              }
+            }
           }
         }).DisposeWith(this);
       }

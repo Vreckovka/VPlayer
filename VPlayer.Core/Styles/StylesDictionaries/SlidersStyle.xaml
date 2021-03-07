@@ -70,6 +70,28 @@
     </Grid>
   </ControlTemplate>
 
+  <ControlTemplate x:Key="ShadowlessSlider" TargetType="Slider">
+    <Grid>
+      <Track x:Name="PART_Track">
+        <Track.DecreaseRepeatButton>
+          <RepeatButton Style="{StaticResource SliderRepeatButton1}"
+                        Command="Slider.DecreaseLarge"
+                        Height="{TemplateBinding Height}" />
+        </Track.DecreaseRepeatButton>
+        <Track.Thumb>
+          <Thumb Style="{StaticResource SliderThumb}"  Margin="-9 0 0 0" />
+        </Track.Thumb>
+        <Track.IncreaseRepeatButton>
+          <RepeatButton Style="{StaticResource SliderRepeatButton}"
+                        Command="Slider.IncreaseLarge"
+                        Height="{TemplateBinding Height}" >
+
+          </RepeatButton>
+        </Track.IncreaseRepeatButton>
+      </Track>
+    </Grid>
+  </ControlTemplate>
+
   <Style TargetType="Slider">
     <Setter Property="Height" Value="6" />
     <Setter Property="Focusable" Value="False" />
@@ -81,6 +103,24 @@
         <Setter Property="MinHeight" Value="21" />
         <Setter Property="MinWidth" Value="10" />
         <Setter Property="Template" Value="{StaticResource Slider}" />
+      </Trigger>
+      <Trigger Property="IsMouseOver" Value="True">
+        <Setter Property="Cursor" Value="Hand" />
+      </Trigger>
+    </Style.Triggers>
+  </Style>
+
+  <Style TargetType="Slider" x:Key="ShadowLess">
+    <Setter Property="Height" Value="6" />
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="SnapsToDevicePixels" Value="true" />
+    <Setter Property="OverridesDefaultStyle" Value="true" />
+    <Setter Property="Foreground" Value="#b39d84"/>
+    <Style.Triggers>
+      <Trigger Property="Orientation" Value="Horizontal">
+        <Setter Property="MinHeight" Value="21" />
+        <Setter Property="MinWidth" Value="10" />
+        <Setter Property="Template" Value="{StaticResource ShadowlessSlider}" />
       </Trigger>
       <Trigger Property="IsMouseOver" Value="True">
         <Setter Property="Cursor" Value="Hand" />

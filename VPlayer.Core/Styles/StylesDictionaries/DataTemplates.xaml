@@ -12,7 +12,7 @@
     <ResourceDictionary Source="ButtonsStyle.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
-  
+
   <DataTemplate x:Key="InternetPlayerTemplate">
     <StackPanel Width="180">
       <TextBlock HorizontalAlignment="Center" Text="{Binding Title}" />

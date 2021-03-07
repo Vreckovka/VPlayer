@@ -18,6 +18,5 @@ namespace VPlayer.Core.ViewModels
     void SeekForward(int seekSize);
     void SeekBackward(int seekSize);
     IObservable<int> ActualItemChanged { get; }
-
   }
 }

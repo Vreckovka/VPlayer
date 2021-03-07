@@ -3,6 +3,41 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:VPlayer.StylesDictionaries">
 
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/ColorsStyle.xaml" />
+  </ResourceDictionary.MergedDictionaries>
+
+  <Style TargetType="HeaderedContentControl">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="HeaderedContentControl">
+          <Border Padding="{TemplateBinding Padding}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}">
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition />
+              </Grid.RowDefinitions>
+
+              <Border Padding="10" Background="#151515">
+                <TextBlock HorizontalAlignment="Center"
+                           FontSize="14"
+                           Foreground="#ccc"
+                           Text="{TemplateBinding Header}" />
+              </Border>
+
+              <ContentPresenter Grid.Row="1"
+                                Margin="0,10,0,0"
+                                Content="{TemplateBinding Content}" />
+            </Grid>
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+
   <Style x:Key="WindowsChromeButtonStyle" TargetType="Button">
     <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
     <Setter Property="Background" Value="Transparent" />
@@ -71,8 +106,9 @@
                     <!--  Title  -->
                     <TextBlock Margin="0,3,0,0"
                                VerticalAlignment="Center"
-                               FontSize="17"
-                               Foreground="{DynamicResource DefaultWhiteBrush}"
+                               FontSize="15"
+                               FontWeight="Bold"
+                               Foreground="#aaffffff"
                                Text="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Title}" />
                   </StackPanel>
                   <!--  Window buttons  -->
