@@ -148,6 +148,7 @@
               <controls2:PathButton Grid.Row="0"
                                     Grid.Column="2"
                                     Width="13"
+                                    Panel.ZIndex="1"
                                     Height="13"
                                     Margin="0,0,80,0"
                                     HorizontalAlignment="Right"
@@ -197,6 +198,7 @@
               <ContentPresenter Grid.Row="0"
                                 Grid.Column="1"
                                 Grid.ColumnSpan="2"
+                                Panel.ZIndex="0"
                                 ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}" />
 
 

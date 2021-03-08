@@ -107,8 +107,8 @@
                     <TextBlock Margin="0,3,0,0"
                                VerticalAlignment="Center"
                                FontSize="15"
-                               FontWeight="Bold"
-                               Foreground="#aaffffff"
+                               FontWeight="DemiBold"
+                               Foreground="#ccffffff"
                                Text="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Title}" />
                   </StackPanel>
                   <!--  Window buttons  -->

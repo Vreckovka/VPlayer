@@ -5,12 +5,14 @@ using System.Windows;
 using System.Windows.Input;
 using Listener;
 using Ninject;
+using Prism.Events;
 using VCore;
 using VCore.Annotations;
 using VCore.Helpers;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Helpers;
 using VCore.ViewModels;
+using VPlayer.Core.Events;
 using VPlayer.Core.Managers.Status;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
@@ -25,17 +27,20 @@ namespace VPlayer.Player.ViewModels
     private readonly IKernel kernel;
     private readonly KeyListener keyListener;
     private readonly IStatusManager statusManager;
+    private readonly IEventAggregator eventAggregator;
     private Window mainWindow;
 
     public PlayerViewModel(
       IRegionProvider regionProvider,
       [NotNull] IKernel kernel,
       KeyListener keyListener,
-      [NotNull] IStatusManager statusManager) : base(regionProvider)
+      [NotNull] IStatusManager statusManager,
+      [NotNull] IEventAggregator eventAggregator) : base(regionProvider)
     {
       this.kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
       this.keyListener = keyListener ?? throw new ArgumentNullException(nameof(keyListener));
       this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
+      this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
 
       mainWindow = Application.Current.MainWindow;
     }
@@ -151,6 +156,28 @@ namespace VPlayer.Player.ViewModels
 
     #endregion
 
+    #region ActualVolume
+
+    private int actualVolume = 100;
+
+    public int ActualVolume
+    {
+      get { return actualVolume; }
+      set
+      {
+        if (value != actualVolume)
+        {
+          actualVolume = value;
+          RaisePropertyChanged();
+
+
+          ActualViewModel?.SetVolume(value);
+        }
+      }
+    }
+
+    #endregion
+
     #endregion
 
     #region Methods
@@ -187,6 +214,8 @@ namespace VPlayer.Player.ViewModels
             IsFullScreen = x;
           });
       });
+
+      eventAggregator.GetEvent<PlayPauseEvent>().Subscribe(PlayPause).DisposeWith(this);
     }
 
     #endregion
@@ -272,14 +301,14 @@ namespace VPlayer.Player.ViewModels
       {
         if (playButton == null)
         {
-          playButton = new ActionCommand(OnPlayButton);
+          playButton = new ActionCommand(PlayPause);
         }
 
         return playButton;
       }
     }
 
-    public void OnPlayButton()
+    public void PlayPause()
     {
       ActualViewModel?.PlayPause();
     }

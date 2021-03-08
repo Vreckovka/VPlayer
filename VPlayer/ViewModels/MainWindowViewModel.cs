@@ -223,13 +223,12 @@ namespace VPlayer.ViewModels
         {
           WindowChromeVisiblity = Visibility.Collapsed;
 
-          mainWindow.ResizeMode = ResizeMode.NoResize;
-
           if (mainWindow.WindowState == WindowState.Maximized)
           {
             mainWindow.WindowState = WindowState.Normal;
           }
 
+          mainWindow.ResizeMode = ResizeMode.NoResize;
           mainWindow.WindowState = WindowState.Maximized;
         }
         else

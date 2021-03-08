@@ -311,6 +311,25 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region Volume
+
+    private float volume;
+
+    public float Volume
+    {
+      get { return volume; }
+      set
+      {
+        if (value != volume)
+        {
+          volume = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #endregion
 
     #region Methods
@@ -325,6 +344,10 @@ namespace VPlayer.Core.ViewModels
 
       await LoadVlc();
 
+      Volume = VlcControl.SourceProvider.MediaPlayer.Audio.Volume;
+
+      
+
       actualSearchSubject = new ReplaySubject<string>(1).DisposeWith(this);
 
       PlayList.DisposeWith(this);
@@ -338,6 +361,8 @@ namespace VPlayer.Core.ViewModels
 
       HookToPubSubEvents();
     }
+
+  
 
     private void PlayList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
@@ -409,7 +434,7 @@ namespace VPlayer.Core.ViewModels
     {
       eventAggregator.GetEvent<RemoveFromPlaylistEvent<TItemViewModel>>().Subscribe(RemoveItemsFromPlaylist).DisposeWith(this);
       eventAggregator.GetEvent<PlaySongsFromPlayListEvent<TItemViewModel>>().Subscribe(PlayItemFromPlayList).DisposeWith(this);
-      eventAggregator.GetEvent<PlayPauseEvent>().Subscribe(PlayPauseFromEvent).DisposeWith(this);
+     
     }
 
     #endregion
@@ -632,18 +657,6 @@ namespace VPlayer.Core.ViewModels
 
     public virtual void OnSetActualItem(TItemViewModel itemViewModel, bool isPlaying)
     {
-    }
-
-    #endregion
-
-    #region PlayPauseFromEvent
-
-    public void PlayPauseFromEvent()
-    {
-      if (IsActive)
-      {
-        PlayPause();
-      }
     }
 
     #endregion
@@ -1054,7 +1067,7 @@ namespace VPlayer.Core.ViewModels
       if (viewModel == ActualItem)
       {
         if (!ActualItem.IsPaused)
-          PlayPauseFromEvent();
+          PlayPause();
         else
           Play();
       }
@@ -1066,6 +1079,14 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    public void SetVolume(int pVolume)
+    {
+      if (VlcControl?.SourceProvider?.MediaPlayer?.Audio != null)
+      {
+        VlcControl.SourceProvider.MediaPlayer.Audio.Volume = pVolume;
+      }
+     
+    }
 
     protected abstract void OnRemoveItemsFromPlaylist(DeleteType deleteType, RemoveFromPlaylistEventArgs<TItemViewModel> args);
     protected abstract void ItemsRemoved(EventPattern<TItemViewModel> eventPattern);

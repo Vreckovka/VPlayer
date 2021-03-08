@@ -11,7 +11,9 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="RepeatButton">
-          <Border  BorderThickness="0" Background="{StaticResource 30_WhiteTransparentBrush}" Height="{TemplateBinding Height}" />
+          <Border Height="{TemplateBinding Height}"
+                  Background="{StaticResource 30_WhiteTransparentBrush}"
+                  BorderThickness="0" />
         </ControlTemplate>
       </Setter.Value>
     </Setter>
@@ -23,8 +25,11 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="RepeatButton">
-          <Border SnapsToDevicePixels="True" Background="{TemplateBinding Foreground}"
-                            BorderThickness="1" BorderBrush="{TemplateBinding Foreground}" Height="{TemplateBinding Height}" />
+          <Border Height="{TemplateBinding Height}"
+                  Background="{TemplateBinding Foreground}"
+                  BorderBrush="{TemplateBinding Foreground}"
+                  BorderThickness="1"
+                  SnapsToDevicePixels="True" />
         </ControlTemplate>
       </Setter.Value>
     </Setter>
@@ -36,9 +41,9 @@
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate TargetType="Thumb">
-          <Ellipse Height="17" Width="17" Fill="{TemplateBinding Foreground}" >
-
-          </Ellipse>
+          <Ellipse Width="17"
+                   Height="17"
+                   Fill="{TemplateBinding Foreground}" />
         </ControlTemplate>
       </Setter.Value>
     </Setter>
@@ -48,23 +53,21 @@
     <Grid>
       <Track x:Name="PART_Track">
         <Track.DecreaseRepeatButton>
-          <RepeatButton Style="{StaticResource SliderRepeatButton1}"
-                                  Command="Slider.DecreaseLarge"
-                                  Height="{TemplateBinding Height}" />
+          <RepeatButton Height="{TemplateBinding Height}"
+                        Command="Slider.DecreaseLarge"
+                        Style="{StaticResource SliderRepeatButton1}" />
         </Track.DecreaseRepeatButton>
         <Track.Thumb>
-          <Thumb Style="{StaticResource SliderThumb}"  Margin="-9 0 0 0" />
+          <Thumb Margin="-9,0,0,0" Style="{StaticResource SliderThumb}" />
         </Track.Thumb>
         <Track.IncreaseRepeatButton>
-          <RepeatButton Style="{StaticResource SliderRepeatButton}"
-                                  Command="Slider.IncreaseLarge"
-                                  Height="{TemplateBinding Height}" >
-
-          </RepeatButton>
+          <RepeatButton Height="{TemplateBinding Height}"
+                        Command="Slider.IncreaseLarge"
+                        Style="{StaticResource SliderRepeatButton}" />
         </Track.IncreaseRepeatButton>
 
         <Track.Effect>
-          <DropShadowEffect BlurRadius="0" ShadowDepth="5"/>
+          <DropShadowEffect BlurRadius="0" ShadowDepth="5" />
         </Track.Effect>
       </Track>
     </Grid>
@@ -74,19 +77,17 @@
     <Grid>
       <Track x:Name="PART_Track">
         <Track.DecreaseRepeatButton>
-          <RepeatButton Style="{StaticResource SliderRepeatButton1}"
+          <RepeatButton Height="{TemplateBinding Height}"
                         Command="Slider.DecreaseLarge"
-                        Height="{TemplateBinding Height}" />
+                        Style="{StaticResource SliderRepeatButton1}" />
         </Track.DecreaseRepeatButton>
         <Track.Thumb>
-          <Thumb Style="{StaticResource SliderThumb}"  Margin="-9 0 0 0" />
+          <Thumb Margin="-9,0,0,0" Style="{StaticResource SliderThumb}" />
         </Track.Thumb>
         <Track.IncreaseRepeatButton>
-          <RepeatButton Style="{StaticResource SliderRepeatButton}"
+          <RepeatButton Height="{TemplateBinding Height}"
                         Command="Slider.IncreaseLarge"
-                        Height="{TemplateBinding Height}" >
-
-          </RepeatButton>
+                        Style="{StaticResource SliderRepeatButton}" />
         </Track.IncreaseRepeatButton>
       </Track>
     </Grid>
@@ -97,7 +98,7 @@
     <Setter Property="Focusable" Value="False" />
     <Setter Property="SnapsToDevicePixels" Value="true" />
     <Setter Property="OverridesDefaultStyle" Value="true" />
-    <Setter Property="Foreground" Value="#b39d84"/>
+    <Setter Property="Foreground" Value="#b39d84" />
     <Style.Triggers>
       <Trigger Property="Orientation" Value="Horizontal">
         <Setter Property="MinHeight" Value="21" />
@@ -110,12 +111,12 @@
     </Style.Triggers>
   </Style>
 
-  <Style TargetType="Slider" x:Key="ShadowLess">
+  <Style x:Key="ShadowLess" TargetType="Slider">
     <Setter Property="Height" Value="6" />
     <Setter Property="Focusable" Value="False" />
     <Setter Property="SnapsToDevicePixels" Value="true" />
     <Setter Property="OverridesDefaultStyle" Value="true" />
-    <Setter Property="Foreground" Value="#b39d84"/>
+    <Setter Property="Foreground" Value="#b39d84" />
     <Style.Triggers>
       <Trigger Property="Orientation" Value="Horizontal">
         <Setter Property="MinHeight" Value="21" />

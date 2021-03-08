@@ -15,98 +15,12 @@
              mc:Ignorable="d">
 
   <UserControl.Resources>
-    <converters:DataContextChangedConverter x:Key="DataContextChangedConverter" />
-    <DataTemplate x:Key="StatusMessageDataTemplate">
-      <Border Padding="10">
-        <Grid>
-          <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-          </Grid.RowDefinitions>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.Player;component/Views/PlayerViewResources.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
 
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition />
-          </Grid.ColumnDefinitions>
-
-          <TextBlock Grid.Column="0"
-                     Foreground="#555555"
-                     Text="{Binding Message, Mode=OneWay}" />
-
-          <TextBlock Grid.Row="1">
-            <TextBlock.Style>
-              <Style TargetType="TextBlock" />
-            </TextBlock.Style>
-            <Run Text="{Binding ActualMessageStatusState, Mode=OneWay}">
-              <Run.Style>
-                <Style TargetType="Run">
-                  <Style.Triggers>
-                    <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status:MessageStatusState.Beggining}">
-                      <Setter Property="Foreground" Value="Yellow" />
-                    </DataTrigger>
-                    <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status:MessageStatusState.Processing}">
-                      <Setter Property="Foreground" Value="YellowGreen" />
-                    </DataTrigger>
-                    <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status:MessageStatusState.Done}">
-                      <Setter Property="Foreground" Value="Green" />
-                    </DataTrigger>
-                    <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status:MessageStatusState.Failed}">
-                      <Setter Property="Foreground" Value="Red" />
-                    </DataTrigger>
-                  </Style.Triggers>
-                </Style>
-              </Run.Style>
-            </Run>
-            <Run Foreground="#858585" Text="{Binding Process, StringFormat={}{0:N2}%, Mode=OneWay}" />
-          </TextBlock>
-
-          <TextBlock Grid.Row="2" Foreground="#454545">
-            <Run Text="{Binding ProcessedCount, Mode=OneWay}" />
-            <Run Text="/" />
-            <Run Text="{Binding NumberOfProcesses, Mode=OneWay}" />
-          </TextBlock>
-
-          <Grid.Style>
-            <Style TargetType="Grid">
-              <Setter Property="Opacity" Value="0" />
-              <Style.Triggers>
-                <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status:MessageStatusState.Done}">
-                  <DataTrigger.EnterActions>
-                    <RemoveStoryboard BeginStoryboardName="ShowMessageStoryBoard" />
-                    <BeginStoryboard x:Name="HideMessageStoryBoard">
-                      <Storyboard>
-                        <DoubleAnimation BeginTime="0:0:2"
-                                         Storyboard.TargetProperty="Opacity"
-                                         From="1.0"
-                                         To="0.0"
-                                         Duration="0:0:0:0.5" />
-                      </Storyboard>
-                    </BeginStoryboard>
-                  </DataTrigger.EnterActions>
-
-                </DataTrigger>
-
-                <DataTrigger Binding="{Binding Converter={StaticResource DataContextChangedConverter}}" Value="True">
-                  <DataTrigger.EnterActions>
-                    <RemoveStoryboard BeginStoryboardName="HideMessageStoryBoard" />
-                    <BeginStoryboard x:Name="ShowMessageStoryBoard">
-                      <Storyboard>
-                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                         From="0.0"
-                                         To="1.0"
-                                         Duration="0:0:0:0.2" />
-                      </Storyboard>
-                    </BeginStoryboard>
-                  </DataTrigger.EnterActions>
-                </DataTrigger>
-              </Style.Triggers>
-            </Style>
-          </Grid.Style>
-        </Grid>
-      </Border>
-    </DataTemplate>
   </UserControl.Resources>
 
   <Grid>
@@ -127,7 +41,7 @@
             </Grid.RowDefinitions>
 
             <Slider Grid.Row="0"
-                    Margin="10,0,10,0"
+                    Margin="10,5,10,0"
                     Padding="0"
                     Background="Yellow"
                     DataContext="{Binding ActualViewModel}"
@@ -149,12 +63,46 @@
                        Foreground="{StaticResource 120_WhiteTransparentBrush}"
                        Text="{Binding ActualItem.ActualTime, StringFormat=hh\\:mm\\:ss}" />
             <TextBlock Grid.Row="1"
-                       Margin="0,0,5,0"
+                       Margin="0,0,12,0"
                        HorizontalAlignment="Right"
                        FontSize="14"
                        FontWeight="Bold"
                        Foreground="{StaticResource 120_WhiteTransparentBrush}"
                        Text="{Binding ActualItem.Duration, Converter={converters1:TimeConverter TimeType=Second}}" />
+
+
+
+            <Grid Grid.Row="1"
+                  Margin="0,0,10,-40"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Bottom">
+              <Slider Grid.Row="0"
+                      Width="150"
+                      Height="4"
+                      Margin="5,0,10,15"
+                      Padding="0"
+                      HorizontalAlignment="Right"
+                      VerticalAlignment="Top"
+                      Foreground="{StaticResource DefaultRedBrush}"
+                      IsMoveToPointEnabled="True"
+                      Maximum="300"
+                      Style="{StaticResource SliderMini}"
+                      Value="{Binding ActualVolume, Mode=TwoWay}" />
+
+              <TextBlock Margin="5,0,0,0"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Bottom"
+                         FontSize="14"
+                         Foreground="#959595"
+                         Text="Volume" />
+
+              <TextBlock Margin="0,0,10,0"
+                         HorizontalAlignment="Right"
+                         VerticalAlignment="Bottom"
+                         FontSize="14"
+                         Foreground="#959595"
+                         Text="{Binding ActualVolume, StringFormat={}{0} %}" />
+            </Grid>
 
             <Grid.Style>
               <Style TargetType="Grid">
@@ -166,7 +114,6 @@
                 </Style.Triggers>
               </Style>
             </Grid.Style>
-
           </Grid>
 
           <Grid Grid.Row="1">
@@ -202,6 +149,7 @@
 
             <controls1:ButtonWithIcon Grid.Column="2"
                                       Margin="0,0,5,0"
+                                      HorizontalAlignment="Left"
                                       BorderThickness="0"
                                       Command="{Binding NextCommand}"
                                       IconHeight="25"
@@ -215,7 +163,7 @@
             <Style TargetType="Grid">
               <Style.Triggers>
                 <DataTrigger Binding="{Binding IsFullScreen}" Value="True">
-                  <Setter Property="Background" Value="#90252525" />
+                  <Setter Property="Background" Value="#cc252525" />
                 </DataTrigger>
               </Style.Triggers>
             </Style>
@@ -223,14 +171,57 @@
         </Grid>
 
 
-        <ContentPresenter HorizontalAlignment="Right"
-                          Content="{Binding StatusMessage}"
-                          ContentTemplate="{StaticResource StatusMessageDataTemplate}" />
+
       </Grid>
 
       <b:Interaction.Behaviors>
         <behaviors1:ShowHideMouseBehavior />
       </b:Interaction.Behaviors>
     </Border>
+
+    <ContentPresenter Margin="30,0,0,0"
+                      HorizontalAlignment="Left"
+                      Content="{Binding StatusMessage}"
+                      ContentTemplate="{StaticResource StatusMessageDataTemplate}" />
+
+    <Grid Margin="0,0,30,0" HorizontalAlignment="Right">
+      <Slider Grid.Row="0"
+              Width="150"
+              Height="4"
+              Margin="5,15,10,0"
+              Padding="0"
+              HorizontalAlignment="Right"
+              VerticalAlignment="Top"
+              Foreground="{StaticResource DefaultRedBrush}"
+              IsMoveToPointEnabled="True"
+              Maximum="300"
+              Style="{StaticResource SliderMini}"
+              Value="{Binding ActualVolume, Mode=TwoWay}" />
+
+      <TextBlock Margin="5,0,0,15"
+                 HorizontalAlignment="Left"
+                 VerticalAlignment="Bottom"
+                 FontSize="14"
+                 Foreground="#959595"
+                 Text="Volume" />
+
+      <TextBlock Margin="0,0,10,15"
+                 HorizontalAlignment="Right"
+                 VerticalAlignment="Bottom"
+                 FontSize="14"
+                 Foreground="#959595"
+                 Text="{Binding ActualVolume, StringFormat={}{0} %}" />
+
+      <Grid.Style>
+        <Style TargetType="Grid">
+          <Setter Property="Visibility" Value="Visible" />
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding IsFullScreen}" Value="True">
+              <Setter Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </Grid.Style>
+    </Grid>
   </Grid>
 </UserControl>

@@ -18,7 +18,7 @@ namespace VPlayer.WindowsPlayer.Behaviors
 
     static ShowHideMouseManager()
     {
-      cursorTimer = new Timer(1500);
+      cursorTimer = new Timer(2500);
       cursorTimer.AutoReset = false;
 
       hideCursorDelegate = (s, e) =>
