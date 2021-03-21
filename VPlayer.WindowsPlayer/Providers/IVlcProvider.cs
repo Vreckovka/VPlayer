@@ -1,10 +1,12 @@
-﻿using System.Threading.Tasks;
-using Vlc.DotNet.Wpf;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using LibVLCSharp.Shared;
+using LibVLCSharp.WPF;
 
 namespace VPlayer.WindowsPlayer.Providers
 {
   public interface IVlcProvider
   {
-    Task InitlizeVlc(VlcControl vlcControl);
+    Task<KeyValuePair<MediaPlayer, LibVLC>> InitlizeVlc();
   }
 }

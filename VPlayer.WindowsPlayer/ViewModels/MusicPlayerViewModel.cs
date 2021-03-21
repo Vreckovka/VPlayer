@@ -23,7 +23,6 @@ using VCore.ItemsCollections.VirtualList.VirtualLists;
 using VCore.Modularity.Events;
 using VCore.Standard.Helpers;
 using VCore.ViewModels.Navigation;
-using Vlc.DotNet.Core;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.InfoDownloader.Clients.GIfs;
@@ -256,15 +255,19 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region OnActivation
+
     public override void OnActivation(bool firstActivation)
     {
       base.OnActivation(firstActivation);
 
       if (firstActivation)
       {
-        var view = regionProvider.RegisterView<SongPlayerView, MusicPlayerViewModel>(RegionNames.PlayerContentRegion, this, false, out var guid, RegionManager);
+        regionProvider.RegisterView<SongPlayerView, MusicPlayerViewModel>(RegionNames.PlayerContentRegion, this, false, out var guid, RegionManager);
       }
     }
+
+    #endregion
 
     #region OnNewItemPlay
 

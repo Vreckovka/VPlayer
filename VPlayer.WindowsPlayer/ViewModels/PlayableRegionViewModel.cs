@@ -8,6 +8,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -25,8 +26,9 @@ using VCore.Modularity.RegionProviders;
 using VCore.Standard.Helpers;
 using VCore.Standard.Modularity.Interfaces;
 using VCore.ViewModels;
-using Vlc.DotNet.Core;
-using Vlc.DotNet.Wpf;
+using LibVLCSharp.Shared;
+using LibVLCSharp.WPF;
+using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
@@ -48,6 +50,8 @@ namespace VPlayer.Core.ViewModels
     private readonly IVlcProvider vlcProvider;
     private int actualItemIndex;
     protected HashSet<TItemViewModel> shuffleList = new HashSet<TItemViewModel>();
+    private LibVLC libVLC;
+    private bool wasVlcInitilized;
 
     #endregion
 
@@ -73,6 +77,24 @@ namespace VPlayer.Core.ViewModels
     #endregion
 
     #region Properties
+
+    #region MediaPlayer
+
+    private MediaPlayer mediaPlayer;
+    public MediaPlayer MediaPlayer
+    {
+      get { return mediaPlayer; }
+      set
+      {
+        if (value != mediaPlayer)
+        {
+          mediaPlayer = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     #region EventAgreggator
 
@@ -245,27 +267,6 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region VlcControl
-
-    private VlcControl vlcControl = new VlcControl();
-
-    public VlcControl VlcControl
-    {
-      get { return vlcControl; }
-      set
-      {
-        if (value != vlcControl)
-        {
-          vlcControl = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-
-
-    #endregion
-
     #region TotalPlaylistDuration
 
     public TimeSpan TotalPlaylistDuration
@@ -340,13 +341,7 @@ namespace VPlayer.Core.ViewModels
     {
       base.Initialize();
 
-      VlcControl = new VlcControl();
-
-      await LoadVlc();
-
-      Volume = VlcControl.SourceProvider.MediaPlayer.Audio.Volume;
-
-      
+      await HookToVlcEvents();
 
       actualSearchSubject = new ReplaySubject<string>(1).DisposeWith(this);
 
@@ -356,13 +351,10 @@ namespace VPlayer.Core.ViewModels
 
       actualSearchSubject.Throttle(TimeSpan.FromMilliseconds(150)).Subscribe(FilterByActualSearch).DisposeWith(this);
 
-      HookToVlcEvents();
-
-
       HookToPubSubEvents();
     }
 
-  
+
 
     private void PlayList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
@@ -375,32 +367,46 @@ namespace VPlayer.Core.ViewModels
 
     private async Task LoadVlc()
     {
-      await vlcProvider.InitlizeVlc(VlcControl);
+      var result = await vlcProvider.InitlizeVlc();
+
+      MediaPlayer = result.Key;
+
+      libVLC = result.Value;
+
     }
 
     #endregion
 
     #region HookToVlcEvents
 
-    private void HookToVlcEvents()
+    private async Task HookToVlcEvents()
     {
-      if (VlcControl.SourceProvider.MediaPlayer == null)
+      await LoadVlc();
+
+      Volume = mediaPlayer.Volume;
+
+      if (MediaPlayer == null)
       {
         logger.Log(Logger.MessageType.Error, "VLC was not initlized!");
         return;
       }
 
-      VlcControl.SourceProvider.MediaPlayer.EncounteredError += (sender, e) =>
+      mediaPlayer.EncounteredError += (sender, e) =>
       {
-        Console.Error.Write("An error occurred");
-        IsPlayFnished = true;
+        logger.Log(new Exception(e.ToString()), true);
+
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+          MessageBox.Show("VLC BROKE!!!!!");
+        });
       };
 
-      VlcControl.SourceProvider.MediaPlayer.EndReached += (sender, e) => { Task.Run(() => PlayNextWithItem()); };
 
-      VlcControl.SourceProvider.MediaPlayer.TimeChanged += OnVlcTimeChanged;
+      mediaPlayer.EndReached += (sender, e) => { Task.Run(() => PlayNextWithItem()); };
 
-      VlcControl.SourceProvider.MediaPlayer.Paused += (sender, e) =>
+      mediaPlayer.TimeChanged += OnVlcTimeChanged;
+
+      mediaPlayer.Paused += (sender, e) =>
       {
         if (ActualItem != null)
         {
@@ -410,7 +416,7 @@ namespace VPlayer.Core.ViewModels
         IsPlaying = false;
       };
 
-      VlcControl.SourceProvider.MediaPlayer.Stopped += (sender, e) =>
+      mediaPlayer.Stopped += (sender, e) =>
       {
         if (IsPlayFnished && ActualItem != null)
         {
@@ -422,9 +428,9 @@ namespace VPlayer.Core.ViewModels
         }
       };
 
-      VlcControl.SourceProvider.MediaPlayer.Playing += OnVlcPlayingChanged;
-
+      mediaPlayer.Playing += OnVlcPlayingChanged;
     }
+
 
     #endregion
 
@@ -434,7 +440,7 @@ namespace VPlayer.Core.ViewModels
     {
       eventAggregator.GetEvent<RemoveFromPlaylistEvent<TItemViewModel>>().Subscribe(RemoveItemsFromPlaylist).DisposeWith(this);
       eventAggregator.GetEvent<PlaySongsFromPlayListEvent<TItemViewModel>>().Subscribe(PlayItemFromPlayList).DisposeWith(this);
-     
+
     }
 
     #endregion
@@ -576,17 +582,28 @@ namespace VPlayer.Core.ViewModels
     {
       return Task.Run(() =>
       {
-        var media = VlcControl.SourceProvider.MediaPlayer.GetMedia();
+        var media = mediaPlayer.Media;
 
-        if (media == null || media.NowPlaying != model.DiskLocation)
-        {
-          var location = new Uri(model.DiskLocation);
+        var fileUri = new Uri(model.DiskLocation);
 
-          VlcControl.SourceProvider.MediaPlayer.SetMedia(location);
+        media = new Media(libVLC, fileUri);
 
-          OnNewItemPlay();
-        }
+        mediaPlayer.Media = media;
+
+        media.DurationChanged += Media_DurationChanged;
+
+        OnNewItemPlay();
+
       });
+    }
+
+    private void Media_DurationChanged(object sender, MediaDurationChangedEventArgs e)
+    {
+      Application.Current.Dispatcher.Invoke(() =>
+      {
+        ActualItem.Duration = (int)e.Duration / 1000;
+      });
+
     }
 
     #endregion
@@ -595,11 +612,11 @@ namespace VPlayer.Core.ViewModels
 
     #region OnVlcTimeChanged
 
-    private void OnVlcTimeChanged(object sender, VlcMediaPlayerTimeChangedEventArgs eventArgs)
+    private void OnVlcTimeChanged(object sender, MediaPlayerTimeChangedEventArgs eventArgs)
     {
       if (ActualItem != null)
       {
-        var position = ((eventArgs.NewTime * 100) / (ActualItem.Duration * (float)1000.0)) / 100;
+        var position = ((eventArgs.Time * 100) / (ActualItem.Duration * (float)1000.0)) / 100;
         ActualItem.ActualPosition = position;
         ActualSavedPlaylist.LastItemElapsedTime = position;
       }
@@ -609,7 +626,7 @@ namespace VPlayer.Core.ViewModels
 
     #region OnVlcPlayingChanged
 
-    private void OnVlcPlayingChanged(object sender, VlcMediaPlayerPlayingEventArgs eventArgs)
+    private void OnVlcPlayingChanged(object sender, EventArgs eventArgs)
     {
       if (ActualItem != null)
       {
@@ -625,10 +642,13 @@ namespace VPlayer.Core.ViewModels
 
     #region Play
 
-    public void Play()
+    public Task Play()
     {
-      Task.Run(() =>
+      return Task.Run(async () =>
       {
+        if (!wasVlcInitilized)
+          await WaitForVlcInitilization();
+
         if (IsPlayFnished)
         {
           SetItemAndPlay(0, true);
@@ -637,7 +657,7 @@ namespace VPlayer.Core.ViewModels
         {
           if (ActualItem != null)
           {
-            VlcControl.SourceProvider.MediaPlayer.Play();
+            mediaPlayer.Play();
           }
         }
       });
@@ -715,7 +735,7 @@ namespace VPlayer.Core.ViewModels
     {
       if (IsPlaying)
       {
-        VlcControl.SourceProvider.MediaPlayer.Pause();
+        mediaPlayer.Pause();
         IsPlaying = false;
       }
     }
@@ -726,8 +746,8 @@ namespace VPlayer.Core.ViewModels
 
     public void SeekForward(int seekSize)
     {
-      VlcControl.SourceProvider.MediaPlayer.Position = VlcControl.SourceProvider.MediaPlayer.Position + GetSeekSize(seekSize);
-      ActualItem.ActualPosition = VlcControl.SourceProvider.MediaPlayer.Position;
+      mediaPlayer.Position = mediaPlayer.Position + GetSeekSize(seekSize);
+      ActualItem.ActualPosition = mediaPlayer.Position;
     }
 
     #endregion
@@ -736,8 +756,8 @@ namespace VPlayer.Core.ViewModels
 
     public void SeekBackward(int seekSize)
     {
-      VlcControl.SourceProvider.MediaPlayer.Position = VlcControl.SourceProvider.MediaPlayer.Position - GetSeekSize(seekSize);
-      ActualItem.ActualPosition = VlcControl.SourceProvider.MediaPlayer.Position;
+      mediaPlayer.Position = mediaPlayer.Position - GetSeekSize(seekSize);
+      ActualItem.ActualPosition = mediaPlayer.Position;
     }
 
     #endregion
@@ -746,7 +766,7 @@ namespace VPlayer.Core.ViewModels
 
     private float GetSeekSize(int seconds)
     {
-      return seconds * (float)100.0 / VlcControl.SourceProvider.MediaPlayer.Length;
+      return seconds * (float)100.0 / mediaPlayer.Length;
     }
 
     #endregion
@@ -1004,7 +1024,7 @@ namespace VPlayer.Core.ViewModels
         PlayItems(data.Items, false, lastSongIndex.Value);
 
         if (data.SetPostion.HasValue)
-          VlcControl.SourceProvider.MediaPlayer.Position = data.SetPostion.Value;
+          mediaPlayer.Position = data.SetPostion.Value;
       }
     }
 
@@ -1079,14 +1099,26 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region SetVolume
+
     public void SetVolume(int pVolume)
     {
-      if (VlcControl?.SourceProvider?.MediaPlayer?.Audio != null)
+      if (mediaPlayer?.AudioTrack != -1 && mediaPlayer != null)
       {
-        VlcControl.SourceProvider.MediaPlayer.Audio.Volume = pVolume;
+        mediaPlayer.Volume = pVolume;
       }
-     
     }
+
+    #endregion
+
+    #region WaitForInitilization
+
+    protected virtual Task WaitForVlcInitilization()
+    {
+      return Task.Run(() => { wasVlcInitilized = true; });
+    }
+
+    #endregion
 
     protected abstract void OnRemoveItemsFromPlaylist(DeleteType deleteType, RemoveFromPlaylistEventArgs<TItemViewModel> args);
     protected abstract void ItemsRemoved(EventPattern<TItemViewModel> eventPattern);
@@ -1097,11 +1129,11 @@ namespace VPlayer.Core.ViewModels
 
     public override void Dispose()
     {
-      VlcControl.SourceProvider.MediaPlayer.TimeChanged -= OnVlcTimeChanged;
-      VlcControl.SourceProvider.MediaPlayer.Playing -= OnVlcPlayingChanged;
+      mediaPlayer.TimeChanged -= OnVlcTimeChanged;
+      mediaPlayer.Playing -= OnVlcPlayingChanged;
 
-      VlcControl.SourceProvider.Dispose();
-      VlcControl.Dispose();
+      libVLC.Dispose();
+      mediaPlayer.Dispose();
 
       if (ActualSavedPlaylist != null)
         UpdateActualSavedPlaylistPlaylist();

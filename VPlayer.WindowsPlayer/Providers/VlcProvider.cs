@@ -6,34 +6,39 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using Vlc.DotNet.Wpf;
+using LibVLCSharp.Shared;
+using LibVLCSharp.WPF;
 
 namespace VPlayer.WindowsPlayer.Providers
 {
   public class VlcProvider : IVlcProvider
   {
     private SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
+    private bool initilize;
 
     #region LoadVlc
 
-    public async Task InitlizeVlc(VlcControl vlcControl)
+    public async Task<KeyValuePair<MediaPlayer,LibVLC>> InitlizeVlc()
     {
       await semaphoreSlim.WaitAsync();
 
-      var currentAssembly = Assembly.GetEntryAssembly();
-
-      if (currentAssembly != null)
+      var player = await Task.Run(() =>
       {
-        var currentDirectory = new FileInfo(currentAssembly.Location).DirectoryName;
+        if(!initilize)
+        {
+          LibVLCSharp.Shared.Core.Initialize();
+          initilize = true;
+        }
 
-        var path = new DirectoryInfo(Path.Combine(currentDirectory, "libvlc", IntPtr.Size == 4 ? "win-x86" : "win-x64"));
+        var libVLC = new LibVLC("--freetype-background-opacity=120", "--freetype-background-color=0");
 
-        var libDirectory = new DirectoryInfo(path.FullName);
+        return new KeyValuePair<MediaPlayer, LibVLC>(new MediaPlayer(libVLC),libVLC);
+      });
 
-        vlcControl.SourceProvider.CreatePlayer(libDirectory);
-      }
 
       semaphoreSlim.Release();
+
+      return player;
     }
 
     #endregion

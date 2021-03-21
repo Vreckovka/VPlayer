@@ -7,7 +7,7 @@
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/DataTemplates.xaml" />
-    <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/ColorsStyle.xaml" />
+    <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="{x:Type controls1:ButtonWithIcon}">

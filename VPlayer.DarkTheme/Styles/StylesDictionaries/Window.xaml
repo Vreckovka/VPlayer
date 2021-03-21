@@ -4,7 +4,7 @@
                     xmlns:local="clr-namespace:VPlayer.StylesDictionaries">
 
   <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/ColorsStyle.xaml" />
+    <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
   <Style TargetType="HeaderedContentControl">

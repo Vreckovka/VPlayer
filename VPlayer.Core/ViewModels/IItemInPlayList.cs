@@ -12,7 +12,7 @@ namespace VPlayer.Core.ViewModels
   {
     float ActualPosition { get; set; }
     TimeSpan ActualTime { get; }
-    int Duration { get; }
+    int Duration { get; set; }
     bool IsPaused { get; set; }
     string Name { get; }
     bool IsFavorite { get; set; }

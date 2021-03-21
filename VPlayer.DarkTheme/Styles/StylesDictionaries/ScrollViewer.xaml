@@ -1,7 +1,6 @@
-﻿<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:VPlayer.StylesDictionaries">
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:VPlayer.StylesDictionaries">
     <!--
         All the following is required to Re-Style the ScrollViewer, see
         http://msdn2.microsoft.com/en-us/library/aa970847(VS.85).aspx
@@ -10,6 +9,11 @@
     -->
 
     <!--  Brushes used in Styling of ScrollViewer  -->
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
     <SolidColorBrush x:Key="StandardBorderBrush" Color="#888" />
     <SolidColorBrush x:Key="StandardBackgroundBrush" Color="#FFF" />
     <SolidColorBrush x:Key="HoverBorderBrush" Color="#DAFFFFFF" />
@@ -57,17 +61,15 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type RepeatButton}">
-                    <Border
-                        Margin="1"
-                        Background="Transparent"
-                        CornerRadius="2">
-                        <Path
-                            Name="Path"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Data="{Binding Path=Content, RelativeSource={RelativeSource TemplatedParent}}"
-                            Fill="{StaticResource 50_WhiteTransparentBrush}"
-                            Stretch="Uniform" />
+                    <Border Margin="1"
+                            Background="Transparent"
+                            CornerRadius="2">
+                        <Path Name="Path"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              Data="{Binding Path=Content, RelativeSource={RelativeSource TemplatedParent}}"
+                              Fill="{StaticResource 50_WhiteTransparentBrush}"
+                              Stretch="Uniform" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsPressed" Value="true">
@@ -115,11 +117,10 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Thumb}">
-                    <Border
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="2" />
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="2" />
 
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -127,11 +128,10 @@
                                 <RemoveStoryboard BeginStoryboardName="Storyboard22" />
                                 <BeginStoryboard Name="Storyboard2">
                                     <Storyboard FillBehavior="HoldEnd">
-                                        <ColorAnimation
-                                            Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)"
-                                            From="{StaticResource 30_DefaultWhiteColor}"
-                                            To="{StaticResource 50_DefaultWhiteColor}"
-                                            Duration="0:0:0.1" />
+                                        <ColorAnimation Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)"
+                                                        From="{StaticResource 30_DefaultWhiteColor}"
+                                                        To="{StaticResource 50_DefaultWhiteColor}"
+                                                        Duration="0:0:0.1" />
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.EnterActions>
@@ -140,11 +140,10 @@
                                 <RemoveStoryboard BeginStoryboardName="Storyboard2" />
                                 <BeginStoryboard Name="Storyboard22">
                                     <Storyboard FillBehavior="Stop">
-                                        <ColorAnimation
-                                            Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)"
-                                            From="{StaticResource 50_DefaultWhiteColor}"
-                                            To="{StaticResource 30_DefaultWhiteColor}"
-                                            Duration="0:0:0.1" />
+                                        <ColorAnimation Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)"
+                                                        From="{StaticResource 50_DefaultWhiteColor}"
+                                                        To="{StaticResource 30_DefaultWhiteColor}"
+                                                        Duration="0:0:0.1" />
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.ExitActions>
@@ -154,11 +153,10 @@
                             <RemoveStoryboard BeginStoryboardName="Storyboard11" />
                             <BeginStoryboard Name="Storyboard1">
                                 <Storyboard>
-                                    <ColorAnimation
-                                        Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)"
-                                        From="{StaticResource 50_DefaultWhiteColor}"
-                                        To="{StaticResource 200_DefaultWhiteColor}"
-                                        Duration="0:0:0.1" />
+                                    <ColorAnimation Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)"
+                                                    From="{StaticResource 50_DefaultWhiteColor}"
+                                                    To="{StaticResource 200_DefaultWhiteColor}"
+                                                    Duration="0:0:0.1" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
@@ -167,11 +165,10 @@
                             <RemoveStoryboard BeginStoryboardName="Storyboard1" />
                             <BeginStoryboard Name="Storyboard11">
                                 <Storyboard FillBehavior="Stop">
-                                    <ColorAnimation
-                                        Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)"
-                                        From="{StaticResource 200_DefaultWhiteColor}"
-                                        To="{StaticResource 50_DefaultWhiteColor}"
-                                        Duration="0:0:0.1" />
+                                    <ColorAnimation Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)"
+                                                    From="{StaticResource 200_DefaultWhiteColor}"
+                                                    To="{StaticResource 50_DefaultWhiteColor}"
+                                                    Duration="0:0:0.1" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </EventTrigger>
@@ -188,22 +185,19 @@
                 <RowDefinition Height="0.00001*" />
                 <RowDefinition MaxHeight="15" />
             </Grid.RowDefinitions>
-            <Border
-                Grid.RowSpan="3"
-                Background="{StaticResource 10_WhiteTransparentBrush}"
-                CornerRadius="2" />
-            <RepeatButton
-                Grid.Row="0"
-                Width="15"
-                Height="15"
-                Command="ScrollBar.LineUpCommand"
-                Content="M 0 4 L 8 4 L 4 0 Z"
-                Style="{StaticResource ScrollBarLineButton}" />
+            <Border Grid.RowSpan="3"
+                    Background="{StaticResource 10_WhiteTransparentBrush}"
+                    CornerRadius="2" />
+            <RepeatButton Grid.Row="0"
+                          Width="15"
+                          Height="15"
+                          Command="ScrollBar.LineUpCommand"
+                          Content="M 0 4 L 8 4 L 4 0 Z"
+                          Style="{StaticResource ScrollBarLineButton}" />
 
-            <Track
-                Name="PART_Track"
-                Grid.Row="1"
-                IsDirectionReversed="true">
+            <Track Name="PART_Track"
+                   Grid.Row="1"
+                   IsDirectionReversed="true">
                 <Track.DecreaseRepeatButton>
                     <RepeatButton Command="ScrollBar.PageUpCommand" Style="{StaticResource ScrollBarPageButton}" />
                 </Track.DecreaseRepeatButton>
@@ -214,13 +208,12 @@
                     <RepeatButton Command="ScrollBar.PageDownCommand" Style="{StaticResource ScrollBarPageButton}" />
                 </Track.IncreaseRepeatButton>
             </Track>
-            <RepeatButton
-                Grid.Row="3"
-                Width="15"
-                Height="15"
-                Command="ScrollBar.LineDownCommand"
-                Content="M 0 0 L 4 4 L 8 0 Z"
-                Style="{StaticResource ScrollBarLineButton}" />
+            <RepeatButton Grid.Row="3"
+                          Width="15"
+                          Height="15"
+                          Command="ScrollBar.LineDownCommand"
+                          Content="M 0 0 L 4 4 L 8 0 Z"
+                          Style="{StaticResource ScrollBarLineButton}" />
         </Grid>
 
 
@@ -233,20 +226,17 @@
                 <ColumnDefinition Width="0.00001*" />
                 <ColumnDefinition MaxWidth="15" />
             </Grid.ColumnDefinitions>
-            <Border
-                Grid.ColumnSpan="3"
-                Background="{StaticResource 10_WhiteTransparentBrush}"
-                CornerRadius="2" />
-            <RepeatButton
-                Grid.Column="0"
-                Width="15"
-                Command="ScrollBar.LineLeftCommand"
-                Content="M 4 0 L 4 8 L 0 4 Z"
-                Style="{StaticResource ScrollBarLineButton}" />
-            <Track
-                Name="PART_Track"
-                Grid.Column="1"
-                IsDirectionReversed="False">
+            <Border Grid.ColumnSpan="3"
+                    Background="{StaticResource 10_WhiteTransparentBrush}"
+                    CornerRadius="2" />
+            <RepeatButton Grid.Column="0"
+                          Width="15"
+                          Command="ScrollBar.LineLeftCommand"
+                          Content="M 4 0 L 4 8 L 0 4 Z"
+                          Style="{StaticResource ScrollBarLineButton}" />
+            <Track Name="PART_Track"
+                   Grid.Column="1"
+                   IsDirectionReversed="False">
                 <Track.DecreaseRepeatButton>
                     <RepeatButton Command="ScrollBar.PageLeftCommand" Style="{StaticResource ScrollBarPageButton}" />
                 </Track.DecreaseRepeatButton>
@@ -257,12 +247,11 @@
                     <RepeatButton Command="ScrollBar.PageRightCommand" Style="{StaticResource ScrollBarPageButton}" />
                 </Track.IncreaseRepeatButton>
             </Track>
-            <RepeatButton
-                Grid.Column="3"
-                Width="18"
-                Command="ScrollBar.LineRightCommand"
-                Content="M 0 0 L 4 4 L 0 8 Z"
-                Style="{StaticResource ScrollBarLineButton}" />
+            <RepeatButton Grid.Column="3"
+                          Width="18"
+                          Command="ScrollBar.LineRightCommand"
+                          Content="M 0 0 L 4 4 L 0 8 Z"
+                          Style="{StaticResource ScrollBarLineButton}" />
         </Grid>
     </ControlTemplate>
 
@@ -303,21 +292,19 @@
 
                         <ScrollContentPresenter Grid.Column="1" />
 
-                        <ScrollBar
-                            Name="PART_VerticalScrollBar"
-                            Maximum="{TemplateBinding ScrollableHeight}"
-                            ViewportSize="{TemplateBinding ViewportHeight}"
-                            Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
-                            Value="{TemplateBinding VerticalOffset}" />
-                        <ScrollBar
-                            Name="PART_HorizontalScrollBar"
-                            Grid.Row="1"
-                            Grid.Column="1"
-                            Maximum="{TemplateBinding ScrollableWidth}"
-                            Orientation="Horizontal"
-                            ViewportSize="{TemplateBinding ViewportWidth}"
-                            Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
-                            Value="{TemplateBinding HorizontalOffset}" />
+                        <ScrollBar Name="PART_VerticalScrollBar"
+                                   Maximum="{TemplateBinding ScrollableHeight}"
+                                   ViewportSize="{TemplateBinding ViewportHeight}"
+                                   Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+                                   Value="{TemplateBinding VerticalOffset}" />
+                        <ScrollBar Name="PART_HorizontalScrollBar"
+                                   Grid.Row="1"
+                                   Grid.Column="1"
+                                   Maximum="{TemplateBinding ScrollableWidth}"
+                                   Orientation="Horizontal"
+                                   ViewportSize="{TemplateBinding ViewportWidth}"
+                                   Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
+                                   Value="{TemplateBinding HorizontalOffset}" />
 
                     </Grid>
                 </ControlTemplate>

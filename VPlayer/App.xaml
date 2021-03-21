@@ -4,29 +4,30 @@
                         xmlns:local="clr-namespace:VPlayer"
                         xmlns:prism="http://prismlibrary.com/">
 
-  <Application.Resources>
-    <ResourceDictionary>
-      <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/ColorsStyle.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/WindowsStyle.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/ListViewsStyle.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/ButtonsStyle.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/DataTemplates.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/TextBlocksStyle.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/MenusStyle.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/SlidersStyle.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/OverlayStyles.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/ScrollViewerStyles.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/TextBoxStyle.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/Paths.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/ControlsTemplates/PlayableWrapPanelTemplate.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/ControlsTemplates/FinderTemplate.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/ControlsTemplates/ButtonWithIconTemplate.xaml" />
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/ColorsStyle.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/Generic.xaml" />
 
-      </ResourceDictionary.MergedDictionaries>
 
-      <FontFamily x:Key="Montserrat_Thin">pack://application:,,,/VPlayer;component/Resources/Montserrat/Montserrat-Thin.otf#Montserrat Thin</FontFamily>
-      <FontFamily x:Key="Roboto">pack://application:,,,/VPlayer;component/Resources/Roboto/Roboto-Black.otf#Roboto-Black</FontFamily>
-    </ResourceDictionary>
-  </Application.Resources>
+                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/ListViewsStyle.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/ButtonsStyle.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/DataTemplates.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/TextBlocksStyle.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/MenusStyle.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/SlidersStyle.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/OverlayStyles.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/ScrollViewerStyles.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/Paths.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/ControlsTemplates/PlayableWrapPanelTemplate.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/ControlsTemplates/FinderTemplate.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/ControlsTemplates/ButtonWithIconTemplate.xaml" />
+
+            </ResourceDictionary.MergedDictionaries>
+
+            <FontFamily x:Key="Montserrat_Thin">pack://application:,,,/VPlayer;component/Resources/Montserrat/Montserrat-Thin.otf#Montserrat Thin</FontFamily>
+            <FontFamily x:Key="Roboto">pack://application:,,,/VPlayer;component/Resources/Roboto/Roboto-Black.otf#Roboto-Black</FontFamily>
+        </ResourceDictionary>
+    </Application.Resources>
 </prism:PrismApplication>

@@ -27,11 +27,13 @@
   </ItemGroup>
   
   <ItemGroup>
+    <PackageReference Include="LibVLCSharp.WPF" Version="3.4.9" />
     <PackageReference Include="Ninject" Version="3.3.4" />
     <PackageReference Include="Prism.Ninject" Version="7.2.0.1422" />
     <PackageReference Include="Prism.Wpf" Version="7.2.0.1422" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.3" />
     <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="88.0.4324.9600" />
+    <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.12" />
   </ItemGroup>
 
   <ItemGroup>

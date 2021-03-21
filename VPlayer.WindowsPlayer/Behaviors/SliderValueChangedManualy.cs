@@ -57,7 +57,7 @@ namespace VPlayer.Player.Behaviors
       {
         if (AssociatedObject.DataContext is IPlayableRegionViewModel playableRegionViewModel)
         {
-          playableRegionViewModel.VlcControl.SourceProvider.MediaPlayer.Position = (float)e.NewValue;
+          playableRegionViewModel.MediaPlayer.Position = (float)e.NewValue;
         }
       }
     }

@@ -23,11 +23,31 @@ namespace VPlayer.Core.ViewModels
     {
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
+
+      Duration = model.Duration;
     }
 
     #region Properties
 
-    public int Duration => Model.Duration;
+    #region Duration
+
+    private int duration;
+
+    public int Duration
+    {
+      get { return duration; }
+      set
+      {
+        if (value != duration)
+        {
+          duration = value;
+
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     public TimeSpan ActualTime => TimeSpan.FromSeconds(ActualPosition * Duration);
 

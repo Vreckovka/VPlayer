@@ -20,19 +20,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Styles\StylesDictionaries\ButtonsStyle.xaml">
+    <Page Update="Styles\StylesDictionaries\Button.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Styles\StylesDictionaries\ColorsStyle.xaml">
+    <Page Update="Styles\StylesDictionaries\Colors.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Styles\StylesDictionaries\DataTemplates.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Styles\StylesDictionaries\ListViewsStyle.xaml">
+    <Page Update="Styles\StylesDictionaries\ListView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Styles\StylesDictionaries\MenusStyle.xaml">
+    <Page Update="Styles\StylesDictionaries\Menu.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Styles\StylesDictionaries\OverlayStyles.xaml">
@@ -41,19 +41,19 @@
     <Page Update="Styles\StylesDictionaries\Paths.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Styles\StylesDictionaries\ScrollViewerStyles.xaml">
+    <Page Update="Styles\StylesDictionaries\ScrollViewer.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Styles\StylesDictionaries\SlidersStyle.xaml">
+    <Page Update="Styles\StylesDictionaries\Slider.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Styles\StylesDictionaries\TextBlocksStyle.xaml">
+    <Page Update="Styles\StylesDictionaries\TextBlock.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Styles\StylesDictionaries\TextBoxStyle.xaml">
+    <Page Update="Styles\StylesDictionaries\TextBox.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Styles\StylesDictionaries\WindowsStyle.xaml">
+    <Page Update="Styles\StylesDictionaries\Window.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

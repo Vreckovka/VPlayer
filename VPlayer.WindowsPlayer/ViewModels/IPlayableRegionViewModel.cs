@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Threading.Tasks;
+using LibVLCSharp.Shared;
+using LibVLCSharp.WPF;
 using VCore.ViewModels;
-using Vlc.DotNet.Wpf;
 
 namespace VPlayer.Core.ViewModels
 {
   public interface IPlayableRegionViewModel : IRegionViewModel
   {
-    void Play();
+    Task Play();
     void PlayPause();
     void SetItemAndPlay(int? songIndex, bool forcePlay = false);
     void PlayPrevious();
@@ -14,7 +16,7 @@ namespace VPlayer.Core.ViewModels
     void Pause();
     bool IsPlaying { get; set; }
     bool CanPlay { get; }
-    VlcControl VlcControl { get; }
+    MediaPlayer MediaPlayer { get; }
     void SeekForward(int seekSize);
     void SeekBackward(int seekSize);
     IObservable<int> ActualItemChanged { get; }

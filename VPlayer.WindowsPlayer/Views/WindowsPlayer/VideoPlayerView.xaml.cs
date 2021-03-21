@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using VCore.Standard.Modularity.Interfaces;
+using VPlayer.Core.ViewModels;
 
 namespace VPlayer.WindowsPlayer.Views.WindowsPlayer
 {
@@ -24,6 +25,11 @@ namespace VPlayer.WindowsPlayer.Views.WindowsPlayer
     public VideoPlayerView()
     {
       InitializeComponent();
+    }
+
+    private void VideoView_Loaded(object sender, RoutedEventArgs e)
+    {
+     // VideoView.MediaPlayer = ((IPlayableRegionViewModel) DataContext).MediaPlayer;
     }
   }
 }

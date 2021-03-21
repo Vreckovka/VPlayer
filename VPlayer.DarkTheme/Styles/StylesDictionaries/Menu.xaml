@@ -3,7 +3,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:VPlayer.StylesDictionaries">
 
-
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
+    </ResourceDictionary.MergedDictionaries>
 
     <Style TargetType="ContextMenu">
         <Setter Property="Background" Value="{StaticResource TopWindowsBrush}" />

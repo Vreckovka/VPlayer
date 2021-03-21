@@ -7,18 +7,31 @@
              xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore.WPF"
              xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:interactivity="http://prismlibrary.com/"
              xmlns:local="clr-namespace:VPlayer.WindowsPlayer.Views.WindowsPlayer"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vlc="clr-namespace:Vlc.DotNet.Wpf;assembly=Vlc.DotNet.Wpf"
+             xmlns:wpf="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
 
 
-  <ContentControl Background="Yellow" Content="{Binding VlcControl}">
-    <b:Interaction.Behaviors>
-      <behaviors1:FullScreenBehavior EventAggregator="{Binding EventAggregator}" />
-    </b:Interaction.Behaviors>
-  </ContentControl>
+    <ContentControl Margin="5">
+        <Grid>
+            <wpf:VideoView MediaPlayer="{Binding MediaPlayer}">
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="Loaded">
+                        <b:InvokeCommandAction Command="{Binding VideoViewInitlized}" />
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
+            </wpf:VideoView>
+
+            <b:Interaction.Behaviors>
+                <behaviors1:FullScreenBehavior EventAggregator="{Binding EventAggregator}" />
+            </b:Interaction.Behaviors>
+        </Grid>
+
+
+    </ContentControl>
 
 </UserControl>
