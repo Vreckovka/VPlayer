@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using LibVLCSharp.Shared;
-using LibVLCSharp.WPF;
 using VCore.ViewModels;
 
 namespace VPlayer.Core.ViewModels

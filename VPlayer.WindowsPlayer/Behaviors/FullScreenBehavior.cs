@@ -4,40 +4,58 @@ using System.Text;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+
 using Microsoft.Xaml.Behaviors;
 using Ninject;
 using Prism.Events;
+using VCore.Helpers;
 using VPlayer.Core.Events;
 using VPlayer.Player.Behaviors;
+using VPlayer.WindowsPlayer.ViewModels;
 using VPlayer.WindowsPlayer.Views;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer;
+using VPlayer.WindowsPlayer.Vlc;
 
 namespace VPlayer.WindowsPlayer.Behaviors
 {
   public class FullScreenBehavior : Behavior<FrameworkElement>
   {
-    private bool isFullScreen;
-    private DependencyObject originalParent;
-   
+    #region VideoView
 
-    #region EventAggregator
-
-    public static readonly DependencyProperty EventAggregatorProperty =
+    public static readonly DependencyProperty VideoViewProperty =
       DependencyProperty.Register(
-        nameof(EventAggregator),
-        typeof(IEventAggregator),
+        nameof(VideoView),
+        typeof(VideoView),
         typeof(FullScreenBehavior),
         new PropertyMetadata(null));
 
-    public IEventAggregator EventAggregator
+    public VideoView VideoView
     {
-      get { return (IEventAggregator)GetValue(EventAggregatorProperty); }
-      set { SetValue(EventAggregatorProperty, value); }
+      get { return (VideoView)GetValue(VideoViewProperty); }
+      set { SetValue(VideoViewProperty, value); }
     }
 
-    #endregion Kernel
+    #endregion
+
+    #region PlayerDataContext
+
+    public static readonly DependencyProperty PlayerDataContextProperty =
+      DependencyProperty.Register(
+        nameof(PlayerDataContext),
+        typeof(object),
+        typeof(FullScreenBehavior),
+        new PropertyMetadata(null));
+
+    public object PlayerDataContext
+    {
+      get { return (object)GetValue(PlayerDataContextProperty); }
+      set { SetValue(PlayerDataContextProperty, value); }
+    }
+
+    #endregion 
 
     protected override void OnAttached()
     {
@@ -56,10 +74,7 @@ namespace VPlayer.WindowsPlayer.Behaviors
     {
       if (e.ClickCount >= 2)
       {
-        if (!isFullScreen)
-          MakeFullScreen();
-        else
-          MakeNormal();
+        MakeFullScreen();
       }
     }
 
@@ -67,71 +82,13 @@ namespace VPlayer.WindowsPlayer.Behaviors
 
     private void MakeFullScreen()
     {
-      isFullScreen = true;
-
-      var eventArg = EventAggregator;
-      var dataContext = AssociatedObject.DataContext;
-
-      AssociatedObject.DataContext = dataContext;
-
-      originalParent = DisconnectFromParent();
-
-      eventArg.GetEvent<ContentFullScreenEvent>().Publish(new ContentFullScreenEventArgs()
-      {
-        IsFullScreen = isFullScreen,
-        View = AssociatedObject
-      });
+      VideoView.PlayerDataContext = PlayerDataContext;
+      VideoView.MakeFullScreen();
     }
 
     #endregion
 
-    #region MakeNormal
 
-    private void MakeNormal()
-    {
-      isFullScreen = false;
-
-
-      EventAggregator.GetEvent<ContentFullScreenEvent>().Publish(new ContentFullScreenEventArgs()
-      {
-        IsFullScreen = isFullScreen,
-        View = AssociatedObject
-      });
-
-      DisconnectFromParent();
-
-      if (originalParent is Panel panel)
-      {
-        panel.Children.Add(AssociatedObject);
-      }
-      else if (originalParent is ContentPresenter contentPresenter)
-      {
-        contentPresenter.Content = AssociatedObject;
-      }
-
-    }
-
-    #endregion
-
-    #region DisconnectFromParent
-
-    private DependencyObject DisconnectFromParent()
-    {
-      var visualParent = VisualTreeHelper.GetParent(AssociatedObject);
-
-      if (visualParent is Panel panelParent)
-      {
-        panelParent.Children.Remove(AssociatedObject);
-      }
-      else if (visualParent is ContentPresenter contentPresenter)
-      {
-        contentPresenter.Content = null;
-      }
-
-      return visualParent;
-    }
-
-    #endregion
 
     #region OnDetaching
 

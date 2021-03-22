@@ -180,6 +180,68 @@ namespace VPlayer.Player.ViewModels
 
     #endregion
 
+    #region NextCommand
+
+    private ActionCommand nextCommand;
+
+    public ICommand NextCommand
+    {
+      get
+      {
+        if (nextCommand == null)
+        {
+          nextCommand = new ActionCommand(PlayNext);
+        }
+
+        return nextCommand;
+      }
+    }
+
+    #endregion
+
+    #region PreviousCommand
+
+    private ActionCommand previousCommand;
+
+    public ICommand PreviousCommand
+    {
+      get
+      {
+        if (previousCommand == null)
+        {
+          previousCommand = new ActionCommand(PlayPrevious);
+        }
+
+        return previousCommand;
+      }
+    }
+
+    #endregion
+
+    #region Play
+
+    private ActionCommand playButton;
+
+    public ICommand PlayButton
+    {
+      get
+      {
+        if (playButton == null)
+        {
+          playButton = new ActionCommand(PlayPause);
+        }
+
+        return playButton;
+      }
+    }
+
+    public void PlayPause()
+    {
+      ActualViewModel?.PlayPause();
+    }
+
+    #endregion Play
+
     #region Methods
 
     #region Initialize
@@ -231,6 +293,12 @@ namespace VPlayer.Player.ViewModels
 
       foreach (var player in allPlayers)
       {
+        if (player is VideoPlayerViewModel videoPlayerViewModel)
+        {
+          videoPlayerViewModel.PlayerViewModel = this;
+        }
+
+
         player.ObservePropertyChange(x => x.CanPlay).Subscribe(x =>
         {
           if (ActualViewModel == player)
@@ -291,67 +359,7 @@ namespace VPlayer.Player.ViewModels
 
     #endregion
 
-    #region Play
-
-    private ActionCommand playButton;
-
-    public ICommand PlayButton
-    {
-      get
-      {
-        if (playButton == null)
-        {
-          playButton = new ActionCommand(PlayPause);
-        }
-
-        return playButton;
-      }
-    }
-
-    public void PlayPause()
-    {
-      ActualViewModel?.PlayPause();
-    }
-
-    #endregion Play
-
-    #region NextCommand
-
-    private ActionCommand nextCommand;
-
-    public ICommand NextCommand
-    {
-      get
-      {
-        if (nextCommand == null)
-        {
-          nextCommand = new ActionCommand(PlayNext);
-        }
-
-        return nextCommand;
-      }
-    }
-
-    #endregion
-
-    #region PreviousCommand
-
-    private ActionCommand previousCommand;
-
-    public ICommand PreviousCommand
-    {
-      get
-      {
-        if (previousCommand == null)
-        {
-          previousCommand = new ActionCommand(PlayPrevious);
-        }
-
-        return previousCommand;
-      }
-    }
-
-    #endregion
+  
 
     #region PlayNext
 

@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using LibVLCSharp.Shared;
-using LibVLCSharp.WPF;
 
 namespace VPlayer.WindowsPlayer.Providers
 {

@@ -49,14 +49,6 @@ namespace VPlayer.ViewModels
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.regionManager = regionManager ?? throw new ArgumentNullException(nameof(regionManager));
 
-      eventAggregator.GetEvent<ContentFullScreenEvent>().Subscribe(OnContentFullScreenEvent).DisposeWith(this);
-
-      //Task.Run(async () =>
-      //{
-      //  var movie = "https://www.csfd.cz/film/69516-cerveny-trpaslik/komentare/";
-
-      //  var tvShow = cSFDWebsiteScrapper.LoadTvShow(movie);
-      //});
     }
 
 
@@ -176,70 +168,6 @@ namespace VPlayer.ViewModels
 
 
     }
-
-    #endregion
-
-    #region OnContentFullScreenEvent
-
-    private void OnContentFullScreenEvent(ContentFullScreenEventArgs args)
-    {
-      IsFullScreenContentVisible = args.IsFullScreen;
-
-      ChangeFullScreen(IsFullScreenContentVisible);
-
-      var region = regionManager.Regions.SingleOrDefault(x => x.Name == RegionNames.FullscreenRegion);
-
-      if (region != null)
-      {
-        if (args.IsFullScreen)
-        {
-          var existingView = region.Views.SingleOrDefault(x => x == args.View);
-
-          if (existingView == null)
-          {
-            regionManager.AddToRegion(RegionNames.FullscreenRegion, args.View);
-          }
-        }
-        else
-        {
-          region.Remove(args.View);
-        }
-      }
-    }
-
-    #endregion
-
-    #region ChangeFullScreen
-
-    private void ChangeFullScreen(bool isFullScreen)
-    {
-      var mainWindow = Application.Current.MainWindow;
-
-      ShowHideMouseManager.IsFullscreen = isFullScreen;
-
-      if (mainWindow != null)
-      {
-        if (isFullScreen)
-        {
-          WindowChromeVisiblity = Visibility.Collapsed;
-
-          if (mainWindow.WindowState == WindowState.Maximized)
-          {
-            mainWindow.WindowState = WindowState.Normal;
-          }
-
-          mainWindow.ResizeMode = ResizeMode.NoResize;
-          mainWindow.WindowState = WindowState.Maximized;
-        }
-        else
-        {
-          WindowChromeVisiblity = Visibility.Visible;
-          mainWindow.ResizeMode = ResizeMode.CanResize;
-          mainWindow.WindowState = WindowState.Normal;
-        }
-      }
-    }
-
 
     #endregion
 

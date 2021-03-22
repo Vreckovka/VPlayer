@@ -5,11 +5,16 @@ using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Media;
 using Logger;
 using Ninject;
 using Prism.Events;
@@ -20,7 +25,6 @@ using VCore.Modularity.RegionProviders;
 using VCore.Standard.Helpers;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
-//using Vlc.DotNet.Wpf;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
@@ -30,6 +34,8 @@ using VPlayer.Core.ViewModels.TvShows;
 using VPlayer.Player.Views.WindowsPlayer;
 using VPlayer.WindowsPlayer.Providers;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer;
+using Application = System.Windows.Application;
+using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 
 namespace VPlayer.WindowsPlayer.ViewModels
 {
@@ -53,6 +59,25 @@ namespace VPlayer.WindowsPlayer.ViewModels
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
     public override bool ContainsNestedRegions => true;
     public override string Header => "Video Player";
+
+    #region PlayerViewModel
+
+    private object playerViewModel;
+
+    public object PlayerViewModel
+    {
+      get { return playerViewModel; }
+      set
+      {
+        if (value != playerViewModel)
+        {
+          playerViewModel = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     #endregion
 
@@ -94,6 +119,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       base.Initialize();
 
       EventAggregator.GetEvent<PlayTvShowEvent>().Subscribe(PlayItemsFromEvent).DisposeWith(this);
+
     }
 
     #endregion

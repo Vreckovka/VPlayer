@@ -10,28 +10,31 @@
              xmlns:interactivity="http://prismlibrary.com/"
              xmlns:local="clr-namespace:VPlayer.WindowsPlayer.Views.WindowsPlayer"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:wpf="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
+             xmlns:vlc="clr-namespace:VPlayer.WindowsPlayer.Vlc"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
 
 
     <ContentControl Margin="5">
-        <Grid>
-            <wpf:VideoView MediaPlayer="{Binding MediaPlayer}">
-                <b:Interaction.Triggers>
-                    <b:EventTrigger EventName="Loaded">
-                        <b:InvokeCommandAction Command="{Binding VideoViewInitlized}" />
-                    </b:EventTrigger>
-                </b:Interaction.Triggers>
-            </wpf:VideoView>
-
-            <b:Interaction.Behaviors>
-                <behaviors1:FullScreenBehavior EventAggregator="{Binding EventAggregator}" />
-            </b:Interaction.Behaviors>
-        </Grid>
+        <vlc:VideoView x:Name="VideoView" MediaPlayer="{Binding MediaPlayer}">
+            <Canvas HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Background="#01000000">
+                <b:Interaction.Behaviors>
+                    <behaviors1:FullScreenBehavior x:Name="FullScreenBehavior"
+                                                   PlayerDataContext="{Binding PlayerViewModel}"
+                                                   VideoView="{Binding ElementName=VideoView}" />
+                </b:Interaction.Behaviors>
+            </Canvas>
 
 
+
+            <b:Interaction.Triggers>
+                <b:EventTrigger EventName="Loaded">
+                    <b:InvokeCommandAction Command="{Binding VideoViewInitlized}" />
+                </b:EventTrigger>
+            </b:Interaction.Triggers>
+        </vlc:VideoView>
     </ContentControl>
-
 </UserControl>

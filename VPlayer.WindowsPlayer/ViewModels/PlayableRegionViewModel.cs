@@ -27,7 +27,6 @@ using VCore.Standard.Helpers;
 using VCore.Standard.Modularity.Interfaces;
 using VCore.ViewModels;
 using LibVLCSharp.Shared;
-using LibVLCSharp.WPF;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -372,7 +371,6 @@ namespace VPlayer.Core.ViewModels
       MediaPlayer = result.Key;
 
       libVLC = result.Value;
-
     }
 
     #endregion
@@ -642,6 +640,7 @@ namespace VPlayer.Core.ViewModels
 
     #region Play
 
+    public Action onPlay;
     public Task Play()
     {
       return Task.Run(async () =>
@@ -660,6 +659,8 @@ namespace VPlayer.Core.ViewModels
             mediaPlayer.Play();
           }
         }
+
+        onPlay?.Invoke();
       });
     }
 

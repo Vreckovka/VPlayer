@@ -27,7 +27,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="LibVLCSharp.WPF" Version="3.4.9" />
+    <PackageReference Include="LibVLCSharp" Version="3.4.9" />
     <PackageReference Include="Ninject" Version="3.3.4" />
     <PackageReference Include="Prism.Ninject" Version="7.2.0.1422" />
     <PackageReference Include="Prism.Wpf" Version="7.2.0.1422" />

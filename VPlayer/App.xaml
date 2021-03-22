@@ -24,6 +24,9 @@
                 <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/ControlsTemplates/FinderTemplate.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/ControlsTemplates/ButtonWithIconTemplate.xaml" />
 
+                <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Vlc/Themes/VideoViewTemplate.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Vlc/Themes/FullScreenPlayerTemplate.xaml" />
+
             </ResourceDictionary.MergedDictionaries>
 
             <FontFamily x:Key="Montserrat_Thin">pack://application:,,,/VPlayer;component/Resources/Montserrat/Montserrat-Thin.otf#Montserrat Thin</FontFamily>
