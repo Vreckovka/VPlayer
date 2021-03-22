@@ -588,7 +588,7 @@ namespace VPlayer.Core.ViewModels
 
         media = new Media(libVLC, fileUri);
 
-        media = new Media(libVLC, new Uri(@"G:\Gladiator Extended.mkv"));
+        //media = new Media(libVLC, new Uri(@"G:\Gladiator Extended.mkv"));
 
         mediaPlayer.Media = media;
 
