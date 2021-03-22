@@ -4,6 +4,9 @@ using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.AudioStorage.Parsers;
+using VPlayer.AudioStorage.Scrappers;
+using VPlayer.Core.Managers.Status;
+using VPlayer.Library.ViewModels.TvShows;
 
 namespace VPlayer.AudioStorage.Modularity.NinjectModules
 {
@@ -25,6 +28,9 @@ namespace VPlayer.AudioStorage.Modularity.NinjectModules
       Kernel.BindToSelf<AudioInfoDownloader>().InSingletonScope();
 
       Kernel.Bind<ICSFDWebsiteScrapper>().To<CSFDWebsiteScrapper>();
+      Kernel.Bind<IStatusManager>().To<StatusManager>().InSingletonScope();
+      Kernel.Bind<ITvShowScrapper>().To<TVShowScrapper>().InSingletonScope();
+
     }
 
     #endregion Methods

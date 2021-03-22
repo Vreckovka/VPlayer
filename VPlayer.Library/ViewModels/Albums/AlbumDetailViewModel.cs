@@ -122,7 +122,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
               song.Name = audioInfo.Title;
             }
 
-            storageManager.UpdateEntity(song);
+            storageManager.UpdateEntityAsync(song);
 
             statusMessage.ProcessedCount++;
 

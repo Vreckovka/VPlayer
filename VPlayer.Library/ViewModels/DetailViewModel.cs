@@ -55,6 +55,8 @@ namespace VPlayer.Library.ViewModels
 
     #endregion
 
+  
+
     #region Commands
 
     #region Delete

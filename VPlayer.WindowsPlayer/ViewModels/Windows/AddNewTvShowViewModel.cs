@@ -17,6 +17,7 @@ using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.AudioStorage.Parsers;
+using VPlayer.Library.ViewModels.TvShows;
 
 namespace VPlayer.WindowsPlayer.ViewModels.Windows
 {
@@ -24,17 +25,19 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
   {
     private readonly DataLoader dataLoader;
     private readonly IStorageManager storageManager;
+    private readonly ITvShowScrapper tvShowScrapper;
     private readonly ICSFDWebsiteScrapper cSfdWebsiteScrapper;
     private readonly ILogger logger;
 
     public AddNewTvShowViewModel(
       [NotNull] DataLoader dataLoader,
       [NotNull] IStorageManager storageManager,
-      [NotNull] ICSFDWebsiteScrapper cSfdWebsiteScrapper,
+      [NotNull] ITvShowScrapper tvShowScrapper,
       [NotNull] ILogger logger)
     {
       this.dataLoader = dataLoader ?? throw new ArgumentNullException(nameof(dataLoader));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
+      this.tvShowScrapper = tvShowScrapper ?? throw new ArgumentNullException(nameof(tvShowScrapper));
       this.cSfdWebsiteScrapper = cSfdWebsiteScrapper ?? throw new ArgumentNullException(nameof(cSfdWebsiteScrapper));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -183,88 +186,24 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
 
           var tvShow = dataLoader.LoadTvShow(TemporaryName, TvShowPath);
 
+          tvShow.CsfdUrl = TvShowCsfdUrl;
+
           var id = await storageManager.StoreTvShow(tvShow);
 
-          ScrappeTvShow(id);
+          tvShowScrapper.UpdateTvShowFromCsfd(id, TvShowCsfdUrl);
 
           IsLoading = false;
-        }
-        catch (Exception ex)
-        {
-
-          Console.WriteLine(ex);
-        }
-      });
-
-    }
-
-    #endregion
-
-    #endregion
-
-    #region ScrappeTvShow
-
-    private void ScrappeTvShow(int tvShowId)
-    {
-      Task.Run(async () =>
-      {
-        try
-        {
-          var dbTvShow = storageManager.GetRepository<TvShow>().Include(x => x.Episodes).Single(x => x.Id == tvShowId);
-
-          dbTvShow.InfoDownloadStatus = InfoDownloadStatus.Downloading;
-
-          Application.Current.Dispatcher.Invoke(() =>
-          {
-            storageManager.ItemChanged.OnNext(new VCore.Modularity.Events.ItemChanged()
-            {
-              Changed = VCore.Modularity.Events.Changed.Updated,
-              Item = dbTvShow
-            });
-          });
-
-
-      
-          var csfdTvShow = cSfdWebsiteScrapper.LoadTvShow(TvShowCsfdUrl);
-
-          dbTvShow.Name = csfdTvShow.Name;
-
-          foreach (var episode in dbTvShow.Episodes)
-          {
-            Console.WriteLine(episode.SeasonNumber + "x" + episode.EpisodeNumber);
-
-            if (csfdTvShow.Seasons.Count > episode.SeasonNumber)
-            {
-              if (csfdTvShow.Seasons[episode.SeasonNumber - 1].SeasonEpisodes.Count > episode.EpisodeNumber)
-              {
-                var csfdEpisode = csfdTvShow.Seasons[episode.SeasonNumber - 1].SeasonEpisodes[episode.EpisodeNumber - 1];
-
-                episode.Name = csfdEpisode.Name;
-                episode.InfoDownloadStatus = InfoDownloadStatus.Downloaded;
-              }
-              else
-              {
-                episode.InfoDownloadStatus = InfoDownloadStatus.Failed;
-              }
-            }
-            else
-            {
-              episode.InfoDownloadStatus = InfoDownloadStatus.Failed;
-            }
-
-
-          }
-
-          dbTvShow.InfoDownloadStatus = InfoDownloadStatus.Downloaded;
-
-          await storageManager.UpdateWholeTvShow(dbTvShow);
         }
         catch (Exception ex)
         {
           logger.Log(ex);
         }
       });
+
+      Window?.Close();
     }
+
+    #endregion
 
     #endregion
 

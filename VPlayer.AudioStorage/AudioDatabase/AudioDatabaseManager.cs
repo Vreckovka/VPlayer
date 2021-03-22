@@ -400,7 +400,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
           }
           else
           {
-            UpdateEntity(item);
+            UpdateEntityAsync(item);
           }
         }
       });
@@ -635,30 +635,39 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region UpdateEntity
 
-    public Task<bool> UpdateEntity<TEntity>(TEntity newVersion) where TEntity : class, IEntity, IUpdateable<TEntity>
+    public Task<bool> UpdateEntityAsync<TEntity>(TEntity newVersion) where TEntity : class, IEntity, IUpdateable<TEntity>
     {
       return Task.Run(() =>
       {
-        using (var context = new AudioDatabaseContext())
+        try
         {
-          var foundEntity = GetRepository<TEntity>(context).SingleOrDefault(x => x.Id == newVersion.Id);
-
-          if (foundEntity != null)
+          using (var context = new AudioDatabaseContext())
           {
-            foundEntity.Update(newVersion);
+            var foundEntity = GetRepository<TEntity>(context).SingleOrDefault(x => x.Id == newVersion.Id);
 
-            context.SaveChanges();
-
-            logger.Log(Logger.MessageType.Success, $"Entity was updated {newVersion}");
-
-            ItemChanged.OnNext(new ItemChanged()
+            if (foundEntity != null)
             {
-              Item = foundEntity,
-              Changed = Changed.Updated
-            });
+              foundEntity.Update(newVersion);
 
-            return true;
+              context.SaveChanges();
+
+              logger.Log(Logger.MessageType.Success, $"Entity was updated {newVersion}");
+
+              ItemChanged.OnNext(new ItemChanged()
+              {
+                Item = foundEntity,
+                Changed = Changed.Updated
+              });
+
+              return true;
+            }
+
+            return false;
           }
+        }
+        catch (Exception ex)
+        {
+          logger.Log(ex);
 
           return false;
         }

@@ -243,6 +243,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       Application.Current.Dispatcher.Invoke(() =>
       {
+        Subtitles.Clear();
+        AudioTracks.Clear();
+
         if (MediaPlayer.SpuDescription.Length > 0)
         {
           foreach (var spu in MediaPlayer.SpuDescription)

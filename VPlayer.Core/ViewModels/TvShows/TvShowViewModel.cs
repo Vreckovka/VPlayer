@@ -43,7 +43,7 @@ namespace VPlayer.Core.ViewModels.TvShows
 
     #endregion
 
-    public override string ImageThumbnail { get; }
+    public override string ImageThumbnail => Model.PosterPath;
 
     #region Update
 

@@ -116,6 +116,8 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
     #endregion
 
+    #region SaveImage
+
     private void SaveImage(AlbumCover albumCover)
     {
       MemoryStream ms = new MemoryStream(albumCover.DownloadedCover);
@@ -142,6 +144,8 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
         Item = albumViewModel.Model
       });
     }
+
+    #endregion
 
     #region GetFileSize
 

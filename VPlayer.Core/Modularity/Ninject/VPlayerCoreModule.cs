@@ -21,7 +21,7 @@ namespace VPlayer.Core.Modularity.Ninject
 
 
       Kernel.Bind<FileLoggerContainer>().ToSelf().WithConstructorArgument("logFilePath", logFilePath);
-      Kernel.Bind<IStatusManager>().To<StatusManager>().InSingletonScope();
+     
     }
   }
 }

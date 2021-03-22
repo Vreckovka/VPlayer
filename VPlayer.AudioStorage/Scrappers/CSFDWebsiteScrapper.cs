@@ -1,18 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reactive.Subjects;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using HtmlAgilityPack;
 using Logger;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using VCore;
 using VCore.Annotations;
 using VCore.Standard;
+using VPlayer.AudioStorage.InfoDownloader;
+using VPlayer.AudioStorage.InfoDownloader.Models;
+using VPlayer.Core.Managers.Status;
 using WebsiteParser;
 
 namespace VPlayer.AudioStorage.Parsers
@@ -21,13 +29,14 @@ namespace VPlayer.AudioStorage.Parsers
   public class CSFDWebsiteScrapper : ICSFDWebsiteScrapper
   {
     private readonly ILogger logger;
+    private readonly IStatusManager statusManager;
     private ChromeDriver chromeDriver;
     private string baseUrl = "https://www.csfd.cz";
 
-    public CSFDWebsiteScrapper([NotNull] ILogger logger)
+    public CSFDWebsiteScrapper([NotNull] ILogger logger, [NotNull] IStatusManager statusManager)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
+      this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
     }
 
     public bool Initialize()
@@ -36,9 +45,13 @@ namespace VPlayer.AudioStorage.Parsers
       {
         var chromeOptions = new ChromeOptions();
 
-        chromeOptions.AddArguments(new List<string>() { "no-sandbox", "headless", "disable-gpu" });
+        chromeOptions.AddArguments(new List<string>() { "headless", "disable-infobars", "--log-level=3" });
 
-        chromeDriver = new ChromeDriver(chromeOptions);
+        var chromeDriverService = ChromeDriverService.CreateDefaultService();
+
+        chromeDriverService.HideCommandPromptWindow = true;
+
+        chromeDriver = new ChromeDriver(chromeDriverService,chromeOptions);
 
         return true;
       }
@@ -62,7 +75,30 @@ namespace VPlayer.AudioStorage.Parsers
         TvShowUrl = url
       };
 
-      tvShow.Name = GetTvShowName(url);
+      var statusMessage = new StatusMessage(2)
+      {
+        ActualMessageStatusState = MessageStatusState.Processing,
+        Message = "Downloading tv show basic info"
+      };
+
+      statusManager.UpdateMessage(statusMessage);
+
+      tvShow.Name = GetTvShowName(url, out var posterUrl);
+
+      statusMessage.ProcessedCount++;
+      statusManager.UpdateMessage(statusMessage);
+
+      var poster = DownloadPoster(posterUrl);
+
+      if (poster != null)
+      {
+        tvShow.PosterPath = SaveImage(tvShow.Name, poster);
+      }
+
+      statusMessage.ProcessedCount++;
+      statusMessage.ActualMessageStatusState = MessageStatusState.Done;
+      statusManager.UpdateMessage(statusMessage);
+
       tvShow.Seasons = LoadSeasons();
 
       return tvShow;
@@ -71,7 +107,7 @@ namespace VPlayer.AudioStorage.Parsers
 
     #region GetTvShowName
 
-    private string GetTvShowName(string url)
+    private string GetTvShowName(string url, out string posterUrl)
     {
       chromeDriver.Url = url;
       chromeDriver.Navigate();
@@ -80,14 +116,53 @@ namespace VPlayer.AudioStorage.Parsers
 
       document.LoadHtml(chromeDriver.PageSource);
 
-
-
       var node = chromeDriver.FindElement(By.XPath("/html/body/div[2]/div[3]/div[1]/div[1]/div[1]/div[2]/div[1]/h1")).Text;
 
       var name = node.Replace("\t", string.Empty).Replace(" (TV seriál)", string.Empty);
+
       logger.Log(MessageType.Success, $"Tv show name: {name}");
 
+      var posterNode = chromeDriver.FindElement(By.XPath("/html/body/div[2]/div[3]/div[1]/div[1]/div[1]/div[1]/img"));
+
+      posterUrl = posterNode.GetAttribute("src");
+
       return name;
+    }
+
+    #endregion
+
+    #region DownloadPoster
+
+    private byte[] DownloadPoster(string coverUrl)
+    {
+      using (var client = new WebClient())
+      {
+        var downloadedCover = client.DownloadData(coverUrl);
+
+        return downloadedCover;
+      }
+    }
+
+    #endregion
+
+    #region SaveImage
+
+    private string SaveImage(string tvShowName, byte[] image)
+    {
+      MemoryStream ms = new MemoryStream(image);
+      Image i = Image.FromStream(ms);
+
+      var directory = Path.Combine(AudioInfoDownloader.GetDefaultPicturesPath(), $"TvShows\\{tvShowName}");
+      var finalPath = Path.Combine(directory, "poster.jpg");
+
+      finalPath.EnsureDirectoryExists();
+
+      if (File.Exists(finalPath))
+        File.Delete(finalPath);
+
+      i.Save(finalPath, ImageFormat.Jpeg);
+
+      return finalPath;
     }
 
     #endregion
@@ -106,6 +181,14 @@ namespace VPlayer.AudioStorage.Parsers
 
       var nodes = document.DocumentNode.SelectNodes("/html/body/div[2]/div[3]/div[1]/div[3]/div[2]/ul/li/a");
 
+      var statusMessage = new StatusMessage(nodes.Count)
+      {
+        ActualMessageStatusState = MessageStatusState.Processing,
+        Message = "Downloading tv show seasons"
+      };
+
+      statusManager.UpdateMessage(statusMessage);
+
       foreach (var node in nodes)
       {
         var newSeason = new CSFDTVShowSeason();
@@ -116,6 +199,7 @@ namespace VPlayer.AudioStorage.Parsers
         seasons.Add(newSeason);
 
         logger.Log(MessageType.Success, $"Tv show season: {newSeason.Name}");
+
         elementIndex++;
       }
 
@@ -123,6 +207,10 @@ namespace VPlayer.AudioStorage.Parsers
       foreach (var season in seasons)
       {
         season.SeasonEpisodes = LoadSeasonEpisodes(season.SeasonUrl);
+
+        statusMessage.ProcessedCount++;
+
+        statusManager.UpdateMessage(statusMessage);
       }
 
       return seasons;
@@ -163,7 +251,7 @@ namespace VPlayer.AudioStorage.Parsers
         foreach (var node in nodes)
         {
           var newEpisode = new CSFDTVShowSeasonEpisode();
-        
+
           newEpisode.Name = node.InnerText;
           newEpisode.EpisodeUrl = baseUrl + node.Attributes.FirstOrDefault(x => x.Name == "href")?.Value;
 
@@ -224,6 +312,7 @@ namespace VPlayer.AudioStorage.Parsers
   {
     public string Name { get; set; }
     public string TvShowUrl { get; set; }
+    public string PosterPath { get; set; }
     public List<CSFDTVShowSeason> Seasons { get; set; }
   }
 

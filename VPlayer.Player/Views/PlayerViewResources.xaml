@@ -2,7 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:converters="clr-namespace:VPlayer.Player.Converters"
                     xmlns:local="clr-namespace:VPlayer.Player.Views"
-                    xmlns:status="clr-namespace:VPlayer.Core.Managers.Status;assembly=VPlayer.Core">
+                    xmlns:status="clr-namespace:VPlayer.Core.Managers.Status;assembly=VPlayer.Core"
+                    xmlns:status1="clr-namespace:VPlayer.Core.Managers.Status;assembly=VPlayer.AudioStorage">
 
   <converters:DataContextChangedConverter x:Key="DataContextChangedConverter" />
   <DataTemplate x:Key="StatusMessageDataTemplate">
@@ -32,16 +33,16 @@
             <Run.Style>
               <Style TargetType="Run">
                 <Style.Triggers>
-                  <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status:MessageStatusState.Beggining}">
+                  <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status1:MessageStatusState.Beggining}">
                     <Setter Property="Foreground" Value="Yellow" />
                   </DataTrigger>
-                  <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status:MessageStatusState.Processing}">
+                  <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status1:MessageStatusState.Processing}">
                     <Setter Property="Foreground" Value="YellowGreen" />
                   </DataTrigger>
-                  <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status:MessageStatusState.Done}">
+                  <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status1:MessageStatusState.Done}">
                     <Setter Property="Foreground" Value="Green" />
                   </DataTrigger>
-                  <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status:MessageStatusState.Failed}">
+                  <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status1:MessageStatusState.Failed}">
                     <Setter Property="Foreground" Value="Red" />
                   </DataTrigger>
                 </Style.Triggers>
@@ -61,7 +62,7 @@
           <Style TargetType="Grid">
             <Setter Property="Opacity" Value="0" />
             <Style.Triggers>
-              <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status:MessageStatusState.Done}">
+              <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status1:MessageStatusState.Done}">
                 <DataTrigger.EnterActions>
                   <RemoveStoryboard BeginStoryboardName="ShowMessageStoryBoard" />
                   <BeginStoryboard x:Name="HideMessageStoryBoard">

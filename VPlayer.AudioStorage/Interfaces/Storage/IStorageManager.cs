@@ -34,7 +34,7 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
 
     bool StoreEntity<TEntity>(TEntity model, out TEntity entityModel) where TEntity : class, IEntity;
     bool DeleteEntity<TEntity>(TEntity entity) where TEntity : class, IEntity;
-    Task<bool> UpdateEntity<TEntity>(TEntity newVersion) where TEntity : class, IEntity, IUpdateable<TEntity>;
+    Task<bool> UpdateEntityAsync<TEntity>(TEntity newVersion) where TEntity : class, IEntity, IUpdateable<TEntity>;
     void RewriteEntity<T>(T entity) where T : class, IEntity;
    
 

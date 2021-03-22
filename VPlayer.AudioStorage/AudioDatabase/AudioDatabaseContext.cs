@@ -11,7 +11,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
   public class AudioDatabaseContext : DbContext
   {
     //add-migration migration_ -ConnectionString "Data Source=C:\Users\Roman Pecho\AppData\Roaming\VPlayer\VPlayerDatabase.db;Version=3;" -connectionProvider "System.Data.SQLite.EF6"
-
+    //STACI IBA add-migration MIGRATIONNAME 
 
     #region Properties
 

@@ -1,55 +1,50 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 using Logger;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using VCore;
 using VCore.Annotations;
 using VCore.ViewModels;
 using VPlayer.AudioStorage.DataLoader;
-using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.Video;
-using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.AudioStorage.Parsers;
 
 namespace VPlayer.Library.ViewModels.TvShows
 {
   public class UpdateTvShowViewModel : BaseWindowViewModel
   {
-    private readonly DataLoader dataLoader;
-    private readonly IStorageManager storageManager;
-    private readonly ICSFDWebsiteScrapper cSfdWebsiteScrapper;
+    private readonly ITvShowScrapper tVShowScrapper;
     private readonly ILogger logger;
     private readonly TvShow tvShow;
 
     public UpdateTvShowViewModel(
-      [NotNull] DataLoader dataLoader,
-      [NotNull] IStorageManager storageManager,
-      [NotNull] ICSFDWebsiteScrapper cSfdWebsiteScrapper,
+      [NotNull] ITvShowScrapper tVShowScrapper,
       [NotNull] ILogger logger,
       [NotNull] TvShow tvShow)
     {
-      this.dataLoader = dataLoader ?? throw new ArgumentNullException(nameof(dataLoader));
-      this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
-      this.cSfdWebsiteScrapper = cSfdWebsiteScrapper ?? throw new ArgumentNullException(nameof(cSfdWebsiteScrapper));
+      this.tVShowScrapper = tVShowScrapper ?? throw new ArgumentNullException(nameof(tVShowScrapper));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       this.tvShow = tvShow ?? throw new ArgumentNullException(nameof(tvShow));
+
+      save = new ActionCommand(OnSave, () => !string.IsNullOrEmpty(TvShowCsfdUrl) && !string.IsNullOrEmpty(Name));
+
+      Name = tvShow.Name;
+      TvShowCsfdUrl = tvShow.CsfdUrl;
     }
 
 
     #region Name
 
+    private string name;
     public string Name
     {
-      get { return tvShow.Name; }
+      get { return name; }
       set
       {
-        if (value != tvShow.Name)
+        if (value != name)
         {
-          tvShow.Name = value;
+          name = value;
           save.RaiseCanExecuteChanged();
           RaisePropertyChanged();
         }
@@ -60,16 +55,15 @@ namespace VPlayer.Library.ViewModels.TvShows
 
     #region TvShowCsfdUrl
 
-    private string tvShowCsfdUrl;
-
+    private string csfdUrl;
     public string TvShowCsfdUrl
     {
-      get { return tvShowCsfdUrl; }
+      get { return csfdUrl; }
       set
       {
-        if (value != tvShowCsfdUrl)
+        if (value != csfdUrl)
         {
-          tvShowCsfdUrl = value;
+          csfdUrl = value;
           save.RaiseCanExecuteChanged();
           RaisePropertyChanged();
         }
@@ -98,112 +92,46 @@ namespace VPlayer.Library.ViewModels.TvShows
     #endregion
 
     #region Commands
-    
-    #region Load
+
+    #region Save
 
     private ActionCommand save;
-    public ICommand Save
-    {
-      get
-      {
-        if (save == null)
-        {
-          save = new ActionCommand(OnLoad, () => !string.IsNullOrEmpty(TvShowCsfdUrl) && !string.IsNullOrEmpty(Name));
-        }
+    public ICommand Save => save;
 
-        return save;
-      }
-    }
-
-    public void OnLoad()
+    public void OnSave()
     {
+      IsLoading = true;
+
       Task.Run(async () =>
       {
         try
         {
-          IsLoading = true;
-
-          ScrappeTvShow(tvShow.Id);
-
-          IsLoading = false;
-        }
-        catch (Exception ex)
-        {
-
-          Console.WriteLine(ex);
-        }
-      });
-
-    }
-
-    #endregion
-
-    #endregion
-
-    #region ScrappeTvShow
-
-    private void ScrappeTvShow(int tvShowId)
-    {
-      Task.Run(async () =>
-      {
-        try
-        {
-          var dbTvShow = storageManager.GetRepository<TvShow>().Include(x => x.Episodes).Single(x => x.Id == tvShowId);
-
-          dbTvShow.InfoDownloadStatus = InfoDownloadStatus.Downloading;
-
-          Application.Current.Dispatcher.Invoke(() =>
+          if (tvShow.Name != Name)
           {
-            storageManager.ItemChanged.OnNext(new VCore.Modularity.Events.ItemChanged()
-            {
-              Changed = VCore.Modularity.Events.Changed.Updated,
-              Item = dbTvShow
-            });
-          });
-      
-          var csfdTvShow = cSfdWebsiteScrapper.LoadTvShow(TvShowCsfdUrl);
-
-          dbTvShow.Name = tvShow.Name;
-
-          foreach (var episode in dbTvShow.Episodes)
-          {
-            Console.WriteLine(episode.SeasonNumber + "x" + episode.EpisodeNumber);
-
-            if (csfdTvShow.Seasons.Count > episode.SeasonNumber)
-            {
-              if (csfdTvShow.Seasons[episode.SeasonNumber - 1].SeasonEpisodes.Count > episode.EpisodeNumber)
-              {
-                var csfdEpisode = csfdTvShow.Seasons[episode.SeasonNumber - 1].SeasonEpisodes[episode.EpisodeNumber - 1];
-
-                episode.Name = csfdEpisode.Name;
-                episode.InfoDownloadStatus = InfoDownloadStatus.Downloaded;
-              }
-              else
-              {
-                episode.InfoDownloadStatus = InfoDownloadStatus.Failed;
-              }
-            }
-            else
-            {
-              episode.InfoDownloadStatus = InfoDownloadStatus.Failed;
-            }
-
-
+            await tVShowScrapper.UpdateTvShowName(tvShow.Id, Name);
           }
 
-          dbTvShow.InfoDownloadStatus = InfoDownloadStatus.Downloaded;
+          if (tvShow.CsfdUrl != TvShowCsfdUrl)
+          {
+            await tVShowScrapper.UpdateTvShowCsfdUrl(tvShow.Id, TvShowCsfdUrl);
+          }
 
-          await storageManager.UpdateWholeTvShow(dbTvShow);
+          tVShowScrapper.UpdateTvShowFromCsfd(tvShow.Id, TvShowCsfdUrl);
         }
         catch (Exception ex)
         {
           logger.Log(ex);
         }
       });
+
+      IsLoading = false;
+
+      Window?.Close();
     }
 
     #endregion
 
+    #endregion
   }
 }
 

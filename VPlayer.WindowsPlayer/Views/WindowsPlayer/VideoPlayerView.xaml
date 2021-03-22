@@ -7,6 +7,7 @@
              xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore.WPF"
              xmlns:controls1="clr-namespace:VPlayer.WindowsPlayer.Vlc.Controls"
              xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF"
+             xmlns:converters1="clr-namespace:VPlayer.WindowsPlayer.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:interactivity="http://prismlibrary.com/"
              xmlns:local="clr-namespace:VPlayer.WindowsPlayer.Views.WindowsPlayer"
@@ -17,9 +18,8 @@
              mc:Ignorable="d">
 
 
-    <ContentControl Margin="5">
+    <ContentControl Margin="1,0,0,0">
         <Grid>
-
             <vlc:VideoView x:Name="VideoView" MediaPlayer="{Binding MediaPlayer}">
                 <Grid HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
@@ -31,6 +31,7 @@
                           Background="#101010">
                         <MenuItem Height="35"
                                   Header="Audio tracks"
+                                  IsEnabled="{Binding AudioTracks.Count, Converter={converters1:EmptyItemSourceToDisable}}"
                                   ItemsSource="{Binding AudioTracks}">
                             <MenuItem.ItemContainerStyle>
                                 <Style BasedOn="{StaticResource {x:Type MenuItem}}" TargetType="MenuItem">
@@ -47,6 +48,7 @@
 
                         <MenuItem Height="35"
                                   Header="Subtitles"
+                                  IsEnabled="{Binding Subtitles.Count, Converter={converters1:EmptyItemSourceToDisable}}"
                                   ItemsSource="{Binding Subtitles}">
                             <MenuItem.ItemContainerStyle>
                                 <Style BasedOn="{StaticResource {x:Type MenuItem}}" TargetType="MenuItem">

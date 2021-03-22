@@ -216,7 +216,7 @@ namespace VPlayer.Core.ViewModels
         var oldVAlue = Model.IsFavorite;
         Model.IsFavorite = value;
 
-        var updated = await storageManager.UpdateEntity(Model);
+        var updated = await storageManager.UpdateEntityAsync(Model);
 
         if (updated)
         {
