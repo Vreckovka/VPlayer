@@ -32,6 +32,12 @@ namespace VPlayer.WindowsPlayer.Vlc.Controls
       base.OnAttached();
 
       AssociatedObject.MouseLeftButtonDown += AssociatedObject_MouseLeftButtonDown;
+      AssociatedObject.MouseMove += AssociatedObject_MouseMove;
+    }
+
+    private void AssociatedObject_MouseMove(object sender, MouseEventArgs e)
+    {
+      ShowHideMouseManager.ResetMouse();
     }
 
     private void AssociatedObject_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -45,6 +51,7 @@ namespace VPlayer.WindowsPlayer.Vlc.Controls
     protected override void OnDetaching()
     {
       AssociatedObject.MouseLeftButtonDown -= AssociatedObject_MouseLeftButtonDown;
+      AssociatedObject.MouseMove -= AssociatedObject_MouseMove;
     }
   }
 }

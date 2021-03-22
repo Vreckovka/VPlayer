@@ -7,6 +7,7 @@ using System.Windows.Forms.Integration;
 using System.Windows.Interop;
 using System.Windows.Media;
 using LibVLCSharp.Shared;
+using VPlayer.WindowsPlayer.Behaviors;
 using VPlayer.WindowsPlayer.Vlc.Controls;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 
@@ -198,6 +199,9 @@ namespace VPlayer.WindowsPlayer.Vlc
       fullScreenWindow.Topmost = true;
       fullScreenWindow.Style = null;
 
+
+      ShowHideMouseManager.IsFullscreen = true;
+
       var maoin = Application.Current.MainWindow;
 
       fullScreenWindow.Left = maoin.Left;
@@ -255,6 +259,8 @@ namespace VPlayer.WindowsPlayer.Vlc
         MediaPlayer.Play();
 
         MediaPlayer.Position = seek;
+
+        ShowHideMouseManager.IsFullscreen = false;
       }
     }
 
