@@ -30,6 +30,7 @@ namespace VPlayer.WindowsPlayer.Views.WindowsPlayer
 
       FullScreenBehavior.VideoView = VideoView;
       FullScreenBehavior.FullscreenPlayer = FullscreenPlayer;
+      FullScreenBehavior.VideoMenu = VideoMenu;
     }
   }
 }

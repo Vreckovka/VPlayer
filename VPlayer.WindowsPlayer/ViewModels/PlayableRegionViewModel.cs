@@ -49,7 +49,7 @@ namespace VPlayer.Core.ViewModels
     private readonly IVlcProvider vlcProvider;
     private int actualItemIndex;
     protected HashSet<TItemViewModel> shuffleList = new HashSet<TItemViewModel>();
-    private LibVLC libVLC;
+    protected LibVLC libVLC;
     private bool wasVlcInitilized;
 
     #endregion
@@ -427,6 +427,8 @@ namespace VPlayer.Core.ViewModels
       };
 
       mediaPlayer.Playing += OnVlcPlayingChanged;
+
+      OnVlcLoaded();
     }
 
 
@@ -586,6 +588,8 @@ namespace VPlayer.Core.ViewModels
 
         media = new Media(libVLC, fileUri);
 
+        media = new Media(libVLC, new Uri(@"G:\Gladiator Extended.mkv"));
+
         mediaPlayer.Media = media;
 
         media.DurationChanged += Media_DurationChanged;
@@ -595,13 +599,19 @@ namespace VPlayer.Core.ViewModels
       });
     }
 
+    #endregion
+
+    #region Media_DurationChanged
+
     private void Media_DurationChanged(object sender, MediaDurationChangedEventArgs e)
     {
       Application.Current.Dispatcher.Invoke(() =>
       {
         ActualItem.Duration = (int)e.Duration / 1000;
-      });
 
+        if (MediaPlayer.Media != null)
+          MediaPlayer.Media.DurationChanged -= Media_DurationChanged;
+      });
     }
 
     #endregion
@@ -1121,28 +1131,41 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region OnVlcLoaded
+
+    protected virtual void OnVlcLoaded()
+    {
+
+    }
+
+    #endregion
+
     protected abstract void OnRemoveItemsFromPlaylist(DeleteType deleteType, RemoveFromPlaylistEventArgs<TItemViewModel> args);
     protected abstract void ItemsRemoved(EventPattern<TItemViewModel> eventPattern);
     protected abstract void FilterByActualSearch(string predictate);
     protected abstract TPlaylistModel GetNewPlaylistModel(List<TPlaylistItemModel> playlistModels, bool isUserCreated);
 
+
+
     #region Dispose
 
     public override void Dispose()
     {
-      mediaPlayer.TimeChanged -= OnVlcTimeChanged;
-      mediaPlayer.Playing -= OnVlcPlayingChanged;
-
-      libVLC.Dispose();
-      mediaPlayer.Dispose();
-
       if (ActualSavedPlaylist != null)
         UpdateActualSavedPlaylistPlaylist();
 
+      Task.Run(() =>
+      {
+        mediaPlayer.TimeChanged -= OnVlcTimeChanged;
+        mediaPlayer.Playing -= OnVlcPlayingChanged;
 
-      PlayList.CollectionChanged -= PlayList_CollectionChanged;
+        libVLC.Dispose();
+        mediaPlayer.Dispose();
 
-      base.Dispose();
+        PlayList.CollectionChanged -= PlayList_CollectionChanged;
+
+        base.Dispose();
+      });
     }
 
     #endregion

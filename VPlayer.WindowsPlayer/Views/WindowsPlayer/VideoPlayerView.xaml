@@ -25,6 +25,44 @@
                       VerticalAlignment="Stretch"
                       Background="#01000000">
 
+                    <Menu x:Name="VideoMenu"
+                          Padding="0,0"
+                          VerticalAlignment="Top"
+                          Background="#101010">
+                        <MenuItem Height="35"
+                                  Header="Audio tracks"
+                                  ItemsSource="{Binding AudioTracks}">
+                            <MenuItem.ItemContainerStyle>
+                                <Style BasedOn="{StaticResource {x:Type MenuItem}}" TargetType="MenuItem">
+                                    <Setter Property="IsChecked" Value="{Binding IsSelected}" />
+                                    <Setter Property="IsCheckable" Value="True" />
+                                </Style>
+                            </MenuItem.ItemContainerStyle>
+                            <MenuItem.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Description}" />
+                                </DataTemplate>
+                            </MenuItem.ItemTemplate>
+                        </MenuItem>
+
+                        <MenuItem Height="35"
+                                  Header="Subtitles"
+                                  ItemsSource="{Binding Subtitles}">
+                            <MenuItem.ItemContainerStyle>
+                                <Style BasedOn="{StaticResource {x:Type MenuItem}}" TargetType="MenuItem">
+                                    <Setter Property="IsChecked" Value="{Binding IsSelected}" />
+                                    <Setter Property="IsCheckable" Value="True" />
+                                </Style>
+                            </MenuItem.ItemContainerStyle>
+                            <MenuItem.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Description}" />
+                                </DataTemplate>
+                            </MenuItem.ItemTemplate>
+
+                        </MenuItem>
+                    </Menu>
+
                     <controls1:FullscreenPlayer x:Name="FullscreenPlayer" Visibility="Hidden" />
 
                     <b:Interaction.Behaviors>

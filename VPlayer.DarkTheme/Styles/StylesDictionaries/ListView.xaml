@@ -13,6 +13,8 @@
         <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
+
+
     <Style x:Key="ListView_MenuStyle" TargetType="ListView">
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
@@ -20,38 +22,23 @@
         <Setter Property="ScrollViewer.CanContentScroll" Value="true" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="FontWeight" Value="DemiBold" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="FontFamily" Value="{StaticResource Roboto}" />
-        <Setter Property="Background">
-            <Setter.Value>
-
-                <LinearGradientBrush Opacity="0.9" StartPoint="1,0" EndPoint="0,0">
-
-                    <GradientStop Offset="0.5" Color="#97e879" />
-
-                    <GradientStop Offset="-1" Color="#30a9ff" />
-
-                    <GradientStop Offset="0.5" Color="Wheat" />
-
-
-                </LinearGradientBrush>
-            </Setter.Value>
-        </Setter>
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
                 <Style TargetType="ListViewItem">
-                    <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}" />
+                    <Setter Property="Foreground" Value="#aaa" />
                     <Setter Property="IsSelected" Value="{Binding IsActive}" />
                     <Setter Property="Template">
                         <Setter.Value>
                             <!--  Trun off default selection  -->
                             <ControlTemplate TargetType="{x:Type ListViewItem}">
                                 <Border x:Name="Bd"
-                                        Padding="20,8,20,8"
+                                        Padding="15,5"
                                         Background="{TemplateBinding Background}"
                                         SnapsToDevicePixels="true">
-                                    <ContentPresenter Margin="{TemplateBinding Padding}"
+                                    <ContentPresenter Margin="{TemplateBinding Margin}"
                                                       HorizontalAlignment="Left"
                                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                                       Content="{Binding Header}"
@@ -66,13 +53,19 @@
                                             <Condition Binding="{Binding RelativeSource={RelativeSource self}, Path=IsMouseOver}" Value="True" />
                                             <Condition Binding="{Binding RelativeSource={RelativeSource self}, Path=IsSelected}" Value="False" />
                                         </MultiDataTrigger.Conditions>
+
                                         <MultiDataTrigger.EnterActions>
                                             <RemoveStoryboard BeginStoryboardName="B" />
                                             <BeginStoryboard>
                                                 <Storyboard>
                                                     <ColorAnimation Storyboard.TargetProperty="Background.Color"
-                                                                    To="{StaticResource 30_DefaultWhiteColor}"
-                                                                    Duration="0:0:.25" />
+                                                                    To="{StaticResource 10_DefaultWhiteColor}"
+                                                                    Duration="{StaticResource MenuHoverAnimationDuration}" />
+
+
+                                                    <ColorAnimation Storyboard.TargetProperty="(TextBox.Foreground).(SolidColorBrush.Color)"
+                                                                    To="#ccc"
+                                                                    Duration="{StaticResource MenuHoverAnimationDuration}" />
                                                 </Storyboard>
                                             </BeginStoryboard>
                                         </MultiDataTrigger.EnterActions>
@@ -81,18 +74,29 @@
                                                 <Storyboard>
                                                     <ColorAnimation Storyboard.TargetProperty="Background.Color"
                                                                     To="Transparent"
-                                                                    Duration="0:0:.25" />
+                                                                    Duration="{StaticResource MenuHoverAnimationDuration}" />
+
+                                                    <ColorAnimation Storyboard.TargetProperty="(TextBox.Foreground).(SolidColorBrush.Color)"
+                                                                    To="#aaa"
+                                                                    Duration="{StaticResource MenuHoverAnimationDuration}" />
                                                 </Storyboard>
                                             </BeginStoryboard>
                                         </MultiDataTrigger.ExitActions>
                                     </MultiDataTrigger>
                                     <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="FontWeight" Value="Bold" />
                                         <Trigger.EnterActions>
                                             <BeginStoryboard x:Name="A">
                                                 <Storyboard>
                                                     <ColorAnimation Storyboard.TargetProperty="Background.Color"
-                                                                    To="{StaticResource 50_DefaultWhiteColor}"
-                                                                    Duration="0:0:0:0.2" />
+                                                                    To="{StaticResource 22_DefaultWhiteColor}"
+                                                                    Duration="{StaticResource MenuHoverAnimationDuration}" />
+
+                                                    <ColorAnimation Storyboard.TargetProperty="(TextBox.Foreground).(SolidColorBrush.Color)"
+                                                                    To="{StaticResource DefaultWhiteColor}"
+                                                                    Duration="{StaticResource MenuHoverAnimationDuration}" />
+
+
                                                 </Storyboard>
                                             </BeginStoryboard>
                                         </Trigger.EnterActions>
@@ -103,7 +107,13 @@
                                                 <Storyboard>
                                                     <ColorAnimation Storyboard.TargetProperty="Background.Color"
                                                                     To="Transparent"
-                                                                    Duration="0:0:0:.2" />
+                                                                    Duration="{StaticResource MenuHoverAnimationDuration}" />
+
+                                                    <ColorAnimation Storyboard.TargetProperty="(TextBox.Foreground).(SolidColorBrush.Color)"
+                                                                    To="#aaa"
+                                                                    Duration="{StaticResource MenuHoverAnimationDuration}" />
+
+
                                                 </Storyboard>
                                             </BeginStoryboard>
                                         </Trigger.ExitActions>
@@ -144,155 +154,6 @@
         </Setter>
     </Style>
 
-    <Style x:Key="ListViewItem_AlbumSongs" TargetType="{x:Type ListViewItem}">
-        <Setter Property="Foreground" Value="{StaticResource 85_WhiteTransparentBrush}" />
-        <Setter Property="FontFamily" Value="Arial" />
-        <Setter Property="FontWeight" Value="Light" />
-        <Setter Property="Height" Value="35" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <!--  Trun off default selection  -->
-                <ControlTemplate TargetType="{x:Type ListViewItem}">
-                    <Border x:Name="Bd"
-                            Margin="3,0,3,0"
-                            Padding="5"
-                            Background="{TemplateBinding Background}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <Button Margin="2.5,0,8,0"
-                                    Command="{Binding Play}"
-                                    Style="{StaticResource PlayMini}" />
-                            <Grid Name="Container"
-                                  Grid.Column="1"
-                                  Margin="5,0"
-                                  HorizontalAlignment="Stretch"
-                                  VerticalAlignment="Stretch"
-                                  Background="Transparent"
-                                  ClipToBounds="True">
-                                <TextBlock HorizontalAlignment="Left"
-                                           VerticalAlignment="Center"
-                                           Text="{Binding Name}"
-                                           TextTrimming="CharacterEllipsis">
-                                    <i:Interaction.Behaviors>
-                                        <text1:PanningTextWithFontSizeBehavior BiggerFontSize="17"
-                                                                               Container="{Binding ElementName=Container}"
-                                                                               IsMouseOverRelativeToContainer="True" />
-                                    </i:Interaction.Behaviors>
-                                </TextBlock>
-                            </Grid>
-                            <TextBlock Grid.Column="2"
-                                       HorizontalAlignment="Right"
-                                       VerticalAlignment="Center"
-                                       Text="{Binding Duration}" />
-                        </Grid>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <MultiDataTrigger>
-                            <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding RelativeSource={RelativeSource self}, Path=IsMouseOver}" Value="True" />
-                                <Condition Binding="{Binding RelativeSource={RelativeSource self}, Path=IsSelected}" Value="False" />
-                            </MultiDataTrigger.Conditions>
-                            <MultiDataTrigger.EnterActions>
-                                <RemoveStoryboard BeginStoryboardName="B" />
-                                <BeginStoryboard Name="As">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetProperty="Background.Color"
-                                                        To="#10b3adcd"
-                                                        Duration="0:0:.10" />
-
-                                        <ColorAnimation Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)"
-                                                        From="{StaticResource 200_DefaultWhiteColor}"
-                                                        To="{StaticResource DefaultWhiteColor}"
-                                                        Duration="0:0:0.1" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </MultiDataTrigger.EnterActions>
-                            <MultiDataTrigger.ExitActions>
-                                <RemoveStoryboard BeginStoryboardName="As" />
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetProperty="Background.Color"
-                                                        To="Transparent"
-                                                        Duration="0:0:.10" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </MultiDataTrigger.ExitActions>
-                        </MultiDataTrigger>
-
-                        <Trigger Property="IsSelected" Value="True">
-                            <Trigger.EnterActions>
-                                <BeginStoryboard x:Name="A">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetProperty="Background.Color"
-                                                        To="#15FFFFFF"
-                                                        Duration="0:0:0:0.2" />
-
-                                        <ColorAnimation Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)"
-                                                        From="{StaticResource 200_DefaultWhiteColor}"
-                                                        To="{StaticResource DefaultWhiteColor}"
-                                                        Duration="0:0:0.1" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.EnterActions>
-
-                            <Trigger.ExitActions>
-                                <RemoveStoryboard BeginStoryboardName="A" />
-                                <RemoveStoryboard BeginStoryboardName="As" />
-                                <BeginStoryboard x:Name="B">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetProperty="Background.Color"
-                                                        To="Transparent"
-                                                        Duration="0:0:0:0.2" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.ExitActions>
-                        </Trigger>
-                        <DataTrigger Binding="{Binding IsPlaying}" Value="True">
-                            <DataTrigger.EnterActions>
-                                <RemoveStoryboard BeginStoryboardName="A" />
-                                <RemoveStoryboard BeginStoryboardName="B" />
-                                <BeginStoryboard x:Name="A1">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetProperty="Foreground.Color"
-                                                        To="{StaticResource 220_DefaultWhiteColor}"
-                                                        Duration="0:0:0:0.2" />
-                                        <ColorAnimation Storyboard.TargetProperty="Background.Color"
-                                                        To="#dafe2754"
-                                                        Duration="0:0:0:0.2" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </DataTrigger.EnterActions>
-                            <DataTrigger.ExitActions>
-                                <RemoveStoryboard BeginStoryboardName="A1" />
-                                <BeginStoryboard x:Name="B1">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetProperty="Foreground.Color"
-                                                        To="{StaticResource 85_DefaultWhiteColor}"
-                                                        Duration="0:0:0:.01" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </DataTrigger.ExitActions>
-                        </DataTrigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-
-
-    <Style x:Key="AlbumsSongs" TargetType="ListView">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="ItemContainerStyle" Value="{StaticResource ListViewItem_AlbumSongs}" />
-    </Style>
-
-
     <Style x:Key="OverridesBase" TargetType="ListViewItem">
         <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}" />
         <Setter Property="Template">
@@ -305,20 +166,6 @@
                                       SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 
                 </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="AlbumsPlayGridView" TargetType="ListView">
-        <Setter Property="Background" Value="{StaticResource BackgroudBrush}" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="ItemContainerStyle" Value="{StaticResource OverridesBase}" />
-
-        <Setter Property="ItemsPanel">
-            <Setter.Value>
-                <ItemsPanelTemplate>
-                    <controls:VirtualizingWrapPanel Orientation="Vertical" />
-                </ItemsPanelTemplate>
             </Setter.Value>
         </Setter>
     </Style>
@@ -365,7 +212,6 @@
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
-
 
     <Style x:Key="ListViewItemStyle" TargetType="ListViewItem">
         <Setter Property="Template" Value="{StaticResource ListViewItemTemplate}" />

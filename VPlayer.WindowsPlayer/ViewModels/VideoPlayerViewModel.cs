@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Text;
@@ -15,12 +16,14 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using LibVLCSharp.Shared;
 using Logger;
 using Ninject;
 using Prism.Events;
 using VCore;
 using VCore.Annotations;
 using VCore.Helpers;
+using VCore.ItemsCollections;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Helpers;
 using VCore.ViewModels;
@@ -33,6 +36,7 @@ using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.TvShows;
 using VPlayer.Player.Views.WindowsPlayer;
 using VPlayer.WindowsPlayer.Providers;
+using VPlayer.WindowsPlayer.ViewModels.VideoProperties;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer;
 using Application = System.Windows.Application;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
@@ -79,6 +83,44 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region Subtitles
+
+    private RxObservableCollection<SubtitleViewModel> subtitles = new RxObservableCollection<SubtitleViewModel>();
+
+    public RxObservableCollection<SubtitleViewModel> Subtitles
+    {
+      get { return subtitles; }
+      set
+      {
+        if (value != subtitles)
+        {
+          subtitles = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region AudioTracks
+
+    private RxObservableCollection<AudioTrackViewModel> audioTracks = new RxObservableCollection<AudioTrackViewModel>();
+
+    public RxObservableCollection<AudioTrackViewModel> AudioTracks
+    {
+      get { return audioTracks; }
+      set
+      {
+        if (value != audioTracks)
+        {
+          audioTracks = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #endregion
 
     #region Commands
@@ -114,12 +156,50 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region Initialize
 
-    public override async void Initialize()
+    public override void Initialize()
     {
       base.Initialize();
 
       EventAggregator.GetEvent<PlayTvShowEvent>().Subscribe(PlayItemsFromEvent).DisposeWith(this);
 
+      Subtitles.ItemUpdated
+        .Where(x => x.EventArgs.PropertyName == nameof(VideoProperty.IsSelected))
+        .Select(x => (SubtitleViewModel)x.Sender)
+         .Where(x => x.IsSelected)
+        .Subscribe(OnSubtitleSelected).DisposeWith(this);
+
+      AudioTracks.ItemUpdated
+        .Where(x => x.EventArgs.PropertyName == nameof(VideoProperty.IsSelected))
+        .Select(x => (AudioTrackViewModel)x.Sender)
+        .Where(x => x.IsSelected)
+        .Subscribe(OnAudioTrackSelected).DisposeWith(this);
+    }
+
+
+    #endregion
+
+    #region OnSubtitleSelected
+
+    private void OnSubtitleSelected(SubtitleViewModel selectedItem)
+    {
+      var subtitles = Subtitles.Where(x => x != selectedItem).ToList();
+
+      subtitles.ForEach(x => x.IsSelected = false);
+
+      MediaPlayer.SetSpu(selectedItem.Model.Id);
+    }
+
+    #endregion
+
+    #region OnAudioTrackSelected
+
+    private void OnAudioTrackSelected(AudioTrackViewModel selectedItem)
+    {
+      var audios = AudioTracks.Where(x => x != selectedItem).ToList();
+
+      audios.ForEach(x => x.IsSelected = false);
+
+      MediaPlayer.SetAudioTrack(selectedItem.Model.Id);
     }
 
     #endregion
@@ -146,6 +226,53 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
 
     #endregion
+
+    #region OnNewItemPlay
+
+    public override void OnNewItemPlay()
+    {
+      base.OnNewItemPlay();
+
+      if (MediaPlayer.Media != null)
+        MediaPlayer.Media.ParsedChanged += MediaPlayer_ParsedChanged;
+    }
+
+    #endregion
+
+    private void MediaPlayer_ParsedChanged(object sender, EventArgs e)
+    {
+      Application.Current.Dispatcher.Invoke(() =>
+      {
+        if (MediaPlayer.SpuDescription.Length > 0)
+        {
+          foreach (var spu in MediaPlayer.SpuDescription)
+          {
+            Subtitles.Add(new SubtitleViewModel(spu));
+          }
+
+          var actualSub = Subtitles.Single(x => MediaPlayer.Spu == x.Model.Id);
+
+          actualSub.IsSelected = true;
+        }
+
+
+        if (MediaPlayer.AudioTrackDescription.Length > 0)
+        {
+          foreach (var spu in MediaPlayer.AudioTrackDescription)
+          {
+            AudioTracks.Add(new AudioTrackViewModel(spu));
+          }
+
+          var actualAudioTrack = AudioTracks.Single(x => MediaPlayer.AudioTrack == x.Model.Id);
+
+          actualAudioTrack.IsSelected = true;
+        }
+       
+
+        if (MediaPlayer.Media != null)
+          MediaPlayer.Media.ParsedChanged -= MediaPlayer_ParsedChanged;
+      });
+    }
 
     protected override void OnRemoveItemsFromPlaylist(DeleteType deleteType, RemoveFromPlaylistEventArgs<TvShowEpisodeInPlaylistViewModel> args)
     {

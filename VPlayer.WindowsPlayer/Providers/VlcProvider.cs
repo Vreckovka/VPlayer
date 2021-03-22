@@ -29,7 +29,7 @@ namespace VPlayer.WindowsPlayer.Providers
           initilize = true;
         }
 
-        var libVLC = new LibVLC("--freetype-background-opacity=120", "--freetype-background-color=0");
+        var libVLC = new LibVLC("--freetype-background-opacity=150", "--freetype-background-color=0", "--freetype-rel-fontsize=22");
 
         return new KeyValuePair<MediaPlayer, LibVLC>(new MediaPlayer(libVLC),libVLC);
       });

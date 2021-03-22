@@ -10,70 +10,58 @@
              d:DesignWidth="800"
              mc:Ignorable="d">
 
-  <UserControl.Resources>
-    <ResourceDictionary>
-      <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/ControlsTemplates/ButtonWithIconTemplate.xaml" />
-      </ResourceDictionary.MergedDictionaries>
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/ControlsTemplates/ButtonWithIconTemplate.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
 
-      <Style x:Key="MenuuStyle" TargetType="MenuItem">
-        <Setter Property="Foreground" Value="White" />
-        <Setter Property="FontSize" Value="15" />
-        <Setter Property="FontWeight" Value="Bold" />
-      </Style>
-    </ResourceDictionary>
-  </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="auto" />
-      <RowDefinition Height="*" />
-    </Grid.RowDefinitions>
-
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="auto" />
-      <ColumnDefinition Width="*" />
-    </Grid.ColumnDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
 
-    <ListView Grid.Row="0"
-              ItemsSource="{Binding NavigationViewModel.Items}"
-              Style="{StaticResource ListView_MenuStyle}">
-      <ListView.ItemsPanel>
-        <ItemsPanelTemplate>
-          <StackPanel Orientation="Horizontal" />
-        </ItemsPanelTemplate>
-      </ListView.ItemsPanel>
-    </ListView>
+        <ListView Grid.Row="0"
+                  ItemsSource="{Binding NavigationViewModel.Items}"
+                  Style="{StaticResource ListView_MenuStyle}">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+        </ListView>
 
-    <Menu Grid.Column="1"
-          Padding="10"
-          Background="{StaticResource 10_WhiteTransparentBrush}">
-      <MenuItem BorderThickness="0"
-                Header="Load"
-                Style="{StaticResource MenuuStyle}">
-
-        <MenuItem Background="{StaticResource TopWindowsBrush}"
-                  Command="{Binding LoadFromFolder}"
-                  Header="Music"
-                  Style="{StaticResource MenuuStyle}" />
-        <MenuItem Background="{StaticResource TopWindowsBrush}"
-                  Command="{Binding LoadTvShow}"
-                  Header="Tv show"
-                  Style="{StaticResource MenuuStyle}" />
-      </MenuItem>
-    </Menu>
+        <Menu Grid.Row="0"
+              Grid.Column="1"
+              HorizontalAlignment="Right"
+              Margin="0 0 0 0"
+              Background="{StaticResource 3_WhiteTransparentBrush}">
+            <MenuItem Width="80"
+                      Height="30"
+                      BorderThickness="0"
+                      Header="Load">
+                <MenuItem Command="{Binding LoadFromFolder}" Header="Music" />
+                <MenuItem Command="{Binding LoadTvShow}" Header="Tv show" />
+            </MenuItem>
+        </Menu>
 
 
+        <Border Grid.Row="1"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                BorderBrush="{StaticResource 10_WhiteTransparentBrush}"
+                BorderThickness="0,3,0,0">
+            <ContentControl mvvm:RegionManager.RegionName="{x:Static regions:RegionNames.WindowsPlayerContentRegion}" />
+        </Border>
 
-
-    <Border Grid.Row="1"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            BorderBrush="{StaticResource 10_WhiteTransparentBrush}"
-            BorderThickness="0,3,0,0">
-      <ContentControl mvvm:RegionManager.RegionName="{x:Static regions:RegionNames.WindowsPlayerContentRegion}" />
-    </Border>
-
-  </Grid>
+    </Grid>
 </UserControl>

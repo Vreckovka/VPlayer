@@ -26,6 +26,7 @@ namespace VPlayer.WindowsPlayer.Behaviors
   {
     public VideoView VideoView { get; set; }
     public FullscreenPlayer FullscreenPlayer { get; set; }
+    public Menu VideoMenu { get; set; }
 
     #region PlayerDataContext
 
@@ -77,7 +78,11 @@ namespace VPlayer.WindowsPlayer.Behaviors
     private void MakeFullScreen()
     {
       VideoView.MakeFullScreen();
+
       FullscreenPlayer.Visibility = Visibility.Visible;
+      VideoMenu.Visibility = Visibility.Collapsed;
+
+
       FullscreenPlayer.DataContext = PlayerDataContext;
 
       ShowHideMouseManager.IsFullscreen = true;
@@ -92,6 +97,7 @@ namespace VPlayer.WindowsPlayer.Behaviors
       VideoView.ResetFullScreen();
 
       FullscreenPlayer.Visibility = Visibility.Hidden;
+      VideoMenu.Visibility = Visibility.Visible;
 
       ShowHideMouseManager.IsFullscreen = false;
     }
