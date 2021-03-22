@@ -5,6 +5,7 @@
              xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
              xmlns:behaviors1="clr-namespace:VPlayer.WindowsPlayer.Behaviors"
              xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore.WPF"
+             xmlns:controls1="clr-namespace:VPlayer.WindowsPlayer.Vlc.Controls"
              xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:interactivity="http://prismlibrary.com/"
@@ -17,24 +18,30 @@
 
 
     <ContentControl Margin="5">
-        <vlc:VideoView x:Name="VideoView" MediaPlayer="{Binding MediaPlayer}">
-            <Canvas HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Background="#01000000">
-                <b:Interaction.Behaviors>
-                    <behaviors1:FullScreenBehavior x:Name="FullScreenBehavior"
-                                                   PlayerDataContext="{Binding PlayerViewModel}"
-                                                   VideoView="{Binding ElementName=VideoView}" />
-                </b:Interaction.Behaviors>
-            </Canvas>
+        <Grid>
+
+            <vlc:VideoView x:Name="VideoView" MediaPlayer="{Binding MediaPlayer}">
+                <Grid HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      Background="#01000000">
+
+                    <controls1:FullscreenPlayer x:Name="FullscreenPlayer" Visibility="Hidden" />
+
+                    <b:Interaction.Behaviors>
+                        <behaviors1:FullScreenBehavior x:Name="FullScreenBehavior" PlayerDataContext="{Binding PlayerViewModel}" />
+                    </b:Interaction.Behaviors>
+                </Grid>
 
 
 
-            <b:Interaction.Triggers>
-                <b:EventTrigger EventName="Loaded">
-                    <b:InvokeCommandAction Command="{Binding VideoViewInitlized}" />
-                </b:EventTrigger>
-            </b:Interaction.Triggers>
-        </vlc:VideoView>
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="Loaded">
+                        <b:InvokeCommandAction Command="{Binding VideoViewInitlized}" />
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
+            </vlc:VideoView>
+
+
+        </Grid>
     </ContentControl>
 </UserControl>

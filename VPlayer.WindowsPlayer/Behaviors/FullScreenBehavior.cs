@@ -18,27 +18,14 @@ using VPlayer.WindowsPlayer.ViewModels;
 using VPlayer.WindowsPlayer.Views;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer;
 using VPlayer.WindowsPlayer.Vlc;
+using VPlayer.WindowsPlayer.Vlc.Controls;
 
 namespace VPlayer.WindowsPlayer.Behaviors
 {
   public class FullScreenBehavior : Behavior<FrameworkElement>
   {
-    #region VideoView
-
-    public static readonly DependencyProperty VideoViewProperty =
-      DependencyProperty.Register(
-        nameof(VideoView),
-        typeof(VideoView),
-        typeof(FullScreenBehavior),
-        new PropertyMetadata(null));
-
-    public VideoView VideoView
-    {
-      get { return (VideoView)GetValue(VideoViewProperty); }
-      set { SetValue(VideoViewProperty, value); }
-    }
-
-    #endregion
+    public VideoView VideoView { get; set; }
+    public FullscreenPlayer FullscreenPlayer { get; set; }
 
     #region PlayerDataContext
 
@@ -55,7 +42,9 @@ namespace VPlayer.WindowsPlayer.Behaviors
       set { SetValue(PlayerDataContextProperty, value); }
     }
 
-    #endregion 
+    #endregion
+
+    #region OnAttached
 
     protected override void OnAttached()
     {
@@ -64,6 +53,8 @@ namespace VPlayer.WindowsPlayer.Behaviors
       AssociatedObject.MouseLeftButtonDown += AssociatedObject_MouseLeftButtonDown;
       AssociatedObject.MouseMove += AssociatedObject_MouseMove;
     }
+
+    #endregion
 
     private void AssociatedObject_MouseMove(object sender, MouseEventArgs e)
     {
@@ -74,7 +65,10 @@ namespace VPlayer.WindowsPlayer.Behaviors
     {
       if (e.ClickCount >= 2)
       {
-        MakeFullScreen();
+        if (!ShowHideMouseManager.IsFullscreen)
+          MakeFullScreen();
+        else
+          ResetFullScreen();
       }
     }
 
@@ -82,12 +76,27 @@ namespace VPlayer.WindowsPlayer.Behaviors
 
     private void MakeFullScreen()
     {
-      VideoView.PlayerDataContext = PlayerDataContext;
       VideoView.MakeFullScreen();
+      FullscreenPlayer.Visibility = Visibility.Visible;
+      FullscreenPlayer.DataContext = PlayerDataContext;
+
+      ShowHideMouseManager.IsFullscreen = true;
     }
 
     #endregion
 
+    #region ResetFullScreen
+
+    private void ResetFullScreen()
+    {
+      VideoView.ResetFullScreen();
+
+      FullscreenPlayer.Visibility = Visibility.Hidden;
+
+      ShowHideMouseManager.IsFullscreen = false;
+    }
+
+    #endregion
 
 
     #region OnDetaching

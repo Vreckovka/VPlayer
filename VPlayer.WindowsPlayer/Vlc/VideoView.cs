@@ -13,18 +13,9 @@ using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 
 namespace VPlayer.WindowsPlayer.Vlc
 {
-  /// <summary>
-  /// WPF VideoView with databinding for use with LibVLCSharp
-  /// </summary>
-  [TemplatePart(Name = PART_PlayerHost, Type = typeof(WindowsFormsHost))]
-  [TemplatePart(Name = PART_PlayerView, Type = typeof(System.Windows.Forms.Panel))]
+
   public class VideoView : ContentControl, IVideoView, IDisposable
   {
-    private const string PART_PlayerHost = "PART_PlayerHost";
-    private const string PART_PlayerView = "PART_PlayerView";
-
-    private WindowsFormsHost? WindowsFormsHost => Template.FindName(PART_PlayerHost, this) as WindowsFormsHost;
-
     /// <summary>
     /// WPF VideoView constructor
     /// </summary>
@@ -32,16 +23,13 @@ namespace VPlayer.WindowsPlayer.Vlc
     {
       DefaultStyleKey = typeof(VideoView);
 
-      Application.Current.MainWindow.Closing += MainWindow_Closing;
+      Application.Current.Exit += Current_Exit;
     }
 
-    private void MainWindow_Closing(object sender, CancelEventArgs e)
+    private void Current_Exit(object sender, ExitEventArgs e)
     {
-      Application.Current.MainWindow.Closing -= MainWindow_Closing;
       Dispose();
-
     }
-
 
 
     /// <summary>
@@ -90,30 +78,28 @@ namespace VPlayer.WindowsPlayer.Vlc
 
       if (!IsDesignMode)
       {
-        var windowsFormsHost = WindowsFormsHost;
-        if (windowsFormsHost != null)
+        ForegroundWindow = new ForegroundWindow(this)
         {
-          ForegroundWindow = new ForegroundWindow(windowsFormsHost)
-          {
-            OverlayContent = ViewContent
-          };
-        }
+          OverlayContent = ViewContent
+        };
 
-        Hwnd = (Template.FindName(PART_PlayerView, this) as System.Windows.Forms.Panel)?.Handle ?? IntPtr.Zero;
-        if (Hwnd == null)
-        {
-          Trace.WriteLine("HWND is NULL, aborting...");
-          return;
-        }
+        ForegroundWindow.Loaded += ForegroundWindow_Loaded;
 
-        if (MediaPlayer == null)
-        {
-          Trace.Write("No MediaPlayer is set, aborting...");
-          return;
-        }
-
-        MediaPlayer.Hwnd = Hwnd;
+        ForegroundWindow.Show();
       }
+    }
+
+    private void ForegroundWindow_Loaded(object sender, RoutedEventArgs e)
+    {
+      Hwnd = (new WindowInteropHelper(ForegroundWindow)).Handle;
+
+      if (MediaPlayer == null)
+      {
+        Trace.Write("No MediaPlayer is set, aborting...");
+        return;
+      }
+
+      MediaPlayer.Hwnd = Hwnd;
     }
 
     /// <summary>
@@ -155,121 +141,26 @@ namespace VPlayer.WindowsPlayer.Vlc
       }
     }
 
-    #region IDisposable Support
 
-    bool disposedValue;
-    /// <summary>
-    /// Unhook mediaplayer and dispose foreground window
-    /// </summary>
-    /// <param name="disposing"></param>
-    protected virtual void Dispose(bool disposing)
-    {
-      if (!disposedValue)
-      {
-        if (disposing)
-        {
+    #region MakeFullScreen
 
-
-          WindowsFormsHost?.Dispose();
-          ForegroundWindow?.Close();
-        }
-
-        ViewContent = null;
-        ForegroundWindow = null;
-        disposedValue = true;
-      }
-    }
-
-    private Window fullScreenWindow;
     public void MakeFullScreen()
     {
-      var seek = MediaPlayer.Position;
-
-      MediaPlayer.Stop();
-
-      fullScreenWindow = new Window();
-      fullScreenWindow.Loaded += Window_Loaded; ;
-
-
-      fullScreenWindow.WindowStyle = WindowStyle.None;
-      fullScreenWindow.Background = Brushes.Transparent;
-      fullScreenWindow.ResizeMode = ResizeMode.NoResize;
-      fullScreenWindow.AllowsTransparency = true;
-      fullScreenWindow.ShowInTaskbar = false;
-      fullScreenWindow.Topmost = true;
-      fullScreenWindow.Style = null;
-
-
-      ShowHideMouseManager.IsFullscreen = true;
-
-      var maoin = Application.Current.MainWindow;
-
-      fullScreenWindow.Left = maoin.Left;
-      fullScreenWindow.Top = maoin.Top;
-
-      fullScreenWindow.Closed += FullScreenWindow_Closed;
-
-      var grid = new VideoView()
-      {
-        Background = Brushes.Black,
-
-        Content = new FullscreenPlayer()
-        {
-          DataContext = PlayerDataContext,
-          OnDoubleClick = OnDoubleClick
-        }
-      };
-
-
-      grid.Unloaded += Grid_Unloaded;
-      fullScreenWindow.Content = grid;
-
-      fullScreenWindow.Show();
-
-      MediaPlayer.Play();
-
-      MediaPlayer.Position = seek;
+      ForegroundWindow.WindowState = WindowState.Maximized;
     }
 
-    private void Grid_Unloaded(object sender, RoutedEventArgs e)
+    #endregion
+
+    #region ResetFullScreen
+
+    public void ResetFullScreen()
     {
-      ((VideoView)sender).Dispose();
+      ForegroundWindow.WindowState = WindowState.Normal;
     }
 
-    private void FullScreenWindow_Closed(object sender, EventArgs e)
-    {
-      ResetFullScreen();
-    }
+    #endregion
 
-    private void OnDoubleClick()
-    {
-      fullScreenWindow.Close();
-    }
-
-    private void ResetFullScreen()
-    {
-      if (!disposing)
-      {
-        var seek = MediaPlayer.Position;
-
-        MediaPlayer.Stop();
-
-        MediaPlayer.Hwnd = Hwnd;
-
-        MediaPlayer.Play();
-
-        MediaPlayer.Position = seek;
-
-        ShowHideMouseManager.IsFullscreen = false;
-      }
-    }
-
-    private void Window_Loaded(object sender, RoutedEventArgs e)
-    {
-      var wn = (Window)sender;
-      fullScreenWindow.WindowState = WindowState.Maximized;
-      MediaPlayer.Hwnd = (new WindowInteropHelper(wn)).Handle;
-    }
+    #region Dispose Support
 
     private bool disposing;
 
@@ -281,11 +172,28 @@ namespace VPlayer.WindowsPlayer.Vlc
       disposing = true;
 
       Dispose(true);
+    }
 
-      fullScreenWindow?.Close();
+
+    bool disposedValue;
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (!disposedValue)
+      {
+        if (disposing)
+        {
+          ForegroundWindow?.Close();
+        }
+
+        ViewContent = null;
+        ForegroundWindow = null;
+        disposedValue = true;
+      }
     }
 
     #endregion
+
   }
 }
 

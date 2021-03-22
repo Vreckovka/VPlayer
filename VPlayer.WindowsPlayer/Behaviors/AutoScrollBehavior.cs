@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using Microsoft.Xaml.Behaviors;
 using Ninject;
 using ScrollAnimateBehavior.AttachedBehaviors;
+using VCore.Helpers;
 using VPlayer.Core.ViewModels;
 using Decorator = System.Windows.Controls.Decorator;
 using DependencyProperty = System.Windows.DependencyProperty;
@@ -46,8 +48,20 @@ namespace VPlayer.Player.Behaviors
     protected override void OnAttached()
     {
       base.OnAttached();
-      AssociatedObject.Loaded += AssociatedObject_Loaded;
+
       AssociatedObject.DataContextChanged += AssociatedObject_DataContextChanged;
+      AssociatedObject.LayoutUpdated += AssociatedObject_LayoutUpdated;
+    }
+
+    private void AssociatedObject_LayoutUpdated(object sender, EventArgs e)
+    {
+      if (scrollViewer == null)
+      {
+        scrollViewer = AssociatedObject.GetFirstChildOfType<ScrollViewer>();
+
+        SubcsribeToSongChange();
+      }
+
     }
 
     private void AssociatedObject_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -59,25 +73,18 @@ namespace VPlayer.Player.Behaviors
     {
       base.OnDetaching();
 
-      AssociatedObject.Loaded -= AssociatedObject_Loaded;
+      AssociatedObject.LayoutUpdated -= AssociatedObject_LayoutUpdated;
       AssociatedObject.DataContextChanged -= AssociatedObject_DataContextChanged;
-      AssociatedObject.Initialized += AssociatedObject_Initialized;
 
       disposable.Dispose();
     }
 
-    private void AssociatedObject_Initialized(object sender, EventArgs e)
-    {
-    }
 
-    private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
-    {
-      SubcsribeToSongChange();
-    }
 
     private SerialDisposable disposable = new SerialDisposable();
 
- 
+    #region SubcsribeToSongChange
+
     private void SubcsribeToSongChange()
     {
       if (Kernel != null)
@@ -102,15 +109,16 @@ namespace VPlayer.Player.Behaviors
 
           if (playableRegionViewModel != null)
           {
-            disposable.Disposable = playableRegionViewModel.ActualItemChanged.Subscribe(OnSongChanged);
+            disposable.Disposable = playableRegionViewModel.ActualItemChanged.ObserveOnDispatcher().Subscribe(OnSongChanged);
           }
         }
       }
     }
 
+    #endregion
+
 
     private ScrollViewer scrollViewer;
-    private Decorator border;
     private int? last_songInPlayListIndex = null;
     private object lastDatacontext = null;
 
@@ -121,62 +129,51 @@ namespace VPlayer.Player.Behaviors
 
     private void OnSongChanged(int songInPlayListIndex)
     {
-      Application.Current.Dispatcher.Invoke(() =>
+
+      if (scrollViewer == null)
       {
+        return;
+      }
 
+      var scrollIndexOffset = GetScrollOffset(songInPlayListIndex);
 
+      int max = 10;
 
-        if (border == null)
+      if (scrollViewer != null)
+      {
+        if ((songInPlayListIndex > last_songInPlayListIndex + max &&
+             songInPlayListIndex > last_songInPlayListIndex) ||
+            (songInPlayListIndex < last_songInPlayListIndex - max &&
+             songInPlayListIndex < last_songInPlayListIndex))
         {
-          border = VisualTreeHelper.GetChild(AssociatedObject, 0) as Decorator;
+          scrollViewer.ScrollToVerticalOffset(scrollIndexOffset);
         }
-
-        if (scrollViewer == null)
+        else if (songInPlayListIndex != last_songInPlayListIndex)
         {
-          scrollViewer = border?.Child as ScrollViewer;
-        }
+          DoubleAnimation verticalAnimation = new DoubleAnimation();
 
+          verticalAnimation.From = scrollViewer.VerticalOffset;
+          verticalAnimation.To = scrollIndexOffset;
 
-        var scrollIndexOffset = GetScrollOffset(songInPlayListIndex);
-
-        int max = 10;
-
-        if (scrollViewer != null)
-        {
-          if ((songInPlayListIndex > last_songInPlayListIndex + max &&
-               songInPlayListIndex > last_songInPlayListIndex) ||
-              (songInPlayListIndex < last_songInPlayListIndex - max &&
-               songInPlayListIndex < last_songInPlayListIndex))
+          if (last_songInPlayListIndex == songInPlayListIndex - 1)
           {
-            scrollViewer.ScrollToVerticalOffset(scrollIndexOffset);
+            verticalAnimation.Duration = new Duration(AnimationTime);
           }
-          else if (songInPlayListIndex != last_songInPlayListIndex)
+          else
           {
-            DoubleAnimation verticalAnimation = new DoubleAnimation();
-
-            verticalAnimation.From = scrollViewer.VerticalOffset;
-            verticalAnimation.To = scrollIndexOffset;
-
-            if (last_songInPlayListIndex == songInPlayListIndex - 1)
-            {
-              verticalAnimation.Duration = new Duration(AnimationTime);
-            }
-            else
-            {
-              verticalAnimation.Duration = new Duration(TimeSpan.FromSeconds(0.50));
-            }
-
-            Storyboard storyboard = new Storyboard();
-
-            storyboard.Children.Add(verticalAnimation);
-            Storyboard.SetTarget(verticalAnimation, scrollViewer);
-            Storyboard.SetTargetProperty(verticalAnimation, new PropertyPath(ScrollAnimationBehavior.VerticalOffsetProperty));
-            storyboard.Begin();
+            verticalAnimation.Duration = new Duration(TimeSpan.FromSeconds(0.50));
           }
-        }
 
-        last_songInPlayListIndex = songInPlayListIndex;
-      });
+          Storyboard storyboard = new Storyboard();
+
+          storyboard.Children.Add(verticalAnimation);
+          Storyboard.SetTarget(verticalAnimation, scrollViewer);
+          Storyboard.SetTargetProperty(verticalAnimation, new PropertyPath(ScrollAnimationBehavior.VerticalOffsetProperty));
+          storyboard.Begin();
+        }
+      }
+
+      last_songInPlayListIndex = songInPlayListIndex;
     }
   }
 }

@@ -29,6 +29,7 @@ namespace VPlayer.WindowsPlayer.Views.WindowsPlayer
       InitializeComponent();
 
       FullScreenBehavior.VideoView = VideoView;
+      FullScreenBehavior.FullscreenPlayer = FullscreenPlayer;
     }
   }
 }
