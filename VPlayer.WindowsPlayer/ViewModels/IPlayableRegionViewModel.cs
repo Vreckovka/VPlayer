@@ -14,6 +14,7 @@ namespace VPlayer.Core.ViewModels
     void PlayNext();
     void Pause();
     bool IsPlaying { get; set; }
+    bool IsSelectedToPlay { get; set; }
     bool CanPlay { get; }
     MediaPlayer MediaPlayer { get; }
     void SeekForward(int seekSize);

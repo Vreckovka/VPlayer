@@ -330,6 +330,25 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region IsSelectedToPlay
+
+    private bool isSelectedToPlay;
+
+    public bool IsSelectedToPlay
+    {
+      get { return isSelectedToPlay; }
+      set
+      {
+        if (value != isSelectedToPlay)
+        {
+          isSelectedToPlay = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #endregion
 
     #region Methods
@@ -650,7 +669,6 @@ namespace VPlayer.Core.ViewModels
 
     #region Play
 
-    public Action onPlay;
     public Task Play()
     {
       return Task.Run(async () =>
@@ -669,8 +687,6 @@ namespace VPlayer.Core.ViewModels
             mediaPlayer.Play();
           }
         }
-
-        onPlay?.Invoke();
       });
     }
 

@@ -7,9 +7,9 @@ namespace VPlayer.WindowsPlayer.Windows.TvShow
   /// <summary>
   /// Interaction logic for AddNewTvShow.xaml
   /// </summary>
-  public partial class AddNewTvShowWindow : UserControl, IView
+  public partial class AddNewTvShowPrompt : UserControl, IView
   {
-    public AddNewTvShowWindow()
+    public AddNewTvShowPrompt()
     {
       InitializeComponent();
     }

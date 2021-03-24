@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using VCore;
 using VCore.Annotations;
+using VCore.Helpers;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
+using VCore.Standard.Helpers;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
 using VCore.WPF.Managers;
@@ -117,7 +120,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       var vm = viewModelsFactory.Create<AddNewTvShowViewModel>();
 
-      windowManager.ShowPrompt<AddNewTvShowWindow>(vm);
+      windowManager.ShowPrompt<AddNewTvShowPrompt>(vm);
     }
 
     #endregion
@@ -142,26 +145,45 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         var libraryViewModel = viewModelsFactory.Create<LibraryViewModel>();
 
-        var playerViewModel = viewModelsFactory.Create<MusicPlayerViewModel>();
+        var musicPlayer = viewModelsFactory.Create<MusicPlayerViewModel>();
+
+        var videoPlayer = viewModelsFactory.Create<VideoPlayerViewModel>();
 
         var settings = viewModelsFactory.Create<SettingsViewModel>();
 
-         var videoPlayer = viewModelsFactory.Create<VideoPlayerViewModel>();
-       
 
-        NavigationViewModel.Items.Add(new NavigationItem(libraryViewModel));
-        NavigationViewModel.Items.Add(new NavigationItem(playerViewModel));
-        NavigationViewModel.Items.Add(new NavigationItem(videoPlayer));
-        NavigationViewModel.Items.Add(new NavigationItem(settings));
+        NavigationViewModel.Items.Add(new NavigationItem(libraryViewModel)
+        {
+          ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/library.png"
+        });
 
+        var musicPlayerNavigationItem = new NavigationItem(musicPlayer)
+        {
+          ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/music-note.png"
+        };
+
+        NavigationViewModel.Items.Add(musicPlayerNavigationItem);
+
+        var videoPlayerNavigationItem = new NavigationItem(videoPlayer)
+        {
+          ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/video-play.png"
+        };
+
+        NavigationViewModel.Items.Add(videoPlayerNavigationItem);
+
+        NavigationViewModel.Items.Add(new NavigationItem(settings)
+        {
+          ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/settings.png"
+        });
+
+        musicPlayer.ObservePropertyChange(x => x.IsSelectedToPlay).ObserveOnDispatcher().Subscribe(x => musicPlayerNavigationItem.IsBackroundActive = x).DisposeWith(this);
+        videoPlayer.ObservePropertyChange(x => x.IsSelectedToPlay).ObserveOnDispatcher().Subscribe(x => videoPlayerNavigationItem.IsBackroundActive = x).DisposeWith(this);
 
         libraryViewModel.IsActive = true;
       }
     }
 
     #endregion
-
-    #endregion Methods
 
     public void AddFolder(string folderPath)
     {
@@ -177,5 +199,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
         item?.Dispose();
       }
     }
+
+    #endregion Methods
+
   }
 }

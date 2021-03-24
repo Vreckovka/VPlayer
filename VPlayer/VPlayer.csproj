@@ -18,11 +18,31 @@
   <ItemGroup>
     <None Remove="Includes\VPlayerLogo.ico" />
     <None Remove="Includes\VPlayerLogo.png" />
+    <None Remove="Resources\Icons\library.png" />
+    <None Remove="Resources\Icons\music-album.png" />
+    <None Remove="Resources\Icons\music-note.png" />
+    <None Remove="Resources\Icons\settings.png" />
+    <None Remove="Resources\Icons\singer.png" />
+    <None Remove="Resources\Icons\tvshow-playlist.png" />
+    <None Remove="Resources\Icons\tvshow.png" />
+    <None Remove="Resources\Icons\video-play.png" />
     <None Remove="Resources\play-and-pause-button.png" />
+    <None Remove="Resources\song-playliyst.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\library.png" />
+    <Resource Include="Resources\Icons\music-album.png" />
+    <Resource Include="Resources\Icons\music-note.png" />
+    <Resource Include="Resources\Icons\settings.png" />
+    <Resource Include="Resources\Icons\singer.png" />
+    <Resource Include="Resources\Icons\song-playlist.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Includes\VPlayerLogo.ico" />
     <Resource Include="Includes\VPlayerLogo.png" />
+    <Resource Include="Resources\Icons\tvshow-playlist.png" />
+    <Resource Include="Resources\Icons\tvshow.png" />
+    <Resource Include="Resources\Icons\video-play.png" />
     <Resource Include="Resources\play-and-pause-button.png" />
   </ItemGroup>
   

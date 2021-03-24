@@ -239,6 +239,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region MediaPlayer_ParsedChanged
+
     private void MediaPlayer_ParsedChanged(object sender, EventArgs e)
     {
       Application.Current.Dispatcher.Invoke(() =>
@@ -270,12 +272,14 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
           actualAudioTrack.IsSelected = true;
         }
-       
+
 
         if (MediaPlayer.Media != null)
           MediaPlayer.Media.ParsedChanged -= MediaPlayer_ParsedChanged;
       });
     }
+
+    #endregion
 
     protected override void OnRemoveItemsFromPlaylist(DeleteType deleteType, RemoveFromPlaylistEventArgs<TvShowEpisodeInPlaylistViewModel> args)
     {

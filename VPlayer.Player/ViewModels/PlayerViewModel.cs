@@ -301,57 +301,35 @@ namespace VPlayer.Player.ViewModels
 
         player.ObservePropertyChange(x => x.CanPlay).Subscribe(x =>
         {
-          if (ActualViewModel == player)
+          if (x && player.IsActive)
           {
-            CanPlay = x;
+            ChangeActualViewModel(player);
           }
+
         }).DisposeWith(this);
 
         player.ObservePropertyChange(x => x.IsPlaying).Subscribe((x) =>
           {
-            if (ActualViewModel == player)
+            if (x)
             {
-              IsPlaying = x;
-
-              if (IsPlaying)
-                foreach (var player1 in allPlayers)
+              foreach (var player1 in allPlayers)
+              {
+                if (ActualViewModel != player1)
                 {
-                  if (ActualViewModel != player1)
-                  {
-                    player1.Pause();
-                  }
+                  player1.Pause();
                 }
+              }
             }
+
+            IsPlaying = x;
+
           }).DisposeWith(this);
 
         player.ObservePropertyChange(x => x.IsActive).Subscribe(x =>
         {
-          if (x)
+          if (x && player.CanPlay)
           {
-            ActualViewModel = player;
-
-            IsPlaying = ActualViewModel.IsPlaying;
-
-            actualItemSerialDisposable.Disposable?.Dispose();
-
-            if (ActualViewModel is MusicPlayerViewModel musicPlayer)
-            {
-              ActualItem = musicPlayer.ActualItem;
-
-              if (ActualItem == null)
-              {
-                actualItemSerialDisposable.Disposable = musicPlayer.ActualItemChanged.Subscribe((x) => { ActualItem = musicPlayer.ActualItem; });
-              }
-            }
-            else if (ActualViewModel is VideoPlayerViewModel videoPlayerViewModel)
-            {
-              ActualItem = videoPlayerViewModel.ActualItem;
-
-              if (ActualItem == null)
-              {
-                actualItemSerialDisposable.Disposable = videoPlayerViewModel.ActualItemChanged.Subscribe((x) => { ActualItem = videoPlayerViewModel.ActualItem; });
-              }
-            }
+            ChangeActualViewModel(player);
           }
         }).DisposeWith(this);
       }
@@ -359,7 +337,42 @@ namespace VPlayer.Player.ViewModels
 
     #endregion
 
-  
+    private void ChangeActualViewModel(IPlayableRegionViewModel newPlayer)
+    {
+      if (ActualViewModel != null)
+      {
+        ActualViewModel.IsSelectedToPlay = false;
+      }
+
+      ActualViewModel = newPlayer;
+
+      ActualViewModel.IsSelectedToPlay = true;
+
+      IsPlaying = ActualViewModel.IsPlaying;
+
+      actualItemSerialDisposable.Disposable?.Dispose();
+
+      if (ActualViewModel is MusicPlayerViewModel musicPlayer)
+      {
+        ActualItem = musicPlayer.ActualItem;
+
+        if (ActualItem == null)
+        {
+          actualItemSerialDisposable.Disposable = musicPlayer.ActualItemChanged.Subscribe((x) => { ActualItem = musicPlayer.ActualItem; });
+        }
+      }
+      else if (ActualViewModel is VideoPlayerViewModel videoPlayerViewModel)
+      {
+        ActualItem = videoPlayerViewModel.ActualItem;
+
+        if (ActualItem == null)
+        {
+          actualItemSerialDisposable.Disposable = videoPlayerViewModel.ActualItemChanged.Subscribe((x) => { ActualItem = videoPlayerViewModel.ActualItem; });
+        }
+      }
+
+      CanPlay = ActualViewModel.CanPlay;
+    }
 
     #region PlayNext
 
