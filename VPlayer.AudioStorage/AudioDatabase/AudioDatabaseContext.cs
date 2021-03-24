@@ -2,7 +2,12 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Logger;
 using Microsoft.EntityFrameworkCore;
+using Ninject;
+using VCore.Annotations;
+using VCore.Standard;
+using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.Video;
 
@@ -10,6 +15,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
 {
   public class AudioDatabaseContext : DbContext
   {
+    private readonly ILogger logger;
+
+    private readonly IWindowManager windowManager;
     //add-migration migration_ -ConnectionString "Data Source=C:\Users\Roman Pecho\AppData\Roaming\VPlayer\VPlayerDatabase.db;Version=3;" -connectionProvider "System.Data.SQLite.EF6"
     //STACI IBA add-migration MIGRATIONNAME 
 
@@ -23,6 +31,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
 
     public DbSet<TvShow> TvShows { get; set; }
+    public DbSet<TvShowSeason> TvShowsSeasons { get; set; }
     public DbSet<TvShowEpisode> TvShowEpisodes { get; set; }
     public DbSet<PlaylistTvShowEpisode> PlaylistsTvShowEpisode { get; set; }
     public DbSet<TvShowPlaylist> TvShowPlaylists { get; set; }
@@ -33,6 +42,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     public AudioDatabaseContext() : base()
     {
+      this.logger = VIoc.Kernel.Get<ILogger>();
+      this.windowManager = VIoc.Kernel.Get<IWindowManager>();
+
       var directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VPlayer");
       if (!Directory.Exists(directory))
       {
@@ -59,9 +71,19 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     public override int SaveChanges()
     {
-      OnBeforeSaving();
+      try
+      {
 
-      return base.SaveChanges();
+        OnBeforeSaving();
+
+        return base.SaveChanges();
+      }
+      catch (Exception ex)
+      {
+        logger.Log(ex);
+        windowManager.ShowPrompt(ex.ToString());
+        return -1;
+      }
     }
 
     //public override Task<int> SaveChangesAsync()

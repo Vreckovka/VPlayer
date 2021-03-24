@@ -53,7 +53,7 @@ namespace VPlayer.AudioStorage.DataLoader
 
     private List<FileInfo> LoadData(List<string> fileTypes, string directoryPath, bool getSubDirectories, List<FileInfo> aggregatedFileInfos = null)
     {
-      if(aggregatedFileInfos == null)
+      if (aggregatedFileInfos == null)
       {
         aggregatedFileInfos = new List<FileInfo>();
       }
@@ -87,29 +87,45 @@ namespace VPlayer.AudioStorage.DataLoader
 
       var tvShow = new TvShow()
       {
-        Episodes = new List<TvShowEpisode>(),
+        Seasons = new List<TvShowSeason>(),
         Name = tvShowName
       };
+
+      TvShowSeason tvShowSeason;
 
       foreach (var file in files)
       {
         var seriesNumber = GetTvShowSeriesNumber(file.Name);
+
+        tvShowSeason = tvShow.Seasons.SingleOrDefault(x => x.SeasonNumber == seriesNumber.Key);
+
+        if (tvShowSeason == null)
+        {
+          tvShowSeason = new TvShowSeason()
+          {
+            SeasonNumber = seriesNumber.Key,
+            Episodes = new List<TvShowEpisode>(),
+            TvShow = tvShow
+          };
+
+          tvShow.Seasons.Add(tvShowSeason);
+        }
 
         var tvEpisode = new TvShowEpisode()
         {
           DiskLocation = file.FullName,
           Duration = (int)GetFileDuration(file.FullName).TotalSeconds,
           Name = file.Name,
-          TvShow = tvShow
+          TvShow = tvShow,
+          TvShowSeason = tvShowSeason
         };
 
         if (seriesNumber.Key != -1)
         {
           tvEpisode.EpisodeNumber = seriesNumber.Value;
-          tvEpisode.SeasonNumber = seriesNumber.Key;
         }
 
-        tvShow.Episodes.Add(tvEpisode);
+        tvShowSeason.Episodes.Add(tvEpisode);
       }
 
       return tvShow;
@@ -131,7 +147,7 @@ namespace VPlayer.AudioStorage.DataLoader
         @"(?<season>\d{1,2})x(?<episode>\d{1,2})"
       };
 
-      foreach(var regexExpression in regexExpressions)
+      foreach (var regexExpression in regexExpressions)
       {
         Regex regex = new Regex(regexExpression);
 

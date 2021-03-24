@@ -26,7 +26,6 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
     private readonly DataLoader dataLoader;
     private readonly IStorageManager storageManager;
     private readonly ITvShowScrapper tvShowScrapper;
-    private readonly ICSFDWebsiteScrapper cSfdWebsiteScrapper;
     private readonly ILogger logger;
 
     public AddNewTvShowViewModel(
@@ -38,7 +37,6 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
       this.dataLoader = dataLoader ?? throw new ArgumentNullException(nameof(dataLoader));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.tvShowScrapper = tvShowScrapper ?? throw new ArgumentNullException(nameof(tvShowScrapper));
-      this.cSfdWebsiteScrapper = cSfdWebsiteScrapper ?? throw new ArgumentNullException(nameof(cSfdWebsiteScrapper));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 

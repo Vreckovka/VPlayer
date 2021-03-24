@@ -41,7 +41,7 @@ namespace VPlayer.AudioStorage.Scrappers
       {
         try
         {
-          var dbTvShow = storageManager.GetRepository<TvShow>().Include(x => x.Episodes).Single(x => x.Id == tvShowId);
+          var dbTvShow = storageManager.GetRepository<TvShow>().Include(x => x.Seasons).ThenInclude(x => x.Episodes).Single(x => x.Id == tvShowId);
 
           dbTvShow.InfoDownloadStatus = InfoDownloadStatus.Downloading;
          
@@ -57,30 +57,36 @@ namespace VPlayer.AudioStorage.Scrappers
           var csfdTvShow = cSfdWebsiteScrapper.LoadTvShow(csfUrl);
 
           dbTvShow.PosterPath = csfdTvShow.PosterPath;
+
           dbTvShow.Name = csfdTvShow.Name;
 
-          foreach (var episode in dbTvShow.Episodes)
+          foreach (var season in dbTvShow.Seasons)
           {
-            logger.Log(MessageType.Inform,episode.SeasonNumber + "x" + episode.EpisodeNumber);
+            logger.Log(MessageType.Inform, "Updating: Season " + season.SeasonNumber);
 
-            if (csfdTvShow.Seasons.Count > episode.SeasonNumber)
+            if (csfdTvShow.Seasons.Count > season.SeasonNumber)
             {
-              if (csfdTvShow.Seasons[episode.SeasonNumber - 1].SeasonEpisodes.Count >= episode.EpisodeNumber)
+              foreach (var episode in season.Episodes)
               {
-                var csfdEpisode = csfdTvShow.Seasons[episode.SeasonNumber - 1].SeasonEpisodes[episode.EpisodeNumber - 1];
+                if (csfdTvShow.Seasons[season.SeasonNumber - 1].SeasonEpisodes.Count >= episode.EpisodeNumber)
+                {
+                  var csfdEpisode = csfdTvShow.Seasons[season.SeasonNumber - 1].SeasonEpisodes[episode.EpisodeNumber - 1];
 
-                episode.Name = csfdEpisode.Name;
+                  episode.Name = csfdEpisode.Name;
 
-                episode.InfoDownloadStatus = InfoDownloadStatus.Downloaded;
+                  episode.InfoDownloadStatus = InfoDownloadStatus.Downloaded;
+                }
+                else
+                {
+                  episode.InfoDownloadStatus = InfoDownloadStatus.Failed;
+                }
               }
-              else
-              {
-                episode.InfoDownloadStatus = InfoDownloadStatus.Failed;
-              }
+
+              season.InfoDownloadStatus = InfoDownloadStatus.Downloaded;
             }
             else
             {
-              episode.InfoDownloadStatus = InfoDownloadStatus.Failed;
+              season.InfoDownloadStatus = InfoDownloadStatus.Failed;
             }
           }
 
@@ -114,7 +120,7 @@ namespace VPlayer.AudioStorage.Scrappers
     {
       return Task.Run(() =>
       {
-        var dbTvShow = storageManager.GetRepository<TvShow>().Include(x => x.Episodes).Single(x => x.Id == tvShowId);
+        var dbTvShow = storageManager.GetRepository<TvShow>().Include(x => x.Seasons).ThenInclude(x => x.Episodes).Single(x => x.Id == tvShowId);
 
         dbTvShow.Name = name;
 
@@ -130,7 +136,7 @@ namespace VPlayer.AudioStorage.Scrappers
     {
       return Task.Run(async () =>
       {
-        var dbTvShow = storageManager.GetRepository<TvShow>().Include(x => x.Episodes).Single(x => x.Id == tvShowId);
+        var dbTvShow = storageManager.GetRepository<TvShow>().Include(x => x.Seasons).ThenInclude(x => x.Episodes).Single(x => x.Id == tvShowId);
 
         dbTvShow.CsfdUrl = url;
 

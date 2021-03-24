@@ -8,7 +8,7 @@ namespace VPlayer.AudioStorage.DomainClasses.Video
 {
   public class TvShow : DomainEntity, DownloadableEntity, IUpdateable<TvShow>
   {
-    public virtual List<TvShowEpisode> Episodes { get; set; }
+    public virtual List<TvShowSeason> Seasons { get; set; }
     public string Name { get; set; }
     public InfoDownloadStatus InfoDownloadStatus { get; set; }
     public string CsfdUrl { get; set; }
@@ -21,11 +21,11 @@ namespace VPlayer.AudioStorage.DomainClasses.Video
       CsfdUrl = other.CsfdUrl;
       PosterPath = other.PosterPath;
 
-      if (other.Episodes != null && Episodes != null)
+      if (other.Seasons != null && Seasons != null)
       {
-        foreach (var episode in other.Episodes)
+        foreach (var episode in other.Seasons)
         {
-          var mineEpisode = Episodes.Single(x => x.Id == episode.Id);
+          var mineEpisode = Seasons.Single(x => x.Id == episode.Id);
 
           mineEpisode.Update(episode);
         }

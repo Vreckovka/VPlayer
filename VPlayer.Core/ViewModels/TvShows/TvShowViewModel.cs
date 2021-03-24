@@ -8,6 +8,7 @@ using VCore.Standard.Factories.ViewModels;
 using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
+using VPlayer.Core.Factories;
 using VPlayer.Core.Modularity.Regions;
 
 namespace VPlayer.Core.ViewModels.TvShows
@@ -15,14 +16,14 @@ namespace VPlayer.Core.ViewModels.TvShows
   public class TvShowViewModel : PlayableViewModelWithThumbnail<TvShowEpisodeInPlaylistViewModel, TvShow>
   {
     private readonly IStorageManager storage;
-    private readonly IViewModelsFactory viewModelsFactory;
+    private readonly IVPlayerViewModelsFactory viewModelsFactory;
     private readonly IVPlayerRegionProvider vPlayerRegionProvider;
 
     public TvShowViewModel(
       TvShow model,
       IEventAggregator eventAggregator,
       [NotNull] IStorageManager storage,
-      [NotNull] IViewModelsFactory viewModelsFactory,
+      [NotNull] IVPlayerViewModelsFactory viewModelsFactory,
       [NotNull] IVPlayerRegionProvider vPlayerRegionProvider
       ) : base(model, eventAggregator)
     {
@@ -37,7 +38,7 @@ namespace VPlayer.Core.ViewModels.TvShows
     {
       get
       {
-        return Model.Episodes?.Count.ToString();
+        return Model.Seasons?.Count.ToString();
       }
     }
 
@@ -70,17 +71,15 @@ namespace VPlayer.Core.ViewModels.TvShows
     public override IEnumerable<TvShowEpisodeInPlaylistViewModel> GetItemsToPlay()
     {
       var tvShow = storage
-        .GetRepository<AudioStorage.DomainClasses.Video.TvShow>()
-        .Include(x => x.Episodes).SingleOrDefault(x => x.Id == ModelId);
+        .GetRepository<TvShow>()
+        .Include(x => x.Seasons).ThenInclude(x => x.Episodes).SingleOrDefault(x => x.Id == ModelId);
 
       if (tvShow != null)
       {
-        var tvShowEpisodes = tvShow.Episodes.
-          OrderBy(x => x.SeasonNumber)
-          .ThenBy(x => x.EpisodeNumber)
-          .Select(x => viewModelsFactory.Create<TvShowEpisodeInPlaylistViewModel>(x)).ToList();
-
-        tvShowEpisodes.ForEach(x => x.TvShow = this);
+        var tvShowEpisodes = tvShow.Seasons.OrderBy(x => x.SeasonNumber)
+          .Select(x => x.Episodes.OrderBy(x => x.EpisodeNumber).Select(y => viewModelsFactory.Create<TvShowEpisodeInPlaylistViewModel>(y)))
+          .SelectMany(x => x);
+         
 
         return tvShowEpisodes;
       }
@@ -101,13 +100,13 @@ namespace VPlayer.Core.ViewModels.TvShows
 
     #endregion
 
-  
+
 
     public override void PublishAddToPlaylistEvent(IEnumerable<TvShowEpisodeInPlaylistViewModel> viewModels)
     {
       throw new NotImplementedException();
-    } 
+    }
 
-  
+
   }
 }

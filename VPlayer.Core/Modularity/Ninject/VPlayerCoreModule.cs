@@ -1,6 +1,8 @@
 ﻿using Listener;
 using Logger;
+using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Modularity.NinjectModules;
+using VPlayer.Core.Factories;
 using VPlayer.Core.Managers.Status;
 
 namespace VPlayer.Core.Modularity.Ninject
@@ -21,7 +23,9 @@ namespace VPlayer.Core.Modularity.Ninject
 
 
       Kernel.Bind<FileLoggerContainer>().ToSelf().WithConstructorArgument("logFilePath", logFilePath);
-     
+
+      Kernel.Bind<IVPlayerViewModelsFactory>().To<VPlayerViewModelsFactory>();
+      Kernel.Rebind<IViewModelsFactory>().To<VPlayerViewModelsFactory>();
     }
   }
 }

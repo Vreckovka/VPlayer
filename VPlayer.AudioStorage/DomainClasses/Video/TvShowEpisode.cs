@@ -16,6 +16,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     }
 
     public TvShow TvShow { get; set; }
+    public TvShowSeason TvShowSeason { get; set; }
     public string DiskLocation { get; set; }
     public int Duration { get; set; }
     public int Id { get; set; }
@@ -23,9 +24,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     public string Name { get; set; }
     public bool IsFavorite { get; set; }
     public InfoDownloadStatus InfoDownloadStatus { get; set; }
-
     public int EpisodeNumber { get; set; }
-    public int SeasonNumber { get; set; }
 
     public void Update(TvShowEpisode other)
     {

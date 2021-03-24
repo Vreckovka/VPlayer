@@ -18,7 +18,6 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     public void Update(IPlaylist other)
     {
-      Id = other.Id;
       Name = other.Name;
       IsReapting = other.IsReapting;
       IsShuffle = other.IsShuffle;

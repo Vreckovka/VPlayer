@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Prism.Events;
+using VCore.Annotations;
 using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Interfaces.ViewModels;
@@ -11,27 +13,18 @@ namespace VPlayer.Core.ViewModels.TvShows
 {
   public class TvShowEpisodeInPlaylistViewModel : ItemInPlayList<TvShowEpisode>
   {
-    private readonly ITvShowsViewModel tvShowsViewModel;
-
     public TvShowEpisodeInPlaylistViewModel(
       TvShowEpisode model,
       IEventAggregator eventAggregator,
-      ITvShowsViewModel tvShowsViewModel,
       IStorageManager storageManager) : base(model, eventAggregator, storageManager)
     {
-      this.tvShowsViewModel = tvShowsViewModel ?? throw new ArgumentNullException(nameof(tvShowsViewModel));
+      TvShow = model.TvShow ?? throw new ArgumentNullException(nameof(model.TvShow));
+      TvShowSeason = model.TvShowSeason ?? throw new ArgumentNullException(nameof(model.TvShowSeason));
     }
 
-    public TvShowViewModel TvShow { get; set; }
-
-    public override async void Initialize()
-    {
-      base.Initialize();
-
-      if (TvShow == null)
-        TvShow = (await tvShowsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == Model.TvShow.Id);
-    }
-
+    public TvShow TvShow { get; set; }
+    public TvShowSeason TvShowSeason { get; set; }
+  
 
     protected override void OnActualPositionChanged(float value)
     {

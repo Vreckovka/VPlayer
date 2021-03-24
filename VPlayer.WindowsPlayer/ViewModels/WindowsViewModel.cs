@@ -9,6 +9,7 @@ using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
+using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DataLoader;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Modularity.Regions;
@@ -25,8 +26,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
     #region Fields
 
     private readonly IViewModelsFactory viewModelsFactory;
-    private readonly DataLoader dataLoader;
     private readonly IStorageManager storageManager;
+    private readonly IWindowManager windowManager;
 
     #endregion Fields
 
@@ -37,11 +38,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
       IViewModelsFactory viewModelsFactory,
       NavigationViewModel navigationViewModel,
       [NotNull] DataLoader dataLoader,
-      IStorageManager storageManager) : base(regionProvider)
+      IStorageManager storageManager,
+      [NotNull] IWindowManager windowManager) : base(regionProvider)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
-      this.dataLoader = dataLoader ?? throw new ArgumentNullException(nameof(dataLoader));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
+      this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       NavigationViewModel = navigationViewModel ?? throw new ArgumentNullException(nameof(navigationViewModel));
     }
 
@@ -113,13 +115,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public void OnLoadLoadTvShow()
     {
-      var window = new AddNewTvShowWindow();
-
       var vm = viewModelsFactory.Create<AddNewTvShowViewModel>();
 
-      window.DataContext = vm;
-
-      window.ShowDialog();
+      windowManager.ShowPrompt<AddNewTvShowWindow>(vm);
     }
 
     #endregion

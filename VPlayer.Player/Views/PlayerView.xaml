@@ -11,19 +11,31 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:VPlayer.Player.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:status="clr-namespace:VPlayer.Core.Managers.Status;assembly=VPlayer.Core"
              mc:Ignorable="d">
 
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/VPlayer.Player;component/Views/PlayerViewResources.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
 
     </UserControl.Resources>
 
     <Grid>
+        <Grid Background="#080808">
+            <Grid.Effect>
+                <DropShadowEffect BlurRadius="20"
+                                  Direction="90"
+                                  ShadowDepth="5"
+                                  Color="#252525" />
+            </Grid.Effect>
+        </Grid>
+
+        <Grid Background="#080808" />
+
+
         <Border Margin="0,0,0,3"
                 HorizontalAlignment="Center"
                 CornerRadius="5">
@@ -115,16 +127,11 @@
                        Foreground="#959595"
                        Text="{Binding ActualVolume, StringFormat={}{0} %}" />
 
-            <Grid.Style>
-                <Style TargetType="Grid">
-                    <Setter Property="Visibility" Value="Visible" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsFullScreen}" Value="True">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Grid.Style>
+
+
         </Grid>
+
+
     </Grid>
+
 </UserControl>

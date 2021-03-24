@@ -8,7 +8,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     List<TModel> PlaylistItems { get; set; }
   }
 
-  public interface IPlaylist : IUpdateable<IPlaylist>, INamedEntity
+  public interface IPlaylist : IUpdateable<IPlaylist>, INamedEntity, ITrackable
   {
     long? HashCode { get; set; }
     bool IsUserCreated { get; set; }

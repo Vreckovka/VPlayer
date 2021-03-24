@@ -9,6 +9,7 @@ using Prism.Ninject;
 using Prism.Regions;
 using VCore.Modularity.NinjectModules;
 using VCore.Other;
+using VCore.Standard;
 using VCore.Standard.Modularity.NinjectModules;
 using VPlayer.Modularity.NinjectModules;
 using VPlayer.ViewModels;
@@ -20,6 +21,8 @@ namespace VPlayer
   /// <summary>
   /// Interaction logic for App.xaml
   /// </summary>
+  ///
+
   public partial class App : PrismApplication
   {
     private IKernel Kernel;
@@ -31,6 +34,8 @@ namespace VPlayer
       stopWatch.Start();
 
       Kernel = Container.GetContainer();
+
+      VIoc.Kernel = Kernel;
 
       Kernel.Load<CommonNinjectModule>();
       Kernel.Load<WPFNinjectModule>();

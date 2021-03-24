@@ -836,22 +836,40 @@ namespace VPlayer.Core.ViewModels
 
       bool success = false;
 
-      if (editSaved && ActualSavedPlaylist.IsUserCreated)
-      {
-        if (hashCode != ActualSavedPlaylist.HashCode)
-        {
-          ActualSavedPlaylist.HashCode = hashCode;
-          ActualSavedPlaylist.PlaylistItems = playlistModels;
-          ActualSavedPlaylist.ItemCount = playlistModels.Count;
-        }
+      var storedPlaylist = storageManager.GetRepository<TPlaylistModel>().SingleOrDefault(x => x.HashCode == hashCode);
 
-        UpdateActualSavedPlaylistPlaylist();
-      }
-      else if (!ActualSavedPlaylist.IsUserCreated)
+      if (storedPlaylist == null)
       {
-        if (ActualSavedPlaylist.Id <= 0)
+        if (editSaved && ActualSavedPlaylist.IsUserCreated)
         {
-          storageManager.StoreEntity(entityPlayList, out var dbEntityPlalist);
+          if (hashCode != ActualSavedPlaylist.HashCode)
+          {
+            ActualSavedPlaylist.HashCode = hashCode;
+            ActualSavedPlaylist.PlaylistItems = playlistModels;
+            ActualSavedPlaylist.ItemCount = playlistModels.Count;
+          }
+        }
+        else if (!ActualSavedPlaylist.IsUserCreated)
+        {
+          if (ActualSavedPlaylist.Id <= 0)
+          {
+            success= storageManager.StoreEntity(entityPlayList, out var dbEntityPlalist);
+
+            UpdateNonUserCreatedPlaylist(entityPlayList, dbEntityPlalist);
+
+            ActualSavedPlaylist = entityPlayList;
+          }
+          else
+          {
+            UpdateActualSavedPlaylistPlaylist();
+          }
+        }
+      }
+      else
+      {
+        if(storedPlaylist.IsUserCreated)
+        {
+          success = storageManager.StoreEntity(entityPlayList, out var dbEntityPlalist);
 
           UpdateNonUserCreatedPlaylist(entityPlayList, dbEntityPlalist);
 
@@ -861,11 +879,21 @@ namespace VPlayer.Core.ViewModels
         }
         else
         {
-          storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(ActualSavedPlaylist);
-        }
+          storedPlaylist.Update(entityPlayList);
 
-        UpdateActualSavedPlaylistPlaylist();
+          if (storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(storedPlaylist, out var updated))
+          {
+            ActualSavedPlaylist = updated;
+          }
+        }
       }
+
+      if (ActualSavedPlaylist != null)
+      {
+        ActualSavedPlaylist.LastPlayed = DateTime.Now;
+      }
+
+      UpdateActualSavedPlaylistPlaylist();
 
       return success;
     }
@@ -900,8 +928,10 @@ namespace VPlayer.Core.ViewModels
 
     protected void UpdateActualSavedPlaylistPlaylist()
     {
-      storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(ActualSavedPlaylist);
-
+      if (storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(ActualSavedPlaylist, out var updated))
+      {
+        ActualSavedPlaylist = updated;
+      }
     }
 
     #endregion

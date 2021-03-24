@@ -611,19 +611,22 @@ namespace VPlayer.AudioStorage.AudioDatabase
         {
           context.Add(entity);
 
-          context.SaveChanges();
+          var result = context.SaveChanges() > 0;
 
           entityModel = entity;
 
-          logger.Log(Logger.MessageType.Success, $"Entity was updated {entity}");
-
-          ItemChanged.OnNext(new ItemChanged()
+          if(result)
           {
-            Item = entity,
-            Changed = Changed.Added
-          });
+            logger.Log(Logger.MessageType.Success, $"Entity was stored {entity}");
 
-          return true;
+            ItemChanged.OnNext(new ItemChanged()
+            {
+              Item = entity,
+              Changed = Changed.Added
+            });
+          }
+
+          return result;
         }
 
         entityModel = null;
@@ -789,11 +792,13 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region UpdatePlaylist
 
-    public void UpdatePlaylist<TPlaylist, TPlaliystModel>(TPlaylist playlist) where TPlaylist : class, IPlaylist<TPlaliystModel>
+    public bool UpdatePlaylist<TPlaylist, TPlaliystModel>(TPlaylist playlist, out TPlaylist updatedPlaylist) where TPlaylist : class, IPlaylist<TPlaliystModel>
     {
       using (var context = new AudioDatabaseContext())
       {
+        var result = false;
         var foundPlaylist = GetRepository<TPlaylist>(context).Include(x => x.PlaylistItems).SingleOrDefault(x => x.Id == playlist.Id);
+        updatedPlaylist = null;
 
         if (foundPlaylist != null)
         {
@@ -814,14 +819,21 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           foundPlaylist.Update(playlist);
 
-          context.SaveChanges();
+          result = context.SaveChanges() > 0;
 
-          ItemChanged.OnNext(new ItemChanged()
+          if(result)
           {
-            Item = playlist,
-            Changed = Changed.Updated
-          });
+            ItemChanged.OnNext(new ItemChanged()
+            {
+              Item = playlist,
+              Changed = Changed.Updated
+            });
+          }
+
+          updatedPlaylist = foundPlaylist;
         }
+        
+        return result;
       }
     }
 
@@ -841,7 +853,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       {
         using (var context = new AudioDatabaseContext())
         {
-          var foundEntity = GetRepository<TvShow>(context).Include(x => x.Episodes).SingleOrDefault(x => x.Id == newVersion.Id);
+          var foundEntity = GetRepository<TvShow>(context).Include(x => x.Seasons).ThenInclude(x => x.Episodes).SingleOrDefault(x => x.Id == newVersion.Id);
 
           if (foundEntity != null)
           {
@@ -875,27 +887,35 @@ namespace VPlayer.AudioStorage.AudioDatabase
       {
         var tvShowRepo = GetRepository<TvShow>(context);
 
-        var foundEntity = tvShowRepo.Include(x => x.Episodes).SingleOrDefault(x => x.Id == tvShow.Id);
+        var foundEntity = tvShowRepo.Include(x => x.Seasons).ThenInclude(x => x.Episodes).SingleOrDefault(x => x.Id == tvShow.Id);
         bool result = false;
 
         if (foundEntity != null)
         {
-          foreach (var tvShowEpisode in foundEntity.Episodes)
+          foreach (var tvShowSeason in foundEntity.Seasons)
           {
-            context.Remove(tvShowEpisode);
+            foreach(var tvShowEpisode in tvShowSeason.Episodes)
+            {
+              context.Remove(tvShowEpisode);
+            }
+
+            context.Remove(tvShowSeason);
           }
 
           context.Remove(foundEntity);
 
           result = context.SaveChanges() > 0;
 
-          logger.Log(Logger.MessageType.Success, $"Entity TVSHOW was deleted {tvShow.Name}");
-
-          ItemChanged.OnNext(new ItemChanged()
+          if (result)
           {
-            Item = foundEntity,
-            Changed = Changed.Removed
-          });
+            logger.Log(Logger.MessageType.Success, $"Entity TVSHOW was deleted {tvShow.Name}");
+
+            ItemChanged.OnNext(new ItemChanged()
+            {
+              Item = foundEntity,
+              Changed = Changed.Removed
+            });
+          }
         }
 
         return result;

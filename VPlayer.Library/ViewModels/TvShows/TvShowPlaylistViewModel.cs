@@ -8,6 +8,7 @@ using VCore.Standard.Factories.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
+using VPlayer.Core.Factories;
 using VPlayer.Core.ViewModels.TvShows;
 
 namespace VPlayer.Library.ViewModels.TvShows
@@ -17,7 +18,7 @@ namespace VPlayer.Library.ViewModels.TvShows
     #region Fields
 
     private readonly IStorageManager storage;
-    private readonly IViewModelsFactory viewModelsFactory;
+    private readonly IVPlayerViewModelsFactory viewModelsFactory;
 
     #endregion
 
@@ -27,7 +28,7 @@ namespace VPlayer.Library.ViewModels.TvShows
       TvShowPlaylist model,
       IEventAggregator eventAggregator,
       [NotNull] IStorageManager storage,
-      [NotNull] IViewModelsFactory viewModelsFactory) : base(model, eventAggregator, storage)
+      [NotNull] IVPlayerViewModelsFactory viewModelsFactory) : base(model, eventAggregator, storage)
     {
       this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
@@ -47,11 +48,13 @@ namespace VPlayer.Library.ViewModels.TvShows
       var playlist = storage.GetRepository<TvShowPlaylist>()
         .Include(x => x.PlaylistItems)
         .ThenInclude(x => x.TvShowEpisode)
+        .ThenInclude(x => x.TvShowSeason)
         .ThenInclude(x => x.TvShow)
         .SingleOrDefault(x => x.Id == Model.Id);
 
       if(playlist != null)
       {
+      
         var playListSong = playlist.PlaylistItems.OrderBy(x => x.OrderInPlaylist).Select(x => viewModelsFactory.Create<TvShowEpisodeInPlaylistViewModel>(x.TvShowEpisode));
 
         return playListSong;

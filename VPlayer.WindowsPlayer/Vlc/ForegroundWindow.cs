@@ -64,6 +64,8 @@ namespace VPlayer.WindowsPlayer.Vlc
       base.OnStateChanged(e);
 
       overlayWindow.WindowState = WindowState;
+
+      _wndhost?.Focus();
     }
 
     #region OverlayContent
