@@ -17,4 +17,16 @@
     <ProjectReference Include="..\VPlayer.Core\VPlayer.Core.csproj" />
     <ProjectReference Include="..\VPlayer.WindowsPlayer\VPlayer.WindowsPlayer.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Views\PlayerView.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\PlayerViewResources.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
 </Project>

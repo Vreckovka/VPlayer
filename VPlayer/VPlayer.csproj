@@ -21,6 +21,7 @@
     <None Remove="Resources\Icons\library.png" />
     <None Remove="Resources\Icons\music-album.png" />
     <None Remove="Resources\Icons\music-note.png" />
+    <None Remove="Resources\Icons\resize.png" />
     <None Remove="Resources\Icons\settings.png" />
     <None Remove="Resources\Icons\singer.png" />
     <None Remove="Resources\Icons\tvshow-playlist.png" />
@@ -33,6 +34,7 @@
     <Resource Include="Resources\Icons\library.png" />
     <Resource Include="Resources\Icons\music-album.png" />
     <Resource Include="Resources\Icons\music-note.png" />
+    <Resource Include="Resources\Icons\resize.png" />
     <Resource Include="Resources\Icons\settings.png" />
     <Resource Include="Resources\Icons\singer.png" />
     <Resource Include="Resources\Icons\song-playlist.png" />

@@ -2,7 +2,6 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:converters="clr-namespace:VPlayer.Player.Converters"
                     xmlns:local="clr-namespace:VPlayer.Player.Views"
-                    xmlns:status="clr-namespace:VPlayer.Core.Managers.Status;assembly=VPlayer.Core"
                     xmlns:status1="clr-namespace:VPlayer.Core.Managers.Status;assembly=VPlayer.AudioStorage">
 
     <converters:DataContextChangedConverter x:Key="DataContextChangedConverter" />
