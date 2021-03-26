@@ -117,45 +117,7 @@ namespace VPlayer.Player.ViewModels
     }
 
     #endregion
-
-    #region IsFullScreen
-
-    private bool isFullScreen;
-
-    public bool IsFullScreen
-    {
-      get { return isFullScreen; }
-      set
-      {
-        if (value != isFullScreen)
-        {
-          isFullScreen = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
-
-    #region ActualItem
-
-    private IItemInPlayList actuaĺItem;
-
-    public IItemInPlayList ActualItem
-    {
-      get { return actuaĺItem; }
-      set
-      {
-        if (value != actuaĺItem)
-        {
-          actuaĺItem = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
-
+    
     #region ActualVolume
 
     private int actualVolume = 100;
@@ -269,13 +231,7 @@ namespace VPlayer.Player.ViewModels
 
       }).DisposeWith(this);
 
-      ShowHideMouseManager.OnFullScreen.Subscribe((x) =>
-      {
-        Application.Current.Dispatcher.Invoke(() =>
-          {
-            IsFullScreen = x;
-          });
-      });
+    
 
       eventAggregator.GetEvent<PlayPauseEvent>().Subscribe(PlayPause).DisposeWith(this);
     }
@@ -352,25 +308,7 @@ namespace VPlayer.Player.ViewModels
 
       actualItemSerialDisposable.Disposable?.Dispose();
 
-      if (ActualViewModel is MusicPlayerViewModel musicPlayer)
-      {
-        ActualItem = musicPlayer.ActualItem;
-
-        if (ActualItem == null)
-        {
-          actualItemSerialDisposable.Disposable = musicPlayer.ActualItemChanged.Subscribe((x) => { ActualItem = musicPlayer.ActualItem; });
-        }
-      }
-      else if (ActualViewModel is VideoPlayerViewModel videoPlayerViewModel)
-      {
-        ActualItem = videoPlayerViewModel.ActualItem;
-
-        if (ActualItem == null)
-        {
-          actualItemSerialDisposable.Disposable = videoPlayerViewModel.ActualItemChanged.Subscribe((x) => { ActualItem = videoPlayerViewModel.ActualItem; });
-        }
-      }
-
+    
       CanPlay = ActualViewModel.CanPlay;
     }
 

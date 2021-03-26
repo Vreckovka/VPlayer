@@ -51,6 +51,9 @@ namespace VPlayer.Core.Managers.Status
         if (value != processedCount)
         {
           processedCount = value;
+
+          Process = ProcessedCount * 100.0 / NumberOfProcesses;
+
           RaisePropertyChanged();
         }
       }

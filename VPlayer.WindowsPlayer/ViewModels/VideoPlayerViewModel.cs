@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -121,6 +122,25 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region AspectRatios
+
+    private RxObservableCollection<AspectRatioViewModel> aspectRatios;
+
+    public RxObservableCollection<AspectRatioViewModel> AspectRatios
+    {
+      get { return aspectRatios; }
+      set
+      {
+        if (value != aspectRatios)
+        {
+          aspectRatios = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #endregion
 
     #region Commands
@@ -162,19 +182,56 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       EventAggregator.GetEvent<PlayTvShowEvent>().Subscribe(PlayItemsFromEvent).DisposeWith(this);
 
+      aspectRatios = new RxObservableCollection<AspectRatioViewModel>()
+      {
+        new AspectRatioViewModel("1:1"),
+        new AspectRatioViewModel("4:3"),
+        new AspectRatioViewModel("16:9"),
+        new AspectRatioViewModel("21:9"),
+      };
+
       Subtitles.ItemUpdated
         .Where(x => x.EventArgs.PropertyName == nameof(VideoProperty.IsSelected))
         .Select(x => (SubtitleViewModel)x.Sender)
          .Where(x => x.IsSelected)
-        .Subscribe(OnSubtitleSelected).DisposeWith(this);
+        .Subscribe(x =>
+        {
+          MakeSingleSelection(Subtitles, x);
+          OnSubtitleSelected(x);
+        }).DisposeWith(this);
 
       AudioTracks.ItemUpdated
         .Where(x => x.EventArgs.PropertyName == nameof(VideoProperty.IsSelected))
         .Select(x => (AudioTrackViewModel)x.Sender)
         .Where(x => x.IsSelected)
-        .Subscribe(OnAudioTrackSelected).DisposeWith(this);
+        .Subscribe(x =>
+        {
+          MakeSingleSelection(AudioTracks, x);
+          OnAudioTrackSelected(x);
+        }).DisposeWith(this);
+
+      AspectRatios.ItemUpdated
+        .Where(x => x.EventArgs.PropertyName == nameof(VideoProperty.IsSelected))
+        .Select(x => (AspectRatioViewModel)x.Sender)
+        .Where(x => x.IsSelected)
+        .Subscribe(x =>
+        {
+          MakeSingleSelection(AspectRatios, x);
+          OnAspectRatioSelected(x);
+        }).DisposeWith(this);
     }
 
+
+    #endregion
+
+    #region MakeSingleSelection
+
+    private void MakeSingleSelection<TItem>(RxObservableCollection<TItem> items, TItem selectedItem) where TItem : class, INotifyPropertyChanged, ISelectable
+    {
+      var notSelected = items.Where(x => x != selectedItem).ToList();
+
+      notSelected.ForEach(x => x.IsSelected = false);
+    }
 
     #endregion
 
@@ -182,11 +239,16 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     private void OnSubtitleSelected(SubtitleViewModel selectedItem)
     {
-      var subtitles = Subtitles.Where(x => x != selectedItem).ToList();
-
-      subtitles.ForEach(x => x.IsSelected = false);
-
       MediaPlayer.SetSpu(selectedItem.Model.Id);
+
+      if (ActualItem != null)
+      {
+        var model = ActualItem.Model;
+
+        model.Subtitles = selectedItem.Model.Id;
+
+        storageManager.UpdateEntityAsync(model);
+      }
     }
 
     #endregion
@@ -195,11 +257,34 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     private void OnAudioTrackSelected(AudioTrackViewModel selectedItem)
     {
-      var audios = AudioTracks.Where(x => x != selectedItem).ToList();
-
-      audios.ForEach(x => x.IsSelected = false);
-
       MediaPlayer.SetAudioTrack(selectedItem.Model.Id);
+
+      if (ActualItem != null)
+      {
+        var model = ActualItem.Model;
+
+        model.AudioTrack = selectedItem.Model.Id;
+
+        storageManager.UpdateEntityAsync(model);
+      }
+    }
+
+    #endregion
+
+    #region OnAspectRatioSelected
+
+    private void OnAspectRatioSelected(AspectRatioViewModel selectedItem)
+    {
+      if (ActualItem != null)
+      {
+        var model = ActualItem.Model;
+
+        model.AspectRatio = selectedItem.Description;
+
+        MediaPlayer.AspectRatio = model.AspectRatio;
+
+        storageManager.UpdateEntityAsync(model);
+      }
     }
 
     #endregion
@@ -234,7 +319,14 @@ namespace VPlayer.WindowsPlayer.ViewModels
       base.OnNewItemPlay();
 
       if (MediaPlayer.Media != null)
+      {
         MediaPlayer.Media.ParsedChanged += MediaPlayer_ParsedChanged;
+
+        if (ActualItem != null)
+        {
+          MediaPlayer.AspectRatio = ActualItem.Model.AspectRatio;
+        }
+      }
     }
 
     #endregion
@@ -255,9 +347,15 @@ namespace VPlayer.WindowsPlayer.ViewModels
             Subtitles.Add(new SubtitleViewModel(spu));
           }
 
+          if (ActualItem?.Model.Subtitles != null)
+          {
+            MediaPlayer.SetSpu(ActualItem.Model.Subtitles.Value);
+          }
+
           var actualSub = Subtitles.Single(x => MediaPlayer.Spu == x.Model.Id);
 
           actualSub.IsSelected = true;
+
         }
 
 
@@ -266,6 +364,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
           foreach (var spu in MediaPlayer.AudioTrackDescription)
           {
             AudioTracks.Add(new AudioTrackViewModel(spu));
+          }
+
+          if (ActualItem?.Model.AudioTrack != null)
+          {
+            MediaPlayer.SetSpu(ActualItem.Model.AudioTrack.Value);
           }
 
           var actualAudioTrack = AudioTracks.Single(x => MediaPlayer.AudioTrack == x.Model.Id);

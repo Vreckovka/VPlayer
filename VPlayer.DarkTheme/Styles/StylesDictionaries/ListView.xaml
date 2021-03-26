@@ -2,6 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:controls="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                    xmlns:system="clr-namespace:System;assembly=System.Runtime"
                     xmlns:text1="clr-namespace:VCore.Behaviors.Text;assembly=VCore.WPF">
 
 
@@ -13,8 +14,9 @@
         <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <Color x:Key="SecondaryForegroundColor">#757575</Color>
+    <Color x:Key="SecondaryForegroundColor">#555555</Color>
     <SolidColorBrush x:Key="SecondaryForegroundBrush" Color="{StaticResource SecondaryForegroundColor}" />
+    <system:Double x:Key="ListView_MenuStyle_IconSize">17</system:Double>
 
     <Style x:Key="ListView_MenuStyle" TargetType="ListView">
         <Setter Property="SnapsToDevicePixels" Value="true" />
@@ -23,9 +25,12 @@
         <Setter Property="ScrollViewer.CanContentScroll" Value="true" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Background" Value="{StaticResource 3_WhiteTransparentBrush}" />
         <Setter Property="FontWeight" Value="DemiBold" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="FontFamily" Value="{StaticResource Roboto}" />
+        <Setter Property="BorderBrush" Value="#252525" />
+        <Setter Property="BorderThickness" Value="1" />
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
                 <Style TargetType="ListViewItem">
@@ -47,13 +52,13 @@
 
                                         <Grid>
                                             <Grid Margin="0,0,8,0">
-                                                <Image Width="15"
-                                                       Height="15"
+                                                <Image Width="{StaticResource ListView_MenuStyle_IconSize}"
+                                                       Height="{StaticResource ListView_MenuStyle_IconSize}"
                                                        Source="{Binding ImagePath}" />
 
                                                 <Rectangle x:Name="ImageOpacityMask"
-                                                           Width="15"
-                                                           Height="15">
+                                                           Width="{StaticResource ListView_MenuStyle_IconSize}"
+                                                           Height="{StaticResource ListView_MenuStyle_IconSize}">
                                                     <Rectangle.Fill>
                                                         <SolidColorBrush Color="{StaticResource SecondaryForegroundColor}" />
                                                     </Rectangle.Fill>
@@ -74,8 +79,8 @@
 
 
                                             <Path x:Name="IconPath"
-                                                  Width="15"
-                                                  Height="15"
+                                                  Width="{StaticResource ListView_MenuStyle_IconSize}"
+                                                  Height="{StaticResource ListView_MenuStyle_IconSize}"
                                                   Margin="0,0,8,0"
                                                   Data="{Binding IconPathData}"
                                                   Stretch="Uniform">
@@ -90,7 +95,6 @@
                                                     </Style>
                                                 </Path.Style>
                                             </Path>
-
                                         </Grid>
 
                                         <ContentPresenter Grid.Column="1"
@@ -126,7 +130,6 @@
                                                     <ColorAnimation Storyboard.TargetProperty="Background.Color"
                                                                     To="{StaticResource 10_DefaultWhiteColor}"
                                                                     Duration="{StaticResource MenuHoverAnimationDuration}" />
-
 
                                                     <ColorAnimation Storyboard.TargetProperty="(TextBox.Foreground).(SolidColorBrush.Color)"
                                                                     To="#ccc"
@@ -212,7 +215,6 @@
                                             </BeginStoryboard>
                                         </MultiDataTrigger.ExitActions>
                                     </MultiDataTrigger>
-
 
                                     <!--  Hover  IsBackroundActive  -->
                                     <MultiDataTrigger>
@@ -338,9 +340,18 @@
 
                                             <BeginStoryboard x:Name="EnterIsNotBackroundActive">
                                                 <Storyboard>
+
+                                                    <ColorAnimation Storyboard.TargetProperty="Background.Color"
+                                                                    To="Transparent"
+                                                                    Duration="{StaticResource MenuHoverAnimationDuration}" />
+
+                                                    <ColorAnimation Storyboard.TargetProperty="(TextBox.Foreground).(SolidColorBrush.Color)"
+                                                                    To="{StaticResource SecondaryForegroundColor}"
+                                                                    Duration="{StaticResource MenuHoverAnimationDuration}" />
+
                                                     <ColorAnimation Storyboard.TargetName="IconPath"
                                                                     Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                                                    To="Yellow"
+                                                                    To="{StaticResource SecondaryForegroundColor}"
                                                                     Duration="{StaticResource MenuHoverAnimationDuration}" />
 
                                                     <ColorAnimation Storyboard.TargetName="ImageOpacityMask"
@@ -365,13 +376,13 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListView">
-                    <Border Name="Border"
-                            Background="{StaticResource 3_WhiteTransparentBrush}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
-                        <ScrollViewer>
-                            <ItemsPresenter />
-                        </ScrollViewer>
+                    <Border Name="Border" Background="{TemplateBinding Background}">
+                        <Grid>
+                            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" />
+                            <ScrollViewer>
+                                <ItemsPresenter />
+                            </ScrollViewer>
+                        </Grid>
                     </Border>
 
                     <ControlTemplate.Triggers>

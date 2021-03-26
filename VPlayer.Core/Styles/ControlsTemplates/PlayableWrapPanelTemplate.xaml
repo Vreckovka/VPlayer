@@ -9,6 +9,11 @@
                     xmlns:library="clr-namespace:VPlayer.Library"
                     xmlns:text1="clr-namespace:VCore.Behaviors.Text;assembly=VCore.WPF">
 
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/ControlsTemplates/ButtonWithIconTemplate.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
     <Duration x:Key="AnimationDuration">0:0:0:0.15</Duration>
 
     <Style x:Key="PlayableWrapPanelItemButtons"
@@ -131,7 +136,7 @@
                         <Grid Name="A"
                               Width="200"
                               Height="265"
-                              Background="{StaticResource BackgroudBrush}">
+                              Background="{StaticResource BackgroudGradientBrush}">
 
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
@@ -454,7 +459,7 @@
     </Style>
 
     <Style TargetType="{x:Type controls:PlayableWrapPanel}">
-        <Setter Property="Background" Value="{StaticResource BackgroudBrush}" />
+        <Setter Property="Background" Value="{StaticResource BackgroudGradientBrush}" />
         <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True" />
         <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
         <Setter Property="ItemsPanel">
@@ -467,9 +472,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:PlayableWrapPanel">
-                    <Grid Margin="0,10"
-                          Background="{TemplateBinding Panel.Background}"
-                          SnapsToDevicePixels="True">
+                    <Grid Background="{TemplateBinding Panel.Background}" SnapsToDevicePixels="True">
                         <ScrollViewer Padding="{TemplateBinding Control.Padding}"
                                       attachedProperties1:AttachedProperty.ScrollSpeed="5"
                                       Focusable="False">

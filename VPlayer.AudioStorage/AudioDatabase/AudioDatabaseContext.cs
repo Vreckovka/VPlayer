@@ -19,6 +19,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     private readonly IWindowManager windowManager;
     //add-migration migration_ -ConnectionString "Data Source=C:\Users\Roman Pecho\AppData\Roaming\VPlayer\VPlayerDatabase.db;Version=3;" -connectionProvider "System.Data.SQLite.EF6"
+    
     //STACI IBA add-migration MIGRATIONNAME 
 
     #region Properties
@@ -42,9 +43,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     public AudioDatabaseContext() : base()
     {
-      this.logger = VIoc.Kernel.Get<ILogger>();
-      this.windowManager = VIoc.Kernel.Get<IWindowManager>();
-
       var directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VPlayer");
       if (!Directory.Exists(directory))
       {
@@ -61,39 +59,16 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
       optionsBuilder.UseSqlite("Data Source=C:\\Users\\Roman Pecho\\AppData\\Roaming\\VPlayer\\VPlayerDatabase.db;");
     }
-
-    //protected override void OnModelCreating(DbModelBuilder modelBuilder)
-    //{
-    //  var sqliteConnectionInitializer = new SqliteCreateDatabaseIfNotExists<AudioDatabaseContext>(modelBuilder);
-
-    //  Database.SetInitializer(sqliteConnectionInitializer);
-    //}
+  
 
     public override int SaveChanges()
     {
-      try
-      {
+      OnBeforeSaving();
 
-        OnBeforeSaving();
-
-        return base.SaveChanges();
-      }
-      catch (Exception ex)
-      {
-        logger.Log(ex);
-        windowManager.ShowPrompt(ex.ToString());
-        return -1;
-      }
+      return base.SaveChanges();
     }
 
-    //public override Task<int> SaveChangesAsync()
-    //{
-    //  OnBeforeSaving();
-
-    //  return base.SaveChangesAsync();
-    //}
-
-
+   
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken)
     {
       OnBeforeSaving();

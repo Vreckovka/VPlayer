@@ -11,6 +11,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:VPlayer.Player.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors;assembly=VPlayer.WindowsPlayer"
+             xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
              mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -19,87 +21,149 @@
                 <ResourceDictionary Source="pack://application:,,,/VPlayer.Player;component/Views/PlayerViewResources.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
             </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
 
+            <templateSelectors:WindowsPlayerItemsTemplateSelector x:Key="WindowsPlayerItemsTemplateSelector"
+                                                                  SongDataTemplate="{StaticResource SongDescriptionTemplate}"
+                                                                  VideoDataTemplate="{StaticResource VideoDescriptionDataTemplate}" />
+        </ResourceDictionary>
     </UserControl.Resources>
 
     <Grid>
-        <Grid Background="#080808">
-            <Grid.Effect>
-                <DropShadowEffect BlurRadius="20"
-                                  Direction="90"
-                                  ShadowDepth="5"
-                                  Color="#252525" />
-            </Grid.Effect>
-        </Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250" />
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition />
+            <ColumnDefinition Width="auto" />
+        </Grid.ColumnDefinitions>
 
-        <Grid Background="#080808" />
-
-
-        <Border Margin="0,0,0,3"
-                HorizontalAlignment="Center"
-                CornerRadius="5">
-            <Grid>
-                <Grid Width="578" HorizontalAlignment="Center">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                    </Grid.RowDefinitions>
-
-                    <Grid Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <controls1:ButtonWithIcon Grid.Column="0"
-                                                  Margin="0,0,5,0"
-                                                  HorizontalAlignment="Right"
-                                                  BorderThickness="0"
-                                                  Command="{Binding PreviousCommand}"
-                                                  IconHeight="25"
-                                                  IconPathStyle="{StaticResource NextSong}"
-                                                  IconWidth="25"
-                                                  IsEnabled="{Binding CanPlay}"
-                                                  RenderTransformOrigin="0.5,0.5">
-                            <controls1:ButtonWithIcon.RenderTransform>
-                                <ScaleTransform ScaleX="-1" />
-                            </controls1:ButtonWithIcon.RenderTransform>
-                        </controls1:ButtonWithIcon>
-
-                        <Button x:Name="Play_Button"
-                                Grid.Column="1"
-                                Margin="7"
-                                Padding="15"
-                                Background="{StaticResource DefaultRedBrush}"
-                                BorderThickness="0"
-                                Command="{Binding PlayButton}"
-                                Style="{StaticResource PlayButton}" />
-
-                        <controls1:ButtonWithIcon Grid.Column="2"
-                                                  Margin="0,0,5,0"
-                                                  HorizontalAlignment="Left"
-                                                  BorderThickness="0"
-                                                  Command="{Binding NextCommand}"
-                                                  IconHeight="25"
-                                                  IconPathStyle="{StaticResource NextSong}"
-                                                  IconWidth="25"
-                                                  IsEnabled="{Binding CanPlay}"
-                                                  RenderTransformOrigin="0.5,0.5" />
-                    </Grid>
-
-
-                </Grid>
-            </Grid>
+        <Border Grid.ColumnSpan="4">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0 1" EndPoint="0 0">
+                    <GradientStop Offset="1" Color="#90101010" />
+                    <GradientStop Offset="0" Color="{StaticResource BackgroudColor2}" />
+                </LinearGradientBrush>
+            </Border.Background>
         </Border>
 
-        <ContentPresenter Margin="30,0,0,0"
+        <ContentPresenter Grid.Column="0"
+                          Margin="30,0,0,0"
                           HorizontalAlignment="Left"
                           Content="{Binding StatusMessage}"
                           ContentTemplate="{StaticResource StatusMessageDataTemplate}" />
 
-        <Grid Margin="0,0,30,0" HorizontalAlignment="Right">
+        <Grid Grid.Column="1" Margin="5">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock FontSize="14"
+                           FontWeight="DemiBold"
+                           Foreground="#9ca379"
+                           Grid.IsSharedSizeScope="True"
+                           Text="{Binding ActualViewModel.ActualItem.Model.Name}" />
+
+                <ContentControl x:Name="DescriptionText"
+                                Grid.Row="1"
+                                Margin="-5,0,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Content="{Binding ActualViewModel.ActualItem}"
+                                ContentTemplateSelector="{StaticResource WindowsPlayerItemsTemplateSelector}" />
+
+                <userControls:SoundVizualizer Grid.Row="2"
+                                              Width="{Binding ElementName=DescriptionText, Path=ActualWidth}"
+                                              Height="50"
+                                              Margin="0,-30,0,0"
+                                              HorizontalAlignment="Stretch"
+                                              VerticalAlignment="Top"
+                                              Background="Transparent"
+                                              BottomColor="#fc0f41"
+                                              Grid.IsSharedSizeScope="True"
+                                              IsEnabled="{Binding ActualViewModel.IsPlaying}"
+                                              MaxFrequency="100000"
+                                              MiddleColor="{StaticResource DefaultRedColor}"
+                                              NumberOfColumns="250"
+                                              Opacity="1"
+                                              TopColor="{StaticResource DefaultRedColor}">
+
+                    <userControls:SoundVizualizer.Style>
+                        <Style TargetType="userControls:SoundVizualizer">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </userControls:SoundVizualizer.Style>
+
+                </userControls:SoundVizualizer>
+            </Grid>
+        </Grid>
+
+        <Border Grid.Column="0"
+                Grid.ColumnSpan="4"
+                Margin="0,0,0,0"
+                Padding="5"
+                HorizontalAlignment="Center"
+                CornerRadius="5">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <controls1:ButtonWithIcon Grid.Column="0"
+                                              Margin="0,0,5,0"
+                                              HorizontalAlignment="Right"
+                                              BorderThickness="0"
+                                              Command="{Binding PreviousCommand}"
+                                              IconHeight="25"
+                                              IconPathStyle="{StaticResource NextSong}"
+                                              IconWidth="25"
+                                              IsEnabled="{Binding CanPlay}"
+                                              RenderTransformOrigin="0.5,0.5">
+                        <controls1:ButtonWithIcon.RenderTransform>
+                            <ScaleTransform ScaleX="-1" />
+                        </controls1:ButtonWithIcon.RenderTransform>
+                    </controls1:ButtonWithIcon>
+
+                    <Button x:Name="Play_Button"
+                            Grid.Column="1"
+                            Margin="7"
+                            Padding="15"
+                            Background="{StaticResource DefaultRedBrush}"
+                            BorderThickness="0"
+                            Command="{Binding PlayButton}"
+                            Style="{StaticResource PlayButton}" />
+
+                    <controls1:ButtonWithIcon Grid.Column="2"
+                                              Margin="0,0,5,0"
+                                              HorizontalAlignment="Left"
+                                              BorderThickness="0"
+                                              Command="{Binding NextCommand}"
+                                              IconHeight="25"
+                                              IconPathStyle="{StaticResource NextSong}"
+                                              IconWidth="25"
+                                              IsEnabled="{Binding CanPlay}"
+                                              RenderTransformOrigin="0.5,0.5" />
+                </Grid>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Column="3"
+              Margin="0,0,30,0"
+              HorizontalAlignment="Right">
             <Slider Grid.Row="0"
                     Width="150"
                     Height="4"
@@ -107,31 +171,35 @@
                     Padding="0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
-                    Foreground="{StaticResource DefaultRedBrush}"
                     IsMoveToPointEnabled="True"
                     Maximum="300"
                     Style="{StaticResource SliderMini}"
-                    Value="{Binding ActualVolume, Mode=TwoWay}" />
+                    Value="{Binding ActualVolume, Mode=TwoWay}">
+                <Slider.Foreground>
+                    <LinearGradientBrush>
+                        <GradientStop Offset="1" Color="{StaticResource DefaultRedColor}" />
+                        <GradientStop Offset="0" Color="#2747fe" />
+                    </LinearGradientBrush>
+                </Slider.Foreground>
+
+            </Slider>
 
             <TextBlock Margin="5,0,0,15"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Bottom"
                        FontSize="14"
-                       Foreground="#959595"
+                       FontWeight="DemiBold"
+                       Foreground="#656565"
                        Text="Volume" />
 
             <TextBlock Margin="0,0,10,15"
                        HorizontalAlignment="Right"
                        VerticalAlignment="Bottom"
                        FontSize="14"
-                       Foreground="#959595"
+                       FontWeight="DemiBold"
+                       Foreground="#ccc"
                        Text="{Binding ActualVolume, StringFormat={}{0} %}" />
-
-
-
         </Grid>
-
-
     </Grid>
 
 </UserControl>

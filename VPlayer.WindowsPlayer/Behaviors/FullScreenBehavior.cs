@@ -7,7 +7,8 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-
+using System;
+using System.Reactive.Disposables;
 using Microsoft.Xaml.Behaviors;
 using Ninject;
 using Prism.Events;
@@ -45,32 +46,42 @@ namespace VPlayer.WindowsPlayer.Behaviors
 
     #endregion
 
+    private SerialDisposable fullScrennDisposable;
     #region OnAttached
 
     protected override void OnAttached()
     {
       base.OnAttached();
 
+      fullScrennDisposable = new SerialDisposable();
+
       AssociatedObject.MouseLeftButtonDown += AssociatedObject_MouseLeftButtonDown;
       AssociatedObject.MouseMove += AssociatedObject_MouseMove;
+
+      fullScrennDisposable.Disposable = FullScreenManager.OnFullScreen.Subscribe(DecideFullScreen);
     }
 
     #endregion
 
     private void AssociatedObject_MouseMove(object sender, MouseEventArgs e)
     {
-      ShowHideMouseManager.ResetMouse();
+      FullScreenManager.ResetMouse();
     }
 
     private void AssociatedObject_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
       if (e.ClickCount >= 2)
       {
-        if (!ShowHideMouseManager.IsFullscreen)
-          MakeFullScreen();
-        else
-          ResetFullScreen();
+        FullScreenManager.IsFullscreen = !FullScreenManager.IsFullscreen;
       }
+    }
+
+    private void DecideFullScreen(bool isFullScreen)
+    {
+      if (isFullScreen)
+        MakeFullScreen();
+      else
+        ResetFullScreen();
     }
 
     #region MakeFullScreen
@@ -80,12 +91,10 @@ namespace VPlayer.WindowsPlayer.Behaviors
       VideoView.MakeFullScreen();
 
       FullscreenPlayer.Visibility = Visibility.Visible;
+
       VideoMenu.Visibility = Visibility.Collapsed;
 
-
       FullscreenPlayer.DataContext = PlayerDataContext;
-
-      ShowHideMouseManager.IsFullscreen = true;
     }
 
     #endregion
@@ -97,9 +106,8 @@ namespace VPlayer.WindowsPlayer.Behaviors
       VideoView.ResetFullScreen();
 
       FullscreenPlayer.Visibility = Visibility.Hidden;
-      VideoMenu.Visibility = Visibility.Visible;
 
-      ShowHideMouseManager.IsFullscreen = false;
+      VideoMenu.Visibility = Visibility.Visible;
     }
 
     #endregion
@@ -113,6 +121,7 @@ namespace VPlayer.WindowsPlayer.Behaviors
 
       AssociatedObject.MouseLeftButtonDown -= AssociatedObject_MouseLeftButtonDown;
       AssociatedObject.MouseMove -= AssociatedObject_MouseMove;
+      fullScrennDisposable.Dispose();
     }
 
     #endregion

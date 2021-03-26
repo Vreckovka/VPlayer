@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VPlayer.AudioStorage.AudioDatabase;
 
 namespace VPlayer.AudioStorage.Migrations
 {
     [DbContext(typeof(AudioDatabaseContext))]
-    partial class AudioDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20210326163011_AspectRatio")]
+    partial class AspectRatio
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -246,9 +248,6 @@ namespace VPlayer.AudioStorage.Migrations
                     b.Property<string>("AspectRatio")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("AudioTrack")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime?>("Created")
                         .HasColumnType("TEXT");
 
@@ -275,9 +274,6 @@ namespace VPlayer.AudioStorage.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
-
-                    b.Property<int?>("Subtitles")
-                        .HasColumnType("INTEGER");
 
                     b.Property<int?>("TvShowId")
                         .HasColumnType("INTEGER");

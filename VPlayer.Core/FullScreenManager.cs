@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace VPlayer.WindowsPlayer.Behaviors
 {
-  public static class ShowHideMouseManager
+  public static class FullScreenManager
   {
     private static Timer cursorTimer;
     private static ElapsedEventHandler hideCursorDelegate;
@@ -16,7 +16,7 @@ namespace VPlayer.WindowsPlayer.Behaviors
     private static ReplaySubject<Unit> hideMouseSubject = new ReplaySubject<Unit>(1);
     private static ReplaySubject<bool> fullsScreenSubject = new ReplaySubject<bool>(1);
 
-    static ShowHideMouseManager()
+    static FullScreenManager()
     {
       cursorTimer = new Timer(2500);
       cursorTimer.AutoReset = false;
@@ -32,6 +32,8 @@ namespace VPlayer.WindowsPlayer.Behaviors
       };
 
       cursorTimer.Elapsed += hideCursorDelegate;
+
+    
     }
 
     #region OnResetMouse

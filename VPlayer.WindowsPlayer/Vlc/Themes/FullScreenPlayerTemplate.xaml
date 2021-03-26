@@ -37,11 +37,9 @@
                                     <Slider Grid.Row="0"
                                             Margin="15,5,15,0"
                                             Padding="0"
-                                            Background="Yellow"
                                             DataContext="{Binding ActualViewModel}"
                                             IsMoveToPointEnabled="True"
                                             Maximum="1"
-                                            Style="{StaticResource ShadowLess}"
                                             Value="{Binding ActualItem.ActualPosition}">
                                         <b:Interaction.Behaviors>
                                             <behaviors:SliderValueChangedManualy Duration="{Binding ActualItem.Duration}" />

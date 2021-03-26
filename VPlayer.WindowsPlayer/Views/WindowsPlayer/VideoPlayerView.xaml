@@ -63,6 +63,24 @@
                             </MenuItem.ItemTemplate>
 
                         </MenuItem>
+
+                        <MenuItem Height="35"
+                                  Header="Aspect ratio"
+                                  IsEnabled="{Binding AspectRatios.Count, Converter={converters1:EmptyItemSourceToDisable}}"
+                                  ItemsSource="{Binding AspectRatios}">
+                            <MenuItem.ItemContainerStyle>
+                                <Style BasedOn="{StaticResource {x:Type MenuItem}}" TargetType="MenuItem">
+                                    <Setter Property="IsChecked" Value="{Binding IsSelected}" />
+                                    <Setter Property="IsCheckable" Value="True" />
+                                </Style>
+                            </MenuItem.ItemContainerStyle>
+                            <MenuItem.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Description}" />
+                                </DataTemplate>
+                            </MenuItem.ItemTemplate>
+
+                        </MenuItem>
                     </Menu>
 
                     <controls1:FullscreenPlayer x:Name="FullscreenPlayer" Visibility="Hidden" />

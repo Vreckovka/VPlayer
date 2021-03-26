@@ -3,28 +3,15 @@ using VCore.Standard;
 
 namespace VPlayer.WindowsPlayer.ViewModels.VideoProperties
 {
-  public abstract class VideoProperty : ViewModel<TrackDescription>
+  public abstract class VideoProperty : ViewModel, ISelectable
   {
-    protected VideoProperty(TrackDescription model) : base(model)
+    protected VideoProperty() 
     {
     }
 
     #region Description
 
-    private string description;
-
-    public string Description
-    {
-      get { return description; }
-      set
-      {
-        if (value != description)
-        {
-          description = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
+    public abstract string Description { get;  }
 
     #endregion
 

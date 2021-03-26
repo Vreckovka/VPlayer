@@ -100,7 +100,10 @@ namespace VPlayer.AudioStorage.Scrappers
             Message = "Updating tv show in database"
           };
 
+          statusManager.UpdateMessage(statusMessage);
+
           statusMessage.ProcessedCount++;
+
           statusMessage.ActualMessageStatusState = MessageStatusState.Done;
 
           statusManager.UpdateMessage(statusMessage);

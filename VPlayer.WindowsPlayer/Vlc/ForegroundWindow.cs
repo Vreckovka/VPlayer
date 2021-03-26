@@ -101,6 +101,7 @@ namespace VPlayer.WindowsPlayer.Vlc
       {
         _wndhost.Closing -= Wndhost_Closing;
         _wndhost.LocationChanged -= Wndhost_LocationChanged;
+        _wndhost.StateChanged -= Wndhost_StateChanged;
       }
 
       Hide();
@@ -130,6 +131,7 @@ namespace VPlayer.WindowsPlayer.Vlc
       _wndhost.Closing += Wndhost_Closing;
       _bckgnd.SizeChanged += Wndhost_SizeChanged;
       _wndhost.LocationChanged += Wndhost_LocationChanged;
+      _wndhost.StateChanged += Wndhost_StateChanged;
 
       try
       {
@@ -140,6 +142,15 @@ namespace VPlayer.WindowsPlayer.Vlc
         Hide();
         throw new VLCException("Unable to create WPF Window in VideoView.", ex);
       }
+    }
+
+    #endregion
+
+    #region Wndhost_LocationChanged
+
+    private void Wndhost_StateChanged(object sender, EventArgs e)
+    {
+      SetWindowInPlace();
     }
 
     #endregion
@@ -175,6 +186,12 @@ namespace VPlayer.WindowsPlayer.Vlc
 
     void Wndhost_LocationChanged(object? sender, EventArgs e)
     {
+      if (overlayWindow.WindowState == WindowState.Maximized)
+      {
+        overlayWindow.WindowState = WindowState.Normal;
+        WindowState = WindowState.Normal;
+      }
+
       var locationFromScreen = _bckgnd.PointToScreen(_zeroPoint);
       var source = PresentationSource.FromVisual(_wndhost);
       var targetPoints = source.CompositionTarget.TransformFromDevice.Transform(locationFromScreen);
@@ -183,6 +200,7 @@ namespace VPlayer.WindowsPlayer.Vlc
 
       overlayWindow.Left = Left;
       overlayWindow.Top = Top;
+    
     }
 
     #endregion

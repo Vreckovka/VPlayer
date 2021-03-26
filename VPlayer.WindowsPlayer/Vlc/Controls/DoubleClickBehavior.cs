@@ -37,7 +37,7 @@ namespace VPlayer.WindowsPlayer.Vlc.Controls
 
     private void AssociatedObject_MouseMove(object sender, MouseEventArgs e)
     {
-      ShowHideMouseManager.ResetMouse();
+      FullScreenManager.ResetMouse();
     }
 
     private void AssociatedObject_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)

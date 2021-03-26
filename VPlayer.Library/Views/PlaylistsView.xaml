@@ -15,11 +15,8 @@
              mc:Ignorable="d">
   <UserControl.Resources>
     <ResourceDictionary>
-      <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/ControlsTemplates/ButtonWithIconTemplate.xaml" />
-      </ResourceDictionary.MergedDictionaries>
 
-      <Style x:Key="GridViewColumnHeaderGripper" TargetType="{x:Type Thumb}">
+        <Style x:Key="GridViewColumnHeaderGripper" TargetType="{x:Type Thumb}">
         <Setter Property="Canvas.Right" Value="-9" />
         <Setter Property="Width" Value="18" />
         <Setter Property="Height" Value="{Binding ActualHeight, RelativeSource={RelativeSource TemplatedParent}}" />

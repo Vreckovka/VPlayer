@@ -5,150 +5,222 @@
                     xmlns:status="clr-namespace:VPlayer.Core.Managers.Status;assembly=VPlayer.Core"
                     xmlns:status1="clr-namespace:VPlayer.Core.Managers.Status;assembly=VPlayer.AudioStorage">
 
-  <converters:DataContextChangedConverter x:Key="DataContextChangedConverter" />
-  <DataTemplate x:Key="StatusMessageDataTemplate">
-    <Border Padding="10">
-      <Grid>
-        <Grid.RowDefinitions>
-          <RowDefinition />
-          <RowDefinition />
-          <RowDefinition />
-        </Grid.RowDefinitions>
+    <converters:DataContextChangedConverter x:Key="DataContextChangedConverter" />
+    <DataTemplate x:Key="StatusMessageDataTemplate">
+        <Border Padding="10,5">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
 
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition />
-          <ColumnDefinition />
-          <ColumnDefinition />
-        </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0"
+                           Foreground="#555555"
+                           Text="{Binding Message, Mode=OneWay}" />
 
-        <TextBlock Grid.Column="0"
-                   Foreground="#555555"
-                   Text="{Binding Message, Mode=OneWay}" />
+                <TextBlock Grid.Row="1">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock" />
+                    </TextBlock.Style>
+                    <Run Text="{Binding ActualMessageStatusState, Mode=OneWay}">
+                        <Run.Style>
+                            <Style TargetType="Run">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status1:MessageStatusState.Beggining}">
+                                        <Setter Property="Foreground" Value="Yellow" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status1:MessageStatusState.Processing}">
+                                        <Setter Property="Foreground" Value="YellowGreen" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status1:MessageStatusState.Done}">
+                                        <Setter Property="Foreground" Value="Green" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status1:MessageStatusState.Failed}">
+                                        <Setter Property="Foreground" Value="Red" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Run.Style>
+                    </Run>
+                    <Run Foreground="#858585" Text="{Binding Process, StringFormat={}{0:N2}%, Mode=OneWay}" />
+                </TextBlock>
 
-        <TextBlock Grid.Row="1">
-          <TextBlock.Style>
-            <Style TargetType="TextBlock" />
-          </TextBlock.Style>
-          <Run Text="{Binding ActualMessageStatusState, Mode=OneWay}">
-            <Run.Style>
-              <Style TargetType="Run">
-                <Style.Triggers>
-                  <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status1:MessageStatusState.Beggining}">
-                    <Setter Property="Foreground" Value="Yellow" />
-                  </DataTrigger>
-                  <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status1:MessageStatusState.Processing}">
-                    <Setter Property="Foreground" Value="YellowGreen" />
-                  </DataTrigger>
-                  <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status1:MessageStatusState.Done}">
-                    <Setter Property="Foreground" Value="Green" />
-                  </DataTrigger>
-                  <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status1:MessageStatusState.Failed}">
-                    <Setter Property="Foreground" Value="Red" />
-                  </DataTrigger>
-                </Style.Triggers>
-              </Style>
-            </Run.Style>
-          </Run>
-          <Run Foreground="#858585" Text="{Binding Process, StringFormat={}{0:N2}%, Mode=OneWay}" />
-        </TextBlock>
+                <TextBlock Grid.Row="2" Foreground="#454545">
+                    <Run Text="{Binding ProcessedCount, Mode=OneWay}" />
+                    <Run Text="/" />
+                    <Run Text="{Binding NumberOfProcesses, Mode=OneWay}" />
+                </TextBlock>
 
-        <TextBlock Grid.Row="2" Foreground="#454545">
-          <Run Text="{Binding ProcessedCount, Mode=OneWay}" />
-          <Run Text="/" />
-          <Run Text="{Binding NumberOfProcesses, Mode=OneWay}" />
-        </TextBlock>
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Setter Property="Opacity" Value="0" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status1:MessageStatusState.Done}">
+                                <DataTrigger.EnterActions>
+                                    <RemoveStoryboard BeginStoryboardName="ShowMessageStoryBoard" />
+                                    <BeginStoryboard x:Name="HideMessageStoryBoard">
+                                        <Storyboard>
+                                            <DoubleAnimation BeginTime="0:0:2"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             From="1.0"
+                                                             To="0.0"
+                                                             Duration="0:0:0:0.5" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
 
-        <Grid.Style>
-          <Style TargetType="Grid">
-            <Setter Property="Opacity" Value="0" />
-            <Style.Triggers>
-              <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status1:MessageStatusState.Done}">
-                <DataTrigger.EnterActions>
-                  <RemoveStoryboard BeginStoryboardName="ShowMessageStoryBoard" />
-                  <BeginStoryboard x:Name="HideMessageStoryBoard">
-                    <Storyboard>
-                      <DoubleAnimation BeginTime="0:0:2"
-                                       Storyboard.TargetProperty="Opacity"
-                                       From="1.0"
-                                       To="0.0"
-                                       Duration="0:0:0:0.5" />
-                    </Storyboard>
-                  </BeginStoryboard>
-                </DataTrigger.EnterActions>
+                            </DataTrigger>
 
-              </DataTrigger>
+                            <DataTrigger Binding="{Binding Converter={StaticResource DataContextChangedConverter}}" Value="True">
+                                <DataTrigger.EnterActions>
+                                    <RemoveStoryboard BeginStoryboardName="HideMessageStoryBoard" />
+                                    <BeginStoryboard x:Name="ShowMessageStoryBoard">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                             From="0.0"
+                                                             To="1.0"
+                                                             Duration="0:0:0:0.2" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+            </Grid>
+        </Border>
+    </DataTemplate>
 
-              <DataTrigger Binding="{Binding Converter={StaticResource DataContextChangedConverter}}" Value="True">
-                <DataTrigger.EnterActions>
-                  <RemoveStoryboard BeginStoryboardName="HideMessageStoryBoard" />
-                  <BeginStoryboard x:Name="ShowMessageStoryBoard">
-                    <Storyboard>
-                      <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                       From="0.0"
-                                       To="1.0"
-                                       Duration="0:0:0:0.2" />
-                    </Storyboard>
-                  </BeginStoryboard>
-                </DataTrigger.EnterActions>
-              </DataTrigger>
-            </Style.Triggers>
-          </Style>
-        </Grid.Style>
-      </Grid>
-    </Border>
-  </DataTemplate>
-
-  <Style x:Key="SliderThumbMini" TargetType="Thumb">
-    <Setter Property="SnapsToDevicePixels" Value="true" />
-    <Setter Property="OverridesDefaultStyle" Value="true" />
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="Thumb">
-          <Ellipse Width="12"
-                   Height="12"
-                   Fill="{TemplateBinding Foreground}" />
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
-
-  <Style x:Key="SliderMini" TargetType="Slider">
-    <Setter Property="Height" Value="6" />
-    <Setter Property="Focusable" Value="False" />
-    <Setter Property="SnapsToDevicePixels" Value="true" />
-    <Setter Property="OverridesDefaultStyle" Value="true" />
-    <Setter Property="Foreground" Value="#b39d84" />
-    <Style.Triggers>
-      <Trigger Property="Orientation" Value="Horizontal">
-        <Setter Property="MinHeight" Value="21" />
-        <Setter Property="MinWidth" Value="10" />
+    <Style x:Key="SliderThumbMini" TargetType="Thumb">
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="OverridesDefaultStyle" Value="true" />
         <Setter Property="Template">
-          <Setter.Value>
-            <ControlTemplate TargetType="Slider">
-              <Grid>
-                <Track x:Name="PART_Track">
-                  <Track.DecreaseRepeatButton>
-                    <RepeatButton Height="{TemplateBinding Height}"
-                                  Command="Slider.DecreaseLarge"
-                                  Style="{StaticResource SliderRepeatButton1}" />
-                  </Track.DecreaseRepeatButton>
-                  <Track.Thumb>
-                    <Thumb Margin="-9,0,0,0" Style="{StaticResource SliderThumbMini}" />
-                  </Track.Thumb>
-                  <Track.IncreaseRepeatButton>
-                    <RepeatButton Height="{TemplateBinding Height}"
-                                  Command="Slider.IncreaseLarge"
-                                  Style="{StaticResource SliderRepeatButton}" />
-                  </Track.IncreaseRepeatButton>
-                </Track>
-              </Grid>
-            </ControlTemplate>
-          </Setter.Value>
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Ellipse Width="15"
+                             Height="15"
+                             Fill="{StaticResource DefaultRedBrush}"
+                             Stroke="#252525"
+                             StrokeThickness="1" />
+                </ControlTemplate>
+            </Setter.Value>
         </Setter>
-      </Trigger>
-      <Trigger Property="IsMouseOver" Value="True">
-        <Setter Property="Cursor" Value="Hand" />
-      </Trigger>
-    </Style.Triggers>
-  </Style>
+    </Style>
+
+    <Style x:Key="SliderMini" TargetType="Slider">
+        <Setter Property="Height" Value="6" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="Foreground" Value="#b39d84" />
+        <Setter Property="Background" Value="{StaticResource 30_WhiteTransparentBrush}" />
+
+        <Style.Triggers>
+            <Trigger Property="Orientation" Value="Horizontal">
+                <Setter Property="MinHeight" Value="21" />
+                <Setter Property="MinWidth" Value="10" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Slider">
+                            <Grid>
+                                <Track x:Name="PART_Track">
+                                    <Track.DecreaseRepeatButton>
+                                        <RepeatButton Height="{TemplateBinding Height}"
+                                                      Background="{TemplateBinding Foreground}"
+                                                      BorderBrush="{TemplateBinding Foreground}"
+                                                      BorderThickness="1"
+                                                      Command="Slider.DecreaseLarge"
+                                                      Style="{StaticResource SliderRepeatButton}" />
+                                    </Track.DecreaseRepeatButton>
+                                    <Track.Thumb>
+                                        <Thumb Margin="-9,0,0,0" Style="{StaticResource SliderThumbMini}" />
+                                    </Track.Thumb>
+
+                                    <Track.IncreaseRepeatButton>
+                                        <RepeatButton Height="{TemplateBinding Height}"
+                                                      Background="{TemplateBinding Background}"
+                                                      BorderBrush="{TemplateBinding Foreground}"
+                                                      BorderThickness="0"
+                                                      Command="Slider.IncreaseLarge"
+                                                      Style="{StaticResource SliderRepeatButton}" />
+                                    </Track.IncreaseRepeatButton>
+                                </Track>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Cursor" Value="Hand" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+
+    <DataTemplate x:Key="SongDescriptionTemplate">
+        <TextBlock Margin="5,0,0,0"
+                   FontFamily="{StaticResource Roboto}"
+                   FontSize="12">
+            <Run FontSize="13" Text="{Binding ArtistViewModel.Name, Mode=OneWay}">
+                <Run.Style>
+                    <Style TargetType="Run">
+                        <Setter Property="Foreground" Value="#948b79" />
+                        <Setter Property="FontWeight" Value="DemiBold" />
+
+                    </Style>
+                </Run.Style>
+            </Run>
+            <Run Foreground="#50edfffa" Text="(" />
+            <Run Text="{Binding AlbumViewModel.Name, Mode=OneWay, StringFormat={}{0}}">
+                <Run.Style>
+                    <Style TargetType="Run">
+                        <Setter Property="Foreground" Value="#70edfffa" />
+                        <Setter Property="FontWeight" Value="DemiBold" />
+                    </Style>
+                </Run.Style>
+            </Run>
+            <Run Foreground="#50edfffa" Text=")" />
+        </TextBlock>
+    </DataTemplate>
+
+    <DataTemplate x:Key="VideoDescriptionDataTemplate">
+        <Grid Background="Transparent">
+            <Border Padding="0,0,5,5">
+                <Grid VerticalAlignment="Bottom">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Margin="5,0,0,0"
+                               FontFamily="{StaticResource Roboto}"
+                               FontSize="12"
+                               FontWeight="DemiBold">
+                        <Run Text="{Binding TvShow.Name, Mode=OneWay}">
+                            <Run.Style>
+                                <Style TargetType="Run">
+                                    <Setter Property="Foreground" Value="#948b79" />
+                                    <Setter Property="FontWeight" Value="DemiBold" />
+                                </Style>
+                            </Run.Style>
+                        </Run>
+                        <Run Foreground="#50edfffa" Text="(" />
+                        <Run FontWeight="Normal"
+                             Foreground="#30edfffa"
+                             Text="Season" />
+                        <Run FontSize="13"
+                             Foreground="#70edfffa"
+                             Text="{Binding TvShowSeason.SeasonNumber, Mode=OneWay}" />
+                        <Run FontWeight="Normal"
+                             Foreground="#30edfffa"
+                             Text="Episode" />
+                        <Run Foreground="#70edfffa" Text="{Binding Model.EpisodeNumber, Mode=OneWay}" />
+                        <Run Foreground="#50edfffa" Text=")" />
+                    </TextBlock>
+                </Grid>
+            </Border>
+        </Grid>
+    </DataTemplate>
+
 </ResourceDictionary>

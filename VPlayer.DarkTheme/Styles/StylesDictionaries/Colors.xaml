@@ -2,21 +2,15 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:VPlayer.StylesDictionaries">
 
-    <Duration x:Key="MenuHoverAnimationDuration">0:0:.25</Duration>
-    <KeyTime x:Key="MenuHoverAnimationKeyTime">0:0:.25</KeyTime>
+    <Duration x:Key="MenuHoverAnimationDuration">0:0:.20</Duration>
+    <KeyTime x:Key="MenuHoverAnimationKeyTime">0:0:.20</KeyTime>
+
 
     <!--<Color x:Key="asd">#fe2754</Color>-->
     <Color x:Key="BackgroudColor">#0a0a0a</Color>
-    <Color x:Key="BackgroudColor2"
-           A="255"
-           B="11"
-           G="10"
-           R="10" />
-    <Color x:Key="TopWindowsColor"
-           A="255"
-           B="10"
-           G="10"
-           R="10" />
+    <Color x:Key="BackgroudColor2">#080808</Color>
+    <Color x:Key="TopWindowsColor">#101010</Color>
+
     <Color x:Key="DefaultRedColor">#fe2754</Color>
 
     <Color x:Key="DefaultRedTransparentColor"
@@ -94,37 +88,41 @@
     <SolidColorBrush x:Key="YellowBrush" Color="{StaticResource YellowColor}" />
     <SolidColorBrush x:Key="DarkBrownBrush" Color="{StaticResource DarkBrownColor}" />
 
+    <SolidColorBrush x:Key="BackgroudBrush" Color="{StaticResource BackgroudColor}" />
 
-    <SolidColorBrush x:Key="StrongerGrayOverlayBrush" Color="{DynamicResource StrongerGrayOverlay}" />
-    <SolidColorBrush x:Key="TopWindowsBrush" Color="{DynamicResource TopWindowsColor}" />
-    <SolidColorBrush x:Key="DefaultRedBrush" Color="{DynamicResource DefaultRedColor}" />
-    <SolidColorBrush x:Key="DefaultRedBrushDim" Color="{DynamicResource DefaultRedColorDim}" />
-    <SolidColorBrush x:Key="DefaultRedTransparentBrush" Color="{DynamicResource DefaultRedTransparentColor}" />
-    <SolidColorBrush x:Key="DefaultWhiteBrush" Color="{DynamicResource DefaultWhiteColor}" />
+    <SolidColorBrush x:Key="StrongerGrayOverlayBrush" Color="{StaticResource StrongerGrayOverlay}" />
+    <SolidColorBrush x:Key="TopWindowsBrush" Color="{StaticResource TopWindowsColor}" />
+    <SolidColorBrush x:Key="DefaultRedBrush" Color="{StaticResource DefaultRedColor}" />
+    <SolidColorBrush x:Key="DefaultRedBrushDim" Color="{StaticResource DefaultRedColorDim}" />
+    <SolidColorBrush x:Key="DefaultRedTransparentBrush" Color="{StaticResource DefaultRedTransparentColor}" />
+    <SolidColorBrush x:Key="DefaultWhiteBrush" Color="{StaticResource DefaultWhiteColor}" />
 
-    <SolidColorBrush x:Key="235_WhiteTransparentBrush" Color="{DynamicResource 235_DefaultWhiteColor}" />
-    <SolidColorBrush x:Key="220_WhiteTransparentBrush" Color="{DynamicResource 220_DefaultWhiteColor}" />
-    <SolidColorBrush x:Key="200_WhiteTransparentBrush" Color="{DynamicResource 200_DefaultWhiteColor}" />
-    <SolidColorBrush x:Key="120_WhiteTransparentBrush" Color="{DynamicResource 120_DefaultWhiteColor}" />
-    <SolidColorBrush x:Key="100_WhiteTransparentBrush" Color="{DynamicResource 100_DefaultWhiteColor}" />
-    <SolidColorBrush x:Key="85_WhiteTransparentBrush" Color="{DynamicResource 85_DefaultWhiteColor}" />
-    <SolidColorBrush x:Key="50_WhiteTransparentBrush" Color="{DynamicResource 50_DefaultWhiteColor}" />
-    <SolidColorBrush x:Key="30_WhiteTransparentBrush" Color="{DynamicResource 30_DefaultWhiteColor}" />
-    <SolidColorBrush x:Key="10_WhiteTransparentBrush" Color="{DynamicResource 10_DefaultWhiteColor}" />
-    <SolidColorBrush x:Key="3_WhiteTransparentBrush" Color="{DynamicResource 3_DefaultWhiteColor}" />
+    <SolidColorBrush x:Key="235_WhiteTransparentBrush" Color="{StaticResource 235_DefaultWhiteColor}" />
+    <SolidColorBrush x:Key="220_WhiteTransparentBrush" Color="{StaticResource 220_DefaultWhiteColor}" />
+    <SolidColorBrush x:Key="200_WhiteTransparentBrush" Color="{StaticResource 200_DefaultWhiteColor}" />
+    <SolidColorBrush x:Key="120_WhiteTransparentBrush" Color="{StaticResource 120_DefaultWhiteColor}" />
+    <SolidColorBrush x:Key="100_WhiteTransparentBrush" Color="{StaticResource 100_DefaultWhiteColor}" />
+    <SolidColorBrush x:Key="85_WhiteTransparentBrush" Color="{StaticResource 85_DefaultWhiteColor}" />
+    <SolidColorBrush x:Key="50_WhiteTransparentBrush" Color="{StaticResource 50_DefaultWhiteColor}" />
+    <SolidColorBrush x:Key="30_WhiteTransparentBrush" Color="{StaticResource 30_DefaultWhiteColor}" />
+    <SolidColorBrush x:Key="10_WhiteTransparentBrush" Color="{StaticResource 10_DefaultWhiteColor}" />
+    <SolidColorBrush x:Key="3_WhiteTransparentBrush" Color="{StaticResource 3_DefaultWhiteColor}" />
 
-    <LinearGradientBrush x:Key="BackgroudBrush" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0.3" Color="{DynamicResource BackgroudColor}" />
-        <GradientStop Offset="1" Color="{DynamicResource BackgroudColor2}" />
+    <LinearGradientBrush x:Key="BackgroudGradientBrush" StartPoint="1 0">
+        <GradientStop Offset="0" Color="{StaticResource BackgroudColor}" />
+        <GradientStop Offset="1" Color="{StaticResource BackgroudColor2}" />
     </LinearGradientBrush>
 
+
     <LinearGradientBrush x:Key="GlassGradient" StartPoint="0,0" EndPoint="1,1.5">
-        <GradientStop Offset="0" Color="{DynamicResource 50_DefaultWhiteColor}" />
+        <GradientStop Offset="0" Color="{StaticResource 50_DefaultWhiteColor}" />
         <GradientStop Offset="0.35" Color="Transparent" />
     </LinearGradientBrush>
 
-    <LinearGradientBrush x:Key="BackgroudPageBrush" StartPoint="0,0" EndPoint="0,3">
-        <GradientStop Offset="0.23" Color="{DynamicResource BackgroudColor}" />
-        <GradientStop Offset="0.8" Color="{DynamicResource BackgroudColor2}" />
+
+    <LinearGradientBrush x:Key="RedBlueGradientBrush">
+        <GradientStop Offset="0" Color="{StaticResource DefaultRedColor}" />
+        <GradientStop Offset="1" Color="#2747fe" />
     </LinearGradientBrush>
+
 </ResourceDictionary>

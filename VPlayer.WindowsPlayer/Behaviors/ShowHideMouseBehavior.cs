@@ -15,7 +15,7 @@ namespace VPlayer.Player.Behaviors
 
       AssociatedObject.MouseMove += AssociatedObject_MouseMove;
 
-      ShowHideMouseManager.OnHideMouse.Subscribe((x) =>
+      FullScreenManager.OnHideMouse.Subscribe((x) =>
       {
         Application.Current.Dispatcher.Invoke(() =>
         {
@@ -23,7 +23,7 @@ namespace VPlayer.Player.Behaviors
         });
       });
 
-      ShowHideMouseManager.OnResetMouse.Subscribe((x) =>
+      FullScreenManager.OnResetMouse.Subscribe((x) =>
       {
         Application.Current.Dispatcher.Invoke(() =>
         {
@@ -34,7 +34,7 @@ namespace VPlayer.Player.Behaviors
 
     private void AssociatedObject_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
     {
-      ShowHideMouseManager.ResetMouse();
+      FullScreenManager.ResetMouse();
     }
 
     protected override void OnDetaching()

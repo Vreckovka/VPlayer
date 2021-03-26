@@ -143,6 +143,8 @@ namespace VPlayer.ViewModels
     private void SwitchScreen()
     {
       SwitchBehaviorCommand?.Execute(null);
+
+      FullScreenManager.IsFullscreen = false;
     }
 
     #endregion

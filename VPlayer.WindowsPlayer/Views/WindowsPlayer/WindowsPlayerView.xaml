@@ -14,7 +14,6 @@
              xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
              d:DesignHeight="450"
              d:DesignWidth="1900"
-             Background="{StaticResource BackgroudBrush}"
              mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -158,7 +157,6 @@
                       HorizontalAlignment="Stretch"
                       Panel.ZIndex="0"
                       AllowDrop="True"
-                      Background="{StaticResource BackgroudBrush}"
                       ItemsSource="{Binding VirtualizedPlayList}"
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                       Style="{StaticResource WindowsPlayerSongs}">

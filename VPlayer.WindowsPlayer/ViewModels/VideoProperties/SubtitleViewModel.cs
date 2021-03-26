@@ -7,8 +7,6 @@ namespace VPlayer.WindowsPlayer.ViewModels.VideoProperties
   {
     public SubtitleViewModel(TrackDescription model) : base(model)
     {
-     
     }
-
   }
 }

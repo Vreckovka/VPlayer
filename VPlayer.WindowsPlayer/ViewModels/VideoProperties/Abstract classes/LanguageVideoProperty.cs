@@ -4,10 +4,22 @@ namespace VPlayer.WindowsPlayer.ViewModels.VideoProperties
 {
   public abstract class LanguageVideoProperty : VideoProperty
   {
-    protected LanguageVideoProperty(TrackDescription model) : base(model)
+    protected LanguageVideoProperty(TrackDescription model)
     {
-      Description = model.Name;
+      Model = model;
     }
+
+    #region Model
+
+    public TrackDescription Model{ get; }
+
+    #endregion
+
+    #region Description
+
+    public override string Description => Model.Name;
+
+    #endregion
 
     #region Language
 

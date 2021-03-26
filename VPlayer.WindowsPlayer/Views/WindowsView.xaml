@@ -10,14 +10,6 @@
              d:DesignWidth="800"
              mc:Ignorable="d">
 
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/ControlsTemplates/ButtonWithIconTemplate.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -31,6 +23,8 @@
 
 
         <ListView Grid.Row="0"
+                  Grid.ColumnSpan="2"
+                  BorderThickness="0,0,0,2"
                   ItemsSource="{Binding NavigationViewModel.Items}"
                   Style="{StaticResource ListView_MenuStyle}">
             <ListView.ItemsPanel>
@@ -42,11 +36,12 @@
 
         <Menu Grid.Row="0"
               Grid.Column="1"
+              Margin="0,0,0,0"
               HorizontalAlignment="Right"
-              Margin="0 0 0 0"
-              Background="{StaticResource 3_WhiteTransparentBrush}">
+              Background="Transparent">
             <MenuItem Width="80"
                       Height="30"
+                      Background="Transparent"
                       BorderThickness="0"
                       Header="Load">
                 <MenuItem Command="{Binding LoadFromFolder}" Header="Music" />
@@ -58,8 +53,7 @@
         <Border Grid.Row="1"
                 Grid.Column="0"
                 Grid.ColumnSpan="2"
-                BorderBrush="{StaticResource 10_WhiteTransparentBrush}"
-                BorderThickness="0,3,0,0">
+                Padding="0 1 0 0">
             <ContentControl mvvm:RegionManager.RegionName="{x:Static regions:RegionNames.WindowsPlayerContentRegion}" />
         </Border>
 

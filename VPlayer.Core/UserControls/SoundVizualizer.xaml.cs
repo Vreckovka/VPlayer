@@ -268,7 +268,7 @@ namespace VPlayer.Player.UserControls
     #endregion
 
     #region ReadData
-  
+
     private void ReadData(object s, DataAvailableEventArgs dataAvailableEventArgs)
     {
       int read;
@@ -346,17 +346,40 @@ namespace VPlayer.Player.UserControls
 
     private void timer2_Tick(object sender, EventArgs e)
     {
-      var newImage = lineSpectrum.CreateSpectrumLine(new System.Drawing.Size(width, height),
-        bottomColor,
-        topColor,
-        middleColor, true);
-      if (newImage != null)
+      Application.Current?.Dispatcher?.Invoke(async () =>
       {
-        newImage.MakeTransparent();
+        try
+        {
 
-        Application.Current?.Dispatcher?.Invoke(() => Image.Source = BitmapToImageSource(newImage)
-      );
-      }
+          if (IsEnabled)
+          {
+            var newImage = await Task.Run(() =>
+            {
+              return lineSpectrum.CreateSpectrumLine(new System.Drawing.Size(width, height),
+                bottomColor,
+                topColor,
+                middleColor, true);
+            });
+
+            if (newImage != null)
+            {
+              await Task.Run(() =>
+              {
+                newImage.MakeTransparent();
+              });
+
+              var image =  BitmapToImageSource(newImage);
+              
+
+              Image.Source = image;
+            }
+          }
+
+        }
+        catch (Exception ex)
+        {
+        }
+      });
     }
 
     #endregion

@@ -16,24 +16,9 @@
             <Setter.Value>
                 <ControlTemplate TargetType="RepeatButton">
                     <Border Height="{TemplateBinding Height}"
-                            Background="{StaticResource 30_WhiteTransparentBrush}"
-                            BorderThickness="0" />
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="SliderRepeatButton1" TargetType="RepeatButton">
-        <Setter Property="SnapsToDevicePixels" Value="true" />
-        <Setter Property="OverridesDefaultStyle" Value="true" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="RepeatButton">
-                    <Border Height="{TemplateBinding Height}"
-                            Background="{TemplateBinding Foreground}"
-                            BorderBrush="{TemplateBinding Foreground}"
-                            BorderThickness="1"
-                            SnapsToDevicePixels="True" />
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -58,31 +43,34 @@
             <Track x:Name="PART_Track">
                 <Track.DecreaseRepeatButton>
                     <RepeatButton Height="{TemplateBinding Height}"
+                                  Background="{TemplateBinding Foreground}"
                                   Command="Slider.DecreaseLarge"
-                                  Style="{StaticResource SliderRepeatButton1}" />
+                                  Style="{StaticResource SliderRepeatButton}" />
                 </Track.DecreaseRepeatButton>
                 <Track.Thumb>
-                    <Thumb Margin="0,0,0,0" />
+                    <Thumb Width="15"
+                           Height="15"
+                           Margin="0,0,0,0"
+                           Foreground="{TemplateBinding Foreground}" />
                 </Track.Thumb>
                 <Track.IncreaseRepeatButton>
                     <RepeatButton Height="{TemplateBinding Height}"
+                                  Background="{TemplateBinding Background}"
                                   Command="Slider.IncreaseLarge"
                                   Style="{StaticResource SliderRepeatButton}" />
                 </Track.IncreaseRepeatButton>
-
-                <Track.Effect>
-                    <DropShadowEffect BlurRadius="0" ShadowDepth="5" />
-                </Track.Effect>
             </Track>
         </Grid>
     </ControlTemplate>
 
     <Style TargetType="Slider">
-        <Setter Property="Height" Value="3" />
+        <Setter Property="Height" Value="5" />
         <Setter Property="Focusable" Value="False" />
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="OverridesDefaultStyle" Value="true" />
         <Setter Property="Foreground" Value="#b39d84" />
+        <Setter Property="Background" Value="{StaticResource 30_WhiteTransparentBrush}" />
+
         <Style.Triggers>
             <Trigger Property="Orientation" Value="Horizontal">
                 <Setter Property="MinHeight" Value="21" />

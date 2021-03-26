@@ -11,7 +11,6 @@
              xmlns:regions1="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPlayer.Core"
              d:DesignHeight="650"
              d:DesignWidth="800"
-             Background="{StaticResource BackgroudPageBrush}"
              mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -26,13 +25,13 @@
             <ColumnDefinition Width="auto" />
         </Grid.ColumnDefinitions>
 
-        <Border Grid.RowSpan="2"
-                Margin="0,0,5,0"
-                BorderBrush="{StaticResource 10_WhiteTransparentBrush}">
-            <ListView Width="170"
-                      ItemsSource="{Binding NavigationViewModel.Items}"
-                      Style="{StaticResource ListView_MenuStyle}" />
-        </Border>
+
+        <ListView Grid.RowSpan="2"
+                  Width="170"
+                  BorderThickness="0,0,2,0"
+                  ItemsSource="{Binding NavigationViewModel.Items}"
+                  Style="{StaticResource ListView_MenuStyle}" />
+
 
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
