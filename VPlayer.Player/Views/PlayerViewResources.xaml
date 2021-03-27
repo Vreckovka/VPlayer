@@ -5,6 +5,7 @@
                     xmlns:status1="clr-namespace:VPlayer.Core.Managers.Status;assembly=VPlayer.AudioStorage">
 
     <converters:DataContextChangedConverter x:Key="DataContextChangedConverter" />
+
     <DataTemplate x:Key="StatusMessageDataTemplate">
         <Border Padding="10,5">
             <Grid>
@@ -157,69 +158,5 @@
     </Style>
 
 
-    <DataTemplate x:Key="SongDescriptionTemplate">
-        <TextBlock Margin="5,0,0,0"
-                   FontFamily="{StaticResource Roboto}"
-                   FontSize="12">
-            <Run FontSize="13" Text="{Binding ArtistViewModel.Name, Mode=OneWay}">
-                <Run.Style>
-                    <Style TargetType="Run">
-                        <Setter Property="Foreground" Value="#948b79" />
-                        <Setter Property="FontWeight" Value="DemiBold" />
-
-                    </Style>
-                </Run.Style>
-            </Run>
-            <Run Foreground="#50edfffa" Text="(" />
-            <Run Text="{Binding AlbumViewModel.Name, Mode=OneWay, StringFormat={}{0}}">
-                <Run.Style>
-                    <Style TargetType="Run">
-                        <Setter Property="Foreground" Value="#70edfffa" />
-                        <Setter Property="FontWeight" Value="DemiBold" />
-                    </Style>
-                </Run.Style>
-            </Run>
-            <Run Foreground="#50edfffa" Text=")" />
-        </TextBlock>
-    </DataTemplate>
-
-    <DataTemplate x:Key="VideoDescriptionDataTemplate">
-        <Grid Background="Transparent">
-            <Border Padding="0,0,5,5">
-                <Grid VerticalAlignment="Bottom">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="auto" />
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock Margin="5,0,0,0"
-                               FontFamily="{StaticResource Roboto}"
-                               FontSize="12"
-                               FontWeight="DemiBold">
-                        <Run Text="{Binding TvShow.Name, Mode=OneWay}">
-                            <Run.Style>
-                                <Style TargetType="Run">
-                                    <Setter Property="Foreground" Value="#948b79" />
-                                    <Setter Property="FontWeight" Value="DemiBold" />
-                                </Style>
-                            </Run.Style>
-                        </Run>
-                        <Run Foreground="#50edfffa" Text="(" />
-                        <Run FontWeight="Normal"
-                             Foreground="#30edfffa"
-                             Text="Season" />
-                        <Run FontSize="13"
-                             Foreground="#70edfffa"
-                             Text="{Binding TvShowSeason.SeasonNumber, Mode=OneWay}" />
-                        <Run FontWeight="Normal"
-                             Foreground="#30edfffa"
-                             Text="Episode" />
-                        <Run Foreground="#70edfffa" Text="{Binding Model.EpisodeNumber, Mode=OneWay}" />
-                        <Run Foreground="#50edfffa" Text=")" />
-                    </TextBlock>
-                </Grid>
-            </Border>
-        </Grid>
-    </DataTemplate>
 
 </ResourceDictionary>

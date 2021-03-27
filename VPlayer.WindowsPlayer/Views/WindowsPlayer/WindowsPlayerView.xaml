@@ -83,7 +83,7 @@
             </GridSplitter.Style>
         </GridSplitter>
 
-        <Grid Grid.Column="2">
+        <Grid Grid.Column="2" Width="350">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition />

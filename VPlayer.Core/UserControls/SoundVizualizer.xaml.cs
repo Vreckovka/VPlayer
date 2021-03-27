@@ -53,7 +53,6 @@ namespace VPlayer.Player.UserControls
     {
       InitializeComponent();
 
-      IsEnabled = false;
       this.Loaded += SoundVizualizer_Loaded;
       this.SizeChanged += SoundVizualizer_SizeChanged;
       this.IsEnabledChanged += SoundVizualizer_IsEnabledChanged;

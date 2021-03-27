@@ -22,9 +22,7 @@
                 <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <templateSelectors:WindowsPlayerItemsTemplateSelector x:Key="WindowsPlayerItemsTemplateSelector"
-                                                                  SongDataTemplate="{StaticResource SongDescriptionTemplate}"
-                                                                  VideoDataTemplate="{StaticResource VideoDescriptionDataTemplate}" />
+
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -51,60 +49,11 @@
                           Content="{Binding StatusMessage}"
                           ContentTemplate="{StaticResource StatusMessageDataTemplate}" />
 
-        <Grid Grid.Column="1" Margin="5">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="auto" />
-                </Grid.RowDefinitions>
+        <ContentPresenter Grid.Column="1"
+                          HorizontalAlignment="Left"
+                          Content="{Binding ActualViewModel}"
+                          ContentTemplate="{StaticResource PlayerDetail}" />
 
-
-                <userControls:SoundVizualizer Grid.Row="2"
-                                              Width="{Binding ElementName=DescriptionText, Path=ActualWidth}"
-                                              Height="20"
-                                              Margin="0,0,0,0"
-                                              HorizontalAlignment="Stretch"
-                                              VerticalAlignment="Top"
-                                              Background="Transparent"
-                                              BottomColor="#fc0f41"
-                                              Grid.IsSharedSizeScope="True"
-                                              IsEnabled="{Binding ActualViewModel.IsPlaying, FallbackValue=False}"
-                                              MaxFrequency="100000"
-                                              MiddleColor="{StaticResource DefaultRedColor}"
-                                              NormlizedDataMaxValue="10"
-                                              NormlizedDataMinValue="1"
-                                              NumberOfColumns="200"
-                                              Opacity="1"
-                                              TopColor="{StaticResource DefaultRedColor}">
-
-                    <userControls:SoundVizualizer.Style>
-                        <Style TargetType="userControls:SoundVizualizer">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </userControls:SoundVizualizer.Style>
-                </userControls:SoundVizualizer>
-
-                <TextBlock FontSize="14"
-                           FontWeight="DemiBold"
-                           Foreground="#9ca379"
-                           Grid.IsSharedSizeScope="True"
-                           Text="{Binding ActualViewModel.ActualItem.Model.Name}" />
-
-                <ContentControl x:Name="DescriptionText"
-                                Grid.Row="1"
-                                Margin="-5,0,0,0"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Top"
-                                Content="{Binding ActualViewModel.ActualItem}"
-                                ContentTemplateSelector="{StaticResource WindowsPlayerItemsTemplateSelector}" />
-            </Grid>
-        </Grid>
 
         <Border Grid.Column="0"
                 Grid.ColumnSpan="4"

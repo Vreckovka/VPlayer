@@ -35,7 +35,7 @@
                         <Run Text="(">
                             <Run.Style>
                                 <Style TargetType="Run">
-                                    <Setter Property="Foreground" Value="#edfffa" />
+                                    <Setter Property="Foreground" Value="#ccedfffa" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsPlaying}" Value="true">
                                             <Setter Property="Foreground" Value="#24140c" />
@@ -47,7 +47,7 @@
                         <Run Text="Season">
                             <Run.Style>
                                 <Style TargetType="Run">
-                                    <Setter Property="Foreground" Value="#edfffa" />
+                                    <Setter Property="Foreground" Value="#70edfffa" />
                                     <Setter Property="FontWeight" Value="Normal" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsPlaying}" Value="true">
@@ -60,7 +60,7 @@
                         <Run FontSize="13" Text="{Binding TvShowSeason.SeasonNumber, Mode=OneWay}">
                             <Run.Style>
                                 <Style TargetType="Run">
-                                    <Setter Property="Foreground" Value="#ffcb8a" />
+                                    <Setter Property="Foreground" Value="#edfffa" />
                                     <Setter Property="FontWeight" Value="Bold" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsPlaying}" Value="true">
@@ -73,7 +73,7 @@
                         <Run Text="Episode">
                             <Run.Style>
                                 <Style TargetType="Run">
-                                    <Setter Property="Foreground" Value="#edfffa" />
+                                    <Setter Property="Foreground" Value="#70edfffa" />
                                     <Setter Property="FontWeight" Value="Normal" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsPlaying}" Value="true">
@@ -86,7 +86,7 @@
                         <Run Text="{Binding Model.EpisodeNumber, Mode=OneWay, StringFormat={}{0}}">
                             <Run.Style>
                                 <Style TargetType="Run">
-                                    <Setter Property="Foreground" Value="#b3ff8a" />
+                                    <Setter Property="Foreground" Value="#edfffa" />
                                     <Setter Property="FontWeight" Value="Bold" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsPlaying}" Value="true">
@@ -99,7 +99,7 @@
                         <Run Text=")">
                             <Run.Style>
                                 <Style TargetType="Run">
-                                    <Setter Property="Foreground" Value="#edfffa" />
+                                    <Setter Property="Foreground" Value="#ccedfffa" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsPlaying}" Value="true">
                                             <Setter Property="Foreground" Value="#24140c" />

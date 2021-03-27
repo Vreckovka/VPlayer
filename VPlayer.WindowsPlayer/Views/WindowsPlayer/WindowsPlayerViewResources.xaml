@@ -13,14 +13,15 @@
                     xmlns:lrc="clr-namespace:VPlayer.AudioStorage.InfoDownloader.LRC;assembly=VCore.WPF"
                     xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
                     xmlns:text1="clr-namespace:VCore.Behaviors.Text;assembly=VCore.WPF"
-                    xmlns:windowsPlayer="clr-namespace:VPlayer.Player.Views.WindowsPlayer">
+                    xmlns:windowsPlayer="clr-namespace:VPlayer.Player.Views.WindowsPlayer"
+                    xmlns:templateSelectors1="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors;assembly=VPlayer.Core">
 
   <ResourceDictionary.MergedDictionaries>
     <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Views/WindowsPlayer/SongPlayerViewResources.xaml" />
     <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Views/WindowsPlayer/VideoPlayerViewResources.xaml" />
   </ResourceDictionary.MergedDictionaries>
 
-  <templateSelectors:WindowsPlayerItemsTemplateSelector x:Key="WindowsPlayerItemsTemplateSelector"
+  <templateSelectors1:WindowsPlayerItemsTemplateSelector x:Key="WindowsPlayerItemsTemplateSelector"
                                                         SongDataTemplate="{StaticResource SongDataTemplate}"
                                                         VideoDataTemplate="{StaticResource VideoDataTemplate}" />
 

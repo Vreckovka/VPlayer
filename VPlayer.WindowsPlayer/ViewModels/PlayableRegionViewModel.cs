@@ -139,7 +139,7 @@ namespace VPlayer.Core.ViewModels
 
     private bool isPlaying;
 
-    public virtual bool IsPlaying
+    public bool IsPlaying
     {
       get { return isPlaying; }
       set
@@ -431,8 +431,6 @@ namespace VPlayer.Core.ViewModels
         {
           ActualItem.IsPaused = true;
         }
-
-        IsPlaying = false;
       };
 
       mediaPlayer.Stopped += (sender, e) =>
