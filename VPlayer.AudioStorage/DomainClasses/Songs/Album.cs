@@ -12,7 +12,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     UnableToFind
   }
 
-  public class Album : DownloadableEntity, IUpdateable<Album>
+  public class Album : DownloadableEntity, IUpdateable<Album>, INamedEntity
   {
     #region Constructors
 

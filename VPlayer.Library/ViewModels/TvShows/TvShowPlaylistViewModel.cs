@@ -6,6 +6,7 @@ using Prism.Events;
 using VCore.Annotations;
 using VCore.Standard.Factories.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Factories;
@@ -13,7 +14,7 @@ using VPlayer.Core.ViewModels.TvShows;
 
 namespace VPlayer.Library.ViewModels.TvShows
 {
-  public class TvShowPlaylistViewModel : PlaylistViewModel<TvShowEpisodeInPlaylistViewModel, TvShowPlaylist, PlaylistTvShowEpisode>
+  public class TvShowPlaylistViewModel : PlaylistViewModel<TvShowEpisodeInPlaylistViewModel, VideoPlaylist, PlaylistVideoItem>
   {
     #region Fields
 
@@ -25,7 +26,7 @@ namespace VPlayer.Library.ViewModels.TvShows
     #region Constructors
 
     public TvShowPlaylistViewModel(
-      TvShowPlaylist model,
+      VideoPlaylist model,
       IEventAggregator eventAggregator,
       [NotNull] IStorageManager storage,
       [NotNull] IVPlayerViewModelsFactory viewModelsFactory) : base(model, eventAggregator, storage)
@@ -35,7 +36,7 @@ namespace VPlayer.Library.ViewModels.TvShows
     }
 
     #endregion
-   
+
     protected override void OnDetail()
     {
       throw new NotImplementedException();
@@ -45,19 +46,40 @@ namespace VPlayer.Library.ViewModels.TvShows
 
     public override IEnumerable<TvShowEpisodeInPlaylistViewModel> GetItemsToPlay()
     {
-      var playlist = storage.GetRepository<TvShowPlaylist>()
+      var playlist = storage.GetRepository<VideoPlaylist>()
         .Include(x => x.PlaylistItems)
-        .ThenInclude(x => x.TvShowEpisode)
-        .ThenInclude(x => x.TvShowSeason)
-        .ThenInclude(x => x.TvShow)
+        .ThenInclude(x => x.VideoItem)
         .SingleOrDefault(x => x.Id == Model.Id);
 
-      if(playlist != null)
-      {
-      
-        var playListSong = playlist.PlaylistItems.OrderBy(x => x.OrderInPlaylist).Select(x => viewModelsFactory.Create<TvShowEpisodeInPlaylistViewModel>(x.TvShowEpisode));
 
-        return playListSong;
+      if (playlist != null)
+      {
+        var playlistItems = playlist.PlaylistItems.OrderBy(x => x.OrderInPlaylist).ToList();
+
+        var list = new List<TvShowEpisodeInPlaylistViewModel>();
+
+        var fristEpisode = storage.GetRepository<TvShowEpisode>().Where(x => x.VideoItem.Id == playlistItems[0].IdVideoItem).Include(x => x.TvShow).SingleOrDefault();
+
+        if (fristEpisode != null)
+        {
+
+          var tvShows = storage.GetRepository<TvShow>()
+            .Where(x => x.Id == fristEpisode.TvShow.Id)
+            .Include(x => x.Seasons)
+            .ThenInclude(x => x.Episodes)
+            .ThenInclude(x => x.VideoItem).Single();
+
+          var tvShowEpisodes = tvShows.Seasons.SelectMany(x => x.Episodes).ToList();
+
+          foreach (var item in playlistItems)
+          {
+            var tvShowEpisode = tvShowEpisodes.Single(x => x.VideoItem.Id == item.VideoItem.Id);
+
+            list.Add(viewModelsFactory.Create<TvShowEpisodeInPlaylistViewModel>(tvShowEpisode.VideoItem, tvShowEpisode));
+          }
+
+          return list;
+        }
       }
 
       return null;
@@ -69,9 +91,9 @@ namespace VPlayer.Library.ViewModels.TvShows
 
     public override void PublishPlayEvent(IEnumerable<TvShowEpisodeInPlaylistViewModel> viewModels, EventAction eventAction)
     {
-      var e = new PlayTvShowEventData(viewModels, eventAction, Model);
+      var e = new PlayItemsEventData<TvShowEpisodeInPlaylistViewModel>(viewModels, eventAction, Model);
 
-      eventAggregator.GetEvent<PlayTvShowEvent>().Publish(e);
+      eventAggregator.GetEvent<PlayItemsEvent<VideoItem, TvShowEpisodeInPlaylistViewModel>>().Publish(e);
     }
 
     #endregion

@@ -3,7 +3,7 @@
 namespace VPlayer.Core.Events
 {
 
-  public interface IPlayItemEventData<TEventData>
+  public interface IPlayItemsEventData<TEventData>
   {
     IEnumerable<TEventData> Items { get; }
     EventAction EventAction { get; }
@@ -15,9 +15,9 @@ namespace VPlayer.Core.Events
     TData GetModel<TData>() where TData : class;
   }
 
-  public class PlayItemEventData<TEventData> : IPlayItemEventData<TEventData>
+  public class PlayItemsEventData<TEventData> : IPlayItemsEventData<TEventData>
   {
-    public PlayItemEventData(
+    public PlayItemsEventData(
       IEnumerable<TEventData> items,
       EventAction eventAction,
       object model)
@@ -28,7 +28,7 @@ namespace VPlayer.Core.Events
       Model = model;
     }
 
-    public PlayItemEventData(
+    public PlayItemsEventData(
       IEnumerable<TEventData> items,
       EventAction eventAction,
       bool? isShufle,

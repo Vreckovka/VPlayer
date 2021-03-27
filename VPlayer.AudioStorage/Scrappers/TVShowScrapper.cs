@@ -41,7 +41,7 @@ namespace VPlayer.AudioStorage.Scrappers
       {
         try
         {
-          var dbTvShow = storageManager.GetRepository<TvShow>().Include(x => x.Seasons).ThenInclude(x => x.Episodes).Single(x => x.Id == tvShowId);
+          var dbTvShow = storageManager.GetRepository<TvShow>().Include(x => x.Seasons).ThenInclude(x => x.Episodes).ThenInclude(x => x.VideoItem).Single(x => x.Id == tvShowId);
 
           dbTvShow.InfoDownloadStatus = InfoDownloadStatus.Downloading;
          
@@ -72,7 +72,7 @@ namespace VPlayer.AudioStorage.Scrappers
                 {
                   var csfdEpisode = csfdTvShow.Seasons[season.SeasonNumber - 1].SeasonEpisodes[episode.EpisodeNumber - 1];
 
-                  episode.Name = csfdEpisode.Name;
+                  episode.VideoItem.Name = csfdEpisode.Name;
 
                   episode.InfoDownloadStatus = InfoDownloadStatus.Downloaded;
                 }

@@ -112,7 +112,7 @@ namespace VPlayer.AudioStorage.Migrations
                     b.ToTable("PlaylistSongs");
                 });
 
-            modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.PlaylistTvShowEpisode", b =>
+            modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.PlaylistVideoItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -121,7 +121,7 @@ namespace VPlayer.AudioStorage.Migrations
                     b.Property<DateTime?>("Created")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("IdTvShowEpisode")
+                    b.Property<int>("IdVideoItem")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("Modified")
@@ -130,19 +130,14 @@ namespace VPlayer.AudioStorage.Migrations
                     b.Property<int>("OrderInPlaylist")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("TvShowId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("TvShowPlaylistId")
+                    b.Property<int?>("VideoPlaylistId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdTvShowEpisode");
+                    b.HasIndex("IdVideoItem");
 
-                    b.HasIndex("TvShowId");
-
-                    b.HasIndex("TvShowPlaylistId");
+                    b.HasIndex("VideoPlaylistId");
 
                     b.ToTable("PlaylistsTvShowEpisode");
                 });
@@ -243,12 +238,6 @@ namespace VPlayer.AudioStorage.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("AspectRatio")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("AudioTrack")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime?>("Created")
                         .HasColumnType("TEXT");
 
@@ -276,13 +265,13 @@ namespace VPlayer.AudioStorage.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("SubtitleTrack")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int?>("TvShowId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("TvShowSeasonId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("VideoItemId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -291,51 +280,9 @@ namespace VPlayer.AudioStorage.Migrations
 
                     b.HasIndex("TvShowSeasonId");
 
+                    b.HasIndex("VideoItemId");
+
                     b.ToTable("TvShowEpisodes");
-                });
-
-            modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.TvShowPlaylist", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime?>("Created")
-                        .HasColumnType("TEXT");
-
-                    b.Property<long?>("HashCode")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsReapting")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsShuffle")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsUserCreated")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("ItemCount")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<float>("LastItemElapsedTime")
-                        .HasColumnType("REAL");
-
-                    b.Property<int>("LastItemIndex")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("LastPlayed")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("Modified")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TvShowPlaylists");
                 });
 
             modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.Video.TvShow", b =>
@@ -404,6 +351,91 @@ namespace VPlayer.AudioStorage.Migrations
                     b.ToTable("TvShowsSeasons");
                 });
 
+            modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.VideoItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AspectRatio")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("AudioTrack")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("Created")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DiskLocation")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Duration")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsFavorite")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Length")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("Modified")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("SubtitleTrack")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VideoItems");
+                });
+
+            modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.VideoPlaylist", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("Created")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("HashCode")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsReapting")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsShuffle")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsUserCreated")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ItemCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<float>("LastItemElapsedTime")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("LastItemIndex")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("LastPlayed")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("Modified")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TvShowPlaylists");
+                });
+
             modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.Album", b =>
                 {
                     b.HasOne("VPlayer.AudioStorage.DomainClasses.Artist", "Artist")
@@ -428,25 +460,19 @@ namespace VPlayer.AudioStorage.Migrations
                     b.Navigation("Song");
                 });
 
-            modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.PlaylistTvShowEpisode", b =>
+            modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.PlaylistVideoItem", b =>
                 {
-                    b.HasOne("VPlayer.AudioStorage.DomainClasses.TvShowEpisode", "TvShowEpisode")
+                    b.HasOne("VPlayer.AudioStorage.DomainClasses.VideoItem", "VideoItem")
                         .WithMany()
-                        .HasForeignKey("IdTvShowEpisode")
+                        .HasForeignKey("IdVideoItem")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("VPlayer.AudioStorage.DomainClasses.Video.TvShow", "TvShow")
-                        .WithMany()
-                        .HasForeignKey("TvShowId");
-
-                    b.HasOne("VPlayer.AudioStorage.DomainClasses.TvShowPlaylist", null)
+                    b.HasOne("VPlayer.AudioStorage.DomainClasses.VideoPlaylist", null)
                         .WithMany("PlaylistItems")
-                        .HasForeignKey("TvShowPlaylistId");
+                        .HasForeignKey("VideoPlaylistId");
 
-                    b.Navigation("TvShow");
-
-                    b.Navigation("TvShowEpisode");
+                    b.Navigation("VideoItem");
                 });
 
             modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.Song", b =>
@@ -468,9 +494,15 @@ namespace VPlayer.AudioStorage.Migrations
                         .WithMany("Episodes")
                         .HasForeignKey("TvShowSeasonId");
 
+                    b.HasOne("VPlayer.AudioStorage.DomainClasses.VideoItem", "VideoItem")
+                        .WithMany()
+                        .HasForeignKey("VideoItemId");
+
                     b.Navigation("TvShow");
 
                     b.Navigation("TvShowSeason");
+
+                    b.Navigation("VideoItem");
                 });
 
             modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.Video.TvShowSeason", b =>
@@ -497,11 +529,6 @@ namespace VPlayer.AudioStorage.Migrations
                     b.Navigation("PlaylistItems");
                 });
 
-            modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.TvShowPlaylist", b =>
-                {
-                    b.Navigation("PlaylistItems");
-                });
-
             modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.Video.TvShow", b =>
                 {
                     b.Navigation("Seasons");
@@ -510,6 +537,11 @@ namespace VPlayer.AudioStorage.Migrations
             modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.Video.TvShowSeason", b =>
                 {
                     b.Navigation("Episodes");
+                });
+
+            modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.VideoPlaylist", b =>
+                {
+                    b.Navigation("PlaylistItems");
                 });
 #pragma warning restore 612, 618
         }

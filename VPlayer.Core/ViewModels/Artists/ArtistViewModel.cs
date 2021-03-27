@@ -27,7 +27,7 @@ namespace VPlayer.Core.ViewModels.Artists
     #endregion Methods
   }
 
-  public class ArtistViewModel : PlayableViewModelWithThumbnail<SongInPlayListViewModel,Artist>
+  public class ArtistViewModel : PlayableViewModelWithThumbnail<SongInPlayListViewModel, Artist>
   {
     #region Fields
 
@@ -78,9 +78,9 @@ namespace VPlayer.Core.ViewModels.Artists
 
     public override void PublishPlayEvent(IEnumerable<SongInPlayListViewModel> viewModels, EventAction eventAction)
     {
-      var e = new PlaySongsEventData(viewModels, eventAction, this);
+      var e = new PlayItemsEventData<SongInPlayListViewModel>(viewModels, eventAction, this);
 
-      eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
+      eventAggregator.GetEvent<PlayItemsEvent<Song, SongInPlayListViewModel>>().Publish(e);
     }
 
     #endregion
@@ -89,9 +89,9 @@ namespace VPlayer.Core.ViewModels.Artists
 
     public override void PublishAddToPlaylistEvent(IEnumerable<SongInPlayListViewModel> viewModels)
     {
-      var e = new PlaySongsEventData(viewModels, EventAction.Add, this);
+      var e = new PlayItemsEventData<SongInPlayListViewModel>(viewModels, EventAction.Add, this);
 
-      eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
+      eventAggregator.GetEvent<PlayItemsEvent<Song, SongInPlayListViewModel>>().Publish(e);
     }
 
     #endregion

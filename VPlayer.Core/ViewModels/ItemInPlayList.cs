@@ -231,8 +231,14 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    protected abstract void OnActualPositionChanged(float value);
-    protected abstract void OnIsPlayingChanged(bool value);
+    protected virtual void OnActualPositionChanged(float value)
+    {
+    }
+
+    protected virtual void OnIsPlayingChanged(bool value)
+    {
+
+    }
     protected abstract void PublishPlayEvent();
 
     protected abstract void PublishRemoveFromPlaylist();

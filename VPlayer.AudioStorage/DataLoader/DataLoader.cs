@@ -7,9 +7,11 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
+using VCore.Annotations;
 using VCore.Helpers;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.Video;
+using VPlayer.Core.Managers.Status;
 using FileAttributes = System.IO.FileAttributes;
 
 namespace VPlayer.AudioStorage.DataLoader
@@ -23,10 +25,12 @@ namespace VPlayer.AudioStorage.DataLoader
 
   public class DataLoader
   {
+    private readonly IStatusManager statusManager;
     private Dictionary<DataType, List<string>> supportedItems = new Dictionary<DataType, List<string>>();
 
-    public DataLoader()
+    public DataLoader([NotNull] IStatusManager statusManager)
     {
+      this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
       supportedItems.Add(DataType.Video, new List<string>()
       {
         "*.avi", "*.mkv"
@@ -83,7 +87,20 @@ namespace VPlayer.AudioStorage.DataLoader
 
     public TvShow LoadTvShow(string tvShowName, string path)
     {
+      var statusMessage = new StatusMessage(1)
+      {
+        Message = "Getting file info"
+      };
+
+      statusManager.UpdateMessage(statusMessage);
+
       var files = LoadData(DataType.Video, path, true);
+
+      statusMessage.ProcessedCount++;
+
+      statusMessage.ActualMessageStatusState = MessageStatusState.Done;
+
+      statusManager.UpdateMessage(statusMessage);
 
       var tvShow = new TvShow()
       {
@@ -111,13 +128,18 @@ namespace VPlayer.AudioStorage.DataLoader
           tvShow.Seasons.Add(tvShowSeason);
         }
 
-        var tvEpisode = new TvShowEpisode()
+        var videoItem = new VideoItem()
         {
           DiskLocation = file.FullName,
-          Duration = (int)GetFileDuration(file.FullName).TotalSeconds,
+          Duration = (int) GetFileDuration(file.FullName).TotalSeconds,
           Name = file.Name,
+        };
+
+        var tvEpisode = new TvShowEpisode()
+        {
           TvShow = tvShow,
-          TvShowSeason = tvShowSeason
+          TvShowSeason = tvShowSeason,
+          VideoItem = videoItem
         };
 
         if (seriesNumber.Key != -1)

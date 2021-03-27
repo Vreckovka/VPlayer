@@ -12,7 +12,7 @@
         <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/ButtonsStyle.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    
+
     <Style x:Key="ListViewItem_AlbumSongs" TargetType="{x:Type ListViewItem}">
         <Setter Property="Foreground" Value="{StaticResource 85_WhiteTransparentBrush}" />
         <Setter Property="FontFamily" Value="Arial" />
@@ -159,7 +159,7 @@
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="ItemContainerStyle" Value="{StaticResource ListViewItem_AlbumSongs}" />
     </Style>
-    
+
 
     <Style x:Key="AlbumsPlayGridView" TargetType="ListView">
         <Setter Property="Background" Value="{StaticResource BackgroudBrush}" />

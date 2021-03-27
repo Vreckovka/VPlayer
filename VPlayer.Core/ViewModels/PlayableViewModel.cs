@@ -31,7 +31,7 @@ namespace VPlayer.Core.ViewModels
     #endregion 
   }
 
-  public abstract class PlayableViewModelWithThumbnail<TViewModel, TModel> : PlayableViewModel<TViewModel, TModel> where TModel : DownloadableEntity
+  public abstract class PlayableViewModelWithThumbnail<TViewModel, TModel> : PlayableViewModel<TViewModel, TModel> where TModel : DownloadableEntity, INamedEntity
   {
     protected PlayableViewModelWithThumbnail(TModel model, IEventAggregator eventAggregator) : base(model, eventAggregator)
     {

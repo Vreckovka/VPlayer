@@ -198,7 +198,7 @@
             <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Foreground">
                     <Setter.Value>
-                        <SolidColorBrush Color="{StaticResource SecondaryForegroundColor}" />
+                        <SolidColorBrush Color="#252525" />
                     </Setter.Value>
                 </Setter>
             </Trigger>

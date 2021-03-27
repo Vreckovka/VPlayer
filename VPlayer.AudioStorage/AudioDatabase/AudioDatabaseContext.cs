@@ -34,8 +34,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
     public DbSet<TvShow> TvShows { get; set; }
     public DbSet<TvShowSeason> TvShowsSeasons { get; set; }
     public DbSet<TvShowEpisode> TvShowEpisodes { get; set; }
-    public DbSet<PlaylistTvShowEpisode> PlaylistsTvShowEpisode { get; set; }
-    public DbSet<TvShowPlaylist> TvShowPlaylists { get; set; }
+    public DbSet<VideoItem> VideoItems { get; set; }
+    public DbSet<PlaylistVideoItem> PlaylistsTvShowEpisode { get; set; }
+    public DbSet<VideoPlaylist> TvShowPlaylists { get; set; }
 
     #endregion Properties
 

@@ -18,7 +18,7 @@
     #endregion Properties
   }
 
-  public interface DownloadableEntity : INamedEntity
+  public interface DownloadableEntity : IEntity
   {
     InfoDownloadStatus InfoDownloadStatus { get; set; }
   }

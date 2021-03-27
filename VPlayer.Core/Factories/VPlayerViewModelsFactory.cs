@@ -15,5 +15,13 @@ namespace VPlayer.Core.Factories
     public VPlayerViewModelsFactory(IKernel kernel) : base(kernel)
     {
     }
+
+    public TvShowEpisodeInPlaylistViewModel CreateTvShowEpisodeInPlayList(VideoItem videoItem, TvShowEpisode tvShowEpisode)
+    {
+      var pVideoItem = new ConstructorArgument("model", videoItem);
+      var ptvShowEpisode = new ConstructorArgument("tvShowEpisode", tvShowEpisode);
+
+      return kernel.Get<TvShowEpisodeInPlaylistViewModel>(pVideoItem, ptvShowEpisode);
+    }
   }
 }

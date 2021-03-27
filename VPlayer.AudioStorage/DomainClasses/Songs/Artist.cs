@@ -2,7 +2,7 @@
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
-  public class Artist : DomainEntity , DownloadableEntity, IUpdateable<Artist>
+  public class Artist : DomainEntity , DownloadableEntity, IUpdateable<Artist>, INamedEntity
   {
     #region Constructors
 

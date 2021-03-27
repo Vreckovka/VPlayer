@@ -7,5 +7,6 @@ namespace VPlayer.Core.Factories
 {
   public interface IVPlayerViewModelsFactory : IViewModelsFactory
   {
+    TvShowEpisodeInPlaylistViewModel CreateTvShowEpisodeInPlayList(VideoItem videoItem, TvShowEpisode tvShowEpisode);
   }
 }

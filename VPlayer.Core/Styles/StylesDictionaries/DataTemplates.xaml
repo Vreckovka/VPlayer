@@ -395,8 +395,16 @@
 
     <templateSelectors:WindowsPlayerItemsTemplateSelector x:Key="WindowsPlayerItemsTemplateSelector"
                                                           SongDataTemplate="{StaticResource SongDescriptionTemplate}"
-                                                          VideoDataTemplate="{StaticResource VideoDescriptionDataTemplate}" />
+                                                          TvShowEpisodeDataTemplate="{StaticResource TvShowEpisodeDescriptionDataTemplate}"
+                                                          VideoItemDataTemplate="{StaticResource VideoItemDescriptionDataTemplate}" />
 
+    <DataTemplate x:Key="VideoItemDescriptionDataTemplate">
+        <TextBlock Margin="5,0,0,0"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Bottom"
+                   Foreground="#70edfffa"
+                   Text="{Binding Description}" />
+    </DataTemplate>
 
     <DataTemplate x:Key="SongDescriptionTemplate">
         <TextBlock Margin="5,0,0,0"
@@ -481,7 +489,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="VideoDescriptionDataTemplate">
+    <DataTemplate x:Key="TvShowEpisodeDescriptionDataTemplate">
         <Grid Background="Transparent">
             <Border Padding="0,0,5,5">
                 <Grid VerticalAlignment="Bottom">
@@ -512,7 +520,7 @@
                         <Run FontWeight="Normal"
                              Foreground="#30edfffa"
                              Text="Episode" />
-                        <Run Foreground="#70edfffa" Text="{Binding Model.EpisodeNumber, Mode=OneWay}" />
+                        <Run Foreground="#70edfffa" Text="{Binding TvShowEpisode.EpisodeNumber, Mode=OneWay}" />
                         <Run Foreground="#50edfffa" Text=")" />
                     </TextBlock>
                 </Grid>

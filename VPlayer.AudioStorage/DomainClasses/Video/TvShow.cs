@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VPlayer.AudioStorage.DomainClasses.Video
 {
-  public class TvShow : DomainEntity, DownloadableEntity, IUpdateable<TvShow>
+  public class TvShow : DomainEntity, DownloadableEntity, IUpdateable<TvShow>, INamedEntity
   {
     public virtual List<TvShowSeason> Seasons { get; set; }
     public string Name { get; set; }

@@ -44,7 +44,7 @@ using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 
 namespace VPlayer.WindowsPlayer.ViewModels
 {
-  public class VideoPlayerViewModel : PlayableRegionViewModel<WindowsPlayerView, TvShowEpisodeInPlaylistViewModel, PlayTvShowEventData, TvShowPlaylist, PlaylistTvShowEpisode, TvShowEpisode>
+  public class VideoPlayerViewModel : PlayableRegionViewModel<WindowsPlayerView, VideoItemInPlaylistViewModel, VideoPlaylist, PlaylistVideoItem, VideoItem>
   {
     protected TaskCompletionSource<bool> loadedTask = new TaskCompletionSource<bool>();
 
@@ -181,7 +181,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
       IsPlaying = false;
       base.Initialize();
 
-      EventAggregator.GetEvent<PlayTvShowEvent>().Subscribe(PlayItemsFromEvent).DisposeWith(this);
+      eventAggregator.GetEvent<RemoveFromPlaylistEvent<TvShowEpisodeInPlaylistViewModel>>().Subscribe(RemoveFromPlaystTvShow).DisposeWith(this);
+      eventAggregator.GetEvent<PlaySongsFromPlayListEvent<TvShowEpisodeInPlaylistViewModel>>().Subscribe(PlayItemFromPlayList).DisposeWith(this);
+      eventAggregator.GetEvent<PlayItemsEvent<VideoItem, TvShowEpisodeInPlaylistViewModel>>().Subscribe(PlayTvShowItems).DisposeWith(this);
 
       aspectRatios = new RxObservableCollection<AspectRatioViewModel>()
       {
@@ -222,6 +224,32 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }).DisposeWith(this);
     }
 
+
+    #endregion
+
+    #region PlayTvShowItems
+
+    private void PlayTvShowItems(PlayItemsEventData<TvShowEpisodeInPlaylistViewModel> tvShowEpisodeInPlaylistViewModel)
+    {
+      var data = new PlayItemsEventData<VideoItemInPlaylistViewModel>(tvShowEpisodeInPlaylistViewModel.Items, tvShowEpisodeInPlaylistViewModel.EventAction, tvShowEpisodeInPlaylistViewModel.Model);
+
+      PlayItemsFromEvent(data);
+    }
+
+    #endregion
+
+    #region RemoveFromPlaystTvShow
+
+    private void RemoveFromPlaystTvShow(RemoveFromPlaylistEventArgs<TvShowEpisodeInPlaylistViewModel> obj)
+    {
+      var data = new RemoveFromPlaylistEventArgs<VideoItemInPlaylistViewModel>()
+      {
+        DeleteType = obj.DeleteType,
+        ItemsToRemove = obj.ItemsToRemove.Select(x => (VideoItemInPlaylistViewModel)x).ToList()
+      };
+
+      RemoveItemsFromPlaylist(data);
+    }
 
     #endregion
 
@@ -323,8 +351,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         AspectRatios.ForEach(x => x.IsSelected = false);
 
-        Subtitles.Clear();
-        AudioTracks.Clear();
       });
 
       if (MediaPlayer.Media != null)
@@ -352,6 +378,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       Application.Current.Dispatcher.Invoke(() =>
       {
+
+        Subtitles.Clear();
+        AudioTracks.Clear();
+
         if (MediaPlayer.SpuDescription.Length > 0)
         {
           foreach (var spu in MediaPlayer.SpuDescription)
@@ -396,11 +426,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-    protected override void OnRemoveItemsFromPlaylist(DeleteType deleteType, RemoveFromPlaylistEventArgs<TvShowEpisodeInPlaylistViewModel> args)
+    protected override void OnRemoveItemsFromPlaylist(DeleteType deleteType, RemoveFromPlaylistEventArgs<VideoItemInPlaylistViewModel> args)
     {
     }
 
-    protected override void ItemsRemoved(EventPattern<TvShowEpisodeInPlaylistViewModel> eventPattern)
+    protected override void ItemsRemoved(EventPattern<VideoItemInPlaylistViewModel> eventPattern)
     {
     }
 
@@ -411,13 +441,26 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region GetNewPlaylistModel
 
-    protected override TvShowPlaylist GetNewPlaylistModel(List<PlaylistTvShowEpisode> playlistModels, bool isUserCreated)
+    protected override VideoPlaylist GetNewPlaylistModel(List<PlaylistVideoItem> playlistModels, bool isUserCreated)
     {
-      var artists = PlayList.GroupBy(x => x.TvShow.Name);
+      List<string> nameKeys = new List<string>();
 
-      var playlistName = string.Join(", ", artists.Select(x => x.Key).ToArray());
+      var artists = PlayList.OfType<TvShowEpisodeInPlaylistViewModel>().GroupBy(x => x.TvShow.Name);
 
-      var entityPlayList = new TvShowPlaylist()
+      nameKeys = artists.Select(x => x.Key).ToList();
+
+      var videoNames = PlayList.OfType<VideoItemInPlaylistViewModel>().GroupBy(x => x.Description).Take(2).Select(x => x.Key).ToList();
+
+      nameKeys.AddRange(videoNames);
+
+      var playlistName = string.Join(", ", nameKeys.ToArray());
+
+      if (videoNames.Count > 2)
+      {
+        playlistName += " ...";
+      }
+
+      var entityPlayList = new VideoPlaylist()
       {
         IsReapting = IsRepeate,
         IsShuffle = IsShuffle,
@@ -431,19 +474,33 @@ namespace VPlayer.WindowsPlayer.ViewModels
       };
 
       return entityPlayList;
+
+
+      return null;
     }
 
     #endregion
 
     #region GetNewPlaylistItemViewModel
 
-    protected override PlaylistTvShowEpisode GetNewPlaylistItemViewModel(TvShowEpisodeInPlaylistViewModel itemViewModel, int index)
+    protected override PlaylistVideoItem GetNewPlaylistItemViewModel(VideoItemInPlaylistViewModel itemViewModel, int index)
     {
-      return new PlaylistTvShowEpisode()
+      var playlistVideoItem = new PlaylistVideoItem();
+
+      if (itemViewModel.Model.Id != 0)
       {
-        IdTvShowEpisode = itemViewModel.Model.Id,
-        OrderInPlaylist = (index + 1)
-      };
+        playlistVideoItem.IdVideoItem = itemViewModel.Model.Id;
+      }
+      else
+      {
+        return null;
+      }
+
+
+      playlistVideoItem.OrderInPlaylist = (index + 1);
+
+
+      return playlistVideoItem;
     }
 
     #endregion 

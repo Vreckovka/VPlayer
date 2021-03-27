@@ -15,15 +15,12 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Library.ViewModels.AlbumsViewModels;
+using VPlayer.Library.ViewModels.FileBrowser;
 using VPlayer.Library.ViewModels.TvShows;
 using VPlayer.Library.Views;
 
 namespace VPlayer.Library.ViewModels
 {
-  public static class IconPathData
-  {
-    public const string MusicIcon = "M328.712,264.539c12.928-21.632,21.504-48.992,23.168-76.064c1.056-17.376-2.816-35.616-11.2-52.768  c-13.152-26.944-35.744-42.08-57.568-56.704c-16.288-10.912-31.68-21.216-42.56-35.936l-1.952-2.624  c-6.432-8.64-13.696-18.432-14.848-26.656c-1.152-8.32-8.704-14.24-16.96-13.76c-8.384,0.576-14.88,7.52-14.88,15.936v285.12  c-13.408-8.128-29.92-13.12-48-13.12c-44.096,0-80,28.704-80,64s35.904,64,80,64s80-28.704,80-64V165.467  c24.032,9.184,63.36,32.576,74.176,87.2c-2.016,2.976-3.936,6.176-6.176,8.736c-5.856,6.624-5.216,16.736,1.44,22.56  c6.592,5.888,16.704,5.184,22.56-1.44c4.288-4.864,8.096-10.56,11.744-16.512C328.04,265.563,328.393,265.083,328.712,264.539z";
-  }
   public class LibraryViewModel : RegionViewModel<LibraryView>, INavigationItem
   {
     #region Fields
@@ -111,6 +108,7 @@ namespace VPlayer.Library.ViewModels
         var albumsViewModel = viewModelsFactory.Create<IAlbumsViewModel>();
         var tvShowPlaylistsViewModel = viewModelsFactory.Create<TvShowPlaylistsViewModel>();
         var tvShowsViewModel = viewModelsFactory.Create<TvShowsViewModel>();
+        var fileBrowser = viewModelsFactory.Create<FileBrowserViewModel>();
 
         Application.Current?.Dispatcher?.Invoke(() =>
         {
@@ -137,6 +135,11 @@ namespace VPlayer.Library.ViewModels
           NavigationViewModel.Items.Add(new NavigationItem(tvShowsViewModel)
           {
             ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/tvshow.png"
+          });
+
+          NavigationViewModel.Items.Add(new NavigationItem(fileBrowser)
+          {
+            ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/browser.png"
           });
 
           NavigationViewModel.Items.First().IsActive = true;

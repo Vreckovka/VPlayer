@@ -18,6 +18,7 @@
   <ItemGroup>
     <None Remove="Includes\VPlayerLogo.ico" />
     <None Remove="Includes\VPlayerLogo.png" />
+    <None Remove="Resources\Icons\browser.png" />
     <None Remove="Resources\Icons\library.png" />
     <None Remove="Resources\Icons\music-album.png" />
     <None Remove="Resources\Icons\music-note.png" />
@@ -31,6 +32,7 @@
     <None Remove="Resources\song-playliyst.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\Icons\browser.png" />
     <Resource Include="Resources\Icons\library.png" />
     <Resource Include="Resources\Icons\music-album.png" />
     <Resource Include="Resources\Icons\music-note.png" />

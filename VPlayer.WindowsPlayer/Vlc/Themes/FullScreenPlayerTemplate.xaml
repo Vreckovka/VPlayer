@@ -107,6 +107,7 @@
 
                                 <ContentPresenter Grid.Row="1"
                                                   Grid.Column="0"
+                                                  MaxWidth="220"
                                                   Margin="5,15,0,0"
                                                   HorizontalAlignment="Left"
                                                   Content="{Binding ActualViewModel}"

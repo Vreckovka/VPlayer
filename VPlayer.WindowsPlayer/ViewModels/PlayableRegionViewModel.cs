@@ -35,12 +35,11 @@ using VPlayer.WindowsPlayer.Providers;
 
 namespace VPlayer.Core.ViewModels
 {
-  public abstract class PlayableRegionViewModel<TView, TItemViewModel, TPlayItemEventData, TPlaylistModel, TPlaylistItemModel, TModel> : RegionViewModel<TView>, IPlayableRegionViewModel
+  public abstract class PlayableRegionViewModel<TView, TItemViewModel, TPlaylistModel, TPlaylistItemModel, TModel> : RegionViewModel<TView>, IPlayableRegionViewModel
     where TView : class, IView
     where TItemViewModel : class, IItemInPlayList<TModel>
     where TModel : IPlayableModel
     where TPlaylistModel : class, IPlaylist<TPlaylistItemModel>, new()
-    where TPlayItemEventData : IPlayItemEventData<TItemViewModel>
   {
     #region Fields
 
@@ -97,7 +96,7 @@ namespace VPlayer.Core.ViewModels
 
     #region EventAgreggator
 
-    private IEventAggregator eventAggregator;
+    protected IEventAggregator eventAggregator;
 
     public IEventAggregator EventAggregator
     {
@@ -459,6 +458,7 @@ namespace VPlayer.Core.ViewModels
     {
       eventAggregator.GetEvent<RemoveFromPlaylistEvent<TItemViewModel>>().Subscribe(RemoveItemsFromPlaylist).DisposeWith(this);
       eventAggregator.GetEvent<PlaySongsFromPlayListEvent<TItemViewModel>>().Subscribe(PlayItemFromPlayList).DisposeWith(this);
+      eventAggregator.GetEvent<PlayItemsEvent<TModel, TItemViewModel>>().Subscribe(PlayItemsFromEvent).DisposeWith(this);
 
     }
 
@@ -817,7 +817,7 @@ namespace VPlayer.Core.ViewModels
 
     public void OnSavePlaylist()
     {
-      if (!SavePlaylist(true))
+      if (!ActualSavedPlaylist.IsUserCreated && !StorePlaylist(true))
       {
         ActualSavedPlaylist.IsUserCreated = true;
         UpdateActualSavedPlaylistPlaylist();
@@ -827,9 +827,9 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region SavePlaylist
+    #region StorePlaylist
 
-    public bool SavePlaylist(bool isUserCreated = false, bool editSaved = false)
+    public bool StorePlaylist(bool isUserCreated = false, bool editSaved = false)
     {
       var playlistModels = new List<TPlaylistItemModel>();
 
@@ -838,6 +838,11 @@ namespace VPlayer.Core.ViewModels
         var song = PlayList[i];
 
         var newItem = GetNewPlaylistItemViewModel(song, i);
+
+        if (newItem == null)
+        {
+          return false;
+        }
 
         playlistModels.Add(newItem);
       }
@@ -848,11 +853,16 @@ namespace VPlayer.Core.ViewModels
 
       var entityPlayList = GetNewPlaylistModel(playlistModels, isUserCreated);
 
+      if (entityPlayList == null)
+      {
+        return false;
+      }
+
       entityPlayList.HashCode = hashCode;
 
       bool success = false;
 
-      var storedPlaylist = storageManager.GetRepository<TPlaylistModel>().SingleOrDefault(x => x.HashCode == hashCode);
+      var storedPlaylist = storageManager.GetRepository<TPlaylistModel>().Where(x => !x.IsUserCreated).SingleOrDefault(x => x.HashCode == hashCode);
 
       if (storedPlaylist == null)
       {
@@ -869,7 +879,7 @@ namespace VPlayer.Core.ViewModels
         {
           if (ActualSavedPlaylist.Id <= 0)
           {
-            success= storageManager.StoreEntity(entityPlayList, out var dbEntityPlalist);
+            success = storageManager.StoreEntity(entityPlayList, out var dbEntityPlalist);
 
             UpdateNonUserCreatedPlaylist(entityPlayList, dbEntityPlalist);
 
@@ -883,7 +893,7 @@ namespace VPlayer.Core.ViewModels
       }
       else
       {
-        if(storedPlaylist.IsUserCreated)
+        if (storedPlaylist.IsUserCreated)
         {
           success = storageManager.StoreEntity(entityPlayList, out var dbEntityPlalist);
 
@@ -961,7 +971,7 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region PlaySongs
+    #region PlayItems
 
     protected void PlayItems(IEnumerable<TItemViewModel> songs, bool savePlaylist = true, int songIndex = 0, bool editSaved = false)
     {
@@ -984,7 +994,7 @@ namespace VPlayer.Core.ViewModels
         {
           if (savePlaylist)
           {
-            SavePlaylist(editSaved: editSaved);
+            StorePlaylist(editSaved: editSaved);
           }
         });
 
@@ -993,7 +1003,7 @@ namespace VPlayer.Core.ViewModels
 
     #region PlayItemsFromEvent
 
-    protected void PlayItemsFromEvent(TPlayItemEventData data)
+    protected void PlayItemsFromEvent(PlayItemsEventData<TItemViewModel> data)
     {
       if (!data.Items.Any())
         return;
@@ -1021,7 +1031,7 @@ namespace VPlayer.Core.ViewModels
 
           ReloadVirtulizedPlaylist();
           RaisePropertyChanged(nameof(CanPlay));
-          SavePlaylist(editSaved: true);
+          StorePlaylist(editSaved: true);
           break;
         case EventAction.PlayFromPlaylist:
           PlayPlaylist(data);
@@ -1066,7 +1076,7 @@ namespace VPlayer.Core.ViewModels
 
     #region PlayPlaylist
 
-    private void PlayPlaylist(TPlayItemEventData data, int? lastSongIndex = null)
+    private void PlayPlaylist(PlayItemsEventData<TItemViewModel> data, int? lastSongIndex = null)
     {
       ActualSavedPlaylist = data.GetModel<TPlaylistModel>();
 
@@ -1098,7 +1108,7 @@ namespace VPlayer.Core.ViewModels
 
     #region RemoveItemsFromPlaylist
 
-    private void RemoveItemsFromPlaylist(RemoveFromPlaylistEventArgs<TItemViewModel> obj)
+    protected void RemoveItemsFromPlaylist(RemoveFromPlaylistEventArgs<TItemViewModel> obj)
     {
       switch (obj.DeleteType)
       {
@@ -1113,7 +1123,7 @@ namespace VPlayer.Core.ViewModels
             }
           }
 
-          SavePlaylist(editSaved: true);
+          StorePlaylist(editSaved: true);
 
           break;
         case DeleteType.AlbumFromPlaylist:
@@ -1137,9 +1147,9 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region PlaySongFromPlayList
+    #region PlayItemFromPlayList
 
-    private void PlayItemFromPlayList(TItemViewModel viewModel)
+    protected void PlayItemFromPlayList(TItemViewModel viewModel)
     {
       if (viewModel == ActualItem)
       {

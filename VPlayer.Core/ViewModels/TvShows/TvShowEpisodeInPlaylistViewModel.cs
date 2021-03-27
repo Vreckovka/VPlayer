@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Prism.Events;
-using VCore.Annotations;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -11,28 +10,23 @@ using VPlayer.Core.Interfaces.ViewModels;
 
 namespace VPlayer.Core.ViewModels.TvShows
 {
-  public class TvShowEpisodeInPlaylistViewModel : ItemInPlayList<TvShowEpisode>
+  public class TvShowEpisodeInPlaylistViewModel : VideoItemInPlaylistViewModel
   {
     public TvShowEpisodeInPlaylistViewModel(
-      TvShowEpisode model,
+      VideoItem model,
+      TvShowEpisode tvShowEpisode,
       IEventAggregator eventAggregator,
       IStorageManager storageManager) : base(model, eventAggregator, storageManager)
     {
-      TvShow = model.TvShow ?? throw new ArgumentNullException(nameof(model.TvShow));
-      TvShowSeason = model.TvShowSeason ?? throw new ArgumentNullException(nameof(model.TvShowSeason));
+      TvShow = tvShowEpisode.TvShow ?? throw new ArgumentNullException(nameof(tvShowEpisode.TvShow));
+      TvShowSeason = tvShowEpisode.TvShowSeason ?? throw new ArgumentNullException(nameof(tvShowEpisode.TvShowSeason));
+      TvShowEpisode = tvShowEpisode;
     }
 
+    public TvShowEpisode TvShowEpisode { get; }
     public TvShow TvShow { get; set; }
     public TvShowSeason TvShowSeason { get; set; }
-  
 
-    protected override void OnActualPositionChanged(float value)
-    {
-    }
-
-    protected override void OnIsPlayingChanged(bool value)
-    {
-    }
 
     protected override void PublishPlayEvent()
     {

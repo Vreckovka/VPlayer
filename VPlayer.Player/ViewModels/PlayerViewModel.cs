@@ -208,7 +208,7 @@ namespace VPlayer.Player.ViewModels
       ActualViewModel?.PlayPause();
     }
 
-    #endregion Play
+    #endregion 
 
     #region Methods
 

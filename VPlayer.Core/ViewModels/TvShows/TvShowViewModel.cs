@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore.Annotations;
 using VCore.Standard.Factories.ViewModels;
+using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
@@ -72,12 +73,12 @@ namespace VPlayer.Core.ViewModels.TvShows
     {
       var tvShow = storage
         .GetRepository<TvShow>()
-        .Include(x => x.Seasons).ThenInclude(x => x.Episodes).SingleOrDefault(x => x.Id == ModelId);
+        .Include(x => x.Seasons).ThenInclude(x => x.Episodes).ThenInclude(x => x.VideoItem).SingleOrDefault(x => x.Id == ModelId);
 
       if (tvShow != null)
       {
         var tvShowEpisodes = tvShow.Seasons.OrderBy(x => x.SeasonNumber)
-          .Select(x => x.Episodes.OrderBy(x => x.EpisodeNumber).Select(y => viewModelsFactory.Create<TvShowEpisodeInPlaylistViewModel>(y)))
+          .Select(x => x.Episodes.OrderBy(x => x.EpisodeNumber).Select(y => viewModelsFactory.CreateTvShowEpisodeInPlayList(y.VideoItem,y)))
           .SelectMany(x => x);
          
 
@@ -93,9 +94,9 @@ namespace VPlayer.Core.ViewModels.TvShows
 
     public override void PublishPlayEvent(IEnumerable<TvShowEpisodeInPlaylistViewModel> viewModels, EventAction eventAction)
     {
-      var e = new PlayTvShowEventData(viewModels, eventAction, this);
+      var e = new PlayItemsEventData<TvShowEpisodeInPlaylistViewModel>(viewModels, eventAction, this);
 
-      eventAggregator.GetEvent<PlayTvShowEvent>().Publish(e);
+      eventAggregator.GetEvent<PlayItemsEvent<VideoItem, TvShowEpisodeInPlaylistViewModel>>().Publish(e);
     }
 
     #endregion

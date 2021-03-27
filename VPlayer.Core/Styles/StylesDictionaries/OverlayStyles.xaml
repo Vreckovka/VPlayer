@@ -3,33 +3,32 @@
                     xmlns:local="clr-namespace:VPlayer.StylesDictionaries">
 
 
-    <Style TargetType="Grid" x:Key="PlayGridOverlay">
-        <Setter Property="Background" Value="Transparent"/>
+    <Style x:Key="PlayGridOverlay" TargetType="Grid">
+        <Setter Property="Background" Value="Transparent" />
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="true">
                 <Trigger.EnterActions>
-                    <RemoveStoryboard BeginStoryboardName="Exit"/>
+                    <RemoveStoryboard BeginStoryboardName="Exit" />
                     <BeginStoryboard Name="Enter">
                         <Storyboard>
-                            <ColorAnimation Storyboard.Target="{Binding RelativeSource={RelativeSource AncestorType=Grid,Mode=FindAncestor}}" 
-                                                            Storyboard.TargetProperty="(Grid.Background).(SolidColorBrush.Color)"
-                                                            From="#10000000" 
-                                                            To="{StaticResource GrayOverlay}"
-                                                            Duration="0:0:0.2"
-                                                            />
+                            <ColorAnimation Storyboard.Target="{Binding RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}}"
+                                            Storyboard.TargetProperty="(Grid.Background).(SolidColorBrush.Color)"
+                                            From="#10000000"
+                                            To="{StaticResource GrayOverlay}"
+                                            Duration="0:0:0.2" />
                         </Storyboard>
                     </BeginStoryboard>
                 </Trigger.EnterActions>
 
                 <Trigger.ExitActions>
-                    <RemoveStoryboard BeginStoryboardName="Enter"/>
+                    <RemoveStoryboard BeginStoryboardName="Enter" />
                     <BeginStoryboard Name="Exit">
                         <Storyboard>
-                            <ColorAnimation Storyboard.Target="{Binding RelativeSource={RelativeSource AncestorType=Grid,Mode=FindAncestor}}" 
-                                                            Storyboard.TargetProperty="(Grid.Background).(SolidColorBrush.Color)"
-                                                            From="{StaticResource GrayOverlay}" 
-                                                            To="#10000000"
-                                                            Duration="0:0:0.2"/>
+                            <ColorAnimation Storyboard.Target="{Binding RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}}"
+                                            Storyboard.TargetProperty="(Grid.Background).(SolidColorBrush.Color)"
+                                            From="{StaticResource GrayOverlay}"
+                                            To="#10000000"
+                                            Duration="0:0:0.2" />
                         </Storyboard>
 
 
@@ -37,11 +36,11 @@
 
                     <BeginStoryboard Name="ExitA">
                         <Storyboard>
-                            <ColorAnimation Storyboard.Target="{Binding RelativeSource={RelativeSource AncestorType=Grid,Mode=FindAncestor}}" 
+                            <ColorAnimation Storyboard.Target="{Binding RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}}"
                                             Storyboard.TargetProperty="(Grid.Background).(SolidColorBrush.Color)"
-                                            From="{StaticResource GrayOverlay}" 
+                                            From="{StaticResource GrayOverlay}"
                                             To="#01000000"
-                                            Duration="0:0:0.2"/>
+                                            Duration="0:0:0.2" />
 
 
                         </Storyboard>

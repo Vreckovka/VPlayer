@@ -78,16 +78,16 @@ namespace VPlayer.Library.ViewModels
 
     public override void PublishPlayEvent(IEnumerable<SongInPlayListViewModel> viewModels, EventAction eventAction )
     {
-      var e = new PlaySongsEventData(viewModels, eventAction, this);
+      var e = new PlayItemsEventData<SongInPlayListViewModel>(viewModels, eventAction, this);
 
-      eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
+      eventAggregator.GetEvent<PlayItemsEvent<Song,SongInPlayListViewModel>>().Publish(e);
     }
 
     public override void PublishAddToPlaylistEvent(IEnumerable<SongInPlayListViewModel> viewModels)
     {
-      var e = new PlaySongsEventData(viewModels, EventAction.Add, this);
+      var e = new PlayItemsEventData<SongInPlayListViewModel>(viewModels, EventAction.Add, this);
 
-      eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
+      eventAggregator.GetEvent<PlayItemsEvent<Song, SongInPlayListViewModel>>().Publish(e);
     }
 
 
@@ -101,11 +101,11 @@ namespace VPlayer.Library.ViewModels
       {
         var data = GetItemsToPlay().ToList();
 
-        var e = new PlaySongsEventData(data, action, IsShuffle, IsRepeating, Model.LastItemElapsedTime, Model);
+        var e = new PlayItemsEventData<SongInPlayListViewModel>(data, action, IsShuffle, IsRepeating, Model.LastItemElapsedTime, Model);
 
         try
         {
-          eventAggregator.GetEvent<PlaySongsEvent>().Publish(e);
+          eventAggregator.GetEvent<PlayItemsEvent<Song, SongInPlayListViewModel>>().Publish(e);
         }
         catch (Exception ex)
         {

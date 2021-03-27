@@ -5,7 +5,7 @@
                     xmlns:local="clr-namespace:VPlayer.WindowsPlayer.Views.WindowsPlayer"
                     xmlns:lrc="clr-namespace:VPlayer.AudioStorage.InfoDownloader.LRC;assembly=VCore.WPF">
 
-    <DataTemplate x:Key="VideoDataTemplate">
+    <DataTemplate x:Key="TvShowEpisodeDescriptionDataTemplate">
         <Grid Background="Transparent">
             <Border Padding="0,0,5,5">
                 <Grid VerticalAlignment="Bottom">
@@ -83,7 +83,7 @@
                                 </Style>
                             </Run.Style>
                         </Run>
-                        <Run Text="{Binding Model.EpisodeNumber, Mode=OneWay, StringFormat={}{0}}">
+                        <Run Text="{Binding TvShowEpisode.EpisodeNumber, Mode=OneWay, StringFormat={}{0}}">
                             <Run.Style>
                                 <Style TargetType="Run">
                                     <Setter Property="Foreground" Value="#edfffa" />

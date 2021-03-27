@@ -853,7 +853,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       {
         using (var context = new AudioDatabaseContext())
         {
-          var foundEntity = GetRepository<TvShow>(context).Include(x => x.Seasons).ThenInclude(x => x.Episodes).SingleOrDefault(x => x.Id == newVersion.Id);
+          var foundEntity = GetRepository<TvShow>(context).Include(x => x.Seasons).ThenInclude(x => x.Episodes).ThenInclude(x => x.VideoItem).SingleOrDefault(x => x.Id == newVersion.Id);
 
           if (foundEntity != null)
           {

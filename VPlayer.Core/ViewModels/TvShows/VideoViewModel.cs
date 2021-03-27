@@ -3,7 +3,7 @@ using VCore.Standard;
 
 namespace VPlayer.Core.ViewModels.TvShows
 {
-  public abstract class VideoViewModel<TModel> : ViewModel<TModel>, IItemInPlayList<TModel> 
+  public class VideoViewModel<TModel> : ViewModel<TModel>, IItemInPlayList<TModel> 
     where TModel : IPlayableModel
   {
     public VideoViewModel(TModel model) : base(model)

@@ -32,6 +32,7 @@ using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.Albums;
+using VPlayer.Core.ViewModels.TvShows;
 using VPlayer.Player.Views.WindowsPlayer;
 using VPlayer.WindowsPlayer.Providers;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer;
@@ -52,7 +53,7 @@ using VPlayer.WindowsPlayer.Views.WindowsPlayer;
 namespace VPlayer.WindowsPlayer.ViewModels
 {
 
-  public class MusicPlayerViewModel : PlayableRegionViewModel<WindowsPlayerView, SongInPlayListViewModel, PlaySongsEventData, SongsPlaylist, PlaylistSong, Song>
+  public class MusicPlayerViewModel : PlayableRegionViewModel<WindowsPlayerView, SongInPlayListViewModel, SongsPlaylist, PlaylistSong, Song>
   {
     #region Fields
 
@@ -246,8 +247,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
       storageManager.SubscribeToItemChange<Song>(OnSongChange).DisposeWith(this);
       storageManager.SubscribeToItemChange<Album>(OnAlbumChange).DisposeWith(this);
 
-      eventAggregator.GetEvent<PlaySongsEvent>().Subscribe(PlayItemsFromEvent).DisposeWith(this);
       eventAggregator.GetEvent<ItemUpdatedEvent<AlbumViewModel>>().Subscribe(OnAlbumUpdated).DisposeWith(this);
+      
 
       PlayList.ItemRemoved.Subscribe(ItemsRemoved).DisposeWith(this);
       PlayList.ItemAdded.Subscribe(ItemsAdded).DisposeWith(this);
@@ -366,7 +367,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           PlayList.Remove(albumSong);
         }
 
-        SavePlaylist(editSaved: true);
+        StorePlaylist(editSaved: true);
       }
     }
 

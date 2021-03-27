@@ -1,13 +1,14 @@
-﻿namespace VPlayer.AudioStorage.DomainClasses
+﻿using VPlayer.Core.ViewModels;
+
+namespace VPlayer.AudioStorage.DomainClasses
 {
-  public abstract class VideoItem : DomainEntity, IUpdateable<VideoItem>
+  public class VideoItem : DomainEntity, IUpdateable<VideoItem>, IPlayableModel, INamedEntity
   {
     public string DiskLocation { get; set; }
     public int Duration { get; set; }
     public int Length { get; set; }
     public string Name { get; set; }
     public bool IsFavorite { get; set; }
-    public InfoDownloadStatus InfoDownloadStatus { get; set; }
     public string AspectRatio { get; set; }
     public int? AudioTrack { get; set; }
     public int? SubtitleTrack { get; set; }
@@ -20,7 +21,6 @@
       Length = other.Length;
       Name = other.Name;
       IsFavorite = other.IsFavorite;
-      InfoDownloadStatus = other.InfoDownloadStatus;
       AspectRatio = other.AspectRatio;
       AudioTrack = other.AudioTrack;
       SubtitleTrack = other.SubtitleTrack;
