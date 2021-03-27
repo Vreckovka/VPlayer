@@ -49,12 +49,18 @@ namespace VPlayer.WindowsPlayer.Vlc
 
       overlayWindow.Content = _grid;
       overlayWindow.DataContext = _bckgnd.DataContext;
+      overlayWindow.MouseLeftButtonDown += OverlayWindow_GotFocus;
 
 
 
       _bckgnd.DataContextChanged += Background_DataContextChanged;
       _bckgnd.Loaded += Background_Loaded;
       _bckgnd.Unloaded += Background_Unloaded;
+    }
+
+    private void OverlayWindow_GotFocus(object sender, RoutedEventArgs e)
+    {
+      _wndhost?.Focus();
     }
 
     #endregion
