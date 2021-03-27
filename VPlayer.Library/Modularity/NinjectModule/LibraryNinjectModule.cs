@@ -35,7 +35,7 @@ namespace VPlayer.Library.Modularity.NinjectModule
       Kernel.Bind<ITvShowsViewModel>().To<TvShowsViewModel>().InSingletonScope();
 
       Kernel.Bind<SongPlaylistsViewModel>().ToSelf().InSingletonScope();
-      Kernel.Bind<TvShowPlaylistsViewModel>().ToSelf().InSingletonScope();
+      Kernel.Bind<VideoPlaylistsViewModel>().ToSelf().InSingletonScope();
 
 
 

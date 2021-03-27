@@ -106,7 +106,7 @@ namespace VPlayer.Library.ViewModels
         var songPlaylists = viewModelsFactory.Create<SongPlaylistsViewModel>();
         var artistsViewModel = viewModelsFactory.Create<IArtistsViewModel>();
         var albumsViewModel = viewModelsFactory.Create<IAlbumsViewModel>();
-        var tvShowPlaylistsViewModel = viewModelsFactory.Create<TvShowPlaylistsViewModel>();
+        var tvShowPlaylistsViewModel = viewModelsFactory.Create<VideoPlaylistsViewModel>();
         var tvShowsViewModel = viewModelsFactory.Create<TvShowsViewModel>();
         var fileBrowser = viewModelsFactory.Create<FileBrowserViewModel>();
 

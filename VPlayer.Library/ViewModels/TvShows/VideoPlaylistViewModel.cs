@@ -14,7 +14,7 @@ using VPlayer.Core.ViewModels.TvShows;
 
 namespace VPlayer.Library.ViewModels.TvShows
 {
-  public class TvShowPlaylistViewModel : PlaylistViewModel<TvShowEpisodeInPlaylistViewModel, VideoPlaylist, PlaylistVideoItem>
+  public class VideoPlaylistViewModel : PlaylistViewModel<VideoItemInPlaylistViewModel, VideoPlaylist, PlaylistVideoItem>
   {
     #region Fields
 
@@ -25,7 +25,7 @@ namespace VPlayer.Library.ViewModels.TvShows
 
     #region Constructors
 
-    public TvShowPlaylistViewModel(
+    public VideoPlaylistViewModel(
       VideoPlaylist model,
       IEventAggregator eventAggregator,
       [NotNull] IStorageManager storage,
@@ -44,13 +44,15 @@ namespace VPlayer.Library.ViewModels.TvShows
 
     #region GetItemsToPlay
 
-    public override IEnumerable<TvShowEpisodeInPlaylistViewModel> GetItemsToPlay()
+    public override IEnumerable<VideoItemInPlaylistViewModel> GetItemsToPlay()
     {
       var playlist = storage.GetRepository<VideoPlaylist>()
         .Include(x => x.PlaylistItems)
         .ThenInclude(x => x.VideoItem)
         .SingleOrDefault(x => x.Id == Model.Id);
 
+
+     
 
       if (playlist != null)
       {
@@ -80,6 +82,10 @@ namespace VPlayer.Library.ViewModels.TvShows
 
           return list;
         }
+        else
+        {
+          return playlistItems.Select(x => viewModelsFactory.Create<VideoItemInPlaylistViewModel>(x.VideoItem));
+        }
       }
 
       return null;
@@ -89,17 +95,17 @@ namespace VPlayer.Library.ViewModels.TvShows
 
     #region PublishPlayEvent
 
-    public override void PublishPlayEvent(IEnumerable<TvShowEpisodeInPlaylistViewModel> viewModels, EventAction eventAction)
+    public override void PublishPlayEvent(IEnumerable<VideoItemInPlaylistViewModel> viewModels, EventAction eventAction)
     {
-      var e = new PlayItemsEventData<TvShowEpisodeInPlaylistViewModel>(viewModels, eventAction, Model);
+      var e = new PlayItemsEventData<VideoItemInPlaylistViewModel>(viewModels, eventAction, Model);
 
-      eventAggregator.GetEvent<PlayItemsEvent<VideoItem, TvShowEpisodeInPlaylistViewModel>>().Publish(e);
+      eventAggregator.GetEvent<PlayItemsEvent<VideoItem, VideoItemInPlaylistViewModel>>().Publish(e);
     }
 
     #endregion
 
 
-    public override void PublishAddToPlaylistEvent(IEnumerable<TvShowEpisodeInPlaylistViewModel> viewModels)
+    public override void PublishAddToPlaylistEvent(IEnumerable<VideoItemInPlaylistViewModel> viewModels)
     {
       throw new NotImplementedException();
     }
