@@ -59,33 +59,22 @@
                     <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
 
-                <TextBlock FontSize="14"
-                           FontWeight="DemiBold"
-                           Foreground="#9ca379"
-                           Grid.IsSharedSizeScope="True"
-                           Text="{Binding ActualViewModel.ActualItem.Model.Name}" />
-
-                <ContentControl x:Name="DescriptionText"
-                                Grid.Row="1"
-                                Margin="-5,0,0,0"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Top"
-                                Content="{Binding ActualViewModel.ActualItem}"
-                                ContentTemplateSelector="{StaticResource WindowsPlayerItemsTemplateSelector}" />
 
                 <userControls:SoundVizualizer Grid.Row="2"
                                               Width="{Binding ElementName=DescriptionText, Path=ActualWidth}"
-                                              Height="50"
-                                              Margin="0,-30,0,0"
+                                              Height="20"
+                                              Margin="0,0,0,0"
                                               HorizontalAlignment="Stretch"
                                               VerticalAlignment="Top"
                                               Background="Transparent"
                                               BottomColor="#fc0f41"
                                               Grid.IsSharedSizeScope="True"
-                                              IsEnabled="{Binding ActualViewModel.IsPlaying}"
+                                              IsEnabled="{Binding ActualViewModel.IsPlaying, FallbackValue=False}"
                                               MaxFrequency="100000"
                                               MiddleColor="{StaticResource DefaultRedColor}"
-                                              NumberOfColumns="250"
+                                              NormlizedDataMaxValue="10"
+                                              NormlizedDataMinValue="1"
+                                              NumberOfColumns="200"
                                               Opacity="1"
                                               TopColor="{StaticResource DefaultRedColor}">
 
@@ -99,8 +88,21 @@
                             </Style.Triggers>
                         </Style>
                     </userControls:SoundVizualizer.Style>
-
                 </userControls:SoundVizualizer>
+
+                <TextBlock FontSize="14"
+                           FontWeight="DemiBold"
+                           Foreground="#9ca379"
+                           Grid.IsSharedSizeScope="True"
+                           Text="{Binding ActualViewModel.ActualItem.Model.Name}" />
+
+                <ContentControl x:Name="DescriptionText"
+                                Grid.Row="1"
+                                Margin="-5,0,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Content="{Binding ActualViewModel.ActualItem}"
+                                ContentTemplateSelector="{StaticResource WindowsPlayerItemsTemplateSelector}" />
             </Grid>
         </Grid>
 

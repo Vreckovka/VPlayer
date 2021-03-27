@@ -178,6 +178,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public override void Initialize()
     {
+      IsPlaying = false;
       base.Initialize();
 
       EventAggregator.GetEvent<PlayTvShowEvent>().Subscribe(PlayItemsFromEvent).DisposeWith(this);

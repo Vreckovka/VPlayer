@@ -117,7 +117,7 @@ namespace VPlayer.Player.ViewModels
     }
 
     #endregion
-    
+
     #region ActualVolume
 
     private int actualVolume = 100;
@@ -218,20 +218,12 @@ namespace VPlayer.Player.ViewModels
       {
         Application.Current.Dispatcher.Invoke(() =>
         {
-          try
-          {
-            RaisePropertyChanged(nameof(StatusMessage));
-          }
-          catch (Exception ex)
-          {
-
-            throw;
-          }
+          RaisePropertyChanged(nameof(StatusMessage));
         });
 
       }).DisposeWith(this);
 
-    
+
 
       eventAggregator.GetEvent<PlayPauseEvent>().Subscribe(PlayPause).DisposeWith(this);
     }
@@ -308,7 +300,7 @@ namespace VPlayer.Player.ViewModels
 
       actualItemSerialDisposable.Disposable?.Dispose();
 
-    
+
       CanPlay = ActualViewModel.CanPlay;
     }
 

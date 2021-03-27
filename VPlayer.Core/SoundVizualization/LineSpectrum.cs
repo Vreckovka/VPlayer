@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
+using System.Linq;
 using CSCore.DSP;
 
 namespace WinformsVisualization.Visualization
@@ -19,11 +21,13 @@ namespace WinformsVisualization.Visualization
       FftSize = fftSize;
     }
 
-    [Browsable(false)]
+
     public double BarWidth
     {
       get { return _barWidth; }
     }
+
+    #region BarSpacing
 
     public double BarSpacing
     {
@@ -35,10 +39,14 @@ namespace WinformsVisualization.Visualization
         _barSpacing = value;
         UpdateFrequencyMapping();
 
-        RaisePropertyChanged("BarSpacing");
-        RaisePropertyChanged("BarWidth");
+        RaisePropertyChanged(nameof(BarSpacing));
+        RaisePropertyChanged(nameof(BarWidth));
       }
     }
+
+    #endregion
+
+    #region BarCount
 
     public int BarCount
     {
@@ -56,6 +64,11 @@ namespace WinformsVisualization.Visualization
       }
     }
 
+    #endregion
+
+    public double NormlizedDataMaxValue { get; set; } = 30;
+    public double NormlizedDataMinValue { get; set; } = 0;
+
     [BrowsableAttribute(false)]
     public Size CurrentSize
     {
@@ -67,7 +80,7 @@ namespace WinformsVisualization.Visualization
       }
     }
 
-    public float[] fttData()
+    public float[] GetFttData()
     {
       var fftBuffer = new float[(int)FftSize];
       if (SpectrumProvider.GetFftData(fftBuffer, this))
@@ -102,6 +115,11 @@ namespace WinformsVisualization.Visualization
           return bitmap;
         }
       }
+      else
+      {
+
+      }
+
       return null;
     }
 
@@ -120,7 +138,7 @@ namespace WinformsVisualization.Visualization
     {
       int height = size.Height;
       //prepare the fft result for rendering 
-      SpectrumPointData[] spectrumPoints =  CalculateSpectrumPoints(height, fftBuffer);
+      SpectrumPointData[] spectrumPoints = NormalizeData(CalculateSpectrumPoints(height, fftBuffer), NormlizedDataMinValue, NormlizedDataMaxValue);
 
       //connect the calculated points with lines
       for (int i = 0; i < spectrumPoints.Length; i++)
@@ -129,11 +147,36 @@ namespace WinformsVisualization.Visualization
         int barIndex = p.SpectrumPointIndex;
         double xCoord = BarSpacing * (barIndex + 1) + (_barWidth * barIndex) + _barWidth / 2;
 
-        var p1 = new PointF((float)xCoord, height );
+        var p1 = new PointF((float)xCoord, height);
         var p2 = new PointF((float)xCoord, height - ((float)(p.Value * 2) - 1));
 
         graphics.DrawLine(pen, p1, p2);
       }
+    }
+
+    private SpectrumPointData[] NormalizeData(SpectrumPointData[] data, double min, double max)
+    {
+      double dataMax = data.Max(x => x.Value);
+      double dataMin = data.Min(x => x.Value);
+      double range = dataMax - dataMin;
+
+      var normalized = 
+         data.Select(d => (d.Value - dataMin) / range)
+        .Select(n => (double)((1 - n) * min + n * max))
+        .ToArray();
+
+      var normalizeSpectrum = new SpectrumPointData[data.Length];
+
+      for (int i = 0; i < data.Length; i++)
+      {
+        normalizeSpectrum[i] = new SpectrumPointData()
+        {
+          SpectrumPointIndex = data[i].SpectrumPointIndex,
+          Value = normalized[i]
+        };
+      }
+
+      return normalizeSpectrum;
     }
 
     protected override void UpdateFrequencyMapping()

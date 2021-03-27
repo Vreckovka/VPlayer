@@ -357,6 +357,8 @@ namespace VPlayer.Core.ViewModels
 
     public override async void Initialize()
     {
+      IsPlaying = false;
+
       base.Initialize();
 
       await HookToVlcEvents();

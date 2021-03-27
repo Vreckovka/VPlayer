@@ -26,7 +26,14 @@ namespace VPlayer.WindowsPlayer.Behaviors
         var listViewItem = (ListViewItem)AssociatedObject.ItemContainerGenerator.ContainerFromIndex(i);
 
         if (listViewItem != null)
-          listViewItem.Width = AssociatedObject.ActualWidth - ValueDecrease;
+        {
+          var newWidht = AssociatedObject.ActualWidth - ValueDecrease;
+
+          if (newWidht >= 0)
+          {
+            listViewItem.Width = newWidht;
+          }
+        }
       }
     }
 

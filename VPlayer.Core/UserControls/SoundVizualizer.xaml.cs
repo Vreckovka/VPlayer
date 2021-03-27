@@ -38,6 +38,8 @@ namespace VPlayer.Player.UserControls
     private bool isTimerDisposed = true;
     private byte[] buffer;
     private IWaveSource waveSource;
+    private double normlizedDataMinValue;
+    private double normlizedDataMaxValue;
 
     System.Drawing.Color bottomColor = System.Drawing.Color.Green;
     System.Drawing.Color topColor = System.Drawing.Color.Red;
@@ -51,26 +53,20 @@ namespace VPlayer.Player.UserControls
     {
       InitializeComponent();
 
+      IsEnabled = false;
       this.Loaded += SoundVizualizer_Loaded;
       this.SizeChanged += SoundVizualizer_SizeChanged;
       this.IsEnabledChanged += SoundVizualizer_IsEnabledChanged;
+      Unloaded += SoundVizualizer_Unloaded;
 
       Application.Current.Dispatcher.ShutdownStarted += Dispatcher_ShutdownStarted;
 
-      _soundIn = new WasapiLoopbackCapture();
+      RecreateSpectrumProvider();
+    }
 
-      _soundIn.Initialize();
-
-      soundInSource = new SoundInSource(_soundIn);
-      source = soundInSource.ToSampleSource().AppendSource(x => new PitchShifter(x), out var _pitchShifter);
-
-      waveSource = SetupSampleSource(source);
-
-      buffer = new byte[waveSource.WaveFormat.BytesPerSecond / 2];
-
-      _soundIn.Start();
-
-      soundInSource.DataAvailable += ReadData;
+    private void SoundVizualizer_Unloaded(object sender, RoutedEventArgs e)
+    {
+      timer?.Stop();
     }
 
 
@@ -207,6 +203,68 @@ namespace VPlayer.Player.UserControls
 
     #endregion
 
+    #region NormlizedDataMaxValue
+
+    public double NormlizedDataMaxValue
+    {
+      get { return (double)GetValue(NormlizedDataMaxValueProperty); }
+      set { SetValue(NormlizedDataMaxValueProperty, value); }
+    }
+
+    public static readonly DependencyProperty NormlizedDataMaxValueProperty =
+      DependencyProperty.Register(
+        nameof(NormlizedDataMaxValue),
+        typeof(double),
+        typeof(SoundVizualizer),
+        new PropertyMetadata(30.0, (x, y) =>
+        {
+          if (x is SoundVizualizer soundVizualizer)
+          {
+            var newValue = (double)y.NewValue;
+           
+            if (soundVizualizer.lineSpectrum != null)
+            {
+              soundVizualizer.lineSpectrum.NormlizedDataMaxValue = newValue;
+            }
+
+            soundVizualizer.normlizedDataMaxValue = newValue;
+          }
+        }));
+
+
+    #endregion
+
+    #region NormlizedDataMinValue
+
+    public double NormlizedDataMinValue
+    {
+      get { return (double)GetValue(NormlizedDataMinValueProperty); }
+      set { SetValue(NormlizedDataMinValueProperty, value); }
+    }
+
+    public static readonly DependencyProperty NormlizedDataMinValueProperty =
+      DependencyProperty.Register(
+        nameof(NormlizedDataMinValue),
+        typeof(double),
+        typeof(SoundVizualizer),
+        new PropertyMetadata(0.0, (x, y) =>
+        {
+          if (x is SoundVizualizer soundVizualizer)
+          {
+            var newValue = (double)y.NewValue;
+
+            if(soundVizualizer.lineSpectrum != null)
+            {
+              soundVizualizer.lineSpectrum.NormlizedDataMinValue = newValue;
+            }
+
+            soundVizualizer.normlizedDataMinValue = newValue;
+          }
+        }));
+
+
+    #endregion
+
     #endregion
 
     #region Methods
@@ -215,8 +273,19 @@ namespace VPlayer.Player.UserControls
 
     private void SoundVizualizer_Loaded(object sender, RoutedEventArgs e)
     {
-      if (isTimerDisposed)
-        InitlizeTimer();
+      if (isTimerDisposed && IsEnabled)
+      {
+        if (timer == null)
+        {
+          InitlizeTimer();
+          return;
+        }
+      }
+
+      if (!isTimerDisposed && IsEnabled)
+      {
+        timer.Start();
+      }
     }
 
     #endregion
@@ -227,7 +296,7 @@ namespace VPlayer.Player.UserControls
     {
       if (e.NewValue is bool isEnabled)
       {
-        if (isEnabled && isTimerDisposed)
+        if (isEnabled && isTimerDisposed && IsLoaded)
         {
           InitlizeTimer();
         }
@@ -334,10 +403,35 @@ namespace VPlayer.Player.UserControls
 
       var notificationSource = new SingleBlockNotificationStream(aSampleSource);
 
+      lineSpectrum.NormlizedDataMaxValue = normlizedDataMaxValue;
+      lineSpectrum.NormlizedDataMinValue = normlizedDataMinValue;
+
       notificationSource.SingleBlockRead += (s, a) => spectrumProvider.Add(a.Left, a.Right);
 
       return notificationSource.ToWaveSource(16);
 
+    }
+
+    #endregion
+
+    #region RecreateSpectrumProvider
+
+    private void RecreateSpectrumProvider()
+    {
+      _soundIn = new WasapiLoopbackCapture();
+
+      _soundIn.Initialize();
+
+      soundInSource = new SoundInSource(_soundIn);
+      source = soundInSource.ToSampleSource().AppendSource(x => new PitchShifter(x), out var _pitchShifter);
+
+      waveSource = SetupSampleSource(source);
+
+      buffer = new byte[waveSource.WaveFormat.BytesPerSecond / 2];
+
+      _soundIn.Start();
+
+      soundInSource.DataAvailable += ReadData;
     }
 
     #endregion
@@ -348,36 +442,38 @@ namespace VPlayer.Player.UserControls
     {
       Application.Current?.Dispatcher?.Invoke(async () =>
       {
-        try
+        if (IsEnabled)
         {
-
-          if (IsEnabled)
+          var newImage = await Task.Run(() =>
           {
-            var newImage = await Task.Run(() =>
+            return lineSpectrum.CreateSpectrumLine(new System.Drawing.Size(width, height),
+              bottomColor,
+              topColor,
+              middleColor, true);
+          });
+
+          if (newImage == null)
+          {
+            var data = lineSpectrum.GetFttData();
+
+            if (data == null)
             {
-              return lineSpectrum.CreateSpectrumLine(new System.Drawing.Size(width, height),
-                bottomColor,
-                topColor,
-                middleColor, true);
-            });
-
-            if (newImage != null)
-            {
-              await Task.Run(() =>
-              {
-                newImage.MakeTransparent();
-              });
-
-              var image =  BitmapToImageSource(newImage);
-              
-
-              Image.Source = image;
+              RecreateSpectrumProvider();
             }
           }
 
-        }
-        catch (Exception ex)
-        {
+          if (newImage != null)
+          {
+            await Task.Run(() =>
+            {
+              newImage.MakeTransparent();
+            });
+
+            var image = BitmapToImageSource(newImage);
+
+
+            Image.Source = image;
+          }
         }
       });
     }

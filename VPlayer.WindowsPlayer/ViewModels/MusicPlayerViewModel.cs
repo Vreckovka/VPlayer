@@ -241,7 +241,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       base.Initialize();
 
-
+      IsPlaying = false;
 
       storageManager.SubscribeToItemChange<Song>(OnSongChange).DisposeWith(this);
       storageManager.SubscribeToItemChange<Album>(OnAlbumChange).DisposeWith(this);
