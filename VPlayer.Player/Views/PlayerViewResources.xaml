@@ -7,7 +7,7 @@
     <converters:DataContextChangedConverter x:Key="DataContextChangedConverter" />
 
     <DataTemplate x:Key="StatusMessageDataTemplate">
-        <Border Padding="10,5">
+        <Border Margin="0,0,30,0" Padding="10,5">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto" />
@@ -91,71 +91,6 @@
             </Grid>
         </Border>
     </DataTemplate>
-
-    <Style x:Key="SliderThumbMini" TargetType="Thumb">
-        <Setter Property="SnapsToDevicePixels" Value="true" />
-        <Setter Property="OverridesDefaultStyle" Value="true" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Thumb">
-                    <Ellipse Width="15"
-                             Height="15"
-                             Fill="{StaticResource DefaultRedBrush}"
-                             Stroke="#252525"
-                             StrokeThickness="1" />
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="SliderMini" TargetType="Slider">
-        <Setter Property="Height" Value="6" />
-        <Setter Property="Focusable" Value="False" />
-        <Setter Property="SnapsToDevicePixels" Value="true" />
-        <Setter Property="OverridesDefaultStyle" Value="true" />
-        <Setter Property="Foreground" Value="#b39d84" />
-        <Setter Property="Background" Value="{StaticResource 30_WhiteTransparentBrush}" />
-
-        <Style.Triggers>
-            <Trigger Property="Orientation" Value="Horizontal">
-                <Setter Property="MinHeight" Value="21" />
-                <Setter Property="MinWidth" Value="10" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="Slider">
-                            <Grid>
-                                <Track x:Name="PART_Track">
-                                    <Track.DecreaseRepeatButton>
-                                        <RepeatButton Height="{TemplateBinding Height}"
-                                                      Background="{TemplateBinding Foreground}"
-                                                      BorderBrush="{TemplateBinding Foreground}"
-                                                      BorderThickness="1"
-                                                      Command="Slider.DecreaseLarge"
-                                                      Style="{StaticResource SliderRepeatButton}" />
-                                    </Track.DecreaseRepeatButton>
-                                    <Track.Thumb>
-                                        <Thumb Margin="-9,0,0,0" Style="{StaticResource SliderThumbMini}" />
-                                    </Track.Thumb>
-
-                                    <Track.IncreaseRepeatButton>
-                                        <RepeatButton Height="{TemplateBinding Height}"
-                                                      Background="{TemplateBinding Background}"
-                                                      BorderBrush="{TemplateBinding Foreground}"
-                                                      BorderThickness="0"
-                                                      Command="Slider.IncreaseLarge"
-                                                      Style="{StaticResource SliderRepeatButton}" />
-                                    </Track.IncreaseRepeatButton>
-                                </Track>
-                            </Grid>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Trigger>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Cursor" Value="Hand" />
-            </Trigger>
-        </Style.Triggers>
-    </Style>
 
 
 

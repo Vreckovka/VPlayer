@@ -159,7 +159,7 @@
                                             Duration="{StaticResource MenuHoverAnimationDuration}" />
 
                             <ColorAnimation Storyboard.TargetProperty="(TextBox.Foreground).(SolidColorBrush.Color)"
-                                            To="#aaa"
+                                            To="{StaticResource SecondaryForegroundColor}"
                                             Duration="{StaticResource MenuHoverAnimationDuration}" />
                         </Storyboard>
                     </BeginStoryboard>
@@ -198,7 +198,7 @@
             <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Foreground">
                     <Setter.Value>
-                        <SolidColorBrush Color="#252525" />
+                        <SolidColorBrush Color="{StaticResource SecondaryForegroundColor}" />
                     </Setter.Value>
                 </Setter>
             </Trigger>
@@ -483,7 +483,7 @@
     <Style x:Key="{x:Type MenuItem}" TargetType="{x:Type MenuItem}">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="#aaa" />
+        <Setter Property="Foreground" Value="{StaticResource SecondaryForegroundBrush}" />
         <Setter Property="FontFamily" Value="{StaticResource Roboto}" />
         <Style.Triggers>
             <Trigger Property="Role" Value="TopLevelHeader">

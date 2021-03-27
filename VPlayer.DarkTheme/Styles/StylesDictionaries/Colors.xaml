@@ -108,6 +108,9 @@
     <SolidColorBrush x:Key="10_WhiteTransparentBrush" Color="{StaticResource 10_DefaultWhiteColor}" />
     <SolidColorBrush x:Key="3_WhiteTransparentBrush" Color="{StaticResource 3_DefaultWhiteColor}" />
 
+    <Color x:Key="SecondaryForegroundColor">#555555</Color>
+    <SolidColorBrush x:Key="SecondaryForegroundBrush" Color="{StaticResource SecondaryForegroundColor}" />
+
     <LinearGradientBrush x:Key="BackgroudGradientBrush" StartPoint="1 0">
         <GradientStop Offset="0" Color="{StaticResource BackgroudColor}" />
         <GradientStop Offset="1" Color="{StaticResource BackgroudColor2}" />

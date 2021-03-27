@@ -61,6 +61,12 @@ namespace VPlayer.Player.ViewModels
         if (value != actualViewModel)
         {
           actualViewModel = value;
+
+          if (actualViewModel != null)
+          {
+            ActualVolume = (int)actualViewModel.Volume;
+          }
+        
           RaisePropertyChanged();
         }
       }

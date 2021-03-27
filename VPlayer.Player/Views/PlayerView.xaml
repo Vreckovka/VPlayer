@@ -28,8 +28,7 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250" />
-            <ColumnDefinition Width="auto" />
+            <ColumnDefinition />
             <ColumnDefinition />
             <ColumnDefinition Width="auto" />
         </Grid.ColumnDefinitions>
@@ -37,26 +36,33 @@
         <Border Grid.ColumnSpan="4">
             <Border.Background>
                 <LinearGradientBrush StartPoint="0 1" EndPoint="0 0">
-                    <GradientStop Offset="1" Color="#90101010" />
+                    <GradientStop Offset="1" Color="#101010" />
                     <GradientStop Offset="0" Color="{StaticResource BackgroudColor2}" />
                 </LinearGradientBrush>
             </Border.Background>
         </Border>
 
         <ContentPresenter Grid.Column="0"
-                          Margin="30,0,0,0"
                           HorizontalAlignment="Left"
                           Content="{Binding StatusMessage}"
                           ContentTemplate="{StaticResource StatusMessageDataTemplate}" />
 
-        <ContentPresenter Grid.Column="1"
-                          HorizontalAlignment="Left"
-                          Content="{Binding ActualViewModel}"
-                          ContentTemplate="{StaticResource PlayerDetail}" />
+        <Border Grid.Column="0" HorizontalAlignment="Right">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0 1" EndPoint="0 0">
+                    <GradientStop Offset="1" Color="#101010" />
+                    <GradientStop Offset="0" Color="{StaticResource BackgroudColor2}" />
+                </LinearGradientBrush>
+            </Border.Background>
+            <ContentPresenter Margin="0,0,0,0"
+                              Content="{Binding ActualViewModel}"
+                              ContentTemplate="{StaticResource PlayerDetail}" />
+        </Border>
+
 
 
         <Border Grid.Column="0"
-                Grid.ColumnSpan="4"
+                Grid.ColumnSpan="3"
                 Margin="0,0,0,0"
                 Padding="5"
                 HorizontalAlignment="Center"
@@ -112,7 +118,7 @@
             </Grid>
         </Border>
 
-        <Grid Grid.Column="3"
+        <Grid Grid.Column="2"
               Margin="0,0,30,0"
               HorizontalAlignment="Right">
             <Slider Grid.Row="0"
@@ -122,18 +128,10 @@
                     Padding="0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
+                    Foreground="{StaticResource DefaultRedBrush}"
                     IsMoveToPointEnabled="True"
                     Maximum="300"
-                    Style="{StaticResource SliderMini}"
-                    Value="{Binding ActualVolume, Mode=TwoWay}">
-                <Slider.Foreground>
-                    <LinearGradientBrush>
-                        <GradientStop Offset="1" Color="{StaticResource DefaultRedColor}" />
-                        <GradientStop Offset="0" Color="#2747fe" />
-                    </LinearGradientBrush>
-                </Slider.Foreground>
-
-            </Slider>
+                    Value="{Binding ActualVolume, Mode=TwoWay}" />
 
             <TextBlock Margin="5,0,0,15"
                        HorizontalAlignment="Left"

@@ -27,7 +27,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="5" />
-            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="400" />
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Column="0" Margin="0,0,0,15">
@@ -83,7 +83,7 @@
             </GridSplitter.Style>
         </GridSplitter>
 
-        <Grid Grid.Column="2" Width="350">
+        <Grid Grid.Column="2" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition />

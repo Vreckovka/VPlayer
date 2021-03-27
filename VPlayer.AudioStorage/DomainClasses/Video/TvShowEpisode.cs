@@ -21,9 +21,9 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     public void Update(TvShowEpisode other)
     {
-      Name = other.Name;
-      InfoDownloadStatus = other.InfoDownloadStatus;
-      IsFavorite = other.IsFavorite;
+      base.Update(other);
+
+      EpisodeNumber = other.EpisodeNumber;
     }
   }
 }

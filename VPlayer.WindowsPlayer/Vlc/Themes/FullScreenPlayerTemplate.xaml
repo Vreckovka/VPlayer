@@ -80,7 +80,6 @@
                                                 Foreground="{StaticResource DefaultRedBrush}"
                                                 IsMoveToPointEnabled="True"
                                                 Maximum="300"
-                                                Style="{StaticResource SliderMini}"
                                                 Value="{Binding ActualVolume, Mode=TwoWay}" />
 
                                         <TextBlock Margin="5,0,0,0"

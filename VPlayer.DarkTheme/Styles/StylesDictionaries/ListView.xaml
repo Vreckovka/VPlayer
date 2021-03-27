@@ -14,8 +14,7 @@
         <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <Color x:Key="SecondaryForegroundColor">#555555</Color>
-    <SolidColorBrush x:Key="SecondaryForegroundBrush" Color="{StaticResource SecondaryForegroundColor}" />
+    
     <system:Double x:Key="ListView_MenuStyle_IconSize">17</system:Double>
 
     <Style x:Key="ListView_MenuStyle" TargetType="ListView">

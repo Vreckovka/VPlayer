@@ -246,7 +246,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         var model = ActualItem.Model;
 
-        model.Subtitles = selectedItem.Model.Id;
+        model.SubtitleTrack = selectedItem.Model.Id;
 
         storageManager.UpdateEntityAsync(model);
       }
@@ -321,7 +321,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       Application.Current.Dispatcher.Invoke(() =>
       {
-        AspectRatios.Clear();
+        AspectRatios.ForEach(x => x.IsSelected = false);
+
         Subtitles.Clear();
         AudioTracks.Clear();
       });
@@ -333,6 +334,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
         if (ActualItem != null)
         {
           MediaPlayer.AspectRatio = ActualItem.Model.AspectRatio;
+
+          if (MediaPlayer.AspectRatio != null)
+          {
+            var selected = AspectRatios.Single(x => x.Description == MediaPlayer.AspectRatio);
+            selected.IsSelected = true;
+          }
         }
       }
     }
@@ -352,9 +359,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
             Subtitles.Add(new SubtitleViewModel(spu));
           }
 
-          if (ActualItem?.Model.Subtitles != null)
+          if (ActualItem?.Model.SubtitleTrack != null)
           {
-            MediaPlayer.SetSpu(ActualItem.Model.Subtitles.Value);
+            MediaPlayer.SetSpu(ActualItem.Model.SubtitleTrack.Value);
           }
 
           var actualSub = Subtitles.Single(x => MediaPlayer.Spu == x.Model.Id);

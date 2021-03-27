@@ -60,11 +60,8 @@ namespace VPlayer.WindowsPlayer.Behaviors
       base.OnAttached();
 
       AssociatedObject.Loaded += AssociatedObject_Loaded;
-      AssociatedObject.SizeChanged += AssociatedObject_SizeChanged;
-    }
 
-    private void AssociatedObject_SizeChanged(object sender, SizeChangedEventArgs e)
-    {
+     
     }
 
     private GridSplitter gridSplitter;
