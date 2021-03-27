@@ -8,11 +8,14 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using CSCore;
+using CSCore.CoreAudioAPI;
 using CSCore.DSP;
 using CSCore.SoundIn;
 using CSCore.Streams;
 using CSCore.Streams.Effects;
+using CSCore.Win32;
 using WinformsVisualization.Visualization;
 using Color = System.Windows.Media.Color;
 
@@ -40,6 +43,7 @@ namespace VPlayer.Player.UserControls
     private IWaveSource waveSource;
     private double normlizedDataMinValue;
     private double normlizedDataMaxValue;
+    private string registredOutputDevice;
 
     System.Drawing.Color bottomColor = System.Drawing.Color.Green;
     System.Drawing.Color topColor = System.Drawing.Color.Red;
@@ -220,7 +224,7 @@ namespace VPlayer.Player.UserControls
           if (x is SoundVizualizer soundVizualizer)
           {
             var newValue = (double)y.NewValue;
-           
+
             if (soundVizualizer.lineSpectrum != null)
             {
               soundVizualizer.lineSpectrum.NormlizedDataMaxValue = newValue;
@@ -252,7 +256,7 @@ namespace VPlayer.Player.UserControls
           {
             var newValue = (double)y.NewValue;
 
-            if(soundVizualizer.lineSpectrum != null)
+            if (soundVizualizer.lineSpectrum != null)
             {
               soundVizualizer.lineSpectrum.NormlizedDataMinValue = newValue;
             }
@@ -346,38 +350,6 @@ namespace VPlayer.Player.UserControls
 
     #endregion
 
-    #region DisposeTimer
-
-    private void DisposeTimer()
-    {
-      isTimerDisposed = true;
-
-      if (timer != null)
-      {
-        timer.Elapsed -= timer2_Tick;
-        timer?.Dispose();
-      }
-
-    }
-
-    #endregion
-
-    #region Dispatcher_ShutdownStarted
-
-    private void Dispatcher_ShutdownStarted(object sender, EventArgs e)
-    {
-      waveSource?.Dispose();
-      source?.Dispose();
-      _soundIn?.Dispose();
-
-      if (soundInSource != null)
-        soundInSource.DataAvailable -= ReadData;
-
-      DisposeTimer();
-    }
-
-    #endregion
-
     #region SetupSampleSource
 
     private IWaveSource SetupSampleSource(ISampleSource aSampleSource)
@@ -417,11 +389,13 @@ namespace VPlayer.Player.UserControls
 
     private void RecreateSpectrumProvider()
     {
-      _soundIn = new WasapiLoopbackCapture();
+      DisposeEqualizer();
 
+      _soundIn = new WasapiLoopbackCapture();
       _soundIn.Initialize();
 
       soundInSource = new SoundInSource(_soundIn);
+
       source = soundInSource.ToSampleSource().AppendSource(x => new PitchShifter(x), out var _pitchShifter);
 
       waveSource = SetupSampleSource(source);
@@ -431,6 +405,23 @@ namespace VPlayer.Player.UserControls
       _soundIn.Start();
 
       soundInSource.DataAvailable += ReadData;
+    }
+
+    #endregion
+
+    #region DisposeEqualizer
+
+    private void DisposeEqualizer()
+    {
+      if (soundInSource != null)
+      {
+        soundInSource.DataAvailable -= ReadData;
+      }
+
+      _soundIn?.Dispose();
+      soundInSource?.Dispose();
+      source?.Dispose();
+      waveSource?.Dispose();
     }
 
     #endregion
@@ -451,12 +442,12 @@ namespace VPlayer.Player.UserControls
               middleColor, true);
           });
 
+
           if (newImage == null)
           {
-            var data = lineSpectrum.GetFttData();
-
-            if (data == null)
+            if (registredOutputDevice != AudioDeviceManager.Instance.DefaultDevice)
             {
+              registredOutputDevice = AudioDeviceManager.Instance.DefaultDevice;
               RecreateSpectrumProvider();
             }
           }
@@ -477,8 +468,10 @@ namespace VPlayer.Player.UserControls
       });
     }
 
+
     #endregion
 
+   
     #region BitmapToImageSource
 
     BitmapImage BitmapToImageSource(Bitmap bitmap)
@@ -499,6 +492,95 @@ namespace VPlayer.Player.UserControls
 
     #endregion
 
+    #region DisposeTimer
+
+    private void DisposeTimer()
+    {
+      isTimerDisposed = true;
+
+      if (timer != null)
+      {
+        timer.Elapsed -= timer2_Tick;
+        timer?.Dispose();
+      }
+
+    }
+
     #endregion
+
+    #region Dispatcher_ShutdownStarted
+
+    private void Dispatcher_ShutdownStarted(object sender, EventArgs e)
+    {
+      if (soundInSource != null)
+        soundInSource.DataAvailable -= ReadData;
+
+      DisposeTimer();
+
+      DisposeEqualizer();
+
+    }
+
+    #endregion
+
+    #endregion
+
+
+  }
+
+  public class AudioDeviceManager : IMMNotificationClient
+  {
+    public event EventHandler<string> DefaultDeviceChanged;
+
+    private static AudioDeviceManager instance;
+
+    private MMDeviceEnumerator mMDeviceEnumerator;
+    public string DefaultDevice { get; private set; }
+
+    #region Instance
+
+    public static AudioDeviceManager Instance
+    {
+      get
+      {
+        if (instance == null)
+        {
+          instance = new AudioDeviceManager();
+        }
+
+        return instance;
+      }
+    }
+
+    #endregion
+
+    public AudioDeviceManager()
+    {
+      mMDeviceEnumerator = new MMDeviceEnumerator();
+      mMDeviceEnumerator.RegisterEndpointNotificationCallback(this);
+    }
+
+    public void OnDeviceStateChanged(string deviceId, DeviceState deviceState)
+    {
+    }
+
+    public void OnDeviceAdded(string deviceId)
+    {
+    }
+
+    public void OnDeviceRemoved(string deviceId)
+    {
+    }
+
+    public void OnDefaultDeviceChanged(DataFlow dataFlow, Role role, string deviceId)
+    {
+      DefaultDevice = deviceId;
+
+      DefaultDeviceChanged?.Invoke(this, deviceId);
+    }
+
+    public void OnPropertyValueChanged(string deviceId, PropertyKey key)
+    {
+    }
   }
 }

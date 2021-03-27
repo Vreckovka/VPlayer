@@ -442,7 +442,7 @@
                                               VerticalAlignment="Top"
                                               Background="Transparent"
                                               BottomColor="#fc0f41"
-                                              IsEnabled="{Binding IsPlaying, Mode=OneWay}"
+                                              IsEnabled="{Binding IsPlaying, Mode=OneWay, FallbackValue=False}"
                                               MaxFrequency="100000"
                                               MiddleColor="{StaticResource DefaultRedColor}"
                                               NormlizedDataMaxValue="10"
