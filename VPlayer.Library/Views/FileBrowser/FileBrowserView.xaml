@@ -53,8 +53,14 @@
                 </Style.Triggers>
             </Style>
 
-            <converters:HighlightTextConverter x:Key="FolderHighlightTextConverter" RunStyle="{StaticResource FolderNameStyle}" />
-            <converters:HighlightTextConverter x:Key="FileHighlightTextConverter" RunStyle="{StaticResource FileNameStyle}" />
+            <converters:HighlightTextConverter x:Key="FolderHighlightTextConverter"
+                                               HighlightBackround="#ffea00"
+                                               HighlightForeground="#252525"
+                                               RunStyle="{StaticResource FolderNameStyle}" />
+            <converters:HighlightTextConverter x:Key="FileHighlightTextConverter"
+                                               HighlightBackround="#ffea00"
+                                               HighlightForeground="#252525"
+                                               RunStyle="{StaticResource FileNameStyle}" />
 
             <DataTemplate x:Key="FolderTreeViewTemplate">
                 <Grid>

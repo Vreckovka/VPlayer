@@ -409,7 +409,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
           if (ActualItem?.Model.AudioTrack != null)
           {
-            MediaPlayer.SetSpu(ActualItem.Model.AudioTrack.Value);
+            MediaPlayer.SetAudioTrack(ActualItem.Model.AudioTrack.Value);
           }
 
           var actualAudioTrack = AudioTracks.Single(x => MediaPlayer.AudioTrack == x.Model.Id);
@@ -420,10 +420,43 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         if (MediaPlayer.Media != null)
           MediaPlayer.Media.ParsedChanged -= MediaPlayer_ParsedChanged;
+
+        uint widht = 0;
+        uint height = 0;
+        MediaPlayer.Size(0, ref widht, ref height);
+
+        var aspectRation = GetRatio((int)widht, (int)height);
+
+        if(AspectRatios.SingleOrDefault(x => x.IsSelected) == null)
+        {
+          var actualRatio = AspectRatios.SingleOrDefault(x => x.Description == aspectRation);
+
+          if (actualRatio != null)
+          {
+            actualRatio.IsSelected = true;
+          }
+        }
       });
     }
 
     #endregion
+
+    #region GetRatio
+
+    public string GetRatio(int a, int b)
+    {
+      var gcd = GCD(a, b);
+
+      return string.Format("{0}:{1}", a / gcd, b / gcd);
+    }
+
+    public int GCD(int a, int b)
+    {
+      return b == 0 ? Math.Abs(a) : GCD(b, a % b);
+    }
+
+    #endregion
+
 
     protected override void OnRemoveItemsFromPlaylist(DeleteType deleteType, RemoveFromPlaylistEventArgs<VideoItemInPlaylistViewModel> args)
     {
