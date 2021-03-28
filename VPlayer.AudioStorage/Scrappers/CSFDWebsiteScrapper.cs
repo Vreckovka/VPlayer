@@ -16,7 +16,6 @@ using Logger;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using VCore;
-using VCore.Annotations;
 using VCore.Standard;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.InfoDownloader.Models;
@@ -33,7 +32,7 @@ namespace VPlayer.AudioStorage.Parsers
     private ChromeDriver chromeDriver;
     private string baseUrl = "https://www.csfd.cz";
 
-    public CSFDWebsiteScrapper([NotNull] ILogger logger, [NotNull] IStatusManager statusManager)
+    public CSFDWebsiteScrapper(ILogger logger,  IStatusManager statusManager)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));

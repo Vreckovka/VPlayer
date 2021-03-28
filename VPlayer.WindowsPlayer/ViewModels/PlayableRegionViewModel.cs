@@ -17,7 +17,6 @@ using Logger;
 using Ninject;
 using Prism.Events;
 using VCore;
-using VCore.Annotations;
 using VCore.Helpers;
 using VCore.ItemsCollections;
 using VCore.ItemsCollections.VirtualList;
@@ -57,11 +56,11 @@ namespace VPlayer.Core.ViewModels
 
     public PlayableRegionViewModel(
       IRegionProvider regionProvider,
-      [NotNull] IKernel kernel,
-      [NotNull] ILogger logger,
-      [NotNull] IStorageManager storageManager,
-      [NotNull] IEventAggregator eventAggregator,
-      [NotNull] IVlcProvider vlcProvider) : base(regionProvider)
+      IKernel kernel,
+       ILogger logger,
+     IStorageManager storageManager,
+      IEventAggregator eventAggregator,
+       IVlcProvider vlcProvider) : base(regionProvider)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));

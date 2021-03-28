@@ -8,7 +8,6 @@ using System.Windows.Input;
 using Prism.Events;
 using Prism.Regions;
 using VCore;
-using VCore.Annotations;
 using VCore.Helpers;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;

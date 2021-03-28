@@ -7,7 +7,6 @@ using System.Windows.Input;
 using Logger;
 using Prism.Events;
 using VCore;
-using VCore.Annotations;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
 using VCore.WPF.Managers;
@@ -41,8 +40,8 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
       IStorageManager storageManager,
       IWindowManager windowManager,
       AudioInfoDownloader audioInfoDownloader,
-      [NotNull] IStatusManager statusManager,
-      [NotNull] ILogger logger
+      StatusManager statusManager,
+      ILogger logger
       ) : base(regionProvider, storageManager, album, windowManager)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));

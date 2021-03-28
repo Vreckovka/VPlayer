@@ -1,6 +1,5 @@
 ﻿using System;
 using Prism.Regions;
-using VCore.Annotations;
 using VCore.Modularity.Navigation;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
@@ -20,7 +19,7 @@ namespace VPlayer.Library.Modularity
     #region Constructors
 
     public VPlayerLibraryRegionProvider(
-      [NotNull] IRegionManager regionManager,
+      IRegionManager regionManager,
       IViewFactory viewFactory,
       IViewModelsFactory viewModelsFactory,
       INavigationProvider navigationProvider) : base(regionManager, viewFactory, viewModelsFactory, navigationProvider)

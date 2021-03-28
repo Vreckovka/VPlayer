@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 using VCore;
-using VCore.Annotations;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
 using VCore.ViewModels;
@@ -15,17 +14,17 @@ using VPlayer.Library.Views.TvShows;
 
 namespace VPlayer.Library.ViewModels.TvShows
 {
-  public class TvShowDetailViewModel : DetailViewModel<TvShowViewModel,TvShow,TvShowDetailView>
+  public class TvShowDetailViewModel : DetailViewModel<TvShowViewModel, TvShow, TvShowDetailView>
   {
-    [NotNull] private readonly IWindowManager windowManager;
+    private readonly IWindowManager windowManager;
     private readonly IViewModelsFactory viewModelsFactory;
 
     public TvShowDetailViewModel(
       IRegionProvider regionProvider,
-      [NotNull] IStorageManager storageManager, 
+       IStorageManager storageManager,
       TvShowViewModel model,
-      [NotNull] IWindowManager windowManager,
-      [NotNull] IViewModelsFactory viewModelsFactory) : base(regionProvider, storageManager, model, windowManager)
+     IWindowManager windowManager,
+      IViewModelsFactory viewModelsFactory) : base(regionProvider, storageManager, model, windowManager)
     {
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
@@ -35,7 +34,7 @@ namespace VPlayer.Library.ViewModels.TvShows
 
     protected override void OnUpdate()
     {
-      var vm = viewModelsFactory.Create< UpdateTvShowViewModel>(ViewModel.Model);
+      var vm = viewModelsFactory.Create<UpdateTvShowViewModel>(ViewModel.Model);
 
       windowManager.ShowPrompt<TvShowUpdateView>(vm);
     }

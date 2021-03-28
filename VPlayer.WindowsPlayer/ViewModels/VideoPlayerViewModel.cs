@@ -22,7 +22,6 @@ using Logger;
 using Ninject;
 using Prism.Events;
 using VCore;
-using VCore.Annotations;
 using VCore.Helpers;
 using VCore.ItemsCollections;
 using VCore.Modularity.RegionProviders;
@@ -50,10 +49,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public VideoPlayerViewModel(
       IRegionProvider regionProvider,
-      [NotNull] IKernel kernel,
-      [NotNull] ILogger logger,
-      [NotNull] IStorageManager storageManager,
-      [NotNull] IEventAggregator eventAggregator,
+       IKernel kernel,
+       ILogger logger,
+      IStorageManager storageManager,
+       IEventAggregator eventAggregator,
       IVlcProvider vlcProvider) :
       base(regionProvider, kernel, logger, storageManager, eventAggregator, vlcProvider)
     {

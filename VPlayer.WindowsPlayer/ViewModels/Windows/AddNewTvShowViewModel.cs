@@ -9,7 +9,6 @@ using Logger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using VCore;
-using VCore.Annotations;
 using VCore.Standard;
 using VCore.ViewModels;
 using VPlayer.AudioStorage.DataLoader;
@@ -29,10 +28,10 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
     private readonly ILogger logger;
 
     public AddNewTvShowViewModel(
-      [NotNull] DataLoader dataLoader,
-      [NotNull] IStorageManager storageManager,
-      [NotNull] ITvShowScrapper tvShowScrapper,
-      [NotNull] ILogger logger)
+       DataLoader dataLoader,
+       IStorageManager storageManager,
+       ITvShowScrapper tvShowScrapper,
+       ILogger logger)
     {
       this.dataLoader = dataLoader ?? throw new ArgumentNullException(nameof(dataLoader));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));

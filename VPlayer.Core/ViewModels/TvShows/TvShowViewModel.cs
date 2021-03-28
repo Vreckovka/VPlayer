@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
-using VCore.Annotations;
 using VCore.Standard.Factories.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.Video;
@@ -23,9 +22,9 @@ namespace VPlayer.Core.ViewModels.TvShows
     public TvShowViewModel(
       TvShow model,
       IEventAggregator eventAggregator,
-      [NotNull] IStorageManager storage,
-      [NotNull] IVPlayerViewModelsFactory viewModelsFactory,
-      [NotNull] IVPlayerRegionProvider vPlayerRegionProvider
+       IStorageManager storage,
+       IVPlayerViewModelsFactory viewModelsFactory,
+       IVPlayerRegionProvider vPlayerRegionProvider
       ) : base(model, eventAggregator)
     {
       this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
@@ -78,9 +77,9 @@ namespace VPlayer.Core.ViewModels.TvShows
       if (tvShow != null)
       {
         var tvShowEpisodes = tvShow.Seasons.OrderBy(x => x.SeasonNumber)
-          .Select(x => x.Episodes.OrderBy(x => x.EpisodeNumber).Select(y => viewModelsFactory.CreateTvShowEpisodeInPlayList(y.VideoItem,y)))
+          .Select(x => x.Episodes.OrderBy(x => x.EpisodeNumber).Select(y => viewModelsFactory.CreateTvShowEpisodeInPlayList(y.VideoItem, y)))
           .SelectMany(x => x);
-         
+
 
         return tvShowEpisodes;
       }

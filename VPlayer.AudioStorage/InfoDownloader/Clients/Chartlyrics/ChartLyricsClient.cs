@@ -9,7 +9,6 @@ using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader.Clients.Chartlyrics.XMLClasses;
 using Logger;
 using VCore;
-using VCore.Annotations;
 
 namespace VPlayer.AudioStorage.InfoDownloader.Clients.Chartlyrics
 {
@@ -17,7 +16,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.Chartlyrics
   {
     private readonly ILogger logger;
 
-    public ChartLyricsClient([NotNull] ILogger logger)
+    public ChartLyricsClient(ILogger logger)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }

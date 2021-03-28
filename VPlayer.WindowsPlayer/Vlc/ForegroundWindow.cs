@@ -5,7 +5,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using LibVLCSharp.Shared;
-using VCore.Annotations;
 
 namespace VPlayer.WindowsPlayer.Vlc
 {

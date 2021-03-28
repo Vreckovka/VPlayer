@@ -35,6 +35,7 @@
                 <Style TargetType="ListViewItem">
                     <Setter Property="Foreground" Value="{StaticResource SecondaryForegroundBrush}" />
                     <Setter Property="IsSelected" Value="{Binding IsActive}" />
+                    <Setter Property="IsTabStop" Value="False" />
                     <Setter Property="Template">
                         <Setter.Value>
                             <!--  Trun off default selection  -->

@@ -330,7 +330,7 @@
                                                AlbumDataTemplate="{StaticResource AlbumImageDatatemplate}"
                                                GifDataTemplate="{StaticResource GifImageDatatemplate}" />
 
-  <DataTemplate x:Key="SongDataTemplate">
+  <DataTemplate x:Key="PlayListSongDataTemplate">
     <Grid Background="Transparent">
       <Border Padding="0,0,5,5">
         <Grid VerticalAlignment="Bottom">

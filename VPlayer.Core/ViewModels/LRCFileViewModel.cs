@@ -5,7 +5,6 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Windows.Input;
 using VCore;
-using VCore.Annotations;
 using VCore.Standard;
 using VCore.ViewModels;
 using VPlayer.AudioStorage.InfoDownloader.LRC;
@@ -25,7 +24,7 @@ namespace VPlayer.Core.ViewModels
 
     #region Constructors
 
-    public LRCFileViewModel(ILRCFile model, LRCProviders lRcProvider, [NotNull] ILrcProvider lrcProvider) : base(model)
+    public LRCFileViewModel(ILRCFile model, LRCProviders lRcProvider, ILrcProvider lrcProvider) : base(model)
     {
       this.lrcProvider = lrcProvider ?? throw new ArgumentNullException(nameof(lrcProvider));
 

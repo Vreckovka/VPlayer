@@ -5,7 +5,6 @@ using System.IO;
 using System.Windows.Input;
 using Prism.Events;
 using VCore;
-using VCore.Annotations;
 using VCore.Standard;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -19,7 +18,7 @@ namespace VPlayer.Core.ViewModels
     protected readonly IEventAggregator eventAggregator;
     private readonly IStorageManager storageManager;
 
-    protected ItemInPlayList(TModel model, IEventAggregator eventAggregator, [NotNull] IStorageManager storageManager) : base(model)
+    protected ItemInPlayList(TModel model, IEventAggregator eventAggregator,  IStorageManager storageManager) : base(model)
     {
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));

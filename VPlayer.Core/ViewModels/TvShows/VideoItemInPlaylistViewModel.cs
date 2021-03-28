@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using Prism.Events;
-using VCore.Annotations;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
@@ -10,7 +9,7 @@ namespace VPlayer.Core.ViewModels.TvShows
 {
   public class VideoItemInPlaylistViewModel : ItemInPlayList<VideoItem>
   {
-    public VideoItemInPlaylistViewModel(VideoItem model, IEventAggregator eventAggregator, [NotNull] IStorageManager storageManager) : base(model, eventAggregator, storageManager)
+    public VideoItemInPlaylistViewModel(VideoItem model, IEventAggregator eventAggregator, IStorageManager storageManager) : base(model, eventAggregator, storageManager)
     {
       Description = Path.GetDirectoryName(model.DiskLocation);
     }

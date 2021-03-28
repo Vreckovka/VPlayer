@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 using VCore;
-using VCore.Annotations;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard;
 using VCore.Standard.Modularity.Interfaces;

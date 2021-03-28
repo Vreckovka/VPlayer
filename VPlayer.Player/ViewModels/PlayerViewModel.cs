@@ -7,7 +7,6 @@ using Listener;
 using Ninject;
 using Prism.Events;
 using VCore;
-using VCore.Annotations;
 using VCore.Helpers;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Helpers;
@@ -32,10 +31,10 @@ namespace VPlayer.Player.ViewModels
 
     public PlayerViewModel(
       IRegionProvider regionProvider,
-      [NotNull] IKernel kernel,
+      IKernel kernel,
       KeyListener keyListener,
-      [NotNull] IStatusManager statusManager,
-      [NotNull] IEventAggregator eventAggregator) : base(regionProvider)
+      IStatusManager statusManager,
+      IEventAggregator eventAggregator) : base(regionProvider)
     {
       this.kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
       this.keyListener = keyListener ?? throw new ArgumentNullException(nameof(keyListener));
@@ -356,7 +355,7 @@ namespace VPlayer.Player.ViewModels
           {
             if (mainWindow.IsActive)
             {
-              ActualViewModel.SeekBackward(seekSize);
+              ActualViewModel?.SeekBackward(seekSize);
             }
             break;
           }
@@ -364,7 +363,7 @@ namespace VPlayer.Player.ViewModels
           {
             if (mainWindow.IsActive)
             {
-              ActualViewModel.SeekForward(seekSize);
+              ActualViewModel?.SeekForward(seekSize);
             }
             break;
           }

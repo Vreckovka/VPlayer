@@ -6,7 +6,6 @@ using System.Windows;
 using Logger;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
-using VCore.Annotations;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;

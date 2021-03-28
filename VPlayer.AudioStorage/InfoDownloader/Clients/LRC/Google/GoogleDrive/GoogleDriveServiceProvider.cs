@@ -7,7 +7,6 @@ using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using Logger;
-using VCore.Annotations;
 using File = Google.Apis.Drive.v3.Data.File;
 
 namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
@@ -32,7 +31,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
     private readonly string keyPath;
     private readonly ILogger logger;
 
-    public GoogleDriveServiceProvider(string keyPath, [NotNull] ILogger logger)
+    public GoogleDriveServiceProvider(string keyPath, ILogger logger)
     {
       this.keyPath = keyPath ?? throw new ArgumentNullException(nameof(keyPath));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));

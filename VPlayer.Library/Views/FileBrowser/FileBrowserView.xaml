@@ -9,6 +9,7 @@
              xmlns:local="clr-namespace:VPlayer.Library.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:templateSelectors="clr-namespace:VPlayer.Library.TemplateSelectors"
+             xmlns:windowsFile="clr-namespace:VCore.Standard.ViewModels.WindowsFile;assembly=VCore.Standard"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
@@ -18,7 +19,7 @@
             <SolidColorBrush x:Key="SoundColor">#a3535f</SolidColorBrush>
 
             <DataTemplate x:Key="FolderTreeViewTemplate">
-                <Grid>
+                <Grid >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto" />
                         <ColumnDefinition />
@@ -40,10 +41,10 @@
                             <Style BasedOn="{StaticResource {x:Type controls:ButtonWithIcon}}" TargetType="controls:ButtonWithIcon">
                                 <Setter Property="Visibility" Value="Hidden" />
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding FolderType}" Value="{x:Static fileBrowser:FolderType.Video}">
+                                    <DataTrigger Binding="{Binding FolderType}" Value="{x:Static windowsFile:FolderType.Video}">
                                         <Setter Property="Visibility" Value="Visible" />
                                     </DataTrigger>
-                                    <DataTrigger Binding="{Binding FolderType}" Value="{x:Static fileBrowser:FolderType.Sound}">
+                                    <DataTrigger Binding="{Binding FolderType}" Value="{x:Static windowsFile:FolderType.Sound}">
                                         <Setter Property="Visibility" Value="Visible" />
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -57,18 +58,18 @@
                                FontSize="15"
                                FontWeight="DemiBold"
                                Opacity="1"
-                               Text="{Binding Model.Name}">
+                               Text="{Binding Name}">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
                                 <Setter Property="Foreground" Value="#555555" />
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding FolderType}" Value="{x:Static fileBrowser:FolderType.Video}">
+                                    <DataTrigger Binding="{Binding FolderType}" Value="{x:Static windowsFile:FolderType.Video}">
                                         <Setter Property="Foreground" Value="{StaticResource VideoColor}" />
                                     </DataTrigger>
-                                    <DataTrigger Binding="{Binding FolderType}" Value="{x:Static fileBrowser:FolderType.Sound}">
+                                    <DataTrigger Binding="{Binding FolderType}" Value="{x:Static windowsFile:FolderType.Sound}">
                                         <Setter Property="Foreground" Value="{StaticResource SoundColor}" />
                                     </DataTrigger>
-                                    <DataTrigger Binding="{Binding FolderType}" Value="{x:Static fileBrowser:FolderType.Mixed}">
+                                    <DataTrigger Binding="{Binding FolderType}" Value="{x:Static windowsFile:FolderType.Mixed}">
                                         <Setter Property="Foreground" Value="Yellow" />
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -104,10 +105,10 @@
                             <Style BasedOn="{StaticResource {x:Type controls:ButtonWithIcon}}" TargetType="controls:ButtonWithIcon">
                                 <Setter Property="Visibility" Value="Hidden" />
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding FileType}" Value="{x:Static fileBrowser:FileType.Video}">
+                                    <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.Video}">
                                         <Setter Property="Visibility" Value="Visible" />
                                     </DataTrigger>
-                                    <DataTrigger Binding="{Binding FileType}" Value="{x:Static fileBrowser:FileType.Sound}">
+                                    <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.Sound}">
                                         <Setter Property="Visibility" Value="Visible" />
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -122,22 +123,22 @@
                                 <Setter Property="Foreground" Value="#252525" />
                             </Style>
                         </TextBlock.Style>
-                        <Run Text="{Binding Model.Name, Mode=OneWay}">
+                        <Run Text="{Binding Name, Mode=OneWay}">
                             <Run.Style>
                                 <Style TargetType="Run">
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding FileType}" Value="{x:Static fileBrowser:FileType.Video}">
+                                        <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.Video}">
                                             <Setter Property="Foreground" Value="#648afa" />
                                             <Setter Property="FontWeight" Value="DemiBold" />
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding FileType}" Value="{x:Static fileBrowser:FileType.Sound}">
+                                        <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.Sound}">
                                             <Setter Property="Foreground" Value="#eb677b" />
                                             <Setter Property="FontWeight" Value="DemiBold" />
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding FileType}" Value="{x:Static fileBrowser:FileType.TextFile}">
+                                        <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.TextFile}">
                                             <Setter Property="Foreground" Value="#5a5c40" />
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding FileType}" Value="{x:Static fileBrowser:FileType.Image}">
+                                        <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.Image}">
                                             <Setter Property="Foreground" Value="#70a1fe27" />
                                         </DataTrigger>
                                     </Style.Triggers>

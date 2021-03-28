@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
-using VCore.Annotations;
 using VCore.Standard.Factories.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.Video;
@@ -28,8 +27,8 @@ namespace VPlayer.Library.ViewModels.TvShows
     public VideoPlaylistViewModel(
       VideoPlaylist model,
       IEventAggregator eventAggregator,
-      [NotNull] IStorageManager storage,
-      [NotNull] IVPlayerViewModelsFactory viewModelsFactory) : base(model, eventAggregator, storage)
+     IStorageManager storage,
+       IVPlayerViewModelsFactory viewModelsFactory) : base(model, eventAggregator, storage)
     {
       this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));

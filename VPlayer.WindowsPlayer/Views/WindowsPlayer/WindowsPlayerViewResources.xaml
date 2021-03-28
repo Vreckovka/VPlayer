@@ -21,29 +21,12 @@
         <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Views/WindowsPlayer/VideoPlayerViewResources.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <DataTemplate x:Key="VideoItemDescriptionDataTemplate">
-        <TextBlock Margin="5,0,0,0"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Bottom"
-                   Text="{Binding Description}">
-            <TextBlock.Style>
-                <Style TargetType="TextBlock">
-                    <Setter Property="Foreground" Value="#30edfffa" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-                            <Setter Property="Foreground" Value="#24140c" />
-                            <Setter Property="FontWeight" Value="Bold" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </TextBlock.Style>
-        </TextBlock>
-    </DataTemplate>
+
 
     <templateSelectors1:WindowsPlayerItemsTemplateSelector x:Key="WindowsPlayerItemsTemplateSelector"
-                                                           SongDataTemplate="{StaticResource SongDescriptionTemplate}"
-                                                           TvShowEpisodeDataTemplate="{StaticResource TvShowEpisodeDescriptionDataTemplate}"
-                                                           VideoItemDataTemplate="{StaticResource VideoItemDescriptionDataTemplate}" />
+                                                           SongDataTemplate="{StaticResource PlayListSongDataTemplate}"
+                                                           TvShowEpisodeDataTemplate="{StaticResource PlayListTvShowEpisodeDescriptionDataTemplate}"
+                                                           VideoItemDataTemplate="{StaticResource PlayListVideoItemDescriptionDataTemplate}" />
 
 
 

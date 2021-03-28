@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Logger;
 using Microsoft.EntityFrameworkCore;
-using VCore.Annotations;
+
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -22,10 +22,10 @@ namespace VPlayer.AudioStorage.Scrappers
     private readonly IStatusManager statusManager;
 
     public TVShowScrapper(
-      [NotNull] IStorageManager storageManager, 
-      [NotNull] ICSFDWebsiteScrapper cSfdWebsiteScrapper, 
-      [NotNull] ILogger logger,
-      [NotNull] IStatusManager statusManager)
+       IStorageManager storageManager, 
+       ICSFDWebsiteScrapper cSfdWebsiteScrapper, 
+       ILogger logger,
+       IStatusManager statusManager)
     {
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.cSfdWebsiteScrapper = cSfdWebsiteScrapper ?? throw new ArgumentNullException(nameof(cSfdWebsiteScrapper));

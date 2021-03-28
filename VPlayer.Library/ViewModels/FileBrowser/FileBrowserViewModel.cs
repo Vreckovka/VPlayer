@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Text;
 using System.Windows.Controls;
-using VCore.Annotations;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.ViewModels.TreeView;
+using VCore.Standard.ViewModels.WindowsFile;
 using VCore.ViewModels;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Library.Views;
@@ -17,7 +18,7 @@ namespace VPlayer.Library.ViewModels.FileBrowser
   {
     private readonly IViewModelsFactory viewModelsFactory;
 
-    public FileBrowserViewModel(IRegionProvider regionProvider, [NotNull] IViewModelsFactory viewModelsFactory) : base(regionProvider)
+    public FileBrowserViewModel(IRegionProvider regionProvider, IViewModelsFactory viewModelsFactory) : base(regionProvider)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
     }
@@ -32,7 +33,7 @@ namespace VPlayer.Library.ViewModels.FileBrowser
     {
       base.Initialize();
 
-      var baseFolder = viewModelsFactory.Create<FolderViewModel>(new System.IO.DirectoryInfo(BaseDirectoryPath));
+      var baseFolder = viewModelsFactory.Create<PlayableFolderViewModel>(new DirectoryInfo(BaseDirectoryPath));
 
       baseFolder.IsExpanded = true;
 

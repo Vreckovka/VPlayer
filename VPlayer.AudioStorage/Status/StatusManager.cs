@@ -3,7 +3,6 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Windows;
 using Prism.Events;
-using VCore.Annotations;
 using VCore.Standard;
 using VCore.Standard.Helpers;
 
@@ -20,7 +19,7 @@ namespace VPlayer.Core.Managers.Status
 
     #region Constructors
 
-    public StatusManager([NotNull] IEventAggregator eventAggregator)
+    public StatusManager(IEventAggregator eventAggregator)
     {
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
     }

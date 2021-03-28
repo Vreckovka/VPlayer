@@ -4,7 +4,6 @@ using System.Windows.Input;
 using Logger;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using VCore;
-using VCore.Annotations;
 using VCore.ViewModels;
 using VPlayer.AudioStorage.DataLoader;
 using VPlayer.AudioStorage.DomainClasses.Video;
@@ -19,9 +18,9 @@ namespace VPlayer.Library.ViewModels.TvShows
     private readonly TvShow tvShow;
 
     public UpdateTvShowViewModel(
-      [NotNull] ITvShowScrapper tVShowScrapper,
-      [NotNull] ILogger logger,
-      [NotNull] TvShow tvShow)
+      ITvShowScrapper tVShowScrapper,
+       ILogger logger,
+       TvShow tvShow)
     {
       this.tVShowScrapper = tVShowScrapper ?? throw new ArgumentNullException(nameof(tVShowScrapper));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));

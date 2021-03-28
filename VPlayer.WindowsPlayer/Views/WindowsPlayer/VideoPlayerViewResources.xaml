@@ -5,7 +5,7 @@
                     xmlns:local="clr-namespace:VPlayer.WindowsPlayer.Views.WindowsPlayer"
                     xmlns:lrc="clr-namespace:VPlayer.AudioStorage.InfoDownloader.LRC;assembly=VCore.WPF">
 
-    <DataTemplate x:Key="TvShowEpisodeDescriptionDataTemplate">
+    <DataTemplate x:Key="PlayListTvShowEpisodeDescriptionDataTemplate">
         <Grid Background="Transparent">
             <Border Padding="0,0,5,5">
                 <Grid VerticalAlignment="Bottom">
@@ -133,5 +133,24 @@
                 </ContextMenu>
             </Grid.ContextMenu>
         </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PlayListVideoItemDescriptionDataTemplate">
+        <TextBlock Margin="5,0,0,0"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Bottom"
+                   Text="{Binding Description}">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Foreground" Value="#30edfffa" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                            <Setter Property="Foreground" Value="#24140c" />
+                            <Setter Property="FontWeight" Value="Bold" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
     </DataTemplate>
 </ResourceDictionary>

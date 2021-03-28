@@ -7,7 +7,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
-using VCore.Annotations;
 using VCore.Helpers;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.Video;
@@ -28,7 +27,7 @@ namespace VPlayer.AudioStorage.DataLoader
     private readonly IStatusManager statusManager;
     private Dictionary<DataType, List<string>> supportedItems = new Dictionary<DataType, List<string>>();
 
-    public DataLoader([NotNull] IStatusManager statusManager)
+    public DataLoader(IStatusManager statusManager)
     {
       this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
       supportedItems.Add(DataType.Video, new List<string>()

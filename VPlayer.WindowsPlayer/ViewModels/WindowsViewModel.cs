@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Input;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using VCore;
-using VCore.Annotations;
 using VCore.Helpers;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
@@ -40,9 +39,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
       IRegionProvider regionProvider,
       IViewModelsFactory viewModelsFactory,
       NavigationViewModel navigationViewModel,
-      [NotNull] DataLoader dataLoader,
+       DataLoader dataLoader,
       IStorageManager storageManager,
-      [NotNull] IWindowManager windowManager) : base(regionProvider)
+       IWindowManager windowManager) : base(regionProvider)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));

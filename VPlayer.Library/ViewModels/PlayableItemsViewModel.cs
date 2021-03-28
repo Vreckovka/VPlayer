@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using Prism.Events;
 using Prism.Regions;
-using VCore.Annotations;
 using VCore.Interfaces.ViewModels;
 using VCore.Modularity.Events;
 using VCore.Modularity.RegionProviders;
