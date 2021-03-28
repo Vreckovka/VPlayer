@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\file.png" />
     <None Remove="Styles\StylesDictionaries\WindowsStyle.xaml~RF282db4.TMP" />
   </ItemGroup>
 
@@ -17,6 +18,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\CustomLibraries\VCore\VCore.WPF.csproj" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Resource Include="Resources\file.png" />
   </ItemGroup>
 
   <ItemGroup>

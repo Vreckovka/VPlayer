@@ -15,12 +15,13 @@
              mc:Ignorable="d">
     <Grid>
         <Grid.Resources>
-            <SolidColorBrush x:Key="VideoColor">#4467cf</SolidColorBrush>
-            <SolidColorBrush x:Key="SoundColor">#a3535f</SolidColorBrush>
+            <SolidColorBrush x:Key="VideoColor">#648afa</SolidColorBrush>
+            <SolidColorBrush x:Key="SoundColor">#eb677b</SolidColorBrush>
 
             <DataTemplate x:Key="FolderTreeViewTemplate">
-                <Grid >
+                <Grid>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
                         <ColumnDefinition Width="auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
@@ -52,12 +53,20 @@
                         </controls:ButtonWithIcon.Style>
                     </controls:ButtonWithIcon>
 
-                    <TextBlock Grid.Column="1"
+                    <Path Grid.Column="1"
+                          Width="12"
+                          Height="12"
+                          Margin="0,0,5,0"
+                          Fill="#454545"
+                          Opacity="0.3"
+                          Style="{StaticResource Folder}" />
+
+                    <TextBlock Grid.Column="2"
                                Margin="0,0,0,0"
                                HorizontalAlignment="Center"
                                FontSize="15"
                                FontWeight="DemiBold"
-                               Opacity="1"
+                               Opacity="0.65"
                                Text="{Binding Name}">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
@@ -85,6 +94,7 @@
             <DataTemplate x:Key="FileTreeViewTemplate">
                 <Grid>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
                         <ColumnDefinition Width="auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
@@ -116,7 +126,25 @@
                         </controls:ButtonWithIcon.Style>
                     </controls:ButtonWithIcon>
 
-                    <TextBlock Grid.Column="1">
+                    <Image Grid.Column="1"
+                           Width="15"
+                           Height="15"
+                           Margin="0,0,5,0"
+                           Source="pack://application:,,,/VPlayer.DarkTheme;component/Resources/file.png" />
+
+                    <Rectangle x:Name="ImageOpacityMask"
+                               Grid.Column="1"
+                               Width="15"
+                               Height="15">
+                        <Rectangle.Fill>
+                            <SolidColorBrush Color="#454545" />
+                        </Rectangle.Fill>
+                        <Rectangle.OpacityMask>
+                            <ImageBrush ImageSource="pack://application:,,,/VPlayer.DarkTheme;component/Resources/file.png" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+
+                    <TextBlock Grid.Column="2">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
                                 <Setter Property="Opacity" Value="1" />
@@ -128,11 +156,11 @@
                                 <Style TargetType="Run">
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.Video}">
-                                            <Setter Property="Foreground" Value="#648afa" />
+                                            <Setter Property="Foreground" Value="{StaticResource VideoColor}" />
                                             <Setter Property="FontWeight" Value="DemiBold" />
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.Sound}">
-                                            <Setter Property="Foreground" Value="#eb677b" />
+                                            <Setter Property="Foreground" Value="{StaticResource SoundColor}" />
                                             <Setter Property="FontWeight" Value="DemiBold" />
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.TextFile}">
