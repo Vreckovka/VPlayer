@@ -6,13 +6,12 @@
            BasedOn="{StaticResource {x:Type TextBlock}}"
            TargetType="{x:Type TextBlock}">
         <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}" />
-        <Setter Property="FontFamily" Value="Arial" />
+        
     </Style>
 
     <Style x:Key="Base1"
            BasedOn="{StaticResource {x:Type TextBlock}}"
            TargetType="{x:Type TextBlock}">
         <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}" />
-        <Setter Property="FontFamily" Value="pack://application:,,,/VPlayer;component/Resources/Montserrat/Montserrat-Thin.otf#Montserrat Thin" />
     </Style>
 </ResourceDictionary>

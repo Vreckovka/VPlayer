@@ -18,7 +18,7 @@
     <Setter Property="HorizontalContentAlignment" Value="Center" />
     <Setter Property="HorizontalAlignment" Value="Center" />
     <Setter Property="Foreground" Value="{StaticResource YellowBrush}" />
-    <Setter Property="FontFamily" Value="{StaticResource Roboto}" />
+   
     <Setter Property="FontWeight" Value="DemiBold" />
     <Setter Property="IsReadOnly" Value="True" />
     <Setter Property="Background" Value="Transparent" />
@@ -43,7 +43,7 @@
     <Grid>
       <TextBlock Margin="15,8"
                  VerticalAlignment="Bottom"
-                 FontFamily="{StaticResource Roboto}"
+                
                  FontSize="13"
                  FontWeight="Normal"
                  Foreground="#30ffffff"
@@ -340,7 +340,7 @@
           </Grid.ColumnDefinitions>
 
           <TextBlock Margin="5,0,0,0"
-                     FontFamily="{StaticResource Roboto}"
+                    
                      FontSize="12">
             <Run FontSize="13" Text="{Binding ArtistViewModel.Name, Mode=OneWay}">
               <Run.Style>

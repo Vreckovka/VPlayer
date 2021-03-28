@@ -32,7 +32,7 @@
 
     <Style x:Key="ListViewItem_PlayerTrack" TargetType="{x:Type ListViewItem}">
         <Setter Property="Foreground" Value="{StaticResource 100_WhiteTransparentBrush}" />
-        <Setter Property="FontFamily" Value="Arial" />
+
         <Setter Property="FontWeight" Value="Light" />
         <Setter Property="Height" Value="50" />
         <Setter Property="Padding" Value="0" />
@@ -111,7 +111,6 @@
                                 <TextBlock Name="NonPlayingTextBlock"
                                            Grid.Column="1"
                                            Padding="0"
-                                           FontFamily="{StaticResource Roboto}"
                                            FontSize="18"
                                            FontWeight="Bold"
                                            Style="{StaticResource ListViewTextBlockStyle}">
@@ -127,7 +126,6 @@
                                 <TextBlock Name="PlayingTextBlock"
                                            Grid.Column="1"
                                            Padding="0"
-                                           FontFamily="{StaticResource Roboto}"
                                            FontWeight="Bold">
                                     <TextBlock.Style>
                                         <Style BasedOn="{StaticResource ListViewTextBlockStyle}" TargetType="TextBlock">
@@ -184,7 +182,6 @@
                                        Margin="0,5,8,0"
                                        HorizontalAlignment="Right"
                                        VerticalAlignment="Top"
-                                       FontFamily="{StaticResource Roboto}"
                                        FontSize="13"
                                        FontWeight="Bold"
                                        Text="{Binding Duration, Converter={converters1:TimeConverter TimeType=Second}}">

@@ -14,10 +14,11 @@
         MinWidth="560"
         MinHeight="400"
         Closing="OnClosing"
+        FontFamily="pack://application:,,,/VPlayer;component/Resources/Fonts/Roboto/#Roboto"
+        FontSize="12"
         Icon="/Includes/VPlayerLogo.png"
         Style="{StaticResource {x:Type Window}}"
         WindowStartupLocation="CenterScreen"
-        WindowStyle="None"
         mc:Ignorable="d">
 
     <Window.Resources>

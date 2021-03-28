@@ -2,11 +2,11 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
-using VCore.Standard;
+
 
 namespace Listener
 {
-  public class KeyListener : ViewModel
+  public class KeyListener
   {
     #region Fields
 

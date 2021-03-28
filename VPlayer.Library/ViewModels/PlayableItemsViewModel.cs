@@ -19,12 +19,13 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Core.ViewModels.Artists;
+using VPlayer.Library.ViewModels.FileBrowser;
 using VPlayer.Library.ViewModels.LibraryViewModels;
 
 namespace VPlayer.Library.ViewModels
 {
   public abstract class PlayableItemsViewModel<TView, TViewModel, TModel> :
-    RegionViewModel<TView>, ICollectionViewModel<TViewModel, TModel>, IPlayableItemsViewModel
+    RegionViewModel<TView>, ICollectionViewModel<TViewModel, TModel>, IPlayableItemsViewModel, IFilterable
     where TView : class, IView
     where TViewModel : class, INamedEntityViewModel<TModel>
     where TModel : class, INamedEntity

@@ -23,8 +23,6 @@
 
             </ResourceDictionary.MergedDictionaries>
 
-            <FontFamily x:Key="Montserrat_Thin">pack://application:,,,/VPlayer;component/Resources/Montserrat/Montserrat-Thin.otf#Montserrat Thin</FontFamily>
-            <FontFamily x:Key="Roboto">pack://application:,,,/VPlayer;component/Resources/Roboto/Roboto-Black.otf#Roboto-Black</FontFamily>
         </ResourceDictionary>
     </Application.Resources>
 </prism:PrismApplication>

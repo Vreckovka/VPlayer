@@ -204,11 +204,11 @@ namespace VPlayer.Library.ViewModels.LibraryViewModels
 
     #region Filter
 
-    public void Filter(string name)
+    public void Filter(string predicated)
     {
-      if (!string.IsNullOrEmpty(name))
+      if (!string.IsNullOrEmpty(predicated))
       {
-        FilteredItems = Items.Where(x => x.Name.ToLower().Contains(name) || x.Name.Similarity(name) > 0.8);
+        FilteredItems = Items.Where(x => x.Name.ToLower().Contains(predicated) || x.Name.Similarity(predicated) > 0.8);
       }
       else
       {

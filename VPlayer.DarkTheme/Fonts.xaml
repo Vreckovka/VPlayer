@@ -1,7 +1,5 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-  <FontFamily x:Key="Roboto">pack://application:,,,/VPlayer.DarkTheme;component/Resources/Roboto/Roboto-Black.otf#Roboto-Black</FontFamily>
-  <FontFamily x:Key="Montserrat_Thin">pack://application:,,,/VPlayer.DarkTheme;component/Resources/Montserrat/Montserrat-Thin.otf#Montserrat Thin</FontFamily>
 
 </ResourceDictionary>

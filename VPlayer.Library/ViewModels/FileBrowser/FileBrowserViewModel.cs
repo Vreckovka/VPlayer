@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
+using VCore;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.ViewModels.TreeView;
@@ -14,7 +18,12 @@ using VPlayer.Library.Views;
 
 namespace VPlayer.Library.ViewModels.FileBrowser
 {
-  public class FileBrowserViewModel : RegionViewModel<FileBrowserView>
+  public interface IFilterable
+  {
+    void Filter(string predicated);
+  }
+
+  public class FileBrowserViewModel : RegionViewModel<FileBrowserView>, IFilterable
   {
     private readonly IViewModelsFactory viewModelsFactory;
 
@@ -29,15 +38,21 @@ namespace VPlayer.Library.ViewModels.FileBrowser
 
     public string BaseDirectoryPath = "E:\\Torrent";
 
+    private PlayableFolderViewModel root;
     public override void Initialize()
     {
       base.Initialize();
 
-      var baseFolder = viewModelsFactory.Create<PlayableFolderViewModel>(new DirectoryInfo(BaseDirectoryPath));
+      root = viewModelsFactory.Create<PlayableFolderViewModel>(new DirectoryInfo(BaseDirectoryPath));
 
-      baseFolder.IsExpanded = true;
+      root.GetFolderInfo();
+      root.IsExpanded = true;
+      root.CanExpand = false;
+      root.CanPlay = false;
+      root.FolderType = FolderType.Other;
+      root.IsRoot = true;
 
-      Items.Add(baseFolder);
+      Items.Add(root);
     }
 
     #region Items
@@ -58,5 +73,19 @@ namespace VPlayer.Library.ViewModels.FileBrowser
     }
 
     #endregion
+
+    public void Filter(string predicated)
+    {
+      if (predicated.Length >= 3 && !string.IsNullOrEmpty(predicated) && !predicated.All(x => char.IsWhiteSpace(x)))
+      {
+        root.Filter(predicated);
+      }
+      else
+      {
+        root.ResetFilter();
+      }
+
+
+    }
   }
 }

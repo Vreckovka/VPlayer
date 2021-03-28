@@ -29,9 +29,32 @@ namespace VPlayer.Library.ViewModels.FileBrowser
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+
+      if (FileType == FileType.Video || FileType == FileType.Sound)
+      {
+        CanPlay = true;
+      }
     }
 
-   
+    #region CanPlay
+
+    private bool canPlay;
+
+    public bool CanPlay
+    {
+      get { return canPlay; }
+      set
+      {
+        if (value != canPlay)
+        {
+          canPlay = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #region Commands
 
     #region PlayButton

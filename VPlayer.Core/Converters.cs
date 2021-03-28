@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
@@ -172,7 +173,7 @@ namespace VPlayer.Library
     public override object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
       int? subString = null;
-      if (parameter is int it)
+      if (int.TryParse(parameter.ToString(), out var it ))
       {
         subString = it;
       }
@@ -197,8 +198,14 @@ namespace VPlayer.Library
     public static string GetHashString(string inputString)
     {
       StringBuilder sb = new StringBuilder();
-      foreach (byte b in GetHash(inputString))
+      var hash = GetHash(inputString);
+
+      foreach (byte b in hash)
+      {
         sb.Append(b.ToString("X2"));
+
+      }
+      
 
       return sb.ToString();
     }

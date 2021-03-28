@@ -141,7 +141,7 @@
                              Background="#FF202020"
                              BorderThickness="0"
                              Content="Info"
-                             FontFamily="pack://application:,,,/VPlayer.VPlayer;component/Resources/#Montserrat-Light"
+                           
                              FontSize="18"
                              FontWeight="Light"
                              Foreground="#DCFFFFFF"
@@ -156,7 +156,7 @@
                 <TextBox Name="NameTxt"
                          Margin="0,0,0,0"
                          BorderThickness="0"
-                         FontFamily="{StaticResource Roboto}"
+                       
                          FontSize="43"
                          FontWeight="Bold"
                          Foreground="#f7ede1"
@@ -192,7 +192,7 @@
                 </TextBox>
 
                 <TextBlock HorizontalAlignment="Center"
-                           FontFamily="{StaticResource Roboto}"
+                          
                            FontSize="15"
                            FontWeight="DemiBold"
                            Foreground="#f2e0cb"

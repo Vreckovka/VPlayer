@@ -15,8 +15,6 @@
 
     </ResourceDictionary.MergedDictionaries>
 
-    <FontFamily x:Key="Roboto">pack://application:,,,/VPlayer;component/Resources/Roboto/Roboto-Black.otf#Roboto-Black</FontFamily>
-
     <DataTemplate x:Key="InternetPlayerTemplate">
         <StackPanel Width="180">
             <TextBlock HorizontalAlignment="Center" Text="{Binding Title}" />
@@ -75,7 +73,7 @@
 
                         <TextBlock Name="NameTxt"
                                    Grid.Row="0"
-                                   FontFamily="Arial"
+                                   
                                    FontSize="20"
                                    Text="{Binding Name}">
                             <TextBlock.Style>
@@ -134,7 +132,7 @@
 
                         <TextBlock Grid.Row="1"
                                    HorizontalAlignment="Stretch"
-                                   FontFamily="Arial"
+                                  
                                    FontSize="15"
                                    Text="{Binding Artist.Name}"
                                    TextAlignment="Center">
@@ -242,7 +240,7 @@
 
                         <TextBlock Name="NameTxt"
                                    Grid.Row="0"
-                                   FontFamily="Arial"
+                                  
                                    FontSize="20"
                                    Text="{Binding Name}">
                             <b:Interaction.Behaviors>
@@ -254,7 +252,7 @@
 
                         <TextBlock Grid.Row="1"
                                    HorizontalAlignment="Stretch"
-                                   FontFamily="Arial"
+                                   
                                    FontSize="15"
                                    Text="{Binding Artist.Name}"
                                    TextAlignment="Center">
@@ -359,7 +357,7 @@
 
                         <TextBlock Grid.Row="1"
                                    HorizontalAlignment="Stretch"
-                                   FontFamily="Arial"
+                                  
                                    FontSize="15"
                                    Text="{Binding SizeString}"
                                    TextAlignment="Center">
@@ -408,7 +406,6 @@
 
     <DataTemplate x:Key="SongDescriptionTemplate">
         <TextBlock Margin="5,0,0,0"
-                   FontFamily="{StaticResource Roboto}"
                    FontSize="12">
             <Run FontSize="13" Text="{Binding ArtistViewModel.Name, Mode=OneWay}">
                 <Run.Style>
@@ -480,7 +477,7 @@
 
                 <ContentControl x:Name="DescriptionText"
                                 Grid.Row="1"
-                                Margin="-5,0,0,0"
+                                Margin="0,0,0,0"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Top"
                                 Content="{Binding ActualItem}"
@@ -490,42 +487,26 @@
     </DataTemplate>
 
     <DataTemplate x:Key="TvShowEpisodeDescriptionDataTemplate">
-        <Grid Background="Transparent">
-            <Border Padding="0,0,5,5">
-                <Grid VerticalAlignment="Bottom">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="auto" />
-                    </Grid.ColumnDefinitions>
+        <TextBlock FontSize="12">
+            <Run Foreground="#948b79"
+                 Text="{Binding TvShow.Name, Mode=OneWay}" />
 
-                    <TextBlock Margin="5,0,0,0"
-                               FontFamily="{StaticResource Roboto}"
-                               FontSize="12"
-                               FontWeight="DemiBold">
-                        <Run Text="{Binding TvShow.Name, Mode=OneWay}">
-                            <Run.Style>
-                                <Style TargetType="Run">
-                                    <Setter Property="Foreground" Value="#948b79" />
-                                    <Setter Property="FontWeight" Value="DemiBold" />
-                                </Style>
-                            </Run.Style>
-                        </Run>
-                        <Run Foreground="#50edfffa" Text="(" />
-                        <Run FontWeight="Normal"
-                             Foreground="#30edfffa"
-                             Text="Season" />
-                        <Run FontSize="13"
-                             Foreground="#70edfffa"
-                             Text="{Binding TvShowSeason.SeasonNumber, Mode=OneWay}" />
-                        <Run FontWeight="Normal"
-                             Foreground="#30edfffa"
-                             Text="Episode" />
-                        <Run Foreground="#70edfffa" Text="{Binding TvShowEpisode.EpisodeNumber, Mode=OneWay}" />
-                        <Run Foreground="#50edfffa" Text=")" />
-                    </TextBlock>
-                </Grid>
-            </Border>
-        </Grid>
+            <Run Foreground="#50edfffa" Text="(" />
+            <Run FontWeight="Normal"
+                 Foreground="#30edfffa"
+                 Text="Season" />
+            <Run FontSize="13"
+                 FontWeight="DemiBold"
+                 Foreground="#70edfffa"
+                 Text="{Binding TvShowSeason.SeasonNumber, Mode=OneWay}" />
+            <Run FontWeight="Normal"
+                 Foreground="#30edfffa"
+                 Text="Episode" />
+            <Run FontWeight="DemiBold"
+                 Foreground="#70edfffa"
+                 Text="{Binding TvShowEpisode.EpisodeNumber, Mode=OneWay}" />
+            <Run Foreground="#50edfffa" Text=")" />
+        </TextBlock>
     </DataTemplate>
 
 </ResourceDictionary>

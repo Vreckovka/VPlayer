@@ -89,7 +89,7 @@ namespace VPlayer.Library.ViewModels
       actualSearchSubject = new ReplaySubject<string>(1);
       actualSearchSubject.DisposeWith(this);
 
-      actualSearchSubject.Throttle(TimeSpan.FromMilliseconds(150)).Subscribe(Filter).DisposeWith(this);
+      actualSearchSubject.Throttle(TimeSpan.FromMilliseconds(250)).Subscribe(Filter).DisposeWith(this);
 
     }
 
@@ -157,9 +157,9 @@ namespace VPlayer.Library.ViewModels
     {
       var acutal = NavigationViewModel.Items.SingleOrDefault(x => x.IsActive);
 
-      if (acutal != null && acutal.navigationItem is IPlayableItemsViewModel playableItemsViewModel)
+      if (acutal != null && acutal.navigationItem is IFilterable filterable)
       {
-        playableItemsViewModel.Filter(phrase);
+        filterable.Filter(phrase);
       }
     }
 

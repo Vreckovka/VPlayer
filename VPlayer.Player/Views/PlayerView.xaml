@@ -22,7 +22,7 @@
                 <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-
+           
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -149,6 +149,8 @@
                        Foreground="#ccc"
                        Text="{Binding ActualVolume, StringFormat={}{0} %}" />
         </Grid>
+
+       
     </Grid>
 
 </UserControl>

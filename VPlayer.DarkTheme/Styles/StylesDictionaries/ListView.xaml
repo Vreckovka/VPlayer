@@ -25,9 +25,9 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Background" Value="{StaticResource 3_WhiteTransparentBrush}" />
-        <Setter Property="FontWeight" Value="DemiBold" />
+        <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="14" />
-        <Setter Property="FontFamily" Value="{StaticResource Roboto}" />
+
         <Setter Property="BorderBrush" Value="#252525" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="ItemContainerStyle">
@@ -481,7 +481,7 @@
         <Setter Property="FontSize" Value="15" />
         <Setter Property="FontWeight" Value="DemiBold" />
         <Setter Property="Foreground" Value="#ababab" />
-        <Setter Property="FontFamily" Value="{StaticResource Roboto}" />
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">

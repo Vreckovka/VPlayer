@@ -15,7 +15,7 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Margin="5,0,0,0"
-                               FontFamily="{StaticResource Roboto}"
+                               
                                FontSize="12"
                                FontWeight="DemiBold">
                         <Run Text="{Binding TvShow.Name, Mode=OneWay}">
@@ -61,7 +61,7 @@
                             <Run.Style>
                                 <Style TargetType="Run">
                                     <Setter Property="Foreground" Value="#edfffa" />
-                                    <Setter Property="FontWeight" Value="Bold" />
+                                    <Setter Property="FontWeight" Value="DemiBold" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsPlaying}" Value="true">
                                             <Setter Property="Foreground" Value="#24140c" />
@@ -87,7 +87,7 @@
                             <Run.Style>
                                 <Style TargetType="Run">
                                     <Setter Property="Foreground" Value="#edfffa" />
-                                    <Setter Property="FontWeight" Value="Bold" />
+                                    <Setter Property="FontWeight" Value="DemiBold" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsPlaying}" Value="true">
                                             <Setter Property="Foreground" Value="#24140c" />
@@ -146,7 +146,7 @@
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding IsPlaying}" Value="true">
                             <Setter Property="Foreground" Value="#24140c" />
-                            <Setter Property="FontWeight" Value="Bold" />
+                            <Setter Property="FontWeight" Value="DemiBold" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>

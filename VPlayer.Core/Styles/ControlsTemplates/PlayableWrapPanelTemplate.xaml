@@ -403,7 +403,7 @@
                                     <TextBlock Name="NameTxt"
                                                Grid.Row="0"
                                                Margin="5"
-                                               FontFamily="Arial"
+                                             
                                                FontSize="20"
                                                Foreground="WhiteSmoke"
                                                Text="{TemplateBinding HeaderText}">
@@ -434,7 +434,7 @@
 
                                     <TextBlock Grid.Row="1"
                                                HorizontalAlignment="Stretch"
-                                               FontFamily="Arial"
+                                              
                                                FontSize="15"
                                                Text="{TemplateBinding BottomText}"
                                                TextAlignment="Center">

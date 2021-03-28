@@ -15,7 +15,6 @@
 
     <Style x:Key="ListViewItem_AlbumSongs" TargetType="{x:Type ListViewItem}">
         <Setter Property="Foreground" Value="{StaticResource 85_WhiteTransparentBrush}" />
-        <Setter Property="FontFamily" Value="Arial" />
         <Setter Property="FontWeight" Value="Light" />
         <Setter Property="Height" Value="35" />
         <Setter Property="Template">

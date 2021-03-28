@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.Foundation.Metadata;
+//using Windows.Foundation.Metadata;
 
 namespace Listener
 {
@@ -12,7 +12,7 @@ namespace Listener
     /// <summary>
     /// Sample native object for injecting to the WebView.
     /// </summary>
-    [AllowForWeb]
+    //[AllowForWeb]
     public sealed class DOMClickNotifyHandler
     {
         public event NotifyAppHandler NotifyAppEvent;

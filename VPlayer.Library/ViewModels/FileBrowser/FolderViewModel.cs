@@ -31,7 +31,27 @@ namespace VPlayer.Library.ViewModels.FileBrowser
     {
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
+
     }
+
+    #region CanPlay
+
+    private bool canPlay;
+
+    public bool CanPlay
+    {
+      get { return canPlay; }
+      set
+      {
+        if (value != canPlay)
+        {
+          canPlay = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     #region Commands
 
@@ -98,6 +118,16 @@ namespace VPlayer.Library.ViewModels.FileBrowser
     }
 
     #endregion
+
+    protected override void OnGetFolderInfo()
+    {
+      base.OnGetFolderInfo();
+
+      if (FolderType != FolderType.Other)
+      {
+        CanPlay = true;
+      }
+    }
 
     protected override FileViewModel CreateNewFileItem(FileInfo fileInfo)
     {

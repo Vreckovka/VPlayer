@@ -148,7 +148,7 @@
                                       Grid.ColumnSpan="3"
                                       Height="40"
                                       Margin="15,7,15,0"
-                                      FontFamily="{StaticResource Roboto}"
+                                     
                                       FontSize="14"
                                       KeyDownCommand="{Binding FinderKeyDown}"
                                       Text="{Binding ActualSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
