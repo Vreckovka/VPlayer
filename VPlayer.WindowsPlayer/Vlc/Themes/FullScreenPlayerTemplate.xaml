@@ -22,7 +22,7 @@
                             VerticalAlignment="Bottom"
                             CornerRadius="5">
                         <Grid>
-                            <Grid Width="600" HorizontalAlignment="Center">
+                            <Grid Width="600" HorizontalAlignment="Center" Height="110">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto" />
                                     <RowDefinition Height="auto" />
@@ -93,7 +93,8 @@
                                                    HorizontalAlignment="Right"
                                                    VerticalAlignment="Bottom"
                                                    FontSize="14"
-                                                   Foreground="#959595"
+                                                   FontWeight="DemiBold"
+                                                   Foreground="#ccc"
                                                    Text="{Binding ActualVolume, StringFormat={}{0} %}" />
                                     </Grid>
 
@@ -107,8 +108,8 @@
 
                                 <ContentPresenter Grid.Row="1"
                                                   Grid.Column="0"
-                                                  MaxWidth="220"
-                                                  Margin="5,15,0,0"
+                                                  MaxWidth="210"
+                                                  Margin="5,20,0,0"
                                                   HorizontalAlignment="Left"
                                                   Content="{Binding ActualViewModel}"
                                                   ContentTemplate="{StaticResource PlayerDetail}" />

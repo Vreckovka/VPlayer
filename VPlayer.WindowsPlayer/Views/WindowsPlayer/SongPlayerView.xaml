@@ -73,9 +73,9 @@
                                           IsEnabled="{Binding IsPlaying}"
                                           MaxFrequency="9500"
                                           MiddleColor="#101b1f"
-                                          NormlizedDataMaxValue="35"
+                                          NormlizedDataMaxValue="30"
                                           NormlizedDataMinValue="2"
-                                          NumberOfColumns="200"
+                                          NumberOfColumns="300"
                                           Opacity="0.8"
                                           TopColor="#8bcde0">
 

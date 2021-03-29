@@ -73,7 +73,6 @@
 
                         <TextBlock Name="NameTxt"
                                    Grid.Row="0"
-                                   
                                    FontSize="20"
                                    Text="{Binding Name}">
                             <TextBlock.Style>
@@ -132,7 +131,6 @@
 
                         <TextBlock Grid.Row="1"
                                    HorizontalAlignment="Stretch"
-                                  
                                    FontSize="15"
                                    Text="{Binding Artist.Name}"
                                    TextAlignment="Center">
@@ -240,7 +238,6 @@
 
                         <TextBlock Name="NameTxt"
                                    Grid.Row="0"
-                                  
                                    FontSize="20"
                                    Text="{Binding Name}">
                             <b:Interaction.Behaviors>
@@ -252,7 +249,6 @@
 
                         <TextBlock Grid.Row="1"
                                    HorizontalAlignment="Stretch"
-                                   
                                    FontSize="15"
                                    Text="{Binding Artist.Name}"
                                    TextAlignment="Center">
@@ -357,7 +353,6 @@
 
                         <TextBlock Grid.Row="1"
                                    HorizontalAlignment="Stretch"
-                                  
                                    FontSize="15"
                                    Text="{Binding SizeString}"
                                    TextAlignment="Center">
@@ -405,8 +400,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="SongDescriptionTemplate">
-        <TextBlock Margin="5,0,0,0"
-                   FontSize="12">
+        <TextBlock Margin="0,0,0,0" FontSize="12">
             <Run FontSize="13" Text="{Binding ArtistViewModel.Name, Mode=OneWay}">
                 <Run.Style>
                     <Style TargetType="Run">
@@ -430,44 +424,13 @@
     </DataTemplate>
 
     <DataTemplate x:Key="PlayerDetail">
-        <Grid Margin="5">
+        <Grid Margin="5,0,0,0" VerticalAlignment="Center">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
-
-
-                <userControls:SoundVizualizer Grid.Row="2"
-                                              Width="{Binding ElementName=DescriptionText, Path=ActualWidth}"
-                                              Height="20"
-                                              Margin="-5,0,0,0"
-                                              HorizontalAlignment="Left"
-                                              VerticalAlignment="Top"
-                                              Background="Transparent"
-                                              BottomColor="#fc0f41"
-                                              IsEnabled="{Binding IsPlaying, Mode=OneWay, FallbackValue=False}"
-                                              MaxFrequency="100000"
-                                              MiddleColor="{StaticResource DefaultRedColor}"
-                                              NormlizedDataMaxValue="10"
-                                              NormlizedDataMinValue="1"
-                                              NumberOfColumns="200"
-                                              Opacity="1"
-                                              TopColor="{StaticResource DefaultRedColor}">
-
-                    <userControls:SoundVizualizer.Style>
-                        <Style TargetType="userControls:SoundVizualizer">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </userControls:SoundVizualizer.Style>
-                </userControls:SoundVizualizer>
-
 
                 <TextBlock FontSize="14"
                            FontWeight="DemiBold"
@@ -482,14 +445,44 @@
                                 VerticalAlignment="Top"
                                 Content="{Binding ActualItem}"
                                 ContentTemplateSelector="{StaticResource WindowsPlayerItemsTemplateSelector}" />
+
+
+                <userControls:SoundVizualizer Grid.Row="2"
+                                              Height="25"
+                                              MaxWidth="390"
+                                              Margin="0,0,0,0"
+                                              HorizontalAlignment="Left"
+                                              VerticalAlignment="Top"
+                                              Background="Transparent"
+                                              BottomColor="#fc0f41"
+                                              IsEnabled="{Binding IsPlaying, Mode=OneWay, FallbackValue=False}"
+                                              MaxFrequency="100000"
+                                              MiddleColor="{StaticResource DefaultRedColor}"
+                                              NormlizedDataMaxValue="10"
+                                              NormlizedDataMinValue="1"
+                                              NumberOfColumns="350"
+                                              Opacity="1"
+                                              TopColor="{StaticResource DefaultRedColor}">
+
+                    <userControls:SoundVizualizer.Style>
+                        <Style TargetType="userControls:SoundVizualizer">
+                            <Setter Property="Visibility" Value="Hidden" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </userControls:SoundVizualizer.Style>
+                </userControls:SoundVizualizer>
+
             </Grid>
         </Grid>
     </DataTemplate>
 
     <DataTemplate x:Key="TvShowEpisodeDescriptionDataTemplate">
         <TextBlock FontSize="12">
-            <Run Foreground="#948b79"
-                 Text="{Binding TvShow.Name, Mode=OneWay}" />
+            <Run Foreground="#948b79" Text="{Binding TvShow.Name, Mode=OneWay}" />
 
             <Run Foreground="#50edfffa" Text="(" />
             <Run FontWeight="Normal"

@@ -42,6 +42,22 @@ namespace VPlayer.Player.Behaviors
       base.OnAttached();
 
       AssociatedObject.ValueChanged += AssociatedObject_ValueChanged;
+      AssociatedObject.MouseWheel += AssociatedObject_MouseWheel;
+    }
+
+    private void AssociatedObject_MouseWheel(object sender, MouseWheelEventArgs e)
+    {
+      if (AssociatedObject.DataContext is IPlayableRegionViewModel playableRegionViewModel)
+      {
+        if (e.Delta > 0)
+        {
+          playableRegionViewModel.SeekForward();
+        }
+        else
+        {
+          playableRegionViewModel.SeekBackward();
+        }
+      }
     }
 
     protected override void OnDetaching()

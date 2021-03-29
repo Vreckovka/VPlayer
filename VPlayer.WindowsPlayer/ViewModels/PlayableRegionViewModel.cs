@@ -770,7 +770,7 @@ namespace VPlayer.Core.ViewModels
 
     #region SeekForward
 
-    public void SeekForward(int seekSize)
+    public void SeekForward(int seekSize = 50)
     {
       mediaPlayer.Position = mediaPlayer.Position + GetSeekSize(seekSize);
       ActualItem.ActualPosition = mediaPlayer.Position;
@@ -780,7 +780,7 @@ namespace VPlayer.Core.ViewModels
 
     #region SeekBackward
 
-    public void SeekBackward(int seekSize)
+    public void SeekBackward(int seekSize = 50)
     {
       mediaPlayer.Position = mediaPlayer.Position - GetSeekSize(seekSize);
       ActualItem.ActualPosition = mediaPlayer.Position;

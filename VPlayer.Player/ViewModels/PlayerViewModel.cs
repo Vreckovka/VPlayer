@@ -329,8 +329,7 @@ namespace VPlayer.Player.ViewModels
 
     #region KeyListener_OnKeyPressed
 
-    private int seekSize = 50;
-    private void KeyListener_OnKeyPressed(object sender, KeyPressedArgs e)
+   private void KeyListener_OnKeyPressed(object sender, KeyPressedArgs e)
     {
       switch (e.KeyPressed)
       {
@@ -355,7 +354,7 @@ namespace VPlayer.Player.ViewModels
           {
             if (mainWindow.IsActive)
             {
-              ActualViewModel?.SeekBackward(seekSize);
+              ActualViewModel?.SeekBackward();
             }
             break;
           }
@@ -363,7 +362,7 @@ namespace VPlayer.Player.ViewModels
           {
             if (mainWindow.IsActive)
             {
-              ActualViewModel?.SeekForward(seekSize);
+              ActualViewModel?.SeekForward();
             }
             break;
           }

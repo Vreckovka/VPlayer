@@ -22,13 +22,13 @@
                 <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-           
+
         </ResourceDictionary>
     </UserControl.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition />
+            <ColumnDefinition Width="*"/>
             <ColumnDefinition />
             <ColumnDefinition Width="auto" />
         </Grid.ColumnDefinitions>
@@ -42,38 +42,40 @@
             </Border.Background>
         </Border>
 
-        <ContentPresenter Grid.Column="0"
-                          HorizontalAlignment="Left"
-                          Content="{Binding StatusMessage}"
-                          ContentTemplate="{StaticResource StatusMessageDataTemplate}" />
-
-        <Border Grid.Column="0" HorizontalAlignment="Right">
+        <Border Grid.Column="0" HorizontalAlignment="Left">
             <Border.Background>
                 <LinearGradientBrush StartPoint="0 1" EndPoint="0 0">
                     <GradientStop Offset="1" Color="#101010" />
                     <GradientStop Offset="0" Color="{StaticResource BackgroudColor2}" />
                 </LinearGradientBrush>
             </Border.Background>
-            <ContentPresenter Margin="0,0,0,0"
+
+            <ContentPresenter Margin="5,0,0,0"
+                              HorizontalAlignment="Center"
                               Content="{Binding ActualViewModel}"
                               ContentTemplate="{StaticResource PlayerDetail}" />
         </Border>
+
+        <ContentPresenter Grid.Column="0"
+                          HorizontalAlignment="Left"
+                          Content="{Binding StatusMessage}"
+                          ContentTemplate="{StaticResource StatusMessageDataTemplate}" />
+
 
 
 
         <Border Grid.Column="0"
                 Grid.ColumnSpan="3"
-                Margin="0,0,0,0"
-                Padding="5"
+                Padding="0,5"
                 HorizontalAlignment="Center"
-                CornerRadius="5">
+                CornerRadius="0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
 
-                <Grid Grid.Row="1">
+                <Grid Grid.Row="1" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="auto" />
@@ -81,7 +83,7 @@
                     </Grid.ColumnDefinitions>
 
                     <controls1:ButtonWithIcon Grid.Column="0"
-                                              Margin="0,0,5,0"
+                                              Margin="0,0,0,0"
                                               HorizontalAlignment="Right"
                                               BorderThickness="0"
                                               Command="{Binding PreviousCommand}"
@@ -150,7 +152,7 @@
                        Text="{Binding ActualVolume, StringFormat={}{0} %}" />
         </Grid>
 
-       
+
     </Grid>
 
 </UserControl>

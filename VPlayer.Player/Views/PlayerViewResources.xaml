@@ -7,7 +7,10 @@
     <converters:DataContextChangedConverter x:Key="DataContextChangedConverter" />
 
     <DataTemplate x:Key="StatusMessageDataTemplate">
-        <Border Margin="0,0,30,0" Padding="10,5">
+        <Border Width="200"
+                Margin="0,0,0,0"
+                Padding="10,5"
+                BorderThickness="3">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto" />
@@ -52,43 +55,53 @@
                     <Run Text="{Binding NumberOfProcesses, Mode=OneWay}" />
                 </TextBlock>
 
-                <Grid.Style>
-                    <Style TargetType="Grid">
-                        <Setter Property="Opacity" Value="0" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status1:MessageStatusState.Done}">
-                                <DataTrigger.EnterActions>
-                                    <RemoveStoryboard BeginStoryboardName="ShowMessageStoryBoard" />
-                                    <BeginStoryboard x:Name="HideMessageStoryBoard">
-                                        <Storyboard>
-                                            <DoubleAnimation BeginTime="0:0:2"
-                                                             Storyboard.TargetProperty="Opacity"
-                                                             From="1.0"
-                                                             To="0.0"
-                                                             Duration="0:0:0:0.5" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </DataTrigger.EnterActions>
 
-                            </DataTrigger>
-
-                            <DataTrigger Binding="{Binding Converter={StaticResource DataContextChangedConverter}}" Value="True">
-                                <DataTrigger.EnterActions>
-                                    <RemoveStoryboard BeginStoryboardName="HideMessageStoryBoard" />
-                                    <BeginStoryboard x:Name="ShowMessageStoryBoard">
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                             From="0.0"
-                                                             To="1.0"
-                                                             Duration="0:0:0:0.2" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </DataTrigger.EnterActions>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Grid.Style>
             </Grid>
+
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Opacity" Value="0" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ActualMessageStatusState}" Value="{x:Static status1:MessageStatusState.Done}">
+                            <DataTrigger.EnterActions>
+                                <RemoveStoryboard BeginStoryboardName="ShowMessageStoryBoard" />
+                                <BeginStoryboard x:Name="HideMessageStoryBoard">
+                                    <Storyboard>
+                                        <DoubleAnimation BeginTime="0:0:2"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         From="1.0"
+                                                         To="0.0"
+                                                         Duration="0:0:0:0.5" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding Converter={StaticResource DataContextChangedConverter}}" Value="True">
+                            <DataTrigger.EnterActions>
+                                <RemoveStoryboard BeginStoryboardName="HideMessageStoryBoard" />
+                                <BeginStoryboard x:Name="ShowMessageStoryBoard">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                         From="0.0"
+                                                         To="1.0"
+                                                         Duration="0:0:0:0.2" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0 1" EndPoint="0 0">
+                    <GradientStop Offset="1" Color="#101010" />
+                    <GradientStop Offset="0" Color="{StaticResource BackgroudColor2}" />
+                </LinearGradientBrush>
+            </Border.Background>
+
         </Border>
     </DataTemplate>
 

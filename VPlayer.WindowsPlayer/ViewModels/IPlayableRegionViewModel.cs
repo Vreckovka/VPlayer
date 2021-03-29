@@ -18,8 +18,8 @@ namespace VPlayer.Core.ViewModels
     bool CanPlay { get; }
     public float Volume { get; }
     MediaPlayer MediaPlayer { get; }
-    void SeekForward(int seekSize);
-    void SeekBackward(int seekSize);
+    void SeekForward(int seekSize = 50);
+    void SeekBackward(int seekSize = 50);
     IObservable<int> ActualItemChanged { get; }
     void SetVolume(int pVolume);
   }
