@@ -5,8 +5,8 @@
                     xmlns:library="clr-namespace:VPlayer.Library"
                     xmlns:local="clr-namespace:VPlayer.StylesDictionaries"
                     xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
-                    xmlns:text1="clr-namespace:VCore.Behaviors.Text;assembly=VCore.WPF"
-                    xmlns:userControls="clr-namespace:VPlayer.Player.UserControls">
+                    xmlns:userControls="clr-namespace:VPlayer.Player.UserControls"
+                    xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="OverlayStyles.xaml" />
@@ -241,7 +241,7 @@
                                    FontSize="20"
                                    Text="{Binding Name}">
                             <b:Interaction.Behaviors>
-                                <text1:PanningTextWithFontSizeBehavior BiggerFontSize="25"
+                                <text:PanningTextWithFontSizeBehavior BiggerFontSize="25"
                                                                        Container="{Binding ElementName=ParentContainer}"
                                                                        IsMouseOverRelativeToContainer="True" />
                             </b:Interaction.Behaviors>
@@ -448,10 +448,9 @@
 
 
                 <userControls:SoundVizualizer Grid.Row="2"
+                                              Width="390"
                                               Height="25"
-                                              MaxWidth="390"
                                               Margin="0,0,0,0"
-                                              HorizontalAlignment="Left"
                                               VerticalAlignment="Top"
                                               Background="Transparent"
                                               BottomColor="#fc0f41"

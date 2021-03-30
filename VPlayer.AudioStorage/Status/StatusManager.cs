@@ -107,6 +107,15 @@ namespace VPlayer.Core.Managers.Status
 
     #endregion
 
+    public void UpdateMessageAndIncreaseProcessCount(StatusMessage statusMessage, int count = 1)
+    {
+      Application.Current.Dispatcher.Invoke(() =>
+      {
+        statusMessage.ProcessedCount++;
+        UpdateMessage(statusMessage);
+      });
+    }
+
     #endregion
   }
 }

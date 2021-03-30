@@ -481,13 +481,16 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       nameKeys = artists.Select(x => x.Key).ToList();
 
-      var videoNames = PlayList.OfType<VideoItemInPlaylistViewModel>().GroupBy(x => x.Description).Take(2).Select(x => x.Key).ToList();
+      if (nameKeys.Count == 0)
+      {
+        var videoNames = PlayList.OfType<VideoItemInPlaylistViewModel>().GroupBy(x => x.Description).Take(2).Select(x => x.Key).ToList();
 
-      nameKeys.AddRange(videoNames);
+        nameKeys.AddRange(videoNames);
+      }
 
       var playlistName = string.Join(", ", nameKeys.ToArray());
 
-      if (videoNames.Count > 2)
+      if (nameKeys.Count > 2)
       {
         playlistName += " ...";
       }

@@ -8,6 +8,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:prism="http://prismlibrary.com/"
         xmlns:regions="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPlayer.Core"
+        xmlns:attachedProperties="clr-namespace:VCore.AttachedProperties;assembly=VCore.WPF"
         Title="{Binding Title}"
         Width="1288"
         Height="830"

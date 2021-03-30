@@ -23,5 +23,10 @@ namespace VPlayer.Library.Views.TvShows
     {
       InitializeComponent();
     }
+
+    private void ListView_MouseWheel(object sender, MouseWheelEventArgs e)
+    {
+
+    }
   }
 }

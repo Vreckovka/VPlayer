@@ -56,12 +56,11 @@
                               ContentTemplate="{StaticResource PlayerDetail}" />
         </Border>
 
-        <ContentPresenter Grid.Column="0"
+        <ContentPresenter Grid.Column="2"
+                          Margin="0 -145 2 0"
                           HorizontalAlignment="Left"
                           Content="{Binding StatusMessage}"
                           ContentTemplate="{StaticResource StatusMessageDataTemplate}" />
-
-
 
 
         <Border Grid.Column="0"

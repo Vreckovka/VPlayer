@@ -2,18 +2,19 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:controls="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
-                    xmlns:text1="clr-namespace:VCore.Behaviors.Text;assembly=VCore.WPF">
+                    xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF"
+                    xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF">
 
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/DataTemplates.xaml" />
         <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/OverlayStyles.xaml" />
         <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/TextBlocksStyle.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/ButtonsStyle.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Button.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
 
-    <Style x:Key="ListViewItem_AlbumSongs" TargetType="{x:Type ListViewItem}">
+    <Style x:Key="ListViewItem_DetailItem" TargetType="{x:Type ListViewItem}">
         <Setter Property="Foreground" Value="{StaticResource 85_WhiteTransparentBrush}" />
         <Setter Property="FontWeight" Value="Light" />
         <Setter Property="Height" Value="35" />
@@ -35,6 +36,7 @@
                             <Button Margin="2.5,0,8,0"
                                     Command="{Binding Play}"
                                     Style="{StaticResource PlayMini}" />
+
                             <Grid Name="Container"
                                   Grid.Column="1"
                                   Margin="5,0"
@@ -47,7 +49,7 @@
                                            Text="{Binding Name}"
                                            TextTrimming="CharacterEllipsis">
                                     <b:Interaction.Behaviors>
-                                        <text1:PanningTextWithFontSizeBehavior BiggerFontSize="17"
+                                        <text:PanningTextWithFontSizeBehavior BiggerFontSize="17"
                                                                                Container="{Binding ElementName=Container}"
                                                                                IsMouseOverRelativeToContainer="True" />
                                     </b:Interaction.Behaviors>
@@ -56,7 +58,7 @@
                             <TextBlock Grid.Column="2"
                                        HorizontalAlignment="Right"
                                        VerticalAlignment="Center"
-                                       Text="{Binding Duration}" />
+                                       Text="{Binding Duration, Converter={converters:TimeConverter TimeType=Second}}" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -156,7 +158,7 @@
     <Style x:Key="AlbumsSongs" TargetType="ListView">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="ItemContainerStyle" Value="{StaticResource ListViewItem_AlbumSongs}" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource ListViewItem_DetailItem}" />
     </Style>
 
 

@@ -4,8 +4,7 @@
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                     xmlns:library="clr-namespace:VPlayer.Library"
                     xmlns:library1="clr-namespace:VPlayer.Library;assembly=VCore.WPF"
-                    xmlns:local="clr-namespace:VPlayer.StylesDictionaries"
-                    xmlns:text1="clr-namespace:VCore.Behaviors.Text;assembly=VCore.WPF">
+                    xmlns:local="clr-namespace:VPlayer.StylesDictionaries">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="OverlayStyles.xaml" />

@@ -41,8 +41,8 @@ namespace VPlayer.Player.UserControls
     private bool isTimerDisposed = true;
     private byte[] buffer;
     private IWaveSource waveSource;
-    private double normlizedDataMinValue;
-    private double normlizedDataMaxValue;
+    private double normlizedDataMinValue = 1;
+    private double normlizedDataMaxValue = 30;
     private string registredOutputDevice;
 
     System.Drawing.Color bottomColor = System.Drawing.Color.Green;

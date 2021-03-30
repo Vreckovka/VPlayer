@@ -15,7 +15,6 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Margin="5,0,0,0"
-                               
                                FontSize="12"
                                FontWeight="DemiBold">
                         <Run Text="{Binding TvShow.Name, Mode=OneWay}">
@@ -120,6 +119,33 @@
                             </Style>
                         </TextBlock.Style>
                     </TextBlock>
+
+                    <controls2:PathButton Grid.Column="1"
+                                          Width="13"
+                                          Height="13"
+                                          Margin="10,0,10,0"
+                                          HorizontalAlignment="Left"
+                                          VerticalAlignment="Center"
+                                          Panel.ZIndex="1"
+                                          IsChecked="{Binding IsFavorite}"
+                                          PathStyle="{StaticResource Favorite}"
+                                          ToolTip="Favorite">
+                        <controls2:PathButton.Style>
+                            <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
+                                <Setter Property="IconDefaultColor" Value="#10ffffff" />
+                                <Setter Property="IconHoverColor" Value="#8fd4f2" />
+                                <Setter Property="PathCheckedBrush" Value="#aa39b2e6" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                        <Setter Property="IconDefaultColor" Value="#30522e05" />
+                                        <Setter Property="IconHoverColor" Value="#79b1c9" />
+                                        <Setter Property="PathCheckedBrush" Value="#39b2e6" />
+                                    </DataTrigger>
+
+                                </Style.Triggers>
+                            </Style>
+                        </controls2:PathButton.Style>
+                    </controls2:PathButton>
                 </Grid>
             </Border>
 

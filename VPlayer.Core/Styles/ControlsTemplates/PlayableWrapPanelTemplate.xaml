@@ -7,7 +7,7 @@
                     xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF"
                     xmlns:domainClasses="clr-namespace:VPlayer.AudioStorage.DomainClasses;assembly=VPlayer.AudioStorage"
                     xmlns:library="clr-namespace:VPlayer.Library"
-                    xmlns:text1="clr-namespace:VCore.Behaviors.Text;assembly=VCore.WPF">
+                    xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
@@ -426,7 +426,7 @@
                                             </Style>
                                         </TextBlock.Style>
                                         <b:Interaction.Behaviors>
-                                            <text1:PanningTextWithFontSizeBehavior BiggerFontSize="25"
+                                            <text:PanningTextWithFontSizeBehavior BiggerFontSize="25"
                                                                                    Container="{Binding ElementName=GridParent}"
                                                                                    IsMouseOverRelativeToContainer="True" />
                                         </b:Interaction.Behaviors>

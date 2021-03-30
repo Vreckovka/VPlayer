@@ -67,15 +67,14 @@
               Background="#DD000000">
 
             <userControls:SoundVizualizer Grid.Row="0"
-                                          Grid.Column="0"
                                           HorizontalAlignment="Stretch"
                                           BottomColor="#251f3338"
                                           IsEnabled="{Binding IsPlaying}"
                                           MaxFrequency="9500"
                                           MiddleColor="#101b1f"
-                                          NormlizedDataMaxValue="30"
+                                          NormlizedDataMaxValue="31"
                                           NormlizedDataMinValue="2"
-                                          NumberOfColumns="300"
+                                          NumberOfColumns="255"
                                           Opacity="0.8"
                                           TopColor="#8bcde0">
 
@@ -141,7 +140,6 @@
                              Background="#FF202020"
                              BorderThickness="0"
                              Content="Info"
-                           
                              FontSize="18"
                              FontWeight="Light"
                              Foreground="#DCFFFFFF"
@@ -156,7 +154,6 @@
                 <TextBox Name="NameTxt"
                          Margin="0,0,0,0"
                          BorderThickness="0"
-                       
                          FontSize="43"
                          FontWeight="Bold"
                          Foreground="#f7ede1"
@@ -192,7 +189,6 @@
                 </TextBox>
 
                 <TextBlock HorizontalAlignment="Center"
-                          
                            FontSize="15"
                            FontWeight="DemiBold"
                            Foreground="#f2e0cb"

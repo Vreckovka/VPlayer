@@ -114,7 +114,7 @@
                             <Setter Property="BorderThickness" Value="0" />
                             <Setter Property="Padding" Value="0,10" />
                             <Setter Property="FontWeight" Value="Normal" />
-                            <Setter Property="IsHitTestVisible" Value="False" />
+                            <Setter Property="IsHitTestVisible" Value="True" />
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
@@ -174,7 +174,7 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Width="200" Header="Name">
+                        <GridViewColumn Width="295" Header="Name">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock FontSize="15"

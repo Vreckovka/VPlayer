@@ -6,8 +6,8 @@
              xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
              xmlns:local="clr-namespace:VPlayer.Library.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:text1="clr-namespace:VCore.Behaviors.Text;assembly=VCore.WPF"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
@@ -153,7 +153,7 @@
                                   </Style>
                                 </TextBlock.Style>
                                 <b:Interaction.Behaviors>
-                                  <text1:PanningTextWithFontSizeBehavior BiggerFontSize="25"
+                                  <text:PanningTextWithFontSizeBehavior BiggerFontSize="25"
                                                                          Container="{Binding ElementName=A}"
                                                                          IsMouseOverRelativeToContainer="True" />
                                 </b:Interaction.Behaviors>

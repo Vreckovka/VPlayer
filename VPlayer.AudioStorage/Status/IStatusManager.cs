@@ -9,5 +9,7 @@ namespace VPlayer.Core.Managers.Status
     IObservable<StatusMessage> OnStatusMessageUpdated { get; }
 
     void UpdateMessage(StatusMessage statusMessage);
+
+    void UpdateMessageAndIncreaseProcessCount(StatusMessage statusMessage, int count = 1);
   }
 }

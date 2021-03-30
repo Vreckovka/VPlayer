@@ -18,7 +18,25 @@ namespace VPlayer.Core.Managers.Status
 
     public Guid Id { get; }
 
-    public int NumberOfProcesses { get; }
+
+    #region NumberOfProcesses
+
+    private int bumberOfProcesses;
+
+    public int NumberOfProcesses
+    {
+      get { return bumberOfProcesses; }
+      set
+      {
+        if (value != bumberOfProcesses)
+        {
+          bumberOfProcesses = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     #region Process
 

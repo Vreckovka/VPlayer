@@ -4,6 +4,8 @@
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
              xmlns:behaviors1="clr-namespace:VPlayer.WindowsPlayer.Behaviors"
+             xmlns:behaviors2="clr-namespace:VPlayer.WindowsPlayer.Behaviors;assembly=VCore.WPF"
+             xmlns:behaviors3="clr-namespace:VCore.WPF.Behaviors;assembly=VCore.WPF"
              xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
              xmlns:converters1="clr-namespace:VCore.Converters;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -83,7 +85,7 @@
             </GridSplitter.Style>
         </GridSplitter>
 
-        <Grid Grid.Column="2" >
+        <Grid Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition />
@@ -148,7 +150,6 @@
                                       Grid.ColumnSpan="3"
                                       Height="40"
                                       Margin="15,7,15,0"
-                                     
                                       FontSize="14"
                                       KeyDownCommand="{Binding FinderKeyDown}"
                                       Text="{Binding ActualSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -172,11 +173,12 @@
             </ListView>
 
             <b:Interaction.Behaviors>
-                <behaviors1:HideWidthBehavior x:Name="HideBehavior"
-                                              MinWidth="00"
-                                              ExecuteButtonName="HideButton"
-                                              GridSplitterName="GridSplitter"
-                                              Duration="0:0:0:.35" />
+                <behaviors3:HideBehavior x:Name="HideBehavior"
+                                         ExecuteButtonName="HideButton"
+                                         GridSplitterName="GridSplitter"
+                                         MinValue="00"
+                                         ResizeParameter="Width"
+                                         Duration="0:0:0:.35" />
             </b:Interaction.Behaviors>
         </Grid>
 

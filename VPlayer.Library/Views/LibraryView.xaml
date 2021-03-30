@@ -1,7 +1,6 @@
 ﻿<UserControl x:Class="VPlayer.Library.Views.LibraryView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:behaviors1="clr-namespace:VCore.Behaviors;assembly=VCore.WPF"
              xmlns:controls2="clr-namespace:VCore.Controls;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:design1="clr-namespace:VCore.Design;assembly=VCore.WPF"
@@ -9,6 +8,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:regions="http://prismlibrary.com/"
              xmlns:regions1="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPlayer.Core"
+             xmlns:behaviors="clr-namespace:VCore.WPF.Behaviors;assembly=VCore.WPF"
              d:DesignHeight="650"
              d:DesignWidth="800"
              mc:Ignorable="d">
@@ -44,7 +44,7 @@
                               Text="{Binding ActualSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
             <Grid Grid.Row="1"
-                  behaviors1:DropBehavior.PreviewDropCommand="{Binding FilesDropped}"
+                  behaviors:DropBehavior.PreviewDropCommand="{Binding FilesDropped}"
                   AllowDrop="True">
                 <ContentControl regions:RegionManager.RegionName="{x:Static regions1:RegionNames.LibraryContentRegion}" />
             </Grid>

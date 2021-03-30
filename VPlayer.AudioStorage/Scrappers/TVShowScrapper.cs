@@ -64,7 +64,7 @@ namespace VPlayer.AudioStorage.Scrappers
           {
             logger.Log(MessageType.Inform, "Updating: Season " + season.SeasonNumber);
 
-            if (csfdTvShow.Seasons.Count > season.SeasonNumber)
+            if (csfdTvShow.Seasons.Count >= season.SeasonNumber)
             {
               foreach (var episode in season.Episodes)
               {

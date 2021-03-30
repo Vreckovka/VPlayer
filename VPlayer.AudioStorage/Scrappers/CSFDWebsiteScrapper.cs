@@ -84,8 +84,7 @@ namespace VPlayer.AudioStorage.Parsers
 
       tvShow.Name = GetTvShowName(url, out var posterUrl);
 
-      statusMessage.ProcessedCount++;
-      statusManager.UpdateMessage(statusMessage);
+      statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
 
       var poster = DownloadPoster(posterUrl);
 
@@ -94,11 +93,9 @@ namespace VPlayer.AudioStorage.Parsers
         tvShow.PosterPath = SaveImage(tvShow.Name, poster);
       }
 
-      statusMessage.ProcessedCount++;
-      statusMessage.ActualMessageStatusState = MessageStatusState.Done;
-      statusManager.UpdateMessage(statusMessage);
+      statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
 
-      tvShow.Seasons = LoadSeasons();
+      tvShow.Seasons = LoadSeasons(statusMessage);
 
       return tvShow;
     }
@@ -168,23 +165,19 @@ namespace VPlayer.AudioStorage.Parsers
 
     #region LoadSeasons
 
-    private List<CSFDTVShowSeason> LoadSeasons()
+    private List<CSFDTVShowSeason> LoadSeasons(StatusMessage statusMessage)
     {
       var seasons = new List<CSFDTVShowSeason>();
 
-      int elementIndex = 1;
-      bool wasFound;
       var document = new HtmlDocument();
 
       document.LoadHtml(chromeDriver.PageSource);
 
       var nodes = document.DocumentNode.SelectNodes("/html/body/div[2]/div[3]/div[1]/div[3]/div[2]/ul/li/a");
 
-      var statusMessage = new StatusMessage(nodes.Count)
-      {
-        ActualMessageStatusState = MessageStatusState.Processing,
-        Message = "Downloading tv show seasons"
-      };
+      statusMessage.Message = "Downloading tv show seasons";
+      statusMessage.ProcessedCount = 0;
+      statusMessage.NumberOfProcesses = nodes.Count;
 
       statusManager.UpdateMessage(statusMessage);
 
@@ -198,8 +191,6 @@ namespace VPlayer.AudioStorage.Parsers
         seasons.Add(newSeason);
 
         logger.Log(MessageType.Success, $"Tv show season: {newSeason.Name}");
-
-        elementIndex++;
       }
 
 
@@ -207,9 +198,7 @@ namespace VPlayer.AudioStorage.Parsers
       {
         season.SeasonEpisodes = LoadSeasonEpisodes(season.SeasonUrl);
 
-        statusMessage.ProcessedCount++;
-
-        statusManager.UpdateMessage(statusMessage);
+        statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
       }
 
       return seasons;
