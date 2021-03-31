@@ -15,12 +15,16 @@ namespace WinformsVisualization.Visualization
     private double _barSpacing;
 
     private Size _currentSize;
-    
 
     public LineSpectrum(FftSize fftSize)
     {
       FftSize = fftSize;
     }
+
+    public double NormlizedDataMaxValue { get; set; } = 30;
+    public double NormlizedDataMinValue { get; set; } = 0;
+
+    public bool UseSkew { get; set; }
 
     #region AutomaticBarCountCalculation
 
@@ -77,7 +81,7 @@ namespace WinformsVisualization.Visualization
       }
       set
       {
-        if(MinimumBarWidth != null && value < MinimumBarWidth)
+        if (MinimumBarWidth != null && value < MinimumBarWidth)
         {
           value = MinimumBarWidth.Value;
         }
@@ -127,9 +131,6 @@ namespace WinformsVisualization.Visualization
     }
 
     #endregion
-
-    public double NormlizedDataMaxValue { get; set; } = 30;
-    public double NormlizedDataMinValue { get; set; } = 0;
 
     #region CurrentSize
 
@@ -182,6 +183,8 @@ namespace WinformsVisualization.Visualization
 
     #endregion
 
+    #region CreateSpectrumLine
+
     public Bitmap CreateSpectrumLine(Size size, Color color1, Color color2, Color background, bool highQuality)
     {
       if (!UpdateFrequencyMappingIfNessesary(size))
@@ -193,6 +196,8 @@ namespace WinformsVisualization.Visualization
       }
     }
 
+    #endregion
+
     #region CreateSpectrumLineInternal
 
     private void CreateSpectrumLineInternal(Graphics graphics, Pen pen, float[] fftBuffer, Size size)
@@ -201,18 +206,21 @@ namespace WinformsVisualization.Visualization
 
       var spectrumPoints = CalculateSpectrumPoints(height, fftBuffer);
 
-      for (int i = 0; i < spectrumPoints.Length; i++)
+      if (UseSkew)
       {
-        if (i < spectrumPoints.Length * 0.05)
-          spectrumPoints[i].Value = Math.Pow(spectrumPoints[i].Value, 1);
-        else if (i < spectrumPoints.Length * 0.1)
-          spectrumPoints[i].Value = Math.Pow(spectrumPoints[i].Value, 1.2);
-        else if (i < spectrumPoints.Length * 0.15)
-          spectrumPoints[i].Value = Math.Pow(spectrumPoints[i].Value, 1.4);
-        else if (i < spectrumPoints.Length * 0.20)
-          spectrumPoints[i].Value = Math.Pow(spectrumPoints[i].Value, 1.6);
-        else
-          spectrumPoints[i].Value = Math.Pow(spectrumPoints[i].Value, 1.8);
+        for (int i = 0; i < spectrumPoints.Length; i++)
+        {
+          if (i < spectrumPoints.Length * 0.05)
+            spectrumPoints[i].Value = Math.Pow(spectrumPoints[i].Value, 1);
+          if (i < spectrumPoints.Length * 0.1)
+            spectrumPoints[i].Value = Math.Pow(spectrumPoints[i].Value, 1.2);
+          else if (i < spectrumPoints.Length * 0.15)
+            spectrumPoints[i].Value = Math.Pow(spectrumPoints[i].Value, 1.4);
+          else if (i < spectrumPoints.Length * 0.20)
+            spectrumPoints[i].Value = Math.Pow(spectrumPoints[i].Value, 1.6);
+          else
+            spectrumPoints[i].Value = Math.Pow(spectrumPoints[i].Value, 2.0);
+        }
       }
 
       SpectrumPointData[] spectrumPointsNormalized = NormalizeData(spectrumPoints, NormlizedDataMinValue, NormlizedDataMaxValue);
@@ -266,8 +274,7 @@ namespace WinformsVisualization.Visualization
 
     protected override void UpdateFrequencyMapping()
     {
-      //if (!AutomaticBarCountCalculation)
-        BarWidth = Math.Max(((_currentSize.Width - (BarSpacing * (BarCount + 1))) / BarCount), 0.00001);
+      BarWidth = Math.Max(((_currentSize.Width - (BarSpacing * (BarCount + 1))) / BarCount), 0.00001);
 
       base.UpdateFrequencyMapping();
     }

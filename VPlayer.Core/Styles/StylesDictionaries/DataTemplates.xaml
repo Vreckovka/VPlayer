@@ -453,14 +453,13 @@
                                               Margin="0,0,0,0"
                                               VerticalAlignment="Top"
                                               Background="Transparent"
-                                              BottomColor="#fc0f41"
+                                              BottomColor="#fe274b"
                                               IsEnabled="{Binding IsPlaying, Mode=OneWay, FallbackValue=False}"
                                               MaxFrequency="100000"
                                               MiddleColor="{StaticResource DefaultRedColor}"
                                               NormlizedDataMaxValue="10"
-                                              NormlizedDataMinValue="1"
-                                              MinimumBarWidth="1"
-                                              NumberOfColumns="350"
+                                              NormlizedDataMinValue="2"
+                                              NumberOfColumns="97"
                                               Opacity="1"
                                               TopColor="{StaticResource DefaultRedColor}">
 

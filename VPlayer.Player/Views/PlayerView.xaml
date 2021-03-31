@@ -28,7 +28,7 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*" />
             <ColumnDefinition />
             <ColumnDefinition Width="auto" />
         </Grid.ColumnDefinitions>
@@ -42,22 +42,73 @@
             </Border.Background>
         </Border>
 
-        <Border Grid.Column="0" HorizontalAlignment="Left">
-            <Border.Background>
-                <LinearGradientBrush StartPoint="0 1" EndPoint="0 0">
-                    <GradientStop Offset="1" Color="#101010" />
-                    <GradientStop Offset="0" Color="{StaticResource BackgroudColor2}" />
-                </LinearGradientBrush>
-            </Border.Background>
+        <Border Grid.Column="0"
+                Width="390"
+                HorizontalAlignment="Left"
+                Background="Transparent">
 
-            <ContentPresenter Margin="5,0,0,0"
-                              HorizontalAlignment="Center"
-                              Content="{Binding ActualViewModel}"
-                              ContentTemplate="{StaticResource PlayerDetail}" />
+
+            <Grid x:Name="GridParent"
+                  Margin="5,0,0,0"
+                  VerticalAlignment="Center"
+                  DataContext="{Binding ActualViewModel}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock FontSize="14"
+                               FontWeight="DemiBold"
+                               Foreground="#9ca379"
+                               Grid.IsSharedSizeScope="True"
+                               Text="{Binding ActualItem.Model.Name}" />
+
+                    <ContentControl x:Name="DescriptionText"
+                                    Grid.Row="1"
+                                    Margin="0,0,0,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    Content="{Binding ActualItem}"
+                                    ContentTemplateSelector="{StaticResource WindowsPlayerItemsTemplateSelector}" />
+
+
+                    <userControls:SoundVizualizer Grid.Row="2"
+                                                  Width="{Binding ElementName=GridParent, Path=ActualWidth}"
+                                                  Height="25"
+                                                  Margin="0,0,0,0"
+                                                  VerticalAlignment="Top"
+                                                  Background="Transparent"
+                                                  BottomColor="#fe274b"
+                                                  IsEnabled="{Binding IsPlaying, Mode=OneWay, FallbackValue=False}"
+                                                  MaxFrequency="10000"
+                                                  MiddleColor="{StaticResource DefaultRedColor}"
+                                                  MinimumBarWidth="1"
+                                                  NormlizedDataMaxValue="10"
+                                                  NormlizedDataMinValue="3"
+                                                  NumberOfColumns="130"
+                                                  Opacity="1"
+                                                  TopColor="{StaticResource DefaultRedColor}"
+                                                  UseSkew="True">
+
+                        <userControls:SoundVizualizer.Style>
+                            <Style TargetType="userControls:SoundVizualizer">
+                                <Setter Property="Visibility" Value="Hidden" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </userControls:SoundVizualizer.Style>
+                    </userControls:SoundVizualizer>
+                </Grid>
+            </Grid>
         </Border>
 
         <ContentPresenter Grid.Column="2"
-                          Margin="0 -145 2 0"
+                          Margin="0,-145,2,0"
                           HorizontalAlignment="Left"
                           Content="{Binding StatusMessage}"
                           ContentTemplate="{StaticResource StatusMessageDataTemplate}" />
@@ -74,7 +125,7 @@
                     <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
 
-                <Grid Grid.Row="1" >
+                <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="auto" />

@@ -26,7 +26,6 @@ namespace VPlayer.Player.UserControls
   /// </summary>
   ///
 
-  [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
   public partial class SoundVizualizer : UserControl
   {
     #region Fields
@@ -231,7 +230,6 @@ namespace VPlayer.Player.UserControls
 
     #endregion
 
-
     #region MaxFrequency
 
     public int MaxFrequency
@@ -312,6 +310,35 @@ namespace VPlayer.Player.UserControls
             }
 
             soundVizualizer.normlizedDataMinValue = newValue;
+          }
+        }));
+
+
+    #endregion
+
+    #region UseSkew
+
+    public bool UseSkew
+    {
+      get { return (bool)GetValue(UseSkewProperty); }
+      set { SetValue(UseSkewProperty, value); }
+    }
+
+    public static readonly DependencyProperty UseSkewProperty =
+      DependencyProperty.Register(
+        nameof(UseSkew),
+        typeof(bool),
+        typeof(SoundVizualizer),
+        new PropertyMetadata(false, (x, y) =>
+        {
+          if (x is SoundVizualizer soundVizualizer)
+          {
+            var newValue = (bool)y.NewValue;
+
+            if (soundVizualizer.lineSpectrum != null)
+            {
+              soundVizualizer.lineSpectrum.UseSkew = newValue;
+            }
           }
         }));
 
@@ -404,7 +431,7 @@ namespace VPlayer.Player.UserControls
 
     private IWaveSource SetupSampleSource(ISampleSource aSampleSource)
     {
-      const FftSize fftSize = FftSize.Fft4096;
+      const FftSize fftSize = FftSize.Fft8192;
       //create a spectrum provider which provides fft data based on some input
       var spectrumProvider = new BasicSpectrumProvider(aSampleSource.WaveFormat.Channels, aSampleSource.WaveFormat.SampleRate, fftSize);
 
@@ -420,7 +447,8 @@ namespace VPlayer.Player.UserControls
         ScalingStrategy = ScalingStrategy.Sqrt,
         MaximumFrequency = MaxFrequency,
         MinimumFrequency = 0,
-        MinimumBarWidth = MinimumBarWidth
+        MinimumBarWidth = MinimumBarWidth,
+        UseSkew = UseSkew
       };
 
       //AutomaticBarCountCalculation = UseAutomaticBarCountCalculation,

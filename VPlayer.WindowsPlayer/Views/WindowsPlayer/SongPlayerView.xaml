@@ -78,9 +78,10 @@
                                           MiddleColor="#101b1f"
                                           NormlizedDataMaxValue="25"
                                           NumberOfColumns="150"
-                                          NormlizedDataMinValue="2"
+                                          NormlizedDataMinValue="5"
                                           Opacity="0.8"
                                           TopColor="#8bcde0"
+                                          UseSkew="True"
                                           MinimumBarWidth="3"
                                           >
 
