@@ -176,7 +176,7 @@
                 <behaviors3:HideBehavior x:Name="HideBehavior"
                                          ExecuteButtonName="HideButton"
                                          GridSplitterName="GridSplitter"
-                                         MinValue="00"
+                                         MinValue="0"
                                          ResizeParameter="Width"
                                          Duration="0:0:0:.35" />
             </b:Interaction.Behaviors>

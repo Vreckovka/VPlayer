@@ -182,6 +182,56 @@ namespace VPlayer.Player.UserControls
 
     #endregion
 
+    #region MinimumBarWidth
+
+    public double? MinimumBarWidth
+    {
+      get { return (double?)GetValue(MinimumBarWidthProperty); }
+      set { SetValue(MinimumBarWidthProperty, value); }
+    }
+
+    public static readonly DependencyProperty MinimumBarWidthProperty =
+      DependencyProperty.Register(
+        nameof(MinimumBarWidth),
+        typeof(double?),
+        typeof(SoundVizualizer),
+        new PropertyMetadata(null, (x, y) =>
+        {
+          if (x is SoundVizualizer soundVizualizer)
+          {
+            var barWidth = (double)y.NewValue;
+            soundVizualizer.lineSpectrum.MinimumBarWidth = barWidth;
+          }
+        }));
+
+    #endregion
+
+    #region UseAutomaticBarCountCalculation
+
+    public bool UseAutomaticBarCountCalculation
+    {
+      get { return (bool)GetValue(UseAutomaticBarCountCalculationProperty); }
+      set { SetValue(UseAutomaticBarCountCalculationProperty, value); }
+    }
+
+    public static readonly DependencyProperty UseAutomaticBarCountCalculationProperty =
+      DependencyProperty.Register(
+        nameof(UseAutomaticBarCountCalculation),
+        typeof(bool),
+        typeof(SoundVizualizer),
+        new PropertyMetadata(false, (x, y) =>
+        {
+          if (x is SoundVizualizer soundVizualizer)
+          {
+            var use = (bool)y.NewValue;
+            soundVizualizer.lineSpectrum.AutomaticBarCountCalculation = use;
+          }
+        }));
+
+
+    #endregion
+
+
     #region MaxFrequency
 
     public int MaxFrequency
@@ -369,8 +419,14 @@ namespace VPlayer.Player.UserControls
         IsXLogScale = true,
         ScalingStrategy = ScalingStrategy.Sqrt,
         MaximumFrequency = MaxFrequency,
-        MinimumFrequency = 0
+        MinimumFrequency = 0,
+        MinimumBarWidth = MinimumBarWidth
       };
+
+      //AutomaticBarCountCalculation = UseAutomaticBarCountCalculation,
+      //BarWidth = BarWidth,
+      //NormlizedDataMaxValue = NormlizedDataMaxValue,
+      //NormlizedDataMinValue = NormlizedDataMinValue
 
       var notificationSource = new SingleBlockNotificationStream(aSampleSource);
 
@@ -471,7 +527,7 @@ namespace VPlayer.Player.UserControls
 
     #endregion
 
-   
+
     #region BitmapToImageSource
 
     BitmapImage BitmapToImageSource(Bitmap bitmap)

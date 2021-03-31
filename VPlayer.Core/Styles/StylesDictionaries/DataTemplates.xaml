@@ -5,8 +5,8 @@
                     xmlns:library="clr-namespace:VPlayer.Library"
                     xmlns:local="clr-namespace:VPlayer.StylesDictionaries"
                     xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
-                    xmlns:userControls="clr-namespace:VPlayer.Player.UserControls"
-                    xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF">
+                    xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF"
+                    xmlns:userControls="clr-namespace:VPlayer.Player.UserControls">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="OverlayStyles.xaml" />
@@ -242,8 +242,8 @@
                                    Text="{Binding Name}">
                             <b:Interaction.Behaviors>
                                 <text:PanningTextWithFontSizeBehavior BiggerFontSize="25"
-                                                                       Container="{Binding ElementName=ParentContainer}"
-                                                                       IsMouseOverRelativeToContainer="True" />
+                                                                      Container="{Binding ElementName=ParentContainer}"
+                                                                      IsMouseOverRelativeToContainer="True" />
                             </b:Interaction.Behaviors>
                         </TextBlock>
 
@@ -459,6 +459,7 @@
                                               MiddleColor="{StaticResource DefaultRedColor}"
                                               NormlizedDataMaxValue="10"
                                               NormlizedDataMinValue="1"
+                                              MinimumBarWidth="1"
                                               NumberOfColumns="350"
                                               Opacity="1"
                                               TopColor="{StaticResource DefaultRedColor}">

@@ -266,6 +266,8 @@ namespace VPlayer.Core.ViewModels
 
       if (ArtistViewModel != null)
         ArtistViewModel.IsInPlaylist = true;
+
+      LoadLRCFromEnitityLyrics();
     }
 
     #endregion
@@ -331,6 +333,7 @@ namespace VPlayer.Core.ViewModels
           switch (provider)
           {
             case LRCProviders.NotIdentified:
+              LRCFile = new LRCFileViewModel(lrc, provider);
               break;
             case LRCProviders.Google:
               LRCFile = new LRCFileViewModel(lrc, provider, googleDriveLrcProvider);
@@ -343,6 +346,10 @@ namespace VPlayer.Core.ViewModels
               throw new ArgumentOutOfRangeException();
           }
         }
+      }
+      else
+      {
+        RaisePropertyChanged(nameof(LyricsObject));
       }
     }
 
@@ -400,14 +407,13 @@ namespace VPlayer.Core.ViewModels
     {
       var client = new MiniLyricsLRCProvider();
 
-      var lrcString = await client.FindLRC(ArtistViewModel.Name, Name);
+      var lrcString = (await client.FindLRC(ArtistViewModel.Name, Name))?.Replace("\r", "");
 
       var parser = new LRCParser();
 
       if (lrcString != null)
       {
-
-        var lrc = parser.Parse(lrcString.Replace("\r", "").Split('\n').ToList());
+        var lrc = parser.Parse(lrcString.Split('\n').ToList());
 
         Model.LRCLyrics = lrcString;
 

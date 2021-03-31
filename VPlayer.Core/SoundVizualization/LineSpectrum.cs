@@ -13,19 +13,80 @@ namespace WinformsVisualization.Visualization
   {
     private int _barCount;
     private double _barSpacing;
-    private double _barWidth;
+
     private Size _currentSize;
+    
 
     public LineSpectrum(FftSize fftSize)
     {
       FftSize = fftSize;
     }
 
+    #region AutomaticBarCountCalculation
 
+    private bool automaticBarCountCalculation;
+
+    public bool AutomaticBarCountCalculation
+    {
+      get { return automaticBarCountCalculation; }
+      set
+      {
+        if (value != automaticBarCountCalculation)
+        {
+          automaticBarCountCalculation = value;
+          RaisePropertyChanged(nameof(CurrentSize));
+        }
+      }
+    }
+
+    #endregion
+
+    #region MinimumBarWidth
+
+    private double? minimumBarWidth;
+
+    public double? MinimumBarWidth
+    {
+      get { return minimumBarWidth; }
+      set
+      {
+        if (value != minimumBarWidth)
+        {
+          minimumBarWidth = value;
+
+          //if (AutomaticBarCountCalculation)
+          //{
+          //  BarCount = (int)(_currentSize.Width / BarWidth);
+          //}
+
+          UpdateFrequencyMapping();
+        }
+      }
+    }
+
+    #endregion
+
+    #region BarWidth
+
+    private double barWidth = 1;
     public double BarWidth
     {
-      get { return _barWidth; }
+      get
+      {
+        return barWidth;
+      }
+      set
+      {
+        if(MinimumBarWidth != null && value < MinimumBarWidth)
+        {
+          value = MinimumBarWidth.Value;
+        }
+
+        barWidth = value;
+      }
     }
+
+    #endregion
 
     #region BarSpacing
 
@@ -55,6 +116,7 @@ namespace WinformsVisualization.Visualization
       {
         if (value <= 0)
           throw new ArgumentOutOfRangeException("value");
+
         _barCount = value;
         SpectrumResolution = value;
         UpdateFrequencyMapping();
@@ -69,27 +131,22 @@ namespace WinformsVisualization.Visualization
     public double NormlizedDataMaxValue { get; set; } = 30;
     public double NormlizedDataMinValue { get; set; } = 0;
 
-    [BrowsableAttribute(false)]
+    #region CurrentSize
+
     public Size CurrentSize
     {
       get { return _currentSize; }
       protected set
       {
         _currentSize = value;
+
         RaisePropertyChanged("CurrentSize");
       }
     }
 
-    public float[] GetFttData()
-    {
-      var fftBuffer = new float[(int)FftSize];
-      if (SpectrumProvider.GetFftData(fftBuffer, this))
-      {
-        return fftBuffer;
-      }
+    #endregion
 
-      return null;
-    }
+    #region CreateSpectrumLine
 
     public Bitmap CreateSpectrumLine(Size size, Brush brush, Color background, bool highQuality)
     {
@@ -101,7 +158,7 @@ namespace WinformsVisualization.Visualization
       //get the fft result from the spectrum provider
       if (SpectrumProvider.GetFftData(fftBuffer, this))
       {
-        using (var pen = new Pen(brush, (float)_barWidth))
+        using (var pen = new Pen(brush, (float)BarWidth))
         {
           var bitmap = new Bitmap(size.Width, size.Height);
           using (Graphics graphics = Graphics.FromImage(bitmap))
@@ -123,29 +180,49 @@ namespace WinformsVisualization.Visualization
       return null;
     }
 
+    #endregion
+
     public Bitmap CreateSpectrumLine(Size size, Color color1, Color color2, Color background, bool highQuality)
     {
       if (!UpdateFrequencyMappingIfNessesary(size))
         return null;
 
-      using (Brush brush = new LinearGradientBrush(new RectangleF(0, 0, (float)_barWidth, size.Height), color2, color1, LinearGradientMode.Vertical))
+      using (Brush brush = new LinearGradientBrush(new RectangleF(0, 0, (float)BarWidth, size.Height), color2, color1, LinearGradientMode.Vertical))
       {
         return CreateSpectrumLine(size, brush, background, highQuality);
       }
     }
 
+    #region CreateSpectrumLineInternal
+
     private void CreateSpectrumLineInternal(Graphics graphics, Pen pen, float[] fftBuffer, Size size)
     {
       int height = size.Height;
-      //prepare the fft result for rendering 
-      SpectrumPointData[] spectrumPoints = NormalizeData(CalculateSpectrumPoints(height, fftBuffer), NormlizedDataMinValue, NormlizedDataMaxValue);
 
-      //connect the calculated points with lines
+      var spectrumPoints = CalculateSpectrumPoints(height, fftBuffer);
+
       for (int i = 0; i < spectrumPoints.Length; i++)
       {
-        SpectrumPointData p = spectrumPoints[i];
+        if (i < spectrumPoints.Length * 0.05)
+          spectrumPoints[i].Value = Math.Pow(spectrumPoints[i].Value, 1);
+        else if (i < spectrumPoints.Length * 0.1)
+          spectrumPoints[i].Value = Math.Pow(spectrumPoints[i].Value, 1.2);
+        else if (i < spectrumPoints.Length * 0.15)
+          spectrumPoints[i].Value = Math.Pow(spectrumPoints[i].Value, 1.4);
+        else if (i < spectrumPoints.Length * 0.20)
+          spectrumPoints[i].Value = Math.Pow(spectrumPoints[i].Value, 1.6);
+        else
+          spectrumPoints[i].Value = Math.Pow(spectrumPoints[i].Value, 1.8);
+      }
+
+      SpectrumPointData[] spectrumPointsNormalized = NormalizeData(spectrumPoints, NormlizedDataMinValue, NormlizedDataMaxValue);
+
+      //connect the calculated points with lines
+      for (int i = 0; i < spectrumPointsNormalized.Length; i++)
+      {
+        SpectrumPointData p = spectrumPointsNormalized[i];
         int barIndex = p.SpectrumPointIndex;
-        double xCoord = BarSpacing * (barIndex + 1) + (_barWidth * barIndex) + _barWidth / 2;
+        double xCoord = BarSpacing * (barIndex + 1) + (BarWidth * barIndex) + BarWidth / 2;
 
         var p1 = new PointF((float)xCoord, height);
         var p2 = new PointF((float)xCoord, height - ((float)(p.Value * 2) - 1));
@@ -154,13 +231,17 @@ namespace WinformsVisualization.Visualization
       }
     }
 
+    #endregion
+
+    #region NormalizeData
+
     private SpectrumPointData[] NormalizeData(SpectrumPointData[] data, double min, double max)
     {
       double dataMax = data.Max(x => x.Value);
       double dataMin = data.Min(x => x.Value);
       double range = dataMax - dataMin;
 
-      var normalized = 
+      var normalized =
          data.Select(d => (d.Value - dataMin) / range)
         .Select(n => (double)((1 - n) * min + n * max))
         .ToArray();
@@ -179,11 +260,21 @@ namespace WinformsVisualization.Visualization
       return normalizeSpectrum;
     }
 
+    #endregion
+
+    #region UpdateFrequencyMapping
+
     protected override void UpdateFrequencyMapping()
     {
-      _barWidth = Math.Max(((_currentSize.Width - (BarSpacing * (BarCount + 1))) / BarCount), 0.00001);
+      //if (!AutomaticBarCountCalculation)
+        BarWidth = Math.Max(((_currentSize.Width - (BarSpacing * (BarCount + 1))) / BarCount), 0.00001);
+
       base.UpdateFrequencyMapping();
     }
+
+    #endregion
+
+    #region UpdateFrequencyMappingIfNessesary
 
     private bool UpdateFrequencyMappingIfNessesary(Size newSize)
     {
@@ -195,6 +286,10 @@ namespace WinformsVisualization.Visualization
 
       return newSize.Width > 0 && newSize.Height > 0;
     }
+
+    #endregion
+
+    #region PrepareGraphics
 
     private void PrepareGraphics(Graphics graphics, bool highQuality)
     {
@@ -213,5 +308,7 @@ namespace WinformsVisualization.Visualization
         graphics.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
       }
     }
+
+    #endregion
   }
 }

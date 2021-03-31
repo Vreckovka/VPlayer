@@ -14,8 +14,6 @@ namespace VPlayer.Core.ViewModels
 {
   public class LRCFileViewModel : ViewModel<ILRCFile>
   {
-    private readonly ILrcProvider lrcProvider;
-
     #region Fields
 
     private readonly ILrcProvider sourceProvider;
@@ -24,10 +22,9 @@ namespace VPlayer.Core.ViewModels
 
     #region Constructors
 
-    public LRCFileViewModel(ILRCFile model, LRCProviders lRcProvider, ILrcProvider lrcProvider) : base(model)
+    public LRCFileViewModel(ILRCFile model, LRCProviders lRcProvider, ILrcProvider lrcProvider = null) : base(model)
     {
-      this.lrcProvider = lrcProvider ?? throw new ArgumentNullException(nameof(lrcProvider));
-
+      sourceProvider = lrcProvider;
       Provider = lRcProvider;
 
       Lines = model?.Lines.Select(x => new LRCLyricLineViewModel(x)).ToList();
@@ -158,8 +155,10 @@ namespace VPlayer.Core.ViewModels
 
           ActualLine = newLine;
 
-          if (newLine != null)
-            actualLineSubject.OnNext(Lines.IndexOf(newLine));
+          if (ActualLine != null)
+          {
+            actualLineSubject.OnNext(Lines.IndexOf(ActualLine));
+          }
         }
       }
     }
@@ -189,15 +188,15 @@ namespace VPlayer.Core.ViewModels
 
       if (Model is GoogleLRCFile google && Provider == LRCProviders.Google)
       {
-        lrcProvider.Update(Model);
+        sourceProvider.Update(Model);
       }
-      else
+      else if(sourceProvider != null)
       {
-       var lrcFile = await lrcProvider.TryGetLrcAsync(Model.Title, Model.Artist, Model.Album);
+       var lrcFile = await sourceProvider.TryGetLrcAsync(Model.Title, Model.Artist, Model.Album);
       
        Model = lrcFile;
 
-       lrcProvider.Update(lrcFile);
+       sourceProvider.Update(lrcFile);
       }
     
     }

@@ -407,24 +407,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-    #region OnPlayEvent
-
-    protected override void OnPlayEvent()
-    {
-      base.OnPlayEvent();
-
-
-      Task.Run(async () =>
-      {
-        foreach (var song in PlayList)
-        {
-          song.LoadLRCFromEnitityLyrics();
-        }
-      });
-    }
-
-    #endregion
-
     #region CheckCycle
 
     private void CheckCycle()
