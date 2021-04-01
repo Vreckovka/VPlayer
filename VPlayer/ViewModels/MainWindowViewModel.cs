@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Prism.Events;
 using Prism.Regions;
+using SoundManagement;
 using VCore;
 using VCore.Helpers;
 using VCore.Standard.Factories.ViewModels;
@@ -47,6 +48,8 @@ namespace VPlayer.ViewModels
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.regionManager = regionManager ?? throw new ArgumentNullException(nameof(regionManager));
+
+      AudioDeviceManager.Instance.RefreshAudioDevices();
 
     }
 

@@ -5,12 +5,14 @@
              xmlns:behaviors="clr-namespace:VPlayer.WindowsPlayer.Behaviors;assembly=VPlayer.WindowsPlayer"
              xmlns:behaviors1="clr-namespace:VPlayer.Player.Behaviors"
              xmlns:behaviors2="clr-namespace:VPlayer.Player.Behaviors;assembly=VPlayer.WindowsPlayer"
+             xmlns:behaviors3="clr-namespace:VCore.WPF.Behaviors;assembly=VCore.WPF"
              xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
              xmlns:converters="clr-namespace:VPlayer.Player.Converters"
              xmlns:converters1="clr-namespace:VCore.Converters;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:VPlayer.Player.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:soundManagement="clr-namespace:SoundManagement;assembly=SoundManagement"
              xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors;assembly=VPlayer.WindowsPlayer"
              xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
              mc:Ignorable="d">
@@ -30,6 +32,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition />
+            <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="auto" />
         </Grid.ColumnDefinitions>
 
@@ -118,7 +121,15 @@
                 Grid.ColumnSpan="3"
                 Padding="0,5"
                 HorizontalAlignment="Center"
+                Panel.ZIndex="1"
                 CornerRadius="0">
+
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0 1" EndPoint="0 0">
+                    <GradientStop Offset="1" Color="#101010" />
+                    <GradientStop Offset="0" Color="{StaticResource BackgroudColor2}" />
+                </LinearGradientBrush>
+            </Border.Background>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto" />
@@ -169,6 +180,79 @@
                 </Grid>
             </Grid>
         </Border>
+
+        <Grid Grid.Column="1"
+              Margin="5,8,5,5"
+              HorizontalAlignment="Right"
+              DataContext="{x:Static soundManagement:AudioDeviceManager.Instance}">
+
+            <controls1:ButtonWithIcon x:Name="HideButton" IconPathStyle="{StaticResource Windows}" />
+
+            <Grid Width="300"
+                  Height="0"
+                  Margin="-130,-150,-130,72"
+                  VerticalAlignment="Bottom"
+                  Background="#101010">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+
+                <ComboBox Margin="10"
+                          VerticalAlignment="Top"
+                          DisplayMemberPath="Description"
+                          ItemsSource="{Binding SoundDevices}"
+                          SelectedItem="{Binding SelectedSoundDevice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <b:Interaction.Triggers>
+                        <b:EventTrigger EventName="SelectionChanged">
+                            <b:InvokeCommandAction Command="{Binding Path=OnSelectedDeviceChangedCommand}" />
+                        </b:EventTrigger>
+                    </b:Interaction.Triggers>
+                </ComboBox>
+
+
+                <Grid Grid.Row="1"
+                      Margin="10,3,10,5"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Bottom">
+                    <Slider Grid.Row="0"
+                            Height="4"
+                            Margin="0,0,0,0"
+                            Padding="0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Foreground="{StaticResource DefaultRedBrush}"
+                            IsMoveToPointEnabled="True"
+                            Maximum="100"
+                            Value="{Binding ActualVolume, Mode=TwoWay}" />
+
+                    <TextBlock Margin="0,0,0,0"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Bottom"
+                               FontSize="14"
+                               FontWeight="DemiBold"
+                               Foreground="#656565"
+                               Text="Volume" />
+
+                    <TextBlock Margin="0,20,0,0"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Bottom"
+                               FontSize="14"
+                               FontWeight="DemiBold"
+                               Foreground="#ccc"
+                               Text="{Binding ActualVolume, StringFormat={}{0:N0} %}" />
+                </Grid>
+
+                <b:Interaction.Behaviors>
+                    <behaviors3:HideBehavior x:Name="HideBehavior"
+                                             ExecuteButtonName="HideButton"
+                                             MinValue="0"
+                                             ResizeParameter="Height"
+                                             ValueToExpand="100"
+                                             Duration="0:0:0:.20" />
+                </b:Interaction.Behaviors>
+            </Grid>
+        </Grid>
 
         <Grid Grid.Column="2"
               Margin="0,0,30,0"

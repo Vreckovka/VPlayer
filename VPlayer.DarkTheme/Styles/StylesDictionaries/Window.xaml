@@ -8,10 +8,11 @@
     </ResourceDictionary.MergedDictionaries>
 
     <Style TargetType="HeaderedContentControl">
+        <Setter Property="Foreground" Value="#ccc" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="HeaderedContentControl">
-                    <Border Padding="{TemplateBinding Padding}"
+                    <Border Margin="{TemplateBinding Margin}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
                         <Grid>
@@ -20,15 +21,15 @@
                                 <RowDefinition />
                             </Grid.RowDefinitions>
 
-                            <Border Padding="10" Background="#151515">
+                            <Border Padding="{TemplateBinding Padding}" Background="#151515">
                                 <TextBlock HorizontalAlignment="Center"
                                            FontSize="14"
-                                           Foreground="#ccc"
+                                           Foreground="{TemplateBinding Foreground}"
                                            Text="{TemplateBinding Header}" />
                             </Border>
 
                             <ContentPresenter Grid.Row="1"
-                                              Margin="0,10,0,0"
+                                              Margin="0,0,0,0"
                                               Content="{TemplateBinding Content}" />
                         </Grid>
                     </Border>

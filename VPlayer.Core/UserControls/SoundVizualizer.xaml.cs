@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Security.Permissions;
@@ -16,6 +17,8 @@ using CSCore.SoundIn;
 using CSCore.Streams;
 using CSCore.Streams.Effects;
 using CSCore.Win32;
+using SoundManagement;
+using VCore.Helpers;
 using WinformsVisualization.Visualization;
 using Color = System.Windows.Media.Color;
 
@@ -33,16 +36,25 @@ namespace VPlayer.Player.UserControls
     private LineSpectrum lineSpectrum;
     private int width;
     private int height;
-    private ISampleSource source;
-    private WasapiLoopbackCapture _soundIn;
-    private SoundInSource soundInSource;
+
+
+    private static ISampleSource source;
+    private static WasapiLoopbackCapture _soundIn;
+    private static SoundInSource soundInSource;
+    private static byte[] buffer;
+    private static string registredOutputDevice;
+    private static List<SoundVizualizer> soundVizualizers = new List<SoundVizualizer>();
+    private static bool wasSoundSourceInitilized = false;
+    private static BasicSpectrumProvider basicSpectrumProvider;
+    private const FftSize fftSize = FftSize.Fft8192;
+
     private Timer timer;
     private bool isTimerDisposed = true;
-    private byte[] buffer;
-    private IWaveSource waveSource;
+
+    private static IWaveSource waveSource;
     private double normlizedDataMinValue = 1;
     private double normlizedDataMaxValue = 30;
-    private string registredOutputDevice;
+
 
     System.Drawing.Color bottomColor = System.Drawing.Color.Green;
     System.Drawing.Color topColor = System.Drawing.Color.Red;
@@ -63,7 +75,11 @@ namespace VPlayer.Player.UserControls
 
       Application.Current.Dispatcher.ShutdownStarted += Dispatcher_ShutdownStarted;
 
-      RecreateSpectrumProvider();
+      soundVizualizers.Add(this);
+
+      InitilizeSoundSource();
+
+      AssignSpectrum();
     }
 
     private void SoundVizualizer_Unloaded(object sender, RoutedEventArgs e)
@@ -349,6 +365,33 @@ namespace VPlayer.Player.UserControls
 
     #region Methods
 
+    #region InitilizeSoundSource
+
+    private static void InitilizeSoundSource()
+    {
+      if (!wasSoundSourceInitilized)
+      {
+        RecreateSpectrumProvider();
+
+        wasSoundSourceInitilized = true;
+
+        AudioDeviceManager.Instance.ObservePropertyChange(x => x.SelectedSoundDevice).Subscribe(async x =>
+        {
+          await Task.Run(() =>
+          {
+            RecreateSpectrumProvider();
+          });
+
+          foreach (var soundVizualizer in soundVizualizers)
+          {
+            soundVizualizer.AssignSpectrum();
+          }
+        });
+      }
+    }
+
+    #endregion
+
     #region SoundVizualizer_Loaded
 
     private void SoundVizualizer_Loaded(object sender, RoutedEventArgs e)
@@ -418,28 +461,38 @@ namespace VPlayer.Player.UserControls
 
     #region ReadData
 
-    private void ReadData(object s, DataAvailableEventArgs dataAvailableEventArgs)
+    private static void ReadData(object s, DataAvailableEventArgs dataAvailableEventArgs)
     {
       int read;
 
-      while (!isTimerDisposed && (read = waveSource.Read(buffer, 0, buffer.Length)) > 0) ;
+      while ((read = waveSource.Read(buffer, 0, buffer.Length)) > 0) ;
     }
 
     #endregion
 
     #region SetupSampleSource
 
-    private IWaveSource SetupSampleSource(ISampleSource aSampleSource)
+    private static IWaveSource SetupSampleSource(ISampleSource aSampleSource)
     {
-      const FftSize fftSize = FftSize.Fft8192;
-      //create a spectrum provider which provides fft data based on some input
-      var spectrumProvider = new BasicSpectrumProvider(aSampleSource.WaveFormat.Channels, aSampleSource.WaveFormat.SampleRate, fftSize);
+      basicSpectrumProvider = new BasicSpectrumProvider(aSampleSource.WaveFormat.Channels, aSampleSource.WaveFormat.SampleRate, fftSize);
 
-      //linespectrum and voiceprint3dspectrum used for rendering some fft data
-      //in oder to get some fft data, set the previously created spectrumprovider 
+      var notificationSource = new SingleBlockNotificationStream(aSampleSource);
+
+      notificationSource.SingleBlockRead += (s, a) => basicSpectrumProvider.Add(a.Left, a.Right);
+
+      return notificationSource.ToWaveSource(16);
+
+    }
+
+    #endregion
+
+    #region AssignSpectrum
+
+    private void AssignSpectrum()
+    {
       lineSpectrum = new LineSpectrum(fftSize)
       {
-        SpectrumProvider = spectrumProvider,
+        SpectrumProvider = basicSpectrumProvider,
         UseAverage = true,
         BarCount = NumberOfColumns,
         BarSpacing = 2,
@@ -448,30 +501,17 @@ namespace VPlayer.Player.UserControls
         MaximumFrequency = MaxFrequency,
         MinimumFrequency = 0,
         MinimumBarWidth = MinimumBarWidth,
-        UseSkew = UseSkew
+        UseSkew = UseSkew,
+        NormlizedDataMaxValue = normlizedDataMaxValue,
+        NormlizedDataMinValue = normlizedDataMinValue
       };
-
-      //AutomaticBarCountCalculation = UseAutomaticBarCountCalculation,
-      //BarWidth = BarWidth,
-      //NormlizedDataMaxValue = NormlizedDataMaxValue,
-      //NormlizedDataMinValue = NormlizedDataMinValue
-
-      var notificationSource = new SingleBlockNotificationStream(aSampleSource);
-
-      lineSpectrum.NormlizedDataMaxValue = normlizedDataMaxValue;
-      lineSpectrum.NormlizedDataMinValue = normlizedDataMinValue;
-
-      notificationSource.SingleBlockRead += (s, a) => spectrumProvider.Add(a.Left, a.Right);
-
-      return notificationSource.ToWaveSource(16);
-
     }
 
     #endregion
 
     #region RecreateSpectrumProvider
 
-    private void RecreateSpectrumProvider()
+    private static void RecreateSpectrumProvider()
     {
       DisposeEqualizer();
 
@@ -480,7 +520,14 @@ namespace VPlayer.Player.UserControls
 
       soundInSource = new SoundInSource(_soundIn);
 
+     
+
       source = soundInSource.ToSampleSource().AppendSource(x => new PitchShifter(x), out var _pitchShifter);
+
+      var _dummyCapture = new WasapiCapture(true, AudioClientShareMode.Shared, 250) ;
+      
+      
+
 
       waveSource = SetupSampleSource(source);
 
@@ -495,17 +542,19 @@ namespace VPlayer.Player.UserControls
 
     #region DisposeEqualizer
 
-    private void DisposeEqualizer()
+    private static void DisposeEqualizer()
     {
       if (soundInSource != null)
       {
         soundInSource.DataAvailable -= ReadData;
       }
 
-      _soundIn?.Dispose();
       soundInSource?.Dispose();
       source?.Dispose();
       waveSource?.Dispose();
+      _soundIn?.Stop();
+      _soundIn?.Dispose();
+
     }
 
     #endregion
@@ -527,15 +576,6 @@ namespace VPlayer.Player.UserControls
           });
 
 
-          if (newImage == null)
-          {
-            if (registredOutputDevice != AudioDeviceManager.Instance.DefaultDevice)
-            {
-              registredOutputDevice = AudioDeviceManager.Instance.DefaultDevice;
-              RecreateSpectrumProvider();
-            }
-          }
-
           if (newImage != null)
           {
             await Task.Run(() =>
@@ -554,7 +594,6 @@ namespace VPlayer.Player.UserControls
 
 
     #endregion
-
 
     #region BitmapToImageSource
 
@@ -608,63 +647,5 @@ namespace VPlayer.Player.UserControls
     #endregion
 
     #endregion
-
-
-  }
-
-  public class AudioDeviceManager : IMMNotificationClient
-  {
-    public event EventHandler<string> DefaultDeviceChanged;
-
-    private static AudioDeviceManager instance;
-
-    private MMDeviceEnumerator mMDeviceEnumerator;
-    public string DefaultDevice { get; private set; }
-
-    #region Instance
-
-    public static AudioDeviceManager Instance
-    {
-      get
-      {
-        if (instance == null)
-        {
-          instance = new AudioDeviceManager();
-        }
-
-        return instance;
-      }
-    }
-
-    #endregion
-
-    public AudioDeviceManager()
-    {
-      mMDeviceEnumerator = new MMDeviceEnumerator();
-      mMDeviceEnumerator.RegisterEndpointNotificationCallback(this);
-    }
-
-    public void OnDeviceStateChanged(string deviceId, DeviceState deviceState)
-    {
-    }
-
-    public void OnDeviceAdded(string deviceId)
-    {
-    }
-
-    public void OnDeviceRemoved(string deviceId)
-    {
-    }
-
-    public void OnDefaultDeviceChanged(DataFlow dataFlow, Role role, string deviceId)
-    {
-      DefaultDevice = deviceId;
-
-      DefaultDeviceChanged?.Invoke(this, deviceId);
-    }
-
-    public void OnPropertyValueChanged(string deviceId, PropertyKey key)
-    {
-    }
   }
 }

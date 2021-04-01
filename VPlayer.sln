@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30503.244
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPlayer", "VPlayer\VPlayer.csproj", "{1FB08EAF-397B-4682-AFC9-73B3D1FA2CA5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener", "KeyListener\Listener.csproj", "{BA238278-32D0-4C4E-881A-AD2BE152832C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Listener", "KeyListener\Listener.csproj", "{BA238278-32D0-4C4E-881A-AD2BE152832C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPlayer.WebPlayer", "VPlayer.WebPlayer\VPlayer.WebPlayer.csproj", "{2D6B4AAE-1065-4E73-A96A-BDC154F0F4FE}"
 EndProject
@@ -30,6 +30,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPlayer.DarkTheme", "VPlayer.DarkTheme\VPlayer.DarkTheme.csproj", "{219D618D-ED68-4076-813C-B9C8DB4FF49C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebsiteParser", "..\CustomLibraries\WebsiteParser\WebsiteParser.csproj", "{FD6EC0C9-A961-49D9-83EE-5FA6020650C9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoundManagement", "..\CustomLibraries\SoundManagement\SoundManagement.csproj", "{748AB135-363C-40D5-80C1-9A551071D62C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -197,6 +199,18 @@ Global
 		{FD6EC0C9-A961-49D9-83EE-5FA6020650C9}.Release|x64.Build.0 = Release|Any CPU
 		{FD6EC0C9-A961-49D9-83EE-5FA6020650C9}.Release|x86.ActiveCfg = Release|Any CPU
 		{FD6EC0C9-A961-49D9-83EE-5FA6020650C9}.Release|x86.Build.0 = Release|Any CPU
+		{748AB135-363C-40D5-80C1-9A551071D62C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{748AB135-363C-40D5-80C1-9A551071D62C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{748AB135-363C-40D5-80C1-9A551071D62C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{748AB135-363C-40D5-80C1-9A551071D62C}.Debug|x64.Build.0 = Debug|Any CPU
+		{748AB135-363C-40D5-80C1-9A551071D62C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{748AB135-363C-40D5-80C1-9A551071D62C}.Debug|x86.Build.0 = Debug|Any CPU
+		{748AB135-363C-40D5-80C1-9A551071D62C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{748AB135-363C-40D5-80C1-9A551071D62C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{748AB135-363C-40D5-80C1-9A551071D62C}.Release|x64.ActiveCfg = Release|Any CPU
+		{748AB135-363C-40D5-80C1-9A551071D62C}.Release|x64.Build.0 = Release|Any CPU
+		{748AB135-363C-40D5-80C1-9A551071D62C}.Release|x86.ActiveCfg = Release|Any CPU
+		{748AB135-363C-40D5-80C1-9A551071D62C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -206,6 +220,7 @@ Global
 		{5AA43597-FD3D-4F10-89A5-EB77D3B831D9} = {E90D9EBC-6FA1-471C-84A9-CFC5B30756E4}
 		{219D618D-ED68-4076-813C-B9C8DB4FF49C} = {E90D9EBC-6FA1-471C-84A9-CFC5B30756E4}
 		{FD6EC0C9-A961-49D9-83EE-5FA6020650C9} = {E90D9EBC-6FA1-471C-84A9-CFC5B30756E4}
+		{748AB135-363C-40D5-80C1-9A551071D62C} = {E90D9EBC-6FA1-471C-84A9-CFC5B30756E4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7757B067-0629-4B99-BC33-50BF3898A109}

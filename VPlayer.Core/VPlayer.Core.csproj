@@ -14,6 +14,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CustomLibraries\Logger\Logger.csproj" />
+    <ProjectReference Include="..\..\CustomLibraries\SoundManagement\SoundManagement.csproj" />
     <ProjectReference Include="..\..\CustomLibraries\VCore.Standard\VCore.Standard.csproj" />
     <ProjectReference Include="..\..\CustomLibraries\VCore\VCore.WPF.csproj" />
     <ProjectReference Include="..\KeyListener\Listener.csproj" />
