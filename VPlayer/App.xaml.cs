@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.Common;
 using System.Diagnostics;
+using System.Globalization;
 using System.Windows;
 using Ninject;
 using Prism.Ioc;
@@ -40,6 +41,8 @@ namespace VPlayer
       Kernel.Load<CommonNinjectModule>();
       Kernel.Load<WPFNinjectModule>();
       Kernel.Load<VPlayerNinjectModule>();
+
+      CultureInfo.CurrentCulture = new CultureInfo("en-US");
 
 #if DEBUG
 

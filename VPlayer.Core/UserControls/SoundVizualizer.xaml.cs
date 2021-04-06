@@ -552,6 +552,7 @@ namespace VPlayer.Player.UserControls
       soundInSource?.Dispose();
       source?.Dispose();
       waveSource?.Dispose();
+
       _soundIn?.Stop();
       _soundIn?.Dispose();
 
@@ -633,15 +634,23 @@ namespace VPlayer.Player.UserControls
 
     #region Dispatcher_ShutdownStarted
 
+    private static object disposeBatton = new object();
+    private static bool disposedFromShutDown = false;
     private void Dispatcher_ShutdownStarted(object sender, EventArgs e)
     {
-      if (soundInSource != null)
-        soundInSource.DataAvailable -= ReadData;
+      lock (disposeBatton)
+      {
+        if (!disposedFromShutDown)
+        {
+          disposedFromShutDown = true;
+          if (soundInSource != null)
+            soundInSource.DataAvailable -= ReadData;
 
-      DisposeTimer();
+          DisposeTimer();
 
-      DisposeEqualizer();
-
+          DisposeEqualizer();
+        } 
+      }
     }
 
     #endregion

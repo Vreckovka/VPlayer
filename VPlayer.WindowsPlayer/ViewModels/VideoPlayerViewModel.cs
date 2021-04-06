@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reflection;
@@ -28,6 +30,7 @@ using VCore.Modularity.RegionProviders;
 using VCore.Standard.Helpers;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
+using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
@@ -37,6 +40,8 @@ using VPlayer.Core.ViewModels.TvShows;
 using VPlayer.Player.Views.WindowsPlayer;
 using VPlayer.WindowsPlayer.Providers;
 using VPlayer.WindowsPlayer.ViewModels.VideoProperties;
+using VPlayer.WindowsPlayer.ViewModels.Windows;
+using VPlayer.WindowsPlayer.Views.Prompts;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer;
 using Application = System.Windows.Application;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
@@ -45,6 +50,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 {
   public class VideoPlayerViewModel : PlayableRegionViewModel<WindowsPlayerView, VideoItemInPlaylistViewModel, VideoPlaylist, PlaylistVideoItem, VideoItem>
   {
+    private readonly IWindowManager windowManager;
     protected TaskCompletionSource<bool> loadedTask = new TaskCompletionSource<bool>();
 
     public VideoPlayerViewModel(
@@ -53,9 +59,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
        ILogger logger,
       IStorageManager storageManager,
        IEventAggregator eventAggregator,
-      IVlcProvider vlcProvider) :
+      IVlcProvider vlcProvider,
+      IWindowManager windowManager) :
       base(regionProvider, kernel, logger, storageManager, eventAggregator, vlcProvider)
     {
+      this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
     }
 
     #region Properties
@@ -140,6 +148,44 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region CropRatios
+
+    private RxObservableCollection<AspectRatioViewModel> cropRatios;
+
+    public RxObservableCollection<AspectRatioViewModel> CropRatios
+    {
+      get { return cropRatios; }
+      set
+      {
+        if (value != cropRatios)
+        {
+          cropRatios = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region IsBuffering
+
+    private bool isBuffering;
+
+    public bool IsBuffering
+    {
+      get { return isBuffering; }
+      set
+      {
+        if (value != isBuffering)
+        {
+          isBuffering = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #endregion
 
     #region Commands
@@ -169,28 +215,111 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region PlayFromStream
+
+    private ActionCommand playFromStream;
+
+    public ICommand PlayFromStream
+    {
+      get
+      {
+        if (playFromStream == null)
+        {
+          playFromStream = new ActionCommand(OnPlayFromStream);
+        }
+
+        return playFromStream;
+      }
+    }
+
+    public void OnPlayFromStream()
+    {
+      var vm = new PlayFromStreamViewModel()
+      {
+        Title = "Play from stream"
+      };
+
+      windowManager.ShowPrompt<PlayFromStreamView>(vm);
+
+      if (vm.PromptResult == VCore.WPF.ViewModels.Prompt.PromptResult.Ok)
+      {
+        var item = new VideoItemInPlaylistViewModel(new VideoItem()
+        {
+          Name = "Stream file",
+          DiskLocation = vm.StreamUrl,
+          Duration = (int)new TimeSpan(99, 99, 99).TotalSeconds
+        }, eventAggregator, storageManager);
+
+        try
+        {
+          PlayList.Add(item);
+
+          ReloadVirtulizedPlaylist();
+
+          RaisePropertyChanged(nameof(CanPlay));
+
+          SetItemAndPlay(PlayList.IndexOf(item), true);
+        }
+        catch (Exception ex)
+        {
+          windowManager.ShowPrompt(ex.ToString(), "Error");
+
+          PlayList.Remove(item);
+
+          ActualItem = null;
+
+          ReloadVirtulizedPlaylist();
+        }
+      }
+    }
+
+    #endregion
+
     #endregion
 
     #region Methods
 
     #region Initialize
 
-    public override void Initialize()
+    public override async void Initialize()
     {
       IsPlaying = false;
-      base.Initialize();
+      await base.InitializeAsync();
 
       eventAggregator.GetEvent<RemoveFromPlaylistEvent<TvShowEpisodeInPlaylistViewModel>>().Subscribe(RemoveFromPlaystTvShow).DisposeWith(this);
       eventAggregator.GetEvent<PlaySongsFromPlayListEvent<TvShowEpisodeInPlaylistViewModel>>().Subscribe(PlayItemFromPlayList).DisposeWith(this);
       eventAggregator.GetEvent<PlayItemsEvent<VideoItem, TvShowEpisodeInPlaylistViewModel>>().Subscribe(PlayTvShowItems).DisposeWith(this);
 
-      aspectRatios = new RxObservableCollection<AspectRatioViewModel>()
+
+      var ratios = new AspectRatioViewModel[]
       {
+        new AspectRatioViewModel("Default")
+          {
+            IsDefault = true
+          },
         new AspectRatioViewModel("1:1"),
         new AspectRatioViewModel("4:3"),
         new AspectRatioViewModel("16:9"),
         new AspectRatioViewModel("21:9"),
+        new AspectRatioViewModel("2.35:1")
+          {
+            Value = "235:100"
+          },
+        new AspectRatioViewModel("2.39:1")
+        {
+          Value = "239:100"
+        },
       };
+
+      aspectRatios = new RxObservableCollection<AspectRatioViewModel>();
+      cropRatios = new RxObservableCollection<AspectRatioViewModel>();
+
+      foreach (var ratio in ratios)
+      {
+        aspectRatios.Add(ratio.Copy());
+        cropRatios.Add(ratio.Copy());
+      }
+
 
       Subtitles.ItemUpdated
         .Where(x => x.EventArgs.PropertyName == nameof(VideoProperty.IsSelected))
@@ -221,6 +350,27 @@ namespace VPlayer.WindowsPlayer.ViewModels
           MakeSingleSelection(AspectRatios, x);
           OnAspectRatioSelected(x);
         }).DisposeWith(this);
+
+      CropRatios.ItemUpdated
+        .Where(x => x.EventArgs.PropertyName == nameof(VideoProperty.IsSelected))
+        .Select(x => (AspectRatioViewModel)x.Sender)
+        .Where(x => x.IsSelected)
+        .Subscribe(x =>
+        {
+          MakeSingleSelection(CropRatios, x);
+          OnCropRatioSelected(x);
+        }).DisposeWith(this);
+
+      MediaPlayer.Buffering += MediaPlayer_Buffering;
+    }
+
+
+    private void MediaPlayer_Buffering(object sender, MediaPlayerBufferingEventArgs e)
+    {
+      if (e.Cache != 100)
+        IsBuffering = true;
+      else
+        IsBuffering = false;
     }
 
 
@@ -305,12 +455,42 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       if (ActualItem != null)
       {
+        var ratio = selectedItem.Value;
         var model = ActualItem.Model;
 
-        model.AspectRatio = selectedItem.Description;
+        if (selectedItem.IsDefault)
+        {
+          ratio = null;
+        }
+
+        model.AspectRatio = ratio;
 
         MediaPlayer.AspectRatio = model.AspectRatio;
 
+        storageManager.UpdateEntityAsync(model);
+      }
+    }
+
+    #endregion
+
+    #region OnCropRatioSelected
+
+    private void OnCropRatioSelected(AspectRatioViewModel selectedItem)
+    {
+      if (ActualItem != null)
+      {
+        var ratio = selectedItem.Value;
+        var model = ActualItem.Model;
+
+        if (selectedItem.IsDefault)
+        {
+          ratio = null;
+        }
+
+        model.CropRatio = selectedItem.Description;
+
+        MediaPlayer.CropGeometry = ratio;
+        
         storageManager.UpdateEntityAsync(model);
       }
     }
@@ -349,7 +529,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       Application.Current.Dispatcher.Invoke(() =>
       {
         AspectRatios.ForEach(x => x.IsSelected = false);
-
+        CropRatios.ForEach(x => x.IsSelected = false);
       });
 
       if (MediaPlayer.Media != null)
@@ -359,10 +539,17 @@ namespace VPlayer.WindowsPlayer.ViewModels
         if (ActualItem != null)
         {
           MediaPlayer.AspectRatio = ActualItem.Model.AspectRatio;
+          MediaPlayer.CropGeometry = ActualItem.Model.CropRatio;
 
           if (MediaPlayer.AspectRatio != null)
           {
             var selected = AspectRatios.Single(x => x.Description == MediaPlayer.AspectRatio);
+            selected.IsSelected = true;
+          }
+
+          if (MediaPlayer.CropGeometry != null)
+          {
+            var selected = CropRatios.Single(x => x.Description == MediaPlayer.CropGeometry);
             selected.IsSelected = true;
           }
         }
@@ -421,22 +608,56 @@ namespace VPlayer.WindowsPlayer.ViewModels
         if (MediaPlayer.Media != null)
           MediaPlayer.Media.ParsedChanged -= MediaPlayer_ParsedChanged;
 
-        uint widht = 0;
-        uint height = 0;
-        MediaPlayer.Size(0, ref widht, ref height);
-
-        var aspectRation = GetRatio((int)widht, (int)height);
-
-        if(AspectRatios.SingleOrDefault(x => x.IsSelected) == null)
-        {
-          var actualRatio = AspectRatios.SingleOrDefault(x => x.Description == aspectRation);
-
-          if (actualRatio != null)
-          {
-            actualRatio.IsSelected = true;
-          }
-        }
+        SelectAspectCropRatios();
       });
+    }
+
+    #endregion
+
+    #region SelectAspectCropRatios
+
+    private void SelectAspectCropRatios()
+    {
+      uint width = 0;
+      uint height = 0;
+      MediaPlayer.Size(0, ref width, ref height);
+
+      var aspectRation = GetRatio((int)width, (int)height);
+
+
+      if (AspectRatios.SingleOrDefault(x => x.IsSelected) == null)
+      {
+        var actualRatio = AspectRatios.SingleOrDefault(x => x.Description == aspectRation);
+
+        if (actualRatio != null)
+        {
+          actualRatio.IsSelected = true;
+        }
+
+        if (actualRatio == null)
+        {
+          actualRatio = AspectRatios.Single(x => x.IsDefault);
+
+          actualRatio.IsSelected = true;
+        }
+      }
+
+      if (CropRatios.SingleOrDefault(x => x.IsSelected) == null)
+      {
+        var actualRatio = CropRatios.SingleOrDefault(x => x.Description == aspectRation);
+
+        if (actualRatio != null)
+        {
+          actualRatio.IsSelected = true;
+        }
+
+        if (actualRatio == null)
+        {
+          actualRatio = CropRatios.Single(x => x.IsDefault);
+
+          actualRatio.IsSelected = true;
+        }
+      }
     }
 
     #endregion

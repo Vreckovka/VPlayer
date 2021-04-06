@@ -7,6 +7,7 @@
              xmlns:behaviors2="clr-namespace:VPlayer.WindowsPlayer.Behaviors;assembly=VCore.WPF"
              xmlns:behaviors3="clr-namespace:VCore.WPF.Behaviors;assembly=VCore.WPF"
              xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
+             xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
              xmlns:converters1="clr-namespace:VCore.Converters;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
@@ -46,6 +47,7 @@
                     Grid.Row="1"
                     Margin="10,0,1,0"
                     Padding="0"
+                    IsEnabled="{Binding IsBuffering, Converter={converters:InverseConverter}}"
                     IsMoveToPointEnabled="True"
                     Maximum="1"
                     Value="{Binding ActualItem.ActualPosition}">

@@ -10,6 +10,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     public string Name { get; set; }
     public bool IsFavorite { get; set; }
     public string AspectRatio { get; set; }
+    public string CropRatio { get; set; }
     public int? AudioTrack { get; set; }
     public int? SubtitleTrack { get; set; }
 
@@ -22,6 +23,7 @@ namespace VPlayer.AudioStorage.DomainClasses
       Name = other.Name;
       IsFavorite = other.IsFavorite;
       AspectRatio = other.AspectRatio;
+      CropRatio = other.CropRatio;
       AudioTrack = other.AudioTrack;
       SubtitleTrack = other.SubtitleTrack;
     }

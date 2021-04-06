@@ -88,15 +88,13 @@
 
     <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="{x:Type Separator}">
         <Setter Property="Height" Value="1" />
+        <Setter Property="Width" Value="1" />
         <Setter Property="Margin" Value="0,4,0,4" />
+        <Setter Property="Background" Value="{DynamicResource BorderMediumColor}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Separator}">
-                    <Border BorderThickness="1">
-                        <Border.BorderBrush>
-                            <SolidColorBrush Color="{DynamicResource BorderMediumColor}" />
-                        </Border.BorderBrush>
-                    </Border>
+                    <Border Width="{TemplateBinding Width}" Background="{TemplateBinding Background}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -182,7 +180,7 @@
 
     <!--  TopLevelItem  -->
     <ControlTemplate x:Key="{x:Static MenuItem.TopLevelItemTemplateKey}" TargetType="{x:Type MenuItem}">
-        <Border x:Name="Border">
+        <Border x:Name="Border" Background="{TemplateBinding Background}">
             <Grid>
                 <ContentPresenter Margin="6,3,6,3"
                                   HorizontalAlignment="Center"
@@ -193,7 +191,34 @@
         </Border>
         <ControlTemplate.Triggers>
             <Trigger Property="IsHighlighted" Value="true">
-                <Setter TargetName="Border" Property="Background" Value="red" />
+                <Trigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation Storyboard.TargetName="Border"
+                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                            To="{StaticResource 22_DefaultWhiteColor}"
+                                            Duration="{StaticResource MenuHoverAnimationDuration}" />
+
+                            <ColorAnimation Storyboard.TargetProperty="(TextBox.Foreground).(SolidColorBrush.Color)"
+                                            To="{StaticResource DefaultWhiteColor}"
+                                            Duration="{StaticResource MenuHoverAnimationDuration}" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation Storyboard.TargetName="Border"
+                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                            To="Transparent"
+                                            Duration="{StaticResource MenuHoverAnimationDuration}" />
+
+                            <ColorAnimation Storyboard.TargetProperty="(TextBox.Foreground).(SolidColorBrush.Color)"
+                                            To="{StaticResource SecondaryForegroundColor}"
+                                            Duration="{StaticResource MenuHoverAnimationDuration}" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </Trigger.ExitActions>
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Foreground">
@@ -485,7 +510,7 @@
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{StaticResource SecondaryForegroundBrush}" />
-  
+
         <Style.Triggers>
             <Trigger Property="Role" Value="TopLevelHeader">
                 <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelHeaderTemplateKey}}" />

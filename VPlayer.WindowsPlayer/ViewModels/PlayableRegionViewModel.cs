@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -353,7 +354,16 @@ namespace VPlayer.Core.ViewModels
 
     #region Initialize
 
-    public override async void Initialize()
+    public override void Initialize()
+    {
+      InitializeAsync();
+    }
+
+    #endregion
+
+    #region InitializeAsync
+
+    public async Task InitializeAsync()
     {
       IsPlaying = false;
 
@@ -556,6 +566,10 @@ namespace VPlayer.Core.ViewModels
         }
 
         SetActualItem(actualItemIndex);
+
+        if (ActualItem == null)
+          return;
+
         await SetVlcMedia(ActualItem.Model);
 
         if (IsPlaying || forcePlay)
@@ -596,7 +610,7 @@ namespace VPlayer.Core.ViewModels
 
     #region SetVlcMedia
 
-    private Task SetVlcMedia(TModel model)
+    protected virtual Task SetVlcMedia(TModel model)
     {
       return Task.Run(() =>
       {
@@ -605,8 +619,6 @@ namespace VPlayer.Core.ViewModels
         var fileUri = new Uri(model.DiskLocation);
 
         media = new Media(libVLC, fileUri);
-
-        //media = new Media(libVLC, new Uri(@"G:\Gladiator Extended.mkv"));
 
         mediaPlayer.Media = media;
 
@@ -621,7 +633,7 @@ namespace VPlayer.Core.ViewModels
 
     #region Media_DurationChanged
 
-    private void Media_DurationChanged(object sender, MediaDurationChangedEventArgs e)
+    protected void Media_DurationChanged(object sender, MediaDurationChangedEventArgs e)
     {
       Application.Current.Dispatcher.Invoke(() =>
       {
@@ -642,9 +654,13 @@ namespace VPlayer.Core.ViewModels
     {
       if (ActualItem != null)
       {
-        var position = ((eventArgs.Time * 100) / (ActualItem.Duration * (float)1000.0)) / 100;
-        ActualItem.ActualPosition = position;
-        ActualSavedPlaylist.LastItemElapsedTime = position;
+        var position = ((eventArgs.Time * 100) / (ActualItem.Duration * (float) 1000.0)) / 100;
+
+        if (!double.IsNaN(position) && !double.IsInfinity(position))
+        {
+          ActualItem.ActualPosition = position;
+          ActualSavedPlaylist.LastItemElapsedTime = position;
+        }
       }
     }
 

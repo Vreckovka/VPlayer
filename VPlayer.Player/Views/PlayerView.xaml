@@ -10,6 +10,7 @@
              xmlns:converters="clr-namespace:VPlayer.Player.Converters"
              xmlns:converters1="clr-namespace:VCore.Converters;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:local="clr-namespace:VPlayer.Player.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:soundManagement="clr-namespace:SoundManagement;assembly=SoundManagement"
@@ -186,72 +187,193 @@
               HorizontalAlignment="Right"
               DataContext="{x:Static soundManagement:AudioDeviceManager.Instance}">
 
-            <controls1:ButtonWithIcon x:Name="HideButton" IconPathStyle="{StaticResource Windows}" />
+            <controls1:PathButton x:Name="HideButton"
+                                  Width="50"
+                                  Height="50"
+                                  BorderThickness="0"
+                                  Cursor="Hand"
+                                  IconDefaultColor="#353535"
+                                  IconHoverColor="#4298f5"
+                                  IsChecked="False"
+                                  PathCheckedBrush="#4298f5"
+                                  PathStyle="{StaticResource Windows}">
+                <controls1:PathButton.Style>
+                    <Style BasedOn="{StaticResource {x:Type controls1:PathButton}}" TargetType="controls1:PathButton">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type controls1:PathButton}">
+                                    <Border Width="{TemplateBinding Width}"
+                                            Height="{TemplateBinding Height}"
+                                            Margin="{TemplateBinding Margin}"
+                                            Padding="{TemplateBinding Padding}"
+                                            HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                            VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                                            Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            CornerRadius="3">
+                                        <StackPanel HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                                            <Path x:Name="PathIcon"
+                                                  Width="25"
+                                                  Height="25"
+                                                  Margin="0,0,5.5,0"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"
+                                                  Fill="{TemplateBinding IconBrush}"
+                                                  Stretch="Fill"
+                                                  Style="{TemplateBinding PathStyle}" />
 
-            <Grid Width="300"
-                  Height="0"
-                  Margin="-130,-150,-130,72"
-                  VerticalAlignment="Bottom"
-                  Background="#101010">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="auto" />
-                </Grid.RowDefinitions>
 
-                <ComboBox Margin="10"
-                          VerticalAlignment="Top"
-                          DisplayMemberPath="Description"
-                          ItemsSource="{Binding SoundDevices}"
-                          SelectedItem="{Binding SelectedSoundDevice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                    <b:Interaction.Triggers>
-                        <b:EventTrigger EventName="SelectionChanged">
-                            <b:InvokeCommandAction Command="{Binding Path=OnSelectedDeviceChangedCommand}" />
-                        </b:EventTrigger>
-                    </b:Interaction.Triggers>
-                </ComboBox>
+                                            <TextBlock Margin="0,5,2,0"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       FontWeight="Bold"
+                                                       Foreground="{TemplateBinding Foreground}"
+                                                       Text="{Binding ActualVolume, StringFormat={}{0:N0} %}" />
+                                        </StackPanel>
+
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="MouseEnter">
+                                                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AnimateHoverColor}" />
+                                            </i:EventTrigger>
+
+                                            <i:EventTrigger EventName="MouseLeave">
+                                                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AnimateDefaultColor}" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </Border>
+
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter TargetName="PathIcon" Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=PathCheckedBrush}" />
+
+                                            <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}" />
+
+                                            <Trigger.EnterActions>
+                                                <RemoveStoryboard BeginStoryboardName="ResetForegroundStoryBoard" />
+                                                <RemoveStoryboard BeginStoryboardName="ChangeForegroundStoryBoard" />
+                                            </Trigger.EnterActions>
+                                        </Trigger>
+
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Cursor" Value="Hand" />
+                                        </Trigger>
+
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter TargetName="PathIcon" Property="Fill" Value="#8cc1fa" />
+                                            <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}" />
+                                        </Trigger>
+
+                                        <MultiTrigger>
+                                            <MultiTrigger.Conditions>
+                                                <Condition Property="IsMouseOver" Value="True" />
+                                                <Condition Property="IsChecked" Value="False" />
+                                            </MultiTrigger.Conditions>
+
+                                            <MultiTrigger.EnterActions>
+                                                <RemoveStoryboard BeginStoryboardName="ResetForegroundStoryBoard" />
+                                                <BeginStoryboard x:Name="ChangeForegroundStoryBoard">
+                                                    <Storyboard>
+                                                        <ColorAnimation Storyboard.TargetProperty="Foreground.Color"
+                                                                        From="#ccc"
+                                                                        To="{StaticResource DefaultWhiteColor}"
+                                                                        Duration="0:0:.15" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+
+                                            </MultiTrigger.EnterActions>
+                                        </MultiTrigger>
+
+                                        <MultiTrigger>
+                                            <MultiTrigger.Conditions>
+                                                <Condition Property="IsMouseOver" Value="False" />
+                                                <Condition Property="IsChecked" Value="False" />
+                                            </MultiTrigger.Conditions>
+
+                                            <MultiTrigger.EnterActions>
+                                                <RemoveStoryboard BeginStoryboardName="ChangeForegroundStoryBoard" />
+
+                                                <BeginStoryboard x:Name="ResetForegroundStoryBoard">
+                                                    <Storyboard>
+                                                        <ColorAnimation Storyboard.TargetProperty="Foreground.Color"
+                                                                        To="#909090"
+                                                                        Duration="0:0:.15" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </MultiTrigger.EnterActions>
+                                        </MultiTrigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </controls1:PathButton.Style>
+            </controls1:PathButton>
+
+            <Border Width="300"
+                    Height="0"
+                    Margin="-130,-150,-130,72"
+                    VerticalAlignment="Bottom"
+                    Background="#101010"
+                    BorderBrush="#202020"
+                    BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+
+                    <ComboBox Margin="10"
+                              VerticalAlignment="Top"
+                              DisplayMemberPath="Description"
+                              ItemsSource="{Binding SoundDevices}"
+                              SelectedItem="{Binding SelectedSoundDevice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
 
-                <Grid Grid.Row="1"
-                      Margin="10,3,10,5"
-                      HorizontalAlignment="Stretch"
-                      VerticalAlignment="Bottom">
-                    <Slider Grid.Row="0"
-                            Height="4"
-                            Margin="0,0,0,0"
-                            Padding="0"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Top"
-                            Foreground="{StaticResource DefaultRedBrush}"
-                            IsMoveToPointEnabled="True"
-                            Maximum="100"
-                            Value="{Binding ActualVolume, Mode=TwoWay}" />
+                    <Grid Grid.Row="1"
+                          Margin="10,3,10,5"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Bottom">
+                        <Slider Grid.Row="0"
+                                Height="4"
+                                Margin="0,0,0,0"
+                                Padding="0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Top"
+                                Foreground="{StaticResource DefaultRedBrush}"
+                                IsMoveToPointEnabled="True"
+                                Maximum="100"
+                                Value="{Binding ActualVolume, Mode=TwoWay}" />
 
-                    <TextBlock Margin="0,0,0,0"
-                               HorizontalAlignment="Left"
-                               VerticalAlignment="Bottom"
-                               FontSize="14"
-                               FontWeight="DemiBold"
-                               Foreground="#656565"
-                               Text="Volume" />
+                        <TextBlock Margin="0,0,0,0"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Bottom"
+                                   FontSize="14"
+                                   FontWeight="DemiBold"
+                                   Foreground="#656565"
+                                   Text="Volume" />
 
-                    <TextBlock Margin="0,20,0,0"
-                               HorizontalAlignment="Right"
-                               VerticalAlignment="Bottom"
-                               FontSize="14"
-                               FontWeight="DemiBold"
-                               Foreground="#ccc"
-                               Text="{Binding ActualVolume, StringFormat={}{0:N0} %}" />
+                        <TextBlock Margin="0,20,0,0"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Bottom"
+                                   FontSize="14"
+                                   FontWeight="DemiBold"
+                                   Foreground="#ccc"
+                                   Text="{Binding ActualVolume, StringFormat={}{0:N0} %}" />
+                    </Grid>
                 </Grid>
 
                 <b:Interaction.Behaviors>
                     <behaviors3:HideBehavior x:Name="HideBehavior"
                                              ExecuteButtonName="HideButton"
+                                             HideOnLostCapture="True"
                                              MinValue="0"
                                              ResizeParameter="Height"
                                              ValueToExpand="100"
                                              Duration="0:0:0:.20" />
                 </b:Interaction.Behaviors>
-            </Grid>
+            </Border>
+
         </Grid>
 
         <Grid Grid.Column="2"

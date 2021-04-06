@@ -9,11 +9,26 @@ namespace VPlayer.WindowsPlayer.ViewModels.VideoProperties
   {
     private readonly string aspectRatio;
 
-    public AspectRatioViewModel( string aspectRatio)
+    public AspectRatioViewModel(string aspectRatio)
     {
       this.aspectRatio = aspectRatio ?? throw new ArgumentNullException(nameof(aspectRatio));
+
+      Value = aspectRatio;
     }
 
     public override string Description => aspectRatio;
+
+    public string Value { get; set; }
+
+    public bool IsDefault { get; set; }
+
+    public AspectRatioViewModel Copy()
+    {
+      return new AspectRatioViewModel(aspectRatio)
+      {
+        IsDefault = IsDefault,
+        Value = Value
+      };
+    }
   }
 }
