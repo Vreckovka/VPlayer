@@ -138,6 +138,73 @@
                         </Grid.Style>
                     </Grid>
 
+                    <Button x:Name="HideButton"
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="0,0,0,0"
+                            Padding="5"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            Command="{Binding ExpandHidePlaylist}"
+                            Cursor="Hand"
+                            FontSize="12">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Padding="{TemplateBinding Padding}" Background="Transparent">
+                                                <Grid>
+                                                    <Image x:Name="Image"
+                                                           Width="17"
+                                                           Height="17"
+                                                           Source="pack://application:,,,/VPlayer;component/Resources/Icons/resize.png"
+                                                           Stretch="Uniform" />
+
+                                                    <Rectangle x:Name="ImageOpacityMask"
+                                                               Width="17"
+                                                               Height="17">
+                                                        <Rectangle.Fill>
+                                                            <SolidColorBrush Color="{StaticResource SecondaryForegroundColor}" />
+                                                        </Rectangle.Fill>
+                                                        <Rectangle.OpacityMask>
+                                                            <ImageBrush ImageSource="pack://application:,,,/VPlayer;component/Resources/Icons/resize.png" />
+                                                        </Rectangle.OpacityMask>
+                                                    </Rectangle>
+                                                </Grid>
+                                            </Border>
+
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Trigger.EnterActions>
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <ColorAnimation Storyboard.TargetName="ImageOpacityMask"
+                                                                                Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                                                                To="#ccc"
+                                                                                Duration="0:0:0:.15" />
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </Trigger.EnterActions>
+                                                    <Trigger.ExitActions>
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <ColorAnimation Storyboard.TargetName="ImageOpacityMask"
+                                                                                Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                                                                To="{StaticResource SecondaryForegroundColor}"
+                                                                                Duration="0:0:0:.15" />
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </Trigger.ExitActions>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
                     <controls1:FullscreenPlayer x:Name="FullscreenPlayer"
                                                 Grid.Row="1"
                                                 Visibility="Hidden" />

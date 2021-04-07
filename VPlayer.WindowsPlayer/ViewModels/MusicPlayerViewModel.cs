@@ -148,31 +148,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     #endregion Properties
 
     #region Commands
-
-    #region NextSong
-
-    private ActionCommand<SongInPlayListViewModel> nextSong;
-
-    public ICommand NextSong
-    {
-      get
-      {
-        if (nextSong == null)
-        {
-          nextSong = new ActionCommand<SongInPlayListViewModel>(OnNextSong);
-        }
-
-        return nextSong;
-      }
-    }
-
-    public void OnNextSong(SongInPlayListViewModel songInPlayListViewModel)
-    {
-      PlayNextWithItem(songInPlayListViewModel);
-    }
-
-    #endregion 
-
+    
     #region AlbumDetail
 
     private ActionCommand albumDetail;

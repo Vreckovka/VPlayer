@@ -29,6 +29,8 @@ namespace VPlayer.WindowsPlayer.Behaviors
     public FullscreenPlayer FullscreenPlayer { get; set; }
     public Menu VideoMenu { get; set; }
 
+    public Button HideButton { get; set; }
+
     #region PlayerDataContext
 
     public static readonly DependencyProperty PlayerDataContextProperty =
@@ -47,6 +49,7 @@ namespace VPlayer.WindowsPlayer.Behaviors
     #endregion
 
     private SerialDisposable fullScrennDisposable;
+
     #region OnAttached
 
     protected override void OnAttached()
@@ -93,6 +96,7 @@ namespace VPlayer.WindowsPlayer.Behaviors
       FullscreenPlayer.Visibility = Visibility.Visible;
 
       VideoMenu.Visibility = Visibility.Collapsed;
+      HideButton.Visibility = Visibility.Collapsed;
 
       FullscreenPlayer.DataContext = PlayerDataContext;
     }
@@ -108,10 +112,10 @@ namespace VPlayer.WindowsPlayer.Behaviors
       FullscreenPlayer.Visibility = Visibility.Hidden;
 
       VideoMenu.Visibility = Visibility.Visible;
+      HideButton.Visibility = Visibility.Visible;
     }
 
     #endregion
-
 
     #region OnDetaching
 

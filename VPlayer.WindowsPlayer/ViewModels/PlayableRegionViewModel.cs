@@ -27,6 +27,7 @@ using VCore.Standard.Helpers;
 using VCore.Standard.Modularity.Interfaces;
 using VCore.ViewModels;
 using LibVLCSharp.Shared;
+using VCore.WPF.Behaviors;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -35,7 +36,7 @@ using VPlayer.WindowsPlayer.Providers;
 
 namespace VPlayer.Core.ViewModels
 {
-  public abstract class PlayableRegionViewModel<TView, TItemViewModel, TPlaylistModel, TPlaylistItemModel, TModel> : RegionViewModel<TView>, IPlayableRegionViewModel
+  public abstract class PlayableRegionViewModel<TView, TItemViewModel, TPlaylistModel, TPlaylistItemModel, TModel> : RegionViewModel<TView>, IPlayableRegionViewModel, IHideable
     where TView : class, IView
     where TItemViewModel : class, IItemInPlayList<TModel>
     where TModel : IPlayableModel
@@ -344,6 +345,35 @@ namespace VPlayer.Core.ViewModels
           RaisePropertyChanged();
         }
       }
+    }
+
+    #endregion
+
+    #endregion
+
+    #region Commands
+
+    #region ExpandHidePlaylist
+
+    public event EventHandler<bool> Hide;
+
+    private ActionCommand expandHidePlaylist;
+    public ICommand ExpandHidePlaylist
+    {
+      get
+      {
+        if (expandHidePlaylist == null)
+        {
+          expandHidePlaylist = new ActionCommand(OnExpandHidePlaylist);
+        }
+
+        return expandHidePlaylist;
+      }
+    }
+
+    public void OnExpandHidePlaylist()
+    {
+      OnHidePlaylist(false);
     }
 
     #endregion
@@ -1211,6 +1241,15 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region OnHidePlaylist
+
+    protected virtual void OnHidePlaylist(bool e)
+    {
+      Hide?.Invoke(this, e);
+    }
+
+    #endregion
+
     protected abstract void OnRemoveItemsFromPlaylist(DeleteType deleteType, RemoveFromPlaylistEventArgs<TItemViewModel> args);
     protected abstract void ItemsRemoved(EventPattern<TItemViewModel> eventPattern);
     protected abstract void FilterByActualSearch(string predictate);
@@ -1242,5 +1281,7 @@ namespace VPlayer.Core.ViewModels
     #endregion
 
     #endregion
+
+   
   }
 }

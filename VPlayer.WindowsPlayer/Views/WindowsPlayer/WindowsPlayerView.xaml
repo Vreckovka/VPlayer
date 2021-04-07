@@ -47,7 +47,6 @@
                     Grid.Row="1"
                     Margin="10,0,1,0"
                     Padding="0"
-                    IsEnabled="{Binding IsBuffering, Converter={converters:InverseConverter}}"
                     IsMoveToPointEnabled="True"
                     Maximum="1"
                     Value="{Binding ActualItem.ActualPosition}">
@@ -176,7 +175,6 @@
 
             <b:Interaction.Behaviors>
                 <behaviors3:HideBehavior x:Name="HideBehavior"
-                                         ExecuteButtonName="HideButton"
                                          GridSplitterName="GridSplitter"
                                          MinValue="0"
                                          ResizeParameter="Width"
@@ -187,10 +185,11 @@
         <Button x:Name="HideButton"
                 Grid.Row="0"
                 Grid.Column="0"
-                Margin="0,-30,0,0"
+                Margin="0,0,0,0"
                 Padding="5"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
+                Command="{Binding ExpandHidePlaylist}"
                 Cursor="Hand"
                 FontSize="12">
             <Button.Style>

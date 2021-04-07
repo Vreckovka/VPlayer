@@ -53,6 +53,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private readonly IWindowManager windowManager;
     protected TaskCompletionSource<bool> loadedTask = new TaskCompletionSource<bool>();
 
+    #region Constructors
+
     public VideoPlayerViewModel(
       IRegionProvider regionProvider,
        IKernel kernel,
@@ -65,6 +67,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
     }
+
+    #endregion
 
     #region Properties
 
@@ -252,6 +256,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         try
         {
+          PlayList.Clear();
+          ActualSavedPlaylist = new VideoPlaylist();
+
           PlayList.Add(item);
 
           ReloadVirtulizedPlaylist();
