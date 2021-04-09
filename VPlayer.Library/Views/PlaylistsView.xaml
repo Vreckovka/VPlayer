@@ -40,7 +40,7 @@
                 <Border Name="border"
                         Margin="-10,0,0,0"
                         Padding="3"
-                        Background="#02ffffff"
+                        Background="#07ffffff"
                         BorderBrush="#252525"
                         BorderThickness="0,1,0,0">
                     <Border.Style>
@@ -59,10 +59,10 @@
                 </Border>
                 <ControlTemplate.Triggers>
                     <Trigger Property="IsSelected" Value="true">
-                        <Setter TargetName="border" Property="Background" Value="#10ffffff" />
+                        <Setter TargetName="border" Property="Background" Value="#13ffffff" />
                     </Trigger>
                     <Trigger Property="IsMouseOver" Value="true">
-                        <Setter TargetName="border" Property="Background" Value="#07ffffff" />
+                        <Setter TargetName="border" Property="Background" Value="#10ffffff" />
                     </Trigger>
                 </ControlTemplate.Triggers>
             </ControlTemplate>
