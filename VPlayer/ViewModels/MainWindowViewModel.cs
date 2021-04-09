@@ -5,6 +5,9 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 using Prism.Events;
 using Prism.Regions;
 using SoundManagement;
@@ -42,18 +45,15 @@ namespace VPlayer.ViewModels
     public MainWindowViewModel(
       IViewModelsFactory viewModelsFactory,
       IEventAggregator eventAggregator,
-      IRegionManager regionManager,
-      ICSFDWebsiteScrapper cSFDWebsiteScrapper)
+      IRegionManager regionManager)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.regionManager = regionManager ?? throw new ArgumentNullException(nameof(regionManager));
 
       AudioDeviceManager.Instance.RefreshAudioDevices();
-
+     
     }
-
-
 
     #endregion
 

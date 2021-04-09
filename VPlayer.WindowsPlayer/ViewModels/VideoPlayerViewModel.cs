@@ -26,6 +26,8 @@ using Prism.Events;
 using VCore;
 using VCore.Helpers;
 using VCore.ItemsCollections;
+using VCore.ItemsCollections.VirtualList;
+using VCore.ItemsCollections.VirtualList.VirtualLists;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Helpers;
 using VCore.ViewModels;
@@ -694,10 +696,34 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
     }
 
+    #region FilterByActualSearch
+
+    private bool ifFiltered = false;
     protected override void FilterByActualSearch(string predictate)
     {
-      throw new NotImplementedException();
+      if (!string.IsNullOrEmpty(predictate) && predictate.Length > 2)
+      {
+        ifFiltered = true;
+        var items = PlayList.Where(x =>
+          IsInFind(x.Name, predictate) || (x is TvShowEpisodeInPlaylistViewModel tvShowEpisodeInPlaylistViewModel && (
+          IsInFind(tvShowEpisodeInPlaylistViewModel.TvShow.Name, predictate) ||
+          IsInFind(tvShowEpisodeInPlaylistViewModel.TvShowSeason.Name, predictate) ||
+          ("season " + tvShowEpisodeInPlaylistViewModel.TvShowSeason.SeasonNumber == predictate) ||
+          "episode " +tvShowEpisodeInPlaylistViewModel.TvShowEpisode.EpisodeNumber == predictate)));
+
+        var generator = new ItemsGenerator<VideoItemInPlaylistViewModel>(items, 15);
+
+        VirtualizedPlayList = new VirtualList<VideoItemInPlaylistViewModel>(generator);
+
+      }
+      else if(ifFiltered)
+      {
+        ReloadVirtulizedPlaylist();
+        ifFiltered = false;
+      }
     }
+
+    #endregion
 
     #region GetNewPlaylistModel
 

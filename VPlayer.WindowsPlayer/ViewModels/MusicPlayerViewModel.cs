@@ -60,7 +60,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private readonly IVPlayerRegionProvider vPlayerRegionProvider;
     private readonly IEventAggregator eventAggregator;
     private readonly AudioInfoDownloader audioInfoDownloader;
-    private int actualSongIndex = 0;
     private Dictionary<SongInPlayListViewModel, bool> playBookInCycle = new Dictionary<SongInPlayListViewModel, bool>();
 
     #endregion Fields
@@ -260,6 +259,21 @@ namespace VPlayer.WindowsPlayer.ViewModels
         if (string.IsNullOrEmpty(ActualItem.LRCLyrics))
         {
           await ActualItem.TryToRefreshUpdateLyrics();
+        }
+
+        var validItemsToUpdate = PlayList.Where(x => x.LyricsObject == null).ToList();
+
+        var itemsAfter = validItemsToUpdate.Skip(actualItemIndex);
+        var itemsBefore = validItemsToUpdate.Take(actualItemIndex);
+
+        foreach (var item in itemsAfter)
+        {
+          await item.TryToRefreshUpdateLyrics();
+        }
+
+        foreach (var item in itemsBefore)
+        {
+          await item.TryToRefreshUpdateLyrics();
         }
 
       });

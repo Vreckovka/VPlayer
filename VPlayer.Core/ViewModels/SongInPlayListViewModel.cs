@@ -447,6 +447,12 @@ namespace VPlayer.Core.ViewModels
       {
         await audioInfoDownloader.UpdateSongLyricsAsync(ArtistViewModel.Name, Name, Model);
       }
+
+      Application.Current.Dispatcher.Invoke(() =>
+      {
+        RaisePropertyChanged(nameof(LRCFile));
+        RaisePropertyChanged(nameof(Lyrics));
+      });
     }
 
     #endregion

@@ -24,6 +24,7 @@
     <Color x:Key="YellowColor">#fec827</Color>
     <Color x:Key="DefaultRedColorDim">#db515a</Color>
     <Color x:Key="DarkBrownColor">#522e05</Color>
+    <Color x:Key="BlueColor">#1887db</Color>
 
     <Color x:Key="235_DefaultWhiteColor"
            A="235"
@@ -87,6 +88,7 @@
     <SolidColorBrush x:Key="OrangeBrush" Color="{StaticResource OrangeColor}" />
     <SolidColorBrush x:Key="YellowBrush" Color="{StaticResource YellowColor}" />
     <SolidColorBrush x:Key="DarkBrownBrush" Color="{StaticResource DarkBrownColor}" />
+    <SolidColorBrush x:Key="BlueBrush" Color="{StaticResource BlueColor}" />
 
     <SolidColorBrush x:Key="BackgroudBrush" Color="{StaticResource BackgroudColor}" />
 

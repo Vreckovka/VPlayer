@@ -468,7 +468,7 @@
                                 </controls2:ButtonWithIcon>
 
                                 <controls2:ButtonWithIcon Grid.Column="1"
-                                                          Margin="0,0.7,0,0"
+                                                          Margin="0,0,0,-3"
                                                           Padding="0"
                                                           HorizontalAlignment="Right"
                                                           VerticalAlignment="Center"
@@ -482,7 +482,7 @@
                                             <Setter Property="IconHoverColor" Value="#85876d" />
                                             <Setter Property="IconDefaultColor" Value="#414236" />
                                             <Setter Property="Opacity" Value="1" />
-                                            <Setter Property="Margin" Value="2,-8,0,-7" />
+                                            <Setter Property="Margin" Value="0,0,0,0" />
 
                                             <Setter Property="Template">
                                                 <Setter.Value>
@@ -515,6 +515,8 @@
 
                                                                 <ContentControl Grid.Row="1"
                                                                                 Grid.Column="1"
+                                                                                Width="9"
+                                                                                Height="4"
                                                                                 BorderThickness="0"
                                                                                 Content="{Binding LRCFile}"
                                                                                 ContentTemplateSelector="{StaticResource LyricsProviderTemplateSelector}" />

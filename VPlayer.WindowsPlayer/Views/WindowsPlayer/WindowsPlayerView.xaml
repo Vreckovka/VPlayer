@@ -178,7 +178,7 @@
                                          GridSplitterName="GridSplitter"
                                          MinValue="0"
                                          ResizeParameter="Width"
-                                         Duration="0:0:0:.35" />
+                                         Duration="0:0:0:.30" />
             </b:Interaction.Behaviors>
         </Grid>
 

@@ -12,6 +12,7 @@
         <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Listview.xaml" />
         <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/TreeView.xaml" />
         <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/ToolTip.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/ScrollViewer.xaml" />
 
         <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/ControlsTemplates/ButtonWithIconTemplate.xaml" />
         <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/ControlsTemplates/FinderTemplate.xaml" />

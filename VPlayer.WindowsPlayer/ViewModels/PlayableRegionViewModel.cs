@@ -47,7 +47,7 @@ namespace VPlayer.Core.ViewModels
     protected readonly ILogger logger;
     protected readonly IStorageManager storageManager;
     private readonly IVlcProvider vlcProvider;
-    private int actualItemIndex;
+    protected int actualItemIndex;
     protected HashSet<TItemViewModel> shuffleList = new HashSet<TItemViewModel>();
     protected LibVLC libVLC;
     private bool wasVlcInitilized;
@@ -520,6 +520,7 @@ namespace VPlayer.Core.ViewModels
           }
 
           ActualItem = PlayList[index];
+          //actualItemIndex = index;
           ActualItem.IsPlaying = true;
 
           OnSetActualItem(ActualItem, true);
@@ -684,7 +685,7 @@ namespace VPlayer.Core.ViewModels
     {
       if (ActualItem != null)
       {
-        var position = ((eventArgs.Time * 100) / (ActualItem.Duration * (float) 1000.0)) / 100;
+        var position = ((eventArgs.Time * 100) / (ActualItem.Duration * (float)1000.0)) / 100;
 
         if (!double.IsNaN(position) && !double.IsInfinity(position))
         {
@@ -1009,9 +1010,23 @@ namespace VPlayer.Core.ViewModels
 
     #region IsInFind
 
-    protected bool IsInFind(string original, string phrase)
+    protected bool IsInFind(string original, string phrase, bool useContains = true)
     {
-      return original.ToLower().Contains(phrase) || original.Similarity(phrase) > 0.8;
+      bool result = false;
+
+      if (original != null)
+      {
+        var lowerVariant = original.ToLower();
+
+        if (useContains)
+        {
+          result = lowerVariant.Contains(phrase);
+        }
+
+        return original.Similarity(phrase) > 0.8 || result;
+      }
+
+      return result;
     }
 
     #endregion
@@ -1282,6 +1297,6 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-   
+
   }
 }

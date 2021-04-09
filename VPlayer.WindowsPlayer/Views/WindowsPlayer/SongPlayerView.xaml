@@ -77,7 +77,7 @@
                                           MaxFrequency="10000"
                                           MiddleColor="#101b1f"
                                           NormlizedDataMaxValue="25"
-                                          NumberOfColumns="150"
+                                          NumberOfColumns="250"
                                           NormlizedDataMinValue="5"
                                           Opacity="0.8"
                                           TopColor="#8bcde0"
