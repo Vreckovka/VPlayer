@@ -158,7 +158,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         if (albumDetail == null)
         {
-          albumDetail = new ActionCommand(OnAlbumDetail);
+          albumDetail = new ActionCommand(OnAlbumDetail, CanExecuteAlbumDetail);
         }
 
         return albumDetail;
@@ -168,6 +168,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
     public void OnAlbumDetail()
     {
       vPlayerRegionProvider.ShowAlbumDetail(ActualItem.AlbumViewModel);
+    }
+
+    private bool CanExecuteAlbumDetail()
+    {
+      return ActualItem?.AlbumViewModel != null;
     }
 
     #endregion 
@@ -245,6 +250,15 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region OnActualItemChanged
+
+    protected override void OnActualItemChanged()
+    {
+      albumDetail?.RaiseCanExecuteChanged();
+    }
+
+    #endregion
+
     #region OnNewItemPlay
 
     public override void OnNewItemPlay()
@@ -276,6 +290,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           await item.TryToRefreshUpdateLyrics();
         }
 
+       
       });
     }
 

@@ -128,6 +128,7 @@ namespace VPlayer.Core.ViewModels
 
           actualItemSubject.OnNext(PlayList.IndexOf(actualItem));
 
+          OnActualItemChanged();
           RaisePropertyChanged();
         }
       }
@@ -374,6 +375,35 @@ namespace VPlayer.Core.ViewModels
     public void OnExpandHidePlaylist()
     {
       OnHidePlaylist(false);
+    }
+
+    #endregion
+
+    #region SavePlaylistCommand
+
+    private ActionCommand savePlaylistCommand;
+
+    public ICommand SavePlaylistCommand
+    {
+      get
+      {
+        if (savePlaylistCommand == null)
+        {
+          savePlaylistCommand = new ActionCommand(OnSavePlaylist);
+        }
+
+        return savePlaylistCommand;
+      }
+    }
+
+    public void OnSavePlaylist()
+    {
+      if (!ActualSavedPlaylist.IsUserCreated && !StorePlaylist(true))
+      {
+        ActualSavedPlaylist.IsUserCreated = true;
+        UpdateActualSavedPlaylistPlaylist();
+        RaisePropertyChanged(nameof(ActualSavedPlaylist));
+      }
     }
 
     #endregion
@@ -738,22 +768,6 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region OnNewItemPlay
-
-    public virtual void OnNewItemPlay()
-    {
-    }
-
-    #endregion
-
-    #region OnSetActualItem
-
-    public virtual void OnSetActualItem(TItemViewModel itemViewModel, bool isPlaying)
-    {
-    }
-
-    #endregion
-
     #region PlayPuse
 
     public void PlayPause()
@@ -840,35 +854,6 @@ namespace VPlayer.Core.ViewModels
     private float GetSeekSize(int seconds)
     {
       return seconds * (float)100.0 / mediaPlayer.Length;
-    }
-
-    #endregion
-
-    #region SavePlaylistCommand
-
-    private ActionCommand savePlaylistCommand;
-
-    public ICommand SavePlaylistCommand
-    {
-      get
-      {
-        if (savePlaylistCommand == null)
-        {
-          savePlaylistCommand = new ActionCommand(OnSavePlaylist);
-        }
-
-        return savePlaylistCommand;
-      }
-    }
-
-    public void OnSavePlaylist()
-    {
-      if (!ActualSavedPlaylist.IsUserCreated && !StorePlaylist(true))
-      {
-        ActualSavedPlaylist.IsUserCreated = true;
-        UpdateActualSavedPlaylistPlaylist();
-        RaisePropertyChanged(nameof(ActualSavedPlaylist));
-      }
     }
 
     #endregion
@@ -987,12 +972,6 @@ namespace VPlayer.Core.ViewModels
 
       playlistToUpdate.IsUserCreated = other.IsUserCreated;
     }
-
-    #endregion
-
-    #region GetNewPlaylistItemViewModel
-
-    protected abstract TPlaylistItemModel GetNewPlaylistItemViewModel(TItemViewModel itemViewModel, int index);
 
     #endregion
 
@@ -1157,15 +1136,6 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region OnPlayEvent
-
-    protected virtual void OnPlayEvent()
-    {
-
-    }
-
-    #endregion
-
     #region RemoveItemsFromPlaylist
 
     protected void RemoveItemsFromPlaylist(RemoveFromPlaylistEventArgs<TItemViewModel> obj)
@@ -1238,6 +1208,34 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    //Virtual methods 
+    #region Virtual methods
+
+    #region OnNewItemPlay
+
+    public virtual void OnNewItemPlay()
+    {
+    }
+
+    #endregion
+
+    #region OnSetActualItem
+
+    public virtual void OnSetActualItem(TItemViewModel itemViewModel, bool isPlaying)
+    {
+    }
+
+    #endregion
+
+    #region OnPlayEvent
+
+    protected virtual void OnPlayEvent()
+    {
+
+    }
+
+    #endregion
+
     #region WaitForInitilization
 
     protected virtual Task WaitForVlcInitilization()
@@ -1265,12 +1263,27 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region OnActualItemChanged
+
+    protected virtual void OnActualItemChanged()
+    {
+
+    }
+
+    #endregion
+
+    #endregion
+
+    //Abstract methods 
+    #region Abstract methods
+
+    protected abstract TPlaylistItemModel GetNewPlaylistItemViewModel(TItemViewModel itemViewModel, int index);
     protected abstract void OnRemoveItemsFromPlaylist(DeleteType deleteType, RemoveFromPlaylistEventArgs<TItemViewModel> args);
     protected abstract void ItemsRemoved(EventPattern<TItemViewModel> eventPattern);
     protected abstract void FilterByActualSearch(string predictate);
     protected abstract TPlaylistModel GetNewPlaylistModel(List<TPlaylistItemModel> playlistModels, bool isUserCreated);
 
-
+    #endregion
 
     #region Dispose
 

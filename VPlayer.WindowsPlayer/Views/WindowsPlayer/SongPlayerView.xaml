@@ -68,22 +68,21 @@
 
 
             <userControls:SoundVizualizer Grid.Row="0"
-                                          HorizontalAlignment="Stretch"
                                           Height="45"
+                                          HorizontalAlignment="Stretch"
                                           VerticalAlignment="Bottom"
                                           Background="Transparent"
                                           BottomColor="#252525"
                                           IsEnabled="{Binding IsPlaying}"
                                           MaxFrequency="10000"
                                           MiddleColor="#101b1f"
+                                          MinimumBarWidth="3"
                                           NormlizedDataMaxValue="25"
-                                          NumberOfColumns="250"
                                           NormlizedDataMinValue="5"
+                                          NumberOfColumns="250"
                                           Opacity="0.8"
                                           TopColor="#8bcde0"
-                                          UseSkew="True"
-                                          MinimumBarWidth="3"
-                                          >
+                                          UseSkew="True">
 
                 <userControls:SoundVizualizer.Style>
                     <Style TargetType="userControls:SoundVizualizer">
@@ -104,7 +103,8 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Bottom"
                     Command="{Binding AlbumDetail}"
-                    FontSize="36">
+                    FontSize="36"
+                    ToolTip="Album detail">
                 <Button.Style>
                     <Style BasedOn="{StaticResource BorderlessButtonStyle}" TargetType="Button">
                         <Setter Property="FontWeight" Value="Bold" />
@@ -114,8 +114,18 @@
                                 <Grid>
                                     <Grid Width="15"
                                           Height="35"
-                                          VerticalAlignment="Center"
-                                          Background="White" />
+                                          VerticalAlignment="Center">
+                                        <Grid.Style>
+                                            <Style TargetType="Grid">
+                                                <Setter Property="Background" Value="White" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Button, Mode=FindAncestor}, Path=IsEnabled}" Value="False">
+                                                        <Setter Property="Background" Value="#858585" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Grid.Style>
+                                    </Grid>
                                     <Path Data="M49.52,38.12c3.06,0,5.52-2.52,5.52-5.58c0-3-2.46-5.52-5.52-5.52S44,29.54,44,32.54C44,35.6,46.46,38.12,49.52,38.12z                             M55.4,45.86c0-2.52-2.04-4.5-4.5-4.5h-4.5c-2.52,0-4.5,1.98-4.5,4.5c0,2.46,1.98,4.5,4.5,4.5V63.5c-2.52,0-4.5,2.04-4.5,4.5                             c0,2.52,1.98,4.5,4.5,4.5h9c2.46,0,4.5-1.98,4.5-4.5c0-2.46-2.04-4.5-4.5-4.5V45.86z M50,5c24.84,0,45,20.16,45,45S74.84,95,50,95                             C25.1,95,5,74.84,5,50S25.1,5,50,5z"
                                           Fill="{Binding RelativeSource={RelativeSource AncestorType=Button, Mode=FindAncestor}, Path=Foreground}"
                                           Stroke="{Binding RelativeSource={RelativeSource AncestorType=Button, Mode=FindAncestor}, Path=Foreground}"
@@ -125,33 +135,35 @@
                             </Setter.Value>
                         </Setter>
                         <Style.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="#454545" />
+                            </Trigger>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Trigger.EnterActions>
-                                    <BeginStoryboard>
+                                    <RemoveStoryboard BeginStoryboardName="Exit" />
+                                    <BeginStoryboard x:Name="Enter">
                                         <Storyboard>
                                             <ColorAnimation Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"
-                                                            From="#FF454555"
-                                                            To="{StaticResource DefaultRedColor}"
-                                                            Duration="0:0:0:0.25" />
+                                                            To="{StaticResource DefaultRedColorDim}"
+                                                            Duration="0:0:0:0.15" />
                                         </Storyboard>
                                     </BeginStoryboard>
                                 </Trigger.EnterActions>
-                                <!--<Setter Property="Foreground" Value="{StaticResource DefaultRedBrush}" />-->
+                                <Trigger.ExitActions>
+                                    <RemoveStoryboard BeginStoryboardName="Enter" />
+                                    <BeginStoryboard x:Name="Exit">
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"
+                                                            To="#FF454555"
+                                                            Duration="0:0:0:0.15" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
                             </Trigger>
                         </Style.Triggers>
                     </Style>
                 </Button.Style>
-                <Button.ToolTip>
-                    <ToolTip Margin="0"
-                             Padding="5,0,5,0"
-                             Background="#FF202020"
-                             BorderThickness="0"
-                             Content="Info"
-                             FontSize="18"
-                             FontWeight="Light"
-                             Foreground="#DCFFFFFF"
-                             IsOpen="False" />
-                </Button.ToolTip>
+
             </Button>
 
             <StackPanel Name="Container"

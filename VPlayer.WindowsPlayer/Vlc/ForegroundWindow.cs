@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -50,19 +52,30 @@ namespace VPlayer.WindowsPlayer.Vlc
       overlayWindow.DataContext = _bckgnd.DataContext;
       overlayWindow.MouseLeftButtonDown += OverlayWindow_GotFocus;
 
-
-
       _bckgnd.DataContextChanged += Background_DataContextChanged;
       _bckgnd.Loaded += Background_Loaded;
       _bckgnd.Unloaded += Background_Unloaded;
+
+      IsVisibleChanged += ForegroundWindow_IsVisibleChanged;
     }
+
+    private void ForegroundWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      if (!_bckgnd.IsLoaded && IsVisible)
+      {
+        Height = 0;
+        Width = 0;
+      }
+    }
+
+    #endregion
+
 
     private void OverlayWindow_GotFocus(object sender, RoutedEventArgs e)
     {
       _wndhost?.Focus();
     }
 
-    #endregion
 
     protected override void OnStateChanged(EventArgs e)
     {
@@ -72,6 +85,7 @@ namespace VPlayer.WindowsPlayer.Vlc
 
       _wndhost?.Focus();
     }
+
 
     #region OverlayContent
 
@@ -99,9 +113,14 @@ namespace VPlayer.WindowsPlayer.Vlc
       DataContext = e.NewValue;
     }
 
+    #endregion
+
+    #region Background_Unloaded
+
     void Background_Unloaded(object sender, RoutedEventArgs e)
     {
       _bckgnd.SizeChanged -= Wndhost_SizeChanged;
+
       if (_wndhost != null)
       {
         _wndhost.Closing -= Wndhost_Closing;
@@ -149,13 +168,17 @@ namespace VPlayer.WindowsPlayer.Vlc
       }
     }
 
+
     #endregion
 
-    #region Wndhost_LocationChanged
+    #region Wndhost_StateChanged
 
     private void Wndhost_StateChanged(object sender, EventArgs e)
     {
-      SetWindowInPlace();
+      if (_wndhost.WindowState != WindowState.Minimized)
+      {
+        SetWindowInPlace();
+      }
     }
 
     #endregion
@@ -183,6 +206,7 @@ namespace VPlayer.WindowsPlayer.Vlc
       overlayWindow.Owner = this;
 
       _wndhost.Focus();
+
     }
 
     #endregion
@@ -205,7 +229,7 @@ namespace VPlayer.WindowsPlayer.Vlc
 
       overlayWindow.Left = Left;
       overlayWindow.Top = Top;
-    
+
     }
 
     #endregion
