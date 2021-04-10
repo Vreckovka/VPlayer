@@ -47,7 +47,7 @@
         </Border>
 
 
-        <Grid Grid.Row="0" Grid.RowSpan="3">
+        <!--<Grid Grid.Row="0" Grid.RowSpan="3">
             <controls:PathButton Width="50"
                                  Height="50"
                                  Margin="10"
@@ -58,7 +58,7 @@
                                  PathCheckedBrush="{StaticResource YellowBrush}"
                                  PathStyle="{StaticResource Gif}" />
 
-        </Grid>
+        </Grid>-->
 
 
         <Grid Grid.Row="2"
@@ -109,58 +109,60 @@
                     <Style BasedOn="{StaticResource BorderlessButtonStyle}" TargetType="Button">
                         <Setter Property="FontWeight" Value="Bold" />
                         <Setter Property="Foreground" Value="#FF454555" />
-                        <Setter Property="Content">
+                        <Setter Property="Template">
                             <Setter.Value>
-                                <Grid>
-                                    <Grid Width="15"
-                                          Height="35"
-                                          VerticalAlignment="Center">
-                                        <Grid.Style>
-                                            <Style TargetType="Grid">
-                                                <Setter Property="Background" Value="White" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Button, Mode=FindAncestor}, Path=IsEnabled}" Value="False">
-                                                        <Setter Property="Background" Value="#858585" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Grid.Style>
+                                <ControlTemplate TargetType="Button">
+                                    <Grid>
+                                        <Grid Width="15"
+                                              Height="35"
+                                              VerticalAlignment="Center">
+                                            <Grid.Style>
+                                                <Style TargetType="Grid">
+                                                    <Setter Property="Background" Value="White" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Button, Mode=FindAncestor}, Path=IsEnabled}" Value="False">
+                                                            <Setter Property="Background" Value="#858585" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Grid.Style>
+                                        </Grid>
+                                        <Path Data="M49.52,38.12c3.06,0,5.52-2.52,5.52-5.58c0-3-2.46-5.52-5.52-5.52S44,29.54,44,32.54C44,35.6,46.46,38.12,49.52,38.12z                             M55.4,45.86c0-2.52-2.04-4.5-4.5-4.5h-4.5c-2.52,0-4.5,1.98-4.5,4.5c0,2.46,1.98,4.5,4.5,4.5V63.5c-2.52,0-4.5,2.04-4.5,4.5                             c0,2.52,1.98,4.5,4.5,4.5h9c2.46,0,4.5-1.98,4.5-4.5c0-2.46-2.04-4.5-4.5-4.5V45.86z M50,5c24.84,0,45,20.16,45,45S74.84,95,50,95                             C25.1,95,5,74.84,5,50S25.1,5,50,5z"
+                                              Fill="{Binding RelativeSource={RelativeSource AncestorType=Button, Mode=FindAncestor}, Path=Foreground}"
+                                              Stroke="{Binding RelativeSource={RelativeSource AncestorType=Button, Mode=FindAncestor}, Path=Foreground}"
+                                              StrokeThickness="0.2"
+                                              Style="{StaticResource Information}" />
                                     </Grid>
-                                    <Path Data="M49.52,38.12c3.06,0,5.52-2.52,5.52-5.58c0-3-2.46-5.52-5.52-5.52S44,29.54,44,32.54C44,35.6,46.46,38.12,49.52,38.12z                             M55.4,45.86c0-2.52-2.04-4.5-4.5-4.5h-4.5c-2.52,0-4.5,1.98-4.5,4.5c0,2.46,1.98,4.5,4.5,4.5V63.5c-2.52,0-4.5,2.04-4.5,4.5                             c0,2.52,1.98,4.5,4.5,4.5h9c2.46,0,4.5-1.98,4.5-4.5c0-2.46-2.04-4.5-4.5-4.5V45.86z M50,5c24.84,0,45,20.16,45,45S74.84,95,50,95                             C25.1,95,5,74.84,5,50S25.1,5,50,5z"
-                                          Fill="{Binding RelativeSource={RelativeSource AncestorType=Button, Mode=FindAncestor}, Path=Foreground}"
-                                          Stroke="{Binding RelativeSource={RelativeSource AncestorType=Button, Mode=FindAncestor}, Path=Foreground}"
-                                          StrokeThickness="0.2"
-                                          Style="{StaticResource Information}" />
-                                </Grid>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter Property="Foreground" Value="#454545" />
+                                        </Trigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Trigger.EnterActions>
+                                                <RemoveStoryboard BeginStoryboardName="Exit" />
+                                                <BeginStoryboard x:Name="Enter">
+                                                    <Storyboard>
+                                                        <ColorAnimation Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"
+                                                                        To="{StaticResource DefaultRedColorDim}"
+                                                                        Duration="0:0:0:0.15" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </Trigger.EnterActions>
+                                            <Trigger.ExitActions>
+                                                <RemoveStoryboard BeginStoryboardName="Enter" />
+                                                <BeginStoryboard x:Name="Exit">
+                                                    <Storyboard>
+                                                        <ColorAnimation Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"
+                                                                        To="#FF454555"
+                                                                        Duration="0:0:0:0.15" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </Trigger.ExitActions>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
                             </Setter.Value>
                         </Setter>
-                        <Style.Triggers>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Foreground" Value="#454545" />
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Trigger.EnterActions>
-                                    <RemoveStoryboard BeginStoryboardName="Exit" />
-                                    <BeginStoryboard x:Name="Enter">
-                                        <Storyboard>
-                                            <ColorAnimation Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"
-                                                            To="{StaticResource DefaultRedColorDim}"
-                                                            Duration="0:0:0:0.15" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.EnterActions>
-                                <Trigger.ExitActions>
-                                    <RemoveStoryboard BeginStoryboardName="Enter" />
-                                    <BeginStoryboard x:Name="Exit">
-                                        <Storyboard>
-                                            <ColorAnimation Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"
-                                                            To="#FF454555"
-                                                            Duration="0:0:0:0.15" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.ExitActions>
-                            </Trigger>
-                        </Style.Triggers>
                     </Style>
                 </Button.Style>
 

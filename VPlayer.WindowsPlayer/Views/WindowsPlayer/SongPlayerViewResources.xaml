@@ -94,17 +94,65 @@
                 </b:Interaction.Behaviors>
             </ListView>
 
-            <StackPanel Width="100"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Center">
+            <Grid Margin="15,10"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Top">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <ToggleButton x:Name="SettingsButton"
+                              HorizontalAlignment="Left"
+                              Style="{StaticResource BorderlessToggleButtonStyle}">
+                    <Grid Margin="0,0,0,0">
+                        <Image Width="20"
+                               Height="20"
+                               Source="pack://application:,,,/VPlayer;component/Resources/Icons/settings.png" />
 
-                <TextBlock Text="Adjust lyrics (ms)" />
-                <TextBox Text="{Binding TimeAdjustment, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                <Button Width="70"
-                        Margin="5"
-                        Command="{Binding ApplyPernamently}"
-                        Content="Update" />
-            </StackPanel>
+                        <Rectangle x:Name="ImageOpacityMask"
+                                   Width="20"
+                                   Height="20"
+                                   Fill="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton, Mode=FindAncestor}, Path=Foreground}">
+
+                            <Rectangle.OpacityMask>
+                                <ImageBrush ImageSource="pack://application:,,,/VPlayer;component/Resources/Icons/settings.png" />
+                            </Rectangle.OpacityMask>
+                        </Rectangle>
+                    </Grid>
+
+                </ToggleButton>
+
+                <Border Grid.Row="1"
+                        Margin="0,5,0,0"
+                        CornerRadius="5"
+                        HorizontalAlignment="Left"
+                        Background="#90101010">
+                    <StackPanel Width="100"
+                                Margin="10"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center">
+
+                        <TextBlock Text="Adjust lyrics (ms)" />
+                        <TextBox Text="{Binding TimeAdjustment, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                        <Button Width="70"
+                                Margin="5"
+                                Command="{Binding ApplyPernamently}"
+                                Content="Update" />
+                    </StackPanel>
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Visibility" Value="Hidden" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=SettingsButton, Path=IsChecked}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                </Border>
+
+            </Grid>
+
         </Grid>
     </DataTemplate>
 

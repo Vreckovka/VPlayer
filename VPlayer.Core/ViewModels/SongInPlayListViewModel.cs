@@ -326,7 +326,7 @@ namespace VPlayer.Core.ViewModels
           provider = (LRCProviders)providerNum;
         }
 
-        var lrc = parser.Parse(LRCLyrics.Split('\n').ToList());
+        var lrc = parser.Parse(LRCLyrics.Replace("\r",null).Split('\n').ToList());
 
         if (lrc != null)
         {

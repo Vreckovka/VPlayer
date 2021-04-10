@@ -23,6 +23,7 @@
 
     <Color x:Key="YellowColor">#fec827</Color>
     <Color x:Key="DefaultRedColorDim">#db515a</Color>
+    <Color x:Key="BrownColor">#c47216</Color>
     <Color x:Key="DarkBrownColor">#522e05</Color>
     <Color x:Key="BlueColor">#1887db</Color>
 
