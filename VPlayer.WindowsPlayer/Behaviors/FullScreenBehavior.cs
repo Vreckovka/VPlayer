@@ -60,16 +60,23 @@ namespace VPlayer.WindowsPlayer.Behaviors
 
       AssociatedObject.MouseLeftButtonDown += AssociatedObject_MouseLeftButtonDown;
       AssociatedObject.MouseMove += AssociatedObject_MouseMove;
-
+    
       fullScrennDisposable.Disposable = FullScreenManager.OnFullScreen.Subscribe(DecideFullScreen);
     }
 
+  
     #endregion
+
+    #region AssociatedObject_MouseMove
 
     private void AssociatedObject_MouseMove(object sender, MouseEventArgs e)
     {
       FullScreenManager.ResetMouse();
     }
+
+    #endregion
+
+    #region AssociatedObject_MouseLeftButtonDown
 
     private void AssociatedObject_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
@@ -79,6 +86,10 @@ namespace VPlayer.WindowsPlayer.Behaviors
       }
     }
 
+    #endregion
+
+    #region DecideFullScreen
+
     private void DecideFullScreen(bool isFullScreen)
     {
       if (isFullScreen)
@@ -86,6 +97,8 @@ namespace VPlayer.WindowsPlayer.Behaviors
       else
         ResetFullScreen();
     }
+
+    #endregion
 
     #region MakeFullScreen
 
@@ -99,6 +112,43 @@ namespace VPlayer.WindowsPlayer.Behaviors
       HideButton.Visibility = Visibility.Collapsed;
 
       FullscreenPlayer.DataContext = PlayerDataContext;
+
+      InputManager.Current.PreProcessInput += Current_PreProcessInput;
+
+    }
+
+    #endregion
+
+    #region Current_PreProcessInput
+
+    private void Current_PreProcessInput(object sender, PreProcessInputEventArgs args)
+    {
+      try
+      {
+        if (args != null && args.StagingItem != null && args.StagingItem.Input != null)
+        {
+          InputEventArgs inputEvent = args.StagingItem.Input;
+
+          if (inputEvent is KeyboardEventArgs)
+          {
+            KeyboardEventArgs k = inputEvent as KeyboardEventArgs;
+            RoutedEvent r = k.RoutedEvent;
+            KeyEventArgs keyEvent = k as KeyEventArgs;
+
+            if (r == Keyboard.KeyUpEvent)
+            {
+              if (keyEvent?.Key == Key.Escape)
+              {
+                FullScreenManager.IsFullscreen = !FullScreenManager.IsFullscreen;
+              }
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+
+      }
     }
 
     #endregion
@@ -113,6 +163,7 @@ namespace VPlayer.WindowsPlayer.Behaviors
 
       VideoMenu.Visibility = Visibility.Visible;
       HideButton.Visibility = Visibility.Visible;
+      InputManager.Current.PreProcessInput -= Current_PreProcessInput;
     }
 
     #endregion
@@ -125,6 +176,7 @@ namespace VPlayer.WindowsPlayer.Behaviors
 
       AssociatedObject.MouseLeftButtonDown -= AssociatedObject_MouseLeftButtonDown;
       AssociatedObject.MouseMove -= AssociatedObject_MouseMove;
+      InputManager.Current.PreProcessInput -= Current_PreProcessInput;
       fullScrennDisposable.Dispose();
     }
 

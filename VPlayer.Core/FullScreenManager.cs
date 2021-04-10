@@ -32,7 +32,6 @@ namespace VPlayer.WindowsPlayer.Behaviors
       };
 
       cursorTimer.Elapsed += hideCursorDelegate;
-
     
     }
 

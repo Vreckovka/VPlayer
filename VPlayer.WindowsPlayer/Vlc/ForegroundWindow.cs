@@ -59,6 +59,11 @@ namespace VPlayer.WindowsPlayer.Vlc
       IsVisibleChanged += ForegroundWindow_IsVisibleChanged;
     }
 
+
+    #endregion
+
+    #region ForegroundWindow_IsVisibleChanged
+
     private void ForegroundWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
       if (!_bckgnd.IsLoaded && IsVisible)
@@ -66,16 +71,20 @@ namespace VPlayer.WindowsPlayer.Vlc
         Height = 0;
         Width = 0;
       }
-    }
+    } 
 
     #endregion
 
+    #region OverlayWindow_GotFocus
 
     private void OverlayWindow_GotFocus(object sender, RoutedEventArgs e)
     {
       _wndhost?.Focus();
     }
 
+    #endregion
+
+    #region OnStateChanged
 
     protected override void OnStateChanged(EventArgs e)
     {
@@ -86,6 +95,7 @@ namespace VPlayer.WindowsPlayer.Vlc
       _wndhost?.Focus();
     }
 
+    #endregion
 
     #region OverlayContent
 
@@ -272,16 +282,11 @@ namespace VPlayer.WindowsPlayer.Vlc
       _bckgnd.DataContextChanged -= Background_DataContextChanged;
       _bckgnd.Loaded -= Background_Loaded;
       _bckgnd.Unloaded -= Background_Unloaded;
+      IsVisibleChanged -= ForegroundWindow_IsVisibleChanged;
     }
 
     #endregion
 
-    protected override void OnKeyDown(KeyEventArgs e)
-    {
-      if (e.Key == Key.System && e.SystemKey == Key.F4)
-      {
-        _wndhost?.Focus();
-      }
-    }
+  
   }
 }

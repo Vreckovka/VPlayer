@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms.Integration;
+using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using LibVLCSharp.Shared;
@@ -140,6 +141,8 @@ namespace VPlayer.WindowsPlayer.Vlc
 
       }
     }
+
+  
 
 
     #region MakeFullScreen
