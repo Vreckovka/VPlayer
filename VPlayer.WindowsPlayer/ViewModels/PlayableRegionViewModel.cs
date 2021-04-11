@@ -790,9 +790,9 @@ namespace VPlayer.Core.ViewModels
 #if RELEASE
           int totalSec = (int)PlaylistTotalTimePlayed.TotalSeconds;
 
-          if (totalSec % 10 == 0 && totalSec > lastUpdateSeconds)
+          if (totalSec % 10 == 0 && totalSec > lastTimeChangedMs)
           {
-            lastUpdateSeconds = totalSec;
+            lastTimeChangedMs = totalSec;
             Task.Run(UpdateActualSavedPlaylistPlaylist);
           }
 #endif
