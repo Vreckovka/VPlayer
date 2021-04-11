@@ -53,9 +53,10 @@
         <Border Grid.Row="1"
                 Grid.Column="0"
                 Grid.ColumnSpan="2"
-                Padding="0 1 0 0">
-            <ContentControl mvvm:RegionManager.RegionName="{x:Static regions:RegionNames.WindowsPlayerContentRegion}" />
+                Padding="0,1,0,0">
+            <Grid>
+                <ContentControl mvvm:RegionManager.RegionName="{x:Static regions:RegionNames.WindowsPlayerContentRegion}" />
+             </Grid>
         </Border>
-
     </Grid>
 </UserControl>

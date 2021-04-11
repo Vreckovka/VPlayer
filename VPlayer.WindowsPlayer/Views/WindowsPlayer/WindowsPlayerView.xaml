@@ -41,7 +41,10 @@
             </Grid.RowDefinitions>
 
 
-            <ContentControl regions:RegionManager.RegionName="{x:Static regions1:RegionNames.PlayerContentRegion}" />
+            <ContentControl x:Name="ContentControl" regions:RegionManager.RegionName="{x:Static regions1:RegionNames.PlayerContentRegion}" />
+
+          
+
 
             <Slider x:Name="Slider_Time"
                     Grid.Row="1"

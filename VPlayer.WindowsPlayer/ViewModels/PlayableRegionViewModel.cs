@@ -371,6 +371,24 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region ItemLastTime
+
+    private int? itemLastTime;
+    public int? ItemLastTime
+    {
+      get { return itemLastTime; }
+      set
+      {
+        if (value != itemLastTime)
+        {
+          itemLastTime = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #endregion
 
     #region Commands
@@ -424,6 +442,33 @@ namespace VPlayer.Core.ViewModels
         ActualSavedPlaylist.IsUserCreated = true;
         UpdateActualSavedPlaylistPlaylist();
         RaisePropertyChanged(nameof(ActualSavedPlaylist));
+      }
+    }
+
+    #endregion
+
+    #region ResumePlaying
+
+    private ActionCommand resumePlaying;
+
+    public ICommand ResumePlaying
+    {
+      get
+      {
+        if (resumePlaying == null)
+        {
+          resumePlaying = new ActionCommand(OnResumePlaying);
+        }
+
+        return resumePlaying;
+      }
+    }
+
+    public void OnResumePlaying()
+    {
+      if (ActualItem != null && ItemLastTime != null)
+      {
+        mediaPlayer.Position = ((float)ItemLastTime / ActualItem.Duration);
       }
     }
 
@@ -580,7 +625,6 @@ namespace VPlayer.Core.ViewModels
           if (ActualSavedPlaylist != null)
           {
             ActualSavedPlaylist.LastItemIndex = PlayList.IndexOf(ActualItem);
-            ActualSavedPlaylist.LastItemElapsedTime = 0;
             UpdateActualSavedPlaylistPlaylist();
           }
 
@@ -713,28 +757,11 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region Media_DurationChanged
-
-    protected void Media_DurationChanged(object sender, MediaDurationChangedEventArgs e)
-    {
-      Application.Current.Dispatcher.Invoke(() =>
-      {
-        ActualItem.Duration = (int)e.Duration / 1000;
-
-        if (MediaPlayer.Media != null)
-          MediaPlayer.Media.DurationChanged -= Media_DurationChanged;
-
-       
-      });
-    }
-
-    #endregion
-
     #region VlcMethods
 
     #region OnVlcTimeChanged
 
-   
+
     private void OnVlcTimeChanged(object sender, MediaPlayerTimeChangedEventArgs eventArgs)
     {
       if (ActualItem != null)
@@ -750,8 +777,9 @@ namespace VPlayer.Core.ViewModels
 
           lastTimeChanged = eventArgs.Time;
 
-          PlaylistTotalTimePlayed +=  TimeSpan.FromMilliseconds(deltaTimeChanged);
+          PlaylistTotalTimePlayed += TimeSpan.FromMilliseconds(deltaTimeChanged);
 
+#if RELEASE
           int totalSec = (int)PlaylistTotalTimePlayed.TotalSeconds;
 
           if (totalSec % 10 == 0 && totalSec > lastUpdateSeconds)
@@ -759,6 +787,7 @@ namespace VPlayer.Core.ViewModels
             lastUpdateSeconds = totalSec;
             Task.Run(UpdateActualSavedPlaylistPlaylist);
           }
+#endif
         }
       }
     }
@@ -776,6 +805,23 @@ namespace VPlayer.Core.ViewModels
         ActualItem.IsPaused = false;
         IsPlaying = true;
       }
+    }
+
+    #endregion
+
+    #region Media_DurationChanged
+
+    protected void Media_DurationChanged(object sender, MediaDurationChangedEventArgs e)
+    {
+      Application.Current.Dispatcher.Invoke(() =>
+      {
+        ActualItem.Duration = (int)e.Duration / 1000;
+
+        if (MediaPlayer.Media != null)
+          MediaPlayer.Media.DurationChanged -= Media_DurationChanged;
+
+
+      });
     }
 
     #endregion
@@ -803,6 +849,30 @@ namespace VPlayer.Core.ViewModels
           }
         }
       });
+    }
+
+    #endregion
+
+    #region PlayPlaylist
+
+    private void PlayPlaylist(PlayItemsEventData<TItemViewModel> data, int? lastSongIndex = null)
+    {
+      ActualSavedPlaylist = data.GetModel<TPlaylistModel>();
+      ActualSavedPlaylist.LastPlayed = DateTime.Now;
+
+      if (lastSongIndex == null)
+      {
+        PlayItems(data.Items, false);
+      }
+      else
+      {
+        PlayItems(data.Items, false, lastSongIndex.Value);
+
+        if (data.SetPostion.HasValue)
+          mediaPlayer.Position = data.SetPostion.Value;
+      }
+
+      HandleLastItemElapsed();
     }
 
     #endregion
@@ -1138,7 +1208,7 @@ namespace VPlayer.Core.ViewModels
 
     }
 
-    #endregion 
+    #endregion
 
     #endregion
 
@@ -1152,25 +1222,19 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region PlayPlaylist
+    #region HandleLastItemElapsed
 
-    private void PlayPlaylist(PlayItemsEventData<TItemViewModel> data, int? lastSongIndex = null)
+    private void HandleLastItemElapsed()
     {
-      ActualSavedPlaylist = data.GetModel<TPlaylistModel>();
-
-      ActualSavedPlaylist.LastPlayed = DateTime.Now;
-
-      if (lastSongIndex == null)
+      Application.Current.Dispatcher.Invoke(() =>
       {
-        PlayItems(data.Items, false);
-      }
-      else
-      {
-        PlayItems(data.Items, false, lastSongIndex.Value);
+        ItemLastTime = null;
+        var itemLastTimeFloat = ActualSavedPlaylist.LastItemElapsedTime > 0 ? (float?)ActualSavedPlaylist.LastItemElapsedTime : null;
 
-        if (data.SetPostion.HasValue)
-          mediaPlayer.Position = data.SetPostion.Value;
-      }
+        if (itemLastTimeFloat != null && itemLastTimeFloat > 0)
+          ItemLastTime = (int)(itemLastTimeFloat.Value * ActualItem.Duration);
+
+      });
     }
 
     #endregion
