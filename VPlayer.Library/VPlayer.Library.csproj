@@ -16,5 +16,6 @@
     <ProjectReference Include="..\..\CustomLibraries\VCore\VCore.WPF.csproj" />
     <ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj" />
     <ProjectReference Include="..\VPlayer.Core\VPlayer.Core.csproj" />
+    <ProjectReference Include="..\VPlayer.UPnP\VPlayer.UPnP.csproj" />
   </ItemGroup>
 </Project>

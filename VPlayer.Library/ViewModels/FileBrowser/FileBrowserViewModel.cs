@@ -13,16 +13,12 @@ using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.ViewModels.TreeView;
 using VCore.Standard.ViewModels.WindowsFile;
 using VCore.ViewModels;
+using VCore.WPF.Interfaces;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Library.Views;
 
 namespace VPlayer.Library.ViewModels.FileBrowser
 {
-  public interface IFilterable
-  {
-    void Filter(string predicated);
-  }
-
   public class FileBrowserViewModel : RegionViewModel<FileBrowserView>, IFilterable
   {
     private readonly IViewModelsFactory viewModelsFactory;

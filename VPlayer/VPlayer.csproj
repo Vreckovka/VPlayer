@@ -64,6 +64,7 @@
     <None Remove="Resources\Icons\singer.png" />
     <None Remove="Resources\Icons\tvshow-playlist.png" />
     <None Remove="Resources\Icons\tvshow.png" />
+    <None Remove="Resources\Icons\upnp.png" />
     <None Remove="Resources\Icons\video-play.png" />
     <None Remove="Resources\play-and-pause-button.png" />
     <None Remove="Resources\song-playliyst.png" />
@@ -120,6 +121,7 @@
     <Resource Include="Includes\VPlayerLogo.png" />
     <Resource Include="Resources\Icons\tvshow-playlist.png" />
     <Resource Include="Resources\Icons\tvshow.png" />
+    <Resource Include="Resources\Icons\upnp.png" />
     <Resource Include="Resources\Icons\video-play.png" />
     <Resource Include="Resources\play-and-pause-button.png" />
   </ItemGroup>

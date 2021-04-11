@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VPlayer.AudioStorage.AudioDatabase;
 
 namespace VPlayer.AudioStorage.Migrations
 {
     [DbContext(typeof(AudioDatabaseContext))]
-    partial class AudioDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20210411193722_UPnP")]
+    partial class UPnP
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -378,43 +380,6 @@ namespace VPlayer.AudioStorage.Migrations
                     b.ToTable("UPnPMediaServers");
                 });
 
-            modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.UPnP.UPnPService", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("ControlURL")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("Created")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("EventSubURL")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("Modified")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SCPDURL")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ServiceId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ServiceType")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("UPnPDeviceId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UPnPDeviceId");
-
-                    b.ToTable("UPnPServices");
-                });
-
             modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.Video.TvShow", b =>
                 {
                     b.Property<int>("Id")
@@ -650,13 +615,6 @@ namespace VPlayer.AudioStorage.Migrations
                     b.Navigation("UPnPDevice");
                 });
 
-            modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.UPnP.UPnPService", b =>
-                {
-                    b.HasOne("VPlayer.AudioStorage.DomainClasses.UPnP.UPnPDevice", null)
-                        .WithMany("Services")
-                        .HasForeignKey("UPnPDeviceId");
-                });
-
             modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.Video.TvShowSeason", b =>
                 {
                     b.HasOne("VPlayer.AudioStorage.DomainClasses.Video.TvShow", "TvShow")
@@ -679,11 +637,6 @@ namespace VPlayer.AudioStorage.Migrations
             modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.SongsPlaylist", b =>
                 {
                     b.Navigation("PlaylistItems");
-                });
-
-            modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.UPnP.UPnPDevice", b =>
-                {
-                    b.Navigation("Services");
                 });
 
             modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.Video.TvShow", b =>

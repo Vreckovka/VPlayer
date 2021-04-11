@@ -150,7 +150,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         var settings = viewModelsFactory.Create<SettingsViewModel>();
 
-
+      
         NavigationViewModel.Items.Add(new NavigationItem(libraryViewModel)
         {
           ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/library.png"
@@ -174,6 +174,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         {
           ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/settings.png"
         });
+        
 
         musicPlayer.ObservePropertyChange(x => x.IsSelectedToPlay).ObserveOnDispatcher().Subscribe(x => musicPlayerNavigationItem.IsBackroundActive = x).DisposeWith(this);
         videoPlayer.ObservePropertyChange(x => x.IsSelectedToPlay).ObserveOnDispatcher().Subscribe(x => videoPlayerNavigationItem.IsBackroundActive = x).DisposeWith(this);
@@ -184,10 +185,16 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region AddFolder
+
     public void AddFolder(string folderPath)
     {
       storageManager.StoreData(folderPath);
     }
+
+    #endregion
+
+    #region Dispose
 
     public override void Dispose()
     {
@@ -198,6 +205,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
         item?.Dispose();
       }
     }
+
+    #endregion
 
     #endregion Methods
 

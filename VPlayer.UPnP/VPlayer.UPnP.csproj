@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+	  <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\CustomLibraries\VCore.Standard\VCore.Standard.csproj" />
+    <ProjectReference Include="..\..\CustomLibraries\VCore\VCore.WPF.csproj" />
+    <ProjectReference Include="..\03.Domain\UPnP\UPnP.csproj" />
+    <ProjectReference Include="..\VPlayer.Core\VPlayer.Core.csproj" />
+    <ProjectReference Include="..\VPlayer.DarkTheme\VPlayer.DarkTheme.csproj" />
+  </ItemGroup>
+
+</Project>

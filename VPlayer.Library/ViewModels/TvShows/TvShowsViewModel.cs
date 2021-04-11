@@ -9,6 +9,7 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.TvShows;
+using VPlayer.Library.ViewModels.FileBrowser;
 using VPlayer.Library.ViewModels.LibraryViewModels;
 using VPlayer.Library.Views;
 

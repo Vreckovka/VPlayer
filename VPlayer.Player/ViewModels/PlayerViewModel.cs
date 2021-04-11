@@ -147,6 +147,8 @@ namespace VPlayer.Player.ViewModels
 
     #endregion
 
+    #region Commands
+
     #region NextCommand
 
     private ActionCommand nextCommand;
@@ -207,7 +209,9 @@ namespace VPlayer.Player.ViewModels
       ActualViewModel?.PlayPause();
     }
 
-    #endregion 
+    #endregion
+
+    #endregion
 
     #region Methods
 

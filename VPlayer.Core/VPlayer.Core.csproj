@@ -29,4 +29,10 @@
       <IsWinMDFile>true</IsWinMDFile>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <Page Update="Styles\FileBrowserResources.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
 </Project>

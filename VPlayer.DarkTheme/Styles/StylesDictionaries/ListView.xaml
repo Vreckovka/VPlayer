@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:controls="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
+                    xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
 
@@ -447,13 +448,23 @@
                 </Style>
             </Border.Style>
             <StackPanel>
-                <GridViewRowPresenter Columns="{TemplateBinding GridView.ColumnCollection}" Content="{TemplateBinding Content}" />
+                <ContentPresenter x:Name="ContentPresenter" />
+
+                <!--<GridViewRowPresenter x:Name="GridViewRowPresenter"
+                                      Columns="{TemplateBinding GridView.ColumnCollection}"
+                                      Content="{TemplateBinding Content}" />-->
             </StackPanel>
         </Border>
         <ControlTemplate.Triggers>
             <Trigger Property="IsSelected" Value="true">
                 <Setter TargetName="border" Property="Background" Value="#15ffffff" />
             </Trigger>
+            <!--<DataTrigger Binding="{TemplateBinding GridView.ColumnCollection}" Value="{x:Null}">
+                <Setter TargetName="GridViewRowPresenter" Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
+            <DataTrigger Binding="{TemplateBinding GridView.ColumnCollection, Converter={converters:IsNullConverter}}" Value="False">
+                <Setter TargetName="ContentPresenter" Property="Visibility" Value="Collapsed" />
+            </DataTrigger>-->
             <Trigger Property="IsMouseOver" Value="true">
                 <Setter TargetName="border" Property="Background" Value="#10ffffff" />
             </Trigger>
@@ -462,6 +473,7 @@
 
     <Style x:Key="ListViewItemStyle" TargetType="ListViewItem">
         <Setter Property="Template" Value="{StaticResource ListViewItemTemplate}" />
+        <Setter Property="IsSelected" Value="{Binding IsSelected}" />
     </Style>
 
     <Style TargetType="ListView">

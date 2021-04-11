@@ -11,6 +11,7 @@ using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
+using VCore.WPF.Interfaces;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
@@ -18,10 +19,11 @@ using VPlayer.Library.ViewModels.AlbumsViewModels;
 using VPlayer.Library.ViewModels.FileBrowser;
 using VPlayer.Library.ViewModels.TvShows;
 using VPlayer.Library.Views;
+using VPlayer.UPnP.ViewModels;
 
 namespace VPlayer.Library.ViewModels
 {
-  public class LibraryViewModel : RegionViewModel<LibraryView>, INavigationItem
+  public class LibraryViewModel : RegionViewModel<LibraryView>, INavigationItem, IFilterable
   {
     #region Fields
 
@@ -109,6 +111,7 @@ namespace VPlayer.Library.ViewModels
         var tvShowPlaylistsViewModel = viewModelsFactory.Create<VideoPlaylistsViewModel>();
         var tvShowsViewModel = viewModelsFactory.Create<TvShowsViewModel>();
         var fileBrowser = viewModelsFactory.Create<FileBrowserViewModel>();
+        var upnp = viewModelsFactory.Create<UPnPManagerViewModel>();
 
         Application.Current?.Dispatcher?.Invoke(() =>
         {
@@ -142,9 +145,16 @@ namespace VPlayer.Library.ViewModels
             ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/browser.png"
           });
 
+
+          NavigationViewModel.Items.Add(new NavigationItem(upnp)
+          {
+            ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/upnp.png"
+          });
+
           NavigationViewModel.Items.First().IsActive = true;
         });
 
+       
 
       }
     }
@@ -153,11 +163,11 @@ namespace VPlayer.Library.ViewModels
 
     #region Filter
 
-    private void Filter(string phrase)
+    public void Filter(string phrase)
     {
       var acutal = NavigationViewModel.Items.SingleOrDefault(x => x.IsActive);
 
-      if (acutal != null && acutal.navigationItem is IFilterable filterable)
+      if (acutal != null && acutal.Model is IFilterable filterable)
       {
         filterable.Filter(phrase);
       }

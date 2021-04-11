@@ -14,6 +14,7 @@ using VCore.Standard.Helpers;
 using VCore.Standard.Modularity.Interfaces;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
+using VCore.WPF.Interfaces;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;

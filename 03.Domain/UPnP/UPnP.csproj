@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+
+	<ItemGroup>
+		<Reference Include="System.Runtime.WindowsRuntime">
+			<HintPath>..\..\DLL\System.Runtime.WindowsRuntime.dll</HintPath>
+		</Reference>
+		<Reference Include="Windows">
+			<HintPath>..\..\DLL\Windows.winmd</HintPath>
+			<IsWinMDFile>true</IsWinMDFile>
+		</Reference>
+	</ItemGroup>
+
+</Project>
