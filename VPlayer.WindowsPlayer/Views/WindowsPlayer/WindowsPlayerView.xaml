@@ -43,7 +43,7 @@
 
             <ContentControl x:Name="ContentControl" regions:RegionManager.RegionName="{x:Static regions1:RegionNames.PlayerContentRegion}" />
 
-          
+
 
 
             <Slider x:Name="Slider_Time"
@@ -80,6 +80,7 @@
                       Grid.Column="1"
                       Margin="2,0,0,0"
                       HorizontalAlignment="Stretch"
+                      Focusable="False"
                       IsEnabled="{Binding ElementName=HideBehavior, Path=CanHide}">
             <GridSplitter.Style>
                 <Style TargetType="GridSplitter">

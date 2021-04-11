@@ -51,8 +51,7 @@ namespace VPlayer.Core.ViewModels
     protected HashSet<TItemViewModel> shuffleList = new HashSet<TItemViewModel>();
     protected LibVLC libVLC;
     private bool wasVlcInitilized;
-    private long lastTimeChanged;
-    private int lastUpdateSeconds;
+    private long lastTimeChangedMs;
 
     #endregion
 
@@ -126,6 +125,11 @@ namespace VPlayer.Core.ViewModels
       {
         if (value != actualItem)
         {
+          if(actualItem != null)
+          {
+            ItemLastTime = null;
+          }
+
           actualItem = value;
 
           actualItemSubject.OnNext(PlayList.IndexOf(actualItem));
@@ -760,8 +764,7 @@ namespace VPlayer.Core.ViewModels
     #region VlcMethods
 
     #region OnVlcTimeChanged
-
-
+    
     private void OnVlcTimeChanged(object sender, MediaPlayerTimeChangedEventArgs eventArgs)
     {
       if (ActualItem != null)
@@ -773,9 +776,14 @@ namespace VPlayer.Core.ViewModels
           ActualItem.ActualPosition = position;
           ActualSavedPlaylist.LastItemElapsedTime = position;
 
-          var deltaTimeChanged = eventArgs.Time - lastTimeChanged;
+          var deltaTimeChanged = eventArgs.Time - lastTimeChangedMs;
 
-          lastTimeChanged = eventArgs.Time;
+          if (deltaTimeChanged < 0)
+          {
+            deltaTimeChanged = 0;
+          }
+
+          lastTimeChangedMs = eventArgs.Time;
 
           PlaylistTotalTimePlayed += TimeSpan.FromMilliseconds(deltaTimeChanged);
 
@@ -800,7 +808,7 @@ namespace VPlayer.Core.ViewModels
     {
       if (ActualItem != null)
       {
-        lastTimeChanged = 0;
+        lastTimeChangedMs = 0;
         ActualItem.IsPlaying = true;
         ActualItem.IsPaused = false;
         IsPlaying = true;
@@ -827,6 +835,8 @@ namespace VPlayer.Core.ViewModels
     #endregion
 
     #endregion
+
+    #region Play methods
 
     #region Play
 
@@ -938,12 +948,131 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region PlayItems
+
+    protected void PlayItems(IEnumerable<TItemViewModel> songs, bool savePlaylist = true, int songIndex = 0, bool editSaved = false)
+    {
+      Application.Current.Dispatcher.Invoke(() =>
+      {
+        IsActive = true;
+
+        PlayList.Clear();
+        PlayList.AddRange(songs);
+        ReloadVirtulizedPlaylist();
+
+        IsPlaying = true;
+
+        SetItemAndPlay(songIndex);
+
+        if (ActualItem != null)
+          ActualItem.IsPlaying = false;
+
+        Task.Run(() =>
+        {
+          if (savePlaylist)
+          {
+            StorePlaylist(editSaved: editSaved);
+          }
+        });
+
+      });
+    }
+
+
+
+    #endregion
+
+    #region PlayItemsFromEvent
+
+    protected void PlayItemsFromEvent(PlayItemsEventData<TItemViewModel> data)
+    {
+      if (!data.Items.Any())
+        return;
+
+      if (ActualSavedPlaylist.Id > 0)
+      {
+        UpdateActualSavedPlaylistPlaylist();
+        ActualSavedPlaylist = new TPlaylistModel() { Id = -1 };
+      }
+
+
+      switch (data.EventAction)
+      {
+        case EventAction.Play:
+          PlayItems(data.Items);
+
+          break;
+        case EventAction.Add:
+          PlayList.AddRange(data.Items);
+
+          if (ActualItem == null)
+          {
+            SetActualItem(0);
+          }
+
+          ReloadVirtulizedPlaylist();
+          RaisePropertyChanged(nameof(CanPlay));
+          StorePlaylist(editSaved: true);
+          break;
+        case EventAction.PlayFromPlaylist:
+          PlayPlaylist(data);
+
+          break;
+        case EventAction.PlayFromPlaylistLast:
+        {
+          var model = data.GetModel<TPlaylistModel>();
+          PlayPlaylist(data, model.LastItemIndex);
+        }
+
+          break;
+        default:
+          throw new ArgumentOutOfRangeException();
+      }
+
+      RaisePropertyChanged(nameof(CanPlay));
+
+      if (data.IsShufle.HasValue)
+        IsShuffle = data.IsShufle.Value;
+
+      if (data.IsRepeat.HasValue)
+        IsRepeate = data.IsRepeat.Value;
+
+      OnPlayEvent();
+
+    }
+
+    #endregion
+
+    #endregion
+
+    #region Position methods
+
+    #region SetMediaPosition
+
+    public void SetMediaPosition(float position)
+    {
+      if (position < 0)
+      {
+        position = 0;
+      }
+
+      mediaPlayer.Position = position;
+
+      ActualItem.ActualPosition = mediaPlayer.Position;
+
+      lastTimeChangedMs = (long)(ActualItem.ActualPosition * (double)ActualItem.Duration) * 1000;
+    }
+
+    #endregion
+
     #region SeekForward
 
     public void SeekForward(int seekSize = 50)
     {
-      mediaPlayer.Position = mediaPlayer.Position + GetSeekSize(seekSize);
-      ActualItem.ActualPosition = mediaPlayer.Position;
+      var position = mediaPlayer.Position + GetSeekSize(seekSize);
+
+      SetMediaPosition(position);
+
     }
 
     #endregion
@@ -952,8 +1081,9 @@ namespace VPlayer.Core.ViewModels
 
     public void SeekBackward(int seekSize = 50)
     {
-      mediaPlayer.Position = mediaPlayer.Position - GetSeekSize(seekSize);
-      ActualItem.ActualPosition = mediaPlayer.Position;
+      var position = mediaPlayer.Position - GetSeekSize(seekSize);
+
+      SetMediaPosition(position);
     }
 
     #endregion
@@ -966,6 +1096,10 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
+
+    #endregion
+
+    #region Playlist methods
 
     #region StorePlaylist
 
@@ -1096,6 +1230,8 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #endregion
+
     #region IsInFind
 
     protected bool IsInFind(string original, string phrase, bool useContains = true)
@@ -1116,99 +1252,6 @@ namespace VPlayer.Core.ViewModels
 
       return result;
     }
-
-    #endregion
-
-    #region PlayItems
-
-    protected void PlayItems(IEnumerable<TItemViewModel> songs, bool savePlaylist = true, int songIndex = 0, bool editSaved = false)
-    {
-      Application.Current.Dispatcher.Invoke(() =>
-      {
-        IsActive = true;
-
-        PlayList.Clear();
-        PlayList.AddRange(songs);
-        ReloadVirtulizedPlaylist();
-
-        IsPlaying = true;
-
-        SetItemAndPlay(songIndex);
-
-        if (ActualItem != null)
-          ActualItem.IsPlaying = false;
-
-        Task.Run(() =>
-        {
-          if (savePlaylist)
-          {
-            StorePlaylist(editSaved: editSaved);
-          }
-        });
-
-      });
-    }
-
-    #region PlayItemsFromEvent
-
-    protected void PlayItemsFromEvent(PlayItemsEventData<TItemViewModel> data)
-    {
-      if (!data.Items.Any())
-        return;
-
-      if (ActualSavedPlaylist.Id > 0)
-      {
-        UpdateActualSavedPlaylistPlaylist();
-        ActualSavedPlaylist = new TPlaylistModel() { Id = -1 };
-      }
-
-
-      switch (data.EventAction)
-      {
-        case EventAction.Play:
-          PlayItems(data.Items);
-
-          break;
-        case EventAction.Add:
-          PlayList.AddRange(data.Items);
-
-          if (ActualItem == null)
-          {
-            SetActualItem(0);
-          }
-
-          ReloadVirtulizedPlaylist();
-          RaisePropertyChanged(nameof(CanPlay));
-          StorePlaylist(editSaved: true);
-          break;
-        case EventAction.PlayFromPlaylist:
-          PlayPlaylist(data);
-
-          break;
-        case EventAction.PlayFromPlaylistLast:
-          {
-            var model = data.GetModel<TPlaylistModel>();
-            PlayPlaylist(data, model.LastItemIndex);
-          }
-
-          break;
-        default:
-          throw new ArgumentOutOfRangeException();
-      }
-
-      RaisePropertyChanged(nameof(CanPlay));
-
-      if (data.IsShufle.HasValue)
-        IsShuffle = data.IsShufle.Value;
-
-      if (data.IsRepeat.HasValue)
-        IsRepeate = data.IsRepeat.Value;
-
-      OnPlayEvent();
-
-    }
-
-    #endregion
 
     #endregion
 

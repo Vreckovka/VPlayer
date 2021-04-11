@@ -73,7 +73,8 @@ namespace VPlayer.Player.Behaviors
       {
         if (AssociatedObject.DataContext is IPlayableRegionViewModel playableRegionViewModel)
         {
-          playableRegionViewModel.MediaPlayer.Position = (float)e.NewValue;
+          playableRegionViewModel.SetMediaPosition((float) e.NewValue);
+         
         }
       }
     }

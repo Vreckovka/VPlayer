@@ -22,5 +22,6 @@ namespace VPlayer.Core.ViewModels
     void SeekBackward(int seekSize = 50);
     IObservable<int> ActualItemChanged { get; }
     void SetVolume(int pVolume);
+    void SetMediaPosition(float position);
   }
 }
