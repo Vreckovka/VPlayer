@@ -51,6 +51,8 @@ namespace VPlayer.Core.ViewModels
     protected HashSet<TItemViewModel> shuffleList = new HashSet<TItemViewModel>();
     protected LibVLC libVLC;
     private bool wasVlcInitilized;
+    private long lastTimeChanged;
+    private int lastUpdateSeconds;
 
     #endregion
 
@@ -343,6 +345,25 @@ namespace VPlayer.Core.ViewModels
         if (value != isSelectedToPlay)
         {
           isSelectedToPlay = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region PlaylistTotalTimePlayed
+
+    private TimeSpan playlistTotalTimePlayed;
+
+    public TimeSpan PlaylistTotalTimePlayed
+    {
+      get { return ActualSavedPlaylist.TotalPlayedTime; }
+      set
+      {
+        if (value != ActualSavedPlaylist.TotalPlayedTime)
+        {
+          ActualSavedPlaylist.TotalPlayedTime = value;
           RaisePropertyChanged();
         }
       }
@@ -702,6 +723,8 @@ namespace VPlayer.Core.ViewModels
 
         if (MediaPlayer.Media != null)
           MediaPlayer.Media.DurationChanged -= Media_DurationChanged;
+
+       
       });
     }
 
@@ -711,6 +734,7 @@ namespace VPlayer.Core.ViewModels
 
     #region OnVlcTimeChanged
 
+   
     private void OnVlcTimeChanged(object sender, MediaPlayerTimeChangedEventArgs eventArgs)
     {
       if (ActualItem != null)
@@ -721,6 +745,20 @@ namespace VPlayer.Core.ViewModels
         {
           ActualItem.ActualPosition = position;
           ActualSavedPlaylist.LastItemElapsedTime = position;
+
+          var deltaTimeChanged = eventArgs.Time - lastTimeChanged;
+
+          lastTimeChanged = eventArgs.Time;
+
+          PlaylistTotalTimePlayed +=  TimeSpan.FromMilliseconds(deltaTimeChanged);
+
+          int totalSec = (int)PlaylistTotalTimePlayed.TotalSeconds;
+
+          if (totalSec % 10 == 0 && totalSec > lastUpdateSeconds)
+          {
+            lastUpdateSeconds = totalSec;
+            Task.Run(UpdateActualSavedPlaylistPlaylist);
+          }
         }
       }
     }
@@ -733,6 +771,7 @@ namespace VPlayer.Core.ViewModels
     {
       if (ActualItem != null)
       {
+        lastTimeChanged = 0;
         ActualItem.IsPlaying = true;
         ActualItem.IsPaused = false;
         IsPlaying = true;

@@ -18,5 +18,6 @@ namespace VPlayer.AudioStorage.DomainClasses
     bool IsShuffle { get; set; }
     float LastItemElapsedTime { get; set; }
     int LastItemIndex { get; set; }
+    TimeSpan TotalPlayedTime { get; set; }
   }
 }

@@ -614,7 +614,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           entityModel = entity;
 
-          if(result)
+          if (result)
           {
             logger.Log(Logger.MessageType.Success, $"Entity was stored {entity}");
 
@@ -820,7 +820,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           result = context.SaveChanges() > 0;
 
-          if(result)
+          if (result)
           {
             ItemChanged.OnNext(new ItemChanged()
             {
@@ -829,9 +829,14 @@ namespace VPlayer.AudioStorage.AudioDatabase
             });
           }
 
+          if (result)
+            logger.Log(MessageType.Success, $"Item was updated {playlist} {playlist.Id}");
+          else
+            logger.Log(MessageType.Warning, $"Item was not updated {playlist} {playlist.Id} result was {result}");
+
           updatedPlaylist = foundPlaylist;
         }
-        
+
         return result;
       }
     }
@@ -893,7 +898,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
         {
           foreach (var tvShowSeason in foundEntity.Seasons)
           {
-            foreach(var tvShowEpisode in tvShowSeason.Episodes)
+            foreach (var tvShowEpisode in tvShowSeason.Episodes)
             {
               context.Remove(tvShowEpisode);
             }

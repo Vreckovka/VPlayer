@@ -110,39 +110,39 @@
                 <GridView AllowsColumnReorder="False">
 
                     <GridView.Columns>
-                        <GridViewColumn Width="120" Header="Play from last">
+                        <GridViewColumn Width="65" Header="Resume">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <controls1:ButtonWithIcon Width="90"
+                                    <controls1:ButtonWithIcon Width="65"
                                                               HorizontalContentAlignment="Center"
                                                               Command="{Binding Play}"
                                                               CommandParameter="{x:Static events:EventAction.PlayFromPlaylistLast}"
-                                                              Content="Last"
                                                               FontSize="14"
                                                               FontWeight="Normal"
                                                               IconDefaultColor="#50f5936c"
                                                               IconHeight="20"
                                                               IconHoverColor="{StaticResource OrangeColor}"
                                                               IconMargin="0 0 5 0"
-                                                              IconPathStyle="{StaticResource PlaySign}" />
+                                                              IconPathStyle="{StaticResource PlaySign}"
+                                                              ToolTip="Resume" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Width="125" Header="Play from start">
+                        <GridViewColumn Width="65" Header="Fresh">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <controls1:ButtonWithIcon Width="90"
+                                    <controls1:ButtonWithIcon Width="65"
                                                               HorizontalContentAlignment="Center"
                                                               Command="{Binding Play}"
                                                               CommandParameter="{x:Static events:EventAction.PlayFromPlaylist}"
-                                                              Content="Fresh"
                                                               FontSize="14"
                                                               FontWeight="Normal"
                                                               IconDefaultColor="#50db515a"
                                                               IconHeight="20"
                                                               IconHoverColor="{StaticResource DefaultRedColor}"
                                                               IconMargin="0 0 5 0"
-                                                              IconPathStyle="{StaticResource PlaySign}" />
+                                                              IconPathStyle="{StaticResource PlaySign}"
+                                                              ToolTip="Fresh" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -157,9 +157,12 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Width="180"
+                        <GridViewColumn Width="140"
                                         DisplayMemberBinding="{Binding LastPlayed, StringFormat={}dd.MM.yy / HH:mm:ss}"
-                                        Header="Last played" />
+                                        Header="Last time played" />
+                        <GridViewColumn Width="140"
+                                        DisplayMemberBinding="{Binding TotalPlayedTime}"
+                                        Header="Total played time" />
                         <GridViewColumn Width="150"
                                         DisplayMemberBinding="{Binding HashCode, Converter={library:HashConverter}, ConverterParameter=18}"
                                         Header="Hash" />

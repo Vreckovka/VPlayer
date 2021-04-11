@@ -98,8 +98,7 @@
                     BorderThickness="0,0,0,1">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition />
+                        <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="auto" />
                     </Grid.ColumnDefinitions>
 
@@ -108,53 +107,76 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
 
+                    <Grid Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
 
-                    <controls1:ButtonWithIcon Grid.Column="1"
-                                              Margin="0,0,5,0"
-                                              Padding="0"
-                                              HorizontalAlignment="Right"
-                                              Command="{Binding SavePlaylistCommand}"
-                                              IconPathStyle="{StaticResource Playlist}"
-                                              ToolTip="Save playlist">
-                        <controls1:ButtonWithIcon.Style>
-                            <Style BasedOn="{StaticResource {x:Type controls1:ButtonWithIcon}}" TargetType="controls1:ButtonWithIcon">
-                                <Setter Property="IconDefaultColor" Value="{StaticResource 30_DefaultWhiteColor}" />
-                                <Setter Property="IconHoverColor" Value="{StaticResource YellowColor}" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ActualSavedPlaylist.IsUserCreated}" Value="True">
-                                        <Setter Property="IconDefaultColor" Value="{StaticResource DefaultRedColor}" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </controls1:ButtonWithIcon.Style>
-                    </controls1:ButtonWithIcon>
+                        <controls1:ButtonWithIcon Grid.Column="0"
+                                                  Margin="10,0"
+                                                  Padding="8"
+                                                  HorizontalAlignment="Right"
+                                                  BorderBrush="#202020"
+                                                  BorderThickness="1"
+                                                  Command="{Binding SavePlaylistCommand}"
+                                                  FontSize="14"
+                                                  FontWeight="Bold"
+                                                  Foreground="#555555"
+                                                  IconPathStyle="{StaticResource Playlist}"
+                                                  ToolTip="Save playlist">
+                            <controls1:ButtonWithIcon.Style>
+                                <Style BasedOn="{StaticResource {x:Type controls1:ButtonWithIcon}}" TargetType="controls1:ButtonWithIcon">
+                                    <Setter Property="IconDefaultColor" Value="{StaticResource 30_DefaultWhiteColor}" />
+                                    <Setter Property="Content" Value="Generated playlist" />
+                                    <Setter Property="IconHoverColor" Value="{StaticResource YellowColor}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ActualSavedPlaylist.IsUserCreated}" Value="True">
+                                            <Setter Property="IconDefaultColor" Value="{StaticResource DefaultRedColor}" />
+                                            <Setter Property="Content" Value="User playlist" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </controls1:ButtonWithIcon.Style>
+                        </controls1:ButtonWithIcon>
 
-                    <StackPanel Grid.Row="0"
-                                Grid.Column="2"
-                                Margin="5,0"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                Orientation="Horizontal">
-                        <TextBlock Margin="0,0,5,0" Foreground="#25ffffff">
-                            <Run Text="Number of items:" />
-                            <Run Text="{Binding PlayList.Count, Mode=OneWay}" />
-                        </TextBlock>
 
-                        <TextBlock Margin="0,0,5,0" Foreground="#25ffffff">
-                            <Run Text="Duration:" />
-                            <Run Text="{Binding TotalPlaylistDuration, Mode=OneWay}" />
-                        </TextBlock>
-                    </StackPanel>
+                        <StackPanel Grid.Row="0"
+                                    Grid.Column="1"
+                                    Margin="5,0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Opacity="0.5"
+                                    Orientation="Vertical">
+                            <TextBlock Margin="0,0,5,0">
+                                <Run Foreground="#ccc" Text="Items:" />
+                                <Run Foreground="#ccc69b" Text="{Binding PlayList.Count, Mode=OneWay}" />
+                            </TextBlock>
+
+                            <TextBlock Margin="0,0,5,0">
+                                <Run Foreground="#ccc" Text="Duration:" />
+                                <Run Foreground="#858585" Text="{Binding TotalPlaylistDuration, Mode=OneWay, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}" />
+                            </TextBlock>
+
+                            <TextBlock Margin="0,0,5,0">
+                                <Run Foreground="#ccc" Text="Total played:" />
+                                <Run Foreground="{StaticResource YellowBrush}" Text="{Binding PlaylistTotalTimePlayed, Mode=OneWay, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}" />
+                            </TextBlock>
+                        </StackPanel>
+
+                    </Grid>
 
                     <controls1:Finder Grid.Row="1"
                                       Grid.Column="0"
-                                      Grid.ColumnSpan="3"
+                                      Grid.ColumnSpan="2"
                                       Height="40"
                                       Margin="15,7,15,0"
                                       FontSize="14"
                                       KeyDownCommand="{Binding FinderKeyDown}"
                                       Text="{Binding ActualSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
                 </Grid>
+
             </Border>
 
 

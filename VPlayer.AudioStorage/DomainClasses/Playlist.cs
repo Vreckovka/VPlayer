@@ -13,6 +13,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     public bool IsShuffle { get; set; }
     public float LastItemElapsedTime { get; set; }
     public int LastItemIndex { get; set; }
+    public TimeSpan TotalPlayedTime { get; set; }
     public bool IsUserCreated { get; set; }
     public DateTime LastPlayed { get; set; }
 
@@ -27,6 +28,7 @@ namespace VPlayer.AudioStorage.DomainClasses
       LastPlayed = other.LastPlayed;
       HashCode = other.HashCode;
       ItemCount = other.ItemCount;
+      TotalPlayedTime = other.TotalPlayedTime;
     }
   }
 }

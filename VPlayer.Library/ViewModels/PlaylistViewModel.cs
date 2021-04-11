@@ -84,6 +84,23 @@ namespace VPlayer.Library.ViewModels
 
     #endregion
 
+    #region TotalPlayedTime
+
+    public TimeSpan TotalPlayedTime
+    {
+      get { return Model.TotalPlayedTime; }
+      set
+      {
+        if (value != Model.TotalPlayedTime)
+        {
+          Model.TotalPlayedTime = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     public int? ItemsCount => Model.ItemCount;
     public long? HashCode => Model.HashCode;
 
@@ -130,6 +147,7 @@ namespace VPlayer.Library.ViewModels
       RaisePropertyChanged(nameof(HashCode));
       RaisePropertyChanged(nameof(IsShuffle));
       RaisePropertyChanged(nameof(IsRepeating));
+      RaisePropertyChanged(nameof(TotalPlayedTime));
     }
 
     #endregion
