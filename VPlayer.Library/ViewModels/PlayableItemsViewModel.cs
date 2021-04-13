@@ -87,8 +87,7 @@ namespace VPlayer.Library.ViewModels
     #endregion View
 
     #endregion 
-
-
+    
     #region Methods
 
     #region Initialize

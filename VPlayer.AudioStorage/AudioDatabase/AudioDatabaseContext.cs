@@ -8,6 +8,7 @@ using Ninject;
 using VCore.Standard;
 using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.DomainClasses.UPnP;
 using VPlayer.AudioStorage.DomainClasses.Video;
 
@@ -43,6 +44,13 @@ namespace VPlayer.AudioStorage.AudioDatabase
     public DbSet<UPnPMediaServer> UPnPMediaServers { get; set; }
     public DbSet<UPnPDevice> UPnPDevices { get; set; }
     public DbSet<UPnPService> UPnPServices { get; set; }
+
+
+
+    public DbSet<TvSource> TVSources { get; set; }
+    public DbSet<TvChannelGroup> TVChannelGroups { get; set; }
+    public DbSet<TvChannel> TVChannels { get; set; }
+  
 
     #endregion Properties
 

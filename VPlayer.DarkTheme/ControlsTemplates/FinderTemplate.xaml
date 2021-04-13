@@ -19,6 +19,7 @@
     <Style TargetType="controls1:Finder">
         <Setter Property="Padding" Value="0,10" />
         <Setter Property="Height" Value="50" />
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls1:Finder">
@@ -34,6 +35,7 @@
 
                             <TextBox Name="SearchBox"
                                      Margin="0,0,10,0"
+                                     Background="Transparent"
                                      FontFamily="{TemplateBinding FontFamily}"
                                      FontSize="{TemplateBinding FontSize}"
                                      FontWeight="{TemplateBinding FontWeight}"

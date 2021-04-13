@@ -30,7 +30,7 @@
 
 
         <ListView Grid.RowSpan="2"
-                  Width="170"
+                  Width="175"
                   BorderThickness="0,0,2,0"
                   ItemsSource="{Binding NavigationViewModel.Items}"
                   Style="{StaticResource ListView_MenuStyle}" />

@@ -600,7 +600,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region StoreEntity
 
-    public bool StoreEntity<TEntity>(TEntity entity, out TEntity entityModel) where TEntity : class, IEntity
+    public bool StoreEntity<TEntity>(TEntity entity, out TEntity entityModel, bool log = true) where TEntity : class, IEntity
     {
       using (var context = new AudioDatabaseContext())
       {
@@ -616,7 +616,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           if (result)
           {
-            logger.Log(Logger.MessageType.Success, $"Entity was stored {entity}");
+            if (log)
+              logger.Log(Logger.MessageType.Success, $"Entity was stored {entity}");
 
             ItemChanged.OnNext(new ItemChanged()
             {
@@ -630,6 +631,39 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
         entityModel = null;
         return false;
+      }
+    }
+
+    #endregion
+
+    #region StoreRangeEntity
+
+    public bool StoreRangeEntity<TEntity>(List<TEntity> entities, bool log = true) where TEntity : class, IEntity
+    {
+      using (var context = new AudioDatabaseContext())
+      {
+        context.AddRange(entities);
+
+        var count = context.SaveChanges();
+        var result = count > 0;
+
+        if (result)
+        {
+          if (log)
+            logger.Log(Logger.MessageType.Success, $"Entities was stored {count}");
+
+          foreach(var entity in entities)
+          {
+            ItemChanged.OnNext(new ItemChanged()
+            {
+              Item = entity,
+              Changed = Changed.Added
+            });
+          }
+         
+        }
+
+        return result;
       }
     }
 

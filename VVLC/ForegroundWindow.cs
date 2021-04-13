@@ -165,6 +165,7 @@ namespace VPlayer.WindowsPlayer.Vlc
       _wndhost.Closing += Wndhost_Closing;
       _bckgnd.SizeChanged += Wndhost_SizeChanged;
       _wndhost.LocationChanged += Wndhost_LocationChanged;
+      _wndhost.SizeChanged += Wndhost_SizeChanged;
       _wndhost.StateChanged += Wndhost_StateChanged;
 
       try

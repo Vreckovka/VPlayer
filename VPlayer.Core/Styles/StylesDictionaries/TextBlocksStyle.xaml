@@ -6,7 +6,7 @@
            BasedOn="{StaticResource {x:Type TextBlock}}"
            TargetType="{x:Type TextBlock}">
         <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}" />
-        
+
     </Style>
 
     <Style x:Key="Base1"

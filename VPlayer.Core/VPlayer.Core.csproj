@@ -11,6 +11,7 @@
     <PackageReference Include="Prism.Core" Version="7.2.0.1422" />
     <PackageReference Include="Prism.Wpf" Version="7.2.0.1422" />
     <PackageReference Include="VirtualizingWrapPanel" Version="1.5.3" />
+    <PackageReference Include="LibVLCSharp" Version="3.4.9" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CustomLibraries\Logger\Logger.csproj" />
@@ -19,6 +20,7 @@
     <ProjectReference Include="..\..\CustomLibraries\VCore\VCore.WPF.csproj" />
     <ProjectReference Include="..\KeyListener\Listener.csproj" />
     <ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj" />
+    <ProjectReference Include="..\VVLC\VVLC.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Hqub.MusicBrainz.API">

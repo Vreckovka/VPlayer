@@ -84,7 +84,6 @@
 
                         <TextBlock Name="NameTxt"
                                    Grid.Row="0"
-                                   
                                    FontSize="20"
                                    Text="{Binding Name}">
                             <TextBlock.Style>
@@ -143,7 +142,6 @@
 
                         <TextBlock Grid.Row="1"
                                    HorizontalAlignment="Stretch"
-                                
                                    FontSize="15"
                                    Text="{Binding Artist.Name}"
                                    TextAlignment="Center">
@@ -249,7 +247,6 @@
 
                         <TextBlock Grid.Row="1"
                                    HorizontalAlignment="Stretch"
-                                  
                                    FontSize="15"
                                    Text="{Binding SizeString}"
                                    TextAlignment="Center">

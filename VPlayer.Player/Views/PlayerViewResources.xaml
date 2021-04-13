@@ -7,8 +7,7 @@
     <converters:DataContextChangedConverter x:Key="DataContextChangedConverter" />
 
     <DataTemplate x:Key="StatusMessageDataTemplate">
-        <Border Width="200"
-                Height="65"
+        <Border Height="65"
                 Margin="0,0,0,0"
                 Padding="10,5"
                 BorderBrush="#171717"

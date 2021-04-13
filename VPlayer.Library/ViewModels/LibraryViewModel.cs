@@ -15,6 +15,7 @@ using VCore.WPF.Interfaces;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
+using VPlayer.IPTV;
 using VPlayer.Library.ViewModels.AlbumsViewModels;
 using VPlayer.Library.ViewModels.FileBrowser;
 using VPlayer.Library.ViewModels.TvShows;
@@ -105,58 +106,67 @@ namespace VPlayer.Library.ViewModels
 
       if (firstActivation)
       {
-        var songPlaylists = viewModelsFactory.Create<SongPlaylistsViewModel>();
-        var artistsViewModel = viewModelsFactory.Create<IArtistsViewModel>();
-        var albumsViewModel = viewModelsFactory.Create<IAlbumsViewModel>();
-        var tvShowPlaylistsViewModel = viewModelsFactory.Create<VideoPlaylistsViewModel>();
-        var tvShowsViewModel = viewModelsFactory.Create<TvShowsViewModel>();
-        var fileBrowser = viewModelsFactory.Create<FileBrowserViewModel>();
-        var upnp = viewModelsFactory.Create<UPnPManagerViewModel>();
-
-        Application.Current?.Dispatcher?.Invoke(() =>
-        {
-          NavigationViewModel.Items.Add(new NavigationItem(songPlaylists)
-          {
-            ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/song-playlist.png"
-          });
-
-          NavigationViewModel.Items.Add(new NavigationItem(tvShowPlaylistsViewModel)
-          {
-            ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/tvshow-playlist.png"
-          });
-
-          NavigationViewModel.Items.Add(new NavigationItem(artistsViewModel)
-          {
-            ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/singer.png"
-          });
-
-          NavigationViewModel.Items.Add(new NavigationItem(albumsViewModel)
-          {
-            ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/music-album.png"
-          });
-
-          NavigationViewModel.Items.Add(new NavigationItem(tvShowsViewModel)
-          {
-            ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/tvshow.png"
-          });
-
-          NavigationViewModel.Items.Add(new NavigationItem(fileBrowser)
-          {
-            ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/browser.png"
-          });
-
-
-          NavigationViewModel.Items.Add(new NavigationItem(upnp)
-          {
-            ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/upnp.png"
-          });
-
-          NavigationViewModel.Items.First().IsActive = true;
-        });
-
-       
-
+        InitilizeMenu();
       }
+    }
+
+    #endregion
+
+    #region InitilizeMenu
+
+    public void InitilizeMenu()
+    {
+      var songPlaylists = viewModelsFactory.Create<SongPlaylistsViewModel>();
+      var artistsViewModel = viewModelsFactory.Create<IArtistsViewModel>();
+      var albumsViewModel = viewModelsFactory.Create<IAlbumsViewModel>();
+      var tvShowPlaylistsViewModel = viewModelsFactory.Create<VideoPlaylistsViewModel>();
+      var tvShowsViewModel = viewModelsFactory.Create<TvShowsViewModel>();
+      var fileBrowser = viewModelsFactory.Create<FileBrowserViewModel>();
+      var upnp = viewModelsFactory.Create<UPnPManagerViewModel>();
+      var iptv = viewModelsFactory.Create<IPTVManagerViewModel>();
+
+      NavigationViewModel.Items.Add(new NavigationItem(songPlaylists)
+      {
+        ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/song-playlist.png"
+      });
+
+      NavigationViewModel.Items.Add(new NavigationItem(tvShowPlaylistsViewModel)
+      {
+        ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/tvshow-playlist.png"
+      });
+
+      NavigationViewModel.Items.Add(new NavigationItem(artistsViewModel)
+      {
+        ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/singer.png"
+      });
+
+      NavigationViewModel.Items.Add(new NavigationItem(albumsViewModel)
+      {
+        ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/music-album.png"
+      });
+
+      NavigationViewModel.Items.Add(new NavigationItem(tvShowsViewModel)
+      {
+        ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/tvshow.png"
+      });
+
+      NavigationViewModel.Items.Add(new NavigationItem(fileBrowser)
+      {
+        ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/browser.png"
+      });
+
+      NavigationViewModel.Items.Add(new NavigationItem(upnp)
+      {
+        ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/upnp.png"
+      });
+
+      NavigationViewModel.Items.Add(new NavigationItem(iptv)
+      {
+        ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/television.png"
+      });
+
+      NavigationViewModel.Items.First().IsActive = true;
+
     }
 
     #endregion

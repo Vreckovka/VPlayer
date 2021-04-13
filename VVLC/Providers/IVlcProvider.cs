@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using LibVLCSharp.Shared;
 
-namespace VPlayer.WindowsPlayer.Providers
+namespace VPlayer.Core.Providers
 {
   public interface IVlcProvider
   {

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<UseWpf>true</UseWpf>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="WindowsAPICodePack" Version="1.1.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\CustomLibraries\VCore.Standard\VCore.Standard.csproj" />
+	  <ProjectReference Include="..\..\CustomLibraries\VCore\VCore.WPF.csproj" />
+	  <ProjectReference Include="..\03.Domain\IPTVStalker\IPTVStalker.csproj" />
+	  <ProjectReference Include="..\VPlayer.Core\VPlayer.Core.csproj" />
+	  <ProjectReference Include="..\VPlayer.DarkTheme\VPlayer.DarkTheme.csproj" />
+	  <ProjectReference Include="..\VVLC\VVLC.csproj" />
+	</ItemGroup>
+
+</Project>

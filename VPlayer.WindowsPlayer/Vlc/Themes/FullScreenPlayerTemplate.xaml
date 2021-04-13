@@ -4,7 +4,8 @@
                     xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
                     xmlns:controls="clr-namespace:VPlayer.WindowsPlayer.Vlc.Controls"
                     xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
-                    xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF">
+                    xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF"
+                    xmlns:controls2="clr-namespace:VPlayer.WindowsPlayer.Vlc.Controls;assembly=VVLC">
 
 
     <ResourceDictionary.MergedDictionaries>
@@ -12,17 +13,19 @@
     </ResourceDictionary.MergedDictionaries>
 
 
-    <Style TargetType="{x:Type controls:FullscreenPlayer}">
+    <Style TargetType="{x:Type controls2:FullscreenPlayer}">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type controls:FullscreenPlayer}">
+                <ControlTemplate TargetType="{x:Type controls2:FullscreenPlayer}">
 
                     <Border Margin="0,0,0,7"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Bottom"
                             CornerRadius="5">
                         <Grid>
-                            <Grid Width="600" HorizontalAlignment="Center" Height="110">
+                            <Grid Width="600"
+                                  Height="110"
+                                  HorizontalAlignment="Center">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto" />
                                     <RowDefinition Height="auto" />

@@ -156,7 +156,16 @@ namespace VPlayer.Core.Managers.Status
       }
 
       Message = other.Message;
+
       ActualMessageStatusState = other.ActualMessageStatusState;
+
+      if (ProcessedCount == NumberOfProcesses && ActualMessageStatusState != MessageStatusState.Failed)
+      {
+        Message += " is DONE";
+        ActualMessageStatusState = MessageStatusState.Done;
+      }
+
+      
       FailedMessage = other.FailedMessage;
     }
 

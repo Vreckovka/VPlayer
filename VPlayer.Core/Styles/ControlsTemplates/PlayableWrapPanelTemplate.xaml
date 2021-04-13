@@ -403,7 +403,6 @@
                                     <TextBlock Name="NameTxt"
                                                Grid.Row="0"
                                                Margin="5"
-                                             
                                                FontSize="20"
                                                Foreground="WhiteSmoke"
                                                Text="{TemplateBinding HeaderText}">
@@ -427,14 +426,13 @@
                                         </TextBlock.Style>
                                         <b:Interaction.Behaviors>
                                             <text:PanningTextWithFontSizeBehavior BiggerFontSize="25"
-                                                                                   Container="{Binding ElementName=GridParent}"
-                                                                                   IsMouseOverRelativeToContainer="True" />
+                                                                                  Container="{Binding ElementName=GridParent}"
+                                                                                  IsMouseOverRelativeToContainer="True" />
                                         </b:Interaction.Behaviors>
                                     </TextBlock>
 
                                     <TextBlock Grid.Row="1"
                                                HorizontalAlignment="Stretch"
-                                              
                                                FontSize="15"
                                                Text="{TemplateBinding BottomText}"
                                                TextAlignment="Center">

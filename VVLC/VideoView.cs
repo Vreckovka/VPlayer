@@ -8,7 +8,6 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using LibVLCSharp.Shared;
-using VPlayer.WindowsPlayer.Behaviors;
 using VPlayer.WindowsPlayer.Vlc.Controls;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 

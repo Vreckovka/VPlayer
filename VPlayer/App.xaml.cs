@@ -12,6 +12,7 @@ using VCore.Modularity.NinjectModules;
 using VCore.Other;
 using VCore.Standard;
 using VCore.Standard.Modularity.NinjectModules;
+using VPlayer.IPTV.Modularity;
 using VPlayer.Modularity.NinjectModules;
 using VPlayer.ViewModels;
 using VPlayer.Views;
@@ -29,6 +30,7 @@ namespace VPlayer
     private IKernel Kernel;
     private bool isConsoleUp = false;
     private Stopwatch stopWatch;
+
     protected override void RegisterTypes(IContainerRegistry containerRegistry)
     {
       stopWatch = new Stopwatch();
@@ -41,6 +43,7 @@ namespace VPlayer
       Kernel.Load<CommonNinjectModule>();
       Kernel.Load<WPFNinjectModule>();
       Kernel.Load<VPlayerNinjectModule>();
+      Kernel.Load<IPTVModule>();
 
       CultureInfo.CurrentCulture = new CultureInfo("en-US");
 
@@ -49,7 +52,7 @@ namespace VPlayer
       isConsoleUp = WinConsole.CreateConsole();
 
       Console.ForegroundColor = ConsoleColor.Green;
-      Console.WriteLine("TU JE MOJ TEXT");
+      Console.WriteLine("INITIALIZING");
 
 #endif
     }

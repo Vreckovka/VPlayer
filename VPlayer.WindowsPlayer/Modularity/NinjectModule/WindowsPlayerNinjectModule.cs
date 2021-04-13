@@ -4,7 +4,6 @@ using Ninject.Activation.Strategies;
 using VCore.Standard.Modularity.NinjectModules;
 using VPlayer.Core.ViewModels;
 using VPlayer.Library.Modularity.NinjectModule;
-using VPlayer.WindowsPlayer.Providers;
 using VPlayer.WindowsPlayer.ViewModels;
 
 namespace VPlayer.WindowsPlayer.Modularity.NinjectModule
@@ -45,12 +44,6 @@ namespace VPlayer.WindowsPlayer.Modularity.NinjectModule
       base.RegisterViewModels();
     }
 
-    public override void RegisterProviders()
-    {
-      base.RegisterProviders();
-
-      Kernel.Bind<IVlcProvider>().To<VlcProvider>().InSingletonScope();
-    }
 
     #endregion Methods
   }

@@ -30,11 +30,11 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
+using VPlayer.Core.Providers;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Core.ViewModels.TvShows;
 using VPlayer.Player.Views.WindowsPlayer;
-using VPlayer.WindowsPlayer.Providers;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer;
 
 //TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)

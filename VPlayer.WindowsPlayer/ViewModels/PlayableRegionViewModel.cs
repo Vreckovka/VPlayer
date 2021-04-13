@@ -32,7 +32,7 @@ using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
-using VPlayer.WindowsPlayer.Providers;
+using VPlayer.Core.Providers;
 
 namespace VPlayer.Core.ViewModels
 {
@@ -60,10 +60,10 @@ namespace VPlayer.Core.ViewModels
     public PlayableRegionViewModel(
       IRegionProvider regionProvider,
       IKernel kernel,
-       ILogger logger,
-     IStorageManager storageManager,
+      ILogger logger,
+      IStorageManager storageManager,
       IEventAggregator eventAggregator,
-       IVlcProvider vlcProvider) : base(regionProvider)
+      IVlcProvider vlcProvider) : base(regionProvider)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
@@ -125,7 +125,7 @@ namespace VPlayer.Core.ViewModels
       {
         if (value != actualItem)
         {
-          if(actualItem != null)
+          if (actualItem != null)
           {
             ItemLastTime = null;
           }
@@ -764,7 +764,7 @@ namespace VPlayer.Core.ViewModels
     #region VlcMethods
 
     #region OnVlcTimeChanged
-    
+
     private void OnVlcTimeChanged(object sender, MediaPlayerTimeChangedEventArgs eventArgs)
     {
       if (ActualItem != null)
@@ -1019,10 +1019,10 @@ namespace VPlayer.Core.ViewModels
 
           break;
         case EventAction.PlayFromPlaylistLast:
-        {
-          var model = data.GetModel<TPlaylistModel>();
-          PlayPlaylist(data, model.LastItemIndex);
-        }
+          {
+            var model = data.GetModel<TPlaylistModel>();
+            PlayPlaylist(data, model.LastItemIndex);
+          }
 
           break;
         default:

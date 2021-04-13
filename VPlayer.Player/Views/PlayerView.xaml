@@ -10,10 +10,11 @@
              xmlns:converters="clr-namespace:VPlayer.Player.Converters"
              xmlns:converters1="clr-namespace:VCore.Converters;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:local="clr-namespace:VPlayer.Player.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:popups="clr-namespace:VCore.WPF.Behaviors.Popups;assembly=VCore.WPF"
              xmlns:soundManagement="clr-namespace:SoundManagement;assembly=SoundManagement"
+             xmlns:status="clr-namespace:VPlayer.Core.Managers.Status;assembly=VPlayer.AudioStorage"
              xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors;assembly=VPlayer.WindowsPlayer"
              xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
              mc:Ignorable="d">
@@ -111,11 +112,39 @@
             </Grid>
         </Border>
 
-        <ContentPresenter Grid.Column="2"
-                          Margin="0,-145,2,0"
-                          HorizontalAlignment="Left"
-                          Content="{Binding StatusMessage}"
-                          ContentTemplate="{StaticResource StatusMessageDataTemplate}" />
+        <Popup Grid.Column="2"
+               HorizontalAlignment="Right"
+               AllowsTransparency="True"
+               Placement="Top"
+               PlacementTarget="{Binding ElementName=PlayerGrid}">
+            <Grid>
+                <ContentPresenter Margin="0,0,0,0"
+                                  HorizontalAlignment="Left"
+                                  Content="{Binding StatusMessage}"
+                                  ContentTemplate="{StaticResource StatusMessageDataTemplate}" />
+            </Grid>
+
+            <Popup.Style>
+                <Style TargetType="Popup">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding StatusMessage.ActualMessageStatusState}" Value="{x:Static status:MessageStatusState.Done}">
+                            <Setter Property="IsOpen" Value="False" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding StatusMessage.ActualMessageStatusState}" Value="{x:Static status:MessageStatusState.Processing}">
+                            <Setter Property="IsOpen" Value="True" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding StatusMessage.ActualMessageStatusState}" Value="{x:Static status:MessageStatusState.Beggining}">
+                            <Setter Property="IsOpen" Value="True" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Popup.Style>
+
+            <b:Interaction.Behaviors>
+                <popups:MovePopupWithParentBehavior />
+            </b:Interaction.Behaviors>
+        </Popup>
+
 
 
         <Border Grid.Column="0"
@@ -235,15 +264,15 @@
                                                        Text="{Binding ActualVolume, StringFormat={}{0:N0} %}" />
                                         </StackPanel>
 
-                                        <i:Interaction.Triggers>
-                                            <i:EventTrigger EventName="MouseEnter">
-                                                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AnimateHoverColor}" />
-                                            </i:EventTrigger>
+                                        <b:Interaction.Triggers>
+                                            <b:EventTrigger EventName="MouseEnter">
+                                                <b:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AnimateHoverColor}" />
+                                            </b:EventTrigger>
 
-                                            <i:EventTrigger EventName="MouseLeave">
-                                                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AnimateDefaultColor}" />
-                                            </i:EventTrigger>
-                                        </i:Interaction.Triggers>
+                                            <b:EventTrigger EventName="MouseLeave">
+                                                <b:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AnimateDefaultColor}" />
+                                            </b:EventTrigger>
+                                        </b:Interaction.Triggers>
                                     </Border>
 
                                     <ControlTemplate.Triggers>

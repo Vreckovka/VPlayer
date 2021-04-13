@@ -50,8 +50,8 @@
                                            TextTrimming="CharacterEllipsis">
                                     <b:Interaction.Behaviors>
                                         <text:PanningTextWithFontSizeBehavior BiggerFontSize="17"
-                                                                               Container="{Binding ElementName=Container}"
-                                                                               IsMouseOverRelativeToContainer="True" />
+                                                                              Container="{Binding ElementName=Container}"
+                                                                              IsMouseOverRelativeToContainer="True" />
                                     </b:Interaction.Behaviors>
                                 </TextBlock>
                             </Grid>

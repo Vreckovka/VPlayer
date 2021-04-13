@@ -124,9 +124,9 @@
 
                 <Border Grid.Row="1"
                         Margin="0,5,0,0"
-                        CornerRadius="5"
                         HorizontalAlignment="Left"
-                        Background="#90101010">
+                        Background="#90101010"
+                        CornerRadius="5">
                     <StackPanel Width="100"
                                 Margin="10"
                                 HorizontalAlignment="Left"

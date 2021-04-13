@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using LibVLCSharp.Shared;
 
-namespace VPlayer.WindowsPlayer.Providers
+namespace VPlayer.Core.Providers
 {
   public class VlcProvider : IVlcProvider
   {

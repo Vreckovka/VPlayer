@@ -4,6 +4,7 @@ using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Modularity.NinjectModules;
 using VPlayer.Core.Factories;
 using VPlayer.Core.Managers.Status;
+using VPlayer.Core.Providers;
 
 namespace VPlayer.Core.Modularity.Ninject
 {
@@ -26,6 +27,8 @@ namespace VPlayer.Core.Modularity.Ninject
 
       Kernel.Bind<IVPlayerViewModelsFactory>().To<VPlayerViewModelsFactory>();
       Kernel.Rebind<IViewModelsFactory>().To<VPlayerViewModelsFactory>();
+
+      Kernel.Bind<IVlcProvider>().To<VlcProvider>().InSingletonScope();
     }
   }
 }
