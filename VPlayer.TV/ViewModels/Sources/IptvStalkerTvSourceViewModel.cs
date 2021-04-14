@@ -6,6 +6,7 @@ using System.Windows;
 using IPTVStalker;
 using Microsoft.EntityFrameworkCore;
 using VCore.Standard.Factories.ViewModels;
+using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Managers.Status;
@@ -24,7 +25,8 @@ namespace VPlayer.IPTV.ViewModels
       TVPlayerViewModel player,
       IStorageManager storageManager,
       IViewModelsFactory viewModelsFactory,
-      IStatusManager statusManager) : base(tVSource, player, storageManager, viewModelsFactory)
+      IStatusManager statusManager,
+      IWindowManager windowManager) : base(tVSource, player, storageManager, viewModelsFactory, windowManager)
     {
       if (tVSource.TvSourceType != TVSourceType.IPTVStalker)
       {
@@ -35,7 +37,7 @@ namespace VPlayer.IPTV.ViewModels
 
       cacheFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), $"VPlayer\\IPTVStalkers\\{Name}");
 
-      if (string.IsNullOrEmpty(Url) || string.IsNullOrEmpty(MacAddress))
+      if ((string.IsNullOrEmpty(Url) || string.IsNullOrEmpty(MacAddress)) && Model.SourceConnection != null)
       {
         var split = Model.SourceConnection.Split("|");
 

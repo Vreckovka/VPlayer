@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Microsoft.EntityFrameworkCore;
 using VCore;
 using VCore.Standard;
@@ -10,8 +11,11 @@ using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
 using VCore.Standard.ViewModels.TreeView;
 using VCore.WPF.ItemsCollections;
+using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPlayer.IPTV.ViewModels.Prompts;
+using VPlayer.IPTV.Views.Prompts;
 
 namespace VPlayer.IPTV.ViewModels
 {
@@ -19,15 +23,18 @@ namespace VPlayer.IPTV.ViewModels
   {
     protected readonly IStorageManager storageManager;
     protected readonly IViewModelsFactory viewModelsFactory;
+    private readonly IWindowManager windowManager;
 
     public TVSourceViewModel(
       TvSource tVSource, 
       TVPlayerViewModel player,
       IStorageManager storageManager,
-      IViewModelsFactory viewModelsFactory) : base(tVSource)
+      IViewModelsFactory viewModelsFactory,
+      IWindowManager windowManager) : base(tVSource)
     {
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+      this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       Player = player ?? throw new ArgumentNullException(nameof(player));
     }
 
@@ -124,9 +131,7 @@ namespace VPlayer.IPTV.ViewModels
     #endregion
 
     public TVPlayerViewModel Player { get;  }
-
-
-
+    
     #region ActualFilter
 
     private string actualFilter;
@@ -148,10 +153,7 @@ namespace VPlayer.IPTV.ViewModels
     }
 
     #endregion
-
-
-
-
+    
     #endregion
 
     #region Methods
@@ -188,6 +190,11 @@ namespace VPlayer.IPTV.ViewModels
     {
       bool result = false;
 
+      if (string.IsNullOrEmpty(phrase))
+      {
+        return true;
+      }
+
       if (original != null)
       {
         var lowerVariant = original.ToLower();
@@ -203,6 +210,41 @@ namespace VPlayer.IPTV.ViewModels
       return result;
     }
 
+    #endregion
+
+    #region Commands
+
+    #region Delete
+
+    private ActionCommand delete;
+
+    public ICommand Delete
+    {
+      get
+      {
+        if (delete == null)
+        {
+          delete = new ActionCommand(OnDelete);
+        }
+
+        return delete;
+      }
+    }
+
+    public async void OnDelete()
+    {
+      var question = windowManager.ShowYesNoPrompt($"Do you really want to delete {Name}?","Delete source");
+
+      if (question == System.Windows.MessageBoxResult.Yes)
+      {
+        var result = storageManager.DeleteEntity(Model);
+
+
+      }
+    }
+
+    #endregion
+    
     #endregion
 
     public abstract Task PrepareEntityForDb();

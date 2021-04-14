@@ -103,12 +103,12 @@
 
     <Style TargetType="{x:Type TreeViewItem}">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="HorizontalContentAlignment" Value="{Binding Path=HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
-        <Setter Property="VerticalContentAlignment" Value="{Binding Path=VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
-        <Setter Property="Padding" Value="5" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="Padding" Value="0" />
         <Setter Property="Foreground" Value="#656565" />
         <Setter Property="FocusVisualStyle" Value="{StaticResource TreeViewItemFocusVisual}" />
-        <Setter Property="ItemsSource" Value="{Binding View}" />
+        <Setter Property="ItemsSource" Value="{Binding SubItems.View}" />
         <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="BorderThickness" Value="0,0,0,2" />
@@ -140,6 +140,7 @@
                                 BorderThickness="{TemplateBinding BorderThickness}">
                             <ContentPresenter x:Name="PART_Header"
                                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                               ContentSource="Header" />
                         </Border>
 

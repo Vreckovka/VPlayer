@@ -5,12 +5,14 @@ using System.Text.RegularExpressions;
 using System.Windows.Input;
 using Microsoft.EntityFrameworkCore;
 using VCore;
+using VCore.Modularity.Events;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
 using VCore.ViewModels;
 using VCore.WPF.ItemsCollections;
 using VCore.WPF.Managers;
+using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Modularity.Regions;
@@ -161,7 +163,7 @@ namespace VPlayer.IPTV
       {
         if (addNewTvGroup == null)
         {
-          addNewTvGroup = new ActionCommand(OnAddNewTvGroup, () => { return !string.IsNullOrEmpty(NewTvGroupName);});
+          addNewTvGroup = new ActionCommand(OnAddNewTvGroup, () => { return !string.IsNullOrEmpty(NewTvGroupName); });
         }
 
         return addNewTvGroup;
@@ -175,7 +177,7 @@ namespace VPlayer.IPTV
         Name = NewTvGroupName
       };
 
-      var group = new TvChannelGroupViewModel(channelGroup);
+      var group = viewModelsFactory.Create<TvChannelGroupViewModel>(channelGroup);
 
       NewTvGroupName = null;
 
@@ -190,6 +192,12 @@ namespace VPlayer.IPTV
 
     #region Methods
 
+    public override void Initialize()
+    {
+      base.Initialize();
+
+      this.storageManager.SubscribeToItemChange<TvSource>(OnTvSourceChanged).DisposeWith(this);
+    }
 
     #region OnActivation
 
@@ -197,20 +205,23 @@ namespace VPlayer.IPTV
     {
       base.OnActivation(firstActivation);
 
-      var sources = storageManager.GetRepository<TvSource>().ToList().Select(CreateTvSourceViewModel);
-
-      foreach (var source in sources)
+      if (firstActivation)
       {
-        TVSources.Add(source);
+
+        var sources = storageManager.GetRepository<TvSource>().ToList().Select(CreateTvSourceViewModel);
+
+        foreach (var source in sources)
+        {
+          TVSources.Add(source);
+        }
+
+        var groups = storageManager.GetRepository<TvChannelGroup>().ToList().Select(x => viewModelsFactory.Create<TvChannelGroupViewModel>(x));
+
+        foreach (var group in groups)
+        {
+          TVGroups.Add(group);
+        }
       }
-
-      var groups = storageManager.GetRepository<TvChannelGroup>().ToList().Select(x => viewModelsFactory.Create<TvChannelGroupViewModel>(x));
-
-      foreach (var group in groups)
-      {
-        TVGroups.Add(group);
-      }
-
     }
 
     #endregion
@@ -227,6 +238,30 @@ namespace VPlayer.IPTV
           return viewModelsFactory.Create<M3UTvSourceViewModel>(tVSource);
         case TVSourceType.IPTVStalker:
           return viewModelsFactory.Create<IptvStalkerTvSourceViewModel>(tVSource);
+        default:
+          throw new ArgumentOutOfRangeException();
+      }
+    }
+
+    #endregion
+
+    #region OnTvSourceChanged
+
+    private void OnTvSourceChanged(ItemChanged<TvSource> tvSource)
+    {
+      var vm = TVSources.ViewModels.SingleOrDefault(x => x.Model.Id == tvSource.Item.Id);
+
+
+      switch (tvSource.Changed)
+      {
+        case Changed.Added:
+          break;
+        case Changed.Removed:
+          if (vm != null)
+            TVSources.Remove(vm);
+          break;
+        case Changed.Updated:
+          break;
         default:
           throw new ArgumentOutOfRangeException();
       }

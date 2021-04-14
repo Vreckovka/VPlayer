@@ -8,6 +8,7 @@ using System.Windows.Input;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using VCore;
 using VCore.Standard.Factories.ViewModels;
+using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.IPTV.ViewModels.Prompts;
@@ -21,7 +22,8 @@ namespace VPlayer.IPTV.ViewModels
       TvSource tVSource,
       TVPlayerViewModel player,
       IStorageManager storageManager,
-      IViewModelsFactory viewModelsFactory) : base(tVSource, player, storageManager, viewModelsFactory)
+      IViewModelsFactory viewModelsFactory,
+      IWindowManager windowManager) : base(tVSource, player, storageManager, viewModelsFactory, windowManager)
     {
       if (tVSource.TvSourceType != TVSourceType.M3U)
       {

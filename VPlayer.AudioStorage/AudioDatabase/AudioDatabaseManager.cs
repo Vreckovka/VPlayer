@@ -733,12 +733,12 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
             result = context.SaveChanges() > 0;
 
-            logger.Log(Logger.MessageType.Success, $"Entity was updated {foundEntity}");
+            logger.Log(Logger.MessageType.Success, $"Entity was removed {foundEntity}");
 
             ItemChanged.OnNext(new ItemChanged()
             {
               Item = foundEntity,
-              Changed = Changed.Updated
+              Changed = Changed.Removed
             });
           }
 

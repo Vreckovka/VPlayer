@@ -9,6 +9,7 @@ using LibVLCSharp.Shared;
 using Logger;
 using VCore.Helpers;
 using VCore.Standard;
+using VCore.Standard.ViewModels.TreeView;
 using VPlayer.Core.Providers;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 
@@ -63,7 +64,13 @@ namespace VPlayer.IPTV.ViewModels
             actualChannel.IsSelected = false;
           }
 
+         
           actualChannel = value;
+
+          if (actualChannel is ISelectable actualSelectable)
+          {
+            actualSelectable.IsSelected = true;
+          }
 
           if (actualChannel != null)
           {
@@ -73,6 +80,7 @@ namespace VPlayer.IPTV.ViewModels
             actualChannel.State = TVChannelState.Loading;
           }
 
+          
 
           PlayActualChannel(actualChannel?.URL);
 
@@ -119,7 +127,7 @@ namespace VPlayer.IPTV.ViewModels
 
       mediaPlayer.EncounteredError += (sender, e) =>
       {
-        logger.Log(new Exception(e.ToString()), true);
+        logger.Log(MessageType.Error,"Vlc playing error", true);
 
         Application.Current.Dispatcher.Invoke(() =>
         {
@@ -185,6 +193,7 @@ namespace VPlayer.IPTV.ViewModels
     }
 
     #endregion
+
 
     public override void Dispose()
     {

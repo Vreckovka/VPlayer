@@ -84,8 +84,8 @@ namespace VPlayer.Library.ViewModels.FileBrowser
       {
         LoadSubFolders(this);
 
-        var videoFiles = SubItems.SelectMany(x => x.SubItems).OfType<FileViewModel>().ToList();
-        videoFiles.AddRange(SubItems.OfType<FileViewModel>());
+        var videoFiles = SubItems.ViewModels.SelectMany(x => x.SubItems.ViewModels).OfType<FileViewModel>().ToList();
+        videoFiles.AddRange(SubItems.ViewModels.OfType<FileViewModel>());
 
         var videoItems = new List<VideoItem>();
 

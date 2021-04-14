@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using UPnP.Common;
@@ -26,25 +27,7 @@ namespace VPlayer.UPnP.ViewModels.UPnP.TreeViewItems
       CanExpand = Model.ChildCount > 0;
     }
 
-    #region View
-
-    private List<TreeViewItemViewModel> view;
-
-    public List<TreeViewItemViewModel> View
-    {
-      get { return view; }
-      set
-      {
-        if (value != view)
-        {
-          view = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
-
+ 
     #region OnExpanded
 
     protected override void OnExpanded(bool isExpandend)
@@ -86,8 +69,6 @@ namespace VPlayer.UPnP.ViewModels.UPnP.TreeViewItems
 
           SubItems.Add(item);
         }
-
-        View = SubItems;
       });
 
       IsBusy = false;

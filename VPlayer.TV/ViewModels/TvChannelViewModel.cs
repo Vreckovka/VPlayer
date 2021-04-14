@@ -42,6 +42,8 @@ namespace VPlayer.IPTV.ViewModels
     {
       await Task.Run(() =>
       {
+        URL = null;
+
         if (IsSelected && URL == null)
         {
           var link = stalkerService.GetLink(Cmd);
@@ -53,7 +55,7 @@ namespace VPlayer.IPTV.ViewModels
     }
   }
 
-  public class TvChannelViewModel : ViewModel<TvChannel>, ISelectable
+  public class TvChannelViewModel : TreeViewItemViewModel<TvChannel>, ISelectable
   {
     public TvChannelViewModel(TvChannel model) : base(model)
     {
@@ -119,6 +121,33 @@ namespace VPlayer.IPTV.ViewModels
     }
 
     #endregion
+
+    #region Name
+
+    public string Name
+    {
+      get { return Model.Name; }
+      set
+      {
+        if (value != Model.Name)
+        {
+          Model.Name = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    public TvChannelViewModel Copy()
+    {
+      return new TvChannelViewModel(Model)
+      {
+        State = State,
+        URL = URL
+      };
+    }
+
 
     protected virtual void OnSelected()
     {
