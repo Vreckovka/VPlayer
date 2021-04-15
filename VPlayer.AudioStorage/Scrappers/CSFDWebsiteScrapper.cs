@@ -32,7 +32,7 @@ namespace VPlayer.AudioStorage.Parsers
     private ChromeDriver chromeDriver;
     private string baseUrl = "https://www.csfd.cz";
 
-    public CSFDWebsiteScrapper(ILogger logger,  IStatusManager statusManager)
+    public CSFDWebsiteScrapper(ILogger logger, IStatusManager statusManager)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
@@ -46,11 +46,12 @@ namespace VPlayer.AudioStorage.Parsers
 
         chromeOptions.AddArguments(new List<string>() { "headless", "disable-infobars", "--log-level=3" });
 
-        var chromeDriverService = ChromeDriverService.CreateDefaultService();
+        var chromeDriverService = ChromeDriverService.CreateDefaultService(Directory.GetCurrentDirectory());
 
         chromeDriverService.HideCommandPromptWindow = true;
 
-        chromeDriver = new ChromeDriver(chromeDriverService,chromeOptions);
+
+        chromeDriver = new ChromeDriver(chromeDriverService, chromeOptions);
 
         return true;
       }
@@ -76,7 +77,7 @@ namespace VPlayer.AudioStorage.Parsers
 
       var statusMessage = new StatusMessage(2)
       {
-        ActualMessageStatusState = MessageStatusState.Processing,
+        MessageStatusState = MessageStatusState.Processing,
         Message = "Downloading tv show basic info"
       };
 
@@ -175,9 +176,11 @@ namespace VPlayer.AudioStorage.Parsers
 
       var nodes = document.DocumentNode.SelectNodes("/html/body/div[2]/div[3]/div[1]/div[3]/div[2]/ul/li/a");
 
-      statusMessage.Message = "Downloading tv show seasons";
-      statusMessage.ProcessedCount = 0;
-      statusMessage.NumberOfProcesses = nodes.Count;
+      statusMessage = new StatusMessage(nodes.Count)
+      {
+        MessageStatusState = MessageStatusState.Processing,
+        Message = "Downloading tv show seasons"
+      };
 
       statusManager.UpdateMessage(statusMessage);
 

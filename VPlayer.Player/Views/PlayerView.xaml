@@ -116,7 +116,8 @@
                HorizontalAlignment="Right"
                AllowsTransparency="True"
                Placement="Top"
-               PlacementTarget="{Binding ElementName=PlayerGrid}">
+               PlacementTarget="{Binding ElementName=PlayerGrid}"
+               PopupAnimation="Fade">
             <Grid>
                 <ContentPresenter Margin="0,0,0,0"
                                   HorizontalAlignment="Left"
@@ -127,13 +128,16 @@
             <Popup.Style>
                 <Style TargetType="Popup">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding StatusMessage.ActualMessageStatusState}" Value="{x:Static status:MessageStatusState.Done}">
+                        <DataTrigger Binding="{Binding Converter={StaticResource DataContextChangedConverter}}" Value="True">
                             <Setter Property="IsOpen" Value="False" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding StatusMessage.ActualMessageStatusState}" Value="{x:Static status:MessageStatusState.Processing}">
+                        <DataTrigger Binding="{Binding StatusMessage.MessageStatusState}" Value="{x:Static status:MessageStatusState.Done}">
+                            <Setter Property="IsOpen" Value="False" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding StatusMessage.MessageStatusState}" Value="{x:Static status:MessageStatusState.Processing}">
                             <Setter Property="IsOpen" Value="True" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding StatusMessage.ActualMessageStatusState}" Value="{x:Static status:MessageStatusState.Beggining}">
+                        <DataTrigger Binding="{Binding StatusMessage.MessageStatusState}" Value="{x:Static status:MessageStatusState.Beggining}">
                             <Setter Property="IsOpen" Value="True" />
                         </DataTrigger>
                     </Style.Triggers>

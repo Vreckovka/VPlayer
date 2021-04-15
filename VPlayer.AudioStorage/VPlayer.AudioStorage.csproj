@@ -9,10 +9,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.3" />
     <PackageReference Include="OpenQA.Selenium.Winium" Version="1.0.0.4" />
-     
     <PackageReference Include="Prism.Core" Version="7.2.0.1422" />
-     
-   
     <PackageReference Include="Unirest-API" Version="1.0.7.6" />
     <PackageReference Include="Unofficial.Microsoft.mshtml" Version="7.0.3300" />
     <PackageReference Include="WatiN" Version="2.1.0" />
@@ -34,5 +31,8 @@
       <HintPath>..\DLL\Windows.winmd</HintPath>
       <IsWinMDFile>true</IsWinMDFile>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 </Project>

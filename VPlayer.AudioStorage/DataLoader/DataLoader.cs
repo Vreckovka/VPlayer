@@ -97,7 +97,7 @@ namespace VPlayer.AudioStorage.DataLoader
 
       statusMessage.ProcessedCount++;
 
-      statusMessage.ActualMessageStatusState = MessageStatusState.Done;
+      statusMessage.MessageStatusState = MessageStatusState.Done;
 
       statusManager.UpdateMessage(statusMessage);
 

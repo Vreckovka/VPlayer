@@ -208,14 +208,16 @@ namespace VPlayer.IPTV
       if (firstActivation)
       {
 
-        var sources = storageManager.GetRepository<TvSource>().ToList().Select(CreateTvSourceViewModel);
+        var sources = storageManager.GetRepository<TvSource>().OrderBy(x => x.Name).ToList().Select(CreateTvSourceViewModel);
 
         foreach (var source in sources)
         {
           TVSources.Add(source);
         }
 
-        var groups = storageManager.GetRepository<TvChannelGroup>().ToList().Select(x => viewModelsFactory.Create<TvChannelGroupViewModel>(x));
+        var groups = storageManager.GetRepository<TvChannelGroup>()
+          .Include(x => x.TvChannels).ThenInclude(x => x.TvChannel).ThenInclude(x => x.TvSource).ToList()
+          .Select(x => viewModelsFactory.Create<TvChannelGroupViewModel>(x));
 
         foreach (var group in groups)
         {

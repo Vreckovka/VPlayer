@@ -100,9 +100,6 @@ namespace VPlayer.AudioStorage.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("TvChannelGroupId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Url")
                         .HasColumnType("TEXT");
 
@@ -110,9 +107,7 @@ namespace VPlayer.AudioStorage.Migrations
 
                     b.HasIndex("IdTvSource");
 
-                    b.HasIndex("TvChannelGroupId");
-
-                    b.ToTable("TVChannels");
+                    b.ToTable("TvChannels");
                 });
 
             modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.IPTV.TvChannelGroup", b =>
@@ -132,7 +127,34 @@ namespace VPlayer.AudioStorage.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TVChannelGroups");
+                    b.ToTable("TvChannelGroups");
+                });
+
+            modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.IPTV.TvChannelGroupItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("Created")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("IdTvChannel")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("Modified")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("TvChannelGroupId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdTvChannel");
+
+                    b.HasIndex("TvChannelGroupId");
+
+                    b.ToTable("TvChannelGroupItems");
                 });
 
             modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.IPTV.TvSource", b =>
@@ -158,7 +180,7 @@ namespace VPlayer.AudioStorage.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TVSources");
+                    b.ToTable("TvSources");
                 });
 
             modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.PlaylistSong", b =>
@@ -668,11 +690,22 @@ namespace VPlayer.AudioStorage.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("TvSource");
+                });
+
+            modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.IPTV.TvChannelGroupItem", b =>
+                {
+                    b.HasOne("VPlayer.AudioStorage.DomainClasses.IPTV.TvChannel", "TvChannel")
+                        .WithMany()
+                        .HasForeignKey("IdTvChannel")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("VPlayer.AudioStorage.DomainClasses.IPTV.TvChannelGroup", null)
-                        .WithMany("TVChannels")
+                        .WithMany("TvChannels")
                         .HasForeignKey("TvChannelGroupId");
 
-                    b.Navigation("TvSource");
+                    b.Navigation("TvChannel");
                 });
 
             modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.PlaylistSong", b =>
@@ -772,7 +805,7 @@ namespace VPlayer.AudioStorage.Migrations
 
             modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.IPTV.TvChannelGroup", b =>
                 {
-                    b.Navigation("TVChannels");
+                    b.Navigation("TvChannels");
                 });
 
             modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.IPTV.TvSource", b =>

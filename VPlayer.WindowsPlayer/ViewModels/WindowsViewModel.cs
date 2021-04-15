@@ -170,6 +170,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         NavigationViewModel.Items.Add(videoPlayerNavigationItem);
 
+        var tvPlayerNavigationItem = new NavigationItem(videoPlayer)
+        {
+          ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/video-play.png"
+        };
+
         NavigationViewModel.Items.Add(new NavigationItem(settings)
         {
           ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/settings.png"
@@ -177,6 +182,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         
 
         musicPlayer.ObservePropertyChange(x => x.IsSelectedToPlay).ObserveOnDispatcher().Subscribe(x => musicPlayerNavigationItem.IsBackroundActive = x).DisposeWith(this);
+        videoPlayer.ObservePropertyChange(x => x.IsSelectedToPlay).ObserveOnDispatcher().Subscribe(x => videoPlayerNavigationItem.IsBackroundActive = x).DisposeWith(this);
         videoPlayer.ObservePropertyChange(x => x.IsSelectedToPlay).ObserveOnDispatcher().Subscribe(x => videoPlayerNavigationItem.IsBackroundActive = x).DisposeWith(this);
 
         libraryViewModel.IsActive = true;

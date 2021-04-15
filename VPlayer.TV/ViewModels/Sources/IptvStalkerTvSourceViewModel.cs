@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Windows;
 using IPTVStalker;
@@ -16,9 +17,8 @@ namespace VPlayer.IPTV.ViewModels
   public class IptvStalkerTvSourceViewModel : TVSourceViewModel
   {
     private readonly IStatusManager statusManager;
+    private readonly IIptvStalkerServiceProvider iptvStalkerServiceProvider;
     private IPTVStalkerService serviceStalker;
-    private ConnectionProperties connectionProperties;
-    private string cacheFolder;
 
     public IptvStalkerTvSourceViewModel(
       TvSource tVSource,
@@ -26,6 +26,7 @@ namespace VPlayer.IPTV.ViewModels
       IStorageManager storageManager,
       IViewModelsFactory viewModelsFactory,
       IStatusManager statusManager,
+      IIptvStalkerServiceProvider iptvStalkerServiceProvider,
       IWindowManager windowManager) : base(tVSource, player, storageManager, viewModelsFactory, windowManager)
     {
       if (tVSource.TvSourceType != TVSourceType.IPTVStalker)
@@ -34,8 +35,7 @@ namespace VPlayer.IPTV.ViewModels
       }
 
       this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
-
-      cacheFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), $"VPlayer\\IPTVStalkers\\{Name}");
+      this.iptvStalkerServiceProvider = iptvStalkerServiceProvider ?? throw new ArgumentNullException(nameof(iptvStalkerServiceProvider));
 
       if ((string.IsNullOrEmpty(Url) || string.IsNullOrEmpty(MacAddress)) && Model.SourceConnection != null)
       {
@@ -50,16 +50,8 @@ namespace VPlayer.IPTV.ViewModels
 
       if (!string.IsNullOrEmpty(Url) && !string.IsNullOrEmpty(MacAddress))
       {
-        connectionProperties = new ConnectionProperties()
-        {
-          TimeZone = "GMT",
-          MAC = MacAddress,
-          Server = Url,
-        };
+        serviceStalker = iptvStalkerServiceProvider.GetStalkerService(Url, MacAddress);
       }
-
-      if (connectionProperties != null)
-        serviceStalker = new IPTVStalkerService(connectionProperties);
     }
 
     #region Url
@@ -153,47 +145,37 @@ namespace VPlayer.IPTV.ViewModels
 
       if (!string.IsNullOrEmpty(Url) && !string.IsNullOrEmpty(MacAddress))
       {
-        connectionProperties = new ConnectionProperties()
-        {
-          TimeZone = "GMT",
-          MAC = MacAddress,
-          Server = Url,
-        };
+        serviceStalker = iptvStalkerServiceProvider.GetStalkerService(Url, MacAddress);
       }
 
       if (serviceStalker == null)
       {
-        if (connectionProperties != null)
+        var statusMessage = new StatusMessage(1)
         {
-          serviceStalker = new IPTVStalkerService(connectionProperties);
+          MessageStatusState = MessageStatusState.Processing,
+          Message = $"Fetching tv channels for stalker service {Name}"
+        };
 
-          var statusMessage = new StatusMessage(1)
+        statusManager.UpdateMessage(statusMessage);
+
+        await Task.Run(() =>
+        {
+          try
           {
-            ActualMessageStatusState = MessageStatusState.Processing,
-            Message = $"Fetching tv channels for stalker service {Name}"
-          };
-
-          statusManager.UpdateMessage(statusMessage);
-
-          await Task.Run(() =>
+            if (TvChannels.ViewModels.Count == 0)
+              serviceStalker.FetchData();
+          }
+          catch (Exception ex)
           {
-            try
-            {
-              if (TvChannels.ViewModels.Count == 0)
-                serviceStalker.FetchData();
-            }
-            catch (Exception ex)
-            {
-              statusMessage.ActualMessageStatusState = MessageStatusState.Failed;
-              statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
-            }
-          });
-        }
+            statusMessage.MessageStatusState = MessageStatusState.Failed;
+            statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+          }
+        });
 
 
         var statusMessage1 = new StatusMessage(1)
         {
-          ActualMessageStatusState = MessageStatusState.Processing,
+          MessageStatusState = MessageStatusState.Processing,
           Message = $"Storing tv channels",
           NumberOfProcesses = serviceStalker.Channels.data.Count
         };
@@ -269,11 +251,7 @@ namespace VPlayer.IPTV.ViewModels
             TvChannels.Add(viewModelsFactory.Create<TvStalkerChannelViewModel>(channel, serviceStalker));
           }
         }
-
-        serviceStalker.Prepare();
       }
-
-     
     }
 
     #endregion

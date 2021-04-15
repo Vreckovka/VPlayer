@@ -56,6 +56,20 @@ namespace VPlayer.AudioStorage.Scrappers
 
           var csfdTvShow = cSfdWebsiteScrapper.LoadTvShow(csfUrl);
 
+          if(csfdTvShow == null)
+          {
+            var statusMessage1 = new StatusMessage(1)
+            {
+              MessageStatusState = MessageStatusState.Failed,
+              Message = "Unable to scrape Tv show"
+            };
+
+            statusManager.UpdateMessage(statusMessage1);
+
+            dbTvShow.InfoDownloadStatus = InfoDownloadStatus.Failed;
+            return;
+          }
+
           dbTvShow.PosterPath = csfdTvShow.PosterPath;
 
           dbTvShow.Name = csfdTvShow.Name;
@@ -96,7 +110,7 @@ namespace VPlayer.AudioStorage.Scrappers
 
           var statusMessage = new StatusMessage(1)
           {
-            ActualMessageStatusState = MessageStatusState.Processing,
+            MessageStatusState = MessageStatusState.Processing,
             Message = "Updating tv show in database"
           };
 
@@ -104,7 +118,7 @@ namespace VPlayer.AudioStorage.Scrappers
 
           statusMessage.ProcessedCount++;
 
-          statusMessage.ActualMessageStatusState = MessageStatusState.Done;
+          statusMessage.MessageStatusState = MessageStatusState.Done;
 
           statusManager.UpdateMessage(statusMessage);
         }

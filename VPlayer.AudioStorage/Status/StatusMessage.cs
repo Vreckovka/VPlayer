@@ -100,16 +100,16 @@ namespace VPlayer.Core.Managers.Status
 
     #region ActualStatus
 
-    private MessageStatusState actualMessageStatusState;
+    private MessageStatusState messageStatusState;
 
-    public MessageStatusState ActualMessageStatusState
+    public MessageStatusState MessageStatusState
     {
-      get { return actualMessageStatusState; }
+      get { return messageStatusState; }
       set
       {
-        if (value != actualMessageStatusState)
+        if (value != messageStatusState)
         {
-          actualMessageStatusState = value;
+          messageStatusState = value;
           RaisePropertyChanged();
         }
       }
@@ -157,12 +157,12 @@ namespace VPlayer.Core.Managers.Status
 
       Message = other.Message;
 
-      ActualMessageStatusState = other.ActualMessageStatusState;
+      MessageStatusState = other.MessageStatusState;
 
-      if (ProcessedCount == NumberOfProcesses && ActualMessageStatusState != MessageStatusState.Failed)
+      if (ProcessedCount == NumberOfProcesses && MessageStatusState != MessageStatusState.Failed)
       {
         Message += " is DONE";
-        ActualMessageStatusState = MessageStatusState.Done;
+        MessageStatusState = MessageStatusState.Done;
       }
 
       

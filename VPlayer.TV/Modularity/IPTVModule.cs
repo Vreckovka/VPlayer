@@ -14,5 +14,11 @@ namespace VPlayer.IPTV.Modularity
 
       Kernel.BindToSelfInSingletonScope<TVPlayerViewModel>();
     }
+
+    public override void RegisterProviders()
+    {
+      Kernel.Bind<IIptvStalkerServiceProvider>().To<IptvStalkerServiceProvider>().InSingletonScope();
+
+    }
   }
 }

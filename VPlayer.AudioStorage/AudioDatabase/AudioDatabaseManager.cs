@@ -652,7 +652,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
           if (log)
             logger.Log(Logger.MessageType.Success, $"Entities was stored {count}");
 
-          foreach(var entity in entities)
+          foreach (var entity in entities)
           {
             ItemChanged.OnNext(new ItemChanged()
             {
@@ -660,7 +660,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
               Changed = Changed.Added
             });
           }
-         
+
         }
 
         return result;
@@ -677,6 +677,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
       {
         try
         {
+          bool result = false;
+
           using (var context = new AudioDatabaseContext())
           {
             var foundEntity = GetRepository<TEntity>(context).SingleOrDefault(x => x.Id == newVersion.Id);
@@ -685,9 +687,10 @@ namespace VPlayer.AudioStorage.AudioDatabase
             {
               foundEntity.Update(newVersion);
 
-              context.SaveChanges();
+              var updateCount = context.SaveChanges();
+              result = updateCount > 0;
 
-              logger.Log(Logger.MessageType.Success, $"Entity was updated {newVersion}");
+              logger.Log(Logger.MessageType.Success, $"Entity was updated {newVersion} update count {updateCount}");
 
               ItemChanged.OnNext(new ItemChanged()
               {
@@ -695,10 +698,10 @@ namespace VPlayer.AudioStorage.AudioDatabase
                 Changed = Changed.Updated
               });
 
-              return true;
+              return result;
             }
 
-            return false;
+            return result;
           }
         }
         catch (Exception ex)

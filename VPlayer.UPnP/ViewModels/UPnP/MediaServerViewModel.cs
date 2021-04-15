@@ -12,7 +12,7 @@ namespace VPlayer.UPnP.ViewModels.UPnP
   public class MediaServerViewModel : UPnPViewModel<MediaServer>
   {
     private readonly IViewModelsFactory viewModelsFactory;
-
+    private bool wasDiscovered;
     public MediaServerViewModel(
       MediaServer model,
       IViewModelsFactory viewModelsFactory,
@@ -133,7 +133,12 @@ namespace VPlayer.UPnP.ViewModels.UPnP
 
     public override void OnSelected()
     {
-      DiscoverMediaServer();
+      if (!wasDiscovered)
+      {
+        wasDiscovered = true;
+
+        DiscoverMediaServer();
+      }
     }
 
     #endregion

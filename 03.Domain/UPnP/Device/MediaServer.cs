@@ -349,6 +349,12 @@ namespace UPnP.Device
             _browseAction.SetArgumentValue("SortCriteria", "");
             await _browseAction.InvokeAsync(ServiceTypes.CONTENTDIRECTORY, this.ContentDirectoryControlUrl.AbsoluteUri);
             DIDLLite tmp_didllite = Deserializer.DeserializeXml<DIDLLite>(_browseAction.GetArgumentValue("Result"));
+
+            if(tmp_didllite == null)
+            {
+              return null;
+            }
+
             foreach (Container container in tmp_didllite.Containers)
               didllite.Containers.Add(container);
             foreach (Item item in tmp_didllite.Items)

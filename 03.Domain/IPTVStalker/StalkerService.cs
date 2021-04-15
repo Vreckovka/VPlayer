@@ -30,6 +30,7 @@ namespace IPTVStalker
     private readonly string folder;
     private ConnectionProperties connectionProperties;
     private string bearerToken;
+    private bool wasPrepared;
 
     #region Constructors
 
@@ -41,7 +42,7 @@ namespace IPTVStalker
         System.IO.Directory.CreateDirectory(connectionProperties.FolderToSave);
     }
 
-   
+
     public IPTVStalkerService(string folder)
     {
       this.folder = folder ?? throw new ArgumentNullException(nameof(folder));
@@ -60,10 +61,11 @@ namespace IPTVStalker
 
     #region Methods
 
-    public void Prepare()
+    private void Prepare()
     {
       bearerToken = GetToken();
       GetProfile();
+      wasPrepared = true;
     }
 
     #region FetchData
@@ -106,18 +108,24 @@ namespace IPTVStalker
 
     public CreateLinkResponse GetLink(string cmd)
     {
+      if (!wasPrepared)
+      {
+        Prepare();
+      }
+
       cmd = cmd.Replace(" ", "+");
       cmd = cmd.Replace(":", "%3a");
       cmd = cmd.Replace("/", "%2f");
 
       var result = GetRequest(ServiceMethods.ServiceType.ITV, $"create_link&cmd={cmd}", true);
 
-      if(string.IsNullOrEmpty(result))
+      if (string.IsNullOrEmpty(result))
       {
         return null;
       }
 
       return JsonSerializer.Deserialize<CreateLinkResponse>(result);
+
     }
 
     #endregion

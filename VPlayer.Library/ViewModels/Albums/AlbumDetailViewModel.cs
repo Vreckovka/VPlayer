@@ -95,7 +95,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
         var statusMessage = new StatusMessage(songs.Count)
         {
-          ActualMessageStatusState = MessageStatusState.Processing,
+          MessageStatusState = MessageStatusState.Processing,
           Message = "Updating album songs from fingerprint"
         };
 
@@ -103,7 +103,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
         if (songs.Count == 0)
         {
-          statusMessage.ActualMessageStatusState = MessageStatusState.Failed;
+          statusMessage.MessageStatusState = MessageStatusState.Failed;
           statusMessage.FailedMessage = "Album has no songs";
 
           statusManager.UpdateMessage(statusMessage);
@@ -128,12 +128,12 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
             statusManager.UpdateMessage(statusMessage);
           }
 
-          statusMessage.ActualMessageStatusState = MessageStatusState.Done;
+          statusMessage.MessageStatusState = MessageStatusState.Done;
           statusManager.UpdateMessage(statusMessage);
         }
         catch (Exception ex)
         {
-          statusMessage.ActualMessageStatusState = MessageStatusState.Failed;
+          statusMessage.MessageStatusState = MessageStatusState.Failed;
           statusManager.UpdateMessage(statusMessage);
 
           logger.Log(ex);

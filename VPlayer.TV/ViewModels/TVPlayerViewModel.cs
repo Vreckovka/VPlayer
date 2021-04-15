@@ -64,7 +64,7 @@ namespace VPlayer.IPTV.ViewModels
             actualChannel.IsSelected = false;
           }
 
-         
+
           actualChannel = value;
 
           if (actualChannel is ISelectable actualSelectable)
@@ -80,7 +80,7 @@ namespace VPlayer.IPTV.ViewModels
             actualChannel.State = TVChannelState.Loading;
           }
 
-          
+
 
           PlayActualChannel(actualChannel?.URL);
 
@@ -108,6 +108,7 @@ namespace VPlayer.IPTV.ViewModels
 
     private void OnChannelLoaded()
     {
+      channelLoadedSerialDisposable.Disposable?.Dispose();
       PlayActualChannel(actualChannel?.URL);
     }
 
@@ -127,7 +128,7 @@ namespace VPlayer.IPTV.ViewModels
 
       mediaPlayer.EncounteredError += (sender, e) =>
       {
-        logger.Log(MessageType.Error,"Vlc playing error", true);
+        logger.Log(MessageType.Error, "Vlc playing error", true);
 
         Application.Current.Dispatcher.Invoke(() =>
         {
@@ -137,19 +138,28 @@ namespace VPlayer.IPTV.ViewModels
 
 
       mediaPlayer.Buffering += MediaPlayer_Buffering;
-
     }
+
+
+
+    #endregion
 
     #region MediaPlayer_Buffering
 
     private void MediaPlayer_Buffering(object sender, MediaPlayerBufferingEventArgs e)
     {
-      ActualChannel.State = TVChannelState.Loading;
+      if ((int)e.Cache == 100)
+      {
+        ActualChannel.State = TVChannelState.Playing;
+      }
+      else
+        ActualChannel.State = TVChannelState.Loading;
+
+      ActualChannel.BufferingValue = e.Cache;
     }
 
     #endregion
 
-    #endregion
 
     #region LoadVlc
 
@@ -170,11 +180,7 @@ namespace VPlayer.IPTV.ViewModels
     {
       try
       {
-        if (string.IsNullOrEmpty(connection))
-        {
-          actualChannel.State = TVChannelState.Error;
-        }
-        else
+        if (!string.IsNullOrEmpty(connection))
         {
           var streamMedia = new Media(libVLC, new Uri(connection));
 

@@ -182,8 +182,6 @@ namespace VPlayer.IPTV.ViewModels
 
     #endregion
 
-    #endregion
-
     #region IsInFind
 
     protected bool IsInFind(string original, string phrase, bool useContains = true)
@@ -254,6 +252,6 @@ namespace VPlayer.IPTV.ViewModels
     protected virtual void OnSelected()
     { }
 
-
+    #endregion
   }
 }

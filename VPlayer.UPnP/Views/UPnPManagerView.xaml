@@ -84,6 +84,7 @@
 
             <ListView Grid.Row="1"
                       Background="Transparent"
+                      Height="250"
                       ItemsSource="{Binding MediaServers.View}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
