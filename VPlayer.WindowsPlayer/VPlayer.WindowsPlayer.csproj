@@ -18,6 +18,7 @@
     <ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj" />
     <ProjectReference Include="..\VPlayer.Core\VPlayer.Core.csproj" />
     <ProjectReference Include="..\VPlayer.Library\VPlayer.Library.csproj" />
+    <ProjectReference Include="..\VPlayer.TV\VPlayer.IPTV.csproj" />
     <ProjectReference Include="..\VVLC\VVLC.csproj" />
   </ItemGroup>
 </Project>

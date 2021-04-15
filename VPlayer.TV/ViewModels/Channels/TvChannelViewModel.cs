@@ -5,6 +5,11 @@ using VPlayer.AudioStorage.DomainClasses.IPTV;
 
 namespace VPlayer.IPTV.ViewModels
 {
+  public class TvPlaylistViewModel : Playlist<TvPlaylistItem>
+  {
+
+  }
+
   public class TvChannelViewModel : TvChannelViewModel<TvChannel>
   {
     public TvChannelViewModel(TvChannel model) : base(model)

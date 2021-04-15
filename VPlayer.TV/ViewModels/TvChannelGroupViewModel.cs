@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Input;
+using Prism.Events;
 using VCore;
 using VCore.Modularity.Events;
 using VCore.Standard.Factories.ViewModels;
@@ -13,6 +14,7 @@ using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPlayer.Core.Events;
 using VPlayer.IPTV.ViewModels;
 using VPlayer.IPTV.ViewModels.Prompts;
 using VPlayer.IPTV.Views.Prompts;
@@ -21,7 +23,7 @@ namespace VPlayer.IPTV
 {
   public class TvChannelGroupViewModel : TreeViewItemViewModel<TvChannelGroup>
   {
-    private readonly TVPlayerViewModel tVPlayerViewModel;
+    private readonly IEventAggregator eventAggregator;
     private readonly IStorageManager storageManager;
     private readonly IViewModelsFactory viewModelsFactory;
     private readonly IWindowManager windowManager;
@@ -30,12 +32,12 @@ namespace VPlayer.IPTV
 
     public TvChannelGroupViewModel(
       TvChannelGroup model,
-      TVPlayerViewModel tVPlayerViewModel,
+      IEventAggregator eventAggregator,
       IStorageManager storageManager,
       IViewModelsFactory viewModelsFactory,
       IWindowManager windowManager) : base(model)
     {
-      this.tVPlayerViewModel = tVPlayerViewModel ?? throw new ArgumentNullException(nameof(tVPlayerViewModel));
+      this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
@@ -167,7 +169,17 @@ namespace VPlayer.IPTV
       {
         if (x.IsSelected)
         {
-          tVPlayerViewModel.ActualChannel = ((TvChannelItemGroupViewModel)x).TvChannel;
+          eventAggregator.GetEvent<PlayItemsEvent<TvPlaylistItem, TvPlaylistItemViewModel>>().Publish(new PlayItemsEventData<TvPlaylistItemViewModel>(new List<TvPlaylistItemViewModel>()
+          {
+            viewModelsFactory.Create<TvPlaylistItemViewModel>(new TvPlaylistItem()
+            {
+              TvChannel =  ((TvChannelItemGroupViewModel)x).TvChannel.Model
+            })
+          }, EventAction.Play, this)
+          {
+            StorePlaylist = false
+          });
+
         }
       }).DisposeWith(this);
 

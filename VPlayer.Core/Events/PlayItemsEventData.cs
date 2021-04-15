@@ -13,6 +13,8 @@ namespace VPlayer.Core.Events
     object Model { get; }
 
     TData GetModel<TData>() where TData : class;
+
+    bool StorePlaylist { get; }
   }
 
   public class PlayItemsEventData<TEventData> : IPlayItemsEventData<TEventData>
@@ -52,6 +54,7 @@ namespace VPlayer.Core.Events
     public bool? IsRepeat { get; }
     public float? SetPostion { get; }
     public object Model { get; }
+    public bool StorePlaylist { get; set; } = true;
 
 
     #region GetModel
@@ -65,6 +68,8 @@ namespace VPlayer.Core.Events
 
       return null;
     }
+
+   
 
     #endregion
   }

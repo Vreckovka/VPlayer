@@ -13,7 +13,7 @@ using VPlayer.Core.ViewModels.TvShows;
 
 namespace VPlayer.Library.ViewModels.TvShows
 {
-  public class VideoPlaylistViewModel : PlaylistViewModel<VideoItemInPlaylistViewModel, VideoPlaylist, PlaylistVideoItem>
+  public class VideoPlaylistViewModel : PlaylistViewModel<VideoItemInPlaylistViewModel, VideoFilePlaylist, PlaylistVideoItem>
   {
     #region Fields
 
@@ -25,7 +25,7 @@ namespace VPlayer.Library.ViewModels.TvShows
     #region Constructors
 
     public VideoPlaylistViewModel(
-      VideoPlaylist model,
+      VideoFilePlaylist model,
       IEventAggregator eventAggregator,
      IStorageManager storage,
        IVPlayerViewModelsFactory viewModelsFactory) : base(model, eventAggregator, storage)
@@ -45,7 +45,7 @@ namespace VPlayer.Library.ViewModels.TvShows
 
     public override IEnumerable<VideoItemInPlaylistViewModel> GetItemsToPlay()
     {
-      var playlist = storage.GetRepository<VideoPlaylist>()
+      var playlist = storage.GetRepository<VideoFilePlaylist>()
         .Include(x => x.PlaylistItems)
         .ThenInclude(x => x.VideoItem)
         .SingleOrDefault(x => x.Id == Model.Id);

@@ -12,7 +12,6 @@ namespace VPlayer.IPTV.Modularity
     {
       base.RegisterViewModels();
 
-      Kernel.BindToSelfInSingletonScope<TVPlayerViewModel>();
     }
 
     public override void RegisterProviders()

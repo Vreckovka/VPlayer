@@ -114,7 +114,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
         {
           foreach (var song in songs)
           {
-            var audioInfo = audioInfoDownloader.GetAudioInfoByFingerPrint(song.DiskLocation);
+            var audioInfo = audioInfoDownloader.GetAudioInfoByFingerPrint(song.Source);
 
             if (audioInfo != null)
             {

@@ -356,17 +356,17 @@ namespace VPlayer.Player.ViewModels
           }
         case Key.Left:
           {
-            if (mainWindow.IsActive)
+            if (mainWindow.IsActive && ActualViewModel is IFilePlayableRegionViewModel filePlayable)
             {
-              ActualViewModel?.SeekBackward();
+              filePlayable?.SeekBackward();
             }
             break;
           }
         case Key.Right:
           {
-            if (mainWindow.IsActive)
+            if (mainWindow.IsActive && ActualViewModel is IFilePlayableRegionViewModel filePlayable)
             {
-              ActualViewModel?.SeekForward();
+              filePlayable?.SeekForward();
             }
             break;
           }

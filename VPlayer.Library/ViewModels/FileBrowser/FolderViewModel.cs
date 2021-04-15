@@ -91,14 +91,14 @@ namespace VPlayer.Library.ViewModels.FileBrowser
 
         foreach (var item in videoFiles)
         {
-          var existing = storageManager.GetRepository<VideoItem>().SingleOrDefault(x => x.DiskLocation == item.Model.FullName);
+          var existing = storageManager.GetRepository<VideoItem>().SingleOrDefault(x => x.Source == item.Model.FullName);
 
           if (existing == null)
           {
             var videoItem = new VideoItem()
             {
               Name = item.Model.Name,
-              DiskLocation = item.Model.FullName
+              Source = item.Model.FullName
             };
 
             storageManager.StoreEntity(videoItem, out var stored);

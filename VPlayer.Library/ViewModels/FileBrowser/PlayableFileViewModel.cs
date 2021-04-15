@@ -94,7 +94,7 @@ namespace VPlayer.Library.ViewModels.FileBrowser
 
     private void PlayVideo()
     {
-      var existing = storageManager.GetRepository<VideoItem>().SingleOrDefault(x => x.DiskLocation == Model.FullName);
+      var existing = storageManager.GetRepository<VideoItem>().SingleOrDefault(x => x.Source == Model.FullName);
       var videoItems = new List<VideoItem>();
 
       if (existing == null)
@@ -102,7 +102,7 @@ namespace VPlayer.Library.ViewModels.FileBrowser
         var videoItem = new VideoItem()
         {
           Name = Model.Name,
-          DiskLocation = Model.FullName
+          Source = Model.FullName
         };
 
         storageManager.StoreEntity<VideoItem>(videoItem, out var stored);

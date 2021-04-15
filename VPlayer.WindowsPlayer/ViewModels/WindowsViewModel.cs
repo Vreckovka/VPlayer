@@ -16,6 +16,7 @@ using VPlayer.AudioStorage.DataLoader;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.Settings;
+using VPlayer.IPTV.ViewModels;
 using VPlayer.Library.ViewModels;
 using VPlayer.WindowsPlayer.ViewModels.Windows;
 using VPlayer.WindowsPlayer.Views;
@@ -143,11 +144,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
       if (firstActivation)
       {
         var libraryViewModel = viewModelsFactory.Create<LibraryViewModel>();
-
         var musicPlayer = viewModelsFactory.Create<MusicPlayerViewModel>();
-
         var videoPlayer = viewModelsFactory.Create<VideoPlayerViewModel>();
-
+        var tvPlayer = viewModelsFactory.Create<TvPlayerViewModel>();
         var settings = viewModelsFactory.Create<SettingsViewModel>();
 
       
@@ -170,10 +169,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         NavigationViewModel.Items.Add(videoPlayerNavigationItem);
 
-        var tvPlayerNavigationItem = new NavigationItem(videoPlayer)
+        var tvPlayerNavigationItem = new NavigationItem(tvPlayer)
         {
-          ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/video-play.png"
+          ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/television.png"
         };
+
+        NavigationViewModel.Items.Add(tvPlayerNavigationItem);
 
         NavigationViewModel.Items.Add(new NavigationItem(settings)
         {
@@ -183,7 +184,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         musicPlayer.ObservePropertyChange(x => x.IsSelectedToPlay).ObserveOnDispatcher().Subscribe(x => musicPlayerNavigationItem.IsBackroundActive = x).DisposeWith(this);
         videoPlayer.ObservePropertyChange(x => x.IsSelectedToPlay).ObserveOnDispatcher().Subscribe(x => videoPlayerNavigationItem.IsBackroundActive = x).DisposeWith(this);
-        videoPlayer.ObservePropertyChange(x => x.IsSelectedToPlay).ObserveOnDispatcher().Subscribe(x => videoPlayerNavigationItem.IsBackroundActive = x).DisposeWith(this);
+        tvPlayer.ObservePropertyChange(x => x.IsSelectedToPlay).ObserveOnDispatcher().Subscribe(x => videoPlayerNavigationItem.IsBackroundActive = x).DisposeWith(this);
 
         libraryViewModel.IsActive = true;
       }

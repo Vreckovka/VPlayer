@@ -263,57 +263,7 @@
 
             </Border>
 
-            <Border Grid.Row="1"
-                    Grid.Column="2"
-                    Width="350"
-                    Height="199"
-                    Margin="5"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Bottom"
-                    Background="#080808"
-                    BorderBrush="#252525"
-                    BorderThickness="2">
-                <vlc:VideoView x:Name="VideoView" MediaPlayer="{Binding TVPlayerViewModel.MediaPlayer, Mode=OneWay}">
-                    <Grid HorizontalAlignment="Stretch"
-                          VerticalAlignment="Stretch"
-                          Background="#01000000"
-                          DataContext="{Binding TVPlayerViewModel.ActualChannel}">
-                        <Grid Background="#85080808">
-                            <StackPanel VerticalAlignment="Center">
-                                <TextBlock Padding="10"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Background="#85080808"
-                                           FontSize="20"
-                                           Foreground="White">
-                                    <Run Text="{Binding State, StringFormat={}{0}:}" />
-                                    <Run Text="{Binding BufferingValue, StringFormat={}{0:N2} %}" />
-                                </TextBlock>
-
-                                <TextBlock Padding="10"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Background="#85080808"
-                                           FontSize="20"
-                                           Foreground="White">
-                                    <Run Text="{Binding Name, StringFormat={}{0}}" />
-                                </TextBlock>
-                            </StackPanel>
-
-
-                            <Grid.Style>
-                                <Style TargetType="Grid">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding State}" Value="{x:Static viewModels:TVChannelState.Playing}">
-                                            <Setter Property="Visibility" Value="Hidden" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Grid.Style>
-                        </Grid>
-                    </Grid>
-                </vlc:VideoView>
-            </Border>
+           
         </Grid>
     </Grid>
 </UserControl>

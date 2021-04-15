@@ -8,7 +8,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     void Update(TEntity other);
   }
 
-  public class Song : INamedEntity, IUpdateable<Song>, IPlayableModel
+  public class Song : INamedEntity, IUpdateable<Song>, IFilePlayableModel
   {
     #region Constructors
 
@@ -28,7 +28,7 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     public virtual Album Album { get; set; }
 
-    public string DiskLocation { get; set; }
+    public string Source { get; set; }
 
     public int Duration { get; set; }
 

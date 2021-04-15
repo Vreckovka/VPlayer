@@ -166,7 +166,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
             Song song = new Song(audioInfo.Title, album)
             {
-              DiskLocation = audioInfo.DiskLocation
+              Source = audioInfo.DiskLocation
             };
 
 
@@ -180,13 +180,13 @@ namespace VPlayer.AudioStorage.AudioDatabase
             {
               song = new Song(audioInfo.Title, album)
               {
-                DiskLocation = audioInfo.DiskLocation,
+                Source = audioInfo.DiskLocation,
                 Duration = audioInfo.Duration
               };
 
               if (string.IsNullOrEmpty(song.Name))
               {
-                song.Name = song.DiskLocation.Split('\\').Last();
+                song.Name = song.Source.Split('\\').Last();
               }
 
               context.Songs.Add(song);
@@ -785,7 +785,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
     #region DeletePlaylist
 
     public Task DeletePlaylist<TPlaylist, TPlaylistItem>(TPlaylist songsPlaylist)
-      where TPlaylist : class, IPlaylist<TPlaylistItem>
+      where TPlaylist : class, IFilePlaylist<TPlaylistItem>
       where TPlaylistItem : class
     {
       return Task.Run(() =>

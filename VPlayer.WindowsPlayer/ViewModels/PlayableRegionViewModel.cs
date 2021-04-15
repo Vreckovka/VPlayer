@@ -51,7 +51,7 @@ namespace VPlayer.Core.ViewModels
     protected HashSet<TItemViewModel> shuffleList = new HashSet<TItemViewModel>();
     protected LibVLC libVLC;
     private bool wasVlcInitilized;
-    private long lastTimeChangedMs;
+
 
     #endregion
 
@@ -217,71 +217,12 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region IsRepeate
-
-    private bool isRepeate = true;
-    public bool IsRepeate
-    {
-      get { return isRepeate; }
-      set
-      {
-        if (value != isRepeate)
-        {
-          isRepeate = value;
-
-          if (ActualSavedPlaylist.IsReapting != value)
-          {
-            ActualSavedPlaylist.IsReapting = value;
-            UpdateActualSavedPlaylistPlaylist();
-          }
-
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
-
-    #region IsShuffle
-
-    private bool isShuffle;
-    public bool IsShuffle
-    {
-      get { return isShuffle; }
-      set
-      {
-        if (value != isShuffle)
-        {
-          isShuffle = value;
-
-          if (ActualSavedPlaylist.IsShuffle != value)
-          {
-            ActualSavedPlaylist.IsShuffle = value;
-            UpdateActualSavedPlaylistPlaylist();
-          }
-
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
-
     #region Kernel
 
     public IKernel Kernel { get; set; }
 
     #endregion
-
-    #region TotalPlaylistDuration
-
-    public TimeSpan TotalPlaylistDuration
-    {
-      get { return TimeSpan.FromSeconds(PlayList.Sum(x => x.Duration)); }
-    }
-
-    #endregion
-
+    
     #region ActualSavedPlaylist
 
     private TPlaylistModel actualSavedPlaylist = new TPlaylistModel() { Id = -1 };
@@ -468,12 +409,8 @@ namespace VPlayer.Core.ViewModels
       }
     }
 
-    public void OnResumePlaying()
+    protected virtual void OnResumePlaying()
     {
-      if (ActualItem != null && ItemLastTime != null)
-      {
-        mediaPlayer.Position = ((float)ItemLastTime / ActualItem.Duration);
-      }
     }
 
     #endregion
@@ -493,7 +430,7 @@ namespace VPlayer.Core.ViewModels
 
     #region InitializeAsync
 
-    public async Task InitializeAsync()
+    protected virtual async Task InitializeAsync()
     {
       IsPlaying = false;
 
@@ -504,19 +441,10 @@ namespace VPlayer.Core.ViewModels
       actualSearchSubject = new ReplaySubject<string>(1).DisposeWith(this);
 
       PlayList.DisposeWith(this);
-
-      PlayList.CollectionChanged += PlayList_CollectionChanged;
-
+      
       actualSearchSubject.Throttle(TimeSpan.FromMilliseconds(150)).Subscribe(FilterByActualSearch).DisposeWith(this);
 
       HookToPubSubEvents();
-    }
-
-
-
-    private void PlayList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-    {
-      RaisePropertyChanged(nameof(TotalPlaylistDuration));
     }
 
     #endregion
@@ -536,7 +464,7 @@ namespace VPlayer.Core.ViewModels
 
     #region HookToVlcEvents
 
-    private async Task HookToVlcEvents()
+    protected virtual async Task HookToVlcEvents()
     {
       await LoadVlc();
 
@@ -560,8 +488,6 @@ namespace VPlayer.Core.ViewModels
 
 
       mediaPlayer.EndReached += (sender, e) => { Task.Run(() => PlayNextWithItem()); };
-
-      mediaPlayer.TimeChanged += OnVlcTimeChanged;
 
       mediaPlayer.Paused += (sender, e) =>
       {
@@ -656,7 +582,7 @@ namespace VPlayer.Core.ViewModels
 
     #region SetItemAndPlay
 
-    public void SetItemAndPlay(int? songIndex = null, bool forcePlay = false)
+    public virtual void SetItemAndPlay(int? songIndex = null, bool forcePlay = false)
     {
       Application.Current?.Dispatcher?.Invoke(async () =>
       {
@@ -667,14 +593,7 @@ namespace VPlayer.Core.ViewModels
 
         IsPlayFnished = false;
 
-        if (IsShuffle && songIndex == null)
-        {
-          var random = new Random();
-          var result = PlayList.Where(p => shuffleList.All(p2 => p2 != p)).ToList();
-
-          actualItemIndex = random.Next(0, result.Count);
-        }
-        else if (songIndex == null)
+        if (songIndex == null)
         {
           actualItemIndex++;
         }
@@ -685,14 +604,11 @@ namespace VPlayer.Core.ViewModels
 
         if (actualItemIndex >= PlayList.Count)
         {
-          if (IsRepeate)
-            actualItemIndex = 0;
-          else
-          {
-            IsPlayFnished = true;
-            Pause();
-            return;
-          }
+
+
+          IsPlayFnished = true;
+          Pause();
+          return;
         }
 
         SetActualItem(actualItemIndex);
@@ -744,17 +660,18 @@ namespace VPlayer.Core.ViewModels
     {
       return Task.Run(() =>
       {
-        var media = mediaPlayer.Media;
+        if (model.Source != null)
+        {
+          var media = mediaPlayer.Media;
 
-        var fileUri = new Uri(model.DiskLocation);
+          var fileUri = new Uri(model.Source);
 
-        media = new Media(libVLC, fileUri);
+          media = new Media(libVLC, fileUri);
 
-        mediaPlayer.Media = media;
+          mediaPlayer.Media = media;
 
-        media.DurationChanged += Media_DurationChanged;
-
-        OnNewItemPlay();
+          OnNewItemPlay();
+        }
 
       });
     }
@@ -763,73 +680,16 @@ namespace VPlayer.Core.ViewModels
 
     #region VlcMethods
 
-    #region OnVlcTimeChanged
-
-    private void OnVlcTimeChanged(object sender, MediaPlayerTimeChangedEventArgs eventArgs)
-    {
-      if (ActualItem != null)
-      {
-        var position = ((eventArgs.Time * 100) / (ActualItem.Duration * (float)1000.0)) / 100;
-
-        if (!double.IsNaN(position) && !double.IsInfinity(position))
-        {
-          ActualItem.ActualPosition = position;
-          ActualSavedPlaylist.LastItemElapsedTime = position;
-
-          var deltaTimeChanged = eventArgs.Time - lastTimeChangedMs;
-
-          if (deltaTimeChanged < 0)
-          {
-            deltaTimeChanged = 0;
-          }
-
-          lastTimeChangedMs = eventArgs.Time;
-
-          PlaylistTotalTimePlayed += TimeSpan.FromMilliseconds(deltaTimeChanged);
-
-#if RELEASE
-          int totalSec = (int)PlaylistTotalTimePlayed.TotalSeconds;
-
-          if (totalSec % 10 == 0 && totalSec > lastTimeChangedMs)
-          {
-            lastTimeChangedMs = totalSec;
-            Task.Run(UpdateActualSavedPlaylistPlaylist);
-          }
-#endif
-        }
-      }
-    }
-
-    #endregion
-
     #region OnVlcPlayingChanged
 
-    private void OnVlcPlayingChanged(object sender, EventArgs eventArgs)
+    protected virtual void OnVlcPlayingChanged(object sender, EventArgs eventArgs)
     {
       if (ActualItem != null)
       {
-        lastTimeChangedMs = 0;
         ActualItem.IsPlaying = true;
         ActualItem.IsPaused = false;
         IsPlaying = true;
       }
-    }
-
-    #endregion
-
-    #region Media_DurationChanged
-
-    protected void Media_DurationChanged(object sender, MediaDurationChangedEventArgs e)
-    {
-      Application.Current.Dispatcher.Invoke(() =>
-      {
-        ActualItem.Duration = (int)e.Duration / 1000;
-
-        if (MediaPlayer.Media != null)
-          MediaPlayer.Media.DurationChanged -= Media_DurationChanged;
-
-
-      });
     }
 
     #endregion
@@ -882,7 +742,7 @@ namespace VPlayer.Core.ViewModels
           mediaPlayer.Position = data.SetPostion.Value;
       }
 
-      HandleLastItemElapsed();
+      OnPlayPlaylist();
     }
 
     #endregion
@@ -920,15 +780,9 @@ namespace VPlayer.Core.ViewModels
 
     #region PlayNext
 
-    public void PlayNext()
+    public virtual void PlayNext()
     {
       actualItemIndex++;
-
-      if (actualItemIndex >= PlayList.Count)
-      {
-        if (IsRepeate)
-          actualItemIndex = 0;
-      }
 
       SetItemAndPlay(actualItemIndex);
     }
@@ -995,11 +849,10 @@ namespace VPlayer.Core.ViewModels
         ActualSavedPlaylist = new TPlaylistModel() { Id = -1 };
       }
 
-
       switch (data.EventAction)
       {
         case EventAction.Play:
-          PlayItems(data.Items);
+          PlayItems(data.Items,data.StorePlaylist);
 
           break;
         case EventAction.Add:
@@ -1031,74 +884,13 @@ namespace VPlayer.Core.ViewModels
 
       RaisePropertyChanged(nameof(CanPlay));
 
-      if (data.IsShufle.HasValue)
-        IsShuffle = data.IsShufle.Value;
-
-      if (data.IsRepeat.HasValue)
-        IsRepeate = data.IsRepeat.Value;
-
-      OnPlayEvent();
-
+      OnPlayEvent(data);
     }
 
     #endregion
 
     #endregion
-
-    #region Position methods
-
-    #region SetMediaPosition
-
-    public void SetMediaPosition(float position)
-    {
-      if (position < 0)
-      {
-        position = 0;
-      }
-
-      mediaPlayer.Position = position;
-
-      ActualItem.ActualPosition = mediaPlayer.Position;
-
-      lastTimeChangedMs = (long)(ActualItem.ActualPosition * (double)ActualItem.Duration) * 1000;
-    }
-
-    #endregion
-
-    #region SeekForward
-
-    public void SeekForward(int seekSize = 50)
-    {
-      var position = mediaPlayer.Position + GetSeekSize(seekSize);
-
-      SetMediaPosition(position);
-
-    }
-
-    #endregion
-
-    #region SeekBackward
-
-    public void SeekBackward(int seekSize = 50)
-    {
-      var position = mediaPlayer.Position - GetSeekSize(seekSize);
-
-      SetMediaPosition(position);
-    }
-
-    #endregion
-
-    #region GetSeekSize
-
-    private float GetSeekSize(int seconds)
-    {
-      return seconds * (float)100.0 / mediaPlayer.Length;
-    }
-
-    #endregion
-
-    #endregion
-
+    
     #region Playlist methods
 
     #region StorePlaylist
@@ -1202,16 +994,10 @@ namespace VPlayer.Core.ViewModels
 
     #region UpdateNonUserCreatedPlaylist
 
-    private void UpdateNonUserCreatedPlaylist(TPlaylistModel playlistToUpdate, TPlaylistModel other)
+    protected virtual void UpdateNonUserCreatedPlaylist(TPlaylistModel playlistToUpdate, TPlaylistModel other)
     {
       if (playlistToUpdate.Id == 0)
         playlistToUpdate.Id = other.Id;
-
-
-      playlistToUpdate.Name = other.Name;
-      playlistToUpdate.IsReapting = other.IsReapting;
-      playlistToUpdate.IsShuffle = other.IsShuffle;
-
 
       playlistToUpdate.IsUserCreated = other.IsUserCreated;
     }
@@ -1264,24 +1050,7 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
-
-    #region HandleLastItemElapsed
-
-    private void HandleLastItemElapsed()
-    {
-      Application.Current.Dispatcher.Invoke(() =>
-      {
-        ItemLastTime = null;
-        var itemLastTimeFloat = ActualSavedPlaylist.LastItemElapsedTime > 0 ? (float?)ActualSavedPlaylist.LastItemElapsedTime : null;
-
-        if (itemLastTimeFloat != null && itemLastTimeFloat > 0)
-          ItemLastTime = (int)(itemLastTimeFloat.Value * ActualItem.Duration);
-
-      });
-    }
-
-    #endregion
-
+    
     #region RemoveItemsFromPlaylist
 
     protected void RemoveItemsFromPlaylist(RemoveFromPlaylistEventArgs<TItemViewModel> obj)
@@ -1375,7 +1144,7 @@ namespace VPlayer.Core.ViewModels
 
     #region OnPlayEvent
 
-    protected virtual void OnPlayEvent()
+    protected virtual void OnPlayEvent(PlayItemsEventData<TItemViewModel> data)
     {
 
     }
@@ -1418,7 +1187,12 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #endregion
+    protected virtual void OnPlayPlaylist()
+    {
+
+    }
+
+      #endregion
 
     //Abstract methods 
     #region Abstract methods
@@ -1440,13 +1214,13 @@ namespace VPlayer.Core.ViewModels
 
       Task.Run(() =>
       {
-        mediaPlayer.TimeChanged -= OnVlcTimeChanged;
+       
         mediaPlayer.Playing -= OnVlcPlayingChanged;
 
         libVLC.Dispose();
         mediaPlayer.Dispose();
 
-        PlayList.CollectionChanged -= PlayList_CollectionChanged;
+    
 
         base.Dispose();
       });

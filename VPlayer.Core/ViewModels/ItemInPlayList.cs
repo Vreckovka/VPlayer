@@ -13,42 +13,20 @@ using VPlayer.Core.Events;
 namespace VPlayer.Core.ViewModels
 {
   public abstract class ItemInPlayList<TModel> : ViewModel<TModel>, IItemInPlayList<TModel>
-    where TModel : class, IPlayableModel, IUpdateable<TModel>, IEntity
+    where TModel : class, IPlayableModel,
+    IUpdateable<TModel>, IEntity
   {
     protected readonly IEventAggregator eventAggregator;
     private readonly IStorageManager storageManager;
 
-    protected ItemInPlayList(TModel model, IEventAggregator eventAggregator,  IStorageManager storageManager) : base(model)
+    protected ItemInPlayList(TModel model, IEventAggregator eventAggregator, IStorageManager storageManager) : base(model)
     {
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
-
-      Duration = model.Duration;
     }
+
 
     #region Properties
-
-    #region Duration
-
-    private int duration;
-
-    public int Duration
-    {
-      get { return duration; }
-      set
-      {
-        if (value != duration)
-        {
-          duration = value;
-
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
-
-    public TimeSpan ActualTime => TimeSpan.FromSeconds(ActualPosition * Duration);
 
     public bool IsPaused { get; set; }
     public string Name => Model.Name;
@@ -78,30 +56,9 @@ namespace VPlayer.Core.ViewModels
       }
     }
 
-    #endregion 
-
-    #region ActualPosition
-
-    private float actualPosition;
-
-    public float ActualPosition
-    {
-      get { return actualPosition; }
-      set
-      {
-        if (value != actualPosition)
-        {
-          actualPosition = value;
-
-          RaisePropertyChanged();
-          RaisePropertyChanged(nameof(ActualTime));
-
-          OnActualPositionChanged(value);
-        }
-      }
-    }
-
     #endregion
+
+
 
     #endregion
 
@@ -185,9 +142,9 @@ namespace VPlayer.Core.ViewModels
 
     private void OnOpenContainingFolder()
     {
-      if (!string.IsNullOrEmpty(Model.DiskLocation))
+      if (!string.IsNullOrEmpty(Model.Source))
       {
-        var folder = Path.GetDirectoryName(Model.DiskLocation);
+        var folder = Path.GetDirectoryName(Model.Source);
 
         if (!string.IsNullOrEmpty(folder))
         {
@@ -203,7 +160,7 @@ namespace VPlayer.Core.ViewModels
 
 
     #endregion
-    
+
     #endregion
 
     #region UpdateIsFavorite
@@ -230,14 +187,10 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    protected virtual void OnActualPositionChanged(float value)
-    {
-    }
-
     protected virtual void OnIsPlayingChanged(bool value)
     {
-
     }
+
     protected abstract void PublishPlayEvent();
 
     protected abstract void PublishRemoveFromPlaylist();

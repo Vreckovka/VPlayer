@@ -9,7 +9,7 @@ using VPlayer.Core.ViewModels;
 namespace VPlayer.Library.ViewModels
 {
   public abstract class PlaylistViewModel<TPlaylistItemViewModel,TPlaylistModel, TPlaylistItemModel> : PlayableViewModel<TPlaylistItemViewModel, TPlaylistModel>
-    where TPlaylistModel : class, IPlaylist<TPlaylistItemModel>
+    where TPlaylistModel : class, IFilePlaylist<TPlaylistItemModel>
     where TPlaylistItemModel : class, IEntity
   {
     private readonly IStorageManager storageManager;

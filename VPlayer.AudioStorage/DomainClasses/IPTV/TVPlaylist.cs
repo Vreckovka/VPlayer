@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using Windows.Media.Playlists;
+using VPlayer.Core.ViewModels;
+using VPlayer.IPTV.ViewModels;
 
 namespace VPlayer.AudioStorage.DomainClasses.IPTV
 {
-  public class TvPlaylist : DomainEntity
+  public class TvPlaylist : Playlist<TvPlaylistItem>
   {
-    public string Name { get; set; }
-    public List<TvChannelGroup> TvChannelGroups { get; set; }
   }
 }

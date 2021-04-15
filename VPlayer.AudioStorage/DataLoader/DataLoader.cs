@@ -129,7 +129,7 @@ namespace VPlayer.AudioStorage.DataLoader
 
         var videoItem = new VideoItem()
         {
-          DiskLocation = file.FullName,
+          Source = file.FullName,
           Duration = (int) GetFileDuration(file.FullName).TotalSeconds,
           Name = file.Name,
         };

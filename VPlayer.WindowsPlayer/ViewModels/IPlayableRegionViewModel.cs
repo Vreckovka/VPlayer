@@ -5,6 +5,13 @@ using VCore.ViewModels;
 
 namespace VPlayer.Core.ViewModels
 {
+  public interface IFilePlayableRegionViewModel : IPlayableRegionViewModel
+  {
+    void SeekForward(int seekSize = 50);
+    void SeekBackward(int seekSize = 50);
+    void SetMediaPosition(float position);
+  }
+
   public interface IPlayableRegionViewModel : IRegionViewModel
   {
     Task Play();
@@ -18,10 +25,7 @@ namespace VPlayer.Core.ViewModels
     bool CanPlay { get; }
     public float Volume { get; }
     MediaPlayer MediaPlayer { get; }
-    void SeekForward(int seekSize = 50);
-    void SeekBackward(int seekSize = 50);
     IObservable<int> ActualItemChanged { get; }
     void SetVolume(int pVolume);
-    void SetMediaPosition(float position);
   }
 }

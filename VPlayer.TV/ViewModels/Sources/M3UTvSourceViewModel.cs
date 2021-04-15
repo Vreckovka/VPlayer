@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using Prism.Events;
 using VCore;
 using VCore.Standard.Factories.ViewModels;
 using VCore.WPF.Managers;
@@ -20,10 +21,10 @@ namespace VPlayer.IPTV.ViewModels
   {
     public M3UTvSourceViewModel(
       TvSource tVSource,
-      TVPlayerViewModel player,
       IStorageManager storageManager,
       IViewModelsFactory viewModelsFactory,
-      IWindowManager windowManager) : base(tVSource, player, storageManager, viewModelsFactory, windowManager)
+      IEventAggregator eventAggregator,
+      IWindowManager windowManager) : base(tVSource, storageManager, viewModelsFactory, eventAggregator, windowManager)
     {
       if (tVSource.TvSourceType != TVSourceType.M3U)
       {

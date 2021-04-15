@@ -53,7 +53,7 @@ using VPlayer.WindowsPlayer.Views.WindowsPlayer;
 namespace VPlayer.WindowsPlayer.ViewModels
 {
 
-  public class MusicPlayerViewModel : PlayableRegionViewModel<WindowsPlayerView, SongInPlayListViewModel, SongsPlaylist, PlaylistSong, Song>
+  public class MusicPlayerViewModel : FilePlayableRegionViewModel<WindowsPlayerView, SongInPlayListViewModel, SongsFilePlaylist, PlaylistSong, Song>
   {
     #region Fields
 
@@ -431,13 +431,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region GetNewPlaylistModel
 
-    protected override SongsPlaylist GetNewPlaylistModel(List<PlaylistSong> playlistModels, bool isUserCreated)
+    protected override SongsFilePlaylist GetNewPlaylistModel(List<PlaylistSong> playlistModels, bool isUserCreated)
     {
       var artists = PlayList.GroupBy(x => x.ArtistViewModel.Name);
 
       var playlistName = string.Join(", ", artists.Select(x => x.Key).ToArray());
 
-      var entityPlayList = new SongsPlaylist()
+      var entityPlayList = new SongsFilePlaylist()
       {
         IsReapting = IsRepeate,
         IsShuffle = IsShuffle,

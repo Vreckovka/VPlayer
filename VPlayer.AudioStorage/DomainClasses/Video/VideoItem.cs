@@ -2,9 +2,9 @@
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
-  public class VideoItem : DomainEntity, IUpdateable<VideoItem>, IPlayableModel, INamedEntity
+  public class VideoItem : DomainEntity, IUpdateable<VideoItem>, IFilePlayableModel, INamedEntity
   {
-    public string DiskLocation { get; set; }
+    public string Source { get; set; }
     public int Duration { get; set; }
     public int Length { get; set; }
     public string Name { get; set; }
@@ -17,7 +17,7 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     public void Update(VideoItem other)
     {
-      DiskLocation = other.DiskLocation;
+      Source = other.Source;
       Duration = other.Duration;
       Length = other.Length;
       Name = other.Name;

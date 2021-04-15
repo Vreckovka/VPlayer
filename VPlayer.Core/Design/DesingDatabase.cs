@@ -132,7 +132,7 @@ namespace VPlayer.Core.Design
             Name = $"Song  with really long name {i}",
             Length = 2,
             Duration = random.Next(400, 800),
-            DiskLocation = "DISK LOCATION",
+            Source = "DISK LOCATION",
             Album = album
           };
 
@@ -144,7 +144,7 @@ namespace VPlayer.Core.Design
           Name = $"Song with really long name wich should not fit in",
           Length = 2,
           Duration = random.Next(400, 800),
-          DiskLocation = "DISK LOCATION",
+          Source = "DISK LOCATION",
           Album = album
         });
       }

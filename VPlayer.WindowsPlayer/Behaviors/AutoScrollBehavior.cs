@@ -23,7 +23,7 @@ namespace VPlayer.Player.Behaviors
 {
   public class AutoScrollBehavior : Behavior<ListView>
   {
-    private IPlayableRegionViewModel playableRegionViewModel;
+    private IPlayableRegionViewModel managablePlayableRegionViewModel;
 
     #region Kernel
 
@@ -103,13 +103,13 @@ namespace VPlayer.Player.Behaviors
         }
 
 
-        if (playableRegionViewModel == null)
+        if (managablePlayableRegionViewModel == null)
         {
-          playableRegionViewModel = AssociatedObject.DataContext as IPlayableRegionViewModel;
+          managablePlayableRegionViewModel = AssociatedObject.DataContext as IPlayableRegionViewModel;
 
-          if (playableRegionViewModel != null)
+          if (managablePlayableRegionViewModel != null)
           {
-            disposable.Disposable = playableRegionViewModel.ActualItemChanged.ObserveOnDispatcher().Subscribe(OnSongChanged);
+            disposable.Disposable = managablePlayableRegionViewModel.ActualItemChanged.ObserveOnDispatcher().Subscribe(OnSongChanged);
           }
         }
       }

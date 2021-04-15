@@ -9,13 +9,13 @@ using VPlayer.Library.Views;
 
 namespace VPlayer.Library.ViewModels.TvShows
 {
-  public class VideoPlaylistsViewModel : PlayableItemsViewModel<PlaylistsView, VideoPlaylistViewModel, VideoPlaylist>
+  public class VideoPlaylistsViewModel : PlayableItemsViewModel<PlaylistsView, VideoPlaylistViewModel, VideoFilePlaylist>
   {
     public VideoPlaylistsViewModel(
       IRegionProvider regionProvider, 
       IViewModelsFactory viewModelsFactory, 
       IStorageManager storageManager,
-      LibraryCollection<VideoPlaylistViewModel, VideoPlaylist> libraryCollection,
+      LibraryCollection<VideoPlaylistViewModel, VideoFilePlaylist> libraryCollection,
       IEventAggregator eventAggregator) :
       base(regionProvider, viewModelsFactory, storageManager, libraryCollection, eventAggregator)
     {

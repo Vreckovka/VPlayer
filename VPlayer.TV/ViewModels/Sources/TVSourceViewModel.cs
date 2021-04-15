@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.EntityFrameworkCore;
+using Prism.Events;
 using VCore;
 using VCore.Standard;
 using VCore.Standard.Factories.ViewModels;
@@ -14,6 +15,7 @@ using VCore.WPF.ItemsCollections;
 using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPlayer.Core.Events;
 using VPlayer.IPTV.ViewModels.Prompts;
 using VPlayer.IPTV.Views.Prompts;
 
@@ -23,19 +25,20 @@ namespace VPlayer.IPTV.ViewModels
   {
     protected readonly IStorageManager storageManager;
     protected readonly IViewModelsFactory viewModelsFactory;
+    protected readonly IEventAggregator eventAggregator;
     private readonly IWindowManager windowManager;
 
     public TVSourceViewModel(
-      TvSource tVSource, 
-      TVPlayerViewModel player,
+      TvSource tVSource,
       IStorageManager storageManager,
       IViewModelsFactory viewModelsFactory,
+      IEventAggregator eventAggregator,
       IWindowManager windowManager) : base(tVSource)
     {
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+      this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
-      Player = player ?? throw new ArgumentNullException(nameof(player));
     }
 
     #region Properties
@@ -129,8 +132,6 @@ namespace VPlayer.IPTV.ViewModels
     }
 
     #endregion
-
-    public TVPlayerViewModel Player { get;  }
     
     #region ActualFilter
 
@@ -162,7 +163,26 @@ namespace VPlayer.IPTV.ViewModels
     {
       base.Initialize();
 
-      TvChannels.OnActualItemChanged.Subscribe(x => Player.ActualChannel = x).DisposeWith(this);
+      TvChannels.OnActualItemChanged.Subscribe(x =>
+      {
+        if (x != null)
+        {
+          var items = new List<TvPlaylistItemViewModel>()
+          {
+            viewModelsFactory.Create<TvPlaylistItemViewModel>(new TvPlaylistItem()
+            {
+              TvChannel = x.Model,
+            },x)
+          };
+
+          var data = new PlayItemsEventData<TvPlaylistItemViewModel>(items, EventAction.Play, this)
+          {
+            StorePlaylist = false
+          };
+
+          eventAggregator.GetEvent<PlayItemsEvent<TvPlaylistItem, TvPlaylistItemViewModel>>().Publish(data);
+        }
+      }).DisposeWith(this);
     }
 
     #region LoadChannels

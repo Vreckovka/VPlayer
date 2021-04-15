@@ -3,16 +3,25 @@ using System.ComponentModel;
 
 namespace VPlayer.Core.ViewModels
 {
+  public interface IFileItemInPlayList : IItemInPlayList
+  {
+    int Duration { get; set; }
+    TimeSpan ActualTime { get; }
+    float ActualPosition { get; set; }
+  }
+
+  public interface IFileItemInPlayList<TModel> : IItemInPlayList<TModel>, IFileItemInPlayList where TModel : IPlayableModel
+  {
+  }
+
   public interface IItemInPlayList<TModel> : IItemInPlayList where TModel : IPlayableModel
   {
     TModel Model { get; set; }
   }
+ 
 
   public interface IItemInPlayList : INotifyPropertyChanged 
   {
-    float ActualPosition { get; set; }
-    TimeSpan ActualTime { get; }
-    int Duration { get; set; }
     bool IsPaused { get; set; }
     string Name { get; }
     bool IsFavorite { get; set; }

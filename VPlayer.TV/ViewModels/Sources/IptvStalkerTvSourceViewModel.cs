@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using IPTVStalker;
 using Microsoft.EntityFrameworkCore;
+using Prism.Events;
 using VCore.Standard.Factories.ViewModels;
 using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
@@ -22,12 +23,12 @@ namespace VPlayer.IPTV.ViewModels
 
     public IptvStalkerTvSourceViewModel(
       TvSource tVSource,
-      TVPlayerViewModel player,
       IStorageManager storageManager,
       IViewModelsFactory viewModelsFactory,
       IStatusManager statusManager,
       IIptvStalkerServiceProvider iptvStalkerServiceProvider,
-      IWindowManager windowManager) : base(tVSource, player, storageManager, viewModelsFactory, windowManager)
+      IEventAggregator eventAggregator,
+      IWindowManager windowManager) : base(tVSource, storageManager, viewModelsFactory, eventAggregator, windowManager)
     {
       if (tVSource.TvSourceType != TVSourceType.IPTVStalker)
       {

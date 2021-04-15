@@ -45,12 +45,13 @@ using VPlayer.WindowsPlayer.ViewModels.VideoProperties;
 using VPlayer.WindowsPlayer.ViewModels.Windows;
 using VPlayer.WindowsPlayer.Views.Prompts;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer;
+using VPlayer.WindowsPlayer.Views.WindowsPlayer.IPTV;
 using Application = System.Windows.Application;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 
 namespace VPlayer.WindowsPlayer.ViewModels
 {
-  public class VideoPlayerViewModel : PlayableRegionViewModel<WindowsPlayerView, VideoItemInPlaylistViewModel, VideoPlaylist, PlaylistVideoItem, VideoItem>
+  public class VideoPlayerViewModel : FilePlayableRegionViewModel<WindowsPlayerView, VideoItemInPlaylistViewModel, VideoFilePlaylist, PlaylistVideoItem, VideoItem>
   {
     private readonly IWindowManager windowManager;
     protected TaskCompletionSource<bool> loadedTask = new TaskCompletionSource<bool>();
@@ -252,14 +253,14 @@ namespace VPlayer.WindowsPlayer.ViewModels
         var item = new VideoItemInPlaylistViewModel(new VideoItem()
         {
           Name = "Stream file",
-          DiskLocation = vm.StreamUrl,
+          Source = vm.StreamUrl,
           Duration = (int)new TimeSpan(99, 99, 99).TotalSeconds
         }, eventAggregator, storageManager);
 
         try
         {
           PlayList.Clear();
-          ActualSavedPlaylist = new VideoPlaylist();
+          ActualSavedPlaylist = new VideoFilePlaylist();
 
           PlayList.Add(item);
 
@@ -514,7 +515,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       if (firstActivation)
       {
-        var view = regionProvider.RegisterView<VideoPlayerView, VideoPlayerViewModel>(RegionNames.PlayerContentRegion, this, false, out var guid, RegionManager);
+        var view = regionProvider.RegisterView<IPTVPlayerView, VideoPlayerViewModel>(RegionNames.PlayerContentRegion, this, false, out var guid, RegionManager);
       }
     }
 
@@ -727,7 +728,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region GetNewPlaylistModel
 
-    protected override VideoPlaylist GetNewPlaylistModel(List<PlaylistVideoItem> playlistModels, bool isUserCreated)
+    protected override VideoFilePlaylist GetNewPlaylistModel(List<PlaylistVideoItem> playlistModels, bool isUserCreated)
     {
       List<string> nameKeys = new List<string>();
 
@@ -749,7 +750,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         playlistName += " ...";
       }
 
-      var entityPlayList = new VideoPlaylist()
+      var entityPlayList = new VideoFilePlaylist()
       {
         IsReapting = IsRepeate,
         IsShuffle = IsShuffle,

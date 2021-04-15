@@ -44,8 +44,6 @@
             <ContentControl x:Name="ContentControl" regions:RegionManager.RegionName="{x:Static regions1:RegionNames.PlayerContentRegion}" />
 
 
-
-
             <Slider x:Name="Slider_Time"
                     Grid.Row="1"
                     Margin="10,0,1,0"

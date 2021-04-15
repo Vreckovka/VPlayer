@@ -28,7 +28,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
     public DbSet<Album> Albums { get; set; }
     public DbSet<Artist> Artists { get; set; }
     public DbSet<Song> Songs { get; set; }
-    public DbSet<SongsPlaylist> SongPlaylists { get; set; }
+    public DbSet<SongsFilePlaylist> SongPlaylists { get; set; }
     public DbSet<PlaylistSong> PlaylistSongs { get; set; }
 
 
@@ -37,7 +37,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
     public DbSet<TvShowEpisode> TvShowEpisodes { get; set; }
     public DbSet<VideoItem> VideoItems { get; set; }
     public DbSet<PlaylistVideoItem> PlaylistsTvShowEpisode { get; set; }
-    public DbSet<VideoPlaylist> TvShowPlaylists { get; set; }
+    public DbSet<VideoFilePlaylist> TvShowPlaylists { get; set; }
 
 
 

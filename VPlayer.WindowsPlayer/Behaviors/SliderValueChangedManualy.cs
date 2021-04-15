@@ -47,7 +47,7 @@ namespace VPlayer.Player.Behaviors
 
     private void AssociatedObject_MouseWheel(object sender, MouseWheelEventArgs e)
     {
-      if (AssociatedObject.DataContext is IPlayableRegionViewModel playableRegionViewModel)
+      if (AssociatedObject.DataContext is IFilePlayableRegionViewModel playableRegionViewModel)
       {
         if (e.Delta > 0)
         {
@@ -71,7 +71,7 @@ namespace VPlayer.Player.Behaviors
     {
       if (Mouse.LeftButton == MouseButtonState.Pressed && AssociatedObject.IsMouseOver)
       {
-        if (AssociatedObject.DataContext is IPlayableRegionViewModel playableRegionViewModel)
+        if (AssociatedObject.DataContext is IFilePlayableRegionViewModel playableRegionViewModel)
         {
           playableRegionViewModel.SetMediaPosition((float) e.NewValue);
          

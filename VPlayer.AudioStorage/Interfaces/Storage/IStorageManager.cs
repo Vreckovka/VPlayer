@@ -43,7 +43,7 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
 
 
     Task DeletePlaylist<TPlaylist, TPlaylistItem>(TPlaylist songsPlaylist)
-      where TPlaylist : class, IPlaylist<TPlaylistItem>
+      where TPlaylist : class, IFilePlaylist<TPlaylistItem>
       where TPlaylistItem : class;
 
     bool UpdatePlaylist<TPlaylist, TPlaliystModel>(TPlaylist playlist, out TPlaylist updatedPlaylist) where TPlaylist : class, IPlaylist<TPlaliystModel>;

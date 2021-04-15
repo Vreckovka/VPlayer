@@ -2,16 +2,17 @@
 using System.IO;
 using Prism.Events;
 using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 
 namespace VPlayer.Core.ViewModels.TvShows
 {
-  public class VideoItemInPlaylistViewModel : ItemInPlayList<VideoItem>
+  public class VideoItemInPlaylistViewModel : FileItemInPlayList<VideoItem>
   {
     public VideoItemInPlaylistViewModel(VideoItem model, IEventAggregator eventAggregator, IStorageManager storageManager) : base(model, eventAggregator, storageManager)
     {
-      Description = Path.GetDirectoryName(model.DiskLocation);
+      Description = Path.GetDirectoryName(model.Source);
     }
 
     protected override void PublishPlayEvent()
@@ -37,9 +38,6 @@ namespace VPlayer.Core.ViewModels.TvShows
     }
 
     #endregion
-
-
-
 
     protected override void PublishRemoveFromPlaylist()
     {

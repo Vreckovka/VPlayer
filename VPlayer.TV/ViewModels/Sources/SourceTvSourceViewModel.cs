@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Prism.Events;
 using VCore.Standard.Factories.ViewModels;
 using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPlayer.Core.Events;
 
 namespace VPlayer.IPTV.ViewModels
 {
@@ -14,11 +16,11 @@ namespace VPlayer.IPTV.ViewModels
   {
 
     public SourceTvSourceViewModel(
-      TvSource tVSource, 
-      TVPlayerViewModel player,
+      TvSource tVSource,
       IStorageManager storageManager,
       IViewModelsFactory viewModelsFactory,
-      IWindowManager windowManager) : base(tVSource, player,storageManager, viewModelsFactory, windowManager)
+      IEventAggregator eventAggregator,
+      IWindowManager windowManager) : base(tVSource,storageManager, viewModelsFactory, eventAggregator, windowManager)
     {
       if (tVSource.TvSourceType != TVSourceType.Source)
       {
@@ -97,9 +99,13 @@ namespace VPlayer.IPTV.ViewModels
 
         if (channel != null)
         {
-        
-
-          Player.ActualChannel = channel;
+          eventAggregator.GetEvent<PlayItemsEvent<TvPlaylistItem, TvPlaylistItemViewModel>>().Publish(new PlayItemsEventData<TvPlaylistItemViewModel>(new List<TvPlaylistItemViewModel>()
+          {
+            viewModelsFactory.Create<TvPlaylistItemViewModel>(new TvPlaylistItem()
+            {
+              TvChannel = channel.Model
+            })
+          }, EventAction.Play, this));
         }
       }
     }

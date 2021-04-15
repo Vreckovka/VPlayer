@@ -16,7 +16,7 @@ using VPlayer.Core.ViewModels;
 
 namespace VPlayer.Library.ViewModels
 {
-  public class SongsPlaylistViewModel : PlaylistViewModel<SongInPlayListViewModel, SongsPlaylist, PlaylistSong>
+  public class SongsPlaylistViewModel : PlaylistViewModel<SongInPlayListViewModel, SongsFilePlaylist, PlaylistSong>
 {
     #region Fields
 
@@ -30,7 +30,7 @@ namespace VPlayer.Library.ViewModels
     #region Constructors
 
     public SongsPlaylistViewModel(
-      SongsPlaylist model,
+      SongsFilePlaylist model,
       IEventAggregator eventAggregator,
       IViewModelsFactory viewModelsFactory,
       SongPlaylistsViewModel songPlaylistsViewModel,
@@ -54,7 +54,7 @@ namespace VPlayer.Library.ViewModels
 
     public override IEnumerable<SongInPlayListViewModel> GetItemsToPlay()
     {
-      var playlist = storageManager.GetRepository< SongsPlaylist>().Where(x => x.Id == ModelId)
+      var playlist = storageManager.GetRepository<SongsFilePlaylist>().Where(x => x.Id == ModelId)
         .Include(x => x.PlaylistItems).ThenInclude(x => x.Song).ThenInclude(x => x.Album)
         .SingleOrDefault();
 

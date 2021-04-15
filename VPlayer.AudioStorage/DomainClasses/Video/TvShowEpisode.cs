@@ -22,13 +22,13 @@ namespace VPlayer.AudioStorage.DomainClasses
     public VideoItem VideoItem { get; set; }
     public int EpisodeNumber { get; set; }
 
-    public string DiskLocation
+    public string Source
     {
-      get { return VideoItem?.DiskLocation; }
+      get { return VideoItem?.Source; }
       set
       {
         if (VideoItem != null)
-          VideoItem.DiskLocation = value;
+          VideoItem.Source = value;
       }
     }
 

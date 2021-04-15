@@ -24,7 +24,7 @@ using VPlayer.Core.ViewModels.Artists;
 
 namespace VPlayer.Core.ViewModels
 {
-  public class SongInPlayListViewModel : ItemInPlayList<Song>
+  public class SongInPlayListViewModel : FileItemInPlayList<Song>
   {
     #region Fields
 
@@ -359,7 +359,7 @@ namespace VPlayer.Core.ViewModels
 
     private async Task LoadLRCFromLocal()
     {
-      if (!string.IsNullOrEmpty(Model.DiskLocation))
+      if (!string.IsNullOrEmpty(Model.Source))
       {
         var provider = new LocalLrcProvider("C:\\Lyrics");
 

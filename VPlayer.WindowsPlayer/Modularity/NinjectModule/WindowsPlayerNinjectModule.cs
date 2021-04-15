@@ -35,7 +35,7 @@ namespace VPlayer.WindowsPlayer.Modularity.NinjectModule
 
       Kernel.Bind<IPlayableRegionViewModel>().ToConstant(videoPlayerViewModel);
       Kernel.Bind<IPlayableRegionViewModel>().ToConstant(musicPlayerViewModel);
-
+      //Kernel.Bind<IPlayableRegionViewModel>().ToConstant(musicPlayerViewModel);
 
     }
 

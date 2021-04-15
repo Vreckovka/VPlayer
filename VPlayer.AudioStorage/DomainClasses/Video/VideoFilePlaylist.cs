@@ -2,8 +2,7 @@
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
-  public class SongsPlaylist : Playlist<PlaylistSong>
+  public class VideoFilePlaylist : FilePlaylist<PlaylistVideoItem>
   {
   }
 }
-
