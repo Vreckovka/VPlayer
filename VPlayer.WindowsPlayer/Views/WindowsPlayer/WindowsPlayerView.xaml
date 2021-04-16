@@ -14,7 +14,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:regions="http://prismlibrary.com/"
              xmlns:regions1="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPlayer.Core"
+             xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
              xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
+             xmlns:regions11="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPLayer.Domain"
              d:DesignHeight="450"
              d:DesignWidth="1900"
              mc:Ignorable="d">
@@ -23,6 +25,8 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Views/WindowsPlayer/WindowsPlayerViewResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -41,7 +45,7 @@
             </Grid.RowDefinitions>
 
 
-            <ContentControl x:Name="ContentControl" regions:RegionManager.RegionName="{x:Static regions1:RegionNames.PlayerContentRegion}" />
+            <ContentControl x:Name="ContentControl" regions:RegionManager.RegionName="{x:Static regions11:RegionNames.PlayerContentRegion}" />
 
 
             <Slider x:Name="Slider_Time"

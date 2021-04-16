@@ -9,6 +9,7 @@ using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
+using VPLayer.Domain.Contracts.IPTV;
 
 namespace VPlayer.IPTV.ViewModels
 {
@@ -89,27 +90,28 @@ namespace VPlayer.IPTV.ViewModels
 
     #endregion
 
-    #region OnSelected
+    //#region OnSelected
 
-    protected override void OnSelected()
-    {
-      if (IsSelected)
-      {
-        var channel = TvChannels.View.SingleOrDefault();
+    //protected override void OnSelected()
+    //{
+    //  if (IsSelected)
+    //  {
+    //    var channel = TvChannels.View.SingleOrDefault();
 
-        if (channel != null)
-        {
-          eventAggregator.GetEvent<PlayItemsEvent<TvPlaylistItem, TvPlaylistItemViewModel>>().Publish(new PlayItemsEventData<TvPlaylistItemViewModel>(new List<TvPlaylistItemViewModel>()
-          {
-            viewModelsFactory.Create<TvPlaylistItemViewModel>(new TvPlaylistItem()
-            {
-              TvChannel = channel.Model
-            })
-          }, EventAction.Play, this));
-        }
-      }
-    }
+    //    if (channel != null)
+    //    {
+    //      eventAggregator.GetEvent<PlayItemsEvent<TvPlaylistItem, TvItemInPlaylistItemViewModel>>().Publish(new PlayItemsEventData<TvItemInPlaylistItemViewModel>(new List<TvItemInPlaylistItemViewModel>()
+    //      {
+    //        viewModelsFactory.Create<TvItemInPlaylistItemViewModel>(new TvPlaylistItem()
+    //        {
+    //          TvChannel = channel.Model,
+    //          Name = channel.Name
+    //        })
+    //      }, EventAction.Play, this));
+    //    }
+    //  }
+    //}
 
-    #endregion
+    //#endregion
   }
 }

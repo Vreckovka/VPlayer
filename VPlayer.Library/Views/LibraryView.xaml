@@ -12,6 +12,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:regions="http://prismlibrary.com/"
              xmlns:regions1="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPlayer.Core"
+             xmlns:regions11="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPLayer.Domain"
              d:DesignHeight="650"
              d:DesignWidth="800"
              mc:Ignorable="d">
@@ -58,7 +59,7 @@
             </controls2:Finder>
 
             <Grid Grid.Row="1">
-                <ContentControl regions:RegionManager.RegionName="{x:Static regions1:RegionNames.LibraryContentRegion}" />
+                <ContentControl regions:RegionManager.RegionName="{x:Static regions11:RegionNames.LibraryContentRegion}" />
             </Grid>
         </Grid>
     </Grid>

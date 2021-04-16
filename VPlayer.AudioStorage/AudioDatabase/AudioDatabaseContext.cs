@@ -51,7 +51,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
     public DbSet<TvChannelGroup> TvChannelGroups { get; set; }
     public DbSet<TvChannelGroupItem> TvChannelGroupItems { get; set; }
     public DbSet<TvChannel> TvChannels { get; set; }
-  
+    public DbSet<TvPlaylist> TvPlaylists { get; set; }
+
 
     #endregion Properties
 

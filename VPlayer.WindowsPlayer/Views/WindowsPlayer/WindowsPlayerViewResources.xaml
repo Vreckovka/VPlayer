@@ -21,22 +21,161 @@
         <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Views/WindowsPlayer/VideoPlayerViewResources.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
+    <DataTemplate x:Key="TvChannelTemplate">
+        <Grid>
+            <ListView Width="324"
+                      Margin="0,0,0,0"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Bottom"
+                      Background="Transparent"
+                      ItemsSource="{Binding TvPlayableItem.TvChannelsSources}">
+                <ListView.Resources>
 
+                    <ControlTemplate x:Key="HorizontalScrollBar" TargetType="{x:Type ScrollBar}">
+                        <Grid Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{StaticResource ArrowHeight}" />
+                                <ColumnDefinition Width="0.00001*" />
+                                <ColumnDefinition Width="{StaticResource ArrowHeight}" />
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.ColumnSpan="3"
+                                    Background="{StaticResource 10_WhiteTransparentBrush}"
+                                    CornerRadius="2" />
+                            <RepeatButton Grid.Column="0"
+                                          Padding="1"
+                                          Command="ScrollBar.LineLeftCommand"
+                                          Content="M 4 0 L 4 8 L 0 4 Z"
+                                          Foreground="#80252525"
+                                          Style="{StaticResource ScrollBarLineButton}"
+                                          WindowChrome.IsHitTestVisibleInChrome="true" />
+                            <Track Name="PART_Track"
+                                   Grid.Column="1"
+                                   IsDirectionReversed="False">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="ScrollBar.PageLeftCommand" Style="{StaticResource ScrollBarPageButton}" />
+                                </Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource ScrollBarThumb}" WindowChrome.IsHitTestVisibleInChrome="true" />
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="ScrollBar.PageRightCommand" Style="{StaticResource ScrollBarPageButton}" />
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                            <RepeatButton Grid.Column="3"
+                                          Padding="1"
+                                          Command="ScrollBar.LineRightCommand"
+                                          Content="M 0 0 L 4 4 L 0 8 Z"
+                                          Foreground="#80252525"
+                                          Style="{StaticResource ScrollBarLineButton}"
+                                          WindowChrome.IsHitTestVisibleInChrome="true" />
+                        </Grid>
+                    </ControlTemplate>
+
+                    <ControlTemplate x:Key="ScrollViewerControlTemplate1" TargetType="{x:Type ScrollViewer}">
+                        <Grid x:Name="Grid" Background="{TemplateBinding Background}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+
+                            <ScrollBar x:Name="PART_HorizontalScrollBar"
+                                       Grid.Row="0"
+                                       Grid.Column="0"
+                                       Width="345"
+                                       Margin="-11,0,-12,0"
+                                       AutomationProperties.AutomationId="HorizontalScrollBar"
+                                       Background="Yellow"
+                                       Cursor="Arrow"
+                                       Maximum="{TemplateBinding ScrollableWidth}"
+                                       Minimum="0"
+                                       Orientation="Horizontal"
+                                       ViewportSize="{TemplateBinding ViewportWidth}"
+                                       Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
+                                       Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" />
+
+                            <ScrollContentPresenter x:Name="PART_ScrollContentPresenter"
+                                                    Grid.Row="0"
+                                                    Grid.Column="0"
+                                                    Margin="{TemplateBinding Padding}"
+                                                    CanContentScroll="{TemplateBinding CanContentScroll}"
+                                                    CanHorizontallyScroll="False"
+                                                    CanVerticallyScroll="False"
+                                                    Content="{TemplateBinding Content}"
+                                                    ContentTemplate="{TemplateBinding ContentTemplate}" />
+                        </Grid>
+                    </ControlTemplate>
+                </ListView.Resources>
+                <ListView.ItemContainerStyle>
+                    <Style BasedOn="{StaticResource ListViewItemStyle}" TargetType="ListViewItem">
+                        <Setter Property="Padding" Value="0" />
+                        <Setter Property="Margin" Value="2,0" />
+                        <Setter Property="BorderBrush" Value="#25252525" />
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="Foreground" Value="#252525" />
+                        <Setter Property="FontWeight" Value="DemiBold" />
+
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="true">
+                                <Setter Property="Background" Value="#25252525" />
+                                <Setter Property="FontWeight" Value="Bold" />
+                                <Setter Property="Foreground" Value="#24140c" />
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="true" />
+                                    <Condition Property="IsSelected" Value="False" />
+                                </MultiTrigger.Conditions>
+
+                                <Setter Property="Background" Value="#25252525" />
+                            </MultiTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Height="22">
+                            <TextBlock Margin="5">
+                                <Run FontSize="11" Text="{Binding TvChannelName, Mode=OneWay, StringFormat={}{0}}" />
+                                <Run FontSize="8"
+                                     FontWeight="Normal"
+                                     Text="{Binding Model.TvChannel.Name}" />
+                            </TextBlock>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+
+            </ListView>
+        </Grid>
+
+    </DataTemplate>
 
     <templateSelectors1:WindowsPlayerItemsTemplateSelector x:Key="WindowsPlayerItemsTemplateSelector"
                                                            SongDataTemplate="{StaticResource PlayListSongDataTemplate}"
+                                                           TvChannelDataTemplate="{StaticResource TvChannelTemplate}"
                                                            TvShowEpisodeDataTemplate="{StaticResource PlayListTvShowEpisodeDescriptionDataTemplate}"
                                                            VideoItemDataTemplate="{StaticResource PlayListVideoItemDescriptionDataTemplate}" />
 
 
 
+
+
     <Style x:Key="ListViewItem_PlayerTrack" TargetType="{x:Type ListViewItem}">
         <Setter Property="Foreground" Value="{StaticResource 100_WhiteTransparentBrush}" />
-
         <Setter Property="FontWeight" Value="Light" />
         <Setter Property="Height" Value="50" />
         <Setter Property="Padding" Value="0" />
-
+        <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+        <Setter Property="ContentTemplateSelector" Value="{Binding PlayerPlaylistItemTemplateSelector}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListViewItem}">
@@ -55,9 +194,6 @@
                                     Margin="8,0"
                                     Command="{Binding Play}"
                                     Style="{StaticResource PlayMini}" />
-
-
-                          
 
                             <controls2:ButtonWithIcon Grid.Column="1"
                                                       Margin="0,0,0,10"
@@ -175,9 +311,7 @@
                                                                               IsMouseOverRelativeToContainer="True" />
                                     </b:Interaction.Behaviors>
                                 </TextBlock>
-
                             </Grid>
-
 
 
                             <ContentPresenter Grid.Row="0"
@@ -186,13 +320,11 @@
                                               Panel.ZIndex="0"
                                               ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}" />
 
-
                         </Grid>
 
                         <Border.InputBindings>
                             <MouseBinding Command="{Binding Play}" MouseAction="LeftDoubleClick" />
                         </Border.InputBindings>
-
                     </Border>
                     <ControlTemplate.Triggers>
                         <MultiDataTrigger>

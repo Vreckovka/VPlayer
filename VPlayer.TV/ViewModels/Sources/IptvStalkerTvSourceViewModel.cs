@@ -12,6 +12,7 @@ using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Managers.Status;
+using VPLayer.Domain.Contracts.IPTV;
 
 namespace VPlayer.IPTV.ViewModels
 {

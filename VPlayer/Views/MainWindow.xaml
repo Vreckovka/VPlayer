@@ -9,6 +9,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:prism="http://prismlibrary.com/"
         xmlns:regions="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPlayer.Core"
+        xmlns:regions1="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPLayer.Domain"
         Title="{Binding Title}"
         Width="1288"
         Height="830"
@@ -57,11 +58,11 @@
                 Content="DELETE ALL"
                 Visibility="Collapsed" />
 
-        <ContentControl Grid.Row="1" prism:RegionManager.RegionName="{x:Static regions:RegionNames.ContentRegion}" />
+        <ContentControl Grid.Row="1" prism:RegionManager.RegionName="{x:Static regions1:RegionNames.ContentRegion}" />
 
         <ContentControl Grid.Row="2"
                         Grid.Column="0"
-                        prism:RegionManager.RegionName="{x:Static regions:RegionNames.PlayerRegion}" />
+                        prism:RegionManager.RegionName="{x:Static regions1:RegionNames.PlayerRegion}" />
     </Grid>
 
 

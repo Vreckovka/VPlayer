@@ -10,6 +10,7 @@
              xmlns:local="clr-namespace:VPlayer.Library.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:events1="clr-namespace:VPlayer.Core.Events;assembly=VPLayer.Domain"
              d:DesignHeight="450"
              d:DesignWidth="1800"
              mc:Ignorable="d">
@@ -53,7 +54,7 @@
                     </StackPanel>
                     <Border.InputBindings>
                         <MouseBinding Command="{Binding Play}"
-                                      CommandParameter="{x:Static events:EventAction.PlayFromPlaylist}"
+                                      CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}"
                                       MouseAction="LeftDoubleClick" />
                     </Border.InputBindings>
                 </Border>
@@ -116,7 +117,7 @@
                                     <controls1:ButtonWithIcon Width="65"
                                                               HorizontalContentAlignment="Center"
                                                               Command="{Binding Play}"
-                                                              CommandParameter="{x:Static events:EventAction.PlayFromPlaylistLast}"
+                                                              CommandParameter="{x:Static events1:EventAction.PlayFromPlaylistLast}"
                                                               FontSize="14"
                                                               FontWeight="Normal"
                                                               IconDefaultColor="#50f5936c"
@@ -134,7 +135,7 @@
                                     <controls1:ButtonWithIcon Width="65"
                                                               HorizontalContentAlignment="Center"
                                                               Command="{Binding Play}"
-                                                              CommandParameter="{x:Static events:EventAction.PlayFromPlaylist}"
+                                                              CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}"
                                                               FontSize="14"
                                                               FontWeight="Normal"
                                                               IconDefaultColor="#50db515a"

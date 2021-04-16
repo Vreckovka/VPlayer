@@ -158,7 +158,7 @@ namespace VPlayer.Core.ViewModels
 
     #region SetItemAndPlay
 
-    public override void SetItemAndPlay(int? songIndex = null, bool forcePlay = false)
+    public override void SetItemAndPlay(int? songIndex = null, bool forcePlay = false, bool onlyItemSet = false)
     {
       if (IsShuffle && songIndex == null)
       {
@@ -172,7 +172,7 @@ namespace VPlayer.Core.ViewModels
       if (IsRepeate && actualItemIndex >= PlayList.Count)
         actualItemIndex = 0;
 
-      base.SetItemAndPlay(songIndex, forcePlay);
+      base.SetItemAndPlay(songIndex, forcePlay, onlyItemSet);
     }
 
     #endregion

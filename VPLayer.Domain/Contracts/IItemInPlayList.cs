@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using VCore.Standard.ViewModels.TreeView;
 
 namespace VPlayer.Core.ViewModels
 {
@@ -14,7 +15,7 @@ namespace VPlayer.Core.ViewModels
   {
   }
 
-  public interface IItemInPlayList<TModel> : IItemInPlayList where TModel : IPlayableModel
+  public interface IItemInPlayList<TModel> : IItemInPlayList, ISelectable where TModel : IPlayableModel
   {
     TModel Model { get; set; }
   }

@@ -440,13 +440,12 @@
 
     <ControlTemplate x:Key="ListViewItemTemplate" TargetType="{x:Type ListViewItem}">
         <Border Name="border"
-                Margin="-10,0,0,0"
-                Padding="10">
-            <Border.Style>
-                <Style TargetType="Border">
-                    <Setter Property="Background" Value="{StaticResource 10_WhiteTransparentBrush}" />
-                </Style>
-            </Border.Style>
+                Margin="0,0,0,0"
+                Padding="{TemplateBinding Padding}"
+                Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}">
+
             <StackPanel>
                 <ContentPresenter x:Name="ContentPresenter" />
 
@@ -457,7 +456,7 @@
         </Border>
         <ControlTemplate.Triggers>
             <Trigger Property="IsSelected" Value="true">
-                <Setter TargetName="border" Property="Background" Value="#15ffffff" />
+                <Setter Property="Background" Value="{StaticResource 30_WhiteTransparentBrush}" />
             </Trigger>
             <!--<DataTrigger Binding="{TemplateBinding GridView.ColumnCollection}" Value="{x:Null}">
                 <Setter TargetName="GridViewRowPresenter" Property="Visibility" Value="Collapsed" />
@@ -465,14 +464,21 @@
             <DataTrigger Binding="{TemplateBinding GridView.ColumnCollection, Converter={converters:IsNullConverter}}" Value="False">
                 <Setter TargetName="ContentPresenter" Property="Visibility" Value="Collapsed" />
             </DataTrigger>-->
-            <Trigger Property="IsMouseOver" Value="true">
-                <Setter TargetName="border" Property="Background" Value="#10ffffff" />
-            </Trigger>
+
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="true" />
+                    <Condition Property="IsSelected" Value="False" />
+                </MultiTrigger.Conditions>
+
+                <Setter Property="Background" Value="#10ffffff" />
+            </MultiTrigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
     <Style x:Key="ListViewItemStyle" TargetType="ListViewItem">
         <Setter Property="Template" Value="{StaticResource ListViewItemTemplate}" />
+        <Setter Property="Background" Value="{StaticResource 10_WhiteTransparentBrush}" />
         <Setter Property="IsSelected" Value="{Binding IsSelected}" />
     </Style>
 

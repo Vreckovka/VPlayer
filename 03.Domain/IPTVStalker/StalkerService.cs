@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -29,7 +30,7 @@ namespace IPTVStalker
   {
     private readonly string folder;
     private ConnectionProperties connectionProperties;
-    private string bearerToken;
+    public string bearerToken;
     private bool wasPrepared;
 
     #region Constructors
@@ -106,7 +107,7 @@ namespace IPTVStalker
 
     #region GetLink
 
-    public CreateLinkResponse GetLink(string cmd)
+    public string GetLink(string cmd)
     {
       if (!wasPrepared)
       {
@@ -119,12 +120,18 @@ namespace IPTVStalker
 
       var result = GetRequest(ServiceMethods.ServiceType.ITV, $"create_link&cmd={cmd}", true);
 
+      Debug.WriteLine("Stalker created link: " + result);
+
       if (string.IsNullOrEmpty(result))
       {
         return null;
       }
 
-      return JsonSerializer.Deserialize<CreateLinkResponse>(result);
+      var desResult = JsonSerializer.Deserialize<CreateLinkResponse>(result);
+
+      var nextConnection = desResult.js.cmd.Substring("ffmpeg ".Length);
+
+      return nextConnection;
 
     }
 
@@ -132,36 +139,39 @@ namespace IPTVStalker
 
     #region GetRequest
 
-    private string GetRequest(string type, string action, bool addReferer = false)
+    private string GetRequest(string type, string action, bool keepAlive = false)
     {
-      HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create($"{connectionProperties.Server}/server/load.php?type={type}&action={action}&JsHttpRequest=1-xml");
-
-
-      request.Headers.Add(HttpRequestHeader.Cookie, "mac=" + connectionProperties.MAC + "; stb_lang=sk; timezone=" + connectionProperties.TimeZone);
-      request.Headers.Add("X-User-Agent", "Model: MAG254; Link: Ethernet");
-
-      if (bearerToken != null)
-        request.Headers.Add("Authorization", $"Bearer {bearerToken}");
-
-
-      if (addReferer)
+      try
       {
-        request.Headers.Add("Referer", "http://fe7.flycany.me:8880/c/");
+        HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create($"{connectionProperties.Server}/server/load.php?type={type}&action={action}&JsHttpRequest=1-xml");
+
+
+        request.Headers.Add(HttpRequestHeader.Cookie, "mac=" + connectionProperties.MAC + "; stb_lang=sk; timezone=" + connectionProperties.TimeZone);
+        request.Headers.Add("X-User-Agent", "Model: MAG254; Link: Ethernet");
+
+        if (bearerToken != null)
+          request.Headers.Add("Authorization", $"Bearer {bearerToken}");
+
+        request.Headers.Add(HttpRequestHeader.KeepAlive, keepAlive.ToString());
+        request.Headers.Add(HttpRequestHeader.UserAgent, "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:57.0) Gecko/20100101 Firefox/57.0");
+        request.Headers.Add(HttpRequestHeader.Connection, "Keep-Alive");
+
+        request.Method = "GET";
+
+        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+        {
+          Stream dataStream = response.GetResponseStream();
+          StreamReader reader = new StreamReader(dataStream);
+          var result = reader.ReadToEnd();
+          reader.Close();
+          dataStream.Close();
+
+          return result;
+        }
       }
-
-      request.Headers.Add(HttpRequestHeader.UserAgent, "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:57.0) Gecko/20100101 Firefox/57.0");
-
-      request.Method = "GET";
-
-      using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+      catch (Exception ex)
       {
-        Stream dataStream = response.GetResponseStream();
-        StreamReader reader = new StreamReader(dataStream);
-        var result = reader.ReadToEnd();
-        reader.Close();
-        dataStream.Close();
-
-        return result;
+        return null;
       }
     }
 
@@ -169,26 +179,31 @@ namespace IPTVStalker
 
     #region GetToken
 
-    private string GetToken()
+    public string GetToken()
     {
       var result = GetRequest(ServiceMethods.ServiceType.STB, ServiceMethods.Handshake);
 
-      var split = result.Split("{\"js\":{\"token\":\"");
-      var token = split[1].Substring(0, "4756976DA1D3BB85A9A5984A12F5F8A7".Length);
+      if (result != null)
+      {
+        var split = result.Split("{\"js\":{\"token\":\"");
+        var token = split[1].Substring(0, "4756976DA1D3BB85A9A5984A12F5F8A7".Length);
 
-      var propertiesJson = JsonSerializer.Serialize(connectionProperties);
+        var propertiesJson = JsonSerializer.Serialize(connectionProperties);
 
-      if (connectionProperties.FolderToSave != null)
-        File.WriteAllText(connectionProperties.FolderToSave + "\\connection.json", propertiesJson);
+        if (connectionProperties.FolderToSave != null)
+          File.WriteAllText(connectionProperties.FolderToSave + "\\connection.json", propertiesJson);
 
-      return token;
+        return token;
+      }
+
+      return null;
     }
 
     #endregion
 
     #region GetProfile
 
-    private ProfileResult GetProfile(string path = null)
+    public ProfileResult GetProfile(string path = null)
     {
       string result = path;
 
@@ -318,6 +333,14 @@ namespace IPTVStalker
 
     #endregion
 
+    #region RefreshService
+
+    public void RefreshService()
+    {
+      Prepare();
+    }
+
+    #endregion
 
     #endregion
 

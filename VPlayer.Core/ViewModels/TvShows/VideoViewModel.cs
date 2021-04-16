@@ -17,9 +17,26 @@ namespace VPlayer.Core.ViewModels.TvShows
     public string Name { get; set; }
     public bool IsFavorite { get; set; }
     public bool IsPlaying { get; set; }
-
     public string FileLocation { get; set; }
 
-   
+    #region IsSelected
+
+    private bool isSelected;
+
+    public bool IsSelected
+    {
+      get { return isSelected; }
+      set
+      {
+        if (value != isSelected)
+        {
+          isSelected = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
   }
 }

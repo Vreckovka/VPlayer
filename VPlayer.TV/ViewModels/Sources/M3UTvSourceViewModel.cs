@@ -12,6 +12,7 @@ using VCore.Standard.Factories.ViewModels;
 using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPLayer.Domain.Contracts.IPTV;
 using VPlayer.IPTV.ViewModels.Prompts;
 using VPlayer.IPTV.Views.Prompts;
 

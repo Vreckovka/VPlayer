@@ -163,26 +163,27 @@ namespace VPlayer.IPTV.ViewModels
     {
       base.Initialize();
 
-      TvChannels.OnActualItemChanged.Subscribe(x =>
-      {
-        if (x != null)
-        {
-          var items = new List<TvPlaylistItemViewModel>()
-          {
-            viewModelsFactory.Create<TvPlaylistItemViewModel>(new TvPlaylistItem()
-            {
-              TvChannel = x.Model,
-            },x)
-          };
+      //TvChannels.OnActualItemChanged.Subscribe(x =>
+      //{
+      //  if (x != null)
+      //  {
+      //    var items = new List<TvPlaylistItemViewModel>()
+      //    {
+      //      viewModelsFactory.Create<TvPlaylistItemViewModel>(new TvPlaylistItem()
+      //      {
+      //        TvChannel = x.Model,
+      //        Name = x.Model.Name
+      //      },x)
+      //    };
 
-          var data = new PlayItemsEventData<TvPlaylistItemViewModel>(items, EventAction.Play, this)
-          {
-            StorePlaylist = false
-          };
+      //    var data = new PlayItemsEventData<TvPlaylistItemViewModel>(items, EventAction.Play, this)
+      //    {
+      //      StorePlaylist = false
+      //    };
 
-          eventAggregator.GetEvent<PlayItemsEvent<TvPlaylistItem, TvPlaylistItemViewModel>>().Publish(data);
-        }
-      }).DisposeWith(this);
+      //    eventAggregator.GetEvent<PlayItemsEvent<TvPlaylistItem, TvPlaylistItemViewModel>>().Publish(data);
+      //  }
+      //}).DisposeWith(this);
     }
 
     #region LoadChannels

@@ -19,6 +19,7 @@
     <ProjectReference Include="..\..\CustomLibraries\VCore.Standard\VCore.Standard.csproj" />
     <ProjectReference Include="..\..\CustomLibraries\VCore\VCore.WPF.csproj" />
     <ProjectReference Include="..\..\CustomLibraries\WebsiteParser\WebsiteParser.csproj" />
+    <ProjectReference Include="..\VPLayer.Domain\VPLayer.Domain.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Hqub.MusicBrainz.API">

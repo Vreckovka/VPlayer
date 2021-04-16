@@ -27,6 +27,7 @@ using VCore.Standard.Helpers;
 using VCore.Standard.Modularity.Interfaces;
 using VCore.ViewModels;
 using LibVLCSharp.Shared;
+using VCore.Standard.ViewModels.TreeView;
 using VCore.WPF.Behaviors;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 using VPlayer.AudioStorage.DomainClasses;
@@ -38,7 +39,7 @@ namespace VPlayer.Core.ViewModels
 {
   public abstract class PlayableRegionViewModel<TView, TItemViewModel, TPlaylistModel, TPlaylistItemModel, TModel> : RegionViewModel<TView>, IPlayableRegionViewModel, IHideable
     where TView : class, IView
-    where TItemViewModel : class, IItemInPlayList<TModel>
+    where TItemViewModel : class, IItemInPlayList<TModel>, ISelectable
     where TModel : IPlayableModel
     where TPlaylistModel : class, IPlaylist<TPlaylistItemModel>, new()
   {
@@ -128,10 +129,15 @@ namespace VPlayer.Core.ViewModels
           if (actualItem != null)
           {
             ItemLastTime = null;
+            actualItem.IsPlaying = false;
           }
 
           actualItem = value;
 
+          if (actualItem != null)
+          {
+            actualItem.IsPlaying = true;
+          }
           actualItemSubject.OnNext(PlayList.IndexOf(actualItem));
 
           OnActualItemChanged();
@@ -222,7 +228,7 @@ namespace VPlayer.Core.ViewModels
     public IKernel Kernel { get; set; }
 
     #endregion
-    
+
     #region ActualSavedPlaylist
 
     private TPlaylistModel actualSavedPlaylist = new TPlaylistModel() { Id = -1 };
@@ -441,7 +447,7 @@ namespace VPlayer.Core.ViewModels
       actualSearchSubject = new ReplaySubject<string>(1).DisposeWith(this);
 
       PlayList.DisposeWith(this);
-      
+
       actualSearchSubject.Throttle(TimeSpan.FromMilliseconds(150)).Subscribe(FilterByActualSearch).DisposeWith(this);
 
       HookToPubSubEvents();
@@ -451,7 +457,7 @@ namespace VPlayer.Core.ViewModels
 
     #region LoadVlc
 
-    private async Task LoadVlc()
+    protected async Task LoadVlc()
     {
       var result = await vlcProvider.InitlizeVlc();
 
@@ -478,16 +484,11 @@ namespace VPlayer.Core.ViewModels
 
       mediaPlayer.EncounteredError += (sender, e) =>
       {
-        logger.Log(new Exception(e.ToString()), true);
-
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-          MessageBox.Show("VLC BROKE!!!!!");
-        });
+        OnVlcError();
       };
 
 
-      mediaPlayer.EndReached += (sender, e) => { Task.Run(() => PlayNextWithItem()); };
+      mediaPlayer.EndReached += (sender, e) => { OnEndReached(); };
 
       mediaPlayer.Paused += (sender, e) =>
       {
@@ -499,14 +500,7 @@ namespace VPlayer.Core.ViewModels
 
       mediaPlayer.Stopped += (sender, e) =>
       {
-        if (IsPlayFnished && ActualItem != null)
-        {
-          ActualItem.IsPlaying = false;
-          ActualItem.IsPaused = false;
-          ActualItem = null;
-          actualItemIndex = -1;
-          IsPlaying = false;
-        }
+        OnMediaPlayerStopped();
       };
 
       mediaPlayer.Playing += OnVlcPlayingChanged;
@@ -514,6 +508,20 @@ namespace VPlayer.Core.ViewModels
       OnVlcLoaded();
     }
 
+
+    #endregion
+
+    #region OnMediaPlayerStopped
+
+    protected virtual void OnMediaPlayerStopped()
+    {
+      if (IsPlayFnished && ActualItem != null)
+      {
+        ActualItem.IsPlaying = false;
+        ActualItem.IsPaused = false;
+        IsPlaying = false;
+      }
+    }
 
     #endregion
 
@@ -551,7 +559,6 @@ namespace VPlayer.Core.ViewModels
 
           OnSetActualItem(ActualItem, true);
 
-
           if (ActualSavedPlaylist != null)
           {
             ActualSavedPlaylist.LastItemIndex = PlayList.IndexOf(ActualItem);
@@ -582,7 +589,7 @@ namespace VPlayer.Core.ViewModels
 
     #region SetItemAndPlay
 
-    public virtual void SetItemAndPlay(int? songIndex = null, bool forcePlay = false)
+    public virtual void SetItemAndPlay(int? songIndex = null, bool forcePlay = false, bool onlyItemSet = false)
     {
       Application.Current?.Dispatcher?.Invoke(async () =>
       {
@@ -604,8 +611,6 @@ namespace VPlayer.Core.ViewModels
 
         if (actualItemIndex >= PlayList.Count)
         {
-
-
           IsPlayFnished = true;
           Pause();
           return;
@@ -620,11 +625,13 @@ namespace VPlayer.Core.ViewModels
 
         if (IsPlaying || forcePlay)
         {
-          Play();
+          if (!onlyItemSet)
+            Play();
         }
         else if (!IsPlaying && songIndex != null)
         {
-          Play();
+          if (!onlyItemSet)
+            Play();
         }
         else if (ActualItem != null)
           ActualItem.IsPaused = true;
@@ -632,6 +639,19 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion 
+
+    protected virtual void OnVlcError()
+    {
+      Application.Current.Dispatcher.Invoke(() =>
+      {
+        MessageBox.Show("VLC BROKE!!!!!");
+      });
+    }
+
+    protected virtual void OnEndReached()
+    {
+      Task.Run(() => PlayNextWithItem());
+    }
 
     #region PlayNextWithItem
 
@@ -713,7 +733,7 @@ namespace VPlayer.Core.ViewModels
         }
         else
         {
-          if (ActualItem != null)
+          if (ActualItem != null && mediaPlayer.Media != null)
           {
             mediaPlayer.Play();
           }
@@ -804,7 +824,7 @@ namespace VPlayer.Core.ViewModels
 
     #region PlayItems
 
-    protected void PlayItems(IEnumerable<TItemViewModel> songs, bool savePlaylist = true, int songIndex = 0, bool editSaved = false)
+    protected void PlayItems(IEnumerable<TItemViewModel> songs, bool savePlaylist = true, int songIndex = 0, bool editSaved = false, bool onlyItemSet = false)
     {
       Application.Current.Dispatcher.Invoke(() =>
       {
@@ -816,10 +836,7 @@ namespace VPlayer.Core.ViewModels
 
         IsPlaying = true;
 
-        SetItemAndPlay(songIndex);
-
-        if (ActualItem != null)
-          ActualItem.IsPlaying = false;
+        SetItemAndPlay(songIndex, onlyItemSet: onlyItemSet);
 
         Task.Run(() =>
         {
@@ -852,7 +869,7 @@ namespace VPlayer.Core.ViewModels
       switch (data.EventAction)
       {
         case EventAction.Play:
-          PlayItems(data.Items,data.StorePlaylist);
+          PlayItems(data.Items, data.StorePlaylist, onlyItemSet:data.SetItemOnly);
 
           break;
         case EventAction.Add:
@@ -890,7 +907,7 @@ namespace VPlayer.Core.ViewModels
     #endregion
 
     #endregion
-    
+
     #region Playlist methods
 
     #region StorePlaylist
@@ -1050,7 +1067,7 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
-    
+
     #region RemoveItemsFromPlaylist
 
     protected void RemoveItemsFromPlaylist(RemoveFromPlaylistEventArgs<TItemViewModel> obj)
@@ -1192,7 +1209,7 @@ namespace VPlayer.Core.ViewModels
 
     }
 
-      #endregion
+    #endregion
 
     //Abstract methods 
     #region Abstract methods
@@ -1214,13 +1231,13 @@ namespace VPlayer.Core.ViewModels
 
       Task.Run(() =>
       {
-       
+
         mediaPlayer.Playing -= OnVlcPlayingChanged;
 
         libVLC.Dispose();
         mediaPlayer.Dispose();
 
-    
+
 
         base.Dispose();
       });

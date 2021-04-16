@@ -164,6 +164,7 @@ namespace VPlayer.WindowsPlayer.Vlc
 
       _wndhost.Closing += Wndhost_Closing;
       _bckgnd.SizeChanged += Wndhost_SizeChanged;
+      _bckgnd.DataContextChanged += _bckgnd_DataContextChanged;
       _wndhost.LocationChanged += Wndhost_LocationChanged;
       _wndhost.SizeChanged += Wndhost_SizeChanged;
       _wndhost.StateChanged += Wndhost_StateChanged;
@@ -177,6 +178,10 @@ namespace VPlayer.WindowsPlayer.Vlc
         Hide();
         throw new VLCException("Unable to create WPF Window in VideoView.", ex);
       }
+    }
+
+    private void _bckgnd_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
     }
 
 

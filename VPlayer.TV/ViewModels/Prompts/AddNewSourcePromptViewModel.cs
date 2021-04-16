@@ -8,6 +8,7 @@ using VCore.Standard;
 using VCore.Standard.Factories.ViewModels;
 using VCore.WPF.ViewModels.Prompt;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
+using VPLayer.Domain.Contracts.IPTV;
 
 namespace VPlayer.IPTV.ViewModels.Prompts
 {

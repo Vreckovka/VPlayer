@@ -42,8 +42,8 @@ namespace VPlayer
 
       Kernel.Load<CommonNinjectModule>();
       Kernel.Load<WPFNinjectModule>();
-      Kernel.Load<VPlayerNinjectModule>();
       Kernel.Load<IPTVModule>();
+      Kernel.Load<VPlayerNinjectModule>();
 
       CultureInfo.CurrentCulture = new CultureInfo("en-US");
 

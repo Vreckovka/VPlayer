@@ -45,7 +45,6 @@ using VPlayer.WindowsPlayer.ViewModels.VideoProperties;
 using VPlayer.WindowsPlayer.ViewModels.Windows;
 using VPlayer.WindowsPlayer.Views.Prompts;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer;
-using VPlayer.WindowsPlayer.Views.WindowsPlayer.IPTV;
 using Application = System.Windows.Application;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 
@@ -515,7 +514,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       if (firstActivation)
       {
-        var view = regionProvider.RegisterView<IPTVPlayerView, VideoPlayerViewModel>(RegionNames.PlayerContentRegion, this, false, out var guid, RegionManager);
+        var view = regionProvider.RegisterView<VideoPlayerView, VideoPlayerViewModel>(RegionNames.PlayerContentRegion, this, false, out var guid, RegionManager);
       }
     }
 

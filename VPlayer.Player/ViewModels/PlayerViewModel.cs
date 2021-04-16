@@ -284,7 +284,7 @@ namespace VPlayer.Player.ViewModels
 
         player.ObservePropertyChange(x => x.IsActive).Subscribe(x =>
         {
-          if (x && player.CanPlay)
+          if (x && player.CanPlay && player != ActualViewModel)
           {
             ChangeActualViewModel(player);
           }

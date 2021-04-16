@@ -1,7 +1,9 @@
-﻿using VCore.Standard;
+﻿using System.Threading.Tasks;
+using VCore.Standard;
 using VCore.Standard.ViewModels.TreeView;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
+using VPLayer.Domain.Contracts.IPTV;
 
 namespace VPlayer.IPTV.ViewModels
 {
@@ -14,9 +16,14 @@ namespace VPlayer.IPTV.ViewModels
   {
     public TvChannelViewModel(TvChannel model) : base(model)
     {
-      URL = model.Url;
+      Url = model.Url;
       Name = model.Name;
     }
+
+    public virtual Task<string> InitilizeUrl()
+    {
+      return Task.Run(() => { return Model.Url; });
+  }
   }
 
   public class TvChannelViewModel<TModel> : TreeViewItemViewModel<TModel> where TModel : class
@@ -48,7 +55,7 @@ namespace VPlayer.IPTV.ViewModels
 
     private string url;
 
-    public string URL
+    public string Url
     {
       get { return url; }
       set
@@ -81,6 +88,10 @@ namespace VPlayer.IPTV.ViewModels
     }
 
     #endregion
-    
+
+   public virtual void RefreshSource()
+    {
+
+    }
   }
 }

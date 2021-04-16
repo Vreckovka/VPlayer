@@ -3,10 +3,11 @@ using VCore.Standard;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.Core.ViewModels;
+using VPLayer.Domain.Contracts.IPTV;
 
 namespace VPlayer.IPTV.ViewModels
 {
-  public class TvPlaylistItem : DomainEntity, IPlayableModel, IUpdateable<TvPlaylistItem>, IEntity
+  public class TvPlaylistItem : DomainEntity, IPlayableModel, IUpdateable<TvPlaylistItem>
   {
     [ForeignKey(nameof(TvChannel))]
     public int IdTvChannel { get; set; }

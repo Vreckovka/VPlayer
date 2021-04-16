@@ -5,7 +5,10 @@
              xmlns:local="clr-namespace:VPlayer.WindowsPlayer.Views.WindowsPlayer.IPTV"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:VPlayer.IPTV.ViewModels;assembly=VPlayer.IPTV"
+             xmlns:viewModels1="clr-namespace:VPlayer.IPTV.ViewModels;assembly=VPLayer.Domain"
              xmlns:vlc="clr-namespace:VPlayer.WindowsPlayer.Vlc;assembly=VVLC"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviors="clr-namespace:VPlayer.WindowsPlayer.Behaviors"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
@@ -15,40 +18,62 @@
               VerticalAlignment="Stretch"
               Background="#01000000"
               DataContext="{Binding ActualItem}">
-            <TextBlock Text="{Binding ActualItem}"/>
-            <Grid Background="#85080808">
-                <StackPanel VerticalAlignment="Center">
-                    <TextBlock Padding="10"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
-                               Background="#85080808"
-                               FontSize="20"
-                               Foreground="White">
-                        <Run Text="{Binding State, Mode=OneWay, StringFormat={}{0}:}" />
-                        <Run Text="{Binding BufferingValue, Mode=OneWay, StringFormat={}{0:N2} %}" />
-                    </TextBlock>
+           
+            <Grid x:Name="VideoMenu">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
 
+                <TextBlock Padding="20"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Background="#85080808"
+                           FontSize="20"
+                           Foreground="White">
+                    <Run Text="{Binding State, Mode=OneWay, StringFormat={}{0}:}" />
+                    <Run Text="{Binding BufferingValue, Mode=OneWay, StringFormat={}{0:N2} %}" />
+
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding State}" Value="{x:Static viewModels1:TVChannelState.Playing}">
+                                    <Setter Property="Visibility" Value="Hidden" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <Grid Grid.Row="1"
+                      VerticalAlignment="Bottom"
+                      Background="#85080808">
                     <TextBlock Padding="10"
                                HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
-                               Background="#85080808"
                                FontSize="20"
                                Foreground="White">
-                        <Run Text="{Binding Name, StringFormat={}{0}, Mode=OneWay}" />
+                        <Run Text="{Binding TvPlayableItem.SelectedTvChannel.Name, StringFormat={}{0}, Mode=OneWay}" />
+                        <Run Foreground="#80ffffff" Text="{Binding TvPlayableItem.SelectedTvChannel.TvChannel.Model.TvSource.Name, StringFormat={}{0}, Mode=OneWay}" />
                     </TextBlock>
-                </StackPanel>
+                </Grid>
 
 
                 <Grid.Style>
                     <Style TargetType="Grid">
+                        <Setter Property="Background" Value="#00101010" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding State}" Value="{x:Static viewModels:TVChannelState.Playing}">
-                                <Setter Property="Visibility" Value="Hidden" />
+                            <DataTrigger Binding="{Binding State}" Value="{x:Static viewModels1:TVChannelState.Playing}">
+                                <Setter Property="Background" Value="Transparent" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </Grid.Style>
             </Grid>
+
+
+            <b:Interaction.Behaviors>
+                <behaviors:FullScreenBehavior x:Name="FullScreenBehavior" PlayerDataContext="{Binding PlayerViewModel}" />
+            </b:Interaction.Behaviors>
         </Grid>
     </vlc:VideoView>
 </UserControl>

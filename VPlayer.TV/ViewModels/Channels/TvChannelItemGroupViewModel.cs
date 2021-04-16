@@ -7,11 +7,12 @@ using VCore.Standard.Factories.ViewModels;
 using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPLayer.Domain.Contracts.IPTV;
 using VPlayer.IPTV.ViewModels;
 
 namespace VPlayer.IPTV
 {
-  public class TvChannelItemGroupViewModel : TvChannelViewModel<TvChannelGroupItem>
+  public class TvChannelItemGroupViewModel : TvChannelViewModel<TvChannelGroupItem>, ITvChannel
   {
     private readonly IStorageManager storageManager;
     private readonly IWindowManager windowManager;
@@ -25,15 +26,16 @@ namespace VPlayer.IPTV
       IViewModelsFactory viewModelsFactory,
       IIptvStalkerServiceProvider iptvStalkerServiceProvider) : base(model)
     {
+
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.iptvStalkerServiceProvider = iptvStalkerServiceProvider ?? throw new ArgumentNullException(nameof(iptvStalkerServiceProvider));
 
-
       Name = model.TvChannel?.Name;
 
     }
+
     #region Commands
 
     #region Delete
@@ -86,20 +88,34 @@ namespace VPlayer.IPTV
 
     #endregion
 
-
-
     #region TvChannelName
 
     public string TvChannelName
     {
       get { return Model?.TvChannel?.TvSource?.Name; }
-     
+
     }
 
     #endregion
 
+    #region IsSelectedToPlay
 
+    private bool isSelectedToPlay;
 
+    public bool IsSelectedToPlay
+    {
+      get { return isSelectedToPlay; }
+      set
+      {
+        if (value != isSelectedToPlay)
+        {
+          isSelectedToPlay = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     #region Initialize
 
@@ -137,13 +153,23 @@ namespace VPlayer.IPTV
 
     #endregion
 
-    #region OnSelected
-
-    protected override void OnSelected(bool isSelected)
+    public async Task<string> InitilizeUrl()
     {
-      TvChannel.IsSelected = isSelected;
+      if (Model.TvChannel?.TvSource != null)
+      {
+        Url = await TvChannel.InitilizeUrl();
+
+        return Url;
+      }
+
+      return null;
     }
 
-    #endregion
+    public override void RefreshSource()
+    {
+      TvChannel.RefreshSource();
+    }
+
+
   }
 }

@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.TvShows;
+using VPlayer.IPTV.ViewModels;
 
 namespace VPlayer.WindowsPlayer.TemplateSelectors
 {
@@ -13,6 +14,8 @@ namespace VPlayer.WindowsPlayer.TemplateSelectors
     public DataTemplate SongDataTemplate { get; set; }
     public DataTemplate TvShowEpisodeDataTemplate { get; set; }
     public DataTemplate VideoItemDataTemplate { get; set; }
+    public DataTemplate TvChannelDataTemplate { get; set; }
+
     public override DataTemplate SelectTemplate(object item, DependencyObject container)
     {
       if(item is SongInPlayListViewModel )
@@ -26,6 +29,10 @@ namespace VPlayer.WindowsPlayer.TemplateSelectors
       else if (item is VideoItemInPlaylistViewModel)
       {
         return VideoItemDataTemplate;
+      }
+      else if (item is TvItemInPlaylistItemViewModel)
+      {
+        return TvChannelDataTemplate;
       }
 
 

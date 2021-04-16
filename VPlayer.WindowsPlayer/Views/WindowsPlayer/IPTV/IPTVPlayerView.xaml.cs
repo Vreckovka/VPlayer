@@ -22,6 +22,13 @@ namespace VPlayer.WindowsPlayer.Views.WindowsPlayer.IPTV
     public IPTVPlayerView()
     {
       InitializeComponent();
+      Loaded += IPTVPlayerView_Loaded;
+    }
+
+    private void IPTVPlayerView_Loaded(object sender, RoutedEventArgs e)
+    {
+      FullScreenBehavior.VideoView = VideoView;
+      FullScreenBehavior.VideoMenu = VideoMenu;
     }
   }
 }

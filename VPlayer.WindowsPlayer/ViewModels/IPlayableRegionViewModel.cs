@@ -16,7 +16,7 @@ namespace VPlayer.Core.ViewModels
   {
     Task Play();
     void PlayPause();
-    void SetItemAndPlay(int? songIndex, bool forcePlay = false);
+    void SetItemAndPlay(int? songIndex, bool forcePlay = false, bool onlyItemSet = false);
     void PlayPrevious();
     void PlayNext();
     void Pause();

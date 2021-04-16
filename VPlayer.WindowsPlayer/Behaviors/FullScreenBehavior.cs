@@ -27,7 +27,7 @@ namespace VPlayer.WindowsPlayer.Behaviors
   {
     public VideoView VideoView { get; set; }
     public FullscreenPlayer FullscreenPlayer { get; set; }
-    public Menu VideoMenu { get; set; }
+    public FrameworkElement VideoMenu { get; set; }
 
     public Button HideButton { get; set; }
 
@@ -60,11 +60,11 @@ namespace VPlayer.WindowsPlayer.Behaviors
 
       AssociatedObject.MouseLeftButtonDown += AssociatedObject_MouseLeftButtonDown;
       AssociatedObject.MouseMove += AssociatedObject_MouseMove;
-    
+
       fullScrennDisposable.Disposable = FullScreenManager.OnFullScreen.Subscribe(DecideFullScreen);
     }
 
-  
+
     #endregion
 
     #region AssociatedObject_MouseMove
@@ -104,14 +104,20 @@ namespace VPlayer.WindowsPlayer.Behaviors
 
     private void MakeFullScreen()
     {
-      VideoView.MakeFullScreen();
+      if (VideoView != null)
+        VideoView.MakeFullScreen();
 
-      FullscreenPlayer.Visibility = Visibility.Visible;
+      if (FullscreenPlayer != null)
+        FullscreenPlayer.Visibility = Visibility.Visible;
 
-      VideoMenu.Visibility = Visibility.Collapsed;
-      HideButton.Visibility = Visibility.Collapsed;
+      if (VideoMenu != null)
+        VideoMenu.Visibility = Visibility.Collapsed;
 
-      FullscreenPlayer.DataContext = PlayerDataContext;
+      if (HideButton != null)
+        HideButton.Visibility = Visibility.Collapsed;
+
+      if (FullscreenPlayer != null)
+        FullscreenPlayer.DataContext = PlayerDataContext;
 
       InputManager.Current.PreProcessInput += Current_PreProcessInput;
 
@@ -157,12 +163,18 @@ namespace VPlayer.WindowsPlayer.Behaviors
 
     private void ResetFullScreen()
     {
-      VideoView.ResetFullScreen();
+      if (VideoView != null)
+        VideoView.ResetFullScreen();
 
-      FullscreenPlayer.Visibility = Visibility.Hidden;
+      if (FullscreenPlayer != null)
+        FullscreenPlayer.Visibility = Visibility.Hidden;
 
-      VideoMenu.Visibility = Visibility.Visible;
-      HideButton.Visibility = Visibility.Visible;
+      if (VideoMenu != null)
+        VideoMenu.Visibility = Visibility.Visible;
+
+      if (HideButton != null)
+        HideButton.Visibility = Visibility.Visible;
+
       InputManager.Current.PreProcessInput -= Current_PreProcessInput;
     }
 

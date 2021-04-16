@@ -23,7 +23,14 @@ namespace VPlayer.WindowsPlayer.Vlc
     {
       DefaultStyleKey = typeof(VideoView);
 
+      DataContextChanged += VideoView_DataContextChanged;
       Application.Current.Exit += Current_Exit;
+    }
+
+    private void VideoView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      if (ForegroundWindow != null)
+        ForegroundWindow.DataContext = DataContext;
     }
 
     private void Current_Exit(object sender, ExitEventArgs e)
@@ -80,7 +87,8 @@ namespace VPlayer.WindowsPlayer.Vlc
       {
         ForegroundWindow = new ForegroundWindow(this)
         {
-          OverlayContent = ViewContent
+          OverlayContent = ViewContent,
+          DataContext = DataContext
         };
 
         ForegroundWindow.Loaded += ForegroundWindow_Loaded;
@@ -141,7 +149,7 @@ namespace VPlayer.WindowsPlayer.Vlc
       }
     }
 
-  
+
 
 
     #region MakeFullScreen

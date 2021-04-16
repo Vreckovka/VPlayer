@@ -12,6 +12,8 @@ namespace VPlayer.Core.Events
     float? SetPostion { get; }
     object Model { get; }
 
+    public bool SetItemOnly { get; set; }
+
     TData GetModel<TData>() where TData : class;
 
     bool StorePlaylist { get; }
@@ -55,7 +57,7 @@ namespace VPlayer.Core.Events
     public float? SetPostion { get; }
     public object Model { get; }
     public bool StorePlaylist { get; set; } = true;
-
+    public bool SetItemOnly { get; set; }
 
     #region GetModel
 

@@ -214,11 +214,22 @@
                                                                VerticalAdornerPlacement="Outside">
 
                                     <Grid drag:DragManager.ShowDrag="True" drag:DropBehavior.PreviewDropCommand="{Binding TvChannelDropped}">
-                                        <TextBlock Margin="5" Foreground="{StaticResource DefaultWhiteBrush}">
+                                        <TextBlock Margin="5">
                                             <Run Text="{Binding Name}" />
                                             <Run FontSize="10"
                                                  Foreground="#555555"
                                                  Text="{Binding TvChannelName, Mode=OneWay, StringFormat={} Source: {0}}" />
+
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsSelectedToPlay}" Value="True">
+                                                            <Setter Property="Foreground" Value="{StaticResource DefaultRedBrush}" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
                                         </TextBlock>
 
                                         <Grid.ContextMenu>
@@ -263,7 +274,7 @@
 
             </Border>
 
-           
+
         </Grid>
     </Grid>
 </UserControl>

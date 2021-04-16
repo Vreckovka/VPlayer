@@ -6,6 +6,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:mvvm="http://prismlibrary.com/"
              xmlns:regions="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPlayer.Core"
+             xmlns:regions1="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPLayer.Domain"
              d:DesignHeight="850"
              d:DesignWidth="800"
              mc:Ignorable="d">
@@ -55,7 +56,7 @@
                 Grid.ColumnSpan="2"
                 Padding="0,1,0,0">
             <Grid>
-                <ContentControl mvvm:RegionManager.RegionName="{x:Static regions:RegionNames.WindowsPlayerContentRegion}" />
+                <ContentControl mvvm:RegionManager.RegionName="{x:Static regions1:RegionNames.WindowsPlayerContentRegion}" />
              </Grid>
         </Border>
     </Grid>

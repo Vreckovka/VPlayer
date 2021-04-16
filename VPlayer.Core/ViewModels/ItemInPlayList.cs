@@ -36,6 +36,25 @@ namespace VPlayer.Core.ViewModels
       set { UpdateIsFavorite(value); }
     }
 
+    #region IsSelected
+
+    private bool isSelected;
+
+    public bool IsSelected
+    {
+      get { return isSelected; }
+      set
+      {
+        if (value != isSelected)
+        {
+          isSelected = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #region IsPlaying
 
     private bool isPlaying;
@@ -57,7 +76,6 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
-
 
 
     #endregion

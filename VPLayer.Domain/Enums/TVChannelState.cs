@@ -2,6 +2,7 @@
 {
   public enum TVChannelState
   {
+    GettingData,
     Loading,
     Playing,
     Error
