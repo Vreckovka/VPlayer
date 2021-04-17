@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using IPTVStalker;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
@@ -23,22 +25,22 @@ namespace VPlayer.IPTV.ViewModels
 
     #region InitilizeUrl
 
-    public override Task<string> InitilizeUrl()
+    public override Task<string> InitilizeUrl(CancellationToken cancellationToken)
     {
-      return Task.Run(() =>
+      return Task.Run(async () =>
       {
         Url = null;
 
         var token = stalkerService.bearerToken;
         if (Url == null && Model != null)
         {
-          Url = stalkerService.GetLink(Model.Url);
+          Url = await stalkerService.GetLink(Model.TvItem.Source,cancellationToken);
 
           serialDisposable.Disposable = Observable.Timer(TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(10)).Subscribe(x => KeepAlive());
         }
 
         return Url;
-      });
+      }, cancellationToken);
     }
 
 
@@ -58,7 +60,7 @@ namespace VPlayer.IPTV.ViewModels
     {
       stalkerService.RefreshService();
 
-      InitilizeUrl();
+      InitilizeUrl(new CancellationTokenSource().Token);
     }
 
     protected override void OnSelected(bool isSelected)

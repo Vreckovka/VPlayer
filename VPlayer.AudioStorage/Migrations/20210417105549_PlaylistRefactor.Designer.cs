@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VPlayer.AudioStorage.AudioDatabase;
 
 namespace VPlayer.AudioStorage.Migrations
 {
     [DbContext(typeof(AudioDatabaseContext))]
-    partial class AudioDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20210417105549_PlaylistRefactor")]
+    partial class PlaylistRefactor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -105,6 +107,9 @@ namespace VPlayer.AudioStorage.Migrations
 
                     b.Property<int?>("TvItemId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -824,7 +829,7 @@ namespace VPlayer.AudioStorage.Migrations
                         .IsRequired();
 
                     b.HasOne("VPlayer.AudioStorage.DomainClasses.IPTV.TvChannelGroup", null)
-                        .WithMany("TvChannelGroupItems")
+                        .WithMany("TvChannels")
                         .HasForeignKey("TvChannelGroupId");
 
                     b.Navigation("TvChannel");
@@ -942,7 +947,7 @@ namespace VPlayer.AudioStorage.Migrations
 
             modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.IPTV.TvChannelGroup", b =>
                 {
-                    b.Navigation("TvChannelGroupItems");
+                    b.Navigation("TvChannels");
                 });
 
             modelBuilder.Entity("VPlayer.AudioStorage.DomainClasses.IPTV.TvPlaylist", b =>

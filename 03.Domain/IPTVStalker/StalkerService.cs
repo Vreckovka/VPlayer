@@ -4,9 +4,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using IPTVStalker.Domain;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using VCore.Standard.Helpers;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace IPTVStalker
@@ -62,16 +65,16 @@ namespace IPTVStalker
 
     #region Methods
 
-    private void Prepare()
+    private async void Prepare()
     {
-      bearerToken = GetToken();
-      GetProfile();
+      bearerToken = await GetToken();
+      await GetProfile();
       wasPrepared = true;
     }
 
     #region FetchData
 
-    public void FetchData()
+    public async void FetchData()
     {
       bool load = true;
 
@@ -81,7 +84,7 @@ namespace IPTVStalker
         connectionProperties = JsonSerializer.Deserialize<ConnectionProperties>(File.ReadAllText(folder + "\\connection.json"));
       }
 
-      bearerToken = GetToken();
+      bearerToken = await GetToken();
 
       if (bearerToken == null)
       {
@@ -90,15 +93,15 @@ namespace IPTVStalker
 
       if (load)
       {
-        Profile = GetProfile()?.js;
-        Generes = GetGeneres()?.js;
-        Channels = GetChannels()?.js;
+        Profile = (await GetProfile())?.js;
+        Generes = (await GetGeneres())?.js;
+        Channels = (await GetChannels())?.js;
       }
       else
       {
-        Profile = GetProfile()?.js;
-        Generes = GetGeneres(folder)?.js;
-        Channels = GetChannels(folder)?.js;
+        Profile = (await GetProfile())?.js;
+        Generes = (await GetGeneres(folder))?.js;
+        Channels = (await GetChannels(folder))?.js;
       }
 
     }
@@ -107,7 +110,7 @@ namespace IPTVStalker
 
     #region GetLink
 
-    public string GetLink(string cmd)
+    public async Task<string> GetLink(string cmd, CancellationToken? cancellationToken = null)
     {
       if (!wasPrepared)
       {
@@ -118,7 +121,7 @@ namespace IPTVStalker
       cmd = cmd.Replace(":", "%3a");
       cmd = cmd.Replace("/", "%2f");
 
-      var result = GetRequest(ServiceMethods.ServiceType.ITV, $"create_link&cmd={cmd}", true);
+      var result = await GetRequest(ServiceMethods.ServiceType.ITV, $"create_link&cmd={cmd}", true, cancellationToken);
 
       Debug.WriteLine("Stalker created link: " + result);
 
@@ -139,7 +142,7 @@ namespace IPTVStalker
 
     #region GetRequest
 
-    private string GetRequest(string type, string action, bool keepAlive = false)
+    private async Task<string> GetRequest(string type, string action, bool keepAlive = false, CancellationToken? cancellationToken = null)
     {
       try
       {
@@ -157,9 +160,18 @@ namespace IPTVStalker
         request.Headers.Add(HttpRequestHeader.Connection, "Keep-Alive");
 
         request.Method = "GET";
+        request.Timeout = (int)TimeSpan.FromSeconds(5).TotalMilliseconds;
 
-        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+        HttpWebResponse response;
+        if (cancellationToken != null)
+          response = await request.GetResponseAsyncWithCancellationToken(cancellationToken.Value);
+        else
+          response = (HttpWebResponse)request.GetResponse();
+
+
+        using (response)
         {
+
           Stream dataStream = response.GetResponseStream();
           StreamReader reader = new StreamReader(dataStream);
           var result = reader.ReadToEnd();
@@ -179,9 +191,9 @@ namespace IPTVStalker
 
     #region GetToken
 
-    public string GetToken()
+    public async Task<string> GetToken()
     {
-      var result = GetRequest(ServiceMethods.ServiceType.STB, ServiceMethods.Handshake);
+      var result = await GetRequest(ServiceMethods.ServiceType.STB, ServiceMethods.Handshake);
 
       if (result != null)
       {
@@ -203,13 +215,13 @@ namespace IPTVStalker
 
     #region GetProfile
 
-    public ProfileResult GetProfile(string path = null)
+    public async Task<ProfileResult> GetProfile(string path = null)
     {
       string result = path;
 
       if (result == null)
       {
-        result = GetRequest(ServiceMethods.ServiceType.STB, ServiceMethods.Profile);
+        result = await GetRequest(ServiceMethods.ServiceType.STB, ServiceMethods.Profile);
 
         if (connectionProperties.FolderToSave != null)
           File.WriteAllText(connectionProperties.FolderToSave + "\\profile.json", result);
@@ -232,13 +244,13 @@ namespace IPTVStalker
 
     #region GetGeneres
 
-    private GeneresResponse GetGeneres(string path = null)
+    private async Task<GeneresResponse> GetGeneres(string path = null)
     {
       string result = path;
 
       if (result == null)
       {
-        result = GetRequest(ServiceMethods.ServiceType.ITV, ServiceMethods.Generes);
+        result = await GetRequest(ServiceMethods.ServiceType.ITV, ServiceMethods.Generes);
 
         if (connectionProperties.FolderToSave != null)
           File.WriteAllText(connectionProperties.FolderToSave + "\\generes.json", result);
@@ -260,13 +272,13 @@ namespace IPTVStalker
 
     #region GetChannels
 
-    private ChannelsResponse GetChannels(string path = null)
+    private async Task<ChannelsResponse> GetChannels(string path = null)
     {
       string result = path;
 
       if (result == null)
       {
-        result = GetRequest(ServiceMethods.ServiceType.ITV, ServiceMethods.AllChannels);
+        result = await GetRequest(ServiceMethods.ServiceType.ITV, ServiceMethods.AllChannels);
 
         if (connectionProperties.FolderToSave != null)
           File.WriteAllText(connectionProperties.FolderToSave + "\\channels.json", result);
@@ -290,9 +302,9 @@ namespace IPTVStalker
 
     #region GetEpg
 
-    private EpgResponse GetEpg(int period)
+    private async  Task<EpgResponse> GetEpg(int period)
     {
-      var result = GetRequest(ServiceMethods.ServiceType.ITV, ServiceMethods.Epg + period);
+      var result = await GetRequest(ServiceMethods.ServiceType.ITV, ServiceMethods.Epg + period);
 
       if (string.IsNullOrEmpty(result))
       {

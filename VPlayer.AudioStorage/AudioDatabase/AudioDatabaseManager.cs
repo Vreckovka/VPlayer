@@ -734,9 +734,10 @@ namespace VPlayer.AudioStorage.AudioDatabase
           {
             context.Remove(foundEntity);
 
-            result = context.SaveChanges() > 0;
+            var removedResult = context.SaveChanges();
+            result = removedResult > 0;
 
-            logger.Log(Logger.MessageType.Success, $"Entity was removed {foundEntity}");
+            logger.Log(Logger.MessageType.Success, $"Entity was removed {foundEntity} {removedResult}");
 
             ItemChanged.OnNext(new ItemChanged()
             {
@@ -785,7 +786,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
     #region DeletePlaylist
 
     public Task DeletePlaylist<TPlaylist, TPlaylistItem>(TPlaylist songsPlaylist)
-      where TPlaylist : class, IFilePlaylist<TPlaylistItem>
+      where TPlaylist : class, IPlaylist<TPlaylistItem>
       where TPlaylistItem : class
     {
       return Task.Run(() =>
@@ -807,7 +808,15 @@ namespace VPlayer.AudioStorage.AudioDatabase
               }
 
               playlistRepo.Remove(entityPlaylist);
-              context.SaveChanges();
+
+              var results = context.SaveChanges();
+
+              var result = results > 0;
+
+              if (result)
+                logger.Log(MessageType.Success, $"Item was deleted {songsPlaylist} {songsPlaylist.Id} result count {results}");
+              else
+                logger.Log(MessageType.Warning, $"Item was not deleted {songsPlaylist} {songsPlaylist.Id} result count {results}");
 
               ItemChanged.OnNext(new ItemChanged()
               {
@@ -828,12 +837,13 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region UpdatePlaylist
 
-    public bool UpdatePlaylist<TPlaylist, TPlaliystModel>(TPlaylist playlist, out TPlaylist updatedPlaylist) where TPlaylist : class, IPlaylist<TPlaliystModel>
+    public bool UpdatePlaylist<TPlaylist, TPlaylistItem>(TPlaylist playlist, out TPlaylist updatedPlaylist) where TPlaylist : class, IPlaylist<TPlaylistItem>
+    where TPlaylistItem : IEntity
     {
       using (var context = new AudioDatabaseContext())
       {
         var result = false;
-        var foundPlaylist = GetRepository<TPlaylist>(context).Include(x => x.PlaylistItems).SingleOrDefault(x => x.Id == playlist.Id);
+        var foundPlaylist = GetRepository<TPlaylist>(context).Include(x => x.PlaylistItems).AsNoTracking().SingleOrDefault(x => x.Id == playlist.Id);
         updatedPlaylist = null;
 
         if (foundPlaylist != null)
@@ -842,20 +852,38 @@ namespace VPlayer.AudioStorage.AudioDatabase
           {
             if (playlist.PlaylistItems.Count > 0 && foundPlaylist.PlaylistItems != null)
             {
+              var removedItems = foundPlaylist.PlaylistItems.Where(p => playlist.PlaylistItems.All(p2 => p2.Id != p.Id)).ToList();
+
+              foreach(var removed in removedItems)
+              {
+                context.Entry(removed).State = EntityState.Deleted;
+              }
+
               foundPlaylist.PlaylistItems.Clear();
 
               foundPlaylist.Update(playlist);
 
-              foreach (var song in playlist.PlaylistItems)
+              foreach (var playlistItem in playlist.PlaylistItems)
               {
-                foundPlaylist.PlaylistItems.Add(song);
+                foundPlaylist.PlaylistItems.Add(playlistItem);
+
+                if (playlistItem.Id == 0)
+                {
+                  context.Entry(playlistItem).State = EntityState.Added;
+                }
               }
+
+              foundPlaylist.ItemCount = foundPlaylist.PlaylistItems.Count;
             }
           }
 
+          context.Entry(foundPlaylist).State = EntityState.Modified;
+
           foundPlaylist.Update(playlist);
 
-          result = context.SaveChanges() > 0;
+          var resultCount = context.SaveChanges();
+
+          result = resultCount > 0;
 
           if (result)
           {
@@ -867,9 +895,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
           }
 
           if (result)
-            logger.Log(MessageType.Success, $"Item was updated {playlist} {playlist.Id}");
+            logger.Log(MessageType.Success, $"Item was updated {playlist} {playlist.Id} result count {resultCount}");
           else
-            logger.Log(MessageType.Warning, $"Item was not updated {playlist} {playlist.Id} result was {result}");
+            logger.Log(MessageType.Warning, $"Item was not updated {playlist} {playlist.Id} result count {resultCount}");
 
           updatedPlaylist = foundPlaylist;
         }

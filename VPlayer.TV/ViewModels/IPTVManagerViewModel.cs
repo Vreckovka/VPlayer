@@ -88,6 +88,25 @@ namespace VPlayer.IPTV
 
     #endregion
 
+    #region TvPlaylist
+
+    private ItemsViewModel<TvPlaylistViewModel> tvPlaylists = new ItemsViewModel<TvPlaylistViewModel>();
+
+    public ItemsViewModel<TvPlaylistViewModel> TvPlaylists
+    {
+      get { return tvPlaylists; }
+      set
+      {
+        if (value != tvPlaylists)
+        {
+          tvPlaylists = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #region NewTvGroupName
 
     private string newTvGroupName;
@@ -101,6 +120,26 @@ namespace VPlayer.IPTV
         {
           newTvGroupName = value;
           addNewTvGroup.RaiseCanExecuteChanged();
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region NewTvPlaylistName
+
+    private string newTvPlaylistName;
+
+    public string NewTvPlaylistName
+    {
+      get { return newTvPlaylistName; }
+      set
+      {
+        if (value != newTvPlaylistName)
+        {
+          newTvPlaylistName = value;
+          addNewTvPlaylist.RaiseCanExecuteChanged();
           RaisePropertyChanged();
         }
       }
@@ -168,9 +207,14 @@ namespace VPlayer.IPTV
 
     public void OnAddNewTvGroup()
     {
+      var tvItem = new TvItem()
+      {
+        Name = NewTvGroupName,
+      };
+
       var channelGroup = new TvChannelGroup()
       {
-        Name = NewTvGroupName
+        TvItem = tvItem
       };
 
       var group = viewModelsFactory.Create<TvChannelGroupViewModel>(channelGroup);
@@ -180,6 +224,41 @@ namespace VPlayer.IPTV
       storageManager.StoreEntity(channelGroup, out var stored);
 
       TVGroups.Add(group);
+    }
+
+    #endregion
+
+    #region AddNewTvPlaylist
+
+    private ActionCommand addNewTvPlaylist;
+
+    public ICommand AddNewTvPlaylist
+    {
+      get
+      {
+        if (addNewTvPlaylist == null)
+        {
+          addNewTvPlaylist = new ActionCommand(OnAddNewTvPlaylist, () => { return !string.IsNullOrEmpty(NewTvPlaylistName); });
+        }
+
+        return addNewTvPlaylist;
+      }
+    }
+
+    public void OnAddNewTvPlaylist()
+    {
+      var tvPlaylist = new TvPlaylist()
+      {
+        Name = NewTvPlaylistName
+      };
+
+      var group = viewModelsFactory.Create<TvPlaylistViewModel>(tvPlaylist);
+
+      NewTvGroupName = null;
+
+      storageManager.StoreEntity(tvPlaylist, out var stored);
+
+      TvPlaylists.Add(group);
     }
 
     #endregion
@@ -203,7 +282,6 @@ namespace VPlayer.IPTV
 
       if (firstActivation)
       {
-
         var sources = storageManager.GetRepository<TvSource>().OrderBy(x => x.Name).ToList().Select(CreateTvSourceViewModel);
 
         foreach (var source in sources)
@@ -212,12 +290,22 @@ namespace VPlayer.IPTV
         }
 
         var groups = storageManager.GetRepository<TvChannelGroup>()
-          .Include(x => x.TvChannels).ThenInclude(x => x.TvChannel).ThenInclude(x => x.TvSource).ToList()
+          .Include(x => x.TvChannelGroupItems).ThenInclude(x => x.TvChannel).Include(x => x.TvItem).ToList()
           .Select(x => viewModelsFactory.Create<TvChannelGroupViewModel>(x));
 
         foreach (var group in groups)
         {
           TVGroups.Add(group);
+        }
+
+        var playLists = storageManager.GetRepository<TvPlaylist>()
+          .Include(x => x.PlaylistItems)
+          .ThenInclude(x => x.ReferencedItem)
+          .Select(x => viewModelsFactory.Create<TvPlaylistViewModel>(x));
+
+        foreach (var playList in playLists)
+        {
+          TvPlaylists.Add(playList);
         }
       }
     }

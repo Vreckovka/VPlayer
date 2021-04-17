@@ -16,7 +16,7 @@ using VPlayer.Core.ViewModels;
 
 namespace VPlayer.Library.ViewModels
 {
-  public class SongsPlaylistViewModel : PlaylistViewModel<SongInPlayListViewModel, SongsFilePlaylist, PlaylistSong>
+  public class SongsPlaylistViewModel : FilePlaylistViewModel<SongInPlayListViewModel, SongsFilePlaylist, PlaylistSong>
 {
     #region Fields
 
@@ -55,19 +55,19 @@ namespace VPlayer.Library.ViewModels
     public override IEnumerable<SongInPlayListViewModel> GetItemsToPlay()
     {
       var playlist = storageManager.GetRepository<SongsFilePlaylist>().Where(x => x.Id == ModelId)
-        .Include(x => x.PlaylistItems).ThenInclude(x => x.Song).ThenInclude(x => x.Album)
+        .Include(x => x.PlaylistItems).ThenInclude(x => x.ReferencedItem).ThenInclude(x => x.Album)
         .SingleOrDefault();
 
       if (playlist != null)
       {
-        var validSongs = playlist.PlaylistItems.Where(x => x.Song.Album != null).ToList();
+        var validSongs = playlist.PlaylistItems.Where(x => x.ReferencedItem.Album != null).ToList();
 
         if (validSongs.Count != playlist.PlaylistItems.Count)
         {
           logger.Log(MessageType.Error, $"SONGS WITH NULL ALBUM! {ModelId} {Name}");
         }
 
-        return validSongs.OrderBy(x => x.OrderInPlaylist).Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x.Song));
+        return validSongs.OrderBy(x => x.OrderInPlaylist).Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x.ReferencedItem));
       }
 
       return new List<SongInPlayListViewModel>(); ;

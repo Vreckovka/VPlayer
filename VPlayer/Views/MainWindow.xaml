@@ -11,7 +11,7 @@
         xmlns:regions="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPlayer.Core"
         xmlns:regions1="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPLayer.Domain"
         Title="{Binding Title}"
-        Width="1288"
+        Width="1488"
         Height="830"
         MinWidth="560"
         MinHeight="400"

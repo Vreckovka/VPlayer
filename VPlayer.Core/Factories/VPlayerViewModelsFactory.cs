@@ -26,7 +26,7 @@ namespace VPlayer.Core.Factories
       return kernel.Get<TvShowEpisodeInPlaylistViewModel>(pVideoItem, ptvShowEpisode);
     }
 
-    public TvItemInPlaylistItemViewModel CreateTvItemInPlaylistItemViewModel(TvPlaylistItem model, ITvPlayableItem tvPlayableItem)
+    public TvItemInPlaylistItemViewModel CreateTvItemInPlaylistItemViewModel(TvItem model, ITvPlayableItem tvPlayableItem)
     {
       var pVideoItem = new ConstructorArgument(nameof(model), model);
       var ptvShowEpisode = new ConstructorArgument(nameof(tvPlayableItem), tvPlayableItem);

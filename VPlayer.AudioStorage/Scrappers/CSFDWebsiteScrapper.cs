@@ -30,7 +30,7 @@ namespace VPlayer.AudioStorage.Parsers
     private readonly ILogger logger;
     private readonly IStatusManager statusManager;
     private ChromeDriver chromeDriver;
-    private string baseUrl = "https://www.csfd.cz";
+    private string baseUrl = "https://new.csfd.sk";
 
     public CSFDWebsiteScrapper(ILogger logger, IStatusManager statusManager)
     {
@@ -113,13 +113,13 @@ namespace VPlayer.AudioStorage.Parsers
 
       document.LoadHtml(chromeDriver.PageSource);
 
-      var node = chromeDriver.FindElement(By.XPath("/html/body/div[2]/div[3]/div[1]/div[1]/div[1]/div[2]/div[1]/h1")).Text;
+      var node = document.DocumentNode.SelectNodes("/html/body/div[2]/div/div[1]/div/div[1]/div/div/header/div/h1").FirstOrDefault()?.InnerText;
 
-      var name = node.Replace("\t", string.Empty).Replace(" (TV seriál)", string.Empty);
+      var name = node.Replace("\t", string.Empty).Replace(" (TV seriál)", string.Empty).Replace("\r",null).Replace("\n", null);
 
       logger.Log(MessageType.Success, $"Tv show name: {name}");
 
-      var posterNode = chromeDriver.FindElement(By.XPath("/html/body/div[2]/div[3]/div[1]/div[1]/div[1]/div[1]/img"));
+      var posterNode = chromeDriver.FindElement(By.XPath("/html/body/div[2]/div/div[1]/div/div[1]/div/div/div[1]/div[1]/a/img"));
 
       posterUrl = posterNode.GetAttribute("src");
 
@@ -174,7 +174,7 @@ namespace VPlayer.AudioStorage.Parsers
 
       document.LoadHtml(chromeDriver.PageSource);
 
-      var nodes = document.DocumentNode.SelectNodes("/html/body/div[2]/div[3]/div[1]/div[3]/div[2]/ul/li/a");
+      var nodes = document.DocumentNode.SelectNodes("/html/body/div[2]/div/div[1]/div/section[1]/div[2]/div/ul/li/h3/a");
 
       statusMessage = new StatusMessage(nodes.Count)
       {
@@ -227,11 +227,16 @@ namespace VPlayer.AudioStorage.Parsers
         document.LoadHtml(html);
 
 
-        var nodes = document.DocumentNode.SelectNodes("html/body/div[2]/div[3]/div[1]/div[3]/div[2]/ul/li/a");
+        var nodes = document.DocumentNode.SelectNodes("/html/body/div[2]/div/div[1]/div[3]/div/ul/li/a");
 
         if (nodes == null)
         {
-          nodes = document.DocumentNode.SelectNodes("html/body/div[2]/div[3]/div[1]/div[2]/div[2]/ul/li/a");
+          nodes = document.DocumentNode.SelectNodes("/html/body/div[2]/div/div[1]/div/section[1]/div[2]/div/ul/li/h3/a");
+        }
+
+        if (nodes == null)
+        {
+          nodes = document.DocumentNode.SelectNodes("/html/body/div[2]/div/div[1]/div/section/div[2]/div/ul/li/h3/a");
         }
 
         if (nodes == null)

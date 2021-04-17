@@ -150,90 +150,93 @@ namespace VPlayer.IPTV.ViewModels
         serviceStalker = iptvStalkerServiceProvider.GetStalkerService(Url, MacAddress);
       }
 
-      if (serviceStalker == null)
+
+      var statusMessage = new StatusMessage(1)
       {
-        var statusMessage = new StatusMessage(1)
-        {
-          MessageStatusState = MessageStatusState.Processing,
-          Message = $"Fetching tv channels for stalker service {Name}"
-        };
+        MessageStatusState = MessageStatusState.Processing,
+        Message = $"Fetching tv channels for stalker service {Name}"
+      };
 
-        statusManager.UpdateMessage(statusMessage);
+      statusManager.UpdateMessage(statusMessage);
 
-        await Task.Run(() =>
+      await Task.Run(() =>
+      {
+        try
         {
-          try
+          if (TvChannels.ViewModels.Count == 0)
+            serviceStalker.FetchData();
+        }
+        catch (Exception ex)
+        {
+          statusMessage.MessageStatusState = MessageStatusState.Failed;
+          statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+        }
+      });
+
+
+      var statusMessage1 = new StatusMessage(1)
+      {
+        MessageStatusState = MessageStatusState.Processing,
+        Message = $"Storing tv channels",
+        NumberOfProcesses = serviceStalker.Channels.data.Count
+      };
+
+      await Application.Current.Dispatcher.InvokeAsync(() =>
+      {
+        statusManager.UpdateMessage(statusMessage1);
+      });
+
+      int count = 0;
+      int range = 250;
+
+      if (serviceStalker != null)
+      {
+        Model.TvChannels = new System.Collections.Generic.List<TvChannel>();
+
+        foreach (var channel in serviceStalker.Channels.data)
+        {
+          var tvItem = new TvItem()
           {
-            if (TvChannels.ViewModels.Count == 0)
-              serviceStalker.FetchData();
-          }
-          catch (Exception ex)
+            Source = channel.cmd,
+            Name = channel.name
+          };
+
+          var tvChannel = new TvChannel()
           {
-            statusMessage.MessageStatusState = MessageStatusState.Failed;
-            statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
-          }
-        });
+            TvItem = tvItem,
+            IdTvSource = Model.Id
+          };
 
-
-        var statusMessage1 = new StatusMessage(1)
-        {
-          MessageStatusState = MessageStatusState.Processing,
-          Message = $"Storing tv channels",
-          NumberOfProcesses = serviceStalker.Channels.data.Count
-        };
-
-        await Application.Current.Dispatcher.InvokeAsync(() =>
-        {
-          statusManager.UpdateMessage(statusMessage1);
-        });
-
-        int count = 0;
-        int range = 100;
-
-        if (serviceStalker != null)
-        {
-          Model.TvChannels = new System.Collections.Generic.List<TvChannel>();
-
-          foreach (var channel in serviceStalker.Channels.data)
-          {
-            var tvChannel = new TvChannel()
-            {
-              Name = channel.name,
-              Url = channel.cmd,
-              IdTvSource = Model.Id
-            };
-
-            Model.TvChannels.Add(tvChannel);
-          }
-
-          for (int i = 0; i < Model.TvChannels.Count; i += range)
-          {
-            storageManager.StoreRangeEntity<TvChannel>(Model.TvChannels.Skip(i).Take(range).ToList());
-
-
-            await Application.Current.Dispatcher.InvokeAsync(() =>
-            {
-              statusMessage1.ProcessedCount = i;
-              statusManager.UpdateMessage(statusMessage1);
-            });
-
-          }
+          Model.TvChannels.Add(tvChannel);
         }
 
-        await Application.Current.Dispatcher.InvokeAsync(() =>
+        for (int i = 0; i < Model.TvChannels.Count; i += range)
         {
-          statusMessage1.ProcessedCount = statusMessage1.NumberOfProcesses;
+          storageManager.StoreRangeEntity<TvChannel>(Model.TvChannels.Skip(i).Take(range).ToList());
 
-          statusManager.UpdateMessage(statusMessage1);
 
-          foreach (var channel in Model.TvChannels)
+          await Application.Current.Dispatcher.InvokeAsync(() =>
           {
-            channel.TvSource = Model;
+            statusMessage1.ProcessedCount = i;
+            statusManager.UpdateMessage(statusMessage1);
+          });
 
-            TvChannels.Add(viewModelsFactory.Create<TvStalkerChannelViewModel>(channel, serviceStalker));
-          }
-        });
+        }
       }
+
+      await Application.Current.Dispatcher.InvokeAsync(() =>
+      {
+        statusMessage1.ProcessedCount = statusMessage1.NumberOfProcesses;
+
+        statusManager.UpdateMessage(statusMessage1);
+
+        foreach (var channel in Model.TvChannels)
+        {
+          channel.TvSource = Model;
+
+          TvChannels.Add(viewModelsFactory.Create<TvStalkerChannelViewModel>(channel, serviceStalker));
+        }
+      });
     }
 
     #endregion
@@ -244,7 +247,7 @@ namespace VPlayer.IPTV.ViewModels
     {
       if (serviceStalker != null)
       {
-        var dbEntity = storageManager.GetRepository<TvSource>().Include(x => x.TvChannels).SingleOrDefault(x => x.Id == Model.Id);
+        var dbEntity = storageManager.GetRepository<TvSource>().Include(x => x.TvChannels).ThenInclude(x => x.TvItem).SingleOrDefault(x => x.Id == Model.Id);
 
         if (dbEntity != null)
         {

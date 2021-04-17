@@ -312,7 +312,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       return new PlaylistSong()
       {
-        IdSong = song.Model.Id,
+        IdReferencedItem = song.Model.Id,
         OrderInPlaylist = (index + 1)
       };
     }

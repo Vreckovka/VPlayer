@@ -3,13 +3,13 @@ using VPlayer.AudioStorage.DomainClasses.Video;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
-  public class PlaylistVideoItem : DomainEntity
+  public class PlaylistVideoItem : DomainEntity, IItemInPlaylist<VideoItem>
   {
     public int OrderInPlaylist { get; set; }
 
-    [ForeignKey(nameof(VideoItem))]
-    public int IdVideoItem { get; set; }
-    public VideoItem VideoItem { get; set; }
+    [ForeignKey(nameof(ReferencedItem))]
+    public int IdReferencedItem { get; set; }
+    public VideoItem ReferencedItem { get; set; }
 
   }
 }

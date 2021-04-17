@@ -33,7 +33,4 @@
       <IsWinMDFile>true</IsWinMDFile>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
 </Project>

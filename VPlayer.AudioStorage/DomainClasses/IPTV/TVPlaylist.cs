@@ -7,5 +7,6 @@ namespace VPlayer.AudioStorage.DomainClasses.IPTV
 {
   public class TvPlaylist : Playlist<TvPlaylistItem>
   {
+  
   }
 }

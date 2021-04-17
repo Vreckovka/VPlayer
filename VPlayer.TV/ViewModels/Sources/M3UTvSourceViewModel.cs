@@ -109,11 +109,16 @@ namespace VPlayer.IPTV.ViewModels
           var channelName = m.Groups[1].Value.Replace("\r", null);
           var url = m.Groups[2].Value;
 
+          var tvItem = new TvItem()
+          {
+            Source = url,
+            Name = channelName
+          };
+
           Model.TvChannels.Add(new TvChannel()
           {
-            Name = channelName,
-            Url = url,
-            TvSource = Model
+            TvSource = Model,
+            TvItem = tvItem
           });
         }
 

@@ -42,6 +42,7 @@ namespace VPlayer.Core.ViewModels
     where TItemViewModel : class, IItemInPlayList<TModel>, ISelectable
     where TModel : IPlayableModel
     where TPlaylistModel : class, IPlaylist<TPlaylistItemModel>, new()
+    where TPlaylistItemModel : IItemInPlaylist<TModel>
   {
     #region Fields
 
@@ -160,7 +161,7 @@ namespace VPlayer.Core.ViewModels
         if (value != isPlaying)
         {
           isPlaying = value;
-
+          OnIsPlayingChanged();
           RaisePropertyChanged();
         }
       }
@@ -869,7 +870,7 @@ namespace VPlayer.Core.ViewModels
       switch (data.EventAction)
       {
         case EventAction.Play:
-          PlayItems(data.Items, data.StorePlaylist, onlyItemSet:data.SetItemOnly);
+          PlayItems(data.Items, data.StorePlaylist, onlyItemSet: data.SetItemOnly);
 
           break;
         case EventAction.Add:
@@ -954,6 +955,12 @@ namespace VPlayer.Core.ViewModels
           if (hashCode != ActualSavedPlaylist.HashCode)
           {
             ActualSavedPlaylist.HashCode = hashCode;
+
+            foreach (var itemInPlaylist in playlistModels)
+            {
+              itemInPlaylist.Id = ActualSavedPlaylist.PlaylistItems.Single(x => x.IdReferencedItem == itemInPlaylist.IdReferencedItem).Id;
+            }
+
             ActualSavedPlaylist.PlaylistItems = playlistModels;
             ActualSavedPlaylist.ItemCount = playlistModels.Count;
           }
@@ -970,6 +977,7 @@ namespace VPlayer.Core.ViewModels
           }
           else
           {
+            ActualSavedPlaylist = entityPlayList;
             UpdateActualSavedPlaylistPlaylist();
           }
         }
@@ -1205,6 +1213,11 @@ namespace VPlayer.Core.ViewModels
     #endregion
 
     protected virtual void OnPlayPlaylist()
+    {
+
+    }
+
+    protected virtual void OnIsPlayingChanged()
     {
 
     }

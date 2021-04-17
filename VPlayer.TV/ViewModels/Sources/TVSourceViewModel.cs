@@ -190,7 +190,7 @@ namespace VPlayer.IPTV.ViewModels
 
     public virtual void LoadChannels()
     {
-      var dbEntity = storageManager.GetRepository<TvSource>().Include(x => x.TvChannels).SingleOrDefault(x => x.Id == Model.Id);
+      var dbEntity = storageManager.GetRepository<TvSource>().Include(x => x.TvChannels).ThenInclude(x => x.TvItem).SingleOrDefault(x => x.Id == Model.Id);
 
       if (dbEntity != null)
       {
@@ -257,8 +257,6 @@ namespace VPlayer.IPTV.ViewModels
       if (question == System.Windows.MessageBoxResult.Yes)
       {
         var result = storageManager.DeleteEntity(Model);
-
-
       }
     }
 

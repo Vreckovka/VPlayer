@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
@@ -8,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using HtmlAgilityPack;
 using Prism.Events;
 using Prism.Regions;
 using SoundManagement;
@@ -52,7 +54,15 @@ namespace VPlayer.ViewModels
       this.regionManager = regionManager ?? throw new ArgumentNullException(nameof(regionManager));
 
       AudioDeviceManager.Instance.RefreshAudioDevices();
-     
+
+
+      var document = new HtmlDocument();
+
+      document.LoadHtml(File.ReadAllText("C:\\Users\\Roman Pecho\\Desktop\\pokemon.txt"));
+
+                                                     ///html/body/div[2]/div/div[1]/div/section/div[2]/div/ul/li[1]/h3/a
+        var node = document.DocumentNode.SelectNodes("/html/body/div[2]/div/div[1]/div");
+      var text = node.FirstOrDefault()?.InnerText;
     }
 
     #endregion

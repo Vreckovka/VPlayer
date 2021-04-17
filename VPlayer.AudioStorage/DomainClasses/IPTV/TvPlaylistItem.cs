@@ -7,15 +7,25 @@ using VPLayer.Domain.Contracts.IPTV;
 
 namespace VPlayer.IPTV.ViewModels
 {
-  public class TvPlaylistItem : DomainEntity, IPlayableModel, IUpdateable<TvPlaylistItem>
+  public class TvItem : DomainEntity , IPlayableModel, IUpdateable<TvItem>
   {
-    [ForeignKey(nameof(TvChannel))]
-    public int IdTvChannel { get; set; }
-    public TvChannel TvChannel { get; set; }
     public string Source { get; set; }
     public string Name { get; set; }
     public bool IsFavorite { get; set; }
-   
+    public void Update(TvItem other)
+    {
+      throw new System.NotImplementedException();
+    }
+  }
+
+
+  public class TvPlaylistItem : DomainEntity, IItemInPlaylist<TvItem>, IUpdateable<TvPlaylistItem>
+  {
+    [ForeignKey(nameof(ReferencedItem))]
+    public int IdReferencedItem { get; set; }
+    public TvItem ReferencedItem { get; set; }
+    public string Name { get; set; }
+
 
     public void Update(TvPlaylistItem other)
     {

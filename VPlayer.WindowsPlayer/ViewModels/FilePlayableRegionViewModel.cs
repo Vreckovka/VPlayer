@@ -21,6 +21,7 @@ namespace VPlayer.Core.ViewModels
     where TItemViewModel : class, IFileItemInPlayList<TModel>
     where TModel : IPlayableModel
     where TPlaylistModel : class, IFilePlaylist<TPlaylistItemModel>, new()
+    where TPlaylistItemModel : IItemInPlaylist<TModel>
   {
     private long lastTimeChangedMs;
 

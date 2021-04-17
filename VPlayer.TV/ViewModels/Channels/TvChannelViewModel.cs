@@ -1,28 +1,23 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using VCore.Standard;
 using VCore.Standard.ViewModels.TreeView;
-using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPLayer.Domain.Contracts.IPTV;
 
 namespace VPlayer.IPTV.ViewModels
 {
-  public class TvPlaylistViewModel : Playlist<TvPlaylistItem>
-  {
-
-  }
-
   public class TvChannelViewModel : TvChannelViewModel<TvChannel>
   {
     public TvChannelViewModel(TvChannel model) : base(model)
     {
-      Url = model.Url;
+      Url = model.TvItem.Source;
       Name = model.Name;
     }
 
-    public virtual Task<string> InitilizeUrl()
+    public virtual Task<string> InitilizeUrl(CancellationToken cancellationToken)
     {
-      return Task.Run(() => { return Model.Url; });
+      return Task.Run(() => { return Model.TvItem.Source; });
   }
   }
 

@@ -22,8 +22,8 @@ namespace VPlayer.AudioStorage.Scrappers
     private readonly IStatusManager statusManager;
 
     public TVShowScrapper(
-       IStorageManager storageManager, 
-       ICSFDWebsiteScrapper cSfdWebsiteScrapper, 
+       IStorageManager storageManager,
+       ICSFDWebsiteScrapper cSfdWebsiteScrapper,
        ILogger logger,
        IStatusManager statusManager)
     {
@@ -44,7 +44,7 @@ namespace VPlayer.AudioStorage.Scrappers
           var dbTvShow = storageManager.GetRepository<TvShow>().Include(x => x.Seasons).ThenInclude(x => x.Episodes).ThenInclude(x => x.VideoItem).Single(x => x.Id == tvShowId);
 
           dbTvShow.InfoDownloadStatus = InfoDownloadStatus.Downloading;
-         
+
           Application.Current.Dispatcher.Invoke(() =>
           {
             storageManager.ItemChanged.OnNext(new VCore.Modularity.Events.ItemChanged()
@@ -56,7 +56,7 @@ namespace VPlayer.AudioStorage.Scrappers
 
           var csfdTvShow = cSfdWebsiteScrapper.LoadTvShow(csfUrl);
 
-          if(csfdTvShow == null)
+          if (csfdTvShow == null)
           {
             var statusMessage1 = new StatusMessage(1)
             {
@@ -124,6 +124,16 @@ namespace VPlayer.AudioStorage.Scrappers
         }
         catch (Exception ex)
         {
+          var statusMessage = new StatusMessage(1)
+          {
+            MessageStatusState = MessageStatusState.Failed,
+            Message = "Updating tv show in database"
+          };
+
+          statusManager.UpdateMessage(statusMessage);
+
+          statusMessage.ProcessedCount++;
+
           logger.Log(ex);
         }
       });

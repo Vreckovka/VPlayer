@@ -11,6 +11,6 @@ namespace VPlayer.Core.Factories
   {
     TvShowEpisodeInPlaylistViewModel CreateTvShowEpisodeInPlayList(VideoItem videoItem, TvShowEpisode tvShowEpisode);
 
-    TvItemInPlaylistItemViewModel CreateTvItemInPlaylistItemViewModel(TvPlaylistItem model, ITvPlayableItem tvPlayableItem);
+    TvItemInPlaylistItemViewModel CreateTvItemInPlaylistItemViewModel(TvItem model, ITvPlayableItem tvPlayableItem);
   }
 }

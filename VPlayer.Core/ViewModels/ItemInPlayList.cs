@@ -13,8 +13,7 @@ using VPlayer.Core.Events;
 namespace VPlayer.Core.ViewModels
 {
   public abstract class ItemInPlayList<TModel> : ViewModel<TModel>, IItemInPlayList<TModel>
-    where TModel : class, IPlayableModel,
-    IUpdateable<TModel>, IEntity
+    where TModel : class, IPlayableModel, IUpdateable<TModel>, IEntity
   {
     protected readonly IEventAggregator eventAggregator;
     private readonly IStorageManager storageManager;

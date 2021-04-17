@@ -13,7 +13,7 @@ using VPlayer.Core.ViewModels.TvShows;
 
 namespace VPlayer.Library.ViewModels.TvShows
 {
-  public class VideoPlaylistViewModel : PlaylistViewModel<VideoItemInPlaylistViewModel, VideoFilePlaylist, PlaylistVideoItem>
+  public class VideoPlaylistViewModel : FilePlaylistViewModel<VideoItemInPlaylistViewModel, VideoFilePlaylist, PlaylistVideoItem>
   {
     #region Fields
 
@@ -47,7 +47,7 @@ namespace VPlayer.Library.ViewModels.TvShows
     {
       var playlist = storage.GetRepository<VideoFilePlaylist>()
         .Include(x => x.PlaylistItems)
-        .ThenInclude(x => x.VideoItem)
+        .ThenInclude(x => x.ReferencedItem)
         .SingleOrDefault(x => x.Id == Model.Id);
 
 
@@ -59,7 +59,7 @@ namespace VPlayer.Library.ViewModels.TvShows
 
         var list = new List<TvShowEpisodeInPlaylistViewModel>();
 
-        var fristEpisode = storage.GetRepository<TvShowEpisode>().Where(x => x.VideoItem.Id == playlistItems[0].IdVideoItem).Include(x => x.TvShow).SingleOrDefault();
+        var fristEpisode = storage.GetRepository<TvShowEpisode>().Where(x => x.VideoItem.Id == playlistItems[0].IdReferencedItem).Include(x => x.TvShow).SingleOrDefault();
 
         if (fristEpisode != null)
         {
@@ -74,7 +74,7 @@ namespace VPlayer.Library.ViewModels.TvShows
 
           foreach (var item in playlistItems)
           {
-            var tvShowEpisode = tvShowEpisodes.Single(x => x.VideoItem.Id == item.VideoItem.Id);
+            var tvShowEpisode = tvShowEpisodes.Single(x => x.VideoItem.Id == item.ReferencedItem.Id);
 
             list.Add(viewModelsFactory.Create<TvShowEpisodeInPlaylistViewModel>(tvShowEpisode.VideoItem, tvShowEpisode));
           }
@@ -83,7 +83,7 @@ namespace VPlayer.Library.ViewModels.TvShows
         }
         else
         {
-          return playlistItems.Select(x => viewModelsFactory.Create<VideoItemInPlaylistViewModel>(x.VideoItem));
+          return playlistItems.Select(x => viewModelsFactory.Create<VideoItemInPlaylistViewModel>(x.ReferencedItem));
         }
       }
 

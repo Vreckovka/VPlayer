@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using IPTVStalker;
@@ -153,11 +154,22 @@ namespace VPlayer.IPTV
 
     #endregion
 
-    public async Task<string> InitilizeUrl()
+    public CancellationTokenSource ActualCancellationTokenSource { get; private set; }
+
+    public async Task<string> InitilizeUrl(CancellationTokenSource pCancellationToken = null)
     {
       if (Model.TvChannel?.TvSource != null)
       {
-        Url = await TvChannel.InitilizeUrl();
+        if (pCancellationToken == null)
+        {
+          var src = new CancellationTokenSource();
+          ActualCancellationTokenSource = src;
+        }
+        else
+          ActualCancellationTokenSource = pCancellationToken;
+
+
+        Url = await TvChannel.InitilizeUrl(ActualCancellationTokenSource.Token);
 
         return Url;
       }

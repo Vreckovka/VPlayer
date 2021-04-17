@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive;
@@ -33,7 +34,7 @@ using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 
 namespace VPlayer.IPTV.ViewModels
 {
-  public class TvPlayerViewModel : PlayableRegionViewModel<WindowsPlayerView, TvItemInPlaylistItemViewModel, TvPlaylist, TvPlaylistItem, TvPlaylistItem>
+  public class TvPlayerViewModel : PlayableRegionViewModel<WindowsPlayerView, TvItemInPlaylistItemViewModel, TvPlaylist, TvPlaylistItem, TvItem>
   {
     private readonly IIptvStalkerServiceProvider iptvStalkerServiceProvider;
     private SerialDisposable channelLoadedSerialDisposable = new SerialDisposable();
@@ -96,19 +97,31 @@ namespace VPlayer.IPTV.ViewModels
     private IDisposable refreshSourceDisposable;
     private async void OnChannelLoaded()
     {
-      libVLC?.Dispose();
-      libVLC = new LibVLC();
+      if (ActualItem.Source != null)
+      {
+        Debug.WriteLine("tv play tv item: " + ActualItem.Source);
 
-      refreshSourceDisposable?.Dispose();
+        libVLC?.Dispose();
+        libVLC = new LibVLC();
 
-      ActualItem.State = TVChannelState.Loading;
+        refreshSourceDisposable?.Dispose();
 
-      await SetVlcMedia(ActualItem.Model);
+        ActualItem.State = TVChannelState.Loading;
 
-      await Play();
+        await SetVlcMedia(ActualItem.Model);
+
+        await Play();
+      }
+      else
+      {
+        libVLC?.Dispose();
+        MediaPlayer.Media = null;
+        MediaPlayer?.Stop();
+      }
     }
 
     #endregion
+
 
     protected override void OnVlcError()
     {
@@ -122,14 +135,18 @@ namespace VPlayer.IPTV.ViewModels
 
     protected override void OnMediaPlayerStopped()
     {
-      ActualItem.State = TVChannelState.Error;
-
-      ActualItem.RefreshConnection();
+      if (MediaPlayer.Media != null)
+      {
+        ActualItem.State = TVChannelState.Error;
+        ActualItem.RefreshConnection();
+      }
     }
 
     protected override void OnEndReached()
     {
     }
+
+  
 
     #region HookToVlcEvents
 

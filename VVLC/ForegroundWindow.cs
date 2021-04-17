@@ -136,6 +136,7 @@ namespace VPlayer.WindowsPlayer.Vlc
         _wndhost.Closing -= Wndhost_Closing;
         _wndhost.LocationChanged -= Wndhost_LocationChanged;
         _wndhost.StateChanged -= Wndhost_StateChanged;
+        _wndhost.SizeChanged -= Wndhost_SizeChanged;
       }
 
       Hide();

@@ -1,20 +1,22 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Prism.Events;
 using VCore.Helpers;
 using VCore.Standard.Helpers;
+using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.ViewModels;
 using VPLayer.Domain.Contracts.IPTV;
 
 namespace VPlayer.IPTV.ViewModels
 {
-  public class TvItemInPlaylistItemViewModel : ItemInPlayList<TvPlaylistItem>
+  public class TvItemInPlaylistItemViewModel : ItemInPlayList<TvItem>
   {
     private SerialDisposable serialDisposable = new SerialDisposable();
     public TvItemInPlaylistItemViewModel(
-      TvPlaylistItem model,
+      TvItem model,
       IEventAggregator eventAggregator,
       IStorageManager storageManager,
       ITvPlayableItem tvPlayableItem) : base(model, eventAggregator, storageManager)
@@ -29,6 +31,7 @@ namespace VPlayer.IPTV.ViewModels
         {
           serialDisposable.Disposable.Dispose();
           State = TVChannelState.GettingData;
+          Source = null;
           BufferingValue = 0;
           serialDisposable.Disposable = Observable.FromAsync(x => tvPlayableItem.SelectedTvChannel.InitilizeUrl()).Subscribe(OnUrlInitilize);
         }
@@ -68,7 +71,7 @@ namespace VPlayer.IPTV.ViewModels
         {
           bufferingValue = value;
 
-          if ((int) bufferingValue == 100)
+          if ((int)bufferingValue == 100)
           {
             State = TVChannelState.Playing;
           }
@@ -90,6 +93,12 @@ namespace VPlayer.IPTV.ViewModels
         if (value != Model.Source)
         {
           Model.Source = value;
+
+          if (State == TVChannelState.GettingData)
+          {
+            State = TVChannelState.Loading;
+          }
+
           RaisePropertyChanged();
         }
       }
@@ -108,7 +117,7 @@ namespace VPlayer.IPTV.ViewModels
       {
         if (value != tvPlayableItem)
         {
-         tvPlayableItem = value;
+          tvPlayableItem = value;
           RaisePropertyChanged();
         }
       }
@@ -118,9 +127,26 @@ namespace VPlayer.IPTV.ViewModels
 
     #region OnUrlInitilize
 
+    private bool boolInitilizedValue = true;
     private void OnUrlInitilize(string url)
     {
+      if (Source == null && url == null && !boolInitilizedValue)
+      {
+        State = TVChannelState.Error;
+
+        if (TvPlayableItem?.SelectedTvChannel != null)
+        {
+          TvPlayableItem.SelectedTvChannel.RefreshSource();
+        }
+
+        serialDisposable.Disposable = Observable.FromAsync(x => tvPlayableItem.SelectedTvChannel.InitilizeUrl()).Subscribe(OnUrlInitilize);
+
+        Debug.WriteLine("Getting url failed, refreshing");
+      }
+
       Source = url;
+
+      boolInitilizedValue = false;
     }
 
     #endregion
@@ -128,10 +154,10 @@ namespace VPlayer.IPTV.ViewModels
 
     public void RefreshSource()
     {
-      if(TvPlayableItem?.SelectedTvChannel != null)
-      {
-        TvPlayableItem.SelectedTvChannel.RefreshSource();
-      }
+      //if (TvPlayableItem?.SelectedTvChannel != null)
+      //{
+      //  TvPlayableItem.SelectedTvChannel.RefreshSource();
+      //}
     }
 
     #region RefreshConnection

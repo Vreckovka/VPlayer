@@ -21,13 +21,13 @@ namespace VPlayer.IPTV.ViewModels
       IStorageManager storageManager,
       IViewModelsFactory viewModelsFactory,
       IEventAggregator eventAggregator,
-      IWindowManager windowManager) : base(tVSource,storageManager, viewModelsFactory, eventAggregator, windowManager)
+      IWindowManager windowManager) : base(tVSource, storageManager, viewModelsFactory, eventAggregator, windowManager)
     {
       if (tVSource.TvSourceType != TVSourceType.Source)
       {
         throw new ArgumentException("Wrong source type");
       }
-      
+
       Url = tVSource.SourceConnection;
     }
 
@@ -60,13 +60,19 @@ namespace VPlayer.IPTV.ViewModels
       return Task.Run(() =>
       {
         Model.SourceConnection = Url;
+
+        var tvItem = new TvItem()
+        {
+          Source = Url,
+          Name = Name
+        };
+
         Model.TvChannels = new List<TvChannel>()
         {
           new TvChannel()
           {
             TvSource = Model,
-            Name = Name,
-            Url = Url
+            TvItem = tvItem
           }
         };
       });

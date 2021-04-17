@@ -9,10 +9,10 @@ using VPlayer.Core.ViewModels;
 namespace VPlayer.Library.ViewModels
 {
   public abstract class PlaylistViewModel<TPlaylistItemViewModel,TPlaylistModel, TPlaylistItemModel> : PlayableViewModel<TPlaylistItemViewModel, TPlaylistModel>
-    where TPlaylistModel : class, IFilePlaylist<TPlaylistItemModel>
+    where TPlaylistModel : class, IPlaylist<TPlaylistItemModel>
     where TPlaylistItemModel : class, IEntity
   {
-    private readonly IStorageManager storageManager;
+    protected readonly IStorageManager storageManager;
    
 
     protected PlaylistViewModel(
@@ -26,46 +26,6 @@ namespace VPlayer.Library.ViewModels
     #region Properties
 
     public bool IsUserCreated => Model.IsUserCreated;
-
-    #region IsRepeating
-
-    public bool IsRepeating
-    {
-      get
-      {
-        return Model.IsReapting;
-      }
-      set
-      {
-        if (value != Model.IsReapting)
-        {
-          Model.IsReapting = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
-
-    #region IsShuffle
-
-    public bool IsShuffle
-    {
-      get
-      {
-        return Model.IsShuffle;
-      }
-      set
-      {
-        if (value != Model.IsShuffle)
-        {
-          Model.IsShuffle = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
 
     #region LastPlayed
 
@@ -145,8 +105,7 @@ namespace VPlayer.Library.ViewModels
       RaisePropertyChanged(nameof(IsUserCreated));
       RaisePropertyChanged(nameof(ItemsCount));
       RaisePropertyChanged(nameof(HashCode));
-      RaisePropertyChanged(nameof(IsShuffle));
-      RaisePropertyChanged(nameof(IsRepeating));
+     
       RaisePropertyChanged(nameof(TotalPlayedTime));
     }
 

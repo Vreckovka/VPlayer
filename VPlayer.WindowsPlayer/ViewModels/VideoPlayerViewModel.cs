@@ -778,7 +778,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       if (itemViewModel.Model.Id != 0)
       {
-        playlistVideoItem.IdVideoItem = itemViewModel.Model.Id;
+        playlistVideoItem.IdReferencedItem = itemViewModel.Model.Id;
       }
       else
       {
