@@ -23,8 +23,7 @@
 
     <DataTemplate x:Key="TvChannelTemplate">
         <Grid>
-            <ListView Width="324"
-                      Margin="0,0,0,0"
+            <ListView Margin="0,0,15,0"
                       HorizontalAlignment="Left"
                       VerticalAlignment="Bottom"
                       Background="Transparent"
@@ -39,7 +38,7 @@
                                 <ColumnDefinition Width="{StaticResource ArrowHeight}" />
                             </Grid.ColumnDefinitions>
                             <Border Grid.ColumnSpan="3"
-                                    Background="{StaticResource 10_WhiteTransparentBrush}"
+                                    Background="Transparent"
                                     CornerRadius="2" />
                             <RepeatButton Grid.Column="0"
                                           Padding="1"
@@ -55,7 +54,9 @@
                                     <RepeatButton Command="ScrollBar.PageLeftCommand" Style="{StaticResource ScrollBarPageButton}" />
                                 </Track.DecreaseRepeatButton>
                                 <Track.Thumb>
-                                    <Thumb Style="{StaticResource ScrollBarThumb}" WindowChrome.IsHitTestVisibleInChrome="true" />
+                                    <Thumb Background="Transparent"
+                                           Style="{StaticResource ScrollBarThumb}"
+                                           WindowChrome.IsHitTestVisibleInChrome="true" />
                                 </Track.Thumb>
                                 <Track.IncreaseRepeatButton>
                                     <RepeatButton Command="ScrollBar.PageRightCommand" Style="{StaticResource ScrollBarPageButton}" />
@@ -86,8 +87,7 @@
                             <ScrollBar x:Name="PART_HorizontalScrollBar"
                                        Grid.Row="0"
                                        Grid.Column="0"
-                                       Width="345"
-                                       Margin="-11,0,-12,0"
+                                       Margin="-11,0,-18,0"
                                        AutomationProperties.AutomationId="HorizontalScrollBar"
                                        Background="Yellow"
                                        Cursor="Arrow"

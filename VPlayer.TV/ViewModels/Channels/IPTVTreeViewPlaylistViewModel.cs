@@ -9,7 +9,6 @@ using Prism.Events;
 using VCore;
 using VCore.Helpers;
 using VCore.Standard.Factories.ViewModels;
-using VCore.Standard.ViewModels.TreeView;
 using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
@@ -19,49 +18,12 @@ using VPlayer.Library.ViewModels;
 
 namespace VPlayer.IPTV.ViewModels
 {
-
-  public class TvChannelGroupPlaylistItemViewModel : TreeViewItemViewModel<TvPlaylistItem>
-  {
-    public TvChannelGroupPlaylistItemViewModel(TvPlaylistItem model, TvChannelGroup tvChannelGroup, IViewModelsFactory viewModelsFactory) : base(model)
-    {
-      Name = model.Name;
-
-      TvChannelGroupViewModel = viewModelsFactory.Create<TvChannelGroupViewModel>(tvChannelGroup);
-
-      foreach (var item in TvChannelGroupViewModel.SubItems.ViewModels)
-      {
-        SubItems.Add(item);
-      }
-
-      CanExpand = SubItems.View.Count > 0;
-    }
-
-    #region TvGroupViewModel
-
-    private TvChannelGroupViewModel tvChannelGroupViewModel;
-
-    public TvChannelGroupViewModel TvChannelGroupViewModel
-    {
-      get { return tvChannelGroupViewModel; }
-      set
-      {
-        if (value != tvChannelGroupViewModel)
-        {
-          tvChannelGroupViewModel = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
-  }
-
-  public class TvPlaylistViewModel : TvTreeViewItem<TvPlaylist>
+  public class IPTVTreeViewPlaylistViewModel : TvTreeViewItem<TvPlaylist>
   {
     private readonly IViewModelsFactory viewModelsFactory;
     private readonly IWindowManager windowManager;
 
-    public TvPlaylistViewModel(
+    public IPTVTreeViewPlaylistViewModel(
       TvPlaylist model,
       IEventAggregator eventAggregator,
       IViewModelsFactory viewModelsFactory,

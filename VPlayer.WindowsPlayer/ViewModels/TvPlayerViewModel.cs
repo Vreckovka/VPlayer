@@ -52,7 +52,7 @@ namespace VPlayer.IPTV.ViewModels
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
     public override string Header => "IPTV Player";
 
-   
+
 
     #region OnSetActualItem
 
@@ -63,11 +63,12 @@ namespace VPlayer.IPTV.ViewModels
         if (ActualItem != null)
         {
           channelLoadedSerialDisposable.Disposable?.Dispose();
-
-          if (ActualItem.Model.Source == null)
-            channelLoadedSerialDisposable.Disposable = ActualItem.ObservePropertyChange(x => x.Source).Subscribe(x => OnChannelLoaded());
+          channelLoadedSerialDisposable.Disposable = ActualItem.ObservePropertyChange(x => x.Source).Subscribe(x => OnChannelLoaded());
 
           ActualItem.State = TVChannelState.GettingData;
+
+          MediaPlayer.Media = null;
+          MediaPlayer.Stop();
         }
       }
       else
@@ -130,7 +131,7 @@ namespace VPlayer.IPTV.ViewModels
         ActualItem.State = TVChannelState.Error;
         ActualItem.RefreshSource();
       }
-        
+
     }
 
     protected override void OnMediaPlayerStopped()
@@ -138,7 +139,15 @@ namespace VPlayer.IPTV.ViewModels
       if (MediaPlayer.Media != null)
       {
         ActualItem.State = TVChannelState.Error;
-        ActualItem.RefreshConnection();
+
+        Task.Run(() =>
+        {
+          Thread.Sleep(1500);
+
+          if (!MediaPlayer.IsPlaying)
+            ActualItem.RefreshConnection();
+        });
+
       }
     }
 
@@ -146,7 +155,7 @@ namespace VPlayer.IPTV.ViewModels
     {
     }
 
-  
+
 
     #region HookToVlcEvents
 

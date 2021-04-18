@@ -90,9 +90,9 @@ namespace VPlayer.IPTV
 
     #region TvPlaylist
 
-    private ItemsViewModel<TvPlaylistViewModel> tvPlaylists = new ItemsViewModel<TvPlaylistViewModel>();
+    private ItemsViewModel<IPTVTreeViewPlaylistViewModel> tvPlaylists = new ItemsViewModel<IPTVTreeViewPlaylistViewModel>();
 
-    public ItemsViewModel<TvPlaylistViewModel> TvPlaylists
+    public ItemsViewModel<IPTVTreeViewPlaylistViewModel> TvPlaylists
     {
       get { return tvPlaylists; }
       set
@@ -252,7 +252,7 @@ namespace VPlayer.IPTV
         Name = NewTvPlaylistName
       };
 
-      var group = viewModelsFactory.Create<TvPlaylistViewModel>(tvPlaylist);
+      var group = viewModelsFactory.Create<IPTVTreeViewPlaylistViewModel>(tvPlaylist);
 
       NewTvGroupName = null;
 
@@ -301,7 +301,7 @@ namespace VPlayer.IPTV
         var playLists = storageManager.GetRepository<TvPlaylist>()
           .Include(x => x.PlaylistItems)
           .ThenInclude(x => x.ReferencedItem)
-          .Select(x => viewModelsFactory.Create<TvPlaylistViewModel>(x));
+          .Select(x => viewModelsFactory.Create<IPTVTreeViewPlaylistViewModel>(x));
 
         foreach (var playList in playLists)
         {

@@ -1,8 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using VPlayer.IPTV.ViewModels;
 
 namespace VPlayer.AudioStorage.DomainClasses.IPTV
 {
+  [Serializable]
   public class TvChannel : DomainEntity, INamedEntity
   {
     public string Name
@@ -28,5 +32,6 @@ namespace VPlayer.AudioStorage.DomainClasses.IPTV
     public int IdTvItem { get; set; }
     public TvItem TvItem { get; set; }
 
+   
   }
 }

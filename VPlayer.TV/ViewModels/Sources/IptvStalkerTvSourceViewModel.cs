@@ -4,9 +4,11 @@ using System.Linq;
 using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using IPTVStalker;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
+using VCore;
 using VCore.Standard.Factories.ViewModels;
 using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
@@ -55,6 +57,30 @@ namespace VPlayer.IPTV.ViewModels
         serviceStalker = iptvStalkerServiceProvider.GetStalkerService(Url, MacAddress);
       }
     }
+
+    #region ReloadTvChannels
+
+    private ActionCommand reloadTvChannels;
+
+    public ICommand ReloadTvChannels
+    {
+      get
+      {
+        if (reloadTvChannels == null)
+        {
+          reloadTvChannels = new ActionCommand(OnReloadTvChannels);
+        }
+
+        return reloadTvChannels;
+      }
+    }
+
+    public void OnReloadTvChannels()
+    {
+      LoadService();
+    }
+
+    #endregion
 
     #region Url
 
@@ -134,6 +160,8 @@ namespace VPlayer.IPTV.ViewModels
 
     private async void LoadService()
     {
+      TvChannels.Clear();
+
       if (string.IsNullOrEmpty(Url) || string.IsNullOrEmpty(MacAddress))
       {
         var split = Model.SourceConnection.Split("|");

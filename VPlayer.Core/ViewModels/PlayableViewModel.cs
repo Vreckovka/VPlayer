@@ -12,6 +12,7 @@ using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.Core.Events;
 using VPlayer.Core.ViewModels.Artists;
+using VPlayer.IPTV.ViewModels;
 
 namespace VPlayer.Core.ViewModels
 {
@@ -154,7 +155,7 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion IsPlaying
-
+    
     #region Commands
 
     #region Play

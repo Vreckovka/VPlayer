@@ -8,6 +8,8 @@ using Prism.Events;
 using VCore.Modularity.Events;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
+using VCore.Standard.ViewModels.TreeView;
+using VCore.WPF.ItemsCollections;
 using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -40,6 +42,8 @@ namespace VPlayer.IPTV
     {
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+
+     
     }
 
     #endregion
@@ -121,6 +125,7 @@ namespace VPlayer.IPTV
       SubItems.View.ItemRemoved.Subscribe(x =>
       {
         TvChannelsSources = SubItems.View.OfType<TvChannelItemGroupViewModel>();
+        SelectedTvChannel = SubItems.ViewModels.OfType<TvChannelItemGroupViewModel>().FirstOrDefault();
       }).DisposeWith(this);
     }
 
@@ -151,7 +156,7 @@ namespace VPlayer.IPTV
 
         Model.TvChannelGroupItems.Add(channelGroupItem);
 
-        var ads = new List<TvChannelGroupItem>(Model.TvChannelGroupItems);
+        var clones = new List<TvChannelGroupItem>(Model.TvChannelGroupItems.Select(x => x.DeepClone()));
 
         foreach (var channel in Model.TvChannelGroupItems)
         {
@@ -168,9 +173,8 @@ namespace VPlayer.IPTV
         channelGroupItem.TvChannel = tvChannelViewModel.Model;
         channelGroupItem.TvChannel.TvSource = tvChannelViewModel.Model.TvSource;
 
-        Model.TvChannelGroupItems = ads;
-
-        SubItems.Add(viewModelsFactory.Create<TvChannelItemGroupViewModel>(channelGroupItem));
+        SubItems.Clear();
+        Initialize();
       }
     }
 
@@ -192,7 +196,7 @@ namespace VPlayer.IPTV
 
     private void PlayActualTvChannel()
     {
-      if (SelectedTvChannel != null)
+      if (SelectedTvChannel == null)
       {
         SelectedTvChannel = SubItems.ViewModels.OfType<TvChannelItemGroupViewModel>().FirstOrDefault();
       }
@@ -203,11 +207,7 @@ namespace VPlayer.IPTV
         var eventToPublis = eventAggregator.GetEvent<PlayItemsEvent<TvItem, TvItemInPlaylistItemViewModel>>();
         var thisInterfaced = (ITvPlayableItem)this;
 
-        var arguemts = viewModelsFactory.CreateTvItemInPlaylistItemViewModel(new TvItem()
-        {
-          Name = Name
-        }, thisInterfaced);
-
+        var arguemts = viewModelsFactory.CreateTvItemInPlaylistItemViewModel(Model.TvItem, thisInterfaced);
 
         var data = new PlayItemsEventData<TvItemInPlaylistItemViewModel>(arguemts.GetEnummerable(), EventAction.Play, this)
         {
@@ -215,6 +215,7 @@ namespace VPlayer.IPTV
           SetItemOnly = true
         };
 
+        TvChannelsSources = SubItems.ViewModels.OfType<TvChannelItemGroupViewModel>();
         SelectedTvChannel.IsSelected = true;
         eventToPublis.Publish(data);
       }
@@ -231,9 +232,13 @@ namespace VPlayer.IPTV
         case Changed.Added:
           break;
         case Changed.Removed:
-          var itemToRemove = SubItems.ViewModels.SingleOrDefault(y => ((TvChannelItemGroupViewModel)y).Model.Id == itemChanged.Item.Id);
-          if (itemToRemove != null)
-            SubItems.Remove(itemToRemove);
+          var itemToRemoveVm = (TvChannelItemGroupViewModel)SubItems.ViewModels.SingleOrDefault(y => ((TvChannelItemGroupViewModel)y).Model.Id == itemChanged.Item.Id);
+          if (itemToRemoveVm != null)
+          {
+            SubItems.Remove(itemToRemoveVm);
+            Model.TvChannelGroupItems.Remove(itemToRemoveVm.Model);
+          }
+
           break;
         case Changed.Updated:
         default:

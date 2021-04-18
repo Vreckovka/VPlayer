@@ -2,13 +2,16 @@
 using System.Windows.Input;
 using Prism.Events;
 using VCore;
+using VCore.ViewModels.Navigation;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.ViewModels;
+using VPlayer.Core.ViewModels.Artists;
 
 namespace VPlayer.Library.ViewModels
 {
-  public abstract class PlaylistViewModel<TPlaylistItemViewModel,TPlaylistModel, TPlaylistItemModel> : PlayableViewModel<TPlaylistItemViewModel, TPlaylistModel>
+  public abstract class PlaylistViewModel<TPlaylistItemViewModel,TPlaylistModel, TPlaylistItemModel> : 
+    PlayableViewModel<TPlaylistItemViewModel, TPlaylistModel> 
     where TPlaylistModel : class, IPlaylist<TPlaylistItemModel>
     where TPlaylistItemModel : class, IEntity
   {
@@ -24,6 +27,34 @@ namespace VPlayer.Library.ViewModels
     }
 
     #region Properties
+
+    #region IsActive
+
+    private bool isActive;
+
+    public bool IsActive
+    {
+      get { return isActive; }
+      set
+      {
+        if (value != isActive)
+        {
+          isActive = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    public string Header
+    {
+      get
+      {
+        return ToString();
+      }
+    }
+
 
     public bool IsUserCreated => Model.IsUserCreated;
 
@@ -124,7 +155,6 @@ namespace VPlayer.Library.ViewModels
 
 
     #endregion
-
 
 
   }

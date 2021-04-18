@@ -154,7 +154,42 @@ namespace VPlayer.IPTV.ViewModels
     }
 
     #endregion
-    
+
+    #endregion
+
+    #region Commands
+
+    #region Delete
+
+    private ActionCommand delete;
+
+    public ICommand Delete
+    {
+      get
+      {
+        if (delete == null)
+        {
+          delete = new ActionCommand(OnDelete);
+        }
+
+        return delete;
+      }
+    }
+
+    public async void OnDelete()
+    {
+      var question = windowManager.ShowYesNoPrompt($"Do you really want to delete {Name}?", "Delete source");
+
+      if (question == System.Windows.MessageBoxResult.Yes)
+      {
+        var result = storageManager.DeleteEntity(Model);
+      }
+    }
+
+    #endregion
+
+  
+
     #endregion
 
     #region Methods
@@ -231,38 +266,7 @@ namespace VPlayer.IPTV.ViewModels
 
     #endregion
 
-    #region Commands
-
-    #region Delete
-
-    private ActionCommand delete;
-
-    public ICommand Delete
-    {
-      get
-      {
-        if (delete == null)
-        {
-          delete = new ActionCommand(OnDelete);
-        }
-
-        return delete;
-      }
-    }
-
-    public async void OnDelete()
-    {
-      var question = windowManager.ShowYesNoPrompt($"Do you really want to delete {Name}?","Delete source");
-
-      if (question == System.Windows.MessageBoxResult.Yes)
-      {
-        var result = storageManager.DeleteEntity(Model);
-      }
-    }
-
-    #endregion
-    
-    #endregion
+   
 
     public abstract Task PrepareEntityForDb();
 

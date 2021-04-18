@@ -18,6 +18,7 @@ using VPlayer.Core.Modularity.Regions;
 using VPlayer.IPTV;
 using VPlayer.Library.ViewModels.AlbumsViewModels;
 using VPlayer.Library.ViewModels.FileBrowser;
+using VPlayer.Library.ViewModels.IPTV;
 using VPlayer.Library.ViewModels.TvShows;
 using VPlayer.Library.Views;
 using VPlayer.UPnP.ViewModels;
@@ -123,6 +124,7 @@ namespace VPlayer.Library.ViewModels
       var tvShowsViewModel = viewModelsFactory.Create<TvShowsViewModel>();
       var fileBrowser = viewModelsFactory.Create<FileBrowserViewModel>();
       var upnp = viewModelsFactory.Create<UPnPManagerViewModel>();
+      var iptvPlaylists = viewModelsFactory.Create<IPTVPlaylistsViewModel>();
       var iptv = viewModelsFactory.Create<IPTVManagerViewModel>();
 
       NavigationViewModel.Items.Add(new NavigationItem(songPlaylists)
@@ -131,6 +133,11 @@ namespace VPlayer.Library.ViewModels
       });
 
       NavigationViewModel.Items.Add(new NavigationItem(tvShowPlaylistsViewModel)
+      {
+        ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/tvshow-playlist.png"
+      });
+
+      NavigationViewModel.Items.Add(new NavigationItem(iptvPlaylists)
       {
         ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/tvshow-playlist.png"
       });

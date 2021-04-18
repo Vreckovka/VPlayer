@@ -166,7 +166,7 @@ namespace IPTVStalker
         if (cancellationToken != null)
           response = await request.GetResponseAsyncWithCancellationToken(cancellationToken.Value);
         else
-          response = (HttpWebResponse)request.GetResponse();
+          response = (HttpWebResponse)(await request.GetResponseAsync());
 
 
         using (response)

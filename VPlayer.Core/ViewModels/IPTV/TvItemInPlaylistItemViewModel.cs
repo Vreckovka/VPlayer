@@ -7,7 +7,9 @@ using VCore.Helpers;
 using VCore.Standard.Helpers;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPlayer.Core.Events;
 using VPlayer.Core.ViewModels;
+using VPlayer.Core.ViewModels.TvShows;
 using VPLayer.Domain.Contracts.IPTV;
 
 namespace VPlayer.IPTV.ViewModels
@@ -138,8 +140,8 @@ namespace VPlayer.IPTV.ViewModels
         {
           TvPlayableItem.SelectedTvChannel.RefreshSource();
         }
-
-        serialDisposable.Disposable = Observable.FromAsync(x => tvPlayableItem.SelectedTvChannel.InitilizeUrl()).Subscribe(OnUrlInitilize);
+        else
+          serialDisposable.Disposable = Observable.FromAsync(x => tvPlayableItem.SelectedTvChannel.InitilizeUrl()).Subscribe(OnUrlInitilize);
 
         Debug.WriteLine("Getting url failed, refreshing");
       }
@@ -172,7 +174,7 @@ namespace VPlayer.IPTV.ViewModels
 
     protected override void PublishPlayEvent()
     {
-      throw new System.NotImplementedException();
+      eventAggregator.GetEvent<PlaySongsFromPlayListEvent<TvItemInPlaylistItemViewModel>>().Publish(this);
     }
 
     protected override void PublishRemoveFromPlaylist()

@@ -163,7 +163,7 @@ namespace IPTVStalker.Domain
     public object hide_tv_genres_in_fullscreen { get; set; }
     public object advert { get; set; }
     public string aspect { get; set; }
-    public int playback_limit { get; set; }
+    //public bool playback_limit { get; set; }
     public object country { get; set; }
     public int watchdog_timeout { get; set; }
     public string play_token { get; set; }

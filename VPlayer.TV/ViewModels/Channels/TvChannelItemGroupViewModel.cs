@@ -13,6 +13,7 @@ using VPlayer.IPTV.ViewModels;
 
 namespace VPlayer.IPTV
 {
+
   public class TvChannelItemGroupViewModel : TvChannelViewModel<TvChannelGroupItem>, ITvChannel
   {
     private readonly IStorageManager storageManager;
@@ -34,7 +35,7 @@ namespace VPlayer.IPTV
       this.iptvStalkerServiceProvider = iptvStalkerServiceProvider ?? throw new ArgumentNullException(nameof(iptvStalkerServiceProvider));
 
       Name = model.TvChannel?.Name;
-
+      
     }
 
     #region Commands

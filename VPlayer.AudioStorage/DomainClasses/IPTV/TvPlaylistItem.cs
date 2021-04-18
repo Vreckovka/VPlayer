@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using VCore.Standard;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
@@ -7,6 +8,7 @@ using VPLayer.Domain.Contracts.IPTV;
 
 namespace VPlayer.IPTV.ViewModels
 {
+  [Serializable]
   public class TvItem : DomainEntity , IPlayableModel, IUpdateable<TvItem>
   {
     public string Source { get; set; }
@@ -19,7 +21,7 @@ namespace VPlayer.IPTV.ViewModels
   }
 
 
-  public class TvPlaylistItem : DomainEntity, IItemInPlaylist<TvItem>, IUpdateable<TvPlaylistItem>
+  public class TvPlaylistItem : DomainEntity, IItemInPlaylist<TvItem>, IUpdateable<TvPlaylistItem>, INamedEntity
   {
     [ForeignKey(nameof(ReferencedItem))]
     public int IdReferencedItem { get; set; }

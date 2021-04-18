@@ -27,7 +27,7 @@ namespace VPlayer.Library.ViewModels.TvShows
     public VideoPlaylistViewModel(
       VideoFilePlaylist model,
       IEventAggregator eventAggregator,
-     IStorageManager storage,
+      IStorageManager storage,
        IVPlayerViewModelsFactory viewModelsFactory) : base(model, eventAggregator, storage)
     {
       this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
