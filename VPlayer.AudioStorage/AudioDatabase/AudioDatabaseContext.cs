@@ -42,6 +42,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
 
     public DbSet<UPnPMediaServer> UPnPMediaServers { get; set; }
+    public DbSet<UPnPMediaRenderer> UPnPMediaRenderers { get; set; }
     public DbSet<UPnPDevice> UPnPDevices { get; set; }
     public DbSet<UPnPService> UPnPServices { get; set; }
 

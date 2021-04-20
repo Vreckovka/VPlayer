@@ -10,7 +10,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\CustomLibraries\Logger\Logger.csproj" />
 	  <ProjectReference Include="..\..\CustomLibraries\VCore\VCore.WPF.csproj" />
+	  <ProjectReference Include="..\VPLayer.Domain\VPLayer.Domain.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

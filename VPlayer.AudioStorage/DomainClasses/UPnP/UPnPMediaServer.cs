@@ -4,6 +4,12 @@ using System.Text;
 
 namespace VPlayer.AudioStorage.DomainClasses.UPnP
 {
+  public class UPnPMediaRenderer : DomainEntity
+  {
+    public string PresentationURL { get; set; }
+    public UPnPDevice UPnPDevice { get; set; }
+  }
+
   public class UPnPMediaServer : DomainEntity
   {
     public string AliasURL { get; set; }
@@ -11,7 +17,6 @@ namespace VPlayer.AudioStorage.DomainClasses.UPnP
     public string DefaultIconUrl { get; set; }
     public bool OnlineServer { get; set; }
     public Uri ContentDirectoryControlUrl { get; set; }
-
     public UPnPDevice UPnPDevice { get; set; }
   }
 

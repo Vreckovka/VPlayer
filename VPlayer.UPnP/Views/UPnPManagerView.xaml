@@ -61,9 +61,16 @@
             <ListView Grid.Row="1" ItemsSource="{Binding Renderers.View}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Margin="5">
-                            <Button Command="{Binding PlayCommand}" Content="Play" />
-                            <TextBlock Foreground="{StaticResource DefaultWhiteBrush}" Text="{Binding Model.DeviceDescription.Device.FriendlyName}" />
+                        <StackPanel Margin="5" Orientation="Horizontal">
+                            <Button Margin="0,0,15,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Command="{Binding Save}"
+                                    Content="Save" />
+                            <TextBlock VerticalAlignment="Center"
+                                       FontWeight="Bold"
+                                       Foreground="{StaticResource DefaultWhiteBrush}"
+                                       Text="{Binding Model.DeviceDescription.Device.FriendlyName}" />
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -89,23 +96,25 @@
                       ItemsSource="{Binding MediaServers.View}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <Grid Margin="5">
+                        <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto" />
                                 <RowDefinition />
                             </Grid.RowDefinitions>
 
-                            <StackPanel Margin="5">
-                                <Button Margin="5"
+                            <StackPanel Margin="5" Orientation="Horizontal">
+                                <Button Margin="0,0,15,0"
                                         HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
                                         Command="{Binding Save}"
                                         Content="Save" />
-                                <TextBlock Margin="5"
-                                           Foreground="{StaticResource DefaultWhiteBrush}"
-                                           Text="{Binding Model.DeviceDescription.Device.FriendlyName}" />
-                                <TextBlock Margin="5"
-                                           Foreground="{StaticResource DefaultWhiteBrush}"
-                                           Text="{Binding Model.AliasURL}" />
+                                <StackPanel>
+                                    <TextBlock FontWeight="Bold"
+                                               Foreground="{StaticResource DefaultWhiteBrush}"
+                                               Text="{Binding Model.DeviceDescription.Device.FriendlyName}" />
+                                    <TextBlock Foreground="#656565" Text="{Binding Model.AliasURL}" />
+                                </StackPanel>
+
                             </StackPanel>
 
 

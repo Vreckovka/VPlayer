@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Windows;
 using UPnP.Common;
 using UPnP.Device;
 using VCore.Standard.Factories.ViewModels;
@@ -73,22 +74,29 @@ namespace VPlayer.UPnP.ViewModels.UPnP
       return Task.Run(async () =>
       {
 
-        if (IsBusy)
+        await Application.Current.Dispatcher.InvokeAsync(() =>
         {
-          return;
-        }
+          if (IsBusy)
+          {
+            return;
+          }
 
-        IsBusy = true;
-
+          IsBusy = true;
+        });
 
         Model.InitAsync();
 
         var results = await Model.BrowseFolderAsync("0");
 
         if (results != null)
-          CreateViewModelsFromDIDLite(results);
-
-        IsBusy = false;
+        {
+          await Application.Current.Dispatcher.InvokeAsync(() =>
+          {
+            Items.Clear();
+            CreateViewModelsFromDIDLite(results);
+            IsBusy = false;
+          });
+        }
       });
     }
 

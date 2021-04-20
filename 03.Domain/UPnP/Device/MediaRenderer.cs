@@ -30,7 +30,7 @@ namespace UPnP.Device
 
     #region Public properties
 
-    public string PresentationURL { get; private set; }
+    public string PresentationURL { get; set; }
     public string DefaultIconUrl { get; private set; }
     public MediaRenderer Self { get; private set; }
     public ConnectionManager ConnectionManager { get; private set; }
@@ -42,7 +42,7 @@ namespace UPnP.Device
 
     #region Public functions
 
-    public void InitAsync()
+    public void Init()
     {
       foreach (Service serv in this.DeviceDescription.Device.ServiceList)
         switch (serv.ServiceType)

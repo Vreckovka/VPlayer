@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,6 +15,7 @@ using UPnP.Device;
 using VCore;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
+using VCore.Standard.Helpers;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
 using VCore.WPF.ItemsCollections;
@@ -143,7 +145,13 @@ namespace VPlayer.UPnP.ViewModels
     {
       base.OnActivation(firstActivation);
 
-      LoadServers();
+      if(firstActivation)
+      {
+        MediaServers.OnActualItemChanged.Where(x => x != null).Subscribe(DiscoverServer).DisposeWith(this);
+
+        LoadServers();
+        LoadRenderers();
+      }  
     }
 
     #endregion
@@ -181,6 +189,35 @@ namespace VPlayer.UPnP.ViewModels
 
     #endregion
 
+    #region LoadRenderers
+
+    public void LoadRenderers()
+    {
+      var renderers = storageManager.GetRepository<UPnPMediaRenderer>().Include(x => x.UPnPDevice).ThenInclude(x => x.Services).ToList();
+
+      foreach (var dbMediaRenderer in renderers)
+      {
+        var mediaRenderer = new MediaRenderer()
+        {
+          PresentationURL = dbMediaRenderer.PresentationURL,
+          DeviceDescription = new global::UPnP.Common.DeviceDescription()
+          {
+            Device = dbMediaRenderer.UPnPDevice.GetDevice()
+          }
+        };
+
+        var vm = viewModelsFactory.Create<MediaRendererViewModel>(mediaRenderer);
+
+        vm.IsStored = true;
+
+        Renderers.Add(vm);
+      }
+
+      Renderers.SelectedItem = Renderers.View.FirstOrDefault();
+    }
+
+    #endregion
+
     #region DiscoverDevices
 
     public void DiscoverDevices()
@@ -203,8 +240,13 @@ namespace VPlayer.UPnP.ViewModels
     {
       Application.Current.Dispatcher.Invoke(() =>
       {
+        var found = Renderers.ViewModels.Any(x => x.Model.PresentationURL == e.MediaRenderer.PresentationURL);
 
-        Renderers.Add(viewModelsFactory.Create<MediaRendererViewModel>(e.MediaRenderer));
+        if (!found)
+        {
+          Renderers.Add(viewModelsFactory.Create<MediaRendererViewModel>(e.MediaRenderer));
+        }
+       
       });
     }
 
@@ -229,16 +271,25 @@ namespace VPlayer.UPnP.ViewModels
 
     #endregion
 
-    public async void DiscoverServer()
-    {
-      var mediaServer = MediaServers.ViewModels.First();
+    #region DiscoverServer
 
+    public async void DiscoverServer(MediaServerViewModel mediaServerViewModel)
+    {
+      await mediaServerViewModel.DiscoverMediaServer();
+    }
+
+    #endregion
+
+    #region PairMediaServer
+
+    public async void PairMediaServer(MediaServerViewModel mediaServerViewModel)
+    {
       var context = new AudioDatabaseContext();
       var songsRepo = storageManager.GetRepository<Song>(context).OrderBy(x => x.Source).ToList();
 
-      await mediaServer.DiscoverMediaServer();
+      await mediaServerViewModel.DiscoverMediaServer();
 
-      var musicFolder = mediaServer.Items.ViewModels.OfType<UPnPContainerViewModel>().Single(x => x.Name == "Music");
+      var musicFolder = mediaServerViewModel.Items.ViewModels.OfType<UPnPContainerViewModel>().Single(x => x.Name == "Music");
       await musicFolder.LoadFolder();
 
       var foldersFolder = musicFolder.SubItems.ViewModels.OfType<UPnPContainerViewModel>().Single(x => x.Name == "Folders");
@@ -250,6 +301,8 @@ namespace VPlayer.UPnP.ViewModels
 
       var result = context.SaveChanges();
     }
+
+    #endregion
 
     #region PairFolder
 

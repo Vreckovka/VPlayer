@@ -202,7 +202,7 @@ namespace UPnP
 
         _mediaRenderers.Add(deviceDescriptionUrl.AbsoluteUri, null);
         MediaRenderer mediaRenderer = new MediaRenderer(deviceDescription, deviceDescriptionUrl);
-        mediaRenderer.InitAsync();
+        mediaRenderer.Init();
         _mediaRenderers[deviceDescriptionUrl.AbsoluteUri] = mediaRenderer;
 
         if (OnMediaRendererFound != null)
