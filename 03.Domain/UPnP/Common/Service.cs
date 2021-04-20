@@ -51,7 +51,7 @@ namespace UPnP.Common
         {
             bool FoundArgument = false;
             foreach (Argument arg in ArgumentList)
-                if (arg.Name.ToUpper() == key.ToUpper() && arg.Value == null)
+                if (arg.Name.ToUpper() == key.ToUpper())
                 {
                     arg.Value = value;
                     FoundArgument = true;

@@ -62,6 +62,7 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Margin="5">
+                            <Button Command="{Binding PlayCommand}" Content="Play" />
                             <TextBlock Foreground="{StaticResource DefaultWhiteBrush}" Text="{Binding Model.DeviceDescription.Device.FriendlyName}" />
                         </StackPanel>
                     </DataTemplate>
@@ -83,8 +84,8 @@
             </StackPanel>
 
             <ListView Grid.Row="1"
-                      Background="Transparent"
                       Height="250"
+                      Background="Transparent"
                       ItemsSource="{Binding MediaServers.View}">
                 <ListView.ItemTemplate>
                     <DataTemplate>

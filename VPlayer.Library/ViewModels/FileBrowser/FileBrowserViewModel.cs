@@ -72,16 +72,17 @@ namespace VPlayer.Library.ViewModels.FileBrowser
 
     public void Filter(string predicated)
     {
-      if (predicated.Length >= 3 && !string.IsNullOrEmpty(predicated) && !predicated.All(x => char.IsWhiteSpace(x)))
+      Application.Current.Dispatcher.Invoke(() =>
       {
-        root.Filter(predicated);
-      }
-      else
-      {
-        root.ResetFilter();
-      }
-
-
+        if (predicated.Length >= 3 && !string.IsNullOrEmpty(predicated) && !predicated.All(x => char.IsWhiteSpace(x)))
+        {
+          root.Filter(predicated);
+        }
+        else
+        {
+          root.ResetFilter();
+        }
+      });
     }
   }
 }

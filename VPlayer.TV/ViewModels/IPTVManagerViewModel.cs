@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
 using Microsoft.EntityFrameworkCore;
@@ -271,7 +272,8 @@ namespace VPlayer.IPTV
     {
       base.Initialize();
 
-      this.storageManager.SubscribeToItemChange<TvSource>(OnTvSourceChanged).DisposeWith(this);
+      this.storageManager.ObserveOnItemChange<TvSource>().ObserveOnDispatcher().Subscribe(OnTvSourceChanged).DisposeWith(this);
+      this.storageManager.ObserveOnItemChange<TvChannelGroup>().ObserveOnDispatcher().Subscribe(OnTvGroupChanged).DisposeWith(this);
     }
 
     #region OnActivation
@@ -345,6 +347,29 @@ namespace VPlayer.IPTV
         case Changed.Removed:
           if (vm != null)
             TVSources.Remove(vm);
+          break;
+        case Changed.Updated:
+          break;
+        default:
+          throw new ArgumentOutOfRangeException();
+      }
+    }
+
+    #endregion
+
+    #region OnTvGroupChanged
+
+    private void OnTvGroupChanged(ItemChanged<TvChannelGroup> itemChanged)
+    {
+      var vm = TVGroups.ViewModels.SingleOrDefault(x => x.Model.Id == itemChanged.Item.Id);
+
+      switch (itemChanged.Changed)
+      {
+        case Changed.Added:
+          break;
+        case Changed.Removed:
+          if (vm != null)
+            TVGroups.Remove(vm);
           break;
         case Changed.Updated:
           break;

@@ -12,6 +12,7 @@ using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Providers;
+using VPlayer.WindowsPlayer.Players;
 
 namespace VPlayer.Core.ViewModels
 {
@@ -28,7 +29,7 @@ namespace VPlayer.Core.ViewModels
     protected FilePlayableRegionViewModel(IRegionProvider regionProvider, IKernel kernel, ILogger logger,
       IStorageManager storageManager,
       IEventAggregator eventAggregator,
-      IVlcProvider vlcProvider) : base(regionProvider, kernel, logger, storageManager, eventAggregator, vlcProvider)
+      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, vLCPlayer)
     {
     }
 
@@ -180,7 +181,8 @@ namespace VPlayer.Core.ViewModels
 
     #region OnVlcTimeChanged
 
-    private void OnVlcTimeChanged(object sender, MediaPlayerTimeChangedEventArgs eventArgs)
+    private int lastTotalTimeSaved = 0;
+    private void OnVlcTimeChanged(object sender, PlayerTimeChangedArgs eventArgs)
     {
       if (ActualItem != null)
       {
@@ -202,15 +204,21 @@ namespace VPlayer.Core.ViewModels
 
           PlaylistTotalTimePlayed += TimeSpan.FromMilliseconds(deltaTimeChanged);
 
-#if RELEASE
+          //#if RELEASE
           int totalSec = (int)PlaylistTotalTimePlayed.TotalSeconds;
 
-          if (totalSec % 10 == 0 && totalSec > lastTimeChangedMs)
+          if (totalSec % 10 == 0 && totalSec > lastTotalTimeSaved)
           {
-            lastTimeChangedMs = totalSec;
-            Task.Run(UpdateActualSavedPlaylistPlaylist);
+            lastTotalTimeSaved = totalSec;
+            Task.Run(() =>
+            {
+              if (storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(ActualSavedPlaylist, out var updated))
+              {
+                ActualSavedPlaylist = updated;
+              }
+            });
           }
-#endif
+          //#endif
         }
       }
     }
@@ -307,7 +315,7 @@ namespace VPlayer.Core.ViewModels
 
     #region Media_DurationChanged
 
-    protected void Media_DurationChanged(object sender, MediaDurationChangedEventArgs e)
+    protected void Media_DurationChanged(object sender, MediaDurationChangedArgs e)
     {
       Application.Current.Dispatcher.Invoke(() =>
       {

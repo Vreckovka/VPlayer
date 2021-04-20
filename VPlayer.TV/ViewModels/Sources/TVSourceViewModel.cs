@@ -258,8 +258,10 @@ namespace VPlayer.IPTV.ViewModels
           result = lowerVariant.Contains(phrase);
         }
 
-        return original.Similarity(phrase) > 0.8 || result;
+        result = result || original.ChunkSimilarity(phrase) > 0.70 || original.SimilarityByTags(phrase); 
       }
+
+     
 
       return result;
     }

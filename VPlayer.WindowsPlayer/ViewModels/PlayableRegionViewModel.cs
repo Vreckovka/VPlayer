@@ -34,6 +34,7 @@ using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Providers;
+using VPlayer.WindowsPlayer.Players;
 
 namespace VPlayer.Core.ViewModels
 {
@@ -44,14 +45,14 @@ namespace VPlayer.Core.ViewModels
     where TPlaylistModel : class, IPlaylist<TPlaylistItemModel>, new()
     where TPlaylistItemModel : IItemInPlaylist<TModel>
   {
+   
+
     #region Fields
 
     protected readonly ILogger logger;
     protected readonly IStorageManager storageManager;
-    private readonly IVlcProvider vlcProvider;
     protected int actualItemIndex;
     protected HashSet<TItemViewModel> shuffleList = new HashSet<TItemViewModel>();
-    protected LibVLC libVLC;
     private bool wasVlcInitilized;
 
 
@@ -65,15 +66,14 @@ namespace VPlayer.Core.ViewModels
       ILogger logger,
       IStorageManager storageManager,
       IEventAggregator eventAggregator,
-      IVlcProvider vlcProvider) : base(regionProvider)
+      VLCPlayer vLCPlayer) : base(regionProvider)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
-      this.vlcProvider = vlcProvider ?? throw new ArgumentNullException(nameof(vlcProvider));
       EventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
 
-
       Kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
+      MediaPlayer = vLCPlayer;
     }
 
     #endregion
@@ -82,8 +82,8 @@ namespace VPlayer.Core.ViewModels
 
     #region MediaPlayer
 
-    private MediaPlayer mediaPlayer;
-    public MediaPlayer MediaPlayer
+    private IPlayer mediaPlayer;
+    public IPlayer MediaPlayer
     {
       get { return mediaPlayer; }
       set
@@ -97,6 +97,24 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
+
+    //#region MediaPlayer
+
+    //private MediaPlayer mediaPlayer;
+    //public MediaPlayer MediaPlayer
+    //{
+    //  get { return mediaPlayer; }
+    //  set
+    //  {
+    //    if (value != mediaPlayer)
+    //    {
+    //      mediaPlayer = value;
+    //      RaisePropertyChanged();
+    //    }
+    //  }
+    //}
+
+    //#endregion
 
     #region EventAgreggator
 
@@ -265,26 +283,7 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
-
-    #region Volume
-
-    private float volume;
-
-    public float Volume
-    {
-      get { return volume; }
-      set
-      {
-        if (value != volume)
-        {
-          volume = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
-
+    
     #region IsSelectedToPlay
 
     private bool isSelectedToPlay;
@@ -460,11 +459,7 @@ namespace VPlayer.Core.ViewModels
 
     protected async Task LoadVlc()
     {
-      var result = await vlcProvider.InitlizeVlc();
-
-      MediaPlayer = result.Key;
-
-      libVLC = result.Value;
+      await MediaPlayer.Initilize();
     }
 
     #endregion
@@ -475,23 +470,21 @@ namespace VPlayer.Core.ViewModels
     {
       await LoadVlc();
 
-      Volume = mediaPlayer.Volume;
-
       if (MediaPlayer == null)
       {
         logger.Log(Logger.MessageType.Error, "VLC was not initlized!");
         return;
       }
 
-      mediaPlayer.EncounteredError += (sender, e) =>
+      MediaPlayer.EncounteredError += (sender, e) =>
       {
         OnVlcError();
       };
 
 
-      mediaPlayer.EndReached += (sender, e) => { OnEndReached(); };
+      MediaPlayer.EndReached += (sender, e) => { OnEndReached(); };
 
-      mediaPlayer.Paused += (sender, e) =>
+      MediaPlayer.Paused += (sender, e) =>
       {
         if (ActualItem != null)
         {
@@ -499,12 +492,12 @@ namespace VPlayer.Core.ViewModels
         }
       };
 
-      mediaPlayer.Stopped += (sender, e) =>
+      MediaPlayer.Stopped += (sender, e) =>
       {
         OnMediaPlayerStopped();
       };
 
-      mediaPlayer.Playing += OnVlcPlayingChanged;
+      MediaPlayer.Playing += OnVlcPlayingChanged;
 
       OnVlcLoaded();
     }
@@ -683,13 +676,9 @@ namespace VPlayer.Core.ViewModels
       {
         if (model.Source != null)
         {
-          var media = mediaPlayer.Media;
-
           var fileUri = new Uri(model.Source);
 
-          media = new Media(libVLC, fileUri);
-
-          mediaPlayer.Media = media;
+          MediaPlayer.SetNewMedia(fileUri);
 
           OnNewItemPlay();
         }
@@ -721,7 +710,7 @@ namespace VPlayer.Core.ViewModels
 
     #region Play
 
-    public Task Play()
+    public virtual Task Play()
     {
       return Task.Run(async () =>
       {
@@ -734,9 +723,9 @@ namespace VPlayer.Core.ViewModels
         }
         else
         {
-          if (ActualItem != null && mediaPlayer.Media != null)
+          if (ActualItem != null && MediaPlayer.Media != null)
           {
-            mediaPlayer.Play();
+            MediaPlayer.Play();
           }
         }
       });
@@ -760,7 +749,7 @@ namespace VPlayer.Core.ViewModels
         PlayItems(data.Items, false, lastSongIndex.Value);
 
         if (data.SetPostion.HasValue)
-          mediaPlayer.Position = data.SetPostion.Value;
+          MediaPlayer.Position = data.SetPostion.Value;
       }
 
       OnPlayPlaylist();
@@ -816,7 +805,7 @@ namespace VPlayer.Core.ViewModels
     {
       if (IsPlaying)
       {
-        mediaPlayer.Pause();
+        MediaPlayer.Pause();
         IsPlaying = false;
       }
     }
@@ -1140,9 +1129,9 @@ namespace VPlayer.Core.ViewModels
 
     public void SetVolume(int pVolume)
     {
-      if (mediaPlayer?.AudioTrack != -1 && mediaPlayer != null)
+      if (MediaPlayer != null)
       {
-        mediaPlayer.Volume = pVolume;
+        MediaPlayer.Volume = pVolume;
       }
     }
 
@@ -1245,10 +1234,9 @@ namespace VPlayer.Core.ViewModels
       Task.Run(() =>
       {
 
-        mediaPlayer.Playing -= OnVlcPlayingChanged;
+        MediaPlayer.Playing -= OnVlcPlayingChanged;
 
-        libVLC.Dispose();
-        mediaPlayer.Dispose();
+        MediaPlayer.Dispose();
 
 
 

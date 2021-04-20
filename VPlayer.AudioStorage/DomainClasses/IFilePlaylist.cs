@@ -23,7 +23,7 @@ namespace VPlayer.AudioStorage.DomainClasses
   {
   }
 
-  public interface IFilePlaylist : IPlaylist, IUpdateable<IFilePlaylist>
+  public interface IFilePlaylist : IPlaylist
   {
     bool IsReapting { get; set; }
     bool IsShuffle { get; set; }

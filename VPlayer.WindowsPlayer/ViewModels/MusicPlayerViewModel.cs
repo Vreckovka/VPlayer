@@ -35,6 +35,8 @@ using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Core.ViewModels.TvShows;
 using VPlayer.Player.Views.WindowsPlayer;
+using VPlayer.UPnP.ViewModels;
+using VPlayer.WindowsPlayer.Players;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer;
 
 //TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)
@@ -60,6 +62,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private readonly IVPlayerRegionProvider vPlayerRegionProvider;
     private readonly IEventAggregator eventAggregator;
     private readonly AudioInfoDownloader audioInfoDownloader;
+    private readonly UPnPManagerViewModel uPnPManagerViewModel;
     private Dictionary<SongInPlayListViewModel, bool> playBookInCycle = new Dictionary<SongInPlayListViewModel, bool>();
 
     #endregion Fields
@@ -72,12 +75,14 @@ namespace VPlayer.WindowsPlayer.ViewModels
       IKernel kernel,
       IStorageManager storageManager,
       AudioInfoDownloader audioInfoDownloader,
+      UPnPManagerViewModel uPnPManagerViewModel,
       ILogger logger,
-      IVlcProvider vlcProvider) : base(regionProvider, kernel, logger, storageManager, eventAggregator, vlcProvider)
+      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, vLCPlayer)
     {
       this.vPlayerRegionProvider = regionProvider ?? throw new ArgumentNullException(nameof(regionProvider));
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
+      this.uPnPManagerViewModel = uPnPManagerViewModel ?? throw new ArgumentNullException(nameof(uPnPManagerViewModel));
     }
 
     #endregion Constructors
@@ -147,7 +152,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     #endregion Properties
 
     #region Commands
-    
+
     #region AlbumDetail
 
     private ActionCommand albumDetail;
@@ -228,7 +233,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       storageManager.SubscribeToItemChange<Album>(OnAlbumChange).DisposeWith(this);
 
       eventAggregator.GetEvent<ItemUpdatedEvent<AlbumViewModel>>().Subscribe(OnAlbumUpdated).DisposeWith(this);
-      
+
 
       PlayList.ItemRemoved.Subscribe(ItemsRemoved).DisposeWith(this);
       PlayList.ItemAdded.Subscribe(ItemsAdded).DisposeWith(this);
@@ -290,7 +295,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           await item.TryToRefreshUpdateLyrics();
         }
 
-       
+
       });
     }
 
@@ -499,5 +504,20 @@ namespace VPlayer.WindowsPlayer.ViewModels
     #endregion
 
     #endregion
+
+    //#region Play
+
+    //public override Task Play()
+    //{
+    //  return Task.Run(() =>
+    //   {
+    //     if (ActualItem.Model.UPnPPath != null)
+    //       uPnPManagerViewModel.Renderers.ViewModels.First().Play(ActualItem.Model.UPnPPath);
+    //     else
+    //       PlayNext();
+    //   });
+    //}
+
+    //#endregion
   }
 }

@@ -27,6 +27,7 @@ using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.Providers;
 using VPlayer.Core.ViewModels;
 using VPlayer.Player.Views.WindowsPlayer;
+using VPlayer.WindowsPlayer.Players;
 using VPlayer.WindowsPlayer.ViewModels;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer.IPTV;
@@ -43,7 +44,7 @@ namespace VPlayer.IPTV.ViewModels
       IStorageManager storageManager,
       IEventAggregator eventAggregator,
       IIptvStalkerServiceProvider iptvStalkerServiceProvider,
-      IVlcProvider vlcProvider) : base(regionProvider, kernel, logger, storageManager, eventAggregator, vlcProvider)
+      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, vLCPlayer)
     {
       this.iptvStalkerServiceProvider = iptvStalkerServiceProvider ?? throw new ArgumentNullException(nameof(iptvStalkerServiceProvider));
     }
@@ -51,8 +52,6 @@ namespace VPlayer.IPTV.ViewModels
     public override bool ContainsNestedRegions => true;
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
     public override string Header => "IPTV Player";
-
-
 
     #region OnSetActualItem
 
@@ -102,8 +101,7 @@ namespace VPlayer.IPTV.ViewModels
       {
         Debug.WriteLine("tv play tv item: " + ActualItem.Source);
 
-        libVLC?.Dispose();
-        libVLC = new LibVLC();
+        MediaPlayer.Reload();
 
         refreshSourceDisposable?.Dispose();
 
@@ -115,7 +113,6 @@ namespace VPlayer.IPTV.ViewModels
       }
       else
       {
-        libVLC?.Dispose();
         MediaPlayer.Media = null;
         MediaPlayer?.Stop();
       }
@@ -171,7 +168,7 @@ namespace VPlayer.IPTV.ViewModels
 
     #region MediaPlayer_Buffering
 
-    private void MediaPlayer_Buffering(object sender, MediaPlayerBufferingEventArgs e)
+    private void MediaPlayer_Buffering(object sender, PlayerBufferingEventArgs e)
     {
       if (ActualItem != null)
       {

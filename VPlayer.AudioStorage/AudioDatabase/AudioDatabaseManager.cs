@@ -15,6 +15,7 @@ using Logger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;
+using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Repositories;
 
@@ -271,6 +272,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       return true;
     }
 
+  
 
     private void AudioInfoDownloader_SubdirectoryLoaded(object sender, List<AudioInfo> e)
     {
@@ -995,6 +997,46 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #endregion
 
+    #region Tv methods
+
+    public Task<bool> DeleteTvChannelGroup(TvChannelGroup tvChannelGroup)
+    {
+      return Task.Run(() =>
+      {
+        using (var context = new AudioDatabaseContext())
+        {
+          foreach (var item in tvChannelGroup.TvChannelGroupItems)
+          {
+            item.TvChannel = null;
+            context.TvChannelGroupItems.Remove(item);
+          }
+
+          context.TvChannelGroups.Remove(tvChannelGroup);
+
+          var resultCount = context.SaveChanges();
+          var result = resultCount > 0;
+
+          if (result)
+          {
+            logger.Log(Logger.MessageType.Success, $"Entity was removed {tvChannelGroup} {resultCount}");
+
+            ItemChanged.OnNext(new ItemChanged()
+            {
+              Item = tvChannelGroup,
+              Changed = Changed.Removed
+            });
+          }
+          else
+            logger.Log(Logger.MessageType.Error, $"Entity was not removed {tvChannelGroup} {resultCount}");
+
+
+          return result;
+        }
+      });
+    }
+
+    #endregion
+
     #region DownloadAllNotYetDownloaded
 
     public Task DownloadAllNotYetDownloaded(bool tryDownloadBroken = false)
@@ -1032,6 +1074,16 @@ namespace VPlayer.AudioStorage.AudioDatabase
     {
       return ItemChanged.Where(x => x.Item.GetType() == typeof(TModel))
         .Select(x => new ItemChanged<TModel>((TModel)x.Item, x.Changed)).Subscribe(observer);
+    }
+
+    #endregion
+
+    #region ObserveOnItemChange
+
+    public IObservable<ItemChanged<TModel>> ObserveOnItemChange<TModel>()
+    {
+      return ItemChanged.Where(x => x.Item.GetType() == typeof(TModel))
+        .Select(x => new ItemChanged<TModel>((TModel)x.Item, x.Changed));
     }
 
     #endregion
@@ -1077,6 +1129,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
     }
 
     #endregion
+
+
+
 
     #endregion
 

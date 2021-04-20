@@ -47,6 +47,8 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     public bool IsFavorite { get; set; }
 
+    public string UPnPPath { get; set; }
+
     #endregion 
 
     #region Methods

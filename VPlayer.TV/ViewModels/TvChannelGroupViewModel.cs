@@ -43,7 +43,7 @@ namespace VPlayer.IPTV
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
 
-     
+
     }
 
     #endregion
@@ -86,9 +86,10 @@ namespace VPlayer.IPTV
 
     #region Initialize
 
+    private bool wasInitilized;
     public override void Initialize()
     {
-      base.Initialize();
+      SubItems.Clear();
 
       if (Model.TvChannelGroupItems != null)
       {
@@ -117,10 +118,7 @@ namespace VPlayer.IPTV
       TvChannelsSources = SubItems.View.OfType<TvChannelItemGroupViewModel>();
       SelectedTvChannel = TvChannelsSources.FirstOrDefault();
 
-      SubItems.View.ItemAdded.Subscribe(x =>
-      {
-        TvChannelsSources = SubItems.View.OfType<TvChannelItemGroupViewModel>();
-      }).DisposeWith(this);
+      SubItems.View.ItemAdded.Subscribe(x => { TvChannelsSources = SubItems.View.OfType<TvChannelItemGroupViewModel>(); }).DisposeWith(this);
 
       SubItems.View.ItemRemoved.Subscribe(x =>
       {
@@ -150,7 +148,8 @@ namespace VPlayer.IPTV
       {
         var channelGroupItem = new TvChannelGroupItem()
         {
-          IdTvChannel = tvChannelViewModel.Model.Id
+          IdTvChannel = tvChannelViewModel.Model.Id,
+          Index = Model.TvChannelGroupItems.Count
         };
 
 
@@ -173,7 +172,7 @@ namespace VPlayer.IPTV
         channelGroupItem.TvChannel = tvChannelViewModel.Model;
         channelGroupItem.TvChannel.TvSource = tvChannelViewModel.Model.TvSource;
 
-        SubItems.Clear();
+
         Initialize();
       }
     }
@@ -266,6 +265,16 @@ namespace VPlayer.IPTV
     }
 
     #endregion
+
+    protected override void OnDelete()
+    {
+      var question = windowManager.ShowYesNoPrompt($"Do you really want to delete {Name}?", "Delete tv group");
+
+      if (question == System.Windows.MessageBoxResult.Yes)
+      {
+        storageManager.DeleteTvChannelGroup(Model);
+      }
+    }
 
     #endregion
   }

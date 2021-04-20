@@ -564,33 +564,39 @@ namespace VPlayer.Player.UserControls
 
     private void timer2_Tick(object sender, EventArgs e)
     {
-      Application.Current?.Dispatcher?.Invoke(async () =>
+      try
       {
-        if (IsEnabled)
-        {
-          var newImage = await Task.Run(() =>
-          {
-            return lineSpectrum.CreateSpectrumLine(new System.Drawing.Size(width, height),
-              bottomColor,
-              topColor,
-              middleColor, true);
-          });
+        Application.Current?.Dispatcher?.Invoke(async () =>
+         {
+           if (IsEnabled)
+           {
+             var newImage = await Task.Run(() =>
+             {
+               return lineSpectrum.CreateSpectrumLine(new System.Drawing.Size(width, height),
+                 bottomColor,
+                 topColor,
+                 middleColor, true);
+             });
 
 
-          if (newImage != null)
-          {
-            await Task.Run(() =>
-            {
-              newImage.MakeTransparent();
-            });
+             if (newImage != null)
+             {
+               await Task.Run(() =>
+               {
+                 newImage.MakeTransparent();
+               });
 
-            var image = BitmapToImageSource(newImage);
+               var image = BitmapToImageSource(newImage);
 
 
-            Image.Source = image;
-          }
-        }
-      });
+               Image.Source = image;
+             }
+           }
+         });
+      }
+      catch (Exception ex)
+      {
+      }
     }
 
 

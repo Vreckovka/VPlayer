@@ -63,7 +63,7 @@ namespace VPlayer.Player.ViewModels
 
           if (actualViewModel != null)
           {
-            ActualVolume = (int)actualViewModel.Volume;
+            ActualVolume = (int)actualViewModel.MediaPlayer.Volume;
           }
         
           RaisePropertyChanged();

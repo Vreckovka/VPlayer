@@ -26,6 +26,7 @@ using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
 using VPlayer.Player.ViewModels;
+using VPlayer.UPnP.ViewModels;
 using VPlayer.WindowsPlayer.Behaviors;
 using VPlayer.WindowsPlayer.ViewModels;
 
@@ -39,6 +40,7 @@ namespace VPlayer.ViewModels
     private readonly IViewModelsFactory viewModelsFactory;
     private readonly IEventAggregator eventAggregator;
     private readonly IRegionManager regionManager;
+    private readonly UPnPManagerViewModel uPnPManagerViewModel;
 
     #endregion
 
@@ -47,22 +49,16 @@ namespace VPlayer.ViewModels
     public MainWindowViewModel(
       IViewModelsFactory viewModelsFactory,
       IEventAggregator eventAggregator,
-      IRegionManager regionManager)
+      IRegionManager regionManager,
+      UPnPManagerViewModel uPnPManagerViewModel)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.regionManager = regionManager ?? throw new ArgumentNullException(nameof(regionManager));
+      this.uPnPManagerViewModel = uPnPManagerViewModel ?? throw new ArgumentNullException(nameof(uPnPManagerViewModel));
 
       AudioDeviceManager.Instance.RefreshAudioDevices();
 
-
-      var document = new HtmlDocument();
-
-      document.LoadHtml(File.ReadAllText("C:\\Users\\Roman Pecho\\Desktop\\pokemon.txt"));
-
-                                                     ///html/body/div[2]/div/div[1]/div/section/div[2]/div/ul/li[1]/h3/a
-        var node = document.DocumentNode.SelectNodes("/html/body/div[2]/div/div[1]/div");
-      var text = node.FirstOrDefault()?.InnerText;
     }
 
     #endregion

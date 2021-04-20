@@ -56,6 +56,7 @@ namespace VPlayer.WindowsPlayer.Vlc
       _bckgnd.Loaded += Background_Loaded;
       _bckgnd.Unloaded += Background_Unloaded;
 
+
       IsVisibleChanged += ForegroundWindow_IsVisibleChanged;
     }
 
@@ -121,6 +122,7 @@ namespace VPlayer.WindowsPlayer.Vlc
     void Background_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
       DataContext = e.NewValue;
+      overlayWindow.DataContext = DataContext;
     }
 
     #endregion

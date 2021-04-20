@@ -41,6 +41,7 @@ using VPlayer.Core.Providers;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.TvShows;
 using VPlayer.Player.Views.WindowsPlayer;
+using VPlayer.WindowsPlayer.Players;
 using VPlayer.WindowsPlayer.ViewModels.VideoProperties;
 using VPlayer.WindowsPlayer.ViewModels.Windows;
 using VPlayer.WindowsPlayer.Views.Prompts;
@@ -59,13 +60,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public VideoPlayerViewModel(
       IRegionProvider regionProvider,
-       IKernel kernel,
-       ILogger logger,
+      IKernel kernel,
+      ILogger logger,
       IStorageManager storageManager,
-       IEventAggregator eventAggregator,
-      IVlcProvider vlcProvider,
+      IEventAggregator eventAggregator,
+      VLCPlayer vLCPlayer,
       IWindowManager windowManager) :
-      base(regionProvider, kernel, logger, storageManager, eventAggregator, vlcProvider)
+      base(regionProvider, kernel, logger, storageManager, eventAggregator, vLCPlayer)
     {
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
     }
@@ -77,6 +78,15 @@ namespace VPlayer.WindowsPlayer.ViewModels
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
     public override bool ContainsNestedRegions => true;
     public override string Header => "Video Player";
+
+    #region MediaPlayer
+
+    public new MediaPlayer MediaPlayer
+    {
+      get { return ((VLCPlayer)base.MediaPlayer).MediaPlayer; }
+    }
+
+    #endregion
 
     #region PlayerViewModel
 
@@ -373,6 +383,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
       MediaPlayer.Buffering += MediaPlayer_Buffering;
     }
 
+    #endregion
+
+    #region MediaPlayer_Buffering
 
     private void MediaPlayer_Buffering(object sender, MediaPlayerBufferingEventArgs e)
     {
@@ -381,7 +394,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
       else
         IsBuffering = false;
     }
-
 
     #endregion
 
@@ -499,7 +511,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         model.CropRatio = selectedItem.Description;
 
         MediaPlayer.CropGeometry = ratio;
-        
+
         storageManager.UpdateEntityAsync(model);
       }
     }
@@ -588,10 +600,18 @@ namespace VPlayer.WindowsPlayer.ViewModels
           {
             MediaPlayer.SetSpu(ActualItem.Model.SubtitleTrack.Value);
           }
+          else if (Subtitles.Count > 2)
+          {
+            var englishSubtitle = Subtitles.FirstOrDefault(x => x.Description.Contains("Anglicky"));
+
+            if (englishSubtitle != null)
+              MediaPlayer.SetSpu(englishSubtitle.Model.Id);
+          }
 
           var actualSub = Subtitles.Single(x => MediaPlayer.Spu == x.Model.Id);
 
           actualSub.IsSelected = true;
+
 
         }
 
@@ -675,9 +695,14 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public string GetRatio(int a, int b)
     {
-      var gcd = GCD(a, b);
+      if (a != 0 && b != 0)
+      {
+        var gcd = GCD(a, b);
 
-      return string.Format("{0}:{1}", a / gcd, b / gcd);
+        return string.Format("{0}:{1}", a / gcd, b / gcd);
+      }
+
+      return "";
     }
 
     public int GCD(int a, int b)
@@ -709,14 +734,14 @@ namespace VPlayer.WindowsPlayer.ViewModels
           IsInFind(tvShowEpisodeInPlaylistViewModel.TvShow.Name, predictate) ||
           IsInFind(tvShowEpisodeInPlaylistViewModel.TvShowSeason.Name, predictate) ||
           ("season " + tvShowEpisodeInPlaylistViewModel.TvShowSeason.SeasonNumber == predictate) ||
-          "episode " +tvShowEpisodeInPlaylistViewModel.TvShowEpisode.EpisodeNumber == predictate)));
+          "episode " + tvShowEpisodeInPlaylistViewModel.TvShowEpisode.EpisodeNumber == predictate)));
 
         var generator = new ItemsGenerator<VideoItemInPlaylistViewModel>(items, 15);
 
         VirtualizedPlayList = new VirtualList<VideoItemInPlaylistViewModel>(generator);
 
       }
-      else if(ifFiltered)
+      else if (ifFiltered)
       {
         ReloadVirtulizedPlaylist();
         ifFiltered = false;
@@ -792,7 +817,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       return playlistVideoItem;
     }
 
-    #endregion 
+    #endregion
 
     #endregion
   }

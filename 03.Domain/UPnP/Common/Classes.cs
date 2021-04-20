@@ -7,7 +7,7 @@ namespace UPnP.Common
         public const string MEDIARENDERER = "urn:schemas-upnp-org:device:MediaRenderer:1";
     }
     
-    static class ServiceTypes
+    public static class ServiceTypes
     {
         public const string CONNECTIONMANAGER = "urn:schemas-upnp-org:service:ConnectionManager:1";
         public const string CONTENTDIRECTORY = "urn:schemas-upnp-org:service:ContentDirectory:1";

@@ -3,9 +3,9 @@
                     xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore.WPF"
                     xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
                     xmlns:events="clr-namespace:VPlayer.Core.Events;assembly=VPlayer.Core"
+                    xmlns:events1="clr-namespace:VPlayer.Core.Events;assembly=VPLayer.Domain"
                     xmlns:templateSelectors="clr-namespace:VPlayer.Library.TemplateSelectors"
-                    xmlns:windowsFile="clr-namespace:VCore.Standard.ViewModels.WindowsFile;assembly=VCore.Standard"
-                    xmlns:events1="clr-namespace:VPlayer.Core.Events;assembly=VPLayer.Domain">
+                    xmlns:windowsFile="clr-namespace:VCore.Standard.ViewModels.WindowsFile;assembly=VCore.Standard">
 
     <SolidColorBrush x:Key="VideoColor">#648afa</SolidColorBrush>
     <SolidColorBrush x:Key="SoundColor">#eb677b</SolidColorBrush>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using IPTVStalker;
 using VCore;
@@ -68,6 +69,51 @@ namespace VPlayer.IPTV
     }
 
     #endregion
+
+    #region TvChannelDropped
+
+    private ActionCommand<object> tvChannelDropped;
+
+    public ICommand TvChannelDropped
+    {
+      get
+      {
+        if (tvChannelDropped == null)
+        {
+          tvChannelDropped = new ActionCommand<object>(OnTvChannelDropped);
+        }
+
+        return tvChannelDropped;
+      }
+    }
+
+    protected void OnTvChannelDropped(object dropData)
+    {
+      IDataObject data = dropData as IDataObject;
+
+      if (null == data) return;
+
+      var tvChannelViewModel = data.GetData(data.GetFormats()[0]) as TvChannelItemGroupViewModel;
+    }
+
+    #endregion
+
+    #endregion
+
+    #region Index
+
+    public int Index
+    {
+      get { return Model.Index; }
+      set
+      {
+        if (value != Model.Index)
+        {
+          Model.Index = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
 
     #endregion
 
@@ -155,6 +201,8 @@ namespace VPlayer.IPTV
 
     #endregion
 
+    #region InitilizeUrl
+
     public CancellationTokenSource ActualCancellationTokenSource { get; private set; }
 
     public async Task<string> InitilizeUrl(CancellationTokenSource pCancellationToken = null)
@@ -178,11 +226,12 @@ namespace VPlayer.IPTV
       return null;
     }
 
+    #endregion
+
     public override void RefreshSource()
     {
       TvChannel.RefreshSource();
     }
-
 
   }
 }

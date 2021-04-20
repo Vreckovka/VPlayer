@@ -14,7 +14,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     public List<TPlaylistItems> PlaylistItems { get; set; }
     public bool IsUserCreated { get; set; }
 
-    public void Update(IPlaylist other)
+    public virtual void Update(IPlaylist other)
     {
       Name = other.Name;
       LastItemIndex = other.LastItemIndex;
@@ -33,13 +33,16 @@ namespace VPlayer.AudioStorage.DomainClasses
     public float LastItemElapsedTime { get; set; }
 
 
-    public void Update(IFilePlaylist other)
+    public override void Update(IPlaylist other)
     {
       base.Update(other);
 
-      IsReapting = other.IsReapting;
-      IsShuffle = other.IsShuffle;
-      LastItemElapsedTime = other.LastItemElapsedTime;
+      if (other is IFilePlaylist filePlaylistOther)
+      {
+        IsReapting = filePlaylistOther.IsReapting;
+        IsShuffle = filePlaylistOther.IsShuffle;
+        LastItemElapsedTime = filePlaylistOther.LastItemElapsedTime;
+      }
     }
   }
 }

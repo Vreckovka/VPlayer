@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using VCore.Modularity.Events;
 using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.DomainClasses.Video;
 
 namespace VPlayer.AudioStorage.Interfaces.Storage
@@ -38,9 +39,6 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
     bool DeleteEntity<TEntity>(TEntity entity) where TEntity : class, IEntity;
     Task<bool> UpdateEntityAsync<TEntity>(TEntity newVersion) where TEntity : class, IEntity, IUpdateable<TEntity>;
     void RewriteEntity<T>(T entity) where T : class, IEntity;
-   
-
-
 
     Task DeletePlaylist<TPlaylist, TPlaylistItem>(TPlaylist songsPlaylist)
       where TPlaylist : class, IPlaylist<TPlaylistItem>
@@ -52,11 +50,13 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
 
     Task<bool> StoreData(IEnumerable<string> audioPath);
     Task<bool> StoreData(string audioPath);
+    Task<bool> DeleteTvChannelGroup(TvChannelGroup tvChannelGroup);
 
-   
-   
+
 
     IDisposable SubscribeToItemChange<TModel>(Action<ItemChanged<TModel>> observer);
+    IObservable<ItemChanged<TModel>> ObserveOnItemChange<TModel>();
+
     Task<bool> UpdateWholeTvShow(TvShow newVersion);
     bool DeleteTvShow(TvShow tvShow);
 

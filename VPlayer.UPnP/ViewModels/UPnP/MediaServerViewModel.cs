@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using UPnP.Common;
 using UPnP.Device;
 using VCore.Standard.Factories.ViewModels;
@@ -67,17 +68,28 @@ namespace VPlayer.UPnP.ViewModels.UPnP
 
     #region DiscoverMediaServer
 
-    public async void DiscoverMediaServer()
+    public Task DiscoverMediaServer()
     {
-      IsBusy = true;
+      return Task.Run(async () =>
+      {
 
-      Model.InitAsync();
-      var results = await Model.BrowseFolderAsync("0");
+        if (IsBusy)
+        {
+          return;
+        }
 
-      if (results != null)
-        CreateViewModelsFromDIDLite(results);
+        IsBusy = true;
 
-      IsBusy = false;
+
+        Model.InitAsync();
+
+        var results = await Model.BrowseFolderAsync("0");
+
+        if (results != null)
+          CreateViewModelsFromDIDLite(results);
+
+        IsBusy = false;
+      });
     }
 
     #endregion

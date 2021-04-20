@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using LibVLCSharp.Shared;
 using VCore.ViewModels;
+using VPlayer.WindowsPlayer.Players;
 
 namespace VPlayer.Core.ViewModels
 {
@@ -23,8 +24,7 @@ namespace VPlayer.Core.ViewModels
     bool IsPlaying { get; set; }
     bool IsSelectedToPlay { get; set; }
     bool CanPlay { get; }
-    public float Volume { get; }
-    MediaPlayer MediaPlayer { get; }
+    IPlayer MediaPlayer { get; }
     IObservable<int> ActualItemChanged { get; }
     void SetVolume(int pVolume);
   }

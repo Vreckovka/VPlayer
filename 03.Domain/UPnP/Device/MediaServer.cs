@@ -215,7 +215,7 @@ namespace UPnP.Device
               if (cont_audio.Title == "Folders")
               {
                 DIDLLite didllite_allaudio = await BrowseFolderAsync(cont_audio.Id);
-                
+
                 Content content = new Content(didllite_allaudio, cont_audio.ParentID, this.PresentationURL);
 
                 if (OnAudioContentScanCompleted != null)
@@ -314,7 +314,7 @@ namespace UPnP.Device
     }
 
     //4-127035
-    private async Task GetMusic(string id)
+    public async Task<string> GetMusic(string id)
     {
       _browseAction.ClearArgumentsValue();
       _browseAction.SetArgumentValue("ObjectId", id);
@@ -323,7 +323,7 @@ namespace UPnP.Device
       _browseAction.SetArgumentValue("RequestedCount", "0");
       await _browseAction.InvokeAsync(ServiceTypes.CONTENTDIRECTORY, this.ContentDirectoryControlUrl.AbsoluteUri);
 
-      var sas = _browseAction.GetArgumentValue("Result");
+      return _browseAction.GetArgumentValue("Result");
     }
 
     public async Task<DIDLLite> BrowseFolderAsync(string id)
@@ -350,7 +350,7 @@ namespace UPnP.Device
             await _browseAction.InvokeAsync(ServiceTypes.CONTENTDIRECTORY, this.ContentDirectoryControlUrl.AbsoluteUri);
             DIDLLite tmp_didllite = Deserializer.DeserializeXml<DIDLLite>(_browseAction.GetArgumentValue("Result"));
 
-            if(tmp_didllite == null)
+            if (tmp_didllite == null)
             {
               return null;
             }
