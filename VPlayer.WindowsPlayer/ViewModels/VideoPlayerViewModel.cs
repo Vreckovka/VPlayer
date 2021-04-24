@@ -21,6 +21,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using LibVLCSharp.Shared;
 using Logger;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using Ninject;
 using Prism.Events;
 using VCore;
@@ -69,6 +70,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
       base(regionProvider, kernel, logger, storageManager, eventAggregator, vLCPlayer)
     {
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
+
+
+
+
     }
 
     #endregion
@@ -183,7 +188,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-   
+
 
     #endregion
 
@@ -272,6 +277,45 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
           ReloadVirtulizedPlaylist();
         }
+      }
+    }
+
+    #endregion
+
+    #region AddSubtitles
+
+    private ActionCommand addSubtitles;
+
+    public ICommand AddSubtitles
+    {
+      get
+      {
+        if (addSubtitles == null)
+        {
+          addSubtitles = new ActionCommand(OnAddSubtitles);
+        }
+
+        return addSubtitles;
+      }
+    }
+
+    public void OnAddSubtitles()
+    {
+      CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+
+      dialog.AllowNonFileSystemItems = true;
+      dialog.IsFolderPicker = false;
+      dialog.Title = "Add subtitiles";
+
+      if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+      {
+        MediaPlayer.ESAdded += MediaPlayer_ESAdded;
+
+        var path = new Uri(dialog.FileName);
+
+        MediaPlayer.AddSlave(MediaSlaveType.Subtitle, path.AbsoluteUri, true);
+
+
       }
     }
 
@@ -366,7 +410,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
 
     #endregion
-    
+
     #region PlayTvShowItems
 
     private void PlayTvShowItems(PlayItemsEventData<TvShowEpisodeInPlaylistViewModel> tvShowEpisodeInPlaylistViewModel)
@@ -408,15 +452,18 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     private void OnSubtitleSelected(SubtitleViewModel selectedItem)
     {
-      MediaPlayer.SetSpu(selectedItem.Model.Id);
-
-      if (ActualItem != null)
+      if (MediaPlayer.Spu != selectedItem.Model.Id)
       {
-        var model = ActualItem.Model;
+        MediaPlayer.SetSpu(selectedItem.Model.Id);
 
-        model.SubtitleTrack = selectedItem.Model.Id;
+        if (ActualItem != null)
+        {
+          var model = ActualItem.Model;
 
-        storageManager.UpdateEntityAsync(model);
+          model.SubtitleTrack = selectedItem.Model.Id;
+
+          storageManager.UpdateEntityAsync(model);
+        }
       }
     }
 
@@ -492,6 +539,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public override void OnActivation(bool firstActivation)
     {
+
       base.OnActivation(firstActivation);
 
       if (firstActivation)
@@ -555,36 +603,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       Application.Current.Dispatcher.Invoke(() =>
       {
-
-        Subtitles.Clear();
         AudioTracks.Clear();
 
-        if (MediaPlayer.SpuDescription.Length > 0)
-        {
-          foreach (var spu in MediaPlayer.SpuDescription)
-          {
-            Subtitles.Add(new SubtitleViewModel(spu));
-          }
-
-          if (ActualItem?.Model.SubtitleTrack != null)
-          {
-            MediaPlayer.SetSpu(ActualItem.Model.SubtitleTrack.Value);
-          }
-          else if (Subtitles.Count > 2)
-          {
-            var englishSubtitle = Subtitles.FirstOrDefault(x => x.Description.Contains("Anglicky"));
-
-            if (englishSubtitle != null)
-              MediaPlayer.SetSpu(englishSubtitle.Model.Id);
-          }
-
-          var actualSub = Subtitles.Single(x => MediaPlayer.Spu == x.Model.Id);
-
-          actualSub.IsSelected = true;
-
-
-        }
-
+        ReloadSubtitles();
 
         if (MediaPlayer.AudioTrackDescription.Length > 0)
         {
@@ -609,9 +630,61 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         SelectAspectCropRatios();
       });
+
+
     }
 
+    private void MediaPlayer_ESAdded(object sender, MediaPlayerESAddedEventArgs e)
+    {
+      if (e.Type == TrackType.Text)
+      {
+        MediaPlayer.ESAdded -= MediaPlayer_ESAdded;
+
+        ActualItem.Model.SubtitleTrack = MediaPlayer.SpuCount;
+
+        Task.Run(() =>
+        {
+          Thread.Sleep(500);
+          ReloadSubtitles();
+        });
+
+      }
+    }
+
+
     #endregion
+
+    private void ReloadSubtitles()
+    {
+      Application.Current.Dispatcher.Invoke(() =>
+      {
+        Subtitles.Clear();
+
+        if (MediaPlayer.SpuDescription.Length > 0)
+        {
+          foreach (var spu in MediaPlayer.SpuDescription)
+          {
+            Subtitles.Add(new SubtitleViewModel(spu));
+          }
+
+          if (ActualItem?.Model.SubtitleTrack != null && MediaPlayer.Spu != ActualItem.Model.SubtitleTrack.Value)
+          {
+            MediaPlayer.SetSpu(ActualItem.Model.SubtitleTrack.Value);
+          }
+          else if (Subtitles.Count > 2)
+          {
+            var englishSubtitle = Subtitles.FirstOrDefault(x => x.Description.Contains("Anglicky"));
+
+            if (englishSubtitle != null)
+              MediaPlayer.SetSpu(englishSubtitle.Model.Id);
+          }
+
+          var actualSub = Subtitles.Single(x => MediaPlayer.Spu == x.Model.Id);
+
+          actualSub.IsSelected = true;
+        }
+      });
+    }
 
     #region SelectAspectCropRatios
 

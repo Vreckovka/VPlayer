@@ -6,6 +6,7 @@
              xmlns:behaviors1="clr-namespace:VPlayer.WindowsPlayer.Behaviors"
              xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore.WPF"
              xmlns:controls1="clr-namespace:VPlayer.WindowsPlayer.Vlc.Controls"
+             xmlns:controls2="clr-namespace:VPlayer.WindowsPlayer.Vlc.Controls;assembly=VVLC"
              xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF"
              xmlns:converters1="clr-namespace:VPlayer.WindowsPlayer.Converters"
              xmlns:converters2="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
@@ -16,7 +17,6 @@
              xmlns:popups="clr-namespace:VCore.WPF.Behaviors.Popups;assembly=VCore.WPF"
              xmlns:vlc="clr-namespace:VPlayer.WindowsPlayer.Vlc"
              xmlns:vlc1="clr-namespace:VPlayer.WindowsPlayer.Vlc;assembly=VVLC"
-             xmlns:controls2="clr-namespace:VPlayer.WindowsPlayer.Vlc.Controls;assembly=VVLC"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
@@ -55,23 +55,29 @@
                             </MenuItem.ItemTemplate>
                         </MenuItem>
 
-                        <MenuItem Height="35"
-                                  Header="Subtitles"
-                                  IsEnabled="{Binding Subtitles.Count, Converter={converters1:EmptyItemSourceToDisable}}"
-                                  ItemsSource="{Binding Subtitles}">
-                            <MenuItem.ItemContainerStyle>
-                                <Style BasedOn="{StaticResource {x:Type MenuItem}}" TargetType="MenuItem">
-                                    <Setter Property="IsChecked" Value="{Binding IsSelected}" />
-                                    <Setter Property="IsCheckable" Value="True" />
-                                </Style>
-                            </MenuItem.ItemContainerStyle>
-                            <MenuItem.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Description}" />
-                                </DataTemplate>
-                            </MenuItem.ItemTemplate>
+                        <MenuItem Header="Subtitles">
+                            <MenuItem Height="35"
+                                      Header="Subtitles"
+                                      IsEnabled="{Binding Subtitles.Count, Converter={converters1:EmptyItemSourceToDisable}}"
+                                      ItemsSource="{Binding Subtitles}">
+                                <MenuItem.ItemContainerStyle>
+                                    <Style BasedOn="{StaticResource {x:Type MenuItem}}" TargetType="MenuItem">
+                                        <Setter Property="IsChecked" Value="{Binding IsSelected}" />
+                                        <Setter Property="IsCheckable" Value="True" />
+                                    </Style>
+                                </MenuItem.ItemContainerStyle>
+                                <MenuItem.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Description}" />
+                                    </DataTemplate>
+                                </MenuItem.ItemTemplate>
+
+                            </MenuItem>
+
+                            <MenuItem Command="{Binding AddSubtitles}" Header="Add subtitles" />
 
                         </MenuItem>
+
 
                         <MenuItem Height="35"
                                   Header="Aspect ratio"

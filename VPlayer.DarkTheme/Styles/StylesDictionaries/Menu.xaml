@@ -32,7 +32,7 @@
 
     <Color x:Key="DisabledControlLightColor">#FFE8EDF9</Color>
     <Color x:Key="DisabledControlDarkColor">#FFC5CBF9</Color>
-    <Color x:Key="DisabledForegroundColor">#FF888888</Color>
+    <Color x:Key="DisabledForegroundColor">#252525</Color>
 
     <Color x:Key="SelectedBackgroundColor">#FFC5CBF9</Color>
     <Color x:Key="SelectedUnfocusedColor">#FFDDDDDD</Color>
@@ -64,7 +64,6 @@
     <!--  Control-specific resources.  -->
     <Color x:Key="HeaderTopColor">#FFC5CBF9</Color>
     <Color x:Key="DatagridCurrentCellBorderColor">Black</Color>
-    <Color x:Key="SliderTrackDarkColor">#FFC5CBF9</Color>
 
     <Color x:Key="NavButtonFrameColor">#FF3843C4</Color>
 
@@ -419,7 +418,10 @@
 
     <!--  SubmenuHeader  -->
     <ControlTemplate x:Key="{x:Static MenuItem.SubmenuHeaderTemplateKey}" TargetType="{x:Type MenuItem}">
-        <Border x:Name="Border" BorderThickness="1">
+        <Border x:Name="Border"
+                Padding="5,5"
+                Background="Transparent"
+                BorderThickness="1">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" SharedSizeGroup="Icon" />
@@ -456,13 +458,13 @@
                        Placement="Right"
                        PopupAnimation="Fade">
                     <Border x:Name="SubmenuBorder"
-                            Background="{DynamicResource MenuPopupBrush}"
-                            BorderThickness="1"
+                            Background="#101010"
+                            BorderThickness="0"
                             SnapsToDevicePixels="True">
                         <Border.BorderBrush>
                             <SolidColorBrush Color="{DynamicResource BorderMediumColor}" />
                         </Border.BorderBrush>
-                        <ScrollViewer CanContentScroll="True" Style="{StaticResource MenuScrollViewer}">
+                        <ScrollViewer CanContentScroll="True" VerticalScrollBarVisibility="Auto">
                             <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
                         </ScrollViewer>
                     </Border>
@@ -470,31 +472,48 @@
             </Grid>
         </Border>
         <ControlTemplate.Triggers>
+            <Trigger Property="ButtonBase.Command" Value="{x:Null}" />
             <Trigger Property="Icon" Value="{x:Null}">
-                <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
+                <Setter TargetName="Icon" Property="Visibility" Value="Hidden" />
             </Trigger>
-            <Trigger Property="IsHighlighted" Value="true">
-                <Setter TargetName="Border" Property="Background">
-                    <Setter.Value>
-                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                            <GradientStop Offset="0" Color="Transparent" />
-                            <GradientStop Offset="1" Color="{DynamicResource ControlMouseOverColor}" />
-                        </LinearGradientBrush>
-                    </Setter.Value>
-                </Setter>
-                <Setter TargetName="Border" Property="BorderBrush">
-                    <Setter.Value>
-                        <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                            <GradientStop Offset="0" Color="{DynamicResource BorderMediumColor}" />
-                            <GradientStop Offset="1" Color="Transparent" />
-                        </LinearGradientBrush>
-                    </Setter.Value>
-                </Setter>
-            </Trigger>
-            <Trigger SourceName="Popup" Property="AllowsTransparency" Value="True">
-                <Setter TargetName="SubmenuBorder" Property="CornerRadius" Value="4" />
-                <Setter TargetName="SubmenuBorder" Property="Padding" Value="0,3,0,3" />
-            </Trigger>
+
+
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsHighlighted" Value="true" />
+                </MultiTrigger.Conditions>
+                <MultiTrigger.EnterActions>
+                    <BeginStoryboard x:Name="EnterHighlitedUnChecked">
+                        <Storyboard>
+                            <ColorAnimation Storyboard.TargetName="Border"
+                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                            To="{StaticResource 22_DefaultWhiteColor}"
+                                            Duration="{StaticResource MenuHoverAnimationDuration}" />
+
+                            <ColorAnimation Storyboard.TargetProperty="(TextBox.Foreground).(SolidColorBrush.Color)"
+                                            To="{StaticResource DefaultWhiteColor}"
+                                            Duration="{StaticResource MenuHoverAnimationDuration}" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </MultiTrigger.EnterActions>
+
+                <MultiTrigger.ExitActions>
+                    <BeginStoryboard x:Name="ExitHighlitedUnChecked">
+                        <Storyboard>
+                            <ColorAnimation Storyboard.TargetName="Border"
+                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                            To="Transparent"
+                                            Duration="{StaticResource MenuHoverAnimationDuration}" />
+
+                            <ColorAnimation Storyboard.TargetProperty="(TextBox.Foreground).(SolidColorBrush.Color)"
+                                            To="{StaticResource SecondaryForegroundColor}"
+                                            Duration="{StaticResource MenuHoverAnimationDuration}" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </MultiTrigger.ExitActions>
+            </MultiTrigger>
+
+
             <Trigger Property="IsEnabled" Value="false">
                 <Setter Property="Foreground">
                     <Setter.Value>
