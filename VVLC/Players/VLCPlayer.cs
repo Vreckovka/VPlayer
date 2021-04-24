@@ -204,13 +204,16 @@ namespace VPlayer.WindowsPlayer.Players
 
     #region SetNewMedia
 
-    public void SetNewMedia(Uri source)
+    public Task SetNewMedia(Uri source)
     {
-      var media = new Media(libVLC, source);
+      return Task.Run(() =>
+      {
+        var media = new Media(libVLC, source);
 
-      Media = new VLCMedia(media);
+        Media = new VLCMedia(media);
 
-      MediaPlayer.Media = media;
+        MediaPlayer.Media = media;
+      });
     }
 
     #endregion

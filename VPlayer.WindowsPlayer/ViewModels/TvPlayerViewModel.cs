@@ -107,7 +107,7 @@ namespace VPlayer.IPTV.ViewModels
 
         ActualItem.State = TVChannelState.Loading;
 
-        await SetVlcMedia(ActualItem.Model);
+        await SetMedia(ActualItem.Model);
 
         await Play();
       }
@@ -156,9 +156,9 @@ namespace VPlayer.IPTV.ViewModels
 
     #region HookToVlcEvents
 
-    protected override async Task HookToVlcEvents()
+    protected override async Task HookToPlayerEvents()
     {
-      await base.HookToVlcEvents();
+      await base.HookToPlayerEvents();
 
       MediaPlayer.Buffering += MediaPlayer_Buffering;
 

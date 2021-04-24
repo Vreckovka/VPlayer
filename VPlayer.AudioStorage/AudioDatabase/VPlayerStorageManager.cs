@@ -21,16 +21,11 @@ using VPlayer.AudioStorage.Repositories;
 
 namespace VPlayer.AudioStorage.AudioDatabase
 {
-  public class AudioDatabaseManager : IStorageManager, IInitializable
+  public class VPlayerStorageManager : IStorageManager, IInitializable
   {
     #region Fields
 
     private readonly AudioInfoDownloader audioInfoDownloader;
-    private readonly PlaylistsRepository playlistsRepository;
-    private readonly AlbumsRepository albumsRepository;
-    private readonly TvShowRepository tvShowRepository;
-    private readonly TvShowPlaylistRepository tvShowPlaylistRepository;
-
     private readonly ILogger logger;
 
     public ReplaySubject<ItemChanged> ItemChanged { get; } = new ReplaySubject<ItemChanged>(1);
@@ -39,19 +34,11 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region Constructors
 
-    public AudioDatabaseManager(
+    public VPlayerStorageManager(
       AudioInfoDownloader audioInfoDownloader,
-      PlaylistsRepository playlistsRepository,
-      AlbumsRepository albumsRepository,
-      TvShowRepository tvShowRepository,
-      TvShowPlaylistRepository tvShowPlaylistRepository,
       ILogger logger)
     {
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
-      this.playlistsRepository = playlistsRepository ?? throw new ArgumentNullException(nameof(playlistsRepository));
-      this.albumsRepository = albumsRepository ?? throw new ArgumentNullException(nameof(albumsRepository));
-      this.tvShowRepository = tvShowRepository ?? throw new ArgumentNullException(nameof(tvShowRepository));
-      this.tvShowPlaylistRepository = tvShowPlaylistRepository ?? throw new ArgumentNullException(nameof(tvShowPlaylistRepository));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -1043,24 +1030,28 @@ namespace VPlayer.AudioStorage.AudioDatabase
     {
       return Task.Run(() =>
       {
-        var notUpdatedAlbums = albumsRepository.Entities
-          .Where(x => x.InfoDownloadStatus == InfoDownloadStatus.Waiting || x.InfoDownloadStatus == InfoDownloadStatus.Downloading)
-          .Include(x => x.Artist).OrderByDescending(x => x.InfoDownloadStatus).ToList();
-
-        foreach (var album in notUpdatedAlbums)
+        using (var context = new AudioDatabaseContext())
         {
-          audioInfoDownloader.UpdateItem(album);
-        }
+          var repository = GetRepository<Album>(context);
 
-        if (tryDownloadBroken)
-        {
-          var brokenAlbums = albumsRepository.Entities.Where(x => x.InfoDownloadStatus == InfoDownloadStatus.Failed
-                                                                  || x.InfoDownloadStatus == InfoDownloadStatus.UnableToFind)
-            .Include(x => x.Artist);
+          var notUpdatedAlbums = repository
+            .Where(x => x.InfoDownloadStatus == InfoDownloadStatus.Waiting || x.InfoDownloadStatus == InfoDownloadStatus.Downloading)
+            .Include(x => x.Artist).OrderByDescending(x => x.InfoDownloadStatus).ToList();
 
-          foreach (var album in brokenAlbums)
+          foreach (var album in notUpdatedAlbums)
           {
             audioInfoDownloader.UpdateItem(album);
+          }
+
+          if (tryDownloadBroken)
+          {
+            var brokenAlbums = repository.Where(x => x.InfoDownloadStatus == InfoDownloadStatus.Failed
+                                                     || x.InfoDownloadStatus == InfoDownloadStatus.UnableToFind).Include(x => x.Artist);
+
+            foreach (var album in brokenAlbums)
+            {
+              audioInfoDownloader.UpdateItem(album);
+            }
           }
         }
       });
@@ -1103,17 +1094,22 @@ namespace VPlayer.AudioStorage.AudioDatabase
     {
       return Task.Run(() =>
       {
-        tvShowRepository.Add(tvShow);
-
-        tvShowRepository.Save();
-
-        ItemChanged.OnNext(new ItemChanged()
+        using (var context = new AudioDatabaseContext())
         {
-          Item = tvShow,
-          Changed = Changed.Added
-        });
+          var repository = GetRepository<TvShow>(context);
 
-        return tvShow.Id;
+          repository.Add(tvShow);
+
+          context.SaveChanges();
+
+          ItemChanged.OnNext(new ItemChanged()
+          {
+            Item = tvShow,
+            Changed = Changed.Added
+          });
+
+          return tvShow.Id;
+        }
       });
     }
 

@@ -442,7 +442,7 @@ namespace VPlayer.Core.ViewModels
 
       base.Initialize();
 
-      await HookToVlcEvents();
+      await HookToPlayerEvents();
 
       actualSearchSubject = new ReplaySubject<string>(1).DisposeWith(this);
 
@@ -466,7 +466,7 @@ namespace VPlayer.Core.ViewModels
 
     #region HookToVlcEvents
 
-    protected virtual async Task HookToVlcEvents()
+    protected virtual async Task HookToPlayerEvents()
     {
       await LoadVlc();
 
@@ -615,7 +615,7 @@ namespace VPlayer.Core.ViewModels
         if (ActualItem == null)
           return;
 
-        await SetVlcMedia(ActualItem.Model);
+        await SetMedia(ActualItem.Model);
 
         if (IsPlaying || forcePlay)
         {
@@ -668,17 +668,17 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region SetVlcMedia
+    #region SetMedia
 
-    protected virtual Task SetVlcMedia(TModel model)
+    protected virtual Task SetMedia(TModel model)
     {
-      return Task.Run(() =>
+      return Task.Run(async () =>
       {
         if (model.Source != null)
         {
           var fileUri = new Uri(model.Source);
 
-          MediaPlayer.SetNewMedia(fileUri);
+          await MediaPlayer.SetNewMedia(fileUri);
 
           OnNewItemPlay();
         }

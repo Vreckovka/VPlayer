@@ -32,7 +32,7 @@ namespace VPlayer.AudioStorage.DataLoader
       this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
       supportedItems.Add(DataType.Video, new List<string>()
       {
-        "*.avi", "*.mkv"
+        "*.avi", "*.mkv", "*.mp4"
       });
     }
 

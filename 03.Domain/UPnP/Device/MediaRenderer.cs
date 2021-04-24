@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UPnP.Common;
 using UPnP.Utils;
@@ -36,11 +38,13 @@ namespace UPnP.Device
     public ConnectionManager ConnectionManager { get; private set; }
     public RenderingControl RenderingControl { get; private set; }
     public AVTransport AVTransport { get; private set; }
-    public Uri ControlUrl{ get; set; }
+    public Uri ControlUrl { get; set; }
 
     #endregion
 
     #region Public functions
+
+    #region Init
 
     public void Init()
     {
@@ -61,6 +65,20 @@ namespace UPnP.Device
 
       SetDefaultIconUrl();
       this.Self = this;
+    }
+
+    #endregion
+
+    public async Task<ServiceAction> GetPositionInfoAsync()
+    {
+      var actionName = "GetPositionInfo";
+      var action = AVTransport.ActionList.Single(x => x.Name == actionName);
+
+
+      action.SetArgumentValue("InstanceID", "0");
+      await action.InvokeAsync(ServiceTypes.AVTRANSPORT, ControlUrl.AbsoluteUri);
+
+      return action;
     }
 
     #endregion

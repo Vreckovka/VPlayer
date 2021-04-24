@@ -30,7 +30,6 @@
             <RowDefinition Height="2*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
-
         </Grid.RowDefinitions>
 
 
@@ -308,6 +307,44 @@
                                  PathStyle="{StaticResource Shuffle}" />
         </Grid>
 
+        <StackPanel Margin="30,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Orientation="Horizontal">
+            <Button Margin="5"
+                    Command="{Binding PlayPauseUPnP}"
+                    Content="Play UPnP" />
+            <ComboBox Width="150"
+                      DisplayMemberPath="Model.DeviceDescription.Device.FriendlyName"
+                      ItemsSource="{Binding UPnPManagerViewModel.Renderers.View}"
+                      SelectedItem="{Binding SelectedMediaRendererViewModel}" />
+        </StackPanel>
+
+
+        <Grid Grid.Row="0"
+              Grid.RowSpan="3"
+              Background="#cc101010">
+            <Border Padding="15,5"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Background="#cc080808"
+                    BorderBrush="#50252525"
+                    BorderThickness="1">
+                <TextBlock FontSize="18"
+                           Foreground="#ccc"
+                           Text="Buffering..." />
+            </Border>
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsBuffering}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+        </Grid>
 
     </Grid>
 </UserControl>

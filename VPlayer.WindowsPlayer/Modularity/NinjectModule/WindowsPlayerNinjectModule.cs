@@ -11,7 +11,7 @@ namespace VPlayer.WindowsPlayer.Modularity.NinjectModule
 {
   public class WindowsPlayerNinjectModule : BaseNinjectModule
   {
-  #region Methods
+    #region Methods
 
     public override void Load()
     {

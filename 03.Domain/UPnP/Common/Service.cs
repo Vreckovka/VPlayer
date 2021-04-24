@@ -66,24 +66,24 @@ namespace UPnP.Common
             try
             {
                 StringBuilder xml = new StringBuilder();
-                xml.Append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-                xml.Append("<s:Envelope s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">");
-                xml.Append("<s:Body>");
-                xml.Append("<u:" + this.Name + " xmlns:u=\"" + service_type + "\">");
+                xml.Append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+                xml.Append("<s:Envelope s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\">\n");
+                xml.Append("<s:Body>\n");
+                xml.Append("<u:" + this.Name + " xmlns:u=\"" + service_type + "\">\n");
                 foreach (Argument arg in this.ArgumentList)
                 {
                     if (arg.Direction.ToUpper() == "IN")
                         xml.Append("<" + arg.Name + ">" + arg.Value + "</" + arg.Name + ">");
                 }
-                xml.Append("</u:" + this.Name + ">");
-                xml.Append("</s:Body>");
-                xml.Append("</s:Envelope>");
+                xml.Append("</u:" + this.Name + ">\n");
+                xml.Append("</s:Body>\n");
+                xml.Append("</s:Envelope>\n");
 
                 HttpClient client = new HttpClient();
                 //client.DefaultRequestHeaders.Authorization = CreateBasicHeader("username", "password");  //if needed...
 
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, control_url);
-                request.Headers.Add("SOAPAction", service_type + "#" + this.Name);
+                request.Headers.Add("SOAPAction", "\"" + service_type + "#" + this.Name + "\"");
                 request.Method = HttpMethod.Post;
                 StringContent requestContent = new StringContent(xml.ToString(), Encoding.UTF8, "text/xml");
                 request.Content = requestContent;

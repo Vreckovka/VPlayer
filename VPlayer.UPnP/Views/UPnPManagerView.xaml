@@ -67,10 +67,12 @@
                                     VerticalAlignment="Center"
                                     Command="{Binding Save}"
                                     Content="Save" />
-                            <TextBlock VerticalAlignment="Center"
-                                       FontWeight="Bold"
-                                       Foreground="{StaticResource DefaultWhiteBrush}"
-                                       Text="{Binding Model.DeviceDescription.Device.FriendlyName}" />
+                            <StackPanel>
+                                <TextBlock FontWeight="Bold"
+                                           Foreground="{StaticResource DefaultWhiteBrush}"
+                                           Text="{Binding Model.DeviceDescription.Device.FriendlyName}" />
+                                <TextBlock Foreground="#656565" Text="{Binding Model.PresentationURL}" />
+                            </StackPanel>
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -112,7 +114,7 @@
                                     <TextBlock FontWeight="Bold"
                                                Foreground="{StaticResource DefaultWhiteBrush}"
                                                Text="{Binding Model.DeviceDescription.Device.FriendlyName}" />
-                                    <TextBlock Foreground="#656565" Text="{Binding Model.AliasURL}" />
+                                    <TextBlock Foreground="#656565" Text="{Binding Model.PresentationURL}" />
                                 </StackPanel>
 
                             </StackPanel>

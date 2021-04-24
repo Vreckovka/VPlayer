@@ -12,6 +12,7 @@ using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Providers;
+using VPlayer.IPTV.ViewModels;
 using VPlayer.WindowsPlayer.Players;
 
 namespace VPlayer.Core.ViewModels
@@ -94,6 +95,25 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region IsBuffering
+
+    private bool isBuffering;
+
+    public bool IsBuffering
+    {
+      get { return isBuffering; }
+      set
+      {
+        if (value != isBuffering)
+        {
+          isBuffering = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #endregion
 
     #region Methods
@@ -111,11 +131,12 @@ namespace VPlayer.Core.ViewModels
 
     #region HookToVlcEvents
 
-    protected override async Task HookToVlcEvents()
+    protected override async Task HookToPlayerEvents()
     {
-      await base.HookToVlcEvents();
+      await base.HookToPlayerEvents();
 
       MediaPlayer.TimeChanged += OnVlcTimeChanged;
+      MediaPlayer.Buffering += MediaPlayer_Buffering;
     }
 
     #endregion
@@ -204,7 +225,7 @@ namespace VPlayer.Core.ViewModels
 
           PlaylistTotalTimePlayed += TimeSpan.FromMilliseconds(deltaTimeChanged);
 
-          //#if RELEASE
+#if RELEASE
           int totalSec = (int)PlaylistTotalTimePlayed.TotalSeconds;
 
           if (totalSec % 10 == 0 && totalSec > lastTotalTimeSaved)
@@ -218,7 +239,7 @@ namespace VPlayer.Core.ViewModels
               }
             });
           }
-          //#endif
+#endif
         }
       }
     }
@@ -276,6 +297,18 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
+
+    #endregion
+
+    #region MediaPlayer_Buffering
+
+    private void MediaPlayer_Buffering(object sender, PlayerBufferingEventArgs e)
+    {
+      if (e.Cache != 100)
+        IsBuffering = true;
+      else
+        IsBuffering = false;
+    }
 
     #endregion
 

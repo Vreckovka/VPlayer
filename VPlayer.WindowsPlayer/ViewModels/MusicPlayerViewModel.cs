@@ -36,6 +36,8 @@ using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Core.ViewModels.TvShows;
 using VPlayer.Player.Views.WindowsPlayer;
 using VPlayer.UPnP.ViewModels;
+using VPlayer.UPnP.ViewModels.Player;
+using VPlayer.UPnP.ViewModels.UPnP;
 using VPlayer.WindowsPlayer.Players;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer;
 
@@ -62,8 +64,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private readonly IVPlayerRegionProvider vPlayerRegionProvider;
     private readonly IEventAggregator eventAggregator;
     private readonly AudioInfoDownloader audioInfoDownloader;
-    private readonly UPnPManagerViewModel uPnPManagerViewModel;
+    private readonly VLCPlayer vLcPlayer;
     private Dictionary<SongInPlayListViewModel, bool> playBookInCycle = new Dictionary<SongInPlayListViewModel, bool>();
+
 
     #endregion Fields
 
@@ -82,7 +85,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
       this.vPlayerRegionProvider = regionProvider ?? throw new ArgumentNullException(nameof(regionProvider));
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
-      this.uPnPManagerViewModel = uPnPManagerViewModel ?? throw new ArgumentNullException(nameof(uPnPManagerViewModel));
+      UPnPManagerViewModel = uPnPManagerViewModel ?? throw new ArgumentNullException(nameof(uPnPManagerViewModel));
+
+      SelectedMediaRendererViewModel = UPnPManagerViewModel.Renderers.View.FirstOrDefault();
+
+
+
+      vLcPlayer = vLCPlayer ?? throw new ArgumentNullException(nameof(vLCPlayer));
     }
 
     #endregion Constructors
@@ -149,6 +158,47 @@ namespace VPlayer.WindowsPlayer.ViewModels
     public override string Header => "Music Player";
     public int Cycle { get; set; }
 
+    public UPnPManagerViewModel UPnPManagerViewModel { get; }
+
+    #region MediaRendererViewModel
+
+    private MediaRendererViewModel selectedMediaRendererViewModel;
+
+    public MediaRendererViewModel SelectedMediaRendererViewModel
+    {
+      get { return selectedMediaRendererViewModel; }
+      set
+      {
+        if (value != selectedMediaRendererViewModel)
+        {
+          selectedMediaRendererViewModel = value;
+          playPauseUPnP?.RaiseCanExecuteChanged();
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region IsUPnPPlaying
+
+    private bool isUPnPPlaying;
+
+    public bool IsUPnPPlaying
+    {
+      get { return isUPnPPlaying; }
+      set
+      {
+        if (value != isUPnPPlaying)
+        {
+          isUPnPPlaying = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #endregion Properties
 
     #region Commands
@@ -212,6 +262,77 @@ namespace VPlayer.WindowsPlayer.ViewModels
       else
       {
         logger.Log(MessageType.Error, "GIF IS NULL");
+      }
+    }
+
+    #endregion
+
+    #region PlayPauseUPnP
+
+    private ActionCommand playPauseUPnP;
+
+    public ICommand PlayPauseUPnP
+    {
+      get
+      {
+        if (playPauseUPnP == null)
+        {
+          playPauseUPnP = new ActionCommand(OnPlayPauseUPnP, CanExecutePlayPauseUPnP);
+        }
+
+        return playPauseUPnP;
+      }
+    }
+
+    private bool CanExecutePlayPauseUPnP()
+    {
+      return SelectedMediaRendererViewModel != null;
+    }
+
+    private bool isUPnp;
+    private MediaRendererPlayer mediaRendererPlayer;
+    public async void OnPlayPauseUPnP()
+    {
+      if (!isUPnp)
+      {
+        IsBuffering = true;
+
+        MediaPlayer.Stop();
+
+        if (mediaRendererPlayer == null)
+        {
+          mediaRendererPlayer = new MediaRendererPlayer(SelectedMediaRendererViewModel.Model);
+
+          MediaPlayer = mediaRendererPlayer;
+
+          await HookToPlayerEvents();
+        }
+        else
+          MediaPlayer = mediaRendererPlayer;
+
+        await SetMedia(ActualItem.Model);
+
+        if (IsPlaying)
+        {
+          MediaPlayer.Play();
+        }
+
+        isUPnp = true;
+      }
+      else
+      {
+        mediaRendererPlayer?.Stop();
+
+        MediaPlayer = vLcPlayer;
+
+        await SetMedia(ActualItem.Model);
+
+        if (IsPlaying)
+        {
+          MediaPlayer.Play();
+        }
+
+        isUPnp = false;
       }
     }
 
@@ -504,20 +625,5 @@ namespace VPlayer.WindowsPlayer.ViewModels
     #endregion
 
     #endregion
-
-    //#region Play
-
-    //public override Task Play()
-    //{
-    //  return Task.Run(() =>
-    //   {
-    //     if (ActualItem.Model.UPnPPath != null)
-    //       uPnPManagerViewModel.Renderers.ViewModels.First().Play(ActualItem.Model.UPnPPath);
-    //     else
-    //       PlayNext();
-    //   });
-    //}
-
-    //#endregion
   }
 }

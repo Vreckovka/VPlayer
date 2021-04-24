@@ -11,6 +11,7 @@
     <ProjectReference Include="..\03.Domain\UPnP\UPnP.csproj" />
     <ProjectReference Include="..\VPlayer.Core\VPlayer.Core.csproj" />
     <ProjectReference Include="..\VPlayer.DarkTheme\VPlayer.DarkTheme.csproj" />
+    <PackageReference Include="NAudio" Version="2.0.0" />
   </ItemGroup>
 
 </Project>

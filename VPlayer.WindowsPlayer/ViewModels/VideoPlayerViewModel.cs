@@ -183,24 +183,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-    #region IsBuffering
-
-    private bool isBuffering;
-
-    public bool IsBuffering
-    {
-      get { return isBuffering; }
-      set
-      {
-        if (value != isBuffering)
-        {
-          isBuffering = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
+   
 
     #endregion
 
@@ -380,23 +363,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
           OnCropRatioSelected(x);
         }).DisposeWith(this);
 
-      MediaPlayer.Buffering += MediaPlayer_Buffering;
     }
 
     #endregion
-
-    #region MediaPlayer_Buffering
-
-    private void MediaPlayer_Buffering(object sender, MediaPlayerBufferingEventArgs e)
-    {
-      if (e.Cache != 100)
-        IsBuffering = true;
-      else
-        IsBuffering = false;
-    }
-
-    #endregion
-
+    
     #region PlayTvShowItems
 
     private void PlayTvShowItems(PlayItemsEventData<TvShowEpisodeInPlaylistViewModel> tvShowEpisodeInPlaylistViewModel)

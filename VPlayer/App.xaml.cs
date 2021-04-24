@@ -14,6 +14,7 @@ using VCore.Standard;
 using VCore.Standard.Modularity.NinjectModules;
 using VPlayer.IPTV.Modularity;
 using VPlayer.Modularity.NinjectModules;
+using VPlayer.UPnP.Modularity;
 using VPlayer.ViewModels;
 using VPlayer.Views;
 
@@ -42,7 +43,7 @@ namespace VPlayer
 
       Kernel.Load<CommonNinjectModule>();
       Kernel.Load<WPFNinjectModule>();
-      Kernel.Load<IPTVModule>();
+   
       Kernel.Load<VPlayerNinjectModule>();
 
       CultureInfo.CurrentCulture = new CultureInfo("en-US");

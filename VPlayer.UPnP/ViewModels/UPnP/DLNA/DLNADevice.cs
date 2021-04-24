@@ -82,7 +82,7 @@ namespace DLNA
 
   #region DLNAService
   public class DLNAService
-  {//Each DLNA server might offer several services so this class makes them easyer to read but the one we are looking for to use is AVTransport
+  {
     public string controlURL = "";
     public string Scpdurl = "";
     public string EventSubURL = "";
@@ -142,37 +142,32 @@ namespace DLNA
 
     #endregion
 
-    private int PlayListPointer = 0;
-    private Dictionary<int, string> PlayListQueue = new Dictionary<int, string>();
     public string ControlURL = "";
-    public bool Connected = false;
     public int ReturnCode = 0;
     public int Port = 0;
     public string IP = "";
     public string Location = "";
-    public string Server = "";
-    public string USN = "";
     public string ST = "";
     public string SMP = "";
-    public string HTML = "";
-    public string FriendlyName = "";
     public Dictionary<string, DLNAService> Services = null;
     private string XMLHead = "<?xml version=\"1.0\"?>" + Environment.NewLine + "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">" + Environment.NewLine + "<SOAP-ENV:Body>" + Environment.NewLine;
     private string XMLFoot = "</SOAP-ENV:Body>" + Environment.NewLine + "</SOAP-ENV:Envelope>" + Environment.NewLine;
 
-    public string GetPosition()
-    {//Returns the current position for the track that is playing on the DLNA server
-      return GetPosition(this.ControlURL);
-    }
-    private string GetPosition(string ControlURL)
-    {//Returns the current position for the track that is playing on the DLNA server
-      string XML = XMLHead + "<m:GetPositionInfo xmlns:m=\"urn:schemas-upnp-org:service:AVTransport:1\"><InstanceID xmlns:dt=\"urn:schemas-microsoft-com:datatypes\" dt:dt=\"ui4\">0</InstanceID></m:GetPositionInfo>" + XMLFoot + Environment.NewLine;
-      Socket SocWeb = HelperDLNA.MakeSocket(this.IP, this.Port);
-      string Request = HelperDLNA.MakeRequest("POST", ControlURL, XML.Length, "urn:schemas-upnp-org:service:AVTransport:1#GetPositionInfo", this.IP, this.Port) + XML;
-      SocWeb.Send(UTF8Encoding.UTF8.GetBytes(Request), SocketFlags.None);
-      string GG = HelperDLNA.ReadSocket(SocWeb, true, ref this.ReturnCode);
-      return GG;
-    }
+    //#region GetPosition
+
+    //public string GetPosition()
+    //{
+    //  string XML = XMLHead + "<m:GetPositionInfo xmlns:m=\"urn:schemas-upnp-org:service:AVTransport:1\"><InstanceID xmlns:dt=\"urn:schemas-microsoft-com:datatypes\" dt:dt=\"ui4\">0</InstanceID></m:GetPositionInfo>" + XMLFoot + Environment.NewLine;
+    //  Socket SocWeb = HelperDLNA.MakeSocket(this.IP, this.Port);
+    //  string Request = HelperDLNA.MakeRequest("POST", ControlURL, XML.Length, "urn:schemas-upnp-org:service:AVTransport:1#GetPositionInfo", this.IP, this.Port) + XML;
+    //  SocWeb.Send(UTF8Encoding.UTF8.GetBytes(Request), SocketFlags.None);
+    //  string GG = HelperDLNA.ReadSocket(SocWeb, true, ref this.ReturnCode);
+    //  return GG;
+    //}
+
+    //#endregion
+
+    #region Desc
 
     public string Desc()
     {//Gets a description of the DLNA server
@@ -185,6 +180,8 @@ namespace DLNA
       XML += "</DIDL-Lite>" + Environment.NewLine;
       return XML;
     }
+
+    #endregion
 
     #region StartPlay
 
@@ -203,7 +200,7 @@ namespace DLNA
 
     #region StopPlay
 
-    private string StopPlay(string ControlURL, int Instance)
+    public string StopPlay(int Instance)
     {//Called to stop playing a movie or a music track
       string XML = XMLHead;
       XML += "<u:Stop xmlns:u=\"urn:schemas-upnp-org:service:AVTransport:1\"><InstanceID>" + Instance + "</InstanceID></u:Stop>" + Environment.NewLine;
@@ -218,7 +215,7 @@ namespace DLNA
 
     #region Pause
 
-    private string Pause(int Instance)
+    public string Pause(int Instance)
     {//Called to pause playing a movie or a music track
       string XML = XMLHead;
       XML += "<u:Pause xmlns:u=\"urn:schemas-upnp-org:service:AVTransport:1\"><InstanceID>" + Instance + "</InstanceID></u:Pause>" + Environment.NewLine;
@@ -231,114 +228,38 @@ namespace DLNA
 
     #endregion
 
+    #region GetTransportInfo
 
-    //public int PlayPreviousQueue()
-    //{//Play the previous track in our queue, we don't care if the current track has not completed or not, just do it
-    //  PlayListPointer--;
-    //  if (PlayListQueue.Count == 0) return 0;
-    //  if (PlayListPointer == 0)
-    //    PlayListPointer = PlayListQueue.Count;
-    //  string Url = PlayListQueue[PlayListPointer];
-    //  StopPlay(false);
-    //  TryToPlayFile(Url);
-    //  return 310;
-    //}
-
-    //private int NoPlayCount = 0;
-
-    //public int PlayNextQueue(bool Force)
-    //{//Play the next track in our queue but only if the current track is about to end or unless we are being forced  
-    //  if (Force)
-    //  {//Looks like someone has pressed the next track button
-    //    PlayListPointer++;
-    //    if (PlayListQueue.Count == 0) return 0;
-    //    if (PlayListPointer > PlayListQueue.Count)
-    //      PlayListPointer = 1;
-    //    string Url = PlayListQueue[PlayListPointer];
-    //    StopPlay(false);
-    //    TryToPlayFile(Url);//Just play it
-    //    NoPlayCount = 0;
-    //    return 310;//Just guess for now how long the track is
-    //  }
-    //  else
-    //  {
-    //    string HTMLPosition = GetPosition();
-    //    if (HTMLPosition.Length < 50) return 0;
-    //    string TrackDuration = HTMLPosition.ChopOffBefore("<TrackDuration>").ChopOffAfter("</TrackDuration>").Substring(2);
-    //    string RelTime = HTMLPosition.ChopOffBefore("<RelTime>").ChopOffAfter("</RelTime>").Substring(2);
-    //    int RTime = TotalSeconds(RelTime);
-    //    int TTime = TotalSeconds(TrackDuration);
-    //    if (RTime < 3 || TTime < 2)
-    //    {
-    //      NoPlayCount++;
-    //      if (NoPlayCount > 3)
-    //      {
-    //        StopPlay(false);
-    //        return PlayNextQueue(true);//Force the next track to start because the current track is about to end
-    //      }
-    //      else
-    //        return 0;
-
-    //    }
-    //    int SecondsToPlay = TTime - RTime - 5;
-    //    if (SecondsToPlay < 0) SecondsToPlay = 0;//Just a safeguard
-    //    if (SecondsToPlay < 10)
-    //    {//Current track is about to end so wait a few seconds and then force the next track in our queue to play
-    //      Thread.Sleep((SecondsToPlay * 1000) + 100);
-    //      return PlayNextQueue(true);
-    //    }
-    //    return SecondsToPlay;//Will have to wait to be polled again before playing the next track in our queue
-    //  }
-    //}
-
-    private int TotalSeconds(string Value)
-    {//Convert the time left for the track to play back to seconds
-      try
+    public string GetTransportInfo()
+    {//Returns the current position for the track that is playing on the DLNA server
+      string XML = XMLHead + "<m:GetTransportInfo xmlns:m=\"urn:schemas-upnp-org:service:AVTransport:1\"><InstanceID xmlns:dt=\"urn:schemas-microsoft-com:datatypes\" dt:dt=\"ui4\">0</InstanceID></m:GetTransportInfo>" + XMLFoot + Environment.NewLine;
+      Socket SocWeb = HelperDLNA.MakeSocket(this.IP, this.Port);
+      string Request = HelperDLNA.MakeRequest("POST", ControlURL, XML.Length, "urn:schemas-upnp-org:service:AVTransport:1#GetTransportInfo", this.IP, this.Port) + XML;
+      if (SocWeb != null)
       {
-        Value = Value.ChopOffAfter(".");
-        int Mins = int.Parse(Value.Split(':')[0]);
-        int Secs = int.Parse(Value.Split(':')[1]);
-        return Mins * 60 + Secs;
+        SocWeb.Send(Encoding.UTF8.GetBytes(Request), SocketFlags.None);
+        return HelperDLNA.ReadSocket(SocWeb, true, ref this.ReturnCode);
       }
-      catch {; }
-      return 0;
+      else
+        return "";
     }
 
-    //public bool AddToQueue(string UrlToPlay, ref bool NewTrackPlaying)
-    //{//We add music tracks to a play list queue and then we poll the server so we know when to send the next track in the queue to play
-    //  if (!this.Connected) this.Connected = this.IsConnected();
-    //  if (!this.Connected) return false;
-    //  foreach (string Url in PlayListQueue.Values)
-    //  {
-    //    if (Url.ToLower() == UrlToPlay.ToLower())
-    //      return false;
-    //  }
-    //  PlayListQueue.Add(PlayListQueue.Count + 1, UrlToPlay);
-    //  if (!NewTrackPlaying)
-    //  {
-    //    PlayListPointer = PlayListQueue.Count + 1;
-    //    StopPlay(false);
-    //    TryToPlayFile(UrlToPlay);
-    //    NewTrackPlaying = true;
-    //  }
-    //  return false;
-    //}
+    #endregion
 
-    //private string NextPlayList(string ControlURL, string UrlToPlay, int Instance)
-    //{//Yes  this would be nice but it does not queue the track up and that is why we use our own queue and then poll the DLNA server to know when to play the next track
-    //    string XML = XMLHead;
-    //    XML += "<u:SetNextAVTransportURI xmlns:u=\"urn:schemas-upnp-org:service:AVTransport:1\">" + Environment.NewLine;
-    //    XML += "<InstanceID>" + Instance + "</InstanceID>" + Environment.NewLine;
-    //    XML += "<NextURI>" + UrlToPlay.Replace(" ", "%20") + "</NextURI>" + Environment.NewLine;
-    //    XML += "<NextURIMetaData>" + Desc() + "</NextURIMetaData>" + Environment.NewLine;
-    //    XML += "</u:SetNextAVTransportURI>" + Environment.NewLine;
-    //    XML += XMLFoot + Environment.NewLine;
-    //    Socket SocWeb = HelperDLNA.MakeSocket(this.IP, this.Port);
-    //    string Request = HelperDLNA.MakeRequest("POST", ControlURL, XML.Length, "urn:schemas-upnp-org:service:AVTransport:1#SetNextAVTransportURI", this.IP, this.Port) + XML;
-    //    SocWeb.Send(UTF8Encoding.UTF8.GetBytes(Request), SocketFlags.None);
-    //    string HTML = HelperDLNA.ReadSocket(SocWeb, true, ref this.ReturnCode);
-    //    return HTML;
-    //}
+    #region Seek
+
+    public string Seek(int Instance, string position)
+    {
+      string XML = XMLHead;
+      XML += "<u:Seek xmlns:u=\"urn:schemas-upnp-org:service:AVTransport:1\"><InstanceID>" + Instance + "</InstanceID><Unit>REL_TIME</Unit><Target>" + position + "</Target></u:Seek>" + Environment.NewLine;
+      XML += XMLFoot + Environment.NewLine;
+      Socket SocWeb = HelperDLNA.MakeSocket(this.IP, this.Port);
+      string Request = HelperDLNA.MakeRequest("POST", ControlURL, XML.Length, "urn:schemas-upnp-org:service:AVTransport:1#Seek", this.IP, this.Port) + XML;
+      SocWeb.Send(Encoding.UTF8.GetBytes(Request), SocketFlags.None);
+      return HelperDLNA.ReadSocket(SocWeb, true, ref this.ReturnCode);
+    }
+
+    #endregion
 
     #region UploadFileToPlay
 
@@ -359,6 +280,6 @@ namespace DLNA
 
     #endregion
 
-   
+
   }
 }

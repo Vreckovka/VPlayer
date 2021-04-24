@@ -28,6 +28,8 @@ using VPlayer.UPnP.ViewModels.UPnP;
 using VPlayer.UPnP.ViewModels.UPnP.TreeViewItems;
 using VPlayer.UPnP.Views;
 using UPnPService = global::UPnP.UPnPService;
+
+
 namespace VPlayer.UPnP.ViewModels
 {
   public class UPnPManagerViewModel : RegionViewModel<UPnPManagerView>
@@ -139,19 +141,27 @@ namespace VPlayer.UPnP.ViewModels
 
     #region Methods
 
+    #region Initialize
+
+    public override void Initialize()
+    {
+      base.Initialize();
+
+      MediaServers.OnActualItemChanged.Where(x => x != null).Subscribe(DiscoverServer).DisposeWith(this);
+
+      //LoadServers();
+      LoadRenderers();
+    }
+
+    #endregion
+
     #region OnActivation
 
     public override void OnActivation(bool firstActivation)
     {
       base.OnActivation(firstActivation);
 
-      if(firstActivation)
-      {
-        MediaServers.OnActualItemChanged.Where(x => x != null).Subscribe(DiscoverServer).DisposeWith(this);
-
-        LoadServers();
-        LoadRenderers();
-      }  
+     
     }
 
     #endregion
@@ -211,9 +221,19 @@ namespace VPlayer.UPnP.ViewModels
         vm.IsStored = true;
 
         Renderers.Add(vm);
+
+
       }
 
       Renderers.SelectedItem = Renderers.View.FirstOrDefault();
+
+
+      Task.Run(() =>
+      {
+        Renderers.SelectedItem.Model.Init();
+        Renderers.SelectedItem.Model.GetPositionInfoAsync();
+      });
+
     }
 
     #endregion
@@ -258,7 +278,7 @@ namespace VPlayer.UPnP.ViewModels
     {
       Application.Current.Dispatcher.Invoke(() =>
       {
-        var found = MediaServers.ViewModels.Any(x => x.Model.AliasURL == e.MediaServer.AliasURL);
+        var found = MediaServers.ViewModels.Any(x => x.Model.PresentationURL == e.MediaServer.PresentationURL);
 
         if (!found)
         {

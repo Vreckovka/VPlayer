@@ -31,7 +31,7 @@ namespace VPlayer.WindowsPlayer.Players
     void Pause();
     void Stop();
     void Reload();
-    public void SetNewMedia(Uri source);
+    public Task SetNewMedia(Uri source);
 
    
   }
