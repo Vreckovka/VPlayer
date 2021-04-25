@@ -36,11 +36,13 @@ namespace VPlayer.IPTV
       IRegionProvider regionProvider,
       IWindowManager windowManager,
       IStorageManager storageManager,
-      IViewModelsFactory viewModelsFactory) : base(regionProvider)
+      IViewModelsFactory viewModelsFactory,
+      MiniTvPlayerViewModel tvPlayerViewModel) : base(regionProvider)
     {
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+      TvPlayerViewModel = tvPlayerViewModel;
     }
 
     #endregion
@@ -50,6 +52,7 @@ namespace VPlayer.IPTV
     public override string Header => "IPTV Management";
     public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
 
+    public MiniTvPlayerViewModel TvPlayerViewModel { get; set; }
 
     #region TVSources
 

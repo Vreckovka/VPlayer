@@ -4,7 +4,7 @@
   {
     #region Properties
 
-    int Id { get; set; }
+    public int Id { get; set; }
 
     #endregion Properties
   }
@@ -18,7 +18,7 @@
     #endregion Properties
   }
 
-  public interface DownloadableEntity : IEntity
+  public interface IDownloadableEntity : IEntity
   {
     InfoDownloadStatus InfoDownloadStatus { get; set; }
   }

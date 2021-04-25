@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore;
+using VCore.Helpers;
 using VCore.Standard;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
@@ -39,6 +41,12 @@ namespace VPlayer.IPTV.ViewModels
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
+
+      this.ObservePropertyChange(x => x.ActualFilter).Throttle(TimeSpan.FromMilliseconds(300)).ObserveOnDispatcher().Subscribe(x =>
+      {
+        TvChannels.Filter(x => IsInFind(x.Model.Name, actualFilter));
+      });
+
     }
 
     #region Properties
@@ -145,9 +153,6 @@ namespace VPlayer.IPTV.ViewModels
         if (value != actualFilter)
         {
           actualFilter = value;
-
-          TvChannels.Filter(x => IsInFind(x.Model.Name, actualFilter));
-
           RaisePropertyChanged();
         }
       }

@@ -72,7 +72,10 @@ namespace VPlayer.IPTV.ViewModels
 
       if (null == data) return;
 
-      var tvChannelViewModel = (TvChannelGroupViewModel)data.GetData(data.GetFormats()[0]);
+      var tvChannelViewModel = data.GetData(data.GetFormats()[0]) as TvChannelGroupViewModel;
+
+      if (tvChannelViewModel == null)
+        return;
 
       if (Model.PlaylistItems == null)
       {

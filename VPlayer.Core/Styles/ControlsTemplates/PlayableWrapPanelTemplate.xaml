@@ -7,7 +7,8 @@
                     xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF"
                     xmlns:domainClasses="clr-namespace:VPlayer.AudioStorage.DomainClasses;assembly=VPlayer.AudioStorage"
                     xmlns:library="clr-namespace:VPlayer.Library"
-                    xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF">
+                    xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF"
+                    xmlns:domainClasses1="clr-namespace:VPlayer.AudioStorage.DomainClasses;assembly=VPLayer.Domain">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
@@ -151,7 +152,7 @@
                                     <Style TargetType="Grid">
                                         <Setter Property="Background" Value="Transparent" />
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses:InfoDownloadStatus.Downloading}">
+                                            <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.Downloading}">
                                                 <DataTrigger.EnterActions>
                                                     <RemoveStoryboard BeginStoryboardName="RemoveDownloadingStoryboard" />
                                                     <BeginStoryboard x:Name="DownloadingStoryboard">
@@ -267,7 +268,7 @@
                                                         <Style TargetType="Path">
                                                             <Setter Property="Fill" Value="White" />
                                                             <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses:InfoDownloadStatus.Downloading}">
+                                                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.Downloading}">
                                                                     <Setter Property="Opacity" Value="0" />
                                                                 </DataTrigger>
                                                             </Style.Triggers>
@@ -282,23 +283,23 @@
                                                     <Path.Style>
                                                         <Style BasedOn="{StaticResource GearCircle}" TargetType="Path">
                                                             <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses:InfoDownloadStatus.Downloaded}">
+                                                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.Downloaded}">
                                                                     <Setter Property="Fill" Value="#80e83f" />
                                                                     <Setter Property="ToolTip" Value="Downloaded" />
                                                                 </DataTrigger>
-                                                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses:InfoDownloadStatus.Downloading}">
+                                                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.Downloading}">
                                                                     <Setter Property="Fill" Value="#3fade8" />
                                                                     <Setter Property="ToolTip" Value="Downloading" />
                                                                 </DataTrigger>
-                                                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses:InfoDownloadStatus.Failed}">
+                                                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.Failed}">
                                                                     <Setter Property="Fill" Value="#e8453f" />
                                                                     <Setter Property="ToolTip" Value="Failed" />
                                                                 </DataTrigger>
-                                                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses:InfoDownloadStatus.UnableToFind}">
+                                                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.UnableToFind}">
                                                                     <Setter Property="Fill" Value="#e8453f" />
                                                                     <Setter Property="ToolTip" Value="Unable to find" />
                                                                 </DataTrigger>
-                                                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses:InfoDownloadStatus.Waiting}">
+                                                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.Waiting}">
                                                                     <Setter Property="Fill" Value="#e8a43f" />
                                                                     <Setter Property="ToolTip" Value="Waiting" />
                                                                 </DataTrigger>
@@ -321,7 +322,7 @@
                                                             <Setter Property="Opacity" Value="1" />
                                                             <Setter Property="Data" Value="M 93.148438 80.832031 C 109.5 57.742188 104.03125 25.769531 80.941406 9.421875 C 57.851562 -6.925781 25.878906 -1.460938 9.53125 21.632812 C -6.816406 44.722656 -1.351562 76.691406 21.742188 93.039062 C 38.222656 104.707031 60.011719 105.605469 77.394531 95.339844 L 115.164062 132.882812 C 119.242188 137.175781 126.027344 137.347656 130.320312 133.269531 C 134.613281 129.195312 134.785156 122.410156 130.710938 118.117188 C 130.582031 117.980469 130.457031 117.855469 130.320312 117.726562 Z M 51.308594 84.332031 C 33.0625 84.335938 18.269531 69.554688 18.257812 51.308594 C 18.253906 33.0625 33.035156 18.269531 51.285156 18.261719 C 69.507812 18.253906 84.292969 33.011719 84.328125 51.234375 C 84.359375 69.484375 69.585938 84.300781 51.332031 84.332031 C 51.324219 84.332031 51.320312 84.332031 51.308594 84.332031 Z M 51.308594 84.332031 " />
                                                             <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses:InfoDownloadStatus.Failed}">
+                                                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.Failed}">
                                                                     <Setter Property="Data" Value="m194.800781 164.769531 128.210938-128.214843c8.34375-8.339844 8.34375-21.824219 0-30.164063-8.339844-8.339844-21.824219-8.339844-30.164063 0l-128.214844 128.214844-128.210937-128.214844c-8.34375-8.339844-21.824219-8.339844-30.164063 0-8.34375 8.339844-8.34375 21.824219 0 30.164063l128.210938 128.214843-128.210938 128.214844c-8.34375 8.339844-8.34375 21.824219 0 30.164063 4.15625 4.160156 9.621094 6.25 15.082032 6.25 5.460937 0 10.921875-2.089844 15.082031-6.25l128.210937-128.214844 128.214844 128.214844c4.160156 4.160156 9.621094 6.25 15.082032 6.25 5.460937 0 10.921874-2.089844 15.082031-6.25 8.34375-8.339844 8.34375-21.824219 0-30.164063zm0 0" />
                                                                 </DataTrigger>
                                                             </Style.Triggers>

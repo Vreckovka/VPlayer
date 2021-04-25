@@ -3,11 +3,6 @@ using VPlayer.Core.ViewModels;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
-  public interface IUpdateable<TEntity> 
-  {
-    void Update(TEntity other);
-  }
-
   public class Song : INamedEntity, IUpdateable<Song>, IFilePlayableModel
   {
     #region Constructors

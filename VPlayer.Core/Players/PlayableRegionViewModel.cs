@@ -98,24 +98,6 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    //#region MediaPlayer
-
-    //private MediaPlayer mediaPlayer;
-    //public MediaPlayer MediaPlayer
-    //{
-    //  get { return mediaPlayer; }
-    //  set
-    //  {
-    //    if (value != mediaPlayer)
-    //    {
-    //      mediaPlayer = value;
-    //      RaisePropertyChanged();
-    //    }
-    //  }
-    //}
-
-    //#endregion
-
     #region EventAgreggator
 
     protected IEventAggregator eventAggregator;
@@ -521,7 +503,7 @@ namespace VPlayer.Core.ViewModels
 
     #region HookToPubSubEvents
 
-    private void HookToPubSubEvents()
+    protected virtual void HookToPubSubEvents()
     {
       eventAggregator.GetEvent<RemoveFromPlaylistEvent<TItemViewModel>>().Subscribe(RemoveItemsFromPlaylist).DisposeWith(this);
       eventAggregator.GetEvent<PlaySongsFromPlayListEvent<TItemViewModel>>().Subscribe(PlayItemFromPlayList).DisposeWith(this);
@@ -642,10 +624,14 @@ namespace VPlayer.Core.ViewModels
       });
     }
 
+    #region OnEndReached
+
     protected virtual void OnEndReached()
     {
       Task.Run(() => PlayNextWithItem());
     }
+
+    #endregion
 
     #region PlayNextWithItem
 

@@ -15,6 +15,7 @@
              xmlns:templateSelectors="clr-namespace:VPlayer.IPTV.TemplateSelectors"
              xmlns:viewModels="clr-namespace:VPlayer.IPTV.ViewModels"
              xmlns:vlc="clr-namespace:VPlayer.WindowsPlayer.Vlc;assembly=VVLC"
+             xmlns:iptv="clr-namespace:VPlayer.WindowsPlayer.Views.WindowsPlayer.IPTV"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
@@ -22,6 +23,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Listview.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
 
@@ -115,7 +117,9 @@
                             <ColumnDefinition Width="auto" />
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Margin="5" FontSize="20" Grid.Column="0">
+                        <TextBlock Grid.Column="0"
+                                   Margin="5"
+                                   FontSize="20">
                             <Run Text="{Binding Name, Mode=OneWay}" />
                         </TextBlock>
 
@@ -172,7 +176,7 @@
                                            Text="Tv channels" />
                             </Border>
 
-                           
+
 
                             <ListView Grid.Row="1"
                                       Grid.ColumnSpan="2"
@@ -180,6 +184,11 @@
                                       BorderBrush="#252525"
                                       BorderThickness="0,0,0,0"
                                       ItemsSource="{Binding TvChannels.View}">
+                                <ListView.ItemContainerStyle>
+                                    <Style BasedOn="{StaticResource ListViewItemStyle}" TargetType="ListViewItem">
+                                        <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                                    </Style>
+                                </ListView.ItemContainerStyle>
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <Grid>
@@ -291,11 +300,7 @@
                                               VerticalAlignment="Bottom"
                                               Background="{StaticResource DefaultRedBrush}" />
                                     </adornedControl:AdornedControl.AdornerContent>
-
                                 </adornedControl:AdornedControl>
-
-
-
                             </DataTemplate>
                         </TreeView.ItemTemplate>
                     </TreeView>
@@ -405,6 +410,17 @@
                 </Grid>
             </Border>
         </Grid>
+
+        <Border Grid.Row="1"
+                Width="350"
+                Height="196.88"
+                Padding="4"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Background="#080808"
+                DataContext="{Binding TvPlayerViewModel}">
+            <iptv:IPTVPlayerView />
+        </Border>
     </Grid>
     <!--</ScrollViewer>-->
 </UserControl>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -163,7 +164,19 @@ namespace VPlayer.IPTV
       }
     }
 
+
+
     #endregion
+
+    public ITvItem TvItem
+    {
+      get
+      {
+        return Model?.TvChannel?.TvItem;
+      }
+    }
+
+    #region Methods
 
     #region Initialize
 
@@ -218,7 +231,7 @@ namespace VPlayer.IPTV
           ActualCancellationTokenSource = pCancellationToken;
 
 
-        Url = await TvChannel.InitilizeUrl(ActualCancellationTokenSource.Token);
+        Url = await TvChannel.InitilizeUrl(ActualCancellationTokenSource);
 
         return Url;
       }
@@ -233,5 +246,17 @@ namespace VPlayer.IPTV
       TvChannel.RefreshSource();
     }
 
+    #endregion
+
+    public ITvChannel SelectedTvChannel
+    {
+      get
+      {
+        return this;
+      }
+      set { }
+    }
+
+    public IEnumerable<ITvChannel> TvChannelsSources { get; set; }
   }
 }

@@ -26,6 +26,7 @@ namespace VPlayer.Core.ViewModels
     where TPlaylistItemModel : IItemInPlaylist<TModel>
   {
     private long lastTimeChangedMs;
+    
 
     protected FilePlayableRegionViewModel(IRegionProvider regionProvider, IKernel kernel, ILogger logger,
       IStorageManager storageManager,

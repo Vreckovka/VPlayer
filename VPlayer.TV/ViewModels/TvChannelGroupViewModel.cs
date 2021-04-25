@@ -16,6 +16,7 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Factories;
 using VPLayer.Domain.Contracts.IPTV;
+using VPlayer.IPTV.Events;
 using VPlayer.IPTV.ViewModels;
 using VPlayer.IPTV.ViewModels.Prompts;
 using VPlayer.IPTV.Views.Prompts;
@@ -69,6 +70,11 @@ namespace VPlayer.IPTV
 
           selectedTvChannel = value;
           selectedTvChannel.IsSelectedToPlay = true;
+
+          if (SubItems.View.Any(x => x.IsSelected))
+          {
+            PlayActualTvChannel();
+          }
 
           RaisePropertyChanged();
         }
@@ -137,7 +143,12 @@ namespace VPlayer.IPTV
 
       if (null == data) return;
 
-      var tvChannelViewModel = (TvChannelViewModel)data.GetData(data.GetFormats()[0]);
+      var tvChannelViewModel = data.GetData(data.GetFormats()[0]) as TvChannelViewModel;
+
+      if(tvChannelViewModel == null)
+      {
+        return;
+      }
 
       if (Model.TvChannelGroupItems == null)
       {
@@ -199,24 +210,15 @@ namespace VPlayer.IPTV
       {
         SelectedTvChannel = SubItems.ViewModels.OfType<TvChannelItemGroupViewModel>().FirstOrDefault();
       }
-
-
+      
       if (SelectedTvChannel != null)
       {
-        var eventToPublis = eventAggregator.GetEvent<PlayItemsEvent<TvItem, TvItemInPlaylistItemViewModel>>();
-        var thisInterfaced = (ITvPlayableItem)this;
-
-        var arguemts = viewModelsFactory.CreateTvItemInPlaylistItemViewModel(Model.TvItem, thisInterfaced);
-
-        var data = new PlayItemsEventData<TvItemInPlaylistItemViewModel>(arguemts.GetEnummerable(), EventAction.Play, this)
-        {
-          StorePlaylist = false,
-          SetItemOnly = true
-        };
+        var eventToPublis = eventAggregator.GetEvent<PlayChannelEvent>();
 
         TvChannelsSources = SubItems.ViewModels.OfType<TvChannelItemGroupViewModel>();
         SelectedTvChannel.IsSelected = true;
-        eventToPublis.Publish(data);
+
+        eventToPublis.Publish(SelectedTvChannel);
       }
     }
 
@@ -266,6 +268,8 @@ namespace VPlayer.IPTV
 
     #endregion
 
+    #region OnDelete
+
     protected override void OnDelete()
     {
       var question = windowManager.ShowYesNoPrompt($"Do you really want to delete {Name}?", "Delete tv group");
@@ -275,6 +279,8 @@ namespace VPlayer.IPTV
         storageManager.DeleteTvChannelGroup(Model);
       }
     }
+
+    #endregion
 
     #endregion
   }

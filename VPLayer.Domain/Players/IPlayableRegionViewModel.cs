@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using LibVLCSharp.Shared;
 using VCore.ViewModels;
 using VPlayer.WindowsPlayer.Players;
 

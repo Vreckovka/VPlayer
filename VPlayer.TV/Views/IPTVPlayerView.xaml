@@ -9,6 +9,7 @@
              xmlns:viewModels="clr-namespace:VPlayer.IPTV.ViewModels;assembly=VPlayer.IPTV"
              xmlns:viewModels1="clr-namespace:VPlayer.IPTV.ViewModels;assembly=VPLayer.Domain"
              xmlns:vlc="clr-namespace:VPlayer.WindowsPlayer.Vlc;assembly=VVLC"
+             xmlns:behaviors1="clr-namespace:VPlayer.WindowsPlayer.Behaviors;assembly=VPlayer.Core"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
@@ -72,8 +73,14 @@
 
 
             <b:Interaction.Behaviors>
-                <behaviors:FullScreenBehavior x:Name="FullScreenBehavior" PlayerDataContext="{Binding PlayerViewModel}" />
+                <behaviors1:FullScreenBehavior x:Name="FullScreenBehavior" PlayerDataContext="{Binding PlayerViewModel}" />
             </b:Interaction.Behaviors>
         </Grid>
+
+        <b:Interaction.Triggers>
+            <b:EventTrigger EventName="Loaded">
+                <b:InvokeCommandAction Command="{Binding VideoViewInitlized}" />
+            </b:EventTrigger>
+        </b:Interaction.Triggers>
     </vlc:VideoView>
 </UserControl>

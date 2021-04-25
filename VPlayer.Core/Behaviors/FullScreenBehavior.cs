@@ -14,10 +14,6 @@ using Ninject;
 using Prism.Events;
 using VCore.Helpers;
 using VPlayer.Core.Events;
-using VPlayer.Player.Behaviors;
-using VPlayer.WindowsPlayer.ViewModels;
-using VPlayer.WindowsPlayer.Views;
-using VPlayer.WindowsPlayer.Views.WindowsPlayer;
 using VPlayer.WindowsPlayer.Vlc;
 using VPlayer.WindowsPlayer.Vlc.Controls;
 

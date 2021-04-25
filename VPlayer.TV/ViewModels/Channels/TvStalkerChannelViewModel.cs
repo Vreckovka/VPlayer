@@ -5,6 +5,7 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using IPTVStalker;
+using Prism.Events;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPLayer.Domain.Contracts.IPTV;
 
@@ -14,33 +15,40 @@ namespace VPlayer.IPTV.ViewModels
   {
     private SerialDisposable serialDisposable = new SerialDisposable();
     public readonly IPTVStalkerService stalkerService;
-
-    public TvStalkerChannelViewModel(TvChannel model, IPTVStalkerService stalkerService) : base(model)
+    private string commnad;
+    public TvStalkerChannelViewModel(TvChannel model, IPTVStalkerService stalkerService, IEventAggregator eventAggregator) : base(model, eventAggregator)
     {
       this.stalkerService = stalkerService ?? throw new ArgumentNullException(nameof(stalkerService));
 
       Url = null;
+      commnad = Model.TvItem.Source;
     }
 
 
     #region InitilizeUrl
 
-    public override Task<string> InitilizeUrl(CancellationToken cancellationToken)
+    public override Task<string> InitilizeUrl(CancellationTokenSource cancellationToken)
     {
+      if (cancellationToken == null)
+      {
+        cancellationToken = new CancellationTokenSource();
+      }
+
       return Task.Run(async () =>
       {
         Url = null;
 
         var token = stalkerService.bearerToken;
+
         if (Url == null && Model != null)
         {
-          Url = await stalkerService.GetLink(Model.TvItem.Source,cancellationToken);
+          Url = await stalkerService.GetLink(commnad, cancellationToken.Token);
 
           serialDisposable.Disposable = Observable.Timer(TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(10)).Subscribe(x => KeepAlive());
         }
 
         return Url;
-      }, cancellationToken);
+      }, cancellationToken.Token);
     }
 
 
@@ -60,11 +68,15 @@ namespace VPlayer.IPTV.ViewModels
     {
       stalkerService.RefreshService();
 
-      InitilizeUrl(new CancellationTokenSource().Token);
+      ActualCancellationTokenSource = new CancellationTokenSource();
+
+      InitilizeUrl(ActualCancellationTokenSource);
     }
 
     protected override void OnSelected(bool isSelected)
     {
+      base.OnSelected(isSelected);
+
       if (!isSelected)
       {
         serialDisposable?.Disposable?.Dispose();

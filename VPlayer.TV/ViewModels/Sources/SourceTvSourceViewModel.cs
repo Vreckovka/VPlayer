@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
+using VCore.Helpers;
 using VCore.Standard.Factories.ViewModels;
 using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
@@ -29,6 +30,8 @@ namespace VPlayer.IPTV.ViewModels
       }
 
       Url = tVSource.SourceConnection;
+
+     
     }
 
     #region Url

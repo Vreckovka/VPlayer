@@ -9,15 +9,18 @@ using VPLayer.Domain.Contracts.IPTV;
 namespace VPlayer.IPTV.ViewModels
 {
   [Serializable]
-  public class TvItem : DomainEntity , IPlayableModel, IUpdateable<TvItem>
+  public class TvItem : DomainEntity, ITvItem, IUpdateable<TvItem>
   {
     public string Source { get; set; }
     public string Name { get; set; }
     public bool IsFavorite { get; set; }
+
     public void Update(TvItem other)
     {
       throw new System.NotImplementedException();
     }
+
+  
   }
 
 

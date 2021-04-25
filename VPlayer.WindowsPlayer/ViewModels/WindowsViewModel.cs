@@ -146,7 +146,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         var libraryViewModel = viewModelsFactory.Create<LibraryViewModel>();
         var musicPlayer = viewModelsFactory.Create<MusicPlayerViewModel>();
         var videoPlayer = viewModelsFactory.Create<VideoPlayerViewModel>();
-        var tvPlayer = viewModelsFactory.Create<TvPlayerViewModel>();
+        var tvPlayer = viewModelsFactory.Create<WindowsIPTVPlayer>();
         var settings = viewModelsFactory.Create<SettingsViewModel>();
 
       

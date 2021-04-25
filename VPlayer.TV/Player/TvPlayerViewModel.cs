@@ -10,15 +10,18 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using IPTVStalker;
 using IPTVStalker.Domain;
 using LibVLCSharp.Shared;
 using Logger;
 using Ninject;
 using Prism.Events;
+using VCore;
 using VCore.Helpers;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard;
+using VCore.Standard.Modularity.Interfaces;
 using VCore.Standard.ViewModels.TreeView;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -26,19 +29,17 @@ using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.Providers;
 using VPlayer.Core.ViewModels;
-using VPlayer.Player.Views.WindowsPlayer;
+using VPLayer.Domain.Contracts.IPTV;
 using VPlayer.WindowsPlayer.Players;
-using VPlayer.WindowsPlayer.ViewModels;
-using VPlayer.WindowsPlayer.Views.WindowsPlayer;
-using VPlayer.WindowsPlayer.Views.WindowsPlayer.IPTV;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 
 namespace VPlayer.IPTV.ViewModels
 {
-  public class TvPlayerViewModel : PlayableRegionViewModel<WindowsPlayerView, TvItemInPlaylistItemViewModel, TvPlaylist, TvPlaylistItem, TvItem>
+  public class TvPlayerViewModel<TView> : PlayableRegionViewModel<TView, TvItemInPlaylistItemViewModel, TvPlaylist, TvPlaylistItem, TvItem> where TView : class, IView
   {
     private readonly IIptvStalkerServiceProvider iptvStalkerServiceProvider;
     private SerialDisposable channelLoadedSerialDisposable = new SerialDisposable();
+    private TaskCompletionSource<bool> loadedTask = new TaskCompletionSource<bool>();
 
     public TvPlayerViewModel(IRegionProvider regionProvider, IKernel kernel, ILogger logger,
       IStorageManager storageManager,
@@ -52,6 +53,44 @@ namespace VPlayer.IPTV.ViewModels
     public override bool ContainsNestedRegions => true;
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
     public override string Header => "IPTV Player";
+
+    #region Commands
+
+    #region VideoViewInitlized
+
+    private ActionCommand videoViewInitlized;
+
+    public ICommand VideoViewInitlized
+    {
+      get
+      {
+        if (videoViewInitlized == null)
+        {
+          videoViewInitlized = new ActionCommand(OnVideoViewInitlized);
+        }
+
+        return videoViewInitlized;
+      }
+    }
+
+    public void OnVideoViewInitlized()
+    {
+      if (!loadedTask.Task.IsCompleted)
+        loadedTask.SetResult(true);
+    }
+
+    #endregion
+
+    #endregion
+
+    #region WaitForInitilization
+
+    protected override Task WaitForVlcInitilization()
+    {
+      return loadedTask.Task;
+    }
+
+    #endregion 
 
     #region OnSetActualItem
 
@@ -73,20 +112,6 @@ namespace VPlayer.IPTV.ViewModels
       else
       {
         refreshSourceDisposable?.Dispose();
-      }
-    }
-
-    #endregion
-
-    #region OnActivation
-
-    public override void OnActivation(bool firstActivation)
-    {
-      base.OnActivation(firstActivation);
-
-      if (firstActivation)
-      {
-        var view = regionProvider.RegisterView<IPTVPlayerView, TvPlayerViewModel>(RegionNames.PlayerContentRegion, this, false, out var guid, RegionManager);
       }
     }
 
@@ -120,6 +145,7 @@ namespace VPlayer.IPTV.ViewModels
 
     #endregion
 
+    #region OnVlcError
 
     protected override void OnVlcError()
     {
@@ -128,8 +154,11 @@ namespace VPlayer.IPTV.ViewModels
         ActualItem.State = TVChannelState.Error;
         ActualItem.RefreshSource();
       }
-
     }
+
+    #endregion
+
+    #region OnMediaPlayerStopped
 
     protected override void OnMediaPlayerStopped()
     {
@@ -148,11 +177,7 @@ namespace VPlayer.IPTV.ViewModels
       }
     }
 
-    protected override void OnEndReached()
-    {
-    }
-
-
+    #endregion
 
     #region HookToVlcEvents
 

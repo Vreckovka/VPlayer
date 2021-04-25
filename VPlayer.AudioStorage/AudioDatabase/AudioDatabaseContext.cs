@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.DomainClasses.UPnP;
 using VPlayer.AudioStorage.DomainClasses.Video;
+using VPlayer.IPTV.ViewModels;
 
 namespace VPlayer.AudioStorage.AudioDatabase
 {
@@ -59,9 +61,11 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region Constructors
 
+    private string directory;
     public AudioDatabaseContext() : base()
     {
-      var directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VPlayer");
+      directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VPlayer");
+
       if (!Directory.Exists(directory))
       {
         Directory.CreateDirectory(directory);
@@ -71,11 +75,17 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #endregion
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+      base.OnModelCreating(modelBuilder);
+
+    }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
       base.OnConfiguring(optionsBuilder);
 
-      optionsBuilder.UseSqlite("Data Source=C:\\Users\\Roman Pecho\\AppData\\Roaming\\VPlayer\\VPlayerDatabase.db;");
+      optionsBuilder.UseSqlite($"Data Source={directory}\\VPlayerDatabase.db;");
     }
   
 

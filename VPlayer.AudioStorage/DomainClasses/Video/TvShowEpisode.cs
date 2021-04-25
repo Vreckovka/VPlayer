@@ -3,7 +3,7 @@ using VPlayer.Core.ViewModels;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
-  public class TvShowEpisode : DomainEntity, IUpdateable<TvShowEpisode>, DownloadableEntity, IPlayableModel
+  public class TvShowEpisode : DomainEntity, IUpdateable<TvShowEpisode>, IDownloadableEntity, IPlayableModel
   {
     public TvShowEpisode()
     {

@@ -26,11 +26,11 @@ namespace VPlayer.WindowsPlayer.Modularity.NinjectModule
 
       Kernel.Bind<VideoPlayerViewModel>().ToSelf().InSingletonScope();
       Kernel.Bind<MusicPlayerViewModel>().ToSelf().InSingletonScope();
-      Kernel.Bind<TvPlayerViewModel>().ToSelf().InSingletonScope();
+      Kernel.Bind<WindowsIPTVPlayer>().ToSelf().InSingletonScope();
 
       var videoPlayerViewModel = Kernel.Get<VideoPlayerViewModel>();
       var musicPlayerViewModel = Kernel.Get<MusicPlayerViewModel>();
-      var tvPlayerViewModel = Kernel.Get<TvPlayerViewModel>();
+      var tvPlayerViewModel = Kernel.Get<WindowsIPTVPlayer>();
 
       Kernel.Bind<IPlayableRegionViewModel>().ToConstant(videoPlayerViewModel);
       Kernel.Bind<IPlayableRegionViewModel>().ToConstant(musicPlayerViewModel);

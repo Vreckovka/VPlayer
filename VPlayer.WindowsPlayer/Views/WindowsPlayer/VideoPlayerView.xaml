@@ -17,6 +17,7 @@
              xmlns:popups="clr-namespace:VCore.WPF.Behaviors.Popups;assembly=VCore.WPF"
              xmlns:vlc="clr-namespace:VPlayer.WindowsPlayer.Vlc"
              xmlns:vlc1="clr-namespace:VPlayer.WindowsPlayer.Vlc;assembly=VVLC"
+             xmlns:behaviors2="clr-namespace:VPlayer.WindowsPlayer.Behaviors;assembly=VPlayer.Core"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
@@ -284,7 +285,7 @@
                                                 Visibility="Hidden" />
 
                     <b:Interaction.Behaviors>
-                        <behaviors1:FullScreenBehavior x:Name="FullScreenBehavior" PlayerDataContext="{Binding PlayerViewModel}" />
+                        <behaviors2:FullScreenBehavior x:Name="FullScreenBehavior" PlayerDataContext="{Binding PlayerViewModel}" />
                     </b:Interaction.Behaviors>
                 </Grid>
 

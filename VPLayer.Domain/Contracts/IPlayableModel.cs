@@ -1,11 +1,12 @@
-﻿namespace VPlayer.Core.ViewModels
+﻿using VPlayer.AudioStorage.DomainClasses;
+
+namespace VPlayer.Core.ViewModels
 {
-  public interface IPlayableModel
+  public interface IPlayableModel : IEntity
   {
-    string Source { get; set; }
-    int Id { get; set; }
-    string Name { get; set; }
-    bool IsFavorite { get; set; }
+    public string Source { get; set; }
+    public string Name { get; set; }
+    public bool IsFavorite { get; set; }
   }
 
   public interface IFilePlayableModel : IPlayableModel

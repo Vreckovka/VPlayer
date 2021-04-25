@@ -55,7 +55,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
   public class VideoPlayerViewModel : FilePlayableRegionViewModel<WindowsPlayerView, VideoItemInPlaylistViewModel, VideoFilePlaylist, PlaylistVideoItem, VideoItem>
   {
     private readonly IWindowManager windowManager;
-    protected TaskCompletionSource<bool> loadedTask = new TaskCompletionSource<bool>();
+    private TaskCompletionSource<bool> loadedTask = new TaskCompletionSource<bool>();
 
     #region Constructors
 
@@ -70,10 +70,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
       base(regionProvider, kernel, logger, storageManager, eventAggregator, vLCPlayer)
     {
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
-
-
-
-
     }
 
     #endregion
@@ -187,8 +183,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
 
     #endregion
-
-
 
     #endregion
 
@@ -630,9 +624,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         SelectAspectCropRatios();
       });
-
-
     }
+
+    #endregion
+
+    #region MediaPlayer_ESAdded
 
     private void MediaPlayer_ESAdded(object sender, MediaPlayerESAddedEventArgs e)
     {
@@ -651,8 +647,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
       }
     }
 
-
     #endregion
+
+    #region ReloadSubtitles
 
     private void ReloadSubtitles()
     {
@@ -685,6 +682,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
       });
     }
+
+    #endregion
 
     #region SelectAspectCropRatios
 

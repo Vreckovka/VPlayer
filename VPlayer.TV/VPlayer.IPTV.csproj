@@ -20,4 +20,17 @@
 	  <ProjectReference Include="..\VVLC\VVLC.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Update="Views\IPTVPlayerView.xaml.cs">
+	    <SubType>Code</SubType>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Views\IPTVPlayerView.xaml">
+	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	    <SubType>Designer</SubType>
+	  </Page>
+	</ItemGroup>
+
 </Project>

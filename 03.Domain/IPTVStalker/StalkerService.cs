@@ -65,7 +65,7 @@ namespace IPTVStalker
 
     #region Methods
 
-    private async void Prepare()
+    private async Task Prepare()
     {
       bearerToken = await GetToken();
       await GetProfile();
@@ -114,7 +114,7 @@ namespace IPTVStalker
     {
       if (!wasPrepared)
       {
-        Prepare();
+        await Prepare();
       }
 
       cmd = cmd.Replace(" ", "+");

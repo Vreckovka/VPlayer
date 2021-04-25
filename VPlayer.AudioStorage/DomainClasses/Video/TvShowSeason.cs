@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace VPlayer.AudioStorage.DomainClasses.Video
 {
-  public class TvShowSeason : DomainEntity, DownloadableEntity, IUpdateable<TvShowSeason>
+  public class TvShowSeason : DomainEntity, IDownloadableEntity, IUpdateable<TvShowSeason>
   {
     public TvShowSeason()
     {

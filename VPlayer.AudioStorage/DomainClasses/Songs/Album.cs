@@ -3,16 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
-  public enum InfoDownloadStatus
-  {
-    Waiting,
-    Downloading,
-    Downloaded,
-    Failed,
-    UnableToFind
-  }
-
-  public class Album : DownloadableEntity, IUpdateable<Album>, INamedEntity
+  public class Album : IDownloadableEntity, IUpdateable<Album>, INamedEntity
   {
     #region Constructors
 
