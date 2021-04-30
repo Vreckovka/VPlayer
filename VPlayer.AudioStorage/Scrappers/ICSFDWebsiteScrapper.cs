@@ -5,5 +5,7 @@ namespace VPlayer.AudioStorage.Parsers
   public interface ICSFDWebsiteScrapper
   {
     CSFDTVShow LoadTvShow(string url);
+
+    CSFDTVShowSeason LoadTvShowSeason(string url);
   }
 }

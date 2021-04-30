@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Input;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
+using VCore;
 using VCore.Standard.Factories.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.Video;
@@ -44,6 +46,7 @@ namespace VPlayer.Core.ViewModels.TvShows
 
     #endregion
 
+    
     public override string ImageThumbnail => Model.PosterPath;
 
     #region Update

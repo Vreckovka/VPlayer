@@ -23,12 +23,17 @@ namespace VPlayer.AudioStorage.DomainClasses.Video
 
       if (other.Seasons != null && Seasons != null)
       {
-        foreach (var episode in other.Seasons)
+        foreach (var showSeason in other.Seasons)
         {
-          var mineEpisode = Seasons.Single(x => x.Id == episode.Id);
+          var mineEpisode = Seasons.SingleOrDefault(x => x.Id == showSeason.Id);
 
-          mineEpisode.Update(episode);
+          if (mineEpisode != null)
+            mineEpisode.Update(showSeason);
         }
+
+        var notIn = other.Seasons.Where(x => x.Id == 0);
+
+        Seasons.AddRange(notIn);
       }
     }
   }

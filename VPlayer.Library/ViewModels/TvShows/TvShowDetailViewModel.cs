@@ -11,6 +11,7 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.TvShows;
 using VPlayer.Library.Views.TvShows;
+using VPlayer.WindowsPlayer.ViewModels.Windows;
 
 namespace VPlayer.Library.ViewModels.TvShows
 {
@@ -29,6 +30,32 @@ namespace VPlayer.Library.ViewModels.TvShows
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
     }
+
+    #region AddToPlaylist
+
+    private ActionCommand addNewSeason;
+
+    public ICommand AddNewSeason
+    {
+      get
+      {
+        if (addNewSeason == null)
+        {
+          addNewSeason = new ActionCommand(OnAddNewSeason);
+        }
+
+        return addNewSeason;
+      }
+    }
+
+    public void OnAddNewSeason()
+    {
+      var vm = viewModelsFactory.Create<AddNewTvShowSeasonViewModel>(ViewModel.Model);
+
+      windowManager.ShowPrompt<TvShowDetailAddNewSeason>(vm);
+    }
+
+    #endregion 
 
     #region OnUpdate
 

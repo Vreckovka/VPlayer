@@ -7,7 +7,7 @@ namespace VPlayer.AudioStorage.DomainClasses.Video
   {
     public TvShowSeason()
     {
-      
+
     }
     public TvShowSeason(TvShow tvShow)
     {
@@ -34,10 +34,16 @@ namespace VPlayer.AudioStorage.DomainClasses.Video
       {
         foreach (var episode in other.Episodes)
         {
-          var mineEpisode = Episodes.Single(x => x.Id == episode.Id);
+          var mineEpisode = Episodes.SingleOrDefault(x => x.Id == episode.Id);
 
-          mineEpisode.Update(episode);
+          if (mineEpisode != null)
+            mineEpisode.Update(episode);
         }
+
+        var notIn = other.Episodes.Where(x => x.Id == 0);
+
+        Episodes.AddRange(notIn);
+
       }
     }
   }

@@ -106,7 +106,7 @@ namespace VPlayer.AudioStorage.Scrappers
 
           dbTvShow.InfoDownloadStatus = InfoDownloadStatus.Downloaded;
 
-          await storageManager.UpdateWholeTvShow(dbTvShow);
+          await storageManager.DeepUpdateTvShow(dbTvShow);
 
           var statusMessage = new StatusMessage(1)
           {
@@ -140,6 +140,95 @@ namespace VPlayer.AudioStorage.Scrappers
     }
 
     #endregion
+
+    public Task UpdateTvShowSeasonFromCsfd(int tvShowSeasonId, string csfUrl)
+    {
+      return Task.Run(async () =>
+      {
+        try
+        {
+          var dbTvShowSeason = storageManager.GetRepository<TvShowSeason>().Include(x => x.Episodes).ThenInclude(x => x.VideoItem).Single(x => x.Id == tvShowSeasonId);
+
+          dbTvShowSeason.InfoDownloadStatus = InfoDownloadStatus.Downloading;
+
+          Application.Current.Dispatcher.Invoke(() =>
+          {
+            storageManager.ItemChanged.OnNext(new VCore.Modularity.Events.ItemChanged()
+            {
+              Changed = VCore.Modularity.Events.Changed.Updated,
+              Item = dbTvShowSeason
+            });
+          });
+
+          var csfdtvShowSeason = cSfdWebsiteScrapper.LoadTvShowSeason(csfUrl);
+
+          if (csfdtvShowSeason == null)
+          {
+            var statusMessage1 = new StatusMessage(1)
+            {
+              MessageStatusState = MessageStatusState.Failed,
+              Message = "Unable to scrape Tv show season"
+            };
+
+            statusManager.UpdateMessage(statusMessage1);
+
+            dbTvShowSeason.InfoDownloadStatus = InfoDownloadStatus.Failed;
+            return;
+          }
+
+
+          dbTvShowSeason.Name = csfdtvShowSeason.Name;
+
+          foreach (var episode in dbTvShowSeason.Episodes)
+          {
+            if (csfdtvShowSeason.SeasonEpisodes.Count >= episode.EpisodeNumber)
+            {
+              var csfdEpisode = csfdtvShowSeason.SeasonEpisodes[episode.EpisodeNumber - 1];
+
+              episode.VideoItem.Name = csfdEpisode.Name;
+
+              episode.InfoDownloadStatus = InfoDownloadStatus.Downloaded;
+            }
+            else
+            {
+              episode.InfoDownloadStatus = InfoDownloadStatus.Failed;
+            }
+          }
+
+          dbTvShowSeason.InfoDownloadStatus = InfoDownloadStatus.Downloaded;
+
+          await storageManager.UpdateEntityAsync(dbTvShowSeason);
+
+          var statusMessage = new StatusMessage(1)
+          {
+            MessageStatusState = MessageStatusState.Processing,
+            Message = "Updating tv show season in database"
+          };
+
+          statusManager.UpdateMessage(statusMessage);
+
+          statusMessage.ProcessedCount++;
+
+          statusMessage.MessageStatusState = MessageStatusState.Done;
+
+          statusManager.UpdateMessage(statusMessage);
+        }
+        catch (Exception ex)
+        {
+          var statusMessage = new StatusMessage(1)
+          {
+            MessageStatusState = MessageStatusState.Failed,
+            Message = "Updating tv show season in database"
+          };
+
+          statusManager.UpdateMessage(statusMessage);
+
+          statusMessage.ProcessedCount++;
+
+          logger.Log(ex);
+        }
+      });
+    }
 
     #region UpdateTvShowName
 

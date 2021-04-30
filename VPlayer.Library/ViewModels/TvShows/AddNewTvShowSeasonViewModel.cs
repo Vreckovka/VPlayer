@@ -1,37 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 using Logger;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using VCore;
-using VCore.Standard;
 using VCore.ViewModels;
 using VPlayer.AudioStorage.DataLoader;
-using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
-using VPlayer.AudioStorage.Parsers;
 using VPlayer.Library.ViewModels.TvShows;
 
 namespace VPlayer.WindowsPlayer.ViewModels.Windows
 {
-  public class AddNewTvShowViewModel : BaseWindowViewModel
+  public class AddNewTvShowSeasonViewModel : BaseWindowViewModel
   {
     private readonly DataLoader dataLoader;
+    private readonly TvShow tvShow;
     private readonly IStorageManager storageManager;
     private readonly ITvShowScrapper tvShowScrapper;
     private readonly ILogger logger;
 
-    public AddNewTvShowViewModel(
-       DataLoader dataLoader,
-       IStorageManager storageManager,
-       ITvShowScrapper tvShowScrapper,
-       ILogger logger)
+    public AddNewTvShowSeasonViewModel(
+      DataLoader dataLoader,
+      TvShow tvShow,
+      IStorageManager storageManager,
+      ITvShowScrapper tvShowScrapper,
+      ILogger logger)
     {
       this.dataLoader = dataLoader ?? throw new ArgumentNullException(nameof(dataLoader));
+      this.tvShow = tvShow ?? throw new ArgumentNullException(nameof(tvShow));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.tvShowScrapper = tvShowScrapper ?? throw new ArgumentNullException(nameof(tvShowScrapper));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -57,27 +55,7 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
     }
 
     #endregion
-
-    #region TemporaryName
-
-    private string temporaryName;
-
-    public string TemporaryName
-    {
-      get { return temporaryName; }
-      set
-      {
-        if (value != temporaryName)
-        {
-          temporaryName = value;
-          load.RaiseCanExecuteChanged();
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
-
+    
     #region TvShowCsfdUrl
 
     private string tvShowCsfdUrl;
@@ -164,30 +142,32 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
       {
         if (load == null)
         {
-          load = new ActionCommand(OnLoad, () => !string.IsNullOrEmpty(TvShowPath) && !string.IsNullOrEmpty(TvShowCsfdUrl) && !string.IsNullOrEmpty(TemporaryName));
+          load = new ActionCommand(OnLoad, () => !string.IsNullOrEmpty(TvShowPath) && !string.IsNullOrEmpty(TvShowCsfdUrl));
         }
 
         return load;
       }
     }
 
-    public void OnLoad()
+    public async void OnLoad()
     {
-      Task.Run(async () =>
+      IsLoading = true;
+
+      await Task.Run(async () =>
       {
         try
         {
-          IsLoading = true;
+          dataLoader.AddtvTvShowSeasons(TvShowPath, tvShow);
 
-          var tvShow = dataLoader.LoadTvShow(TemporaryName, TvShowPath);
+          var single = tvShow.Seasons.SingleOrDefault(x => x.Created == null);
 
-          tvShow.CsfdUrl = TvShowCsfdUrl;
+          if(single == null)
+           single = tvShow.Seasons.OrderByDescending(x => x.Created).FirstOrDefault();
 
-          var id = await storageManager.StoreTvShow(tvShow);
+          var id = await storageManager.DeepUpdateTvShow(tvShow);
 
-          tvShowScrapper.UpdateTvShowFromCsfd(id, TvShowCsfdUrl);
+          await tvShowScrapper.UpdateTvShowSeasonFromCsfd(single.Id,TvShowCsfdUrl);
 
-          IsLoading = false;
         }
         catch (Exception ex)
         {
@@ -195,6 +175,7 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
         }
       });
 
+      IsLoading = false;
       Window?.Close();
     }
 
@@ -204,9 +185,3 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
 
   }
 }
-
-
-
-
-
-

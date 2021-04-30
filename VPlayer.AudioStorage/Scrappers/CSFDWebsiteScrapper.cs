@@ -101,6 +101,45 @@ namespace VPlayer.AudioStorage.Parsers
       return tvShow;
     }
 
+    public CSFDTVShowSeason LoadTvShowSeason(string url)
+    {
+      Initialize();
+
+      var statusMessage = new StatusMessage(2)
+      {
+        MessageStatusState = MessageStatusState.Processing,
+        Message = "Downloading tv show season"
+      };
+
+      statusManager.UpdateMessage(statusMessage);
+
+      var document = new HtmlDocument();
+
+      document.LoadHtml(chromeDriver.PageSource);
+
+      statusMessage = new StatusMessage(1)
+      {
+        MessageStatusState = MessageStatusState.Processing,
+        Message = "Downloading tv show seasons"
+      };
+
+      statusManager.UpdateMessage(statusMessage);
+
+
+      var newSeason = new CSFDTVShowSeason();
+
+      newSeason.Name = document.DocumentNode.SelectSingleNode("").InnerText;
+      newSeason.SeasonUrl = url;
+
+      logger.Log(MessageType.Success, $"Tv show season: {newSeason.Name}");
+
+      newSeason.SeasonEpisodes = LoadSeasonEpisodes(newSeason.SeasonUrl);
+
+      statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+
+      return newSeason;
+    }
+
 
     #region GetTvShowName
 
@@ -115,7 +154,7 @@ namespace VPlayer.AudioStorage.Parsers
 
       var node = document.DocumentNode.SelectNodes("/html/body/div[2]/div/div[1]/div/div[1]/div/div/header/div/h1").FirstOrDefault()?.InnerText;
 
-      var name = node.Replace("\t", string.Empty).Replace(" (TV seriál)", string.Empty).Replace("\r",null).Replace("\n", null);
+      var name = node.Replace("\t", string.Empty).Replace(" (TV seriál)", string.Empty).Replace("\r", null).Replace("\n", null);
 
       logger.Log(MessageType.Success, $"Tv show name: {name}");
 

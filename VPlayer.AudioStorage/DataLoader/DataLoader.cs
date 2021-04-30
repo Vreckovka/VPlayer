@@ -93,8 +93,6 @@ namespace VPlayer.AudioStorage.DataLoader
 
       statusManager.UpdateMessage(statusMessage);
 
-      var files = LoadData(DataType.Video, path, true);
-
       statusMessage.ProcessedCount++;
 
       statusMessage.MessageStatusState = MessageStatusState.Done;
@@ -106,6 +104,26 @@ namespace VPlayer.AudioStorage.DataLoader
         Seasons = new List<TvShowSeason>(),
         Name = tvShowName
       };
+
+      AddtvTvShowSeasons(path, tvShow);
+
+      return tvShow;
+    }
+
+    #endregion
+
+    #region AddtvTvShowSeasons
+
+    public void AddtvTvShowSeasons(string path, TvShow tvShow)
+    {
+      var statusMessage = new StatusMessage(1)
+      {
+        Message = "Getting file info"
+      };
+
+      statusManager.UpdateMessage(statusMessage);
+
+      var files = LoadData(DataType.Video, path, true);
 
       TvShowSeason tvShowSeason;
 
@@ -130,7 +148,7 @@ namespace VPlayer.AudioStorage.DataLoader
         var videoItem = new VideoItem()
         {
           Source = file.FullName,
-          Duration = (int) GetFileDuration(file.FullName).TotalSeconds,
+          Duration = (int)GetFileDuration(file.FullName).TotalSeconds,
           Name = file.Name,
         };
 
@@ -149,7 +167,7 @@ namespace VPlayer.AudioStorage.DataLoader
         tvShowSeason.Episodes.Add(tvEpisode);
       }
 
-      return tvShow;
+
     }
 
     #endregion

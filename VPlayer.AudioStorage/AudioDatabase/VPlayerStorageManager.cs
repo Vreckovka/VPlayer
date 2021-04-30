@@ -905,7 +905,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region UpdateWholeTvShow
 
-    public Task<bool> UpdateWholeTvShow(TvShow newVersion)
+    public Task<bool> DeepUpdateTvShow(TvShow newVersion)
     {
       return Task.Run(() =>
       {
@@ -917,9 +917,25 @@ namespace VPlayer.AudioStorage.AudioDatabase
           {
             foundEntity.Update(newVersion);
 
-            context.SaveChanges();
+            var newSeasons = foundEntity.Seasons.Where(x => x.Id == 0);
 
-            logger.Log(Logger.MessageType.Success, $"Entity was updated {newVersion}");
+            //foreach(var season in newSeasons)
+            //{
+            //  context.Entry(season).State = EntityState.Added;
+            //}
+
+            //var newEpisodes = foundEntity.Seasons.SelectMany(x => x.Episodes).Where(x => x.Id == 0);
+
+            //foreach (var episode in newEpisodes)
+            //{
+            //  context.Entry(episode).State = EntityState.Added;
+            //}
+
+            //context.Entry(foundEntity).State = EntityState.Modified;
+
+            var result = context.SaveChanges();
+
+            logger.Log(Logger.MessageType.Success, $"Entity was updated {result}");
 
             ItemChanged.OnNext(new ItemChanged()
             {

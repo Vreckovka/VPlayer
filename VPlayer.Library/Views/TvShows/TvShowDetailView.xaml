@@ -38,7 +38,6 @@
                     Command="{Binding GetCovers}"
                     Content="Get more covers" />
 
-
         </StackPanel>
 
         <Grid Grid.Row="1">
@@ -83,6 +82,8 @@
                                              IconHeight="25"
                                              IconHoverColor="#f04d46"
                                              IconPathStyle="{StaticResource Delete}" />
+
+                    <Button Command="{Binding AddNewSeason}" Content="Add season" />
                 </StackPanel>
 
 

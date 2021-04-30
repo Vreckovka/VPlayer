@@ -7,6 +7,7 @@ using VCore;
 using VCore.ViewModels;
 using VPlayer.AudioStorage.DataLoader;
 using VPlayer.AudioStorage.DomainClasses.Video;
+using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.AudioStorage.Parsers;
 
 namespace VPlayer.Library.ViewModels.TvShows

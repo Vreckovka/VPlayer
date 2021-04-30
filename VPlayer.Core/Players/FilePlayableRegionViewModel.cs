@@ -193,8 +193,12 @@ namespace VPlayer.Core.ViewModels
         songIndex = actualItemIndex;
       }
 
-      if (IsRepeate && actualItemIndex >= PlayList.Count)
+      if (IsRepeate && actualItemIndex >= PlayList.Count - 1)
+      {
         actualItemIndex = 0;
+        songIndex = 0;
+      }
+        
 
       base.SetItemAndPlay(songIndex, forcePlay, onlyItemSet);
     }
