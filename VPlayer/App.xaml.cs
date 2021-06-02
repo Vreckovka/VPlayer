@@ -54,7 +54,7 @@ namespace VPlayer
 
 #if DEBUG
 
-      //isConsoleUp = WinConsole.CreateConsole();
+      isConsoleUp = WinConsole.CreateConsole();
 
       Console.ForegroundColor = ConsoleColor.Green;
       Console.WriteLine("INITIALIZING");
@@ -97,7 +97,7 @@ namespace VPlayer
       base.OnExit(e);
     }
 
-    private  Assembly Resolver(object sender, ResolveEventArgs args)
+    private Assembly Resolver(object sender, ResolveEventArgs args)
     {
       if (args.Name.StartsWith("CefSharp.Core.Runtime"))
       {
