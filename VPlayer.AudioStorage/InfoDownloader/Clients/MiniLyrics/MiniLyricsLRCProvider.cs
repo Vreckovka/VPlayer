@@ -229,7 +229,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics
       var magickey = Encoding.UTF8.GetBytes(magickeyStr);
 
       // Create the variable POG to be used in a dirt code
-      byte[] pog = new byte[value.Length + magickey.Length]; //TODO Give a better name then POG
+      byte[] pog = new byte[value.Length + magickey.Length]; 
 
 
       Array.Copy(value, 0, pog, 0, value.Length);
@@ -239,8 +239,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics
       byte[] pog_md5 = MD5CryptoServiceProvider.Create().ComputeHash(pog);
 
 
-      //TODO Thing about using encryption or k as 0...
-      // Prepare encryption key
+   
       int j = 0;
       for (int i = 0; i < value.Length; i++)
       {

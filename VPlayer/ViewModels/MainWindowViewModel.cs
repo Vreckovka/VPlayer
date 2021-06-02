@@ -32,7 +32,6 @@ using VPlayer.WindowsPlayer.ViewModels;
 
 namespace VPlayer.ViewModels
 {
-  //TODO: BUG: Seek sipiek aj ked nemas activated (asi ked je minimalizovana appka a prejde sa na novu pesnicku)
   public class MainWindowViewModel : BaseMainWindowViewModel
   {
     #region Fields

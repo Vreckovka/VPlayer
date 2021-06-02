@@ -42,14 +42,11 @@ using VPlayer.WindowsPlayer.Players;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer;
 
 //TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)
-//TODO: Hash playlistov, ked zavries appku tak ti vyhodi posledny playlist
 //TODO: Nacitanie zo suboru
 //TODO: Ak je neidentifkovana skladba, pridanie interpreta zo zoznamu, alebo vytvorit noveho
 //TODO: Nastavit si hlavnu zlozku a ked spustis z inej, moznost presunut
 //TODO: Playlist hore pri menu, quick ze prides a uvidis napriklad 5 poslednych hore v rade , ako carusel (5/5)
 //TODO: Playlist nech sa automaticky nevytvara ak je niekolko pesniciek (nastavenie pre uzivatela aky pocet sa ma ukladat!) (3/5)
-//TODO: Ulozit playlist s casom a nastaveniami (opakovanie, shuffle)
-//TODO: 2 Druhy playlistov, uzivatelsky(upravitelny) a generovany (readonly)
 //TODO: Hore prenutie medzi windows a browser playermi , zmizne bocne menu
 //TODO: Pridat loading indikator, mozno aj co prave robi
 //TODO: Hviezdicky pocet 
