@@ -54,7 +54,7 @@ namespace VPlayer
 
 #if DEBUG
 
-      isConsoleUp = WinConsole.CreateConsole();
+      //isConsoleUp = WinConsole.CreateConsole();
 
       Console.ForegroundColor = ConsoleColor.Green;
       Console.WriteLine("INITIALIZING");

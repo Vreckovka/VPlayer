@@ -65,7 +65,7 @@ namespace VPlayer.Player.ViewModels
           {
             ActualVolume = (int)actualViewModel.MediaPlayer.Volume;
           }
-        
+
           RaisePropertyChanged();
         }
       }
@@ -333,7 +333,7 @@ namespace VPlayer.Player.ViewModels
 
     #region KeyListener_OnKeyPressed
 
-   private void KeyListener_OnKeyPressed(object sender, KeyPressedArgs e)
+    private void KeyListener_OnKeyPressed(object sender, KeyPressedArgs e)
     {
       switch (e.KeyPressed)
       {
@@ -356,7 +356,7 @@ namespace VPlayer.Player.ViewModels
           }
         case Key.Left:
           {
-            if (mainWindow.IsActive && ActualViewModel is IFilePlayableRegionViewModel filePlayable)
+            if (ActualViewModel.IsActive && ActualViewModel is IFilePlayableRegionViewModel filePlayable && mainWindow.WindowState != WindowState.Minimized)
             {
               filePlayable?.SeekBackward();
             }
@@ -364,11 +364,19 @@ namespace VPlayer.Player.ViewModels
           }
         case Key.Right:
           {
-            if (mainWindow.IsActive && ActualViewModel is IFilePlayableRegionViewModel filePlayable)
+            if (ActualViewModel.IsActive && ActualViewModel is IFilePlayableRegionViewModel filePlayable && mainWindow.WindowState != WindowState.Minimized)
             {
               filePlayable?.SeekForward();
             }
             break;
+          }
+        case Key.Space:
+           {
+             if (ActualViewModel.IsActive && ActualViewModel is IFilePlayableRegionViewModel filePlayable && mainWindow.WindowState != WindowState.Minimized)
+             {
+               filePlayable?.PlayPause();
+             }
+             break;
           }
       }
     }
