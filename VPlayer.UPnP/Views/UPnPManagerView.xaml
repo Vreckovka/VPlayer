@@ -65,8 +65,18 @@
                             <Button Margin="0,0,15,0"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
-                                    Command="{Binding Save}"
-                                    Content="Save" />
+                                    Command="{Binding Save}">
+                                <Button.Style>
+                                    <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="Button">
+                                        <Setter Property="Content" Value="Save" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsStored}" Value="True">
+                                                <Setter Property="Content" Value="UnSave" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
                             <StackPanel>
                                 <TextBlock FontWeight="Bold"
                                            Foreground="{StaticResource DefaultWhiteBrush}"

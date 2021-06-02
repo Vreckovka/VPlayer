@@ -194,7 +194,7 @@ namespace VPlayer.WindowsPlayer.Vlc
 
     private void Wndhost_StateChanged(object sender, EventArgs e)
     {
-      if (_wndhost.WindowState != WindowState.Minimized)
+     // if (_wndhost.WindowState != WindowState.Minimized)
       {
         SetWindowInPlace();
       }

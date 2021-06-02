@@ -189,6 +189,7 @@ namespace VPlayer.UPnP.ViewModels
 
         var vm = viewModelsFactory.Create<MediaServerViewModel>(mediaServer);
 
+        vm.DbModel = dbMediaServer;
         vm.IsStored = true;
 
         MediaServers.Add(vm);
@@ -218,6 +219,7 @@ namespace VPlayer.UPnP.ViewModels
 
         var vm = viewModelsFactory.Create<MediaRendererViewModel>(mediaRenderer);
 
+        vm.DbModel = dbMediaRenderer;
         vm.IsStored = true;
 
         Renderers.Add(vm);
@@ -228,10 +230,14 @@ namespace VPlayer.UPnP.ViewModels
       Renderers.SelectedItem = Renderers.View.FirstOrDefault();
 
 
-      Task.Run(() =>
+      Task.Run(async () =>
       {
-        Renderers.SelectedItem.Model.Init();
-        Renderers.SelectedItem.Model.GetPositionInfoAsync();
+        if(Renderers.SelectedItem?.Model != null)
+        {
+          Renderers.SelectedItem.Model.Init();
+
+          await Renderers.SelectedItem.Model.GetPositionInfoAsync();
+        }
       });
 
     }

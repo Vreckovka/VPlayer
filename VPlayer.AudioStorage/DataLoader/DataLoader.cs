@@ -176,21 +176,25 @@ namespace VPlayer.AudioStorage.DataLoader
 
     public KeyValuePair<int, int> GetTvShowSeriesNumber(string name)
     {
-      string sample = name;
-
       List<string> regexExpressions = new List<string>()
       {
         //S01E01
-        @"S(?<season>\d{1,2})E(?<episode>\d{1,2})",
-        //S01E01
-        @"(?<season>\d{1,2})x(?<episode>\d{1,2})"
+        @"s(?<season>\d{1,2})e(?<episode>\d{1,2})",
+        //S01xE01
+        @"s(?<season>\d{1,2})xe(?<episode>\d{1,2})",
+        //01x01
+        @"(?<season>\d{1,2})x(?<episode>\d{1,2})",
+        //[1.01]
+        @"\[(?<season>\d{1,2}).(?<episode>\d{1,2})\]",
+        //[1.01-02]
+        @"\[(?<season>\d{1,2}).(?<episode>\d{1,2})-(?<concatEpisode>\d{1,2})\]"
       };
 
       foreach (var regexExpression in regexExpressions)
       {
         Regex regex = new Regex(regexExpression);
 
-        Match match = regex.Match(sample);
+        Match match = regex.Match(name.ToLower());
 
         if (match.Success)
         {

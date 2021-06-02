@@ -82,7 +82,7 @@ namespace VPlayer.AudioStorage.Scrappers
             {
               foreach (var episode in season.Episodes)
               {
-                if (csfdTvShow.Seasons[season.SeasonNumber - 1].SeasonEpisodes.Count >= episode.EpisodeNumber)
+                if (season.SeasonNumber > 0 && csfdTvShow.Seasons[season.SeasonNumber - 1].SeasonEpisodes.Count >= episode.EpisodeNumber)
                 {
                   var csfdEpisode = csfdTvShow.Seasons[season.SeasonNumber - 1].SeasonEpisodes[episode.EpisodeNumber - 1];
 

@@ -30,7 +30,7 @@ namespace VPlayer.AudioStorage.Parsers
     private readonly ILogger logger;
     private readonly IStatusManager statusManager;
     private ChromeDriver chromeDriver;
-    private string baseUrl = "https://new.csfd.sk";
+    private string baseUrl = "https://csfd.sk";
 
     public CSFDWebsiteScrapper(ILogger logger, IStatusManager statusManager)
     {

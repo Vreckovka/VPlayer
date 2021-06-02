@@ -31,7 +31,7 @@ namespace VPlayer.UPnP.ViewModels.UPnP
         {
           isSelected = value;
 
-          if(isSelected)
+          if (isSelected)
           {
             OnSelected();
           }
@@ -40,34 +40,6 @@ namespace VPlayer.UPnP.ViewModels.UPnP
         }
       }
     }
-
-    #endregion
-
-    #region Commands
-
-    #region Save
-
-    protected ActionCommand save;
-
-    public ICommand Save
-    {
-      get
-      {
-        if (save == null)
-        {
-          save = new ActionCommand(OnSave, () => !IsStored);
-        }
-
-        return save;
-      }
-    }
-
-    private void OnSave()
-    {
-      StoreData();
-    }
-
-    #endregion
 
     #endregion
 
@@ -91,12 +63,45 @@ namespace VPlayer.UPnP.ViewModels.UPnP
     #endregion
 
 
+    #region Commands
+
+    #region Save
+
+    protected ActionCommand save;
+
+    public ICommand Save
+    {
+      get
+      {
+        if (save == null)
+        {
+          save = new ActionCommand(OnSave);
+        }
+
+        return save;
+      }
+    }
+
+    private void OnSave()
+    {
+      if (!IsStored)
+        StoreData();
+      else
+        RemoveData();
+
+      
+    }
+
+    #endregion
+
+    #endregion
+
 
     public virtual void OnSelected()
     {
-
     }
 
     public abstract void StoreData();
+    public abstract void RemoveData();
   }
 }

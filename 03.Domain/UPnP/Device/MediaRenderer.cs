@@ -71,14 +71,19 @@ namespace UPnP.Device
 
     public async Task<ServiceAction> GetPositionInfoAsync()
     {
-      var actionName = "GetPositionInfo";
-      var action = AVTransport.ActionList.Single(x => x.Name == actionName);
+      if (AVTransport != null)
+      {
+        var actionName = "GetPositionInfo";
+        var action = AVTransport.ActionList.Single(x => x.Name == actionName);
 
 
-      action.SetArgumentValue("InstanceID", "0");
-      await action.InvokeAsync(ServiceTypes.AVTRANSPORT, ControlUrl.AbsoluteUri);
+        action.SetArgumentValue("InstanceID", "0");
+        await action.InvokeAsync(ServiceTypes.AVTRANSPORT, ControlUrl.AbsoluteUri);
 
-      return action;
+        return action;
+      }
+
+      return null;
     }
 
     #endregion

@@ -63,6 +63,8 @@ namespace VPlayer.UPnP.ViewModels.UPnP
 
     #endregion
 
+    public UPnPMediaServer DbModel { get; set; }
+
     #endregion
 
     #region Methods
@@ -147,7 +149,21 @@ namespace VPlayer.UPnP.ViewModels.UPnP
       }
     }
 
+
+
     #endregion
+
+
+    public override void RemoveData()
+    {
+      if (DbModel != null)
+      {
+        var result = storageManager.DeleteEntity(DbModel);
+
+        if (result)
+          IsStored = !IsStored;
+      }
+    }
 
     #region OnSelected
 

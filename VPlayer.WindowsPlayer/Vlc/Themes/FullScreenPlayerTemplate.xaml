@@ -4,8 +4,8 @@
                     xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
                     xmlns:controls="clr-namespace:VPlayer.WindowsPlayer.Vlc.Controls"
                     xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
-                    xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF"
-                    xmlns:controls2="clr-namespace:VPlayer.WindowsPlayer.Vlc.Controls;assembly=VVLC">
+                    xmlns:controls2="clr-namespace:VPlayer.WindowsPlayer.Vlc.Controls;assembly=VVLC"
+                    xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF">
 
 
     <ResourceDictionary.MergedDictionaries>

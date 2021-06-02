@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using DLNA;
 using UPnP.Common;
@@ -16,9 +17,9 @@ namespace VPlayer.UPnP.ViewModels.UPnP
   {
     public MediaRendererViewModel(MediaRenderer model, IStorageManager storageManager) : base(model, storageManager)
     {
-     
-    }
 
+    }
+    public UPnPMediaRenderer DbModel { get; set; }
 
     #region Discover
 
@@ -46,18 +47,24 @@ namespace VPlayer.UPnP.ViewModels.UPnP
 
     #region StoreData
 
-    public override void StoreData()
+    public override async void StoreData()
     {
-      Model.Init();
+      var result = await Task.Run(() =>
+         {
+           Model.Init();
+           var dbEntity = new UPnPMediaRenderer()
+           {
+             UPnPDevice = Model.DeviceDescription.Device.GetDeviceDbEntity(),
+             PresentationURL = Model.PresentationURL
+           };
 
-      var dbEntity = new UPnPMediaRenderer()
-      {
-        UPnPDevice = Model.DeviceDescription.Device.GetDeviceDbEntity(),
-        PresentationURL = Model.PresentationURL
-      };
+           var result = storageManager.StoreEntity<UPnPMediaRenderer>(dbEntity, out var stored);
 
-      var result = storageManager.StoreEntity<UPnPMediaRenderer>(dbEntity, out var stored);
+           DbModel = dbEntity;
 
+           return result;
+         }
+       );
 
       if (result)
       {
@@ -66,7 +73,22 @@ namespace VPlayer.UPnP.ViewModels.UPnP
       }
     }
 
+
+
     #endregion
-    
+
+
+
+    public override void RemoveData()
+    {
+      if (DbModel != null)
+      {
+        var result = storageManager.DeleteEntity(DbModel);
+
+        if (result)
+          IsStored = !IsStored;
+      }
+
+    }
   }
 }

@@ -1,32 +1,41 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <UseWPF>true</UseWPF>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<UseWPF>true</UseWPF>
+		<CefSharpAnyCpuSupport>true</CefSharpAnyCpuSupport>
+		<Platforms>AnyCPU;x86</Platforms>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <PlatformTarget>x86</PlatformTarget>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <PlatformTarget>x86</PlatformTarget>
 	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Prism.Core" Version="7.2.0.1422" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Prism.Core" Version="7.2.0.1422" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\CustomLibraries\VCore.Standard\VCore.Standard.csproj" />
-    <ProjectReference Include="..\..\CustomLibraries\VCore\VCore.WPF.csproj" />
-    <ProjectReference Include="..\KeyListener\Listener.csproj" />
-    <ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj" />
-    <ProjectReference Include="..\VPlayer.Core\VPlayer.Core.csproj" />
-    <ProjectReference Include="..\VPlayer.WindowsPlayer\VPlayer.WindowsPlayer.csproj" />
-  </ItemGroup>
 
-  <ItemGroup>
-    <Page Update="Views\PlayerView.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\PlayerViewResources.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\CustomLibraries\VCore.Standard\VCore.Standard.csproj" />
+		<ProjectReference Include="..\..\CustomLibraries\VCore\VCore.WPF.csproj" />
+		<ProjectReference Include="..\KeyListener\Listener.csproj" />
+		<ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj" />
+		<ProjectReference Include="..\VPlayer.Core\VPlayer.Core.csproj" />
+		<ProjectReference Include="..\VPlayer.WindowsPlayer\VPlayer.WindowsPlayer.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Page Update="Views\PlayerView.xaml">
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\PlayerViewResources.xaml">
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+			<SubType>Designer</SubType>
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+	</ItemGroup>
 </Project>

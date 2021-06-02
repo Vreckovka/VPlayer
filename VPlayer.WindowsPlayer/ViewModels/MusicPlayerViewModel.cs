@@ -293,46 +293,46 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private MediaRendererPlayer mediaRendererPlayer;
     public async void OnPlayPauseUPnP()
     {
-      if (!isUPnp)
+      try
       {
-        IsBuffering = true;
-
-        MediaPlayer.Stop();
-
-        if (mediaRendererPlayer == null)
+        if (!isUPnp)
         {
-          mediaRendererPlayer = new MediaRendererPlayer(SelectedMediaRendererViewModel.Model);
+          IsBuffering = true;
 
-          MediaPlayer = mediaRendererPlayer;
+          MediaPlayer.Stop();
 
-          await HookToPlayerEvents();
+          if (mediaRendererPlayer == null)
+          {
+            mediaRendererPlayer = new MediaRendererPlayer(SelectedMediaRendererViewModel.Model);
+
+            MediaPlayer = mediaRendererPlayer;
+
+            await HookToPlayerEvents();
+          }
+          else
+            MediaPlayer = mediaRendererPlayer;
+
+          await SetMedia(ActualItem.Model);
+
+          if (IsPlaying)
+          {
+            MediaPlayer.Play();
+          }
+
+          isUPnp = true;
         }
         else
-          MediaPlayer = mediaRendererPlayer;
-
-        await SetMedia(ActualItem.Model);
-
-        if (IsPlaying)
         {
-          MediaPlayer.Play();
-        }
+          mediaRendererPlayer?.Stop();
 
-        isUPnp = true;
+          await SetVlcPlayer();
+        }
       }
-      else
+      catch (Exception ex)
       {
-        mediaRendererPlayer?.Stop();
+        MessageBox.Show(ex.ToString());
 
-        MediaPlayer = vLcPlayer;
-
-        await SetMedia(ActualItem.Model);
-
-        if (IsPlaying)
-        {
-          MediaPlayer.Play();
-        }
-
-        isUPnp = false;
+        await SetVlcPlayer();
       }
     }
 
@@ -623,6 +623,20 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
 
     #endregion
+
+    private async Task SetVlcPlayer()
+    {
+      MediaPlayer = vLcPlayer;
+
+      await SetMedia(ActualItem.Model);
+
+      if (IsPlaying)
+      {
+        MediaPlayer.Play();
+      }
+
+      isUPnp = false;
+    }
 
     #endregion
   }

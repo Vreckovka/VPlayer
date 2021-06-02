@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text;
@@ -32,7 +34,7 @@ namespace VPlayer.UPnP.ViewModels.Player
 
       dLNADevice = new DLNADevice(Model.PresentationURL);
       dLNADevice.ControlURL = "upnp/control/rendertransport1";
-      streamingMediaServer = new StreamingMediaServer("192.168.1.12", 2875);
+      streamingMediaServer = new StreamingMediaServer(GetLocalIPAddress(), 2876);
 
       if (Application.Current != null)
       {
@@ -40,6 +42,17 @@ namespace VPlayer.UPnP.ViewModels.Player
       }
 
       streamingMediaServer.Start();
+    }
+
+    public static string GetLocalIPAddress()
+    {
+      using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
+      {
+        socket.Connect("8.8.8.8", 65530);
+        IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
+
+        return endPoint.Address.ToString();
+      }
     }
 
     private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -180,6 +193,11 @@ namespace VPlayer.UPnP.ViewModels.Player
     private async void ObserveTimeChanged()
     {
       var positionInfo = await Model.GetPositionInfoAsync();
+
+      if (positionInfo == null)
+      {
+        return;
+      }
 
       string trackPositionString = positionInfo.GetArgumentValue("RelTime");
       string trackDurationString = positionInfo.GetArgumentValue("TrackDuration");

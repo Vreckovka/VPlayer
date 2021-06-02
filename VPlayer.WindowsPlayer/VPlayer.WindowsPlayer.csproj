@@ -1,24 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <UseWPF>true</UseWPF>
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<UseWPF>true</UseWPF>
+		<CefSharpAnyCpuSupport>true</CefSharpAnyCpuSupport>
+		<Platforms>AnyCPU;x86</Platforms>
 	</PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="LibVLCSharp" Version="3.4.9" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.3" />
-    <PackageReference Include="Prism.Core" Version="7.2.0.1422" />
-    <PackageReference Include="System.Reactive.Linq" Version="5.0.0" />
-    <PackageReference Include="WindowsAPICodePack" Version="1.1.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\CustomLibraries\Logger\Logger.csproj" />
-    <ProjectReference Include="..\..\CustomLibraries\VCore.Standard\VCore.Standard.csproj" />
-    <ProjectReference Include="..\..\CustomLibraries\VCore\VCore.WPF.csproj" />
-    <ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj" />
-    <ProjectReference Include="..\VPlayer.Core\VPlayer.Core.csproj" />
-    <ProjectReference Include="..\VPlayer.Library\VPlayer.Library.csproj" />
-    <ProjectReference Include="..\VPlayer.TV\VPlayer.IPTV.csproj" />
-    <ProjectReference Include="..\VVLC\VVLC.csproj" />
-  </ItemGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <PlatformTarget>x86</PlatformTarget>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <PlatformTarget>x86</PlatformTarget>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="LibVLCSharp" Version="3.4.9" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.3" />
+		<PackageReference Include="Prism.Core" Version="7.2.0.1422" />
+		<PackageReference Include="System.Reactive.Linq" Version="5.0.0" />
+		<PackageReference Include="WindowsAPICodePack" Version="1.1.1" />
+		<PackageReference Include="CefSharp.Wpf" Version="89.0.170" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\CustomLibraries\Logger\Logger.csproj" />
+		<ProjectReference Include="..\..\CustomLibraries\VCore.Standard\VCore.Standard.csproj" />
+		<ProjectReference Include="..\..\CustomLibraries\VCore\VCore.WPF.csproj" />
+		<ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj" />
+		<ProjectReference Include="..\VPlayer.Core\VPlayer.Core.csproj" />
+		<ProjectReference Include="..\VPlayer.Library\VPlayer.Library.csproj" />
+		<ProjectReference Include="..\VPlayer.TV\VPlayer.IPTV.csproj" />
+		<ProjectReference Include="..\VVLC\VVLC.csproj" />
+	</ItemGroup>
 </Project>

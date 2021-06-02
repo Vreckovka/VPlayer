@@ -80,7 +80,7 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
 
     #region TvShowCsfdUrl
 
-    private string tvShowCsfdUrl;
+    private string tvShowCsfdUrl = "https://www.csfd.cz/";
 
     public string TvShowCsfdUrl
     {
@@ -90,6 +90,12 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
         if (value != tvShowCsfdUrl)
         {
           tvShowCsfdUrl = value;
+
+          if (string.IsNullOrEmpty(TemporaryName))
+          {
+            TemporaryName = value;
+          }
+
           load.RaiseCanExecuteChanged();
           RaisePropertyChanged();
         }
@@ -116,7 +122,7 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
     }
 
     #endregion
-
+    
     #region Commands
 
     #region ChoosePath
@@ -183,9 +189,9 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
 
           tvShow.CsfdUrl = TvShowCsfdUrl;
 
-          var id = await storageManager.StoreTvShow(tvShow);
+          var id = storageManager.StoreTvShow(tvShow);
 
-          tvShowScrapper.UpdateTvShowFromCsfd(id, TvShowCsfdUrl);
+          //tvShowScrapper.UpdateTvShowFromCsfd(id, TvShowCsfdUrl);
 
           IsLoading = false;
         }
@@ -196,6 +202,7 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
       });
 
       Window?.Close();
+
     }
 
     #endregion

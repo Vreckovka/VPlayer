@@ -2,6 +2,8 @@
 using System.Data.Common;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
+using System.Reflection;
 using System.Windows;
 using Ninject;
 using Prism.Ioc;
@@ -38,6 +40,8 @@ namespace VPlayer
       stopWatch.Start();
 
       Kernel = Container.GetContainer();
+
+     AppDomain.CurrentDomain.AssemblyResolve += Resolver;
 
       VIoc.Kernel = Kernel;
 
@@ -91,6 +95,23 @@ namespace VPlayer
         isConsoleUp = !WinConsole.FreeConsole();
 
       base.OnExit(e);
+    }
+
+    private  Assembly Resolver(object sender, ResolveEventArgs args)
+    {
+      if (args.Name.StartsWith("CefSharp.Core.Runtime"))
+      {
+        string assemblyName = args.Name.Split(new[] { ',' }, 2)[0] + ".dll";
+        string archSpecificPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
+          Environment.Is64BitProcess ? "x64" : "x86",
+          assemblyName);
+
+        return File.Exists(archSpecificPath)
+          ? Assembly.LoadFile(archSpecificPath)
+          : null;
+      }
+
+      return null;
     }
   }
 }

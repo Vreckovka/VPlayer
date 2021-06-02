@@ -1,171 +1,180 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <UseWPF>true</UseWPF>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<ApplicationIcon>Includes/VPlayerLogo.ico</ApplicationIcon>
+		<CefSharpAnyCpuSupport>true</CefSharpAnyCpuSupport>
+		<Platforms>AnyCPU;x86</Platforms>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<PlatformTarget>AnyCPU</PlatformTarget>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+		<PlatformTarget>x86</PlatformTarget>
+		<Prefer32Bit>false</Prefer32Bit>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<OutputPath>D:\VPlayer</OutputPath>
+		<PlatformTarget>x86</PlatformTarget>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+		<OutputPath>D:\VPlayer</OutputPath>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Remove="Includes\VPlayerLogo.ico" />
+		<None Remove="Includes\VPlayerLogo.png" />
+		<None Remove="Resources\Fonts\MartelSans\MartelSans-Black.ttf" />
+		<None Remove="Resources\Fonts\MartelSans\MartelSans-Bold.ttf" />
+		<None Remove="Resources\Fonts\MartelSans\MartelSans-ExtraBold.ttf" />
+		<None Remove="Resources\Fonts\MartelSans\MartelSans-ExtraLight.ttf" />
+		<None Remove="Resources\Fonts\MartelSans\MartelSans-Light.ttf" />
+		<None Remove="Resources\Fonts\MartelSans\MartelSans-Regular.ttf" />
+		<None Remove="Resources\Fonts\MartelSans\MartelSans-SemiBold.ttf" />
+		<None Remove="Resources\Fonts\Montserrat\Montserrat-Black.ttf" />
+		<None Remove="Resources\Fonts\Montserrat\Montserrat-BlackItalic.ttf" />
+		<None Remove="Resources\Fonts\Montserrat\Montserrat-Bold.ttf" />
+		<None Remove="Resources\Fonts\Montserrat\Montserrat-BoldItalic.ttf" />
+		<None Remove="Resources\Fonts\Montserrat\Montserrat-ExtraBold.ttf" />
+		<None Remove="Resources\Fonts\Montserrat\Montserrat-ExtraBoldItalic.ttf" />
+		<None Remove="Resources\Fonts\Montserrat\Montserrat-ExtraLight.ttf" />
+		<None Remove="Resources\Fonts\Montserrat\Montserrat-ExtraLightItalic.ttf" />
+		<None Remove="Resources\Fonts\Montserrat\Montserrat-Italic.ttf" />
+		<None Remove="Resources\Fonts\Montserrat\Montserrat-Light.ttf" />
+		<None Remove="Resources\Fonts\Montserrat\Montserrat-LightItalic.ttf" />
+		<None Remove="Resources\Fonts\Montserrat\Montserrat-Medium.ttf" />
+		<None Remove="Resources\Fonts\Montserrat\Montserrat-MediumItalic.ttf" />
+		<None Remove="Resources\Fonts\Montserrat\Montserrat-Regular.ttf" />
+		<None Remove="Resources\Fonts\Montserrat\Montserrat-SemiBold.ttf" />
+		<None Remove="Resources\Fonts\Montserrat\Montserrat-SemiBoldItalic.ttf" />
+		<None Remove="Resources\Fonts\Montserrat\Montserrat-Thin.ttf" />
+		<None Remove="Resources\Fonts\Montserrat\Montserrat-ThinItalic.ttf" />
+		<None Remove="Resources\Fonts\Roboto\Roboto-Black.ttf" />
+		<None Remove="Resources\Fonts\Roboto\Roboto-BlackItalic.ttf" />
+		<None Remove="Resources\Fonts\Roboto\Roboto-Bold.ttf" />
+		<None Remove="Resources\Fonts\Roboto\Roboto-BoldItalic.ttf" />
+		<None Remove="Resources\Fonts\Roboto\Roboto-Italic.ttf" />
+		<None Remove="Resources\Fonts\Roboto\Roboto-Light.ttf" />
+		<None Remove="Resources\Fonts\Roboto\Roboto-LightItalic.ttf" />
+		<None Remove="Resources\Fonts\Roboto\Roboto-Medium.ttf" />
+		<None Remove="Resources\Fonts\Roboto\Roboto-MediumItalic.ttf" />
+		<None Remove="Resources\Fonts\Roboto\Roboto-Regular.ttf" />
+		<None Remove="Resources\Fonts\Roboto\Roboto-Thin.ttf" />
+		<None Remove="Resources\Fonts\Roboto\Roboto-ThinItalic.ttf" />
+		<None Remove="Resources\Icons\browser.png" />
+		<None Remove="Resources\Icons\library.png" />
+		<None Remove="Resources\Icons\music-album.png" />
+		<None Remove="Resources\Icons\music-note.png" />
+		<None Remove="Resources\Icons\resize.png" />
+		<None Remove="Resources\Icons\settings.png" />
+		<None Remove="Resources\Icons\singer.png" />
+		<None Remove="Resources\Icons\television.png" />
+		<None Remove="Resources\Icons\tvshow-playlist.png" />
+		<None Remove="Resources\Icons\tvshow.png" />
+		<None Remove="Resources\Icons\upnp.png" />
+		<None Remove="Resources\Icons\video-play.png" />
+		<None Remove="Resources\play-and-pause-button.png" />
+		<None Remove="Resources\song-playliyst.png" />
+	</ItemGroup>
+	<ItemGroup>
+		<Resource Include="Resources\Fonts\MartelSans\MartelSans-Black.ttf" />
+		<Resource Include="Resources\Fonts\MartelSans\MartelSans-Bold.ttf" />
+		<Resource Include="Resources\Fonts\MartelSans\MartelSans-ExtraBold.ttf" />
+		<Resource Include="Resources\Fonts\MartelSans\MartelSans-ExtraLight.ttf" />
+		<Resource Include="Resources\Fonts\MartelSans\MartelSans-Light.ttf" />
+		<Resource Include="Resources\Fonts\MartelSans\MartelSans-Regular.ttf" />
+		<Resource Include="Resources\Fonts\MartelSans\MartelSans-SemiBold.ttf" />
+		<Resource Include="Resources\Fonts\Montserrat\Montserrat-Black.ttf" />
+		<Resource Include="Resources\Fonts\Montserrat\Montserrat-BlackItalic.ttf" />
+		<Resource Include="Resources\Fonts\Montserrat\Montserrat-Bold.ttf" />
+		<Resource Include="Resources\Fonts\Montserrat\Montserrat-BoldItalic.ttf" />
+		<Resource Include="Resources\Fonts\Montserrat\Montserrat-ExtraBold.ttf" />
+		<Resource Include="Resources\Fonts\Montserrat\Montserrat-ExtraBoldItalic.ttf" />
+		<Resource Include="Resources\Fonts\Montserrat\Montserrat-ExtraLight.ttf" />
+		<Resource Include="Resources\Fonts\Montserrat\Montserrat-ExtraLightItalic.ttf" />
+		<Resource Include="Resources\Fonts\Montserrat\Montserrat-Italic.ttf" />
+		<Resource Include="Resources\Fonts\Montserrat\Montserrat-Light.ttf" />
+		<Resource Include="Resources\Fonts\Montserrat\Montserrat-LightItalic.ttf" />
+		<Resource Include="Resources\Fonts\Montserrat\Montserrat-Medium.ttf" />
+		<Resource Include="Resources\Fonts\Montserrat\Montserrat-MediumItalic.ttf" />
+		<Resource Include="Resources\Fonts\Montserrat\Montserrat-Regular.ttf" />
+		<Resource Include="Resources\Fonts\Montserrat\Montserrat-SemiBold.ttf" />
+		<Resource Include="Resources\Fonts\Montserrat\Montserrat-SemiBoldItalic.ttf" />
+		<Resource Include="Resources\Fonts\Montserrat\Montserrat-Thin.ttf" />
+		<Resource Include="Resources\Fonts\Montserrat\Montserrat-ThinItalic.ttf" />
+		<Resource Include="Resources\Fonts\Roboto\Roboto-Black.ttf" />
+		<Resource Include="Resources\Fonts\Roboto\Roboto-BlackItalic.ttf" />
+		<Resource Include="Resources\Fonts\Roboto\Roboto-Bold.ttf" />
+		<Resource Include="Resources\Fonts\Roboto\Roboto-BoldItalic.ttf" />
+		<Resource Include="Resources\Fonts\Roboto\Roboto-Italic.ttf" />
+		<Resource Include="Resources\Fonts\Roboto\Roboto-Light.ttf" />
+		<Resource Include="Resources\Fonts\Roboto\Roboto-LightItalic.ttf" />
+		<Resource Include="Resources\Fonts\Roboto\Roboto-Medium.ttf" />
+		<Resource Include="Resources\Fonts\Roboto\Roboto-MediumItalic.ttf" />
+		<Resource Include="Resources\Fonts\Roboto\Roboto-Regular.ttf" />
+		<Resource Include="Resources\Fonts\Roboto\Roboto-Thin.ttf" />
+		<Resource Include="Resources\Fonts\Roboto\Roboto-ThinItalic.ttf" />
+		<Resource Include="Resources\Icons\browser.png" />
+		<Resource Include="Resources\Icons\library.png" />
+		<Resource Include="Resources\Icons\music-album.png" />
+		<Resource Include="Resources\Icons\music-note.png" />
+		<Resource Include="Resources\Icons\resize.png" />
+		<Resource Include="Resources\Icons\settings.png" />
+		<Resource Include="Resources\Icons\singer.png" />
+		<Resource Include="Resources\Icons\song-playlist.png" />
+	</ItemGroup>
+	<ItemGroup>
+		<Resource Include="Includes\VPlayerLogo.ico" />
+		<Resource Include="Includes\VPlayerLogo.png" />
+		<Resource Include="Resources\Icons\television.png" />
+		<Resource Include="Resources\Icons\tvshow-playlist.png" />
+		<Resource Include="Resources\Icons\tvshow.png" />
+		<Resource Include="Resources\Icons\upnp.png" />
+		<Resource Include="Resources\Icons\video-play.png" />
+		<Resource Include="Resources\play-and-pause-button.png" />
+	</ItemGroup>
 
-    <ApplicationIcon>Includes/VPlayerLogo.ico</ApplicationIcon>
+	<ItemGroup>
+		<PackageReference Include="LibVLCSharp" Version="3.4.9" />
+		<PackageReference Include="NAudio" Version="2.0.0" />
+		<PackageReference Include="Ninject" Version="3.3.4" />
+		<PackageReference Include="Prism.Ninject" Version="7.2.0.1422" />
+		<PackageReference Include="Prism.Wpf" Version="7.2.0.1422" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.3" />
+		<PackageReference Include="System.Reactive.Linq" Version="5.0.0" />
+		<PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.12" />
+		<PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="89.0.4389.2300" />
+		<PackageReference Include="CefSharp.Wpf" Version="89.0.170" />
+		<PackageReference Include="OpenQA.Selenium.Winium" Version="1.0.0.4" />
+	</ItemGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\..\CustomLibraries\Logger\Logger.csproj" />
+		<ProjectReference Include="..\..\CustomLibraries\VCore.Standard\VCore.Standard.csproj" />
+		<ProjectReference Include="..\..\CustomLibraries\VCore\VCore.WPF.csproj" />
+		<ProjectReference Include="..\KeyListener\Listener.csproj" />
+		<ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj" />
+		<ProjectReference Include="..\VPlayer.Core\VPlayer.Core.csproj" />
+		<ProjectReference Include="..\VPlayer.DarkTheme\VPlayer.DarkTheme.csproj" />
+		<ProjectReference Include="..\VPlayer.Library\VPlayer.Library.csproj" />
+		<ProjectReference Include="..\VPlayer.Player\VPlayer.Player.csproj" />
+		<ProjectReference Include="..\VPlayer.WindowsPlayer\VPlayer.WindowsPlayer.csproj" />
+	</ItemGroup>
 
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>D:\VPlayer</OutputPath>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Remove="Includes\VPlayerLogo.ico" />
-    <None Remove="Includes\VPlayerLogo.png" />
-    <None Remove="Resources\Fonts\MartelSans\MartelSans-Black.ttf" />
-    <None Remove="Resources\Fonts\MartelSans\MartelSans-Bold.ttf" />
-    <None Remove="Resources\Fonts\MartelSans\MartelSans-ExtraBold.ttf" />
-    <None Remove="Resources\Fonts\MartelSans\MartelSans-ExtraLight.ttf" />
-    <None Remove="Resources\Fonts\MartelSans\MartelSans-Light.ttf" />
-    <None Remove="Resources\Fonts\MartelSans\MartelSans-Regular.ttf" />
-    <None Remove="Resources\Fonts\MartelSans\MartelSans-SemiBold.ttf" />
-    <None Remove="Resources\Fonts\Montserrat\Montserrat-Black.ttf" />
-    <None Remove="Resources\Fonts\Montserrat\Montserrat-BlackItalic.ttf" />
-    <None Remove="Resources\Fonts\Montserrat\Montserrat-Bold.ttf" />
-    <None Remove="Resources\Fonts\Montserrat\Montserrat-BoldItalic.ttf" />
-    <None Remove="Resources\Fonts\Montserrat\Montserrat-ExtraBold.ttf" />
-    <None Remove="Resources\Fonts\Montserrat\Montserrat-ExtraBoldItalic.ttf" />
-    <None Remove="Resources\Fonts\Montserrat\Montserrat-ExtraLight.ttf" />
-    <None Remove="Resources\Fonts\Montserrat\Montserrat-ExtraLightItalic.ttf" />
-    <None Remove="Resources\Fonts\Montserrat\Montserrat-Italic.ttf" />
-    <None Remove="Resources\Fonts\Montserrat\Montserrat-Light.ttf" />
-    <None Remove="Resources\Fonts\Montserrat\Montserrat-LightItalic.ttf" />
-    <None Remove="Resources\Fonts\Montserrat\Montserrat-Medium.ttf" />
-    <None Remove="Resources\Fonts\Montserrat\Montserrat-MediumItalic.ttf" />
-    <None Remove="Resources\Fonts\Montserrat\Montserrat-Regular.ttf" />
-    <None Remove="Resources\Fonts\Montserrat\Montserrat-SemiBold.ttf" />
-    <None Remove="Resources\Fonts\Montserrat\Montserrat-SemiBoldItalic.ttf" />
-    <None Remove="Resources\Fonts\Montserrat\Montserrat-Thin.ttf" />
-    <None Remove="Resources\Fonts\Montserrat\Montserrat-ThinItalic.ttf" />
-    <None Remove="Resources\Fonts\Roboto\Roboto-Black.ttf" />
-    <None Remove="Resources\Fonts\Roboto\Roboto-BlackItalic.ttf" />
-    <None Remove="Resources\Fonts\Roboto\Roboto-Bold.ttf" />
-    <None Remove="Resources\Fonts\Roboto\Roboto-BoldItalic.ttf" />
-    <None Remove="Resources\Fonts\Roboto\Roboto-Italic.ttf" />
-    <None Remove="Resources\Fonts\Roboto\Roboto-Light.ttf" />
-    <None Remove="Resources\Fonts\Roboto\Roboto-LightItalic.ttf" />
-    <None Remove="Resources\Fonts\Roboto\Roboto-Medium.ttf" />
-    <None Remove="Resources\Fonts\Roboto\Roboto-MediumItalic.ttf" />
-    <None Remove="Resources\Fonts\Roboto\Roboto-Regular.ttf" />
-    <None Remove="Resources\Fonts\Roboto\Roboto-Thin.ttf" />
-    <None Remove="Resources\Fonts\Roboto\Roboto-ThinItalic.ttf" />
-    <None Remove="Resources\Icons\browser.png" />
-    <None Remove="Resources\Icons\library.png" />
-    <None Remove="Resources\Icons\music-album.png" />
-    <None Remove="Resources\Icons\music-note.png" />
-    <None Remove="Resources\Icons\resize.png" />
-    <None Remove="Resources\Icons\settings.png" />
-    <None Remove="Resources\Icons\singer.png" />
-    <None Remove="Resources\Icons\television.png" />
-    <None Remove="Resources\Icons\tvshow-playlist.png" />
-    <None Remove="Resources\Icons\tvshow.png" />
-    <None Remove="Resources\Icons\upnp.png" />
-    <None Remove="Resources\Icons\video-play.png" />
-    <None Remove="Resources\play-and-pause-button.png" />
-    <None Remove="Resources\song-playliyst.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Fonts\MartelSans\MartelSans-Black.ttf" />
-    <Resource Include="Resources\Fonts\MartelSans\MartelSans-Bold.ttf" />
-    <Resource Include="Resources\Fonts\MartelSans\MartelSans-ExtraBold.ttf" />
-    <Resource Include="Resources\Fonts\MartelSans\MartelSans-ExtraLight.ttf" />
-    <Resource Include="Resources\Fonts\MartelSans\MartelSans-Light.ttf" />
-    <Resource Include="Resources\Fonts\MartelSans\MartelSans-Regular.ttf" />
-    <Resource Include="Resources\Fonts\MartelSans\MartelSans-SemiBold.ttf" />
-    <Resource Include="Resources\Fonts\Montserrat\Montserrat-Black.ttf" />
-    <Resource Include="Resources\Fonts\Montserrat\Montserrat-BlackItalic.ttf" />
-    <Resource Include="Resources\Fonts\Montserrat\Montserrat-Bold.ttf" />
-    <Resource Include="Resources\Fonts\Montserrat\Montserrat-BoldItalic.ttf" />
-    <Resource Include="Resources\Fonts\Montserrat\Montserrat-ExtraBold.ttf" />
-    <Resource Include="Resources\Fonts\Montserrat\Montserrat-ExtraBoldItalic.ttf" />
-    <Resource Include="Resources\Fonts\Montserrat\Montserrat-ExtraLight.ttf" />
-    <Resource Include="Resources\Fonts\Montserrat\Montserrat-ExtraLightItalic.ttf" />
-    <Resource Include="Resources\Fonts\Montserrat\Montserrat-Italic.ttf" />
-    <Resource Include="Resources\Fonts\Montserrat\Montserrat-Light.ttf" />
-    <Resource Include="Resources\Fonts\Montserrat\Montserrat-LightItalic.ttf" />
-    <Resource Include="Resources\Fonts\Montserrat\Montserrat-Medium.ttf" />
-    <Resource Include="Resources\Fonts\Montserrat\Montserrat-MediumItalic.ttf" />
-    <Resource Include="Resources\Fonts\Montserrat\Montserrat-Regular.ttf" />
-    <Resource Include="Resources\Fonts\Montserrat\Montserrat-SemiBold.ttf" />
-    <Resource Include="Resources\Fonts\Montserrat\Montserrat-SemiBoldItalic.ttf" />
-    <Resource Include="Resources\Fonts\Montserrat\Montserrat-Thin.ttf" />
-    <Resource Include="Resources\Fonts\Montserrat\Montserrat-ThinItalic.ttf" />
-    <Resource Include="Resources\Fonts\Roboto\Roboto-Black.ttf" />
-    <Resource Include="Resources\Fonts\Roboto\Roboto-BlackItalic.ttf" />
-    <Resource Include="Resources\Fonts\Roboto\Roboto-Bold.ttf" />
-    <Resource Include="Resources\Fonts\Roboto\Roboto-BoldItalic.ttf" />
-    <Resource Include="Resources\Fonts\Roboto\Roboto-Italic.ttf" />
-    <Resource Include="Resources\Fonts\Roboto\Roboto-Light.ttf" />
-    <Resource Include="Resources\Fonts\Roboto\Roboto-LightItalic.ttf" />
-    <Resource Include="Resources\Fonts\Roboto\Roboto-Medium.ttf" />
-    <Resource Include="Resources\Fonts\Roboto\Roboto-MediumItalic.ttf" />
-    <Resource Include="Resources\Fonts\Roboto\Roboto-Regular.ttf" />
-    <Resource Include="Resources\Fonts\Roboto\Roboto-Thin.ttf" />
-    <Resource Include="Resources\Fonts\Roboto\Roboto-ThinItalic.ttf" />
-    <Resource Include="Resources\Icons\browser.png" />
-    <Resource Include="Resources\Icons\library.png" />
-    <Resource Include="Resources\Icons\music-album.png" />
-    <Resource Include="Resources\Icons\music-note.png" />
-    <Resource Include="Resources\Icons\resize.png" />
-    <Resource Include="Resources\Icons\settings.png" />
-    <Resource Include="Resources\Icons\singer.png" />
-    <Resource Include="Resources\Icons\song-playlist.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Includes\VPlayerLogo.ico" />
-    <Resource Include="Includes\VPlayerLogo.png" />
-    <Resource Include="Resources\Icons\television.png" />
-    <Resource Include="Resources\Icons\tvshow-playlist.png" />
-    <Resource Include="Resources\Icons\tvshow.png" />
-    <Resource Include="Resources\Icons\upnp.png" />
-    <Resource Include="Resources\Icons\video-play.png" />
-    <Resource Include="Resources\play-and-pause-button.png" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="LibVLCSharp" Version="3.4.9" />
-    <PackageReference Include="NAudio" Version="2.0.0" />
-    <PackageReference Include="Ninject" Version="3.3.4" />
-    <PackageReference Include="Prism.Ninject" Version="7.2.0.1422" />
-    <PackageReference Include="Prism.Wpf" Version="7.2.0.1422" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.3" />
-    <PackageReference Include="System.Reactive.Linq" Version="5.0.0" />
-    <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.12" />
-    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="89.0.4389.2300" />
-  </ItemGroup>
+	<ItemGroup>
+		<Reference Include="Hqub.MusicBrainz.API">
+			<HintPath>..\DLL\Hqub.MusicBrainz.API.dll</HintPath>
+		</Reference>
+		<Reference Include="System.Runtime.WindowsRuntime">
+			<HintPath>..\DLL\System.Runtime.WindowsRuntime.dll</HintPath>
+		</Reference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\CustomLibraries\Logger\Logger.csproj" />
-    <ProjectReference Include="..\..\CustomLibraries\VCore.Standard\VCore.Standard.csproj" />
-    <ProjectReference Include="..\..\CustomLibraries\VCore\VCore.WPF.csproj" />
-    <ProjectReference Include="..\KeyListener\Listener.csproj" />
-    <ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj" />
-    <ProjectReference Include="..\VPlayer.Core\VPlayer.Core.csproj" />
-    <ProjectReference Include="..\VPlayer.DarkTheme\VPlayer.DarkTheme.csproj" />
-    <ProjectReference Include="..\VPlayer.Library\VPlayer.Library.csproj" />
-    <ProjectReference Include="..\VPlayer.Player\VPlayer.Player.csproj" />
-    <ProjectReference Include="..\VPlayer.WindowsPlayer\VPlayer.WindowsPlayer.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Hqub.MusicBrainz.API">
-      <HintPath>..\DLL\Hqub.MusicBrainz.API.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.WindowsRuntime">
-      <HintPath>..\DLL\System.Runtime.WindowsRuntime.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="ChromaPrint\fpcalc.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="ChromaPrint\fpcalc.exe">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
 </Project>

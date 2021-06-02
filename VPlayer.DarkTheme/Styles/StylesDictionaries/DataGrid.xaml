@@ -37,8 +37,8 @@
 
     <!--  Style and template for the DataGridColumnHeader.  -->
     <Style TargetType="{x:Type DataGridColumnHeader}">
-        <Setter Property="Background" Value="{DynamicResource NormalBorderBrush}" />
-        <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+        <Setter Property="Background" Value="{StaticResource BackgroudBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Height" Value="30" />
         <Setter Property="SeparatorBrush" Value="#FFC9CACA" />
@@ -76,7 +76,7 @@
                                    Grid.ColumnSpan="4"
                                    Fill="#121212"
                                    Stretch="Fill"
-                                   Stroke="{StaticResource NormalBorderBrush}"
+                                   Stroke="#25cccccc"
                                    StrokeThickness="1" />
                         <Rectangle x:Name="Hover"
                                    Grid.RowSpan="2"

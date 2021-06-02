@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
 	  <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 	  <UseWPF>true</UseWPF>
+	  <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
 
  
