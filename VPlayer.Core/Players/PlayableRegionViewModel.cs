@@ -778,9 +778,7 @@ namespace VPlayer.Core.ViewModels
 
     public virtual void PlayNext()
     {
-      actualItemIndex++;
-
-      SetItemAndPlay(actualItemIndex);
+      SetItemAndPlay(null);
     }
 
     #endregion

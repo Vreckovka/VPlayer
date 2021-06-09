@@ -74,6 +74,8 @@ namespace VPlayer.Core.ViewModels
     #region IsShuffle
 
     private bool isShuffle;
+    Random shuffleRandom = new Random();
+
     public bool IsShuffle
     {
       get { return isShuffle; }
@@ -186,11 +188,17 @@ namespace VPlayer.Core.ViewModels
     {
       if (IsShuffle && songIndex == null)
       {
-        var random = new Random();
         var result = PlayList.Where(p => shuffleList.All(p2 => p2 != p)).ToList();
 
-        actualItemIndex = random.Next(0, result.Count);
-        songIndex = actualItemIndex;
+        if (result.Count == 0)
+        {
+          shuffleList.Clear();
+          result = PlayList.Where(p => shuffleList.All(p2 => p2 != p)).ToList();
+        }
+
+        var shuffleIndex = shuffleRandom.Next(0, result.Count);
+
+        songIndex = PlayList.IndexOf(result[shuffleIndex]);
       }
 
       if (IsRepeate && actualItemIndex >= PlayList.Count - 1)
