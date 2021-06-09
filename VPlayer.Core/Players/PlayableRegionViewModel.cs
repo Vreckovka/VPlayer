@@ -45,7 +45,6 @@ namespace VPlayer.Core.ViewModels
     where TPlaylistModel : class, IPlaylist<TPlaylistItemModel>, new()
     where TPlaylistItemModel : IItemInPlaylist<TModel>
   {
-   
 
     #region Fields
 
@@ -74,6 +73,10 @@ namespace VPlayer.Core.ViewModels
 
       Kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
       MediaPlayer = vLCPlayer;
+
+      shuffleRandomSeed = new Random().Next(0, int.MaxValue);
+
+      shuffleRandom = new Random(shuffleRandomSeed);
     }
 
     #endregion
@@ -265,7 +268,7 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
-    
+
     #region IsSelectedToPlay
 
     private bool isSelectedToPlay;
@@ -321,6 +324,53 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
+
+    #region IsRepeate
+
+    private bool isRepeate = true;
+    public bool IsRepeate
+    {
+      get { return isRepeate; }
+      set
+      {
+        if (value != isRepeate)
+        {
+          isRepeate = value;
+
+          OnRepeate(value);
+
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region IsShuffle
+
+    private bool isShuffle;
+
+    private int shuffleRandomSeed;
+    protected Random shuffleRandom = new Random();
+
+    public bool IsShuffle
+    {
+      get { return isShuffle; }
+      set
+      {
+        if (value != isShuffle)
+        {
+          isShuffle = value;
+
+          OnShuffle(value);
+
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
 
     #endregion
 
@@ -569,6 +619,27 @@ namespace VPlayer.Core.ViewModels
     {
       Application.Current?.Dispatcher?.Invoke(async () =>
       {
+        if (IsShuffle && songIndex == null)
+        {
+          var result = PlayList.Where(p => shuffleList.All(p2 => p2 != p)).ToList();
+
+          if (result.Count == 0)
+          {
+            shuffleList.Clear();
+            result = PlayList.Where(p => shuffleList.All(p2 => p2 != p)).ToList();
+          }
+
+          var shuffleIndex = (int)Math.Floor(shuffleRandom.NextDouble() * result.Count);
+
+          songIndex = PlayList.IndexOf(result[shuffleIndex]);
+        }
+
+        if (IsRepeate && actualItemIndex >= PlayList.Count - 1)
+        {
+          actualItemIndex = 0;
+          songIndex = 0;
+        }
+
         if (!string.IsNullOrEmpty(actualSearch))
         {
           ActualSearch = null;
@@ -726,6 +797,12 @@ namespace VPlayer.Core.ViewModels
       ActualSavedPlaylist = data.GetModel<TPlaylistModel>();
       ActualSavedPlaylist.LastPlayed = DateTime.Now;
 
+      if (data.IsShuffle.HasValue)
+        IsShuffle = data.IsShuffle.Value;
+
+      if (data.IsRepeat.HasValue)
+        IsRepeate = data.IsRepeat.Value;
+
       if (lastSongIndex == null)
       {
         PlayItems(data.Items, false);
@@ -767,6 +844,28 @@ namespace VPlayer.Core.ViewModels
       if (actualItemIndex < 0)
       {
         actualItemIndex = 0;
+      }
+
+      if (IsShuffle)
+      {
+        var list = shuffleList.ToList();
+
+        if (list.Count > 1)
+        {
+          var lastItem = list[^2];
+
+          shuffleList.Remove(lastItem);
+          shuffleList.Remove(list[^1]);
+
+          shuffleRandom = new Random(shuffleRandomSeed);
+
+          for (int i = 0; i < shuffleList.Count; i++)
+          {
+            shuffleRandom.NextDouble();
+          }
+
+          actualItemIndex = PlayList.IndexOf(lastItem);
+        }
       }
 
       SetItemAndPlay(actualItemIndex);
@@ -1195,6 +1294,16 @@ namespace VPlayer.Core.ViewModels
 
     }
 
+    protected virtual void OnShuffle(bool value)
+    {
+
+    }
+
+    protected virtual void OnRepeate(bool value)
+    {
+
+    }
+
     #endregion
 
     //Abstract methods 
@@ -1207,6 +1316,7 @@ namespace VPlayer.Core.ViewModels
     protected abstract TPlaylistModel GetNewPlaylistModel(List<TPlaylistItemModel> playlistModels, bool isUserCreated);
 
     #endregion
+
 
     #region Dispose
 

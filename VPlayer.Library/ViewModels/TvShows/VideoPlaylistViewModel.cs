@@ -96,7 +96,7 @@ namespace VPlayer.Library.ViewModels.TvShows
 
     public override void PublishPlayEvent(IEnumerable<VideoItemInPlaylistViewModel> viewModels, EventAction eventAction)
     {
-      var e = new PlayItemsEventData<VideoItemInPlaylistViewModel>(viewModels, eventAction, Model);
+      var e = new PlayItemsEventData<VideoItemInPlaylistViewModel>(viewModels, eventAction, Model.IsShuffle, Model.IsReapting,null, Model);
 
       eventAggregator.GetEvent<PlayItemsEvent<VideoItem, VideoItemInPlaylistViewModel>>().Publish(e);
     }

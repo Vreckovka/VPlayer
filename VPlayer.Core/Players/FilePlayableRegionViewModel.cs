@@ -45,59 +45,7 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
-
-    #region IsRepeate
-
-    private bool isRepeate = true;
-    public bool IsRepeate
-    {
-      get { return isRepeate; }
-      set
-      {
-        if (value != isRepeate)
-        {
-          isRepeate = value;
-
-          if (ActualSavedPlaylist.IsReapting != value)
-          {
-            ActualSavedPlaylist.IsReapting = value;
-            UpdateActualSavedPlaylistPlaylist();
-          }
-
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
-
-    #region IsShuffle
-
-    private bool isShuffle;
-    Random shuffleRandom = new Random();
-
-    public bool IsShuffle
-    {
-      get { return isShuffle; }
-      set
-      {
-        if (value != isShuffle)
-        {
-          isShuffle = value;
-
-          if (ActualSavedPlaylist.IsShuffle != value)
-          {
-            ActualSavedPlaylist.IsShuffle = value;
-            UpdateActualSavedPlaylistPlaylist();
-          }
-
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
-
+    
     #region IsBuffering
 
     private bool isBuffering;
@@ -173,42 +121,11 @@ namespace VPlayer.Core.ViewModels
 
     protected override void OnPlayEvent(PlayItemsEventData<TItemViewModel> data)
     {
-      if (data.IsShufle.HasValue)
-        IsShuffle = data.IsShufle.Value;
+      if (data.IsShuffle.HasValue)
+        IsShuffle = data.IsShuffle.Value;
 
       if (data.IsRepeat.HasValue)
         IsRepeate = data.IsRepeat.Value;
-    }
-
-    #endregion
-
-    #region SetItemAndPlay
-
-    public override void SetItemAndPlay(int? songIndex = null, bool forcePlay = false, bool onlyItemSet = false)
-    {
-      if (IsShuffle && songIndex == null)
-      {
-        var result = PlayList.Where(p => shuffleList.All(p2 => p2 != p)).ToList();
-
-        if (result.Count == 0)
-        {
-          shuffleList.Clear();
-          result = PlayList.Where(p => shuffleList.All(p2 => p2 != p)).ToList();
-        }
-
-        var shuffleIndex = shuffleRandom.Next(0, result.Count);
-
-        songIndex = PlayList.IndexOf(result[shuffleIndex]);
-      }
-
-      if (IsRepeate && actualItemIndex >= PlayList.Count - 1)
-      {
-        actualItemIndex = 0;
-        songIndex = 0;
-      }
-        
-
-      base.SetItemAndPlay(songIndex, forcePlay, onlyItemSet);
     }
 
     #endregion
@@ -414,6 +331,36 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region OnShuffle
+
+    protected override void OnShuffle(bool value)
+    {
+      base.OnShuffle(value);
+
+      if (ActualSavedPlaylist.IsShuffle != value)
+      {
+        ActualSavedPlaylist.IsShuffle = value;
+        UpdateActualSavedPlaylistPlaylist();
+      }
+    }
+
+    #endregion
+
+    #region OnRepeate
+
+    protected override void OnRepeate(bool value)
+    {
+      base.OnRepeate(value);
+
+      if (ActualSavedPlaylist.IsReapting != value)
+      {
+        ActualSavedPlaylist.IsReapting = value;
+        UpdateActualSavedPlaylistPlaylist();
+      }
+    }
+
+    #endregion
+
     #region Dispose
 
     public override void Dispose()
@@ -426,6 +373,7 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+   
     #endregion
 
   }

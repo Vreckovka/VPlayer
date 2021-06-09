@@ -7,7 +7,7 @@ namespace VPlayer.Core.Events
   {
     IEnumerable<TEventData> Items { get; }
     EventAction EventAction { get; }
-    bool? IsShufle { get; }
+    bool? IsShuffle { get; }
     bool? IsRepeat { get; }
     float? SetPostion { get; }
     object Model { get; }
@@ -25,7 +25,6 @@ namespace VPlayer.Core.Events
       IEnumerable<TEventData> items,
       EventAction eventAction,
       object model)
-
     {
       Items = items;
       EventAction = eventAction;
@@ -35,14 +34,14 @@ namespace VPlayer.Core.Events
     public PlayItemsEventData(
       IEnumerable<TEventData> items,
       EventAction eventAction,
-      bool? isShufle,
+      bool? isShuffle,
       bool? isRepeat,
       float? setPostion,
       object model)
     {
       EventAction = eventAction;
       Items = items;
-      IsShufle = isShufle;
+      IsShuffle = isShuffle;
       IsRepeat = isRepeat;
       SetPostion = setPostion;
       Model = model;
@@ -52,7 +51,7 @@ namespace VPlayer.Core.Events
 
     public IEnumerable<TEventData> Items { get; }
     public EventAction EventAction { get; }
-    public bool? IsShufle { get; }
+    public bool? IsShuffle { get; }
     public bool? IsRepeat { get; }
     public float? SetPostion { get; }
     public object Model { get; }
