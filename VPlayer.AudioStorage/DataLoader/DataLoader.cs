@@ -86,19 +86,6 @@ namespace VPlayer.AudioStorage.DataLoader
 
     public TvShow LoadTvShow(string tvShowName, string path)
     {
-      var statusMessage = new StatusMessage(1)
-      {
-        Message = "Getting file info"
-      };
-
-      statusManager.UpdateMessage(statusMessage);
-
-      statusMessage.ProcessedCount++;
-
-      statusMessage.MessageStatusState = MessageStatusState.Done;
-
-      statusManager.UpdateMessage(statusMessage);
-
       var tvShow = new TvShow()
       {
         Seasons = new List<TvShowSeason>(),
@@ -167,7 +154,7 @@ namespace VPlayer.AudioStorage.DataLoader
         tvShowSeason.Episodes.Add(tvEpisode);
       }
 
-
+      statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
     }
 
     #endregion

@@ -40,7 +40,9 @@ namespace VPlayer.Library.ViewModels.TvShows
 
     public override bool ContainsNestedRegions => false;
     public override string Header => "Tv shows";
-    public override IQueryable<AudioStorage.DomainClasses.Video.TvShow> LoadQuery => base.LoadQuery.Include(x => x.Seasons).ThenInclude(x => x.Episodes).ThenInclude(x => x.VideoItem);
+    public override IQueryable<AudioStorage.DomainClasses.Video.TvShow> LoadQuery => base.LoadQuery.Include(x => x.Seasons.OrderBy(y => y.SeasonNumber))
+                                                                                                   .ThenInclude(x => x.Episodes.OrderBy(y => y.EpisodeNumber))
+                                                                                                   .ThenInclude(x => x.VideoItem);
     public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
     public IEventAggregator EventAggregator { get; }
 

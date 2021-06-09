@@ -50,6 +50,9 @@ using VPlayer.WindowsPlayer.Views.WindowsPlayer;
 //TODO: Hore prenutie medzi windows a browser playermi , zmizne bocne menu
 //TODO: Pridat loading indikator, mozno aj co prave robi
 //TODO: Hviezdicky pocet 
+//TODO: Menu rozdelit na sub menu = Playlists(Songs, Music, TvShows), Library(Albums, Interprets, TvShows), Other(Iptv, UPnP...)
+//TODO: Popupwindow is TOPMOST
+//TODO: Hlavne zlozky pre pridanie hudby, tv shows. Aby sa to otvaralo stale tam
 
 namespace VPlayer.WindowsPlayer.ViewModels
 {

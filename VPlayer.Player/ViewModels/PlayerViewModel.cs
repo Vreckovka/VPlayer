@@ -312,7 +312,7 @@ namespace VPlayer.Player.ViewModels
 
       CanPlay = ActualViewModel.CanPlay;
     }
-
+    
     #region PlayNext
 
     public void PlayNext()
@@ -385,7 +385,7 @@ namespace VPlayer.Player.ViewModels
 
     private bool CanUseKey(out IFilePlayableRegionViewModel filePlayable)
     {
-      if (ActualViewModel.IsActive && 
+      if (ActualViewModel != null && ActualViewModel.IsActive && 
           ActualViewModel is IFilePlayableRegionViewModel filePlayable1 &&
           mainWindow.IsActive &&
           mainWindow.WindowState != WindowState.Minimized)

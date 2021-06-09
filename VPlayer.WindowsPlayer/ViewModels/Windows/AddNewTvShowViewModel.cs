@@ -189,9 +189,9 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
 
           tvShow.CsfdUrl = TvShowCsfdUrl;
 
-          var id = storageManager.StoreTvShow(tvShow);
+          var id = await storageManager.StoreTvShow(tvShow);
 
-          //tvShowScrapper.UpdateTvShowFromCsfd(id, TvShowCsfdUrl);
+          await tvShowScrapper.UpdateTvShowFromCsfd(id, TvShowCsfdUrl);
 
           IsLoading = false;
         }

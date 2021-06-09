@@ -144,8 +144,8 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.3" />
 		<PackageReference Include="System.Reactive.Linq" Version="5.0.0" />
 		<PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.12" />
-		<PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="89.0.4389.2300" />
-		<PackageReference Include="CefSharp.Wpf" Version="89.0.170" />
+		<PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="91.0.4472.1900" />
+		<PackageReference Include="CefSharp.Wpf" Version="90.6.70" />
 		<PackageReference Include="OpenQA.Selenium.Winium" Version="1.0.0.4" />
 	</ItemGroup>
 

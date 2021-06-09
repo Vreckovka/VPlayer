@@ -46,10 +46,10 @@ namespace VPlayer.AudioStorage.Parsers
 
         chromeOptions.AddArguments(new List<string>() { "headless", "disable-infobars", "--log-level=3" });
 
-        var chromeDriverService = ChromeDriverService.CreateDefaultService(Directory.GetCurrentDirectory());
+        var dir = Directory.GetCurrentDirectory();
+        var chromeDriverService = ChromeDriverService.CreateDefaultService(dir, "chromedriver.exe");
 
         chromeDriverService.HideCommandPromptWindow = true;
-
 
         chromeDriver = new ChromeDriver(chromeDriverService, chromeOptions);
 
@@ -83,22 +83,29 @@ namespace VPlayer.AudioStorage.Parsers
 
       statusManager.UpdateMessage(statusMessage);
 
-      tvShow.Name = GetTvShowName(url, out var posterUrl);
+      var name = GetTvShowName(url, out var posterUrl);
 
-      statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
-
-      var poster = DownloadPoster(posterUrl);
-
-      if (poster != null)
+      if (name != null)
       {
-        tvShow.PosterPath = SaveImage(tvShow.Name, poster);
+        tvShow.Name = name;
+
+        statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+
+        var poster = DownloadPoster(posterUrl);
+
+        if (poster != null)
+        {
+          tvShow.PosterPath = SaveImage(tvShow.Name, poster);
+        }
+
+        statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+
+        tvShow.Seasons = LoadSeasons(statusMessage);
+
+        return tvShow;
       }
 
-      statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
-
-      tvShow.Seasons = LoadSeasons(statusMessage);
-
-      return tvShow;
+      return null;
     }
 
     public CSFDTVShowSeason LoadTvShowSeason(string url)
@@ -114,7 +121,7 @@ namespace VPlayer.AudioStorage.Parsers
       statusManager.UpdateMessage(statusMessage);
 
       var document = new HtmlDocument();
-
+      
       document.LoadHtml(chromeDriver.PageSource);
 
       statusMessage = new StatusMessage(1)
@@ -152,17 +159,34 @@ namespace VPlayer.AudioStorage.Parsers
 
       document.LoadHtml(chromeDriver.PageSource);
 
-      var node = document.DocumentNode.SelectNodes("/html/body/div[2]/div/div[1]/div/div[1]/div/div/header/div/h1").FirstOrDefault()?.InnerText;
+      string node = null;
+      int maxCount = 10;
+      int i = 0;
 
-      var name = node.Replace("\t", string.Empty).Replace(" (TV seriál)", string.Empty).Replace("\r", null).Replace("\n", null);
+      while (node == null && i < maxCount)
+      {                                         
+        node = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div/div/header/div/h1")?.FirstOrDefault()?.InnerText;
 
-      logger.Log(MessageType.Success, $"Tv show name: {name}");
+        if (node != null)
+        {
+          var name = node.Replace("\t", string.Empty).Replace(" (TV seriál)", string.Empty).Replace("\r", null).Replace("\n", null);
 
-      var posterNode = chromeDriver.FindElement(By.XPath("/html/body/div[2]/div/div[1]/div/div[1]/div/div/div[1]/div[1]/a/img"));
+          logger.Log(MessageType.Success, $"Tv show name: {name}");
 
-      posterUrl = posterNode.GetAttribute("src");
+          var posterNode = chromeDriver.FindElement(By.XPath("/html/body/div[3]/div/div[1]/div/div[1]/div/div/div[1]/div[1]/a/img"));
 
-      return name;
+          posterUrl = posterNode.GetAttribute("src");
+
+          return name;
+        }
+
+        i++;
+
+       
+      }
+
+      posterUrl = null;
+      return null;
     }
 
     #endregion
@@ -213,7 +237,7 @@ namespace VPlayer.AudioStorage.Parsers
 
       document.LoadHtml(chromeDriver.PageSource);
 
-      var nodes = document.DocumentNode.SelectNodes("/html/body/div[2]/div/div[1]/div/section[1]/div[2]/div/ul/li/h3/a");
+      var nodes = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/section[1]/div[2]/div/ul/li/h3/a");
 
       statusMessage = new StatusMessage(nodes.Count)
       {
@@ -266,16 +290,16 @@ namespace VPlayer.AudioStorage.Parsers
         document.LoadHtml(html);
 
 
-        var nodes = document.DocumentNode.SelectNodes("/html/body/div[2]/div/div[1]/div[3]/div/ul/li/a");
+        var nodes = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div[3]/div/ul/li/a");
 
         if (nodes == null)
         {
-          nodes = document.DocumentNode.SelectNodes("/html/body/div[2]/div/div[1]/div/section[1]/div[2]/div/ul/li/h3/a");
+          nodes = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/section[1]/div[2]/div/ul/li/h3/a");
         }
 
         if (nodes == null)
         {
-          nodes = document.DocumentNode.SelectNodes("/html/body/div[2]/div/div[1]/div/section/div[2]/div/ul/li/h3/a");
+          nodes = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/section/div[2]/div/ul/li/h3/a");
         }
 
         if (nodes == null)
@@ -304,43 +328,8 @@ namespace VPlayer.AudioStorage.Parsers
     }
 
     #endregion
+    
 
-    #region TryFind
-
-    private bool TryFind(string xPath, out IWebElement webElement)
-    {
-      try
-      {
-        webElement = chromeDriver.FindElement(By.XPath(xPath));
-        return true;
-      }
-      catch (Exception ex)
-      {
-        webElement = null;
-        return false;
-      }
-    }
-
-    #endregion
-
-    #region LoadTestHtml
-
-    private void LoadTestHtml(string filePath)
-    {
-      var html = File.ReadAllText(filePath);
-
-      var document = new HtmlDocument();
-
-      document.LoadHtml(html);
-
-      //#children > div.content.columns
-      var seasonsXPath = "body/div[2]/div[3]/div[1]/div[3]/div[2]/ul/li/a";
-      var nodes = document.DocumentNode.SelectNodes(seasonsXPath);
-
-
-    }
-
-    #endregion
   }
 
   public class CSFDTVShow
