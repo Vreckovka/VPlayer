@@ -21,12 +21,12 @@ namespace VPlayer.Core.ViewModels
     PlayableRegionViewModel<TView, TItemViewModel, TPlaylistModel, TPlaylistItemModel, TModel>, IFilePlayableRegionViewModel
     where TView : class, IView
     where TItemViewModel : class, IFileItemInPlayList<TModel>
-    where TModel : IPlayableModel
+    where TModel : class, IPlayableModel, IUpdateable<TModel>
     where TPlaylistModel : class, IFilePlaylist<TPlaylistItemModel>, new()
     where TPlaylistItemModel : IItemInPlaylist<TModel>
   {
     private long lastTimeChangedMs;
-    
+
 
     protected FilePlayableRegionViewModel(IRegionProvider regionProvider, IKernel kernel, ILogger logger,
       IStorageManager storageManager,
@@ -45,7 +45,7 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
-    
+
     #region IsBuffering
 
     private bool isBuffering;
@@ -133,7 +133,9 @@ namespace VPlayer.Core.ViewModels
     #region OnVlcTimeChanged
 
     private int lastTotalTimeSaved = 0;
-    private void OnVlcTimeChanged(object sender, PlayerTimeChangedArgs eventArgs)
+    private TimeSpan totalPlayedTime;
+
+    private async void OnVlcTimeChanged(object sender, PlayerTimeChangedArgs eventArgs)
     {
       if (ActualItem != null)
       {
@@ -142,7 +144,10 @@ namespace VPlayer.Core.ViewModels
         if (!double.IsNaN(position) && !double.IsInfinity(position))
         {
           ActualItem.ActualPosition = position;
+
+
           ActualSavedPlaylist.LastItemElapsedTime = position;
+
 
           var deltaTimeChanged = eventArgs.Time - lastTimeChangedMs;
 
@@ -153,23 +158,18 @@ namespace VPlayer.Core.ViewModels
 
           lastTimeChangedMs = eventArgs.Time;
 
-          PlaylistTotalTimePlayed += TimeSpan.FromMilliseconds(deltaTimeChanged);
+          totalPlayedTime += TimeSpan.FromMilliseconds(deltaTimeChanged);
 
-#if RELEASE
-          int totalSec = (int)PlaylistTotalTimePlayed.TotalSeconds;
+          PlaylistTotalTimePlayed = totalPlayedTime;
+      
+          int totalSec = (int)totalPlayedTime.TotalSeconds;
 
           if (totalSec % 10 == 0 && totalSec > lastTotalTimeSaved)
           {
             lastTotalTimeSaved = totalSec;
-            Task.Run(() =>
-            {
-              if (storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(ActualSavedPlaylist, out var updated))
-              {
-                ActualSavedPlaylist = updated;
-              }
-            });
+
+            await UpdateActualSavedPlaylistPlaylist();
           }
-#endif
         }
       }
     }
@@ -180,18 +180,25 @@ namespace VPlayer.Core.ViewModels
 
     #region SetMediaPosition
 
+    private object positionBatton = new object();
     public void SetMediaPosition(float position)
     {
-      if (position < 0)
+      lock (positionBatton)
       {
-        position = 0;
+        if (position < 0)
+        {
+          position = 0;
+        }
+
+        MediaPlayer.Stop();
+        MediaPlayer.Position = position;
+        MediaPlayer.Play();
+        MediaPlayer.Position = position;
+
+        ActualItem.ActualPosition = MediaPlayer.Position;
+
+        lastTimeChangedMs = (long)(ActualItem.ActualPosition * (double)ActualItem.Duration) * 1000;
       }
-
-      MediaPlayer.Position = position;
-
-      ActualItem.ActualPosition = MediaPlayer.Position;
-
-      lastTimeChangedMs = (long)(ActualItem.ActualPosition * (double)ActualItem.Duration) * 1000;
     }
 
     #endregion
@@ -280,13 +287,14 @@ namespace VPlayer.Core.ViewModels
 
     protected void Media_DurationChanged(object sender, MediaDurationChangedArgs e)
     {
-      Application.Current.Dispatcher.Invoke(() =>
+      Application.Current.Dispatcher.Invoke(async () =>
       {
         ActualItem.Duration = (int)e.Duration / 1000;
 
         if (MediaPlayer.Media != null)
           MediaPlayer.Media.DurationChanged -= Media_DurationChanged;
 
+        await storageManager.UpdateEntityAsync(ActualItem.Model);
       });
     }
 
@@ -373,7 +381,7 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-   
+
     #endregion
 
   }

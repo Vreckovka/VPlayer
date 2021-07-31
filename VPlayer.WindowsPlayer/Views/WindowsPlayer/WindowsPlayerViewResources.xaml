@@ -203,7 +203,7 @@
                                                       IconHeight="11"
                                                       IconPathStyle="{StaticResource Info}"
                                                       IconWidth="11"
-                                                      ToolTip="{Binding Model.DiskLocation}">
+                                                      ToolTip="{Binding Model.Source}">
 
                                 <controls2:ButtonWithIcon.Style>
                                     <Style BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}" TargetType="{x:Type controls2:ButtonWithIcon}">

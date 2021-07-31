@@ -14,6 +14,7 @@ using VCore.ViewModels.Navigation;
 using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DataLoader;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPlayer.Core;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.Settings;
 using VPlayer.IPTV.ViewModels;
@@ -86,6 +87,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       dialog.AllowNonFileSystemItems = true;
       dialog.IsFolderPicker = true;
+      dialog.InitialDirectory = GlobalSettings.MusicInitialDirectory; 
       dialog.Title = "Select folders with music files";
 
       if (dialog.ShowDialog() == CommonFileDialogResult.Ok)

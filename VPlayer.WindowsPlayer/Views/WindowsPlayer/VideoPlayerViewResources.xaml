@@ -162,21 +162,34 @@
     </DataTemplate>
 
     <DataTemplate x:Key="PlayListVideoItemDescriptionDataTemplate">
-        <TextBlock Margin="5,0,0,0"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Bottom"
-                   Text="{Binding Description}">
-            <TextBlock.Style>
-                <Style TargetType="TextBlock">
-                    <Setter Property="Foreground" Value="#30edfffa" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-                            <Setter Property="Foreground" Value="#24140c" />
-                            <Setter Property="FontWeight" Value="DemiBold" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </TextBlock.Style>
-        </TextBlock>
+        <Grid Background="Transparent">
+            <TextBlock Margin="5,0,0,0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Bottom"
+                       Text="{Binding Description}">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="#30edfffa" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                <Setter Property="Foreground" Value="#24140c" />
+                                <Setter Property="FontWeight" Value="DemiBold" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+            <Grid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Command="{Binding DeleteItemFromPlaylist}" Header="Delete episode from playlist" />
+
+                    <MenuItem IsHitTestVisible="False" />
+
+                    <MenuItem Command="{Binding OpenContainingFolder}" Header="Open folder" />
+                </ContextMenu>
+            </Grid.ContextMenu>
+        </Grid>
+
     </DataTemplate>
 </ResourceDictionary>

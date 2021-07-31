@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Prism.Events;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -12,23 +13,21 @@ namespace VPlayer.Core.ViewModels
     public FileItemInPlayList(
       TModel model,
       IEventAggregator eventAggregator,
-      IStorageManager storageManager) : base(model, eventAggregator,storageManager)
+      IStorageManager storageManager) : base(model, eventAggregator, storageManager)
     {
       Duration = model.Duration;
     }
 
     #region Duration
 
-    private int duration;
-
     public int Duration
     {
-      get { return duration; }
+      get { return Model.Duration; }
       set
       {
-        if (value != duration)
+        if (value != Model.Duration)
         {
-          duration = value;
+          Model.Duration = value;
 
           RaisePropertyChanged();
         }
@@ -46,9 +45,12 @@ namespace VPlayer.Core.ViewModels
       get { return actualPosition; }
       set
       {
-        if (value != actualPosition)
+        if (value != actualPosition && !float.IsNaN(value) && !float.IsInfinity(value))
         {
-          actualPosition = value;
+
+          var stringValue = value.ToString().Take(6).Aggregate("", (x, y) => x + y);
+
+          actualPosition = float.Parse(stringValue);
 
           RaisePropertyChanged();
           RaisePropertyChanged(nameof(ActualTime));
@@ -65,6 +67,19 @@ namespace VPlayer.Core.ViewModels
     }
 
 
-    public TimeSpan ActualTime => TimeSpan.FromSeconds(ActualPosition * Duration);
+    public TimeSpan ActualTime
+    {
+      get
+      {
+        var seconds = ActualPosition * Duration;
+
+        if (TimeSpan.MaxValue.TotalSeconds > seconds)
+        {
+          return TimeSpan.FromSeconds(ActualPosition * Duration);
+        }
+
+        return TimeSpan.FromSeconds(0);
+      }
+    }
   }
 }

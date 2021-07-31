@@ -685,7 +685,9 @@ namespace VPlayer.Core.ViewModels
       });
     }
 
-    #endregion 
+    #endregion
+
+    #region OnVlcError
 
     protected virtual void OnVlcError()
     {
@@ -694,6 +696,8 @@ namespace VPlayer.Core.ViewModels
         MessageBox.Show("VLC BROKE!!!!!");
       });
     }
+
+    #endregion
 
     #region OnEndReached
 
@@ -1103,12 +1107,15 @@ namespace VPlayer.Core.ViewModels
 
     #region UpdateActualSavedPlaylistPlaylist
 
-    protected void UpdateActualSavedPlaylistPlaylist()
+    protected Task UpdateActualSavedPlaylistPlaylist()
     {
-      if (storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(ActualSavedPlaylist, out var updated))
-      {
-        ActualSavedPlaylist = updated;
-      }
+      return Task.Run(() =>
+       {
+         if (storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(ActualSavedPlaylist, out var updated))
+         {
+           ActualSavedPlaylist = updated;
+         }
+       });
     }
 
     #endregion
@@ -1322,7 +1329,7 @@ namespace VPlayer.Core.ViewModels
 
     public override void Dispose()
     {
-      if (ActualSavedPlaylist != null)
+      if (ActualSavedPlaylist != null && ActualSavedPlaylist.Id != -1)
         UpdateActualSavedPlaylistPlaylist();
 
       Task.Run(() =>

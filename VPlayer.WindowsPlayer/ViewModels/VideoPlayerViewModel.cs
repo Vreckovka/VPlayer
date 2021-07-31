@@ -593,36 +593,47 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region MediaPlayer_ParsedChanged
 
-    private void MediaPlayer_ParsedChanged(object sender, EventArgs e)
+    private SemaphoreSlim parseChangedSemaphore = new SemaphoreSlim(1, 1);
+    private async void MediaPlayer_ParsedChanged(object sender, EventArgs e)
     {
-      Application.Current.Dispatcher.Invoke(() =>
+      await Application.Current.Dispatcher.Invoke(async () =>
       {
-        AudioTracks.Clear();
-
-        ReloadSubtitles();
-
-        if (MediaPlayer.AudioTrackDescription.Length > 0)
+        try
         {
-          foreach (var spu in MediaPlayer.AudioTrackDescription)
+          await parseChangedSemaphore.WaitAsync();
+
+          AudioTracks.Clear();
+
+          await ReloadSubtitles();
+
+          if (MediaPlayer.AudioTrackDescription.Length > 0)
           {
-            AudioTracks.Add(new AudioTrackViewModel(spu));
+            foreach (var spu in MediaPlayer.AudioTrackDescription)
+            {
+              AudioTracks.Add(new AudioTrackViewModel(spu));
+            }
+
+            if (ActualItem?.Model.AudioTrack != null)
+            {
+              MediaPlayer.SetAudioTrack(ActualItem.Model.AudioTrack.Value);
+            }
+
+            var actualAudioTrack = AudioTracks.Single(x => MediaPlayer.AudioTrack == x.Model.Id);
+
+            actualAudioTrack.IsSelected = true;
           }
 
-          if (ActualItem?.Model.AudioTrack != null)
-          {
-            MediaPlayer.SetAudioTrack(ActualItem.Model.AudioTrack.Value);
-          }
-
-          var actualAudioTrack = AudioTracks.Single(x => MediaPlayer.AudioTrack == x.Model.Id);
-
-          actualAudioTrack.IsSelected = true;
+          if (MediaPlayer.Media != null)
+            MediaPlayer.Media.ParsedChanged -= MediaPlayer_ParsedChanged;
         }
-
-
-        if (MediaPlayer.Media != null)
-          MediaPlayer.Media.ParsedChanged -= MediaPlayer_ParsedChanged;
-
-        SelectAspectCropRatios();
+        catch (Exception ex)
+        {
+          throw;
+        }
+        finally
+        {
+          parseChangedSemaphore.Release();
+        }
       });
     }
 
@@ -638,10 +649,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         ActualItem.Model.SubtitleTrack = MediaPlayer.SpuCount;
 
-        Task.Run(() =>
+        Task.Run(async () =>
         {
           Thread.Sleep(500);
-          ReloadSubtitles();
+
+          await ReloadSubtitles();
         });
 
       }
@@ -651,9 +663,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region ReloadSubtitles
 
-    private void ReloadSubtitles()
+    private async Task ReloadSubtitles()
     {
-      Application.Current.Dispatcher.Invoke(() =>
+      await Application.Current.Dispatcher.InvokeAsync(() =>
       {
         Subtitles.Clear();
 
@@ -670,7 +682,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
           }
           else if (Subtitles.Count > 2)
           {
-            var englishSubtitle = Subtitles.FirstOrDefault(x => x.Description.Contains("Anglicky"));
+            var englishSubtitle = Subtitles.FirstOrDefault(x => x.Description.ToLower().Contains("anglicky"));
+
+            if (englishSubtitle == null)
+            {
+              englishSubtitle = Subtitles.FirstOrDefault(x => x.Description.ToLower().Contains("anglický"));
+            }
 
             if (englishSubtitle != null)
               MediaPlayer.SetSpu(englishSubtitle.Model.Id);
