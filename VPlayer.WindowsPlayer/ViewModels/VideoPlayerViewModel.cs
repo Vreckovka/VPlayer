@@ -665,7 +665,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     private async Task ReloadSubtitles()
     {
-      await Application.Current.Dispatcher.InvokeAsync(() =>
+      await Application.Current.Dispatcher.InvokeAsync(async () =>
       {
         Subtitles.Clear();
 
@@ -690,7 +690,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
             }
 
             if (englishSubtitle != null)
-              MediaPlayer.SetSpu(englishSubtitle.Model.Id);
+            {
+              OnSubtitleSelected(englishSubtitle);
+            }
           }
 
           var actualSub = Subtitles.Single(x => MediaPlayer.Spu == x.Model.Id);
