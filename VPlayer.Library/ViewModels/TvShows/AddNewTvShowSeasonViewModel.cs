@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -119,10 +120,19 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
     {
       CommonOpenFileDialog dialog = new CommonOpenFileDialog();
 
+      var initialDirectory = GlobalSettings.TvShowInitialDirectory;
+
+      if (tvShow.Seasons != null && tvShow.Seasons.Count > 0)
+      {
+        var episode = tvShow.Seasons[0].Episodes?.FirstOrDefault();
+
+        initialDirectory = new DirectoryInfo(episode.Source).Parent.FullName;
+      }
+
       dialog.AllowNonFileSystemItems = true;
       dialog.IsFolderPicker = true;
-      dialog.InitialDirectory = GlobalSettings.TvShowInitialDirectory; 
-      dialog.Title = "Select folders with tv show";
+      dialog.InitialDirectory = initialDirectory; 
+      dialog.Title = "Select folder with tv show season";
 
       if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
       {

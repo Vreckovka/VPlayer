@@ -634,6 +634,11 @@ namespace VPlayer.Core.ViewModels
           songIndex = PlayList.IndexOf(result[shuffleIndex]);
         }
 
+        if (songIndex != null)
+        {
+          actualItemIndex = songIndex.Value;
+        }
+
         if (IsRepeate && actualItemIndex >= PlayList.Count - 1)
         {
           actualItemIndex = 0;

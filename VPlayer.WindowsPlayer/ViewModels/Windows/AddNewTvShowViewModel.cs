@@ -14,6 +14,7 @@ using VPlayer.AudioStorage.DataLoader;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.AudioStorage.Parsers;
+using VPlayer.Core;
 using VPlayer.Library.ViewModels.TvShows;
 
 namespace VPlayer.WindowsPlayer.ViewModels.Windows
@@ -148,6 +149,7 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
 
       dialog.AllowNonFileSystemItems = true;
       dialog.IsFolderPicker = true;
+      dialog.InitialDirectory = GlobalSettings.TvShowInitialDirectory;
       dialog.Title = "Select folders with tv show";
 
       if (dialog.ShowDialog() == CommonFileDialogResult.Ok)

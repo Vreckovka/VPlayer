@@ -6,7 +6,7 @@ namespace VPlayer.Core
 {
   public static class GlobalSettings
   {
-    public static string MusicInitialDirectory = "D:\\Hudba;";
+    public static string MusicInitialDirectory = "D:\\Hudba";
     public static string TvShowInitialDirectory = "E:\\Serialy";
   }
 }
