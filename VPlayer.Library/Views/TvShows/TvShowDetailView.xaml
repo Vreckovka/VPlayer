@@ -148,23 +148,22 @@
                     Margin="5,0"
                     BorderBrush="{StaticResource 3_WhiteTransparentBrush}"
                     BorderThickness="2,0,0,0">
-
-
-                <ItemsControl attachedProperties:ScrollViewerCorrector.FixScrolling="True"
-                              Background="{StaticResource 3_WhiteTransparentBrush}"
-                              ItemTemplate="{StaticResource SeasonDataTemplate}"
-                              ItemsSource="{Binding ViewModel.Model.Seasons}"
-                              MouseWheel="ListView_MouseWheel"
-                              ScrollViewer.CanContentScroll="False">
-                    <ItemsControl.Template>
-                        <ControlTemplate>
-                            <ScrollViewer>
-                                <ItemsPresenter />
-                            </ScrollViewer>
-                        </ControlTemplate>
-                    </ItemsControl.Template>
-                </ItemsControl>
-
+                <Grid>
+                    <ItemsControl attachedProperties:ScrollViewerCorrector.FixScrolling="True"
+                                  Background="{StaticResource 3_WhiteTransparentBrush}"
+                                  ItemTemplate="{StaticResource SeasonDataTemplate}"
+                                  ItemsSource="{Binding Seasons}"
+                                  MouseWheel="ListView_MouseWheel"
+                                  ScrollViewer.CanContentScroll="False">
+                        <ItemsControl.Template>
+                            <ControlTemplate>
+                                <ScrollViewer>
+                                    <ItemsPresenter />
+                                </ScrollViewer>
+                            </ControlTemplate>
+                        </ItemsControl.Template>
+                    </ItemsControl>
+                </Grid>
             </Border>
         </Grid>
     </Grid>

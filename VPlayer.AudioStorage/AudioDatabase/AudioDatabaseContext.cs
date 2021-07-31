@@ -107,6 +107,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
     private void OnBeforeSaving()
     {
       var entries = ChangeTracker.Entries();
+
       foreach (var entry in entries)
       {
         if (entry.Entity is ITrackable trackable)

@@ -259,7 +259,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       return true;
     }
 
-  
+
 
     private void AudioInfoDownloader_SubdirectoryLoaded(object sender, List<AudioInfo> e)
     {
@@ -843,7 +843,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
             {
               var removedItems = foundPlaylist.PlaylistItems.Where(p => playlist.PlaylistItems.All(p2 => p2.Id != p.Id)).ToList();
 
-              foreach(var removed in removedItems)
+              foreach (var removed in removedItems)
               {
                 context.Entry(removed).State = EntityState.Deleted;
               }
@@ -905,51 +905,93 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region UpdateWholeTvShow
 
+    private static object updatedBatton = new object();
     public Task<bool> DeepUpdateTvShow(TvShow newVersion)
     {
       return Task.Run(() =>
       {
-        using (var context = new AudioDatabaseContext())
+
+        lock (updatedBatton)
         {
-          var foundEntity = GetRepository<TvShow>(context).Include(x => x.Seasons).ThenInclude(x => x.Episodes).ThenInclude(x => x.VideoItem).SingleOrDefault(x => x.Id == newVersion.Id);
-
-          if (foundEntity != null)
+          using (var context = new AudioDatabaseContext())
           {
-            foundEntity.Update(newVersion);
+            var foundEntity = context.TvShows.AsNoTracking().Include(x => x.Seasons)
+              .ThenInclude(x => x.Episodes)
+              .ThenInclude(x => x.VideoItem)
+              .SingleOrDefault(x => x.Id == newVersion.Id);
 
-            var newSeasons = foundEntity.Seasons.Where(x => x.Id == 0);
-
-            //foreach(var season in newSeasons)
-            //{
-            //  context.Entry(season).State = EntityState.Added;
-            //}
-
-            //var newEpisodes = foundEntity.Seasons.SelectMany(x => x.Episodes).Where(x => x.Id == 0);
-
-            //foreach (var episode in newEpisodes)
-            //{
-            //  context.Entry(episode).State = EntityState.Added;
-            //}
-
-            //context.Entry(foundEntity).State = EntityState.Modified;
-
-            var result = context.SaveChanges();
-
-            logger.Log(Logger.MessageType.Success, $"Entity was updated {result}");
-
-            ItemChanged.OnNext(new ItemChanged()
+            if (foundEntity != null)
             {
-              Item = foundEntity,
-              Changed = Changed.Updated
-            });
+              foundEntity.Update(newVersion);
 
-            return true;
+              ModifiedExistingSeasons(context, foundEntity);
+
+              AddNewSeasons(context, foundEntity);
+
+              context.Entry(foundEntity).State = EntityState.Modified;
+
+              var result = context.SaveChanges();
+
+              logger.Log(Logger.MessageType.Success, $"Entity was updated {result}");
+
+              ItemChanged.OnNext(new ItemChanged()
+              {
+                Item = foundEntity,
+                Changed = Changed.Updated
+              });
+
+              return true;
+            }
+
+            return false;
           }
-
-          return false;
         }
       });
     }
+
+    #region ModifiedExistingSeasons
+
+    private void ModifiedExistingSeasons(AudioDatabaseContext context, TvShow foundEntity)
+    {
+      var existingSeasons = foundEntity.Seasons.Where(x => x.Id != 0).ToList();
+
+      foreach (var season in existingSeasons)
+      {
+        context.Entry(season).State = EntityState.Modified;
+      }
+
+      var existingEpisodes = existingSeasons.SelectMany(x => x.Episodes).Where(x => x.Id != 0);
+
+      foreach (var episode in existingEpisodes)
+      {
+        context.Entry(episode).State = EntityState.Modified;
+        context.Entry(episode.VideoItem).State = EntityState.Modified;
+      }
+    }
+
+    #endregion
+
+    #region AddNewSeasons
+
+    private void AddNewSeasons(AudioDatabaseContext context, TvShow foundEntity)
+    {
+      var newSeasons = foundEntity.Seasons.Where(x => x.Id == 0).ToList();
+
+      foreach (var season in newSeasons)
+      {
+        context.Entry(season).State = EntityState.Added;
+      }
+
+      var newEpisodes = newSeasons.SelectMany(x => x.Episodes).Where(x => x.Id == 0);
+
+      foreach (var episode in newEpisodes)
+      {
+        context.Entry(episode).State = EntityState.Added;
+        context.Entry(episode.VideoItem).State = EntityState.Added;
+      }
+    }
+
+    #endregion
 
     #endregion
 

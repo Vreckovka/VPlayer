@@ -37,19 +37,19 @@
 
                 <Border Grid.Row="1"
                         Height="0"
-                        Visibility="Collapsed"
                         BorderBrush="#353535"
-                        BorderThickness="1,0,1,1">
+                        BorderThickness="1,0,1,1"
+                        Visibility="Collapsed">
                     <ListView x:Name="EpisodesListview"
                               ItemContainerStyle="{StaticResource EpisodeListViewItem}"
                               ItemsSource="{Binding Episodes}"
                               ScrollViewer.CanContentScroll="False"
-                              ScrollViewer.VerticalScrollBarVisibility="Disabled"/>
+                              ScrollViewer.VerticalScrollBarVisibility="Disabled" />
 
                     <b:Interaction.Behaviors>
-                        <behaviors:HideBehavior ExecuteButtonName="HideButton"
+                        <behaviors:HideBehavior ChangeVisibility="True"
+                                                ExecuteButtonName="HideButton"
                                                 MinValue="0"
-                                                ChangeVisibility="True"
                                                 ResizeParameter="Height"
                                                 ValueToExpand="{Binding Episodes.Count, Converter={converters:MultiplyValueConverter}, ConverterParameter=35}"
                                                 Duration="0:0:0:.30" />

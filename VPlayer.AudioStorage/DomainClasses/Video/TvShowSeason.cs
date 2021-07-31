@@ -34,13 +34,29 @@ namespace VPlayer.AudioStorage.DomainClasses.Video
       {
         foreach (var episode in other.Episodes)
         {
-          var mineEpisode = Episodes.SingleOrDefault(x => x.Id == episode.Id);
+          var mineEpisodes = Episodes.Where(x => x.Id == episode.Id).ToList();
+
+          TvShowEpisode mineEpisode = null;
+
+          if (mineEpisodes.Count > 1)
+          {
+            var mineEpisodes1 = mineEpisodes.Where(x => x.EpisodeNumber == episode.EpisodeNumber).ToList();
+
+            if (mineEpisodes1.Count == 1)
+            {
+              mineEpisode = mineEpisodes1[0];
+            }
+          }
+          else if(mineEpisodes.Count == 1)
+          {
+            mineEpisode = mineEpisodes[0];
+          }
 
           if (mineEpisode != null)
             mineEpisode.Update(episode);
         }
 
-        var notIn = other.Episodes.Where(x => x.Id == 0);
+        var notIn = other.Episodes.Where(x => x.Id == 0).ToList();
 
         Episodes.AddRange(notIn);
 

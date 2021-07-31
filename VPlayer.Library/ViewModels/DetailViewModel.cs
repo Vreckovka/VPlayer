@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using VCore;
+using VCore.Modularity.Events;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard;
 using VCore.Standard.Modularity.Interfaces;
@@ -31,6 +33,10 @@ namespace VPlayer.Library.ViewModels
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       ViewModel = model ?? throw new ArgumentNullException(nameof(model));
+
+      storageManager.ItemChanged.Where(x =>
+        x.Item is TModel &&
+        x.Changed == VCore.Modularity.Events.Changed.Updated).Subscribe(OnDbUpdate);
     }
 
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
@@ -117,5 +123,10 @@ namespace VPlayer.Library.ViewModels
     #endregion
 
     #endregion
+
+    protected virtual void OnDbUpdate(ItemChanged itemChanged)
+    {
+      ViewModel.Model = (TModel)itemChanged.Item;
+    }
   }
 }

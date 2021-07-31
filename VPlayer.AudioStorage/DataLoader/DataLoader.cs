@@ -102,6 +102,7 @@ namespace VPlayer.AudioStorage.DataLoader
 
     #region AddtvTvShowSeasons
 
+    private List<TvShowSeason> clearedSeasons = new List<TvShowSeason>();
     public void AddtvTvShowSeasons(string path, TvShow tvShow)
     {
       var statusMessage = new StatusMessage(1)
@@ -131,6 +132,11 @@ namespace VPlayer.AudioStorage.DataLoader
           };
 
           tvShow.Seasons.Add(tvShowSeason);
+        }
+        else if(!clearedSeasons.Contains(tvShowSeason) && tvShowSeason.Id != 0)
+        {
+          tvShowSeason.Episodes.Clear();
+          clearedSeasons.Add(tvShowSeason);
         }
 
         var videoItem = new VideoItem()

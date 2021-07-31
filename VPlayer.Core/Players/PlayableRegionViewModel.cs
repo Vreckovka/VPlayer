@@ -639,7 +639,7 @@ namespace VPlayer.Core.ViewModels
           actualItemIndex = songIndex.Value;
         }
 
-        if (IsRepeate && actualItemIndex >= PlayList.Count - 1)
+        if (IsRepeate && actualItemIndex > PlayList.Count - 1)
         {
           actualItemIndex = 0;
           songIndex = 0;
@@ -708,7 +708,22 @@ namespace VPlayer.Core.ViewModels
 
     protected virtual void OnEndReached()
     {
-      Task.Run(() => PlayNextWithItem());
+      Task.Run(() =>
+      {
+        TItemViewModel nextItem = null;
+
+        if (IsRepeate && actualItemIndex >= PlayList.Count - 1)
+        {
+          actualItemIndex = 0;
+
+          if (PlayList.Count > 0)
+          {
+            nextItem = PlayList[actualItemIndex];
+          }
+        }
+
+        PlayNextWithItem(nextItem);
+      });
     }
 
     #endregion

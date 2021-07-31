@@ -57,7 +57,7 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
     }
 
     #endregion
-    
+
     #region TvShowCsfdUrl
 
     private string tvShowCsfdUrl;
@@ -120,18 +120,23 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
     {
       CommonOpenFileDialog dialog = new CommonOpenFileDialog();
 
-      var initialDirectory = GlobalSettings.TvShowInitialDirectory;
+
+      string initialDirectory = null;
 
       if (tvShow.Seasons != null && tvShow.Seasons.Count > 0)
       {
         var episode = tvShow.Seasons[0].Episodes?.FirstOrDefault();
 
-        initialDirectory = new DirectoryInfo(episode.Source).Parent.FullName;
+        initialDirectory = new DirectoryInfo(episode.Source).Parent?.Parent?.FullName;
       }
+
+
+      if (string.IsNullOrEmpty(initialDirectory))
+        initialDirectory = GlobalSettings.TvShowInitialDirectory;
 
       dialog.AllowNonFileSystemItems = true;
       dialog.IsFolderPicker = true;
-      dialog.InitialDirectory = initialDirectory; 
+      dialog.InitialDirectory = initialDirectory;
       dialog.Title = "Select folder with tv show season";
 
       if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
@@ -173,12 +178,12 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
 
           var single = tvShow.Seasons.SingleOrDefault(x => x.Created == null);
 
-          if(single == null)
-           single = tvShow.Seasons.OrderByDescending(x => x.Created).FirstOrDefault();
+          if (single == null)
+            single = tvShow.Seasons.OrderByDescending(x => x.Created).FirstOrDefault();
 
           var id = await storageManager.DeepUpdateTvShow(tvShow);
 
-          await tvShowScrapper.UpdateTvShowSeasonFromCsfd(single.Id,TvShowCsfdUrl);
+          await tvShowScrapper.UpdateTvShowSeasonFromCsfd(single.Id, TvShowCsfdUrl);
 
         }
         catch (Exception ex)

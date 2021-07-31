@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using VCore;
+using VCore.Modularity.Events;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
 using VCore.ViewModels;
@@ -29,6 +31,14 @@ namespace VPlayer.Library.ViewModels.TvShows
     {
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+    }
+
+    public List<TvShowSeason> Seasons
+    {
+      get
+      {
+        return ViewModel?.Model?.Seasons;
+      }
     }
 
     #region AddToPlaylist
@@ -64,9 +74,18 @@ namespace VPlayer.Library.ViewModels.TvShows
       var vm = viewModelsFactory.Create<UpdateTvShowViewModel>(ViewModel.Model);
 
       windowManager.ShowPrompt<TvShowUpdateView>(vm);
+
     }
 
-    #endregion 
+    #endregion
+
+
+    protected override void OnDbUpdate(ItemChanged itemChanged)
+    {
+      base.OnDbUpdate(itemChanged);
+
+      RaisePropertyChanged(nameof(Seasons));
+    }
 
   }
 }
