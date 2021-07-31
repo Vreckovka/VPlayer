@@ -680,7 +680,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           {
             MediaPlayer.SetSpu(ActualItem.Model.SubtitleTrack.Value);
           }
-          else if (Subtitles.Count > 2)
+          else if (Subtitles.Count >= 2)
           {
             var englishSubtitle = Subtitles.FirstOrDefault(x => x.Description.ToLower().Contains("anglicky"));
 

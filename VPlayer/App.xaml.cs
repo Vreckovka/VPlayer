@@ -31,7 +31,7 @@ namespace VPlayer
   public partial class App : PrismApplication
   {
     private IKernel Kernel;
-    private bool isConsoleUp = false;
+    =private bool isConsoleUp = false;
     private Stopwatch stopWatch;
 
     protected override void RegisterTypes(IContainerRegistry containerRegistry)
