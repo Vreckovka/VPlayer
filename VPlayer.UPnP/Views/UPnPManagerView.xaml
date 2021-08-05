@@ -58,35 +58,72 @@
 
             </StackPanel>
 
-            <ListView Grid.Row="1" ItemsSource="{Binding Renderers.View}">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Margin="5" Orientation="Horizontal">
-                            <Button Margin="0,0,15,0"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Command="{Binding Save}">
-                                <Button.Style>
-                                    <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="Button">
-                                        <Setter Property="Content" Value="Save" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsStored}" Value="True">
-                                                <Setter Property="Content" Value="UnSave" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Button.Style>
-                            </Button>
-                            <StackPanel>
-                                <TextBlock FontWeight="Bold"
-                                           Foreground="{StaticResource DefaultWhiteBrush}"
-                                           Text="{Binding Model.DeviceDescription.Device.FriendlyName}" />
-                                <TextBlock Foreground="#656565" Text="{Binding Model.PresentationURL}" />
-                            </StackPanel>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+            <ScrollViewer Grid.Row="1"
+                          Height="200"
+                          Background="Transparent"
+                          VerticalScrollBarVisibility="Auto">
+                <ListView Background="Transparent" ItemsSource="{Binding Renderers.View}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="10,5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+
+                                <Button Grid.Column="0"
+                                        Margin="0,0,10,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding Save}">
+                                    <Button.Style>
+                                        <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="Button">
+                                            <Setter Property="Content" Value="Save" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsStored}" Value="True">
+                                                    <Setter Property="Content" Value="Saved" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock FontWeight="Bold"
+                                               Foreground="{StaticResource DefaultWhiteBrush}"
+                                               Text="{Binding Model.DeviceDescription.Device.FriendlyName}" />
+                                    <TextBlock Foreground="#656565" Text="{Binding Model.PresentationURL}" />
+                                </StackPanel>
+
+                                <Grid Grid.Column="0"
+                                      Grid.ColumnSpan="2"
+                                      Margin="-13,-5"
+                                      Background="#85000000">
+                                    <Grid Background="#aa000000">
+                                        <TextBlock HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   Foreground="White"
+                                                   Text="Saving..." />
+                                    </Grid>
+
+                                    <Grid.Style>
+                                        <Style TargetType="Grid">
+                                            <Setter Property="Visibility" Value="Hidden" />
+
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsLoading}" Value="true">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Grid.Style>
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </ScrollViewer>
+
         </Grid>
 
         <Grid Grid.Row="2">

@@ -62,6 +62,24 @@ namespace VPlayer.UPnP.ViewModels.UPnP
 
     #endregion
 
+    #region IsLoading
+
+    private bool isLoading;
+
+    public bool IsLoading
+    {
+      get { return isLoading; }
+      set
+      {
+        if (value != isLoading)
+        {
+          isLoading = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     #region Commands
 

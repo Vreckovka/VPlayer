@@ -45,31 +45,47 @@ namespace VPlayer.UPnP.ViewModels.UPnP
 
     #endregion
 
+  
+
     #region StoreData
 
     public override async void StoreData()
     {
-      var result = await Task.Run(() =>
-         {
-           Model.Init();
-           var dbEntity = new UPnPMediaRenderer()
-           {
-             UPnPDevice = Model.DeviceDescription.Device.GetDeviceDbEntity(),
-             PresentationURL = Model.PresentationURL
-           };
-
-           var result = storageManager.StoreEntity<UPnPMediaRenderer>(dbEntity, out var stored);
-
-           DbModel = dbEntity;
-
-           return result;
-         }
-       );
-
-      if (result)
+      try
       {
-        IsStored = true;
-        save.RaiseCanExecuteChanged();
+
+        IsLoading = true;
+
+        var result = await Task.Run(() =>
+           {
+             Model.Init();
+             var dbEntity = new UPnPMediaRenderer()
+             {
+               UPnPDevice = Model.DeviceDescription.Device.GetDeviceDbEntity(),
+               PresentationURL = Model.PresentationURL
+             };
+
+             var result = storageManager.StoreEntity<UPnPMediaRenderer>(dbEntity, out var stored);
+
+             DbModel = dbEntity;
+
+             return result;
+           }
+         );
+
+        if (result)
+        {
+          IsStored = true;
+          save.RaiseCanExecuteChanged();
+        }
+      }
+      catch (Exception)
+      {
+        throw;
+      }
+      finally
+      {
+        IsLoading = false;
       }
     }
 
@@ -77,18 +93,41 @@ namespace VPlayer.UPnP.ViewModels.UPnP
 
     #endregion
 
+    #region RemoveData
 
-
-    public override void RemoveData()
+    public override async void RemoveData()
     {
-      if (DbModel != null)
+      try
       {
-        var result = storageManager.DeleteEntity(DbModel);
+
+        IsLoading = true;
+
+        var result = await Task.Run(() =>
+        {
+          if (DbModel != null)
+          {
+            return storageManager.DeleteEntity(DbModel);
+          }
+
+          return false;
+        });
 
         if (result)
           IsStored = !IsStored;
-      }
 
+      }
+      catch (Exception)
+      {
+
+        throw;
+      }
+      finally
+      {
+        IsLoading = false;
+      }
     }
+
+    #endregion
+
   }
 }
