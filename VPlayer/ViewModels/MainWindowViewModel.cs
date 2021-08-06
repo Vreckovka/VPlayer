@@ -34,32 +34,32 @@ using VPlayer.WindowsPlayer.ViewModels;
 namespace VPlayer.ViewModels
 {
 
-        //****FEATURES*****
-        //TODO: Ak je neidentifkovana skladba, pridanie interpreta zo zoznamu, alebo vytvorit noveho
-        //TODO: Nastavit si hlavnu zlozku a ked spustis z inej, moznost presunut
-        //TODO: Playlist hore pri menu, quick ze prides a uvidis napriklad 5 poslednych hore v rade , ako carusel (5/5)
-        //TODO: Playlist nech sa automaticky nevytvara ak je niekolko pesniciek (nastavenie pre uzivatela aky pocet sa ma ukladat!) (3/5)
-        //TODO: Hore prenutie medzi windows a browser playermi , zmizne bocne menu
-        //TODO: Pridat loading indikator, mozno aj co prave robi
-        //TODO: Popupwindow is TOPMOST
-        //TODO: Reorder na playliste
-        //TODO: Upload lyrics do Google Drive
-        //TODO: Moznost editovat lyrics
-        //TODO: Mozno vyhladat titulky cez search a vybrat si
-        //TODO: Hviezdicky pocet 
-        //TODO: Obrazky do listview pri playlistoch (tv show cover atd...)
-        //TODO: TV Channels editor dotiahnut
-        //TODO: Save UPnP Sever (mozno je, bojim sa skusit)
-        //TODO: File Browser - File watcher nad aktualnou zlozkou
-        //TODO: File Browser - Podpora menit cestu
-        //TODO: Popup menu style
-        //TODO: Setting page - Poriadne settingy (ako default cesty do subor napr)
-        //TODO: Ked je synced lyrics a nie si na tabe a ide to dalej a vratis sa tak to scrolne na tu dolnu poziciu animacne (nech to spravi instantne zacne od tade)
-        //TODO: Pridavanie do playlistu vyber do akeho, alebo ci aktualne prehravajuceho, alebo chces vytvorit novy
-        //TODO: Dotiahnut sezony zvlast ako update z csfd
-        //TODO: Vymazat sezonu z tvshow
-        //TODO: Horne menu tituliek a pod dat aj do fullscreenu (tiez hore) (vsak why the fuck not)
-        //TODO: Play UPnP v prehravaci nejako zmenit (je tam iba daky dropdown) (vymysliet a vyrobit, nemusi byt nic zlozite)
+  //****FEATURES*****
+  //TODO: Ak je neidentifkovana skladba, pridanie interpreta zo zoznamu, alebo vytvorit noveho
+  //TODO: Nastavit si hlavnu zlozku a ked spustis z inej, moznost presunut
+  //TODO: Playlist hore pri menu, quick ze prides a uvidis napriklad 5 poslednych hore v rade , ako carusel (5/5)
+  //TODO: Playlist nech sa automaticky nevytvara ak je niekolko pesniciek (nastavenie pre uzivatela aky pocet sa ma ukladat!) (3/5)
+  //TODO: Hore prenutie medzi windows a browser playermi , zmizne bocne menu
+  //TODO: Pridat loading indikator, mozno aj co prave robi
+  //TODO: Popupwindow is TOPMOST
+  //TODO: Reorder na playliste
+  //TODO: Upload lyrics do Google Drive
+  //TODO: Moznost editovat lyrics
+  //TODO: Mozno vyhladat titulky cez search a vybrat si
+  //TODO: Hviezdicky pocet 
+  //TODO: Obrazky do listview pri playlistoch (tv show cover atd...)
+  //TODO: TV Channels editor dotiahnut
+  //TODO: Save UPnP Sever (mozno je, bojim sa skusit)
+  //TODO: File Browser - File watcher nad aktualnou zlozkou
+  //TODO: File Browser - Podpora menit cestu
+  //TODO: Popup menu style
+  //TODO: Setting page - Poriadne settingy (ako default cesty do subor napr)
+  //TODO: Ked je synced lyrics a nie si na tabe a ide to dalej a vratis sa tak to scrolne na tu dolnu poziciu animacne (nech to spravi instantne zacne od tade)
+  //TODO: Pridavanie do playlistu vyber do akeho, alebo ci aktualne prehravajuceho, alebo chces vytvorit novy
+  //TODO: Dotiahnut sezony zvlast ako update z csfd
+  //TODO: Vymazat sezonu z tvshow
+  //TODO: Horne menu tituliek a pod dat aj do fullscreenu (tiez hore) (vsak why the fuck not)
+  //TODO: Play UPnP v prehravaci nejako zmenit (je tam iba daky dropdown) (vymysliet a vyrobit, nemusi byt nic zlozite)
         //
         //  ****DESING***** 
         //      //TODO: Menu rozdelit na sub menu = Playlists(Songs, Music, TvShows), Library(Albums, Interprets, TvShows), Other(Iptv, UPnP...)
