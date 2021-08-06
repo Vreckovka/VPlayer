@@ -34,7 +34,7 @@ using VPlayer.WindowsPlayer.ViewModels;
 namespace VPlayer.ViewModels
 {
 
-  //****FEATURES*****
+        //****FEATURES*****
         //TODO: Ak je neidentifkovana skladba, pridanie interpreta zo zoznamu, alebo vytvorit noveho
         //TODO: Nastavit si hlavnu zlozku a ked spustis z inej, moznost presunut
         //TODO: Playlist hore pri menu, quick ze prides a uvidis napriklad 5 poslednych hore v rade , ako carusel (5/5)
