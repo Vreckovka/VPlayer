@@ -3,6 +3,7 @@
                     xmlns:controls="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
                     xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                    xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
 
 
@@ -55,6 +56,8 @@
                                                 <Image Width="{StaticResource ListView_MenuStyle_IconSize}"
                                                        Height="{StaticResource ListView_MenuStyle_IconSize}"
                                                        Source="{Binding ImagePath}" />
+
+                                                <!--<svgc:SvgViewbox Source="{Binding ImagePath}" />-->
 
                                                 <Rectangle x:Name="ImageOpacityMask"
                                                            Width="{StaticResource ListView_MenuStyle_IconSize}"

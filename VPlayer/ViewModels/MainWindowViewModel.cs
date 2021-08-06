@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -32,6 +33,8 @@ using VPlayer.WindowsPlayer.ViewModels;
 
 namespace VPlayer.ViewModels
 {
+  
+  //****FEATURES*****
   //TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)
   //TODO: Nacitanie zo suboru
   //TODO: Ak je neidentifkovana skladba, pridanie interpreta zo zoznamu, alebo vytvorit noveho
@@ -44,10 +47,30 @@ namespace VPlayer.ViewModels
   //TODO: Menu rozdelit na sub menu = Playlists(Songs, Music, TvShows), Library(Albums, Interprets, TvShows), Other(Iptv, UPnP...)
   //TODO: Popupwindow is TOPMOST
   //TODO: Reorder na playliste
-
-
+  //TODO: Upload lyrics do Google Drive
+  //TODO: Moznost editovat lyrics
+  //TODO: Mozno vyhladat titulky cez search a vybrat si
+  //
+  //
+  //
+  //
+  //
+  //
   //****TOPKY*****
   //TODO: Tv show prehrat od posledneho ulozene playlistu (to iste aj pre hudbu kludne), ked pribudne nova seria pusti to kde si skoncil, ale nacita ju
+  //
+  //
+  //
+  //
+  //
+  //
+  //****LONG RUN*****
+  //TODO: Streaming service, aby som nemusel mat db u seba na disku. Nejaky server niekde si kupit (Minio)
+  //TODO: Streaming pre subory, lyrics, tv shows, kludne uplne vsetko (tv sources...). Db tam bude cele to pojde do webu 
+
+
+
+
   public class MainWindowViewModel : BaseMainWindowViewModel
   {
     #region Fields
@@ -122,6 +145,26 @@ namespace VPlayer.ViewModels
 
     public ICommand SwitchBehaviorCommand { get; set; }
 
+
+    #region BuildVersion
+
+    private string buildVersion;
+
+    public string BuildVersion
+    {
+      get { return buildVersion; }
+      set
+      {
+        if (value != buildVersion)
+        {
+          buildVersion = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #endregion
 
     #region Commads
@@ -189,9 +232,15 @@ namespace VPlayer.ViewModels
       NavigationViewModel.Items.Add(new NavigationItem(windowsPlayer));
 
       var player = viewModelsFactory.Create<PlayerViewModel>();
+
       player.IsActive = true;
 
 
+      Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+
+      DateTime buildDate = new DateTime(2000, 1, 1).AddDays(version.Build).AddSeconds(version.Revision * 2);
+
+      BuildVersion = $"{version} ({buildDate.ToString("dd.mm.yyyy")})";
     }
 
     #endregion

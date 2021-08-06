@@ -7,6 +7,7 @@
 		<ApplicationIcon>Includes/VPlayerLogo.ico</ApplicationIcon>
 		<CefSharpAnyCpuSupport>true</CefSharpAnyCpuSupport>
 		<Platforms>AnyCPU;x86</Platforms>
+		<Deterministic>false</Deterministic>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<PlatformTarget>AnyCPU</PlatformTarget>
@@ -63,6 +64,7 @@
 		<None Remove="Resources\Fonts\Roboto\Roboto-Thin.ttf" />
 		<None Remove="Resources\Fonts\Roboto\Roboto-ThinItalic.ttf" />
 		<None Remove="Resources\Icons\browser.png" />
+		<None Remove="Resources\Icons\home.png" />
 		<None Remove="Resources\Icons\library.png" />
 		<None Remove="Resources\Icons\music-album.png" />
 		<None Remove="Resources\Icons\music-note.png" />
@@ -116,6 +118,7 @@
 		<Resource Include="Resources\Fonts\Roboto\Roboto-Thin.ttf" />
 		<Resource Include="Resources\Fonts\Roboto\Roboto-ThinItalic.ttf" />
 		<Resource Include="Resources\Icons\browser.png" />
+		<Resource Include="Resources\Icons\home.png" />
 		<Resource Include="Resources\Icons\library.png" />
 		<Resource Include="Resources\Icons\music-album.png" />
 		<Resource Include="Resources\Icons\music-note.png" />
@@ -147,6 +150,7 @@
 		<PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="91.0.4472.1900" />
 		<PackageReference Include="CefSharp.Wpf" Version="90.6.70" />
 		<PackageReference Include="OpenQA.Selenium.Winium" Version="1.0.0.4" />
+		<PackageReference Include="SharpVectors" Version="1.7.6" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -151,10 +151,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
         var tvPlayer = viewModelsFactory.Create<WindowsIPTVPlayer>();
         var settings = viewModelsFactory.Create<SettingsViewModel>();
 
-      
+        //"pack://application:,,,/VPlayer;component/Resources/Icons/music-note.png"
+        //"D:\\Aplikacie\\VPlayer\\VPlayer\\Resources\\Icons\\svgs\\home.svg"
+
         NavigationViewModel.Items.Add(new NavigationItem(libraryViewModel)
         {
-          ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/library.png"
+          ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/home.png"
         });
 
         var musicPlayerNavigationItem = new NavigationItem(musicPlayer)
