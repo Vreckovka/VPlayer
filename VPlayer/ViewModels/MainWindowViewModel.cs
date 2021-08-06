@@ -55,7 +55,6 @@ namespace VPlayer.ViewModels
         //TODO: Popup menu style
         //TODO: Setting page - Poriadne settingy (ako default cesty do subor napr)
         //TODO: Ked je synced lyrics a nie si na tabe a ide to dalej a vratis sa tak to scrolne na tu dolnu poziciu animacne (nech to spravi instantne zacne od tade)
-        //TODO: Prehravanie,pridavanie do playlistu albumov, tv show z detailu (tym padom mozno zalozka Albums nebude treba, aj tak tam nechodis, pojdes iba do artist)
         //TODO: Pridavanie do playlistu vyber do akeho, alebo ci aktualne prehravajuceho, alebo chces vytvorit novy
         //
         //  ****DESING***** 
@@ -70,7 +69,7 @@ namespace VPlayer.ViewModels
         //  ****TOPKY*****
         //      //TODO: Tv show prehrat od posledneho ulozene playlistu (to iste aj pre hudbu kludne), ked pribudne nova seria pusti to kde si skoncil, ale nacita ju
         //      //TODO: Vyber output device (zvukove vystupne zariadenie) aj vo fullscreene videa (why the fuck not), miesta do sirky je dost (nie do vysky)
-        //
+        //      //TODO: Prehravanie,pridavanie do playlistu albumov, tv show z detailu (tym padom mozno zalozka Albums nebude treba, aj tak tam nechodis, pojdes iba do artist)
         //
         //
         //****LONG RUN*****
