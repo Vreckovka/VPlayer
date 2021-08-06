@@ -58,6 +58,8 @@ namespace VPlayer.ViewModels
         //TODO: Pridavanie do playlistu vyber do akeho, alebo ci aktualne prehravajuceho, alebo chces vytvorit novy
         //TODO: Dotiahnut sezony zvlast ako update z csfd
         //TODO: Vymazat sezonu z tvshow
+        //TODO: Horne menu tituliek a pod dat aj do fullscreenu (tiez hore) (vsak why the fuck not)
+        //TODO: Play UPnP v prehravaci nejako zmenit (je tam iba daky dropdown) (vymysliet a vyrobit, nemusi byt nic zlozite)
         //
         //  ****DESING***** 
         //      //TODO: Menu rozdelit na sub menu = Playlists(Songs, Music, TvShows), Library(Albums, Interprets, TvShows), Other(Iptv, UPnP...)
