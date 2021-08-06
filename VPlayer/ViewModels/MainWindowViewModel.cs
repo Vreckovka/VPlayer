@@ -100,6 +100,7 @@ namespace VPlayer.ViewModels
   //
   //  ****IMPORTANT!****
           //TODO: Asi v prehravaci sa ukazuje zly cas totaly played time (v listviewe tam je 1Den a tam ukazuje 0) (ASI TO RESETLO!!!)
+          //TODO: Seek sipkami nefunguje a celkovo seek je divny
 
 
 
