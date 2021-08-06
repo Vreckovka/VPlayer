@@ -86,6 +86,8 @@ namespace VPlayer.ViewModels
         //TODO: Nedava sa prec IsPlaying z itemu ked uz nie je v playliste (asi pri rerabke sa ta vetva vymazala)
         //TODO: Ked pises vo filtri a das medzernik tak to pauzne (ma ale chyta aj ked nema pocuvat)
         //TODO: totaly played time bezi a uklada sa aj ked prehravac pozasteveny
+        //TODO: Ked je buffering v prehravaci a das vypnut appku tak spadne a nevypne sa poriadne (zostane aj niekedy bezat potom na pozadi, nejaky thread niekde asi)
+        //
         //  ****IMPORTANT!****
                 //TODO: Asi v prehravaci sa ukazuje zly cas totaly played time (v listviewe tam je 1Den a tam ukazuje 0) (ASI TO RESETLO!!!)
 
