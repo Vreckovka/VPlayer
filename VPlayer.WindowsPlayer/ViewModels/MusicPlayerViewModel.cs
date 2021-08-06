@@ -657,9 +657,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
     public override void OnDeactived()
     {
       base.OnDeactived();
-
+      
       downloadingLyricsTask?.Cancel();
       downloadingLyricsTask?.Dispose();
+      downloadingLyricsTask = null;
     }
 
     #endregion
