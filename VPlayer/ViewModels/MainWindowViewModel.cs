@@ -88,6 +88,7 @@ namespace VPlayer.ViewModels
         //TODO: Nedava sa prec IsPlaying z itemu ked uz nie je v playliste (asi pri rerabke sa ta vetva vymazala)
         //TODO: Ked pises vo filtri a das medzernik tak to pauzne (ma ale chyta aj ked nema pocuvat)
         //TODO: totaly played time bezi a uklada sa aj ked prehravac pozasteveny
+        //TODO: Niekedy ked prepnes automaticky output sound device tak equalizer sa zastavi a da sa reloadnut ze pausnes a znovu spustis hudubu 
         //TODO: Ked je buffering v prehravaci a das vypnut appku tak spadne a nevypne sa poriadne (zostane aj niekedy bezat potom na pozadi, nejaky thread niekde asi)
         //
         //  ****IMPORTANT!****
