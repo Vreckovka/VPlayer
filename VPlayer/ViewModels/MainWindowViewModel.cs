@@ -60,39 +60,39 @@ namespace VPlayer.ViewModels
   //TODO: Vymazat sezonu z tvshow
   //TODO: Horne menu tituliek a pod dat aj do fullscreenu (tiez hore) (vsak why the fuck not)
   //TODO: Play UPnP v prehravaci nejako zmenit (je tam iba daky dropdown) (vymysliet a vyrobit, nemusi byt nic zlozite)
-        //
-        //  ****DESING***** 
-        //      //TODO: Menu rozdelit na sub menu = Playlists(Songs, Music, TvShows), Library(Albums, Interprets, TvShows), Other(Iptv, UPnP...)
-        //      //TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)
-        //      //TODO: Listview TileView / listview prepinac
-        //      //TODO: TileVIew nad listviewom ked je velky aby bolo iba max poloziek na riadok (asi nebude len tak, treba prerobit dizajn karticky, alebo to spravit na center ako container v boostrape)
-        //      //TODO: Playlist listview zobrazit ktory item je posledny (Nazov a poradie v playliste)
-        //
-        //  ****HARD/LONG***** 
-        //      //TODO: Dotiahnut data o albumoch, serialoch (a vyznacit ktore mam a ktore mi chybaju)
-        //
-        //  ****TOPKY*****
-        //      //TODO: Tv show prehrat od posledneho ulozene playlistu (to iste aj pre hudbu kludne), ked pribudne nova seria pusti to kde si skoncil, ale nacita ju
-        //      //TODO: Vyber output device (zvukove vystupne zariadenie) aj vo fullscreene videa (why the fuck not), miesta do sirky je dost (nie do vysky)
-        //      //TODO: Prehravanie,pridavanie do playlistu albumov, tv show z detailu (tym padom mozno zalozka Albums nebude treba, aj tak tam nechodis, pojdes iba do artist)
-        //
-        //
-        //****LONG RUN*****
-        //TODO: Streaming service, aby som nemusel mat db u seba na disku. Nejaky server niekde si kupit (Minio)
-        //TODO: Streaming pre subory, lyrics, tv shows, kludne uplne vsetko (tv sources...). Db tam bude cele to pojde do webu  //
-        //
-        //
-        //
-        //****BUGS*****
-        //TODO: Ked pripojim sluchatka cez bluethooth tak spadne appka (ale nie vzdy, pozeral som asi serial)
-        //TODO: Nedava sa prec IsPlaying z itemu ked uz nie je v playliste (asi pri rerabke sa ta vetva vymazala)
-        //TODO: Ked pises vo filtri a das medzernik tak to pauzne (ma ale chyta aj ked nema pocuvat)
-        //TODO: totaly played time bezi a uklada sa aj ked prehravac pozasteveny
-        //TODO: Niekedy ked prepnes automaticky output sound device tak equalizer sa zastavi a da sa reloadnut ze pausnes a znovu spustis hudubu 
-        //TODO: Ked je buffering v prehravaci a das vypnut appku tak spadne a nevypne sa poriadne (zostane aj niekedy bezat potom na pozadi, nejaky thread niekde asi)
-        //
-        //  ****IMPORTANT!****
-                //TODO: Asi v prehravaci sa ukazuje zly cas totaly played time (v listviewe tam je 1Den a tam ukazuje 0) (ASI TO RESETLO!!!)
+  //
+  //  ****DESING***** 
+  //      //TODO: Menu rozdelit na sub menu = Playlists(Songs, Music, TvShows), Library(Albums, Interprets, TvShows), Other(Iptv, UPnP...)
+  //      //TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)
+  //      //TODO: Listview TileView / listview prepinac
+  //      //TODO: TileVIew nad listviewom ked je velky aby bolo iba max poloziek na riadok (asi nebude len tak, treba prerobit dizajn karticky, alebo to spravit na center ako container v boostrape)
+  //      //TODO: Playlist listview zobrazit ktory item je posledny (Nazov a poradie v playliste)
+  //
+  //  ****HARD/LONG***** 
+  //      //TODO: Dotiahnut data o albumoch, serialoch (a vyznacit ktore mam a ktore mi chybaju)
+  //
+  //  ****TOPKY*****
+  //      //TODO: Tv show prehrat od posledneho ulozene playlistu (to iste aj pre hudbu kludne), ked pribudne nova seria pusti to kde si skoncil, ale nacita ju
+  //      //TODO: Vyber output device (zvukove vystupne zariadenie) aj vo fullscreene videa (why the fuck not), miesta do sirky je dost (nie do vysky)
+  //      //TODO: Prehravanie,pridavanie do playlistu albumov, tv show z detailu (tym padom mozno zalozka Albums nebude treba, aj tak tam nechodis, pojdes iba do artist)
+  //
+  //
+  //****LONG RUN*****
+  //TODO: Streaming service, aby som nemusel mat db u seba na disku. Nejaky server niekde si kupit (Minio)
+  //TODO: Streaming pre subory, lyrics, tv shows, kludne uplne vsetko (tv sources...). Db tam bude cele to pojde do webu  //
+  //
+  //
+  //
+  //****BUGS*****
+  //TODO: Ked pripojim sluchatka cez bluethooth tak spadne appka (ale nie vzdy, pozeral som asi serial)
+  //TODO: Nedava sa prec IsPlaying z itemu ked uz nie je v playliste (asi pri rerabke sa ta vetva vymazala)
+  //TODO: Ked pises vo filtri a das medzernik tak to pauzne (ma ale chyta aj ked nema pocuvat)
+  //TODO: totaly played time bezi a uklada sa aj ked prehravac pozasteveny
+  //TODO: Niekedy ked prepnes automaticky output sound device tak equalizer sa zastavi a da sa reloadnut ze pausnes a znovu spustis hudubu 
+  //TODO: Ked je buffering v prehravaci a das vypnut appku tak spadne a nevypne sa poriadne (zostane aj niekedy bezat potom na pozadi, nejaky thread niekde asi)
+  //
+  //  ****IMPORTANT!****
+          //TODO: Asi v prehravaci sa ukazuje zly cas totaly played time (v listviewe tam je 1Den a tam ukazuje 0) (ASI TO RESETLO!!!)
 
 
 
