@@ -63,6 +63,7 @@ namespace VPlayer.ViewModels
   //TODO: Prehravanie hudby z File browsera
   //TODO: Moznost presunu zlozku a subory do Serialy napr, alebo rovno do nejakeho serialu (Mozno totalne daleko to potiahnut ze moznost vytvorit rovno aj noveho)
   //TODO: CSFD vyhladavanie podla nazvu suborov (nejaky vyhladavac, mozno ze sa ti zobrazi nazov suboru a vyselektujes vyhladavany vyraz (highlight) (nemusis pisat) a to sa vyberie do filtra)
+  //TODO: Highlight videa hover nad itemom v playliste
   //
   //  ****DESING***** 
   //      //TODO: Menu rozdelit na sub menu = Playlists(Songs, Music, TvShows), Library(Albums, Interprets, TvShows), Other(Iptv, UPnP...)
@@ -80,7 +81,9 @@ namespace VPlayer.ViewModels
   //      //TODO: Vyber output device (zvukove vystupne zariadenie) aj vo fullscreene videa (why the fuck not), miesta do sirky je dost (nie do vysky)
   //      //TODO: Prehravanie,pridavanie do playlistu albumov, tv show z detailu (tym padom mozno zalozka Albums nebude treba, aj tak tam nechodis, pojdes iba do artist)
   //      //TODO: Vymazavat itemy z File browsera (ak je odkaz niekde do db na tu zlozku tak vymazat rovno aj tv show, ale spytat sa ci to chces a zapametat si ak ano)
+  //      //TODO: Mute button pri zvuku
   //      //TODO: Umoznit simultalne spustit video a hudbu
+          //TODO: Clear playlist
   //
   //****LONG RUN*****
   //TODO: Streaming service, aby som nemusel mat db u seba na disku. Nejaky server niekde si kupit (Minio)
@@ -100,8 +103,8 @@ namespace VPlayer.ViewModels
   //TODO: Pri prehravani z File browsera sa pustia aj itemy ktore nie su video
   //
   //  ****IMPORTANT!****
-          //TODO: Asi v prehravaci sa ukazuje zly cas totaly played time (v listviewe tam je 1Den a tam ukazuje 0) (ASI TO RESETLO!!!)
-          //TODO: Seek sipkami nefunguje a celkovo seek je divny
+  //TODO: Asi v prehravaci sa ukazuje zly cas totaly played time (v listviewe tam je 1Den a tam ukazuje 0) (ASI TO RESETLO!!!)
+  //TODO: Seek sipkami nefunguje a celkovo seek je divny
 
 
 
