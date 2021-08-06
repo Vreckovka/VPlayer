@@ -33,7 +33,6 @@ using VPlayer.WindowsPlayer.ViewModels;
 
 namespace VPlayer.ViewModels
 {
-
   //****FEATURES*****
   //TODO: Ak je neidentifkovana skladba, pridanie interpreta zo zoznamu, alebo vytvorit noveho
   //TODO: Nastavit si hlavnu zlozku a ked spustis z inej, moznost presunut
@@ -81,7 +80,7 @@ namespace VPlayer.ViewModels
   //TODO: Streaming service, aby som nemusel mat db u seba na disku. Nejaky server niekde si kupit (Minio)
   //TODO: Streaming pre subory, lyrics, tv shows, kludne uplne vsetko (tv sources...). Db tam bude cele to pojde do webu  //
   //
-  //
+  //*********************************************************************************************************************************
   //
   //****BUGS*****
   //TODO: Ked pripojim sluchatka cez bluethooth tak spadne appka (ale nie vzdy, pozeral som asi serial)
