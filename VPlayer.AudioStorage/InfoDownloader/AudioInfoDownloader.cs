@@ -1369,7 +1369,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
       SubdirectoryLoaded?.Invoke(this, e);
     }
 
-    public async Task UpdateSongLyricsAsync(string artistName, string songName, Song song)
+    public async Task<bool> UpdateSongLyricsAsync(string artistName, string songName, Song song)
     {
       var chartClient = new ChartLyricsClient(logger);
 
@@ -1377,6 +1377,8 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
       if (updatedSong != null)
         ItemUpdated.OnNext(updatedSong);
+
+      return updatedSong != null;
 
     }
 

@@ -426,7 +426,7 @@ namespace VPlayer.Core.ViewModels
 
     #region TryToRefreshUpdateLyrics
 
-    public async Task TryToRefreshUpdateLyrics()
+    public async Task<bool> TryToRefreshUpdateLyrics()
     {
       LRCFile = null;
       Lyrics = null;
@@ -453,6 +453,8 @@ namespace VPlayer.Core.ViewModels
         RaisePropertyChanged(nameof(LRCFile));
         RaisePropertyChanged(nameof(Lyrics));
       });
+
+      return LRCFile != null;
     }
 
     #endregion

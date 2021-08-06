@@ -32,6 +32,21 @@ using VPlayer.WindowsPlayer.ViewModels;
 
 namespace VPlayer.ViewModels
 {
+  //TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)
+  //TODO: Nacitanie zo suboru
+  //TODO: Ak je neidentifkovana skladba, pridanie interpreta zo zoznamu, alebo vytvorit noveho
+  //TODO: Nastavit si hlavnu zlozku a ked spustis z inej, moznost presunut
+  //TODO: Playlist hore pri menu, quick ze prides a uvidis napriklad 5 poslednych hore v rade , ako carusel (5/5)
+  //TODO: Playlist nech sa automaticky nevytvara ak je niekolko pesniciek (nastavenie pre uzivatela aky pocet sa ma ukladat!) (3/5)
+  //TODO: Hore prenutie medzi windows a browser playermi , zmizne bocne menu
+  //TODO: Pridat loading indikator, mozno aj co prave robi
+  //TODO: Hviezdicky pocet 
+  //TODO: Menu rozdelit na sub menu = Playlists(Songs, Music, TvShows), Library(Albums, Interprets, TvShows), Other(Iptv, UPnP...)
+  //TODO: Popupwindow is TOPMOST
+  //TODO: Reorder na playliste
+
+
+  //****TOPKY*****
   //TODO: Tv show prehrat od posledneho ulozene playlistu (to iste aj pre hudbu kludne), ked pribudne nova seria pusti to kde si skoncil, ale nacita ju
   public class MainWindowViewModel : BaseMainWindowViewModel
   {

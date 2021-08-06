@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.IO;
 using System.Linq;
 using System.Reactive;
-using System.Reactive.Concurrency;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -16,24 +10,18 @@ using Logger;
 using Ninject;
 using Prism.Events;
 using VCore;
-using VCore.Helpers;
-using VCore.ItemsCollections;
 using VCore.ItemsCollections.VirtualList;
 using VCore.ItemsCollections.VirtualList.VirtualLists;
 using VCore.Modularity.Events;
 using VCore.Standard.Helpers;
-using VCore.ViewModels.Navigation;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.InfoDownloader.Clients.GIfs;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
-using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
-using VPlayer.Core.Providers;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.Albums;
-using VPlayer.Core.ViewModels.TvShows;
 using VPlayer.Player.Views.WindowsPlayer;
 using VPlayer.UPnP.ViewModels;
 using VPlayer.UPnP.ViewModels.Player;
@@ -41,18 +29,6 @@ using VPlayer.UPnP.ViewModels.UPnP;
 using VPlayer.WindowsPlayer.Players;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer;
 
-//TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)
-//TODO: Nacitanie zo suboru
-//TODO: Ak je neidentifkovana skladba, pridanie interpreta zo zoznamu, alebo vytvorit noveho
-//TODO: Nastavit si hlavnu zlozku a ked spustis z inej, moznost presunut
-//TODO: Playlist hore pri menu, quick ze prides a uvidis napriklad 5 poslednych hore v rade , ako carusel (5/5)
-//TODO: Playlist nech sa automaticky nevytvara ak je niekolko pesniciek (nastavenie pre uzivatela aky pocet sa ma ukladat!) (3/5)
-//TODO: Hore prenutie medzi windows a browser playermi , zmizne bocne menu
-//TODO: Pridat loading indikator, mozno aj co prave robi
-//TODO: Hviezdicky pocet 
-//TODO: Menu rozdelit na sub menu = Playlists(Songs, Music, TvShows), Library(Albums, Interprets, TvShows), Other(Iptv, UPnP...)
-//TODO: Popupwindow is TOPMOST
-//TODO: Hlavne zlozky pre pridanie hudby, tv shows. Aby sa to otvaralo stale tam
 
 namespace VPlayer.WindowsPlayer.ViewModels
 {
@@ -387,37 +363,71 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region OnNewItemPlay
 
+    CancellationTokenSource downloadingLyricsTask;
     public override void OnNewItemPlay()
     {
+      downloadingLyricsTask?.Cancel();
+      downloadingLyricsTask?.Dispose();
+
+      downloadingLyricsTask = new CancellationTokenSource();
+
+      var cancellationToken = downloadingLyricsTask.Token;
+
       Task.Run(async () =>
       {
-        if (string.IsNullOrEmpty(ActualItem.Lyrics) && !string.IsNullOrEmpty(ActualItem.ArtistViewModel?.Name))
+        try
         {
-          await audioInfoDownloader.UpdateSongLyricsAsync(ActualItem.ArtistViewModel.Name, ActualItem.Name, ActualItem.Model);
+          bool wasLyricsNull = ActualItem.LRCLyrics == null;
+
+          if (string.IsNullOrEmpty(ActualItem.LRCLyrics))
+          {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            await ActualItem.TryToRefreshUpdateLyrics();
+          }
+
+          if (ActualItem.LRCLyrics != null && wasLyricsNull)
+          {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            await storageManager.UpdateEntityAsync(ActualItem.Model);
+          }
+
+          var validItemsToUpdate = PlayList.ToList();
+
+          var itemsAfter = validItemsToUpdate.Skip(actualItemIndex).Where(x => x.LyricsObject == null);
+          var itemsBefore = validItemsToUpdate.Take(actualItemIndex).Where(x => x.LyricsObject == null);
+
+          await DownloadLyrics(itemsAfter, cancellationToken);
+
+          await DownloadLyrics(itemsBefore, cancellationToken);
+        }
+        catch (OperationCanceledException)
+        {
         }
 
-        if (string.IsNullOrEmpty(ActualItem.LRCLyrics))
+      }, cancellationToken);
+    }
+
+    #endregion
+
+    #region DownloadLyrics
+
+    private async Task DownloadLyrics(IEnumerable<SongInPlayListViewModel> songInPlayListViewModels, CancellationToken cancellationToken)
+    {
+      foreach (var item in songInPlayListViewModels)
+      {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var updated = await item.TryToRefreshUpdateLyrics();
+
+        if (updated)
         {
-          await ActualItem.TryToRefreshUpdateLyrics();
+          cancellationToken.ThrowIfCancellationRequested();
+
+          await storageManager.UpdateEntityAsync(item.Model);
         }
-
-        var validItemsToUpdate = PlayList.Where(x => x.LyricsObject == null).ToList();
-
-        var itemsAfter = validItemsToUpdate.Skip(actualItemIndex);
-        var itemsBefore = validItemsToUpdate.Take(actualItemIndex);
-
-        foreach (var item in itemsAfter)
-        {
-          await item.TryToRefreshUpdateLyrics();
-        }
-
-        foreach (var item in itemsBefore)
-        {
-          await item.TryToRefreshUpdateLyrics();
-        }
-
-
-      });
+      }
     }
 
     #endregion
@@ -624,6 +634,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region SetVlcPlayer
+
     private async Task SetVlcPlayer()
     {
       MediaPlayer = vLcPlayer;
@@ -637,6 +649,32 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       isUPnp = false;
     }
+
+    #endregion
+
+    #region OnDeactived
+
+    public override void OnDeactived()
+    {
+      base.OnDeactived();
+
+      downloadingLyricsTask?.Cancel();
+      downloadingLyricsTask?.Dispose();
+    }
+
+    #endregion
+
+    #region Dispose
+
+    public override void Dispose()
+    {
+      base.Dispose();
+
+      downloadingLyricsTask?.Cancel();
+      downloadingLyricsTask?.Dispose();
+    }
+
+    #endregion
 
     #endregion
   }
