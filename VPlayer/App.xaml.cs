@@ -34,6 +34,13 @@ namespace VPlayer
     private bool isConsoleUp = false;
     private Stopwatch stopWatch;
 
+    #region BuildVersion
+
+    public static string BuildVersion { get; set; }
+
+    #endregion
+
+
     protected override void RegisterTypes(IContainerRegistry containerRegistry)
     {
       stopWatch = new Stopwatch();
@@ -60,6 +67,14 @@ namespace VPlayer
       Console.WriteLine("INITIALIZING");
 
 #endif
+
+
+      Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+
+      DateTime buildDate = new DateTime(2000, 1, 1).AddDays(version.Build).AddSeconds(version.Revision * 2);
+
+      BuildVersion = $"{version} ({buildDate.ToString("dd.MM.yyyy")})";
+
     }
 
     protected override Window CreateShell()

@@ -17,11 +17,20 @@ namespace VPlayer.Core.ViewModels.Settings
     public SettingsViewModel(IRegionProvider regionProvider, IStorageManager storageManager) : base(regionProvider)
     {
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
+
+
+      Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+
+      DateTime buildDate = new DateTime(2000, 1, 1).AddDays(version.Build).AddSeconds(version.Revision * 2);
+
+      BuildVersion = $"{version} ({buildDate.ToString("dd.MM.yyyy")})";
     }
 
     public override bool ContainsNestedRegions => false;
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
     public string Header => "Settings";
+
+    public string BuildVersion { get; set; }
 
     #region DeleteAllData
 
@@ -46,7 +55,6 @@ namespace VPlayer.Core.ViewModels.Settings
     }
 
     #endregion 
-
 
     #region DownloadNotDownloaded
 

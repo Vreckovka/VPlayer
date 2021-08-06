@@ -121,8 +121,8 @@
                     </TextBlock>
 
                     <controls2:PathButton Grid.Column="1"
-                                          Width="13"
-                                          Height="13"
+                                          IconWidth="13"
+                                          IconHeight="13"
                                           Margin="10,0,10,0"
                                           HorizontalAlignment="Left"
                                           VerticalAlignment="Center"

@@ -69,11 +69,6 @@
                         prism:RegionManager.RegionName="{x:Static regions1:RegionNames.PlayerRegion}" />
 
 
-        <TextBlock Grid.Row="2"
-                   Margin="10,0,0,10"
-                   VerticalAlignment="Bottom"
-                   Foreground="{StaticResource 30_WhiteTransparentBrush}"
-                   Text="{Binding BuildVersion}" />
 
     </Grid>
 

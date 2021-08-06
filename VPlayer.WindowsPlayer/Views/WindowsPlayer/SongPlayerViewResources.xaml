@@ -450,8 +450,8 @@
                             </Grid.ColumnDefinitions>
 
                             <controls2:PathButton Grid.Column="0"
-                                                  Width="13"
-                                                  Height="13"
+                                                  IconWidth="13"
+                                                  IconHeight="13"
                                                   Margin="0,0,0,0"
                                                   HorizontalAlignment="Left"
                                                   VerticalAlignment="Center"

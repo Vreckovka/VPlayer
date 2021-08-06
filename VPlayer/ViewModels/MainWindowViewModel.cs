@@ -144,27 +144,7 @@ namespace VPlayer.ViewModels
     #endregion
 
     public ICommand SwitchBehaviorCommand { get; set; }
-
-
-    #region BuildVersion
-
-    private string buildVersion;
-
-    public string BuildVersion
-    {
-      get { return buildVersion; }
-      set
-      {
-        if (value != buildVersion)
-        {
-          buildVersion = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
-
+   
     #endregion
 
     #region Commads
@@ -234,12 +214,7 @@ namespace VPlayer.ViewModels
       var player = viewModelsFactory.Create<PlayerViewModel>();
 
       player.IsActive = true;
-
-      Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-
-      DateTime buildDate = new DateTime(2000, 1, 1).AddDays(version.Build).AddSeconds(version.Revision * 2);
-
-      BuildVersion = $"{version} ({buildDate.ToString("dd.MM.yyyy")})";
+     
     }
 
     #endregion
