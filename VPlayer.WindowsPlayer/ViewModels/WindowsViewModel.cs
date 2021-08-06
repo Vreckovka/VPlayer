@@ -151,8 +151,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
         var tvPlayer = viewModelsFactory.Create<WindowsIPTVPlayer>();
         var settings = viewModelsFactory.Create<SettingsViewModel>();
 
-        //"pack://application:,,,/VPlayer;component/Resources/Icons/music-note.png"
+        //"pack://application:,,,/VPlayer;component/Resources/Icons/home.png"
         //"D:\\Aplikacie\\VPlayer\\VPlayer\\Resources\\Icons\\svgs\\home.svg"
+        //"pack://application:,,,/VPlayer;component/Resources/Icons/svgs/home.svg"
+
 
         NavigationViewModel.Items.Add(new NavigationItem(libraryViewModel)
         {
@@ -184,7 +186,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         {
           ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/settings.png"
         });
-        
+
 
         musicPlayer.ObservePropertyChange(x => x.IsSelectedToPlay).ObserveOnDispatcher().Subscribe(x => musicPlayerNavigationItem.IsBackroundActive = x).DisposeWith(this);
         videoPlayer.ObservePropertyChange(x => x.IsSelectedToPlay).ObserveOnDispatcher().Subscribe(x => videoPlayerNavigationItem.IsBackroundActive = x).DisposeWith(this);

@@ -139,7 +139,7 @@ namespace VPlayer.Library.ViewModels
 
       NavigationViewModel.Items.Add(new NavigationItem(iptvPlaylists)
       {
-        ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/tvshow-playlist.png"
+        ImagePath = "pack://application:,,,/VPlayer;component/Resources/Icons/television.png"
       });
 
       NavigationViewModel.Items.Add(new NavigationItem(artistsViewModel)

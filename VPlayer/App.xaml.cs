@@ -78,6 +78,7 @@ namespace VPlayer
     protected override void OnInitialized()
     {
       base.OnInitialized();
+
       stopWatch.Stop();
 
       Console.WriteLine(stopWatch.Elapsed);

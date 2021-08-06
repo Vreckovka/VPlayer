@@ -71,6 +71,7 @@
 		<None Remove="Resources\Icons\resize.png" />
 		<None Remove="Resources\Icons\settings.png" />
 		<None Remove="Resources\Icons\singer.png" />
+		<None Remove="Resources\Icons\svgs\home.svg" />
 		<None Remove="Resources\Icons\television.png" />
 		<None Remove="Resources\Icons\tvshow-playlist.png" />
 		<None Remove="Resources\Icons\tvshow.png" />
@@ -130,6 +131,7 @@
 	<ItemGroup>
 		<Resource Include="Includes\VPlayerLogo.ico" />
 		<Resource Include="Includes\VPlayerLogo.png" />
+		<Resource Include="Resources\Icons\svgs\home.svg" />
 		<Resource Include="Resources\Icons\television.png" />
 		<Resource Include="Resources\Icons\tvshow-playlist.png" />
 		<Resource Include="Resources\Icons\tvshow.png" />

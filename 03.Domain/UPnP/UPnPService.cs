@@ -81,23 +81,25 @@ namespace UPnP
     public async Task StartUPnPDiscoveryAsync()
     {
       _socket = new DatagramSocket();
+
       _socket.MessageReceived += _socket_MessageReceived;
 
       IOutputStream stream = await _socket.GetOutputStreamAsync(new HostName("239.255.255.250"), "1900");
       
       var writer = new DataWriter(stream) { UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding.Utf8 };
+
       writer.WriteString(DiscoverMessage);
 
       _upnpDiscoveryStart = DateTime.Now;
-   
 
       await writer.StoreAsync();
+
       await stream.FlushAsync();
+      
       stream.Dispose();
     }
 
     #endregion
-    
 
     #region _socket_MessageReceived
 
@@ -240,6 +242,16 @@ namespace UPnP
       }
       return null;
     }
+
+    #endregion
+
+    #region CancelDiscover
+
+    public void CancelDiscover()
+    {
+      _socket.MessageReceived -= _socket_MessageReceived;
+      _socket.Dispose();
+    } 
 
     #endregion
   }

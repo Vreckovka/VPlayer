@@ -248,14 +248,23 @@ namespace VPlayer.UPnP.ViewModels
 
     public void DiscoverDevices()
     {
-      uPnPService = new UPnPService();
+      if (!IsDiscovering)
+      {
+        uPnPService = new UPnPService();
 
-      IsDiscovering = true;
+        IsDiscovering = true;
 
-      uPnPService.OnMediaServerFound += Service_OnMediaServerFound;
-      uPnPService.OnMediaRendererFound += UPnPService_OnMediaRendererFound;
+        uPnPService.OnMediaServerFound += Service_OnMediaServerFound;
+        uPnPService.OnMediaRendererFound += UPnPService_OnMediaRendererFound;
 
-      uPnPService.StartUPnPDiscoveryAsync();
+        uPnPService.StartUPnPDiscoveryAsync();
+      }
+      else
+      {
+        uPnPService?.CancelDiscover();
+
+        IsDiscovering = false;
+      }
     }
 
     #endregion

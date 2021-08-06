@@ -272,28 +272,36 @@
     <Style TargetType="{x:Type controls:PathButton}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="#DB505050" />
-        <Setter Property="Width" Value="20" />
-        <Setter Property="Height" Value="20" />
         <Setter Property="PathCheckedBrush" Value="#FFEFDF" />
         <Setter Property="IconDefaultColor" Value="#50FFEFDF" />
-
+        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:PathButton}">
-                    <Border Padding="0"
+                    <Border Width="{TemplateBinding Width}"
+                            Height="{TemplateBinding Height}"
+                            Padding="{TemplateBinding Padding}"
                             Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="4">
                         <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
                             <Path x:Name="PathIcon"
-                                  Width="{TemplateBinding Width}"
-                                  Height="{TemplateBinding Height}"
+                                  Width="{TemplateBinding IconWidth}"
+                                  Height="{TemplateBinding IconHeight}"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch"
-                                  Fill="{TemplateBinding Foreground}"
+                                  Fill="{TemplateBinding IconBrush}"
                                   Stretch="Fill"
                                   Style="{TemplateBinding PathStyle}" />
 
                             <ContentPresenter x:Name="MyContentPresenter"
+                                              Grid.Column="1"
                                               Margin="0,0,0,0"
                                               HorizontalAlignment="Center"
                                               VerticalAlignment="Center"
