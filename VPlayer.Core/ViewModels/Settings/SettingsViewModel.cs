@@ -6,6 +6,7 @@ using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Modularity.Regions;
+using VPlayer.Core.Providers;
 using VPlayer.Core.Views;
 
 namespace VPlayer.Core.ViewModels.Settings
@@ -14,16 +15,11 @@ namespace VPlayer.Core.ViewModels.Settings
   {
     private readonly IStorageManager storageManager;
 
-    public SettingsViewModel(IRegionProvider regionProvider, IStorageManager storageManager) : base(regionProvider)
+    public SettingsViewModel(IRegionProvider regionProvider, IStorageManager storageManager, IBasicInformationProvider basicInformationProvider) : base(regionProvider)
     {
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
 
-
-      Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-
-      DateTime buildDate = new DateTime(2000, 1, 1).AddDays(version.Build).AddSeconds(version.Revision * 2);
-
-      BuildVersion = $"{version} ({buildDate.ToString("dd.MM.yyyy")})";
+      BuildVersion = basicInformationProvider.GetBuildVersion();
     }
 
     public override bool ContainsNestedRegions => false;

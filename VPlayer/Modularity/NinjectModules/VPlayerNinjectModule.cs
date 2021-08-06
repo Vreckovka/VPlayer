@@ -3,6 +3,7 @@ using Ninject;
 using VCore.Modularity.NinjectModules;
 using VCore.Standard.Modularity.NinjectModules;
 using VPlayer.Core.Modularity.Ninject;
+using VPlayer.Core.Providers;
 using VPlayer.IPTV.Modularity;
 using VPlayer.Player.ViewModels;
 using VPlayer.UPnP.Modularity;
@@ -19,6 +20,10 @@ namespace VPlayer.Modularity.NinjectModules
 
       if (Kernel != null)
       {
+
+        Kernel.Bind<IBasicInformationProvider>().To<VPlayerBasicInformationProvider>().InSingletonScope();
+
+
         Kernel.Load<VPlayerCoreModule>();
 
         Kernel.Load<IPTVModule>();
