@@ -59,6 +59,7 @@ namespace VPlayer.ViewModels
   //TODO: Horne menu tituliek a pod dat aj do fullscreenu (tiez hore) (vsak why the fuck not)
   //TODO: Play UPnP v prehravaci nejako zmenit (je tam iba daky dropdown) (vymysliet a vyrobit, nemusi byt nic zlozite)
   //TODO: Random a Opakovanie moznost v tv show playliste na prehravaci chyba
+  //TODO: Listview pre Artistov, Albumy atd ... selection a potom akcie (vyberiem si 10 a dam spojit do seba, aristov rovnakych, ale nejako ich nespojilo)
   //
   //  ****DESING***** 
   //      //TODO: Menu rozdelit na sub menu = Playlists(Songs, Music, TvShows), Library(Albums, Interprets, TvShows), Other(Iptv, UPnP...)
