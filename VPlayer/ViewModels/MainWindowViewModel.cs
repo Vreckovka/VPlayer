@@ -33,7 +33,7 @@ using VPlayer.WindowsPlayer.ViewModels;
 
 namespace VPlayer.ViewModels
 {
-  
+
   //****FEATURES*****
   //TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)
   //TODO: Nacitanie zo suboru
@@ -66,7 +66,14 @@ namespace VPlayer.ViewModels
   //
   //****LONG RUN*****
   //TODO: Streaming service, aby som nemusel mat db u seba na disku. Nejaky server niekde si kupit (Minio)
-  //TODO: Streaming pre subory, lyrics, tv shows, kludne uplne vsetko (tv sources...). Db tam bude cele to pojde do webu 
+  //TODO: Streaming pre subory, lyrics, tv shows, kludne uplne vsetko (tv sources...). Db tam bude cele to pojde do webu  //
+  //
+  //
+  //
+  //
+  //
+  //****BUGS*****
+  //TODO: Ked pripojim sluchatka cez bluethooth tak spadne appka (ale nie vzdy, pozeral som asi serial)
 
 
 
