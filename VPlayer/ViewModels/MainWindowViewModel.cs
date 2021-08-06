@@ -56,12 +56,15 @@ namespace VPlayer.ViewModels
         //TODO: Setting page - Poriadne settingy (ako default cesty do subor napr)
         //TODO: Ked je synced lyrics a nie si na tabe a ide to dalej a vratis sa tak to scrolne na tu dolnu poziciu animacne (nech to spravi instantne zacne od tade)
         //TODO: Pridavanie do playlistu vyber do akeho, alebo ci aktualne prehravajuceho, alebo chces vytvorit novy
+        //TODO: Dotiahnut sezony zvlast ako update z csfd
+        //TODO: Vymazat sezonu z tvshow
         //
         //  ****DESING***** 
         //      //TODO: Menu rozdelit na sub menu = Playlists(Songs, Music, TvShows), Library(Albums, Interprets, TvShows), Other(Iptv, UPnP...)
         //      //TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)
         //      //TODO: Listview TileView / listview prepinac
-        //      //TODO: TileVIew nad listviewom ked je velky aby bolo iba max poloziek na riadok
+        //      //TODO: TileVIew nad listviewom ked je velky aby bolo iba max poloziek na riadok (asi nebude len tak, treba prerobit dizajn karticky, alebo to spravit na center ako container v boostrape)
+        //      //TODO: Playlist listview zobrazit ktory item je posledny (Nazov a poradie v playliste)
         //
         //  ****HARD/LONG***** 
         //      //TODO: Dotiahnut data o albumoch, serialoch (a vyznacit ktore mam a ktore mi chybaju)
@@ -80,7 +83,10 @@ namespace VPlayer.ViewModels
         //
         //****BUGS*****
         //TODO: Ked pripojim sluchatka cez bluethooth tak spadne appka (ale nie vzdy, pozeral som asi serial)
-
+        //TODO: Nedava sa prec IsPlaying z itemu ked uz nie je v playliste (asi pri rerabke sa ta vetva vymazala)
+        //TODO: Ked pises vo filtri a das medzernik tak to pauzne (ma ale chyta aj ked nema pocuvat)
+        //TODO: totaly played time bezi a uklada sa aj ked prehravac pozasteveny
+        //TODO: Asi v prehravaci sa ukazuje zly cas totaly played time (v listviewe tam je 1Den a tam ukazuje 0)
 
 
 
