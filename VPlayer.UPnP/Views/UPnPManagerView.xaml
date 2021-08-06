@@ -111,11 +111,11 @@
                                     <TextBlock>
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
-                                                <Setter Property="Text" Value="Not saved" />
+                                                <Setter Property="Text" Value="Save device" />
 
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding IsStored}" Value="true">
-                                                        <Setter Property="Text" Value="Saved" />
+                                                        <Setter Property="Text" Value="Remove device" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -205,11 +205,11 @@
                                         <TextBlock>
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock">
-                                                    <Setter Property="Text" Value="Not saved" />
+                                                    <Setter Property="Text" Value="Save server" />
 
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding IsStored}" Value="true">
-                                                            <Setter Property="Text" Value="Saved" />
+                                                            <Setter Property="Text" Value="Remove server" />
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
