@@ -90,11 +90,11 @@ namespace VPlayer.ViewModels
   //TODO: totaly played time bezi a uklada sa aj ked prehravac pozasteveny
   //TODO: Niekedy ked prepnes automaticky output sound device tak equalizer sa zastavi a da sa reloadnut ze pausnes a znovu spustis hudubu 
   //TODO: Ked je buffering v prehravaci a das vypnut appku tak spadne a nevypne sa poriadne (zostane aj niekedy bezat potom na pozadi, nejaky thread niekde asi)
-  //TODO: Nespojilo playlisty s rovnakym hash
-  //TODO: Nespaja niektorych aristov
+  //TODO: Nespojilo playlisty s rovnakym hash po spusteni (neviem ci TV show alebo hudba) (mozno tv show ze pustis z detailu a das save a potom znovu z detailu)
+  //TODO: Nespaja niektorych aristov pri load
   //
   //  ****IMPORTANT!****
-  //TODO: Asi v prehravaci sa ukazuje zly cas totaly played time (v listviewe tam je 1Den a tam ukazuje 0) (ASI TO RESETLO!!!)
+          //TODO: Asi v prehravaci sa ukazuje zly cas totaly played time (v listviewe tam je 1Den a tam ukazuje 0) (ASI TO RESETLO!!!)
 
 
 
