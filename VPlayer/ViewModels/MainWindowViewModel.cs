@@ -240,7 +240,7 @@ namespace VPlayer.ViewModels
 
       DateTime buildDate = new DateTime(2000, 1, 1).AddDays(version.Build).AddSeconds(version.Revision * 2);
 
-      BuildVersion = $"{version} ({buildDate.ToString("dd.mm.yyyy")})";
+      BuildVersion = $"{version} ({buildDate.ToString("dd.MM.yyyy")})";
     }
 
     #endregion
