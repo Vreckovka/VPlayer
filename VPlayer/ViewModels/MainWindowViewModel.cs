@@ -58,6 +58,7 @@ namespace VPlayer.ViewModels
   //TODO: Vymazat sezonu z tvshow
   //TODO: Horne menu tituliek a pod dat aj do fullscreenu (tiez hore) (vsak why the fuck not)
   //TODO: Play UPnP v prehravaci nejako zmenit (je tam iba daky dropdown) (vymysliet a vyrobit, nemusi byt nic zlozite)
+  //TODO: Random a Opakovanie moznost v tv show playliste na prehravaci chyba
   //
   //  ****DESING***** 
   //      //TODO: Menu rozdelit na sub menu = Playlists(Songs, Music, TvShows), Library(Albums, Interprets, TvShows), Other(Iptv, UPnP...)
@@ -89,6 +90,7 @@ namespace VPlayer.ViewModels
   //TODO: totaly played time bezi a uklada sa aj ked prehravac pozasteveny
   //TODO: Niekedy ked prepnes automaticky output sound device tak equalizer sa zastavi a da sa reloadnut ze pausnes a znovu spustis hudubu 
   //TODO: Ked je buffering v prehravaci a das vypnut appku tak spadne a nevypne sa poriadne (zostane aj niekedy bezat potom na pozadi, nejaky thread niekde asi)
+  //TODO: Nespojilo playlisty s rovnakym hash
   //
   //  ****IMPORTANT!****
   //TODO: Asi v prehravaci sa ukazuje zly cas totaly played time (v listviewe tam je 1Den a tam ukazuje 0) (ASI TO RESETLO!!!)
