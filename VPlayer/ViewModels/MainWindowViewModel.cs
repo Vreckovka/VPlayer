@@ -46,7 +46,6 @@ namespace VPlayer.ViewModels
   //TODO: Moznost editovat lyrics
   //TODO: Mozno vyhladat titulky cez search a vybrat si
   //TODO: Hviezdicky pocet 
-  //TODO: Obrazky do listview pri playlistoch (tv show cover atd...)
   //TODO: TV Channels editor dotiahnut
   //TODO: Save UPnP Sever (mozno je, bojim sa skusit)
   //TODO: File Browser - File watcher nad aktualnou zlozkou
@@ -64,6 +63,7 @@ namespace VPlayer.ViewModels
   //      //TODO: Menu rozdelit na sub menu = Playlists(Songs, Music, TvShows), Library(Albums, Interprets, TvShows), Other(Iptv, UPnP...)
   //      //TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)
   //      //TODO: Listview TileView / listview prepinac
+  //      //TODO: Obrazky do listview pri playlistoch (tv show cover atd...)
   //      //TODO: TileVIew nad listviewom ked je velky aby bolo iba max poloziek na riadok (asi nebude len tak, treba prerobit dizajn karticky, alebo to spravit na center ako container v boostrape)
   //      //TODO: Playlist listview zobrazit ktory item je posledny (Nazov a poradie v playliste)
   //
@@ -91,7 +91,7 @@ namespace VPlayer.ViewModels
   //TODO: Ked je buffering v prehravaci a das vypnut appku tak spadne a nevypne sa poriadne (zostane aj niekedy bezat potom na pozadi, nejaky thread niekde asi)
   //
   //  ****IMPORTANT!****
-          //TODO: Asi v prehravaci sa ukazuje zly cas totaly played time (v listviewe tam je 1Den a tam ukazuje 0) (ASI TO RESETLO!!!)
+  //TODO: Asi v prehravaci sa ukazuje zly cas totaly played time (v listviewe tam je 1Den a tam ukazuje 0) (ASI TO RESETLO!!!)
 
 
 
