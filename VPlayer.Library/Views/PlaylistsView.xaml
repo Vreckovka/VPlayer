@@ -5,12 +5,12 @@
              xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:events="clr-namespace:VPlayer.Core.Events;assembly=VPlayer.Core"
+             xmlns:events1="clr-namespace:VPlayer.Core.Events;assembly=VPLayer.Domain"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
              xmlns:local="clr-namespace:VPlayer.Library.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-             xmlns:events1="clr-namespace:VPlayer.Core.Events;assembly=VPLayer.Domain"
              d:DesignHeight="450"
              d:DesignWidth="1800"
              mc:Ignorable="d">
@@ -178,19 +178,19 @@
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <controls1:PathButton Width="15"
-                                                              Height="15"
-                                                              Margin="0,0,10,5"
+                                        <controls1:PathButton Margin="0,0,10,5"
                                                               HorizontalAlignment="Right"
                                                               VerticalAlignment="Bottom"
+                                                              IconHeight="15"
+                                                              IconWidth="15"
                                                               IsChecked="{Binding IsRepeating}"
                                                               PathStyle="{StaticResource Repeate}" />
 
-                                        <controls1:PathButton Width="15"
-                                                              Height="15"
-                                                              Margin="0,0,35,5"
+                                        <controls1:PathButton Margin="0,0,35,5"
                                                               HorizontalAlignment="Right"
                                                               VerticalAlignment="Bottom"
+                                                              IconHeight="15"
+                                                              IconWidth="15"
                                                               IsChecked="{Binding IsShuffle}"
                                                               PathStyle="{StaticResource Shuffle}" />
                                     </StackPanel>
