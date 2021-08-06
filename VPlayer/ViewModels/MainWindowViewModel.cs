@@ -76,7 +76,7 @@ namespace VPlayer.ViewModels
   //      //TODO: Tv show prehrat od posledneho ulozene playlistu (to iste aj pre hudbu kludne), ked pribudne nova seria pusti to kde si skoncil, ale nacita ju
   //      //TODO: Vyber output device (zvukove vystupne zariadenie) aj vo fullscreene videa (why the fuck not), miesta do sirky je dost (nie do vysky)
   //      //TODO: Prehravanie,pridavanie do playlistu albumov, tv show z detailu (tym padom mozno zalozka Albums nebude treba, aj tak tam nechodis, pojdes iba do artist)
-  //
+  //      //TODO: Vymazavat itemy z File browsera (ak je odkaz niekde do db na tu zlozku tak vymazat rovno aj tv show, ale spytat sa ci to chces a zapametat si ak ano)
   //
   //****LONG RUN*****
   //TODO: Streaming service, aby som nemusel mat db u seba na disku. Nejaky server niekde si kupit (Minio)
