@@ -54,6 +54,9 @@ namespace VPlayer.ViewModels
         //TODO: File Browser - Podpora menit cestu
         //TODO: Popup menu style
         //TODO: Setting page - Poriadne settingy (ako default cesty do subor napr)
+        //TODO: Ked je synced lyrics a nie si na tabe a ide to dalej a vratis sa tak to scrolne na tu dolnu poziciu animacne (nech to spravi instantne zacne od tade)
+        //TODO: Prehravanie,pridavanie do playlistu albumov, tv show z detailu (tym padom mozno zalozka Albums nebude treba, aj tak tam nechodis, pojdes iba do artist)
+        //TODO: Pridavanie do playlistu vyber do akeho, alebo ci aktualne prehravajuceho, alebo chces vytvorit novy
         //
         //  ****DESING***** 
         //      //TODO: Menu rozdelit na sub menu = Playlists(Songs, Music, TvShows), Library(Albums, Interprets, TvShows), Other(Iptv, UPnP...)
