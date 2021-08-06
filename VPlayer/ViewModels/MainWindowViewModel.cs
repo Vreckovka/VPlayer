@@ -60,6 +60,9 @@ namespace VPlayer.ViewModels
   //TODO: Play UPnP v prehravaci nejako zmenit (je tam iba daky dropdown) (vymysliet a vyrobit, nemusi byt nic zlozite)
   //TODO: Random a Opakovanie moznost v tv show playliste na prehravaci chyba
   //TODO: Listview pre Artistov, Albumy atd ... selection a potom akcie (vyberiem si 10 a dam spojit do seba, aristov rovnakych, ale nejako ich nespojilo)
+  //TODO: Prehravanie hudby z File browsera
+  //TODO: Moznost presunu zlozku a subory do Serialy napr, alebo rovno do nejakeho serialu (Mozno totalne daleko to potiahnut ze moznost vytvorit rovno aj noveho)
+  //TODO: CSFD vyhladavanie podla nazvu suborov (nejaky vyhladavac, mozno ze sa ti zobrazi nazov suboru a vyselektujes vyhladavany vyraz (highlight) (nemusis pisat) a to sa vyberie do filtra)
   //
   //  ****DESING***** 
   //      //TODO: Menu rozdelit na sub menu = Playlists(Songs, Music, TvShows), Library(Albums, Interprets, TvShows), Other(Iptv, UPnP...)
