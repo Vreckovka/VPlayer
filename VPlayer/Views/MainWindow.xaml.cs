@@ -37,11 +37,14 @@ namespace VPlayer.Views
     {
       IInputElement focusedControl = Keyboard.FocusedElement;
 
-      FocusManager.SetFocusedElement(this, this);
+      if (focusedControl != null)
+      {
+        FocusManager.SetFocusedElement(this, this);
 
-      focusedControl.ReleaseMouseCapture();
+        focusedControl.ReleaseMouseCapture();
 
-      Keyboard.ClearFocus();
+        Keyboard.ClearFocus();
+      }
     }
   }
 }

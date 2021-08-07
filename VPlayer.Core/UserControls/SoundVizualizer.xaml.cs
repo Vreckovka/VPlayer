@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Security.Permissions;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -21,6 +21,7 @@ using SoundManagement;
 using VCore.Helpers;
 using WinformsVisualization.Visualization;
 using Color = System.Windows.Media.Color;
+using Timer = System.Timers.Timer;
 
 namespace VPlayer.Player.UserControls
 {
@@ -79,7 +80,8 @@ namespace VPlayer.Player.UserControls
 
       InitilizeSoundSource();
 
-      AssignSpectrum();
+      if (soundInSource != null)
+        AssignSpectrum();
     }
 
     private void SoundVizualizer_Unloaded(object sender, RoutedEventArgs e)
@@ -215,7 +217,9 @@ namespace VPlayer.Player.UserControls
           if (x is SoundVizualizer soundVizualizer)
           {
             var barWidth = (double)y.NewValue;
-            soundVizualizer.lineSpectrum.MinimumBarWidth = barWidth;
+
+            if (soundVizualizer?.lineSpectrum != null)
+              soundVizualizer.lineSpectrum.MinimumBarWidth = barWidth;
           }
         }));
 
@@ -396,6 +400,10 @@ namespace VPlayer.Player.UserControls
 
     private void SoundVizualizer_Loaded(object sender, RoutedEventArgs e)
     {
+      if (soundInSource != null && lineSpectrum == null)
+        AssignSpectrum();
+
+
       if (isTimerDisposed && IsEnabled)
       {
         if (timer == null)
@@ -511,31 +519,39 @@ namespace VPlayer.Player.UserControls
 
     #region RecreateSpectrumProvider
 
-    private static object reacreateBatton = new object();
+    private static SemaphoreSlim reacreateBatton = new SemaphoreSlim(1, 1);
 
-    private static void RecreateSpectrumProvider()
+    private static async void RecreateSpectrumProvider()
     {
-      lock (reacreateBatton)
+      try
       {
-        DisposeEqualizer();
+        await reacreateBatton.WaitAsync();
 
-        _soundIn = new WasapiLoopbackCapture();
-        _soundIn.Initialize();
+        await Task.Run(() =>
+        {
+          DisposeEqualizer();
 
-        soundInSource = new SoundInSource(_soundIn);
+          _soundIn = new WasapiLoopbackCapture();
+          _soundIn.Initialize();
 
-        source = soundInSource.ToSampleSource().AppendSource(x => new PitchShifter(x), out var _pitchShifter);
+          soundInSource = new SoundInSource(_soundIn);
 
-        var _dummyCapture = new WasapiCapture(true, AudioClientShareMode.Shared, 250);
+          source = soundInSource.ToSampleSource().AppendSource(x => new PitchShifter(x), out var _pitchShifter);
 
+          var _dummyCapture = new WasapiCapture(true, AudioClientShareMode.Shared, 250);
 
-        waveSource = SetupSampleSource(source);
+          waveSource = SetupSampleSource(source);
 
-        buffer = new byte[waveSource.WaveFormat.BytesPerSecond / 2];
+          buffer = new byte[waveSource.WaveFormat.BytesPerSecond / 2];
 
-        _soundIn.Start();
+          _soundIn.Start();
 
-        soundInSource.DataAvailable += ReadData; 
+          soundInSource.DataAvailable += ReadData;
+        });
+      }
+      finally
+      {
+        reacreateBatton.Release();
       }
     }
 
@@ -575,7 +591,7 @@ namespace VPlayer.Player.UserControls
       {
         Application.Current?.Dispatcher?.Invoke(async () =>
          {
-           if (IsEnabled)
+           if (IsEnabled && lineSpectrum != null)
            {
              var newImage = await Task.Run(() =>
              {
@@ -662,7 +678,7 @@ namespace VPlayer.Player.UserControls
           DisposeTimer();
 
           DisposeEqualizer();
-        } 
+        }
       }
     }
 

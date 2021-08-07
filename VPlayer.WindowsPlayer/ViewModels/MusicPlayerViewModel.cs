@@ -356,6 +356,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     protected override void OnActualItemChanged()
     {
+      base.OnActualItemChanged();
+
       albumDetail?.RaiseCanExecuteChanged();
     }
 
@@ -366,6 +368,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
     CancellationTokenSource downloadingLyricsTask;
     public override void OnNewItemPlay()
     {
+      base.OnNewItemPlay();
+
       downloadingLyricsTask?.Cancel();
       downloadingLyricsTask?.Dispose();
 

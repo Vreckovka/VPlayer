@@ -96,8 +96,12 @@ namespace VPlayer.Core.ViewModels
 
     public override void OnNewItemPlay()
     {
+      base.OnNewItemPlay();
+
       if (MediaPlayer.Media != null)
+      {
         MediaPlayer.Media.DurationChanged += Media_DurationChanged;
+      }
     }
 
     #endregion
@@ -157,7 +161,7 @@ namespace VPlayer.Core.ViewModels
           var totalPlayedTime = TimeSpan.FromMilliseconds(deltaTimeChanged);
 
           PlaylistTotalTimePlayed += totalPlayedTime;
-      
+
           int totalSec = (int)PlaylistTotalTimePlayed.TotalSeconds;
 
           if (totalSec % 10 == 0 && totalSec > lastTotalTimeSaved)
@@ -298,17 +302,6 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region OnVlcPlayingChanged
-
-    protected override void OnVlcPlayingChanged(object sender, EventArgs eventArgs)
-    {
-      lastTimeChangedMs = 0;
-
-      base.OnVlcPlayingChanged(sender, eventArgs);
-    }
-
-    #endregion
-
     #region OnPlayPlaylist
 
     protected override void OnPlayPlaylist()
@@ -366,6 +359,13 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
+
+    protected override void OnActualItemChanged()
+    {
+      base.OnActualItemChanged();
+
+      ActualItem.ActualPosition = 0;
+    }
 
     #region Dispose
 
