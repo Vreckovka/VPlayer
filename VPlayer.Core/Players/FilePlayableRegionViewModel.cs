@@ -133,7 +133,6 @@ namespace VPlayer.Core.ViewModels
     #region OnVlcTimeChanged
 
     private int lastTotalTimeSaved = 0;
-    private TimeSpan totalPlayedTime;
 
     private async void OnVlcTimeChanged(object sender, PlayerTimeChangedArgs eventArgs)
     {
@@ -144,10 +143,7 @@ namespace VPlayer.Core.ViewModels
         if (!double.IsNaN(position) && !double.IsInfinity(position))
         {
           ActualItem.ActualPosition = position;
-
-
           ActualSavedPlaylist.LastItemElapsedTime = position;
-
 
           var deltaTimeChanged = eventArgs.Time - lastTimeChangedMs;
 
@@ -158,11 +154,11 @@ namespace VPlayer.Core.ViewModels
 
           lastTimeChangedMs = eventArgs.Time;
 
-          totalPlayedTime += TimeSpan.FromMilliseconds(deltaTimeChanged);
+          var totalPlayedTime = TimeSpan.FromMilliseconds(deltaTimeChanged);
 
-          PlaylistTotalTimePlayed = totalPlayedTime;
+          PlaylistTotalTimePlayed += totalPlayedTime;
       
-          int totalSec = (int)totalPlayedTime.TotalSeconds;
+          int totalSec = (int)PlaylistTotalTimePlayed.TotalSeconds;
 
           if (totalSec % 10 == 0 && totalSec > lastTotalTimeSaved)
           {
@@ -190,9 +186,6 @@ namespace VPlayer.Core.ViewModels
           position = 0;
         }
 
-        MediaPlayer.Stop();
-        MediaPlayer.Position = position;
-        MediaPlayer.Play();
         MediaPlayer.Position = position;
 
         ActualItem.ActualPosition = MediaPlayer.Position;

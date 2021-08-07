@@ -162,7 +162,7 @@
                                         DisplayMemberBinding="{Binding LastPlayed, StringFormat={}dd.MM.yy / HH:mm:ss}"
                                         Header="Last time played" />
                         <GridViewColumn Width="140"
-                                        DisplayMemberBinding="{Binding TotalPlayedTime}"
+                                        DisplayMemberBinding="{Binding TotalPlayedTime, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}"
                                         Header="Total played time" />
                         <GridViewColumn Width="150"
                                         DisplayMemberBinding="{Binding HashCode, Converter={library:HashConverter}, ConverterParameter=18}"
