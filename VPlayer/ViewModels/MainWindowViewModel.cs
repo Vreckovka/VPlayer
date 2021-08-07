@@ -33,7 +33,7 @@ using VPlayer.WindowsPlayer.ViewModels;
 
 namespace VPlayer.ViewModels
 {
-  //****FEATURES*****
+  //*****FEATURES*****
   //TODO: Ak je neidentifkovana skladba, pridanie interpreta zo zoznamu, alebo vytvorit noveho
   //TODO: Nastavit si hlavnu zlozku a ked spustis z inej, moznost presunut
   //TODO: Playlist hore pri menu, quick ze prides a uvidis napriklad 5 poslednych hore v rade , ako carusel (5/5)
@@ -60,48 +60,53 @@ namespace VPlayer.ViewModels
   //TODO: Play UPnP v prehravaci nejako zmenit (je tam iba daky dropdown) (vymysliet a vyrobit, nemusi byt nic zlozite)
   //TODO: Random a Opakovanie moznost v tv show playliste na prehravaci chyba
   //TODO: Listview pre Artistov, Albumy atd ... selection a potom akcie (vyberiem si 10 a dam spojit do seba, aristov rovnakych, ale nejako ich nespojilo)
-  //TODO: Prehravanie hudby z File browsera
   //TODO: Moznost presunu zlozku a subory do Serialy napr, alebo rovno do nejakeho serialu (Mozno totalne daleko to potiahnut ze moznost vytvorit rovno aj noveho)
   //TODO: CSFD vyhladavanie podla nazvu suborov (nejaky vyhladavac, mozno ze sa ti zobrazi nazov suboru a vyselektujes vyhladavany vyraz (highlight) (nemusis pisat) a to sa vyberie do filtra)
-  //TODO: Highlight videa hover nad itemom v playliste
   //
-  //  ****DESING***** 
-  //      //TODO: Menu rozdelit na sub menu = Playlists(Songs, Music, TvShows), Library(Albums, Interprets, TvShows), Other(Iptv, UPnP...)
-  //      //TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)
-  //      //TODO: Listview TileView / listview prepinac
-  //      //TODO: Obrazky do listview pri playlistoch (tv show cover atd...)
-  //      //TODO: TileVIew nad listviewom ked je velky aby bolo iba max poloziek na riadok (asi nebude len tak, treba prerobit dizajn karticky, alebo to spravit na center ako container v boostrape)
-  //      //TODO: Playlist listview zobrazit ktory item je posledny (Nazov a poradie v playliste)
+  //  *****Easy*****
+  //        //TODO: Pridat thumbnail zo suboru
+  //        //TODO: Highlight videa hover nad itemom v playliste
+  //        //TODO: Moznost vymazat automaticky nahrane lyrics a zakazat stahovanie
   //
-  //  ****HARD/LONG***** 
-  //      //TODO: Dotiahnut data o albumoch, serialoch (a vyznacit ktore mam a ktore mi chybaju)
-  //      //TODO: Poriadny Search, nieco take ako ctrlt + T pre Resharpery, kludne aj na button a filtre po kategoriach (aby sa dalo pouzivat aj bez klavesnice)
+  //  *****DESING***** 
+  //        //TODO: Menu rozdelit na sub menu = Playlists(Songs, Music, TvShows), Library(Albums, Interprets, TvShows), Other(Iptv, UPnP...)
+  //        //TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)
+  //        //TODO: Listview TileView / listview prepinac
+  //        //TODO: Obrazky do listview pri playlistoch (tv show cover atd...)
+  //        //TODO: TileVIew nad listviewom ked je velky aby bolo iba max poloziek na riadok (asi nebude len tak, treba prerobit dizajn karticky, alebo to spravit na center ako container v boostrape)
+  //        //TODO: Playlist listview zobrazit ktory item je posledny (Nazov a poradie v playliste)
   //
-  //  ****TOPKY*****
-  //      //TODO: Tv show prehrat od posledneho ulozene playlistu (to iste aj pre hudbu kludne), ked pribudne nova seria pusti to kde si skoncil, ale nacita ju
-  //      //TODO: Vyber output device (zvukove vystupne zariadenie) aj vo fullscreene videa (why the fuck not), miesta do sirky je dost (nie do vysky)
-  //      //TODO: Prehravanie,pridavanie do playlistu albumov, tv show z detailu (tym padom mozno zalozka Albums nebude treba, aj tak tam nechodis, pojdes iba do artist)
-  //      //TODO: Vymazavat itemy z File browsera (ak je odkaz niekde do db na tu zlozku tak vymazat rovno aj tv show, ale spytat sa ci to chces a zapametat si ak ano)
-  //      //TODO: Mute button pri zvuku
-  //      //TODO: Umoznit simultalne spustit video a hudbu
-          //TODO: Clear playlist
+  //  *****HARD/LONG***** 
+  //        //TODO: Dotiahnut data o albumoch, serialoch (a vyznacit ktore mam a ktore mi chybaju)
+  //        //TODO: Poriadny Search, nieco take ako ctrlt + T pre Resharpery, kludne aj na button a filtre po kategoriach (aby sa dalo pouzivat aj bez klavesnice)
+  //        //TODO: Prehravanie hudby z File browsera
   //
-  //****LONG RUN*****
+  //  *****TOPKY*****
+  //        //TODO: Tv show prehrat od posledneho ulozene playlistu (to iste aj pre hudbu kludne), ked pribudne nova seria pusti to kde si skoncil, ale nacita ju
+  //        //TODO: Vyber output device (zvukove vystupne zariadenie) aj vo fullscreene videa (why the fuck not), miesta do sirky je dost (nie do vysky)
+  //        //TODO: Prehravanie,pridavanie do playlistu albumov, tv show z detailu (tym padom mozno zalozka Albums nebude treba, aj tak tam nechodis, pojdes iba do artist)
+  //        //TODO: Vymazavat itemy z File browsera (ak je odkaz niekde do db na tu zlozku tak vymazat rovno aj tv show, ale spytat sa ci to chces a zapametat si ak ano)
+  //        //TODO: Mute button pri zvuku
+  //        //TODO: Umoznit simultalne spustit video a hudbu
+  //TODO: Clear playlist
+  //
+  //*****LONG RUN*****
   //TODO: Streaming service, aby som nemusel mat db u seba na disku. Nejaky server niekde si kupit (Minio)
   //TODO: Streaming pre subory, lyrics, tv shows, kludne uplne vsetko (tv sources...). Db tam bude cele to pojde do webu  //
   //
   //*********************************************************************************************************************************
   //
-  //****BUGS*****
+  //*****BUGS*****
   //TODO: Nedava sa prec IsPlaying z itemu ked uz nie je v playliste (asi pri rerabke sa ta vetva vymazala)
   //TODO: totaly played time bezi a uklada sa aj ked prehravac pozasteveny
   //TODO: Niekedy ked prepnes automaticky output sound device tak equalizer sa zastavi a da sa reloadnut ze pausnes a znovu spustis hudubu 
   //TODO: Ked je buffering v prehravaci a das vypnut appku tak spadne a nevypne sa poriadne (zostane aj niekedy bezat potom na pozadi, nejaky thread niekde asi)
   //TODO: Nespojilo playlisty s rovnakym hash po spusteni (neviem ci TV show alebo hudba) (mozno tv show ze pustis z detailu a das save a potom znovu z detailu)
   //TODO: Nespaja niektorych aristov pri load
+  //TODO: Sem tam ostanie vysiet appka
   //
-  //  ****IMPORTANT!****
-          //
+  //  *****IMPORTANT!*****
+  //
 
 
 
