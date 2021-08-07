@@ -95,7 +95,6 @@ namespace VPlayer.ViewModels
   //****BUGS*****
   //TODO: Ked pripojim sluchatka cez bluethooth tak spadne appka (ale nie vzdy, pozeral som asi serial)
   //TODO: Nedava sa prec IsPlaying z itemu ked uz nie je v playliste (asi pri rerabke sa ta vetva vymazala)
-  //TODO: Ked pises vo filtri a das medzernik tak to pauzne (ma ale chyta aj ked nema pocuvat)
   //TODO: totaly played time bezi a uklada sa aj ked prehravac pozasteveny
   //TODO: Niekedy ked prepnes automaticky output sound device tak equalizer sa zastavi a da sa reloadnut ze pausnes a znovu spustis hudubu 
   //TODO: Ked je buffering v prehravaci a das vypnut appku tak spadne a nevypne sa poriadne (zostane aj niekedy bezat potom na pozadi, nejaky thread niekde asi)
@@ -104,8 +103,7 @@ namespace VPlayer.ViewModels
   //TODO: Pri prehravani z File browsera sa pustia aj itemy ktore nie su video
   //
   //  ****IMPORTANT!****
-          //TODO: Asi v prehravaci sa ukazuje zly cas totaly played time (v listviewe tam je 1Den a tam ukazuje 0) (ASI TO RESETLO!!!)
-          //TODO: Seek sipkami nefunguje a celkovo seek je divny
+          //
 
 
 

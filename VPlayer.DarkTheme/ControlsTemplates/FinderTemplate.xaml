@@ -40,7 +40,17 @@
                                      FontSize="{TemplateBinding FontSize}"
                                      FontWeight="{TemplateBinding FontWeight}"
                                      Foreground="{TemplateBinding Foreground}"
-                                     Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Text, UpdateSourceTrigger=PropertyChanged}" />
+                                     Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Text, UpdateSourceTrigger=PropertyChanged}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="GotFocus">
+                                        <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=FocusChanged}" CommandParameter="true" />
+                                    </i:EventTrigger>
+
+                                    <i:EventTrigger EventName="LostFocus">
+                                        <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=FocusChanged}" CommandParameter="false" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </TextBox>
 
                             <Path Name="NameTxt"
                                   Grid.Row="0"

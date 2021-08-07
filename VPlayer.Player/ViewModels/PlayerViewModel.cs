@@ -11,6 +11,7 @@ using VCore.Helpers;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Helpers;
 using VCore.ViewModels;
+using VCore.WPF.Managers;
 using VPlayer.Core.Events;
 using VPlayer.Core.Managers.Status;
 using VPlayer.Core.Modularity.Regions;
@@ -294,6 +295,8 @@ namespace VPlayer.Player.ViewModels
 
     #endregion
 
+    #region ChangeActualViewModel
+
     private void ChangeActualViewModel(IPlayableRegionViewModel newPlayer)
     {
       if (ActualViewModel != null)
@@ -312,7 +315,9 @@ namespace VPlayer.Player.ViewModels
 
       CanPlay = ActualViewModel.CanPlay;
     }
-    
+
+    #endregion
+
     #region PlayNext
 
     public void PlayNext()
@@ -371,7 +376,7 @@ namespace VPlayer.Player.ViewModels
             break;
           }
         case Key.Space:
-           {
+            {
              if (CanUseKey(out var filePlayable))
              {
                filePlayable?.PlayPause();
@@ -388,7 +393,8 @@ namespace VPlayer.Player.ViewModels
       if (ActualViewModel != null && ActualViewModel.IsActive && 
           ActualViewModel is IFilePlayableRegionViewModel filePlayable1 &&
           mainWindow.IsActive &&
-          mainWindow.WindowState != WindowState.Minimized)
+          mainWindow.WindowState != WindowState.Minimized &&
+          !VFocusManager.IsAnyFocused())
       {
         filePlayable = filePlayable1;
         return true;

@@ -246,8 +246,8 @@
 
     <DataTemplate x:Key="AlbumImageDatatemplate">
         <Grid>
-            <Grid VerticalAlignment="Stretch">
 
+            <Grid VerticalAlignment="Stretch">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -450,12 +450,12 @@
                             </Grid.ColumnDefinitions>
 
                             <controls2:PathButton Grid.Column="0"
-                                                  IconWidth="13"
-                                                  IconHeight="13"
                                                   Margin="0,0,0,0"
                                                   HorizontalAlignment="Left"
                                                   VerticalAlignment="Center"
                                                   Panel.ZIndex="1"
+                                                  IconHeight="13"
+                                                  IconWidth="13"
                                                   IsChecked="{Binding IsFavorite}"
                                                   PathStyle="{StaticResource Favorite}"
                                                   ToolTip="Favorite">

@@ -14,9 +14,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:regions="http://prismlibrary.com/"
              xmlns:regions1="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPlayer.Core"
+             xmlns:regions11="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPLayer.Domain"
              xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
              xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
-             xmlns:regions11="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPLayer.Domain"
              d:DesignHeight="450"
              d:DesignWidth="1900"
              mc:Ignorable="d">
@@ -37,7 +37,10 @@
             <ColumnDefinition Width="400" />
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="0" Margin="0,0,0,15">
+        <Grid Grid.Column="0"
+              Margin="0,0,0,15"
+              Focusable="True"
+              IsHitTestVisible="True">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="auto" />

@@ -181,6 +181,11 @@ namespace VPlayer.Core.ViewModels
     {
       lock (positionBatton)
       {
+        if (ActualItem == null)
+        {
+          return;
+        }
+
         if (position < 0)
         {
           position = 0;
