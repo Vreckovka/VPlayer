@@ -511,31 +511,32 @@ namespace VPlayer.Player.UserControls
 
     #region RecreateSpectrumProvider
 
+    private static object reacreateBatton = new object();
+
     private static void RecreateSpectrumProvider()
     {
-      DisposeEqualizer();
+      lock (reacreateBatton)
+      {
+        DisposeEqualizer();
 
-      _soundIn = new WasapiLoopbackCapture();
-      _soundIn.Initialize();
+        _soundIn = new WasapiLoopbackCapture();
+        _soundIn.Initialize();
 
-      soundInSource = new SoundInSource(_soundIn);
+        soundInSource = new SoundInSource(_soundIn);
 
-     
+        source = soundInSource.ToSampleSource().AppendSource(x => new PitchShifter(x), out var _pitchShifter);
 
-      source = soundInSource.ToSampleSource().AppendSource(x => new PitchShifter(x), out var _pitchShifter);
-
-      var _dummyCapture = new WasapiCapture(true, AudioClientShareMode.Shared, 250) ;
-      
-      
+        var _dummyCapture = new WasapiCapture(true, AudioClientShareMode.Shared, 250);
 
 
-      waveSource = SetupSampleSource(source);
+        waveSource = SetupSampleSource(source);
 
-      buffer = new byte[waveSource.WaveFormat.BytesPerSecond / 2];
+        buffer = new byte[waveSource.WaveFormat.BytesPerSecond / 2];
 
-      _soundIn.Start();
+        _soundIn.Start();
 
-      soundInSource.DataAvailable += ReadData;
+        soundInSource.DataAvailable += ReadData; 
+      }
     }
 
     #endregion
@@ -550,11 +551,17 @@ namespace VPlayer.Player.UserControls
       }
 
       soundInSource?.Dispose();
+      soundInSource = null;
+
       source?.Dispose();
+      source = null;
+
       waveSource?.Dispose();
+      waveSource = null;
 
       _soundIn?.Stop();
       _soundIn?.Dispose();
+      _soundIn = null;
 
     }
 
