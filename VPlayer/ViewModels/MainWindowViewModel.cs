@@ -104,6 +104,7 @@ namespace VPlayer.ViewModels
   //TODO: Nespojilo playlisty s rovnakym hash po spusteni (neviem ci TV show alebo hudba) (mozno tv show ze pustis z detailu a das save a potom znovu z detailu)
   //TODO: Nespaja niektorych aristov pri load
   //TODO: Sem tam ostanie vysiet appka
+  //TODO: VLC volume ako keby je 0
   //
   //  *****IMPORTANT!*****
   //

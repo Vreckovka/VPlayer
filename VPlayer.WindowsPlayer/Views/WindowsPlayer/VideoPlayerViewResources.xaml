@@ -121,12 +121,12 @@
                     </TextBlock>
 
                     <controls2:PathButton Grid.Column="1"
-                                          IconWidth="13"
-                                          IconHeight="13"
                                           Margin="10,0,10,0"
                                           HorizontalAlignment="Left"
                                           VerticalAlignment="Center"
                                           Panel.ZIndex="1"
+                                          IconHeight="13"
+                                          IconWidth="13"
                                           IsChecked="{Binding IsFavorite}"
                                           PathStyle="{StaticResource Favorite}"
                                           ToolTip="Favorite">

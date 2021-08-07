@@ -371,26 +371,33 @@ namespace VPlayer.Player.UserControls
 
     #region InitilizeSoundSource
 
-    private static void InitilizeSoundSource()
+    private static SemaphoreSlim initilizeSempahore = new SemaphoreSlim(1, 1);
+    private static async  void  InitilizeSoundSource()
     {
-      if (!wasSoundSourceInitilized)
+      try
       {
-        RecreateSpectrumProvider();
+        await initilizeSempahore.WaitAsync();
 
-        wasSoundSourceInitilized = true;
-
-        AudioDeviceManager.Instance.ObservePropertyChange(x => x.SelectedSoundDevice).Subscribe(async x =>
+        if (!wasSoundSourceInitilized)
         {
-          await Task.Run(() =>
-          {
-            RecreateSpectrumProvider();
-          });
+          await RecreateSpectrumProvider();
 
-          foreach (var soundVizualizer in soundVizualizers)
+          wasSoundSourceInitilized = true;
+
+          AudioDeviceManager.Instance.ObservePropertyChange(x => x.SelectedSoundDevice).Subscribe(async x =>
           {
-            soundVizualizer.AssignSpectrum();
-          }
-        });
+            await RecreateSpectrumProvider();
+
+            foreach (var soundVizualizer in soundVizualizers)
+            {
+              soundVizualizer.AssignSpectrum();
+            }
+          });
+        }
+      }
+      finally 
+      {
+        initilizeSempahore.Release();
       }
     }
 
@@ -429,6 +436,8 @@ namespace VPlayer.Player.UserControls
       {
         if (isEnabled && isTimerDisposed && IsLoaded)
         {
+          AssignSpectrum();
+
           InitlizeTimer();
         }
         else if (!isTimerDisposed && !isEnabled)
@@ -521,7 +530,7 @@ namespace VPlayer.Player.UserControls
 
     private static SemaphoreSlim reacreateBatton = new SemaphoreSlim(1, 1);
 
-    private static async void RecreateSpectrumProvider()
+    private static async Task RecreateSpectrumProvider()
     {
       try
       {

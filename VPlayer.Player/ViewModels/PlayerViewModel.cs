@@ -376,21 +376,24 @@ namespace VPlayer.Player.ViewModels
             break;
           }
         case Key.Space:
+          {
+            if (CanUseKey(out var filePlayable))
             {
-             if (CanUseKey(out var filePlayable))
-             {
-               filePlayable?.PlayPause();
-             }
-             break;
+              filePlayable?.PlayPause();
+            }
+            break;
           }
       }
     }
 
     #endregion KeyListener_OnKeyPressed
 
+    #region CanUseKey
+
+
     private bool CanUseKey(out IFilePlayableRegionViewModel filePlayable)
     {
-      if (ActualViewModel != null && ActualViewModel.IsActive && 
+      if (ActualViewModel != null && ActualViewModel.IsActive &&
           ActualViewModel is IFilePlayableRegionViewModel filePlayable1 &&
           mainWindow.IsActive &&
           mainWindow.WindowState != WindowState.Minimized &&
@@ -403,6 +406,8 @@ namespace VPlayer.Player.ViewModels
       filePlayable = null;
       return false;
     }
+
+    #endregion
 
     #endregion
   }
