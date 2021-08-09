@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reactive;
 using System.Text;
 using System.Windows;
 using Microsoft.Xaml.Behaviors;
@@ -9,13 +10,15 @@ namespace VPlayer.Player.Behaviors
 {
   public class ShowHideMouseBehavior : Behavior<FrameworkElement>
   {
+    IDisposable hideMouse;
+    IDisposable showMouse;
     protected override void OnAttached()
     {
       base.OnAttached();
 
       AssociatedObject.MouseMove += AssociatedObject_MouseMove;
 
-      FullScreenManager.OnHideMouse.Subscribe((x) =>
+      hideMouse = FullScreenManager.OnHideMouse.Subscribe((x) =>
       {
         Application.Current.Dispatcher.Invoke(() =>
         {
@@ -23,7 +26,7 @@ namespace VPlayer.Player.Behaviors
         });
       });
 
-      FullScreenManager.OnResetMouse.Subscribe((x) =>
+      showMouse = FullScreenManager.OnResetMouse.Subscribe((x) =>
       {
         Application.Current.Dispatcher.Invoke(() =>
         {
@@ -31,6 +34,7 @@ namespace VPlayer.Player.Behaviors
         });
       });
     }
+
 
     private void AssociatedObject_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
     {
@@ -42,6 +46,9 @@ namespace VPlayer.Player.Behaviors
       base.OnDetaching();
 
       AssociatedObject.MouseMove -= AssociatedObject_MouseMove;
+
+      hideMouse?.Dispose();
+      showMouse?.Dispose();
     }
   }
 }

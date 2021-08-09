@@ -234,7 +234,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       var vm = new PlayFromStreamViewModel()
       {
-        Title = "Play from stream"
+        Title = "Play from stream",
+        StreamUrl = System.Windows.Clipboard.GetText()
       };
 
       windowManager.ShowPrompt<PlayFromStreamView>(vm);

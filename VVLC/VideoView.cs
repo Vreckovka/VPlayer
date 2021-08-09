@@ -25,6 +25,12 @@ namespace VPlayer.WindowsPlayer.Vlc
 
       DataContextChanged += VideoView_DataContextChanged;
       Application.Current.Exit += Current_Exit;
+
+    }
+
+    protected override void OnMouseMove(MouseEventArgs e)
+    {
+      base.OnMouseMove(e);
     }
 
     private void VideoView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)

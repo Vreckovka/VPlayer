@@ -49,25 +49,24 @@ namespace VPlayer.ViewModels
   //TODO: TV Channels editor dotiahnut
   //TODO: Save UPnP Sever (mozno je, bojim sa skusit)
   //TODO: File Browser - File watcher nad aktualnou zlozkou
-  //TODO: File Browser - Podpora menit cestu
   //TODO: Popup menu style
   //TODO: Setting page - Poriadne settingy (ako default cesty do subor napr)
   //TODO: Ked je synced lyrics a nie si na tabe a ide to dalej a vratis sa tak to scrolne na tu dolnu poziciu animacne (nech to spravi instantne zacne od tade)
   //TODO: Pridavanie do playlistu vyber do akeho, alebo ci aktualne prehravajuceho, alebo chces vytvorit novy
   //TODO: Dotiahnut sezony zvlast ako update z csfd
   //TODO: Vymazat sezonu z tvshow
-  //TODO: Horne menu tituliek a pod dat aj do fullscreenu (tiez hore) (vsak why the fuck not)
   //TODO: Play UPnP v prehravaci nejako zmenit (je tam iba daky dropdown) (vymysliet a vyrobit, nemusi byt nic zlozite)
   //TODO: Random a Opakovanie moznost v tv show playliste na prehravaci chyba
   //TODO: Listview pre Artistov, Albumy atd ... selection a potom akcie (vyberiem si 10 a dam spojit do seba, aristov rovnakych, ale nejako ich nespojilo)
   //TODO: Moznost presunu zlozku a subory do Serialy napr, alebo rovno do nejakeho serialu (Mozno totalne daleko to potiahnut ze moznost vytvorit rovno aj noveho)
   //TODO: CSFD vyhladavanie podla nazvu suborov (nejaky vyhladavac, mozno ze sa ti zobrazi nazov suboru a vyselektujes vyhladavany vyraz (highlight) (nemusis pisat) a to sa vyberie do filtra)
+  //TODO: Highlight videa hover nad itemom v playliste
   //
   //  *****Easy*****
   //        //TODO: Pridat thumbnail zo suboru
-  //        //TODO: Highlight videa hover nad itemom v playliste
   //        //TODO: Moznost vymazat automaticky nahrane lyrics a zakazat stahovanie
-  //        //TODO: 2klik na VLC sound da na 100% 
+  //        
+  //        
   //
   //  *****DESING***** 
   //        //TODO: Menu rozdelit na sub menu = Playlists(Songs, Music, TvShows), Library(Albums, Interprets, TvShows), Other(Iptv, UPnP...)
@@ -110,6 +109,7 @@ namespace VPlayer.ViewModels
   //TODO: Sem tam ostanie vysiet appka
   //TODO: VLC volume ako keby je 0
   //TODO: ESC na fullscreene nefunguje
+  //TODO: Po roztiahnuti okna spadlo
   //
   //  *****IMPORTANT!*****
   //

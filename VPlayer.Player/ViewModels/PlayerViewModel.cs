@@ -212,6 +212,30 @@ namespace VPlayer.Player.ViewModels
 
     #endregion
 
+    #region ResetVolume
+
+    private ActionCommand resetVolume;
+
+    public ICommand ResetVolume
+    {
+      get
+      {
+        if (resetVolume == null)
+        {
+          resetVolume = new ActionCommand(OnResetVolume);
+        }
+
+        return resetVolume;
+      }
+    }
+
+    public void OnResetVolume()
+    {
+      ActualVolume = 100;
+    }
+
+    #endregion
+
     #endregion
 
     #region Methods

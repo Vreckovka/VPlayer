@@ -11,6 +11,7 @@
     <Color x:Key="BackgroudColor2">#080808</Color>
     <Color x:Key="TopWindowsColor">#101010</Color>
 
+
     <Color x:Key="DefaultRedColor">#fe2754</Color>
 
     <Color x:Key="DefaultRedTransparentColor"
@@ -26,6 +27,7 @@
     <Color x:Key="BrownColor">#c47216</Color>
     <Color x:Key="DarkBrownColor">#522e05</Color>
     <Color x:Key="BlueColor">#1887db</Color>
+    <Color x:Key="GreenColor">#36d66e</Color>
 
     <Color x:Key="235_DefaultWhiteColor"
            A="235"

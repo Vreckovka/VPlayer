@@ -13,6 +13,7 @@ using Microsoft.Xaml.Behaviors;
 using Ninject;
 using Prism.Events;
 using VCore.Helpers;
+using VCore.WPF.Managers;
 using VPlayer.Core.Events;
 using VPlayer.WindowsPlayer.Vlc;
 using VPlayer.WindowsPlayer.Vlc.Controls;
@@ -103,11 +104,14 @@ namespace VPlayer.WindowsPlayer.Behaviors
       if (VideoView != null)
         VideoView.MakeFullScreen();
 
+      VFocusManager.SetFocus(AssociatedObject);
+      //var res2 = AssociatedObject?.CaptureMouse();
+
       if (FullscreenPlayer != null)
         FullscreenPlayer.Visibility = Visibility.Visible;
 
-      if (VideoMenu != null)
-        VideoMenu.Visibility = Visibility.Collapsed;
+      //if (VideoMenu != null)
+      //  VideoMenu.Visibility = Visibility.Collapsed;
 
       if (HideButton != null)
         HideButton.Visibility = Visibility.Collapsed;
@@ -117,6 +121,29 @@ namespace VPlayer.WindowsPlayer.Behaviors
 
       InputManager.Current.PreProcessInput += Current_PreProcessInput;
 
+    }
+
+    #endregion
+
+    #region ResetFullScreen
+
+    private void ResetFullScreen()
+    {
+      if (VideoView != null)
+        VideoView.ResetFullScreen();
+
+      //AssociatedObject?.ReleaseMouseCapture();
+
+      if (FullscreenPlayer != null)
+        FullscreenPlayer.Visibility = Visibility.Hidden;
+
+      if (VideoMenu != null)
+        VideoMenu.Visibility = Visibility.Visible;
+
+      if (HideButton != null)
+        HideButton.Visibility = Visibility.Visible;
+
+      InputManager.Current.PreProcessInput -= Current_PreProcessInput;
     }
 
     #endregion
@@ -151,27 +178,6 @@ namespace VPlayer.WindowsPlayer.Behaviors
       {
 
       }
-    }
-
-    #endregion
-
-    #region ResetFullScreen
-
-    private void ResetFullScreen()
-    {
-      if (VideoView != null)
-        VideoView.ResetFullScreen();
-
-      if (FullscreenPlayer != null)
-        FullscreenPlayer.Visibility = Visibility.Hidden;
-
-      if (VideoMenu != null)
-        VideoMenu.Visibility = Visibility.Visible;
-
-      if (HideButton != null)
-        HideButton.Visibility = Visibility.Visible;
-
-      InputManager.Current.PreProcessInput -= Current_PreProcessInput;
     }
 
     #endregion

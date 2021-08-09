@@ -331,6 +331,10 @@
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="PathIcon" Property="Fill" Value="GhostWhite" />
                         </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="PathIcon" Property="Fill" Value="#303030" />
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

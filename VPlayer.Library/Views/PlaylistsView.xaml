@@ -147,6 +147,7 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
+
                         <GridViewColumn Width="295" Header="Name">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
@@ -158,6 +159,17 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
+
+                        <GridViewColumn Width="75" Header="Last item">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Margin="5,0,0,0"
+                                               FontWeight="Normal"
+                                               Text="{Binding Model.LastItemIndex}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+
                         <GridViewColumn Width="140"
                                         DisplayMemberBinding="{Binding LastPlayed, StringFormat={}dd.MM.yy / HH:mm:ss}"
                                         Header="Last time played" />

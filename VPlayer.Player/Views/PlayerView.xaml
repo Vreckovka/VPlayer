@@ -6,6 +6,7 @@
              xmlns:behaviors1="clr-namespace:VPlayer.Player.Behaviors"
              xmlns:behaviors2="clr-namespace:VPlayer.Player.Behaviors;assembly=VPlayer.WindowsPlayer"
              xmlns:behaviors3="clr-namespace:VCore.WPF.Behaviors;assembly=VCore.WPF"
+             xmlns:controls="clr-namespace:VPlayer.WindowsPlayer.Vlc.Controls;assembly=VVLC"
              xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
              xmlns:converters="clr-namespace:VPlayer.Player.Converters"
              xmlns:converters1="clr-namespace:VCore.Converters;assembly=VCore.WPF"
@@ -235,7 +236,8 @@
                                   IconHoverColor="#4298f5"
                                   IsChecked="False"
                                   PathCheckedBrush="#4298f5"
-                                  PathStyle="{StaticResource Windows}">
+                                  PathStyle="{StaticResource Windows}"
+                                  ToolTip="Windows volume">
                 <controls1:PathButton.Style>
                     <Style BasedOn="{StaticResource {x:Type controls1:PathButton}}" TargetType="controls1:PathButton">
                         <Setter Property="Template">
@@ -444,7 +446,12 @@
                        FontSize="14"
                        FontWeight="DemiBold"
                        Foreground="#ccc"
-                       Text="{Binding ActualVolume, StringFormat={}{0} %}" />
+                       Text="{Binding ActualVolume, StringFormat={}{0} %}"
+                       ToolTip="Player volume">
+                <b:Interaction.Behaviors>
+                    <controls:DoubleClickBehavior Command="{Binding ResetVolume}" />
+                </b:Interaction.Behaviors>
+            </TextBlock>
         </Grid>
 
 

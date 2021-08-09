@@ -5,6 +5,7 @@
              xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
              xmlns:behaviors1="clr-namespace:VPlayer.WindowsPlayer.Behaviors"
              xmlns:behaviors2="clr-namespace:VPlayer.WindowsPlayer.Behaviors;assembly=VPlayer.Core"
+             xmlns:behaviors3="clr-namespace:VPlayer.WindowsPlayer.Behaviors;assembly=VCore.WPF"
              xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore.WPF"
              xmlns:controls1="clr-namespace:VPlayer.WindowsPlayer.Vlc.Controls"
              xmlns:controls2="clr-namespace:VPlayer.WindowsPlayer.Vlc.Controls;assembly=VVLC"
@@ -124,6 +125,10 @@
                         <MenuItem Height="35"
                                   Command="{Binding PlayFromStream}"
                                   Header="Play from stream" />
+
+                        <b:Interaction.Behaviors>
+                            <behaviors:ShowHideMouseBehavior />
+                        </b:Interaction.Behaviors>
                     </Menu>
 
                     <Grid Grid.Row="1"

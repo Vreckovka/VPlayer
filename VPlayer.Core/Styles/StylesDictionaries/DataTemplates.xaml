@@ -424,7 +424,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="PlayerDetail">
-        <Grid Margin="5,0,0,0" VerticalAlignment="Center">
+        <Grid Margin="0,0,0,0" VerticalAlignment="Center">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto" />

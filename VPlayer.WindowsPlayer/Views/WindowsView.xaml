@@ -26,6 +26,7 @@
         <ListView Grid.Row="0"
                   Grid.ColumnSpan="2"
                   BorderThickness="0,0,0,2"
+                  Grid.IsSharedSizeScope="True"
                   ItemsSource="{Binding NavigationViewModel.Items}"
                   Style="{StaticResource ListView_MenuStyle}">
             <ListView.ItemsPanel>

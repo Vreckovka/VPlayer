@@ -57,6 +57,7 @@ namespace VPlayer.IPTV.ViewModels.Prompts
 
     #endregion
 
+
     #region SourceType
 
     private TVSourceType selectedTvSourceType;

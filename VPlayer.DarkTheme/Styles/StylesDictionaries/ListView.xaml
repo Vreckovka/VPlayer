@@ -1,5 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+                    xmlns:behaviors="clr-namespace:VCore.WPF.Behaviors;assembly=VCore.WPF"
                     xmlns:controls="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
                     xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
@@ -29,6 +31,7 @@
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="14" />
 
+
         <Setter Property="BorderBrush" Value="#252525" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="ItemContainerStyle">
@@ -37,76 +40,90 @@
                     <Setter Property="Foreground" Value="{StaticResource SecondaryForegroundBrush}" />
                     <Setter Property="IsSelected" Value="{Binding IsActive}" />
                     <Setter Property="IsTabStop" Value="False" />
+                    <Setter Property="Padding" Value="15,5" />
+                    <Setter Property="Margin" Value="0,0,0,0" />
+                    <Setter Property="VerticalContentAlignment" Value="Center" />
+
                     <Setter Property="Template">
                         <Setter.Value>
                             <!--  Trun off default selection  -->
                             <ControlTemplate TargetType="{x:Type ListViewItem}">
                                 <Border x:Name="Bd"
-                                        Padding="15,5"
+                                        Margin="{TemplateBinding Margin}"
+                                        Padding="{TemplateBinding Padding}"
                                         Background="{TemplateBinding Background}"
                                         SnapsToDevicePixels="true">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="auto" />
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
 
                                         <Grid>
-                                            <Grid Margin="0,0,8,0">
-                                                <Image Width="{StaticResource ListView_MenuStyle_IconSize}"
-                                                       Height="{StaticResource ListView_MenuStyle_IconSize}"
-                                                       Source="{Binding ImagePath}" />
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="auto" />
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
 
-                                                <!--<svgc:SvgViewbox Source="{Binding ImagePath}" />-->
+                                            <Grid Margin="0,0,8,0" HorizontalAlignment="Left">
+                                                <Grid>
+                                                    <Image Width="{StaticResource ListView_MenuStyle_IconSize}"
+                                                           Height="{StaticResource ListView_MenuStyle_IconSize}"
+                                                           Source="{Binding ImagePath}" />
 
-                                                <Rectangle x:Name="ImageOpacityMask"
-                                                           Width="{StaticResource ListView_MenuStyle_IconSize}"
-                                                           Height="{StaticResource ListView_MenuStyle_IconSize}">
-                                                    <Rectangle.Fill>
-                                                        <SolidColorBrush Color="{StaticResource SecondaryForegroundColor}" />
-                                                    </Rectangle.Fill>
-                                                    <Rectangle.OpacityMask>
-                                                        <ImageBrush ImageSource="{Binding ImagePath}" />
-                                                    </Rectangle.OpacityMask>
-                                                </Rectangle>
-                                                <Grid.Style>
-                                                    <Style TargetType="Grid">
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding ImagePath}" Value="{x:Null}">
-                                                                <Setter Property="Visibility" Value="Collapsed" />
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Grid.Style>
+                                                    <Rectangle x:Name="ImageOpacityMask"
+                                                               Width="{StaticResource ListView_MenuStyle_IconSize}"
+                                                               Height="{StaticResource ListView_MenuStyle_IconSize}">
+                                                        <Rectangle.Fill>
+                                                            <SolidColorBrush Color="{StaticResource SecondaryForegroundColor}" />
+                                                        </Rectangle.Fill>
+                                                        <Rectangle.OpacityMask>
+                                                            <ImageBrush ImageSource="{Binding ImagePath}" />
+                                                        </Rectangle.OpacityMask>
+                                                    </Rectangle>
+                                                    <Grid.Style>
+                                                        <Style TargetType="Grid">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding ImagePath}" Value="{x:Null}">
+                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Grid.Style>
+                                                </Grid>
+
+
+                                                <Path x:Name="IconPath"
+                                                      Width="{StaticResource ListView_MenuStyle_IconSize}"
+                                                      Height="{StaticResource ListView_MenuStyle_IconSize}"
+                                                      Data="{Binding IconPathData}"
+                                                      Stretch="Uniform">
+                                                    <Path.Style>
+                                                        <Style TargetType="Path">
+                                                            <Setter Property="Fill" Value="{StaticResource SecondaryForegroundBrush}" />
+                                                            <Style.Triggers>
+                                                                <Trigger Property="Data" Value="{x:Null}">
+                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                </Trigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Path.Style>
+                                                </Path>
                                             </Grid>
 
-
-                                            <Path x:Name="IconPath"
-                                                  Width="{StaticResource ListView_MenuStyle_IconSize}"
-                                                  Height="{StaticResource ListView_MenuStyle_IconSize}"
-                                                  Margin="0,0,8,0"
-                                                  Data="{Binding IconPathData}"
-                                                  Stretch="Uniform">
-                                                <Path.Style>
-                                                    <Style TargetType="Path">
-                                                        <Setter Property="Fill" Value="{StaticResource SecondaryForegroundBrush}" />
-                                                        <Style.Triggers>
-                                                            <Trigger Property="Data" Value="{x:Null}">
-                                                                <Setter Property="Visibility" Value="Collapsed" />
-                                                            </Trigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Path.Style>
-                                            </Path>
+                                            <ContentPresenter x:Name="ContentPresenter"
+                                                              Grid.Column="1"
+                                                              Margin="0,0,1,0"
+                                                              HorizontalAlignment="Left"
+                                                              VerticalAlignment="Center"
+                                                              Content="{Binding Header}"
+                                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                                         </Grid>
 
-                                        <ContentPresenter Grid.Column="1"
-                                                          Margin="{TemplateBinding Margin}"
-                                                          HorizontalAlignment="Left"
-                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                          Content="{Binding Header}"
-                                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                        <b:Interaction.Behaviors>
+                                            <behaviors:SetSizeAfterLoadBehavior ExtraWidth="5" />
+                                        </b:Interaction.Behaviors>
                                     </Grid>
+
 
                                 </Border>
                                 <ControlTemplate.Triggers>
@@ -272,6 +289,7 @@
                                     <!--  IsSelected  -->
                                     <Trigger Property="IsSelected" Value="True">
                                         <Setter Property="FontWeight" Value="Bold" />
+
                                         <Trigger.EnterActions>
                                             <RemoveStoryboard BeginStoryboardName="ExitHoverIsBackroundActive" />
                                             <RemoveStoryboard BeginStoryboardName="ExitIsBackroundActive" />

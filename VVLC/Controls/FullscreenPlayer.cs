@@ -31,6 +31,10 @@ namespace VPlayer.WindowsPlayer.Vlc.Controls
     {
      
     }
+    protected override void OnInitialized(EventArgs e)
+    {
+      base.OnInitialized(e);
+    }
 
     private void DoubleClick()
     {

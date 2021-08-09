@@ -120,6 +120,8 @@ namespace VPlayer.Library.ViewModels.FileBrowser
 
     #endregion
 
+    #region OnGetFolderInfo
+
     protected override void OnGetFolderInfo()
     {
       base.OnGetFolderInfo();
@@ -130,9 +132,27 @@ namespace VPlayer.Library.ViewModels.FileBrowser
       }
     }
 
+    #endregion
+
+    #region CreateNewFileItem
+
     protected override FileViewModel CreateNewFileItem(FileInfo fileInfo)
     {
       return viewModelsFactory.Create<PlayableFileViewModel>(fileInfo);
+    }
+
+    #endregion
+
+    protected override void OnLoadSubItems()
+    {
+      base.OnLoadSubItems();
+
+      RefreshPlayablityAndType();
+    }
+
+    private void RefreshPlayablityAndType()
+    {
+      CanPlay = SubItems.View.OfType<PlayableFolderViewModel>().Any(x => x.CanPlay);
     }
 
     protected override FolderViewModel CreateNewFolderItem(DirectoryInfo directoryInfo)

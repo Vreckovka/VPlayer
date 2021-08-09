@@ -34,6 +34,7 @@
                   Width="185"
                   BorderThickness="0,0,2,0"
                   ItemsSource="{Binding NavigationViewModel.Items}"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                   Style="{StaticResource ListView_MenuStyle}" />
 
 
