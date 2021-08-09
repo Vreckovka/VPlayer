@@ -26,6 +26,12 @@
 	<ItemGroup>
 		<None Remove="Includes\VPlayerLogo.ico" />
 		<None Remove="Includes\VPlayerLogo.png" />
+		<None Remove="Resources\Fonts\FontAwesome\fa-brands-400.ttf" />
+		<None Remove="Resources\Fonts\FontAwesome\fa-duotone-900.ttf" />
+		<None Remove="Resources\Fonts\FontAwesome\fa-light-300.ttf" />
+		<None Remove="Resources\Fonts\FontAwesome\fa-regular-400.ttf" />
+		<None Remove="Resources\Fonts\FontAwesome\fa-solid-900.ttf" />
+		<None Remove="Resources\Fonts\FontAwesome\fa-thin-100.ttf" />
 		<None Remove="Resources\Fonts\MartelSans\MartelSans-Black.ttf" />
 		<None Remove="Resources\Fonts\MartelSans\MartelSans-Bold.ttf" />
 		<None Remove="Resources\Fonts\MartelSans\MartelSans-ExtraBold.ttf" />
@@ -81,6 +87,12 @@
 		<None Remove="Resources\song-playliyst.png" />
 	</ItemGroup>
 	<ItemGroup>
+		<Resource Include="Resources\Fonts\FontAwesome\fa-brands-400.ttf" />
+		<Resource Include="Resources\Fonts\FontAwesome\fa-duotone-900.ttf" />
+		<Resource Include="Resources\Fonts\FontAwesome\fa-light-300.ttf" />
+		<Resource Include="Resources\Fonts\FontAwesome\fa-regular-400.ttf" />
+		<Resource Include="Resources\Fonts\FontAwesome\fa-solid-900.ttf" />
+		<Resource Include="Resources\Fonts\FontAwesome\fa-thin-100.ttf" />
 		<Resource Include="Resources\Fonts\MartelSans\MartelSans-Black.ttf" />
 		<Resource Include="Resources\Fonts\MartelSans\MartelSans-Bold.ttf" />
 		<Resource Include="Resources\Fonts\MartelSans\MartelSans-ExtraBold.ttf" />

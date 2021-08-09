@@ -432,22 +432,43 @@
                                         </b:Interaction.Behaviors>
                                     </TextBlock>
 
-                                    <TextBlock Grid.Row="1"
-                                               HorizontalAlignment="Stretch"
-                                               FontSize="15"
-                                               Text="{TemplateBinding BottomText}"
-                                               TextAlignment="Center">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Foreground" Value="{StaticResource 50_WhiteTransparentBrush}" />
-                                                <Setter Property="Background">
-                                                    <Setter.Value>
-                                                        <SolidColorBrush Opacity="0.01" Color="{StaticResource DefaultWhiteColor}" />
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
+                                    <StackPanel Grid.Row="1">
+                                        <TextBlock HorizontalAlignment="Stretch"
+                                                   FontSize="15"
+                                                   Text="{TemplateBinding BottomText}"
+                                                   TextAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="{StaticResource 50_WhiteTransparentBrush}" />
+                                                    <Setter Property="Background">
+                                                        <Setter.Value>
+                                                            <SolidColorBrush Opacity="0.01" Color="{StaticResource DefaultWhiteColor}" />
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </TextBlock.Style>
+
+                                            <Path x:Name="IconPath"
+                                                  Width="10"
+                                                  Height="10"
+                                                  Margin="10,0,0,0"
+                                                  Data="{Binding BottomPathData}"
+                                                  Stretch="Uniform">
+                                                <Path.Style>
+                                                    <Style TargetType="Path">
+                                                        <Setter Property="Fill" Value="{StaticResource 120_WhiteTransparentBrush}" />
+                                                        <Style.Triggers>
+                                                            <Trigger Property="Data" Value="{x:Null}">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                            </Trigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Path.Style>
+                                            </Path>
+
+                                        </TextBlock>
+                                    </StackPanel>
+
                                 </Grid>
                             </Border>
                         </Grid>

@@ -31,7 +31,8 @@
 
 
         <ListView Grid.RowSpan="2"
-                  Width="185"
+                  Width="230"
+                  Background="Transparent"
                   BorderThickness="0,0,2,0"
                   ItemsSource="{Binding NavigationViewModel.Items}"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"

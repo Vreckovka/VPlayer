@@ -70,6 +70,18 @@ namespace VPlayer.Core.ViewModels
 
     public InfoDownloadStatus InfoDownloadStatus => Model.InfoDownloadStatus;
 
+    #region BottomPathData
+
+    public virtual string BottomPathData
+    {
+      get
+      {
+        return "";
+      }
+    }
+
+    #endregion
+
     #endregion
 
     #region GetEmptyImage

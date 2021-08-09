@@ -56,7 +56,7 @@ namespace VPlayer.Core.ViewModels.Artists
 
     #region Properties
 
-    public override string BottomText => Model.Albums?.Count.ToString();
+    public override string BottomText => "Number of albums: " + Model.Albums?.Count.ToString();
     public override string ImageThumbnail => GetArtistCover();
 
     #endregion 
