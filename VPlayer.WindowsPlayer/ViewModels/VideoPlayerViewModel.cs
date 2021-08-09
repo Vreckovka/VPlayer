@@ -78,7 +78,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
     public override bool ContainsNestedRegions => true;
-    public override string Header => "Video Player";
+    public override string Header => "Video player";
 
     #region MediaPlayer
 

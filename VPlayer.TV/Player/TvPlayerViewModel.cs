@@ -52,7 +52,7 @@ namespace VPlayer.IPTV.ViewModels
 
     public override bool ContainsNestedRegions => true;
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
-    public override string Header => "IPTV Player";
+    public override string Header => "IPTV player";
 
     #region Commands
 

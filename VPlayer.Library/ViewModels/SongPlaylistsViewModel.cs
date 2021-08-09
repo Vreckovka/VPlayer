@@ -22,7 +22,7 @@ namespace VPlayer.Home.ViewModels
     }
 
     public override bool ContainsNestedRegions => false;
-    public override string Header { get; } = "Songs Playlists";
+    public override string Header { get; } = "Songs";
     public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
 
     #region IsBusy

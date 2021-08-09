@@ -18,7 +18,7 @@ namespace VPlayer.Home.ViewModels.IPTV
     }
 
     public override bool ContainsNestedRegions => false;
-    public override string Header { get; } = "IPTV playlists";
+    public override string Header { get; } = "IPTV";
     public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
   }
 }

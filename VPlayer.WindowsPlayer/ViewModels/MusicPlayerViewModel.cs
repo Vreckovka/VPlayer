@@ -131,7 +131,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public override bool ContainsNestedRegions => true;
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
-    public override string Header => "Music Player";
+    public override string Header => "Music player";
     public int Cycle { get; set; }
 
     public UPnPManagerViewModel UPnPManagerViewModel { get; }

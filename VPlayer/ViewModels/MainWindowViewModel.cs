@@ -49,6 +49,9 @@ namespace VPlayer.ViewModels
   //TODO: TV Channels editor dotiahnut
   //TODO: Save UPnP Sever (mozno je, bojim sa skusit)
   //TODO: File Browser - File watcher nad aktualnou zlozkou
+  //TODO: File Browser - Right click open folder
+  //TODO: File Browser - Nastavit zlozku ako hlavnu
+  //TODO: File Browser - Nastavit zlozku ako root
   //TODO: Popup menu style
   //TODO: Setting page - Poriadne settingy (ako default cesty do subor napr)
   //TODO: Ked je synced lyrics a nie si na tabe a ide to dalej a vratis sa tak to scrolne na tu dolnu poziciu animacne (nech to spravi instantne zacne od tade)
@@ -61,6 +64,7 @@ namespace VPlayer.ViewModels
   //TODO: Moznost presunu zlozku a subory do Serialy napr, alebo rovno do nejakeho serialu (Mozno totalne daleko to potiahnut ze moznost vytvorit rovno aj noveho)
   //TODO: CSFD vyhladavanie podla nazvu suborov (nejaky vyhladavac, mozno ze sa ti zobrazi nazov suboru a vyselektujes vyhladavany vyraz (highlight) (nemusis pisat) a to sa vyberie do filtra)
   //TODO: Highlight videa hover nad itemom v playliste
+  //
   //
   //  *****Easy*****
   //        //TODO: Pridat thumbnail zo suboru
@@ -88,6 +92,7 @@ namespace VPlayer.ViewModels
   //        //TODO: Umoznit zmenit cislo epizody a seriu
   //        //TODO: Premenovat epizodu
   //        //TODO: Clear playlist
+  //        //TODO: Ked pojdes hover nad playlist itemom tak sa zobrazi taka karta, kde budu detailne info + velka fotka
   //
   //*****LONG RUN*****
   //TODO: Streaming service, aby som nemusel mat db u seba na disku. Nejaky server niekde si kupit (Minio)
