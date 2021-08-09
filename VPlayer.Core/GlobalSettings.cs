@@ -8,6 +8,6 @@ namespace VPlayer.Core
   {
     public static string MusicInitialDirectory = "D:\\Hudba";
     public static string TvShowInitialDirectory = "E:\\Serialy";
-    public static string FileBrowserInitialDirectory = "E:\\";
+    public static string FileBrowserInitialDirectory = "E:\\Torrent";
   }
 }
