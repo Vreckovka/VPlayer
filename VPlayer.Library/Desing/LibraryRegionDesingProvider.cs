@@ -2,16 +2,16 @@
 using VCore.Design;
 using VCore.Standard.Modularity.Interfaces;
 using VPlayer.Core.Modularity.Regions;
-using VPlayer.Library.Desing.ViewModels;
-using VPlayer.Library.Views;
+using VPlayer.Home.Desing.ViewModels;
+using VPlayer.Home.Views.Music.Albums;
 
-namespace VPlayer.Library.Desing
+namespace VPlayer.Home.Desing
 {
   public class LibraryRegionDesingProvider : DesignTimeViewsProvider
   {
     protected override IEnumerable<IView> OnGetViewForRegion(string regionName)
     {
-      if (regionName == RegionNames.LibraryContentRegion)
+      if (regionName == RegionNames.HomeContentRegion)
       {
         var list = new List<IView>();
 

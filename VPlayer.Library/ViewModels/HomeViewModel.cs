@@ -6,7 +6,6 @@ using System.Reactive.Subjects;
 using System.Windows;
 using System.Windows.Input;
 using VCore;
-using VCore.Modularity.RegionProviders;
 using VCore.Standard;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
@@ -17,15 +16,14 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.Settings;
+using VPlayer.Home.ViewModels.FileBrowser;
+using VPlayer.Home.ViewModels.IPTV;
+using VPlayer.Home.ViewModels.TvShows;
+using VPlayer.Home.Views;
 using VPlayer.IPTV;
-using VPlayer.Library.ViewModels.AlbumsViewModels;
-using VPlayer.Library.ViewModels.FileBrowser;
-using VPlayer.Library.ViewModels.IPTV;
-using VPlayer.Library.ViewModels.TvShows;
-using VPlayer.Library.Views;
 using VPlayer.UPnP.ViewModels;
 
-namespace VPlayer.Library.ViewModels
+namespace VPlayer.Home.ViewModels
 {
   public class MenuViewModel : ViewModel, INavigationItem
   {
@@ -56,7 +54,7 @@ namespace VPlayer.Library.ViewModels
     public string Header { get; } 
   }
 
-  public class LibraryViewModel : RegionViewModel<LibraryView>, INavigationItem, IFilterable
+  public class HomeViewModel : RegionViewModel<LibraryView>, INavigationItem, IFilterable
   {
     #region Fields
 
@@ -67,7 +65,7 @@ namespace VPlayer.Library.ViewModels
 
     #region Constructors
 
-    public LibraryViewModel(
+    public HomeViewModel(
       IVPlayerRegionProvider regionProvider,
       IViewModelsFactory viewModelsFactory,
       NavigationViewModel navigationViewModel,

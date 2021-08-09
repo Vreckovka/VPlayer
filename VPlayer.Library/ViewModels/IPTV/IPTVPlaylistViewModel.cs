@@ -3,17 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
-using VCore.Standard.Helpers;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Factories;
-using VPlayer.Core.ViewModels.Artists;
-using VPLayer.Domain.Contracts.IPTV;
 using VPlayer.IPTV;
 using VPlayer.IPTV.ViewModels;
+using VPlayer.Library.ViewModels;
 
-namespace VPlayer.Library.ViewModels.IPTV
+namespace VPlayer.Home.ViewModels.IPTV
 {
   public class IPTVPlaylistViewModel : PlaylistViewModel<TvItemInPlaylistItemViewModel, TvPlaylist, TvPlaylistItem>
   {

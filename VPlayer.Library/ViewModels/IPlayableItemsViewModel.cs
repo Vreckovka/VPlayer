@@ -1,4 +1,4 @@
-﻿namespace VPlayer.Library.ViewModels
+﻿namespace VPlayer.Home.ViewModels
 {
   public interface IPlayableItemsViewModel
   {

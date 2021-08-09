@@ -10,11 +10,10 @@ using VCore.Standard.Modularity.Interfaces;
 using VCore.ViewModels;
 using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses;
-using VPlayer.AudioStorage.InfoDownloader.Models;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Modularity.Regions;
 
-namespace VPlayer.Library.ViewModels
+namespace VPlayer.Home.ViewModels
 {
   public abstract class DetailViewModel<TViewModel, TModel, TDetailView> : RegionViewModel<TDetailView>
     where TDetailView : class, IView

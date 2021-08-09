@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 using Logger;
-using Prism.Events;
 using VCore;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
@@ -15,9 +13,9 @@ using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Managers.Status;
 using VPlayer.Core.ViewModels.Albums;
-using VPlayer.Library.Views;
+using VPlayer.Home.Views.Music.Albums;
 
-namespace VPlayer.Library.ViewModels.AlbumsViewModels
+namespace VPlayer.Home.ViewModels.Albums
 {
   public class AlbumDetailViewModel : DetailViewModel<AlbumViewModel, Album, AlbumDetailView>
   {

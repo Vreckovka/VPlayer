@@ -1,5 +1,4 @@
-﻿using System;
-using Prism.Regions;
+﻿using Prism.Regions;
 using VCore.Modularity.Navigation;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
@@ -8,11 +7,11 @@ using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Core.ViewModels.Artists;
 using VPlayer.Core.ViewModels.TvShows;
-using VPlayer.Library.ViewModels.AlbumsViewModels;
-using VPlayer.Library.ViewModels.ArtistsViewModels;
-using VPlayer.Library.ViewModels.TvShows;
+using VPlayer.Home.ViewModels.Albums;
+using VPlayer.Home.ViewModels.Artists;
+using VPlayer.Home.ViewModels.TvShows;
 
-namespace VPlayer.Library.Modularity
+namespace VPlayer.Home.Modularity
 {
   public class VPlayerLibraryRegionProvider : RegionProvider, IVPlayerRegionProvider
   {

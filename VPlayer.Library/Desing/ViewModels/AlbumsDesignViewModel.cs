@@ -2,7 +2,7 @@
 using VPlayer.Core.Design;
 using VPlayer.Core.Design.ViewModels;
 
-namespace VPlayer.Library.Desing.ViewModels
+namespace VPlayer.Home.Desing.ViewModels
 {
   public class AlbumsDesignViewModel
   {

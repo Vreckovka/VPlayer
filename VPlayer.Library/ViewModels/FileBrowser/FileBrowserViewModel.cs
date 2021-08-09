@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using VCore;
 using VCore.Modularity.RegionProviders;
@@ -18,9 +14,9 @@ using VCore.WPF.Interfaces;
 using VCore.WPF.Managers;
 using VPlayer.Core;
 using VPlayer.Core.Modularity.Regions;
-using VPlayer.Library.Views;
+using VPlayer.Home.Views.FileBrowser;
 
-namespace VPlayer.Library.ViewModels.FileBrowser
+namespace VPlayer.Home.ViewModels.FileBrowser
 {
   public class FileBrowserViewModel : RegionViewModel<FileBrowserView>, IFilterable
   {
@@ -53,7 +49,7 @@ namespace VPlayer.Library.ViewModels.FileBrowser
 
     public override string Header => "File browser";
 
-    public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
+    public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
 
     #region BaseDirectoryPath
 

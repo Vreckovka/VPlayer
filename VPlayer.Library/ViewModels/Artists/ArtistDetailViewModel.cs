@@ -6,9 +6,9 @@ using VCore.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.Artists;
-using VPlayer.Library.Views;
+using VPlayer.Home.Views.Music.Artists;
 
-namespace VPlayer.Library.ViewModels.ArtistsViewModels
+namespace VPlayer.Home.ViewModels.Artists
 {
   public class ArtistDetailViewModel : RegionViewModel<ArtistDetailView>
   {

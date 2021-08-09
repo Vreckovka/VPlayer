@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using VCore;
 using VCore.Modularity.Events;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
-using VCore.ViewModels;
 using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
-using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.TvShows;
-using VPlayer.Library.Views.TvShows;
-using VPlayer.WindowsPlayer.ViewModels.Windows;
+using VPlayer.Home.Views.TvShows;
 
-namespace VPlayer.Library.ViewModels.TvShows
+namespace VPlayer.Home.ViewModels.TvShows
 {
   public class TvShowDetailViewModel : DetailViewModel<TvShowViewModel, TvShow, TvShowDetailView>
   {

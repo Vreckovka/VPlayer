@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logger", "..\CustomLibrarie
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPlayer.AudioStorage", "VPlayer.AudioStorage\VPlayer.AudioStorage.csproj", "{B5245008-CFDF-4B83-BF61-B0B26A8E92BF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPlayer.Library", "VPlayer.Library\VPlayer.Library.csproj", "{26D6BB81-3F3C-4DDC-857D-2B2DC4C660B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPlayer.Home", "VPlayer.Library\VPlayer.Home.csproj", "{26D6BB81-3F3C-4DDC-857D-2B2DC4C660B8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VPlayer.Core", "VPlayer.Core\VPlayer.Core.csproj", "{B8D5C40B-3B3D-43E1-95FA-97087581BDA2}"
 EndProject

@@ -4,10 +4,10 @@ using VCore.Standard.Factories.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Modularity.Regions;
-using VPlayer.Library.ViewModels.LibraryViewModels;
-using VPlayer.Library.Views;
+using VPlayer.Home.ViewModels.LibraryViewModels;
+using VPlayer.Home.Views;
 
-namespace VPlayer.Library.ViewModels.TvShows
+namespace VPlayer.Home.ViewModels.TvShows
 {
   public class VideoPlaylistsViewModel : PlayableItemsViewModel<PlaylistsView, VideoPlaylistViewModel, VideoFilePlaylist>
   {
@@ -23,7 +23,7 @@ namespace VPlayer.Library.ViewModels.TvShows
 
     public override bool ContainsNestedRegions => false;
     public override string Header { get; } = "Tv show Playlists";
-    public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
+    public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
 
     #region IsBusy
 

@@ -23,7 +23,7 @@ namespace VPlayer.Core.ViewModels.Settings
     }
 
     public override bool ContainsNestedRegions => false;
-    public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
+    public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
     public string Header => "Settings";
 
     public string BuildVersion { get; set; }

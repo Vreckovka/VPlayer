@@ -50,7 +50,7 @@ namespace VPlayer.UPnP.ViewModels
     #region Properties
 
     public override string Header => "UPnP";
-    public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
+    public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
 
     #region IsDiscovering
 

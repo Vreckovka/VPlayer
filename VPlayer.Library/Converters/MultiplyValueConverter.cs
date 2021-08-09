@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 using VCore.Converters;
 
-namespace VPlayer.Library.Converters
+namespace VPlayer.Home.Converters
 {
   public class MultiplyValueConverter : BaseConverter
   {

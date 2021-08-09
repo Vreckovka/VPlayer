@@ -18,9 +18,10 @@ using VPlayer.AudioStorage.InfoDownloader.Models;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.Albums;
-using VPlayer.Library.Views;
+using VPlayer.Home.Views.Music.Albums;
+using VPlayer.Library;
 
-namespace VPlayer.Library.ViewModels.AlbumsViewModels
+namespace VPlayer.Home.ViewModels.Albums
 {
   public class AlbumCoversViewModel : RegionViewModel<AlbumCoversView>
   {
@@ -61,7 +62,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     public override bool ContainsNestedRegions => false;
     public double DownloadedProcessValue { get; set; }
     public int FoundConvers { get; set; }
-    public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
+    public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
     public AlbumCover SelectedCover { get; set; }
 
     #endregion Properties
@@ -247,7 +248,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
 
     public static string GetRegionName()
     {
-      return RegionNames.LibraryContentRegion;
+      return RegionNames.HomeContentRegion;
     }
     #endregion
 

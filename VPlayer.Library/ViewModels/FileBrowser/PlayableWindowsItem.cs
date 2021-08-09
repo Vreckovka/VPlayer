@@ -1,16 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Windows.Input;
-using Prism.Events;
-using VCore;
-using VCore.Standard;
-using VCore.Standard.Factories.ViewModels;
-using VCore.Standard.ViewModels.TreeView;
-using VCore.Standard.ViewModels.WindowsFile;
-using VPlayer.AudioStorage.Interfaces.Storage;
-
-namespace VPlayer.Library.ViewModels.FileBrowser
+﻿namespace VPlayer.Home.ViewModels.FileBrowser
 {
   //public abstract class PlayableWindowsItem<TModel, TWindowsItem> : TreeViewItemViewModel<TModel>
   //  where TModel : WindowsItem<TWindowsItem>

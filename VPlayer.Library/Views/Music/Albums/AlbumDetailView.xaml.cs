@@ -2,7 +2,7 @@
 using VCore.Standard.Modularity.Interfaces;
 using VPlayer.AudioStorage.DomainClasses;
 
-namespace VPlayer.Library.Views
+namespace VPlayer.Home.Views.Music.Albums
 {
   /// <summary>
   /// Interaction logic for AlbumDetailView.xaml

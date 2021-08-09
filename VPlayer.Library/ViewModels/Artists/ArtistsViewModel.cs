@@ -12,10 +12,10 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.Artists;
-using VPlayer.Library.ViewModels.LibraryViewModels;
-using VPlayer.Library.Views;
+using VPlayer.Home.ViewModels.LibraryViewModels;
+using VPlayer.Home.Views.Music.Artists;
 
-namespace VPlayer.Library.ViewModels.ArtistsViewModels
+namespace VPlayer.Home.ViewModels.Artists
 {
   public class ArtistsViewModel : PlayableItemsViewModel<ArtistsView, ArtistViewModel, Artist>, IArtistsViewModel
   {
@@ -42,7 +42,7 @@ namespace VPlayer.Library.ViewModels.ArtistsViewModels
 
     public override bool ContainsNestedRegions => false;
     public override string Header => "Artists";
-    public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
+    public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
     public override IQueryable<Artist> LoadQuery => base.LoadQuery.Include(x => x.Albums).ThenInclude(x => x.Songs);
 
     #endregion 

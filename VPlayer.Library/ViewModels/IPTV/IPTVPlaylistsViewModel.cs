@@ -1,17 +1,13 @@
-﻿using System.Text;
-using Prism.Events;
+﻿using Prism.Events;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
-using VCore.ViewModels.Navigation;
-using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Modularity.Regions;
-using VPlayer.IPTV.ViewModels;
-using VPlayer.Library.ViewModels.LibraryViewModels;
-using VPlayer.Library.Views;
+using VPlayer.Home.ViewModels.LibraryViewModels;
+using VPlayer.Home.Views;
 
-namespace VPlayer.Library.ViewModels.IPTV
+namespace VPlayer.Home.ViewModels.IPTV
 {
   public class IPTVPlaylistsViewModel : PlayableItemsViewModel<PlaylistsView, IPTVPlaylistViewModel, TvPlaylist>
   {
@@ -23,6 +19,6 @@ namespace VPlayer.Library.ViewModels.IPTV
 
     public override bool ContainsNestedRegions => false;
     public override string Header { get; } = "IPTV playlists";
-    public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
+    public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
   }
 }

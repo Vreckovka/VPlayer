@@ -1,13 +1,12 @@
-﻿using Logger;
-using Prism.Mvvm;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 using System.Windows;
+using Logger;
 using Microsoft.EntityFrameworkCore;
+using Prism.Mvvm;
 using VCore;
 using VCore.ItemsCollections.VirtualList;
 using VCore.ItemsCollections.VirtualList.VirtualLists;
@@ -16,7 +15,7 @@ using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.ViewModels.Artists;
 
-namespace VPlayer.Library.ViewModels.LibraryViewModels
+namespace VPlayer.Home.ViewModels.LibraryViewModels
 {
   public class LibraryCollection<TViewModel, TModel> : BindableBase
     where TViewModel : class, INamedEntityViewModel<TModel>

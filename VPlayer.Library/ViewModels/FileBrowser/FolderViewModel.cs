@@ -1,22 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Prism.Events;
 using VCore;
 using VCore.Standard.Factories.ViewModels;
-using VCore.Standard.ViewModels.TreeView;
 using VCore.Standard.ViewModels.WindowsFile;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.ViewModels.TvShows;
 
-namespace VPlayer.Library.ViewModels.FileBrowser
+namespace VPlayer.Home.ViewModels.FileBrowser
 {
   public class PlayableFolderViewModel : FolderViewModel
   {

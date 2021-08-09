@@ -9,11 +9,10 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.TvShows;
-using VPlayer.Library.ViewModels.FileBrowser;
-using VPlayer.Library.ViewModels.LibraryViewModels;
-using VPlayer.Library.Views;
+using VPlayer.Home.ViewModels.LibraryViewModels;
+using VPlayer.Home.Views.TvShows;
 
-namespace VPlayer.Library.ViewModels.TvShows
+namespace VPlayer.Home.ViewModels.TvShows
 {
   public class TvShowsViewModel : PlayableItemsViewModel<TvShowsView, TvShowViewModel, AudioStorage.DomainClasses.Video.TvShow>, ITvShowsViewModel
   {
@@ -43,7 +42,7 @@ namespace VPlayer.Library.ViewModels.TvShows
     public override IQueryable<AudioStorage.DomainClasses.Video.TvShow> LoadQuery => base.LoadQuery.Include(x => x.Seasons.OrderBy(y => y.SeasonNumber))
                                                                                                    .ThenInclude(x => x.Episodes.OrderBy(y => y.EpisodeNumber))
                                                                                                    .ThenInclude(x => x.VideoItem);
-    public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
+    public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
     public IEventAggregator EventAggregator { get; }
 
     #endregion Properties

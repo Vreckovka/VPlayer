@@ -5,7 +5,6 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Prism.Events;
-using Prism.Regions;
 using VCore.Interfaces.ViewModels;
 using VCore.Modularity.Events;
 using VCore.Modularity.RegionProviders;
@@ -13,17 +12,14 @@ using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
 using VCore.Standard.Modularity.Interfaces;
 using VCore.ViewModels;
-using VCore.ViewModels.Navigation;
 using VCore.WPF.Interfaces;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
-using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Core.ViewModels.Artists;
-using VPlayer.Library.ViewModels.FileBrowser;
-using VPlayer.Library.ViewModels.LibraryViewModels;
+using VPlayer.Home.ViewModels.LibraryViewModels;
 
-namespace VPlayer.Library.ViewModels
+namespace VPlayer.Home.ViewModels
 {
   public abstract class PlayableItemsViewModel<TView, TViewModel, TModel> :
     RegionViewModel<TView>, ICollectionViewModel<TViewModel, TModel>, IPlayableItemsViewModel, IFilterable

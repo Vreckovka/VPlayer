@@ -4,12 +4,12 @@ using VCore.Standard.Modularity.NinjectModules;
 using VPlayer.AudioStorage.Modularity.NinjectModules;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
-using VPlayer.Library.ViewModels;
-using VPlayer.Library.ViewModels.AlbumsViewModels;
-using VPlayer.Library.ViewModels.ArtistsViewModels;
-using VPlayer.Library.ViewModels.TvShows;
+using VPlayer.Home.ViewModels;
+using VPlayer.Home.ViewModels.Albums;
+using VPlayer.Home.ViewModels.Artists;
+using VPlayer.Home.ViewModels.TvShows;
 
-namespace VPlayer.Library.Modularity.NinjectModule
+namespace VPlayer.Home.Modularity.NinjectModule
 {
   public class LibraryNinjectModule : BaseNinjectModule
   {

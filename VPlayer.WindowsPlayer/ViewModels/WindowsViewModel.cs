@@ -17,6 +17,7 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.Settings;
+using VPlayer.Home.ViewModels;
 using VPlayer.IPTV.ViewModels;
 using VPlayer.Library.ViewModels;
 using VPlayer.WindowsPlayer.ViewModels.Windows;
@@ -145,7 +146,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       if (firstActivation)
       {
-        var libraryViewModel = viewModelsFactory.Create<LibraryViewModel>();
+        var libraryViewModel = viewModelsFactory.Create<HomeViewModel>();
         var musicPlayer = viewModelsFactory.Create<MusicPlayerViewModel>();
         var videoPlayer = viewModelsFactory.Create<VideoPlayerViewModel>();
         var tvPlayer = viewModelsFactory.Create<WindowsIPTVPlayer>();

@@ -1,4 +1,4 @@
-﻿namespace VPlayer.Library.ViewModels.DesignViewModels
+﻿namespace VPlayer.Home.ViewModels.DesignViewModels
 {
     //public class ArtistsDesignViewModel : ArtistsCollection
     //{

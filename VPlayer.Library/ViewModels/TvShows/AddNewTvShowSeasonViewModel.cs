@@ -13,7 +13,7 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core;
 using VPlayer.Library.ViewModels.TvShows;
 
-namespace VPlayer.WindowsPlayer.ViewModels.Windows
+namespace VPlayer.Home.ViewModels.TvShows
 {
   public class AddNewTvShowSeasonViewModel : BaseWindowViewModel
   {

@@ -50,7 +50,7 @@ namespace VPlayer.IPTV
     #region Properties
 
     public override string Header => "IPTV Management";
-    public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
+    public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
 
     public MiniTvPlayerViewModel TvPlayerViewModel { get; set; }
 

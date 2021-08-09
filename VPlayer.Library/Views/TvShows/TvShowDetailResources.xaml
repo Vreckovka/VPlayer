@@ -3,8 +3,8 @@
                     xmlns:attachedProperties="clr-namespace:VCore.AttachedProperties;assembly=VCore.WPF"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:behaviors="clr-namespace:VCore.WPF.Behaviors;assembly=VCore.WPF"
-                    xmlns:converters="clr-namespace:VPlayer.Library.Converters"
-                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+                    xmlns:converters="clr-namespace:VPlayer.Home.Converters">
 
     <Style x:Key="EpisodeListViewItem"
            BasedOn="{StaticResource ListViewItem_DetailItem}"

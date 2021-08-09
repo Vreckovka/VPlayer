@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
-using VCore.Standard.Factories.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Factories;
 using VPlayer.Core.ViewModels.TvShows;
+using VPlayer.Library.ViewModels;
 
-namespace VPlayer.Library.ViewModels.TvShows
+namespace VPlayer.Home.ViewModels.TvShows
 {
   public class VideoPlaylistViewModel : FilePlaylistViewModel<VideoItemInPlaylistViewModel, VideoFilePlaylist, PlaylistVideoItem>
   {

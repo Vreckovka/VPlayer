@@ -3,8 +3,8 @@ using Ninject.Activation;
 using Ninject.Activation.Strategies;
 using VCore.Standard.Modularity.NinjectModules;
 using VPlayer.Core.ViewModels;
+using VPlayer.Home.Modularity.NinjectModule;
 using VPlayer.IPTV.ViewModels;
-using VPlayer.Library.Modularity.NinjectModule;
 using VPlayer.WindowsPlayer.ViewModels;
 
 namespace VPlayer.WindowsPlayer.Modularity.NinjectModule

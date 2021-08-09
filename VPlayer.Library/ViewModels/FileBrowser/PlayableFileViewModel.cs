@@ -12,7 +12,7 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.ViewModels.TvShows;
 
-namespace VPlayer.Library.ViewModels.FileBrowser
+namespace VPlayer.Home.ViewModels.FileBrowser
 {
   public class PlayableFileViewModel : FileViewModel
   {

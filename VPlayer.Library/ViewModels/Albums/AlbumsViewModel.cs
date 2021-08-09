@@ -1,9 +1,9 @@
-﻿using Logger;
-using Prism.Events;
-using System;
+﻿using System;
 using System.Linq;
 using System.Windows;
+using Logger;
 using Microsoft.EntityFrameworkCore;
+using Prism.Events;
 using VCore.Modularity.Events;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
@@ -13,10 +13,10 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.Albums;
-using VPlayer.Library.ViewModels.LibraryViewModels;
-using VPlayer.Library.Views;
+using VPlayer.Home.ViewModels.LibraryViewModels;
+using VPlayer.Home.Views.Music.Albums;
 
-namespace VPlayer.Library.ViewModels.AlbumsViewModels
+namespace VPlayer.Home.ViewModels.Albums
 {
   public class AlbumsViewModel : PlayableItemsViewModel<AlbumsView, AlbumViewModel, Album>, IAlbumsViewModel
   {
@@ -44,7 +44,7 @@ namespace VPlayer.Library.ViewModels.AlbumsViewModels
     public override bool ContainsNestedRegions => false;
     public override string Header => "Albums";
     public override IQueryable<Album> LoadQuery => base.LoadQuery.Include(x => x.Artist).Include(x => x.Songs);
-    public override string RegionName { get; protected set; } = RegionNames.LibraryContentRegion;
+    public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
     public IEventAggregator EventAggregator { get; }
 
     #endregion Properties

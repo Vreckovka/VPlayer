@@ -2,15 +2,12 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Logger;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using VCore;
 using VCore.ViewModels;
-using VPlayer.AudioStorage.DataLoader;
 using VPlayer.AudioStorage.DomainClasses.Video;
-using VPlayer.AudioStorage.Interfaces.Storage;
-using VPlayer.AudioStorage.Parsers;
+using VPlayer.Library.ViewModels.TvShows;
 
-namespace VPlayer.Library.ViewModels.TvShows
+namespace VPlayer.Home.ViewModels.TvShows
 {
   public class UpdateTvShowViewModel : BaseWindowViewModel
   {

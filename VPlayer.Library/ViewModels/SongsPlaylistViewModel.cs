@@ -6,15 +6,14 @@ using System.Windows;
 using Logger;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
-using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
-using VPlayer.AudioStorage.Repositories;
 using VPlayer.Core.Events;
 using VPlayer.Core.ViewModels;
+using VPlayer.Library.ViewModels;
 
-namespace VPlayer.Library.ViewModels
+namespace VPlayer.Home.ViewModels
 {
   public class SongsPlaylistViewModel : FilePlaylistViewModel<SongInPlayListViewModel, SongsFilePlaylist, PlaylistSong>
 {

@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 using VCore.Standard.Modularity.Interfaces;
 
-namespace VPlayer.Library.Views
+namespace VPlayer.Home.Views.Music.Artists
 {
     /// <summary>
     /// Interaction logic for ArtistsView.xaml
