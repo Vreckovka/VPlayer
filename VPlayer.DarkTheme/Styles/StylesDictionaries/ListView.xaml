@@ -318,7 +318,7 @@
                                             <BeginStoryboard>
                                                 <Storyboard>
                                                     <ColorAnimation Storyboard.TargetProperty="Background.Color"
-                                                                    To="{StaticResource 22_DefaultWhiteColor}"
+                                                                    To="{StaticResource 10_DefaultWhiteColor}"
                                                                     Duration="{StaticResource MenuHoverAnimationDuration}" />
 
                                                     <ColorAnimation Storyboard.TargetProperty="(TextBox.Foreground).(SolidColorBrush.Color)"
@@ -364,6 +364,38 @@
                                             </BeginStoryboard>
                                         </Trigger.ExitActions>
                                     </Trigger>
+
+                                    <!--<MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding SubItems.Count}" Value="0" />
+                                        </MultiDataTrigger.Conditions>
+
+
+                                        <MultiDataTrigger.EnterActions>
+                                            <RemoveStoryboard BeginStoryboardName="ExitHoverIsBackroundActive" />
+                                            <RemoveStoryboard BeginStoryboardName="ExitIsBackroundActive" />
+                                            <RemoveStoryboard BeginStoryboardName="ExitHover" />
+
+
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation Storyboard.TargetProperty="Background.Color"
+                                                                    To="{StaticResource 22_DefaultWhiteColor}"
+                                                                    Duration="{StaticResource MenuHoverAnimationDuration}" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </MultiDataTrigger.EnterActions>
+                                        <MultiDataTrigger.ExitActions>
+                                            <BeginStoryboard x:Name="ExitSelectedBackground">
+                                                <Storyboard>
+                                                    <ColorAnimation Storyboard.TargetProperty="Background.Color"
+                                                                    To="Transparent"
+                                                                    Duration="{StaticResource MenuHoverAnimationDuration}" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </MultiDataTrigger.ExitActions>
+                                    </MultiDataTrigger>-->
+
 
                                     <!--  IsNotBackroundActive  -->
                                     <MultiDataTrigger>
