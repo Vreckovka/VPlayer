@@ -65,8 +65,6 @@ namespace VPlayer.ViewModels
   //  *****Easy*****
   //        //TODO: Pridat thumbnail zo suboru
   //        //TODO: Moznost vymazat automaticky nahrane lyrics a zakazat stahovanie
-  //        
-  //        
   //
   //  *****DESING***** 
   //        //TODO: Menu rozdelit na sub menu = Playlists(Songs, Music, TvShows), Library(Albums, Interprets, TvShows), Other(Iptv, UPnP...)
@@ -90,8 +88,7 @@ namespace VPlayer.ViewModels
   //        //TODO: Umoznit simultalne spustit video a hudbu
   //        //TODO: Umoznit zmenit cislo epizody a seriu
   //        //TODO: Premenovat epizodu
-  //
-  //TODO: Clear playlist
+  //        //TODO: Clear playlist
   //
   //*****LONG RUN*****
   //TODO: Streaming service, aby som nemusel mat db u seba na disku. Nejaky server niekde si kupit (Minio)
@@ -112,7 +109,7 @@ namespace VPlayer.ViewModels
   //TODO: Po roztiahnuti okna spadlo
   //
   //  *****IMPORTANT!*****
-  //
+  //       //TODO: Niekedy fullscreen necha skrytu mysku
 
 
 
