@@ -67,6 +67,7 @@ namespace VPlayer.ViewModels
   //        //TODO: Pridat thumbnail zo suboru
   //        //TODO: Highlight videa hover nad itemom v playliste
   //        //TODO: Moznost vymazat automaticky nahrane lyrics a zakazat stahovanie
+  //        //TODO: 2klik na VLC sound da na 100% 
   //
   //  *****DESING***** 
   //        //TODO: Menu rozdelit na sub menu = Playlists(Songs, Music, TvShows), Library(Albums, Interprets, TvShows), Other(Iptv, UPnP...)
@@ -88,6 +89,9 @@ namespace VPlayer.ViewModels
   //        //TODO: Vymazavat itemy z File browsera (ak je odkaz niekde do db na tu zlozku tak vymazat rovno aj tv show, ale spytat sa ci to chces a zapametat si ak ano)
   //        //TODO: Mute button pri zvuku
   //        //TODO: Umoznit simultalne spustit video a hudbu
+  //        //TODO: Umoznit zmenit cislo epizody a seriu
+  //        //TODO: Premenovat epizodu
+  //
   //TODO: Clear playlist
   //
   //*****LONG RUN*****
@@ -105,6 +109,7 @@ namespace VPlayer.ViewModels
   //TODO: Nespaja niektorych aristov pri load
   //TODO: Sem tam ostanie vysiet appka
   //TODO: VLC volume ako keby je 0
+  //TODO: ESC na fullscreene nefunguje
   //
   //  *****IMPORTANT!*****
   //
