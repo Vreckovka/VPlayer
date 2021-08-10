@@ -148,7 +148,7 @@ namespace VPlayer.Home.ViewModels.FileBrowser
 
     private void RefreshPlayablityAndType()
     {
-      CanPlay = SubItems.View.OfType<PlayableFolderViewModel>().Any(x => x.CanPlay);
+      CanPlay = SubItems.View.OfType<PlayableFolderViewModel>().Any(x => x.CanPlay) || SubItems.View.OfType<PlayableFileViewModel>().Any(x => x.CanPlay);
     }
 
     protected override FolderViewModel CreateNewFolderItem(DirectoryInfo directoryInfo)
