@@ -48,23 +48,26 @@ namespace UPnP.Device
 
     public void Init()
     {
-      foreach (Service serv in this.DeviceDescription.Device.ServiceList)
-        switch (serv.ServiceType)
-        {
-          case ServiceTypes.RENDERINGCONTROL:
-            this.RenderingControl = Deserializer.DeserializeXmlAsync<RenderingControl>(new Uri(this.PresentationURL + serv.SCPDURL.Substring(1)));
-            break;
-          case ServiceTypes.CONNECTIONMANAGER:
-            this.ConnectionManager = Deserializer.DeserializeXmlAsync<ConnectionManager>(new Uri(this.PresentationURL + serv.SCPDURL.Substring(1)));
-            break;
-          case ServiceTypes.AVTRANSPORT:
-            this.AVTransport = Deserializer.DeserializeXmlAsync<AVTransport>(new Uri(this.PresentationURL + serv.SCPDURL.Substring(1)));
-            ControlUrl = new Uri(this.PresentationURL + serv.ControlURL.Substring(1));
-            break;
-        }
+      if (DeviceDescription?.Device?.ServiceList != null)
+      {
+        foreach (Service serv in this.DeviceDescription.Device.ServiceList)
+          switch (serv.ServiceType)
+          {
+            case ServiceTypes.RENDERINGCONTROL:
+              this.RenderingControl = Deserializer.DeserializeXmlAsync<RenderingControl>(new Uri(this.PresentationURL + serv.SCPDURL.Substring(1)));
+              break;
+            case ServiceTypes.CONNECTIONMANAGER:
+              this.ConnectionManager = Deserializer.DeserializeXmlAsync<ConnectionManager>(new Uri(this.PresentationURL + serv.SCPDURL.Substring(1)));
+              break;
+            case ServiceTypes.AVTRANSPORT:
+              this.AVTransport = Deserializer.DeserializeXmlAsync<AVTransport>(new Uri(this.PresentationURL + serv.SCPDURL.Substring(1)));
+              ControlUrl = new Uri(this.PresentationURL + serv.ControlURL.Substring(1));
+              break;
+          }
 
-      SetDefaultIconUrl();
-      this.Self = this;
+        SetDefaultIconUrl();
+        this.Self = this;
+      }
     }
 
     #endregion

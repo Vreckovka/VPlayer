@@ -27,6 +27,7 @@ using VPlayer.AudioStorage.InfoDownloader.Clients.Chartlyrics;
 using VPlayer.AudioStorage.InfoDownloader.LRC;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;
 using VCore;
+using VCore.Standard;
 
 namespace VPlayer.AudioStorage.InfoDownloader
 {

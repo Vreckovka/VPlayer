@@ -21,6 +21,7 @@ using VCore.Standard.Helpers;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
 using VCore.WPF.Behaviors;
+using VCore.WPF.ViewModels.Navigation;
 using VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics;
 using VPlayer.AudioStorage.Parsers;
 using VPlayer.Core.Events;
@@ -123,8 +124,6 @@ namespace VPlayer.ViewModels
 
     private readonly IViewModelsFactory viewModelsFactory;
     private readonly IEventAggregator eventAggregator;
-    private readonly IRegionManager regionManager;
-    private readonly UPnPManagerViewModel uPnPManagerViewModel;
 
     #endregion
 
@@ -132,17 +131,10 @@ namespace VPlayer.ViewModels
 
     public MainWindowViewModel(
       IViewModelsFactory viewModelsFactory,
-      IEventAggregator eventAggregator,
-      IRegionManager regionManager,
-      UPnPManagerViewModel uPnPManagerViewModel)
+      IEventAggregator eventAggregator)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
-      this.regionManager = regionManager ?? throw new ArgumentNullException(nameof(regionManager));
-      this.uPnPManagerViewModel = uPnPManagerViewModel ?? throw new ArgumentNullException(nameof(uPnPManagerViewModel));
-
-      AudioDeviceManager.Instance.RefreshAudioDevices();
-
     }
 
     #endregion
@@ -249,7 +241,14 @@ namespace VPlayer.ViewModels
 
     public override void Initialize()
     {
+      if (WasInitilized)
+      {
+        return;
+      }
+
       base.Initialize();
+
+      AudioDeviceManager.Instance.RefreshAudioDevices();
 
       var windowsPlayer = viewModelsFactory.Create<WindowsViewModel>();
 

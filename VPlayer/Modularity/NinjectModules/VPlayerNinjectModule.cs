@@ -7,6 +7,7 @@ using VPlayer.Core.Providers;
 using VPlayer.IPTV.Modularity;
 using VPlayer.Player.ViewModels;
 using VPlayer.UPnP.Modularity;
+using VPlayer.ViewModels;
 using VPlayer.WindowsPlayer.Modularity.NinjectModule;
 using VPlayer.WindowsPlayer.ViewModels;
 
@@ -34,6 +35,13 @@ namespace VPlayer.Modularity.NinjectModules
         Kernel.BindToSelfInSingletonScope<PlayerViewModel>();
        
       }
+    }
+
+    public override void RegisterViewModels()
+    {
+      base.RegisterViewModels();
+
+      Kernel.Bind<MainWindowViewModel>().ToSelf().InSingletonScope();
     }
   }
 }

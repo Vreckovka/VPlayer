@@ -143,103 +143,117 @@ namespace VPlayer.UPnP.ViewModels
 
     #region Initialize
 
-    public override void Initialize()
+    public override async void Initialize()
     {
       base.Initialize();
 
-      MediaServers.OnActualItemChanged.Where(x => x != null).Subscribe(DiscoverServer).DisposeWith(this);
-
-      //LoadServers();
-      LoadRenderers();
+      await LoadRenderers();
     }
 
     #endregion
 
-    #region OnActivation
-
-    public override void OnActivation(bool firstActivation)
+    public override async void OnActivation(bool firstActivation)
     {
       base.OnActivation(firstActivation);
 
-     
-    }
+      if (firstActivation)
+      {
+        await LoadServers();
 
-    #endregion
+        MediaServers.OnActualItemChanged.Where(x => x != null).Subscribe(DiscoverServer).DisposeWith(this);
+      }
+    }
 
     #region LoadServers
 
-    public void LoadServers()
+    public Task LoadServers()
     {
-      var mediaServers = storageManager.GetRepository<UPnPMediaServer>().Include(x => x.UPnPDevice).ThenInclude(x => x.Services).ToList();
-
-      foreach (var dbMediaServer in mediaServers)
+      return Task.Run(async () =>
       {
-        var mediaServer = new MediaServer()
+        var mediaServersDb = storageManager.GetRepository<UPnPMediaServer>().Include(x => x.UPnPDevice).ThenInclude(x => x.Services).ToList();
+
+        foreach (var dbMediaServer in mediaServersDb)
         {
-          AliasURL = dbMediaServer.AliasURL,
-          PresentationURL = dbMediaServer.PresentationURL,
-          DeviceDescription = new global::UPnP.Common.DeviceDescription()
+          var mediaServer = new MediaServer()
           {
-            Device = dbMediaServer.UPnPDevice.GetDevice()
-          },
-          OnlineServer = dbMediaServer.OnlineServer,
-          DefaultIconUrl = dbMediaServer.DefaultIconUrl,
-          ContentDirectoryControlUrl = dbMediaServer.ContentDirectoryControlUrl
-        };
+            AliasURL = dbMediaServer.AliasURL,
+            PresentationURL = dbMediaServer.PresentationURL,
+            DeviceDescription = new global::UPnP.Common.DeviceDescription()
+            {
+              Device = dbMediaServer.UPnPDevice.GetDevice()
+            },
+            OnlineServer = dbMediaServer.OnlineServer,
+            DefaultIconUrl = dbMediaServer.DefaultIconUrl,
+            ContentDirectoryControlUrl = dbMediaServer.ContentDirectoryControlUrl
+          };
 
-        var vm = viewModelsFactory.Create<MediaServerViewModel>(mediaServer);
+          var vm = viewModelsFactory.Create<MediaServerViewModel>(mediaServer);
 
-        vm.DbModel = dbMediaServer;
-        vm.IsStored = true;
+          vm.DbModel = dbMediaServer;
+          vm.IsStored = true;
 
-        MediaServers.Add(vm);
-      }
+          await Application.Current.Dispatcher.InvokeAsync(() =>
+          {
+            MediaServers.Add(vm);
+          });
+        }
 
-      MediaServers.SelectedItem = MediaServers.View.FirstOrDefault();
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+          MediaServers.SelectedItem = MediaServers.View.FirstOrDefault();
+        });
+
+      });
     }
 
     #endregion
 
     #region LoadRenderers
 
-    public void LoadRenderers()
+    public Task LoadRenderers()
     {
-      var renderers = storageManager.GetRepository<UPnPMediaRenderer>().Include(x => x.UPnPDevice).ThenInclude(x => x.Services).ToList();
-
-      foreach (var dbMediaRenderer in renderers)
+      return Task.Run(async () =>
       {
-        var mediaRenderer = new MediaRenderer()
+        var renderersDb = storageManager.GetRepository<UPnPMediaRenderer>().Include(x => x.UPnPDevice).ThenInclude(x => x.Services).ToList();
+
+        foreach (var dbMediaRenderer in renderersDb)
         {
-          PresentationURL = dbMediaRenderer.PresentationURL,
-          DeviceDescription = new global::UPnP.Common.DeviceDescription()
+          var mediaRenderer = new MediaRenderer()
           {
-            Device = dbMediaRenderer.UPnPDevice.GetDevice()
-          }
-        };
+            PresentationURL = dbMediaRenderer.PresentationURL,
+            DeviceDescription = new global::UPnP.Common.DeviceDescription()
+            {
+              Device = dbMediaRenderer.UPnPDevice.GetDevice()
+            }
+          };
 
-        var vm = viewModelsFactory.Create<MediaRendererViewModel>(mediaRenderer);
+          var vm = viewModelsFactory.Create<MediaRendererViewModel>(mediaRenderer);
 
-        vm.DbModel = dbMediaRenderer;
-        vm.IsStored = true;
+          vm.DbModel = dbMediaRenderer;
+          vm.IsStored = true;
 
-        Renderers.Add(vm);
+          await Application.Current.Dispatcher.InvokeAsync(() =>
+          {
+            Renderers.Add(vm);
+          });
 
-
-      }
-
-      Renderers.SelectedItem = Renderers.View.FirstOrDefault();
-
-
-      Task.Run(async () =>
-      {
-        if(Renderers.SelectedItem?.Model != null)
-        {
-          Renderers.SelectedItem.Model.Init();
-
-          await Renderers.SelectedItem.Model.GetPositionInfoAsync();
         }
-      });
 
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+          Renderers.SelectedItem = Renderers.View.FirstOrDefault();
+        });
+
+        await Task.Run(async () =>
+        {
+          if (Renderers.SelectedItem?.Model != null)
+          {
+            Renderers.SelectedItem.Model.Init();
+
+            await Renderers.SelectedItem.Model.GetPositionInfoAsync();
+          }
+        });
+      });
     }
 
     #endregion
@@ -281,7 +295,7 @@ namespace VPlayer.UPnP.ViewModels
         {
           Renderers.Add(viewModelsFactory.Create<MediaRendererViewModel>(e.MediaRenderer));
         }
-       
+
       });
     }
 

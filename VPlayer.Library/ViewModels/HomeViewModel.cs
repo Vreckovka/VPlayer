@@ -6,12 +6,12 @@ using System.Reactive.Subjects;
 using System.Windows;
 using System.Windows.Input;
 using VCore;
-using VCore.Standard;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
 using VCore.WPF.Interfaces;
+using VCore.WPF.ViewModels.Navigation;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
@@ -25,35 +25,6 @@ using VPlayer.UPnP.ViewModels;
 
 namespace VPlayer.Home.ViewModels
 {
-  public class MenuViewModel : ViewModel, INavigationItem
-  {
-    public MenuViewModel(string header)
-    {
-      Header = header;
-    }
-
-    #region IsActive
-
-    private bool isActive;
-
-    public bool IsActive
-    {
-      get { return isActive; }
-      set
-      {
-        if (value != isActive)
-        {
-          isActive = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
-
-    public string Header { get; } 
-  }
-
   public class HomeViewModel : RegionViewModel<LibraryView>, INavigationItem, IFilterable
   {
     #region Fields
@@ -117,6 +88,11 @@ namespace VPlayer.Home.ViewModels
 
     public override void Initialize()
     {
+      if (WasInitilized)
+      {
+        return;
+      }
+
       base.Initialize();
 
       actualSearchSubject = new ReplaySubject<string>(1);
@@ -124,6 +100,7 @@ namespace VPlayer.Home.ViewModels
 
       actualSearchSubject.Throttle(TimeSpan.FromMilliseconds(250)).Subscribe(Filter).DisposeWith(this);
 
+      InitilizeMenu();
     }
 
     #endregion Initialize
@@ -136,7 +113,7 @@ namespace VPlayer.Home.ViewModels
 
       if (firstActivation)
       {
-        InitilizeMenu();
+        NavigationViewModel.Items.First().SubItems.First().IsActive = true;
       }
     }
 
@@ -261,7 +238,7 @@ namespace VPlayer.Home.ViewModels
       NavigationViewModel.Items.Add(library);
       NavigationViewModel.Items.Add(otherMenuItem);
 
-      NavigationViewModel.Items.First().SubItems.First().IsActive = true;
+     
 
     }
 

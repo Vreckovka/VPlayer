@@ -6,6 +6,8 @@ using System.IO;
 using System.Reflection;
 using System.Windows;
 using Ninject;
+using Ninject.Activation;
+using Ninject.Parameters;
 using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Ninject;
@@ -48,13 +50,12 @@ namespace VPlayer
 
       Kernel = Container.GetContainer();
 
-     AppDomain.CurrentDomain.AssemblyResolve += Resolver;
+      AppDomain.CurrentDomain.AssemblyResolve += Resolver;
 
       VIoc.Kernel = Kernel;
 
       Kernel.Load<CommonNinjectModule>();
       Kernel.Load<WPFNinjectModule>();
-   
       Kernel.Load<VPlayerNinjectModule>();
 
       CultureInfo.CurrentCulture = new CultureInfo("en-US");
@@ -82,12 +83,19 @@ namespace VPlayer
       var shell = Container.Resolve<MainWindow>();
 
       RegionManager.SetRegionManager(shell, Kernel.Get<IRegionManager>());
+
       RegionManager.UpdateRegions();
 
-      var dataContext = Container.Resolve<MainWindowViewModel>();
+      var dataContext = Kernel.Get<MainWindowViewModel>(new Parameter("moj", OnGet, true));
+
       shell.DataContext = dataContext;
 
       return shell;
+    }
+
+    private object OnGet(IContext context)
+    {
+      return context.Resolve();
     }
 
     protected override void OnInitialized()

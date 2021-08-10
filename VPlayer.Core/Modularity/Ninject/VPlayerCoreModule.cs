@@ -1,5 +1,6 @@
 ﻿using Listener;
 using Logger;
+using Ninject.Extensions.Factory;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Modularity.NinjectModules;
 using VPlayer.Core.Factories;

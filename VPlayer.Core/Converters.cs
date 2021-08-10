@@ -172,6 +172,11 @@ namespace VPlayer.Library
   {
     public override object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
+      if(value == null)
+      {
+        return null;
+      }
+
       int? subString = null;
       if (int.TryParse(parameter.ToString(), out var it ))
       {
