@@ -65,6 +65,15 @@ namespace VPlayer.ViewModels
   //TODO: Moznost presunu zlozku a subory do Serialy napr, alebo rovno do nejakeho serialu (Mozno totalne daleko to potiahnut ze moznost vytvorit rovno aj noveho)
   //TODO: CSFD vyhladavanie podla nazvu suborov (nejaky vyhladavac, mozno ze sa ti zobrazi nazov suboru a vyselektujes vyhladavany vyraz (highlight) (nemusis pisat) a to sa vyberie do filtra)
   //TODO: Highlight videa hover nad itemom v playliste
+//  Playlist sidebar aj vo fullscreene(why the fuck not)
+//Nazov playlistu zobrazit v playlist sidebare a ked nie je saved tak je italic a ze Naźov playlistu(tak pekne bielo a celkom velky text a tenky), ked bude saved tak kludne bold
+//playlist sidebar iconky do context menu
+//playlist sidebar horne info - iconcy miesto textu?
+//playlist sidebar width na % z celkovej sirky(aby bol co najväcsi a stale pekne to bolo a video bolo velke)
+//BUG - Blikanie topbaru ked mas mysku(asi ten timer stale posiela signal aj ked hybes - treba zacat od 0 po kazdom pohybe a zistit ci nie si nad menu (ked mas hover chces aby to bolo stale zobrazene))
+//FileBrowser - zobrazuje slideshow obrazkov z videa(FFMPEG)
+//FileBrowser - Mark videne (ako dlho som to pozeral - % pozrete, kludne z celej zloky), ak som to pozeral aspon 5min a datum
+//Tv show card - pustit od posledneho playlistu (zacne to tam kde si skoncil)
   //
   //
   //  *****Easy*****
