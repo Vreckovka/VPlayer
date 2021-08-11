@@ -95,11 +95,11 @@ namespace VPlayer.Home.ViewModels.TvShows
     private ActionCommand save;
     public ICommand Save => save;
 
-    public void OnSave()
+    public async void OnSave()
     {
       IsLoading = true;
 
-      Task.Run(async () =>
+      await Task.Run(async () =>
       {
         try
         {

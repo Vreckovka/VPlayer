@@ -41,6 +41,14 @@ namespace VPlayer.AudioStorage.Scrappers
       {
         try
         {
+          var statusMessage = new StatusMessage(1)
+          {
+            MessageStatusState = MessageStatusState.Beggining,
+            Message = "Starting to scrape tv show"
+          };
+
+          statusManager.UpdateMessage(statusMessage);
+
           var dbTvShow = storageManager.GetRepository<TvShow>().Include(x => x.Seasons).ThenInclude(x => x.Episodes).ThenInclude(x => x.VideoItem).Single(x => x.Id == tvShowId);
 
           dbTvShow.InfoDownloadStatus = InfoDownloadStatus.Downloading;
@@ -58,15 +66,21 @@ namespace VPlayer.AudioStorage.Scrappers
 
           if (csfdTvShow == null)
           {
-            var statusMessage1 = new StatusMessage(1)
+            statusMessage = new StatusMessage(1)
             {
               MessageStatusState = MessageStatusState.Failed,
+
               Message = "Unable to scrape Tv show"
+
+
             };
 
-            statusManager.UpdateMessage(statusMessage1);
+            statusManager.UpdateMessage(statusMessage);
 
             dbTvShow.InfoDownloadStatus = InfoDownloadStatus.Failed;
+
+           
+
             return;
           }
 
@@ -108,7 +122,7 @@ namespace VPlayer.AudioStorage.Scrappers
 
           await storageManager.DeepUpdateTvShow(dbTvShow);
 
-          var statusMessage = new StatusMessage(1)
+          statusMessage = new StatusMessage(1)
           {
             MessageStatusState = MessageStatusState.Processing,
             Message = "Updating tv show in database"
@@ -127,6 +141,7 @@ namespace VPlayer.AudioStorage.Scrappers
           var statusMessage = new StatusMessage(1)
           {
             MessageStatusState = MessageStatusState.Failed,
+
             Message = "Updating tv show in database"
           };
 
