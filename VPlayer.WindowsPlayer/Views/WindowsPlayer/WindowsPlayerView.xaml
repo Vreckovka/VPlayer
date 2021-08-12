@@ -107,8 +107,8 @@
                     BorderThickness="0,0,0,1">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions>
@@ -119,44 +119,79 @@
                     <Grid Grid.Column="1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="auto" />
                         </Grid.ColumnDefinitions>
 
-                        <controls1:ButtonWithIcon Grid.Column="0"
-                                                  Margin="10,0"
-                                                  Padding="8"
-                                                  HorizontalAlignment="Right"
-                                                  BorderBrush="#202020"
-                                                  BorderThickness="1"
-                                                  Command="{Binding SavePlaylistCommand}"
-                                                  FontSize="14"
-                                                  FontWeight="Bold"
-                                                  Foreground="#555555"
-                                                  IconPathStyle="{StaticResource Playlist}"
-                                                  ToolTip="Save playlist">
-                            <controls1:ButtonWithIcon.Style>
-                                <Style BasedOn="{StaticResource {x:Type controls1:ButtonWithIcon}}" TargetType="controls1:ButtonWithIcon">
-                                    <Setter Property="IconDefaultColor" Value="{StaticResource 30_DefaultWhiteColor}" />
-                                    <Setter Property="Content" Value="Generated playlist" />
-                                    <Setter Property="IconHoverColor" Value="{StaticResource YellowColor}" />
+
+                        <TextBox MinWidth="0"
+                                 Padding="0"
+                                 HorizontalAlignment="Left"
+                                 VerticalAlignment="Center"
+                                 BorderThickness="0,0,0,1"
+                                 DataContext="{Binding ActualSavedPlaylist}"
+                                 Text="{Binding Name, Mode=TwoWay}">
+                            <TextBox.Style>
+                                <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="Foreground" Value="White" />
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                    <Setter Property="FontSize" Value="20" />
+                                    <Setter Property="Margin" Value="14,0,10,0" />
+
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ActualSavedPlaylist.IsUserCreated}" Value="True">
-                                            <Setter Property="IconDefaultColor" Value="{StaticResource DefaultRedColor}" />
-                                            <Setter Property="Content" Value="User playlist" />
+                                        <Trigger Property="IsFocused" Value="True">
+                                            <Setter Property="BorderBrush" Value="#50ffffff" />
+                                            <Setter Property="Margin" Value="14,0,8,-1" />
+                                        </Trigger>
+
+                                        <Trigger Property="IsFocused" Value="False">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="TextBox">
+                                                        <TextBlock Margin="2,0,0,0"
+                                                                   Text="{TemplateBinding Text}"
+                                                                   TextTrimming="CharacterEllipsis" />
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+
+                                        <DataTrigger Binding="{Binding IsUserCreated}" Value="False">
+                                            <Setter Property="FontWeight" Value="Light" />
+                                            <Setter Property="FontStyle" Value="Italic" />
+                                            <Setter Property="Foreground" Value="#757575" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
-                            </controls1:ButtonWithIcon.Style>
-                        </controls1:ButtonWithIcon>
+                            </TextBox.Style>
+
+                            <b:Interaction.Behaviors>
+                                <behaviors3:FocusBehavior OnLostFocusCommand="{Binding SavePlaylistCommand}" SetFocusManager="True" />
+                            </b:Interaction.Behaviors>
+
+                        </TextBox>
+
+
+
+                        <controls1:PathButton Grid.Column="1"
+                                              Margin="0,0,10,0"
+                                              Padding="0"
+                                              Command="{Binding SavePlaylistCommand}"
+                                              IconDefaultColor="#454545"
+                                              IsReadOnly="True"
+                                              PathStyle="{StaticResource Pencil}"
+                                              ToolTip="Save playlist" />
 
 
                         <StackPanel Grid.Row="0"
-                                    Grid.Column="1"
+                                    Grid.Column="2"
                                     Margin="5,0"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
                                     Opacity="0.5"
                                     Orientation="Vertical">
+
                             <TextBlock Margin="0,0,5,0">
                                 <Run Foreground="#ccc" Text="Items:" />
                                 <Run Foreground="#ccc69b" Text="{Binding PlayList.Count, Mode=OneWay}" />

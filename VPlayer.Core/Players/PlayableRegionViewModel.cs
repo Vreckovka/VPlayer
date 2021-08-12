@@ -420,12 +420,11 @@ namespace VPlayer.Core.ViewModels
 
     public void OnSavePlaylist()
     {
-      if (!ActualSavedPlaylist.IsUserCreated && !StorePlaylist(true))
-      {
-        ActualSavedPlaylist.IsUserCreated = true;
-        UpdateActualSavedPlaylistPlaylist();
-        RaisePropertyChanged(nameof(ActualSavedPlaylist));
-      }
+      ActualSavedPlaylist.IsUserCreated = !ActualSavedPlaylist.IsUserCreated;
+
+      UpdateActualSavedPlaylistPlaylist();
+
+      RaisePropertyChanged(nameof(ActualSavedPlaylist));
     }
 
     #endregion
