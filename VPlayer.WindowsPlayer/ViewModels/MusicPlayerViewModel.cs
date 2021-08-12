@@ -273,7 +273,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         if (!isUPnp)
         {
-          IsBuffering = true;
+          BufferingSubject.OnNext(true);
 
           MediaPlayer.Stop();
 

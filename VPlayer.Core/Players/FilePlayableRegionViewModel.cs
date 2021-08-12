@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using System.Windows;
 using LibVLCSharp.Shared;
@@ -27,12 +29,17 @@ namespace VPlayer.Core.ViewModels
   {
     private long lastTimeChangedMs;
 
+    
 
     protected FilePlayableRegionViewModel(IRegionProvider regionProvider, IKernel kernel, ILogger logger,
       IStorageManager storageManager,
       IEventAggregator eventAggregator,
       VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, vLCPlayer)
     {
+      BufferingSubject.Throttle(TimeSpan.FromSeconds(0.5)).Subscribe(x =>
+      {
+        IsBuffering = x;
+      });
     }
 
     #region Properties
@@ -45,6 +52,8 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
+
+    protected ReplaySubject<bool> BufferingSubject { get; } = new ReplaySubject<bool>(1);
 
     #region IsBuffering
 
@@ -244,9 +253,9 @@ namespace VPlayer.Core.ViewModels
     private void MediaPlayer_Buffering(object sender, PlayerBufferingEventArgs e)
     {
       if (e.Cache != 100)
-        IsBuffering = true;
+        BufferingSubject.OnNext(true);
       else
-        IsBuffering = false;
+        BufferingSubject.OnNext(false);  ;
     }
 
     #endregion

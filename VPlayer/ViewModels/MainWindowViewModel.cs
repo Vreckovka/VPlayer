@@ -126,7 +126,7 @@ namespace VPlayer.ViewModels
   //TODO: chromedriver sa nekopiruje pri publish
   //
   //  *****IMPORTANT!*****
-  //       //TODO: Niekedy fullscreen necha skrytu mysku
+  //       //TODO: Niekedy fullscreen necha skrytu mysku - ked budes seekovat sipkami chvilku tak sa to prestane zobrazovat a potom to zmizne (tab stop chodis po menu, lebo nemas focus ked prepnes epizodu)
   //       //TODO: Po pridani novej serii nefunguje csfd download
   //       
 

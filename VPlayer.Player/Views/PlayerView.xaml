@@ -18,6 +18,7 @@
              xmlns:status="clr-namespace:VPlayer.Core.Managers.Status;assembly=VPlayer.AudioStorage"
              xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors;assembly=VPlayer.WindowsPlayer"
              xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
+             Focusable="False"
              mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -31,7 +32,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid x:Name="PlayerGrid">
+    <Grid x:Name="PlayerGrid" Focusable="False">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition />

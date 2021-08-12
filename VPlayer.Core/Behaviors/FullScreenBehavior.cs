@@ -15,6 +15,7 @@ using Prism.Events;
 using VCore.Helpers;
 using VCore.WPF.Managers;
 using VPlayer.Core.Events;
+using VPlayer.Core.ViewModels;
 using VPlayer.WindowsPlayer.Vlc;
 using VPlayer.WindowsPlayer.Vlc.Controls;
 
@@ -57,8 +58,25 @@ namespace VPlayer.WindowsPlayer.Behaviors
 
       AssociatedObject.MouseLeftButtonDown += AssociatedObject_MouseLeftButtonDown;
       AssociatedObject.MouseMove += AssociatedObject_MouseMove;
+      AssociatedObject.DataContextChanged += AssociatedObject_DataContextChanged;
+     
 
       fullScrennDisposable.Disposable = FullScreenManager.OnFullScreen.Subscribe(DecideFullScreen);
+
+
+   
+    }
+
+  
+    private void AssociatedObject_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      if (e.NewValue is IFilePlayableRegionViewModel viewModel)
+      {
+        viewModel?.ActualItemChanged.Subscribe(x =>
+        {
+          Application.Current.MainWindow?.Focus();
+        });
+      }
     }
 
 
@@ -121,6 +139,8 @@ namespace VPlayer.WindowsPlayer.Behaviors
 
       InputManager.Current.PreProcessInput += Current_PreProcessInput;
 
+
+      Application.Current.MainWindow?.Focus();
     }
 
     #endregion
