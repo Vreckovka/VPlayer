@@ -107,7 +107,6 @@ namespace VPlayer.ViewModels
   //        TODO: Umoznit simultalne spustit video a hudbu
   //        TODO: Umoznit zmenit cislo epizody a seriu
   //        TODO: Premenovat epizodu
-  //        TODO: Clear playlist
   //        TODO: Ked pojdes hover nad playlist itemom tak sa zobrazi taka karta, kde budu detailne info + velka fotka
   //        TODO: Vytvorit HOME TAB (HOME -> ANALYTICS)  - Horizontal listview poslednych 5 - 10 playlistov a moznost ich hned spustit a potom rozne statistiky... (grafy, tabulky...) 
   //
