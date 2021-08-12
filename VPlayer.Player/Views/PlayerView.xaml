@@ -102,6 +102,7 @@
                         <userControls:SoundVizualizer.Style>
                             <Style TargetType="userControls:SoundVizualizer">
                                 <Setter Property="Visibility" Value="Hidden" />
+
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsPlaying}" Value="true">
                                         <Setter Property="Visibility" Value="Visible" />

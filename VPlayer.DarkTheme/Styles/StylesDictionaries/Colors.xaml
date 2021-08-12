@@ -27,6 +27,7 @@
     <Color x:Key="BrownColor">#c47216</Color>
     <Color x:Key="DarkBrownColor">#522e05</Color>
     <Color x:Key="BlueColor">#1887db</Color>
+    <Color x:Key="DarkBlueColor">#2747fe</Color>
     <Color x:Key="GreenColor">#36d66e</Color>
 
     <Color x:Key="235_DefaultWhiteColor"
@@ -92,6 +93,7 @@
     <SolidColorBrush x:Key="YellowBrush" Color="{StaticResource YellowColor}" />
     <SolidColorBrush x:Key="DarkBrownBrush" Color="{StaticResource DarkBrownColor}" />
     <SolidColorBrush x:Key="BlueBrush" Color="{StaticResource BlueColor}" />
+    <SolidColorBrush x:Key="DarkBlueBrush" Color="{StaticResource BlueColor}" />
     <SolidColorBrush x:Key="GreenBrush" Color="{StaticResource GreenColor}" />
 
     <SolidColorBrush x:Key="BackgroudBrush" Color="{StaticResource BackgroudColor}" />
@@ -130,8 +132,14 @@
 
 
     <LinearGradientBrush x:Key="RedBlueGradientBrush">
-        <GradientStop Offset="0" Color="{StaticResource DefaultRedColor}" />
-        <GradientStop Offset="1" Color="#2747fe" />
+        <GradientStop Offset="-0.5" Color="{StaticResource BlueColor}" />
+        <GradientStop Offset="1.5" Color="{StaticResource DefaultRedColor}" />
+        <GradientStop Offset="1.5" Color="{StaticResource BlueColor}" />
     </LinearGradientBrush>
+
+
+
+
+
 
 </ResourceDictionary>

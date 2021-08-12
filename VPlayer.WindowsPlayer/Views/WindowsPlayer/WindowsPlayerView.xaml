@@ -126,18 +126,29 @@
 
                         <Border Margin="14,0,0,0"
                                 Padding="10,0"
-                                Background="#07ffffff">
+                                Background="#05ffffff"
+                                BorderThickness="1">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ActualSavedPlaylist.IsUserCreated}" Value="true">
+                                            <Setter Property="BorderBrush" Value="#10ffffff" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
                             <TextBox MinWidth="0"
                                      Padding="0"
                                      HorizontalAlignment="Stretch"
                                      VerticalAlignment="Center"
                                      BorderThickness="0,0,0,1"
+                                     Cursor="IBeam"
                                      DataContext="{Binding ActualSavedPlaylist}"
                                      Text="{Binding Name, Mode=TwoWay}">
                                 <TextBox.Style>
                                     <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
                                         <Setter Property="BorderBrush" Value="Transparent" />
-                                        <Setter Property="Foreground" Value="White" />
+                                        <Setter Property="Foreground" Value="#bbffffff" />
                                         <Setter Property="FontWeight" Value="Bold" />
                                         <Setter Property="FontSize" Value="20" />
 
