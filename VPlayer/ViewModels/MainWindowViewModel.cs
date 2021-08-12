@@ -49,14 +49,15 @@ namespace VPlayer.ViewModels
   //TODO: Hviezdicky pocet 
   //TODO: TV Channels editor dotiahnut
   //TODO: Save UPnP Sever (mozno je, bojim sa skusit)
-
+  //
+  // *****File Browser*****
   //TODO: File Browser - File watcher nad aktualnou zlozkou
   //TODO: File Browser - Right click open folder
   //TODO: File Browser - Nastavit zlozku ako hlavnu
   //TODO: File Browser - Nastavit zlozku ako root
   //TODO: FileBrowser - zobrazuje slideshow obrazkov z videa(FFMPEG)
   //TODO: FileBrowser - Mark videne (ako dlho som to pozeral - % pozrete, kludne z celej zloky), ak som to pozeral aspon 5min a datum
-
+  //
   //TODO: Popup menu style
   //TODO: Setting page - Poriadne settingy (ako default cesty do subor napr)
   //TODO: Ked je synced lyrics a nie si na tabe a ide to dalej a vratis sa tak to scrolne na tu dolnu poziciu animacne (nech to spravi instantne zacne od tade)
@@ -70,47 +71,45 @@ namespace VPlayer.ViewModels
   //TODO: CSFD vyhladavanie podla nazvu suborov (nejaky vyhladavac, mozno ze sa ti zobrazi nazov suboru a vyselektujes vyhladavany vyraz (highlight) (nemusis pisat) a to sa vyberie do filtra)
   //TODO: Highlight videa hover nad itemom v playliste
   //TODO  Playlist sidebar aj vo fullscreene(why the fuck not) - schovany a rovnake mechanismus na zobrazenie
-  //TODO: Carty Music Player, Video Player... tmava ak ma prazdny playlist
-  //TODO: Playlist sidebar - Nazov playlistu a ked nie je saved tak je italic a ze Naźov playlistu(tak pekne bielo a celkom velky text a tenky), ked bude saved tak kludne bold
+  //TODO: Tv show card (kludne aj artist) - pustit od posledneho playlistu (zacne to tam kde si skoncil)
+  //
+  // *****Playlist sidebar*****
   //TODO: Playlist sidebar - iconky do context menu
   //TODO: Playlist sidebar - horne info - iconcy miesto textu?
   //TODO: Playlist sidebar width na % z celkovej sirky(aby bol co najväcsi a stale pekne to bolo a video bolo velke)
-
-  //TODO: Tv show card (kludne aj artist) - pustit od posledneho playlistu (zacne to tam kde si skoncil)
+  //
+  //
   //
   //
   //  *****Easy*****
-  //        //TODO: Pridat thumbnail zo suboru
-  //        //TODO: Status popup close manual
-  //        //TODO: Moznost vymazat automaticky nahrane lyrics a zakazat stahovanie
+  //        TODO: Pridat thumbnail zo suboru
+  //        TODO: Status popup close manual
+  //        TODO: Moznost vymazat automaticky nahrane lyrics a zakazat stahovanie
   //
   //  *****DESING***** 
-  //        //TODO: Menu rozdelit na sub menu = Playlists(Songs, Music, TvShows), Library(Albums, Interprets, TvShows), Other(Iptv, UPnP...)
-  //        //TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)
-  //        //TODO: Listview TileView / listview prepinac
-  //        //TODO: Obrazky do listview pri playlistoch (tv show cover atd...)
-  //        //TODO: TileVIew nad listviewom ked je velky aby bolo iba max poloziek na riadok (asi nebude len tak, treba prerobit dizajn karticky, alebo to spravit na center ako container v boostrape)
-  //        //TODO: Playlist listview zobrazit ktory item je posledny (Nazov a poradie v playliste)
+  //        TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)
+  //        TODO: Listview TileView / listview prepinac
+  //        TODO: Obrazky do listview pri playlistoch (tv show cover atd...)
+  //        TODO: TileVIew nad listviewom ked je velky aby bolo iba max poloziek na riadok (asi nebude len tak, treba prerobit dizajn karticky, alebo to spravit na center ako container v boostrape)
+  //        TODO: Playlist listview zobrazit ktory item je posledny (Nazov a poradie v playliste)
+  //        TODO: Carty Music Player, Video Player... tmava ak ma prazdny playlist
   //
   //  *****HARD/LONG***** 
-  //        //TODO: Dotiahnut data o albumoch, serialoch (a vyznacit ktore mam a ktore mi chybaju)
-  //        //TODO: Poriadny Search, nieco take ako ctrlt + T pre Resharpery, kludne aj na button a filtre po kategoriach (aby sa dalo pouzivat aj bez klavesnice)
-  //        //TODO: Prehravanie hudby z File browsera
+  //        TODO: Dotiahnut data o albumoch, serialoch (a vyznacit ktore mam a ktore mi chybaju)
+  //        TODO: Poriadny Search, nieco take ako ctrlt + T pre Resharpery, kludne aj na button a filtre po kategoriach (aby sa dalo pouzivat aj bez klavesnice)
+  //        TODO: Prehravanie hudby z File browsera
   //
   //  *****TOPKY*****
-  //        //TODO: Tv show prehrat od posledneho ulozene playlistu (to iste aj pre hudbu kludne), ked pribudne nova seria pusti to kde si skoncil, ale nacita ju
-  //        //TODO: Prehravanie,pridavanie do playlistu albumov, tv show z detailu (tym padom mozno zalozka Albums nebude treba, aj tak tam nechodis, pojdes iba do artist)
-  //        //TODO: Vymazavat itemy z File browsera (ak je odkaz niekde do db na tu zlozku tak vymazat rovno aj tv show, ale spytat sa ci to chces a zapametat si ak ano)
-  //        //TODO: Mute button pri zvuku
-  //        //TODO: Umoznit simultalne spustit video a hudbu
-  //        //TODO: Umoznit zmenit cislo epizody a seriu
-  //        //TODO: Premenovat epizodu
-  //        //TODO: Clear playlist
-  //        //TODO: Ked pojdes hover nad playlist itemom tak sa zobrazi taka karta, kde budu detailne info + velka fotka
+  //        TODO: Tv show prehrat od posledneho ulozene playlistu (to iste aj pre hudbu kludne), ked pribudne nova seria pusti to kde si skoncil, ale nacita ju
+  //        TODO: Prehravanie,pridavanie do playlistu albumov, tv show z detailu (tym padom mozno zalozka Albums nebude treba, aj tak tam nechodis, pojdes iba do artist)
+  //        TODO: Vymazavat itemy z File browsera (ak je odkaz niekde do db na tu zlozku tak vymazat rovno aj tv show, ale spytat sa ci to chces a zapametat si ak ano)
+  //        TODO: Mute button pri zvuku
+  //        TODO: Umoznit simultalne spustit video a hudbu
+  //        TODO: Umoznit zmenit cislo epizody a seriu
+  //        TODO: Premenovat epizodu
+  //        TODO: Clear playlist
+  //        TODO: Ked pojdes hover nad playlist itemom tak sa zobrazi taka karta, kde budu detailne info + velka fotka
   //
-  //*****LONG RUN*****
-  //TODO: Streaming service, aby som nemusel mat db u seba na disku. Nejaky server niekde si kupit (Minio)
-  //TODO: Streaming pre subory, lyrics, tv shows, kludne uplne vsetko (tv sources...). Db tam bude cele to pojde do webu  //
   //
   //*********************************************************************************************************************************
   //
@@ -126,11 +125,17 @@ namespace VPlayer.ViewModels
   //TODO: ESC na fullscreene nefunguje
   //TODO: Po roztiahnuti okna spadlo
   //TODO: chromedriver sa nekopiruje pri publish
+  //TODO: ked task zlyha tak Error popup hned mizne
   //
   //  *****IMPORTANT!*****
-  //       //TODO: Po pridani novej serii nefunguje csfd download
+  //        TODO: Po pridani novej serii nefunguje csfd download
   //       
-
+  //
+  //********************************************************************************************************************************
+  //
+  //*****LONG RUN*****
+  //TODO: Streaming service, aby som nemusel mat db u seba na disku. Nejaky server niekde si kupit (Minio)
+  //TODO: Streaming pre subory, lyrics, tv shows, kludne uplne vsetko (tv sources...). Db tam bude cele to pojde do webu  //
 
   public class MainWindowViewModel : BaseMainWindowViewModel
   {
