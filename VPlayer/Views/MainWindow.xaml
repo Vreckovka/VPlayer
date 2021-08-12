@@ -28,7 +28,7 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/Paths.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Paths.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>

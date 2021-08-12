@@ -29,7 +29,7 @@ namespace VPlayer.Core.ViewModels
   {
     private long lastTimeChangedMs;
 
-    
+
 
     protected FilePlayableRegionViewModel(IRegionProvider regionProvider, IKernel kernel, ILogger logger,
       IStorageManager storageManager,
@@ -255,7 +255,7 @@ namespace VPlayer.Core.ViewModels
       if (e.Cache != 100)
         BufferingSubject.OnNext(true);
       else
-        BufferingSubject.OnNext(false);  ;
+        BufferingSubject.OnNext(false); ;
     }
 
     #endregion
@@ -373,7 +373,8 @@ namespace VPlayer.Core.ViewModels
     {
       base.OnActualItemChanged();
 
-      ActualItem.ActualPosition = 0;
+      if (ActualItem != null)
+        ActualItem.ActualPosition = 0;
     }
 
     #region Dispose

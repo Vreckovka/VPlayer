@@ -14,7 +14,6 @@
                 <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/DataTemplates.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/TextBlocksStyle.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/OverlayStyles.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/Paths.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/ControlsTemplates/PlayableWrapPanelTemplate.xaml" />
 
                 <ResourceDictionary Source="pack://application:,,,/VVLC;component/Themes/VideoViewTemplate.xaml" />

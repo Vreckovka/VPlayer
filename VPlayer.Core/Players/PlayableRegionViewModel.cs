@@ -429,6 +429,45 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region ClearPlaylistCommand
+
+    private ActionCommand clearPlaylistCommand;
+
+    public ICommand ClearPlaylistCommand
+    {
+      get
+      {
+        if (clearPlaylistCommand == null)
+        {
+          clearPlaylistCommand = new ActionCommand(OnClearPlaylist);
+        }
+
+        return clearPlaylistCommand;
+      }
+    }
+
+    public async void OnClearPlaylist()
+    {
+      if(ActualSavedPlaylist.Id > 0 )
+      {
+        await UpdateActualSavedPlaylistPlaylist();
+      }
+    
+
+      IsPlaying = false;
+      VirtualizedPlayList = null;
+      PlayList.Clear();
+      ActualItem = null;
+      MediaPlayer.Stop();
+      await MediaPlayer.SetNewMedia(null);
+      MediaPlayer.Reload();
+      actualItemIndex = 0;
+      PlaylistTotalTimePlayed = new TimeSpan(0);
+      ActualSavedPlaylist = new TPlaylistModel() { Id = -1 };
+    }
+
+    #endregion
+
     #region ResumePlaying
 
     private ActionCommand resumePlaying;

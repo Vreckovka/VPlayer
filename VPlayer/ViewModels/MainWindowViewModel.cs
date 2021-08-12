@@ -109,20 +109,19 @@ namespace VPlayer.ViewModels
   //        TODO: Premenovat epizodu
   //        TODO: Clear playlist
   //        TODO: Ked pojdes hover nad playlist itemom tak sa zobrazi taka karta, kde budu detailne info + velka fotka
+  //        TODO: Vytvorit HOME TAB (HOME -> ANALYTICS)  - Horizontal listview poslednych 5 - 10 playlistov a moznost ich hned spustit a potom rozne statistiky... (grafy, tabulky...) 
   //
   //
   //*********************************************************************************************************************************
   //
   //*****BUGS*****
   //TODO: Nedava sa prec IsPlaying z itemu ked uz nie je v playliste (asi pri rerabke sa ta vetva vymazala)
-  //TODO: totaly played time bezi a uklada sa aj ked prehravac pozasteveny
   //TODO: Niekedy ked prepnes automaticky output sound device tak equalizer sa zastavi a da sa reloadnut ze pausnes a znovu spustis hudubu 
   //TODO: Ked je buffering v prehravaci a das vypnut appku tak spadne a nevypne sa poriadne (zostane aj niekedy bezat potom na pozadi, nejaky thread niekde asi)
   //TODO: Nespojilo playlisty s rovnakym hash po spusteni (neviem ci TV show alebo hudba) (mozno tv show ze pustis z detailu a das save a potom znovu z detailu)
   //TODO: Nespaja niektorych aristov pri load
   //TODO: Sem tam ostanie vysiet appka
   //TODO: VLC volume ako keby je 0
-  //TODO: ESC na fullscreene nefunguje
   //TODO: Po roztiahnuti okna spadlo
   //TODO: chromedriver sa nekopiruje pri publish
   //TODO: ked task zlyha tak Error popup hned mizne

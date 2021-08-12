@@ -208,11 +208,19 @@ namespace VPlayer.WindowsPlayer.Players
     {
       return Task.Run(() =>
       {
-        var media = new Media(libVLC, source);
+        if(source != null)
+        {
+          var media = new Media(libVLC, source);
 
-        Media = new VLCMedia(media);
+          Media = new VLCMedia(media);
 
-        MediaPlayer.Media = media;
+          MediaPlayer.Media = media;
+        }
+        else
+        {
+          MediaPlayer.Media = null;
+        }
+      
       });
     }
 

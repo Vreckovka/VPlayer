@@ -841,7 +841,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         IsReapting = IsRepeate,
         IsShuffle = IsShuffle,
         Name = playlistName,
-        ItemCount = playlistModels.Count,
+        ItemCount = playlistModels?.Count,
         PlaylistItems = playlistModels,
         LastItemElapsedTime = ActualSavedPlaylist.LastItemElapsedTime,
         LastItemIndex = ActualSavedPlaylist.LastItemIndex,
