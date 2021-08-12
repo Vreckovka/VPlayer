@@ -124,58 +124,68 @@
                         </Grid.ColumnDefinitions>
 
 
-                        <TextBox MinWidth="0"
-                                 Padding="0"
-                                 HorizontalAlignment="Left"
-                                 VerticalAlignment="Center"
-                                 BorderThickness="0,0,0,1"
-                                 DataContext="{Binding ActualSavedPlaylist}"
-                                 Text="{Binding Name, Mode=TwoWay}">
-                            <TextBox.Style>
-                                <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
-                                    <Setter Property="BorderBrush" Value="Transparent" />
-                                    <Setter Property="Foreground" Value="White" />
-                                    <Setter Property="FontWeight" Value="Bold" />
-                                    <Setter Property="FontSize" Value="20" />
-                                    <Setter Property="Margin" Value="14,0,10,0" />
+                        <Border Margin="14,0,0,0"
+                                Padding="10,0"
+                                Background="#07ffffff">
+                            <TextBox MinWidth="0"
+                                     Padding="0"
+                                     HorizontalAlignment="Stretch"
+                                     VerticalAlignment="Center"
+                                     BorderThickness="0,0,0,1"
+                                     DataContext="{Binding ActualSavedPlaylist}"
+                                     Text="{Binding Name, Mode=TwoWay}">
+                                <TextBox.Style>
+                                    <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
+                                        <Setter Property="BorderBrush" Value="Transparent" />
+                                        <Setter Property="Foreground" Value="White" />
+                                        <Setter Property="FontWeight" Value="Bold" />
+                                        <Setter Property="FontSize" Value="20" />
 
-                                    <Style.Triggers>
-                                        <Trigger Property="IsFocused" Value="True">
-                                            <Setter Property="BorderBrush" Value="#50ffffff" />
-                                            <Setter Property="Margin" Value="14,0,8,-1" />
-                                        </Trigger>
+                                        <Style.Triggers>
+                                            <Trigger Property="IsFocused" Value="True">
+                                                <Setter Property="BorderBrush" Value="#50ffffff" />
+                                            </Trigger>
 
-                                        <Trigger Property="IsFocused" Value="False">
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="TextBox">
-                                                        <TextBlock Margin="2,0,0,0"
-                                                                   Text="{TemplateBinding Text}"
-                                                                   TextTrimming="CharacterEllipsis" />
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="BorderBrush" Value="#50ffffff" />
+                                            </Trigger>
 
-                                        <DataTrigger Binding="{Binding IsUserCreated}" Value="False">
-                                            <Setter Property="FontWeight" Value="Light" />
-                                            <Setter Property="FontStyle" Value="Italic" />
-                                            <Setter Property="Foreground" Value="#757575" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBox.Style>
+                                            <Trigger Property="IsFocused" Value="False">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="TextBox">
+                                                            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                                                <TextBlock Margin="2,0,0,0"
+                                                                           Text="{TemplateBinding Text}"
+                                                                           TextTrimming="CharacterEllipsis" />
+                                                            </Border>
 
-                            <b:Interaction.Behaviors>
-                                <behaviors3:FocusBehavior OnLostFocusCommand="{Binding SavePlaylistCommand}" SetFocusManager="True" />
-                            </b:Interaction.Behaviors>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Trigger>
 
-                        </TextBox>
+                                            <DataTrigger Binding="{Binding IsUserCreated}" Value="False">
+                                                <Setter Property="FontWeight" Value="Light" />
+                                                <Setter Property="FontStyle" Value="Italic" />
+                                                <Setter Property="Foreground" Value="#757575" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+
+                                <b:Interaction.Behaviors>
+                                    <behaviors3:FocusBehavior OnLostFocusCommand="{Binding SavePlaylistCommand}" SetFocusManager="True" />
+                                </b:Interaction.Behaviors>
+
+                            </TextBox>
+                        </Border>
+
 
 
 
                         <controls1:PathButton Grid.Column="1"
-                                              Margin="0,0,10,0"
+                                              Margin="10,0"
                                               Padding="0"
                                               Command="{Binding SavePlaylistCommand}"
                                               IconDefaultColor="#454545"
