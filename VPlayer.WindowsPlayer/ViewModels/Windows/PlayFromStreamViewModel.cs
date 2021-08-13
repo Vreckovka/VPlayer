@@ -28,7 +28,7 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
         if (value != streamUrl)
         {
           streamUrl = value;
-          okCommand.RaiseCanExecuteChanged();
+          okCommand?.RaiseCanExecuteChanged();
           RaisePropertyChanged();
         }
       }
