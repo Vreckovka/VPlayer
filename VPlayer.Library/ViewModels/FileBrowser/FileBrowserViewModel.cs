@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using Microsoft.VisualBasic.FileIO;
 using VCore;
 using VCore.ItemsCollections;
 using VCore.Modularity.RegionProviders;
@@ -160,9 +161,6 @@ namespace VPlayer.Home.ViewModels.FileBrowser
 
     #endregion
 
-
-    #region Commands
-
     #region DeleteItemCommand
 
     private ActionCommand<string> deleteItemCommand;
@@ -177,50 +175,6 @@ namespace VPlayer.Home.ViewModels.FileBrowser
         }
 
         return deleteItemCommand;
-      }
-    }
-
-    #endregion
-
-    #endregion
-
-    #region DeleteItem
-
-    private void DeleteItem(string path)
-    {
-      var result = windowManager.ShowDeletePrompt(path);
-
-      if (result == VCore.WPF.ViewModels.Prompt.PromptResult.Ok)
-      {
-        try
-        {
-          if (Directory.Exists(path))
-          {
-            DirectoryInfo di = new DirectoryInfo(path);
-
-            foreach (FileInfo file in di.EnumerateFiles())
-            {
-              file.Delete();
-            }
-
-            foreach (DirectoryInfo dir in di.EnumerateDirectories())
-            {
-              dir.Delete(true);
-            }
-
-            Directory.Delete(path);
-          }
-          else if (File.Exists(path))
-          {
-            File.Delete(path);
-          }
-        }
-        catch (Exception ex)
-        {
-          windowManager.ShowErrorPrompt(ex);
-        }
-
-        OnRefresh();
       }
     }
 
@@ -296,6 +250,38 @@ namespace VPlayer.Home.ViewModels.FileBrowser
     }
 
     #endregion
+
+    #region DeleteItem
+
+    private void DeleteItem(string path)
+    {
+      var result = windowManager.ShowDeletePrompt(path);
+
+      if (result == VCore.WPF.ViewModels.Prompt.PromptResult.Ok)
+      {
+        try
+        {
+
+          if (Directory.Exists(path))
+          {
+            FileSystem.DeleteDirectory(path, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
+          }
+          else if (File.Exists(path))
+          {
+            FileSystem.DeleteFile(path, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
+          }
+        }
+        catch (Exception ex)
+        {
+          windowManager.ShowErrorPrompt(ex);
+        }
+
+        OnRefresh();
+      }
+    }
+
+    #endregion
+
 
     #endregion
   }

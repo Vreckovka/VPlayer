@@ -60,35 +60,7 @@
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition />
-                <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
-
-            <controls:ButtonWithIcon Width="30"
-                                     Height="20"
-                                     Padding="0"
-                                     HorizontalAlignment="Center"
-                                     HorizontalContentAlignment="Center"
-                                     Command="{Binding PlayButton}"
-                                     CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}"
-                                     IconDefaultColor="#454545"
-                                     IconHeight="15"
-                                     IconHoverColor="{StaticResource DefaultRedColor}"
-                                     IconMargin="0 0 0 0"
-                                     IconPathStyle="{StaticResource PlaySign}">
-                <controls:ButtonWithIcon.Style>
-                    <Style BasedOn="{StaticResource {x:Type controls:ButtonWithIcon}}" TargetType="controls:ButtonWithIcon">
-                        <Setter Property="Visibility" Value="Hidden" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding CanPlay}" Value="true">
-                                <Setter Property="Visibility" Value="Visible" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding IsRoot}" Value="true">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </controls:ButtonWithIcon.Style>
-            </controls:ButtonWithIcon>
 
             <Path Grid.Column="1"
                   Margin="0,2,5,2"
@@ -118,24 +90,94 @@
                 </Path.Style>
             </Path>
 
-            <ContentControl Grid.Column="2"
+
+
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <controls:ButtonWithIcon Width="30"
+                                         Height="20"
+                                         Padding="0"
+                                         HorizontalAlignment="Center"
+                                         HorizontalContentAlignment="Center"
+                                         Command="{Binding PlayButton}"
+                                         CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}"
+                                         IconDefaultColor="#30ffffff"
+                                         IconHeight="15"
+                                         IconHoverColor="{StaticResource DefaultRedColor}"
+                                         IconMargin="0 0 0 0"
+                                         IconPathStyle="{StaticResource PlaySign}">
+                    <controls:ButtonWithIcon.Style>
+                        <Style BasedOn="{StaticResource {x:Type controls:ButtonWithIcon}}" TargetType="controls:ButtonWithIcon">
+                            <Setter Property="Visibility" Value="Hidden" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CanPlay}" Value="true">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsRoot}" Value="true">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </controls:ButtonWithIcon.Style>
+                </controls:ButtonWithIcon>
+
+
+                <controls:PathButton Margin="0,0,10,2"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"
+                                     Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.DeleteItemCommand}"
+                                     CommandParameter="{Binding Model.FullName}"
+                                     IconDefaultColor="#20ffffff"
+                                     IconHeight="14"
+                                     IconHoverColor="{StaticResource LightRedColor}"
+                                     IconWidth="12"
+                                     IsReadOnly="True"
+                                     PathStyle="{StaticResource Trash}"
+                                     ToolTip="Delete (pernamently)">
+                    <controls:PathButton.Style>
+                        <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsRoot}" Value="true">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </controls:PathButton.Style>
+                </controls:PathButton>
+
+                <controls:PathButton Margin="0,0,10,2"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"
+                                     Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.ChangeDirectory}"
+                                     CommandParameter="{Binding Model.FullName}"
+                                     IconDefaultColor="#20ffffff"
+                                     IconHeight="14"
+                                     IconHoverColor="{StaticResource GreenColor}"
+                                     IconWidth="12"
+                                     IsReadOnly="True"
+                                     PathStyle="{StaticResource InBoxIn}"
+                                     ToolTip="Go inside">
+                    <controls:PathButton.Style>
+                        <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsRoot}" Value="true">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </controls:PathButton.Style>
+
+
+                </controls:PathButton>
+
+            </StackPanel>
+
+
+            <ContentControl Grid.Column="3"
                             VerticalAlignment="Center"
                             Content="{Binding HighlitedText, Converter={StaticResource FolderHighlightTextConverter}, Mode=OneTime}"
                             ToolTip="{Binding FolderType, Mode=OneTime}" />
 
-            <controls:PathButton Grid.Column="3"
-                                 Margin="0,0,10,2"
-                                 HorizontalAlignment="Center"
-                                 VerticalAlignment="Center"
-                                 Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.DeleteItemCommand}"
-                                 CommandParameter="{Binding Model.FullName}"
-                                 IconDefaultColor="#20ffffff"
-                                 IconHeight="14"
-                                 IconHoverColor="{StaticResource LightRedColor}"
-                                 IconWidth="12"
-                                 IsReadOnly="True"
-                                 PathStyle="{StaticResource Trash}"
-                                 ToolTip="Delete (pernamently)" />
+
 
             <Grid.Style>
                 <Style TargetType="Grid">
@@ -158,8 +200,9 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="auto" />
-                <ColumnDefinition />
                 <ColumnDefinition Width="auto" />
+                <ColumnDefinition />
+
             </Grid.ColumnDefinitions>
 
             <controls:ButtonWithIcon Width="30"
@@ -169,7 +212,7 @@
                                      HorizontalContentAlignment="Center"
                                      Command="{Binding PlayButton}"
                                      CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}"
-                                     IconDefaultColor="#454545"
+                                     IconDefaultColor="#30ffffff"
                                      IconHeight="15"
                                      IconHoverColor="{StaticResource DefaultRedColor}"
                                      IconMargin="0 0 0 0"
@@ -186,7 +229,21 @@
                 </controls:ButtonWithIcon.Style>
             </controls:ButtonWithIcon>
 
-            <Grid Grid.Column="1" Margin="0,0,5,0">
+            <controls:PathButton Grid.Column="1"
+                                 Margin="0,0,10,2"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center"
+                                 Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.DeleteItemCommand}"
+                                 CommandParameter="{Binding Model.FullName}"
+                                 IconDefaultColor="#20ffffff"
+                                 IconHeight="14"
+                                 IconHoverColor="{StaticResource LightRedColor}"
+                                 IconWidth="12"
+                                 IsReadOnly="True"
+                                 PathStyle="{StaticResource Trash}"
+                                 ToolTip="Delete (pernamently)" />
+
+            <Grid Grid.Column="2" Margin="0,0,5,0">
                 <Image Width="15"
                        Height="15"
                        Source="pack://application:,,,/VPlayer.DarkTheme;component/Resources/file.png" />
@@ -218,8 +275,7 @@
                 </Rectangle>
             </Grid>
 
-
-            <StackPanel Grid.Column="2" Orientation="Horizontal">
+            <StackPanel Grid.Column="3" Orientation="Horizontal">
                 <ContentControl Margin="0,0,0,0"
                                 VerticalAlignment="Center"
                                 Content="{Binding HighlitedText, Converter={StaticResource FileHighlightTextConverter}, Mode=OneTime}" />
@@ -246,19 +302,7 @@
 
             </StackPanel>
 
-            <controls:PathButton Grid.Column="3"
-                                 Margin="0,0,10,2"
-                                 HorizontalAlignment="Center"
-                                 VerticalAlignment="Center"
-                                 Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.DeleteItemCommand}"
-                                 CommandParameter="{Binding Model.FullName}"
-                                 IconDefaultColor="#20ffffff"
-                                 IconHeight="14"
-                                 IconHoverColor="{StaticResource LightRedColor}"
-                                 IconWidth="12"
-                                 IsReadOnly="True"
-                                 PathStyle="{StaticResource Trash}"
-                                 ToolTip="Delete (pernamently)" />
+
 
             <Grid.Style>
                 <Style TargetType="Grid">

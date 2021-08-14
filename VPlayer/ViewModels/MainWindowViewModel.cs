@@ -58,7 +58,6 @@ namespace VPlayer.ViewModels
   //TODO: FileBrowser - zobrazuje slideshow obrazkov z videa(FFMPEG)
   //TODO: FileBrowser - Mark videne (ako dlho som to pozeral - % pozrete, kludne z celej zloky), ak som to pozeral aspon 5min a datum
   //
-  //TODO: Popup menu style
   //TODO: Setting page - Poriadne settingy (ako default cesty do subor napr)
   //TODO: Ked je synced lyrics a nie si na tabe a ide to dalej a vratis sa tak to scrolne na tu dolnu poziciu animacne (nech to spravi instantne zacne od tade)
   //TODO: Pridavanie do playlistu vyber do akeho, alebo ci aktualne prehravajuceho, alebo chces vytvorit novy
@@ -77,8 +76,6 @@ namespace VPlayer.ViewModels
   //TODO: Playlist sidebar - iconky do context menu
   //TODO: Playlist sidebar - horne info - iconcy miesto textu?
   //TODO: Playlist sidebar width na % z celkovej sirky(aby bol co najväcsi a stale pekne to bolo a video bolo velke)
-  //
-  //
   //
   //
   //  *****Easy*****
