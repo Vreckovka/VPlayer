@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using VCore;
+using VCore.ItemsCollections;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.ViewModels.TreeView;
@@ -12,6 +13,7 @@ using VCore.Standard.ViewModels.WindowsFile;
 using VCore.ViewModels;
 using VCore.WPF.Interfaces;
 using VCore.WPF.Managers;
+using VCore.WPF.ViewModels.WindowsFiles;
 using VPlayer.Core;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Home.Views.FileBrowser;
@@ -92,9 +94,9 @@ namespace VPlayer.Home.ViewModels.FileBrowser
 
     #region Items
 
-    private ObservableCollection<TreeViewItemViewModel> items = new ObservableCollection<TreeViewItemViewModel>();
+    private RxObservableCollection<TreeViewItemViewModel> items = new RxObservableCollection<TreeViewItemViewModel>();
 
-    public ObservableCollection<TreeViewItemViewModel> Items
+    public RxObservableCollection<TreeViewItemViewModel> Items
     {
       get { return items; }
       set
@@ -154,6 +156,72 @@ namespace VPlayer.Home.ViewModels.FileBrowser
     private void OnRefresh()
     {
       OnBaseDirectoryPathChanged(BaseDirectoryPath);
+    }
+
+    #endregion
+
+
+    #region Commands
+
+    #region DeleteItemCommand
+
+    private ActionCommand<string> deleteItemCommand;
+
+    public ICommand DeleteItemCommand
+    {
+      get
+      {
+        if (deleteItemCommand == null)
+        {
+          deleteItemCommand = new ActionCommand<string>(DeleteItem);
+        }
+
+        return deleteItemCommand;
+      }
+    }
+
+    #endregion
+
+    #endregion
+
+    #region DeleteItem
+
+    private void DeleteItem(string path)
+    {
+      var result = windowManager.ShowDeletePrompt(path);
+
+      if (result == VCore.WPF.ViewModels.Prompt.PromptResult.Ok)
+      {
+        try
+        {
+          if (Directory.Exists(path))
+          {
+            DirectoryInfo di = new DirectoryInfo(path);
+
+            foreach (FileInfo file in di.EnumerateFiles())
+            {
+              file.Delete();
+            }
+
+            foreach (DirectoryInfo dir in di.EnumerateDirectories())
+            {
+              dir.Delete(true);
+            }
+
+            Directory.Delete(path);
+          }
+          else if (File.Exists(path))
+          {
+            File.Delete(path);
+          }
+        }
+        catch (Exception ex)
+        {
+          windowManager.ShowErrorPrompt(ex);
+        }
+
+        OnRefresh();
+      }
     }
 
     #endregion

@@ -115,6 +115,7 @@ namespace VPlayer.UPnP.ViewModels.Player
       var response = dLNADevice.StartPlay(0);
       IsPlaying = true;
       OnPlaying();
+
       positionDisposable.Disposable = Observable.Timer(TimeSpan.FromSeconds(0), TimeSpan.FromMilliseconds(500)).Subscribe(x =>
       {
         ObserveTimeChanged();
@@ -190,6 +191,7 @@ namespace VPlayer.UPnP.ViewModels.Player
     private bool wasEndReached = false;
     private TimeSpan? acutalMediaDuration;
     private int lastBufferingValue = 0;
+
     private async void ObserveTimeChanged()
     {
       var positionInfo = await Model.GetPositionInfoAsync();
@@ -232,10 +234,12 @@ namespace VPlayer.UPnP.ViewModels.Player
               string status = dLNADevice.GetTransportInfo();
               string currentStatus = status.ChopOffBefore("<CurrentTransportState>").Trim().ChopOffAfter("</CurrentTransportState>");
 
-              if (currentStatus == "STOPPED" && IsPlaying)
+              if (currentStatus == "STOPPED" && IsPlaying && !wasNewMediaRequest)
               {
                 wasEndReached = true;
+
                 OnEndReached();
+
                 positionDisposable.Disposable?.Dispose();
               }
             }
@@ -249,14 +253,17 @@ namespace VPlayer.UPnP.ViewModels.Player
     #region SetNewMedia
 
     private string lastUri;
-
+    private bool wasNewMediaRequest;
     public Task SetNewMedia(Uri source)
     {
       return Task.Run(async () =>
       {
+        wasNewMediaRequest = true;
+
         OnBuffering(new PlayerBufferingEventArgs() { Cache = 0 });
         
         positionDisposable.Disposable?.Dispose();
+
         dLNADevice?.StopPlay(0);
         acutalMediaDuration = null;
         wasEndReached = false;
@@ -273,12 +280,17 @@ namespace VPlayer.UPnP.ViewModels.Player
         if (lastUri != streamingMediaServer.Stream)
         {
           lastUri = streamingMediaServer.Stream;
-          Mp3FileReader reader = new Mp3FileReader(source.LocalPath);
 
-          var response = dLNADevice.UploadFileToPlay(streamingMediaServer.Stream);
-
+          var response = dLNADevice?.UploadFileToPlay(streamingMediaServer.Stream);
 
           Media = new UNpNMedia();
+        }
+
+        if (IsPlaying)
+        {
+          Play();
+
+          wasNewMediaRequest = false;
         }
       });
 

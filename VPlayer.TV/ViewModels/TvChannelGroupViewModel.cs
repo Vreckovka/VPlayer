@@ -11,6 +11,7 @@ using VCore.Standard.Helpers;
 using VCore.Standard.ViewModels.TreeView;
 using VCore.WPF.ItemsCollections;
 using VCore.WPF.Managers;
+using VCore.WPF.ViewModels.Prompt;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
@@ -272,9 +273,9 @@ namespace VPlayer.IPTV
 
     protected override void OnDelete()
     {
-      var question = windowManager.ShowYesNoPrompt($"Do you really want to delete {Name}?", "Delete tv group");
+      var question = windowManager.ShowDeletePrompt(Name, header: "Delete tv group");
 
-      if (question == System.Windows.MessageBoxResult.Yes)
+      if (question == PromptResult.Ok)
       {
         storageManager.DeleteTvChannelGroup(Model);
       }

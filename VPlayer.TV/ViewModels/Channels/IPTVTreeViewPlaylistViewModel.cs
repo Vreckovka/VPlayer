@@ -134,9 +134,9 @@ namespace VPlayer.IPTV.ViewModels
 
     protected virtual void OnDelete()
     {
-      var question = windowManager.ShowYesNoPrompt($"Do you really want to delete {Name}?", "Delete tv playlist");
+      var question = windowManager.ShowDeletePrompt(Name, header: "Delete tv playlist");
 
-      if (question == System.Windows.MessageBoxResult.Yes)
+      if (question == VCore.WPF.ViewModels.Prompt.PromptResult.Ok)
       {
         var result = storageManager.DeleteEntity(Model);
       }

@@ -8,6 +8,7 @@ using IPTVStalker;
 using VCore;
 using VCore.Standard.Factories.ViewModels;
 using VCore.WPF.Managers;
+using VCore.WPF.ViewModels.Prompt;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPLayer.Domain.Contracts.IPTV;
@@ -61,9 +62,9 @@ namespace VPlayer.IPTV
 
     public void OnDelete()
     {
-      var question = windowManager.ShowYesNoPrompt($"Do you really want to remove  {Name} from group?", "Remove from tv group");
+      var question = windowManager.ShowDeletePrompt(Name, "Do you really want to remove ", " from group?", "Remove from tv group");
 
-      if (question == System.Windows.MessageBoxResult.Yes)
+      if (question == PromptResult.Ok)
       {
         var result = storageManager.DeleteEntity(Model);
       }

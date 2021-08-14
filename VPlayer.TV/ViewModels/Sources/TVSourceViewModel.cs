@@ -15,6 +15,7 @@ using VCore.Standard.Helpers;
 using VCore.Standard.ViewModels.TreeView;
 using VCore.WPF.ItemsCollections;
 using VCore.WPF.Managers;
+using VCore.WPF.ViewModels.Prompt;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
@@ -127,7 +128,7 @@ namespace VPlayer.IPTV.ViewModels
         {
           isSelected = value;
 
-          if(isSelected && TvChannels.ViewModels.Count == 0)
+          if (isSelected && TvChannels.ViewModels.Count == 0)
           {
             LoadChannels();
           }
@@ -140,7 +141,7 @@ namespace VPlayer.IPTV.ViewModels
     }
 
     #endregion
-    
+
     #region ActualFilter
 
     private string actualFilter;
@@ -183,9 +184,9 @@ namespace VPlayer.IPTV.ViewModels
 
     public async void OnDelete()
     {
-      var question = windowManager.ShowYesNoPrompt($"Do you really want to delete {Name}?", "Delete source");
+      var question = windowManager.ShowDeletePrompt(Name, header: "Delete source");
 
-      if (question == System.Windows.MessageBoxResult.Yes)
+      if (question == PromptResult.Ok)
       {
         var result = storageManager.DeleteEntity(Model);
       }
@@ -193,7 +194,7 @@ namespace VPlayer.IPTV.ViewModels
 
     #endregion
 
-  
+
 
     #endregion
 
@@ -263,17 +264,17 @@ namespace VPlayer.IPTV.ViewModels
           result = lowerVariant.Contains(phrase);
         }
 
-        result = result || original.ChunkSimilarity(phrase) > 0.70 || original.SimilarityByTags(phrase); 
+        result = result || original.ChunkSimilarity(phrase) > 0.70 || original.SimilarityByTags(phrase);
       }
 
-     
+
 
       return result;
     }
 
     #endregion
 
-   
+
 
     public abstract Task PrepareEntityForDb();
 

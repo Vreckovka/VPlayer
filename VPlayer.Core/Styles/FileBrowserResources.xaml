@@ -5,7 +5,8 @@
                     xmlns:events="clr-namespace:VPlayer.Core.Events;assembly=VPlayer.Core"
                     xmlns:events1="clr-namespace:VPlayer.Core.Events;assembly=VPLayer.Domain"
                     xmlns:templateSelectors="clr-namespace:VPlayer.Library.TemplateSelectors"
-                    xmlns:windowsFile="clr-namespace:VCore.Standard.ViewModels.WindowsFile;assembly=VCore.Standard">
+                    xmlns:windowsFile="clr-namespace:VCore.Standard.ViewModels.WindowsFile;assembly=VCore.Standard"
+                    xmlns:windowsFiles="clr-namespace:VCore.WPF.ViewModels.WindowsFiles;assembly=VCore.WPF">
 
     <SolidColorBrush x:Key="VideoColor">#648afa</SolidColorBrush>
     <SolidColorBrush x:Key="SoundColor">#eb677b</SolidColorBrush>
@@ -15,25 +16,26 @@
         <Style.Triggers>
             <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.Video}">
                 <Setter Property="Foreground" Value="#aaa" />
+                <Setter Property="FontSize" Value="17" />
 
             </DataTrigger>
             <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.Sound}">
                 <Setter Property="Foreground" Value="#aaa" />
-                <Setter Property="FontWeight" Value="DemiBold" />
+                <Setter Property="FontSize" Value="17" />
             </DataTrigger>
         </Style.Triggers>
     </Style>
 
 
     <Style x:Key="FolderNameStyle" TargetType="Run">
-        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontSize" Value="17" />
         <Setter Property="Foreground" Value="#ccc" />
         <Setter Property="FontWeight" Value="Bold" />
         <Style.Triggers>
-            <DataTrigger Binding="{Binding FolderType}" Value="{x:Static windowsFile:FolderType.Other}">
+            <DataTrigger Binding="{Binding FolderType}" Value="{x:Static windowsFiles:FolderType.Other}">
                 <Setter Property="Foreground" Value="#858585" />
                 <Setter Property="FontWeight" Value="Normal" />
-                <Setter Property="FontSize" Value="12" />
+                <Setter Property="FontSize" Value="14" />
             </DataTrigger>
 
             <DataTrigger Binding="{Binding IsRoot}" Value="true">
@@ -58,6 +60,7 @@
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition />
+                <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
 
             <controls:ButtonWithIcon Width="30"
@@ -96,16 +99,16 @@
                         <Setter Property="Fill" Value="#858585" />
                         <Setter Property="Opacity" Value="0.3" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding FolderType}" Value="{x:Static windowsFile:FolderType.Video}">
+                            <DataTrigger Binding="{Binding FolderType}" Value="{x:Static windowsFiles:FolderType.Video}">
                                 <Setter Property="Fill" Value="{StaticResource VideoColor}" />
                                 <Setter Property="Opacity" Value="0.5" />
 
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding FolderType}" Value="{x:Static windowsFile:FolderType.Sound}">
+                            <DataTrigger Binding="{Binding FolderType}" Value="{x:Static windowsFiles:FolderType.Sound}">
                                 <Setter Property="Fill" Value="{StaticResource SoundColor}" />
                                 <Setter Property="Opacity" Value="0.5" />
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding FolderType}" Value="{x:Static windowsFile:FolderType.Mixed}">
+                            <DataTrigger Binding="{Binding FolderType}" Value="{x:Static windowsFiles:FolderType.Mixed}">
                                 <Setter Property="Fill" Value="Yellow" />
                                 <Setter Property="Opacity" Value="0.5" />
                             </DataTrigger>
@@ -116,14 +119,29 @@
             </Path>
 
             <ContentControl Grid.Column="2"
-                            Margin="0,0,0,0"
                             VerticalAlignment="Center"
-                            Content="{Binding HighlitedText, Converter={StaticResource FolderHighlightTextConverter}, Mode=OneTime}" />
+                            Content="{Binding HighlitedText, Converter={StaticResource FolderHighlightTextConverter}, Mode=OneTime}"
+                            ToolTip="{Binding FolderType, Mode=OneTime}" />
 
+            <controls:PathButton Grid.Column="3"
+                                 Margin="0,0,10,2"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center"
+                                 Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.DeleteItemCommand}"
+                                 CommandParameter="{Binding Model.FullName}"
+                                 IconDefaultColor="#20ffffff"
+                                 IconHeight="14"
+                                 IconHoverColor="{StaticResource LightRedColor}"
+                                 IconWidth="12"
+                                 IsReadOnly="True"
+                                 PathStyle="{StaticResource Trash}"
+                                 ToolTip="Delete (pernamently)" />
 
             <Grid.Style>
                 <Style TargetType="Grid">
                     <Setter Property="Height" Value="18" />
+                    <Setter Property="Margin" Value="2.5" />
+
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding IsRoot}" Value="true">
                             <Setter Property="Height" Value="20" />
@@ -141,6 +159,7 @@
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition />
+                <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
 
             <controls:ButtonWithIcon Width="30"
@@ -207,7 +226,7 @@
 
                 <TextBlock Margin="10,0,0,0"
                            VerticalAlignment="Center"
-                           FontSize="12"
+                           FontSize="13"
                            Text="{Binding Model.Length, Converter={converters:FileSizeConverter}, ConverterParameter=N2, Mode=OneWay}">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
@@ -227,8 +246,24 @@
 
             </StackPanel>
 
+            <controls:PathButton Grid.Column="3"
+                                 Margin="0,0,10,2"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center"
+                                 Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.DeleteItemCommand}"
+                                 CommandParameter="{Binding Model.FullName}"
+                                 IconDefaultColor="#20ffffff"
+                                 IconHeight="14"
+                                 IconHoverColor="{StaticResource LightRedColor}"
+                                 IconWidth="12"
+                                 IsReadOnly="True"
+                                 PathStyle="{StaticResource Trash}"
+                                 ToolTip="Delete (pernamently)" />
+
             <Grid.Style>
                 <Style TargetType="Grid">
+                    <Setter Property="Margin" Value="2.5" />
+
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding CanPlay}" Value="false">
                             <Setter Property="Opacity" Value="0.75" />

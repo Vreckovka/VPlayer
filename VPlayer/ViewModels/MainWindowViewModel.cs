@@ -123,7 +123,7 @@ namespace VPlayer.ViewModels
   //TODO: VLC volume ako keby je 0
   //TODO: Po roztiahnuti okna spadlo
   //TODO: chromedriver sa nekopiruje pri publish
-  //TODO: ked task zlyha tak Error popup hned mizne
+  //TODO: csfd download ked task zlyha tak Error popup hned mizne
   //
   //  *****IMPORTANT!*****
   //        TODO: Po pridani novej serii nefunguje csfd download

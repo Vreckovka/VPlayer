@@ -80,9 +80,9 @@ namespace VPlayer.Home.ViewModels
 
     protected virtual async void OnDelete()
     {
-      var result = windowManager.ShowYesNoPrompt($"Do you want to delete {ViewModel.Model.Name}", "Delete");
+      var result = windowManager.ShowDeletePrompt(ViewModel.Model.Name);
 
-      if (result == System.Windows.MessageBoxResult.Yes)
+      if (result == VCore.WPF.ViewModels.Prompt.PromptResult.Ok)
       {
         var resultDelete = await Task.Run(() =>
         {

@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using VCore.Standard.ViewModels.WindowsFile;
+using VCore.WPF.ViewModels.WindowsFiles;
 
 namespace VPlayer.Library.TemplateSelectors
 {

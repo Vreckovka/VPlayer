@@ -6,12 +6,12 @@
              xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:design1="clr-namespace:VCore.Design;assembly=VCore.WPF"
+             xmlns:desing="clr-namespace:VPlayer.Home.Desing"
              xmlns:interfaces="clr-namespace:VCore.WPF.Interfaces;assembly=VCore.WPF"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:regions="http://prismlibrary.com/"
              xmlns:regions1="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPlayer.Core"
              xmlns:regions11="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPLayer.Domain"
-             xmlns:desing="clr-namespace:VPlayer.Home.Desing"
              d:DesignHeight="650"
              d:DesignWidth="800"
              mc:Ignorable="d">

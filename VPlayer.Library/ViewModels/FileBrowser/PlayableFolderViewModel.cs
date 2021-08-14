@@ -7,6 +7,8 @@ using Prism.Events;
 using VCore;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.ViewModels.WindowsFile;
+using VCore.WPF.Managers;
+using VCore.WPF.ViewModels.WindowsFiles;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
@@ -23,7 +25,8 @@ namespace VPlayer.Home.ViewModels.FileBrowser
       DirectoryInfo directoryInfo,
       IEventAggregator eventAggregator,
       IViewModelsFactory viewModelsFactory,
-      IStorageManager storageManager) : base(directoryInfo, viewModelsFactory)
+      IWindowManager windowManager,
+      IStorageManager storageManager) : base(directoryInfo, viewModelsFactory, windowManager)
     {
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
