@@ -54,7 +54,6 @@ namespace VPlayer.ViewModels
   //TODO: File Browser - File watcher nad aktualnou zlozkou
   //TODO: File Browser - Right click open folder
   //TODO: File Browser - Nastavit zlozku ako hlavnu
-  //TODO: File Browser - Nastavit zlozku ako root
   //TODO: FileBrowser - zobrazuje slideshow obrazkov z videa(FFMPEG)
   //TODO: FileBrowser - Mark videne (ako dlho som to pozeral - % pozrete, kludne z celej zloky), ak som to pozeral aspon 5min a datum
   //
