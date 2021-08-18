@@ -548,7 +548,7 @@
     </ControlTemplate>
 
     <Style x:Key="ListViewItemStyle" TargetType="ListViewItem">
-        <Setter Property="Template" Value="{StaticResource ListViewItemTemplate}" />
+        <Setter Property="Template" Value="{DynamicResource ListViewItemTemplate}" />
         <Setter Property="Background" Value="{StaticResource 10_WhiteTransparentBrush}" />
         <Setter Property="IsSelected" Value="{Binding IsSelected}" />
     </Style>

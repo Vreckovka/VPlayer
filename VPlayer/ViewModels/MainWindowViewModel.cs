@@ -70,7 +70,8 @@ namespace VPlayer.ViewModels
   //TODO: Highlight videa hover nad itemom v playliste
   //TODO  Playlist sidebar aj vo fullscreene(why the fuck not) - schovany a rovnake mechanismus na zobrazenie
   //TODO: Tv show card (kludne aj artist) - pustit od posledneho playlistu (zacne to tam kde si skoncil)
-  //
+  //TODO: Last time played, dat ktory den (25.7.2019 (Pondelok))
+  //TODO: Windows Player - Moznost reloadnut subor (vlc co sa hra), iconka niekde a spusti sa to tam kde to skoncilo
   // *****Playlist sidebar*****
   //TODO: Playlist sidebar - iconky do context menu
   //TODO: Playlist sidebar - horne info - iconcy miesto textu?
@@ -96,6 +97,7 @@ namespace VPlayer.ViewModels
   //        TODO: Prehravanie hudby z File browsera
   //
   //  *****TOPKY*****
+  //        TODO: File Browser - Nahrat tv show rovno z tade
   //        TODO: Tv show prehrat od posledneho ulozene playlistu (to iste aj pre hudbu kludne), ked pribudne nova seria pusti to kde si skoncil, ale nacita ju
   //        TODO: Prehravanie,pridavanie do playlistu albumov, tv show z detailu (tym padom mozno zalozka Albums nebude treba, aj tak tam nechodis, pojdes iba do artist)
   //        TODO: Vymazavat itemy z File browsera (ak je odkaz niekde do db na tu zlozku tak vymazat rovno aj tv show, ale spytat sa ci to chces a zapametat si ak ano)
@@ -111,7 +113,7 @@ namespace VPlayer.ViewModels
   //
   //*****BUGS*****
   //TODO: Nedava sa prec IsPlaying z itemu ked uz nie je v playliste (asi pri rerabke sa ta vetva vymazala)
-  //TODO: Niekedy ked prepnes automaticky output sound device tak equalizer sa zastavi a da sa reloadnut ze pausnes a znovu spustis hudubu 
+  //TODO: Niekedy ked prepnes automaticky output sound device tak equalizer sa zastavi a da sa reloadnut ze pausnes a znovu spustis hudubu - mal som pusteny tv show a potom som z playlistu pustil hudbu
   //TODO: Ked je buffering v prehravaci a das vypnut appku tak spadne a nevypne sa poriadne (zostane aj niekedy bezat potom na pozadi, nejaky thread niekde asi)
   //TODO: Nespojilo playlisty s rovnakym hash po spusteni (neviem ci TV show alebo hudba) (mozno tv show ze pustis z detailu a das save a potom znovu z detailu)
   //TODO: Nespaja niektorych aristov pri load

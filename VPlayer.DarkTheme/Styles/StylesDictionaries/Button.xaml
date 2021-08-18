@@ -302,7 +302,7 @@
 
                             <ContentPresenter x:Name="MyContentPresenter"
                                               Grid.Column="1"
-                                              Margin="0,0,0,0"
+                                              Margin="10,0,0,0"
                                               HorizontalAlignment="Center"
                                               VerticalAlignment="Center"
                                               Content="{TemplateBinding Content}" />
@@ -328,9 +328,9 @@
                             <Setter Property="Cursor" Value="Hand" />
                         </Trigger>
 
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="PathIcon" Property="Fill" Value="GhostWhite" />
-                        </Trigger>
+                        <!--<Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="PathIcon" Property="Fill" Value="{StaticResource}" />
+                        </Trigger>-->
 
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="PathIcon" Property="Fill" Value="#303030" />

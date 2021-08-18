@@ -254,7 +254,7 @@ namespace VPlayer.Core.ViewModels
 
     #region IsPlayFnished
 
-    public bool IsPlayFnished { get; private set; }
+    public bool IsPlayFnished { get; protected set; }
 
     #endregion
 

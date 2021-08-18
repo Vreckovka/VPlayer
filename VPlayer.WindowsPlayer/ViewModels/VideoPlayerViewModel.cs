@@ -41,6 +41,7 @@ using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.Providers;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.TvShows;
+using VPlayer.IPTV.ViewModels;
 using VPlayer.Player.Views.WindowsPlayer;
 using VPlayer.WindowsPlayer.Players;
 using VPlayer.WindowsPlayer.ViewModels.VideoProperties;
@@ -312,6 +313,39 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
 
       }
+    }
+
+    #endregion
+
+    #region ReloadFile
+
+    private ActionCommand reloadFile;
+
+    public ICommand ReloadFile
+    {
+      get
+      {
+        if (reloadFile == null)
+        {
+          reloadFile = new ActionCommand(OnReloadFile);
+        }
+
+        return reloadFile;
+      }
+    }
+
+    private float? reloadPosition;
+    public async void OnReloadFile()
+    {
+      reloadPosition = ActualItem.ActualPosition;
+
+      ((VLCPlayer)base.MediaPlayer).Reload();
+
+      await SetMedia(ActualItem.Model);
+
+      IsPlayFnished = false;
+
+      await Play();
     }
 
     #endregion
@@ -626,6 +660,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
           if (MediaPlayer.Media != null)
             MediaPlayer.Media.ParsedChanged -= MediaPlayer_ParsedChanged;
+
+          if(ActualItem != null && reloadPosition != null)
+          {
+            MediaPlayer.Position = reloadPosition.Value;
+
+            reloadPosition = null;
+          }
         }
         catch (Exception ex)
         {

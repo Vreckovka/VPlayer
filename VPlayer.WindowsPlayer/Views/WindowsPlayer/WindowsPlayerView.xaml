@@ -200,7 +200,20 @@
 
                         <StackPanel Grid.Row="1"
                                     Margin="0,10,0,0"
-                                    HorizontalAlignment="Right">
+                                    HorizontalAlignment="Right"
+                                    Orientation="Horizontal">
+
+                            <controls1:PathButton Margin="0,0"
+                                                  Padding="0"
+                                                  Command="{Binding ReloadFile}"
+                                                  IconDefaultColor="#454545"
+                                                  IconHeight="20"
+                                                  IconHoverColor="{StaticResource BlueColor}"
+                                                  IconWidth="20"
+                                                  IsReadOnly="True"
+                                                  PathStyle="{StaticResource arrows-rotate}"
+                                                  ToolTip="Reload file" />
+
                             <controls1:PathButton Margin="0,0"
                                                   Padding="0"
                                                   Command="{Binding ClearPlaylistCommand}"
@@ -211,6 +224,7 @@
                                                   IsReadOnly="True"
                                                   PathStyle="{StaticResource TrashList}"
                                                   ToolTip="Clear actual playlist" />
+
                         </StackPanel>
 
                         <controls1:PathButton Grid.Column="1"
