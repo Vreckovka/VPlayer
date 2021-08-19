@@ -9,7 +9,9 @@ using LibVLCSharp.Shared;
 using Logger;
 using Ninject;
 using Prism.Events;
+using SoundManagement;
 using VCore;
+using VCore.Helpers;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Modularity.Interfaces;
 using VPlayer.AudioStorage.DomainClasses;
@@ -32,8 +34,10 @@ namespace VPlayer.Core.ViewModels
     private long lastTimeChangedMs;
 
 
-
-    protected FilePlayableRegionViewModel(IRegionProvider regionProvider, IKernel kernel, ILogger logger,
+    protected FilePlayableRegionViewModel(
+      IRegionProvider regionProvider,
+      IKernel kernel,
+      ILogger logger,
       IStorageManager storageManager,
       IEventAggregator eventAggregator,
       VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, vLCPlayer)
@@ -431,6 +435,8 @@ namespace VPlayer.Core.ViewModels
 
       MediaPlayer.TimeChanged -= OnVlcTimeChanged;
       PlayList.CollectionChanged -= PlayList_CollectionChanged;
+
+      
     }
 
     #endregion

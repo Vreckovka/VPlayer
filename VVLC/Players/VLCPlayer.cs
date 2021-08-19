@@ -27,10 +27,10 @@ namespace VPlayer.WindowsPlayer.Players
 
     public int Volume
     {
-      get { return MediaPlayer.Volume; }
+      get { return MediaPlayer?.Volume ??  100; }
       set
       {
-        if (value != MediaPlayer.Volume)
+        if (MediaPlayer != null && value != MediaPlayer.Volume)
         {
           MediaPlayer.Volume = value;
           RaisePropertyChanged();

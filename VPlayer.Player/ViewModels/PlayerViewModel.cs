@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Listener;
 using Ninject;
 using Prism.Events;
+using SoundManagement;
 using VCore;
 using VCore.Helpers;
 using VCore.Modularity.RegionProviders;
@@ -29,6 +32,8 @@ namespace VPlayer.Player.ViewModels
     private readonly IStatusManager statusManager;
     private readonly IEventAggregator eventAggregator;
     private Window mainWindow;
+    private IDisposable audioDeviceManagerDisposable;
+
 
     public PlayerViewModel(
       IRegionProvider regionProvider,
@@ -136,8 +141,8 @@ namespace VPlayer.Player.ViewModels
         if (value != actualVolume)
         {
           actualVolume = value;
-          RaisePropertyChanged();
 
+          RaisePropertyChanged();
 
           ActualViewModel?.SetVolume(value);
         }
@@ -258,15 +263,22 @@ namespace VPlayer.Player.ViewModels
       }).DisposeWith(this);
 
 
-
       eventAggregator.GetEvent<PlayPauseEvent>().Subscribe(PlayPause).DisposeWith(this);
+
+      AudioDeviceManager.Instance.ObservePropertyChange(x => x.SelectedSoundDevice).Subscribe(async x =>
+      {
+        await Task.Delay(500);
+        
+        ActualViewModel?.SetVolume(ActualVolume);
+
+      }).DisposeWith(this);
     }
 
     #endregion
 
     #region SubscribeToPlayers
 
-    private SerialDisposable actualItemSerialDisposable = new SerialDisposable();
+
     private void SubscribeToPlayers()
     {
       var allPlayers = kernel.GetAll<IPlayableRegionViewModel>();
@@ -289,6 +301,7 @@ namespace VPlayer.Player.ViewModels
           }
 
         }).DisposeWith(this);
+
 
         player.ObservePropertyChange(x => x.IsPlaying).Subscribe((x) =>
           {
@@ -323,6 +336,8 @@ namespace VPlayer.Player.ViewModels
 
     private void ChangeActualViewModel(IPlayableRegionViewModel newPlayer)
     {
+
+
       if (ActualViewModel != null)
       {
         ActualViewModel.IsSelectedToPlay = false;
@@ -333,9 +348,6 @@ namespace VPlayer.Player.ViewModels
       ActualViewModel.IsSelectedToPlay = true;
 
       IsPlaying = ActualViewModel.IsPlaying;
-
-      actualItemSerialDisposable.Disposable?.Dispose();
-
 
       CanPlay = ActualViewModel.CanPlay;
     }
@@ -429,6 +441,19 @@ namespace VPlayer.Player.ViewModels
 
       filePlayable = null;
       return false;
+    }
+
+    #endregion
+
+    #region Dispose
+
+    public override void Dispose()
+    {
+      base.Dispose();
+
+      audioDeviceManagerDisposable?.Dispose();
+
+      keyListener.OnKeyPressed -= KeyListener_OnKeyPressed;
     }
 
     #endregion

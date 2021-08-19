@@ -75,6 +75,7 @@ namespace VPlayer.ViewModels
   //TODO: Tv show card (kludne aj artist) - pustit od posledneho playlistu (zacne to tam kde si skoncil)
   //TODO: Last time played, dat ktory den (25.7.2019 (Pondelok))
   //TODO: Windows Player - Moznost reloadnut subor (vlc co sa hra), iconka niekde a spusti sa to tam kde to skoncilo
+  //
   // *****Playlist sidebar*****
   //TODO: Playlist sidebar - iconky do context menu
   //TODO: Playlist sidebar - horne info - iconcy miesto textu?
