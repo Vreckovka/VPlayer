@@ -4,10 +4,12 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using LibVLCSharp.Shared;
 using Logger;
 using Ninject;
 using Prism.Events;
+using VCore;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Modularity.Interfaces;
 using VPlayer.AudioStorage.DomainClasses;
@@ -70,6 +72,43 @@ namespace VPlayer.Core.ViewModels
           RaisePropertyChanged();
         }
       }
+    }
+
+    #endregion
+
+    #endregion
+
+    #region Commands
+
+    #region ReloadFile
+
+    private ActionCommand reloadFile;
+
+    public ICommand ReloadFile
+    {
+      get
+      {
+        if (reloadFile == null)
+        {
+          reloadFile = new ActionCommand(OnReloadFile);
+        }
+
+        return reloadFile;
+      }
+    }
+
+    private float? reloadPosition;
+    public async void OnReloadFile()
+    {
+      reloadPosition = ActualItem.ActualPosition;
+
+      ((VLCPlayer)base.MediaPlayer).Reload();
+
+      await SetMedia(ActualItem.Model);
+
+      IsPlayFnished = false;
+
+      await Play();
     }
 
     #endregion
@@ -306,6 +345,13 @@ namespace VPlayer.Core.ViewModels
           MediaPlayer.Media.DurationChanged -= Media_DurationChanged;
 
         await storageManager.UpdateEntityAsync(ActualItem.Model);
+
+        if (ActualItem != null && reloadPosition != null)
+        {
+          MediaPlayer.Position = reloadPosition.Value;
+
+          reloadPosition = null;
+        }
       });
     }
 

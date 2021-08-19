@@ -317,38 +317,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-    #region ReloadFile
-
-    private ActionCommand reloadFile;
-
-    public ICommand ReloadFile
-    {
-      get
-      {
-        if (reloadFile == null)
-        {
-          reloadFile = new ActionCommand(OnReloadFile);
-        }
-
-        return reloadFile;
-      }
-    }
-
-    private float? reloadPosition;
-    public async void OnReloadFile()
-    {
-      reloadPosition = ActualItem.ActualPosition;
-
-      ((VLCPlayer)base.MediaPlayer).Reload();
-
-      await SetMedia(ActualItem.Model);
-
-      IsPlayFnished = false;
-
-      await Play();
-    }
-
-    #endregion
+   
 
     #endregion
 
@@ -661,12 +630,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           if (MediaPlayer.Media != null)
             MediaPlayer.Media.ParsedChanged -= MediaPlayer_ParsedChanged;
 
-          if(ActualItem != null && reloadPosition != null)
-          {
-            MediaPlayer.Position = reloadPosition.Value;
-
-            reloadPosition = null;
-          }
+        
         }
         catch (Exception ex)
         {

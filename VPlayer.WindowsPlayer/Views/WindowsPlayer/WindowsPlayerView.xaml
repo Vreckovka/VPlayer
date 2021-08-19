@@ -129,33 +129,41 @@
                         </Grid.ColumnDefinitions>
 
 
-                        <Border Margin="14,0,0,0"
-                                Padding="10,0"
-                                Background="#05ffffff"
-                                BorderThickness="1">
+                        <Border Padding="10,0">
                             <Border.Style>
                                 <Style TargetType="Border">
+                                    <Setter Property="Background" Value="#10ffffff" />
+                                    <Setter Property="CornerRadius" Value="12" />
+                                    <Setter Property="BorderThickness" Value="1" />
+                                    <Setter Property="Margin" Value="12,0,0,0" />
+
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ActualSavedPlaylist.IsUserCreated}" Value="true">
-                                            <Setter Property="BorderBrush" Value="#10ffffff" />
+                                        <DataTrigger Binding="{Binding ElementName=NameTextBox, Path=IsFocused}" Value="true">
+                                            <Setter Property="BorderBrush" Value="#20ffffff" />
+                                            <Setter Property="BorderThickness" Value="1" />
+                                            <Setter Property="Background" Value="#10ffffff" />
+                                            <Setter Property="Margin" Value="14,0,0,0" />
+                                            <Setter Property="CornerRadius" Value="0" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </Border.Style>
-                            <TextBox MinWidth="0"
+                            <TextBox x:Name="NameTextBox"
+                                     MinWidth="0"
+                                     Margin="2,0,0,0"
                                      Padding="0"
-                                     HorizontalAlignment="Stretch"
+                                     HorizontalAlignment="Left"
                                      VerticalAlignment="Center"
-                                     BorderThickness="0,0,0,1"
                                      Cursor="IBeam"
                                      DataContext="{Binding ActualSavedPlaylist}"
                                      Text="{Binding Name, Mode=TwoWay}">
                                 <TextBox.Style>
                                     <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
-                                        <Setter Property="BorderBrush" Value="Transparent" />
                                         <Setter Property="Foreground" Value="#bbffffff" />
                                         <Setter Property="FontWeight" Value="Bold" />
-                                        <Setter Property="FontSize" Value="20" />
+                                        <Setter Property="FontSize" Value="25" />
+
+                                        <Setter Property="BorderThickness" Value="0,0,0,1" />
 
                                         <Style.Triggers>
                                             <Trigger Property="IsFocused" Value="True">
@@ -170,12 +178,11 @@
                                                 <Setter Property="Template">
                                                     <Setter.Value>
                                                         <ControlTemplate TargetType="TextBox">
-                                                            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-                                                                <TextBlock Margin="2,0,0,0"
+                                                            <Border Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}">
+                                                                <TextBlock Margin="3,0,0,0"
                                                                            Text="{TemplateBinding Text}"
                                                                            TextTrimming="CharacterEllipsis" />
                                                             </Border>
-
                                                         </ControlTemplate>
                                                     </Setter.Value>
                                                 </Setter>
@@ -185,6 +192,7 @@
                                                 <Setter Property="FontWeight" Value="Light" />
                                                 <Setter Property="FontStyle" Value="Italic" />
                                                 <Setter Property="Foreground" Value="#757575" />
+                                                <Setter Property="FontSize" Value="20" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
