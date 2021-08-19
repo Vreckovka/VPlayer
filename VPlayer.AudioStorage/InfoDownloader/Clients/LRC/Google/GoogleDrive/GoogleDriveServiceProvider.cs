@@ -78,25 +78,33 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
               scopes = new[] { DriveService.Scope.Drive };
             }
 
-            using (var stream = new FileStream(keyPath, FileMode.Open, FileAccess.Read))
+            if (System.IO.File.Exists(keyPath))
             {
-              // The file token.json stores the user's access and refresh tokens, and is created
-              // automatically when the authorization flow completes for the first time.
-              string credPath = "token.json";
-              credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                GoogleClientSecrets.Load(stream).Secrets,
-                scopes,
-                "user",
-                CancellationToken.None,
-                new FileDataStore(credPath, true)).Result;
-            }
+              using (var stream = new FileStream(keyPath, FileMode.Open, FileAccess.Read))
+              {
+                // The file token.json stores the user's access and refresh tokens, and is created
+                // automatically when the authorization flow completes for the first time.
+                string credPath = "token.json";
+                credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
+                  GoogleClientSecrets.Load(stream).Secrets,
+                  scopes,
+                  "user",
+                  CancellationToken.None,
+                  new FileDataStore(credPath, true)).Result;
+              }
 
-            // Create Drive API service.
-            return new DriveService(new BaseClientService.Initializer()
+              // Create Drive API service.
+              return new DriveService(new BaseClientService.Initializer()
+              {
+                HttpClientInitializer = credential,
+                ApplicationName = ApplicationName,
+              });
+            }
+            else
             {
-              HttpClientInitializer = credential,
-              ApplicationName = ApplicationName,
-            });
+              logger.Log(MessageType.Warning, "Google API is not registered (JSON file not found)");
+              return null;
+            }
           }
           catch (Exception ex)
           {

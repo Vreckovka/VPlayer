@@ -59,33 +59,19 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #endregion Properties
 
-    #region Constructors
 
-    private string directory;
-    public AudioDatabaseContext() : base()
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-      directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VPlayer");
+      var directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VPlayer");
 
       if (!Directory.Exists(directory))
       {
         Directory.CreateDirectory(directory);
       }
 
-    }
-
-    #endregion
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-      base.OnModelCreating(modelBuilder);
-
-    }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-      base.OnConfiguring(optionsBuilder);
-
       optionsBuilder.UseSqlite($"Data Source={directory}\\VPlayerDatabase.db;");
+
+      base.OnConfiguring(optionsBuilder);
     }
   
 

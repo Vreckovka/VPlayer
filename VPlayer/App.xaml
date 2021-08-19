@@ -4,23 +4,23 @@
                         xmlns:local="clr-namespace:VPlayer"
                         xmlns:prism="http://prismlibrary.com/">
 
-    <Application.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/Generic.xaml" />
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/Generic.xaml" />
 
-                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/ListViewsStyle.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/ButtonsStyle.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/DataTemplates.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/TextBlocksStyle.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/OverlayStyles.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/ControlsTemplates/PlayableWrapPanelTemplate.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/ListViewsStyle.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/ButtonsStyle.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/DataTemplates.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/TextBlocksStyle.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/OverlayStyles.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/ControlsTemplates/PlayableWrapPanelTemplate.xaml" />
 
-                <ResourceDictionary Source="pack://application:,,,/VVLC;component/Themes/VideoViewTemplate.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Vlc/Themes/FullScreenPlayerTemplate.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VVLC;component/Themes/VideoViewTemplate.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Vlc/Themes/FullScreenPlayerTemplate.xaml" />
 
-            </ResourceDictionary.MergedDictionaries>
+      </ResourceDictionary.MergedDictionaries>
 
-        </ResourceDictionary>
-    </Application.Resources>
+    </ResourceDictionary>
+  </Application.Resources>
 </prism:PrismApplication>

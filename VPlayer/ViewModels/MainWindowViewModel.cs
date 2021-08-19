@@ -11,6 +11,8 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using HtmlAgilityPack;
+using Logger;
+using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using Prism.Regions;
 using SoundManagement;
@@ -22,6 +24,7 @@ using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
 using VCore.WPF.Behaviors;
 using VCore.WPF.ViewModels.Navigation;
+using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics;
 using VPlayer.AudioStorage.Parsers;
 using VPlayer.Core.Events;
@@ -139,6 +142,7 @@ namespace VPlayer.ViewModels
 
     private readonly IViewModelsFactory viewModelsFactory;
     private readonly IEventAggregator eventAggregator;
+    private readonly ILogger logger;
 
     #endregion
 
@@ -146,10 +150,12 @@ namespace VPlayer.ViewModels
 
     public MainWindowViewModel(
       IViewModelsFactory viewModelsFactory,
-      IEventAggregator eventAggregator)
+      IEventAggregator eventAggregator,
+      ILogger logger)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     #endregion
@@ -197,7 +203,7 @@ namespace VPlayer.ViewModels
     #endregion
 
     public ICommand SwitchBehaviorCommand { get; set; }
-   
+
     #endregion
 
     #region Commads
@@ -254,12 +260,9 @@ namespace VPlayer.ViewModels
 
     #region Initilize
 
-    public override void Initialize()
+    public override async void Initialize()
     {
-      if (WasInitilized)
-      {
-        return;
-      }
+      await TryMigrateDatabaseAsync();
 
       base.Initialize();
 
@@ -274,10 +277,19 @@ namespace VPlayer.ViewModels
       var player = viewModelsFactory.Create<PlayerViewModel>();
 
       player.IsActive = true;
-     
+
     }
 
     #endregion
+
+    private async Task TryMigrateDatabaseAsync()
+    {
+      logger.Log(MessageType.Inform, "Migrating database");
+
+      var context = new AudioDatabaseContext();
+
+      await context.Database.MigrateAsync();
+    }
 
     #region Dispose
 
