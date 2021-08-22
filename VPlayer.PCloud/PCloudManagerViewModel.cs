@@ -40,15 +40,6 @@ namespace VPlayer.PCloud
       if (firstActivation)
       {
         PCloudFileBrowserViewModel.OnBaseDirectoryPathChanged("0");
-
-        //var folders = await cloudService.GetFoldersAsync(0);
-
-        //if (folders == null)
-        //{
-        //  cloudService.SaveLoginInfo("pecho4@gmail.com", "roman564123a");
-
-        //  folders = await cloudService.GetFoldersAsync(0);
-        //}
       }
     }
 
