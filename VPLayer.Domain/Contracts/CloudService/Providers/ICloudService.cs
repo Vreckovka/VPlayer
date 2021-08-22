@@ -14,5 +14,6 @@ namespace VPLayer.Domain.Contracts.CloudService.Providers
     void SaveLoginInfo(string email, string password);
     Task<bool> ExistsFolderAsync(long id);
     Task<string> GetPublicLink(long id);
+    bool IsUserLoggedIn();
   }
 }

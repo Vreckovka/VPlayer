@@ -68,6 +68,11 @@ namespace VPlayer.PCloud
       return null;
     }
 
+    public bool IsUserLoggedIn()
+    {
+      return File.Exists(filePath);
+    }
+
     #endregion
 
     #region GetFilesAsync
