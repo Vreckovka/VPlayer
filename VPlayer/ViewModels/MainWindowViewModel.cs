@@ -101,7 +101,7 @@ namespace VPlayer.ViewModels
   //  *****HARD/LONG***** 
   //        TODO: Dotiahnut data o albumoch, serialoch (a vyznacit ktore mam a ktore mi chybaju)
   //        TODO: Poriadny Search, nieco take ako ctrlt + T pre Resharpery, kludne aj na button a filtre po kategoriach (aby sa dalo pouzivat aj bez klavesnice)
-  //        TODO: Prehravanie hudby z File browsera
+  //        
   //
   //  *****TOPKY*****
   //        TODO: File Browser - Nahrat tv show rovno z tade

@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Controls;
 using Ninject;
 using Ninject.Activation;
 using Ninject.Parameters;
@@ -119,6 +120,13 @@ namespace VPlayer
         isConsoleUp = !WinConsole.FreeConsole();
 
       base.OnExit(e);
+    }
+
+    protected override void OnStartup(StartupEventArgs e)
+    {
+      Control.IsTabStopProperty.OverrideMetadata(typeof(Control),new FrameworkPropertyMetadata(false));
+
+      base.OnStartup(e);
     }
 
     private Assembly Resolver(object sender, ResolveEventArgs args)
