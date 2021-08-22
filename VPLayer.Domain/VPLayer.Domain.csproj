@@ -12,5 +12,6 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\..\CustomLibraries\VCore.Standard\VCore.Standard.csproj" />
 	  <ProjectReference Include="..\..\CustomLibraries\VCore\VCore.WPF.csproj" />
+	  <ProjectReference Include="..\PCloudClient\PCloudClient.csproj" />
 	</ItemGroup>
 </Project>

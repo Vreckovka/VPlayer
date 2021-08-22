@@ -22,6 +22,7 @@ using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.Albums;
+using VPlayer.Core.ViewModels.TvShows;
 using VPlayer.Player.Views.WindowsPlayer;
 using VPlayer.UPnP.ViewModels;
 using VPlayer.UPnP.ViewModels.Player;
@@ -33,7 +34,7 @@ using VPlayer.WindowsPlayer.Views.WindowsPlayer;
 namespace VPlayer.WindowsPlayer.ViewModels
 {
 
-  public class MusicPlayerViewModel : FilePlayableRegionViewModel<WindowsPlayerView, SongInPlayListViewModel, SongsFilePlaylist, PlaylistSong, Song>
+  public class MusicPlayerViewModel : FilePlayableRegionViewModel<WindowsPlayerView, SoundItemInPlaylistViewModel, SoundItemFilePlaylist, PlaylistSoundItem, SoundItem>
   {
     #region Fields
 
@@ -198,12 +199,21 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public void OnAlbumDetail()
     {
-      vPlayerRegionProvider.ShowAlbumDetail(ActualItem.AlbumViewModel);
+      if(ActualItem is SongInPlayListViewModel songInPlay)
+      {
+        vPlayerRegionProvider.ShowAlbumDetail(songInPlay.AlbumViewModel);
+      }
+     
     }
 
     private bool CanExecuteAlbumDetail()
     {
-      return ActualItem?.AlbumViewModel != null;
+      if (ActualItem is SongInPlayListViewModel songInPlay)
+      {
+        return songInPlay?.AlbumViewModel != null;
+      }
+
+      return false;
     }
 
     #endregion 
@@ -331,9 +341,38 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       eventAggregator.GetEvent<ItemUpdatedEvent<AlbumViewModel>>().Subscribe(OnAlbumUpdated).DisposeWith(this);
 
+      eventAggregator.GetEvent<RemoveFromPlaylistEvent<SongInPlayListViewModel>>().Subscribe(RemoveFromPlaystSongs).DisposeWith(this);
+      eventAggregator.GetEvent<PlaySongsFromPlayListEvent<SongInPlayListViewModel>>().Subscribe(PlayItemFromPlayList).DisposeWith(this);
+      eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SongInPlayListViewModel>>().Subscribe(PlayTvShowItems).DisposeWith(this);
 
       PlayList.ItemRemoved.Subscribe(ItemsRemoved).DisposeWith(this);
       PlayList.ItemAdded.Subscribe(ItemsAdded).DisposeWith(this);
+    }
+
+    #endregion
+
+    #region PlayTvShowItems
+
+    private void PlayTvShowItems(PlayItemsEventData<SongInPlayListViewModel> tvShowEpisodeInPlaylistViewModel)
+    {
+      var data = new PlayItemsEventData<SoundItemInPlaylistViewModel>(tvShowEpisodeInPlaylistViewModel.Items, tvShowEpisodeInPlaylistViewModel.EventAction, tvShowEpisodeInPlaylistViewModel.Model);
+
+      PlayItemsFromEvent(data);
+    }
+
+    #endregion
+
+    #region RemoveFromPlaystSongs
+
+    private void RemoveFromPlaystSongs(RemoveFromPlaylistEventArgs<SongInPlayListViewModel> obj)
+    {
+      var data = new RemoveFromPlaylistEventArgs<SoundItemInPlaylistViewModel>()
+      {
+        DeleteType = obj.DeleteType,
+        ItemsToRemove = obj.ItemsToRemove.Select(x => (SoundItemInPlaylistViewModel)x).ToList()
+      };
+
+      RemoveItemsFromPlaylist(data);
     }
 
     #endregion
@@ -381,30 +420,33 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         try
         {
-          bool wasLyricsNull = ActualItem.LRCLyrics == null;
-
-          if (string.IsNullOrEmpty(ActualItem.LRCLyrics))
+          if (ActualItem is SongInPlayListViewModel songInPlay)
           {
-            cancellationToken.ThrowIfCancellationRequested();
+            bool wasLyricsNull = songInPlay.LRCLyrics == null;
 
-            await ActualItem.TryToRefreshUpdateLyrics();
+            if (string.IsNullOrEmpty(songInPlay.LRCLyrics))
+            {
+              cancellationToken.ThrowIfCancellationRequested();
+
+              await songInPlay.TryToRefreshUpdateLyrics();
+            }
+
+            if (songInPlay.LRCLyrics != null && wasLyricsNull)
+            {
+              cancellationToken.ThrowIfCancellationRequested();
+
+              await storageManager.UpdateEntityAsync(ActualItem.Model);
+            }
+
+            var validItemsToUpdate = PlayList.OfType<SongInPlayListViewModel>().ToList();
+
+            var itemsAfter = validItemsToUpdate.Skip(actualItemIndex).Where(x => x.LyricsObject == null);
+            var itemsBefore = validItemsToUpdate.Take(actualItemIndex).Where(x => x.LyricsObject == null);
+
+            await DownloadLyrics(itemsAfter, cancellationToken);
+
+            await DownloadLyrics(itemsBefore, cancellationToken);
           }
-
-          if (ActualItem.LRCLyrics != null && wasLyricsNull)
-          {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            await storageManager.UpdateEntityAsync(ActualItem.Model);
-          }
-
-          var validItemsToUpdate = PlayList.ToList();
-
-          var itemsAfter = validItemsToUpdate.Skip(actualItemIndex).Where(x => x.LyricsObject == null);
-          var itemsBefore = validItemsToUpdate.Take(actualItemIndex).Where(x => x.LyricsObject == null);
-
-          await DownloadLyrics(itemsAfter, cancellationToken);
-
-          await DownloadLyrics(itemsBefore, cancellationToken);
         }
         catch (OperationCanceledException)
         {
@@ -438,23 +480,38 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region OnSetActualItem
 
-    public override void OnSetActualItem(SongInPlayListViewModel itemViewModel, bool isPlaying)
+    public override void OnSetActualItem(SoundItemInPlaylistViewModel itemViewModel, bool isPlaying)
     {
-      itemViewModel.AlbumViewModel.IsPlaying = isPlaying;
-      itemViewModel.ArtistViewModel.IsPlaying = isPlaying;
+      if(itemViewModel  is SongInPlayListViewModel viewModel)
+      {
+        viewModel.AlbumViewModel.IsPlaying = isPlaying;
+        viewModel.ArtistViewModel.IsPlaying = isPlaying;
+      }
+     
     }
 
     #endregion
 
     #region GetNewPlaylistItemViewModel
 
-    protected override PlaylistSong GetNewPlaylistItemViewModel(SongInPlayListViewModel song, int index)
+    protected override PlaylistSoundItem GetNewPlaylistItemViewModel(SoundItemInPlaylistViewModel song, int index)
     {
-      return new PlaylistSong()
+      var playlistVideoItem = new PlaylistSoundItem();
+
+      if (song.Model.Id != 0)
       {
-        IdReferencedItem = song.Model.Id,
-        OrderInPlaylist = (index + 1)
-      };
+        playlistVideoItem.IdReferencedItem = song.Model.Id;
+      }
+      else
+      {
+        return null;
+      }
+
+
+      playlistVideoItem.OrderInPlaylist = (index + 1);
+
+
+      return playlistVideoItem;
     }
 
     #endregion
@@ -465,7 +522,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       var album = change.Item;
 
-      var songsInPlaylist = PlayList.Where(x => x.AlbumViewModel != null && x.AlbumViewModel.ModelId == album.Id);
+      var songsInPlaylist = PlayList.OfType<SongInPlayListViewModel>().Where(x => x.AlbumViewModel != null && x.AlbumViewModel.ModelId == album.Id);
 
       foreach (var song in songsInPlaylist)
       {
@@ -482,15 +539,15 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       var song = itemChanged.Item;
 
-      var playlistSong = PlayList.SingleOrDefault(x => x.Model.Id == song.Id);
+      var playlistSong = PlayList.OfType<SongInPlayListViewModel>().SingleOrDefault(x => x.Model.Id == song.Id);
 
       if (playlistSong != null)
       {
         playlistSong.Update(song);
 
-        if (ActualItem != null && ActualItem.Model.Id == song.Id)
+        if (ActualItem != null && ActualItem.Model.Id == song.Id && ActualItem is SongInPlayListViewModel inPlayListViewModel)
         {
-          ActualItem.Update(song);
+          inPlayListViewModel.Update(song);
         }
       }
     }
@@ -499,13 +556,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region OnRemoveItemsFromPlaylist
 
-    protected override void OnRemoveItemsFromPlaylist(DeleteType deleteType, RemoveFromPlaylistEventArgs<SongInPlayListViewModel> args)
+    protected override void OnRemoveItemsFromPlaylist(DeleteType deleteType, RemoveFromPlaylistEventArgs<SoundItemInPlaylistViewModel> args)
     {
-      var albumId = args.ItemsToRemove.FirstOrDefault(x => x.AlbumViewModel != null)?.AlbumViewModel.ModelId;
+      var albumId = args.ItemsToRemove.OfType<SongInPlayListViewModel>().FirstOrDefault(x => x.AlbumViewModel != null)?.AlbumViewModel.ModelId;
 
       if (albumId != null)
       {
-        var albumSongs = PlayList.Where(x => x.Model.Album.Id == albumId).ToList();
+        var albumSongs = PlayList.OfType<SongInPlayListViewModel>().Where(x => x.SongModel.Album.Id == albumId).ToList();
 
         foreach (var albumSong in albumSongs)
         {
@@ -520,24 +577,27 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region ItemsRemoved
 
-    protected override void ItemsRemoved(EventPattern<SongInPlayListViewModel> eventPattern)
+    protected override void ItemsRemoved(EventPattern<SoundItemInPlaylistViewModel> eventPattern)
     {
-      var anyAlbum = PlayList.Any(x => x.AlbumViewModel.ModelId == eventPattern.EventArgs.AlbumViewModel.ModelId);
-
-      if (!anyAlbum)
+      if(eventPattern.EventArgs is SongInPlayListViewModel songInPlayListViewModel)
       {
-        eventPattern.EventArgs.AlbumViewModel.IsInPlaylist = false;
+        var anyAlbum = PlayList.OfType<SongInPlayListViewModel>().Any(x => x.AlbumViewModel.ModelId == songInPlayListViewModel.AlbumViewModel.ModelId);
+
+        if (!anyAlbum)
+        {
+          songInPlayListViewModel.AlbumViewModel.IsInPlaylist = false;
+        }
+
+
+        var anyArtist = PlayList.OfType<SongInPlayListViewModel>().Any(x => x.ArtistViewModel.ModelId == songInPlayListViewModel.ArtistViewModel.ModelId);
+
+        if (!anyArtist)
+        {
+          songInPlayListViewModel.ArtistViewModel.IsInPlaylist = false;
+        }
+
+        shuffleList.Remove(eventPattern.EventArgs);
       }
-
-
-      var anyArtist = PlayList.Any(x => x.ArtistViewModel.ModelId == eventPattern.EventArgs.ArtistViewModel.ModelId);
-
-      if (!anyArtist)
-      {
-        eventPattern.EventArgs.ArtistViewModel.IsInPlaylist = false;
-      }
-
-      shuffleList.Remove(eventPattern.EventArgs);
 
     }
 
@@ -545,7 +605,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region ItemsAdded
 
-    private void ItemsAdded(EventPattern<SongInPlayListViewModel> eventPattern)
+    private void ItemsAdded(EventPattern<SoundItemInPlaylistViewModel> eventPattern)
     {
 
     }
@@ -571,13 +631,23 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region GetNewPlaylistModel
 
-    protected override SongsFilePlaylist GetNewPlaylistModel(List<PlaylistSong> playlistModels, bool isUserCreated)
+    protected override SoundItemFilePlaylist GetNewPlaylistModel(List<PlaylistSoundItem> playlistModels, bool isUserCreated)
     {
-      var artists = PlayList.GroupBy(x => x.ArtistViewModel.Name);
+      var artists = PlayList.OfType<SongInPlayListViewModel>().GroupBy(x => x.ArtistViewModel.Name).ToList();
 
-      var playlistName = string.Join(", ", artists.Select(x => x.Key).ToArray());
+      string playlistName = null;
 
-      var entityPlayList = new SongsFilePlaylist()
+      if (artists.Count > 0)
+      {
+        playlistName = string.Join(", ", artists.Select(x => x.Key).ToArray());
+      }
+      else
+      {
+        playlistName = "NEJAKY PLAYLIST";
+      }
+
+
+      var entityPlayList = new SoundItemFilePlaylist()
       {
         IsReapting = IsRepeate,
         IsShuffle = IsShuffle,
@@ -601,14 +671,18 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       if (!string.IsNullOrEmpty(predictate))
       {
-        var items = PlayList.Where(x =>
-          IsInFind(x.Name, predictate) ||
-          IsInFind(x.AlbumViewModel.Name, predictate) ||
-          IsInFind(x.ArtistViewModel.Name, predictate));
+        var items = PlayList.Where(x => IsInFind(x.Name, predictate)).ToList();
 
-        var generator = new ItemsGenerator<SongInPlayListViewModel>(items, 15);
+        var other = PlayList.OfType<SongInPlayListViewModel>().Where(x => IsInFind(x.AlbumViewModel.Name, predictate) ||
+                                                                          IsInFind(x.ArtistViewModel.Name, predictate));
 
-        VirtualizedPlayList = new VirtualList<SongInPlayListViewModel>(generator);
+        var notIn = other.Where(x => !items.Contains(x));
+
+        items.AddRange(notIn);
+
+        var generator = new ItemsGenerator<SoundItemInPlaylistViewModel>(items, 15);
+
+        VirtualizedPlayList = new VirtualList<SoundItemInPlaylistViewModel>(generator);
 
       }
       else
@@ -625,7 +699,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     private void OnAlbumUpdated(ItemUpdatedEventArgs<AlbumViewModel> itemUpdatedEventArgs)
     {
-      var songsInAlbum = PlayList.Where(x => x.AlbumViewModel.ModelId == itemUpdatedEventArgs.Model.ModelId);
+      var songsInAlbum = PlayList.OfType<SongInPlayListViewModel>().Where(x => x.AlbumViewModel.ModelId == itemUpdatedEventArgs.Model.ModelId);
 
       foreach (var songInAlbum in songsInAlbum)
       {
@@ -661,7 +735,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     public override void OnDeactived()
     {
       base.OnDeactived();
-      
+
       downloadingLyricsTask?.Cancel();
       downloadingLyricsTask?.Dispose();
       downloadingLyricsTask = null;

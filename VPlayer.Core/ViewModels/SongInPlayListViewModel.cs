@@ -21,10 +21,11 @@ using VPlayer.Core.Events;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Core.ViewModels.Artists;
+using VPlayer.Core.ViewModels.TvShows;
 
 namespace VPlayer.Core.ViewModels
 {
-  public class SongInPlayListViewModel : FileItemInPlayList<Song>
+  public class SongInPlayListViewModel : SoundItemInPlaylistViewModel
   {
     #region Fields
 
@@ -45,18 +46,38 @@ namespace VPlayer.Core.ViewModels
       AudioInfoDownloader audioInfoDownloader,
       Song model,
       GoogleDriveLrcProvider googleDriveLrcProvider,
-      IStorageManager storageManager) : base(model, eventAggregator, storageManager)
+      IStorageManager storageManager) : base(model.SoundItem, eventAggregator, storageManager)
     {
       this.albumsViewModel = albumsViewModel ?? throw new ArgumentNullException(nameof(albumsViewModel));
       this.artistsViewModel = artistsViewModel ?? throw new ArgumentNullException(nameof(artistsViewModel));
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
       this.googleDriveLrcProvider = googleDriveLrcProvider ?? throw new ArgumentNullException(nameof(googleDriveLrcProvider));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
+      SongModel = model ?? throw new ArgumentNullException(nameof(model));
     }
 
     #endregion Constructors
 
     #region Properties
+
+    #region SongModel
+
+    private Song songModel;
+
+    public Song SongModel
+    {
+      get { return songModel; }
+      set
+      {
+        if (value != songModel)
+        {
+          songModel = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     #region AlbumViewModel
 
@@ -100,7 +121,7 @@ namespace VPlayer.Core.ViewModels
 
     public string ImagePath => AlbumViewModel.Model?.AlbumFrontCoverFilePath;
 
-    public string LRCLyrics => Model.LRCLyrics;
+    public string LRCLyrics => SongModel.LRCLyrics;
 
 
     #region OnActualPositionChanged
@@ -131,13 +152,13 @@ namespace VPlayer.Core.ViewModels
     {
       get
       {
-        return Model.Chartlyrics_Lyric;
+        return SongModel.Chartlyrics_Lyric;
       }
       set
       {
-        if (value != Model.Chartlyrics_Lyric)
+        if (value != SongModel.Chartlyrics_Lyric)
         {
-          Model.Chartlyrics_Lyric = value;
+          SongModel.Chartlyrics_Lyric = value;
           RaisePropertyChanged(nameof(LyricsObject));
           RaisePropertyChanged();
         }
@@ -258,7 +279,7 @@ namespace VPlayer.Core.ViewModels
     {
       base.Initialize();
 
-      AlbumViewModel = (await albumsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == Model.Album.Id);
+      AlbumViewModel = (await albumsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == SongModel.Album.Id);
       ArtistViewModel = (await artistsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == AlbumViewModel.Model.Artist.Id);
 
       if (AlbumViewModel != null)
@@ -302,7 +323,7 @@ namespace VPlayer.Core.ViewModels
 
     public void Update(Song song)
     {
-      Model.Update(song);
+      SongModel.Update(song);
 
       RaisePropertyChanged(nameof(Name));
       RaisePropertyChanged(nameof(Lyrics));
@@ -363,7 +384,7 @@ namespace VPlayer.Core.ViewModels
       {
         var provider = new LocalLrcProvider("C:\\Lyrics");
 
-        var lrc = await audioInfoDownloader.TryGetLRCLyricsAsync(provider, Model, ArtistViewModel?.Name, AlbumViewModel?.Name);
+        var lrc = await audioInfoDownloader.TryGetLRCLyricsAsync(provider, SongModel, ArtistViewModel?.Name, AlbumViewModel?.Name);
 
         if (lrc != null)
           LRCFile = new LRCFileViewModel(lrc, provider.LRCProvider, provider);
@@ -377,7 +398,7 @@ namespace VPlayer.Core.ViewModels
 
     private async Task LoadLRCFromGoogleDrive()
     {
-      var lrc = (GoogleLRCFile)await audioInfoDownloader.TryGetLRCLyricsAsync(googleDriveLrcProvider, Model, ArtistViewModel?.Name, AlbumViewModel?.Name);
+      var lrc = (GoogleLRCFile)await audioInfoDownloader.TryGetLRCLyricsAsync(googleDriveLrcProvider, SongModel, ArtistViewModel?.Name, AlbumViewModel?.Name);
 
       if (lrc != null)
         LRCFile = new LRCFileViewModel(lrc, googleDriveLrcProvider.LRCProvider, googleDriveLrcProvider);
@@ -415,7 +436,7 @@ namespace VPlayer.Core.ViewModels
       {
         var lrc = parser.Parse(lrcString.Split('\n').ToList());
 
-        Model.LRCLyrics = lrcString;
+        SongModel.LRCLyrics = lrcString;
 
         LRCFile = new LRCFileViewModel(lrc, LRCProviders.MiniLyrics, client);
       }
@@ -445,7 +466,7 @@ namespace VPlayer.Core.ViewModels
 
       if (LRCFile == null && Lyrics == null && !string.IsNullOrEmpty(ArtistViewModel?.Name))
       {
-        await audioInfoDownloader.UpdateSongLyricsAsync(ArtistViewModel.Name, Name, Model);
+        await audioInfoDownloader.UpdateSongLyricsAsync(ArtistViewModel.Name, Name, SongModel);
       }
 
       Application.Current?.Dispatcher?.Invoke(() =>

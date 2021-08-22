@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Input;
@@ -13,8 +14,9 @@ using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.ViewModels.TvShows;
+using FileInfo = VCore.WPF.ViewModels.WindowsFiles.FileInfo;
 
-namespace VPlayer.Home.ViewModels.FileBrowser
+namespace VPlayer.Core.FileBrowser
 {
   public class PlayableFileViewModel : FileViewModel
   {
@@ -23,11 +25,11 @@ namespace VPlayer.Home.ViewModels.FileBrowser
     private readonly IViewModelsFactory viewModelsFactory;
 
     public PlayableFileViewModel(
-      FileInfo model, 
-      IEventAggregator eventAggregator, 
+      FileInfo model,
+      IEventAggregator eventAggregator,
       IStorageManager storageManager,
       IWindowManager windowManager,
-      IViewModelsFactory viewModelsFactory) : base(model, windowManager)
+      IViewModelsFactory viewModelsFactory) : base(model)
     {
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
@@ -97,7 +99,7 @@ namespace VPlayer.Home.ViewModels.FileBrowser
 
     private void PlayVideo()
     {
-      var existing = storageManager.GetRepository<VideoItem>().SingleOrDefault(x => x.Source == Model.FullName);
+      var existing = storageManager.GetRepository<VideoItem>().SingleOrDefault(x => x.Source == Model.Indentificator);
       var videoItems = new List<VideoItem>();
 
       if (existing == null)
@@ -105,7 +107,7 @@ namespace VPlayer.Home.ViewModels.FileBrowser
         var videoItem = new VideoItem()
         {
           Name = Model.Name,
-          Source = Model.FullName
+          Source = Model.Indentificator
         };
 
         storageManager.StoreEntity<VideoItem>(videoItem, out var stored);
@@ -124,6 +126,28 @@ namespace VPlayer.Home.ViewModels.FileBrowser
 
     #endregion
 
-   
+
+    public override void OnOpenContainingFolder()
+    {
+      if (!string.IsNullOrEmpty(Model.Indentificator))
+      {
+        var folder = Model.Indentificator;
+
+        if (!Directory.Exists(Model.Indentificator))
+        {
+          folder = System.IO.Path.GetDirectoryName(Model.Indentificator);
+        }
+
+        if (!string.IsNullOrEmpty(folder))
+        {
+          Process.Start(new System.Diagnostics.ProcessStartInfo()
+          {
+            FileName = folder,
+            UseShellExecute = true,
+            Verb = "open"
+          });
+        }
+      }
+    }
   }
 }

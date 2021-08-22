@@ -278,7 +278,6 @@ namespace VPlayer.Player.ViewModels
 
     #region SubscribeToPlayers
 
-
     private void SubscribeToPlayers()
     {
       var allPlayers = kernel.GetAll<IPlayableRegionViewModel>();

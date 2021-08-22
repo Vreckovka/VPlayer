@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.VisualBasic.FileIO;
@@ -10,24 +10,23 @@ using VCore.ItemsCollections;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.ViewModels.TreeView;
-using VCore.Standard.ViewModels.WindowsFile;
 using VCore.ViewModels;
 using VCore.WPF.Interfaces;
 using VCore.WPF.Managers;
 using VCore.WPF.ViewModels.WindowsFiles;
-using VPlayer.Core;
+using VPlayer.Core.FileBrowser;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Home.Views.FileBrowser;
 
-namespace VPlayer.Home.ViewModels.FileBrowser
+namespace VPlayer.Core.ViewModels
 {
-  public class FileBrowserViewModel : RegionViewModel<FileBrowserView>, IFilterable
+  public abstract class FileBrowserViewModel<TFolderViewModel> : RegionViewModel<FileBrowserView>, IFilterable where TFolderViewModel : FolderViewModel<PlayableFileViewModel>
   {
     #region Fields
 
-    private readonly IViewModelsFactory viewModelsFactory;
+    protected readonly IViewModelsFactory viewModelsFactory;
     private readonly IWindowManager windowManager;
-    private PlayableFolderViewModel root;
+    private TFolderViewModel root;
 
     #endregion
 
@@ -219,23 +218,21 @@ namespace VPlayer.Home.ViewModels.FileBrowser
 
     #region OnBaseDirectoryPathChanged
 
-    public void OnBaseDirectoryPathChanged(string newPath)
+    public async void OnBaseDirectoryPathChanged(string newPath)
     {
       try
       {
         BaseDirectoryPath = newPath;
 
-        if (!string.IsNullOrEmpty(newPath) && Directory.Exists(newPath))
+        if (!string.IsNullOrEmpty(newPath) && await DirectoryExists(newPath))
         {
+          ParentDirectory = GetParentDirectoryName(newPath);
 
-          ParentDirectory = new DirectoryInfo(newPath).Parent?.FullName;
-
-          root = viewModelsFactory.Create<PlayableFolderViewModel>(new DirectoryInfo(newPath));
+          root = GetNewFolderViewModel(newPath);
 
           root.GetFolderInfo();
           root.IsExpanded = true;
           root.CanExpand = false;
-          root.CanPlay = false;
           root.FolderType = FolderType.Other;
           root.IsRoot = true;
 
@@ -281,6 +278,10 @@ namespace VPlayer.Home.ViewModels.FileBrowser
     }
 
     #endregion
+
+    protected abstract TFolderViewModel GetNewFolderViewModel(string newPath);
+    protected abstract string GetParentDirectoryName(string newPath);
+    protected abstract Task<bool> DirectoryExists(string newPath);
 
 
     #endregion

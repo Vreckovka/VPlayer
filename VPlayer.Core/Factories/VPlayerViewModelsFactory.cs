@@ -6,6 +6,7 @@ using Ninject.Parameters;
 using VCore.Standard.Factories.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.Video;
+using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.TvShows;
 using VPLayer.Domain.Contracts.IPTV;
 using VPlayer.IPTV.ViewModels;
@@ -24,6 +25,14 @@ namespace VPlayer.Core.Factories
       var ptvShowEpisode = new ConstructorArgument("tvShowEpisode", tvShowEpisode);
 
       return kernel.Get<TvShowEpisodeInPlaylistViewModel>(pVideoItem, ptvShowEpisode);
+    }
+
+    public SongInPlayListViewModel CreateSongInPlayListViewModel(SoundItem soundItem, Song song)
+    {
+      var pVideoItem = new ConstructorArgument("soundItem", soundItem);
+      var ptvShowEpisode = new ConstructorArgument("model", song);
+
+      return kernel.Get<SongInPlayListViewModel>(pVideoItem, ptvShowEpisode);
     }
 
     public TvItemInPlaylistItemViewModel CreateTvItemInPlaylistItemViewModel(TvItem model, ITvPlayableItem tvPlayableItem)

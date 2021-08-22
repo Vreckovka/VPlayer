@@ -3,7 +3,7 @@ using VPlayer.AudioStorage.DomainClasses;
 
 namespace VPlayer.AudioStorage.Repositories
 {
-  public class PlaylistsRepository : GenericRepository<AudioDatabaseContext, SongsFilePlaylist>
+  public class PlaylistsRepository : GenericRepository<AudioDatabaseContext, SoundItemFilePlaylist>
   {
     public PlaylistsRepository(AudioDatabaseContext context) : base(context)
     {

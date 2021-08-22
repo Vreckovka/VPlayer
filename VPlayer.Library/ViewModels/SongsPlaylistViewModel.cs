@@ -11,11 +11,12 @@ using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.ViewModels;
+using VPlayer.Core.ViewModels.TvShows;
 using VPlayer.Library.ViewModels;
 
 namespace VPlayer.Home.ViewModels
 {
-  public class SongsPlaylistViewModel : FilePlaylistViewModel<SongInPlayListViewModel, SongsFilePlaylist, PlaylistSong>
+  public class SongsPlaylistViewModel : FilePlaylistViewModel<SoundItemInPlaylistViewModel, SoundItemFilePlaylist, PlaylistSoundItem>
 {
     #region Fields
 
@@ -29,7 +30,7 @@ namespace VPlayer.Home.ViewModels
     #region Constructors
 
     public SongsPlaylistViewModel(
-      SongsFilePlaylist model,
+      SoundItemFilePlaylist model,
       IEventAggregator eventAggregator,
       IViewModelsFactory viewModelsFactory,
       SongPlaylistsViewModel songPlaylistsViewModel,
@@ -51,41 +52,65 @@ namespace VPlayer.Home.ViewModels
 
     #region GetItemsToPlay
 
-    public override IEnumerable<SongInPlayListViewModel> GetItemsToPlay()
+    public override IEnumerable<SoundItemInPlaylistViewModel> GetItemsToPlay()
     {
-      var playlist = storageManager.GetRepository<SongsFilePlaylist>().Where(x => x.Id == ModelId)
-        .Include(x => x.PlaylistItems).ThenInclude(x => x.ReferencedItem).ThenInclude(x => x.Album)
-        .SingleOrDefault();
+      var playlist = storageManager.GetRepository<SoundItemFilePlaylist>()
+        .Include(x => x.PlaylistItems)
+        .ThenInclude(x => x.ReferencedItem)
+        .SingleOrDefault(x => x.Id == Model.Id);
+
 
       if (playlist != null)
       {
-        var validSongs = playlist.PlaylistItems.Where(x => x.ReferencedItem.Album != null).ToList();
+        var playlistItems = playlist.PlaylistItems.OrderBy(x => x.OrderInPlaylist).ToList();
 
-        if (validSongs.Count != playlist.PlaylistItems.Count)
+        var list = new List<SongInPlayListViewModel>();
+
+        var fristEpisode = storageManager.GetRepository<Song>().Where(x => x.SoundItem.Id == playlistItems[0].IdReferencedItem).Include(x => x.Album).ThenInclude(x => x.Artist).SingleOrDefault();
+
+        if (fristEpisode != null)
         {
-          logger.Log(MessageType.Error, $"SONGS WITH NULL ALBUM! {ModelId} {Name}");
-        }
+          var album = storageManager.GetRepository<Artist>()
+            .Where(x => x.Id == fristEpisode.Album.Artist.Id)
+            .Include(x => x.Albums)
+            .ThenInclude(x => x.Songs)
+            .ThenInclude(x => x.SoundItem).Single();
 
-        return validSongs.OrderBy(x => x.OrderInPlaylist).Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x.ReferencedItem));
+          var songs = album.Albums.SelectMany(x => x.Songs).ToList();
+
+          foreach (var item in playlistItems)
+          {
+            var song = songs.Single(x => x.SoundItem.Id == item.ReferencedItem.Id);
+
+            list.Add(viewModelsFactory.Create<SongInPlayListViewModel>(song
+              ));
+          }
+
+          return list;
+        }
+        else
+        {
+          return playlistItems.Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x.ReferencedItem));
+        }
       }
 
-      return new List<SongInPlayListViewModel>(); ;
+      return null;
     }
 
     #endregion
 
-    public override void PublishPlayEvent(IEnumerable<SongInPlayListViewModel> viewModels, EventAction eventAction )
+    public override void PublishPlayEvent(IEnumerable<SoundItemInPlaylistViewModel> viewModels, EventAction eventAction )
     {
-      var e = new PlayItemsEventData<SongInPlayListViewModel>(viewModels, eventAction, this);
+      var e = new PlayItemsEventData<SoundItemInPlaylistViewModel>(viewModels, eventAction, this);
 
-      eventAggregator.GetEvent<PlayItemsEvent<Song,SongInPlayListViewModel>>().Publish(e);
+      eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(e);
     }
 
-    public override void PublishAddToPlaylistEvent(IEnumerable<SongInPlayListViewModel> viewModels)
+    public override void PublishAddToPlaylistEvent(IEnumerable<SoundItemInPlaylistViewModel> viewModels)
     {
-      var e = new PlayItemsEventData<SongInPlayListViewModel>(viewModels, EventAction.Add, this);
+      var e = new PlayItemsEventData<SoundItemInPlaylistViewModel>(viewModels, EventAction.Add, this);
 
-      eventAggregator.GetEvent<PlayItemsEvent<Song, SongInPlayListViewModel>>().Publish(e);
+      eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(e);
     }
 
 
@@ -99,11 +124,11 @@ namespace VPlayer.Home.ViewModels
       {
         var data = GetItemsToPlay().ToList();
 
-        var e = new PlayItemsEventData<SongInPlayListViewModel>(data, action, IsShuffle, IsRepeating, Model.LastItemElapsedTime, Model);
+        var e = new PlayItemsEventData<SoundItemInPlaylistViewModel>(data, action, IsShuffle, IsRepeating, Model.LastItemElapsedTime, Model);
 
         try
         {
-          eventAggregator.GetEvent<PlayItemsEvent<Song, SongInPlayListViewModel>>().Publish(e);
+          eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(e);
         }
         catch (Exception ex)
         {

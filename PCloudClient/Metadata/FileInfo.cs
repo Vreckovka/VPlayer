@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using PCloud;
 
-namespace PCloud.Metadata
+namespace PCloudClient.Metadata
 {
 	/// <summary>Abstract base class for both folders and files. All data is read only.</summary>
 	public abstract class FileBase

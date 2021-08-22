@@ -153,9 +153,13 @@ namespace VPlayer.AudioStorage.AudioDatabase
               audioInfoDownloader.UpdateItem(album);
             }
 
-            Song song = new Song(audioInfo.Title, album)
+            Song song = new Song(album)
             {
-              Source = audioInfo.DiskLocation
+              SoundItem = new SoundItem()
+              {
+                Source = audioInfo.DiskLocation,
+                Name = audioInfo.Title
+              }
             };
 
 
@@ -167,10 +171,14 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
             if (song == null)
             {
-              song = new Song(audioInfo.Title, album)
+              song = new Song(album)
               {
-                Source = audioInfo.DiskLocation,
-                Duration = audioInfo.Duration
+                SoundItem = new SoundItem()
+                {
+                  Duration = audioInfo.Duration,
+                  Source = audioInfo.DiskLocation,
+                  Name = audioInfo.Title
+                }
               };
 
               if (string.IsNullOrEmpty(song.Name))
@@ -713,6 +721,10 @@ namespace VPlayer.AudioStorage.AudioDatabase
       {
         return DeleteTvShow(tvShow);
       }
+      if (entity is Album album)
+      {
+        return DeleteAlbum(album);
+      }
       else
       {
         using (var context = new AudioDatabaseContext())
@@ -725,6 +737,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
             context.Remove(foundEntity);
 
             var removedResult = context.SaveChanges();
+
             result = removedResult > 0;
 
             logger.Log(Logger.MessageType.Success, $"Entity was removed {foundEntity} {removedResult}");
@@ -770,6 +783,47 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #endregion
 
+    #region DeleteTvShow
+
+    public bool DeleteAlbum(Album album)
+    {
+      using (var context = new AudioDatabaseContext())
+      {
+        var tvShowRepo = GetRepository<Album>(context);
+
+        var foundEntity = tvShowRepo.Include(x => x.Songs).ThenInclude(x => x.SoundItem).SingleOrDefault(x => x.Id == album.Id);
+
+        bool result = false;
+
+        if (foundEntity != null)
+        {
+          foreach (var tvShowEpisode in foundEntity.Songs)
+          {
+            context.Remove(tvShowEpisode.SoundItem);
+            context.Remove(tvShowEpisode);
+          }
+
+          context.Remove(foundEntity);
+
+          result = context.SaveChanges() > 0;
+
+          if (result)
+          {
+            logger.Log(Logger.MessageType.Success, $"Entity ALBUM was deleted {album.Name}");
+
+            ItemChanged.OnNext(new ItemChanged()
+            {
+              Item = foundEntity,
+              Changed = Changed.Removed
+            });
+          }
+        }
+
+        return result;
+      }
+    }
+
+    #endregion
 
     #region Playlist methods
 

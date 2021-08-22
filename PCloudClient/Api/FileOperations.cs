@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using PCloudClient.Metadata;
+using FileInfo = PCloudClient.Metadata.FileInfo;
 
 namespace PCloud
 {
@@ -111,13 +113,13 @@ namespace PCloud
     }
 
     /// <summary>Open an existing file</summary>
-    public static Task<FileDescriptor> createFile(this Connection conn, Metadata.FileInfo fi, FileMode mode, FileAccess access)
+    public static Task<FileDescriptor> createFile(this Connection conn, FileInfo fi, FileMode mode, FileAccess access)
     {
       return conn.createFile(fi.id, mode, access);
     }
 
     /// <summary>Open a file in the specified folder</summary>
-    public static async Task<FileDescriptor> createFile(this Connection conn, Metadata.FolderInfo parentFolder, string name, FileMode mode, FileAccess access)
+    public static async Task<FileDescriptor> createFile(this Connection conn, FolderInfo parentFolder, string name, FileMode mode, FileAccess access)
     {
       RequestBuilder req = conn.newRequest("file_open");
       req.add("flags", (long)openFlags(mode, access));
@@ -258,7 +260,7 @@ namespace PCloud
     const int defaultBufferSize = 512 * 1024;
 
     /// <summary>Download a complete file</summary>
-    public static async Task downloadFile(this Connection conn, Metadata.FileInfo fi, Stream destStream, int bufferSize = defaultBufferSize)
+    public static async Task downloadFile(this Connection conn, FileInfo fi, Stream destStream, int bufferSize = defaultBufferSize)
     {
       if (fi.length <= 0)
         return;
@@ -319,7 +321,7 @@ namespace PCloud
     }
 
     /// <summary>Upload a file.</summary>
-    public static async Task<Metadata.FileInfo> uploadFile(this Connection conn, Metadata.FolderInfo folder, string name, Stream sourceStream, bool noPartial = true, bool renameIfExists = false)
+    public static async Task<FileInfo> uploadFile(this Connection conn, FolderInfo folder, string name, Stream sourceStream, bool noPartial = true, bool renameIfExists = false)
     {
       sourceStream.rewind();
       var req = conn.newRequest("uploadfile", sourceStream.Length);
@@ -332,11 +334,11 @@ namespace PCloud
       req.unixTimestamps();
 
       var response = await conn.upload(req, sourceStream);
-      return new Metadata.FileInfo(response.metadata());
+      return new FileInfo(response.metadata());
     }
 
     /// <summary>Delete a file</summary>
-    public static Task deleteFile(this Connection conn, Metadata.FileInfo fi)
+    public static Task deleteFile(this Connection conn, FileInfo fi)
     {
       var req = conn.newRequest("deletefile");
       req.add("fileid", fi.id);
@@ -356,14 +358,14 @@ namespace PCloud
     }
 
     /// <summary>Refresh file metadata</summary>
-    public static async Task<Metadata.FileInfo> getFileInfo(this Connection conn, long id)
+    public static async Task<FileInfo> getFileInfo(this Connection conn, long id)
     {
       var req = conn.newRequest("stat");
       req.add("fileid", id);
       req.unixTimestamps();
 
       var response = await conn.send(req);
-      return new Metadata.FileInfo(response.metadata());
+      return new FileInfo(response.metadata());
     }
 
     public static async Task<string> GetFilePublicLink(this Connection conn, long id)

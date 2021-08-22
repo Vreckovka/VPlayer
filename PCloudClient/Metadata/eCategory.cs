@@ -1,4 +1,4 @@
-﻿namespace PCloud.Metadata
+﻿namespace PCloudClient.Metadata
 {
 	public enum eCategory: byte
 	{

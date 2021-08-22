@@ -333,7 +333,7 @@
                         </Trigger>-->
 
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="PathIcon" Property="Fill" Value="#303030" />
+                            <Setter TargetName="PathIcon" Property="Fill" Value="#191919" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

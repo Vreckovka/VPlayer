@@ -3,7 +3,15 @@ using VPlayer.Core.ViewModels;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
-  public class Song : INamedEntity, IUpdateable<Song>, IFilePlayableModel
+  public class SoundItem : PlaybleItem, IUpdateable<SoundItem>
+  {
+    public void Update(SoundItem other)
+    {
+      base.Update(other);
+    }
+  }
+
+  public class Song : DomainEntity, IUpdateable<Song>, IPlayableModel
   {
     #region Constructors
 
@@ -11,9 +19,8 @@ namespace VPlayer.AudioStorage.DomainClasses
     {
     }
 
-    public Song(string name, Album album)
+    public Song(Album album)
     {
-      Name = name;
       Album = album;
     }
 
@@ -21,28 +28,72 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     #region Properties
 
-    public virtual Album Album { get; set; }
-
-    public string Source { get; set; }
-
-    public int Duration { get; set; }
-
-    [Key]
-    public int Id { get; set; }
-
-    public int Length { get; set; }
+    public Album Album { get; set; }
+    public SoundItem SoundItem { get; set; }
+    
     public string MusicBrainzId { get; set; }
-    public string Name { get; set; }
-
+    
     public string Chartlyrics_Lyric { get; set; }
     public string Chartlyrics_LyricId { get; set; }
     public string Chartlyrics_LyricCheckSum { get; set; }
 
     public string LRCLyrics { get; set; }
-
-    public bool IsFavorite { get; set; }
-
     public string UPnPPath { get; set; }
+
+
+
+    public string Source
+    {
+      get { return SoundItem?.Source; }
+      set
+      {
+        if (SoundItem != null)
+          SoundItem.Source = value;
+      }
+    }
+
+    public int Duration
+    {
+      get
+      {
+        if (SoundItem != null)
+          return SoundItem.Duration;
+
+
+        return 0;
+      }
+      set { if (SoundItem != null) SoundItem.Duration = value; }
+    }
+
+    public int Length
+    {
+      get
+      {
+        if (SoundItem != null)
+          return SoundItem.Length;
+
+        return 0;
+      }
+      set { if (SoundItem != null) SoundItem.Length = Length; }
+    }
+
+    public string Name
+    {
+      get { return SoundItem?.Name; }
+      set { if (SoundItem != null) SoundItem.Name = Name; }
+    }
+
+    public bool IsFavorite
+    {
+      get
+      {
+        if (SoundItem != null)
+          return SoundItem.IsFavorite;
+
+        return false;
+      }
+      set { if (SoundItem != null) SoundItem.IsFavorite = IsFavorite; }
+    }
 
     #endregion 
 
@@ -50,11 +101,14 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     public override string ToString()
     {
-      return $"{Name}|{Album}";
+      return $"{SoundItem.Name}|{Album}";
     }
 
     public void Update(Song other)
     {
+      if (other.SoundItem != null)
+        SoundItem?.Update(other.SoundItem);
+
       Name = other.Name;
       Chartlyrics_Lyric = other.Chartlyrics_Lyric;
       Chartlyrics_LyricCheckSum = other.Chartlyrics_LyricCheckSum;

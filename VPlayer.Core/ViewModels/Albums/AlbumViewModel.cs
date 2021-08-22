@@ -52,7 +52,8 @@ namespace VPlayer.Core.ViewModels.Albums
 
     public override IEnumerable<SongInPlayListViewModel> GetItemsToPlay()
     {
-      var songs = storage.GetRepository<Song>().Include(x => x.Album).Where(x => x.Album.Id == Model.Id).ToList();
+      var songs = storage.GetRepository<Song>().Include(x => x.SoundItem).Include(x => x.Album).Where(x => x.Album.Id == Model.Id).ToList();
+
       var playListSong = songs.Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x));
 
       return playListSong;
@@ -65,14 +66,14 @@ namespace VPlayer.Core.ViewModels.Albums
     {
       var e = new PlayItemsEventData<SongInPlayListViewModel>(viewModels, eventAction, this);
 
-      eventAggregator.GetEvent<PlayItemsEvent<Song, SongInPlayListViewModel>>().Publish(e);
+      eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SongInPlayListViewModel>>().Publish(e);
     }
 
     public override void PublishAddToPlaylistEvent(IEnumerable<SongInPlayListViewModel> viewModels)
     {
       var e = new PlayItemsEventData<SongInPlayListViewModel>(viewModels, EventAction.Add, this);
 
-      eventAggregator.GetEvent<PlayItemsEvent<Song, SongInPlayListViewModel>>().Publish(e);
+      eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SongInPlayListViewModel>>().Publish(e);
     }
 
     #region Update

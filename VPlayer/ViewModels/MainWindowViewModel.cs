@@ -30,6 +30,7 @@ using VPlayer.AudioStorage.Parsers;
 using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
+using VPLayer.Domain.Contracts.CloudService.Providers;
 using VPlayer.Player.ViewModels;
 using VPlayer.UPnP.ViewModels;
 using VPlayer.WindowsPlayer.Behaviors;
@@ -86,6 +87,8 @@ namespace VPlayer.ViewModels
   //        TODO: Pridat thumbnail zo suboru
   //        TODO: Status popup close manual
   //        TODO: Moznost vymazat automaticky nahrane lyrics a zakazat stahovanie
+  //        TODO: Dvojklik na windows volume (nastavi dostpny dalsi device (hore ci dole????))
+  //		TODO: Ak Windows Volume je 100 a stale chcem viac tak dam VLC volume ++
   //
   //  *****DESING***** 
   //        TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)
@@ -111,7 +114,7 @@ namespace VPlayer.ViewModels
   //        TODO: Premenovat epizodu
   //        TODO: Ked pojdes hover nad playlist itemom tak sa zobrazi taka karta, kde budu detailne info + velka fotka
   //        TODO: Vytvorit HOME TAB (HOME -> ANALYTICS)  - Horizontal listview poslednych 5 - 10 playlistov a moznost ich hned spustit a potom rozne statistiky... (grafy, tabulky...) 
-  //
+  //        TODO: Paging na dotahovanie playlistov (aj ostatnych veci) (aby sa neloadovala tak dlho appka a aj tak tie dole ma nezaujimaju)
   //
   //*********************************************************************************************************************************
   //
@@ -122,7 +125,6 @@ namespace VPlayer.ViewModels
   //TODO: Nespojilo playlisty s rovnakym hash po spusteni (neviem ci TV show alebo hudba) (mozno tv show ze pustis z detailu a das save a potom znovu z detailu)
   //TODO: Nespaja niektorych aristov pri load
   //TODO: Sem tam ostanie vysiet appka
-  //TODO: VLC volume ako keby je 0
   //TODO: Po roztiahnuti okna spadlo
   //TODO: chromedriver sa nekopiruje pri publish
   //TODO: csfd download ked task zlyha tak Error popup hned mizne
@@ -134,7 +136,7 @@ namespace VPlayer.ViewModels
   //********************************************************************************************************************************
   //
   //*****LONG RUN*****
-  //TODO: Streaming service, aby som nemusel mat db u seba na disku. Nejaky server niekde si kupit (Minio)
+  //TODO: Streaming service, aby som nemusel mat db u seba na disku. Nejaky server/cloud niekde si kupit (PCloud)
   //TODO: Streaming pre subory, lyrics, tv shows, kludne uplne vsetko (tv sources...). Db tam bude cele to pojde do webu  //
 
   public class MainWindowViewModel : BaseMainWindowViewModel
@@ -144,6 +146,7 @@ namespace VPlayer.ViewModels
     private readonly IViewModelsFactory viewModelsFactory;
     private readonly IEventAggregator eventAggregator;
     private readonly ILogger logger;
+   
 
     #endregion
 
@@ -152,7 +155,8 @@ namespace VPlayer.ViewModels
     public MainWindowViewModel(
       IViewModelsFactory viewModelsFactory,
       IEventAggregator eventAggregator,
-      ILogger logger)
+      ILogger logger
+     )
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
@@ -279,6 +283,7 @@ namespace VPlayer.ViewModels
 
       player.IsActive = true;
 
+    
     }
 
     #endregion

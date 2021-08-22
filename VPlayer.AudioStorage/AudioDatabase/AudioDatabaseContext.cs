@@ -22,22 +22,26 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     private readonly IWindowManager windowManager;
     //add-migration migration_ -ConnectionString "Data Source=C:\Users\Roman Pecho\AppData\Roaming\VPlayer\VPlayerDatabase.db;Version=3;" -connectionProvider "System.Data.SQLite.EF6"
-    
+
     //STACI IBA add-migration MIGRATIONNAME 
 
     #region Properties
 
+    public DbSet<VideoItem> VideoItems { get; set; }
+    public DbSet<SoundItem> SoundItems { get; set; }
+
+
+
     public DbSet<Album> Albums { get; set; }
     public DbSet<Artist> Artists { get; set; }
     public DbSet<Song> Songs { get; set; }
-    public DbSet<SongsFilePlaylist> SongPlaylists { get; set; }
-    public DbSet<PlaylistSong> PlaylistSongs { get; set; }
+    public DbSet<PlaylistSoundItem> PlaylistSongs { get; set; }
+    public DbSet<SoundItemFilePlaylist> SongPlaylists { get; set; }
 
 
     public DbSet<TvShow> TvShows { get; set; }
     public DbSet<TvShowSeason> TvShowsSeasons { get; set; }
     public DbSet<TvShowEpisode> TvShowEpisodes { get; set; }
-    public DbSet<VideoItem> VideoItems { get; set; }
     public DbSet<PlaylistVideoItem> PlaylistsTvShowEpisode { get; set; }
     public DbSet<VideoFilePlaylist> TvShowPlaylists { get; set; }
 

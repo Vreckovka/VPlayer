@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using PCloudClient.Metadata;
 
 namespace PCloud
 {
@@ -10,7 +11,7 @@ namespace PCloud
 		/// <param name="name">Name of the new folder</param>
 		/// <param name="parent">Parent folder, or null to create a top-level one</param>
 		/// <param name="getExisting">true to get an existing one if it exists, false to fail</param>
-		public static async Task<Metadata.FolderInfo> createFolder( this Connection conn, string name, Metadata.FolderInfo parent = null, bool getExisting = true )
+		public static async Task<FolderInfo> createFolder( this Connection conn, string name, FolderInfo parent = null, bool getExisting = true )
 		{
 			RequestBuilder req = conn.newRequest( getExisting ? "createfolderifnotexists" : "createfolder" );
 			req.add( "folderid", parent?.id ?? 0L );
@@ -18,11 +19,11 @@ namespace PCloud
 			req.unixTimestamps();
 
 			var response = await conn.send( req );
-			return new Metadata.FolderInfo( response.metadata() );
+			return new FolderInfo( response.metadata() );
 		}
 
 		/// <summary>Delete a folder</summary>
-		public static Task deleteFolder( this Connection conn, Metadata.FolderInfo folder, bool recursively = false )
+		public static Task deleteFolder( this Connection conn, FolderInfo folder, bool recursively = false )
 		{
 			if( null == folder || 0 == folder.id )
 				throw new ArgumentException( "The root folder can't be deleted" );
@@ -34,7 +35,7 @@ namespace PCloud
 		}
 
 		/// <summary>Rename and/or move a folder</summary>
-		public static async Task<Metadata.FolderInfo> renameFolder( this Connection conn, Metadata.FolderInfo folder, string newName, Metadata.FolderInfo newParent )
+		public static async Task<FolderInfo> renameFolder( this Connection conn, FolderInfo folder, string newName, FolderInfo newParent )
 		{
 			if( null == folder || 0 == folder.id )
 				throw new ArgumentException( "The root folder can't be renamed" );
@@ -51,17 +52,17 @@ namespace PCloud
 			req.unixTimestamps();
 
 			var response = await conn.send( req );
-			return new Metadata.FolderInfo( response.metadata() );
+			return new FolderInfo( response.metadata() );
 		}
 
 		/// <summary>Rename a folder</summary>
-		public static Task<Metadata.FolderInfo> renameFolder( this Connection conn, Metadata.FolderInfo folder, string newName )
+		public static Task<FolderInfo> renameFolder( this Connection conn, FolderInfo folder, string newName )
 		{
 			return conn.renameFolder( folder, newName, null );
 		}
 
 		/// <summary>Move a folder</summary>
-		public static Task<Metadata.FolderInfo> moveFolder( this Connection conn, Metadata.FolderInfo folder, Metadata.FolderInfo newParent )
+		public static Task<FolderInfo> moveFolder( this Connection conn, FolderInfo folder, FolderInfo newParent )
 		{
 			return conn.renameFolder( folder, null, newParent );
 		}

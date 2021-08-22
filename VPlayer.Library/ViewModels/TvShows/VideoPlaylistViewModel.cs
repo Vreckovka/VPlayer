@@ -49,8 +49,6 @@ namespace VPlayer.Home.ViewModels.TvShows
         .Include(x => x.PlaylistItems)
         .ThenInclude(x => x.ReferencedItem)
         .SingleOrDefault(x => x.Id == Model.Id);
-
-
      
 
       if (playlist != null)

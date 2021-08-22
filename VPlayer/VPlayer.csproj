@@ -177,6 +177,7 @@
 		<ProjectReference Include="..\VPlayer.Core\VPlayer.Core.csproj" />
 		<ProjectReference Include="..\VPlayer.DarkTheme\VPlayer.DarkTheme.csproj" />
 		<ProjectReference Include="..\VPlayer.Library\VPlayer.Home.csproj" />
+		<ProjectReference Include="..\VPlayer.PCloud\VPlayer.PCloud.csproj" />
 		<ProjectReference Include="..\VPlayer.Player\VPlayer.Player.csproj" />
 		<ProjectReference Include="..\VPlayer.WindowsPlayer\VPlayer.WindowsPlayer.csproj" />
 	</ItemGroup>

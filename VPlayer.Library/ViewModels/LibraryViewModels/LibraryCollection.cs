@@ -143,11 +143,15 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
       {
         if (WasLoaded)
         {
-          var originalItem = Items.SingleOrDefault(x => x.ModelId == entity.Id);
+          var items = Items.Where(x => x.ModelId == entity.Id).ToList();
 
-          if (originalItem != null)
+          foreach(var item in items)
           {
-            Items.Remove(originalItem);
+            Items.Remove(item);
+          }
+          
+          if (items.Count > 0)
+          {
             Recreate();
           }
           else

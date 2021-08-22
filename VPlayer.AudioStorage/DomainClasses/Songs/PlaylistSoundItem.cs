@@ -2,12 +2,12 @@
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
-  public class PlaylistSong : DomainEntity, IItemInPlaylist<Song>
+  public class PlaylistSoundItem : DomainEntity, IItemInPlaylist<SoundItem>
   {
     public int OrderInPlaylist { get; set; }
 
     [ForeignKey(nameof(ReferencedItem))]
     public int IdReferencedItem { get; set; }
-    public Song ReferencedItem { get; set; }
+    public SoundItem ReferencedItem { get; set; }
   }
 }

@@ -15,7 +15,7 @@ namespace VPlayer.Library.TemplateSelectors
 
     public override DataTemplate SelectTemplate(object item, DependencyObject container)
     {
-      if (item is FolderViewModel)
+      if (item is FolderHierarchyItemViewModel<FolderInfo>)
       {
         return FolderTemplate;
       }

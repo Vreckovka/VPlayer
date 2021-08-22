@@ -2,13 +2,26 @@
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
-  public class VideoItem : DomainEntity, IUpdateable<VideoItem>, IFilePlayableModel, INamedEntity
+  public class PlaybleItem : DomainEntity, IUpdateable<PlaybleItem>, IFilePlayableModel,INamedEntity
   {
     public string Source { get; set; }
     public int Duration { get; set; }
     public int Length { get; set; }
     public string Name { get; set; }
     public bool IsFavorite { get; set; }
+
+    public void Update(PlaybleItem other)
+    {
+      Source = other.Source;
+      Duration = other.Duration;
+      Length = other.Length;
+      Name = other.Name;
+      IsFavorite = other.IsFavorite;
+    }
+  }
+
+  public class VideoItem : PlaybleItem, IUpdateable<VideoItem>
+  {
     public string AspectRatio { get; set; }
     public string CropRatio { get; set; }
     public int? AudioTrack { get; set; }
@@ -17,11 +30,8 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     public void Update(VideoItem other)
     {
-      Source = other.Source;
-      Duration = other.Duration;
-      Length = other.Length;
-      Name = other.Name;
-      IsFavorite = other.IsFavorite;
+      base.Update(other);
+
       AspectRatio = other.AspectRatio;
       CropRatio = other.CropRatio;
       AudioTrack = other.AudioTrack;
