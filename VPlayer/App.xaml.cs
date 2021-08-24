@@ -12,6 +12,7 @@ using VCore.WPF;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.ViewModels.Windows;
 using VCore.WPF.Views;
+using VCore.WPF.Views.SplashScreen;
 using VPlayer.IPTV.Modularity;
 using VPlayer.Modularity.NinjectModules;
 using VPlayer.UPnP.Modularity;
@@ -21,7 +22,7 @@ using VPlayer.Views;
 
 namespace VPlayer
 {
-  public class VPlayerApplication : VApplication<MainWindow, MainWindowViewModel, VPlayerSplashScreen>
+  public class VPlayerApplication : VApplication<MainWindow, MainWindowViewModel, SplashScreenView>
   {
     protected override void LoadModules()
     {
