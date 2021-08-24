@@ -4,8 +4,11 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Logger;
 using Ninject;
 using Ninject.Activation;
 using Ninject.Parameters;
@@ -17,11 +20,17 @@ using VCore.Modularity.NinjectModules;
 using VCore.Other;
 using VCore.Standard;
 using VCore.Standard.Modularity.NinjectModules;
+using VCore.ViewModels;
+using VCore.WPF.Interfaces.Managers;
+using VCore.WPF.Managers;
+using VCore.WPF.ViewModels.Windows;
+using VCore.WPF.Views;
 using VPlayer.IPTV.Modularity;
 using VPlayer.Modularity.NinjectModules;
 using VPlayer.UPnP.Modularity;
 using VPlayer.ViewModels;
 using VPlayer.Views;
+using SplashScreen = System.Windows.SplashScreen;
 
 
 namespace VPlayer
@@ -31,11 +40,53 @@ namespace VPlayer
   /// </summary>
   ///
 
-  public partial class App : PrismApplication
+  public abstract class VApplication : PrismApplication
+  {
+    protected void ShowSplashScreen()
+    {
+      var thread = new Thread(() =>
+      {
+        var splashScreen = new SplashScreenWindow();
+        splashScreen.DataContext = new SplashScreenViewModel();
+
+        splashScreen.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+        splashScreen.WindowStyle = WindowStyle.None;
+        splashScreen.AllowsTransparency = true;
+        splashScreen.ResizeMode = ResizeMode.NoResize;
+        splashScreen.ShowInTaskbar = true;
+
+        splashScreen.Content = new VPlayerSplashScreen();
+
+        if (splashScreen != null)
+        {
+          splashScreen.Show();
+
+          EventHandler closedEventHandler = null;
+
+          closedEventHandler = (o, s) =>
+          {
+            splashScreen.Closed -= closedEventHandler;
+            splashScreen.Dispatcher.InvokeShutdown();
+          };
+
+          splashScreen.Closed += closedEventHandler;
+
+          System.Windows.Threading.Dispatcher.Run();
+        }
+      });
+
+      thread.SetApartmentState(ApartmentState.STA);
+      thread.Start();
+    }
+  }
+
+  public partial class App : VApplication
   {
     private IKernel Kernel;
     private bool isConsoleUp = false;
     private Stopwatch stopWatch;
+    private ILogger logger;
+    private IWindowManager windowManager;
 
     #region BuildVersion
 
@@ -43,8 +94,10 @@ namespace VPlayer
 
     #endregion
 
+    #region RegisterTypes
 
-    protected override void RegisterTypes(IContainerRegistry containerRegistry)
+
+    protected override async void RegisterTypes(IContainerRegistry containerRegistry)
     {
       stopWatch = new Stopwatch();
       stopWatch.Start();
@@ -61,6 +114,11 @@ namespace VPlayer
 
       CultureInfo.CurrentCulture = new CultureInfo("en-US");
 
+      logger = Container.Resolve<ILogger>();
+      windowManager = Container.Resolve<IWindowManager>();
+
+      ShowSplashScreen();
+
 #if DEBUG
 
       isConsoleUp = WinConsole.CreateConsole();
@@ -70,16 +128,16 @@ namespace VPlayer
 
 #endif
 
-
       Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
       DateTime buildDate = new DateTime(2000, 1, 1).AddDays(version.Build).AddSeconds(version.Revision * 2);
 
       BuildVersion = $"{version} ({buildDate.ToString("dd.MM.yyyy")})";
-
     }
 
-    protected override Window CreateShell()
+    #endregion
+
+    private MainWindow CreateMainWindow()
     {
       var shell = Container.Resolve<MainWindow>();
 
@@ -87,31 +145,35 @@ namespace VPlayer
 
       RegionManager.UpdateRegions();
 
-      var dataContext = Kernel.Get<MainWindowViewModel>(new Parameter("moj", OnGet, true));
+      var dataContext = Kernel.Get<MainWindowViewModel>();
 
       shell.DataContext = dataContext;
 
       return shell;
     }
 
-    private object OnGet(IContext context)
+   
+
+    #region CreateShell
+
+
+    protected override Window CreateShell()
     {
-      return context.Resolve();
+      return CreateMainWindow();
     }
 
-    protected override void OnInitialized()
+    #endregion
+
+    protected override async void OnInitialized()
     {
       base.OnInitialized();
+
+      SetupExceptionHandling();
 
       stopWatch.Stop();
 
       Console.WriteLine(stopWatch.Elapsed);
-    }
 
-    protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
-    {
-      //moduleCatalog.AddModule<WindowsViewModel>();
-      //moduleCatalog.AddModule<LibraryViewModel>();
     }
 
     protected override void OnExit(ExitEventArgs e)
@@ -124,7 +186,7 @@ namespace VPlayer
 
     protected override void OnStartup(StartupEventArgs e)
     {
-      Control.IsTabStopProperty.OverrideMetadata(typeof(Control),new FrameworkPropertyMetadata(false));
+      Control.IsTabStopProperty.OverrideMetadata(typeof(Control), new FrameworkPropertyMetadata(false));
 
       base.OnStartup(e);
     }
@@ -145,5 +207,58 @@ namespace VPlayer
 
       return null;
     }
+
+    #region SetupExceptionHandling
+
+    private void SetupExceptionHandling()
+    {
+      AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+        LogUnhandledException((Exception)e.ExceptionObject, "AppDomain.CurrentDomain.UnhandledException");
+
+      DispatcherUnhandledException += (s, e) =>
+      {
+        LogUnhandledException(e.Exception, "Application.Current.DispatcherUnhandledException");
+        e.Handled = true;
+      };
+
+      TaskScheduler.UnobservedTaskException += (s, e) =>
+      {
+        LogUnhandledException(e.Exception, "TaskScheduler.UnobservedTaskException");
+        e.SetObserved();
+      };
+    }
+
+    #endregion
+
+    #region LogUnhandledException
+
+    private async void LogUnhandledException(Exception exception, string source)
+    {
+      string message = $"Unhandled exception ({source})";
+
+      try
+      {
+        System.Reflection.AssemblyName assemblyName = System.Reflection.Assembly.GetExecutingAssembly().GetName();
+
+        message = string.Format("Unhandled exception in {0} v{1}", assemblyName.Name, assemblyName.Version);
+      }
+      catch (Exception ex)
+      {
+        logger.Log(ex);
+      }
+      finally
+      {
+        logger.Log(MessageType.Error, message);
+        logger.Log(exception);
+
+        await Application.Current.Dispatcher.InvokeAsync(() =>
+        {
+          windowManager.ShowErrorPrompt(exception);
+        });
+      }
+    }
+
+    #endregion
+
   }
 }

@@ -6,6 +6,7 @@ using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
 using VCore.WPF.Managers;
 using VCore.WPF.Prompts;
+using VPlayer.Core;
 using VPlayer.Core.Modularity.Regions;
 using VPLayer.Domain.Contracts.CloudService.Providers;
 using VPlayer.PCloud.ViewModels;
@@ -28,6 +29,8 @@ namespace VPlayer.PCloud
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
 
       PCloudFileBrowserViewModel = pCloudFileBrowserViewModel ?? throw new ArgumentNullException(nameof(pCloudFileBrowserViewModel));
+
+     
     }
 
 

@@ -85,6 +85,7 @@
 		<None Remove="Resources\Icons\video-play.png" />
 		<None Remove="Resources\play-and-pause-button.png" />
 		<None Remove="Resources\song-playliyst.png" />
+		<None Remove="Resources\VPlayer_Artist.png" />
 	</ItemGroup>
 	<ItemGroup>
 		<Resource Include="Resources\Fonts\FontAwesome\fa-brands-400.ttf" />
@@ -189,6 +190,10 @@
 		<Reference Include="System.Runtime.WindowsRuntime">
 			<HintPath>..\DLL\System.Runtime.WindowsRuntime.dll</HintPath>
 		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="Resources\VPlayer_Artist.png" />
 	</ItemGroup>
 
 	<ItemGroup>

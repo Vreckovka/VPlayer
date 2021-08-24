@@ -24,6 +24,7 @@ namespace VPlayer.PCloud.ViewModels
       this.cloudService = cloudService ?? throw new ArgumentNullException(nameof(cloudService));
     }
 
+    #region GetFiles
 
     public override async Task<IEnumerable<FileInfo>> GetFiles()
     {
@@ -52,6 +53,8 @@ namespace VPlayer.PCloud.ViewModels
       return list;
     }
 
+    #endregion
+
     #region GetFolders
 
     public override async Task<IEnumerable<FolderInfo>> GetFolders()
@@ -61,15 +64,20 @@ namespace VPlayer.PCloud.ViewModels
       return folders.Select(x => new FolderInfo()
       {
         Indentificator = x.id.ToString(),
-        Name = x.name
+        Name = x.name,
+        ParentIndentificator = x.parentFolderId.ToString()
       });
     }
 
     #endregion
 
+    #region OnOpenContainingFolder
+
     public override void OnOpenContainingFolder()
     {
       throw new NotImplementedException();
     }
+
+    #endregion
   }
 }

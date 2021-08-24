@@ -18,23 +18,37 @@ namespace VPlayer.Home.ViewModels.FileBrowser
     {
     }
 
-    protected override PlayableFolderViewModel<WindowsFolderViewModel, WindowsFileViewModel> GetNewFolderViewModel(string newPath)
+    protected override Task<PlayableFolderViewModel<WindowsFolderViewModel, WindowsFileViewModel>> GetNewFolderViewModel(string newPath)
     {
-      var info = new FolderInfo()
+      return Task.Run(() =>
       {
-        Indentificator = newPath,
-        Name = (new DirectoryInfo(newPath)).Name
-      };
+        var dirInfo = new DirectoryInfo(newPath);
 
-      var folderViewModel = viewModelsFactory.Create<WindowsFolderViewModel>(info);
+        var info = new FolderInfo()
+        {
+          Indentificator = newPath,
+          Name = dirInfo.Name,
+          ParentIndentificator = dirInfo.Parent?.FullName
+        };
 
-      return viewModelsFactory.Create<PlayableFolderViewModel<WindowsFolderViewModel, WindowsFileViewModel>>(folderViewModel);
+        var folderViewModel = viewModelsFactory.Create<WindowsFolderViewModel>(info);
+
+        return viewModelsFactory.Create<PlayableFolderViewModel<WindowsFolderViewModel, WindowsFileViewModel>>(folderViewModel);
+      });
     }
 
-    protected override string GetParentDirectoryName(string newPath)
+    protected override Task<PlayableFolderViewModel<WindowsFolderViewModel, WindowsFileViewModel>> GetParentFolderViewModel(string childIdentificator)
     {
-      return new DirectoryInfo(newPath).Parent?.FullName;
+      var dirInfo = new DirectoryInfo(childIdentificator).Parent;
+
+      if (dirInfo != null)
+      {
+        return GetNewFolderViewModel(dirInfo.FullName);
+      }
+
+      return null;
     }
+
 
     protected override Task<bool> DirectoryExists(string newPath)
     {

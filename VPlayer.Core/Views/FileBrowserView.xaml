@@ -10,86 +10,86 @@
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/FileBrowserResources.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
-    <Grid Margin="5">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/FileBrowserResources.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </UserControl.Resources>
+  <Grid Margin="5">
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-
-
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="auto" />
-            </Grid.ColumnDefinitions>
-
-            <TextBox Margin="0,0,0,0" Text="{Binding BaseDirectoryPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+    <Grid.RowDefinitions>
+      <RowDefinition Height="auto" />
+      <RowDefinition />
+    </Grid.RowDefinitions>
 
 
-            <Grid Grid.Column="1" Margin="5,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="auto" />
-                    <ColumnDefinition Width="auto" />
-                    <ColumnDefinition Width="auto" />
-                </Grid.ColumnDefinitions>
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition />
+        <ColumnDefinition Width="auto" />
+      </Grid.ColumnDefinitions>
 
-                <controls:PathButton Grid.Column="1"
-                                     Margin="0,5,5,0"
-                                     Command="{Binding ChangeDirectory}"
-                                     CommandParameter="{Binding BaseDirectoryPath}"
-                                     IconHoverColor="{StaticResource DefaultRedColor}"
-                                     IconWidth="25"
-                                     IsReadOnly="True"
-                                     PathStyle="{StaticResource FolderOpen}"
-                                     ToolTip="Navigate" />
-
-                <controls:PathButton Grid.Column="2"
-                                     Margin="0,5,5,0"
-                                     Command="{Binding ChangeDirectory}"
-                                     CommandParameter="{Binding ParentDirectory}"
-                                     IconHoverColor="{StaticResource BlueColor}"
-                                     IconWidth="25"
-                                     IsReadOnly="True"
-                                     PathStyle="{StaticResource FolderUp}"
-                                     ToolTip="{Binding ParentDirectory}">
-                    <controls:PathButton.Style>
-                        <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ParentDirectory}" Value="{x:Null}">
-                                    <Setter Property="IsEnabled" Value="False" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </controls:PathButton.Style>
-                </controls:PathButton>
-
-                <controls:PathButton Grid.Column="3"
-                                     Margin="0,5,5,0"
-                                     Command="{Binding Refresh}"
-                                     IconHoverColor="{StaticResource GreenColor}"
-                                     IconWidth="21"
-                                     IsReadOnly="True"
-                                     PathStyle="{StaticResource Refresh}"
-                                     ToolTip="Refresh" />
-
-            </Grid>
+      <TextBox Margin="0,0,0,0" Text="{Binding BaseDirectoryPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
 
-        </Grid>
+      <Grid Grid.Column="1" Margin="5,0">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition />
+          <ColumnDefinition Width="auto" />
+          <ColumnDefinition Width="auto" />
+          <ColumnDefinition Width="auto" />
+        </Grid.ColumnDefinitions>
 
-        <TreeView Grid.Row="1"
-                  Margin="-20,0,0,0"
-                  ItemTemplateSelector="{StaticResource WindowItemTemplateSelector}"
-                  ItemsSource="{Binding Items}" />
+        <controls:PathButton Grid.Column="1"
+                             Margin="0,5,5,0"
+                             Command="{Binding ChangeDirectory}"
+                             CommandParameter="{Binding BaseDirectoryPath}"
+                             IconHoverColor="{StaticResource DefaultRedColor}"
+                             IconWidth="25"
+                             IsReadOnly="True"
+                             PathStyle="{StaticResource FolderOpen}"
+                             ToolTip="Navigate" />
+
+        <controls:PathButton Grid.Column="2"
+                             Margin="0,5,5,0"
+                             Command="{Binding ChangeDirectory}"
+                             CommandParameter="{Binding ParentDirectory}"
+                             IconHoverColor="{StaticResource BlueColor}"
+                             IconWidth="25"
+                             IsReadOnly="True"
+                             PathStyle="{StaticResource FolderUp}"
+                             ToolTip="{Binding ParentDirectory}">
+          <controls:PathButton.Style>
+            <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding ParentDirectory}" Value="{x:Null}">
+                  <Setter Property="IsEnabled" Value="False" />
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </controls:PathButton.Style>
+        </controls:PathButton>
+
+        <controls:PathButton Grid.Column="3"
+                             Margin="0,5,5,0"
+                             Command="{Binding Refresh}"
+                             IconHoverColor="{StaticResource GreenColor}"
+                             IconWidth="21"
+                             IsReadOnly="True"
+                             PathStyle="{StaticResource Refresh}"
+                             ToolTip="Refresh" />
+
+      </Grid>
+
 
     </Grid>
+
+    <TreeView Grid.Row="1"
+              Margin="-20,0,0,0"
+              ItemTemplateSelector="{StaticResource WindowItemTemplateSelector}"
+              ItemsSource="{Binding Items}" />
+
+  </Grid>
 </UserControl>

@@ -37,12 +37,9 @@ namespace VPlayer.Core.ViewModels
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
 
-      baseDirectoryPath = GlobalSettings.FileBrowserInitialDirectory;
+      BaseDirectoryPath = GlobalSettings.FileBrowserInitialDirectory;
 
-      if (!string.IsNullOrEmpty(baseDirectoryPath) && Directory.Exists(baseDirectoryPath))
-      {
-        ParentDirectory = new DirectoryInfo(baseDirectoryPath).Parent?.FullName;
-      }
+
     }
 
     #endregion
@@ -75,9 +72,9 @@ namespace VPlayer.Core.ViewModels
 
     #region ParentDirectory
 
-    private string parentDirectory;
+    private TFolderViewModel parentDirectory;
 
-    public string ParentDirectory
+    public TFolderViewModel ParentDirectory
     {
       get { return parentDirectory; }
       set
@@ -185,17 +182,40 @@ namespace VPlayer.Core.ViewModels
 
     #region OnActivation
 
-    public override void OnActivation(bool firstActivation)
+    public override async void OnActivation(bool firstActivation)
     {
       base.OnActivation(firstActivation);
 
       if (firstActivation)
       {
-        OnBaseDirectoryPathChanged(BaseDirectoryPath);
+        await SetBaseDirectory();
+
+        if (!string.IsNullOrEmpty(baseDirectoryPath))
+        {
+          baseDirectoryPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+          await SetBaseDirectory();
+        }
       }
     }
 
     #endregion
+
+    private async Task<bool> SetBaseDirectory()
+    {
+      var dirExists = await DirectoryExists(baseDirectoryPath);
+
+      if (!string.IsNullOrEmpty(baseDirectoryPath) && dirExists)
+      {
+        ParentDirectory = await GetParentFolderViewModel(baseDirectoryPath);
+
+        OnBaseDirectoryPathChanged(BaseDirectoryPath);
+
+        return true;
+      }
+
+      return false;
+    }
 
     #region Filter
 
@@ -226,9 +246,9 @@ namespace VPlayer.Core.ViewModels
 
         if (!string.IsNullOrEmpty(newPath) && await DirectoryExists(newPath))
         {
-          ParentDirectory = GetParentDirectoryName(newPath);
+          root = await GetNewFolderViewModel(newPath);
 
-          root = GetNewFolderViewModel(newPath);
+          ParentDirectory = await GetNewFolderViewModel(root.Model.ParentIndentificator);
 
           root.GetFolderInfo();
           root.IsExpanded = true;
@@ -279,8 +299,8 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    protected abstract TFolderViewModel GetNewFolderViewModel(string newPath);
-    protected abstract string GetParentDirectoryName(string newPath);
+    protected abstract Task<TFolderViewModel> GetNewFolderViewModel(string newPath);
+    protected abstract Task<TFolderViewModel> GetParentFolderViewModel(string childIdentificator);
     protected abstract Task<bool> DirectoryExists(string newPath);
 
 
