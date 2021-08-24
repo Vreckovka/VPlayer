@@ -1,8 +1,8 @@
-﻿<local:VApplication x:Class="VPlayer.App"
-              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-              xmlns:local="clr-namespace:VPlayer"
-              xmlns:prism="http://prismlibrary.com/">
+﻿<local:VPlayerApplication x:Class="VPlayer.App"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:VPlayer"
+                    xmlns:prism="http://prismlibrary.com/">
 
   <Application.Resources>
     <ResourceDictionary>
@@ -23,4 +23,4 @@
 
     </ResourceDictionary>
   </Application.Resources>
-</local:VApplication>
+</local:VPlayerApplication>

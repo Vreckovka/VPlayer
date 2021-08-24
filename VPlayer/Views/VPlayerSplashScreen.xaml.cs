@@ -10,13 +10,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using VCore.Standard.Modularity.Interfaces;
 
 namespace VPlayer.Views
 {
   /// <summary>
   /// Interaction logic for VPlayerSplashScreen.xaml
   /// </summary>
-  public partial class VPlayerSplashScreen : UserControl
+  public partial class VPlayerSplashScreen : UserControl, IView
   {
     public VPlayerSplashScreen()
     {
