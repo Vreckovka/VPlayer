@@ -1,5 +1,7 @@
 ﻿using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.VisualBasic.FileIO;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
 using VCore.WPF.Managers;
@@ -15,6 +17,27 @@ namespace VPlayer.Home.ViewModels.FileBrowser
       IViewModelsFactory viewModelsFactory,
       IWindowManager windowManager) : base(regionProvider, viewModelsFactory, windowManager)
     {
+    }
+
+    protected override void OnDeleteItem(string indentificator)
+    {
+      if (Directory.Exists(indentificator))
+      {
+        FileSystem.DeleteDirectory(indentificator, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
+      }
+      else if (File.Exists(indentificator))
+      {
+        FileSystem.DeleteFile(indentificator, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
+      }
+
+      var items = Items.OfType<PlayableWindowsFileFolderViewModel>().SelectMany(x => x.SubItems.ViewModels.OfType<PlayableWindowsFileFolderViewModel>());
+
+      var deletedItem = items.Single(x => x.Model.Indentificator == indentificator);
+
+      if(deletedItem.ParentFolder != null)
+      {
+        deletedItem.ParentFolder.SubItems.Remove(deletedItem);
+      }
     }
 
     protected override Task<PlayableWindowsFileFolderViewModel> GetNewFolderViewModel(string newPath)

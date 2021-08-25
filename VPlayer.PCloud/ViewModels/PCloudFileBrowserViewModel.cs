@@ -30,6 +30,11 @@ namespace VPlayer.PCloud.ViewModels
 
     public override Visibility FinderVisibility => Visibility.Collapsed;
 
+    protected override void OnDeleteItem(string indentificator)
+    {
+      throw new NotImplementedException();
+    }
+
     protected override async Task<PlayblePCloudFolderViewModel> GetNewFolderViewModel(string newPath)
     {
       var dir = await cloudService.GetFolderInfo(long.Parse(newPath));

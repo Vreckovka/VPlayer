@@ -287,8 +287,10 @@ namespace VPlayer.Core.ViewModels
         {
           root = await GetNewFolderViewModel(newPath);
 
-          ParentDirectory = await GetNewFolderViewModel(root.Model.ParentIndentificator);
+          if (root.Model.ParentIndentificator != null)
+            ParentDirectory = await GetNewFolderViewModel(root.Model.ParentIndentificator);
 
+          root.IsRoot = true;
           root.IsExpanded = true;
           root.CanExpand = false;
           root.FolderType = FolderType.Other;
@@ -315,27 +317,18 @@ namespace VPlayer.Core.ViewModels
       {
         try
         {
-
-          if (Directory.Exists(path))
-          {
-            FileSystem.DeleteDirectory(path, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
-          }
-          else if (File.Exists(path))
-          {
-            FileSystem.DeleteFile(path, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
-          }
+          OnDeleteItem(path);
         }
         catch (Exception ex)
         {
           windowManager.ShowErrorPrompt(ex);
         }
-
-        OnRefresh();
       }
     }
 
     #endregion
 
+    protected abstract void OnDeleteItem(string indentificator);
     protected abstract Task<TFolderViewModel> GetNewFolderViewModel(string newPath);
     protected abstract Task<TFolderViewModel> GetParentFolderViewModel(string childIdentificator);
     protected abstract Task<bool> DirectoryExists(string newPath);

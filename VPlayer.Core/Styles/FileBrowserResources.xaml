@@ -38,7 +38,7 @@
                 <Setter Property="FontSize" Value="14" />
             </DataTrigger>
 
-            <DataTrigger Binding="{Binding ParentFolder}" Value="{x:Null}">
+            <DataTrigger Binding="{Binding IsRoot}" Value="true">
                 <Setter Property="FontSize" Value="18" />
                 <Setter Property="Foreground" Value="#ccc" />
             </DataTrigger>
@@ -77,7 +77,7 @@
                         <Setter Property="Visibility" Value="Visible" />
 
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding ParentFolder}" Value="{x:Null}">
+                            <DataTrigger Binding="{Binding IsRoot}" Value="true">
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -195,7 +195,7 @@
                     <Setter Property="Background" Value="Transparent" />
 
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding ParentFolder}" Value="{x:Null}">
+                        <DataTrigger Binding="{Binding IsRoot}" Value="true">
                             <Setter Property="Height" Value="20" />
                         </DataTrigger>
                     </Style.Triggers>

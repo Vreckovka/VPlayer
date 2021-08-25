@@ -57,12 +57,17 @@
                 <controls:PathButton Grid.Column="2"
                                      Margin="0,5,5,0"
                                      Command="{Binding ChangeDirectory}"
-                                     CommandParameter="{Binding ParentDirectory}"
+                                     CommandParameter="{Binding ParentDirectory.Model.Indentificator}"
                                      IconHoverColor="{StaticResource BlueColor}"
                                      IconWidth="25"
                                      IsReadOnly="True"
-                                     PathStyle="{StaticResource FolderUp}"
-                                     ToolTip="{Binding ParentDirectory}">
+                                     PathStyle="{StaticResource FolderUp}">
+                    <controls:PathButton.ToolTip>
+                        <TextBlock>
+                            <Run Text="{Binding ParentDirectory.Name}" />
+                            <Run Text="{Binding ParentDirectory.Model.Indentificator, StringFormat={}({0})}" />
+                        </TextBlock>
+                    </controls:PathButton.ToolTip>
                     <controls:PathButton.Style>
                         <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
                             <Style.Triggers>
