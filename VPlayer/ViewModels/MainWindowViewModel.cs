@@ -88,8 +88,8 @@ namespace VPlayer.ViewModels
   //        TODO: Status popup close manual
   //        TODO: Moznost vymazat automaticky nahrane lyrics a zakazat stahovanie
   //        TODO: Dvojklik na windows volume (nastavi dostpny dalsi device (hore ci dole????))
-  //		TODO: Ak Windows Volume je 100 a stale chcem viac tak dam VLC volume ++
-  //		TODO: Vymazat playlist + data iconka (iny trash button)
+  //		    TODO: Ak Windows Volume je 100 a stale chcem viac tak dam VLC volume ++
+  //		    TODO: Vymazat playlist + data iconka (iny trash button)
   //
   //  *****DESING***** 
   //        TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)
@@ -102,7 +102,10 @@ namespace VPlayer.ViewModels
   //  *****HARD/LONG***** 
   //        TODO: Dotiahnut data o albumoch, serialoch (a vyznacit ktore mam a ktore mi chybaju)
   //        TODO: Poriadny Search, nieco take ako ctrlt + T pre Resharpery, kludne aj na button a filtre po kategoriach (aby sa dalo pouzivat aj bez klavesnice)
-  //        
+  //
+  //
+  //  *****PClou******
+  //       TODO: Load stats ked sa pusti v prehravaci (CloudService) 
   //
   //  *****TOPKY*****
   //        TODO: File Browser - Nahrat tv show rovno z tade
@@ -137,8 +140,9 @@ namespace VPlayer.ViewModels
   //********************************************************************************************************************************
   //
   //*****LONG RUN*****
-  //TODO: Streaming service, aby som nemusel mat db u seba na disku. Nejaky server/cloud niekde si kupit (PCloud)
-  //TODO: Streaming pre subory, lyrics, tv shows, kludne uplne vsetko (tv sources...). Db tam bude cele to pojde do webu  //
+  //TODO: Streaming pre subory, lyrics, tv shows, kludne uplne vsetko (tv sources...).
+  //TODO: Db hosting
+  //TODO: WEB???? (Budem mat data)
 
   public class MainWindowViewModel : BaseMainWindowViewModel
   {

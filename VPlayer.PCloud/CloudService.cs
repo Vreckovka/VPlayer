@@ -6,9 +6,9 @@ using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using PCloud;
-using PCloudClient.Metadata;
+using PCloudClient.Domain;
 using VPLayer.Domain.Contracts.CloudService.Providers;
-using FileInfo = PCloudClient.Metadata.FileInfo;
+using FileInfo = PCloudClient.Domain.FileInfo;
 
 namespace VPlayer.PCloud
 {
@@ -44,6 +44,29 @@ namespace VPlayer.PCloud
       return null;
     }
 
+    public async Task<PCloudResponse<Stats>> GetFileStats(long id)
+    {
+      if (credentials != null)
+      {
+        using (var conn = await Connection.open(ssl, host))
+        {
+          try
+          {
+            await conn.login(credentials.Email, credentials.Password);
+
+            return await conn.GetFileStats(id);
+          }
+          finally
+          {
+            await Logout(conn);
+          }
+        }
+      }
+
+      return null;
+    }
+
+
     #region GetPublicLink
 
     public async Task<string> GetPublicLink(long id)
@@ -68,7 +91,7 @@ namespace VPlayer.PCloud
       return null;
     }
 
-    public bool IsUserLoggedIn()
+  public bool IsUserLoggedIn()
     {
       return File.Exists(filePath);
     }

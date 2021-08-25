@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
-using PCloudClient.Metadata;
-using FileInfo = PCloudClient.Metadata.FileInfo;
+using PCloudClient.Domain;
+using FileInfo = PCloudClient.Domain.FileInfo;
 
 namespace PCloud
 {
@@ -383,6 +384,29 @@ namespace PCloud
       link = "http://" + host + path;
 
       return link;
+    }
+
+
+    public static async Task<PCloudResponse<Stats>> GetFileStats(this Connection conn, long id)
+    {
+      PCloudResponse<Stats> data = null;
+      var req = conn.newRequest("stat");
+      req.add("fileid", id);
+      req.unixTimestamps();
+
+      var response = await conn.send(req, true);
+
+      var json = response.GetJson();
+
+      var options = new JsonSerializerOptions()
+      {
+        AllowTrailingCommas = true
+      };
+
+      data = JsonSerializer.Deserialize<PCloudResponse<Stats>>(json, options);
+
+
+      return data;
     }
   }
 }

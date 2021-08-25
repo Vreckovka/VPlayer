@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using PCloudClient.Metadata;
+using PCloudClient.Domain;
 
 namespace PCloud
 {

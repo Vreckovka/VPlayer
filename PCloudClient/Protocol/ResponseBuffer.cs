@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 namespace PCloud
 {
 	/// <summary>Byte array to parse binary responses from.</summary>
-	class ResponseBuffer: IDisposable
+  public class ResponseBuffer: IDisposable
 	{
 		/// <summary>Buffer with the complete binary JSON.</summary>
-		readonly byte[] buffer;
+		public readonly byte[] buffer;
 
 		/// <summary>For performance reasons, the above buffer comes from ArrayPool&lt;byte&gt;, can be longer than response. This readonly field has the actual length.</summary>
-		readonly int length;
+    public readonly int length;
 
 		/// <summary>Current read offset. The parser reads the data sequentially.</summary>
-		int offset = 0;
+    public int offset = 0;
 
 		/// <summary>Encoding for strings.</summary>
 		static readonly Encoding encStrings = Encoding.UTF8;

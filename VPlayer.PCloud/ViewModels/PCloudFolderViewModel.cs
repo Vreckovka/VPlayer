@@ -5,14 +5,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using PCloudClient.Domain;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.ViewModels.WindowsFile;
 using VCore.WPF.ViewModels.WindowsFiles;
 using VPLayer.Domain.Contracts.CloudService.Providers;
 using FileInfo = VCore.WPF.ViewModels.WindowsFiles.FileInfo;
+using FolderInfo = VCore.WPF.ViewModels.WindowsFiles.FolderInfo;
 
 namespace VPlayer.PCloud.ViewModels
 {
+  public class PCloudFileInfo : FileInfo
+  {
+    public PCloudFileInfo(string fullName, string source) : base(fullName, source)
+    {
+    }
+
+    public Stats Stats { get; set; }
+  }
+
   public class PCloudFolderViewModel : FolderViewModel<PCloudFileViewModel>
   {
     private readonly ICloudService cloudService;
@@ -33,11 +44,11 @@ namespace VPlayer.PCloud.ViewModels
     {
       var files = await cloudService.GetFilesAsync(long.Parse(Model.Indentificator));
 
-      var list = new List<FileInfo>();
+      var list = new List<PCloudFileInfo>();
 
       foreach (var file in files)
       {
-        var fileInfo = new FileInfo(file.name, null)
+        var fileInfo = new PCloudFileInfo(file.name, null)
         {
           Indentificator = file.id.ToString(),
           Name = file.name,

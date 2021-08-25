@@ -1,4 +1,4 @@
-﻿namespace PCloudClient.Metadata
+﻿namespace PCloudClient.Domain
 {
 	public enum eIcon: byte
 	{

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using PCloud;
 
-namespace PCloudClient.Metadata
+namespace PCloudClient.Domain
 {
-	/// <summary>Abstract base class for both folders and files. All data is read only.</summary>
+  /// <summary>Abstract base class for both folders and files. All data is read only.</summary>
 	public abstract class FileBase
 	{
 		/// <summary>folderid of the folder the object resides in</summary>

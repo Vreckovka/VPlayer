@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using PCloudClient.Metadata;
+using PCloud;
+using PCloudClient.Domain;
 
 namespace VPLayer.Domain.Contracts.CloudService.Providers
 {
@@ -14,6 +15,7 @@ namespace VPLayer.Domain.Contracts.CloudService.Providers
     void SaveLoginInfo(string email, string password);
     Task<bool> ExistsFolderAsync(long id);
     Task<string> GetPublicLink(long id);
+    Task<PCloudResponse<Stats>> GetFileStats(long id);
     bool IsUserLoggedIn();
   }
 }
