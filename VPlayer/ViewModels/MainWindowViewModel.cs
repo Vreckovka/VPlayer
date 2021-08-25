@@ -107,6 +107,12 @@ namespace VPlayer.ViewModels
   //  *****PCloud******
   //       TODO: Load stats ked sa pusti v prehravaci (CloudService) 
   //
+  //
+  //  *****Webova db******
+  //       TODO: Selector pre vyber databazy (Lokalna, Cloud)
+  //       TODO: Playlisty ukladat podla typu suborov do prislusneho typu datbaty (lokal, cloud) 
+  //
+  //
   //  *****TOPKY*****
   //        TODO: File Browser - Nahrat tv show rovno z tade
   //        TODO: File Browser - Nahrat artists rovno z tade
