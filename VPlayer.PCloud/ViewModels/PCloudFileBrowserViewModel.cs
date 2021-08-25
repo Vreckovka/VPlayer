@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
 using VCore.WPF.Managers;
@@ -26,6 +27,8 @@ namespace VPlayer.PCloud.ViewModels
 
       BaseDirectoryPath = GlobalSettings.CloudBrowserInitialDirectory;
     }
+
+    public override Visibility FinderVisibility => Visibility.Collapsed;
 
     protected override async Task<PlayblePCloudFolderViewModel> GetNewFolderViewModel(string newPath)
     {

@@ -15,7 +15,7 @@ namespace VPlayer.PCloud.ViewModels
     {
     }
 
-    public override bool LoadSubItemsWhenExpanded => false;
+    public override int MaxAutomaticLoadLevel => 0;
 
     public override bool CanPlay { get => true; }
 

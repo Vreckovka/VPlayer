@@ -46,6 +46,7 @@ namespace VPlayer.Core.ViewModels
 
     #region Properties
 
+    public virtual Visibility FinderVisibility => Visibility.Visible;
     public override string Header => "File browser";
 
     public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
@@ -176,6 +177,28 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region FilterPhrase
+
+    private string filterPhrase;
+
+    public string FilterPhrase
+    {
+      get { return filterPhrase; }
+      set
+      {
+        if (value != filterPhrase)
+        {
+          filterPhrase = value;
+
+          Filter(filterPhrase);
+
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #endregion
 
     #region Methods
@@ -236,17 +259,18 @@ namespace VPlayer.Core.ViewModels
 
     public void Filter(string predicated)
     {
-      Application.Current.Dispatcher.Invoke(() =>
+      if (predicated.Length >= 3 && !string.IsNullOrEmpty(predicated) && !predicated.All(x => char.IsWhiteSpace(x)))
       {
-        if (predicated.Length >= 3 && !string.IsNullOrEmpty(predicated) && !predicated.All(x => char.IsWhiteSpace(x)))
+        Task.Run(() =>
         {
           root.Filter(predicated);
-        }
-        else
-        {
-          root.ResetFilter();
-        }
-      });
+        });
+
+      }
+      else
+      {
+        root.ResetFilter();
+      }
     }
 
     #endregion

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.ViewModels.WindowsFile;
 using VCore.WPF.ViewModels.WindowsFiles;
@@ -24,7 +25,7 @@ namespace VPlayer.PCloud.ViewModels
       this.cloudService = cloudService ?? throw new ArgumentNullException(nameof(cloudService));
     }
 
-    public override bool LoadSubItemsWhenExpanded => false;
+    public override int MaxAutomaticLoadLevel => 0;
 
     #region GetFiles
 
@@ -40,6 +41,7 @@ namespace VPlayer.PCloud.ViewModels
         {
           Indentificator = file.id.ToString(),
           Name = file.name,
+          Length = file.length
         };
 
         var type = fileInfo.Extension.GetFileType();
