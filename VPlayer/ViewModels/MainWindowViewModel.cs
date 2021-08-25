@@ -104,11 +104,12 @@ namespace VPlayer.ViewModels
   //        TODO: Poriadny Search, nieco take ako ctrlt + T pre Resharpery, kludne aj na button a filtre po kategoriach (aby sa dalo pouzivat aj bez klavesnice)
   //
   //
-  //  *****PClou******
+  //  *****PCloud******
   //       TODO: Load stats ked sa pusti v prehravaci (CloudService) 
   //
   //  *****TOPKY*****
   //        TODO: File Browser - Nahrat tv show rovno z tade
+  //        TODO: File Browser - Nahrat artists rovno z tade
   //        TODO: Tv show prehrat od posledneho ulozene playlistu (to iste aj pre hudbu kludne), ked pribudne nova seria pusti to kde si skoncil, ale nacita ju
   //        TODO: Prehravanie,pridavanie do playlistu albumov, tv show z detailu (tym padom mozno zalozka Albums nebude treba, aj tak tam nechodis, pojdes iba do artist)
   //        TODO: Vymazavat itemy z File browsera (ak je odkaz niekde do db na tu zlozku tak vymazat rovno aj tv show, ale spytat sa ci to chces a zapametat si ak ano)
@@ -119,6 +120,7 @@ namespace VPlayer.ViewModels
   //        TODO: Ked pojdes hover nad playlist itemom tak sa zobrazi taka karta, kde budu detailne info + velka fotka
   //        TODO: Vytvorit HOME TAB (HOME -> ANALYTICS)  - Horizontal listview poslednych 5 - 10 playlistov a moznost ich hned spustit a potom rozne statistiky... (grafy, tabulky...) 
   //        TODO: Paging na dotahovanie playlistov (aj ostatnych veci) (aby sa neloadovala tak dlho appka a aj tak tie dole ma nezaujimaju)
+  //        TODO: Zmena suborov (Napriklad ked nema Artista a ja to najdem tak ho nastavit) ---> Mozno cim skor a potom dat do PCloudu
   //
   //*********************************************************************************************************************************
   //
@@ -140,7 +142,7 @@ namespace VPlayer.ViewModels
   //********************************************************************************************************************************
   //
   //*****LONG RUN*****
-  //TODO: Streaming pre subory, lyrics, tv shows, kludne uplne vsetko (tv sources...).
+  //TODO: Streaming pre subory, lyrics, tv shows (asi nie (mozno zopar)), kludne uplne vsetko (tv sources...).
   //TODO: Db hosting
   //TODO: WEB???? (Budem mat data)
 
