@@ -17,11 +17,11 @@
 		<Prefer32Bit>false</Prefer32Bit>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<OutputPath>D:\VPlayer</OutputPath>
+		<OutputPath></OutputPath>
 		<PlatformTarget>x86</PlatformTarget>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-		<OutputPath>D:\VPlayer</OutputPath>
+		<OutputPath></OutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="Includes\VPlayerLogo.ico" />
@@ -197,8 +197,20 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Properties\Settings.Designer.cs">
+	    <DesignTimeSharedInput>True</DesignTimeSharedInput>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Settings.settings</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Update="ChromaPrint\fpcalc.exe">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Properties\Settings.settings">
+		  <Generator>SettingsSingleFileGenerator</Generator>
+		  <LastGenOutput>Settings.Designer.cs</LastGenOutput>
 		</None>
 	</ItemGroup>
 
