@@ -188,18 +188,31 @@ namespace VPlayer.Core.ViewModels
 
       if (firstActivation)
       {
-        await SetBaseDirectory();
-
-        if (!string.IsNullOrEmpty(baseDirectoryPath))
-        {
-          baseDirectoryPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-
-          await SetBaseDirectory();
-        }
+        await SetUpManager();
       }
     }
 
     #endregion
+
+    #region SetUpManager
+
+    public async Task<bool> SetUpManager()
+    {
+      var result = await SetBaseDirectory();
+
+      if (!result)
+      {
+        baseDirectoryPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+        result = await SetBaseDirectory();
+      }
+
+      return result;
+    }
+
+    #endregion
+
+    #region SetBaseDirectory
 
     private async Task<bool> SetBaseDirectory()
     {
@@ -216,6 +229,8 @@ namespace VPlayer.Core.ViewModels
 
       return false;
     }
+
+    #endregion
 
     #region Filter
 
@@ -250,11 +265,9 @@ namespace VPlayer.Core.ViewModels
 
           ParentDirectory = await GetNewFolderViewModel(root.Model.ParentIndentificator);
 
-          root.GetFolderInfo();
           root.IsExpanded = true;
           root.CanExpand = false;
           root.FolderType = FolderType.Other;
-          root.IsRoot = true;
 
           Items.Clear();
           Items.Add(root);

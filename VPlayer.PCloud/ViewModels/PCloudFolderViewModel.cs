@@ -24,6 +24,8 @@ namespace VPlayer.PCloud.ViewModels
       this.cloudService = cloudService ?? throw new ArgumentNullException(nameof(cloudService));
     }
 
+    public override bool LoadSubItemsWhenExpanded => false;
+
     #region GetFiles
 
     public override async Task<IEnumerable<FileInfo>> GetFiles()

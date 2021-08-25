@@ -47,34 +47,18 @@ namespace VPlayer.PCloud
     {
       base.OnActivation(firstActivation);
 
-      if (wasLoaded)
-      {
-        PCloudFileBrowserViewModel.OnBaseDirectoryPathChanged("0");
-
-        var folders = await cloudService.GetFoldersAsync(0);
-
-        if (folders != null)
-        {
-          wasLoaded = true;
-        }
-      }
-
-      if (!cloudService.IsUserLoggedIn() && !wasLoaded)
+      if (!cloudService.IsUserLoggedIn())
       {
         var vm = new LoginPromptViewModel();
 
         windowManager.ShowPrompt<LoginPrompt>(vm);
 
         cloudService.SaveLoginInfo(vm.Name, vm.Password);
+      }
 
-        PCloudFileBrowserViewModel.OnBaseDirectoryPathChanged("0");
-
-        var folders = await cloudService.GetFoldersAsync(0);
-
-        if (folders != null)
-        {
-          wasLoaded = true;
-        }
+      if (!wasLoaded)
+      {
+        wasLoaded = await PCloudFileBrowserViewModel.SetUpManager();
       }
     }
 

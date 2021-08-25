@@ -38,7 +38,7 @@
         <Setter Property="FontSize" Value="14" />
       </DataTrigger>
 
-      <DataTrigger Binding="{Binding IsRoot}" Value="true">
+      <DataTrigger Binding="{Binding ParentFolder}" Value="{x:Null}">
         <Setter Property="FontSize" Value="18" />
         <Setter Property="Foreground" Value="#ccc" />
       </DataTrigger>
@@ -121,6 +121,15 @@
                              PathStyle="{StaticResource ArrowUpSquare}"
                              ToolTip="Open in filebrowser" />
 
+        <controls:PathButton IconHeight="10"
+                             IconHoverColor="{StaticResource BlueColor}"
+                             IconWidth="11"
+                             IsChecked="{Binding WasLoaded, Mode=OneWay}"
+                             IsReadOnly="True"
+                             PathCheckedBrush="#2f6e30"
+                             PathStyle="{StaticResource check}"
+                             ToolTip="Loaded" />
+
       </StackPanel>
 
       <Path Grid.Column="1"
@@ -152,19 +161,38 @@
       </Path>
 
 
-
-
-      <ContentControl Grid.Column="3"
+      <ContentControl Grid.Column="2"
                       VerticalAlignment="Center"
                       Content="{Binding HighlitedText, Converter={StaticResource FolderHighlightTextConverter}, Mode=OneTime}"
                       ToolTip="{Binding FolderType, Mode=OneTime}" />
 
+      <Grid Grid.Column="1" Grid.ColumnSpan="2">
+        <TextBlock Margin="150,0,0,0"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   Foreground="#ccc"
+                   Text="Loading..." />
+        <Grid.Style>
+          <Style TargetType="Grid">
+            <Setter Property="Background" Value="#cc141414" />
+            <Setter Property="Visibility" Value="Hidden" />
 
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding IsLoading}" Value="true">
+                <Setter Property="Visibility" Value="Visible" />
+              </DataTrigger>
+            </Style.Triggers>
+
+
+          </Style>
+        </Grid.Style>
+      </Grid>
 
       <Grid.Style>
         <Style TargetType="Grid">
           <Setter Property="Height" Value="18" />
           <Setter Property="Margin" Value="2.5" />
+          <Setter Property="Background" Value="Transparent" />
 
           <Style.Triggers>
             <DataTrigger Binding="{Binding IsRoot}" Value="true">

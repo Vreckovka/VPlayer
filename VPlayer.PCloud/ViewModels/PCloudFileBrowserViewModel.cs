@@ -12,7 +12,7 @@ using VPLayer.Domain.Contracts.CloudService.Providers;
 
 namespace VPlayer.PCloud.ViewModels
 {
-  public class PCloudFileBrowserViewModel : FileBrowserViewModel<PlayableFolderViewModel<PCloudFolderViewModel, PCloudFileViewModel>>
+  public class PCloudFileBrowserViewModel : FileBrowserViewModel<PlayblePCloudFolderViewModel>
   {
     private readonly ICloudService cloudService;
 
@@ -27,7 +27,7 @@ namespace VPlayer.PCloud.ViewModels
       BaseDirectoryPath = GlobalSettings.CloudBrowserInitialDirectory;
     }
 
-    protected override async Task<PlayableFolderViewModel<PCloudFolderViewModel, PCloudFileViewModel>> GetNewFolderViewModel(string newPath)
+    protected override async Task<PlayblePCloudFolderViewModel> GetNewFolderViewModel(string newPath)
     {
       var dir = await cloudService.GetFolderInfo(long.Parse(newPath));
 
@@ -40,10 +40,10 @@ namespace VPlayer.PCloud.ViewModels
 
       var folderViewModel = viewModelsFactory.Create<PCloudFolderViewModel>(info);
 
-      return viewModelsFactory.Create<PlayableFolderViewModel<PCloudFolderViewModel, PCloudFileViewModel>>(folderViewModel);
+      return viewModelsFactory.Create<PlayblePCloudFolderViewModel>(folderViewModel);
     }
 
-    protected override async Task<PlayableFolderViewModel<PCloudFolderViewModel, PCloudFileViewModel>> GetParentFolderViewModel(string childIdentificator)
+    protected override async Task<PlayblePCloudFolderViewModel> GetParentFolderViewModel(string childIdentificator)
     {
       var parent = await cloudService.GetFolderInfo(long.Parse(childIdentificator));
 

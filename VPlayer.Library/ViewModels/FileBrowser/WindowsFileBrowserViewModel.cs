@@ -4,12 +4,11 @@ using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
 using VCore.WPF.Managers;
 using VCore.WPF.ViewModels.WindowsFiles;
-using VPlayer.Core.FileBrowser;
 using VPlayer.Core.ViewModels;
 
 namespace VPlayer.Home.ViewModels.FileBrowser
 {
-  public class WindowsFileBrowserViewModel : FileBrowserViewModel<PlayableFolderViewModel<WindowsFolderViewModel, WindowsFileViewModel>>
+  public class WindowsFileBrowserViewModel : FileBrowserViewModel<PlayableWindowsFileFolderViewModel>
   {
     public WindowsFileBrowserViewModel(
       IRegionProvider regionProvider,
@@ -18,7 +17,7 @@ namespace VPlayer.Home.ViewModels.FileBrowser
     {
     }
 
-    protected override Task<PlayableFolderViewModel<WindowsFolderViewModel, WindowsFileViewModel>> GetNewFolderViewModel(string newPath)
+    protected override Task<PlayableWindowsFileFolderViewModel> GetNewFolderViewModel(string newPath)
     {
       return Task.Run(() =>
       {
@@ -33,11 +32,11 @@ namespace VPlayer.Home.ViewModels.FileBrowser
 
         var folderViewModel = viewModelsFactory.Create<WindowsFolderViewModel>(info);
 
-        return viewModelsFactory.Create<PlayableFolderViewModel<WindowsFolderViewModel, WindowsFileViewModel>>(folderViewModel);
+        return viewModelsFactory.Create<PlayableWindowsFileFolderViewModel>(folderViewModel);
       });
     }
 
-    protected override Task<PlayableFolderViewModel<WindowsFolderViewModel, WindowsFileViewModel>> GetParentFolderViewModel(string childIdentificator)
+    protected override Task<PlayableWindowsFileFolderViewModel> GetParentFolderViewModel(string childIdentificator)
     {
       var dirInfo = new DirectoryInfo(childIdentificator).Parent;
 

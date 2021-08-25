@@ -16,7 +16,7 @@ using FileInfo = VCore.WPF.ViewModels.WindowsFiles.FileInfo;
 
 namespace VPlayer.Core.FileBrowser
 {
-  public class PlayableFolderViewModel<TFolderViewModel, TFileViewModel> : FolderViewModel<PlayableFileViewModel>
+  public abstract class PlayableFolderViewModel<TFolderViewModel, TFileViewModel> : FolderViewModel<PlayableFileViewModel>
     where TFolderViewModel : FolderViewModel<TFileViewModel>
     where TFileViewModel : FileViewModel
 
@@ -43,7 +43,7 @@ namespace VPlayer.Core.FileBrowser
 
     private bool canPlay;
 
-    public bool CanPlay
+    public virtual bool CanPlay
     {
       get { return canPlay; }
       set
@@ -83,79 +83,80 @@ namespace VPlayer.Core.FileBrowser
 
     #region Play
 
-    public void Play()
+    public async void Play()
     {
-      if (FolderType != FolderType.Other && FolderType != FolderType.Mixed)
+      IsLoading = true;
+
+      await LoadSubFolders(this);
+
+      var playableFiles = SubItems.ViewModels.SelectMany(x => x.SubItems.ViewModels).OfType<FileViewModel>().ToList();
+
+      if (FolderType == FolderType.Video)
       {
-        LoadSubFolders(this);
+        playableFiles.AddRange(SubItems.ViewModels.OfType<PlayableFileViewModel>().Where(x => x.FileType == FileType.Video));
 
-        var playableFiles = SubItems.ViewModels.SelectMany(x => x.SubItems.ViewModels).OfType<FileViewModel>().ToList();
+        var videoItems = new List<VideoItem>();
 
-        if (FolderType == FolderType.Video)
+        foreach (var item in playableFiles)
         {
-          playableFiles.AddRange(SubItems.ViewModels.OfType<PlayableFileViewModel>().Where(x => x.FileType == FileType.Video));
+          var existing = storageManager.GetRepository<VideoItem>().SingleOrDefault(x => x.Source == item.Model.Source);
 
-          var videoItems = new List<VideoItem>();
-
-          foreach (var item in playableFiles)
+          if (existing == null)
           {
-            var existing = storageManager.GetRepository<VideoItem>().SingleOrDefault(x => x.Source == item.Model.Source);
-
-            if (existing == null)
+            var videoItem = new VideoItem()
             {
-              var videoItem = new VideoItem()
-              {
-                Name = item.Model.Name,
-                Source = item.Model.Source
-              };
+              Name = item.Model.Name,
+              Source = item.Model.Source
+            };
 
-              storageManager.StoreEntity(videoItem, out var stored);
+            storageManager.StoreEntity(videoItem, out var stored);
 
-              videoItems.Add(stored);
-            }
-            else
-            {
-              videoItems.Add(existing);
-            }
+            videoItems.Add(stored);
           }
-
-          var data = new PlayItemsEventData<VideoItemInPlaylistViewModel>(videoItems.Select(x => viewModelsFactory.Create<VideoItemInPlaylistViewModel>(x)), EventAction.Play, this);
-
-          eventAggregator.GetEvent<PlayItemsEvent<VideoItem, VideoItemInPlaylistViewModel>>().Publish(data);
-        }
-        else if (FolderType == FolderType.Sound)
-        {
-          playableFiles.AddRange(SubItems.ViewModels.OfType<PlayableFileViewModel>().Where(x => x.FileType == FileType.Sound));
-
-          var videoItems = new List<SoundItem>();
-
-          foreach (var item in playableFiles)
+          else
           {
-            var existing = storageManager.GetRepository<SoundItem>().SingleOrDefault(x => x.Source == item.Model.Source);
-
-            if (existing == null)
-            {
-              var videoItem = new SoundItem()
-              {
-                Name = item.Model.Name,
-                Source = item.Model.Source
-              };
-
-              storageManager.StoreEntity(videoItem, out var stored);
-
-              videoItems.Add(stored);
-            }
-            else
-            {
-              videoItems.Add(existing);
-            }
+            videoItems.Add(existing);
           }
-
-          var data = new PlayItemsEventData<SoundItemInPlaylistViewModel>(videoItems.Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x)), EventAction.Play, this);
-
-          eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(data);
         }
+
+        var data = new PlayItemsEventData<VideoItemInPlaylistViewModel>(videoItems.Select(x => viewModelsFactory.Create<VideoItemInPlaylistViewModel>(x)), EventAction.Play, this);
+
+        eventAggregator.GetEvent<PlayItemsEvent<VideoItem, VideoItemInPlaylistViewModel>>().Publish(data);
       }
+      else if (FolderType == FolderType.Sound)
+      {
+        playableFiles.AddRange(SubItems.ViewModels.OfType<PlayableFileViewModel>().Where(x => x.FileType == FileType.Sound));
+
+        var videoItems = new List<SoundItem>();
+
+        foreach (var item in playableFiles)
+        {
+          var existing = storageManager.GetRepository<SoundItem>().SingleOrDefault(x => x.Source == item.Model.Source);
+
+          if (existing == null)
+          {
+            var videoItem = new SoundItem()
+            {
+              Name = item.Model.Name,
+              Source = item.Model.Source
+            };
+
+            storageManager.StoreEntity(videoItem, out var stored);
+
+            videoItems.Add(stored);
+          }
+          else
+          {
+            videoItems.Add(existing);
+          }
+        }
+
+        var data = new PlayItemsEventData<SoundItemInPlaylistViewModel>(videoItems.Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x)), EventAction.Play, this);
+
+        eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(data);
+      }
+
+      IsLoading = false;
     }
 
     #endregion
@@ -165,6 +166,22 @@ namespace VPlayer.Core.FileBrowser
     protected override void OnGetFolderInfo()
     {
       base.OnGetFolderInfo();
+
+      if (FolderType != FolderType.Other)
+      {
+        CanPlay = true;
+      }
+
+      ParentFolder?.RefreshType();
+    }
+
+    #endregion
+
+    #region RefreshType
+
+    public override void RefreshType()
+    {
+      base.RefreshType();
 
       if (FolderType != FolderType.Other)
       {
