@@ -65,7 +65,6 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     #endregion Constructors
 
-
     #region Properties
 
     public ReplaySubject<object> ItemUpdated { get; } = new ReplaySubject<object>(10);
@@ -115,8 +114,6 @@ namespace VPlayer.AudioStorage.InfoDownloader
       {
         try
         {
-
-
           var updateAlbum = await UpdateAlbum(album);
 
           if (updateAlbum != null)

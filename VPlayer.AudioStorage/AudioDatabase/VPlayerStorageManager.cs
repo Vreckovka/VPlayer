@@ -79,6 +79,11 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #endregion
 
+    public static string GetNormalizedName(string name)
+    {
+      return name.ToLower().Replace(" ", null).Replace("　", null);
+    }
+
     #region StoreData
 
     private object storeBatton = new object();
@@ -92,19 +97,19 @@ namespace VPlayer.AudioStorage.AudioDatabase
         {
           using (var context = new AudioDatabaseContext())
           {
-            Artist artist = new Artist(audioInfo.Artist)
+            Artist newArtist = new Artist(audioInfo.Artist)
             {
-              MusicBrainzId = audioInfo.ArtistMbid
+              MusicBrainzId = audioInfo.ArtistMbid,
+              NormalizedName =  GetNormalizedName(audioInfo.Artist)
             };
 
-            artist = (from x in context.Artists where x.Name == artist.Name select x).SingleOrDefault();
+            Artist artist = newArtist;
+
+            artist = (from x in context.Artists where x.NormalizedName ==  artist.NormalizedName select x).SingleOrDefault();
 
             if (artist == null && audioInfo.Artist != null)
             {
-              artist = new Artist(audioInfo.Artist)
-              {
-                MusicBrainzId = audioInfo.ArtistMbid
-              };
+              artist = newArtist;
 
               context.Artists.Add(artist);
               context.SaveChanges();
@@ -124,11 +129,12 @@ namespace VPlayer.AudioStorage.AudioDatabase
             {
               Name = audioInfo.Album,
               Artist = artist,
+              NormalizedName = GetNormalizedName(audioInfo.Album)
             };
 
             album = (from x in context.Albums
-                     where x.Name == album.Name
-                     where x.Artist.Name == album.Artist.Name
+                     where  x.NormalizedName ==  album.NormalizedName
+                     where  x.Artist.NormalizedName ==  album.Artist.NormalizedName
                      select x).SingleOrDefault();
 
             if (album == null && audioInfo.Album != null)
@@ -136,7 +142,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
               album = new Album()
               {
                 Name = audioInfo.Album,
-                Artist = artist
+                Artist = artist,
+                NormalizedName = GetNormalizedName(audioInfo.Album)
               };
 
               context.Albums.Add(album);
@@ -158,13 +165,14 @@ namespace VPlayer.AudioStorage.AudioDatabase
               SoundItem = new SoundItem()
               {
                 Source = audioInfo.DiskLocation,
-                Name = audioInfo.Title
-              }
+                Name = audioInfo.Title,
+                NormalizedName = GetNormalizedName(audioInfo.Title)
+              },
             };
 
 
             song = (from x in context.Songs
-                    where song.Name == x.Name
+                    where song.NormalizedName ==x.NormalizedName
                     where x.Album.Id == song.Album.Id
                     select x).SingleOrDefault();
 
@@ -177,7 +185,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
                 {
                   Duration = audioInfo.Duration,
                   Source = audioInfo.DiskLocation,
-                  Name = audioInfo.Title
+                  Name = audioInfo.Title,
+                  NormalizedName = GetNormalizedName(audioInfo.Title)
                 }
               };
 
@@ -196,6 +205,20 @@ namespace VPlayer.AudioStorage.AudioDatabase
               });
 
               logger.Log(Logger.MessageType.Success, $"New song was added {song.Name}");
+            }
+            else
+            {
+              song.Source = audioInfo.DiskLocation;
+              
+              ItemChanged.OnNext(new ItemChanged()
+              {
+                Item = song,
+                Changed = Changed.Updated
+              });
+
+              context.SaveChanges();
+
+              logger.Log(Logger.MessageType.Success, $"Song was updated {song.Name}");
             }
           }
         }
@@ -440,8 +463,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
                 originalAlbum.Update(album);
 
                 var duplicates = (from x in albums
-                                  where x.Name == originalAlbum.Name
-                                  where x.Artist.Name == originalAlbum.Artist.Name
+                                  where x.NormalizedName == originalAlbum.NormalizedName
+                                  where x.Artist.NormalizedName ==originalAlbum.Artist.NormalizedName
                                   group x by x.Name
                   into a
                                   where a.Count() > 1
@@ -485,8 +508,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
               {
                 originalAlbum =
                   (from x in context.Albums
-                   where x.Name == album.Name
-                   where x.Artist.Name == album.Artist.Name
+                   where x.NormalizedName ==  album.NormalizedName
+                   where  x.Artist.NormalizedName == album.Artist.NormalizedName
                    select x).Include(x => x.Songs).Include(x => x.Artist).SingleOrDefault();
 
                 if (originalAlbum != null)
@@ -557,7 +580,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
         var songsToAdd =
           (from x in albumToCombine.Songs
-           where originalAlbum.Songs.All(y => y.Name != x.Name)
+           where originalAlbum.Songs.All(y => y.NormalizedName != x.NormalizedName)
            select x)
           .ToList();
 

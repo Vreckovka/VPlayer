@@ -99,14 +99,14 @@ namespace VPlayer.Home.ViewModels
 
     #region ItemsChanged
 
-    protected virtual void ItemsChanged(ItemChanged<TModel> itemChanged)
+    protected virtual async void ItemsChanged(ItemChanged<TModel> itemChanged)
     {
       var model = itemChanged.Item;
 
       switch (itemChanged.Changed)
       {
         case Changed.Added:
-          LibraryCollection.Add(model);
+          await LibraryCollection.Add(model);
 
           Application.Current?.Dispatcher?.Invoke(() =>
           {

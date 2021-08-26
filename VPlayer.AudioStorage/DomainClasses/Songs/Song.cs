@@ -1,14 +1,44 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using VCore.WPF.ViewModels.WindowsFiles;
 using VPlayer.Core.ViewModels;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
+  [Serializable]
+  public class SoundFileInfo : FileInfo, IEntity, IUpdateable<SoundFileInfo>
+  {
+    public SoundFileInfo(string fullName, string source) : base(fullName, source)
+    {
+    }
+
+    [Key]
+    public int Id { get; set; }
+    public DateTime? Created { get; set; }
+    public DateTime? Modified { get; set; }
+
+
+    public string Artist { get; set; }
+    public string Album { get; set; }
+
+    public void Update(SoundFileInfo other)
+    {
+      Id = other.Id;
+      Created = other.Created;
+      Modified = other.Modified;
+      Artist = other.Artist;
+      Album = other.Album;
+    }
+  }
+
   public class SoundItem : PlaybleItem, IUpdateable<SoundItem>
   {
     public void Update(SoundItem other)
     {
       base.Update(other);
     }
+
+    public SoundFileInfo FileInfo { get; set; }
   }
 
   public class Song : DomainEntity, IUpdateable<Song>, IPlayableModel
@@ -30,9 +60,9 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     public Album Album { get; set; }
     public SoundItem SoundItem { get; set; }
-    
+
     public string MusicBrainzId { get; set; }
-    
+
     public string Chartlyrics_Lyric { get; set; }
     public string Chartlyrics_LyricId { get; set; }
     public string Chartlyrics_LyricCheckSum { get; set; }
@@ -40,6 +70,18 @@ namespace VPlayer.AudioStorage.DomainClasses
     public string LRCLyrics { get; set; }
     public string UPnPPath { get; set; }
 
+    public string NormalizedName
+    {
+      get
+      {
+        return SoundItem?.NormalizedName;
+      }
+      set
+      {
+        if (SoundItem != null)
+          SoundItem.NormalizedName = value;
+      }
+    }
 
 
     public string Source

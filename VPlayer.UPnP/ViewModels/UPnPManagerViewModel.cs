@@ -147,7 +147,7 @@ namespace VPlayer.UPnP.ViewModels
     {
       base.Initialize();
 
-      await LoadRenderers();
+      //await LoadRenderers();
     }
 
     #endregion

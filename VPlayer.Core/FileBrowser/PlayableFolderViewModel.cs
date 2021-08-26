@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore;
 using VCore.Standard.Factories.ViewModels;
@@ -127,31 +128,39 @@ namespace VPlayer.Core.FileBrowser
       {
         playableFiles.AddRange(SubItems.ViewModels.OfType<PlayableFileViewModel>().Where(x => x.FileType == FileType.Sound));
 
-        var videoItems = new List<SoundItem>();
+        var soundItems = new List<SoundItem>();
 
         foreach (var item in playableFiles)
         {
-          var existing = storageManager.GetRepository<SoundItem>().SingleOrDefault(x => x.Source == item.Model.Source);
+          var existing = storageManager.GetRepository<SoundItem>().Include(x => x.FileInfo).SingleOrDefault(x => x.Source == item.Model.Source);
 
           if (existing == null)
           {
+            var fileInfo = new SoundFileInfo(item.Model.FullName, item.Model.Source)
+            {
+              Length = item.Model.Length,
+              Indentificator = item.Model.Indentificator,
+            };
+
             var videoItem = new SoundItem()
             {
               Name = item.Model.Name,
-              Source = item.Model.Source
+              Source = item.Model.Source,
+              FileInfo = fileInfo  
             };
 
             storageManager.StoreEntity(videoItem, out var stored);
 
-            videoItems.Add(stored);
+            soundItems.Add(stored);
           }
           else
           {
-            videoItems.Add(existing);
+            soundItems.Add(existing);
           }
         }
 
-        var data = new PlayItemsEventData<SoundItemInPlaylistViewModel>(videoItems.Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x)), EventAction.Play, this);
+        var data = new PlayItemsEventData<SoundItemInPlaylistViewModel>(
+          soundItems.Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x)), EventAction.Play, this);
 
         eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(data);
       }

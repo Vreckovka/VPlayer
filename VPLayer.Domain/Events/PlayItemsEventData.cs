@@ -49,7 +49,7 @@ namespace VPlayer.Core.Events
     }
 
 
-    public IEnumerable<TEventData> Items { get; }
+    public IEnumerable<TEventData> Items { get;set; }
     public EventAction EventAction { get; }
     public bool? IsShuffle { get; }
     public bool? IsRepeat { get; }

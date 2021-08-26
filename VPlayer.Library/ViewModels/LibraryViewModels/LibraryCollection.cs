@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using Logger;
 using Microsoft.EntityFrameworkCore;
@@ -121,11 +122,17 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
 
     #region Add
 
-    public void Add(TModel entity)
+    public async Task Add(TModel entity)
     {
+      var viewModel = ViewModelsFactory.Create<TViewModel>(entity);
+
+      if (!WasLoaded)
+      {
+        await LoadInitilizedDataAsync();
+      }
+
       Application.Current?.Dispatcher?.Invoke(() =>
       {
-        var viewModel = ViewModelsFactory.Create<TViewModel>(entity);
         Items.Add(viewModel);
 
       });
@@ -145,11 +152,11 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
         {
           var items = Items.Where(x => x.ModelId == entity.Id).ToList();
 
-          foreach(var item in items)
+          foreach (var item in items)
           {
             Items.Remove(item);
           }
-          
+
           if (items.Count > 0)
           {
             Recreate();
@@ -169,7 +176,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
 
     public async void Update(TModel entity)
     {
-      if(!WasLoaded)
+      if (!WasLoaded)
       {
         await GetOrLoadDataAsync();
       }
@@ -196,7 +203,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
     {
       if (Items != null)
       {
-        var generator = new ItemsGenerator<TViewModel>(Items,21);
+        var generator = new ItemsGenerator<TViewModel>(Items, 21);
 
         FilteredItems = new VirtualList<TViewModel>(generator);
       }

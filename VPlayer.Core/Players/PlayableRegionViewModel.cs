@@ -448,11 +448,11 @@ namespace VPlayer.Core.ViewModels
 
     public async void OnClearPlaylist()
     {
-      if(ActualSavedPlaylist.Id > 0 )
+      if (ActualSavedPlaylist.Id > 0)
       {
         await UpdateActualSavedPlaylistPlaylist();
       }
-    
+
 
       IsPlaying = false;
       VirtualizedPlayList = null;
@@ -1035,6 +1035,12 @@ namespace VPlayer.Core.ViewModels
       }
 
       RaisePropertyChanged(nameof(CanPlay));
+
+      //Nie su to tie iste viewmodely z nejakeho dôvodu
+      if (data.EventAction == EventAction.Play)
+      {
+        data.Items = PlayList;
+      }
 
       OnPlayEvent(data);
     }

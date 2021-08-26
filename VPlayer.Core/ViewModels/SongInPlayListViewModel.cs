@@ -119,7 +119,7 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    public string ImagePath => AlbumViewModel.Model?.AlbumFrontCoverFilePath;
+    public string ImagePath => AlbumViewModel?.Model?.AlbumFrontCoverFilePath;
 
     public string LRCLyrics => SongModel.LRCLyrics;
 
@@ -279,8 +279,11 @@ namespace VPlayer.Core.ViewModels
     {
       base.Initialize();
 
-      AlbumViewModel = (await albumsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == SongModel.Album.Id);
-      ArtistViewModel = (await artistsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == AlbumViewModel.Model.Artist.Id);
+      if (SongModel.Album != null)
+      {
+        AlbumViewModel = (await albumsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == SongModel.Album.Id);
+        ArtistViewModel = (await artistsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == SongModel.Album.Artist.Id);
+      }
 
       if (AlbumViewModel != null)
         AlbumViewModel.IsInPlaylist = true;
@@ -318,7 +321,7 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
-    
+
     #region Update
 
     public void Update(Song song)
@@ -347,7 +350,7 @@ namespace VPlayer.Core.ViewModels
           provider = (LRCProviders)providerNum;
         }
 
-        var lrc = parser.Parse(LRCLyrics.Replace("\r",null).Split('\n').ToList());
+        var lrc = parser.Parse(LRCLyrics.Replace("\r", null).Split('\n').ToList());
 
         if (lrc != null)
         {
@@ -484,7 +487,7 @@ namespace VPlayer.Core.ViewModels
 
     public void UpdateAlbumViewModel(Album album)
     {
-      if (AlbumViewModel != null && AlbumViewModel.Model != null)
+      if (AlbumViewModel?.Model != null)
       {
         AlbumViewModel.Model.Update(album);
         RaisePropertyChanged(nameof(ImagePath));

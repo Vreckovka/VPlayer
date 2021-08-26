@@ -8,6 +8,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     public int Duration { get; set; }
     public int Length { get; set; }
     public string Name { get; set; }
+    public string NormalizedName { get; set; }
     public bool IsFavorite { get; set; }
 
     public void Update(PlaybleItem other)
@@ -16,6 +17,7 @@ namespace VPlayer.AudioStorage.DomainClasses
       Duration = other.Duration;
       Length = other.Length;
       Name = other.Name;
+      NormalizedName = other.NormalizedName;
       IsFavorite = other.IsFavorite;
     }
   }

@@ -24,6 +24,8 @@ namespace VPlayer.AudioStorage.DomainClasses
     public string MusicBrainzId { get; set; }
     public string Name { get; set; }
 
+    public string NormalizedName { get; set; }
+
     public InfoDownloadStatus InfoDownloadStatus { get; set; }
 
     #endregion Properties

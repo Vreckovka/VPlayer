@@ -82,8 +82,7 @@ namespace VPlayer.Home.ViewModels
           {
             var song = songs.Single(x => x.SoundItem.Id == item.ReferencedItem.Id);
 
-            list.Add(viewModelsFactory.Create<SongInPlayListViewModel>(song
-              ));
+            list.Add(viewModelsFactory.Create<SongInPlayListViewModel>(song));
           }
 
           return list;
