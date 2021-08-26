@@ -56,8 +56,11 @@ namespace VPlayer.AudioStorage.DomainClasses
     {
       get
       {
-        return FileInfo?.Title;
-      }
+        if (string.IsNullOrEmpty(FileInfo?.Title))
+          return FileInfo?.Name;
+        else
+          return FileInfo?.Title;
+      } 
 
     }
 
