@@ -18,7 +18,7 @@ namespace VPlayer.WindowsPlayer.TemplateSelectors
 
     public override DataTemplate SelectTemplate(object item, DependencyObject container)
     {
-      if(item is SongInPlayListViewModel )
+      if(item is SoundItemInPlaylistViewModel )
       {
         return SongDataTemplate;
       }

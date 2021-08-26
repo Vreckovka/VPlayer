@@ -12,7 +12,7 @@ namespace VPlayer.Core.Modularity.Ninject
   public class VPlayerCoreModule : BaseNinjectModule
   {
 
-    private string logFilePath = "Loggs\\logs.txt";
+
 
     public override void RegisterProviders()
     {
@@ -20,16 +20,26 @@ namespace VPlayer.Core.Modularity.Ninject
 
       Kernel.BindToSelfInSingletonScope<KeyListener>();
 
-      Kernel.Bind<ILogger>().To<Logger.Logger>();
-      Kernel.Bind<ILoggerContainer>().To<Logger.ConsoleLogger>();
-
-
-      Kernel.Bind<FileLoggerContainer>().ToSelf().WithConstructorArgument("logFilePath", logFilePath);
 
       Kernel.Bind<IVPlayerViewModelsFactory>().To<VPlayerViewModelsFactory>();
       Kernel.Rebind<IViewModelsFactory>().To<VPlayerViewModelsFactory>();
 
       Kernel.Bind<IVlcProvider>().To<VlcProvider>().InSingletonScope();
     }
+  }
+
+  public class VPlayerLoggerModule : BaseNinjectModule
+  {
+    private string logFilePath = "Loggs\\logs.txt";
+
+    public override void RegisterProviders()
+    {
+      base.RegisterProviders();
+
+      Kernel.Bind<FileLoggerContainer>().ToSelf().WithConstructorArgument("logFilePath", logFilePath);
+      Kernel.Bind<ILogger>().To<Logger.Logger>();
+      Kernel.Bind<ILoggerContainer>().To<Logger.ConsoleLogger>();
+    }
+
   }
 }

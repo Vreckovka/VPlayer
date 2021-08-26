@@ -26,6 +26,7 @@ using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.Albums;
+using VPlayer.Core.ViewModels.Artists;
 using VPlayer.Core.ViewModels.TvShows;
 using VPLayer.Domain.Contracts.CloudService.Providers;
 using VPlayer.PCloud.ViewModels;
@@ -436,6 +437,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     private Task DownloadSongInfo(SoundItemInPlaylistViewModel viewmodel, CancellationToken cancellationToken)
     {
+      if (viewmodel == null)
+      {
+        return Task.CompletedTask;
+      }
+
       return Task.Run(async () =>
       {
         try
@@ -443,6 +449,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
           if (!(viewmodel is SongInPlayListViewModel))
           {
             var fileInfo = viewmodel?.Model?.FileInfo;
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+              viewmodel.IsDownloading = true;
+            });
 
             if (fileInfo != null)
             {
@@ -476,8 +487,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
                   cancellationToken.ThrowIfCancellationRequested();
 
-                  artist = storageManager.GetRepository<Artist>().Include(x => x.Albums)
-                    .FirstOrDefault(x => x.NormalizedName == normalizedName);
+                  artist = storageManager.GetRepository<Artist>().Include(x => x.Albums).FirstOrDefault(x => x.NormalizedName == normalizedName);
 
                   if (artist == null)
                   {
@@ -493,7 +503,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
                   cancellationToken.ThrowIfCancellationRequested();
 
-                  album = artist.Albums.SingleOrDefault(x => x.NormalizedName == normalizedName);
+                  album = artist.Albums?.SingleOrDefault(x => x.NormalizedName == normalizedName);
 
                   if (album == null)
                   {
@@ -509,11 +519,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
                     if (album != null)
                     {
-                      var storedAlbum = artist.Albums.SingleOrDefault(x => x.MusicBrainzId == album.MusicBrainzId);
-                    }
-                    else
-                    {
+                      var id = album.MusicBrainzId;
+                      var storedAlbum = artist.Albums?.SingleOrDefault(x => x.MusicBrainzId == id);
 
+                      if (storedAlbum != null)
+                      {
+                        album = storedAlbum;
+                      }
                     }
                   }
                 }
@@ -562,6 +574,19 @@ namespace VPlayer.WindowsPlayer.ViewModels
                           {
                             ActualItem = vm;
                           }
+
+                          if (vm.AlbumViewModel == null && vm.SongModel.Album != null)
+                          {
+                            vm.AlbumViewModel = viewModelsFactory.Create<AlbumViewModel>(vm.SongModel.Album);
+                          }
+
+                          if (vm.ArtistViewModel == null && vm.SongModel.Album?.Artist != null)
+                          {
+                            vm.ArtistViewModel = viewModelsFactory.Create<ArtistViewModel>(vm.SongModel.Album.Artist);
+                          }
+
+                          ReloadVirtulizedPlaylist();
+                          await vm.TryToRefreshUpdateLyrics();
                         }
 
                         catch (TaskCanceledException)
@@ -779,9 +804,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
             await DownloadSongInfo(item, downloadingSongTask.Token);
           }
 
-          ReloadVirtulizedPlaylist();
+         
 
-          DownloadLyrics();
+         
         }
         catch (Exception ex)
         {
@@ -959,7 +984,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       downloadingSongTask?.Cancel();
       downloadingSongTask?.Dispose();
-      downloadingLyricsTask = null;
+      downloadingSongTask = null;
     }
 
     #endregion

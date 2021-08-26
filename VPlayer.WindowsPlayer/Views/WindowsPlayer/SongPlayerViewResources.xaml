@@ -386,6 +386,25 @@
                         <ColumnDefinition Width="auto" />
                     </Grid.ColumnDefinitions>
 
+                    <TextBlock Margin="22,01,0,0" Text="Downloading info...">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Setter Property="Foreground" Value="#555555" />
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsDownloading}" Value="true">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+
+                                    <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                        <Setter Property="Foreground" Value="#101010" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
                     <TextBlock Margin="5,0,0,0" FontSize="12">
                         <Run FontSize="13" Text="{Binding ArtistViewModel.Name, Mode=OneWay}">
                             <Run.Style>
@@ -401,6 +420,7 @@
                                 </Style>
                             </Run.Style>
                         </Run>
+
                         <Run Text="{Binding AlbumViewModel.Name, Mode=OneWay, StringFormat={}({0})}">
                             <Run.Style>
                                 <Style TargetType="Run">

@@ -100,12 +100,12 @@ namespace VPlayer.AudioStorage.AudioDatabase
             Artist newArtist = new Artist(audioInfo.Artist)
             {
               MusicBrainzId = audioInfo.ArtistMbid,
-              NormalizedName =  GetNormalizedName(audioInfo.Artist)
+              NormalizedName = GetNormalizedName(audioInfo.Artist)
             };
 
             Artist artist = newArtist;
 
-            artist = (from x in context.Artists where x.NormalizedName ==  artist.NormalizedName select x).SingleOrDefault();
+            artist = (from x in context.Artists where x.NormalizedName == artist.NormalizedName select x).SingleOrDefault();
 
             if (artist == null && audioInfo.Artist != null)
             {
@@ -133,8 +133,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
             };
 
             album = (from x in context.Albums
-                     where  x.NormalizedName ==  album.NormalizedName
-                     where  x.Artist.NormalizedName ==  album.Artist.NormalizedName
+                     where x.NormalizedName == album.NormalizedName
+                     where x.Artist.NormalizedName == album.Artist.NormalizedName
                      select x).SingleOrDefault();
 
             if (album == null && audioInfo.Album != null)
@@ -172,7 +172,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
 
             song = (from x in context.Songs
-                    where song.NormalizedName ==x.NormalizedName
+                    where song.NormalizedName == x.NormalizedName
                     where x.Album.Id == song.Album.Id
                     select x).SingleOrDefault();
 
@@ -209,7 +209,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
             else
             {
               song.Source = audioInfo.DiskLocation;
-              
+
               ItemChanged.OnNext(new ItemChanged()
               {
                 Item = song,
@@ -464,7 +464,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
                 var duplicates = (from x in albums
                                   where x.NormalizedName == originalAlbum.NormalizedName
-                                  where x.Artist.NormalizedName ==originalAlbum.Artist.NormalizedName
+                                  where x.Artist.NormalizedName == originalAlbum.Artist.NormalizedName
                                   group x by x.Name
                   into a
                                   where a.Count() > 1
@@ -508,8 +508,10 @@ namespace VPlayer.AudioStorage.AudioDatabase
               {
                 originalAlbum =
                   (from x in context.Albums
-                   where x.NormalizedName ==  album.NormalizedName
-                   where  x.Artist.NormalizedName == album.Artist.NormalizedName
+                   where string.IsNullOrEmpty(x.NormalizedName)
+                   where string.IsNullOrEmpty(x.Artist.NormalizedName)
+                   where x.NormalizedName == album.NormalizedName
+                   where x.Artist.NormalizedName == album.Artist.NormalizedName
                    select x).Include(x => x.Songs).Include(x => x.Artist).SingleOrDefault();
 
                 if (originalAlbum != null)

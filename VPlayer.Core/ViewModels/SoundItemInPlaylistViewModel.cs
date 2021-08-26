@@ -38,5 +38,29 @@ namespace VPlayer.Core.ViewModels.TvShows
     }
 
     #endregion
+
+
+
+    #region IsDownloading
+
+    private bool isDownloading;
+
+    public bool IsDownloading
+    {
+      get { return isDownloading; }
+      set
+      {
+        if (value != isDownloading)
+        {
+          isDownloading = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+
+
   }
 }

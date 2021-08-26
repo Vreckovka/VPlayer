@@ -1214,6 +1214,7 @@ namespace VPlayer.Core.ViewModels
     protected void ReloadVirtulizedPlaylist()
     {
       var generator = new ItemsGenerator<TItemViewModel>(PlayList, 15);
+
       VirtualizedPlayList = new VirtualList<TItemViewModel>(generator);
     }
 

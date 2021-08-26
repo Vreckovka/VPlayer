@@ -265,7 +265,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
         catch (Exception ex)
         {
-          windowManager.ShowPrompt(ex.ToString(), "Error");
+          windowManager.ShowErrorPrompt(ex);
 
           PlayList.Remove(item);
 

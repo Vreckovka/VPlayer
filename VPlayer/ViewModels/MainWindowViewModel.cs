@@ -280,7 +280,7 @@ namespace VPlayer.ViewModels
 
     public override async void Initialize()
     {
-      await TryMigrateDatabaseAsync();
+    
 
       base.Initialize();
 
@@ -300,16 +300,7 @@ namespace VPlayer.ViewModels
     }
 
     #endregion
-
-    private async Task TryMigrateDatabaseAsync()
-    {
-      logger.Log(MessageType.Inform, "Migrating database");
-
-      var context = new AudioDatabaseContext();
-
-      await context.Database.MigrateAsync();
-    }
-
+    
     #region Dispose
 
     public override void Dispose()

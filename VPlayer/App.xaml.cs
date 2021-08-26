@@ -3,6 +3,10 @@ using System.Data.Common;
 using System.IO;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using Logger;
+using Microsoft.EntityFrameworkCore;
 using Ninject;
 using Ninject.Activation;
 using Ninject.Parameters;
@@ -10,9 +14,12 @@ using Prism.Ioc;
 using Prism.Modularity;
 using VCore.WPF;
 using VCore.WPF.Interfaces.Managers;
+using VCore.WPF.Managers;
 using VCore.WPF.ViewModels.Windows;
 using VCore.WPF.Views;
 using VCore.WPF.Views.SplashScreen;
+using VPlayer.AudioStorage.AudioDatabase;
+using VPlayer.Core.Modularity.Ninject;
 using VPlayer.IPTV.Modularity;
 using VPlayer.Modularity.NinjectModules;
 using VPlayer.UPnP.Modularity;
@@ -30,18 +37,43 @@ namespace VPlayer
 
       Kernel.Load<VPlayerNinjectModule>();
     }
-  }
 
-  public partial class App : VPlayerApplication
-  {
+    private async Task TryMigrateDatabaseAsync()
+    {
+      logger = Container.Resolve<ILogger>();
+
+      logger.Log(MessageType.Inform, "Migrating database");
+
+      var context = new AudioDatabaseContext();
+
+      await context.Database.MigrateAsync();
+    }
+
+    #region OnContainerCreated
+
+    protected override async void OnContainerCreated()
+    {
+      base.OnContainerCreated();
+
+      Kernel.Load<VPlayerLoggerModule>();
+
+      SplashScreenManager.SetText("Migrating database");
+
+      await TryMigrateDatabaseAsync();
+
+      SplashScreenManager.AddProgress(10);
+    }
+
+    #endregion
 
     #region RegisterTypes
 
-    protected override void RegisterTypes(IContainerRegistry containerRegistry)
+    protected override async void RegisterTypes(IContainerRegistry containerRegistry)
     {
       base.RegisterTypes(containerRegistry);
 
       AppDomain.CurrentDomain.AssemblyResolve += Resolver;
+
     }
 
     #endregion
@@ -66,6 +98,11 @@ namespace VPlayer
     }
 
     #endregion
+  }
+
+  public partial class App : VPlayerApplication
+  {
+
 
   }
 }

@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
 using VCore.Modularity.RegionProviders;
 using VCore.ViewModels;
 using VCore.WPF.Managers;
 using VCore.WPF.Prompts;
+using VCore.WPF.ViewModels.Prompt;
 using VPlayer.Core;
 using VPlayer.Core.Modularity.Regions;
 using VPLayer.Domain.Contracts.CloudService.Providers;
@@ -30,7 +33,7 @@ namespace VPlayer.PCloud
 
       PCloudFileBrowserViewModel = pCloudFileBrowserViewModel ?? throw new ArgumentNullException(nameof(pCloudFileBrowserViewModel));
 
-     
+
     }
 
 
@@ -43,23 +46,34 @@ namespace VPlayer.PCloud
     #region OnActivation
 
     private bool wasLoaded;
-    public override async void OnActivation(bool firstActivation)
+    public override void OnActivation(bool firstActivation)
     {
       base.OnActivation(firstActivation);
 
-      if (!cloudService.IsUserLoggedIn())
+      Task.Run(async () =>
       {
-        var vm = new LoginPromptViewModel();
+        await Task.Delay(50);
+        await Application.Current.Dispatcher.InvokeAsync(async () =>
+        {
+          if (!cloudService.IsUserLoggedIn())
+          {
+            var vm = new LoginPromptViewModel();
 
-        windowManager.ShowPrompt<LoginPrompt>(vm);
 
-        cloudService.SaveLoginInfo(vm.Name, vm.Password);
-      }
+            var result = windowManager.ShowQuestionPrompt<LoginPrompt, LoginPromptViewModel>(vm);
 
-      if (!wasLoaded)
-      {
-        wasLoaded = await PCloudFileBrowserViewModel.SetUpManager();
-      }
+            if (result == PromptResult.Ok)
+            {
+              cloudService.SaveLoginInfo(vm.Name, vm.Password);
+            }
+          }
+
+          if (!wasLoaded && cloudService.IsUserLoggedIn())
+          {
+            wasLoaded = await PCloudFileBrowserViewModel.SetUpManager();
+          }
+        });
+      });
     }
 
     #endregion
