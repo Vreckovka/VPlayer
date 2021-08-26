@@ -66,7 +66,7 @@ namespace VPlayer.Home.ViewModels
 
         var list = new List<SongInPlayListViewModel>();
 
-        var fristEpisode = storageManager.GetRepository<Song>().Where(x => x.SoundItem.Id == playlistItems[0].IdReferencedItem).Include(x => x.Album).ThenInclude(x => x.Artist).SingleOrDefault();
+        var fristEpisode = storageManager.GetRepository<Song>().Where(x => x.ItemModel.Id == playlistItems[0].IdReferencedItem).Include(x => x.Album).ThenInclude(x => x.Artist).SingleOrDefault();
 
         if (fristEpisode != null)
         {
@@ -74,13 +74,13 @@ namespace VPlayer.Home.ViewModels
             .Where(x => x.Id == fristEpisode.Album.Artist.Id)
             .Include(x => x.Albums)
             .ThenInclude(x => x.Songs)
-            .ThenInclude(x => x.SoundItem).Single();
+            .ThenInclude(x => x.ItemModel).Single();
 
           var songs = album.Albums.SelectMany(x => x.Songs).ToList();
 
           foreach (var item in playlistItems)
           {
-            var song = songs.Single(x => x.SoundItem.Id == item.ReferencedItem.Id);
+            var song = songs.Single(x => x.ItemModel.Id == item.ReferencedItem.Id);
 
             list.Add(viewModelsFactory.Create<SongInPlayListViewModel>(song));
           }

@@ -160,39 +160,52 @@ namespace VPlayer.AudioStorage.AudioDatabase
               audioInfoDownloader.UpdateItem(album);
             }
 
+            var fileInfo = new SoundFileInfo(audioInfo.DiskLocation, audioInfo.DiskLocation)
+            {
+              Indentificator = audioInfo.DiskLocation,
+              Artist = audioInfo.Artist,
+              Album = audioInfo.Album,
+              Title = audioInfo.Title,
+              Source = audioInfo.DiskLocation,
+              Name = Path.GetFileName(audioInfo.DiskLocation),
+            };
+
+            var soundItem = new SoundItem()
+            {
+              Duration = audioInfo.Duration,
+              NormalizedName = GetNormalizedName(audioInfo.Title),
+              FileInfo = fileInfo
+            };
+
             Song song = new Song(album)
             {
-              SoundItem = new SoundItem()
-              {
-                Source = audioInfo.DiskLocation,
-                Name = audioInfo.Title,
-                NormalizedName = GetNormalizedName(audioInfo.Title)
-              },
+              ItemModel = soundItem
             };
 
 
+            if (string.IsNullOrEmpty(song.ItemModel.Name))
+            {
+              song.ItemModel.FileInfo.Name = song.ItemModel.FileInfo.Name;
+            }
+
             song = (from x in context.Songs
-                    where song.NormalizedName == x.NormalizedName
+                    where song.ItemModel.NormalizedName == x.ItemModel.NormalizedName
                     where x.Album.Id == song.Album.Id
                     select x).SingleOrDefault();
 
 
             if (song == null)
             {
+             
               song = new Song(album)
               {
-                SoundItem = new SoundItem()
-                {
-                  Duration = audioInfo.Duration,
-                  Source = audioInfo.DiskLocation,
-                  Name = audioInfo.Title,
-                  NormalizedName = GetNormalizedName(audioInfo.Title)
-                }
+                ItemModel = soundItem
               };
 
-              if (string.IsNullOrEmpty(song.Name))
+
+              if (string.IsNullOrEmpty(song.ItemModel.Name))
               {
-                song.Name = song.Source.Split('\\').Last();
+                song.ItemModel.FileInfo.Name = song.ItemModel.FileInfo.Name;
               }
 
               context.Songs.Add(song);
@@ -208,7 +221,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
             }
             else
             {
-              song.Source = audioInfo.DiskLocation;
+              song.ItemModel.FileInfo.Source = audioInfo.DiskLocation;
 
               ItemChanged.OnNext(new ItemChanged()
               {
@@ -582,7 +595,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
         var songsToAdd =
           (from x in albumToCombine.Songs
-           where originalAlbum.Songs.All(y => y.NormalizedName != x.NormalizedName)
+           where originalAlbum.Songs.All(y => y.ItemModel.NormalizedName != x.ItemModel.NormalizedName)
            select x)
           .ToList();
 
@@ -816,7 +829,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       {
         var tvShowRepo = GetRepository<Album>(context);
 
-        var foundEntity = tvShowRepo.Include(x => x.Songs).ThenInclude(x => x.SoundItem).SingleOrDefault(x => x.Id == album.Id);
+        var foundEntity = tvShowRepo.Include(x => x.Songs).ThenInclude(x => x.ItemModel).SingleOrDefault(x => x.Id == album.Id);
 
         bool result = false;
 
@@ -824,7 +837,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
         {
           foreach (var tvShowEpisode in foundEntity.Songs)
           {
-            context.Remove(tvShowEpisode.SoundItem);
+            context.Remove(tvShowEpisode.ItemModel);
             context.Remove(tvShowEpisode);
           }
 

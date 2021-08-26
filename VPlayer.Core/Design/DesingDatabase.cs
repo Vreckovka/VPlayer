@@ -121,33 +121,33 @@ namespace VPlayer.Core.Design
 
     public void CreateSongs()
     {
-      Songs = new List<Song>();
-      Random random = new Random();
-      foreach (var album in Albums)
-      {
-        for (int i = 0; i < random.Next(5, 10); i++)
-        {
-          var song = new Song()
-          {
-            Name = $"Song  with really long name {i}",
-            Length = 2,
-            Duration = random.Next(400, 800),
-            Source = "DISK LOCATION",
-            Album = album
-          };
+      //Songs = new List<Song>();
+      //Random random = new Random();
+      //foreach (var album in Albums)
+      //{
+      //  for (int i = 0; i < random.Next(5, 10); i++)
+      //  {
+      //    var song = new Song()
+      //    {
+      //      Name = $"Song  with really long name {i}",
+      //      Length = 2,
+      //      Duration = random.Next(400, 800),
+      //      Source = "DISK LOCATION",
+      //      Album = album
+      //    };
 
-          Songs.Add(song);
-        }
+      //    Songs.Add(song);
+      //  }
 
-        Songs.Add(new Song()
-        {
-          Name = $"Song with really long name wich should not fit in",
-          Length = 2,
-          Duration = random.Next(400, 800),
-          Source = "DISK LOCATION",
-          Album = album
-        });
-      }
+      //  Songs.Add(new Song()
+      //  {
+      //    Name = $"Song with really long name wich should not fit in",
+      //    Length = 2,
+      //    Duration = random.Next(400, 800),
+      //    Source = "DISK LOCATION",
+      //    Album = album
+      //  });
+      //}
     }
 
     #endregion CreateSongs

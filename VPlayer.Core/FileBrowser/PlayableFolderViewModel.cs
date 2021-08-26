@@ -90,11 +90,13 @@ namespace VPlayer.Core.FileBrowser
 
       await LoadSubFolders(this);
 
-      var playableFiles = SubItems.ViewModels.SelectMany(x => x.SubItems.ViewModels).OfType<FileViewModel>().ToList();
+      var playableFiles = SubItems.ViewModels.SelectMany(x => x.SubItems.ViewModels).OfType<PlayableFileViewModel>();
 
       if (FolderType == FolderType.Video)
       {
-        playableFiles.AddRange(SubItems.ViewModels.OfType<PlayableFileViewModel>().Where(x => x.FileType == FileType.Video));
+        var itemsInFolder = SubItems.ViewModels.OfType<PlayableFileViewModel>().Where(x => x.FileType == FileType.Video);
+
+        playableFiles = playableFiles.Concat(itemsInFolder).Where(x => x.FileType == FileType.Video).ToList();
 
         var videoItems = new List<VideoItem>();
 
@@ -126,13 +128,15 @@ namespace VPlayer.Core.FileBrowser
       }
       else if (FolderType == FolderType.Sound)
       {
-        playableFiles.AddRange(SubItems.ViewModels.OfType<PlayableFileViewModel>().Where(x => x.FileType == FileType.Sound));
+        var itemsInFolder = SubItems.ViewModels.OfType<PlayableFileViewModel>().Where(x => x.FileType == FileType.Sound);
+
+        playableFiles = playableFiles.Concat(itemsInFolder).Where(x => x.FileType == FileType.Sound);
 
         var soundItems = new List<SoundItem>();
 
         foreach (var item in playableFiles)
         {
-          var existing = storageManager.GetRepository<SoundItem>().Include(x => x.FileInfo).SingleOrDefault(x => x.Source == item.Model.Source);
+          var existing = storageManager.GetRepository<SoundItem>().Include(x => x.FileInfo).SingleOrDefault(x => x.FileInfo.Source == item.Model.Source);
 
           if (existing == null)
           {
@@ -140,16 +144,15 @@ namespace VPlayer.Core.FileBrowser
             {
               Length = item.Model.Length,
               Indentificator = item.Model.Indentificator,
+              Name = item.Model.Name,
             };
 
-            var videoItem = new SoundItem()
+            var soudItem = new SoundItem()
             {
-              Name = item.Model.Name,
-              Source = item.Model.Source,
               FileInfo = fileInfo  
             };
 
-            storageManager.StoreEntity(videoItem, out var stored);
+            storageManager.StoreEntity(soudItem, out var stored);
 
             soundItems.Add(stored);
           }

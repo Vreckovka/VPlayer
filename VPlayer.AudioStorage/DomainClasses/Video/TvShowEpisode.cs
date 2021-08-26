@@ -45,7 +45,7 @@ namespace VPlayer.AudioStorage.DomainClasses
       set { if (VideoItem != null) VideoItem.Duration = value; }
     }
 
-    public int Length
+    public long Length
     {
       get
       {

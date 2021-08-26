@@ -46,7 +46,7 @@ namespace VPlayer.Core.ViewModels
       AudioInfoDownloader audioInfoDownloader,
       Song model,
       GoogleDriveLrcProvider googleDriveLrcProvider,
-      IStorageManager storageManager) : base(model.SoundItem, eventAggregator, storageManager)
+      IStorageManager storageManager) : base(model.ItemModel, eventAggregator, storageManager)
     {
       this.albumsViewModel = albumsViewModel ?? throw new ArgumentNullException(nameof(albumsViewModel));
       this.artistsViewModel = artistsViewModel ?? throw new ArgumentNullException(nameof(artistsViewModel));
@@ -282,7 +282,15 @@ namespace VPlayer.Core.ViewModels
       if (SongModel.Album != null)
       {
         AlbumViewModel = (await albumsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == SongModel.Album.Id);
-        ArtistViewModel = (await artistsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == SongModel.Album.Artist.Id);
+
+        if (SongModel.Album.Artist != null)
+        {
+          ArtistViewModel = (await artistsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == SongModel.Album.Artist.Id);
+        }
+        else if (AlbumViewModel?.Model.Artist != null)
+        {
+          ArtistViewModel = (await artistsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == AlbumViewModel.Model.Artist.Id);
+        }
       }
 
       if (AlbumViewModel != null)

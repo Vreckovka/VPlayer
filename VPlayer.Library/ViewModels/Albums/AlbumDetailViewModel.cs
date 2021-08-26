@@ -116,7 +116,7 @@ namespace VPlayer.Home.ViewModels.Albums
 
             if (audioInfo != null)
             {
-              song.Name = audioInfo.Title;
+              song.ItemModel.FileInfo.Name = audioInfo.Title;
             }
 
             storageManager.UpdateEntityAsync(song);

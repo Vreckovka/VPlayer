@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VPlayer.AudioStorage.AudioDatabase;
 
 namespace VPlayer.AudioStorage.Migrations
 {
     [DbContext(typeof(AudioDatabaseContext))]
-    partial class AudioDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20210826171020_RemovedColumns")]
+    partial class RemovedColumns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -336,6 +338,9 @@ namespace VPlayer.AudioStorage.Migrations
                     b.Property<string>("MusicBrainzId")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("NormalizedName")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("UPnPPath")
                         .HasColumnType("TEXT");
 
@@ -410,10 +415,19 @@ namespace VPlayer.AudioStorage.Migrations
                     b.Property<bool>("IsFavorite")
                         .HasColumnType("INTEGER");
 
+                    b.Property<long>("Length")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime?>("Modified")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("NormalizedName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Source")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

@@ -2,12 +2,13 @@
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
-  public class PlaybleItem : DomainEntity, IUpdateable<PlaybleItem>, IFilePlayableModel,INamedEntity
+  public class PlaybleItem : DomainEntity, IUpdateable<PlaybleItem>, IFilePlayableModel, INamedEntity
   {
-    public string Source { get; set; }
+    public virtual string Source { get; set; }
+    public virtual long Length { get; set; }
+    public virtual string Name { get; set; }
+
     public int Duration { get; set; }
-    public int Length { get; set; }
-    public string Name { get; set; }
     public string NormalizedName { get; set; }
     public bool IsFavorite { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using VCore.WPF.ViewModels.WindowsFiles;
 using VPlayer.Core.ViewModels;
 
@@ -8,6 +9,10 @@ namespace VPlayer.AudioStorage.DomainClasses
   [Serializable]
   public class SoundFileInfo : FileInfo, IEntity, IUpdateable<SoundFileInfo>
   {
+    public SoundFileInfo()
+    {
+    }
+
     public SoundFileInfo(string fullName, string source) : base(fullName, source)
     {
     }
@@ -19,26 +24,80 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     public void Update(SoundFileInfo other)
     {
-      ((FileInfo) this).Update(other);
+      ((FileInfo)this).Update(other);
 
       Id = other.Id;
       Created = other.Created;
       Modified = other.Modified;
-      
+
     }
   }
 
   public class SoundItem : PlaybleItem, IUpdateable<SoundItem>
   {
+    public SoundFileInfo FileInfo { get; set; }
+
     public void Update(SoundItem other)
     {
       base.Update(other);
+
+      if (FileInfo == null)
+      {
+        FileInfo = other.FileInfo;
+      }
+      else
+        FileInfo.Update(other.FileInfo);
     }
 
-    public SoundFileInfo FileInfo { get; set; }
+    #region Name
+
+    [NotMapped]
+    public override string Name
+    {
+      get
+      {
+        return FileInfo?.Title;
+      }
+
+    }
+
+    #endregion
+
+    #region Source
+
+    [NotMapped]
+    public override string Source
+    {
+      get
+      {
+        return FileInfo?.Source;
+      }
+    }
+
+    #endregion
+
+    #region Length
+
+    [NotMapped]
+    public override long Length
+    {
+      get
+      {
+        if (FileInfo != null)
+        {
+          return FileInfo.Length;
+        }
+
+        return 0;
+      }
+
+    }
+
+    #endregion
+
   }
 
-  public class Song : DomainEntity, IUpdateable<Song>, IPlayableModel
+  public class Song : DomainEntity, IUpdateable<Song>, IPlayableModel<SoundItem>
   {
     #region Constructors
 
@@ -56,7 +115,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     #region Properties
 
     public Album Album { get; set; }
-    public SoundItem SoundItem { get; set; }
+    public SoundItem ItemModel { get; set; }
 
     public string MusicBrainzId { get; set; }
 
@@ -67,71 +126,56 @@ namespace VPlayer.AudioStorage.DomainClasses
     public string LRCLyrics { get; set; }
     public string UPnPPath { get; set; }
 
-    public string NormalizedName
-    {
-      get
-      {
-        return SoundItem?.NormalizedName;
-      }
-      set
-      {
-        if (SoundItem != null)
-          SoundItem.NormalizedName = value;
-      }
-    }
 
 
+    [NotMapped]
     public string Source
     {
-      get { return SoundItem?.Source; }
-      set
-      {
-        if (SoundItem != null)
-          SoundItem.Source = value;
-      }
+      get { return ItemModel?.Source; }
     }
 
+    [NotMapped]
     public int Duration
     {
       get
       {
-        if (SoundItem != null)
-          return SoundItem.Duration;
+        if (ItemModel != null)
+          return ItemModel.Duration;
 
 
         return 0;
       }
-      set { if (SoundItem != null) SoundItem.Duration = value; }
+
     }
 
-    public int Length
+    [NotMapped]
+    public long Length
     {
       get
       {
-        if (SoundItem != null)
-          return SoundItem.Length;
+        if (ItemModel != null)
+          return ItemModel.Length;
 
         return 0;
       }
-      set { if (SoundItem != null) SoundItem.Length = Length; }
     }
 
+    [NotMapped]
     public string Name
     {
-      get { return SoundItem?.Name; }
-      set { if (SoundItem != null) SoundItem.Name = Name; }
+      get { return ItemModel?.Name; }
     }
 
+    [NotMapped]
     public bool IsFavorite
     {
       get
       {
-        if (SoundItem != null)
-          return SoundItem.IsFavorite;
+        if (ItemModel != null)
+          return ItemModel.IsFavorite;
 
         return false;
       }
-      set { if (SoundItem != null) SoundItem.IsFavorite = IsFavorite; }
     }
 
     #endregion 
@@ -140,20 +184,19 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     public override string ToString()
     {
-      return $"{SoundItem.Name}|{Album}";
+      return $"{ItemModel.Name}|{Album}";
     }
 
     public void Update(Song other)
     {
-      if (other.SoundItem != null)
-        SoundItem?.Update(other.SoundItem);
+      if (other.ItemModel != null)
+        ItemModel?.Update(other.ItemModel);
 
-      Name = other.Name;
+
       Chartlyrics_Lyric = other.Chartlyrics_Lyric;
       Chartlyrics_LyricCheckSum = other.Chartlyrics_LyricCheckSum;
       Chartlyrics_LyricId = other.Chartlyrics_LyricId;
       LRCLyrics = other.LRCLyrics;
-      IsFavorite = other.IsFavorite;
     }
 
     #endregion Methods

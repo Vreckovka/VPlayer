@@ -1302,8 +1302,31 @@ namespace VPlayer.AudioStorage.InfoDownloader
     {
       try
       {
-        StorageFile file = AsyncHelpers.RunSync(() => StorageFile.GetFileFromPathAsync(path).AsTask());
-        MusicProperties musicProperties = AsyncHelpers.RunSync(() => file.Properties.GetMusicPropertiesAsync().AsTask());
+        StorageFile file = AsyncHelpers.RunSync(() =>
+        {
+          try
+          {
+            return StorageFile.GetFileFromPathAsync(path).AsTask();
+          }
+          catch (Exception ex)
+          {
+            logger.Log(Logger.MessageType.Error, ex.Message);
+            return null;
+          }
+        });
+
+        MusicProperties musicProperties = AsyncHelpers.RunSync(() =>
+        {
+          try
+          {
+            return file.Properties.GetMusicPropertiesAsync().AsTask();
+          }
+          catch (Exception ex)
+          {
+            logger.Log(Logger.MessageType.Error, ex.Message);
+            return null;
+          }
+        });
 
         return musicProperties;
       }

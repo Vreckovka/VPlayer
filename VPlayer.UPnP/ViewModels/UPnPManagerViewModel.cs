@@ -334,7 +334,7 @@ namespace VPlayer.UPnP.ViewModels
     public async void PairMediaServer(MediaServerViewModel mediaServerViewModel)
     {
       var context = new AudioDatabaseContext();
-      var songsRepo = storageManager.GetRepository<Song>(context).OrderBy(x => x.Source).ToList();
+      var songsRepo = storageManager.GetRepository<Song>(context).OrderBy(x => x.ItemModel.FileInfo.Source).ToList();
 
       await mediaServerViewModel.DiscoverMediaServer();
 
@@ -364,7 +364,7 @@ namespace VPlayer.UPnP.ViewModels
 
         foreach (var folder in folders)
         {
-          var songs = songsRepo.Where(x => x.Source.Contains(folder.Name)).ToList();
+          var songs = songsRepo.Where(x => x.ItemModel.FileInfo.Source.Contains(folder.Name)).ToList();
 
           if (songs.Count > 0)
           {

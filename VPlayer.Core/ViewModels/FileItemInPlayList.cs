@@ -7,8 +7,7 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 namespace VPlayer.Core.ViewModels
 {
   public abstract class FileItemInPlayList<TModel> : ItemInPlayList<TModel>, IFileItemInPlayList<TModel>
-    where TModel : class, IFilePlayableModel,
-    IUpdateable<TModel>, IEntity
+    where TModel : class, IFilePlayableModel,  IUpdateable<TModel>, IEntity
   {
     public FileItemInPlayList(
       TModel model,
