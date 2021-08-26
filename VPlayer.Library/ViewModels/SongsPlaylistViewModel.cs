@@ -57,7 +57,6 @@ namespace VPlayer.Home.ViewModels
       var playlist = storageManager.GetRepository<SoundItemFilePlaylist>()
         .Include(x => x.PlaylistItems)
         .ThenInclude(x => x.ReferencedItem)
-        .ThenInclude(x => x.FileInfo)
         .SingleOrDefault(x => x.Id == Model.Id);
 
 
@@ -75,7 +74,8 @@ namespace VPlayer.Home.ViewModels
             .Where(x => x.Id == fristEpisode.Album.Artist.Id)
             .Include(x => x.Albums)
             .ThenInclude(x => x.Songs)
-            .ThenInclude(x => x.ItemModel).Single();
+            .ThenInclude(x => x.ItemModel)
+            .ThenInclude(x => x.FileInfo).Single();
 
           var songs = album.Albums.SelectMany(x => x.Songs).ToList();
 

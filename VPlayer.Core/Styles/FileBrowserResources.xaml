@@ -11,6 +11,21 @@
     <SolidColorBrush x:Key="VideoColor">#648afa</SolidColorBrush>
     <SolidColorBrush x:Key="SoundColor">#eb677b</SolidColorBrush>
 
+    <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
+        <Setter Property="IconHeight" Value="14" />
+        <Setter Property="IconWidth" Value="13" />
+        <Setter Property="MaxWidth" Value="23" />
+        <Setter Property="MaxHeight" Value="20" />
+        <Setter Property="Width" Value="23" />
+        <Setter Property="Height" Value="20" />
+        <Setter Property="IsReadOnly" Value="True" />
+        <Setter Property="IconDefaultColor" Value="#20ffffff" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="5,0" />
+        <Setter Property="Visibility" Value="Visible" />
+    </Style>
+
     <Style x:Key="FileNameStyle" TargetType="Run">
         <Setter Property="Foreground" Value="#454545" />
         <Style.Triggers>
@@ -63,32 +78,13 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0"
-                        Margin="0,0,5,0"
+                        Margin="8,0,-2,0"
                         Orientation="Horizontal">
-                <StackPanel.Resources>
-                    <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
-                        <Setter Property="IconHeight" Value="14" />
-                        <Setter Property="IconWidth" Value="12" />
-                        <Setter Property="IsReadOnly" Value="True" />
-                        <Setter Property="IconDefaultColor" Value="#20ffffff" />
-                        <Setter Property="HorizontalAlignment" Value="Center" />
-                        <Setter Property="VerticalAlignment" Value="Center" />
-                        <Setter Property="Margin" Value="5,0" />
-                        <Setter Property="Visibility" Value="Visible" />
-
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsRoot}" Value="true">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </StackPanel.Resources>
+                <StackPanel.Resources />
 
                 <controls:PathButton Command="{Binding PlayButton}"
                                      CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}"
-                                     IconHeight="16"
                                      IconHoverColor="{StaticResource DefaultRedColor}"
-                                     IconWidth="14"
                                      PathStyle="{StaticResource PlaySign}"
                                      ToolTip="Play">
                     <controls:PathButton.Style>
@@ -121,14 +117,16 @@
                                      PathStyle="{StaticResource ArrowUpSquare}"
                                      ToolTip="Open in filebrowser" />
 
-                <controls:PathButton IconHeight="10"
-                                     IconHoverColor="{StaticResource BlueColor}"
-                                     IconWidth="11"
+                <controls:PathButton ClickMode="Hover"
+                                     Cursor="Arrow"
+                                     IconHeight="9"
+                                     IconHoverColor="#757575"
+                                     IconWidth="10"
                                      IsChecked="{Binding WasLoaded, Mode=OneWay}"
                                      IsReadOnly="True"
                                      PathCheckedBrush="#2f6e30"
                                      PathStyle="{StaticResource check}"
-                                     ToolTip="Loaded" />
+                                     ToolTip="Loaded indicator" />
 
             </StackPanel>
 
@@ -222,20 +220,8 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0"
-                        Margin="0,0,5,0"
+                        Margin="0,0,0,0"
                         Orientation="Horizontal">
-                <StackPanel.Resources>
-                    <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
-                        <Setter Property="IconHeight" Value="14" />
-                        <Setter Property="IconWidth" Value="12" />
-                        <Setter Property="IsReadOnly" Value="True" />
-                        <Setter Property="IconDefaultColor" Value="#20ffffff" />
-                        <Setter Property="HorizontalAlignment" Value="Center" />
-                        <Setter Property="VerticalAlignment" Value="Center" />
-                        <Setter Property="Margin" Value="5,0" />
-                        <Setter Property="Visibility" Value="Visible" />
-                    </Style>
-                </StackPanel.Resources>
 
                 <Grid Width="41"
                       Height="11"
