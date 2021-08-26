@@ -57,6 +57,7 @@ namespace VPlayer.Home.ViewModels
       var playlist = storageManager.GetRepository<SoundItemFilePlaylist>()
         .Include(x => x.PlaylistItems)
         .ThenInclude(x => x.ReferencedItem)
+        .ThenInclude(x => x.FileInfo)
         .SingleOrDefault(x => x.Id == Model.Id);
 
 
