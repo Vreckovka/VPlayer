@@ -58,9 +58,9 @@ namespace VPlayer.AudioStorage.InfoDownloader
     public AudioInfoDownloader(ILogger logger)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    
 
-   
+
+
     }
 
     #endregion Constructors
@@ -152,10 +152,10 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
       audioInfo = GetAudioInfoByWindowsAsync(path);
 
-      if (audioInfo == null || 
+      if (audioInfo == null ||
           (audioInfo.Artist == null &&
            audioInfo.Album == null &&
-           audioInfo.Artist == "" && 
+           audioInfo.Artist == "" &&
            audioInfo.Album == ""))
       {
         var fingerPrintAudioInfo = GetAudioInfoByFingerPrint(path);
@@ -1260,7 +1260,6 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     #region Windows info methods
 
-
     #region GetAudioInfoByWindowsAsync
 
     /// <summary>
@@ -1268,7 +1267,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
-    private AudioInfo GetAudioInfoByWindowsAsync(string path)
+    public AudioInfo GetAudioInfoByWindowsAsync(string path)
     {
       var musicProp = GetAudioWindowsPropertiesAsync(path);
 
@@ -1350,11 +1349,23 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     #endregion Directory methods
 
+    public static string GetClearAlbumName(string sourceString)
+    {
+      var lowerString = sourceString.ToLower();
+
+      var replaced = lowerString.Replace("(retail)", null);
+
+      var sub = replaced.Substring(1, replaced.Length - 1);
+      sub = Char.ToUpper(replaced[0]) + sub;
+
+      return sub;
+    }
+
     #region Methods
 
     public void Initialize()
     {
-     
+
     }
 
     protected virtual void OnCoversDownloaded(List<AlbumCover> e)

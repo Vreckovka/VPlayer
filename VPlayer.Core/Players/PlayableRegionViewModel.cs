@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Reflection;
@@ -53,7 +54,6 @@ namespace VPlayer.Core.ViewModels
     protected int actualItemIndex;
     protected HashSet<TItemViewModel> shuffleList = new HashSet<TItemViewModel>();
     private bool wasVlcInitilized;
-
 
     #endregion
 
@@ -967,7 +967,7 @@ namespace VPlayer.Core.ViewModels
 
         PlayList.Clear();
         PlayList.AddRange(songs);
-        ReloadVirtulizedPlaylist();
+        RequestReloadVirtulizedPlaylist();
 
         IsPlaying = true;
 
@@ -1015,7 +1015,7 @@ namespace VPlayer.Core.ViewModels
             SetActualItem(0);
           }
 
-          ReloadVirtulizedPlaylist();
+          RequestReloadVirtulizedPlaylist();
           RaisePropertyChanged(nameof(CanPlay));
           StorePlaylist(editSaved: true);
           break;
@@ -1211,7 +1211,36 @@ namespace VPlayer.Core.ViewModels
 
     #region ReloadVirtulizedPlaylist
 
-    protected void ReloadVirtulizedPlaylist()
+    private Stopwatch stopwatchReloadVirtulizedPlaylist;
+    private object batton = new object();
+    private SerialDisposable serialDisposable = new SerialDisposable();
+
+    protected void RequestReloadVirtulizedPlaylist()
+    {
+      int dueTime = 1500;
+      lock (batton)
+      {
+        serialDisposable.Disposable = Observable.Timer(TimeSpan.FromMilliseconds(dueTime)).Subscribe((x) =>
+        {
+          stopwatchReloadVirtulizedPlaylist = null;
+          ReloadVirtulizedPlaylist();
+        });
+
+        if (stopwatchReloadVirtulizedPlaylist == null || stopwatchReloadVirtulizedPlaylist.ElapsedMilliseconds > dueTime)
+        {
+          ReloadVirtulizedPlaylist();
+
+          stopwatchReloadVirtulizedPlaylist = new Stopwatch();
+          stopwatchReloadVirtulizedPlaylist.Start();
+        }
+      }
+    }
+
+    #endregion
+
+    #region ReloadVirtulizedPlaylist
+
+    private void ReloadVirtulizedPlaylist()
     {
       var generator = new ItemsGenerator<TItemViewModel>(PlayList, 15);
 
@@ -1249,7 +1278,7 @@ namespace VPlayer.Core.ViewModels
       }
 
 
-      ReloadVirtulizedPlaylist();
+      RequestReloadVirtulizedPlaylist();
 
       if (obj.ItemsToRemove.Count(x => x.Model.Id == ActualItem.Model.Id) > 0)
       {

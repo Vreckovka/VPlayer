@@ -377,6 +377,100 @@
                                                  AlbumDataTemplate="{StaticResource AlbumImageDatatemplate}"
                                                  GifDataTemplate="{StaticResource GifImageDatatemplate}" />
 
+    <DataTemplate x:Key="PlayListSoundDataTemplate">
+        <Grid Background="Transparent">
+            <Border Padding="0,0,5,5">
+                <Grid VerticalAlignment="Bottom">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Margin="22,01,0,0" Text="Downloading info...">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Setter Property="Foreground" Value="#555555" />
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsDownloading}" Value="true">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+
+                                    <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                        <Setter Property="Foreground" Value="#101010" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+
+                    <Grid Grid.Column="1" Margin="0,0,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid Width="60"
+                              Margin="0,0,10,3"
+                              HorizontalAlignment="Right">
+                            <Grid.Resources>
+                                <Style BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}" TargetType="controls2:ButtonWithIcon">
+                                    <Setter Property="IconHeight" Value="11" />
+                                    <Setter Property="IconWidth" Value="11" />
+                                </Style>
+                            </Grid.Resources>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <controls2:PathButton Grid.Column="0"
+                                                  Margin="0,0,0,0"
+                                                  HorizontalAlignment="Left"
+                                                  VerticalAlignment="Center"
+                                                  Panel.ZIndex="1"
+                                                  IconHeight="13"
+                                                  IconWidth="13"
+                                                  IsChecked="{Binding IsFavorite}"
+                                                  PathStyle="{StaticResource Favorite}"
+                                                  ToolTip="Favorite">
+                                <controls2:PathButton.Style>
+                                    <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
+                                        <Setter Property="IconDefaultColor" Value="#10ffffff" />
+                                        <Setter Property="IconHoverColor" Value="#8fd4f2" />
+                                        <Setter Property="PathCheckedBrush" Value="#aa39b2e6" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                                <Setter Property="IconDefaultColor" Value="#30522e05" />
+                                                <Setter Property="IconHoverColor" Value="#79b1c9" />
+                                                <Setter Property="PathCheckedBrush" Value="#39b2e6" />
+                                            </DataTrigger>
+
+                                        </Style.Triggers>
+                                    </Style>
+                                </controls2:PathButton.Style>
+                            </controls2:PathButton>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <Grid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Command="{Binding DeleteItemFromPlaylist}" Header="Delete song from playlist" />
+                    <MenuItem Command="{Binding DeleteSongFromPlaylistWithAlbum}" Header="Delete song album from playlist" />
+
+                    <MenuItem IsHitTestVisible="False" />
+
+                    <MenuItem Command="{Binding OpenContainingFolder}" Header="Open folder" />
+                </ContextMenu>
+            </Grid.ContextMenu>
+        </Grid>
+    </DataTemplate>
+
     <DataTemplate x:Key="PlayListSongDataTemplate">
         <Grid Background="Transparent">
             <Border Padding="0,0,5,5">

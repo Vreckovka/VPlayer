@@ -257,7 +257,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
           PlayList.Add(item);
 
-          ReloadVirtulizedPlaylist();
+          RequestReloadVirtulizedPlaylist();
 
           RaisePropertyChanged(nameof(CanPlay));
 
@@ -271,7 +271,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
           ActualItem = null;
 
-          ReloadVirtulizedPlaylist();
+          RequestReloadVirtulizedPlaylist();
         }
       }
     }
@@ -810,7 +810,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       }
       else if (ifFiltered)
       {
-        ReloadVirtulizedPlaylist();
+        RequestReloadVirtulizedPlaylist();
         ifFiltered = false;
       }
     }

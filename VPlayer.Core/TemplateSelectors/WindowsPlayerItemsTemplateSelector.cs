@@ -12,15 +12,20 @@ namespace VPlayer.WindowsPlayer.TemplateSelectors
   public class WindowsPlayerItemsTemplateSelector : DataTemplateSelector
   {
     public DataTemplate SongDataTemplate { get; set; }
+    public DataTemplate SoundDataTemplate { get; set; }
     public DataTemplate TvShowEpisodeDataTemplate { get; set; }
     public DataTemplate VideoItemDataTemplate { get; set; }
     public DataTemplate TvChannelDataTemplate { get; set; }
 
     public override DataTemplate SelectTemplate(object item, DependencyObject container)
     {
-      if(item is SoundItemInPlaylistViewModel )
+      if (item is SongInPlayListViewModel)
       {
         return SongDataTemplate;
+      }
+      else if (item is SoundItemInPlaylistViewModel )
+      {
+        return SoundDataTemplate;
       }
       else if(item is TvShowEpisodeInPlaylistViewModel)
       {

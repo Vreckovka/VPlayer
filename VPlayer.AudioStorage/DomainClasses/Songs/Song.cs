@@ -17,17 +17,14 @@ namespace VPlayer.AudioStorage.DomainClasses
     public DateTime? Created { get; set; }
     public DateTime? Modified { get; set; }
 
-
-    public string Artist { get; set; }
-    public string Album { get; set; }
-
     public void Update(SoundFileInfo other)
     {
+      ((FileInfo) this).Update(other);
+
       Id = other.Id;
       Created = other.Created;
       Modified = other.Modified;
-      Artist = other.Artist;
-      Album = other.Album;
+      
     }
   }
 
