@@ -855,10 +855,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
           {
             await DownloadSongInfo(item, downloadingSongTask.Token);
           }
-
-
-
-
         }
         catch (Exception ex)
         {
