@@ -401,6 +401,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         regionProvider.RegisterView<SongPlayerView, MusicPlayerViewModel>(RegionNames.PlayerContentRegion, this, false, out var guid, RegionManager);
       }
+
+      DownloadSongInfos(PlayList);
     }
 
     #endregion
@@ -500,11 +502,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
               var result = await storageManager.UpdateEntityAsync(fileInfo);
 
-              if (downloadingArtist == null || artistName?.Similarity(downloadingArtist.Name, true) < 0.9)
+              if (downloadingArtist == null || VPlayerStorageManager.GetNormalizedName(artistName)?.Similarity(VPlayerStorageManager.GetNormalizedName(downloadingArtist.Name), true) < 0.9)
                 downloadingArtist = await GetArist(artistName, cancellationToken);
 
 
-              if (downloadingAlbum == null || albumName?.Similarity(downloadingAlbum.Name, true, true) < 0.9)
+              if (downloadingAlbum == null || VPlayerStorageManager.GetNormalizedName(albumName)?.Similarity(VPlayerStorageManager.GetNormalizedName(downloadingAlbum.Name), true, true) < 0.9)
                 downloadingAlbum = await GetAlbum(downloadingArtist, albumName, cancellationToken);
 
 
@@ -861,19 +863,38 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       base.OnPlayEvent(data);
 
-      Task.Run(async () =>
+      DownloadSongInfos(PlayList);
+    }
+
+    #endregion
+
+    #region DownloadSongInfos
+
+    private Task DownloadSongInfos(IEnumerable<SoundItemInPlaylistViewModel> soundItemInPlaylistViewModel)
+    {
+      return Task.Run(async () =>
       {
         downloadingSongTask?.Cancel();
         downloadingSongTask = new CancellationTokenSource();
 
         try
         {
-          var items = data.Items.ToList();
+          var items = soundItemInPlaylistViewModel.ToList();
 
           foreach (var item in items)
           {
+            if (downloadingSongTask == null)
+            {
+              return;
+            }
+
+            downloadingSongTask.Token.ThrowIfCancellationRequested();
+
             await DownloadSongInfo(item, downloadingSongTask.Token);
           }
+        }
+        catch (OperationCanceledException)
+        {
         }
         catch (Exception ex)
         {
@@ -938,13 +959,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-    #region GetNewPlaylistModel
-
-    protected override SoundItemFilePlaylist GetNewPlaylistModel(List<PlaylistSoundItem> playlistModels, bool isUserCreated)
+    private string GetNewPlaylistName()
     {
       var artists = PlayList.OfType<SongInPlayListViewModel>().Where(X => X.ArtistViewModel != null).GroupBy(x => x.ArtistViewModel.Name).ToList();
 
-      string playlistName = null;
+      string playlistName = "";
 
       if (artists.Count > 0)
       {
@@ -952,9 +971,39 @@ namespace VPlayer.WindowsPlayer.ViewModels
       }
       else
       {
-        playlistName = "NEJAKY PLAYLIST";
+        var splits = PlayList.Select(x => x.Model.Source.Split("\\")).ToList();
+
+        for (int i = 0; i < splits.Max(x => x.Length); i++)
+        {
+          var source = splits.Where(x => x.Length > i).GroupBy(x => x[i]).ToList();
+
+          var keys = source.Select(x => x.Key).Distinct().ToList();
+          var separator = "\\";
+
+          if (keys.Count == 1)
+          {
+            if (i > 0)
+            {
+              playlistName += separator;
+            }
+
+            playlistName += keys[0];
+          }
+          else if (i == 0)
+          {
+            playlistName = "Generated playlist: " + DateTime.Now.ToLongDateString();
+          }
+        }
       }
 
+      return playlistName;
+    }
+
+    #region GetNewPlaylistModel
+
+    protected override SoundItemFilePlaylist GetNewPlaylistModel(List<PlaylistSoundItem> playlistModels, bool isUserCreated)
+    {
+      var playlistName = GetNewPlaylistName();
 
       var entityPlayList = new SoundItemFilePlaylist()
       {

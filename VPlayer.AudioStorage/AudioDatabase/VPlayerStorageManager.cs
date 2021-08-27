@@ -81,7 +81,12 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     public static string GetNormalizedName(string name)
     {
-      return name.ToLower().Replace(" ", null).Replace("　", null);
+      if (string.IsNullOrEmpty(name))
+      {
+        return name;
+      }
+
+      return new String(name.Where(x => Char.IsLetterOrDigit(x)).ToArray());
     }
 
     #region StoreData
