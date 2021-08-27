@@ -6,6 +6,7 @@ using System.Windows.Input;
 using Logger;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using VCore;
+using VCore.Standard.NewFolder;
 using VCore.ViewModels;
 using VPlayer.AudioStorage.DataLoader;
 using VPlayer.AudioStorage.DomainClasses.Video;
@@ -21,6 +22,7 @@ namespace VPlayer.Home.ViewModels.TvShows
     private readonly TvShow tvShow;
     private readonly IStorageManager storageManager;
     private readonly ITvShowScrapper tvShowScrapper;
+    private readonly ISettingsProvider settingsProvider;
     private readonly ILogger logger;
 
     public AddNewTvShowSeasonViewModel(
@@ -28,12 +30,14 @@ namespace VPlayer.Home.ViewModels.TvShows
       TvShow tvShow,
       IStorageManager storageManager,
       ITvShowScrapper tvShowScrapper,
+      ISettingsProvider settingsProvider,
       ILogger logger)
     {
       this.dataLoader = dataLoader ?? throw new ArgumentNullException(nameof(dataLoader));
       this.tvShow = tvShow ?? throw new ArgumentNullException(nameof(tvShow));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.tvShowScrapper = tvShowScrapper ?? throw new ArgumentNullException(nameof(tvShowScrapper));
+      this.settingsProvider = settingsProvider ?? throw new ArgumentNullException(nameof(settingsProvider));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -132,7 +136,7 @@ namespace VPlayer.Home.ViewModels.TvShows
 
 
       if (string.IsNullOrEmpty(initialDirectory))
-        initialDirectory = GlobalSettings.TvShowInitialDirectory;
+        initialDirectory = settingsProvider.GetSetting(GlobalSettings.TvShowInitialDirectory)?.Value;
 
       dialog.AllowNonFileSystemItems = true;
       dialog.IsFolderPicker = true;

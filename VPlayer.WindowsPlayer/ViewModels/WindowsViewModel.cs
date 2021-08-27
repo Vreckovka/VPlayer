@@ -9,6 +9,7 @@ using VCore.Helpers;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
+using VCore.Standard.NewFolder;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
 using VCore.WPF.Managers;
@@ -32,6 +33,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     #region Fields
 
     private readonly IViewModelsFactory viewModelsFactory;
+    private readonly ISettingsProvider settingsProvider;
     private readonly IStorageManager storageManager;
     private readonly IWindowManager windowManager;
 
@@ -44,10 +46,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
       IViewModelsFactory viewModelsFactory,
       NavigationViewModel navigationViewModel,
        DataLoader dataLoader,
+      ISettingsProvider settingsProvider,
       IStorageManager storageManager,
        IWindowManager windowManager) : base(regionProvider)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+      this.settingsProvider = settingsProvider ?? throw new ArgumentNullException(nameof(settingsProvider));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       NavigationViewModel = navigationViewModel ?? throw new ArgumentNullException(nameof(navigationViewModel));
@@ -89,7 +93,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       dialog.AllowNonFileSystemItems = true;
       dialog.IsFolderPicker = true;
-      dialog.InitialDirectory = GlobalSettings.MusicInitialDirectory; 
+      dialog.InitialDirectory = settingsProvider.GetSetting(GlobalSettings.MusicInitialDirectory)?.Value; 
       dialog.Title = "Select folders with music files";
 
       if (dialog.ShowDialog() == CommonFileDialogResult.Ok)

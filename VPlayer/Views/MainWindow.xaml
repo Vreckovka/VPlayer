@@ -4,13 +4,13 @@
         xmlns:attachedProperties="clr-namespace:VCore.AttachedProperties;assembly=VCore.WPF"
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:behaviors="clr-namespace:VCore.WPF.Behaviors;assembly=VCore.WPF"
+        xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
         xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:prism="http://prismlibrary.com/"
         xmlns:regions="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPlayer.Core"
         xmlns:regions1="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPLayer.Domain"
-        xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
         Title="{Binding Title}"
         Width="1488"
         Height="830"
@@ -38,11 +38,11 @@
     <TaskbarItemInfo>
       <TaskbarItemInfo.ThumbButtonInfos>
         <ThumbButtonInfo Command="{Binding PlayStop}"
-                                 Description="Play Stop"
-                                 ImageSource="pack://application:,,,/Resources/play-and-pause-button.png" />
+                         Description="Play Stop"
+                         ImageSource="pack://application:,,,/Resources/play-and-pause-button.png" />
         <ThumbButtonInfo Command="{Binding SwitchScreenCommand}"
-                                 Description="Move to active screen"
-                                 ImageSource="pack://application:,,,/VCore.WPF;component/Resources/window_switch.png" />
+                         Description="Move to active screen"
+                         ImageSource="pack://application:,,,/VCore.WPF;component/Resources/window_switch.png" />
       </TaskbarItemInfo.ThumbButtonInfos>
     </TaskbarItemInfo>
   </Window.TaskbarItemInfo>
@@ -58,8 +58,8 @@
 
 
     <Button Click="Button_Click"
-                Content="DELETE ALL"
-                Visibility="Collapsed" />
+            Content="DELETE ALL"
+            Visibility="Collapsed" />
 
 
 
@@ -68,8 +68,8 @@
 
 
     <ContentControl Grid.Row="2"
-                        Grid.Column="0"
-                        prism:RegionManager.RegionName="{x:Static regions1:RegionNames.PlayerRegion}" />
+                    Grid.Column="0"
+                    prism:RegionManager.RegionName="{x:Static regions1:RegionNames.PlayerRegion}" />
 
 
 

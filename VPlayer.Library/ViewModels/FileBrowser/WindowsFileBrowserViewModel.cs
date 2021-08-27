@@ -4,8 +4,10 @@ using System.Threading.Tasks;
 using Microsoft.VisualBasic.FileIO;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
+using VCore.Standard.NewFolder;
 using VCore.WPF.Managers;
 using VCore.WPF.ViewModels.WindowsFiles;
+using VPlayer.Core;
 using VPlayer.Core.ViewModels;
 
 namespace VPlayer.Home.ViewModels.FileBrowser
@@ -15,8 +17,10 @@ namespace VPlayer.Home.ViewModels.FileBrowser
     public WindowsFileBrowserViewModel(
       IRegionProvider regionProvider,
       IViewModelsFactory viewModelsFactory,
-      IWindowManager windowManager) : base(regionProvider, viewModelsFactory, windowManager)
+      ISettingsProvider settingsProvider,
+      IWindowManager windowManager) : base(regionProvider, viewModelsFactory, windowManager, settingsProvider)
     {
+      BaseDirectoryPath = settingsProvider.GetSetting(GlobalSettings.FileBrowserInitialDirectory)?.Value;
     }
 
     protected override void OnDeleteItem(string indentificator)

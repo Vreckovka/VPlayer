@@ -12,6 +12,7 @@ using Ninject.Activation;
 using Ninject.Parameters;
 using Prism.Ioc;
 using Prism.Modularity;
+using VCore.Standard.NewFolder;
 using VCore.WPF;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Managers;
@@ -19,6 +20,7 @@ using VCore.WPF.ViewModels.Windows;
 using VCore.WPF.Views;
 using VCore.WPF.Views.SplashScreen;
 using VPlayer.AudioStorage.AudioDatabase;
+using VPlayer.Core;
 using VPlayer.Core.Modularity.Ninject;
 using VPlayer.IPTV.Modularity;
 using VPlayer.Modularity.NinjectModules;
@@ -36,6 +38,21 @@ namespace VPlayer
       base.LoadModules();
 
       Kernel.Load<VPlayerNinjectModule>();
+    }
+
+    private void LoadSettings()
+    {
+      var provider = Container.Resolve<ISettingsProvider>();
+
+      var wasLoaded = provider.Load();
+
+      if (!wasLoaded)
+      {
+        provider.AddOrUpdateSetting(nameof(GlobalSettings.CloudBrowserInitialDirectory), new SettingParameters("0"));
+        provider.AddOrUpdateSetting(nameof(GlobalSettings.FileBrowserInitialDirectory),  new SettingParameters(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), true));
+        provider.AddOrUpdateSetting(nameof(GlobalSettings.MusicInitialDirectory), new SettingParameters(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), true));
+        provider.AddOrUpdateSetting(nameof(GlobalSettings.TvShowInitialDirectory), new SettingParameters(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), true));
+      }
     }
 
     private async Task TryMigrateDatabaseAsync()
@@ -56,6 +73,12 @@ namespace VPlayer
       base.OnContainerCreated();
 
       Kernel.Load<VPlayerLoggerModule>();
+
+      SplashScreenManager.SetText("Loading settings");
+
+      LoadSettings();
+
+      SplashScreenManager.AddProgress(5);
 
       SplashScreenManager.SetText("Migrating database");
 

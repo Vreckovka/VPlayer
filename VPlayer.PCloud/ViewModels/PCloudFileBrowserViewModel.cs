@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
+using VCore.Standard.NewFolder;
 using VCore.WPF.Managers;
 using VCore.WPF.ViewModels.WindowsFiles;
 using VPlayer.Core;
@@ -18,14 +19,15 @@ namespace VPlayer.PCloud.ViewModels
     private readonly ICloudService cloudService;
 
     public PCloudFileBrowserViewModel(
-      IRegionProvider regionProvider, 
+      IRegionProvider regionProvider,
       ICloudService cloudService,
-      IViewModelsFactory viewModelsFactory, 
-      IWindowManager windowManager) : base(regionProvider, viewModelsFactory, windowManager)
+      ISettingsProvider settingsProvider,
+      IViewModelsFactory viewModelsFactory,
+      IWindowManager windowManager) : base(regionProvider, viewModelsFactory, windowManager, settingsProvider)
     {
       this.cloudService = cloudService ?? throw new ArgumentNullException(nameof(cloudService));
 
-      BaseDirectoryPath = GlobalSettings.CloudBrowserInitialDirectory;
+      BaseDirectoryPath = settingsProvider.GetSetting(GlobalSettings.CloudBrowserInitialDirectory)?.Value;
     }
 
     public override Visibility FinderVisibility => Visibility.Collapsed;

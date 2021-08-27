@@ -6,9 +6,9 @@ namespace VPlayer.Core
 {
   public static class GlobalSettings
   {
-    public static string MusicInitialDirectory = "D:\\Hudba";
-    public static string TvShowInitialDirectory = "E:\\Serialy";
-    public static string FileBrowserInitialDirectory = "E:\\Torrent";
-    public static string CloudBrowserInitialDirectory = "0";
+    public const string MusicInitialDirectory = nameof(MusicInitialDirectory);
+    public const string TvShowInitialDirectory =  nameof(TvShowInitialDirectory);
+    public const string FileBrowserInitialDirectory = nameof(FileBrowserInitialDirectory);
+    public const string CloudBrowserInitialDirectory =  nameof(CloudBrowserInitialDirectory);
   }
 }

@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using VCore;
 using VCore.Standard;
+using VCore.Standard.NewFolder;
 using VCore.ViewModels;
 using VPlayer.AudioStorage.DataLoader;
 using VPlayer.AudioStorage.DomainClasses;
@@ -24,17 +25,20 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
     private readonly DataLoader dataLoader;
     private readonly IStorageManager storageManager;
     private readonly ITvShowScrapper tvShowScrapper;
+    private readonly ISettingsProvider settingsProvider;
     private readonly ILogger logger;
 
     public AddNewTvShowViewModel(
        DataLoader dataLoader,
        IStorageManager storageManager,
        ITvShowScrapper tvShowScrapper,
+       ISettingsProvider settingsProvider,
        ILogger logger)
     {
       this.dataLoader = dataLoader ?? throw new ArgumentNullException(nameof(dataLoader));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.tvShowScrapper = tvShowScrapper ?? throw new ArgumentNullException(nameof(tvShowScrapper));
+      this.settingsProvider = settingsProvider ?? throw new ArgumentNullException(nameof(settingsProvider));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -149,7 +153,7 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
 
       dialog.AllowNonFileSystemItems = true;
       dialog.IsFolderPicker = true;
-      dialog.InitialDirectory = GlobalSettings.TvShowInitialDirectory;
+      dialog.InitialDirectory = settingsProvider.GetSetting(GlobalSettings.TvShowInitialDirectory)?.Value;
       dialog.Title = "Select folders with tv show";
 
       if (dialog.ShowDialog() == CommonFileDialogResult.Ok)

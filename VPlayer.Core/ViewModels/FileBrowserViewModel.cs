@@ -9,6 +9,7 @@ using VCore;
 using VCore.ItemsCollections;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
+using VCore.Standard.NewFolder;
 using VCore.Standard.ViewModels.TreeView;
 using VCore.ViewModels;
 using VCore.WPF.Interfaces;
@@ -26,20 +27,22 @@ namespace VPlayer.Core.ViewModels
 
     protected readonly IViewModelsFactory viewModelsFactory;
     private readonly IWindowManager windowManager;
+    protected readonly ISettingsProvider settingsProvider;
     private TFolderViewModel root;
 
     #endregion
 
     #region Constructors
 
-    public FileBrowserViewModel(IRegionProvider regionProvider, IViewModelsFactory viewModelsFactory, IWindowManager windowManager) : base(regionProvider)
+    public FileBrowserViewModel(
+      IRegionProvider regionProvider, 
+      IViewModelsFactory viewModelsFactory, 
+      IWindowManager windowManager,
+      ISettingsProvider settingsProvider) : base(regionProvider)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
-
-      BaseDirectoryPath = GlobalSettings.FileBrowserInitialDirectory;
-
-
+      this.settingsProvider = settingsProvider ?? throw new ArgumentNullException(nameof(settingsProvider));
     }
 
     #endregion
@@ -211,6 +214,11 @@ namespace VPlayer.Core.ViewModels
 
       if (firstActivation)
       {
+        if (string.IsNullOrEmpty("baseDirectory"))
+        {
+          BaseDirectoryPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+        }
+
         await SetUpManager();
       }
     }
