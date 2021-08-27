@@ -1376,9 +1376,10 @@ namespace VPlayer.AudioStorage.InfoDownloader
     {
       var lowerString = sourceString.ToLower();
 
-      var replaced = lowerString.Replace("(retail)", null);
+      var replaced = lowerString.Replace("(retail)", null).Replace("(limited edition)", null).Replace("&","and");
 
       var sub = replaced.Substring(1, replaced.Length - 1);
+
       sub = Char.ToUpper(replaced[0]) + sub;
 
       return sub;

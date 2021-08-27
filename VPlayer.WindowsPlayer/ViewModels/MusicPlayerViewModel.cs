@@ -504,8 +504,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
                 downloadingArtist = await GetArist(artistName, cancellationToken);
 
 
-              if (downloadingAlbum == null || albumName?.Similarity(downloadingAlbum.Name, true) < 0.9)
+              if (downloadingAlbum == null || albumName?.Similarity(downloadingAlbum.Name, true, true) < 0.9)
                 downloadingAlbum = await GetAlbum(downloadingArtist, albumName, cancellationToken);
+
 
               if (downloadingArtist != null)
               {
@@ -513,67 +514,85 @@ namespace VPlayer.WindowsPlayer.ViewModels
                 {
                   downloadingAlbum = new Album()
                   {
-                    Artist = downloadingArtist
+                    Artist = downloadingArtist,
+                    Name = albumName
                   };
                 }
 
-                var song = new Song()
+              }
+              else
+              {
+                downloadingArtist = new Artist()
                 {
-                  Album = downloadingAlbum,
-                  ItemModel = viewmodel.Model,
+                  Name = artistName
                 };
 
-                var vm = viewModelsFactory.Create<SongInPlayListViewModel>(song);
-
-                var index = PlayList.IndexOf(viewmodel);
-
-                cancellationToken.ThrowIfCancellationRequested();
-
-                if (index >= 0)
+                if (downloadingAlbum == null)
                 {
-                  Application.Current.Dispatcher.InvokeAsync(async () =>
+                  downloadingAlbum = new Album()
                   {
-                    try
-                    {
-                      vm.Initialize();
-
-                      vm.ActualPosition = viewmodel.ActualPosition;
-                      vm.IsFavorite = viewmodel.IsFavorite;
-                      vm.IsPlaying = viewmodel.IsPlaying;
-                      vm.IsSelected = viewmodel.IsSelected;
-                      vm.Duration = viewmodel.Duration;
-
-                      if (ActualItem == viewmodel)
-                      {
-                        ActualItem = vm;
-                      }
-
-                      if (vm.AlbumViewModel == null && vm.SongModel.Album != null)
-                      {
-                        vm.AlbumViewModel = viewModelsFactory.Create<AlbumViewModel>(vm.SongModel.Album);
-                      }
-
-                      if (vm.ArtistViewModel == null && vm.SongModel.Album?.Artist != null)
-                      {
-                        vm.ArtistViewModel = viewModelsFactory.Create<ArtistViewModel>(vm.SongModel.Album.Artist);
-                      }
-
-                      PlayList.Remove(viewmodel);
-                      PlayList.Insert(index, vm);
-                      RequestReloadVirtulizedPlaylist();
-
-                      vm.TryToRefreshUpdateLyrics();
-                    }
-
-                    catch (TaskCanceledException)
-                    {
-                    }
-                    catch (Exception ex)
-                    {
-                      logger.Log(ex);
-                    }
-                  });
+                    Artist = downloadingArtist,
+                    Name = albumName
+                  };
                 }
+              }
+
+              var song = new Song()
+              {
+                Album = downloadingAlbum,
+                ItemModel = viewmodel.Model,
+              };
+
+              var vm = viewModelsFactory.Create<SongInPlayListViewModel>(song);
+
+              var index = PlayList.IndexOf(viewmodel);
+
+              if (index >= 0)
+              {
+                Application.Current.Dispatcher.InvokeAsync(async () =>
+                {
+                  try
+                  {
+                    vm.Initialize();
+
+                    vm.ActualPosition = viewmodel.ActualPosition;
+                    vm.IsFavorite = viewmodel.IsFavorite;
+                    vm.IsPlaying = viewmodel.IsPlaying;
+                    vm.IsSelected = viewmodel.IsSelected;
+                    vm.Duration = viewmodel.Duration;
+
+                    if (ActualItem == viewmodel)
+                    {
+                      ActualItem = vm;
+                    }
+
+                    if (vm.AlbumViewModel == null && vm.SongModel.Album != null)
+                    {
+                      vm.AlbumViewModel = viewModelsFactory.Create<AlbumViewModel>(vm.SongModel.Album);
+                    }
+
+                    if (vm.ArtistViewModel == null && vm.SongModel.Album?.Artist != null)
+                    {
+                      vm.ArtistViewModel = viewModelsFactory.Create<ArtistViewModel>(vm.SongModel.Album.Artist);
+                    }
+
+                    PlayList.Remove(viewmodel);
+                    PlayList.Insert(index, vm);
+                    RequestReloadVirtulizedPlaylist();
+
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    vm.TryToRefreshUpdateLyrics();
+                  }
+
+                  catch (TaskCanceledException)
+                  {
+                  }
+                  catch (Exception ex)
+                  {
+                    logger.Log(ex);
+                  }
+                });
               }
             }
           }
