@@ -876,6 +876,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         downloadingSongTask?.Cancel();
         downloadingSongTask = new CancellationTokenSource();
+        downloadingArtist = null;
+        downloadingAlbum = null;
 
         try
         {

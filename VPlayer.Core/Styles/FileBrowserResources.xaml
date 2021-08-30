@@ -8,356 +8,362 @@
                     xmlns:windowsFile="clr-namespace:VCore.Standard.ViewModels.WindowsFile;assembly=VCore.Standard"
                     xmlns:windowsFiles="clr-namespace:VCore.WPF.ViewModels.WindowsFiles;assembly=VCore.WPF">
 
-  <SolidColorBrush x:Key="VideoColor">#648afa</SolidColorBrush>
-  <SolidColorBrush x:Key="SoundColor">#eb677b</SolidColorBrush>
+    <SolidColorBrush x:Key="VideoColor">#648afa</SolidColorBrush>
+    <SolidColorBrush x:Key="SoundColor">#eb677b</SolidColorBrush>
 
-  <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
-    <Setter Property="IconHeight" Value="14" />
-    <Setter Property="IconWidth" Value="15" />
-    <Setter Property="Width" Value="25" />
-    <Setter Property="Height" Value="20" />
-    <Setter Property="IsReadOnly" Value="True" />
-    <Setter Property="Padding" Value="0" />
-    <!--<Setter Property="Background" Value="#15ffffff" />-->
-    <Setter Property="IconDefaultColor" Value="#20ffffff" />
-    <Setter Property="HorizontalAlignment" Value="Center" />
-    <Setter Property="VerticalAlignment" Value="Center" />
-    <Setter Property="HorizontalContentAlignment" Value="Center" />
-    <Setter Property="IconStretch" Value="Uniform" />
-    <Setter Property="VerticalContentAlignment" Value="Center" />
-    <Setter Property="Margin" Value="5,0" />
-    <Setter Property="Visibility" Value="Visible" />
-  </Style>
+    <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
+        <Setter Property="IconHeight" Value="14" />
+        <Setter Property="IconWidth" Value="15" />
+        <Setter Property="Width" Value="30" />
+        <Setter Property="Height" Value="20" />
+        <Setter Property="IsReadOnly" Value="True" />
+        <Setter Property="Padding" Value="0" />
 
-  <Style x:Key="FileNameStyle" TargetType="Run">
-    <Setter Property="Foreground" Value="#454545" />
-    <Style.Triggers>
-      <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.Video}">
-        <Setter Property="Foreground" Value="#aaa" />
+        <!--<Setter Property="Background" Value="#15ff0000" />-->
+        <!--<Setter Property="BorderBrush" Value="Yellow" />-->
+        <!--<Setter Property="BorderThickness" Value="1,0" />-->
+
+        <Setter Property="IconDefaultColor" Value="#20ffffff" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="IconStretch" Value="Uniform" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Margin" Value="0,0" />
+        <Setter Property="Visibility" Value="Visible" />
+    </Style>
+
+    <Style x:Key="FileNameStyle" TargetType="Run">
+        <Setter Property="Foreground" Value="#454545" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.Video}">
+                <Setter Property="Foreground" Value="#aaa" />
+                <Setter Property="FontSize" Value="15" />
+
+            </DataTrigger>
+            <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.Sound}">
+                <Setter Property="Foreground" Value="#aaa" />
+                <Setter Property="FontSize" Value="15" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+
+    <Style x:Key="FolderNameStyle" TargetType="Run">
         <Setter Property="FontSize" Value="15" />
-
-      </DataTrigger>
-      <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.Sound}">
-        <Setter Property="Foreground" Value="#aaa" />
-        <Setter Property="FontSize" Value="15" />
-      </DataTrigger>
-    </Style.Triggers>
-  </Style>
-
-
-  <Style x:Key="FolderNameStyle" TargetType="Run">
-    <Setter Property="FontSize" Value="15" />
-    <Setter Property="Foreground" Value="#ccc" />
-    <Setter Property="FontWeight" Value="Bold" />
-    <Style.Triggers>
-      <DataTrigger Binding="{Binding FolderType}" Value="{x:Static windowsFiles:FolderType.Other}">
-        <Setter Property="Foreground" Value="#858585" />
-        <Setter Property="FontWeight" Value="Normal" />
-        <Setter Property="FontSize" Value="14" />
-      </DataTrigger>
-
-      <DataTrigger Binding="{Binding IsRoot}" Value="true">
-        <Setter Property="FontSize" Value="18" />
         <Setter Property="Foreground" Value="#ccc" />
-      </DataTrigger>
-    </Style.Triggers>
-  </Style>
+        <Setter Property="FontWeight" Value="Bold" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding FolderType}" Value="{x:Static windowsFiles:FolderType.Other}">
+                <Setter Property="Foreground" Value="#858585" />
+                <Setter Property="FontWeight" Value="Normal" />
+                <Setter Property="FontSize" Value="14" />
+            </DataTrigger>
 
-  <converters:HighlightTextConverter x:Key="FolderHighlightTextConverter"
-                                     HighlightBackround="#ffea00"
-                                     HighlightForeground="#252525"
-                                     RunStyle="{StaticResource FolderNameStyle}" />
-  <converters:HighlightTextConverter x:Key="FileHighlightTextConverter"
-                                     HighlightBackround="#ffea00"
-                                     HighlightForeground="#252525"
-                                     RunStyle="{StaticResource FileNameStyle}" />
-
-  <DataTemplate x:Key="FolderTreeViewTemplate">
-    <Grid>
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="auto" />
-        <ColumnDefinition Width="auto" />
-        <ColumnDefinition />
-      </Grid.ColumnDefinitions>
-
-      <StackPanel Grid.Column="0" Orientation="Horizontal">
-        <StackPanel.Resources />
-
-        <controls:PathButton Command="{Binding PlayButton}"
-                             CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}"
-                             IconHoverColor="{StaticResource DefaultRedColor}"
-                             PathStyle="{StaticResource PlaySign}"
-                             ToolTip="Play">
-          <controls:PathButton.Style>
-            <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
-              <Setter Property="Visibility" Value="Hidden" />
-              <Style.Triggers>
-                <DataTrigger Binding="{Binding CanPlay}" Value="true">
-                  <Setter Property="Visibility" Value="Visible" />
-                </DataTrigger>
-              </Style.Triggers>
-            </Style>
-          </controls:PathButton.Style>
-        </controls:PathButton>
-
-        <controls:PathButton Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.DeleteItemCommand}"
-                             CommandParameter="{Binding Model.Indentificator}"
-                             IconHoverColor="{StaticResource LightRedColor}"
-                             PathStyle="{StaticResource Trash}"
-                             ToolTip="Delete (to trash)" />
-
-        <controls:PathButton Margin="3,0,7,0"
-                             Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.ChangeDirectory}"
-                             CommandParameter="{Binding Model.Indentificator}"
-                             IconHoverColor="{StaticResource GreenColor}"
-                             IconWidth="15"
-                             PathStyle="{StaticResource InBoxIn}"
-                             ToolTip="Go inside" />
-
-        <controls:PathButton Margin="5,0,5,0"
-                             Command="{Binding OpenContainingFolder}"
-                             CommandParameter="{Binding Model.Indentificator}"
-                             IconHeight="13"
-                             IconHoverColor="{StaticResource BlueColor}"
-                             PathStyle="{StaticResource ArrowUpSquare}"
-                             ToolTip="Open in filebrowser" />
-
-        <controls:PathButton Margin="6,0,4,0"
-                             ClickMode="Hover"
-                             Cursor="Arrow"
-                             IconHeight="7"
-                             IconHoverColor="#757575"
-                             IconWidth="12"
-                             IsChecked="{Binding WasLoaded, Mode=OneWay}"
-                             IsReadOnly="True"
-                             PathCheckedBrush="#2f6e30"
-                             PathStyle="{StaticResource check}"
-                             ToolTip="Loaded indicator" />
-
-        <StackPanel.Style>
-          <Style TargetType="StackPanel">
-            <Setter Property="Margin" Value="0,0,0,0" />
-            <Style.Triggers>
-              <DataTrigger Binding="{Binding IsRoot}" Value="true">
-                <Setter Property="Margin" Value="0,0,0,0" />
-              </DataTrigger>
-            </Style.Triggers>
-          </Style>
-        </StackPanel.Style>
-      </StackPanel>
-
-      <Path Grid.Column="1"
-            Margin="4,2,5,2"
-            VerticalAlignment="Center"
-            Stretch="Uniform">
-        <Path.Style>
-          <Style BasedOn="{StaticResource Folder}" TargetType="Path">
-            <Setter Property="Fill" Value="#858585" />
-            <Setter Property="Opacity" Value="0.3" />
-            <Style.Triggers>
-              <DataTrigger Binding="{Binding FolderType}" Value="{x:Static windowsFiles:FolderType.Video}">
-                <Setter Property="Fill" Value="{StaticResource VideoColor}" />
-                <Setter Property="Opacity" Value="0.5" />
-
-              </DataTrigger>
-              <DataTrigger Binding="{Binding FolderType}" Value="{x:Static windowsFiles:FolderType.Sound}">
-                <Setter Property="Fill" Value="{StaticResource SoundColor}" />
-                <Setter Property="Opacity" Value="0.5" />
-              </DataTrigger>
-              <DataTrigger Binding="{Binding FolderType}" Value="{x:Static windowsFiles:FolderType.Mixed}">
-                <Setter Property="Fill" Value="Yellow" />
-                <Setter Property="Opacity" Value="0.5" />
-              </DataTrigger>
-
-            </Style.Triggers>
-          </Style>
-        </Path.Style>
-      </Path>
-
-
-      <ContentControl Grid.Column="2"
-                      VerticalAlignment="Center"
-                      Content="{Binding HighlitedText, Converter={StaticResource FolderHighlightTextConverter}, Mode=OneTime}"
-                      ToolTip="{Binding FolderType, Mode=OneTime}" />
-
-      <Grid Grid.Column="1" Grid.ColumnSpan="2">
-        <TextBlock Margin="150,0,0,0"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Center"
-                   Foreground="#ccc"
-                   Text="Loading..." />
-        <Grid.Style>
-          <Style TargetType="Grid">
-            <Setter Property="Background" Value="#cc141414" />
-            <Setter Property="Visibility" Value="Hidden" />
-
-            <Style.Triggers>
-              <DataTrigger Binding="{Binding IsLoading}" Value="true">
-                <Setter Property="Visibility" Value="Visible" />
-              </DataTrigger>
-            </Style.Triggers>
-
-
-          </Style>
-        </Grid.Style>
-      </Grid>
-
-      <Grid.Style>
-        <Style TargetType="Grid">
-          <Setter Property="Height" Value="18" />
-          <Setter Property="Margin" Value="0" />
-          <Setter Property="Background" Value="Transparent" />
-
-          <Style.Triggers>
             <DataTrigger Binding="{Binding IsRoot}" Value="true">
-              <Setter Property="Height" Value="20" />
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="Foreground" Value="#ccc" />
             </DataTrigger>
-          </Style.Triggers>
-        </Style>
-      </Grid.Style>
+        </Style.Triggers>
+    </Style>
 
-      <Grid.ContextMenu>
-        <ContextMenu>
-          <MenuItem Command="{Binding OpenContainingFolder}" Header="Open folder" />
-        </ContextMenu>
-      </Grid.ContextMenu>
-    </Grid>
-  </DataTemplate>
+    <converters:HighlightTextConverter x:Key="FolderHighlightTextConverter"
+                                       HighlightBackround="#ffea00"
+                                       HighlightForeground="#252525"
+                                       RunStyle="{StaticResource FolderNameStyle}" />
+    <converters:HighlightTextConverter x:Key="FileHighlightTextConverter"
+                                       HighlightBackround="#ffea00"
+                                       HighlightForeground="#252525"
+                                       RunStyle="{StaticResource FileNameStyle}" />
 
+    <DataTemplate x:Key="FolderTreeViewTemplate">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
 
-  <DataTemplate x:Key="FileTreeViewTemplate">
-    <Grid>
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="auto" />
-        <ColumnDefinition Width="auto" />
-        <ColumnDefinition Width="auto" />
-        <ColumnDefinition />
-
-      </Grid.ColumnDefinitions>
-
-      <StackPanel Grid.Column="0"
-                  Margin="0,0,0,0"
-                  Orientation="Horizontal">
-
-        <Grid Width="35"
-              Height="11"
-              Background="Transparent" />
-
-        <controls:PathButton Command="{Binding PlayButton}"
-                             CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}"
-                             IconHoverColor="{StaticResource DefaultRedColor}"
-                             PathStyle="{StaticResource PlaySign}"
-                             ToolTip="Play">
-          <controls:PathButton.Style>
-            <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
-              <Setter Property="Visibility" Value="Hidden" />
-              <Style.Triggers>
-                <DataTrigger Binding="{Binding CanPlay}" Value="true">
-                  <Setter Property="Visibility" Value="Visible" />
-                </DataTrigger>
-              </Style.Triggers>
-            </Style>
-          </controls:PathButton.Style>
-        </controls:PathButton>
-
-        <controls:PathButton Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.DeleteItemCommand}"
-                             CommandParameter="{Binding Model.FullName}"
-                             IconHoverColor="{StaticResource LightRedColor}"
-                             PathStyle="{StaticResource Trash}"
-                             ToolTip="Delete (to trash)" />
-
-        <controls:PathButton Command="{Binding OpenContainingFolder}"
-                             CommandParameter="{Binding Model.FullName}"
-                             IconHeight="13"
-                             IconHoverColor="{StaticResource BlueColor}"
-                             PathStyle="{StaticResource ArrowUpSquare}"
-                             ToolTip="Open in filebrowser" />
-      </StackPanel>
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <StackPanel.Resources />
 
 
+                <controls:PathButton Command="{Binding PlayButton}"
+                                     CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}"
+                                     IconHoverColor="{StaticResource DefaultRedColor}"
+                                     PathStyle="{StaticResource PlaySign}"
+                                     ToolTip="Play">
+                    <controls:PathButton.Style>
+                        <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
+                            <Setter Property="Visibility" Value="Hidden" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CanPlay}" Value="true">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </controls:PathButton.Style>
+                </controls:PathButton>
 
-      <Grid Grid.Column="2" Margin="1,0,5,0">
-        <Image Width="15"
-               Height="15"
-               Margin="5,0,0,0"
-               Source="pack://application:,,,/VPlayer.DarkTheme;component/Resources/file.png" />
+                <controls:PathButton Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.DeleteItemCommand}"
+                                     CommandParameter="{Binding Model.Indentificator}"
+                                     IconHoverColor="{StaticResource LightRedColor}"
+                                     PathStyle="{StaticResource Trash}"
+                                     ToolTip="Delete (to trash)" />
 
-        <Rectangle Width="15" Height="15">
-          <Rectangle.Style>
-            <Style TargetType="Rectangle">
-              <Setter Property="Fill" Value="#858585" />
-              <Setter Property="Opacity" Value="0.7" />
-              <Style.Triggers>
-                <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.Video}">
-                  <Setter Property="Fill" Value="{StaticResource VideoColor}" />
-                </DataTrigger>
-                <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.Sound}">
-                  <Setter Property="Fill" Value="{StaticResource SoundColor}" />
-                </DataTrigger>
-                <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.TextFile}">
-                  <Setter Property="Fill" Value="#5a5c40" />
-                </DataTrigger>
-                <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.Image}">
-                  <Setter Property="Fill" Value="#70a1fe27" />
-                </DataTrigger>
-              </Style.Triggers>
-            </Style>
-          </Rectangle.Style>
-          <Rectangle.OpacityMask>
-            <ImageBrush ImageSource="pack://application:,,,/VPlayer.DarkTheme;component/Resources/file.png" />
-          </Rectangle.OpacityMask>
-        </Rectangle>
-      </Grid>
+                <controls:PathButton Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.ChangeDirectory}"
+                                     CommandParameter="{Binding Model.Indentificator}"
+                                     IconHoverColor="{StaticResource GreenColor}"
+                                     IconWidth="14"
+                                     Margin="-1 0 1 0"
+                                     PathStyle="{StaticResource InBoxIn}"
+                                     ToolTip="Go inside" />
 
-      <StackPanel Grid.Column="3" Orientation="Horizontal">
-        <ContentControl Margin="0,0,0,0"
-                        VerticalAlignment="Center"
-                        Content="{Binding HighlitedText, Converter={StaticResource FileHighlightTextConverter}, Mode=OneTime}" />
+                <controls:PathButton Command="{Binding OpenContainingFolder}"
+                                     CommandParameter="{Binding Model.Indentificator}"
+                                     IconHeight="13"
+                                     IconHoverColor="{StaticResource BlueColor}"
+                                     PathStyle="{StaticResource ArrowUpSquare}"
+                                     ToolTip="Open in filebrowser" />
 
-        <TextBlock Margin="10,0,0,0"
-                   VerticalAlignment="Center"
-                   FontSize="13"
-                   Text="{Binding Model.Length, Converter={converters:FileSizeConverter}, ConverterParameter=N2, Mode=OneWay}">
-          <TextBlock.Style>
-            <Style TargetType="TextBlock">
-              <Setter Property="FontWeight" Value="DemiBold" />
-              <Setter Property="Foreground" Value="#252525" />
-              <Style.Triggers>
-                <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.Video}">
-                  <Setter Property="Foreground" Value="#555555" />
-                </DataTrigger>
-                <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.Sound}">
-                  <Setter Property="Foreground" Value="#555555" />
-                </DataTrigger>
-              </Style.Triggers>
-            </Style>
-          </TextBlock.Style>
-        </TextBlock>
+                <controls:PathButton ClickMode="Hover"
+                                     Cursor="Arrow"
+                                     IconHeight="8"
+                                     Margin="1 0 -1 0"
+                                     IconHoverColor="#757575"
+                                     IconWidth="12"
+                                     IsChecked="{Binding WasLoaded, Mode=OneWay}"
+                                     IsReadOnly="True"
+                                     PathCheckedBrush="#2f6e30"
+                                     PathStyle="{StaticResource check}"
+                                     ToolTip="Loaded indicator" />
 
-      </StackPanel>
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Setter Property="Margin" Value="0,0,0,0" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsRoot}" Value="true">
+                                <Setter Property="Margin" Value="0,0,0,0" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+            </StackPanel>
+
+            <Path Grid.Column="1"
+                  Margin="0,2,5,2"
+                  VerticalAlignment="Center"
+                  Stretch="Uniform">
+                <Path.Style>
+                    <Style BasedOn="{StaticResource Folder}" TargetType="Path">
+                        <Setter Property="Fill" Value="#858585" />
+                        <Setter Property="Opacity" Value="0.3" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding FolderType}" Value="{x:Static windowsFiles:FolderType.Video}">
+                                <Setter Property="Fill" Value="{StaticResource VideoColor}" />
+                                <Setter Property="Opacity" Value="0.5" />
+
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding FolderType}" Value="{x:Static windowsFiles:FolderType.Sound}">
+                                <Setter Property="Fill" Value="{StaticResource SoundColor}" />
+                                <Setter Property="Opacity" Value="0.5" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding FolderType}" Value="{x:Static windowsFiles:FolderType.Mixed}">
+                                <Setter Property="Fill" Value="Yellow" />
+                                <Setter Property="Opacity" Value="0.5" />
+                            </DataTrigger>
+
+                        </Style.Triggers>
+                    </Style>
+                </Path.Style>
+            </Path>
 
 
-      <Grid.Style>
-        <Style TargetType="Grid">
-          <Setter Property="Margin" Value="0" />
+            <ContentControl Grid.Column="2"
+                            VerticalAlignment="Center"
+                            Content="{Binding HighlitedText, Converter={StaticResource FolderHighlightTextConverter}, Mode=OneTime}"
+                            ToolTip="{Binding FolderType, Mode=OneTime}" />
 
-          <Style.Triggers>
-            <DataTrigger Binding="{Binding CanPlay}" Value="false">
-              <Setter Property="Opacity" Value="1" />
-            </DataTrigger>
-          </Style.Triggers>
-        </Style>
-      </Grid.Style>
+            <Grid Grid.Column="1" Grid.ColumnSpan="2">
+                <TextBlock Margin="150,0,0,0"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"
+                           Foreground="#ccc"
+                           Text="Loading..." />
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Setter Property="Background" Value="#cc141414" />
+                        <Setter Property="Visibility" Value="Hidden" />
 
-      <Grid.ContextMenu>
-        <ContextMenu>
-          <MenuItem Command="{Binding OpenContainingFolder}" Header="Open containing folder" />
-        </ContextMenu>
-      </Grid.ContextMenu>
-    </Grid>
-  </DataTemplate>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsLoading}" Value="true">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
 
-  <templateSelectors:WindowItemTemplateSelector x:Key="WindowItemTemplateSelector"
-                                                FileTemplate="{StaticResource FileTreeViewTemplate}"
-                                                FolderTemplate="{StaticResource FolderTreeViewTemplate}" />
+
+                    </Style>
+                </Grid.Style>
+            </Grid>
+
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Height" Value="18" />
+                    <Setter Property="Margin" Value="0" />
+                    <Setter Property="Background" Value="Transparent" />
+
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsRoot}" Value="true">
+                            <Setter Property="Height" Value="20" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+
+            <Grid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Command="{Binding OpenContainingFolder}" Header="Open folder" />
+                </ContextMenu>
+            </Grid.ContextMenu>
+        </Grid>
+    </DataTemplate>
+
+
+    <DataTemplate x:Key="FileTreeViewTemplate">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition />
+
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0"
+                        Margin="0,0,0,0"
+                        Orientation="Horizontal">
+
+                <Grid Width="30"
+                      Height="11"
+                      Background="Transparent" />
+
+                <controls:PathButton Command="{Binding PlayButton}"
+                                     CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}"
+                                     IconHoverColor="{StaticResource DefaultRedColor}"
+                                     PathStyle="{StaticResource PlaySign}"
+                                     ToolTip="Play">
+                    <controls:PathButton.Style>
+                        <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
+                            <Setter Property="Visibility" Value="Hidden" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CanPlay}" Value="true">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </controls:PathButton.Style>
+                </controls:PathButton>
+
+                <controls:PathButton Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.DeleteItemCommand}"
+                                     CommandParameter="{Binding Model.FullName}"
+                                     IconHoverColor="{StaticResource LightRedColor}"
+                                     PathStyle="{StaticResource Trash}"
+                                     ToolTip="Delete (to trash)" />
+
+                <controls:PathButton Command="{Binding OpenContainingFolder}"
+                                     CommandParameter="{Binding Model.FullName}"
+                                     IconHeight="13"
+                                     IconHoverColor="{StaticResource BlueColor}"
+                                     PathStyle="{StaticResource ArrowUpSquare}"
+                                     ToolTip="Open in filebrowser" />
+            </StackPanel>
+
+
+
+            <Grid Grid.Column="2"
+                  Width="21"
+                  Margin="-4,0,5,0">
+                <Image Width="15"
+                       Height="15"
+                       Margin="0,0,0,0"
+                       Source="pack://application:,,,/VPlayer.DarkTheme;component/Resources/file.png" />
+
+                <Rectangle Width="15" Height="15">
+                    <Rectangle.Style>
+                        <Style TargetType="Rectangle">
+                            <Setter Property="Fill" Value="#858585" />
+                            <Setter Property="Opacity" Value="0.7" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.Video}">
+                                    <Setter Property="Fill" Value="{StaticResource VideoColor}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.Sound}">
+                                    <Setter Property="Fill" Value="{StaticResource SoundColor}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.TextFile}">
+                                    <Setter Property="Fill" Value="#5a5c40" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.Image}">
+                                    <Setter Property="Fill" Value="#70a1fe27" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Rectangle.Style>
+                    <Rectangle.OpacityMask>
+                        <ImageBrush ImageSource="pack://application:,,,/VPlayer.DarkTheme;component/Resources/file.png" />
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+            </Grid>
+
+            <StackPanel Grid.Column="3" Orientation="Horizontal">
+                <ContentControl Margin="0,0,0,0"
+                                VerticalAlignment="Center"
+                                Content="{Binding HighlitedText, Converter={StaticResource FileHighlightTextConverter}, Mode=OneTime}" />
+
+                <TextBlock Margin="10,0,0,0"
+                           VerticalAlignment="Center"
+                           FontSize="13"
+                           Text="{Binding Model.Length, Converter={converters:FileSizeConverter}, ConverterParameter=N2, Mode=OneWay}">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontWeight" Value="DemiBold" />
+                            <Setter Property="Foreground" Value="#252525" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.Video}">
+                                    <Setter Property="Foreground" Value="#555555" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding FileType}" Value="{x:Static windowsFile:FileType.Sound}">
+                                    <Setter Property="Foreground" Value="#555555" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+            </StackPanel>
+
+
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Margin" Value="0" />
+
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding CanPlay}" Value="false">
+                            <Setter Property="Opacity" Value="1" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+
+            <Grid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Command="{Binding OpenContainingFolder}" Header="Open containing folder" />
+                </ContextMenu>
+            </Grid.ContextMenu>
+        </Grid>
+    </DataTemplate>
+
+    <templateSelectors:WindowItemTemplateSelector x:Key="WindowItemTemplateSelector"
+                                                  FileTemplate="{StaticResource FileTreeViewTemplate}"
+                                                  FolderTemplate="{StaticResource FolderTreeViewTemplate}" />
 </ResourceDictionary>
