@@ -90,7 +90,7 @@ namespace VPlayer.Core.FileBrowser
 
       await LoadSubFolders(this);
 
-      var playableFiles = SubItems.ViewModels.SelectMany(x => x.SubItems.ViewModels).OfType<PlayableFileViewModel>();
+      var playableFiles = SubItems.ViewModels.SelectManyRecursive(x => x.SubItems.ViewModels).OfType<PlayableFileViewModel>();
 
       if (FolderType == FolderType.Video)
       {

@@ -197,11 +197,6 @@
                                         </Style.Triggers>
                                     </Style>
                                 </TextBox.Style>
-
-                                <b:Interaction.Behaviors>
-                                    <behaviors3:FocusBehavior OnLostFocusCommand="{Binding SavePlaylistCommand}" SetFocusManager="True" />
-                                </b:Interaction.Behaviors>
-
                             </TextBox>
                         </Border>
 
