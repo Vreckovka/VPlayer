@@ -89,8 +89,9 @@ namespace VPlayer.ViewModels
   //        TODO: Status popup close manual
   //        TODO: Moznost vymazat automaticky nahrane lyrics a zakazat stahovanie
   //        TODO: Dvojklik na windows volume (nastavi dostpny dalsi device (hore ci dole????))
-  //		TODO: Ak Windows Volume je 100 a stale chcem viac tak dam VLC volume ++
-  //		TODO: Vymazat playlist + data iconka (iny trash button)
+  //		    TODO: Ak Windows Volume je 100 a stale chcem viac tak dam VLC volume ++
+  //		    TODO: Vymazat playlist + data iconka (iny trash button)
+  //        TODO: Vymazat z databazy file item (Iconka do FILE WATCHERA) (oznacit ako stored a potom ked kliknes tak vymazes) nejaka db iconka alebo co
   //
   //  *****DESING***** 
   //        TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)

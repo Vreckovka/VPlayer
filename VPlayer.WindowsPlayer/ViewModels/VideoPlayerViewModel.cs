@@ -615,9 +615,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         Application.Current.Dispatcher.Invoke(() =>
         {
-          ActualItem.Name = string.IsNullOrEmpty(item.OriginalName) ? item.Name : item.OriginalName;
-
           ActualItem.CSFDItem = item;
+          ActualItem.CSFDItem.Name = string.IsNullOrEmpty(item.OriginalName) ? item.Name : item.OriginalName;
         });
       }
     } 
