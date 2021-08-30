@@ -8,6 +8,9 @@
                     xmlns:windowsFile="clr-namespace:VCore.Standard.ViewModels.WindowsFile;assembly=VCore.Standard"
                     xmlns:windowsFiles="clr-namespace:VCore.WPF.ViewModels.WindowsFiles;assembly=VCore.WPF">
 
+    <Color x:Key="VideoColorColor">#648afa</Color>
+    <Color x:Key="SoundColorColor">#eb677b</Color>
+
     <SolidColorBrush x:Key="VideoColor">#648afa</SolidColorBrush>
     <SolidColorBrush x:Key="SoundColor">#eb677b</SolidColorBrush>
 
@@ -111,11 +114,11 @@
                                      PathStyle="{StaticResource Trash}"
                                      ToolTip="Delete (to trash)" />
 
-                <controls:PathButton Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.ChangeDirectory}"
+                <controls:PathButton Margin="-1,0,1,0"
+                                     Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.ChangeDirectory}"
                                      CommandParameter="{Binding Model.Indentificator}"
                                      IconHoverColor="{StaticResource GreenColor}"
                                      IconWidth="14"
-                                     Margin="-1 0 1 0"
                                      PathStyle="{StaticResource InBoxIn}"
                                      ToolTip="Go inside" />
 
@@ -126,10 +129,10 @@
                                      PathStyle="{StaticResource ArrowUpSquare}"
                                      ToolTip="Open in filebrowser" />
 
-                <controls:PathButton ClickMode="Hover"
+                <controls:PathButton Margin="1,0,-1,0"
+                                     ClickMode="Hover"
                                      Cursor="Arrow"
                                      IconHeight="8"
-                                     Margin="1 0 -1 0"
                                      IconHoverColor="#757575"
                                      IconWidth="12"
                                      IsChecked="{Binding WasLoaded, Mode=OneWay}"
@@ -169,8 +172,15 @@
                                 <Setter Property="Opacity" Value="0.5" />
                             </DataTrigger>
                             <DataTrigger Binding="{Binding FolderType}" Value="{x:Static windowsFiles:FolderType.Mixed}">
-                                <Setter Property="Fill" Value="Yellow" />
-                                <Setter Property="Opacity" Value="0.5" />
+                                <Setter Property="Fill">
+                                    <Setter.Value>
+                                        <LinearGradientBrush>
+                                            <GradientStop Offset="0.15" Color="{StaticResource VideoColorColor}" />
+                                            <GradientStop Offset="1" Color="{StaticResource SoundColorColor}" />
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Opacity" Value="0.55" />
                             </DataTrigger>
 
                         </Style.Triggers>
