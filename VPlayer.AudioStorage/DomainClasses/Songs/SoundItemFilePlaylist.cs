@@ -4,6 +4,7 @@ namespace VPlayer.AudioStorage.DomainClasses
 {
   public class SoundItemFilePlaylist : FilePlaylist<PlaylistSoundItem>
   {
+
   }
 }
 

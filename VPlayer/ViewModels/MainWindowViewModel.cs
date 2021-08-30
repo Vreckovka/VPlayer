@@ -58,8 +58,9 @@ namespace VPlayer.ViewModels
   //TODO: File Browser - File watcher nad aktualnou zlozkou
   //TODO: File Browser - Right click open folder
   //TODO: File Browser - Nastavit zlozku ako hlavnu
-  //TODO: FileBrowser - zobrazuje slideshow obrazkov z videa(FFMPEG)
-  //TODO: FileBrowser - Mark videne (ako dlho som to pozeral - % pozrete, kludne z celej zloky), ak som to pozeral aspon 5min a datum
+  //TODO: File Browser - zobrazuje slideshow obrazkov z videa(FFMPEG)
+  //TODO: File Browser - Mark videne (ako dlho som to pozeral - % pozrete, kludne z celej zloky), ak som to pozeral aspon 5min a datum
+  //TODO: File Browser - Oblubene cesty (nejaky dropdown potom)
   //
   //TODO: Setting page - Poriadne settingy (ako default cesty do subor napr)
   //TODO: Ked je synced lyrics a nie si na tabe a ide to dalej a vratis sa tak to scrolne na tu dolnu poziciu animacne (nech to spravi instantne zacne od tade)
@@ -88,8 +89,8 @@ namespace VPlayer.ViewModels
   //        TODO: Status popup close manual
   //        TODO: Moznost vymazat automaticky nahrane lyrics a zakazat stahovanie
   //        TODO: Dvojklik na windows volume (nastavi dostpny dalsi device (hore ci dole????))
-  //		    TODO: Ak Windows Volume je 100 a stale chcem viac tak dam VLC volume ++
-  //		    TODO: Vymazat playlist + data iconka (iny trash button)
+  //		TODO: Ak Windows Volume je 100 a stale chcem viac tak dam VLC volume ++
+  //		TODO: Vymazat playlist + data iconka (iny trash button)
   //
   //  *****DESING***** 
   //        TODO: Cykli ked prejdes cely play list tak ze si ho cely vypocujes (meni sa farba podla cyklu)
@@ -105,12 +106,12 @@ namespace VPlayer.ViewModels
   //
   //
   //  *****PCloud******
-  //       TODO: Load stats ked sa pusti v prehravaci (CloudService) 
+  //       	TODO: Load stats ked sa pusti v prehravaci (CloudService) 
   //
   //
-  //  *****Webova db******
-  //       TODO: Selector pre vyber databazy (Lokalna, Cloud)
-  //       TODO: Playlisty ukladat podla typu suborov do prislusneho typu datbaty (lokal, cloud) 
+  //  	*****Webova db******
+  //        TODO: Selector pre vyber databazy (Lokalna, Cloud)
+  //        TODO: Playlisty ukladat podla typu suborov do prislusneho typu datbaty (lokal, cloud) 
   //
   //
   //  *****TOPKY*****

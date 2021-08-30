@@ -57,36 +57,25 @@ namespace VPlayer.Home.ViewModels
       var playlist = storageManager.GetRepository<SoundItemFilePlaylist>()
         .Include(x => x.PlaylistItems)
         .ThenInclude(x => x.ReferencedItem)
+        .ThenInclude(x => x.FileInfo)
         .SingleOrDefault(x => x.Id == Model.Id);
 
 
       if (playlist != null)
       {
-        var playlistItems = playlist.PlaylistItems.OrderBy(x => x.OrderInPlaylist).ToList();
+        var playlistItems = playlist.PlaylistItems.OrderBy(x => x.OrderInPlaylist);
 
-        var list = new List<SongInPlayListViewModel>();
+        var songsItems = storageManager.GetRepository<Song>()
+          .Where(x => playlistItems.Select(y => y.IdReferencedItem).Contains(x.ItemModel.Id))
+          .Include(x => x.Album)
+          .ThenInclude(x => x.Artist)
+          .Include(x => x.ItemModel)
+          .ThenInclude(x => x.FileInfo)
+          .ToList();
 
-        var fristEpisode = storageManager.GetRepository<Song>().Where(x => x.ItemModel.Id == playlistItems[0].IdReferencedItem).Include(x => x.Album).ThenInclude(x => x.Artist).SingleOrDefault();
-
-        if (fristEpisode != null)
+        if (songsItems.Count > 0)
         {
-          var album = storageManager.GetRepository<Artist>()
-            .Where(x => x.Id == fristEpisode.Album.Artist.Id)
-            .Include(x => x.Albums)
-            .ThenInclude(x => x.Songs)
-            .ThenInclude(x => x.ItemModel)
-            .ThenInclude(x => x.FileInfo).Single();
-
-          var songs = album.Albums.SelectMany(x => x.Songs).ToList();
-
-          foreach (var item in playlistItems)
-          {
-            var song = songs.Single(x => x.ItemModel.Id == item.ReferencedItem.Id);
-
-            list.Add(viewModelsFactory.Create<SongInPlayListViewModel>(song));
-          }
-
-          return list;
+          return songsItems.Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x));
         }
         else
         {
