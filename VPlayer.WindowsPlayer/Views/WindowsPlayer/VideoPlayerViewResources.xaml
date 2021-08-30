@@ -170,15 +170,56 @@
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
                         <Setter Property="Foreground" Value="#30edfffa" />
+                        <Setter Property="Visibility" Value="Hidden" />
+
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsPlaying}" Value="true">
                                 <Setter Property="Foreground" Value="#24140c" />
                                 <Setter Property="FontWeight" Value="DemiBold" />
                             </DataTrigger>
+
+                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ListView, Mode=FindAncestor}, Mode=OneWay, Path=DataContext.CSFDItem}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
+
+            <Grid x:Name="CSFDInfo" DataContext="{Binding RelativeSource={RelativeSource AncestorType=ListView, Mode=FindAncestor}, Mode=OneWay, Path=DataContext.CSFDItem}">
+                <TextBlock Margin="5,0,0,3"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Bottom">
+                    <Run FontSize="14"
+                         FontWeight="Bold"
+                         Text="{Binding OriginalName}" />
+
+                    <Run FontSize="14" Text="{Binding Year, StringFormat={}({0})}" />
+
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="White" />
+
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ContentPresenter, Mode=FindAncestor}, Path=DataContext.IsPlaying}" Value="True">
+                                    <Setter Property="Foreground" Value="#24140c" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Style.Triggers>
+                            <Trigger Property="DataContext" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+            </Grid>
+
 
             <Grid.ContextMenu>
                 <ContextMenu>

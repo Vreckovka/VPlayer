@@ -7,7 +7,7 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 namespace VPlayer.Core.ViewModels
 {
   public abstract class FileItemInPlayList<TModel> : ItemInPlayList<TModel>, IFileItemInPlayList<TModel>
-    where TModel : class, IFilePlayableModel,  IUpdateable<TModel>, IEntity
+    where TModel : class, IFilePlayableModel, IUpdateable<TModel>, IEntity
   {
     public FileItemInPlayList(
       TModel model,
@@ -49,7 +49,10 @@ namespace VPlayer.Core.ViewModels
 
           var stringValue = value.ToString().Take(6).Aggregate("", (x, y) => x + y);
 
-          actualPosition = float.Parse(stringValue);
+          var floatValue = float.Parse(stringValue);
+
+          if (floatValue <= 1)
+            actualPosition = floatValue;
 
           RaisePropertyChanged();
           RaisePropertyChanged(nameof(ActualTime));

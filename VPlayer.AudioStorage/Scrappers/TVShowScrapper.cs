@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
-using VPlayer.AudioStorage.Parsers;
+using VPlayer.AudioStorage.Scrappers.CSFD;
 using VPlayer.Core.Managers.Status;
 using VPlayer.Library.ViewModels.TvShows;
 
@@ -84,7 +84,7 @@ namespace VPlayer.AudioStorage.Scrappers
             return;
           }
 
-          dbTvShow.PosterPath = csfdTvShow.PosterPath;
+          dbTvShow.PosterPath = csfdTvShow.ImagePath;
 
           dbTvShow.Name = csfdTvShow.Name;
 

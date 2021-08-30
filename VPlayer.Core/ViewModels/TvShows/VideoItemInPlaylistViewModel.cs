@@ -39,6 +39,8 @@ namespace VPlayer.Core.ViewModels.TvShows
 
     #endregion
 
+   
+
     protected override void PublishRemoveFromPlaylist()
     {
       var songs = new List<VideoItemInPlaylistViewModel>() { this };

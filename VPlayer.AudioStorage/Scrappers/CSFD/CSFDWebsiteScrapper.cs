@@ -1,28 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Reactive.Subjects;
-using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using HtmlAgilityPack;
 using Logger;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using VCore;
-using VCore.Standard;
 using VPlayer.AudioStorage.InfoDownloader;
-using VPlayer.AudioStorage.InfoDownloader.Models;
+using VPlayer.AudioStorage.Scrappers.CSFD.Domain;
 using VPlayer.Core.Managers.Status;
-using WebsiteParser;
 
-namespace VPlayer.AudioStorage.Parsers
+namespace VPlayer.AudioStorage.Scrappers.CSFD
 {
 
   public class CSFDWebsiteScrapper : ICSFDWebsiteScrapper
@@ -31,6 +26,7 @@ namespace VPlayer.AudioStorage.Parsers
     private readonly IStatusManager statusManager;
     private ChromeDriver chromeDriver;
     private string baseUrl = "https://csfd.sk";
+    private bool wasInitilized;
 
     public CSFDWebsiteScrapper(ILogger logger, IStatusManager statusManager)
     {
@@ -38,30 +34,41 @@ namespace VPlayer.AudioStorage.Parsers
       this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
     }
 
+    #region Initialize
+
     public bool Initialize()
     {
       try
       {
-        var chromeOptions = new ChromeOptions();
+        if (!wasInitilized)
+        {
+          var chromeOptions = new ChromeOptions();
 
-        chromeOptions.AddArguments(new List<string>() { "headless", "disable-infobars", "--log-level=3" });
+          chromeOptions.AddArguments(new List<string>() { "headless", "disable-infobars", "--log-level=3" });
 
-        var dir = Directory.GetCurrentDirectory();
-        var chromeDriverService = ChromeDriverService.CreateDefaultService(dir, "chromedriver.exe");
+          var dir = Directory.GetCurrentDirectory();
+          var chromeDriverService = ChromeDriverService.CreateDefaultService(dir, "chromedriver.exe");
 
-        chromeDriverService.HideCommandPromptWindow = true;
+          chromeDriverService.HideCommandPromptWindow = true;
 
-        chromeDriver = new ChromeDriver(chromeDriverService, chromeOptions);
+          chromeDriver = new ChromeDriver(chromeDriverService, chromeOptions);
 
-        return true;
+          wasInitilized = true;
+        }
+
+        return wasInitilized;
       }
       catch (Exception ex)
       {
         logger.Log(ex);
+
         return false;
       }
     }
 
+    #endregion
+
+    #region LoadTvShow
 
     public CSFDTVShow LoadTvShow(string url)
     {
@@ -72,7 +79,7 @@ namespace VPlayer.AudioStorage.Parsers
 
       var tvShow = new CSFDTVShow()
       {
-        TvShowUrl = url
+        Url = url
       };
 
       var statusMessage = new StatusMessage(2)
@@ -95,7 +102,7 @@ namespace VPlayer.AudioStorage.Parsers
 
         if (poster != null)
         {
-          tvShow.PosterPath = SaveImage(tvShow.Name, poster);
+          tvShow.ImagePath = SaveImage(tvShow.Name, poster);
         }
 
         statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
@@ -107,6 +114,10 @@ namespace VPlayer.AudioStorage.Parsers
 
       return null;
     }
+
+    #endregion
+
+    #region LoadTvShowSeason
 
     public CSFDTVShowSeason LoadTvShowSeason(string url)
     {
@@ -121,7 +132,7 @@ namespace VPlayer.AudioStorage.Parsers
       statusManager.UpdateMessage(statusMessage);
 
       var document = new HtmlDocument();
-      
+
       document.LoadHtml(chromeDriver.PageSource);
 
       statusMessage = new StatusMessage(1)
@@ -147,6 +158,7 @@ namespace VPlayer.AudioStorage.Parsers
       return newSeason;
     }
 
+    #endregion
 
     #region GetTvShowName
 
@@ -164,7 +176,7 @@ namespace VPlayer.AudioStorage.Parsers
       int i = 0;
 
       while (node == null && i < maxCount)
-      {                                         
+      {
         node = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div/div/header/div/h1")?.FirstOrDefault()?.InnerText;
 
         if (node != null)
@@ -175,6 +187,7 @@ namespace VPlayer.AudioStorage.Parsers
 
           var posterNode = chromeDriver.FindElement(By.XPath("/html/body/div[3]/div/div[1]/div/div[1]/div/div/div[1]/div[1]/a/img"));
 
+
           posterUrl = posterNode.GetAttribute("src");
 
           return name;
@@ -182,7 +195,7 @@ namespace VPlayer.AudioStorage.Parsers
 
         i++;
 
-       
+
       }
 
       posterUrl = null;
@@ -312,7 +325,7 @@ namespace VPlayer.AudioStorage.Parsers
           var newEpisode = new CSFDTVShowSeasonEpisode();
 
           newEpisode.Name = node.InnerText;
-          newEpisode.EpisodeUrl = baseUrl + node.Attributes.FirstOrDefault(x => x.Name == "href")?.Value;
+          newEpisode.Url = baseUrl + node.Attributes.FirstOrDefault(x => x.Name == "href")?.Value;
 
           episodes.Add(newEpisode);
           logger.Log(MessageType.Success, $"Tv show episode: {newEpisode.Name}");
@@ -328,29 +341,218 @@ namespace VPlayer.AudioStorage.Parsers
     }
 
     #endregion
-    
 
-  }
+    #region FindItems
 
-  public class CSFDTVShow
-  {
-    public string Name { get; set; }
-    public string TvShowUrl { get; set; }
-    public string PosterPath { get; set; }
-    public List<CSFDTVShowSeason> Seasons { get; set; }
-  }
+    public Task<CSFDQueryResult> FindItems(string name)
+    {
+      var query = $"https://www.csfd.cz/hledat/?q={name}";
 
-  public class CSFDTVShowSeason
-  {
-    public string Name { get; set; }
-    public string SeasonUrl { get; set; }
+      if (!Initialize())
+      {
+        return null;
+      }
 
-    public List<CSFDTVShowSeasonEpisode> SeasonEpisodes { get; set; }
-  }
+      return GetItems(query);
+    }
 
-  public class CSFDTVShowSeasonEpisode
-  {
-    public string Name { get; set; }
-    public string EpisodeUrl { get; set; }
+    #endregion
+
+    #region GetBestFind
+
+    public async Task<CSFDItem> GetBestFind(string name, int? year = null)
+    {
+      var parsedNameMatch = Regex.Match(name, @"(.*?)\d\d\d\d");
+
+      string parsedName = "";
+
+      if (parsedNameMatch.Success)
+      {
+        if (parsedNameMatch.Success)
+        {
+          if (parsedNameMatch.Groups.Count > 1)
+          {
+            parsedName = parsedNameMatch.Groups[1].Value;
+           
+          }
+        }
+      }
+      else
+      {
+        parsedName = name;
+      }
+
+      parsedName = parsedName.Replace(".", " ").Replace("-", null);
+      
+      var items = await FindItems(parsedName);
+
+      var allItems = items.Movies.Concat(items.TvShows).ToList();
+
+      var query = allItems.Where(x => x.OriginalName != null).OrderByDescending(x => x.OriginalName.Similarity(parsedName)).AsEnumerable();
+      query = query.Concat(allItems.Where(x => x.OriginalName == null).OrderByDescending(x => x.Name.Similarity(parsedName)).AsEnumerable());
+
+      if (year != null)
+      {
+        query = query.Where(x => x.Year == year);
+      }
+
+      return query.FirstOrDefault();
+    }
+
+    #endregion
+
+    #region GetItems
+
+    private async Task<CSFDQueryResult> GetItems(string url)
+    {
+      CSFDQueryResult result = new CSFDQueryResult();
+      chromeDriver.Url = url;
+      chromeDriver.Navigate();
+
+      var document = new HtmlDocument();
+
+      document.LoadHtml(chromeDriver.PageSource);
+
+      var movies = await GetMoviesFromFind(document);
+      var tvShows = await GetTvShowsFromFind(document);
+
+      result.Movies = movies;
+      result.TvShows = tvShows;
+
+      return result;
+    }
+
+    #endregion
+
+    #region GetMoviesFromFind
+
+    private Task<IEnumerable<CSFDItem>> GetMoviesFromFind(HtmlDocument document)
+    {
+      return Task.Run(() =>
+      {
+        var nodes = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[2]/div/div[1]/div/div[1]/section[1]/div/div[1]/article");
+
+        return ParseFindNodes(nodes);
+      });
+    }
+
+    #endregion
+
+    #region ParseFindNodes
+
+    private IEnumerable<CSFDItem> ParseFindNodes(HtmlNodeCollection nodes)
+    {
+      if (nodes == null)
+      {
+        return null;
+      }
+
+      var list = new List<CSFDItem>();
+
+      foreach (var node in nodes)
+      {
+        var posterNode = node.ChildNodes[1].ChildNodes[1];
+
+        var name = posterNode.Attributes[0].Value;
+
+        string posterUrl = null;
+
+        var urlValue = posterNode.ChildNodes[1].Attributes[1].Value;
+
+        if (!urlValue.Contains("data:image"))
+        {
+          posterUrl = baseUrl + urlValue;
+        }
+
+        var url = baseUrl + posterNode.Attributes[1].Value;
+
+        var infoNode = node.ChildNodes[3];
+        string originalName = null;
+
+        if (infoNode.ChildNodes[1].ChildNodes.Count > 3)
+        {
+          originalName = infoNode.ChildNodes[1].ChildNodes[3].InnerText.Replace("(", null).Replace(")", null);
+        }
+
+
+        var tile = infoNode.ChildNodes[1].ChildNodes[1].ChildNodes[3].InnerText;
+        var yearStr = tile.Substring(1, 4);
+
+        var regex = new Regex(@"\((.*?)\)");
+        var ads = regex.Matches(tile);
+
+        List<string> parameters = new List<string>();
+
+        if (ads.Count > 1)
+        {
+          for (int i = 1; i < ads.Count; i++)
+          {
+            parameters.Add(ads[i].Groups[1].Captures[0].Value);
+          }
+        }
+
+        int year = int.Parse(yearStr);
+
+
+        var generes = infoNode.ChildNodes[3].InnerText.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("/");
+
+        string[] actors = null;
+        string[] directors = null;
+
+        if (infoNode.ChildNodes.Count >= 6)
+        {
+          var textDirectors = infoNode.ChildNodes[5].InnerText;
+
+          if (textDirectors.Contains("Režie:"))
+          {
+            directors = textDirectors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Režie:")[1].Split(",");
+          }
+        }
+
+        if (infoNode.ChildNodes.Count >= 8)
+        {
+          var textActors = infoNode.ChildNodes[7].InnerText;
+
+          if (textActors.Contains("Hrají:"))
+          {
+            actors = textActors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Hrají:")[1].Split(",");
+          }
+        }
+
+
+        var item = new CSFDItem()
+        {
+          ImagePath = posterUrl,
+          Name = name,
+          Year = year,
+          Url = url,
+          Actors = actors,
+          Directors = directors,
+          Generes = generes,
+          Parameters = parameters.ToArray(),
+          OriginalName = originalName
+        };
+
+        list.Add(item);
+      }
+
+      return list.AsEnumerable();
+    }
+
+    #endregion
+
+    #region GetTvShowsFromFind
+
+    private Task<IEnumerable<CSFDItem>> GetTvShowsFromFind(HtmlDocument document)
+    {
+      return Task.Run(() =>
+      {
+        var nodes = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[2]/div/div[1]/div/div[1]/section[2]/div/div[1]/article");
+
+        return ParseFindNodes(nodes);
+      });
+    }
+
+    #endregion
   }
 }

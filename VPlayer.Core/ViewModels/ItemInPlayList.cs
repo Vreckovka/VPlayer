@@ -28,7 +28,23 @@ namespace VPlayer.Core.ViewModels
     #region Properties
 
     public bool IsPaused { get; set; }
-    public string Name => Model.Name;
+
+    #region Name
+
+    public string Name
+    {
+      get { return Model?.Name; }
+      set
+      {
+        if (Model != null && value != Model.Name)
+        {
+          Model.Name = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
     public bool IsFavorite
     {
       get { return Model.IsFavorite; }

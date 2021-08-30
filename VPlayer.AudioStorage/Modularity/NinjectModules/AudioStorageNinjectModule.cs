@@ -3,8 +3,8 @@ using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google;
 using VPlayer.AudioStorage.Interfaces.Storage;
-using VPlayer.AudioStorage.Parsers;
 using VPlayer.AudioStorage.Scrappers;
+using VPlayer.AudioStorage.Scrappers.CSFD;
 using VPlayer.Core.Managers.Status;
 using VPlayer.Library.ViewModels.TvShows;
 

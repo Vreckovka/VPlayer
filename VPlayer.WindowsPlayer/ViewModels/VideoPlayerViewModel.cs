@@ -36,6 +36,8 @@ using VCore.ViewModels.Navigation;
 using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPlayer.AudioStorage.Scrappers.CSFD;
+using VPlayer.AudioStorage.Scrappers.CSFD.Domain;
 using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.Providers;
@@ -56,6 +58,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
   public class VideoPlayerViewModel : FilePlayableRegionViewModel<WindowsPlayerView, VideoItemInPlaylistViewModel, VideoFilePlaylist, PlaylistVideoItem, VideoItem>
   {
     private readonly IWindowManager windowManager;
+    private readonly ICSFDWebsiteScrapper iCsfdWebsiteScrapper;
     private TaskCompletionSource<bool> loadedTask = new TaskCompletionSource<bool>();
 
     #region Constructors
@@ -67,10 +70,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
       IStorageManager storageManager,
       IEventAggregator eventAggregator,
       VLCPlayer vLCPlayer,
-      IWindowManager windowManager) :
+      IWindowManager windowManager,
+      ICSFDWebsiteScrapper iCsfdWebsiteScrapper ) :
       base(regionProvider, kernel, logger, storageManager, eventAggregator, vLCPlayer)
     {
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
+      this.iCsfdWebsiteScrapper = iCsfdWebsiteScrapper ?? throw new ArgumentNullException(nameof(iCsfdWebsiteScrapper));
     }
 
     #endregion
@@ -80,6 +85,25 @@ namespace VPlayer.WindowsPlayer.ViewModels
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
     public override bool ContainsNestedRegions => true;
     public override string Header => "Video player";
+
+    #region CSFDItem
+
+    private CSFDItem cSFDItem;
+
+    public CSFDItem CSFDItem
+    {
+      get { return cSFDItem; }
+      set
+      {
+        if (value != cSFDItem)
+        {
+          cSFDItem = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     #region MediaPlayer
 
@@ -591,7 +615,28 @@ namespace VPlayer.WindowsPlayer.ViewModels
           }
         }
       }
+
+      FindOnCsfd(ActualItem.Name);
     }
+
+    #endregion
+
+    #region FindOnCsfd
+
+    private async Task FindOnCsfd(string name)
+    {
+      var item = await iCsfdWebsiteScrapper.GetBestFind(name);
+
+      if (item != null)
+      {
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+          ActualItem.Name = string.IsNullOrEmpty(item.OriginalName) ? item.Name : item.OriginalName;
+
+          CSFDItem = item;
+        });
+      }
+    } 
 
     #endregion
 

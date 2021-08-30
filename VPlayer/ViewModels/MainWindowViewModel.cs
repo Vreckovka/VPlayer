@@ -26,7 +26,7 @@ using VCore.WPF.Behaviors;
 using VCore.WPF.ViewModels.Navigation;
 using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics;
-using VPlayer.AudioStorage.Parsers;
+using VPlayer.AudioStorage.Scrappers.CSFD;
 using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
@@ -160,7 +160,7 @@ namespace VPlayer.ViewModels
     private readonly IViewModelsFactory viewModelsFactory;
     private readonly IEventAggregator eventAggregator;
     private readonly ILogger logger;
-   
+    private readonly ICSFDWebsiteScrapper iCsfdWebsiteScrapper;
 
     #endregion
 
@@ -169,12 +169,14 @@ namespace VPlayer.ViewModels
     public MainWindowViewModel(
       IViewModelsFactory viewModelsFactory,
       IEventAggregator eventAggregator,
-      ILogger logger
+      ILogger logger,
+      ICSFDWebsiteScrapper iCsfdWebsiteScrapper
      )
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+      this.iCsfdWebsiteScrapper = iCsfdWebsiteScrapper ?? throw new ArgumentNullException(nameof(iCsfdWebsiteScrapper));
     }
 
     #endregion
@@ -281,12 +283,11 @@ namespace VPlayer.ViewModels
 
     public override async void Initialize()
     {
-    
-
       base.Initialize();
 
       AudioDeviceManager.Instance.RefreshAudioDevices();
 
+     
       var windowsPlayer = viewModelsFactory.Create<WindowsViewModel>();
 
       windowsPlayer.IsActive = true;
@@ -297,11 +298,11 @@ namespace VPlayer.ViewModels
 
       player.IsActive = true;
 
-    
+
     }
 
     #endregion
-    
+
     #region Dispose
 
     public override void Dispose()
