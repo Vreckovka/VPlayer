@@ -178,7 +178,7 @@
                                 <Setter Property="FontWeight" Value="DemiBold" />
                             </DataTrigger>
 
-                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ListView, Mode=FindAncestor}, Mode=OneWay, Path=DataContext.CSFDItem}" Value="{x:Null}">
+                            <DataTrigger Binding="{Binding CSFDItem}" Value="{x:Null}">
                                 <Setter Property="Visibility" Value="Visible" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -186,7 +186,7 @@
                 </TextBlock.Style>
             </TextBlock>
 
-            <Grid x:Name="CSFDInfo" DataContext="{Binding RelativeSource={RelativeSource AncestorType=ListView, Mode=FindAncestor}, Mode=OneWay, Path=DataContext.CSFDItem}">
+            <Grid x:Name="CSFDInfo" DataContext="{Binding CSFDItem}">
                 <TextBlock Margin="5,0,0,3"
                            HorizontalAlignment="Left"
                            VerticalAlignment="Bottom">

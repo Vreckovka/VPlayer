@@ -167,6 +167,116 @@
                                                            VideoItemDataTemplate="{StaticResource PlayListVideoItemDescriptionDataTemplate}" />
 
 
+    <DataTemplate x:Key="VideoItemToolTip">
+
+        <Grid>
+            <Border Margin="-5,0,0,0"
+                    Padding="5,0,5,2"
+                    BorderBrush="#454545"
+                    BorderThickness="0,0,0,1">
+                <Grid DataContext="{Binding CSFDItem}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Image Width="67" Source="{Binding ImagePath}" />
+
+                    <Grid Grid.Column="1" Margin="15,0,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <Grid.Resources>
+                            <Style x:Key="Header" TargetType="TextBlock">
+                                <Setter Property="FontSize" Value="12" />
+                                <Setter Property="Foreground" Value="#757575" />
+                            </Style>
+
+                            <Style x:Key="Content" TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="#ddd" />
+                                <Setter Property="FontSize" Value="15" />
+                                <Setter Property="FontWeight" Value="Thin" />
+                            </Style>
+
+                        </Grid.Resources>
+                        <TextBlock Style="{StaticResource Header}" Text="Name" />
+
+                        <TextBlock Grid.Row="1"
+                                   Style="{StaticResource Content}"
+                                   Text="{Binding Name}" />
+
+                        <TextBlock Grid.Row="2"
+                                   Style="{StaticResource Header}"
+                                   Text="Original name" />
+
+                        <TextBlock Grid.Row="3"
+                                   Style="{StaticResource Content}"
+                                   Text="{Binding OriginalName}" />
+
+                        <TextBlock Grid.Row="4"
+                                   Style="{StaticResource Header}"
+                                   Text="Year" />
+
+                        <TextBlock Grid.Row="5"
+                                   Style="{StaticResource Content}"
+                                   Text="{Binding Year}" />
+
+                    </Grid>
+
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Style.Triggers>
+                                <Trigger Property="DataContext" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                </Grid>
+            </Border>
+
+            <TextBlock FontSize="12"
+                       Foreground="White"
+                       Text="{Binding Model.Source}">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding CSFDItem}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </Grid>
+
+
+
+
+    </DataTemplate>
+
+    <DataTemplate x:Key="ToolTipFallBack">
+        <TextBlock FontSize="12"
+                   Foreground="White"
+                   Text="{Binding Model.Source}" />
+    </DataTemplate>
+
+    <templateSelectors1:WindowsPlayerItemsTemplateSelector x:Key="WindowsPlayerItemsTooltipTemplateSelector"
+                                                           FallBackTemplate="{StaticResource ToolTipFallBack}"
+                                                           SongDataTemplate="{StaticResource ToolTipFallBack}"
+                                                           SoundDataTemplate="{StaticResource ToolTipFallBack}"
+                                                           TvChannelDataTemplate="{StaticResource ToolTipFallBack}"
+                                                           TvShowEpisodeDataTemplate="{StaticResource ToolTipFallBack}"
+                                                           VideoItemDataTemplate="{StaticResource VideoItemToolTip}" />
 
 
 
@@ -202,8 +312,7 @@
                                                       Panel.ZIndex="2"
                                                       IconHeight="11"
                                                       IconPathStyle="{StaticResource Info}"
-                                                      IconWidth="11"
-                                                      ToolTip="{Binding Model.Source}">
+                                                      IconWidth="11">
 
                                 <controls2:ButtonWithIcon.Style>
                                     <Style BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}" TargetType="{x:Type controls2:ButtonWithIcon}">
@@ -221,6 +330,15 @@
 
                                     </Style>
                                 </controls2:ButtonWithIcon.Style>
+
+                                <controls2:ButtonWithIcon.ToolTip>
+                                    <Border>
+                                        <Grid>
+                                            <ContentPresenter ContentTemplateSelector="{StaticResource WindowsPlayerItemsTooltipTemplateSelector}" />
+                                        </Grid>
+                                    </Border>
+
+                                </controls2:ButtonWithIcon.ToolTip>
 
                             </controls2:ButtonWithIcon>
 

@@ -461,7 +461,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         if (!urlValue.Contains("data:image"))
         {
-          posterUrl = baseUrl + urlValue;
+          posterUrl = urlValue.Replace("//image.pmgstatic.com", "https://image.pmgstatic.com");
         }
 
         var url = baseUrl + posterNode.Attributes[1].Value;
@@ -532,6 +532,13 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           Parameters = parameters.ToArray(),
           OriginalName = originalName
         };
+
+        //if (item.ImagePath != null)
+        //{
+        //  var webClient = new WebClient();
+
+        //  item.Image = webClient.DownloadData("https://image.pmgstatic.com/cache/resized/w60h85/files/images/film/posters/165/598/165598636_4a6e6f.jpg");
+        //}
 
         list.Add(item);
       }

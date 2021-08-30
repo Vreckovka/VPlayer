@@ -17,6 +17,8 @@ namespace VPlayer.WindowsPlayer.TemplateSelectors
     public DataTemplate VideoItemDataTemplate { get; set; }
     public DataTemplate TvChannelDataTemplate { get; set; }
 
+    public DataTemplate FallBackTemplate { get; set; }
+
     public override DataTemplate SelectTemplate(object item, DependencyObject container)
     {
       if (item is SongInPlayListViewModel)
@@ -40,6 +42,10 @@ namespace VPlayer.WindowsPlayer.TemplateSelectors
         return TvChannelDataTemplate;
       }
 
+      if (FallBackTemplate != null)
+      {
+        return FallBackTemplate;
+      }
 
       return new DataTemplate();
     }

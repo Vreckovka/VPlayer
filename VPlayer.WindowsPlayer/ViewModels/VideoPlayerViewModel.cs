@@ -85,26 +85,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
     public override bool ContainsNestedRegions => true;
     public override string Header => "Video player";
-
-    #region CSFDItem
-
-    private CSFDItem cSFDItem;
-
-    public CSFDItem CSFDItem
-    {
-      get { return cSFDItem; }
-      set
-      {
-        if (value != cSFDItem)
-        {
-          cSFDItem = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
-
+    
     #region MediaPlayer
 
     public new MediaPlayer MediaPlayer
@@ -633,7 +614,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         {
           ActualItem.Name = string.IsNullOrEmpty(item.OriginalName) ? item.Name : item.OriginalName;
 
-          CSFDItem = item;
+          ActualItem.CSFDItem = item;
         });
       }
     } 

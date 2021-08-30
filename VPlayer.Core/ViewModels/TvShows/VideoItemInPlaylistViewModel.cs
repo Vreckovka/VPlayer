@@ -4,6 +4,7 @@ using Prism.Events;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPlayer.AudioStorage.Scrappers.CSFD.Domain;
 using VPlayer.Core.Events;
 
 namespace VPlayer.Core.ViewModels.TvShows
@@ -39,7 +40,24 @@ namespace VPlayer.Core.ViewModels.TvShows
 
     #endregion
 
-   
+    #region CSFDItem
+
+    private CSFDItem cSFDItem;
+
+    public CSFDItem CSFDItem
+    {
+      get { return cSFDItem; }
+      set
+      {
+        if (value != cSFDItem)
+        {
+          cSFDItem = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     protected override void PublishRemoveFromPlaylist()
     {
