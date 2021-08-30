@@ -362,7 +362,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     public async Task<CSFDItem> GetBestFind(string name, int? year = null)
     {
-      var parsedNameMatch = Regex.Match(name, @"(.*?)\d\d\d\d");
+      var parsedNameMatch = Regex.Match(name, @"(.*?)(\d\d\d\d)");
 
       string parsedName = "";
 
@@ -373,7 +373,18 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           if (parsedNameMatch.Groups.Count > 1)
           {
             parsedName = parsedNameMatch.Groups[1].Value;
-           
+
+            if (parsedNameMatch.Groups.Count >= 3 && int.TryParse(parsedNameMatch.Groups[2].Value, out var pYear))
+            {
+              if (year > 1887)
+              {
+                year = pYear;
+              }
+              else
+              {
+                year = null;
+              }
+            }
           }
         }
       }
@@ -383,20 +394,45 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       }
 
       parsedName = parsedName.Replace(".", " ").Replace("-", null);
-      
+
       var items = await FindItems(parsedName);
 
-      var allItems = items.Movies.Concat(items.TvShows).ToList();
+      List<CSFDItem> allItems = null;
 
-      var query = allItems.Where(x => x.OriginalName != null).OrderByDescending(x => x.OriginalName.Similarity(parsedName)).AsEnumerable();
-      query = query.Concat(allItems.Where(x => x.OriginalName == null).OrderByDescending(x => x.Name.Similarity(parsedName)).AsEnumerable());
+      if (items.Movies != null && items.TvShows != null)
+      {
+        allItems = items.Movies.Concat(items.TvShows).ToList();
+      }
+      else if (items.Movies != null)
+      {
+        allItems = items.Movies.ToList();
+      }
+      else if (items.TvShows != null)
+      {
+        allItems = items.TvShows.ToList();
+      }
+
+      if (allItems == null)
+      {
+        return null;
+      }
+
+      double minSimilarity = 0.55;
+
+      var query = allItems.Where(x => x.OriginalName != null)
+        .Where(x => x.OriginalName.Similarity(parsedName) > minSimilarity)
+        .OrderByDescending(x => x.OriginalName.Similarity(parsedName)).AsEnumerable();
+
+      query = query.Concat(allItems.Where(x => x.Name != null)
+        .Where(x => x.Name.Similarity(parsedName) > minSimilarity)
+        .OrderByDescending(x => x.Name.Similarity(parsedName)).AsEnumerable());
 
       if (year != null)
       {
         query = query.Where(x => x.Year == year);
       }
 
-      return query.FirstOrDefault();
+      return query.OrderByDescending(x => x.Year).FirstOrDefault();
     }
 
     #endregion

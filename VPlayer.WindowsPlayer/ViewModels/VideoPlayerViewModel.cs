@@ -484,7 +484,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         model.AudioTrack = selectedItem.Model.Id;
 
-        storageManager.UpdateEntityAsync(model);
+        Task.Run(() => storageManager.UpdateEntityAsync(model));
       }
     }
 
@@ -597,7 +597,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
       }
 
-      FindOnCsfd(ActualItem.Name);
+      if(!(ActualItem is TvShowEpisodeInPlaylistViewModel))
+      {
+        FindOnCsfd(ActualItem.Name);
+      }
     }
 
     #endregion
