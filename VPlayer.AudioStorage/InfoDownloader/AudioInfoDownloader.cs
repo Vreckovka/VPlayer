@@ -725,8 +725,19 @@ namespace VPlayer.AudioStorage.InfoDownloader
       MemoryStream ms = new MemoryStream(blob);
       Image i = Image.FromStream(ms);
 
-      var directory = Path.Combine(GetDefaultPicturesPath(), $"Albums\\{album.Name}\\{album.Id}");
-      var finalPath = Path.Combine(directory, "frontConver.jpg");
+      string path = null;
+
+      if (string.IsNullOrEmpty(album.Artist.Name))
+      {
+        path = $"Albums\\{album.Artist.Name}\\{album.Name}\\{album.Id}";
+      }
+      else
+      {
+        path = $"Albums\\{album.Name}\\{album.Id}";
+      }
+
+      var directory = Path.Combine(GetDefaultPicturesPath(), path);
+      var finalPath = Path.Combine(directory, $"frontConver_{DateTime.Now.Ticks}.jpg");
 
       finalPath.EnsureDirectoryExists();
 
