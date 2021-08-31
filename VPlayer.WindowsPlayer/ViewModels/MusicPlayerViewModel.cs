@@ -584,7 +584,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    vm.TryToRefreshUpdateLyrics();
+                    var resultLyrics = await vm.TryToRefreshUpdateLyrics();
+
+                    if (resultLyrics && viewmodel.Model != null)
+                    {
+                      await storageManager.UpdateEntityAsync(viewmodel.Model);
+                    }
                   }
 
                   catch (TaskCanceledException)

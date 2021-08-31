@@ -798,6 +798,8 @@ namespace VPlayer.Core.ViewModels
           var fileUri = new Uri(model.Source);
 
           await MediaPlayer.SetNewMedia(fileUri);
+          
+       
 
           OnNewItemPlay();
         }
