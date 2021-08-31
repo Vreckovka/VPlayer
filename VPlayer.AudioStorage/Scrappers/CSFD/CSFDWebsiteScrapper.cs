@@ -432,7 +432,9 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         query = query.Where(x => x.Year == year);
       }
 
-      return query.OrderByDescending(x => x.Year).FirstOrDefault();
+      var sortedItems = query.OrderByDescending(x => x.RatingColor).ThenByDescending(x => x.Year).ToList();
+
+      return sortedItems.FirstOrDefault();
     }
 
     #endregion
@@ -555,6 +557,36 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           }
         }
 
+        var color = infoNode.ChildNodes[1].ChildNodes[1].ChildNodes[0].Attributes[0].Value.Replace("icon icon-rounded-square ", null);
+
+        RatingColor? ratingColor = null;
+
+        switch (color)
+        {
+          case "lightgrey":
+            {
+              ratingColor = RatingColor.LightGray;
+              break;
+            }
+
+          case "grey":
+            {
+              ratingColor = RatingColor.Gray;
+              break;
+            }
+
+          case "blue":
+            {
+              ratingColor = RatingColor.Blue;
+              break;
+            }
+
+          case "red":
+            {
+              ratingColor = RatingColor.Red;
+              break;
+            }
+        }
 
         var item = new CSFDItem()
         {
@@ -566,7 +598,8 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           Directors = directors,
           Generes = generes,
           Parameters = parameters.ToArray(),
-          OriginalName = originalName
+          OriginalName = originalName,
+          RatingColor = ratingColor
         };
 
         //if (item.ImagePath != null)

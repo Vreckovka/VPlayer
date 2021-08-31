@@ -8,6 +8,7 @@
                     xmlns:controls1="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
                     xmlns:controls2="clr-namespace:VCore.Controls;assembly=VCore.WPF"
                     xmlns:converters1="clr-namespace:VCore.Converters;assembly=VCore.WPF"
+                    xmlns:domain="clr-namespace:VPlayer.AudioStorage.Scrappers.CSFD.Domain;assembly=VPlayer.AudioStorage"
                     xmlns:e="http://schemas.epsiloner.git/wpf/"
                     xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
                     xmlns:lrc="clr-namespace:VPlayer.AudioStorage.InfoDownloader.LRC;assembly=VCore.WPF"
@@ -168,68 +169,106 @@
 
 
     <DataTemplate x:Key="VideoItemToolTip">
-
         <Grid>
-            <Border Margin="-5,0,0,0"
-                    Padding="5,0,5,2"
-                    BorderBrush="#454545"
-                    BorderThickness="0,0,0,1">
+            <Border Margin="-7"
+                    Padding="0,0,3,0"
+                    BorderThickness="2,0,0,0">
                 <Grid DataContext="{Binding CSFDItem}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
 
-                    <Image Width="67" Source="{Binding ImagePath}" />
+                    <Border Padding="7,7,7,7"
+                            Background="#151515"
+                            BorderBrush="#454545"
+                            BorderThickness="0">
+                        <Image Width="82" Source="{Binding ImagePath}" />
 
-                    <Grid Grid.Column="1" Margin="15,0,0,0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto" />
-                            <RowDefinition />
-                            <RowDefinition Height="auto" />
-                            <RowDefinition />
-                            <RowDefinition Height="auto" />
-                            <RowDefinition />
-                            <RowDefinition Height="auto" />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
+                        <!--<Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="BorderBrush" Value="#454545" />
 
-                        <Grid.Resources>
-                            <Style x:Key="Header" TargetType="TextBlock">
-                                <Setter Property="FontSize" Value="12" />
-                                <Setter Property="Foreground" Value="#757575" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding RatingColor}" Value="{x:Static domain:RatingColor.LightGray}">
+                                        <Setter Property="BorderBrush" Value="#959595" />
+                                    </DataTrigger>
+
+                                    <DataTrigger Binding="{Binding RatingColor}" Value="{x:Static domain:RatingColor.Gray}">
+                                        <Setter Property="BorderBrush" Value="#050505" />
+                                    </DataTrigger>
+
+                                    <DataTrigger Binding="{Binding RatingColor}" Value="{x:Static domain:RatingColor.Blue}">
+                                        <Setter Property="BorderBrush" Value="{StaticResource DefaultRedBrush}" />
+                                    </DataTrigger>
+
+                                    <DataTrigger Binding="{Binding RatingColor}" Value="{x:Static domain:RatingColor.Red}">
+                                        <Setter Property="BorderBrush" Value="#2465a6" />
+                                    </DataTrigger>
+                                </Style.Triggers>
                             </Style>
+                        </Border.Style>-->
+                    </Border>
 
-                            <Style x:Key="Content" TargetType="TextBlock">
-                                <Setter Property="Foreground" Value="#ddd" />
-                                <Setter Property="FontSize" Value="15" />
-                                <Setter Property="FontWeight" Value="Thin" />
-                            </Style>
 
-                        </Grid.Resources>
-                        <TextBlock Style="{StaticResource Header}" Text="Name" />
+                    <Border Grid.Column="1"
+                            MinWidth="150"
+                            Padding="15,5,0,7"
+                            Background="#151515">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="1"
-                                   Style="{StaticResource Content}"
-                                   Text="{Binding Name}" />
+                            <Grid.Resources>
+                                <Style x:Key="Header" TargetType="TextBlock">
+                                    <Setter Property="FontSize" Value="14" />
+                                    <Setter Property="Margin" Value="0,1" />
+                                    <Setter Property="Foreground" Value="#959595" />
+                                    <Setter Property="FontWeight" Value="Normal" />
+                                </Style>
 
-                        <TextBlock Grid.Row="2"
-                                   Style="{StaticResource Header}"
-                                   Text="Original name" />
+                                <Style x:Key="Content" TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="#ccc" />
+                                    <Setter Property="Margin" Value="0" />
+                                    <Setter Property="FontSize" Value="16" />
+                                    <Setter Property="FontWeight" Value="SemiBold" />
+                                </Style>
 
-                        <TextBlock Grid.Row="3"
-                                   Style="{StaticResource Content}"
-                                   Text="{Binding OriginalName}" />
+                            </Grid.Resources>
 
-                        <TextBlock Grid.Row="4"
-                                   Style="{StaticResource Header}"
-                                   Text="Year" />
+                            <TextBlock Style="{StaticResource Header}" Text="Name" />
 
-                        <TextBlock Grid.Row="5"
-                                   Style="{StaticResource Content}"
-                                   Text="{Binding Year}" />
+                            <TextBlock Grid.Row="1"
+                                       Style="{StaticResource Content}"
+                                       Text="{Binding Name}" />
 
-                    </Grid>
+                            <TextBlock Grid.Row="2"
+                                       Style="{StaticResource Header}"
+                                       Text="Original name" />
+
+                            <TextBlock Grid.Row="3"
+                                       Style="{StaticResource Content}"
+                                       Text="{Binding OriginalName}" />
+
+                            <TextBlock Grid.Row="4"
+                                       Style="{StaticResource Header}"
+                                       Text="Year" />
+
+                            <TextBlock Grid.Row="5"
+                                       Style="{StaticResource Content}"
+                                       Text="{Binding Year}" />
+
+                        </Grid>
+                    </Border>
+
 
                     <Grid.Style>
                         <Style TargetType="Grid">
@@ -241,6 +280,61 @@
                         </Style>
                     </Grid.Style>
                 </Grid>
+
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="BorderBrush" Value="#101010" />
+
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding CSFDItem.RatingColor}" Value="{x:Static domain:RatingColor.LightGray}">
+                                <Setter Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush>
+                                            <GradientStop Offset="0" Color="#959595" />
+                                            <GradientStop Offset="0.3" Color="#95959595" />
+                                            <GradientStop Offset="0.85" Color="#151515" />
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding CSFDItem.RatingColor}" Value="{x:Static domain:RatingColor.Gray}">
+                                <Setter Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush>
+                                            <GradientStop Offset="0" Color="#050505" />
+                                            <GradientStop Offset="0.3" Color="#95050505" />
+                                            <GradientStop Offset="0.85" Color="#151515" />
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding CSFDItem.RatingColor}" Value="{x:Static domain:RatingColor.Blue}">
+                                <Setter Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush>
+                                            <GradientStop Offset="0" Color="#2465a6" />
+                                            <GradientStop Offset="0.3" Color="#952465a6" />
+                                            <GradientStop Offset="0.85" Color="#151515" />
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding CSFDItem.RatingColor}" Value="{x:Static domain:RatingColor.Red}">
+                                <Setter Property="Background">
+                                    <Setter.Value>
+                                        <LinearGradientBrush StartPoint="1 1" EndPoint="1 0">
+                                            <GradientStop Offset="1.2" Color="{StaticResource DefaultRedColor}" />
+                                            <GradientStop Offset="0" Color="#151515" />
+                                        </LinearGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
             </Border>
 
             <TextBlock FontSize="12"
