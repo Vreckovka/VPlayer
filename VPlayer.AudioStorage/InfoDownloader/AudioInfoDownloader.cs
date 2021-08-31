@@ -737,7 +737,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
       }
 
       var directory = Path.Combine(GetDefaultPicturesPath(), path);
-      var finalPath = Path.Combine(directory, $"frontConver_{DateTime.Now.Ticks}.jpg");
+      var finalPath = Path.Combine(directory, $"frontConver.jpg");
 
       finalPath.EnsureDirectoryExists();
 
