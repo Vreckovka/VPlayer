@@ -87,20 +87,29 @@ namespace VPlayer.Player.Behaviors
 
           var scrollIndexOffset = (songInPlayListIndex - 1 < 0 ? 0 : songInPlayListIndex - 1) * StepSize;
 
-          if (scrollViewer != null )
+          if (scrollViewer != null)
           {
-            DoubleAnimation verticalAnimation = new DoubleAnimation();
+            var diff = Math.Abs(scrollViewer.VerticalOffset - scrollIndexOffset);
 
-            verticalAnimation.From = scrollViewer.VerticalOffset;
-            verticalAnimation.To = scrollIndexOffset;
-            verticalAnimation.Duration = new Duration(AnimationTime);
+            if (diff > StepSize * 3)
+            {
+              scrollViewer.ScrollToVerticalOffset(scrollIndexOffset);
+            }
+            else
+            {
+              DoubleAnimation verticalAnimation = new DoubleAnimation();
 
-            Storyboard storyboard = new Storyboard();
+              verticalAnimation.From = scrollViewer.VerticalOffset;
+              verticalAnimation.To = scrollIndexOffset;
+              verticalAnimation.Duration = new Duration(AnimationTime);
 
-            storyboard.Children.Add(verticalAnimation);
-            Storyboard.SetTarget(verticalAnimation, scrollViewer);
-            Storyboard.SetTargetProperty(verticalAnimation, new PropertyPath(ScrollAnimationBehavior.VerticalOffsetProperty));
-            storyboard.Begin();
+              Storyboard storyboard = new Storyboard();
+
+              storyboard.Children.Add(verticalAnimation);
+              Storyboard.SetTarget(verticalAnimation, scrollViewer);
+              Storyboard.SetTargetProperty(verticalAnimation, new PropertyPath(ScrollAnimationBehavior.VerticalOffsetProperty));
+              storyboard.Begin();
+            }
           }
         });
       }
