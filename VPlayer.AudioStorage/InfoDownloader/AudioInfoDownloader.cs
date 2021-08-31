@@ -727,7 +727,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
       string path = null;
 
-      if (string.IsNullOrEmpty(album.Artist.Name))
+      if (!string.IsNullOrEmpty(album.Artist.Name))
       {
         path = $"Albums\\{album.Artist.Name}\\{album.Name}\\{album.Id}";
       }
