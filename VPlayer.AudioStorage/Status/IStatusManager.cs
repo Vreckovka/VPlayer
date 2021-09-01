@@ -10,6 +10,8 @@ namespace VPlayer.Core.Managers.Status
 
     void UpdateMessage(StatusMessage statusMessage);
 
+    void SetSession(StatusMessage statusMessage);
+
     void UpdateMessageAndIncreaseProcessCount(StatusMessage statusMessage, int count = 1);
   }
 }

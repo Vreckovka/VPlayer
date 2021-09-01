@@ -85,7 +85,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       var statusMessage = new StatusMessage(3)
       {
         MessageStatusState = MessageStatusState.Processing,
-        Message = $"Downloading {url}"
+        Message = $"Downloading {url.Replace("https://www.csfd.cz/",null).Replace("/prehled", null)}"
       };
 
       statusManager.UpdateMessage(statusMessage);

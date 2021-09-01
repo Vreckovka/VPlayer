@@ -109,6 +109,12 @@ namespace VPlayer.Core.Managers.Status
 
     #endregion
 
+    StatusMessage session;
+    public void SetSession(StatusMessage statusMessage)
+    {
+      session = statusMessage;
+    }
+
     public void UpdateMessageAndIncreaseProcessCount(StatusMessage statusMessage, int count = 1)
     {
       Application.Current.Dispatcher.Invoke(() =>

@@ -135,7 +135,7 @@
                             <Setter Property="IsOpen" Value="False" />
                         </DataTrigger>
                         <DataTrigger Binding="{Binding StatusMessage.MessageStatusState}" Value="{x:Static status:MessageStatusState.Done}">
-                            <Setter Property="IsOpen" Value="False" />
+                            <Setter Property="IsOpen" Value="True" />
                         </DataTrigger>
                         <DataTrigger Binding="{Binding StatusMessage.MessageStatusState}" Value="{x:Static status:MessageStatusState.Processing}">
                             <Setter Property="IsOpen" Value="True" />
