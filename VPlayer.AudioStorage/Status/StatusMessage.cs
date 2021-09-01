@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Windows.Input;
+using VCore;
 using VCore.Standard.Common;
 using VPlayer.AudioStorage.DomainClasses;
 
@@ -13,6 +15,8 @@ namespace VPlayer.Core.Managers.Status
       Id = Guid.NewGuid();
       NumberOfProcesses = numberOfProcesses;
     }
+
+
 
     #region Properties
 
@@ -136,6 +140,53 @@ namespace VPlayer.Core.Managers.Status
 
     #endregion
 
+    #region IsForcedClose
+
+    private bool isForcedClose;
+
+    public bool IsForcedClose
+    {
+      get { return isForcedClose; }
+      set
+      {
+        if (value != isForcedClose)
+        {
+          isForcedClose = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region OnClose
+
+    #region ChoosePath
+
+    private ActionCommand close;
+
+    public ICommand Close
+    {
+      get
+      {
+        if (close == null)
+        {
+          close = new ActionCommand(OnClose);
+        }
+
+        return close;
+      }
+    }
+
+    public void OnClose()
+    {
+      IsForcedClose = !IsForcedClose;
+    }
+
+    #endregion
+
+    #endregion
+
     #endregion
 
     #region Methods
@@ -145,8 +196,8 @@ namespace VPlayer.Core.Managers.Status
     public void Update(StatusMessage other)
     {
       ProcessedCount = other.ProcessedCount;
-      
-      if(other.NumberOfProcesses == 1)
+
+      if (other.NumberOfProcesses == 1)
       {
         Process = other.Process;
       }
@@ -161,11 +212,10 @@ namespace VPlayer.Core.Managers.Status
 
       if (ProcessedCount == NumberOfProcesses && MessageStatusState != MessageStatusState.Failed)
       {
-        Message += " is DONE";
         MessageStatusState = MessageStatusState.Done;
       }
 
-      
+
       FailedMessage = other.FailedMessage;
     }
 

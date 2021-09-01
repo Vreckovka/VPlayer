@@ -2,7 +2,9 @@
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Windows;
+using System.Windows.Input;
 using Prism.Events;
+using VCore;
 using VCore.Standard;
 using VCore.Standard.Helpers;
 
@@ -61,6 +63,7 @@ namespace VPlayer.Core.Managers.Status
 
     #endregion
 
+
     #endregion
 
     #region Methods
@@ -109,11 +112,6 @@ namespace VPlayer.Core.Managers.Status
 
     #endregion
 
-    StatusMessage session;
-    public void SetSession(StatusMessage statusMessage)
-    {
-      session = statusMessage;
-    }
 
     public void UpdateMessageAndIncreaseProcessCount(StatusMessage statusMessage, int count = 1)
     {
@@ -131,7 +129,6 @@ namespace VPlayer.Core.Managers.Status
     {
       if (statusMessage.ProcessedCount == statusMessage.NumberOfProcesses && statusMessage.MessageStatusState != MessageStatusState.Failed)
       {
-        statusMessage.Message += " is DONE";
         statusMessage.MessageStatusState = MessageStatusState.Done;
       }
     }

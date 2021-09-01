@@ -11,6 +11,7 @@
              xmlns:converters="clr-namespace:VPlayer.Player.Converters"
              xmlns:converters1="clr-namespace:VCore.Converters;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:global="clr-namespace:"
              xmlns:local="clr-namespace:VPlayer.Player.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:popups="clr-namespace:VCore.WPF.Behaviors.Popups;assembly=VCore.WPF"
@@ -115,24 +116,26 @@
             </Grid>
         </Border>
 
-        <Popup Grid.Column="2"
-               HorizontalAlignment="Right"
-               AllowsTransparency="True"
-               Placement="Top"
-               PlacementTarget="{Binding ElementName=PlayerGrid}"
-               PopupAnimation="Fade">
+        <global:NonTopmostPopup Grid.Column="2"
+                                HorizontalAlignment="Right"
+                                AllowsTransparency="True"
+                                Placement="Top"
+                                PlacementTarget="{Binding ElementName=PlayerGrid}"
+                                PopupAnimation="Fade"
+                                StaysOpen="true">
             <Grid>
                 <ContentPresenter Margin="0,0,0,0"
                                   HorizontalAlignment="Left"
                                   Content="{Binding StatusMessage}"
                                   ContentTemplate="{StaticResource StatusMessageDataTemplate}" />
+
             </Grid>
 
-            <Popup.Style>
-                <Style TargetType="Popup">
+            <global:NonTopmostPopup.Style>
+                <Style TargetType="global:NonTopmostPopup">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding Converter={StaticResource DataContextChangedConverter}}" Value="True">
-                            <Setter Property="IsOpen" Value="False" />
+                            <Setter Property="IsOpen" Value="True" />
                         </DataTrigger>
                         <DataTrigger Binding="{Binding StatusMessage.MessageStatusState}" Value="{x:Static status:MessageStatusState.Done}">
                             <Setter Property="IsOpen" Value="True" />
@@ -145,12 +148,12 @@
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </Popup.Style>
+            </global:NonTopmostPopup.Style>
 
             <b:Interaction.Behaviors>
                 <popups:MovePopupWithParentBehavior />
             </b:Interaction.Behaviors>
-        </Popup>
+        </global:NonTopmostPopup>
 
 
 

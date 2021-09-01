@@ -162,7 +162,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       logger.Log(MessageType.Success, $"Tv show season: {newSeason.Name}");
 
-      newSeason.SeasonEpisodes = LoadSeasonEpisodes(newSeason.SeasonNumber, newSeason.Url);
+      newSeason.SeasonEpisodes = LoadSeasonEpisodes(newSeason.SeasonNumber, newSeason.Url, statusMessage);
 
       statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
 
@@ -197,7 +197,6 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           logger.Log(MessageType.Success, $"Tv show name: {name}");
 
           var posterNode = chromeDriver.FindElement(By.XPath("/html/body/div[3]/div/div[1]/div/div[1]/div/div/div[1]/div[1]/a/img"));
-
 
           posterUrl = posterNode.GetAttribute("src");
 
@@ -266,7 +265,8 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       statusMessage = new StatusMessage(nodes.Count)
       {
         MessageStatusState = MessageStatusState.Processing,
-        Message = "Downloading tv show seasons"
+        Message = "Downloading tv show seasons",
+        IsForcedClose = statusMessage.IsForcedClose
       };
 
       statusManager.UpdateMessage(statusMessage);
@@ -287,7 +287,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       int num = 1;
       foreach (var season in seasons)
       {
-        season.SeasonEpisodes = LoadSeasonEpisodes(num, season.Url);
+        season.SeasonEpisodes = LoadSeasonEpisodes(num, season.Url, statusMessage);
 
         statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
 
@@ -301,7 +301,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region LoadSeasonEpisodes
 
-    private List<CSFDTVShowSeasonEpisode> LoadSeasonEpisodes(int seasonNumber, string url)
+    private List<CSFDTVShowSeasonEpisode> LoadSeasonEpisodes(int seasonNumber, string url, StatusMessage statusMessage)
     {
       try
       {
@@ -334,10 +334,11 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           return episodes;
         }
 
-        var statusMessage = new StatusMessage(nodes.Count)
+        statusMessage = new StatusMessage(nodes.Count)
         {
           MessageStatusState = MessageStatusState.Processing,
-          Message = $"Downloading season ({seasonNumber}) episodes"
+          Message = $"Downloading season ({seasonNumber}) episodes",
+          IsForcedClose = statusMessage.IsForcedClose
         };
 
         statusManager.UpdateMessage(statusMessage);

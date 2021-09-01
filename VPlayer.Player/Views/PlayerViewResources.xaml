@@ -8,10 +8,9 @@
     <converters:DataContextChangedConverter x:Key="DataContextChangedConverter" />
 
     <DataTemplate x:Key="StatusMessageDataTemplate">
-        <Border Height="65"
+        <Border Width="250"
                 Margin="0,0,0,0"
                 Padding="10,5"
-                BorderBrush="#171717"
                 BorderThickness="1">
             <Border.Background>
                 <LinearGradientBrush StartPoint="0 1" EndPoint="0 0">
@@ -30,22 +29,25 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
-                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto" />
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="0"
                                Margin="0,2"
                                Foreground="#555555"
-                               Text="{Binding Message, Mode=OneWay}" />
+                               Text="{Binding Message, Mode=OneWay}"
+                               TextTrimming="CharacterEllipsis" />
 
                     <Button Grid.Column="1"
                             Margin="10,0,0,0"
+                            HorizontalAlignment="Right"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Command="{Binding Close}"
                             Foreground="#454545"
                             ToolTip="Close">
                         <Button.Style>
-                            <Style TargetType="Button" >
-
-                            </Style>
+                            <Style TargetType="Button" />
                         </Button.Style>
                         X
                     </Button>
@@ -91,19 +93,37 @@
 
             <Border.Style>
                 <Style TargetType="Border">
-                    <Style.Triggers>
+                    <Setter Property="Height" Value="65" />
+                    <Setter Property="BorderBrush" Value="#171717" />
 
+                    <Style.Triggers>
                         <!--  Null  -->
                         <DataTrigger Binding="{Binding .}" Value="{x:Null}">
                             <Setter Property="Opacity" Value="0" />
                             <Setter Property="Visibility" Value="Hidden" />
                         </DataTrigger>
 
+                        <DataTrigger Binding="{Binding IsForcedClose}" Value="True">
+                            <Setter Property="Height" Value="30" />
+
+                            <DataTrigger.EnterActions>
+                                <RemoveStoryboard BeginStoryboardName="HideMessageStoryBoard" />
+                                <RemoveStoryboard BeginStoryboardName="HideMessageStoryBoard1" />
+                                <RemoveStoryboard BeginStoryboardName="ShowMessageStoryBoard" />
+                            </DataTrigger.EnterActions>
+                        </DataTrigger>
+
+
                         <!--  DataContextChanged  -->
-                        <DataTrigger Binding="{Binding Converter={StaticResource DataContextChangedConverter}}" Value="True">
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Converter={StaticResource DataContextChangedConverter}}" Value="True" />
+                                <Condition Binding="{Binding IsForcedClose}" Value="False" />
+                            </MultiDataTrigger.Conditions>
                             <Setter Property="Opacity" Value="0" />
                             <Setter Property="Visibility" Value="Visible" />
-                            <DataTrigger.EnterActions>
+
+                            <MultiDataTrigger.EnterActions>
                                 <RemoveStoryboard BeginStoryboardName="HideMessageStoryBoard" />
                                 <RemoveStoryboard BeginStoryboardName="HideMessageStoryBoard1" />
 
@@ -117,8 +137,9 @@
 
                                     </Storyboard>
                                 </BeginStoryboard>
-                            </DataTrigger.EnterActions>
-                        </DataTrigger>
+                            </MultiDataTrigger.EnterActions>
+                        </MultiDataTrigger>
+
 
                         <!--  Done  -->
                         <DataTrigger Binding="{Binding MessageStatusState}" Value="{x:Static status1:MessageStatusState.Done}">
@@ -126,19 +147,20 @@
                                 <RemoveStoryboard BeginStoryboardName="ShowMessageStoryBoard" />
                                 <BeginStoryboard x:Name="HideMessageStoryBoard">
                                     <Storyboard>
-                                        <!--<DoubleAnimation BeginTime="0:0:2"
+                                        <DoubleAnimation BeginTime="0:0:2"
                                                          Storyboard.TargetProperty="Opacity"
                                                          From="1.0"
                                                          To="0.0"
-                                                         Duration="0:0:0:0.5" />-->
+                                                         Duration="0:0:0:0.5" />
 
-                                        <ObjectAnimationUsingKeyFrames BeginTime="0:0:2" Storyboard.TargetProperty="Visibility">
+                                        <ObjectAnimationUsingKeyFrames BeginTime="0:0:2.5" Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="{x:Static Visibility.Collapsed}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </DataTrigger.EnterActions>
                         </DataTrigger>
+
 
                         <!--  Failed  -->
                         <DataTrigger Binding="{Binding MessageStatusState}" Value="{x:Static status1:MessageStatusState.Failed}">
@@ -152,7 +174,7 @@
                                                          To="0.0"
                                                          Duration="0:0:0:0.5" />
 
-                                        <ObjectAnimationUsingKeyFrames BeginTime="0:0:2" Storyboard.TargetProperty="Visibility">
+                                        <ObjectAnimationUsingKeyFrames BeginTime="0:0:2.5" Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="{x:Static Visibility.Collapsed}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>

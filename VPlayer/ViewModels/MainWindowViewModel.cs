@@ -288,7 +288,7 @@ namespace VPlayer.ViewModels
 
       AudioDeviceManager.Instance.RefreshAudioDevices();
 
-      //Task.Run(() => iCsfdWebsiteScrapper.LoadTvShow("https://www.csfd.cz/film/930640-neporazitelny/prehled/"));
+      Task.Run(() => iCsfdWebsiteScrapper.LoadTvShow("https://www.csfd.cz/film/742448-loki/recenze/"));
 
       var windowsPlayer = viewModelsFactory.Create<WindowsViewModel>();
 
