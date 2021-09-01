@@ -288,7 +288,8 @@ namespace VPlayer.ViewModels
 
       AudioDeviceManager.Instance.RefreshAudioDevices();
 
-     
+      //Task.Run(() => iCsfdWebsiteScrapper.LoadTvShow("https://www.csfd.cz/film/930640-neporazitelny/prehled/"));
+
       var windowsPlayer = viewModelsFactory.Create<WindowsViewModel>();
 
       windowsPlayer.IsActive = true;

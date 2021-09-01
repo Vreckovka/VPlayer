@@ -2,5 +2,8 @@
 {
   public class CSFDTVShowSeasonEpisode : CSFDItem
   {
+    public int? EpisodeNumber{ get; set; }
+
+    public int? SeasonNumber { get; set; }
   }
 }

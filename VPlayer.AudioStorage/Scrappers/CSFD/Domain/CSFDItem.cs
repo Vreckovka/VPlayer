@@ -14,8 +14,9 @@
     public string Url { get; set; }
     public string ImagePath { get; set; }
     public byte[] Image { get; set; }
-    public int Year { get; set; }
+    public int? Year { get; set; }
     public RatingColor? RatingColor { get; set; }
+    public int? Rating { get; set; }
 
     public string[] Generes { get; set; }
     public string[] Actors { get; set; }

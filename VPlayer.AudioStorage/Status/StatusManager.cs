@@ -101,6 +101,8 @@ namespace VPlayer.Core.Managers.Status
           ActualMessage.Update(statusMessage);
         }
 
+        CheckMessage(ActualMessage);
+
         onStatusMessageUpdatedSubject.OnNext(ActualMessage);
       });
     }
@@ -112,10 +114,20 @@ namespace VPlayer.Core.Managers.Status
       Application.Current.Dispatcher.Invoke(() =>
       {
         statusMessage.ProcessedCount++;
+
         UpdateMessage(statusMessage);
       });
     }
 
     #endregion
+
+    private void CheckMessage(StatusMessage statusMessage)
+    {
+      if (statusMessage.ProcessedCount == statusMessage.NumberOfProcesses && statusMessage.MessageStatusState != MessageStatusState.Failed)
+      {
+        statusMessage.Message += " is DONE";
+        statusMessage.MessageStatusState = MessageStatusState.Done;
+      }
+    }
   }
 }

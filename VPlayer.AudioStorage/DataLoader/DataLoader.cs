@@ -168,7 +168,7 @@ namespace VPlayer.AudioStorage.DataLoader
 
     #region GetTvShowSeriesNumber
 
-    public KeyValuePair<int, int> GetTvShowSeriesNumber(string name)
+    public static KeyValuePair<int, int> GetTvShowSeriesNumber(string name)
     {
       List<string> regexExpressions = new List<string>()
       {
@@ -200,6 +200,33 @@ namespace VPlayer.AudioStorage.DataLoader
       }
 
       return new KeyValuePair<int, int>(-1, -1);
+    }
+
+    #endregion
+
+    #region IsTvShow
+
+    public static bool IsTvShow(KeyValuePair<int, int> episodeNumber)
+    {
+      if (episodeNumber.Key != -1 && episodeNumber.Value != -1)
+      {
+        return true;
+      }
+
+      return false;
+    }
+
+
+    public static bool IsTvShow(string name )
+    {
+      var episodeNumber = GetTvShowSeriesNumber(name);
+
+      if (episodeNumber.Key != -1 && episodeNumber.Value != -1)
+      {
+        return true;
+      }
+
+      return false;
     }
 
     #endregion

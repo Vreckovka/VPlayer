@@ -34,6 +34,7 @@ using VCore.Standard.Helpers;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
 using VCore.WPF.Managers;
+using VPlayer.AudioStorage.DataLoader;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.AudioStorage.Scrappers.CSFD;
@@ -597,30 +598,43 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
       }
 
-      if (!(ActualItem is TvShowEpisodeInPlaylistViewModel))
-      {
-        Task.Run(() =>
-        {
-          return FindOnCsfd(ActualItem.Name);
-        });
-      }
+      Task.Run(() => FindOnCsfd(ActualItem));
     }
 
     #endregion
 
     #region FindOnCsfd
 
-    private async Task FindOnCsfd(string name)
+    private async Task FindOnCsfd(VideoItemInPlaylistViewModel viewModel)
     {
-      var item = await iCsfdWebsiteScrapper.GetBestFind(name);
+      if (viewModel == null)
+      {
+        return;
+      }
+
+      var item = await iCsfdWebsiteScrapper.GetBestFind(viewModel.Name);
 
       if (item != null)
       {
-        Application.Current.Dispatcher.Invoke(() =>
+        if (item is CSFDTVShow cSFDTVShow)
         {
-          ActualItem.CSFDItem = item;
-          ActualItem.CSFDItem.Name = string.IsNullOrEmpty(item.OriginalName) ? item.Name : item.OriginalName;
-        });
+          foreach (var tvShowItem in PlayList.Where(x => DataLoader.IsTvShow(x.Name)))
+          {
+            var number = DataLoader.GetTvShowSeriesNumber(tvShowItem.Name);
+
+            var csfdEpisode  = cSFDTVShow.Seasons[number.Key - 1].SeasonEpisodes[number.Value - 1];
+
+            tvShowItem.CSFDItem = csfdEpisode;
+          }
+        }
+        else
+        {
+          Application.Current.Dispatcher.Invoke(() =>
+          {
+            viewModel.CSFDItem = item;
+            viewModel.CSFDItem.Name = string.IsNullOrEmpty(item.OriginalName) ? item.Name : item.OriginalName;
+          });
+        }
       }
     }
 

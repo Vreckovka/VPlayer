@@ -2,10 +2,9 @@
 
 namespace VPlayer.AudioStorage.Scrappers.CSFD.Domain
 {
-  public class CSFDTVShowSeason
+  public class CSFDTVShowSeason : CSFDItem
   {
-    public string Name { get; set; }
-    public string SeasonUrl { get; set; }
+    public int SeasonNumber { get; set; }
 
     public List<CSFDTVShowSeasonEpisode> SeasonEpisodes { get; set; }
   }
