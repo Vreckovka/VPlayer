@@ -525,9 +525,9 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region LoadVlc
+    #region InitilizeMediaPlayer
 
-    protected async Task LoadVlc()
+    protected async Task InitilizeMediaPlayer()
     {
       await MediaPlayer.Initilize();
     }
@@ -538,7 +538,7 @@ namespace VPlayer.Core.ViewModels
 
     protected virtual async Task HookToPlayerEvents()
     {
-      await LoadVlc();
+      await Task.Run(() => InitilizeMediaPlayer());
 
       if (MediaPlayer == null)
       {
@@ -653,79 +653,100 @@ namespace VPlayer.Core.ViewModels
 
     #region SetItemAndPlay
 
-    public virtual void SetItemAndPlay(int? songIndex = null, bool forcePlay = false, bool onlyItemSet = false)
+    public virtual async void SetItemAndPlay(int? songIndex = null, bool forcePlay = false, bool onlyItemSet = false)
     {
-      Application.Current?.Dispatcher?.Invoke(async () =>
+
+      if (IsShuffle && songIndex == null)
       {
-        if (IsShuffle && songIndex == null)
+        var result = PlayList.Where(p => shuffleList.All(p2 => p2 != p)).ToList();
+
+        if (result.Count == 0)
         {
-          var result = PlayList.Where(p => shuffleList.All(p2 => p2 != p)).ToList();
-
-          if (result.Count == 0)
-          {
-            shuffleList.Clear();
-            result = PlayList.Where(p => shuffleList.All(p2 => p2 != p)).ToList();
-          }
-
-          var shuffleIndex = (int)Math.Floor(shuffleRandom.NextDouble() * result.Count);
-
-          songIndex = PlayList.IndexOf(result[shuffleIndex]);
+          shuffleList.Clear();
+          result = PlayList.Where(p => shuffleList.All(p2 => p2 != p)).ToList();
         }
 
-        if (songIndex != null)
-        {
-          actualItemIndex = songIndex.Value;
-        }
+        var shuffleIndex = (int)Math.Floor(shuffleRandom.NextDouble() * result.Count);
 
-        if (IsRepeate && actualItemIndex > PlayList.Count - 1)
-        {
-          actualItemIndex = 0;
-          songIndex = 0;
-        }
+        songIndex = PlayList.IndexOf(result[shuffleIndex]);
+      }
 
-        if (!string.IsNullOrEmpty(actualSearch))
+      if (songIndex != null)
+      {
+        actualItemIndex = songIndex.Value;
+      }
+
+      if (IsRepeate && actualItemIndex > PlayList.Count - 1)
+      {
+        actualItemIndex = 0;
+        songIndex = 0;
+      }
+
+      if (!string.IsNullOrEmpty(actualSearch))
+      {
+        Application.Current?.Dispatcher?.Invoke(() =>
         {
           ActualSearch = null;
-        }
+        });
+      }
 
-        IsPlayFnished = false;
+      IsPlayFnished = false;
 
-        if (songIndex == null)
-        {
-          actualItemIndex++;
-        }
-        else
-        {
-          actualItemIndex = songIndex.Value;
-        }
+      if (songIndex == null)
+      {
+        actualItemIndex++;
+      }
+      else
+      {
+        actualItemIndex = songIndex.Value;
+      }
 
-        if (actualItemIndex >= PlayList.Count)
+      if (actualItemIndex >= PlayList.Count)
+      {
+        Application.Current?.Dispatcher?.Invoke(() =>
         {
           IsPlayFnished = true;
-          Pause();
-          return;
-        }
+        });
 
+        Pause();
+        return;
+      }
+
+      Application.Current?.Dispatcher?.Invoke(() =>
+      {
         SetActualItem(actualItemIndex);
-
-        if (ActualItem == null)
-          return;
-
-        await SetMedia(ActualItem.Model);
-
-        if (IsPlaying || forcePlay)
-        {
-          if (!onlyItemSet)
-            Play();
-        }
-        else if (!IsPlaying && songIndex != null)
-        {
-          if (!onlyItemSet)
-            Play();
-        }
-        else if (ActualItem != null)
-          ActualItem.IsPaused = true;
       });
+
+      if (ActualItem == null)
+        return;
+
+      var oldPlaying = IsPlaying;
+
+      Application.Current?.Dispatcher?.Invoke(() =>
+      {
+        IsPlaying = true;
+        ActualItem.IsPlaying = true;
+      });
+
+      await SetMedia(ActualItem.Model);
+
+      if (oldPlaying || forcePlay)
+      {
+        if (!onlyItemSet)
+          Play();
+      }
+      else if (!IsPlaying && songIndex != null)
+      {
+        if (!onlyItemSet)
+          Play();
+      }
+      else if (ActualItem != null)
+      {
+        Application.Current?.Dispatcher?.Invoke(() =>
+        {
+          ActualItem.IsPaused = true;
+        });
+      }
     }
 
     #endregion
@@ -798,8 +819,6 @@ namespace VPlayer.Core.ViewModels
           var fileUri = new Uri(model.Source);
 
           await MediaPlayer.SetNewMedia(fileUri);
-          
-       
 
           OnNewItemPlay();
         }
@@ -849,6 +868,8 @@ namespace VPlayer.Core.ViewModels
             MediaPlayer.Play();
           }
         }
+
+        OnPlay();
       });
     }
 
@@ -876,10 +897,12 @@ namespace VPlayer.Core.ViewModels
         PlayItems(data.Items, false, lastSongIndex.Value);
 
         if (data.SetPostion.HasValue)
+        {
           MediaPlayer.Position = data.SetPostion.Value;
+        }
       }
 
-      OnPlayPlaylist();
+      OnPlayPlaylist(data);
     }
 
     #endregion
@@ -1387,7 +1410,12 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    protected virtual void OnPlayPlaylist()
+    protected virtual void OnPlay()
+    {
+
+    }
+
+    protected virtual void OnPlayPlaylist(PlayItemsEventData<TItemViewModel> data)
     {
 
     }

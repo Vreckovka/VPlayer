@@ -71,7 +71,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       IEventAggregator eventAggregator,
       VLCPlayer vLCPlayer,
       IWindowManager windowManager,
-      ICSFDWebsiteScrapper iCsfdWebsiteScrapper ) :
+      ICSFDWebsiteScrapper iCsfdWebsiteScrapper) :
       base(regionProvider, kernel, logger, storageManager, eventAggregator, vLCPlayer)
     {
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
@@ -85,7 +85,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
     public override bool ContainsNestedRegions => true;
     public override string Header => "Video player";
-    
+
     #region MediaPlayer
 
     public new MediaPlayer MediaPlayer
@@ -322,7 +322,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-   
+
 
     #endregion
 
@@ -597,9 +597,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
       }
 
-      if(!(ActualItem is TvShowEpisodeInPlaylistViewModel))
+      if (!(ActualItem is TvShowEpisodeInPlaylistViewModel))
       {
-        FindOnCsfd(ActualItem.Name);
+        Task.Run(() =>
+        {
+          return FindOnCsfd(ActualItem.Name);
+        });
       }
     }
 
@@ -619,7 +622,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           ActualItem.CSFDItem.Name = string.IsNullOrEmpty(item.OriginalName) ? item.Name : item.OriginalName;
         });
       }
-    } 
+    }
 
     #endregion
 
@@ -658,7 +661,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           if (MediaPlayer.Media != null)
             MediaPlayer.Media.ParsedChanged -= MediaPlayer_ParsedChanged;
 
-        
+
         }
         catch (Exception ex)
         {
@@ -807,6 +810,45 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region OnPlay
+
+    protected override void OnPlay()
+    {
+      base.OnPlay();
+
+      if (requestedLastPosition != null)
+      {
+        Application.Current.Dispatcher.Invoke(async () =>
+        {
+          MediaPlayer.Position = requestedLastPosition.Value;
+          ActualItem.ActualPosition = requestedLastPosition.Value;
+        });
+      }
+
+      requestedLastPosition = null;
+    }
+
+    #endregion
+
+    #region OnPlayPlaylist
+
+    private float? requestedLastPosition = null;
+    protected override void OnPlayPlaylist(PlayItemsEventData<VideoItemInPlaylistViewModel> data)
+    {
+      base.OnPlayPlaylist(data);
+
+      if (data.EventAction == EventAction.PlayFromPlaylistLast)
+      {
+        var lastTime = GetLastItemElapsed(data.GetModel<VideoFilePlaylist>());
+
+        if (lastTime > 0.80)
+        {
+          requestedLastPosition = lastTime;
+        }
+      }
+    }
+
+    #endregion
 
     protected override void OnRemoveItemsFromPlaylist(DeleteType deleteType, RemoveFromPlaylistEventArgs<VideoItemInPlaylistViewModel> args)
     {

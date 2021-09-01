@@ -363,9 +363,9 @@ namespace VPlayer.Core.ViewModels
 
     #region OnPlayPlaylist
 
-    protected override void OnPlayPlaylist()
+    protected override void OnPlayPlaylist(PlayItemsEventData<TItemViewModel> data)
     {
-      base.OnPlayPlaylist();
+      base.OnPlayPlaylist(data);
 
       HandleLastItemElapsed();
     }
@@ -379,12 +379,21 @@ namespace VPlayer.Core.ViewModels
       Application.Current.Dispatcher.Invoke(() =>
       {
         ItemLastTime = null;
-        var itemLastTimeFloat = ActualSavedPlaylist.LastItemElapsedTime > 0 ? (float?)ActualSavedPlaylist.LastItemElapsedTime : null;
 
-        if (itemLastTimeFloat != null && itemLastTimeFloat > 0)
-          ItemLastTime = (int)(itemLastTimeFloat.Value * ActualItem.Duration);
+        var position = GetLastItemElapsed(ActualSavedPlaylist);
 
+        if (position != null && position > 0)
+          ItemLastTime = (int)(position.Value * ActualItem.Duration);
       });
+    }
+
+    #endregion
+
+    #region GetLastItemElapsed
+
+    protected float? GetLastItemElapsed(TPlaylistModel playlistModel)
+    {
+      return playlistModel.LastItemElapsedTime > 0 ? (float?)playlistModel.LastItemElapsedTime : null;
     }
 
     #endregion
@@ -419,6 +428,8 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region OnActualItemChanged
+
     protected override void OnActualItemChanged()
     {
       base.OnActualItemChanged();
@@ -426,6 +437,8 @@ namespace VPlayer.Core.ViewModels
       if (ActualItem != null)
         ActualItem.ActualPosition = 0;
     }
+
+    #endregion
 
     #region Dispose
 
@@ -436,7 +449,7 @@ namespace VPlayer.Core.ViewModels
       MediaPlayer.TimeChanged -= OnVlcTimeChanged;
       PlayList.CollectionChanged -= PlayList_CollectionChanged;
 
-      
+
     }
 
     #endregion
