@@ -142,7 +142,7 @@ namespace VPlayer.Core.Managers.Status
 
     #region IsMinimized
 
-    private bool isMinimized;
+    private bool isMinimized = true;
 
     public bool IsMinimized
     {

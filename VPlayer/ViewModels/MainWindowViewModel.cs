@@ -283,7 +283,9 @@ namespace VPlayer.ViewModels
 
       AudioDeviceManager.Instance.RefreshAudioDevices();
 
+#if DEBUG
       //Task.Run(() => iCsfdWebsiteScrapper.LoadTvShow("https://www.csfd.cz/film/742448-loki/recenze/"));
+#endif
 
       var windowsPlayer = viewModelsFactory.Create<WindowsViewModel>();
 
@@ -298,9 +300,9 @@ namespace VPlayer.ViewModels
 
     }
 
-    #endregion
+#endregion
 
-    #region Dispose
+#region Dispose
 
     public override void Dispose()
     {
@@ -312,9 +314,9 @@ namespace VPlayer.ViewModels
       }
     }
 
-    #endregion
+#endregion
 
-    #endregion
+#endregion
   }
 }
 
