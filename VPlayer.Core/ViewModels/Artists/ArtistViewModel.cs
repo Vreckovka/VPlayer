@@ -67,7 +67,7 @@ namespace VPlayer.Core.ViewModels.Artists
 
     public override IEnumerable<SongInPlayListViewModel> GetItemsToPlay()
     {
-      var songs = storage.GetRepository<Artist>().Include(x => x.Albums).ThenInclude(x => x.Songs).ThenInclude(x => x.ItemModel).Where(x => x.Id == Model.Id).ToList();
+      var songs = storage.GetRepository<Artist>().Include(x => x.Albums).ThenInclude(x => x.Songs).ThenInclude(x => x.ItemModel).ThenInclude(x => x.FileInfo).Where(x => x.Id == Model.Id).ToList();
 
       return songs.SelectMany(x => x.Albums.SelectMany(y => y.Songs)).Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x));
     }

@@ -10,7 +10,7 @@
     <DataTemplate x:Key="StatusMessageDataTemplate">
         <Border Width="250"
                 Margin="0,0,0,0"
-                Padding="10,5"
+                Padding="5,5,5,0"
                 BorderThickness="1">
             <Border.Background>
                 <LinearGradientBrush StartPoint="0 1" EndPoint="0 0">
@@ -28,33 +28,69 @@
 
                 <Grid>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
                         <ColumnDefinition />
                         <ColumnDefinition Width="auto" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Column="0"
+                    <controls:PathButton Width="15"
+                                         Height="15"
+                                         Margin="0,0,0,0"
+                                         HorizontalAlignment="Right"
+                                         Background="Transparent"
+                                         BorderThickness="0"
+                                         Command="{Binding Close}"
+                                         IconDefaultColor="#454545"
+                                         IconHeight="8"
+                                         IconHoverColor="{StaticResource DefaultRedColor}"
+                                         IconWidth="8"
+                                         IsReadOnly="True"
+                                         PathStyle="{StaticResource xmark}"
+                                         ToolTip="Close" />
+
+                    <TextBlock Grid.Column="1"
                                Margin="0,2"
                                Foreground="#555555"
                                Text="{Binding Message, Mode=OneWay}"
                                TextTrimming="CharacterEllipsis" />
 
-                    <Button Grid.Column="1"
-                            Margin="10,0,0,0"
-                            HorizontalAlignment="Right"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            Command="{Binding Close}"
-                            Foreground="#454545"
-                            ToolTip="Close">
-                        <Button.Style>
-                            <Style TargetType="Button" />
-                        </Button.Style>
-                        X
-                    </Button>
+                    <StackPanel Grid.Column="2"
+                                Margin="5,0,0,0"
+                                Orientation="Horizontal">
+
+
+                        <controls:PathButton Width="15"
+                                             Height="15"
+                                             Margin="0,0,0,0"
+                                             HorizontalAlignment="Right"
+                                             Background="Transparent"
+                                             BorderThickness="0"
+                                             Command="{Binding Minimize}"
+                                             IconDefaultColor="#454545"
+                                             IconHeight="7"
+                                             IconHoverColor="{StaticResource DefaultRedColor}"
+                                             IconWidth="10"
+                                             IsReadOnly="True"
+                                             ToolTip="Minimize">
+                            <controls:PathButton.Style>
+                                <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
+                                    <Setter Property="PathStyle" Value="{StaticResource angle-down}" />
+
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsMinimized}" Value="true">
+                                            <Setter Property="PathStyle" Value="{StaticResource angle-up}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </controls:PathButton.Style>
+                        </controls:PathButton>
+
+                    </StackPanel>
+
                 </Grid>
 
 
-                <TextBlock Grid.Row="1" Margin="0,2">
+                <TextBlock Grid.Row="1" Margin="15,2,0,2">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock" />
                     </TextBlock.Style>
@@ -69,10 +105,10 @@
                                         <Setter Property="Foreground" Value="YellowGreen" />
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding MessageStatusState}" Value="{x:Static status1:MessageStatusState.Done}">
-                                        <Setter Property="Foreground" Value="Green" />
+                                        <Setter Property="Foreground" Value="#07ab33" />
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding MessageStatusState}" Value="{x:Static status1:MessageStatusState.Failed}">
-                                        <Setter Property="Foreground" Value="Red" />
+                                        <Setter Property="Foreground" Value="#bf0808" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -82,7 +118,7 @@
                 </TextBlock>
 
                 <TextBlock Grid.Row="2"
-                           Margin="0,2"
+                           Margin="15,2,0,2"
                            Foreground="#454545">
                     <Run Text="{Binding ProcessedCount, Mode=OneWay}" />
                     <Run Text="/" />
@@ -103,8 +139,18 @@
                             <Setter Property="Visibility" Value="Hidden" />
                         </DataTrigger>
 
-                        <DataTrigger Binding="{Binding IsForcedClose}" Value="True">
+                        <DataTrigger Binding="{Binding IsMinimized}" Value="True">
                             <Setter Property="Height" Value="30" />
+
+                            <DataTrigger.EnterActions>
+                                <RemoveStoryboard BeginStoryboardName="HideMessageStoryBoard" />
+                                <RemoveStoryboard BeginStoryboardName="HideMessageStoryBoard1" />
+                                <RemoveStoryboard BeginStoryboardName="ShowMessageStoryBoard" />
+                            </DataTrigger.EnterActions>
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding IsClosed}" Value="True">
+                            <Setter Property="Visibility" Value="Hidden" />
 
                             <DataTrigger.EnterActions>
                                 <RemoveStoryboard BeginStoryboardName="HideMessageStoryBoard" />
@@ -184,11 +230,6 @@
                     </Style.Triggers>
                 </Style>
             </Border.Style>
-
-
         </Border>
     </DataTemplate>
-
-
-
 </ResourceDictionary>

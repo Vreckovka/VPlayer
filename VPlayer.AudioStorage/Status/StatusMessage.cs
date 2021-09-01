@@ -140,18 +140,18 @@ namespace VPlayer.Core.Managers.Status
 
     #endregion
 
-    #region IsForcedClose
+    #region IsMinimized
 
-    private bool isForcedClose;
+    private bool isMinimized;
 
-    public bool IsForcedClose
+    public bool IsMinimized
     {
-      get { return isForcedClose; }
+      get { return isMinimized; }
       set
       {
-        if (value != isForcedClose)
+        if (value != isMinimized)
         {
-          isForcedClose = value;
+          isMinimized = value;
           RaisePropertyChanged();
         }
       }
@@ -159,9 +159,58 @@ namespace VPlayer.Core.Managers.Status
 
     #endregion
 
-    #region OnClose
+    #region IsClosed
 
-    #region ChoosePath
+    private bool isClosed;
+
+    public bool IsClosed
+    {
+      get { return isClosed; }
+      set
+      {
+        if (value != isClosed)
+        {
+          isClosed = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+
+
+
+
+    #endregion
+
+    #region Commands
+
+    #region Minimized
+
+    private ActionCommand minimize;
+
+    public ICommand Minimize
+    {
+      get
+      {
+        if (minimize == null)
+        {
+          minimize = new ActionCommand(OnMinimized);
+        }
+
+        return minimize;
+      }
+    }
+
+    public void OnMinimized()
+    {
+      IsMinimized = !IsMinimized;
+    }
+
+    #endregion
+
+    #region Close
 
     private ActionCommand close;
 
@@ -180,15 +229,13 @@ namespace VPlayer.Core.Managers.Status
 
     public void OnClose()
     {
-      IsForcedClose = !IsForcedClose;
+      IsClosed = !IsClosed;
     }
 
     #endregion
 
-    #endregion
 
     #endregion
-
     #region Methods
 
     #region Update

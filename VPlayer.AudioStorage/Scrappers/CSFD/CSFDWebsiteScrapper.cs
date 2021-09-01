@@ -266,7 +266,8 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       {
         MessageStatusState = MessageStatusState.Processing,
         Message = "Downloading tv show seasons",
-        IsForcedClose = statusMessage.IsForcedClose
+        IsMinimized = statusMessage.IsMinimized,
+        IsClosed = statusMessage.IsClosed,
       };
 
       statusManager.UpdateMessage(statusMessage);
@@ -338,7 +339,8 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         {
           MessageStatusState = MessageStatusState.Processing,
           Message = $"Downloading season ({seasonNumber}) episodes",
-          IsForcedClose = statusMessage.IsForcedClose
+          IsMinimized = statusMessage.IsMinimized,
+          IsClosed = statusMessage.IsClosed
         };
 
         statusManager.UpdateMessage(statusMessage);

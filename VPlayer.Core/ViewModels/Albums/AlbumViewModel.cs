@@ -52,8 +52,6 @@ namespace VPlayer.Core.ViewModels.Albums
 
     public override IEnumerable<SongInPlayListViewModel> GetItemsToPlay()
     {
-      var songsd = storage.GetRepository<SoundItem>().Include(x => x.FileInfo).ToList();
-
       var songs = storage.GetRepository<Song>()
         .Include(x => x.ItemModel)
         .ThenInclude(x => x.FileInfo)
