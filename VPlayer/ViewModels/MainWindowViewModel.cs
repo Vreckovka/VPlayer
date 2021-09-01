@@ -45,7 +45,6 @@ namespace VPlayer.ViewModels
   //TODO: Playlist nech sa automaticky nevytvara ak je niekolko pesniciek (nastavenie pre uzivatela aky pocet sa ma ukladat!) (3/5)
   //TODO: Hore prenutie medzi windows a browser playermi , zmizne bocne menu
   //TODO: Pridat loading indikator, mozno aj co prave robi
-  //TODO: Popupwindow is TOPMOST
   //TODO: Reorder na playliste
   //TODO: Upload lyrics do Google Drive
   //TODO: Moznost editovat lyrics
@@ -56,14 +55,13 @@ namespace VPlayer.ViewModels
   //
   // *****File Browser*****
   //TODO: File Browser - File watcher nad aktualnou zlozkou
+  //TODO: File Browser - Prepinanie diskov (C,D,E...)
   //TODO: File Browser - Right click open folder
   //TODO: File Browser - Nastavit zlozku ako hlavnu
   //TODO: File Browser - zobrazuje slideshow obrazkov z videa(FFMPEG)
   //TODO: File Browser - Mark videne (ako dlho som to pozeral - % pozrete, kludne z celej zloky), ak som to pozeral aspon 5min a datum
   //TODO: File Browser - Oblubene cesty (nejaky dropdown potom)
   //
-  //TODO: Setting page - Poriadne settingy (ako default cesty do subor napr)
-  //TODO: Ked je synced lyrics a nie si na tabe a ide to dalej a vratis sa tak to scrolne na tu dolnu poziciu animacne (nech to spravi instantne zacne od tade)
   //TODO: Pridavanie do playlistu vyber do akeho, alebo ci aktualne prehravajuceho, alebo chces vytvorit novy
   //TODO: Dotiahnut sezony zvlast ako update z csfd
   //TODO: Vymazat sezonu z tvshow
@@ -71,12 +69,10 @@ namespace VPlayer.ViewModels
   //TODO: Random a Opakovanie moznost v tv show playliste na prehravaci chyba
   //TODO: Listview pre Artistov, Albumy atd ... selection a potom akcie (vyberiem si 10 a dam spojit do seba, aristov rovnakych, ale nejako ich nespojilo)
   //TODO: Moznost presunu zlozku a subory do Serialy napr, alebo rovno do nejakeho serialu (Mozno totalne daleko to potiahnut ze moznost vytvorit rovno aj noveho)
-  //TODO: CSFD vyhladavanie podla nazvu suborov (nejaky vyhladavac, mozno ze sa ti zobrazi nazov suboru a vyselektujes vyhladavany vyraz (highlight) (nemusis pisat) a to sa vyberie do filtra)
   //TODO: Highlight videa hover nad itemom v playliste
   //TODO  Playlist sidebar aj vo fullscreene(why the fuck not) - schovany a rovnake mechanismus na zobrazenie
   //TODO: Tv show card (kludne aj artist) - pustit od posledneho playlistu (zacne to tam kde si skoncil)
   //TODO: Last time played, dat ktory den (25.7.2019 (Pondelok))
-  //TODO: Windows Player - Moznost reloadnut subor (vlc co sa hra), iconka niekde a spusti sa to tam kde to skoncilo
   //
   // *****Playlist sidebar*****
   //TODO: Playlist sidebar - iconky do context menu
@@ -86,7 +82,6 @@ namespace VPlayer.ViewModels
   //
   //  *****Easy*****
   //        TODO: Pridat thumbnail zo suboru
-  //        TODO: Status popup close manual
   //        TODO: Moznost vymazat automaticky nahrane lyrics a zakazat stahovanie
   //        TODO: Dvojklik na windows volume (nastavi dostpny dalsi device (hore ci dole????))
   //		    TODO: Ak Windows Volume je 100 a stale chcem viac tak dam VLC volume ++
