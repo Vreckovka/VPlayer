@@ -283,7 +283,7 @@ namespace VPlayer.ViewModels
 
       AudioDeviceManager.Instance.RefreshAudioDevices();
 
-      Task.Run(() => iCsfdWebsiteScrapper.LoadTvShow("https://www.csfd.cz/film/742448-loki/recenze/"));
+      //Task.Run(() => iCsfdWebsiteScrapper.LoadTvShow("https://www.csfd.cz/film/742448-loki/recenze/"));
 
       var windowsPlayer = viewModelsFactory.Create<WindowsViewModel>();
 
