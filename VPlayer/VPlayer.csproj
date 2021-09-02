@@ -8,6 +8,9 @@
 		<CefSharpAnyCpuSupport>true</CefSharpAnyCpuSupport>
 		<Platforms>AnyCPU;x86</Platforms>
 		<Deterministic>false</Deterministic>
+		<TransformOnBuild>true</TransformOnBuild>
+		<OverwriteReadOnlyOutputFiles>true</OverwriteReadOnlyOutputFiles>
+		<TransformOutOfDateOnly>false</TransformOutOfDateOnly>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<PlatformTarget>AnyCPU</PlatformTarget>
@@ -86,6 +89,13 @@
 		<None Remove="Resources\play-and-pause-button.png" />
 		<None Remove="Resources\song-playliyst.png" />
 		<None Remove="Resources\VPlayer_Artist.png" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Include="VersionAutoIncrement.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>VersionAutoIncrement.tt</DependentUpon>
+	  </None>
 	</ItemGroup>
 	<ItemGroup>
 		<Resource Include="Resources\Fonts\FontAwesome\fa-brands-400.ttf" />
@@ -202,6 +212,11 @@
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>Settings.settings</DependentUpon>
 	  </Compile>
+	  <Compile Update="VersionAutoIncrement.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>VersionAutoIncrement.tt</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -212,6 +227,14 @@
 		  <Generator>SettingsSingleFileGenerator</Generator>
 		  <LastGenOutput>Settings.Designer.cs</LastGenOutput>
 		</None>
+		<None Update="VersionAutoIncrement.tt">
+		  <Generator>TextTemplatingFileGenerator</Generator>
+		  <LastGenOutput>VersionAutoIncrement.cs</LastGenOutput>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
 
 </Project>

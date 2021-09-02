@@ -1,0 +1,19 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+
+using System.Reflection;
+
+[assembly: AssemblyVersion("<#= this.Major #>.<#= this.Minor #>.<#= this.DaysSinceProjectStarted #>.<#= this.MinutesSinceMidnight  #>")]
+
+<#+
+
+ static DateTime ProjectStartedDate = new DateTime(year: 2019, month: 3, day: 17);
+
+ int Major = (DateTime.Now.Year - ProjectStartedDate.Year) + 1;
+ int Minor = DateTime.Now.Month;
+
+ int DaysSinceProjectStarted = (int)((DateTime.Now - new DateTime(2000, 1, 1)).TotalDays);
+
+ int MinutesSinceMidnight = (int)DateTime.Now.TimeOfDay.TotalSeconds / 2;
+
+#>
