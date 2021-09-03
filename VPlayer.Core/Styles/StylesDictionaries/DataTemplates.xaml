@@ -6,7 +6,8 @@
                     xmlns:local="clr-namespace:VPlayer.StylesDictionaries"
                     xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
                     xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF"
-                    xmlns:userControls="clr-namespace:VPlayer.Player.UserControls">
+                    xmlns:userControls="clr-namespace:VPlayer.Player.UserControls"
+                    xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.DarkTheme">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="OverlayStyles.xaml" />
@@ -45,7 +46,7 @@
                 <Image Grid.Row="0"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Top"
-                       Source="{Binding AlbumFrontCoverBLOB, Converter={library:ImageLazyLoadingConverter}, IsAsync=True}" />
+                       Source="{Binding AlbumFrontCoverBLOB, Converter={library1:ImageLazyLoadingConverter}, IsAsync=True}" />
 
                 <Grid Grid.Row="0" Background="{StaticResource GlassGradient}" />
 

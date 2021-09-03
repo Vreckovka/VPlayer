@@ -142,7 +142,13 @@ namespace VPlayer.Core.Managers.Status
 
     #region IsMinimized
 
-    private bool isMinimized = true;
+#if DEBUG
+    private bool isMinimized = false;
+#else
+   private bool isMinimized = true;
+#endif
+
+
 
     public bool IsMinimized
     {
@@ -177,10 +183,6 @@ namespace VPlayer.Core.Managers.Status
     }
 
     #endregion
-
-
-
-
 
     #endregion
 
@@ -236,6 +238,7 @@ namespace VPlayer.Core.Managers.Status
 
 
     #endregion
+
     #region Methods
 
     #region Update
@@ -262,11 +265,13 @@ namespace VPlayer.Core.Managers.Status
         MessageStatusState = MessageStatusState.Done;
       }
 
+      IsClosed = other.IsClosed;
+      isMinimized = other.IsMinimized;
 
       FailedMessage = other.FailedMessage;
     }
 
-    #endregion 
+    #endregion
 
     #endregion
   }

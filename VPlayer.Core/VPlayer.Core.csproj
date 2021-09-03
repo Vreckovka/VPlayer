@@ -22,6 +22,7 @@
     <ProjectReference Include="..\..\CustomLibraries\VCore\VCore.WPF.csproj" />
     <ProjectReference Include="..\KeyListener\Listener.csproj" />
     <ProjectReference Include="..\VPlayer.AudioStorage\VPlayer.AudioStorage.csproj" />
+    <ProjectReference Include="..\VPlayer.DarkTheme\VPlayer.DarkTheme.csproj" />
     <ProjectReference Include="..\VPLayer.Domain\VPLayer.Domain.csproj" />
     <ProjectReference Include="..\VVLC\VVLC.csproj" />
   </ItemGroup>

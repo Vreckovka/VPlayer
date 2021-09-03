@@ -70,7 +70,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region LoadTvShow
 
-    public CSFDTVShow LoadTvShow(string url)
+    public CSFDTVShow LoadTvShow(string url, int? seasonNumber = null, int? episodeNumber = null)
     {
       if (!Initialize())
       {
@@ -85,7 +85,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       var statusMessage = new StatusMessage(3)
       {
         MessageStatusState = MessageStatusState.Processing,
-        Message = $"Downloading {url.Replace("https://www.csfd.cz/",null).Replace("/prehled", null)}"
+        Message = $"Downloading {url.Replace("https://www.csfd.cz/", null).Replace("/prehled", null)}"
       };
 
       statusManager.UpdateMessage(statusMessage);
@@ -107,9 +107,14 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
 
-        tvShow.Seasons = LoadSeasons(statusMessage);
+        tvShow.Seasons = LoadSeasons(statusMessage, seasonNumber, episodeNumber);
 
-        foreach (var item in tvShow.Seasons.SelectMany(x => x.SeasonEpisodes))
+        if (tvShow.Seasons == null)
+        {
+          return tvShow;
+        }
+
+        foreach (var item in tvShow.Seasons.Where(x => x.SeasonEpisodes != null).SelectMany(x => x.SeasonEpisodes))
         {
           item.ImagePath = tvShow.ImagePath;
         }
@@ -241,9 +246,13 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       finalPath.EnsureDirectoryExists();
 
       if (File.Exists(finalPath))
+      {
         File.Delete(finalPath);
+      }
+       
 
       i.Save(finalPath, ImageFormat.Jpeg);
+      i.Dispose();
 
       return finalPath;
     }
@@ -252,7 +261,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region LoadSeasons
 
-    private List<CSFDTVShowSeason> LoadSeasons(StatusMessage statusMessage)
+    private List<CSFDTVShowSeason> LoadSeasons(StatusMessage statusMessage, int? seasonNumber, int? episodeNumber)
     {
       var seasons = new List<CSFDTVShowSeason>();
 
@@ -261,6 +270,11 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       document.LoadHtml(chromeDriver.PageSource);
 
       var nodes = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/section[1]/div[2]/div/ul/li/h3/a");
+
+      if (nodes == null)
+      {
+        return seasons;
+      }
 
       statusMessage = new StatusMessage(nodes.Count)
       {
@@ -284,16 +298,39 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         logger.Log(MessageType.Success, $"Tv show season: {newSeason.Name}");
       }
 
-
-      int num = 1;
-      foreach (var season in seasons)
+      for (int i = 0; seasons.Count > i; i++)
       {
-        season.SeasonEpisodes = LoadSeasonEpisodes(num, season.Url, statusMessage);
+        seasons[i].SeasonNumber = i + 1;
+      }
+
+      if (seasonNumber == null)
+      {
+        foreach (var season in seasons)
+        {
+          season.SeasonEpisodes = LoadSeasonEpisodes(season.SeasonNumber, season.Url, statusMessage);
+
+          statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+        }
+      }
+      else
+      {
+        statusMessage.ProcessedCount = 0;
+        statusMessage.NumberOfProcesses = 1;
+
+        var season = seasons[seasonNumber.Value - 1];
+
+        if (season != null)
+        {
+          season.SeasonEpisodes = LoadSeasonEpisodes(seasonNumber.Value, season.Url, statusMessage, episodeNumber);
+        }
+        else
+        {
+          return null;
+        }
 
         statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
-
-        num++;
       }
+
 
       return seasons;
     }
@@ -302,7 +339,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region LoadSeasonEpisodes
 
-    private List<CSFDTVShowSeasonEpisode> LoadSeasonEpisodes(int seasonNumber, string url, StatusMessage statusMessage)
+    private List<CSFDTVShowSeasonEpisode> LoadSeasonEpisodes(int seasonNumber, string url, StatusMessage statusMessage, int? episodeNumber = null)
     {
       try
       {
@@ -345,20 +382,42 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         statusManager.UpdateMessage(statusMessage);
 
-        foreach (var node in nodes)
+       
+
+        if (episodeNumber == null)
         {
+          foreach (var node in nodes)
+          {
+            var newEpisode = new CSFDTVShowSeasonEpisode();
+
+            newEpisode.Name = node.InnerText;
+            newEpisode.Url = baseUrl + node.Attributes.FirstOrDefault(x => x.Name == "href")?.Value;
+
+            LoadCsfdEpisode(newEpisode);
+            episodes.Add(newEpisode);
+
+            logger.Log(MessageType.Success, $"Tv show episode: {newEpisode.Name}");
+            statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+          }
+        }
+        else
+        {
+          var node = nodes[episodeNumber.Value - 1];
+          statusMessage.ProcessedCount = 0;
+          statusMessage.NumberOfProcesses = 1;
+
           var newEpisode = new CSFDTVShowSeasonEpisode();
 
           newEpisode.Name = node.InnerText;
           newEpisode.Url = baseUrl + node.Attributes.FirstOrDefault(x => x.Name == "href")?.Value;
 
           LoadCsfdEpisode(newEpisode);
-
           episodes.Add(newEpisode);
 
           logger.Log(MessageType.Success, $"Tv show episode: {newEpisode.Name}");
           statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
         }
+       
 
         return episodes;
       }
@@ -479,7 +538,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       cSFDTVShowSeasonEpisode.OriginalName = originalName;
       cSFDTVShowSeasonEpisode.Generes = generes;
       cSFDTVShowSeasonEpisode.SeasonNumber = number.Key != -1 ? (int?)number.Key : null;
-      cSFDTVShowSeasonEpisode.EpisodeNumber = number.Value != -1 ? (int?)number.Key : null;
+      cSFDTVShowSeasonEpisode.EpisodeNumber = number.Value != -1 ? (int?)number.Value : null;
       cSFDTVShowSeasonEpisode.Parameters = parameters.ToArray();
     }
 
@@ -513,6 +572,14 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     public async Task<CSFDItem> GetBestFind(string name, int? year = null, bool onlySingleItem = false)
     {
+      var statusMessage = new StatusMessage(1)
+      {
+        MessageStatusState = MessageStatusState.Processing,
+        Message = $"Finding {name}"
+      };
+
+      statusManager.UpdateMessage(statusMessage);
+
       var parsedNameMatch = Regex.Match(name, @"(.*?)(\d\d\d\d)");
 
       string parsedName = "";
@@ -546,16 +613,45 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       parsedName = parsedName.Replace(".", " ").Replace("-", null);
 
+
       var episodeNumber = DataLoader.DataLoader.GetTvShowSeriesNumber(name);
 
       if (DataLoader.DataLoader.IsTvShow(episodeNumber) && !onlySingleItem)
       {
+        var match = Regex.Match(parsedName, @"\D*");
+
+        if (match.Success)
+        {
+          parsedName = match.Value;
+        }
+
         var tvShowFind = await FindSingleCsfdItem(parsedName, year, episodeNumber);
 
-        var tvSHow = LoadTvShow(tvShowFind.Url);
+        if (tvShowFind == null)
+        {
+          return null;
+        }
+
+        var tvSHow = LoadTvShow(tvShowFind.Url, episodeNumber.Key);
 
         if (tvSHow != null)
         {
+          if (tvSHow.Seasons != null)
+          {
+            if (tvSHow.Seasons.Count > episodeNumber.Key)
+            {
+              var season = tvSHow.Seasons[episodeNumber.Value];
+
+              if (season.SeasonEpisodes != null)
+              {
+                if (season.SeasonEpisodes.Count == 1)
+                {
+                  return season.SeasonEpisodes[0];
+                }
+              }
+            }
+          }
+
           return tvSHow;
         }
         else
@@ -567,10 +663,13 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       {
         if (bestItem != null && lastParsedName == parsedName)
         {
+          statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+
           return bestItem;
         }
 
-        return await FindSingleCsfdItem(parsedName, year, episodeNumber);
+
+        return await FindSingleCsfdItem(parsedName, year, episodeNumber, true);
       }
     }
 
@@ -578,11 +677,25 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region FindSingleCsfdItem
 
-    private async Task<CSFDItem> FindSingleCsfdItem(string parsedName, int? year, KeyValuePair<int, int> episodeNumber)
+    private async Task<CSFDItem> FindSingleCsfdItem(string parsedName, int? year, KeyValuePair<int, int> episodeNumber, bool showStatusMassage = false)
     {
       lastParsedName = parsedName;
 
+      var statusMessage = new StatusMessage(2)
+      {
+        MessageStatusState = MessageStatusState.Processing,
+        Message = $"Finding item"
+      };
+
+      if (showStatusMassage)
+      {
+        statusManager.UpdateMessage(statusMessage);
+      }
+
       var items = await FindItems(parsedName);
+
+      if (showStatusMassage)
+        statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
 
       var allItems = items.AllItems?.ToList();
 
@@ -621,6 +734,9 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       {
         bestItem.Rating = GetCsfdRating(bestItem);
       }
+
+      if (showStatusMassage)
+        statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
 
       return bestItem;
     }

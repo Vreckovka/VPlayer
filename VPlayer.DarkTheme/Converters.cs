@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -109,23 +110,41 @@ namespace VPlayer.Library
   {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
+      var image = new BitmapImage();
+
       if (value != null)
       {
-        using (var ms = new System.IO.MemoryStream((byte[])value))
+        if (value is byte[])
         {
-          var image = new BitmapImage();
-          image.DecodePixelHeight = 1;
-          image.DecodePixelWidth = 1;
-          image.BeginInit();
-          image.CacheOption = BitmapCacheOption.OnLoad;
-          image.StreamSource = ms;
-          image.EndInit();
-          image.Freeze();
-          return image;
+          using (var ms = new System.IO.MemoryStream((byte[])value))
+          {
+           
+            image.DecodePixelHeight = 1;
+            image.DecodePixelWidth = 1;
+            image.BeginInit();
+            image.CacheOption = BitmapCacheOption.OnLoad;
+            image.StreamSource = ms;
+            image.EndInit();
+            image.Freeze();
+            return image;
+          }
+        }
+        else if (value is string filename)
+        {
+          if (File.Exists(filename))
+          {
+            using (var stream = File.OpenRead(filename))
+            {
+              image.BeginInit();
+              image.CacheOption = BitmapCacheOption.OnLoad;
+              image.StreamSource = stream;
+              image.EndInit();
+            }
+          }
         }
       }
 
-      return null;
+      return image;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

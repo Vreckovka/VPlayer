@@ -145,7 +145,8 @@
                             <DataTrigger.EnterActions>
                                 <RemoveStoryboard BeginStoryboardName="HideMessageStoryBoard" />
                                 <RemoveStoryboard BeginStoryboardName="HideMessageStoryBoard1" />
-                                <RemoveStoryboard BeginStoryboardName="ShowMessageStoryBoard" />
+                                <RemoveStoryboard BeginStoryboardName="ShowMessageStoryBoard1" />
+                                <RemoveStoryboard BeginStoryboardName="ShowMessageStoryBoard2" />
                             </DataTrigger.EnterActions>
                         </DataTrigger>
 
@@ -155,74 +156,77 @@
                             <DataTrigger.EnterActions>
                                 <RemoveStoryboard BeginStoryboardName="HideMessageStoryBoard" />
                                 <RemoveStoryboard BeginStoryboardName="HideMessageStoryBoard1" />
-                                <RemoveStoryboard BeginStoryboardName="ShowMessageStoryBoard" />
+                                <RemoveStoryboard BeginStoryboardName="ShowMessageStoryBoard1" />
+                                <RemoveStoryboard BeginStoryboardName="ShowMessageStoryBoard2" />
                             </DataTrigger.EnterActions>
                         </DataTrigger>
 
 
-                        <!--  DataContextChanged  -->
-                        <MultiDataTrigger>
-                            <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding Converter={StaticResource DataContextChangedConverter}}" Value="True" />
-                                <Condition Binding="{Binding IsForcedClose}" Value="False" />
-                            </MultiDataTrigger.Conditions>
-                            <Setter Property="Opacity" Value="0" />
-                            <Setter Property="Visibility" Value="Visible" />
-
-                            <MultiDataTrigger.EnterActions>
+                        <!--  Beggining  -->
+                        <DataTrigger Binding="{Binding MessageStatusState}" Value="{x:Static status1:MessageStatusState.Processing}">
+                            <DataTrigger.EnterActions>
                                 <RemoveStoryboard BeginStoryboardName="HideMessageStoryBoard" />
                                 <RemoveStoryboard BeginStoryboardName="HideMessageStoryBoard1" />
 
-                                <BeginStoryboard x:Name="ShowMessageStoryBoard">
+                                <BeginStoryboard x:Name="ShowMessageStoryBoard1">
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                         From="0.0"
                                                          To="1.0"
                                                          Duration="0:0:0:0.2" />
-
-
                                     </Storyboard>
                                 </BeginStoryboard>
-                            </MultiDataTrigger.EnterActions>
-                        </MultiDataTrigger>
+                            </DataTrigger.EnterActions>
+                        </DataTrigger>
 
+                        <!--  Processing  -->
+                        <DataTrigger Binding="{Binding MessageStatusState}" Value="{x:Static status1:MessageStatusState.Beggining}">
+                            <DataTrigger.EnterActions>
+                                <RemoveStoryboard BeginStoryboardName="HideMessageStoryBoard" />
+
+                                <BeginStoryboard x:Name="ShowMessageStoryBoard2">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                         To="1.0"
+                                                         Duration="0:0:0:0.2" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+                        </DataTrigger>
 
                         <!--  Done  -->
                         <DataTrigger Binding="{Binding MessageStatusState}" Value="{x:Static status1:MessageStatusState.Done}">
                             <DataTrigger.EnterActions>
-                                <RemoveStoryboard BeginStoryboardName="ShowMessageStoryBoard" />
+                                <RemoveStoryboard BeginStoryboardName="HideMessageStoryBoard" />
+                                <!--<RemoveStoryboard BeginStoryboardName="ShowMessageStoryBoard" />-->
+                                <RemoveStoryboard BeginStoryboardName="ShowMessageStoryBoard1" />
+                                <RemoveStoryboard BeginStoryboardName="ShowMessageStoryBoard2" />
+
                                 <BeginStoryboard x:Name="HideMessageStoryBoard">
                                     <Storyboard>
                                         <DoubleAnimation BeginTime="0:0:2"
                                                          Storyboard.TargetProperty="Opacity"
-                                                         From="1.0"
                                                          To="0.0"
                                                          Duration="0:0:0:0.5" />
-
-                                        <ObjectAnimationUsingKeyFrames BeginTime="0:0:2.5" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </DataTrigger.EnterActions>
                         </DataTrigger>
 
-
                         <!--  Failed  -->
                         <DataTrigger Binding="{Binding MessageStatusState}" Value="{x:Static status1:MessageStatusState.Failed}">
                             <DataTrigger.EnterActions>
-                                <RemoveStoryboard BeginStoryboardName="ShowMessageStoryBoard" />
+                                <RemoveStoryboard BeginStoryboardName="HideMessageStoryBoard" />
+
+                                <!--<RemoveStoryboard BeginStoryboardName="ShowMessageStoryBoard" />-->
+                                <RemoveStoryboard BeginStoryboardName="ShowMessageStoryBoard1" />
+                                <RemoveStoryboard BeginStoryboardName="ShowMessageStoryBoard2" />
+
                                 <BeginStoryboard x:Name="HideMessageStoryBoard1">
                                     <Storyboard>
                                         <DoubleAnimation BeginTime="0:0:2"
                                                          Storyboard.TargetProperty="Opacity"
-                                                         From="1.0"
                                                          To="0.0"
                                                          Duration="0:0:0:0.5" />
-
-                                        <ObjectAnimationUsingKeyFrames BeginTime="0:0:2.5" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </DataTrigger.EnterActions>

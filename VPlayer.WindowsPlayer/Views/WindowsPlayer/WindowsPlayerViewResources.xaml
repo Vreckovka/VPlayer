@@ -15,7 +15,8 @@
                     xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
                     xmlns:templateSelectors1="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors;assembly=VPlayer.Core"
                     xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF"
-                    xmlns:windowsPlayer="clr-namespace:VPlayer.Player.Views.WindowsPlayer">
+                    xmlns:windowsPlayer="clr-namespace:VPlayer.Player.Views.WindowsPlayer"
+                    xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.DarkTheme">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Views/WindowsPlayer/SongPlayerViewResources.xaml" />
@@ -184,7 +185,7 @@
                             Background="#151515"
                             BorderBrush="#454545"
                             BorderThickness="0">
-                        <Image Width="82" Source="{Binding ImagePath}" />
+                        <Image Width="82" Source="{Binding ImagePath,Converter={library1:ImageLazyLoadingConverter}}" />
 
 
                     </Border>

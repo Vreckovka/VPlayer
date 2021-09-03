@@ -192,7 +192,7 @@
                            VerticalAlignment="Bottom">
                     <Run FontSize="14"
                          FontWeight="Bold"
-                         Text="{Binding OriginalName}" />
+                         Text="{Binding OriginalName, Mode=OneWay}" />
 
                     <Run FontSize="14" Text="{Binding Year, StringFormat={}({0})}" />
 

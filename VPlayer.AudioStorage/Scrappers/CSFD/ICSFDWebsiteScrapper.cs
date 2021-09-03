@@ -5,7 +5,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 {
   public interface ICSFDWebsiteScrapper
   {
-    CSFDTVShow LoadTvShow(string url);
+    CSFDTVShow LoadTvShow(string url, int? seasonNumber = null, int? episodeNumber = null);
 
     CSFDTVShowSeason LoadTvShowSeason(string url);
     Task<CSFDQueryResult> FindItems(string name);

@@ -8,6 +8,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF"
+             xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.DarkTheme"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
@@ -60,7 +61,7 @@
                                  ItemsSource="{Binding AlbumCovers, Mode=OneWay}">
       <controls1:PlayableWrapPanel.ItemTemplate>
         <DataTemplate>
-          <controls1:PlayableWrapPanelItem BottomText="{Binding SizeString}" ImageThumbnail="{Binding DownloadedCover, Converter={library:ImageLazyLoadingConverter}}">
+          <controls1:PlayableWrapPanelItem BottomText="{Binding SizeString}" ImageThumbnail="{Binding DownloadedCover, Converter={library1:ImageLazyLoadingConverter}}">
             <controls1:PlayableWrapPanelItem.Style>
               <Style TargetType="{x:Type controls1:PlayableWrapPanelItem}">
                 <Setter Property="Template">
