@@ -187,27 +187,53 @@
             </TextBlock>
 
             <Grid x:Name="CSFDInfo" DataContext="{Binding CSFDItem}">
-                <TextBlock Margin="5,0,0,3"
-                           HorizontalAlignment="Left"
-                           VerticalAlignment="Bottom">
-                    <Run FontSize="14"
-                         FontWeight="Bold"
-                         Text="{Binding OriginalName, Mode=OneWay}" />
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Margin="5,0,0,3"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Bottom"
+                               FontSize="13"
+                               FontWeight="Bold"
+                               Text="{Binding OriginalName, Mode=OneWay}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="#f2e0cb" />
+                                <Setter Property="Opacity" Value="0.35" />
 
-                    <Run FontSize="14" Text="{Binding Year, StringFormat={}({0})}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ContentPresenter, Mode=FindAncestor}, Path=DataContext.IsPlaying}" Value="True">
+                                        <Setter Property="Foreground" Value="#24140c" />
+                                        <Setter Property="Opacity" Value=".8" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
 
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Foreground" Value="White" />
 
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ContentPresenter, Mode=FindAncestor}, Path=DataContext.IsPlaying}" Value="True">
-                                    <Setter Property="Foreground" Value="#24140c" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
+                    <TextBlock Margin="3,0,0,3"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Bottom"
+                               FontSize="12"
+                               Text="{Binding Year, StringFormat={}({0})}">
+
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="#edfffa" />
+                                <Setter Property="Opacity" Value="0.35" />
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ContentPresenter, Mode=FindAncestor}, Path=DataContext.IsPlaying}" Value="True">
+                                        <Setter Property="Foreground" Value="#24140c" />
+                                        <Setter Property="Opacity" Value=".8" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+
+                </StackPanel>
+
 
                 <Grid.Style>
                     <Style TargetType="Grid">

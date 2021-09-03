@@ -641,7 +641,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
                 if (singleSeason != null && singleSeason?.SeasonEpisodes?.Count == 1)
                 {
                   viewModel.CSFDItem = new CSFDItemViewModel(singleSeason.SeasonEpisodes.First());
-                  viewModel.CSFDItem.OriginalName = item.Name;
+                  viewModel.CSFDItem.OriginalName = viewModel.CSFDItem.Name;
                 }
                 else if (singleSeason?.SeasonEpisodes != null)
                 {
@@ -656,7 +656,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
                     episode.CSFDItem = new CSFDItemViewModel(csfdEpisode);
 
                     if (episode.CSFDItem != null)
-                      episode.CSFDItem.OriginalName =  item.OriginalName;
+                      episode.CSFDItem.OriginalName = episode.CSFDItem.Name;
                   }
                 }
               }
@@ -676,7 +676,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
                   tvShowItem.CSFDItem = new CSFDItemViewModel(csfdEpisode);
 
                   if (csfdEpisode != null)
-                    tvShowItem.CSFDItem.OriginalName =  item.OriginalName;
+                    tvShowItem.CSFDItem.OriginalName = tvShowItem.CSFDItem.Name;
 
                 }
               }
