@@ -847,17 +847,29 @@ namespace VPlayer.WindowsPlayer.ViewModels
     #region OnPlayEvent
 
     private CancellationTokenSource downloadingSongTask;
+
     protected override void OnPlayEvent(PlayItemsEventData<SoundItemInPlaylistViewModel> data)
     {
       base.OnPlayEvent(data);
 
-      PlayList.Clear();
-      PlayList.AddRange(CreateSongViewModels(data.Items.Where(x => !(x is SongInPlayListViewModel))));
-      RequestReloadVirtulizedPlaylist();
 
-      ActualItem = PlayList.FirstOrDefault(x => x.Model.Id == ActualItem.Model.Id);
+      var itemsToRemove = data.Items.Where(x => !(x is SongInPlayListViewModel)).ToList();
 
-      DownloadSongInfos(PlayList);
+      foreach (var item in itemsToRemove)
+      {
+        PlayList.Remove(PlayList.Single(x => x.Model == item.Model));
+      }
+
+      PlayList.AddRange(CreateSongViewModels(itemsToRemove));
+
+      if (itemsToRemove.Count > 0)
+      {
+        RequestReloadVirtulizedPlaylist();
+
+        ActualItem = PlayList.FirstOrDefault(x => x.Model.Id == ActualItem.Model.Id);
+
+        DownloadSongInfos(PlayList);
+      }
     }
 
     #endregion
@@ -942,7 +954,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
         {
           songInPlayListViewModel.AlbumViewModel.IsInPlaylist = false;
         }
-
 
         var anyArtist = PlayList.OfType<SongInPlayListViewModel>().Any(x => x.ArtistViewModel.ModelId == songInPlayListViewModel.ArtistViewModel.ModelId);
 

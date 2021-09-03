@@ -193,20 +193,19 @@ namespace VPlayer.AudioStorage.AudioDatabase
               song.ItemModel.FileInfo.Name = song.ItemModel.FileInfo.Name;
             }
 
-            song = (from x in context.Songs
-                    where song.ItemModel.NormalizedName == x.ItemModel.NormalizedName
-                    where x.Album.Id == song.Album.Id
-                    select x).SingleOrDefault();
+            song = context.Songs
+              .Include(x => x.ItemModel)
+              .ThenInclude(x => x.FileInfo)
+              .Where(x => song.ItemModel.NormalizedName == x.ItemModel.NormalizedName)
+              .SingleOrDefault(x => x.Album.Id == song.Album.Id);
 
 
             if (song == null)
             {
-             
               song = new Song(album)
               {
                 ItemModel = soundItem
               };
-
 
               if (string.IsNullOrEmpty(song.ItemModel.Name))
               {
@@ -530,7 +529,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
                    where string.IsNullOrEmpty(x.Artist.NormalizedName)
                    where x.NormalizedName == album.NormalizedName
                    where x.Artist.NormalizedName == album.Artist.NormalizedName
-                   select x).Include(x => x.Songs).Include(x => x.Artist).SingleOrDefault();
+                   select x).Include(x => x.Songs).ThenInclude(x => x.ItemModel).ThenInclude(x => x.FileInfo)
+                  .Include(x => x.Artist).SingleOrDefault();
 
                 if (originalAlbum != null)
                   CombineAlbums(originalAlbum, album, context);
@@ -561,7 +561,11 @@ namespace VPlayer.AudioStorage.AudioDatabase
             {
               if (album.Songs == null)
               {
-                var dbAlbum = context.Albums.Where(x => x.Id == album.Id).Include(x => x.Songs).Include(x => x.Artist).SingleOrDefault();
+                var dbAlbum = context.Albums.Where(x => x.Id == album.Id)
+                  .Include(x => x.Songs)
+                  .ThenInclude(x => x.ItemModel)
+                  .ThenInclude(x => x.FileInfo)
+                  .Include(x => x.Artist).SingleOrDefault();
 
 
 
@@ -598,8 +602,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       try
       {
 
-        var songsToAdd =
-          (from x in albumToCombine.Songs
+        var songsToAdd = (from x in albumToCombine.Songs
            where originalAlbum.Songs.All(y => y.ItemModel.NormalizedName != x.ItemModel.NormalizedName)
            select x)
           .ToList();

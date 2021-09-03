@@ -133,18 +133,7 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region OnIsPlayingChanged
 
-    protected override void OnIsPlayingChanged(bool value)
-    {
-      if (ArtistViewModel != null)
-        ArtistViewModel.IsPlaying = value;
-
-      if (AlbumViewModel != null)
-        AlbumViewModel.IsPlaying = value;
-    }
-
-    #endregion
 
     #region Lyrics
 
@@ -503,6 +492,19 @@ namespace VPlayer.Core.ViewModels
         AlbumViewModel.Model.Update(album);
         RaisePropertyChanged(nameof(ImagePath));
       }
+    }
+
+    #endregion
+
+    #region OnIsPlayingChanged
+
+    protected override void OnIsPlayingChanged(bool value)
+    {
+      if (ArtistViewModel != null)
+        ArtistViewModel.IsPlaying = value;
+
+      if (AlbumViewModel != null)
+        AlbumViewModel.IsPlaying = value;
     }
 
     #endregion
