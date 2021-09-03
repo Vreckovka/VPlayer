@@ -443,14 +443,14 @@ namespace VPlayer.Core.ViewModels
       {
         if (clearPlaylistCommand == null)
         {
-          clearPlaylistCommand = new ActionCommand(OnClearPlaylist);
+          clearPlaylistCommand = new ActionCommand(OnClearPlaylistCallback);
         }
 
         return clearPlaylistCommand;
       }
     }
 
-    public async void OnClearPlaylist()
+    private async void OnClearPlaylistCallback()
     {
       if (ActualSavedPlaylist.Id > 0)
       {
@@ -468,6 +468,8 @@ namespace VPlayer.Core.ViewModels
       actualItemIndex = 0;
       PlaylistTotalTimePlayed = new TimeSpan(0);
       ActualSavedPlaylist = new TPlaylistModel() { Id = -1 };
+
+      OnClearPlaylist();
     }
 
     #endregion
@@ -1413,6 +1415,11 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
+
+    protected virtual void OnClearPlaylist()
+    {
+
+    }
 
     protected virtual void OnPlay()
     {
