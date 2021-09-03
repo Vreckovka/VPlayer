@@ -1035,17 +1035,25 @@ namespace VPlayer.WindowsPlayer.ViewModels
       return playlistName;
     }
 
-    #region OnClearPlaylist
+    #region BeforeClearPlaylist
 
-    protected override void OnClearPlaylist()
+    protected override void BeforeClearPlaylist()
     {
-      base.OnClearPlaylist();
+      base.BeforeClearPlaylist();
 
       PlayList.OfType<SongInPlayListViewModel>().Where(x => x.AlbumViewModel != null).Select(x => x.AlbumViewModel).Distinct()
-         .ForEach(x => x.IsInPlaylist = false);
+         .ForEach(x =>
+         {
+           x.IsPlaying = false;
+           x.IsInPlaylist = false;
+         });
 
       PlayList.OfType<SongInPlayListViewModel>().Where(x => x.ArtistViewModel != null).Select(x => x.ArtistViewModel).Distinct()
-        .ForEach(x => x.IsInPlaylist = false);
+        .ForEach(x =>
+        {
+          x.IsPlaying = false;
+          x.IsInPlaylist = false;
+        });
     }
 
     #endregion

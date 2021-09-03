@@ -457,6 +457,7 @@ namespace VPlayer.Core.ViewModels
         await UpdateActualSavedPlaylistPlaylist();
       }
 
+      BeforeClearPlaylist();
 
       IsPlaying = false;
       VirtualizedPlayList = null;
@@ -468,8 +469,6 @@ namespace VPlayer.Core.ViewModels
       actualItemIndex = 0;
       PlaylistTotalTimePlayed = new TimeSpan(0);
       ActualSavedPlaylist = new TPlaylistModel() { Id = -1 };
-
-      OnClearPlaylist();
     }
 
     #endregion
@@ -1416,7 +1415,7 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    protected virtual void OnClearPlaylist()
+    protected virtual void BeforeClearPlaylist()
     {
 
     }
