@@ -249,7 +249,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       {
         File.Delete(finalPath);
       }
-       
+
 
       i.Save(finalPath, ImageFormat.Jpeg);
       i.Dispose();
@@ -303,6 +303,45 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         seasons[i].SeasonNumber = i + 1;
       }
 
+
+      var isSingleSeasoned = !document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/section[1]/div[1]/h3").FirstOrDefault()?.InnerText.Contains("Série");
+
+      if (isSingleSeasoned == true)
+      {
+        var episodes = new List<CSFDTVShowSeasonEpisode>();
+
+        var newSingleSeason = new CSFDTVShowSeason()
+        {
+          SeasonEpisodes = episodes,
+          SeasonNumber = 1
+        };
+
+        statusMessage.Message = "Single seasoned: Downlading episodes";
+        statusManager.UpdateMessage(statusMessage);
+
+        episodeNumber = 1;
+        foreach (var season in seasons)
+        {
+          var newEpisode = new CSFDTVShowSeasonEpisode();
+
+          newEpisode.Name = season.Name;
+          newEpisode.Url = season.Url;
+
+          LoadCsfdEpisode(newEpisode);
+
+          if (newEpisode.EpisodeNumber == null)
+            newEpisode.EpisodeNumber = episodeNumber;
+
+          episodes.Add(newEpisode);
+
+          statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+          episodeNumber++;
+        }
+
+        return new List<CSFDTVShowSeason>() { newSingleSeason };
+      }
+
+
       if (seasonNumber == null)
       {
         foreach (var season in seasons)
@@ -328,8 +367,10 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           return null;
         }
 
+
         statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
       }
+
 
 
       return seasons;
@@ -382,7 +423,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         statusManager.UpdateMessage(statusMessage);
 
-       
+
 
         if (episodeNumber == null)
         {
@@ -417,7 +458,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           logger.Log(MessageType.Success, $"Tv show episode: {newEpisode.Name}");
           statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
         }
-       
+
 
         return episodes;
       }

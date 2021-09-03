@@ -638,9 +638,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
               {
                 var singleSeason = cSFDTVShow.Seasons.Where(x => x.SeasonEpisodes != null).Single(x => x.SeasonEpisodes.Count > 0);
 
-                if (singleSeason != null && singleSeason?.SeasonEpisodes?.Count == 1)
+                var episodeS = singleSeason?.SeasonEpisodes.First();
+
+                if (singleSeason?.SeasonEpisodes?.Count == 1 && episodeS != null)
                 {
-                  viewModel.CSFDItem = new CSFDItemViewModel(singleSeason.SeasonEpisodes.First());
+                  viewModel.CSFDItem = new CSFDItemViewModel(episodeS);
                   viewModel.CSFDItem.OriginalName = viewModel.CSFDItem.Name;
                 }
                 else if (singleSeason?.SeasonEpisodes != null)
@@ -653,10 +655,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
                     var csfdEpisode = singleSeason.SeasonEpisodes.SingleOrDefault(x => x.EpisodeNumber == number.Value);
 
-                    episode.CSFDItem = new CSFDItemViewModel(csfdEpisode);
-
-                    if (episode.CSFDItem != null)
+                    if (csfdEpisode != null)
+                    {
+                      episode.CSFDItem = new CSFDItemViewModel(csfdEpisode);
                       episode.CSFDItem.OriginalName = episode.CSFDItem.Name;
+                    }
+
                   }
                 }
               }
@@ -673,16 +677,16 @@ namespace VPlayer.WindowsPlayer.ViewModels
                     csfdEpisode = cSFDTVShow.Seasons[number.Key - 1].SeasonEpisodes[number.Value - 1];
                   }
 
-                  tvShowItem.CSFDItem = new CSFDItemViewModel(csfdEpisode);
-
                   if (csfdEpisode != null)
+                  {
+                    tvShowItem.CSFDItem = new CSFDItemViewModel(csfdEpisode);
                     tvShowItem.CSFDItem.OriginalName = tvShowItem.CSFDItem.Name;
-
+                  }
                 }
               }
             }
           }
-          else 
+          else
           {
             viewModel.CSFDItem = new CSFDItemViewModel(item);
             viewModel.CSFDItem.OriginalName = string.IsNullOrEmpty(item.OriginalName) ? item.Name : item.OriginalName;
