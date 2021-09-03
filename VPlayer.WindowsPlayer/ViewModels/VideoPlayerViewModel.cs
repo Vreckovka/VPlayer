@@ -642,8 +642,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
                 if (singleSeason?.SeasonEpisodes?.Count == 1 && episodeS != null)
                 {
-                  viewModel.CSFDItem = new CSFDItemViewModel(episodeS);
-                  viewModel.CSFDItem.OriginalName = viewModel.CSFDItem.Name;
+                  UpdateVideoItem(viewModel, episodeS, item.Name);
                 }
                 else if (singleSeason?.SeasonEpisodes != null)
                 {
@@ -655,12 +654,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
                     var csfdEpisode = singleSeason.SeasonEpisodes.SingleOrDefault(x => x.EpisodeNumber == number.Value);
 
-                    if (csfdEpisode != null)
-                    {
-                      episode.CSFDItem = new CSFDItemViewModel(csfdEpisode);
-                      episode.CSFDItem.OriginalName = episode.CSFDItem.Name;
-                    }
-
+                    UpdateVideoItem(episode, csfdEpisode, item.Name);
                   }
                 }
               }
@@ -677,25 +671,37 @@ namespace VPlayer.WindowsPlayer.ViewModels
                     csfdEpisode = cSFDTVShow.Seasons[number.Key - 1].SeasonEpisodes[number.Value - 1];
                   }
 
-                  if (csfdEpisode != null)
-                  {
-                    tvShowItem.CSFDItem = new CSFDItemViewModel(csfdEpisode);
-                    tvShowItem.CSFDItem.OriginalName = tvShowItem.CSFDItem.Name;
-                  }
+                  UpdateVideoItem(tvShowItem, csfdEpisode, item.Name);
                 }
               }
             }
           }
           else
           {
-            viewModel.CSFDItem = new CSFDItemViewModel(item);
-            viewModel.CSFDItem.OriginalName = string.IsNullOrEmpty(item.OriginalName) ? item.Name : item.OriginalName;
+            UpdateVideoItem(viewModel, item, item.Name);
           }
         }
       });
     }
 
     #endregion
+
+    private void UpdateVideoItem(VideoItemInPlaylistViewModel tvShowItem, CSFDItem csfdEpisode, string tvShowName)
+    {
+      if (csfdEpisode != null)
+      {
+        tvShowItem.CSFDItem = new CSFDItemViewModel(csfdEpisode);
+
+        if (tvShowItem.CSFDItem.OriginalName == tvShowName)
+        {
+          tvShowItem.CSFDItem.OriginalName = tvShowItem.CSFDItem.Name;
+        }
+        else
+        {
+          tvShowItem.CSFDItem.OriginalName = string.IsNullOrEmpty(csfdEpisode.OriginalName) ? csfdEpisode.Name : csfdEpisode.OriginalName;
+        }
+      }
+    }
 
     #region MediaPlayer_ParsedChanged
 

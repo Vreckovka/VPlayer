@@ -576,7 +576,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       cSFDTVShowSeasonEpisode.Year = year;
       cSFDTVShowSeasonEpisode.Actors = actors;
       cSFDTVShowSeasonEpisode.Directors = directors;
-      cSFDTVShowSeasonEpisode.OriginalName = originalName;
+      cSFDTVShowSeasonEpisode.OriginalName = originalName.Replace("(více)", null);
       cSFDTVShowSeasonEpisode.Generes = generes;
       cSFDTVShowSeasonEpisode.SeasonNumber = number.Key != -1 ? (int?)number.Key : null;
       cSFDTVShowSeasonEpisode.EpisodeNumber = number.Value != -1 ? (int?)number.Value : null;
