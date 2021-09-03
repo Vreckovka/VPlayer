@@ -23,6 +23,7 @@ using VCore.Modularity.RegionProviders;
 using VCore.Standard;
 using VCore.Standard.Modularity.Interfaces;
 using VCore.Standard.ViewModels.TreeView;
+using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
@@ -45,7 +46,8 @@ namespace VPlayer.IPTV.ViewModels
       IStorageManager storageManager,
       IEventAggregator eventAggregator,
       IIptvStalkerServiceProvider iptvStalkerServiceProvider,
-      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, vLCPlayer)
+      IWindowManager windowManager,
+      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator,windowManager, vLCPlayer)
     {
       this.iptvStalkerServiceProvider = iptvStalkerServiceProvider ?? throw new ArgumentNullException(nameof(iptvStalkerServiceProvider));
     }

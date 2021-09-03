@@ -463,6 +463,9 @@ namespace VPlayer.Core.ViewModels
       LRCFile = null;
       Lyrics = null;
 
+      if (ArtistViewModel == null || AlbumViewModel == null)
+        return false;
+
       if (LRCFile == null)
         await LoadLRCFromGoogleDrive();
 

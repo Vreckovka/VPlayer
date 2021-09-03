@@ -91,13 +91,6 @@
 		<None Remove="Resources\VPlayer_Artist.png" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Include="VersionAutoIncrement.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>VersionAutoIncrement.tt</DependentUpon>
-	  </None>
-	</ItemGroup>
-	<ItemGroup>
 		<Resource Include="Resources\Fonts\FontAwesome\fa-brands-400.ttf" />
 		<Resource Include="Resources\Fonts\FontAwesome\fa-duotone-900.ttf" />
 		<Resource Include="Resources\Fonts\FontAwesome\fa-light-300.ttf" />

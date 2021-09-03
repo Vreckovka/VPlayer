@@ -8,6 +8,7 @@ using Ninject;
 using Prism.Events;
 using VCore;
 using VCore.Modularity.RegionProviders;
+using VCore.WPF.Managers;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.IPTV.ViewModels;
@@ -25,7 +26,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
       IStorageManager storageManager,
       IEventAggregator eventAggregator,
       IIptvStalkerServiceProvider iptvStalkerServiceProvider,
-      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, iptvStalkerServiceProvider, vLCPlayer)
+      IWindowManager windowManager,
+      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, iptvStalkerServiceProvider,windowManager, vLCPlayer)
     {
     }
 

@@ -30,6 +30,7 @@ using VCore.ViewModels;
 using LibVLCSharp.Shared;
 using VCore.Standard.ViewModels.TreeView;
 using VCore.WPF.Behaviors;
+using VCore.WPF.Managers;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -51,6 +52,7 @@ namespace VPlayer.Core.ViewModels
 
     protected readonly ILogger logger;
     protected readonly IStorageManager storageManager;
+    private readonly IWindowManager windowManager;
     protected int actualItemIndex;
     protected HashSet<TItemViewModel> shuffleList = new HashSet<TItemViewModel>();
     private bool wasVlcInitilized;
@@ -65,10 +67,12 @@ namespace VPlayer.Core.ViewModels
       ILogger logger,
       IStorageManager storageManager,
       IEventAggregator eventAggregator,
+      IWindowManager windowManager,
       VLCPlayer vLCPlayer) : base(regionProvider)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
+      this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       EventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
 
       Kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
@@ -757,7 +761,7 @@ namespace VPlayer.Core.ViewModels
     {
       Application.Current.Dispatcher.Invoke(() =>
       {
-        MessageBox.Show("VLC BROKE!!!!!");
+        windowManager.ShowErrorPrompt($"Unable to play item {ActualItem?.Name}\nSource: {ActualItem?.Model?.Source}");
       });
     }
 

@@ -5,6 +5,7 @@ using Prism.Events;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
+using VCore.WPF.Managers;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Factories;
 using VPLayer.Domain.Contracts.IPTV;
@@ -23,7 +24,8 @@ namespace VPlayer.IPTV.ViewModels
       IEventAggregator eventAggregator,
       IVPlayerViewModelsFactory viewModelsFactory,
       IIptvStalkerServiceProvider iptvStalkerServiceProvider,
-      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, iptvStalkerServiceProvider, vLCPlayer)
+      IWindowManager windowManager,
+      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, iptvStalkerServiceProvider,windowManager, vLCPlayer)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
     }

@@ -73,7 +73,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       VLCPlayer vLCPlayer,
       IWindowManager windowManager,
       ICSFDWebsiteScrapper iCsfdWebsiteScrapper) :
-      base(regionProvider, kernel, logger, storageManager, eventAggregator, vLCPlayer)
+      base(regionProvider, kernel, logger, storageManager, eventAggregator,windowManager, vLCPlayer)
     {
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       this.iCsfdWebsiteScrapper = iCsfdWebsiteScrapper ?? throw new ArgumentNullException(nameof(iCsfdWebsiteScrapper));

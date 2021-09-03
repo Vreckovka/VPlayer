@@ -14,6 +14,7 @@ using VCore;
 using VCore.Helpers;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Modularity.Interfaces;
+using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
@@ -40,7 +41,8 @@ namespace VPlayer.Core.ViewModels
       ILogger logger,
       IStorageManager storageManager,
       IEventAggregator eventAggregator,
-      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, vLCPlayer)
+      IWindowManager windowManager,
+      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, vLCPlayer)
     {
       BufferingSubject.Throttle(TimeSpan.FromSeconds(0.5)).Subscribe(x =>
       {

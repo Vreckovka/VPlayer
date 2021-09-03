@@ -17,6 +17,7 @@ using VCore.ItemsCollections.VirtualList.VirtualLists;
 using VCore.Modularity.Events;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
+using VCore.WPF.Managers;
 using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
@@ -69,7 +70,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
       UPnPManagerViewModel uPnPManagerViewModel,
       ICloudService cloudService,
       ILogger logger,
-      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, vLCPlayer)
+      IWindowManager windowManager,
+      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, vLCPlayer)
     {
       this.vPlayerRegionProvider = regionProvider ?? throw new ArgumentNullException(nameof(regionProvider));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
@@ -706,13 +708,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
               await storageManager.UpdateEntityAsync(ActualItem.Model);
             }
 
-            var validItemsToUpdate = PlayList.OfType<SongInPlayListViewModel>().ToList();
+            var validItemsToUpdate = PlayList.OfType<SongInPlayListViewModel>()
+              .Where(x => x.ArtistViewModel != null && x.AlbumViewModel != null).ToList();
 
             var itemsAfter = validItemsToUpdate.Skip(actualItemIndex).Where(x => x.LyricsObject == null);
             var itemsBefore = validItemsToUpdate.Take(actualItemIndex).Where(x => x.LyricsObject == null);
 
             await DownloadLyrics(itemsAfter, cancellationToken);
-
             await DownloadLyrics(itemsBefore, cancellationToken);
           }
         }
@@ -852,6 +854,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
       PlayList.Clear();
       PlayList.AddRange(CreateSongViewModels(data.Items.Where(x => !(x is SongInPlayListViewModel))));
       RequestReloadVirtulizedPlaylist();
+
+      ActualItem = PlayList.FirstOrDefault(x => x.Model.Id == ActualItem.Model.Id);
 
       DownloadSongInfos(PlayList);
     }
