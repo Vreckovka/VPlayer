@@ -143,8 +143,7 @@ namespace VPlayer.Library
               image.EndInit();
             }
           }
-          else if (Uri.TryCreate(filename, UriKind.Absolute, out uriResult)
-                   && uriResult.Scheme == Uri.UriSchemeHttp)
+          else 
           {
             return value;
           }
