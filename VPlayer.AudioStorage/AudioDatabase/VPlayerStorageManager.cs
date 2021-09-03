@@ -461,7 +461,10 @@ namespace VPlayer.AudioStorage.AudioDatabase
               (from x in context.Albums.Include(x => x.Artist)
                where x.MusicBrainzId != null
                where x.MusicBrainzId == album.MusicBrainzId
-               select x).Include(x => x.Songs).Include(x => x.Artist).SingleOrDefault();
+               select x).Include(x => x.Songs)
+              .ThenInclude(x => x.ItemModel)
+              .ThenInclude(x => x.FileInfo)
+              .Include(x => x.Artist).SingleOrDefault();
 
             //Update is first time
             if (originalAlbum == null)
@@ -603,8 +606,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
       {
 
         var songsToAdd = (from x in albumToCombine.Songs
-           where originalAlbum.Songs.All(y => y.ItemModel.NormalizedName != x.ItemModel.NormalizedName)
-           select x)
+                          where originalAlbum.Songs.All(y => y.ItemModel.NormalizedName != x.ItemModel.NormalizedName)
+                          select x)
           .ToList();
 
         originalAlbum.Songs.AddRange(songsToAdd);
