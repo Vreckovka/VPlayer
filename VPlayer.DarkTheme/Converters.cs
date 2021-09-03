@@ -131,6 +131,8 @@ namespace VPlayer.Library
         }
         else if (value is string filename)
         {
+          Uri uriResult;
+
           if (File.Exists(filename))
           {
             using (var stream = File.OpenRead(filename))
@@ -140,6 +142,11 @@ namespace VPlayer.Library
               image.StreamSource = stream;
               image.EndInit();
             }
+          }
+          else if (Uri.TryCreate(filename, UriKind.Absolute, out uriResult)
+                   && uriResult.Scheme == Uri.UriSchemeHttp)
+          {
+            return value;
           }
         }
       }

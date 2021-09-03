@@ -733,6 +733,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       if (bestItem != null)
       {
         bestItem.Rating = GetCsfdRating(bestItem);
+        bestItem.ImagePath = GetCsfdImage(bestItem);
       }
 
       if (showStatusMassage)
@@ -805,6 +806,29 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         {
           return rating;
         }
+      }
+
+      return null;
+    }
+
+    #endregion
+
+    #region GetCsfdImage
+
+    private string GetCsfdImage(CSFDItem cSFDItem)
+    {
+      chromeDriver.Url = cSFDItem.Url;
+      chromeDriver.Navigate();
+
+      var document = new HtmlDocument();
+
+      document.LoadHtml(chromeDriver.PageSource);
+
+      var urlValue = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[1]/a/img").FirstOrDefault()?.Attributes[2].Value;
+
+      if (!urlValue.Contains("data:image"))
+      {
+        return urlValue.Replace("//image.pmgstatic.com", "https://image.pmgstatic.com");
       }
 
       return null;
