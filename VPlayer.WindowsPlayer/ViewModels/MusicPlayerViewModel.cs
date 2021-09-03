@@ -451,7 +451,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         try
         {
-          if (!(viewmodel is SongInPlayListViewModel))
+          if (viewmodel is SongInPlayListViewModel songInPlayListViewModel &&
+              songInPlayListViewModel.AlbumViewModel == null &&
+              songInPlayListViewModel.ArtistViewModel == null)
           {
             var fileInfo = viewmodel?.Model?.FileInfo;
 
@@ -539,68 +541,47 @@ namespace VPlayer.WindowsPlayer.ViewModels
                 }
               }
 
-              var song = new Song()
+              Application.Current.Dispatcher.InvokeAsync(async () =>
               {
-                Album = downloadingAlbum,
-                ItemModel = viewmodel.Model,
-              };
-
-              var vm = viewModelsFactory.Create<SongInPlayListViewModel>(song);
-
-              var index = PlayList.IndexOf(viewmodel);
-
-              if (index >= 0)
-              {
-                Application.Current.Dispatcher.InvokeAsync(async () =>
+                try
                 {
-                  try
+                  songInPlayListViewModel.SongModel.Album = downloadingAlbum;
+
+                  songInPlayListViewModel.Initialize();
+
+
+                  if (songInPlayListViewModel.AlbumViewModel == null && songInPlayListViewModel.SongModel.Album != null)
                   {
-                    vm.Initialize();
+                    songInPlayListViewModel.AlbumViewModel = viewModelsFactory.Create<AlbumViewModel>(songInPlayListViewModel.SongModel.Album);
+                  }
 
-                    vm.ActualPosition = viewmodel.ActualPosition;
-                    vm.IsFavorite = viewmodel.IsFavorite;
-                    vm.IsPlaying = viewmodel.IsPlaying;
-                    vm.IsSelected = viewmodel.IsSelected;
-                    vm.Duration = viewmodel.Duration;
+                  if (songInPlayListViewModel.ArtistViewModel == null && songInPlayListViewModel.SongModel.Album?.Artist != null)
+                  {
+                    songInPlayListViewModel.ArtistViewModel = viewModelsFactory.Create<ArtistViewModel>(songInPlayListViewModel.SongModel.Album.Artist);
+                  }
 
-                    if (ActualItem == viewmodel)
-                    {
-                      ActualItem = vm;
-                    }
+                  cancellationToken.ThrowIfCancellationRequested();
 
-                    if (vm.AlbumViewModel == null && vm.SongModel.Album != null)
-                    {
-                      vm.AlbumViewModel = viewModelsFactory.Create<AlbumViewModel>(vm.SongModel.Album);
-                    }
-
-                    if (vm.ArtistViewModel == null && vm.SongModel.Album?.Artist != null)
-                    {
-                      vm.ArtistViewModel = viewModelsFactory.Create<ArtistViewModel>(vm.SongModel.Album.Artist);
-                    }
-
-                    PlayList.Remove(viewmodel);
-                    PlayList.Insert(index, vm);
-                    RequestReloadVirtulizedPlaylist();
-
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    var resultLyrics = await vm.TryToRefreshUpdateLyrics();
+                  Task.Run(async () =>
+                  {
+                    var resultLyrics = await songInPlayListViewModel.TryToRefreshUpdateLyrics();
 
                     if (resultLyrics && viewmodel.Model != null)
                     {
                       await storageManager.UpdateEntityAsync(viewmodel.Model);
                     }
-                  }
+                  });
 
-                  catch (TaskCanceledException)
-                  {
-                  }
-                  catch (Exception ex)
-                  {
-                    logger.Log(ex);
-                  }
-                });
-              }
+                }
+
+                catch (TaskCanceledException)
+                {
+                }
+                catch (Exception ex)
+                {
+                  logger.Log(ex);
+                }
+              });
             }
           }
         }
@@ -868,7 +849,40 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       base.OnPlayEvent(data);
 
+      PlayList.Clear();
+      PlayList.AddRange(CreateSongViewModels(data.Items.Where(x => !(x is SongInPlayListViewModel))));
+      RequestReloadVirtulizedPlaylist();
+
       DownloadSongInfos(PlayList);
+    }
+
+    #endregion
+
+    #region CreateSongViewModels
+
+    private IEnumerable<SongInPlayListViewModel> CreateSongViewModels(IEnumerable<SoundItemInPlaylistViewModel> items)
+    {
+      var list = new List<SongInPlayListViewModel>();
+
+      foreach (var viewmodel in items)
+      {
+        var song = new Song()
+        {
+          ItemModel = viewmodel.Model,
+        };
+
+        var vm = viewModelsFactory.Create<SongInPlayListViewModel>(song);
+
+        vm.ActualPosition = viewmodel.ActualPosition;
+        vm.IsFavorite = viewmodel.IsFavorite;
+        vm.IsPlaying = viewmodel.IsPlaying;
+        vm.IsSelected = viewmodel.IsSelected;
+        vm.Duration = viewmodel.Duration;
+
+        list.Add(vm);
+      }
+
+      return list;
     }
 
     #endregion
