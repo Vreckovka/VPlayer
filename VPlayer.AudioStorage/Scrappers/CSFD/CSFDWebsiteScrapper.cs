@@ -791,11 +791,23 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       document.LoadHtml(chromeDriver.PageSource);
 
-      var ratingNode = document.DocumentNode.SelectNodes("/html/body/div[4]/div/div[1]/aside/div[1]/div[2]/div")?.FirstOrDefault()?.InnerText.Replace("\t", null).Replace("\r", null).Replace("\n", null).Replace("%", null);
+      var ratingNode = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/aside/div[1]/div[2]/div")?.FirstOrDefault()?.InnerText.Replace("\t", null).Replace("\r", null).Replace("\n", null).Replace("%", null);
 
-      int.TryParse(ratingNode, out var rating);
+      if (int.TryParse(ratingNode, out var rating))
+      {
+        return rating;
+      }
+      else
+      {
+        ratingNode = document.DocumentNode.SelectNodes("/html/body/div[4]/div/div[1]/aside/div[1]/div[2]/div")?.FirstOrDefault()?.InnerText.Replace("\t", null).Replace("\r", null).Replace("\n", null).Replace("%", null);
 
-      return rating;
+        if (int.TryParse(ratingNode, out rating))
+        {
+          return rating;
+        }
+      }
+
+      return null;
     }
 
     #endregion
