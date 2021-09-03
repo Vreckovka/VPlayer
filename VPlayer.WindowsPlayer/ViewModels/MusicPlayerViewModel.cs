@@ -574,6 +574,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
                     }
                   });
 
+                  songInPlayListViewModel.RaiseNotifyPropertyChanged(nameof(SoundItemFilePlaylist.Name));
                 }
 
                 catch (TaskCanceledException)
@@ -827,11 +828,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     protected override void OnRemoveItemsFromPlaylist(DeleteType deleteType, RemoveFromPlaylistEventArgs<SoundItemInPlaylistViewModel> args)
     {
-      var albumId = args.ItemsToRemove.OfType<SongInPlayListViewModel>().FirstOrDefault(x => x.AlbumViewModel != null)?.AlbumViewModel.ModelId;
+      var albumId = args.ItemsToRemove.OfType<SongInPlayListViewModel>()
+        .FirstOrDefault(x => x.AlbumViewModel != null)?.AlbumViewModel.ModelId;
 
       if (albumId != null)
       {
-        var albumSongs = PlayList.OfType<SongInPlayListViewModel>().Where(x => x.SongModel.Album.Id == albumId).ToList();
+        var albumSongs = PlayList.OfType<SongInPlayListViewModel>()
+          .Where(x => x.SongModel?.Album.Id == albumId).ToList();
 
         foreach (var albumSong in albumSongs)
         {

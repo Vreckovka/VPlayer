@@ -220,6 +220,11 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    public void RaiseNotifyPropertyChanged(string propertyName)
+    {
+      RaisePropertyChanged(propertyName);
+    }
+
     protected virtual void OnIsPlayingChanged(bool value)
     {
     }

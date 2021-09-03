@@ -133,8 +133,6 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-
-
     #region Lyrics
 
     public string Lyrics
