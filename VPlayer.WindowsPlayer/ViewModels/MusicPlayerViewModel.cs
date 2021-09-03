@@ -834,7 +834,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
       if (albumId != null)
       {
         var albumSongs = PlayList.OfType<SongInPlayListViewModel>()
-          .Where(x => x.SongModel?.Album.Id == albumId).ToList();
+          .Where(x => x.SongModel?.Album != null)
+          .Where(x => x.SongModel.Album.Id == albumId).ToList();
 
         foreach (var albumSong in albumSongs)
         {
@@ -951,14 +952,18 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       if (eventPattern.EventArgs is SongInPlayListViewModel songInPlayListViewModel)
       {
-        var anyAlbum = PlayList.OfType<SongInPlayListViewModel>().Any(x => x.AlbumViewModel.ModelId == songInPlayListViewModel.AlbumViewModel.ModelId);
+        var anyAlbum = PlayList.OfType<SongInPlayListViewModel>()
+          .Where(x => x.AlbumViewModel != null)
+          .Any(x => x.AlbumViewModel.ModelId == songInPlayListViewModel.AlbumViewModel.ModelId);
 
         if (!anyAlbum)
         {
           songInPlayListViewModel.AlbumViewModel.IsInPlaylist = false;
         }
 
-        var anyArtist = PlayList.OfType<SongInPlayListViewModel>().Any(x => x.ArtistViewModel.ModelId == songInPlayListViewModel.ArtistViewModel.ModelId);
+        var anyArtist = PlayList.OfType<SongInPlayListViewModel>()
+          .Where(x => x.ArtistViewModel != null)
+          .Any(x => x.ArtistViewModel.ModelId == songInPlayListViewModel.ArtistViewModel.ModelId);
 
         if (!anyArtist)
         {
