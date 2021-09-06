@@ -180,6 +180,11 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     private string GetTvShowName(string url, out string posterUrl)
     {
+      url = url
+        .Replace("https://new.csfd.sk", baseUrl)
+        .Replace("https://csfd.sk", baseUrl)
+        .Replace("https://www.csfd.sk", baseUrl);
+
       chromeDriver.Url = url;
       chromeDriver.Navigate();
 
@@ -576,7 +581,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       cSFDTVShowSeasonEpisode.Year = year;
       cSFDTVShowSeasonEpisode.Actors = actors;
       cSFDTVShowSeasonEpisode.Directors = directors;
-      cSFDTVShowSeasonEpisode.OriginalName = originalName.Replace("(více)", null);
+      cSFDTVShowSeasonEpisode.OriginalName = originalName?.Replace("(více)", null);
       cSFDTVShowSeasonEpisode.Generes = generes;
       cSFDTVShowSeasonEpisode.SeasonNumber = number.Key != -1 ? (int?)number.Key : null;
       cSFDTVShowSeasonEpisode.EpisodeNumber = number.Value != -1 ? (int?)number.Value : null;
@@ -699,9 +704,9 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         {
           if (tvSHow.Seasons != null)
           {
-            if (tvSHow.Seasons.Count > episodeKeys.Key)
+            if (tvSHow.Seasons.Count >= episodeKeys.Key)
             {
-              var season = tvSHow.Seasons[episodeKeys.Value];
+              var season = tvSHow.Seasons[episodeKeys.Key - 1];
 
               if (season.SeasonEpisodes != null)
               {
@@ -710,6 +715,8 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
                   return season.SeasonEpisodes[0];
                 }
               }
+
+              return season;
             }
           }
 
