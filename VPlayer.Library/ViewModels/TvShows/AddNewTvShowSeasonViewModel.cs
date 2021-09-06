@@ -6,7 +6,7 @@ using System.Windows.Input;
 using Logger;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using VCore;
-using VCore.Standard.NewFolder;
+using VCore.Standard.Providers;
 using VCore.ViewModels;
 using VPlayer.AudioStorage.DataLoader;
 using VPlayer.AudioStorage.DomainClasses.Video;

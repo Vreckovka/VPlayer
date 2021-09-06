@@ -9,7 +9,7 @@ using VCore;
 using VCore.ItemsCollections;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
-using VCore.Standard.NewFolder;
+using VCore.Standard.Providers;
 using VCore.Standard.ViewModels.TreeView;
 using VCore.ViewModels;
 using VCore.WPF.Interfaces;

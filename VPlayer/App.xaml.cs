@@ -12,7 +12,7 @@ using Ninject.Activation;
 using Ninject.Parameters;
 using Prism.Ioc;
 using Prism.Modularity;
-using VCore.Standard.NewFolder;
+using VCore.Standard.Providers;
 using VCore.WPF;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Managers;

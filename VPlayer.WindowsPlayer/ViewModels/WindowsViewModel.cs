@@ -9,7 +9,7 @@ using VCore.Helpers;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
-using VCore.Standard.NewFolder;
+using VCore.Standard.Providers;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
 using VCore.WPF.Managers;

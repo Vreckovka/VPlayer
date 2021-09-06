@@ -5,7 +5,7 @@ using VCore;
 using VCore.ItemsCollections;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard;
-using VCore.Standard.NewFolder;
+using VCore.Standard.Providers;
 using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
 using VPlayer.AudioStorage.Interfaces.Storage;

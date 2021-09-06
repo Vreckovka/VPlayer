@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
-using VCore.Standard.NewFolder;
+using VCore.Standard.Providers;
 using VCore.WPF.Managers;
 using VCore.WPF.ViewModels.WindowsFiles;
 using VPlayer.Core;
