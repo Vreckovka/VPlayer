@@ -674,7 +674,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       if (DataLoader.DataLoader.IsTvShow(episodeKeys) && !onlySingleItem)
       {
-        if (tvShowName != null)
+        if (tvShowName == null)
         {
           var match = Regex.Match(parsedName, @"\D*");
 
@@ -713,6 +713,10 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
                 if (season.SeasonEpisodes.Count == 1)
                 {
                   return season.SeasonEpisodes[0];
+                }
+                else if(episodeKeys.Value != -1 && season.SeasonEpisodes.Count >= episodeKeys.Value)
+                {
+                  return season.SeasonEpisodes[episodeKeys.Value - 1];
                 }
               }
 

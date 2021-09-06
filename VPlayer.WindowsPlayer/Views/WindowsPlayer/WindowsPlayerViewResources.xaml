@@ -202,14 +202,16 @@
                                 <RowDefinition />
                                 <RowDefinition Height="auto" />
                                 <RowDefinition />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition />
                             </Grid.RowDefinitions>
 
                             <Grid.Resources>
                                 <Style x:Key="Header" TargetType="TextBlock">
-                                    <Setter Property="FontSize" Value="14" />
+                                    <Setter Property="FontSize" Value="13" />
                                     <Setter Property="Margin" Value="0,1" />
-                                    <Setter Property="Foreground" Value="#ccc" />
-                                    <Setter Property="FontWeight" Value="Thin" />
+                                    <Setter Property="Foreground" Value="#808080" />
+                                    <Setter Property="FontWeight" Value="Medium" />
                                 </Style>
 
                                 <Style x:Key="Content" TargetType="TextBlock">
@@ -242,6 +244,37 @@
                             <TextBlock Grid.Row="5"
                                        Style="{StaticResource Content}"
                                        Text="{Binding Year}" />
+
+                            <TextBlock Grid.Row="6"
+                                       Style="{StaticResource Header}"
+                                       Text="Description" />
+
+                            <TextBlock Grid.Row="7">
+                                <Run FontSize="14"
+                                     FontWeight="Medium"
+                                     Foreground="#808080"
+                                     Text="Season" />
+
+                                <Run Text="{Binding Model.SeasonNumber}" />
+
+                                <Run FontSize="14"
+                                     FontWeight="Medium"
+                                     Foreground="#808080"
+                                     Text="Episode" />
+
+                                <Run Text="{Binding Model.EpisodeNumber}" />
+
+                                <TextBlock.Style>
+                                    <Style BasedOn="{StaticResource Content}" TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Hidden" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Model, Converter={converters1:IsTypeConverter}, ConverterParameter={x:Type domain:CSFDTVShowSeasonEpisode}}" Value="true">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
 
                         </Grid>
                     </Border>
