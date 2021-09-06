@@ -3,11 +3,11 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:library="clr-namespace:VPlayer.Library"
+                    xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.DarkTheme"
                     xmlns:local="clr-namespace:VPlayer.StylesDictionaries"
                     xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
                     xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF"
-                    xmlns:userControls="clr-namespace:VPlayer.Player.UserControls"
-                    xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.DarkTheme">
+                    xmlns:userControls="clr-namespace:VPlayer.Player.UserControls">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="OverlayStyles.xaml" />
@@ -387,7 +387,7 @@
         </Grid>
     </DataTemplate>
 
-    <templateSelectors:WindowsPlayerItemsTemplateSelector x:Key="WindowsPlayerItemsTemplateSelector"
+    <templateSelectors:WindowsPlayerItemsTemplateSelector x:Key="WindowsPlayerItemsTemplateSelectorPlayer"
                                                           SongDataTemplate="{StaticResource SongDescriptionTemplate}"
                                                           TvShowEpisodeDataTemplate="{StaticResource TvShowEpisodeDescriptionDataTemplate}"
                                                           VideoItemDataTemplate="{StaticResource VideoItemDescriptionDataTemplate}" />
@@ -443,7 +443,7 @@
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Top"
                                 Content="{Binding ActualItem}"
-                                ContentTemplateSelector="{StaticResource WindowsPlayerItemsTemplateSelector}" />
+                                ContentTemplateSelector="{StaticResource WindowsPlayerItemsTemplateSelectorPlayer}" />
 
 
                 <userControls:SoundVizualizer Grid.Row="2"

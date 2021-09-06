@@ -1101,7 +1101,7 @@ namespace VPlayer.Core.ViewModels
         playlistModels.Add(newItem);
       }
 
-      var songIds = PlayList.Select(x => x.Model.Id);
+      var songIds = PlayList.Select(x => x.Model.Id).ToList();
 
       var hashCode = songIds.GetSequenceHashCode();
 

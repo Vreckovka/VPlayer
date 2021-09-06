@@ -9,6 +9,6 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     CSFDTVShowSeason LoadTvShowSeason(string url);
     Task<CSFDQueryResult> FindItems(string name);
-    Task<CSFDItem> GetBestFind(string name, int? year = null, bool onlySingleItem = false);
+    Task<CSFDItem> GetBestFind(string name, int? year = null, bool onlySingleItem = false, string tvShowUrl = null, string tvShowName = null, int? seasonNumber = null, int? episodeNumber = null);
   }
 }

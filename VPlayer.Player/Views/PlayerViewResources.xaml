@@ -46,6 +46,7 @@
                                          IconWidth="8"
                                          IsReadOnly="True"
                                          PathStyle="{StaticResource xmark}"
+                                         Style="{StaticResource {x:Type controls:PathButton}}"
                                          ToolTip="Close" />
 
                     <TextBlock Grid.Column="1"

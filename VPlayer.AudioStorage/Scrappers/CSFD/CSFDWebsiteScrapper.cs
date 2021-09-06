@@ -611,7 +611,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     private CSFDItem bestItem;
     private string lastParsedName;
 
-    public async Task<CSFDItem> GetBestFind(string name, int? year = null, bool onlySingleItem = false)
+    public async Task<CSFDItem> GetBestFind(string name, int? year = null, bool onlySingleItem = false, string tvShowUrl = null, string tvShowName = null, int? seasonNumber = null, int? episodeNumber = null)
     {
       var statusMessage = new StatusMessage(1)
       {
@@ -655,33 +655,53 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       parsedName = parsedName.Replace(".", " ").Replace("-", null);
 
 
-      var episodeNumber = DataLoader.DataLoader.GetTvShowSeriesNumber(name);
+      var episodeKeys = DataLoader.DataLoader.GetTvShowSeriesNumber(name);
 
-      if (DataLoader.DataLoader.IsTvShow(episodeNumber) && !onlySingleItem)
+      if (seasonNumber != null)
       {
-        var match = Regex.Match(parsedName, @"\D*");
+        episodeKeys = new KeyValuePair<int, int>(seasonNumber.Value, episodeKeys.Value);
+      }
 
-        if (match.Success)
+      if (episodeNumber != null)
+      {
+        episodeKeys = new KeyValuePair<int, int>(episodeKeys.Key, episodeNumber.Value);
+      }
+
+      if (DataLoader.DataLoader.IsTvShow(episodeKeys) && !onlySingleItem)
+      {
+        if (tvShowName != null)
         {
-          parsedName = match.Value;
+          var match = Regex.Match(parsedName, @"\D*");
+
+          if (match.Success)
+          {
+            parsedName = match.Value;
+          }
+
+          tvShowName = parsedName;
         }
 
-        var tvShowFind = await FindSingleCsfdItem(parsedName, year, episodeNumber);
-
-        if (tvShowFind == null)
+        if (tvShowUrl == null)
         {
-          return null;
+          var tvShowFind = await FindSingleCsfdItem(tvShowName, year, episodeKeys);
+
+          if (tvShowFind == null)
+          {
+            return null;
+          }
+
+          tvShowUrl = tvShowFind.Url;
         }
 
-        var tvSHow = LoadTvShow(tvShowFind.Url, episodeNumber.Key);
+        var tvSHow = LoadTvShow(tvShowUrl, episodeKeys.Key, episodeNumber);
 
         if (tvSHow != null)
         {
           if (tvSHow.Seasons != null)
           {
-            if (tvSHow.Seasons.Count > episodeNumber.Key)
+            if (tvSHow.Seasons.Count > episodeKeys.Key)
             {
-              var season = tvSHow.Seasons[episodeNumber.Value];
+              var season = tvSHow.Seasons[episodeKeys.Value];
 
               if (season.SeasonEpisodes != null)
               {
@@ -697,7 +717,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         }
         else
         {
-          return tvShowFind;
+          return null;
         }
       }
       else
@@ -710,7 +730,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         }
 
 
-        return await FindSingleCsfdItem(parsedName, year, episodeNumber, true);
+        return await FindSingleCsfdItem(parsedName, year, episodeKeys, true);
       }
     }
 
@@ -863,16 +883,33 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       var document = new HtmlDocument();
 
-      document.LoadHtml(chromeDriver.PageSource);
-
-      var urlValue = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[1]/a/img").FirstOrDefault()?.Attributes[2].Value;
-
-      if (!urlValue.Contains("data:image"))
+      if (chromeDriver.PageSource != null)
       {
-        return urlValue.Replace("//image.pmgstatic.com", "https://image.pmgstatic.com");
+        document.LoadHtml(chromeDriver.PageSource);
+
+        var node = document?.DocumentNode?.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[1]/a/img")?.FirstOrDefault();
+
+        if (node == null)
+        {
+          node = document?.DocumentNode?.SelectNodes("/html/body/div[3]/div/div[1]/div/div/div[2]/div/div[1]/div[1]/img")?.FirstOrDefault();
+        }
+
+        if (node != null)
+        {
+          if (node.Attributes.Count >= 3)
+          {
+            var urlValue = node.Attributes[2]?.Value;
+
+            if (urlValue != null && !urlValue.Contains("data:image"))
+            {
+              return urlValue.Replace("//image.pmgstatic.com", "https://image.pmgstatic.com");
+            }
+          }
+        }
       }
 
       return null;
+
     }
 
     #endregion

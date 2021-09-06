@@ -21,6 +21,7 @@ using VCore.WPF.Views;
 using VCore.WPF.Views.SplashScreen;
 using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.Core;
+using VPlayer.Core.Managers.Status;
 using VPlayer.Core.Modularity.Ninject;
 using VPlayer.IPTV.Modularity;
 using VPlayer.Modularity.NinjectModules;
@@ -33,12 +34,18 @@ namespace VPlayer
 {
   public class VPlayerApplication : VApplication<MainWindow, MainWindowViewModel, SplashScreenView>
   {
+    #region LoadModules
+
     protected override void LoadModules()
     {
       base.LoadModules();
 
       Kernel.Load<VPlayerNinjectModule>();
     }
+
+    #endregion
+
+    #region LoadSettings
 
     private void LoadSettings()
     {
@@ -49,11 +56,15 @@ namespace VPlayer
       if (!wasLoaded)
       {
         provider.AddOrUpdateSetting(nameof(GlobalSettings.CloudBrowserInitialDirectory), new SettingParameters("0"));
-        provider.AddOrUpdateSetting(nameof(GlobalSettings.FileBrowserInitialDirectory),  new SettingParameters(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), true));
+        provider.AddOrUpdateSetting(nameof(GlobalSettings.FileBrowserInitialDirectory), new SettingParameters(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), true));
         provider.AddOrUpdateSetting(nameof(GlobalSettings.MusicInitialDirectory), new SettingParameters(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), true));
         provider.AddOrUpdateSetting(nameof(GlobalSettings.TvShowInitialDirectory), new SettingParameters(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), true));
       }
     }
+
+    #endregion
+
+    #region TryMigrateDatabaseAsync
 
     private async Task TryMigrateDatabaseAsync()
     {
@@ -65,6 +76,8 @@ namespace VPlayer
 
       await context.Database.MigrateAsync();
     }
+
+    #endregion
 
     #region OnContainerCreated
 
@@ -118,6 +131,36 @@ namespace VPlayer
       }
 
       return null;
+    }
+
+    #endregion
+
+    #region OnUnhandledExceptionCaught
+
+    private IStatusManager statusManager;
+    protected override void OnUnhandledExceptionCaught(Exception exception)
+    {
+      base.OnUnhandledExceptionCaught(exception);
+
+      Application.Current?.Dispatcher?.Invoke(() =>
+      {
+        if (statusManager == null)
+        {
+          statusManager = Kernel.Get<IStatusManager>();
+        }
+
+        if (statusManager != null &&
+            statusManager.ActualMessage != null &&
+            (statusManager.ActualMessage.MessageStatusState != MessageStatusState.Done ||
+             statusManager.ActualMessage.MessageStatusState != MessageStatusState.Failed))
+        {
+          statusManager.UpdateMessage(new StatusMessage(1)
+          {
+            MessageStatusState = MessageStatusState.Failed,
+            Message = "Error occured: " + exception.ToString()
+          });
+        }
+      });
     }
 
     #endregion

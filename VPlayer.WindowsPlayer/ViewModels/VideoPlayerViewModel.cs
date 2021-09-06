@@ -617,7 +617,20 @@ namespace VPlayer.WindowsPlayer.ViewModels
         return;
       }
 
-      var item = await iCsfdWebsiteScrapper.GetBestFind(viewModel.Name);
+      CSFDItem item = null;
+
+      if (viewModel is TvShowEpisodeInPlaylistViewModel episodeInPlaylistViewModel)
+      {
+        item = await iCsfdWebsiteScrapper.GetBestFind(
+          episodeInPlaylistViewModel.Name, 
+          tvShowUrl: episodeInPlaylistViewModel?.TvShow.CsfdUrl,
+          seasonNumber: episodeInPlaylistViewModel?.TvShowSeason.SeasonNumber,
+          episodeNumber: episodeInPlaylistViewModel?.TvShowEpisode.EpisodeNumber);
+      }
+      else
+      {
+        item = await iCsfdWebsiteScrapper.GetBestFind(viewModel.Name);
+      }
 
       Application.Current.Dispatcher.Invoke(() =>
       {

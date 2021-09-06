@@ -11,12 +11,12 @@
                     xmlns:domain="clr-namespace:VPlayer.AudioStorage.Scrappers.CSFD.Domain;assembly=VPlayer.AudioStorage"
                     xmlns:e="http://schemas.epsiloner.git/wpf/"
                     xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
+                    xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.DarkTheme"
                     xmlns:lrc="clr-namespace:VPlayer.AudioStorage.InfoDownloader.LRC;assembly=VCore.WPF"
                     xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
                     xmlns:templateSelectors1="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors;assembly=VPlayer.Core"
                     xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF"
-                    xmlns:windowsPlayer="clr-namespace:VPlayer.Player.Views.WindowsPlayer"
-                    xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.DarkTheme">
+                    xmlns:windowsPlayer="clr-namespace:VPlayer.Player.Views.WindowsPlayer">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Views/WindowsPlayer/SongPlayerViewResources.xaml" />
@@ -185,7 +185,7 @@
                             Background="#151515"
                             BorderBrush="#454545"
                             BorderThickness="0">
-                        <Image Width="82" Source="{Binding ImagePath,Converter={library1:ImageLazyLoadingConverter}}" />
+                        <Image Width="82" Source="{Binding ImagePath, Converter={library1:ImageLazyLoadingConverter}}" />
 
 
                     </Border>
@@ -251,9 +251,19 @@
                             Padding="15,5"
                             VerticalAlignment="Top"
                             CornerRadius="2">
-                        <TextBlock FontSize="27"
-                                   FontWeight="Bold"
-                                   Text="{Binding Rating}" />
+                        <TextBlock FontSize="27" FontWeight="Bold">
+                            <TextBlock.Style>
+                                <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
+                                    <Setter Property="Text" Value="{Binding Rating}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Rating}" Value="{x:Null}">
+                                            <Setter Property="Text" Value="?" />
+                                            <Setter Property="Foreground" Value="#757575" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
 
                         <Border.Style>
                             <Style TargetType="Border">
@@ -404,7 +414,7 @@
                                                            SongDataTemplate="{StaticResource ToolTipFallBack}"
                                                            SoundDataTemplate="{StaticResource ToolTipFallBack}"
                                                            TvChannelDataTemplate="{StaticResource ToolTipFallBack}"
-                                                           TvShowEpisodeDataTemplate="{StaticResource ToolTipFallBack}"
+                                                           TvShowEpisodeDataTemplate="{StaticResource VideoItemToolTip}"
                                                            VideoItemDataTemplate="{StaticResource VideoItemToolTip}" />
 
 

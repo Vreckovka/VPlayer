@@ -1005,7 +1005,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     private string GetNewPlaylistName()
     {
-      var artists = PlayList.OfType<SongInPlayListViewModel>().Where(X => X.ArtistViewModel != null).GroupBy(x => x.ArtistViewModel.Name).ToList();
+      var artists = PlayList.OfType<SongInPlayListViewModel>()
+        .Where(x => !string.IsNullOrEmpty(x?.ArtistViewModel?.Name))
+        .GroupBy(x => x.ArtistViewModel.Name).ToList();
 
       string playlistName = "";
 
@@ -1017,26 +1019,33 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         var splits = PlayList.Select(x => x.Model.Source.Split("\\")).ToList();
 
-        for (int i = 0; i < splits.Max(x => x.Length); i++)
+        if (splits.Count > 0)
         {
-          var source = splits.Where(x => x.Length > i).GroupBy(x => x[i]).ToList();
-
-          var keys = source.Select(x => x.Key).Distinct().ToList();
-          var separator = "\\";
-
-          if (keys.Count == 1)
+          for (int i = 0; i < splits.Max(x => x.Length); i++)
           {
-            if (i > 0)
+            var source = splits.Where(x => x.Length > i).GroupBy(x => x[i]).ToList();
+
+            var keys = source.Select(x => x.Key).Distinct().ToList();
+            var separator = "\\";
+
+            if (keys.Count == 1)
             {
-              playlistName += separator;
-            }
+              if (i > 0)
+              {
+                playlistName += separator;
+              }
 
-            playlistName += keys[0];
+              playlistName += keys[0];
+            }
+            else if (i == 0)
+            {
+              playlistName = "Generated playlist: " + DateTime.Now.ToLongDateString();
+            }
           }
-          else if (i == 0)
-          {
-            playlistName = "Generated playlist: " + DateTime.Now.ToLongDateString();
-          }
+        }
+        else
+        {
+          playlistName = "Generated playlist: " + DateTime.Now.ToLongDateString();
         }
       }
 

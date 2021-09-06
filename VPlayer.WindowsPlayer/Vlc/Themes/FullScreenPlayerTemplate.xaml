@@ -5,12 +5,17 @@
                     xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
                     xmlns:controls2="clr-namespace:VPlayer.WindowsPlayer.Vlc.Controls;assembly=VVLC"
                     xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF"
-                    xmlns:soundManagement="clr-namespace:SoundManagement;assembly=SoundManagement">
+                    xmlns:domain="clr-namespace:VPlayer.AudioStorage.Scrappers.CSFD.Domain;assembly=VPlayer.AudioStorage"
+                    xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.DarkTheme"
+                    xmlns:soundManagement="clr-namespace:SoundManagement;assembly=SoundManagement"
+                    xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors;assembly=VPlayer.Core">
 
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/VPlayer.Player;component/Views/PlayerViewResources.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Views/WindowsPlayer/WindowsPlayerViewResources.xaml" />
     </ResourceDictionary.MergedDictionaries>
+
 
 
     <Style TargetType="{x:Type controls2:FullscreenPlayer}">
@@ -327,13 +332,51 @@
                                 </Grid>
                             </Grid>
 
-                            <ContentPresenter Grid.Row="2"
-                                              Grid.Column="0"
-                                              MaxWidth="250"
-                                              Margin="0,0,0,0"
-                                              HorizontalAlignment="Left"
-                                              Content="{Binding ActualViewModel}"
-                                              ContentTemplate="{StaticResource PlayerDetail}" />
+                            <Grid Grid.Row="2"
+                                  Grid.Column="0"
+                                  DataContext="{Binding ActualViewModel}">
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+
+                                <controls1:ButtonWithIcon Margin="0,2,0,10"
+                                                          Padding="2"
+                                                          HorizontalAlignment="Left"
+                                                          VerticalAlignment="Top"
+                                                          Panel.ZIndex="2"
+                                                          DataContext="{Binding ActualItem}"
+                                                          IconHeight="11"
+                                                          IconPathStyle="{StaticResource Info}"
+                                                          IconWidth="11">
+
+                                    <controls1:ButtonWithIcon.Style>
+                                        <Style BasedOn="{StaticResource {x:Type controls1:ButtonWithIcon}}" TargetType="{x:Type controls1:ButtonWithIcon}">
+                                            <Setter Property="IconHoverColor" Value="#40a8e6" />
+                                            <Setter Property="IconDefaultColor" Value="#9540a8e6" />
+                                            <Setter Property="Opacity" Value="1" />
+                                            <Setter Property="Margin" Value="0,-5,0,-5" />
+                                        </Style>
+                                    </controls1:ButtonWithIcon.Style>
+
+                                    <controls1:ButtonWithIcon.ToolTip>
+                                        <Border Background="Transparent">
+                                            <Grid>
+                                                <ContentPresenter Content="{Binding}" ContentTemplateSelector="{StaticResource WindowsPlayerItemsTooltipTemplateSelector}" />
+                                            </Grid>
+                                        </Border>
+                                    </controls1:ButtonWithIcon.ToolTip>
+
+                                </controls1:ButtonWithIcon>
+
+                                <ContentPresenter Grid.Column="1"
+                                                  MaxWidth="250"
+                                                  Margin="0,0,0,0"
+                                                  HorizontalAlignment="Left"
+                                                  Content="{Binding}"
+                                                  ContentTemplate="{StaticResource PlayerDetail}" />
+                            </Grid>
 
 
                             <Grid Grid.Row="2"
