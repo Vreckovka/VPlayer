@@ -1,4 +1,5 @@
 ﻿using System.Data.Common;
+using System.Reflection;
 using Ninject;
 using VCore.Modularity.NinjectModules;
 using VCore.Standard.Modularity.NinjectModules;
@@ -16,6 +17,16 @@ using VPlayer.WindowsPlayer.ViewModels;
 
 namespace VPlayer.Modularity.NinjectModules
 {
+  public class VPlayerInfoProvider : IVPlayerInfoProvider
+  {
+    public string GetApplicationVersion()
+    {
+      var assemlby = Assembly.GetExecutingAssembly();
+
+      return BasicInformationProvider.GetFormattedBuildVersion(assemlby);
+    }
+  }
+
   public class VPlayerNinjectModule : BaseNinjectModule
   {
     public override void Load()
@@ -24,8 +35,8 @@ namespace VPlayer.Modularity.NinjectModules
 
       if (Kernel != null)
       {
+        Kernel.Bind<IVPlayerInfoProvider>().To<VPlayerInfoProvider>();
 
-        Kernel.Bind<IBasicInformationProvider>().To<VPlayerBasicInformationProvider>().InSingletonScope();
         Kernel.Bind<ICloudService>().To<CloudService>()
           .InSingletonScope()
           .WithConstructorArgument(System.Configuration.ConfigurationManager.AppSettings["PCloudPath"])

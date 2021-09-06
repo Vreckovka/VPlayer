@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Windows.Input;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using VCore;
@@ -12,6 +13,7 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.Providers;
 using VPlayer.Core.Views;
+using VPlayer.Modularity.NinjectModules;
 
 namespace VPlayer.Core.ViewModels.Settings
 {
@@ -53,13 +55,13 @@ namespace VPlayer.Core.ViewModels.Settings
 
     public SettingsViewModel(IRegionProvider regionProvider,
       IStorageManager storageManager,
-      IBasicInformationProvider basicInformationProvider,
-      ISettingsProvider settingsProvider) : base(regionProvider)
+      ISettingsProvider settingsProvider,
+      IVPlayerInfoProvider iVPlayerInfoProvider) : base(regionProvider)
     {
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.settingsProvider = settingsProvider ?? throw new ArgumentNullException(nameof(settingsProvider));
 
-      BuildVersion = basicInformationProvider.GetBuildVersion();
+      BuildVersion = iVPlayerInfoProvider.GetApplicationVersion();
 
       foreach (var setting in settingsProvider.Settings)
       {
