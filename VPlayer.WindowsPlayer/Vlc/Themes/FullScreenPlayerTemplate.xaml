@@ -357,6 +357,13 @@
                                             <Setter Property="IconDefaultColor" Value="#9540a8e6" />
                                             <Setter Property="Opacity" Value="1" />
                                             <Setter Property="Margin" Value="0,-5,0,-5" />
+
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding CSFDItem}" Value="{x:Null}">
+                                                    <Setter Property="IconDefaultColor" Value="#454545" />
+                                                    <Setter Property="IconHoverColor" Value="#757575" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
                                         </Style>
                                     </controls1:ButtonWithIcon.Style>
 
@@ -367,7 +374,6 @@
                                             </Grid>
                                         </Border>
                                     </controls1:ButtonWithIcon.ToolTip>
-
                                 </controls1:ButtonWithIcon>
 
                                 <ContentPresenter Grid.Column="1"
