@@ -33,7 +33,9 @@
         </Grid.RowDefinitions>
 
         <StackPanel Margin="5,10,5,25" Orientation="Horizontal">
-            <controls:PathButton Padding="10,5"
+            <controls:PathButton Width="auto"
+                                 Height="auto"
+                                 Padding="10,5"
                                  HorizontalAlignment="Left"
                                  BorderBrush="{StaticResource 30_WhiteTransparentBrush}"
                                  BorderThickness="1"
@@ -46,7 +48,7 @@
                                  PathCheckedBrush="{StaticResource RedBlueGradientBrush}"
                                  PathStyle="{StaticResource MagnifyingGlass}">
                 <controls:PathButton.Content>
-                    <TextBlock Margin="10,0,5,-2"
+                    <TextBlock Margin="-2,0,0,0"
                                VerticalAlignment="Bottom"
                                FontSize="13">
                         <TextBlock.Style>

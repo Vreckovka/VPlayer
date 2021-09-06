@@ -93,7 +93,7 @@ namespace VPlayer.Core.Managers.Status
 
     public void UpdateMessage(StatusMessage statusMessage)
     {
-      Application.Current.Dispatcher.Invoke(() =>
+      Application.Current?.Dispatcher?.Invoke(() =>
       {
         if (ActualMessage == null || ActualMessage.Id != statusMessage.Id)
         {
