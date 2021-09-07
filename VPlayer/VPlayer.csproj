@@ -5,13 +5,15 @@
 		<UseWPF>true</UseWPF>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<ApplicationIcon>Includes/VPlayerLogo.ico</ApplicationIcon>
-		<CefSharpAnyCpuSupport>true</CefSharpAnyCpuSupport>
 		<Platforms>AnyCPU;x86</Platforms>
-		<Deterministic>false</Deterministic>
-		<TransformOnBuild>true</TransformOnBuild>
-		<OverwriteReadOnlyOutputFiles>true</OverwriteReadOnlyOutputFiles>
-		<TransformOutOfDateOnly>false</TransformOutOfDateOnly>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<ContentWithTargetPath Include="$(ProjectDir)\bin\x86\Release\netcoreapp3.1\chromedriver.exe" 
+		                       CopyToOutputDirectory="PreserveNewest" TargetPath="chromedriver.exe" />
+	</ItemGroup>
+	
+
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<PlatformTarget>AnyCPU</PlatformTarget>
 	</PropertyGroup>
@@ -26,6 +28,7 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
 		<OutputPath></OutputPath>
 	</PropertyGroup>
+
 	<ItemGroup>
 		<None Remove="Includes\VPlayerLogo.ico" />
 		<None Remove="Includes\VPlayerLogo.png" />
@@ -170,7 +173,6 @@
 		<PackageReference Include="CefSharp.Wpf" Version="90.6.70" />
 		<PackageReference Include="OpenQA.Selenium.Winium" Version="1.0.0.4" />
 		<PackageReference Include="SharpVectors" Version="1.7.6" />
-		<PackageReference Include="WebDriver.ChromeDriver.win32" Version="92.0.4515.107" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -197,20 +199,20 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Resource Include="Resources\VPlayer_Artist.png" />
+		<Resource Include="Resources\VPlayer_Artist.png" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Properties\Settings.Designer.cs">
-	    <DesignTimeSharedInput>True</DesignTimeSharedInput>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>Settings.settings</DependentUpon>
-	  </Compile>
-	  <Compile Update="VersionAutoIncrement.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>VersionAutoIncrement.tt</DependentUpon>
-	  </Compile>
+		<Compile Update="Properties\Settings.Designer.cs">
+			<DesignTimeSharedInput>True</DesignTimeSharedInput>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Settings.settings</DependentUpon>
+		</Compile>
+		<Compile Update="VersionAutoIncrement.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>VersionAutoIncrement.tt</DependentUpon>
+		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -218,17 +220,17 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Properties\Settings.settings">
-		  <Generator>SettingsSingleFileGenerator</Generator>
-		  <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+			<Generator>SettingsSingleFileGenerator</Generator>
+			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
 		</None>
 		<None Update="VersionAutoIncrement.tt">
-		  <Generator>TextTemplatingFileGenerator</Generator>
-		  <LastGenOutput>VersionAutoIncrement.cs</LastGenOutput>
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>VersionAutoIncrement.cs</LastGenOutput>
 		</None>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
 
 </Project>
