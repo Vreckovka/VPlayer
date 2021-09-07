@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using PCloud;
 using PCloudClient.Domain;
+using VCore;
 using VPLayer.Domain.Contracts.CloudService.Providers;
 using FileInfo = PCloudClient.Domain.FileInfo;
 
@@ -163,6 +164,9 @@ namespace VPlayer.PCloud
       };
 
       var json = JsonSerializer.Serialize(loginInfo);
+
+
+      StringHelper.EnsureDirectoryExists(filePath);
 
       File.WriteAllText(filePath, json);
 

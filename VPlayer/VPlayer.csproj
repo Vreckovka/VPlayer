@@ -170,6 +170,7 @@
 		<PackageReference Include="CefSharp.Wpf" Version="90.6.70" />
 		<PackageReference Include="OpenQA.Selenium.Winium" Version="1.0.0.4" />
 		<PackageReference Include="SharpVectors" Version="1.7.6" />
+		<PackageReference Include="WebDriver.ChromeDriver.win32" Version="92.0.4515.107" />
 	</ItemGroup>
 
 	<ItemGroup>
