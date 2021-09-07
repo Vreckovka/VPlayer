@@ -1005,7 +1005,14 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     private string GetNewPlaylistName()
     {
-      var artists = PlayList.OfType<SongInPlayListViewModel>()
+      var actaulPlaylist = PlayList?.ToList();
+
+      if (actaulPlaylist == null)
+      {
+        return  "Generated playlist: " + DateTime.Now.ToLongDateString(); ;
+      }
+
+      var artists = actaulPlaylist.OfType<SongInPlayListViewModel>()
         .Where(x => !string.IsNullOrEmpty(x?.ArtistViewModel?.Name))
         .GroupBy(x => x.ArtistViewModel.Name).ToList();
 
@@ -1017,7 +1024,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       }
       else
       {
-        var splits = PlayList.Select(x => x.Model.Source.Split("\\")).ToList();
+        var splits = actaulPlaylist.Select(x => x.Model.Source.Split("\\")).ToList();
 
         if (splits.Count > 0)
         {

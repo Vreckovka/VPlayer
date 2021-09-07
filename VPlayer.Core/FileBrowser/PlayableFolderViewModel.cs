@@ -86,6 +86,11 @@ namespace VPlayer.Core.FileBrowser
 
     public async void Play()
     {
+      if (IsLoading)
+      {
+        return;
+      }
+
       IsLoading = true;
 
       await LoadSubFolders(this);
