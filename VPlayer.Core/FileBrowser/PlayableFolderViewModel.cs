@@ -167,8 +167,7 @@ namespace VPlayer.Core.FileBrowser
           }
         }
 
-        var data = new PlayItemsEventData<SoundItemInPlaylistViewModel>(
-          soundItems.Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x)), EventAction.Play, this);
+        var data = new PlayItemsEventData<SoundItemInPlaylistViewModel>(soundItems.Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x)), EventAction.Play, this);
 
         eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(data);
       }

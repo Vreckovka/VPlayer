@@ -827,7 +827,6 @@ namespace VPlayer.Core.ViewModels
 
           OnNewItemPlay();
         }
-
       });
     }
 
@@ -1020,6 +1019,11 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    protected virtual void BeforePlayEvent(PlayItemsEventData<TItemViewModel> data)
+    {
+
+    }
+
     #region PlayItemsFromEvent
 
     protected void PlayItemsFromEvent(PlayItemsEventData<TItemViewModel> data)
@@ -1032,6 +1036,8 @@ namespace VPlayer.Core.ViewModels
         UpdateActualSavedPlaylistPlaylist();
         ActualSavedPlaylist = new TPlaylistModel() { Id = -1 };
       }
+
+      BeforePlayEvent(data);
 
       switch (data.EventAction)
       {
@@ -1451,7 +1457,11 @@ namespace VPlayer.Core.ViewModels
 
     protected virtual void OnPlay()
     {
-
+      Application.Current.Dispatcher.Invoke(async () =>
+      {
+        if (ActualItem != null)
+          ActualItem.IsPlaying = true;
+      });
     }
 
     protected virtual void OnPlayPlaylist(PlayItemsEventData<TItemViewModel> data)

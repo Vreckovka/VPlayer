@@ -403,8 +403,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         regionProvider.RegisterView<SongPlayerView, MusicPlayerViewModel>(RegionNames.PlayerContentRegion, this, false, out var guid, RegionManager);
       }
-
-      DownloadSongInfos(PlayList);
     }
 
     #endregion
@@ -848,6 +846,39 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    protected override void BeforePlayEvent(PlayItemsEventData<SoundItemInPlaylistViewModel> data)
+    {
+      var songs = data.Items.OfType<SongInPlayListViewModel>().ToList();
+
+      var soundItems = data.Items.Where(x => !(x is SongInPlayListViewModel)).ToList();
+
+      var newList = new List<SongInPlayListViewModel>();
+
+      if (songs.Count > 0)
+      {
+        foreach (var item in data.Items)
+        {
+          var songItem = songs.SingleOrDefault(x => x.Model.Id == item.Model.Id);
+          var soundItem = soundItems.SingleOrDefault(x => x.Model.Id == item.Model.Id);
+
+          if (songItem != null)
+          {
+            newList.Add(songItem);
+          }
+          else if (soundItem != null)
+          {
+            newList.Add(CreateSongViewModel(soundItem));
+          }
+        }
+      }
+      else
+      {
+        newList.AddRange(soundItems.Select(x => CreateSongViewModel(x)));
+      }
+
+      data.Items = newList;
+    }
+
     #region OnPlayEvent
 
     private CancellationTokenSource downloadingSongTask;
@@ -856,53 +887,30 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       base.OnPlayEvent(data);
 
-
-      var itemsToRemove = data.Items.Where(x => !(x is SongInPlayListViewModel)).ToList();
-
-      foreach (var item in itemsToRemove)
-      {
-        PlayList.Remove(PlayList.Single(x => x.Model == item.Model));
-      }
-
-      PlayList.AddRange(CreateSongViewModels(itemsToRemove));
-
-      if (itemsToRemove.Count > 0)
-      {
-        RequestReloadVirtulizedPlaylist();
-
-        ActualItem = PlayList.FirstOrDefault(x => x.Model.Id == ActualItem.Model.Id);
-
-        DownloadSongInfos(PlayList);
-      }
+      DownloadSongInfos(PlayList);
     }
 
     #endregion
 
-    #region CreateSongViewModels
+    #region CreateSongViewModel
 
-    private IEnumerable<SongInPlayListViewModel> CreateSongViewModels(IEnumerable<SoundItemInPlaylistViewModel> items)
+    private SongInPlayListViewModel CreateSongViewModel(SoundItemInPlaylistViewModel viewmodel)
     {
-      var list = new List<SongInPlayListViewModel>();
-
-      foreach (var viewmodel in items)
+      var song = new Song()
       {
-        var song = new Song()
-        {
-          ItemModel = viewmodel.Model,
-        };
+        ItemModel = viewmodel.Model,
+      };
 
-        var vm = viewModelsFactory.Create<SongInPlayListViewModel>(song);
+      var vm = viewModelsFactory.Create<SongInPlayListViewModel>(song);
 
-        vm.ActualPosition = viewmodel.ActualPosition;
-        vm.IsFavorite = viewmodel.IsFavorite;
-        vm.IsPlaying = viewmodel.IsPlaying;
-        vm.IsSelected = viewmodel.IsSelected;
-        vm.Duration = viewmodel.Duration;
+      vm.ActualPosition = viewmodel.ActualPosition;
+      vm.IsFavorite = viewmodel.IsFavorite;
+      vm.IsPlaying = viewmodel.IsPlaying;
+      vm.IsSelected = viewmodel.IsSelected;
+      vm.Duration = viewmodel.Duration;
 
-        list.Add(vm);
-      }
+      return vm;
 
-      return list;
     }
 
     #endregion
