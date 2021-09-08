@@ -128,15 +128,13 @@ namespace VPlayer.ViewModels
   //*********************************************************************************************************************************
   //
   //*****BUGS*****
-  //TODO: Nedava sa prec IsPlaying z itemu ked uz nie je v playliste (asi pri rerabke sa ta vetva vymazala)
   //TODO: Niekedy ked prepnes automaticky output sound device tak equalizer sa zastavi a da sa reloadnut ze pausnes a znovu spustis hudubu - mal som pusteny tv show a potom som z playlistu pustil hudbu
   //TODO: Ked je buffering v prehravaci a das vypnut appku tak spadne a nevypne sa poriadne (zostane aj niekedy bezat potom na pozadi, nejaky thread niekde asi)
   //TODO: Nespojilo playlisty s rovnakym hash po spusteni (neviem ci TV show alebo hudba) (mozno tv show ze pustis z detailu a das save a potom znovu z detailu)
   //TODO: Nespaja niektorych aristov pri load
   //TODO: Sem tam ostanie vysiet appka
   //TODO: Po roztiahnuti okna spadlo
-  //TODO: chromedriver sa nekopiruje pri publish
-  //TODO: csfd download ked task zlyha tak Error popup hned mizne
+  //TODO: Status message: Failed template je nejaky vadny
   //
   //  *****IMPORTANT!*****
   //        TODO: Po pridani novej serii nefunguje csfd download
