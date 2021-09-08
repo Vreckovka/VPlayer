@@ -1003,11 +1003,13 @@ namespace VPlayer.Core.ViewModels
 
         SetItemAndPlay(songIndex, onlyItemSet: onlyItemSet);
 
+        var listPlaylist = PlayList.ToList();
+
         Task.Run(() =>
         {
           if (savePlaylist)
           {
-            StorePlaylist(editSaved: editSaved);
+            StorePlaylist(listPlaylist, editSaved: editSaved);
           }
         });
 
@@ -1047,7 +1049,8 @@ namespace VPlayer.Core.ViewModels
 
           RequestReloadVirtulizedPlaylist();
           RaisePropertyChanged(nameof(CanPlay));
-          StorePlaylist(editSaved: true);
+
+          StorePlaylist(PlayList.ToList(), editSaved: true);
           break;
         case EventAction.PlayFromPlaylist:
           PlayPlaylist(data);
@@ -1083,9 +1086,9 @@ namespace VPlayer.Core.ViewModels
 
     #region StorePlaylist
 
-    public bool StorePlaylist(bool isUserCreated = false, bool editSaved = false)
+    public bool StorePlaylist(List<TItemViewModel> items, bool isUserCreated = false, bool editSaved = false)
     {
-      var acutalPlaylist = PlayList?.ToList();
+      var acutalPlaylist = items;
 
       if (acutalPlaylist == null || acutalPlaylist.Count == 0)
       {
@@ -1164,7 +1167,7 @@ namespace VPlayer.Core.ViewModels
           else
           {
             Application.Current.Dispatcher.Invoke(() => { ActualSavedPlaylist = entityPlayList; });
-            
+
             UpdateActualSavedPlaylistPlaylist();
           }
         }
@@ -1177,9 +1180,12 @@ namespace VPlayer.Core.ViewModels
 
           UpdateNonUserCreatedPlaylist(entityPlayList, dbEntityPlalist);
 
-          ActualSavedPlaylist = entityPlayList;
+          Application.Current.Dispatcher.Invoke(() =>
+          {
+            ActualSavedPlaylist = entityPlayList;
 
-          ActualSavedPlaylist.LastPlayed = DateTime.Now;
+            ActualSavedPlaylist.LastPlayed = DateTime.Now;
+          });
         }
         else
         {
@@ -1187,14 +1193,20 @@ namespace VPlayer.Core.ViewModels
 
           if (storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(storedPlaylist, out var updated))
           {
-            ActualSavedPlaylist = updated;
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+              ActualSavedPlaylist = updated;
+            });
           }
         }
       }
 
       if (ActualSavedPlaylist != null)
       {
-        ActualSavedPlaylist.LastPlayed = DateTime.Now;
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+          ActualSavedPlaylist.LastPlayed = DateTime.Now;
+        });
       }
 
       UpdateActualSavedPlaylistPlaylist();
@@ -1224,7 +1236,7 @@ namespace VPlayer.Core.ViewModels
        {
          if (storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(ActualSavedPlaylist, out var updated))
          {
-           ActualSavedPlaylist = updated;
+           Application.Current.Dispatcher.Invoke(() => { ActualSavedPlaylist = updated; });
          }
        });
     }
@@ -1313,7 +1325,7 @@ namespace VPlayer.Core.ViewModels
             }
           }
 
-          StorePlaylist(editSaved: true);
+          StorePlaylist(PlayList.ToList(), editSaved: true);
 
           break;
         case DeleteType.AlbumFromPlaylist:

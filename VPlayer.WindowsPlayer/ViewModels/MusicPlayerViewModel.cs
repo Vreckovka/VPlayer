@@ -842,7 +842,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           PlayList.Remove(albumSong);
         }
 
-        StorePlaylist(editSaved: true);
+        StorePlaylist(PlayList.ToList(), editSaved: true);
       }
     }
 
@@ -1005,7 +1005,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     private string GetGenericPlaylistName()
     {
-      return  "Generated playlist: " + DateTime.Now.ToLongDateString(); 
+      return "Generated playlist: " + DateTime.Now.ToLongDateString();
     }
 
 
@@ -1015,7 +1015,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       if (actaulPlaylist == null)
       {
-        return  GetGenericPlaylistName(); 
+        return GetGenericPlaylistName();
       }
 
       var artists = actaulPlaylist.OfType<SongInPlayListViewModel>()
