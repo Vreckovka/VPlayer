@@ -28,6 +28,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
     private bool wasPCloudInitilized = false;
     private long lyricsFolderId = 1302392188;
     private List<PCloudClient.Domain.FolderInfo> artistsFolders = new List<PCloudClient.Domain.FolderInfo>();
+    private string fileExtension = ".lrc";
 
     public PCloudLrcProvider(ICloudService cloudService)
     {
@@ -77,7 +78,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
             {
               var songs = (await cloudService.GetFilesAsync(album.id)).ToList();
 
-              var existingSong = songs.SingleOrDefault(x => GetNormalizedName(x.name.Replace(".txt", null)) == GetNormalizedName(lRCFile.Title));
+              var existingSong = songs.SingleOrDefault(x => GetNormalizedName(x.name.Replace(fileExtension, null)) == GetNormalizedName(lRCFile.Title));
 
               if (existingSong != null)
               {
@@ -85,7 +86,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
               }
               else
               {
-                return await cloudService.CreateFileAndWrite(lRCFile.Title + ".txt", lRCFile.GetString(), album.id);
+                return await cloudService.CreateFileAndWrite(lRCFile.Title + fileExtension, lRCFile.GetString(), album.id);
               }
             }
             else
@@ -94,7 +95,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
               if (newAlbum != null)
               {
-                return await cloudService.CreateFileAndWrite(lRCFile.Title + ".txt", lRCFile.GetString(), newAlbum.id);
+                return await cloudService.CreateFileAndWrite(lRCFile.Title + fileExtension, lRCFile.GetString(), newAlbum.id);
               }
             }
           }
@@ -110,7 +111,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
               if (newAlbum != null)
               {
-                return await cloudService.CreateFileAndWrite(lRCFile.Title + ".txt", lRCFile.GetString(), newAlbum.id);
+                return await cloudService.CreateFileAndWrite(lRCFile.Title + fileExtension, lRCFile.GetString(), newAlbum.id);
               }
             }
           }
@@ -174,7 +175,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
           {
             var songs = (await cloudService.GetFilesAsync(album.id)).ToList();
 
-            var existingSong = songs.SingleOrDefault(x => GetNormalizedName(x.name.Replace(".txt", null)) == GetNormalizedName(songName));
+            var existingSong = songs.SingleOrDefault(x => GetNormalizedName(x.name.Replace(fileExtension, null)) == GetNormalizedName(songName));
 
             if (existingSong != null)
             {
