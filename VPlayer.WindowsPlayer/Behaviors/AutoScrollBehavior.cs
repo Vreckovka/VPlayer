@@ -4,6 +4,7 @@ using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
+using Logger;
 using Microsoft.Xaml.Behaviors;
 using Ninject;
 using VCore.Helpers;
@@ -82,36 +83,48 @@ namespace VPlayer.Player.Behaviors
 
 
     private SerialDisposable disposable = new SerialDisposable();
+    private ILogger logger;
 
     #region SubcsribeToSongChange
 
     private void SubcsribeToSongChange()
     {
-      if (Kernel != null)
+      try
       {
-        if (lastDatacontext != AssociatedObject.DataContext)
+        if (Kernel != null)
         {
-          last_songInPlayListIndex = null;
-          lastDatacontext = AssociatedObject.DataContext;
-        }
-        else if (last_songInPlayListIndex != null)
-        {
-          var verticalOffset = GetScrollOffset(last_songInPlayListIndex.Value);
+          logger = Kernel.Get<ILogger>();
 
-          if (scrollViewer.VerticalOffset != verticalOffset)
-            scrollViewer.ScrollToVerticalOffset(verticalOffset);
-        }
-
-
-        if (managablePlayableRegionViewModel == null)
-        {
-          managablePlayableRegionViewModel = AssociatedObject.DataContext as IPlayableRegionViewModel;
-
-          if (managablePlayableRegionViewModel != null)
+          if (lastDatacontext != AssociatedObject.DataContext)
           {
-            disposable.Disposable = managablePlayableRegionViewModel.ActualItemChanged.ObserveOnDispatcher().Subscribe(OnSongChanged);
+            last_songInPlayListIndex = null;
+            lastDatacontext = AssociatedObject.DataContext;
+          }
+          else if (last_songInPlayListIndex != null)
+          {
+            var verticalOffset = GetScrollOffset(last_songInPlayListIndex.Value);
+
+            if (scrollViewer.VerticalOffset != verticalOffset)
+              scrollViewer.ScrollToVerticalOffset(verticalOffset);
+          }
+
+
+          if (managablePlayableRegionViewModel == null)
+          {
+            managablePlayableRegionViewModel = AssociatedObject.DataContext as IPlayableRegionViewModel;
+
+            if (managablePlayableRegionViewModel != null)
+            {
+              disposable.Disposable = managablePlayableRegionViewModel.ActualItemChanged
+                .ObserveOn(Application.Current.Dispatcher)
+                .Subscribe(OnSongChanged);
+            }
           }
         }
+      }
+      catch (Exception ex)
+      {
+        logger?.Log(ex);
       }
     }
 
@@ -129,51 +142,57 @@ namespace VPlayer.Player.Behaviors
 
     private void OnSongChanged(int songInPlayListIndex)
     {
-
-      if (scrollViewer == null)
+      try
       {
-        return;
+        if (scrollViewer == null)
+        {
+          return;
+        }
+
+        var scrollIndexOffset = GetScrollOffset(songInPlayListIndex);
+
+        int max = 10;
+
+        if (scrollViewer != null)
+        {
+          if ((songInPlayListIndex > last_songInPlayListIndex + max &&
+               songInPlayListIndex > last_songInPlayListIndex) ||
+              (songInPlayListIndex < last_songInPlayListIndex - max &&
+               songInPlayListIndex < last_songInPlayListIndex))
+          {
+            scrollViewer.ScrollToVerticalOffset(scrollIndexOffset);
+          }
+          else if (songInPlayListIndex != last_songInPlayListIndex)
+          {
+            DoubleAnimation verticalAnimation = new DoubleAnimation();
+
+            verticalAnimation.From = scrollViewer.VerticalOffset;
+            verticalAnimation.To = scrollIndexOffset;
+
+            if (last_songInPlayListIndex == songInPlayListIndex - 1)
+            {
+              verticalAnimation.Duration = new Duration(AnimationTime);
+            }
+            else
+            {
+              verticalAnimation.Duration = new Duration(TimeSpan.FromSeconds(0.50));
+            }
+
+            Storyboard storyboard = new Storyboard();
+
+            storyboard.Children.Add(verticalAnimation);
+            Storyboard.SetTarget(verticalAnimation, scrollViewer);
+            Storyboard.SetTargetProperty(verticalAnimation, new PropertyPath(ScrollAnimationBehavior.VerticalOffsetProperty));
+            storyboard.Begin();
+          }
+        }
+
+        last_songInPlayListIndex = songInPlayListIndex;
       }
-
-      var scrollIndexOffset = GetScrollOffset(songInPlayListIndex);
-
-      int max = 10;
-
-      if (scrollViewer != null)
+      catch (Exception ex)
       {
-        if ((songInPlayListIndex > last_songInPlayListIndex + max &&
-             songInPlayListIndex > last_songInPlayListIndex) ||
-            (songInPlayListIndex < last_songInPlayListIndex - max &&
-             songInPlayListIndex < last_songInPlayListIndex))
-        {
-          scrollViewer.ScrollToVerticalOffset(scrollIndexOffset);
-        }
-        else if (songInPlayListIndex != last_songInPlayListIndex)
-        {
-          DoubleAnimation verticalAnimation = new DoubleAnimation();
-
-          verticalAnimation.From = scrollViewer.VerticalOffset;
-          verticalAnimation.To = scrollIndexOffset;
-
-          if (last_songInPlayListIndex == songInPlayListIndex - 1)
-          {
-            verticalAnimation.Duration = new Duration(AnimationTime);
-          }
-          else
-          {
-            verticalAnimation.Duration = new Duration(TimeSpan.FromSeconds(0.50));
-          }
-
-          Storyboard storyboard = new Storyboard();
-
-          storyboard.Children.Add(verticalAnimation);
-          Storyboard.SetTarget(verticalAnimation, scrollViewer);
-          Storyboard.SetTargetProperty(verticalAnimation, new PropertyPath(ScrollAnimationBehavior.VerticalOffsetProperty));
-          storyboard.Begin();
-        }
+        logger?.Log(ex);
       }
-
-      last_songInPlayListIndex = songInPlayListIndex;
     }
   }
 }
