@@ -1003,13 +1003,19 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    private string GetGenericPlaylistName()
+    {
+      return  "Generated playlist: " + DateTime.Now.ToLongDateString(); 
+    }
+
+
     private string GetNewPlaylistName()
     {
       var actaulPlaylist = PlayList?.ToList();
 
       if (actaulPlaylist == null)
       {
-        return  "Generated playlist: " + DateTime.Now.ToLongDateString(); ;
+        return  GetGenericPlaylistName(); 
       }
 
       var artists = actaulPlaylist.OfType<SongInPlayListViewModel>()
@@ -1046,13 +1052,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
             }
             else if (i == 0)
             {
-              playlistName = "Generated playlist: " + DateTime.Now.ToLongDateString();
+              playlistName = GetGenericPlaylistName();
             }
           }
         }
         else
         {
-          playlistName = "Generated playlist: " + DateTime.Now.ToLongDateString();
+          playlistName = GetGenericPlaylistName();
         }
       }
 
@@ -1092,7 +1098,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         IsReapting = IsRepeate,
         IsShuffle = IsShuffle,
-        Name = playlistName,
+        Name = string.IsNullOrEmpty(playlistName) ? GetGenericPlaylistName() : playlistName,
         ItemCount = playlistModels?.Count,
         PlaylistItems = playlistModels,
         LastItemElapsedTime = ActualSavedPlaylist.LastItemElapsedTime,
