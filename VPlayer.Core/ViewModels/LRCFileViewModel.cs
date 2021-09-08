@@ -97,7 +97,7 @@ namespace VPlayer.Core.ViewModels
 
     #region TimeAdjustment
 
-    private double timeAdjustment;
+    private double timeAdjustment = 0;
     public double TimeAdjustment
     {
       get { return timeAdjustment; }
@@ -261,6 +261,7 @@ namespace VPlayer.Core.ViewModels
           if (UpdateStatus == true)
           {
             Provider = LRCProviders.PCloud;
+            TimeAdjustment = 0;
           }
         });
       }
