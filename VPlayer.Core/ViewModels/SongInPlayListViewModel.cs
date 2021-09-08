@@ -420,7 +420,10 @@ namespace VPlayer.Core.ViewModels
       var lrc = (PCloudLRCFile)await audioInfoDownloader.TryGetLRCLyricsAsync(pCloudLrcProvider, SongModel, ArtistViewModel?.Name, AlbumViewModel?.Name);
 
       if (lrc != null)
+      {
         LRCFile = new LRCFileViewModel(lrc, pCloudLrcProvider.LRCProvider, pCloudLrcProvider, googleDriveLrcProvider);
+      }
+        
 
     }
 

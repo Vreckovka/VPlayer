@@ -287,6 +287,8 @@ namespace VPlayer.PCloud
 
             await conn.writeFile(fd, ms, ms.Length);
             await conn.closeFile(fd);
+
+            return true;
           }
           finally
           {

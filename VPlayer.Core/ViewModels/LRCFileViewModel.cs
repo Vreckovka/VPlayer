@@ -247,9 +247,10 @@ namespace VPlayer.Core.ViewModels
     {
       try
       {
+
         Model.Lines.ForEach(x => x.Timestamp += TimeSpan.FromMilliseconds(TimeAdjustment));
 
-        Application.Current.Dispatcher.Invoke(() => { IsLoading = true; });
+        Application.Current.Dispatcher.Invoke(() => { IsLoading = true; UpdateStatus = null; });
 
         var result =  await pCloudLrcProvider.Update(Model);
 

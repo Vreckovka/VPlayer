@@ -1455,6 +1455,10 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
         if (lrcFile != null)
         {
+          lrcFile.Title = song.Name;
+          lrcFile.Artist = artistName;
+          lrcFile.Album = albumName;
+
           song.LRCLyrics = (int)client.LRCProvider + ";" + lrcFile.GetString();
 
           ItemUpdated.OnNext(song);
