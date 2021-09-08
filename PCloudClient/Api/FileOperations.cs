@@ -403,8 +403,12 @@ namespace PCloud
         AllowTrailingCommas = true
       };
 
-      data = JsonSerializer.Deserialize<PCloudResponse<Stats>>(json, options);
+      if (string.IsNullOrEmpty(json))
+      {
+        data = JsonSerializer.Deserialize<PCloudResponse<Stats>>(json, options);
 
+      }
+    
 
       return data;
     }

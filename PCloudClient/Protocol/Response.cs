@@ -103,8 +103,6 @@ namespace PCloud
     {
       var json =  GetJsonValue(dict);
 
-     // var newJson = "\"" + json + "\"";
-
       return json;
     }
 
