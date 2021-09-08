@@ -105,9 +105,9 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
             artistsFolders.Add(newArtistFolder);
 
-            if (!string.IsNullOrEmpty(lRCFile.Album))
+            if (!string.IsNullOrEmpty(lRCFile.Album) && newArtistFolder != null)
             {
-              var newAlbum = await cloudService.CreateFolder(lRCFile.Album, lyricsFolderId);
+              var newAlbum = await cloudService.CreateFolder(lRCFile.Album, newArtistFolder.id);
 
               if (newAlbum != null)
               {
