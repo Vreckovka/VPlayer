@@ -485,7 +485,15 @@ namespace VPlayer.Core.ViewModels
         await LoadLRCFromPCloud();
 
       if (LRCFile == null)
+      {
         await LoadLRCFromGoogleDrive();
+
+        if (LRCFile != null)
+        {
+          LRCFile.OnApplyPernamently();
+        }
+      }
+     
 
       if (LRCFile == null)
         await LoadLRCFromMiniLyrics();
