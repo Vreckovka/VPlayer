@@ -12,6 +12,7 @@ using Ninject.Activation;
 using Ninject.Parameters;
 using Prism.Ioc;
 using Prism.Modularity;
+using VCore.Standard.Modularity.NinjectModules;
 using VCore.Standard.Providers;
 using VCore.WPF;
 using VCore.WPF.Interfaces.Managers;
@@ -84,10 +85,7 @@ namespace VPlayer
     protected override async void OnContainerCreated()
     {
       base.OnContainerCreated();
-
-      Kernel.Load<VPlayerLoggerModule>();
-
-      SplashScreenManager.SetText("Loading settings");
+      
 
       LoadSettings();
 
