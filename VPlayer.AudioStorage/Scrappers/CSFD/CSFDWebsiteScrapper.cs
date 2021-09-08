@@ -70,7 +70,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region LoadTvShow
 
-    public CSFDTVShow LoadTvShow(string url, int? seasonNumber = null, int? episodeNumber = null)
+    public CSFDTVShow LoadTvShow(string url, CancellationToken cancellationToken, int? seasonNumber = null, int? episodeNumber = null)
     {
       if (!Initialize())
       {
@@ -90,7 +90,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       statusManager.UpdateMessage(statusMessage);
 
-      var name = GetTvShowName(url, out var posterUrl);
+      var name = GetTvShowName(url, out var posterUrl, cancellationToken);
 
       if (name != null)
       {
@@ -98,16 +98,16 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
 
-        var poster = DownloadPoster(posterUrl);
+        var poster = DownloadPoster(posterUrl, cancellationToken);
 
         if (poster != null)
         {
-          tvShow.ImagePath = SaveImage(tvShow.Name, poster);
+          tvShow.ImagePath = SaveImage(tvShow.Name, poster, cancellationToken);
         }
 
         statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
 
-        tvShow.Seasons = LoadSeasons(statusMessage, seasonNumber, episodeNumber);
+        tvShow.Seasons = LoadSeasons(statusMessage, seasonNumber, episodeNumber, cancellationToken);
 
         if (tvShow.Seasons == null)
         {
@@ -134,7 +134,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region LoadTvShowSeason
 
-    public CSFDTVShowSeason LoadTvShowSeason(string url)
+    public CSFDTVShowSeason LoadTvShowSeason(string url, CancellationToken cancellationToken)
     {
       Initialize();
 
@@ -178,7 +178,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region GetTvShowName
 
-    private string GetTvShowName(string url, out string posterUrl)
+    private string GetTvShowName(string url, out string posterUrl, CancellationToken cancellationToken)
     {
       url = url
         .Replace("https://new.csfd.sk", baseUrl)
@@ -190,6 +190,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       var document = new HtmlDocument();
 
+      cancellationToken.ThrowIfCancellationRequested();
       document.LoadHtml(chromeDriver.PageSource);
 
       string node = null;
@@ -198,6 +199,8 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       while (node == null && i < maxCount)
       {
+        cancellationToken.ThrowIfCancellationRequested();
+
         node = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div/div/header/div/h1")?.FirstOrDefault()?.InnerText;
 
         if (node != null)
@@ -214,8 +217,6 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         }
 
         i++;
-
-
       }
 
       posterUrl = null;
@@ -226,10 +227,12 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region DownloadPoster
 
-    private byte[] DownloadPoster(string coverUrl)
+    private byte[] DownloadPoster(string coverUrl, CancellationToken cancellationToken)
     {
       using (var client = new WebClient())
       {
+        cancellationToken.ThrowIfCancellationRequested();
+
         var downloadedCover = client.DownloadData(coverUrl);
 
         return downloadedCover;
@@ -240,7 +243,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region SaveImage
 
-    private string SaveImage(string tvShowName, byte[] image)
+    private string SaveImage(string tvShowName, byte[] image, CancellationToken cancellationToken)
     {
       MemoryStream ms = new MemoryStream(image);
       Image i = Image.FromStream(ms);
@@ -248,13 +251,19 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       var directory = Path.Combine(AudioInfoDownloader.GetDefaultPicturesPath(), $"TvShows\\{tvShowName}");
       var finalPath = Path.Combine(directory, "poster.jpg");
 
+      cancellationToken.ThrowIfCancellationRequested();
+
       finalPath.EnsureDirectoryExists();
 
       if (File.Exists(finalPath))
       {
+        cancellationToken.ThrowIfCancellationRequested();
+
         File.Delete(finalPath);
       }
 
+
+      cancellationToken.ThrowIfCancellationRequested();
 
       i.Save(finalPath, ImageFormat.Jpeg);
       i.Dispose();
@@ -266,12 +275,13 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region LoadSeasons
 
-    private List<CSFDTVShowSeason> LoadSeasons(StatusMessage statusMessage, int? seasonNumber, int? episodeNumber)
+    private List<CSFDTVShowSeason> LoadSeasons(StatusMessage statusMessage, int? seasonNumber, int? episodeNumber, CancellationToken cancellationToken)
     {
       var seasons = new List<CSFDTVShowSeason>();
 
       var document = new HtmlDocument();
 
+      cancellationToken.ThrowIfCancellationRequested();
       document.LoadHtml(chromeDriver.PageSource);
 
       var nodes = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/section[1]/div[2]/div/ul/li/h3/a");
@@ -300,6 +310,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         seasons.Add(newSeason);
 
+        cancellationToken.ThrowIfCancellationRequested();
         logger.Log(MessageType.Success, $"Tv show season: {newSeason.Name}");
       }
 
@@ -308,7 +319,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         seasons[i].SeasonNumber = i + 1;
       }
 
-
+      cancellationToken.ThrowIfCancellationRequested();
       var isSingleSeasoned = !document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/section[1]/div[1]/h3").FirstOrDefault()?.InnerText.Contains("Série");
 
       if (isSingleSeasoned == true)
@@ -332,6 +343,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           newEpisode.Name = season.Name;
           newEpisode.Url = season.Url;
 
+          cancellationToken.ThrowIfCancellationRequested();
           LoadCsfdEpisode(newEpisode);
 
           if (newEpisode.EpisodeNumber == null)
@@ -351,6 +363,8 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       {
         foreach (var season in seasons)
         {
+          cancellationToken.ThrowIfCancellationRequested();
+
           season.SeasonEpisodes = LoadSeasonEpisodes(season.SeasonNumber, season.Url, statusMessage);
 
           statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
@@ -365,6 +379,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         if (season != null)
         {
+          cancellationToken.ThrowIfCancellationRequested();
           season.SeasonEpisodes = LoadSeasonEpisodes(seasonNumber.Value, season.Url, statusMessage, episodeNumber);
         }
         else
@@ -372,7 +387,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           return null;
         }
 
-
+        cancellationToken.ThrowIfCancellationRequested();
         statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
       }
 
@@ -597,16 +612,18 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region FindItems
 
-    public Task<CSFDQueryResult> FindItems(string name)
+    public Task<CSFDQueryResult> FindItems(string name, CancellationToken cancellationToken)
     {
       var query = $"https://www.csfd.cz/hledat/?q={name}";
+
+      cancellationToken.ThrowIfCancellationRequested();
 
       if (!Initialize())
       {
         return null;
       }
 
-      return GetItems(query);
+      return GetItems(query, cancellationToken);
     }
 
     #endregion
@@ -616,7 +633,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     private CSFDItem bestItem;
     private string lastParsedName;
 
-    public async Task<CSFDItem> GetBestFind(string name, int? year = null, bool onlySingleItem = false, string tvShowUrl = null, string tvShowName = null, int? seasonNumber = null, int? episodeNumber = null)
+    public async Task<CSFDItem> GetBestFind(string name, CancellationToken cancellationToken, int? year = null, bool onlySingleItem = false, string tvShowUrl = null, string tvShowName = null, int? seasonNumber = null, int? episodeNumber = null)
     {
       var statusMessage = new StatusMessage(1)
       {
@@ -688,7 +705,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         if (tvShowUrl == null)
         {
-          var tvShowFind = await FindSingleCsfdItem(tvShowName, year, episodeKeys);
+          var tvShowFind = await FindSingleCsfdItem(tvShowName, year, episodeKeys, cancellationToken);
 
           if (tvShowFind == null)
           {
@@ -698,7 +715,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           tvShowUrl = tvShowFind.Url;
         }
 
-        var tvSHow = LoadTvShow(tvShowUrl, episodeKeys.Key, episodeNumber);
+        var tvSHow = LoadTvShow(tvShowUrl, cancellationToken, episodeKeys.Key, episodeNumber);
 
         if (tvSHow != null)
         {
@@ -714,7 +731,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
                 {
                   return season.SeasonEpisodes[0];
                 }
-                else if(episodeKeys.Value != -1 && season.SeasonEpisodes.Count >= episodeKeys.Value)
+                else if (episodeKeys.Value != -1 && season.SeasonEpisodes.Count >= episodeKeys.Value)
                 {
                   return season.SeasonEpisodes[episodeKeys.Value - 1];
                 }
@@ -741,7 +758,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         }
 
 
-        return await FindSingleCsfdItem(parsedName, year, episodeKeys, true);
+        return await FindSingleCsfdItem(parsedName, year, episodeKeys, cancellationToken, true);
       }
     }
 
@@ -749,7 +766,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region FindSingleCsfdItem
 
-    private async Task<CSFDItem> FindSingleCsfdItem(string parsedName, int? year, KeyValuePair<int, int> episodeNumber, bool showStatusMassage = false)
+    private async Task<CSFDItem> FindSingleCsfdItem(string parsedName, int? year, KeyValuePair<int, int> episodeNumber, CancellationToken cancellationToken,  bool showStatusMassage = false)
     {
       lastParsedName = parsedName;
 
@@ -764,7 +781,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         statusManager.UpdateMessage(statusMessage);
       }
 
-      var items = await FindItems(parsedName);
+      var items = await FindItems(parsedName, cancellationToken);
 
       if (showStatusMassage)
         statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
@@ -818,18 +835,23 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region GetItems
 
-    private async Task<CSFDQueryResult> GetItems(string url)
+    private async Task<CSFDQueryResult> GetItems(string url, CancellationToken cancellationToken)
     {
+      cancellationToken.ThrowIfCancellationRequested();
       CSFDQueryResult result = new CSFDQueryResult();
       chromeDriver.Url = url;
       chromeDriver.Navigate();
 
       var document = new HtmlDocument();
 
+      cancellationToken.ThrowIfCancellationRequested();
       document.LoadHtml(chromeDriver.PageSource);
 
-      var movies = await GetMoviesFromFind(document);
-      var tvShows = await GetTvShowsFromFind(document);
+      cancellationToken.ThrowIfCancellationRequested();
+      var movies = await GetMoviesFromFind(document, cancellationToken);
+
+      cancellationToken.ThrowIfCancellationRequested();
+      var tvShows = await GetTvShowsFromFind(document, cancellationToken);
 
       result.Movies = movies;
       result.TvShows = tvShows;
@@ -841,13 +863,13 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region GetMoviesFromFind
 
-    private Task<IEnumerable<CSFDItem>> GetMoviesFromFind(HtmlDocument document)
+    private Task<IEnumerable<CSFDItem>> GetMoviesFromFind(HtmlDocument document, CancellationToken cancellationToken)
     {
       return Task.Run(() =>
       {
         var nodes = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[2]/div/div[1]/div/div[1]/section[1]/div/div[1]/article");
 
-        return ParseFindNodes(nodes);
+        return ParseFindNodes(nodes, cancellationToken);
       });
     }
 
@@ -927,7 +949,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region ParseFindNodes
 
-    private IEnumerable<CSFDItem> ParseFindNodes(HtmlNodeCollection nodes)
+    private IEnumerable<CSFDItem> ParseFindNodes(HtmlNodeCollection nodes, CancellationToken cancellationToken)
     {
       if (nodes == null)
       {
@@ -938,6 +960,8 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       foreach (var node in nodes)
       {
+        cancellationToken.ThrowIfCancellationRequested();
+
         var posterNode = node.ChildNodes[1].ChildNodes[1];
 
         var name = posterNode.Attributes[0].Value;
@@ -1068,13 +1092,13 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region GetTvShowsFromFind
 
-    private Task<IEnumerable<CSFDItem>> GetTvShowsFromFind(HtmlDocument document)
+    private Task<IEnumerable<CSFDItem>> GetTvShowsFromFind(HtmlDocument document, CancellationToken cancellationToken)
     {
       return Task.Run(() =>
       {
         var nodes = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[2]/div/div[1]/div/div[1]/section[2]/div/div[1]/article");
 
-        return ParseFindNodes(nodes);
+        return ParseFindNodes(nodes, cancellationToken);
       });
     }
 

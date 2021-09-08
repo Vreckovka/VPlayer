@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Logger;
@@ -35,6 +36,7 @@ namespace VPlayer.AudioStorage.Scrappers
 
     #region UpdateTvShowFromCsfd
 
+    private CancellationTokenSource ctsUpdateTvShowFromCsfd;
     public Task UpdateTvShowFromCsfd(int tvShowId, string csfUrl)
     {
       return Task.Run(async () =>
@@ -62,7 +64,10 @@ namespace VPlayer.AudioStorage.Scrappers
             });
           });
 
-          var csfdTvShow = cSfdWebsiteScrapper.LoadTvShow(csfUrl);
+          ctsUpdateTvShowFromCsfd?.Cancel();
+          ctsUpdateTvShowFromCsfd = new CancellationTokenSource();
+
+          var csfdTvShow = cSfdWebsiteScrapper.LoadTvShow(csfUrl, ctsUpdateTvShowFromCsfd.Token);
 
           if (csfdTvShow == null)
           {
@@ -156,6 +161,7 @@ namespace VPlayer.AudioStorage.Scrappers
 
     #endregion
 
+    private CancellationTokenSource ctsUpdateTvShowSeasonFromCsfd;
     public Task UpdateTvShowSeasonFromCsfd(int tvShowSeasonId, string csfUrl)
     {
       return Task.Run(async () =>
@@ -175,7 +181,10 @@ namespace VPlayer.AudioStorage.Scrappers
             });
           });
 
-          var csfdtvShowSeason = cSfdWebsiteScrapper.LoadTvShowSeason(csfUrl);
+          ctsUpdateTvShowSeasonFromCsfd?.Cancel();
+          ctsUpdateTvShowSeasonFromCsfd = new CancellationTokenSource();
+
+          var csfdtvShowSeason = cSfdWebsiteScrapper.LoadTvShowSeason(csfUrl, ctsUpdateTvShowSeasonFromCsfd.Token);
 
           if (csfdtvShowSeason == null)
           {

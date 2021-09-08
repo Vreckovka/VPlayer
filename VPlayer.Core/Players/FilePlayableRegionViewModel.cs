@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -432,15 +433,35 @@ namespace VPlayer.Core.ViewModels
 
     #region OnActualItemChanged
 
+    private CancellationTokenSource cTSOnActualItemChanged;
     protected override void OnActualItemChanged()
     {
       base.OnActualItemChanged();
 
+
+      if (cTSOnActualItemChanged != null)
+      {
+        cTSOnActualItemChanged.Cancel();
+      }
+    
+      cTSOnActualItemChanged = new CancellationTokenSource();
+
       if (ActualItem != null)
         ActualItem.ActualPosition = 0;
+
+      Task.Run(() =>
+      {
+        return DownloadItemInfo(cTSOnActualItemChanged.Token);
+      });
     }
 
     #endregion
+
+
+    protected virtual Task DownloadItemInfo(CancellationToken cancellationToken)
+    {
+      return Task.CompletedTask;
+    }
 
     #region Dispose
 
@@ -455,7 +476,6 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
-
 
     #endregion
 

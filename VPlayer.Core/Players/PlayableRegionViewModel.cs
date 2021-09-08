@@ -1085,23 +1085,34 @@ namespace VPlayer.Core.ViewModels
 
     public bool StorePlaylist(bool isUserCreated = false, bool editSaved = false)
     {
-      var playlistModels = new List<TPlaylistItemModel>();
+      var acutalPlaylist = PlayList?.ToList();
 
-      for (int i = 0; i < PlayList.Count; i++)
+      if (acutalPlaylist == null || acutalPlaylist.Count == 0)
       {
-        var song = PlayList[i];
-
-        var newItem = GetNewPlaylistItemViewModel(song, i);
-
-        if (newItem == null)
-        {
-          return false;
-        }
-
-        playlistModels.Add(newItem);
+        return false;
       }
 
-      var songIds = PlayList.Select(x => x.Model.Id).ToList();
+      var playlistModels = new List<TPlaylistItemModel>();
+
+      for (int i = 0; i < acutalPlaylist.Count; i++)
+      {
+        var song = acutalPlaylist[i];
+
+        if (song != null)
+        {
+
+          var newItem = GetNewPlaylistItemViewModel(song, i);
+
+          if (newItem == null)
+          {
+            return false;
+          }
+
+          playlistModels.Add(newItem);
+        }
+      }
+
+      var songIds = acutalPlaylist.Where(x => x.Model != null).Select(x => x.Model.Id).ToList();
 
       var hashCode = songIds.GetSequenceHashCode();
 

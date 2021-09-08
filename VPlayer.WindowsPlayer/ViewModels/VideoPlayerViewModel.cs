@@ -601,16 +601,17 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-    protected override void OnActualItemChanged()
+    protected override async Task DownloadItemInfo(CancellationToken cancellationToken)
     {
-      base.OnActualItemChanged();
+      await base.DownloadItemInfo(cancellationToken);
 
-      Task.Run(() => FindOnCsfd(ActualItem));
+      await FindOnCsfd(ActualItem, cancellationToken);
     }
+
 
     #region FindOnCsfd
 
-    private async Task FindOnCsfd(VideoItemInPlaylistViewModel viewModel)
+    private async Task FindOnCsfd(VideoItemInPlaylistViewModel viewModel, CancellationToken cancellationToken)
     {
       if (viewModel == null || viewModel.CSFDItem != null)
       {
@@ -622,14 +623,15 @@ namespace VPlayer.WindowsPlayer.ViewModels
       if (viewModel is TvShowEpisodeInPlaylistViewModel episodeInPlaylistViewModel)
       {
         item = await iCsfdWebsiteScrapper.GetBestFind(
-          episodeInPlaylistViewModel.Name, 
+          episodeInPlaylistViewModel.Name,
+          cancellationToken,
           tvShowUrl: episodeInPlaylistViewModel?.TvShow.CsfdUrl,
           seasonNumber: episodeInPlaylistViewModel?.TvShowSeason.SeasonNumber,
           episodeNumber: episodeInPlaylistViewModel?.TvShowEpisode.EpisodeNumber);
       }
       else
       {
-        item = await iCsfdWebsiteScrapper.GetBestFind(viewModel.Name);
+        item = await iCsfdWebsiteScrapper.GetBestFind(viewModel.Name, cancellationToken);
       }
 
       Application.Current.Dispatcher.Invoke(() =>
@@ -699,6 +701,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region UpdateVideoItem
+
     private void UpdateVideoItem(VideoItemInPlaylistViewModel tvShowItem, CSFDItem csfdEpisode, string tvShowName)
     {
       if (csfdEpisode != null)
@@ -715,6 +719,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
       }
     }
+
+    #endregion
 
     #region MediaPlayer_ParsedChanged
 
