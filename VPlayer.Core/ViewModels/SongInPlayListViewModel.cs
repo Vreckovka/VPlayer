@@ -359,6 +359,12 @@ namespace VPlayer.Core.ViewModels
               break;
             case LRCProviders.Google:
               LRCFile = new LRCFileViewModel(lrc, provider, pCloudLrcProvider, googleDriveLrcProvider);
+
+              if (LRCFile != null)
+              {
+                LRCFile.OnApplyPernamently();
+              }
+
               break;
             case LRCProviders.Local:
               var localProvider = new LocalLrcProvider("C:\\Lyrics");
