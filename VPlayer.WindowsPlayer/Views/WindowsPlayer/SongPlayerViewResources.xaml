@@ -4,6 +4,7 @@
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
                     xmlns:behaviors1="clr-namespace:VPlayer.WindowsPlayer.Behaviors"
+                    xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
                     xmlns:controls2="clr-namespace:VCore.Controls;assembly=VCore.WPF"
                     xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
                     xmlns:local="clr-namespace:VPlayer.WindowsPlayer.Views.WindowsPlayer"
@@ -35,7 +36,9 @@
 
     <DataTemplate x:Key="LyricsDataTemplate">
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden">
-            <TextBox Style="{StaticResource LyricsStyle}" Text="{Binding Mode=OneWay}" />
+            <Border>
+                <TextBox Style="{StaticResource LyricsStyle}" Text="{Binding Mode=OneWay}" />
+            </Border>
         </ScrollViewer>
     </DataTemplate>
 
@@ -94,56 +97,113 @@
                 </b:Interaction.Behaviors>
             </ListView>
 
-            <Grid Margin="15,10"
+            <Grid Margin="15,10,15,0"
                   HorizontalAlignment="Left"
                   VerticalAlignment="Top">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <ToggleButton x:Name="SettingsButton"
-                              HorizontalAlignment="Left"
-                              Style="{StaticResource BorderlessToggleButtonStyle}">
-                    <Grid Margin="0,0,0,0">
-                        <Image Width="20"
-                               Height="20"
-                               Source="pack://application:,,,/VPlayer;component/Resources/Icons/settings.png" />
 
-                        <Rectangle x:Name="ImageOpacityMask"
-                                   Width="20"
-                                   Height="20"
-                                   Fill="{Binding RelativeSource={RelativeSource AncestorType=ToggleButton, Mode=FindAncestor}, Path=Foreground}">
+                <controls2:PathButton x:Name="SettingsButton"
+                                      HorizontalAlignment="Left"
+                                      FontWeight="Bold"
+                                      ForegroundCheckedColor="White"
+                                      ForegroundDefaultColor="#454545"
+                                      ForegroundHoverColor="#ccc"
+                                      IconDefaultColor="#555555"
+                                      IconHoverColor="#ccc"
+                                      PathCheckedBrush="{StaticResource DefaultRedBrush}"
+                                      PathStyle="{StaticResource gear}">
+                    Lyrics
+                </controls2:PathButton>
 
-                            <Rectangle.OpacityMask>
-                                <ImageBrush ImageSource="pack://application:,,,/VPlayer;component/Resources/Icons/settings.png" />
-                            </Rectangle.OpacityMask>
-                        </Rectangle>
-                    </Grid>
 
-                </ToggleButton>
 
                 <Border Grid.Row="1"
                         Margin="0,5,0,0"
+                        Padding="0"
                         HorizontalAlignment="Left"
-                        Background="#90101010"
+                        Background="#cc101010"
+                        BorderBrush="#95454545"
+                        BorderThickness="1"
                         CornerRadius="5">
-                    <StackPanel Width="100"
-                                Margin="10"
+                    <StackPanel Margin="10"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center">
 
-                        <TextBlock Text="Adjust lyrics (ms)" />
-                        <TextBox Text="{Binding TimeAdjustment, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                        <Button Width="70"
-                                Margin="5"
-                                Command="{Binding ApplyPernamently}"
-                                Content="Update" />
+                        <TextBlock FontWeight="Bold"
+                                   Foreground="#ccc"
+                                   Text="Adjust lyrics (ms)" />
+
+                        <controls:NumericUpAndDown StepSize="500" Value="{Binding TimeAdjustment, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+
+
+                        <controls2:PathButton Margin="0,10,0,0"
+                                              Padding="10"
+                                              HorizontalAlignment="Left"
+                                              Background="#151515"
+                                              BorderBrush="#45cccccc"
+                                              BorderThickness="1"
+                                              Command="{Binding ApplyPernamently}"
+                                              FontWeight="Bold"
+                                              ForegroundCheckedColor="White"
+                                              ForegroundDefaultColor="#454545"
+                                              ForegroundHoverColor="#ccc"
+                                              IconDefaultColor="#555555"
+                                              IconHoverColor="{StaticResource BlueColor}"
+                                              IsReadOnly="True"
+                                              PathCheckedBrush="{StaticResource YellowBrush}"
+                                              PathStyle="{StaticResource Save}">
+                            Save pernamently
+                        </controls2:PathButton>
+
+                        <TextBlock Margin="0,10,0,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding UpdateStatus, Mode=OneWay}" Value="true">
+                                            <Setter Property="Text" Value="Success" />
+                                            <Setter Property="Foreground" Value="{StaticResource GreenBrush}" />
+                                        </DataTrigger>
+
+                                        <DataTrigger Binding="{Binding UpdateStatus, Mode=OneWay}" Value="false">
+                                            <Setter Property="Text" Value="Failed" />
+                                            <Setter Property="Foreground" Value="{StaticResource DefaultRedBrush}" />
+                                        </DataTrigger>
+
+                                        <DataTrigger Binding="{Binding UpdateStatus, Mode=OneWay}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+
                     </StackPanel>
                     <Border.Style>
                         <Style TargetType="Border">
                             <Setter Property="Visibility" Value="Hidden" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding ElementName=SettingsButton, Path=IsChecked}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                </Border>
+
+                <Border Grid.Row="1" Background="#85050505">
+                    <TextBlock HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               FontSize="18"
+                               Text="Saving..." />
+
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsLoading}" Value="True">
                                     <Setter Property="Visibility" Value="Visible" />
                                 </DataTrigger>
                             </Style.Triggers>
@@ -164,6 +224,45 @@
             </DataTrigger>
         </Style.Triggers>
     </Style>
+
+    <DataTemplate x:Key="PCloudLyricsDataTemplate">
+        <Path Width="10"
+              Height="10"
+              Margin="-2,-6,0,0"
+              ToolTip="Cloud">
+            <Path.Style>
+                <Style BasedOn="{attachedProperties:MultiStyle cloud-solid SyncLyricsSubIconStyle}" TargetType="Path">
+                    <Setter Property="Fill" Value="#4285f4" />
+
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=controls2:ButtonWithIcon}, Path=IsMouseOver}" Value="true">
+                            <DataTrigger.EnterActions>
+                                <RemoveStoryboard BeginStoryboardName="HoverStoryboardEnd" />
+                                <BeginStoryboard x:Name="HoverStoryboardStart">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                         To="0.75"
+                                                         Duration="0:0:0:0.15" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+
+                            <DataTrigger.ExitActions>
+                                <RemoveStoryboard BeginStoryboardName="HoverStoryboardStart" />
+                                <BeginStoryboard x:Name="HoverStoryboardEnd">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                         To="0.3"
+                                                         Duration="0:0:0:0.15" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.ExitActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Path.Style>
+        </Path>
+    </DataTemplate>
 
     <DataTemplate x:Key="GoogleLyricsDataTemplate">
         <Path Width="10"
@@ -371,7 +470,8 @@
 
     <templateSelectors:LyricsProviderTemplateSelector x:Key="LyricsProviderTemplateSelector"
                                                       GoogleDataTemplate="{StaticResource GoogleLyricsDataTemplate}"
-                                                      LocalDataTemplate="{StaticResource LocalLyricsDataTemplate}" />
+                                                      LocalDataTemplate="{StaticResource LocalLyricsDataTemplate}"
+                                                      PCloudDataTemplate="{StaticResource PCloudLyricsDataTemplate}" />
 
     <templateSelectors:SongImageTemplateSelector x:Key="SongImageTemplateSelector"
                                                  AlbumDataTemplate="{StaticResource AlbumImageDatatemplate}"
@@ -678,7 +778,7 @@
                                                                                 Width="9"
                                                                                 Height="4"
                                                                                 BorderThickness="0"
-                                                                                Content="{Binding LRCFile}"
+                                                                                Content="{Binding LRCFile.Provider}"
                                                                                 ContentTemplateSelector="{StaticResource LyricsProviderTemplateSelector}" />
 
 

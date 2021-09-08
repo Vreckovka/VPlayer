@@ -26,58 +26,58 @@
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d">
 
-  <Window.Resources>
-    <ResourceDictionary>
-      <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Paths.xaml" />
-      </ResourceDictionary.MergedDictionaries>
-    </ResourceDictionary>
-  </Window.Resources>
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/VCore.WPF;component/StylesDictionaries/Paths.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
 
-  <Window.TaskbarItemInfo>
-    <TaskbarItemInfo>
-      <TaskbarItemInfo.ThumbButtonInfos>
-        <ThumbButtonInfo Command="{Binding PlayStop}"
-                         Description="Play Stop"
-                         ImageSource="pack://application:,,,/Resources/play-and-pause-button.png" />
-        <ThumbButtonInfo Command="{Binding SwitchScreenCommand}"
-                         Description="Move to active screen"
-                         ImageSource="pack://application:,,,/VCore.WPF;component/Resources/window_switch.png" />
-      </TaskbarItemInfo.ThumbButtonInfos>
-    </TaskbarItemInfo>
-  </Window.TaskbarItemInfo>
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo>
+            <TaskbarItemInfo.ThumbButtonInfos>
+                <ThumbButtonInfo Command="{Binding PlayStop}"
+                                 Description="Play Stop"
+                                 ImageSource="pack://application:,,,/Resources/play-and-pause-button.png" />
+                <ThumbButtonInfo Command="{Binding SwitchScreenCommand}"
+                                 Description="Move to active screen"
+                                 ImageSource="pack://application:,,,/VCore.WPF;component/Resources/window_switch.png" />
+            </TaskbarItemInfo.ThumbButtonInfos>
+        </TaskbarItemInfo>
+    </Window.TaskbarItemInfo>
 
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="auto" />
-      <RowDefinition />
-      <RowDefinition Height="auto" />
-    </Grid.RowDefinitions>
-
-
-
-
-    <Button Click="Button_Click"
-            Content="DELETE ALL"
-            Visibility="Collapsed" />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
 
 
 
-    <ContentControl Grid.Row="1" prism:RegionManager.RegionName="{x:Static regions1:RegionNames.ContentRegion}" />
+
+        <Button Click="Button_Click"
+                Content="DELETE ALL"
+                Visibility="Collapsed" />
 
 
 
-    <ContentControl Grid.Row="2"
-                    Grid.Column="0"
-                    prism:RegionManager.RegionName="{x:Static regions1:RegionNames.PlayerRegion}" />
+        <ContentControl Grid.Row="1" prism:RegionManager.RegionName="{x:Static regions1:RegionNames.ContentRegion}" />
 
 
 
-  </Grid>
+        <ContentControl Grid.Row="2"
+                        Grid.Column="0"
+                        prism:RegionManager.RegionName="{x:Static regions1:RegionNames.PlayerRegion}" />
 
 
-  <b:Interaction.Behaviors>
-    <behaviors:ProperMaximizeWindowBehavior />
-    <behaviors:MoveToActiveScreenBehavior SwitchCommnd="{Binding SwitchBehaviorCommand, Mode=TwoWay}" />
-  </b:Interaction.Behaviors>
+
+    </Grid>
+
+
+    <b:Interaction.Behaviors>
+        <behaviors:ProperMaximizeWindowBehavior />
+        <behaviors:MoveToActiveScreenBehavior SwitchCommnd="{Binding SwitchBehaviorCommand, Mode=TwoWay}" />
+    </b:Interaction.Behaviors>
 </Window>

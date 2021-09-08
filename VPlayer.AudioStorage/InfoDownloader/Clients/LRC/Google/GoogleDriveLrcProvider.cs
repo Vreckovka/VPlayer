@@ -49,39 +49,41 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
     #region GetFile
 
     private Semaphore batton = new Semaphore(1, 1);
-    protected override GoogleDriveFile GetFile(string songName, string artistName, string albumName)
+    protected override Task<GoogleDriveFile> GetFile(string songName, string artistName, string albumName)
     {
-      try
+      return Task.Run(() =>
       {
-        batton.WaitOne();
-
-        var artistFolder = BaseFolder?.TryGetValueFromFolder(artistName, GoogleMimeTypes.GoogleDriveFolder);
-
-        if (artistFolder != null)
+        try
         {
-          var albumFolder = artistFolder.TryGetValueFromFolder(albumName, GoogleMimeTypes.GoogleDriveFolder);
+          batton.WaitOne();
 
-          if (albumFolder != null)
+          var artistFolder = BaseFolder?.TryGetValueFromFolder(artistName, GoogleMimeTypes.GoogleDriveFolder);
+
+          if (artistFolder != null)
           {
-            var fileName = GetFileName(artistName, songName) + ".lrc";
+            var albumFolder = artistFolder.TryGetValueFromFolder(albumName, GoogleMimeTypes.GoogleDriveFolder);
 
-            var lyricsFile = albumFolder.TryGetValueFromFolder(fileName, GoogleMimeTypes.GoogleDriveFile);
+            if (albumFolder != null)
+            {
+              var fileName = GetFileName(artistName, songName) + ".lrc";
 
-            return lyricsFile;
+              var lyricsFile = albumFolder.TryGetValueFromFolder(fileName, GoogleMimeTypes.GoogleDriveFile);
+
+              return lyricsFile;
+            }
           }
+
+          return null;
         }
-
-        return null;
-      }
-      catch (Exception ex)
-      {
-        throw;
-      }
-      finally
-      {
-        batton.Release();
-      }
-
+        catch (Exception ex)
+        {
+          throw;
+        }
+        finally
+        {
+          batton.Release();
+        }
+      });
     }
 
 
@@ -92,7 +94,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
     protected override async Task<KeyValuePair<string[], ILRCFile>> GetLinesLrcFileAsync(string songName, string artistName, string albumName)
     {
-      var lyricsFile = GetFile(songName, artistName, albumName);
+      var lyricsFile = await GetFile(songName, artistName, albumName);
 
       if (lyricsFile != null)
       {
@@ -174,21 +176,28 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
     #region Update
 
-    public override void Update(ILRCFile lRCFile)
+    public override Task<bool> Update(ILRCFile lRCFile)
     {
-      if (lRCFile is GoogleLRCFile googleLRCFile)
+      return Task.Run(() =>
       {
-        var file = googleDriveServiceProvider.GetFile(googleLRCFile.GoogleDriveFileId);
+        if (lRCFile is GoogleLRCFile googleLRCFile)
+        {
+          var file = googleDriveServiceProvider.GetFile(googleLRCFile.GoogleDriveFileId);
 
-        Stream stream = GenerateStreamFromString(lRCFile.GetString());
+          Stream stream = GenerateStreamFromString(lRCFile.GetString());
 
-        googleDriveServiceProvider.UpdateFile(file, file.Id, stream, file.MimeType);
+          googleDriveServiceProvider.UpdateFile(file, file.Id, stream, file.MimeType);
 
+          return true;
+        }
 
-      }
+        return false;
+      });
     }
 
     #endregion
+
+    #region GenerateStreamFromString
 
     public static Stream GenerateStreamFromString(string s)
     {
@@ -199,6 +208,8 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
       stream.Position = 0;
       return stream;
     }
+
+    #endregion
 
     #endregion
   }

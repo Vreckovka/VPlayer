@@ -32,6 +32,7 @@ namespace VPlayer.Core.ViewModels
     private readonly IAlbumsViewModel albumsViewModel;
     private readonly IArtistsViewModel artistsViewModel;
     private readonly AudioInfoDownloader audioInfoDownloader;
+    private readonly PCloudLrcProvider pCloudLrcProvider;
     private readonly GoogleDriveLrcProvider googleDriveLrcProvider;
     private readonly IStorageManager storageManager;
 
@@ -44,6 +45,7 @@ namespace VPlayer.Core.ViewModels
       IAlbumsViewModel albumsViewModel,
       IArtistsViewModel artistsViewModel,
       AudioInfoDownloader audioInfoDownloader,
+      PCloudLrcProvider pCloudLrcProvider,
       Song model,
       GoogleDriveLrcProvider googleDriveLrcProvider,
       IStorageManager storageManager) : base(model.ItemModel, eventAggregator, storageManager)
@@ -51,6 +53,7 @@ namespace VPlayer.Core.ViewModels
       this.albumsViewModel = albumsViewModel ?? throw new ArgumentNullException(nameof(albumsViewModel));
       this.artistsViewModel = artistsViewModel ?? throw new ArgumentNullException(nameof(artistsViewModel));
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
+      this.pCloudLrcProvider = pCloudLrcProvider ?? throw new ArgumentNullException(nameof(pCloudLrcProvider));
       this.googleDriveLrcProvider = googleDriveLrcProvider ?? throw new ArgumentNullException(nameof(googleDriveLrcProvider));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       SongModel = model ?? throw new ArgumentNullException(nameof(model));
@@ -352,14 +355,19 @@ namespace VPlayer.Core.ViewModels
           switch (provider)
           {
             case LRCProviders.NotIdentified:
-              LRCFile = new LRCFileViewModel(lrc, provider);
+              LRCFile = new LRCFileViewModel(lrc, provider, pCloudLrcProvider);
               break;
             case LRCProviders.Google:
-              LRCFile = new LRCFileViewModel(lrc, provider, googleDriveLrcProvider);
+              LRCFile = new LRCFileViewModel(lrc, provider, pCloudLrcProvider, googleDriveLrcProvider);
               break;
             case LRCProviders.Local:
               var localProvider = new LocalLrcProvider("C:\\Lyrics");
-              LRCFile = new LRCFileViewModel(lrc, provider, localProvider);
+              LRCFile = new LRCFileViewModel(lrc, provider, pCloudLrcProvider, localProvider);
+              break;
+            case LRCProviders.MiniLyrics:
+              break;
+            case LRCProviders.PCloud:
+              LRCFile = new LRCFileViewModel(lrc, provider, pCloudLrcProvider, pCloudLrcProvider);
               break;
             default:
               throw new ArgumentOutOfRangeException();
@@ -385,7 +393,7 @@ namespace VPlayer.Core.ViewModels
         var lrc = await audioInfoDownloader.TryGetLRCLyricsAsync(provider, SongModel, ArtistViewModel?.Name, AlbumViewModel?.Name);
 
         if (lrc != null)
-          LRCFile = new LRCFileViewModel(lrc, provider.LRCProvider, provider);
+          LRCFile = new LRCFileViewModel(lrc, provider.LRCProvider, pCloudLrcProvider, provider);
 
       }
     }
@@ -399,7 +407,20 @@ namespace VPlayer.Core.ViewModels
       var lrc = (GoogleLRCFile)await audioInfoDownloader.TryGetLRCLyricsAsync(googleDriveLrcProvider, SongModel, ArtistViewModel?.Name, AlbumViewModel?.Name);
 
       if (lrc != null)
-        LRCFile = new LRCFileViewModel(lrc, googleDriveLrcProvider.LRCProvider, googleDriveLrcProvider);
+        LRCFile = new LRCFileViewModel(lrc, googleDriveLrcProvider.LRCProvider, pCloudLrcProvider, googleDriveLrcProvider);
+
+    }
+
+    #endregion
+
+    #region LoadLRCFromPCloud
+
+    private async Task LoadLRCFromPCloud()
+    {
+      var lrc = (PCloudLRCFile)await audioInfoDownloader.TryGetLRCLyricsAsync(pCloudLrcProvider, SongModel, ArtistViewModel?.Name, AlbumViewModel?.Name);
+
+      if (lrc != null)
+        LRCFile = new LRCFileViewModel(lrc, pCloudLrcProvider.LRCProvider, pCloudLrcProvider, googleDriveLrcProvider);
 
     }
 
@@ -409,13 +430,13 @@ namespace VPlayer.Core.ViewModels
 
     private void UpdateSyncedLyrics()
     {
-      if (LRCFile != null)
+      Application.Current.Dispatcher.Invoke(() =>
       {
-        Application.Current.Dispatcher.Invoke(() =>
+        if (LRCFile != null)
         {
           LRCFile.SetActualLine(ActualTime);
-        });
-      }
+        }
+      });
     }
 
     #endregion
@@ -434,9 +455,13 @@ namespace VPlayer.Core.ViewModels
       {
         var lrc = parser.Parse(lrcString.Split('\n').ToList());
 
+        lrc.Artist = ArtistViewModel?.Name;
+        lrc.Album = AlbumViewModel?.Name;
+        lrc.Title = Name;
+
         SongModel.LRCLyrics = lrcString;
 
-        LRCFile = new LRCFileViewModel(lrc, LRCProviders.MiniLyrics, client);
+        LRCFile = new LRCFileViewModel(lrc, LRCProviders.MiniLyrics, pCloudLrcProvider, client);
       }
 
     }
@@ -452,6 +477,9 @@ namespace VPlayer.Core.ViewModels
 
       if (ArtistViewModel == null || AlbumViewModel == null)
         return false;
+
+      if (LRCFile == null)
+        await LoadLRCFromPCloud();
 
       if (LRCFile == null)
         await LoadLRCFromGoogleDrive();
@@ -470,10 +498,13 @@ namespace VPlayer.Core.ViewModels
         await audioInfoDownloader.UpdateSongLyricsAsync(ArtistViewModel.Name, Name, SongModel);
       }
 
+
+
       Application.Current?.Dispatcher?.Invoke(() =>
       {
         RaisePropertyChanged(nameof(LRCFile));
         RaisePropertyChanged(nameof(Lyrics));
+        RaisePropertyChanged(nameof(LyricsObject));
       });
 
       return LRCFile != null;

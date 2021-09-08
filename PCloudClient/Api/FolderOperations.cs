@@ -11,10 +11,10 @@ namespace PCloud
 		/// <param name="name">Name of the new folder</param>
 		/// <param name="parent">Parent folder, or null to create a top-level one</param>
 		/// <param name="getExisting">true to get an existing one if it exists, false to fail</param>
-		public static async Task<FolderInfo> createFolder( this Connection conn, string name, FolderInfo parent = null, bool getExisting = true )
+		public static async Task<FolderInfo> createFolder( this Connection conn, string name, long? parentId = null, bool getExisting = true )
 		{
 			RequestBuilder req = conn.newRequest( getExisting ? "createfolderifnotexists" : "createfolder" );
-			req.add( "folderid", parent?.id ?? 0L );
+			req.add( "folderid", parentId ?? 0L );
 			req.add( "name", name );
 			req.unixTimestamps();
 

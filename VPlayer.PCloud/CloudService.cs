@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using PCloud;
@@ -33,6 +34,8 @@ namespace VPlayer.PCloud
       credentials = GetLoginInfo();
     }
 
+    #region GetLoginInfo
+
     public LoginInfo GetLoginInfo()
     {
       if (File.Exists(filePath))
@@ -44,6 +47,10 @@ namespace VPlayer.PCloud
 
       return null;
     }
+
+    #endregion
+
+    #region GetFileStats
 
     public async Task<PCloudResponse<Stats>> GetFileStats(long id)
     {
@@ -67,9 +74,10 @@ namespace VPlayer.PCloud
       return null;
     }
 
+    #endregion
 
     #region GetPublicLink
-
+    
     public async Task<string> GetPublicLink(long id)
     {
       if (credentials != null)
@@ -92,12 +100,14 @@ namespace VPlayer.PCloud
       return null;
     }
 
-  public bool IsUserLoggedIn()
+    public bool IsUserLoggedIn()
     {
       return File.Exists(filePath);
     }
 
     #endregion
+
+
 
     #region GetFilesAsync
 
@@ -228,6 +238,155 @@ namespace VPlayer.PCloud
     }
 
     #endregion
+
+    #region CreateFile
+
+    public async Task<long?> CreateFile(string name, long parenId)
+    {
+      if (credentials != null)
+      {
+        using (var conn = await Connection.open(ssl, host))
+        {
+          try
+          {
+            await conn.login(credentials.Email, credentials.Password);
+
+            var file = await conn.createFile(parenId, name, FileMode.Create, FileAccess.Write);
+
+            if (file.fileId > 0)
+            {
+              return file.fileId;
+            }
+          }
+          finally
+          {
+            await Logout(conn);
+          }
+        }
+      }
+
+      return null;
+    }
+
+    #endregion
+
+    #region WriteToFile
+
+    public async Task<bool> WriteToFile(string sourceString, long id)
+    {
+      if (credentials != null)
+      {
+        using (var conn = await Connection.open(ssl, host))
+        {
+          try
+          {
+            await conn.login(credentials.Email, credentials.Password);
+            MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(sourceString), false);
+
+            var fd = await conn.createFile(id, FileMode.Open, FileAccess.Write);
+
+            await conn.writeFile(fd, ms, ms.Length);
+            await conn.closeFile(fd);
+          }
+          finally
+          {
+            await Logout(conn);
+          }
+        }
+      }
+
+      return false;
+    }
+
+    #endregion
+
+    #region CreateFileAndWrite
+
+    public async Task<bool> CreateFileAndWrite(string name, string sourceString, long folderId)
+    {
+      if (credentials != null)
+      {
+        using (var conn = await Connection.open(ssl, host))
+        {
+          try
+          {
+            await conn.login(credentials.Email, credentials.Password);
+
+            MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(sourceString), false);
+
+            var fd = await conn.createFile(folderId, name, FileMode.Create, FileAccess.Write);
+
+            await conn.writeFile(fd, ms, ms.Length);
+            await conn.closeFile(fd);
+
+            return true;
+          }
+          finally
+          {
+            await Logout(conn);
+          }
+        }
+      }
+
+      return false;
+    }
+
+    #endregion
+
+    #region CreateFolder
+
+    public async Task<FolderInfo> CreateFolder(string name, long? parentId)
+    {
+      if (credentials != null)
+      {
+        using (var conn = await Connection.open(ssl, host))
+        {
+          try
+          {
+            await conn.login(credentials.Email, credentials.Password);
+
+            return await conn.createFolder(name, parentId);
+          }
+          finally
+          {
+            await Logout(conn);
+          }
+        }
+      }
+
+      return null;
+    }
+
+    #endregion
+
+    public async Task<MemoryStream> ReadFile(long id)
+    {
+      if (credentials != null)
+      {
+        using (var conn = await Connection.open(ssl, host))
+        {
+          try
+          {
+            await conn.login(credentials.Email, credentials.Password);
+
+            var fd = await conn.createFile(id, FileMode.Open, FileAccess.Read);
+            var fileSize = await conn.getFileSize(fd);
+            MemoryStream msRead = new MemoryStream();
+
+            await conn.readFile(fd, msRead, fileSize.length);
+
+            return msRead;
+          }
+          finally
+          {
+            await Logout(conn);
+          }
+        }
+      }
+
+      return null;
+    }
+
 
     #region Logout
 

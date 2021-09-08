@@ -5,7 +5,7 @@
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Paths.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VCore.WPF;component/StylesDictionaries/Paths.xaml" />
         <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
@@ -246,8 +246,6 @@
         </Setter>
     </Style>
 
-
-
     <Style x:Key="ButtonStyleWindows" TargetType="{x:Type Button}">
         <Setter Property="Foreground" Value="{DynamicResource DefaultWhiteBrush}" />
         <Setter Property="FontSize" Value="15" />
@@ -275,6 +273,7 @@
         <Setter Property="PathCheckedBrush" Value="#FFEFDF" />
         <Setter Property="IconDefaultColor" Value="#50FFEFDF" />
         <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="IconMargin" Value="10 0 0 0" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="Template">
@@ -304,7 +303,7 @@
 
                             <ContentPresenter x:Name="MyContentPresenter"
                                               Grid.Column="1"
-                                              Margin="10,0,0,0"
+                                              Margin="{TemplateBinding IconMargin}"
                                               HorizontalAlignment="Center"
                                               VerticalAlignment="Center"
                                               Content="{TemplateBinding Content}" />

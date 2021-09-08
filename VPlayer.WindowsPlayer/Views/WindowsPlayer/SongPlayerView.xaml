@@ -108,7 +108,6 @@
                 Margin="0,0,0,-2"
                 Background="#95000000">
             <Grid>
-
                 <ContentControl BorderThickness="0"
                                 Content="{Binding ActualItem.LyricsObject}"
                                 ContentTemplateSelector="{StaticResource LyricsTemplateSelector}" />

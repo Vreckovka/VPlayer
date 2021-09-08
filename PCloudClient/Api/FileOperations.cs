@@ -120,11 +120,11 @@ namespace PCloud
     }
 
     /// <summary>Open a file in the specified folder</summary>
-    public static async Task<FileDescriptor> createFile(this Connection conn, FolderInfo parentFolder, string name, FileMode mode, FileAccess access)
+    public static async Task<FileDescriptor> createFile(this Connection conn, long parentFolderId, string name, FileMode mode, FileAccess access)
     {
       RequestBuilder req = conn.newRequest("file_open");
       req.add("flags", (long)openFlags(mode, access));
-      req.add("folderid", parentFolder.id);
+      req.add("folderid", parentFolderId);
       req.add("name", name);
       var response = await conn.send(req);
       return new FileDescriptor(response.dict);

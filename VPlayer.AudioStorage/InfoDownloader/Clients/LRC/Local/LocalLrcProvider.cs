@@ -31,39 +31,42 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients
 
     #region FindFile
 
-    protected override FileInfo GetFile(string songName, string artistName, string albumName)
+    protected override Task<FileInfo> GetFile(string songName, string artistName, string albumName)
     {
-      var directoryPath = basePath;
-
-      if (!string.IsNullOrEmpty(artistName))
+      return Task.Run(() =>
       {
-        directoryPath = Path.Combine(directoryPath, artistName);
-      }
+        var directoryPath = basePath;
 
-      if (!string.IsNullOrEmpty(albumName))
-      {
-        directoryPath = Path.Combine(directoryPath, albumName);
-      }
-
-      if (!string.IsNullOrEmpty(artistName) && Directory.Exists(directoryPath))
-      {
-        var directory = new DirectoryInfo(directoryPath);
-
-        var filesInDir = directory.GetFiles($"*{GetFileName(artistName, songName)}*.lrc").ToList();
-
-        if (filesInDir.Count == 1)
+        if (!string.IsNullOrEmpty(artistName))
         {
-          return filesInDir?.FirstOrDefault();
+          directoryPath = Path.Combine(directoryPath, artistName);
         }
-        else if (filesInDir.Count == 0)
-        {
-          return null;
-        }
-        else
-          throw new Exception("More files were found '" + songName + "' in '" + directory.FullName + "'");
-      }
 
-      return null;
+        if (!string.IsNullOrEmpty(albumName))
+        {
+          directoryPath = Path.Combine(directoryPath, albumName);
+        }
+
+        if (!string.IsNullOrEmpty(artistName) && Directory.Exists(directoryPath))
+        {
+          var directory = new DirectoryInfo(directoryPath);
+
+          var filesInDir = directory.GetFiles($"*{GetFileName(artistName, songName)}*.lrc").ToList();
+
+          if (filesInDir.Count == 1)
+          {
+            return filesInDir?.FirstOrDefault();
+          }
+          else if (filesInDir.Count == 0)
+          {
+            return null;
+          }
+          else
+            throw new Exception("More files were found '" + songName + "' in '" + directory.FullName + "'");
+        }
+
+        return null;
+      });
     }
 
     public override LRCProviders LRCProvider => LRCProviders.Local;
@@ -74,9 +77,9 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients
 
     protected override Task<KeyValuePair<string[],ILRCFile>> GetLinesLrcFileAsync(string songName, string artistName, string albumName)
     {
-      return Task.Run<KeyValuePair<string[], ILRCFile>>(() =>
+      return Task.Run<KeyValuePair<string[], ILRCFile>>(async () =>
       {
-        var lrcFile = GetFile(songName, artistName, albumName)?.FullName;
+        var lrcFile = (await GetFile(songName, artistName, albumName))?.FullName;
 
         if (!string.IsNullOrEmpty(lrcFile))
         {
@@ -89,7 +92,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients
 
     #endregion
 
-    public override void Update(ILRCFile lRCFile)
+    public override Task<bool> Update(ILRCFile lRCFile)
     {
       throw new NotImplementedException();
     }

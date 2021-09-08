@@ -396,7 +396,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics
       throw new NotImplementedException();
     }
 
-    public void Update(ILRCFile lRCFile)
+    public Task<bool> Update(ILRCFile lRCFile)
     {
       throw new NotImplementedException();
     }

@@ -25,6 +25,7 @@ namespace VPlayer.AudioStorage.Modularity.NinjectModules
       Kernel.Bind<IGoogleDriveServiceProvider>().To<GoogleDriveServiceProvider>().InSingletonScope().WithConstructorArgument("keyPath", googleApi);
 
       Kernel.BindToSelf<GoogleDriveLrcProvider>().InSingletonScope();
+      Kernel.BindToSelf<PCloudLrcProvider>().InSingletonScope();
       Kernel.BindToSelf<AudioInfoDownloader>().InSingletonScope();
 
       Kernel.Bind<ICSFDWebsiteScrapper>().To<CSFDWebsiteScrapper>();
