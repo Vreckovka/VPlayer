@@ -360,6 +360,10 @@ namespace VPlayer.Core.ViewModels
             case LRCProviders.Google:
               LRCFile = new LRCFileViewModel(lrc, provider, pCloudLrcProvider, googleDriveLrcProvider);
 
+              LRCFile.Model.Title = Name;
+              LRCFile.Model.Artist = artistViewModel?.Name;
+              LRCFile.Model.Album = albumViewModel?.Name;
+
               if (LRCFile != null)
               {
                 LRCFile.OnApplyPernamently();
