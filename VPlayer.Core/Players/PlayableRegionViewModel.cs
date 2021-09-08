@@ -1135,15 +1135,20 @@ namespace VPlayer.Core.ViewModels
         {
           if (hashCode != ActualSavedPlaylist.HashCode)
           {
-            ActualSavedPlaylist.HashCode = hashCode;
-
-            foreach (var itemInPlaylist in playlistModels)
+            Application.Current.Dispatcher.Invoke(() =>
             {
-              itemInPlaylist.Id = ActualSavedPlaylist.PlaylistItems.Single(x => x.IdReferencedItem == itemInPlaylist.IdReferencedItem).Id;
-            }
+              ActualSavedPlaylist.HashCode = hashCode;
 
-            ActualSavedPlaylist.PlaylistItems = playlistModels;
-            ActualSavedPlaylist.ItemCount = playlistModels.Count;
+              foreach (var pItemInPlaylist in playlistModels)
+              {
+                pItemInPlaylist.Id = ActualSavedPlaylist.PlaylistItems
+                  .Single(x => x.IdReferencedItem == pItemInPlaylist.IdReferencedItem).Id;
+              }
+
+              ActualSavedPlaylist.PlaylistItems = playlistModels;
+              ActualSavedPlaylist.ItemCount = playlistModels.Count;
+            });
+
           }
         }
         else if (!ActualSavedPlaylist.IsUserCreated)
@@ -1154,11 +1159,12 @@ namespace VPlayer.Core.ViewModels
 
             UpdateNonUserCreatedPlaylist(entityPlayList, dbEntityPlalist);
 
-            ActualSavedPlaylist = entityPlayList;
+            Application.Current.Dispatcher.Invoke(() => { ActualSavedPlaylist = entityPlayList; });
           }
           else
           {
-            ActualSavedPlaylist = entityPlayList;
+            Application.Current.Dispatcher.Invoke(() => { ActualSavedPlaylist = entityPlayList; });
+            
             UpdateActualSavedPlaylistPlaylist();
           }
         }
