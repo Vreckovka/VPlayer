@@ -78,7 +78,8 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
             {
               var songs = (await cloudService.GetFilesAsync(album.id)).ToList();
 
-              var existingSong = songs.SingleOrDefault(x => GetNormalizedName(x.name.Replace(fileExtension, null)) == GetNormalizedName(lRCFile.Title));
+              var existingSong = songs.SingleOrDefault(x => GetFileName(lRCFile.Artist, x.name.Replace(fileExtension, null)) ==
+                                                            GetFileName(lRCFile.Artist, lRCFile.Title));
 
               if (existingSong != null)
               {
@@ -86,7 +87,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
               }
               else
               {
-                return await cloudService.CreateFileAndWrite(lRCFile.Title + fileExtension, lRCFile.GetString(), album.id);
+                return await cloudService.CreateFileAndWrite(GetFileName(lRCFile.Artist,lRCFile.Title) + fileExtension, lRCFile.GetString(), album.id);
               }
             }
             else
@@ -95,7 +96,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
               if (newAlbum != null)
               {
-                return await cloudService.CreateFileAndWrite(lRCFile.Title + fileExtension, lRCFile.GetString(), newAlbum.id);
+                return await cloudService.CreateFileAndWrite(GetFileName(lRCFile.Artist, lRCFile.Title), lRCFile.GetString(), newAlbum.id);
               }
             }
           }
@@ -111,7 +112,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
               if (newAlbum != null)
               {
-                return await cloudService.CreateFileAndWrite(lRCFile.Title + fileExtension, lRCFile.GetString(), newAlbum.id);
+                return await cloudService.CreateFileAndWrite(GetFileName(lRCFile.Artist, lRCFile.Title), lRCFile.GetString(), newAlbum.id);
               }
             }
           }
