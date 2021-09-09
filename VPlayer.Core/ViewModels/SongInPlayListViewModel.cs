@@ -196,6 +196,36 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region IsAutomaticLyricsDownloadDisabled
+
+    public bool IsAutomaticLyricsDownloadDisabled
+    {
+      get { return !Model.IsAutomaticLyricsFindEnabled; }
+      set
+      {
+        if (!value != Model.IsAutomaticLyricsFindEnabled)
+        {
+          Model.IsAutomaticLyricsFindEnabled = !value;
+
+          UpdateDbModel();
+
+          if (Model.IsAutomaticLyricsFindEnabled)
+          {
+            TryToRefreshUpdateLyrics();
+          }
+
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    private async void UpdateDbModel()
+    {
+      var reuslt = await storageManager.UpdateEntityAsync(Model);
+    }
+
 
     #endregion
 
@@ -488,6 +518,11 @@ namespace VPlayer.Core.ViewModels
       LRCFile = null;
       Lyrics = null;
 
+      if(IsAutomaticLyricsDownloadDisabled)
+      {
+        return false;
+      }
+
       if (ArtistViewModel == null || AlbumViewModel == null)
         return false;
 
@@ -503,10 +538,17 @@ namespace VPlayer.Core.ViewModels
           LRCFile.OnApplyPernamently();
         }
       }
-     
 
       if (LRCFile == null)
+      {
         await LoadLRCFromMiniLyrics();
+
+        if (LRCFile != null)
+        {
+          LRCFile.OnApplyPernamently();
+        }
+      }
+       
 
       if (LRCFile == null)
         await LoadLRCFromLocal();

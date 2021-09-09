@@ -101,7 +101,7 @@ namespace VPlayer.Core.FileBrowser
         cancellationTokenSource?.Cancel();
         cancellationTokenSource = new CancellationTokenSource();
 
-        IsLoading = true;
+        isLoadedSubject.OnNext(true);
 
         await LoadSubFolders(this, cancellationTokenSource.Token);
 
@@ -213,11 +213,11 @@ namespace VPlayer.Core.FileBrowser
         Application.Current.Dispatcher.Invoke(() =>
         {
           LoadingMessage = null;
-          IsLoading = false;
+          isLoadedSubject.OnNext(false);
           cancellationTokenSource?.Cancel();
           cancellationTokenSource = null;
         });
-        }
+      }
     }
 
     #endregion

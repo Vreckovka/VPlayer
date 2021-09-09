@@ -47,6 +47,8 @@ namespace VPlayer.AudioStorage.DomainClasses
       }
       else
         FileInfo.Update(other.FileInfo);
+
+      IsAutomaticLyricsFindEnabled = other.IsAutomaticLyricsFindEnabled;
     }
 
     #region Name
@@ -98,6 +100,8 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     #endregion
 
+    public bool IsAutomaticLyricsFindEnabled { get; set; } = true;
+
   }
 
   public class Song : DomainEntity, IUpdateable<Song>, IPlayableModel<SoundItem>
@@ -128,8 +132,7 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     public string LRCLyrics { get; set; }
     public string UPnPPath { get; set; }
-
-
+    
 
     [NotMapped]
     public string Source
