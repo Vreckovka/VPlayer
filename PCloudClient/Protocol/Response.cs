@@ -90,7 +90,7 @@ namespace PCloud
         else
         {
           stringR += "\"" + item.Value.ToString()
-                            .Replace("'", "\\'")
+                            .Replace("\'", "\\'")
                             .Replace("\"", "\\\"")
                             .Replace("\\", "\\\\")
                             .Replace("\n", "\\n")
