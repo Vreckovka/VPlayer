@@ -58,6 +58,7 @@ namespace VPlayer.Core.FileBrowser
     }
 
     #endregion
+    
 
     #region Commands
 
@@ -135,11 +136,14 @@ namespace VPlayer.Core.FileBrowser
       {
         var itemsInFolder = SubItems.ViewModels.OfType<PlayableFileViewModel>().Where(x => x.FileType == FileType.Sound);
 
-        playableFiles = playableFiles.Concat(itemsInFolder).Where(x => x.FileType == FileType.Sound);
+        var playableFilesList = playableFiles.Concat(itemsInFolder).Where(x => x.FileType == FileType.Sound).ToList();
 
         var soundItems = new List<SoundItem>();
 
-        foreach (var item in playableFiles)
+        int actaulIndex = 1;
+        LoadingMessage = $" getting source for {actaulIndex}/{playableFilesList.Count}";
+
+        foreach (var item in playableFilesList)
         {
           var existing = storageManager.GetRepository<SoundItem>().Include(x => x.FileInfo).SingleOrDefault(x => x.FileInfo.Indentificator == item.Model.Indentificator);
 
@@ -152,7 +156,7 @@ namespace VPlayer.Core.FileBrowser
               sourceModel = await folderViewModel.GetItemSource(sourceModel);
             }
 
-            var fileInfo = new SoundFileInfo(sourceModel.FullName,sourceModel.Source)
+            var fileInfo = new SoundFileInfo(sourceModel.FullName, sourceModel.Source)
             {
               Length = sourceModel.Length,
               Indentificator = sourceModel.Indentificator,
@@ -161,7 +165,7 @@ namespace VPlayer.Core.FileBrowser
 
             var soudItem = new SoundItem()
             {
-              FileInfo = fileInfo  
+              FileInfo = fileInfo
             };
 
             storageManager.StoreEntity(soudItem, out var stored);
@@ -172,6 +176,9 @@ namespace VPlayer.Core.FileBrowser
           {
             soundItems.Add(existing);
           }
+
+          actaulIndex++;
+          LoadingMessage = $" getting source for {actaulIndex}/{playableFilesList.Count}";
         }
 
         var data = new PlayItemsEventData<SoundItemInPlaylistViewModel>(soundItems.Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x)), EventAction.Play, this);
@@ -179,6 +186,7 @@ namespace VPlayer.Core.FileBrowser
         eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(data);
       }
 
+      LoadingMessage = null;
       IsLoading = false;
     }
 
