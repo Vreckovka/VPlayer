@@ -21,6 +21,7 @@ using Windows.Storage.FileProperties;
 using Artist = Hqub.MusicBrainz.API.Entities.Artist;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using Logger;
 using VCore.Helpers;
@@ -50,7 +51,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
                                "for more information.";
 
     private string meta = "recordings+releases+tracks";
-    private string[] supportedItems = new string[] { "*.mp3", "*.flac" };
+    private string[] supportedItems = new string[] { "*.mp3", "*.flac", ".mp4a", "*.ogg", "*.wav" };
 
     #endregion Fields
 
@@ -1405,26 +1406,32 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     #endregion Directory methods
 
+    #region GetClearName
+
     public static string GetClearName(string sourceString)
     {
+      if (string.IsNullOrEmpty(sourceString))
+      {
+        return sourceString;
+      }
+
       var lowerString = sourceString.ToLower();
 
       var replaced = lowerString.Replace("(retail)", null).Replace("(limited edition)", null).Replace("&", "and");
 
-      var sub = replaced.Substring(1, replaced.Length - 1);
+      replaced = Regex.Replace(replaced, @"\(.*\)", "");
+      replaced = Regex.Replace(replaced, @"\[.*\]", "");
+      replaced = Regex.Replace(replaced, @"\s+", " ");
 
-      sub = Char.ToUpper(replaced[0]) + sub;
+      CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+      TextInfo textInfo = cultureInfo.TextInfo;
 
-      // Remove text between brackets.
-      sub = Regex.Replace(sub, @"\(.*\)", "");
-      sub = Regex.Replace(sub, @"\[.*\]", "");
-
-      // Remove extra spaces.
-      sub = Regex.Replace(sub, @"\s+", " ");
-
-      return sub;
+      return textInfo.ToTitleCase(replaced);
     }
 
+    #endregion
+
+   
     #region Methods
 
     public void Initialize()

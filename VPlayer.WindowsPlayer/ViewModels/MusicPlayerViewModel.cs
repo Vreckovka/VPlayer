@@ -466,35 +466,39 @@ namespace VPlayer.WindowsPlayer.ViewModels
               string artistName = viewmodel?.Model?.FileInfo.Artist;
               string albumName = viewmodel?.Model?.FileInfo.Album;
 
-              if (long.TryParse(fileInfo.Indentificator, out var id))
+             
+              if (artistName == null || albumName == null)
               {
-                var stats = (await cloudService.GetFileStats(id))?.metadata;
-
-                if (stats != null)
+                if (long.TryParse(fileInfo.Indentificator, out var id))
                 {
-                  fileInfo.Artist = AudioInfoDownloader.GetClearName(stats.artist);
-                  fileInfo.Album = AudioInfoDownloader.GetClearName(stats.album);
+                  var stats = (await cloudService.GetFileStats(id))?.metadata;
 
-                  artistName = fileInfo.Artist;
-                  albumName = fileInfo.Album;
-
-
-                  if (!string.IsNullOrEmpty(stats.title))
+                  if (stats != null)
                   {
-                    fileInfo.Name = AudioInfoDownloader.GetClearName(stats.title);
+                    fileInfo.Artist = AudioInfoDownloader.GetClearName(stats.artist);
+                    fileInfo.Album = AudioInfoDownloader.GetClearName(stats.album);
+
+                    artistName = fileInfo.Artist;
+                    albumName = fileInfo.Album;
+
+
+                    if (!string.IsNullOrEmpty(stats.title))
+                    {
+                      fileInfo.Name = AudioInfoDownloader.GetClearName(stats.title);
+                    }
                   }
                 }
-              }
-              else if (artistName == null || albumName == null)
-              {
-                var info = await Task.Run(() => audioInfoDownloader.GetAudioInfoByWindowsAsync(fileInfo.Source));
-
-                artistName = AudioInfoDownloader.GetClearName(info?.Artist);
-                albumName = AudioInfoDownloader.GetClearName(info?.Album);
-
-                if (!string.IsNullOrEmpty(info?.Title))
+                else
                 {
-                  fileInfo.Name =  AudioInfoDownloader.GetClearName(info.Title);
+                  var info = await Task.Run(() => audioInfoDownloader.GetAudioInfoByWindowsAsync(fileInfo.Source));
+
+                  artistName = AudioInfoDownloader.GetClearName(info?.Artist);
+                  albumName = AudioInfoDownloader.GetClearName(info?.Album);
+
+                  if (!string.IsNullOrEmpty(info?.Title))
+                  {
+                    fileInfo.Name =  AudioInfoDownloader.GetClearName(info.Title);
+                  }
                 }
               }
 

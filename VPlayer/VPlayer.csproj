@@ -172,6 +172,7 @@
 		<PackageReference Include="System.Reactive.Linq" Version="5.0.0" />
 		<PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.12" />
 		<PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="91.0.4472.1900" />
+    <PackageReference Include="System.Globalization" Version="4.3.0" />
 		<PackageReference Include="CefSharp.Wpf" Version="90.6.70" />
 		<PackageReference Include="OpenQA.Selenium.Winium" Version="1.0.0.4" />
 		<PackageReference Include="SharpVectors" Version="1.7.6" />

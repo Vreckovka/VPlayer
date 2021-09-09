@@ -40,7 +40,6 @@ namespace VPlayer.UPnP.ViewModels.UPnP
 
     private void OnDiscover()
     {
-      //Play("http://127.0.0.1:10243/WMPNSSv4/2988159691/1_MTRfYjFmMzQ5YzVfNzU0YTdjNTVfZTUwNzg1NWEtMTI5Njg1.mp3");
     }
 
     #endregion

@@ -206,6 +206,7 @@ namespace VPlayer.UPnP.ViewModels
       else if (FileName.ToLower().EndsWith(".gif")) ContentType = "image/gif";
       else if (FileName.ToLower().EndsWith(".avi")) ContentType = "video/avi";
       else if (FileName.ToLower().EndsWith(".mp4")) ContentType = "video/mp4";
+
       else if (FileName.ToLower().EndsWith(".m4a")) ContentType = "audio/mp4";
       else if (FileName.ToLower().EndsWith(".flac")) ContentType = "audio/flac";
       else if (FileName.ToLower().EndsWith(".wav")) ContentType = "audio/wav";
