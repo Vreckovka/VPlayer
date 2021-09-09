@@ -46,17 +46,28 @@ namespace VPlayer.PCloud.ViewModels
           Length = file.length,
         };
 
-        var type = fileInfo.Extension.GetFileType();
-
-        if (type == FileType.Video || type == FileType.Sound)
-        {
-          fileInfo.Source = await cloudService.GetPublicLink(file.id);
-        }
+      
 
         list.Add(fileInfo);
       }
 
       return list;
+    }
+
+    #endregion
+
+    #region GetItemSource
+
+    public override async Task<FileInfo> GetItemSource(FileInfo fileInfo)
+    {
+      var type = fileInfo.Extension.GetFileType();
+
+      if (type == FileType.Video || type == FileType.Sound)
+      {
+        fileInfo.Source = await cloudService.GetPublicLink(long.Parse(fileInfo.Indentificator));
+      }
+
+      return fileInfo;
     }
 
     #endregion

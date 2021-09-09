@@ -145,11 +145,18 @@ namespace VPlayer.Core.FileBrowser
 
           if (existing == null)
           {
-            var fileInfo = new SoundFileInfo(item.Model.FullName, item.Model.Source)
+            var sourceModel = item.Model;
+
+            if (string.IsNullOrEmpty(sourceModel.Source) && sourceModel != null)
             {
-              Length = item.Model.Length,
-              Indentificator = item.Model.Indentificator,
-              Name = item.Model.Name,
+              sourceModel = await folderViewModel.GetItemSource(sourceModel);
+            }
+
+            var fileInfo = new SoundFileInfo(sourceModel.FullName,sourceModel.Source)
+            {
+              Length = sourceModel.Length,
+              Indentificator = sourceModel.Indentificator,
+              Name = sourceModel.Name,
             };
 
             var soudItem = new SoundItem()
