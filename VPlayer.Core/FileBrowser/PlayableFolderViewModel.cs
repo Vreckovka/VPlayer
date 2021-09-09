@@ -141,7 +141,7 @@ namespace VPlayer.Core.FileBrowser
 
         foreach (var item in playableFiles)
         {
-          var existing = storageManager.GetRepository<SoundItem>().Include(x => x.FileInfo).SingleOrDefault(x => x.FileInfo.Source == item.Model.Source);
+          var existing = storageManager.GetRepository<SoundItem>().Include(x => x.FileInfo).SingleOrDefault(x => x.FileInfo.Indentificator == item.Model.Indentificator);
 
           if (existing == null)
           {

@@ -21,6 +21,7 @@ using Windows.Storage.FileProperties;
 using Artist = Hqub.MusicBrainz.API.Entities.Artist;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Text.RegularExpressions;
 using Logger;
 using VCore.Helpers;
 using VPlayer.AudioStorage.InfoDownloader.Clients.Chartlyrics;
@@ -890,7 +891,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
             }
           });
 
-          if(response == null)
+          if (response == null)
           {
             return null;
           }
@@ -1404,15 +1405,22 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     #endregion Directory methods
 
-    public static string GetClearAlbumName(string sourceString)
+    public static string GetClearName(string sourceString)
     {
       var lowerString = sourceString.ToLower();
 
-      var replaced = lowerString.Replace("(retail)", null).Replace("(limited edition)", null).Replace("&","and");
+      var replaced = lowerString.Replace("(retail)", null).Replace("(limited edition)", null).Replace("&", "and");
 
       var sub = replaced.Substring(1, replaced.Length - 1);
 
       sub = Char.ToUpper(replaced[0]) + sub;
+
+      // Remove text between brackets.
+      sub = Regex.Replace(sub, @"\(.*\)", "");
+      sub = Regex.Replace(sub, @"\[.*\]", "");
+
+      // Remove extra spaces.
+      sub = Regex.Replace(sub, @"\s+", " ");
 
       return sub;
     }

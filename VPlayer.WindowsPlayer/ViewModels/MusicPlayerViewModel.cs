@@ -472,8 +472,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
                 if (stats != null)
                 {
-                  fileInfo.Artist = AudioInfoDownloader.GetClearAlbumName(stats.artist);
-                  fileInfo.Album = AudioInfoDownloader.GetClearAlbumName(stats.album);
+                  fileInfo.Artist = AudioInfoDownloader.GetClearName(stats.artist);
+                  fileInfo.Album = AudioInfoDownloader.GetClearName(stats.album);
 
                   artistName = fileInfo.Artist;
                   albumName = fileInfo.Album;
@@ -481,7 +481,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
                   if (!string.IsNullOrEmpty(stats.title))
                   {
-                    fileInfo.Name = stats.title;
+                    fileInfo.Name = AudioInfoDownloader.GetClearName(stats.title);
                   }
                 }
               }
@@ -489,12 +489,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
               {
                 var info = await Task.Run(() => audioInfoDownloader.GetAudioInfoByWindowsAsync(fileInfo.Source));
 
-                artistName = AudioInfoDownloader.GetClearAlbumName(info?.Artist);
-                albumName = AudioInfoDownloader.GetClearAlbumName(info?.Album);
+                artistName = AudioInfoDownloader.GetClearName(info?.Artist);
+                albumName = AudioInfoDownloader.GetClearName(info?.Album);
 
                 if (!string.IsNullOrEmpty(info?.Title))
                 {
-                  fileInfo.Name = info.Title;
+                  fileInfo.Name =  AudioInfoDownloader.GetClearName(info.Title);
                 }
               }
 
@@ -507,8 +507,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
               if (downloadingArtist == null || VPlayerStorageManager.GetNormalizedName(artistName)?.Similarity(VPlayerStorageManager.GetNormalizedName(downloadingArtist.Name), true) < 0.9)
                 downloadingArtist = await GetArist(artistName, cancellationToken);
 
+              var normalizedAlbumName = AudioInfoDownloader.GetClearName(VPlayerStorageManager.GetNormalizedName(albumName));
 
-              if (downloadingAlbum == null || VPlayerStorageManager.GetNormalizedName(albumName)?.Similarity(VPlayerStorageManager.GetNormalizedName(downloadingAlbum.Name), true, true) < 0.9)
+              if (downloadingAlbum == null || normalizedAlbumName?.Similarity(VPlayerStorageManager.GetNormalizedName(downloadingAlbum.Name), true, true) < 0.9)
                 downloadingAlbum = await GetAlbum(downloadingArtist, albumName, cancellationToken);
 
 

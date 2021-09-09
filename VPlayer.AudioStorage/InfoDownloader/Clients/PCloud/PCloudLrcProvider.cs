@@ -78,7 +78,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
             {
               var songs = (await cloudService.GetFilesAsync(album.id)).ToList();
 
-              var existingSong = songs.SingleOrDefault(x => GetFileName(lRCFile.Artist, x.name.Replace(fileExtension, null)) ==
+              var existingSong = songs.SingleOrDefault(x => x.name.Replace(fileExtension, null) == 
                                                             GetFileName(lRCFile.Artist, lRCFile.Title));
 
               if (existingSong != null)
@@ -176,7 +176,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
           {
             var songs = (await cloudService.GetFilesAsync(album.id)).ToList();
 
-            var existingSong = songs.SingleOrDefault(x => GetNormalizedName(x.name.Replace(fileExtension, null)) == GetNormalizedName(songName));
+            var existingSong = songs.SingleOrDefault(x => x.name.Replace(fileExtension, null) == GetFileName(artistName,songName));
 
             if (existingSong != null)
             {
