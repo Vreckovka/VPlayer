@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System;
 using System.Reactive.Disposables;
+using System.Windows.Controls.Primitives;
 using Microsoft.Xaml.Behaviors;
 using Ninject;
 using Prism.Events;
@@ -27,7 +28,7 @@ namespace VPlayer.WindowsPlayer.Behaviors
     public FullscreenPlayer FullscreenPlayer { get; set; }
     public FrameworkElement VideoMenu { get; set; }
 
-    public Button HideButton { get; set; }
+    public ButtonBase HideButton { get; set; }
 
     #region PlayerDataContext
 
