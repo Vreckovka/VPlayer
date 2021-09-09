@@ -590,6 +590,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
         catch (TaskCanceledException)
         {
         }
+        catch (Exception ex)
+        {
+          logger.Log(ex);
+        }
         finally
         {
           Application.Current.Dispatcher.Invoke(() =>

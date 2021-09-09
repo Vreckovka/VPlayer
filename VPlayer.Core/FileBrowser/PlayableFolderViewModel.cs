@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
@@ -93,7 +94,7 @@ namespace VPlayer.Core.FileBrowser
       {
         if (IsLoading)
         {
-          cancellationTokenSource.Cancel();
+          cancellationTokenSource?.Cancel();
           return;
         }
 
@@ -209,10 +210,14 @@ namespace VPlayer.Core.FileBrowser
       catch (OperationCanceledException) { }
       finally
       {
-        LoadingMessage = null;
-        IsLoading = false;
-        cancellationTokenSource = null;
-      }
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+          LoadingMessage = null;
+          IsLoading = false;
+          cancellationTokenSource?.Cancel();
+          cancellationTokenSource = null;
+        });
+        }
     }
 
     #endregion

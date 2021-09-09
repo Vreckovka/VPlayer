@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Hash = System.Collections.Generic.Dictionary<string, object>;
 
@@ -74,7 +75,7 @@ namespace PCloud
         this.otherValues = otherValues.ToArray();
     }
 
-    private string GetJsonValue(IReadOnlyDictionary<string,object> dictionary)
+    private string GetJsonValue(IReadOnlyDictionary<string, object> dictionary)
     {
       var stringR = "{";
 
@@ -88,7 +89,17 @@ namespace PCloud
         }
         else
         {
-          stringR += "\"" + item.Value + "\"";
+          stringR += "\"" + item.Value.ToString()
+                            .Replace("'", "\\'")
+                            .Replace("\"", "\\\"")
+                            .Replace("\\", "\\\\")
+                            .Replace("\n", "\\n")
+                            .Replace("\r", "\\r")
+                            .Replace("\t", "\\t")
+                            .Replace("\b", "\\b")
+                            .Replace("\f", "\\f")
+                            .Replace("\v", "\\v") 
+                            .Replace("\0", "")+ "\"";
         }
 
         stringR += ",";
@@ -101,7 +112,7 @@ namespace PCloud
 
     public string GetJson()
     {
-      var json =  GetJsonValue(dict);
+      var json = GetJsonValue(dict);
 
       return json;
     }

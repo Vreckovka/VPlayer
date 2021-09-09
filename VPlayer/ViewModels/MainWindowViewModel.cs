@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -171,6 +172,10 @@ namespace VPlayer.ViewModels
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       this.iCsfdWebsiteScrapper = iCsfdWebsiteScrapper ?? throw new ArgumentNullException(nameof(iCsfdWebsiteScrapper));
+
+      var stringSam = "sdfsf  \t \\ sdfs d";
+
+      var escape = Regex.Escape(stringSam).Replace("\\ "," ");
     }
 
     #endregion
