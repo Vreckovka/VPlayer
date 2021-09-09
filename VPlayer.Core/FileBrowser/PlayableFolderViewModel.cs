@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.EntityFrameworkCore;
@@ -58,7 +59,7 @@ namespace VPlayer.Core.FileBrowser
     }
 
     #endregion
-    
+
 
     #region Commands
 
@@ -85,109 +86,133 @@ namespace VPlayer.Core.FileBrowser
 
     #region Play
 
+    private static CancellationTokenSource cancellationTokenSource;
     public async void Play()
     {
-      if (IsLoading)
+      try
       {
-        return;
-      }
-
-      IsLoading = true;
-
-      await LoadSubFolders(this);
-
-      var playableFiles = SubItems.ViewModels.SelectManyRecursive(x => x.SubItems.ViewModels).OfType<PlayableFileViewModel>();
-
-      if (FolderType == FolderType.Video)
-      {
-        var itemsInFolder = SubItems.ViewModels.OfType<PlayableFileViewModel>().Where(x => x.FileType == FileType.Video);
-
-        playableFiles = playableFiles.Concat(itemsInFolder).Where(x => x.FileType == FileType.Video).ToList();
-
-        var videoItems = new List<VideoItem>();
-
-        foreach (var item in playableFiles)
+        if (IsLoading)
         {
-          var existing = storageManager.GetRepository<VideoItem>().SingleOrDefault(x => x.Source == item.Model.Source);
-
-          if (existing == null)
-          {
-            var videoItem = new VideoItem()
-            {
-              Name = item.Model.Name,
-              Source = item.Model.Source
-            };
-
-            storageManager.StoreEntity(videoItem, out var stored);
-
-            videoItems.Add(stored);
-          }
-          else
-          {
-            videoItems.Add(existing);
-          }
+          cancellationTokenSource.Cancel();
+          return;
         }
 
-        var data = new PlayItemsEventData<VideoItemInPlaylistViewModel>(videoItems.Select(x => viewModelsFactory.Create<VideoItemInPlaylistViewModel>(x)), EventAction.Play, this);
+        cancellationTokenSource?.Cancel();
+        cancellationTokenSource = new CancellationTokenSource();
 
-        eventAggregator.GetEvent<PlayItemsEvent<VideoItem, VideoItemInPlaylistViewModel>>().Publish(data);
-      }
-      else if (FolderType == FolderType.Sound)
-      {
-        var itemsInFolder = SubItems.ViewModels.OfType<PlayableFileViewModel>().Where(x => x.FileType == FileType.Sound);
+        IsLoading = true;
 
-        var playableFilesList = playableFiles.Concat(itemsInFolder).Where(x => x.FileType == FileType.Sound).ToList();
+        await LoadSubFolders(this, cancellationTokenSource.Token);
 
-        var soundItems = new List<SoundItem>();
+        var playableFiles = SubItems.ViewModels.SelectManyRecursive(x => x.SubItems.ViewModels)
+          .OfType<PlayableFileViewModel>();
 
-        int actaulIndex = 1;
-        LoadingMessage = $" getting source for {actaulIndex}/{playableFilesList.Count}";
-
-        foreach (var item in playableFilesList)
+        if (FolderType == FolderType.Video)
         {
-          var existing = storageManager.GetRepository<SoundItem>().Include(x => x.FileInfo).SingleOrDefault(x => x.FileInfo.Indentificator == item.Model.Indentificator);
+          var itemsInFolder = SubItems.ViewModels.OfType<PlayableFileViewModel>()
+            .Where(x => x.FileType == FileType.Video);
 
-          if (existing == null)
+          playableFiles = playableFiles.Concat(itemsInFolder).Where(x => x.FileType == FileType.Video).ToList();
+
+          var videoItems = new List<VideoItem>();
+
+          foreach (var item in playableFiles)
           {
-            var sourceModel = item.Model;
+            var existing = storageManager.GetRepository<VideoItem>()
+              .SingleOrDefault(x => x.Source == item.Model.Source);
 
-            if (string.IsNullOrEmpty(sourceModel.Source) && sourceModel != null)
+            if (existing == null)
             {
-              sourceModel = await folderViewModel.GetItemSource(sourceModel);
+              var videoItem = new VideoItem()
+              {
+                Name = item.Model.Name,
+                Source = item.Model.Source
+              };
+
+              storageManager.StoreEntity(videoItem, out var stored);
+
+              videoItems.Add(stored);
+            }
+            else
+            {
+              videoItems.Add(existing);
+            }
+          }
+
+          var data = new PlayItemsEventData<VideoItemInPlaylistViewModel>(
+            videoItems.Select(x => viewModelsFactory.Create<VideoItemInPlaylistViewModel>(x)), EventAction.Play, this);
+
+          eventAggregator.GetEvent<PlayItemsEvent<VideoItem, VideoItemInPlaylistViewModel>>().Publish(data);
+        }
+        else if (FolderType == FolderType.Sound)
+        {
+          var itemsInFolder = SubItems.ViewModels.OfType<PlayableFileViewModel>()
+            .Where(x => x.FileType == FileType.Sound);
+
+          var playableFilesList = playableFiles.Concat(itemsInFolder).Where(x => x.FileType == FileType.Sound).ToList();
+
+          var soundItems = new List<SoundItem>();
+
+          int actaulIndex = 1;
+          LoadingMessage = $" getting source for {actaulIndex}/{playableFilesList.Count}";
+
+          foreach (var item in playableFilesList)
+          {
+            var existing = storageManager.GetRepository<SoundItem>().Include(x => x.FileInfo)
+              .SingleOrDefault(x => x.FileInfo.Indentificator == item.Model.Indentificator);
+
+            if (existing == null)
+            {
+              var sourceModel = item.Model;
+
+              if (string.IsNullOrEmpty(sourceModel.Source) && sourceModel != null)
+              {
+                cancellationTokenSource?.Token.ThrowIfCancellationRequested();
+
+                sourceModel = await folderViewModel.GetItemSource(sourceModel);
+              }
+
+              var fileInfo = new SoundFileInfo(sourceModel.FullName, sourceModel.Source)
+              {
+                Length = sourceModel.Length,
+                Indentificator = sourceModel.Indentificator,
+                Name = sourceModel.Name,
+              };
+
+              var soudItem = new SoundItem()
+              {
+                FileInfo = fileInfo
+              };
+
+              storageManager.StoreEntity(soudItem, out var stored);
+
+              soundItems.Add(stored);
+            }
+            else
+            {
+              soundItems.Add(existing);
             }
 
-            var fileInfo = new SoundFileInfo(sourceModel.FullName, sourceModel.Source)
-            {
-              Length = sourceModel.Length,
-              Indentificator = sourceModel.Indentificator,
-              Name = sourceModel.Name,
-            };
-
-            var soudItem = new SoundItem()
-            {
-              FileInfo = fileInfo
-            };
-
-            storageManager.StoreEntity(soudItem, out var stored);
-
-            soundItems.Add(stored);
-          }
-          else
-          {
-            soundItems.Add(existing);
+            actaulIndex++;
+            LoadingMessage = $" getting source for {actaulIndex}/{playableFilesList.Count}";
           }
 
-          actaulIndex++;
-          LoadingMessage = $" getting source for {actaulIndex}/{playableFilesList.Count}";
+          var data = new PlayItemsEventData<SoundItemInPlaylistViewModel>(
+            soundItems.Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x)), EventAction.Play, this);
+
+          eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(data);
         }
 
-        var data = new PlayItemsEventData<SoundItemInPlaylistViewModel>(soundItems.Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x)), EventAction.Play, this);
 
-        eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(data);
       }
-
-      LoadingMessage = null;
-      IsLoading = false;
+      catch (TaskCanceledException) { }
+      catch (OperationCanceledException) { }
+      finally
+      {
+        LoadingMessage = null;
+        IsLoading = false;
+        cancellationTokenSource = null;
+      }
     }
 
     #endregion

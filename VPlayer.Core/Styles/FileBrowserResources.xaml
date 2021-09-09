@@ -91,17 +91,23 @@
         <StackPanel.Resources />
 
 
-        <controls:PathButton Command="{Binding PlayButton}"
-                             CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}"
-                             IconHoverColor="{StaticResource DefaultRedColor}"
-                             PathStyle="{StaticResource PlaySign}"
-                             ToolTip="Play">
+        <controls:PathButton Command="{Binding PlayButton}" CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}">
           <controls:PathButton.Style>
             <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
               <Setter Property="Visibility" Value="Hidden" />
+              <Setter Property="PathStyle" Value="{StaticResource play}" />
+              <Setter Property="ToolTip" Value="Play" />
+
               <Style.Triggers>
                 <DataTrigger Binding="{Binding CanPlay}" Value="true">
                   <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsLoading}" Value="true">
+                  <Setter Property="PathStyle" Value="{StaticResource stop}" />
+                  <Setter Property="IconWidth" Value="12" />
+                  <Setter Property="IconHoverColor" Value="{StaticResource OrangeColor}" />
+                  <Setter Property="IconDefaultColor" Value="{StaticResource DefaultRedColor}" />
+                  <Setter Property="ToolTip" Value="Stop" />
                 </DataTrigger>
               </Style.Triggers>
             </Style>
