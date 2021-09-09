@@ -96,7 +96,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
               if (newAlbum != null)
               {
-                return await cloudService.CreateFileAndWrite(GetFileName(lRCFile.Artist, lRCFile.Title), lRCFile.GetString(), newAlbum.id);
+                return await cloudService.CreateFileAndWrite(GetFileName(lRCFile.Artist, lRCFile.Title)  + fileExtension, lRCFile.GetString(), newAlbum.id);
               }
             }
           }
@@ -112,7 +112,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
               if (newAlbum != null)
               {
-                return await cloudService.CreateFileAndWrite(GetFileName(lRCFile.Artist, lRCFile.Title), lRCFile.GetString(), newAlbum.id);
+                return await cloudService.CreateFileAndWrite(GetFileName(lRCFile.Artist, lRCFile.Title)  + fileExtension, lRCFile.GetString(), newAlbum.id);
               }
             }
           }
