@@ -835,22 +835,38 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     protected override void OnRemoveItemsFromPlaylist(DeleteType deleteType, RemoveFromPlaylistEventArgs<SoundItemInPlaylistViewModel> args)
     {
-      var albumId = args.ItemsToRemove.OfType<SongInPlayListViewModel>()
-        .FirstOrDefault(x => x.AlbumViewModel != null)?.AlbumViewModel.ModelId;
-
-      if (albumId != null)
+      if (deleteType == DeleteType.AlbumFromPlaylist)
       {
-        var albumSongs = PlayList.OfType<SongInPlayListViewModel>()
-          .Where(x => x.SongModel?.Album != null)
-          .Where(x => x.SongModel.Album.Id == albumId).ToList();
+        var album = args.ItemsToRemove.OfType<SongInPlayListViewModel>()
+          .FirstOrDefault(x => x.AlbumViewModel != null)?.AlbumViewModel;
 
-        foreach (var albumSong in albumSongs)
+        if (album != null)
         {
-          PlayList.Remove(albumSong);
-        }
+          var albumSongs = PlayList.OfType<SongInPlayListViewModel>()
+            .Where(x => x.SongModel?.Album == album.Model)
 
-        StorePlaylist(PlayList.ToList(), editSaved: true);
+          foreach (var albumSong in albumSongs)
+          {
+            PlayList.Remove(albumSong);
+          }
+        }
+        else
+        {
+          foreach (var item in args.ItemsToRemove)
+          {
+            PlayList.Remove(item);
+          }
+        }
       }
+      else
+      {
+        foreach (var item in args.ItemsToRemove)
+        {
+          PlayList.Remove(item);
+        }
+      }
+
+      StorePlaylist(PlayList.ToList(), editSaved: true);
     }
 
     #endregion
@@ -1043,6 +1059,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region GetNewPlaylistName
+
     private string GetNewPlaylistName()
     {
       var actaulPlaylist = PlayList?.ToList();
@@ -1071,7 +1089,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           playlistName += $" - {albums[0].Key}";
         }
       }
-      else 
+      else
       {
         var splits = actaulPlaylist.Where(x => x?.Model?.Source != null)
           .Select(x => x.Model.Source.Split("\\")).ToList();
@@ -1108,6 +1126,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       return playlistName;
     }
+
+    #endregion
 
     #region BeforeClearPlaylist
 
