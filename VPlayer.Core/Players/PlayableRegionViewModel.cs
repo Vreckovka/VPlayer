@@ -1278,7 +1278,7 @@ namespace VPlayer.Core.ViewModels
            {
              if (VFocusManager.FocusedItems.Count(x => x.Name == "NameTextBox") == 0)
              {
-               ActualSavedPlaylist = updated; 
+               ActualSavedPlaylist = updated;
              }
            });
          }
@@ -1356,6 +1356,13 @@ namespace VPlayer.Core.ViewModels
 
     protected void RemoveItemsFromPlaylist(RemoveFromPlaylistEventArgs<TItemViewModel> obj)
     {
+      var oldPlaylist = new List<KeyValuePair<TItemViewModel, int>>();
+
+      for (int i = 0; i < PlayList.Count; i++)
+      {
+        oldPlaylist.Add(new KeyValuePair<TItemViewModel, int>(PlayList[i], i));
+      }
+
       switch (obj.DeleteType)
       {
         case DeleteType.SingleFromPlaylist:
@@ -1365,7 +1372,6 @@ namespace VPlayer.Core.ViewModels
 
             if (songInPlaylist != null)
             {
-
               PlayList.Remove(songInPlaylist);
             }
           }
@@ -1381,24 +1387,37 @@ namespace VPlayer.Core.ViewModels
           throw new ArgumentOutOfRangeException();
       }
 
-
-      RequestReloadVirtulizedPlaylist();
-
-      if (obj.ItemsToRemove.Count(x => x.Model.Id == ActualItem.Model.Id) > 0)
+      if (!PlayList.Contains(ActualItem))
       {
         ActualItem = null;
       }
-
 
       if (ActualItem != null)
       {
         var newIndex = PlayList.IndexOf(ActualItem);
 
         if (newIndex >= 0 && actualItemIndex != newIndex)
-        {   
+        {
           SetItemAndPlay(newIndex);
         }
       }
+      else if (PlayList.Count > 0)
+      {
+        var nextItem = oldPlaylist.Where(x => x.Value > actualItemIndex).FirstOrDefault(x => PlayList.Contains(x.Key));
+
+        if (nextItem.Key == null)
+        {
+          IsPlayFnished = true;
+          Play();
+        }
+        else
+        {
+          SetItemAndPlay(PlayList.IndexOf(nextItem.Key), true);
+        }
+      }
+
+      RequestReloadVirtulizedPlaylist();
+      StorePlaylist(PlayList.ToList(), editSaved: true);
     }
 
     #endregion

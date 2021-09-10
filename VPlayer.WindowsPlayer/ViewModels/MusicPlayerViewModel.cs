@@ -837,10 +837,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       if (deleteType == DeleteType.AlbumFromPlaylist)
       {
-        var album = args.ItemsToRemove.OfType<SongInPlayListViewModel>()
-          .FirstOrDefault(x => x.AlbumViewModel != null)?.AlbumViewModel;
+        var album = args.ItemsToRemove.OfType<SongInPlayListViewModel>().FirstOrDefault(x => x.AlbumViewModel != null)?.AlbumViewModel;
 
-        if (album != null)
+        if (album != null && !string.IsNullOrEmpty(album.Name))
         {
           var albumSongs = PlayList.OfType<SongInPlayListViewModel>().Where(x => x.SongModel?.Album == album.Model).ToList();
 
@@ -865,7 +864,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
       }
 
-      StorePlaylist(PlayList.ToList(), editSaved: true);
+     
     }
 
     #endregion
