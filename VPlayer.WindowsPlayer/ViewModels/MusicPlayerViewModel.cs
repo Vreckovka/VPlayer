@@ -843,7 +843,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         if (album != null)
         {
           var albumSongs = PlayList.OfType<SongInPlayListViewModel>()
-            .Where(x => x.SongModel?.Album == album.Model)
+            .Where(x => x.SongModel?.Album == album.Model);
 
           foreach (var albumSong in albumSongs)
           {
