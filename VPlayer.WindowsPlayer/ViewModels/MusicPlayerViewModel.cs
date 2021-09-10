@@ -842,8 +842,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         if (album != null)
         {
-          var albumSongs = PlayList.OfType<SongInPlayListViewModel>()
-            .Where(x => x.SongModel?.Album == album.Model);
+          var albumSongs = PlayList.OfType<SongInPlayListViewModel>().Where(x => x.SongModel?.Album == album.Model).ToList();
 
           foreach (var albumSong in albumSongs)
           {
@@ -1247,13 +1246,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       base.OnDeactived();
 
-      downloadingLyricsTask?.Cancel();
-      downloadingLyricsTask?.Dispose();
-      downloadingLyricsTask = null;
+      //downloadingLyricsTask?.Cancel();
+      //downloadingLyricsTask?.Dispose();
+      //downloadingLyricsTask = null;
 
-      downloadingSongTask?.Cancel();
-      downloadingSongTask?.Dispose();
-      downloadingSongTask = null;
+      //downloadingSongTask?.Cancel();
+      //downloadingSongTask?.Dispose();
+      //downloadingSongTask = null;
     }
 
     #endregion
