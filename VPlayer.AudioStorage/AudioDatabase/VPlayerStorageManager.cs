@@ -199,25 +199,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
             if (song == null)
             {
-              song = new Song(album);
-            }
-
-            song.ItemModel = soundItem;
-
-            if (string.IsNullOrEmpty(song.ItemModel.Name))
-            {
-              song.ItemModel.FileInfo.Name = song.ItemModel.FileInfo.Name;
-            }
-
-            song = context.Songs
-              .Include(x => x.ItemModel)
-              .ThenInclude(x => x.FileInfo)
-              .Where(x => song.ItemModel.NormalizedName == x.ItemModel.NormalizedName)
-              .SingleOrDefault(x => x.Album.Id == song.Album.Id);
-
-
-            if (song == null)
-            {
               song = new Song(album)
               {
                 ItemModel = soundItem
