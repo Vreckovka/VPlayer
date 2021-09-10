@@ -168,6 +168,7 @@ namespace VPlayer.Core.FileBrowser
 
               if (string.IsNullOrEmpty(sourceModel.Source) && sourceModel != null)
               {
+                IsLoading = true;
                 cancellationTokenSource?.Token.ThrowIfCancellationRequested();
 
                 sourceModel = await folderViewModel.GetItemSource(sourceModel);
@@ -199,6 +200,7 @@ namespace VPlayer.Core.FileBrowser
 
                 if (result?.Source != null)
                 {
+                  IsLoading = true;
                   existing.FileInfo.Source = result.Source;
 
                   await storageManager.UpdateEntityAsync(existing.FileInfo);
