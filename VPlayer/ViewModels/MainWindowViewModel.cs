@@ -172,13 +172,6 @@ namespace VPlayer.ViewModels
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       this.iCsfdWebsiteScrapper = iCsfdWebsiteScrapper ?? throw new ArgumentNullException(nameof(iCsfdWebsiteScrapper));
-
-
-      DateTime ProjectStartedDate = new DateTime(year: 2019, month: 3, day: 17);
-
-      TimeSpan timespan = DateTime.Now - ProjectStartedDate;
-      double years = timespan.TotalDays / 365;
-      double months = (years - (int) years) * 12;
     }
 
     #endregion
