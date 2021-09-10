@@ -173,9 +173,12 @@ namespace VPlayer.ViewModels
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       this.iCsfdWebsiteScrapper = iCsfdWebsiteScrapper ?? throw new ArgumentNullException(nameof(iCsfdWebsiteScrapper));
 
-      var stringSam = "sdfsf  \t \\ sdfs d";
 
-      var escape = Regex.Escape(stringSam).Replace("\\ "," ");
+      DateTime ProjectStartedDate = new DateTime(year: 2019, month: 3, day: 17);
+
+      TimeSpan timespan = DateTime.Now - ProjectStartedDate;
+      double years = timespan.TotalDays / 365;
+      double months = (years - (int) years) * 12;
     }
 
     #endregion
@@ -303,9 +306,9 @@ namespace VPlayer.ViewModels
 
     }
 
-#endregion
+    #endregion
 
-#region Dispose
+    #region Dispose
 
     public override void Dispose()
     {
@@ -317,9 +320,9 @@ namespace VPlayer.ViewModels
       }
     }
 
-#endregion
+    #endregion
 
-#endregion
+    #endregion
   }
 }
 

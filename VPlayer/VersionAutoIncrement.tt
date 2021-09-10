@@ -9,8 +9,12 @@ using System.Reflection;
 
  static DateTime ProjectStartedDate = new DateTime(year: 2019, month: 3, day: 17);
 
- int Major = (DateTime.Now.Year - ProjectStartedDate.Year) + 1;
- int Minor = DateTime.Now.Month;
+static TimeSpan timespan = DateTime.Now - ProjectStartedDate;
+static double years = timespan.TotalDays / 365;
+static double months = (years - (int) years) * 12;
+
+ int Major = (int)years;
+ int Minor = (int)months;
 
  int DaysSinceProjectStarted = (int)((DateTime.Now - new DateTime(2000, 1, 1)).TotalDays);
 
