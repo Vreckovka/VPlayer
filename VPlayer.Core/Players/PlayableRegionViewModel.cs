@@ -1365,6 +1365,7 @@ namespace VPlayer.Core.ViewModels
 
             if (songInPlaylist != null)
             {
+
               PlayList.Remove(songInPlaylist);
             }
           }
@@ -1388,7 +1389,16 @@ namespace VPlayer.Core.ViewModels
         ActualItem = null;
       }
 
-      SetItemAndPlay(actualItemIndex);
+
+      if (ActualItem != null)
+      {
+        var newIndex = PlayList.IndexOf(ActualItem);
+
+        if (newIndex >= 0 && actualItemIndex != newIndex)
+        {   
+          SetItemAndPlay(newIndex);
+        }
+      }
     }
 
     #endregion
