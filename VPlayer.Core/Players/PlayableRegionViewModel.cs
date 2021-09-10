@@ -1396,10 +1396,7 @@ namespace VPlayer.Core.ViewModels
       {
         var newIndex = PlayList.IndexOf(ActualItem);
 
-        if (newIndex >= 0 && actualItemIndex != newIndex)
-        {
-          SetItemAndPlay(newIndex);
-        }
+        actualItemIndex = newIndex;
       }
       else if (PlayList.Count > 0)
       {
