@@ -953,9 +953,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
             downloadingSongTask.Token.ThrowIfCancellationRequested();
 
             await DownloadSongInfo(item, downloadingSongTask.Token);
-
-            TrySetNewPlaylistName();
           }
+
+          TrySetNewPlaylistName();
         }
         catch (OperationCanceledException)
         {
