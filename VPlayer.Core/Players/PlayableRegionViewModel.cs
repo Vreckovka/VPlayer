@@ -450,9 +450,8 @@ namespace VPlayer.Core.ViewModels
       }
     }
 
-    public async void OnSavePlaylist()
+    public void OnSavePlaylist()
     {
-      await Task.Delay(1000);
       UpdateActualSavedPlaylistPlaylist();
 
       RaisePropertyChanged(nameof(ActualSavedPlaylist));
@@ -1198,15 +1197,22 @@ namespace VPlayer.Core.ViewModels
           }
           else
           {
-            Application.Current.Dispatcher.Invoke(() => { ActualSavedPlaylist = entityPlayList; });
+            success = storageManager.StoreEntity(entityPlayList, out var dbEntityPlalist);
 
-            UpdateActualSavedPlaylistPlaylist();
+            UpdateNonUserCreatedPlaylist(entityPlayList, dbEntityPlalist);
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+              ActualSavedPlaylist = entityPlayList;
+
+              ActualSavedPlaylist.LastPlayed = DateTime.Now;
+            });
           }
         }
       }
       else
       {
-        if (storedPlaylist.IsUserCreated)
+        if (!storedPlaylist.IsUserCreated)
         {
           success = storageManager.StoreEntity(entityPlayList, out var dbEntityPlalist);
 

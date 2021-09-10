@@ -994,7 +994,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           .Where(x => x.AlbumViewModel != null)
           .Any(x => x.AlbumViewModel.ModelId == songInPlayListViewModel.AlbumViewModel.ModelId);
 
-        if (!anyAlbum)
+        if (!anyAlbum && songInPlayListViewModel.AlbumViewModel != null)  
         {
           songInPlayListViewModel.AlbumViewModel.IsInPlaylist = false;
         }
@@ -1003,7 +1003,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           .Where(x => x.ArtistViewModel != null)
           .Any(x => x.ArtistViewModel.ModelId == songInPlayListViewModel.ArtistViewModel.ModelId);
 
-        if (!anyArtist)
+        if (!anyArtist && songInPlayListViewModel.ArtistViewModel != null)
         {
           songInPlayListViewModel.ArtistViewModel.IsInPlaylist = false;
         }
