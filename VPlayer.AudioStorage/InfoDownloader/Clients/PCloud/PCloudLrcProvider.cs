@@ -196,6 +196,11 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
     private string GetNormalizedName(string input)
     {
+      if (string.IsNullOrEmpty(input))
+      {
+        return input;
+      }
+
       Regex rgx = new Regex("[^a-zA-Z0-9]");
 
       return rgx.Replace(input.ToLower(), "");
