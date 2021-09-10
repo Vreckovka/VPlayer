@@ -5,5 +5,6 @@
     public int? EpisodeNumber{ get; set; }
 
     public int? SeasonNumber { get; set; }
+    public string TvShowUrl { get; set; }
   }
 }

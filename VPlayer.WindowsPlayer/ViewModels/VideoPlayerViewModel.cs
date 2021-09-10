@@ -631,7 +631,20 @@ namespace VPlayer.WindowsPlayer.ViewModels
       }
       else
       {
-        item = await iCsfdWebsiteScrapper.GetBestFind(viewModel.Name, cancellationToken);
+        bool singleSeason = false;
+        var acutalEpisode = DataLoader.GetTvShowSeriesNumber(viewModel.Name);
+
+        if (acutalEpisode.EpisodeNumber != null)
+        {
+          var episodeInSeason = PlayList.Select(x => DataLoader.GetTvShowSeriesNumber(x.Name))
+            .Where(x => x != null)
+            .Count(x => x.SeasonNumber == acutalEpisode.SeasonNumber);
+
+          singleSeason = episodeInSeason > 1 && episodeInSeason <= 20;
+        }
+      
+
+        item = await iCsfdWebsiteScrapper.GetBestFind(viewModel.Name, cancellationToken, downloadSingleSeason: singleSeason);
       }
 
       Application.Current.Dispatcher.Invoke(() =>
@@ -661,15 +674,18 @@ namespace VPlayer.WindowsPlayer.ViewModels
                 }
                 else if (singleSeason?.SeasonEpisodes != null)
                 {
-                  var episodeInSeason = PlayList.Where(x => DataLoader.GetTvShowSeriesNumber(x.Name).Key == singleSeason.SeasonNumber);
+                  var episodeInSeason = PlayList.Where(x => DataLoader.GetTvShowSeriesNumber(x.Name)?.SeasonNumber == singleSeason.SeasonNumber);
 
                   foreach (var episode in episodeInSeason)
                   {
                     var number = DataLoader.GetTvShowSeriesNumber(episode.Name);
 
-                    var csfdEpisode = singleSeason.SeasonEpisodes.SingleOrDefault(x => x.EpisodeNumber == number.Value);
+                    if (number != null)
+                    {
+                      var csfdEpisode = singleSeason.SeasonEpisodes.SingleOrDefault(x => x.EpisodeNumber == number.EpisodeNumber);
 
-                    UpdateVideoItem(episode, csfdEpisode, item.Name);
+                      UpdateVideoItem(episode, csfdEpisode, item.Name);
+                    }
                   }
                 }
               }
@@ -681,12 +697,15 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
                   CSFDTVShowSeasonEpisode csfdEpisode = null;
 
-                  if (number.Key >= cSFDTVShow.Seasons.Count && cSFDTVShow.Seasons[number.Key - 1].SeasonEpisodes.Count >= number.Value)
+                  if (number != null)
                   {
-                    csfdEpisode = cSFDTVShow.Seasons[number.Key - 1].SeasonEpisodes[number.Value - 1];
-                  }
+                    if (number.SeasonNumber >= cSFDTVShow.Seasons.Count && cSFDTVShow.Seasons[number.SeasonNumber.Value - 1].SeasonEpisodes.Count >= number.EpisodeNumber)
+                    {
+                      csfdEpisode = cSFDTVShow.Seasons[number.SeasonNumber.Value - 1].SeasonEpisodes[number.EpisodeNumber.Value - 1];
+                    }
 
-                  UpdateVideoItem(tvShowItem, csfdEpisode, item.Name);
+                    UpdateVideoItem(tvShowItem, csfdEpisode, item.Name);
+                  }
                 }
               }
             }

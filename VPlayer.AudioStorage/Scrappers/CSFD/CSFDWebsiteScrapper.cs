@@ -13,6 +13,7 @@ using Logger;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using VCore;
+using VPlayer.AudioStorage.DataLoader;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.Scrappers.CSFD.Domain;
 using VPlayer.Core.Managers.Status;
@@ -82,10 +83,18 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         Url = url
       };
 
+
+      var nameF = url
+        .Replace("https://www.csfd.cz/film/", null)
+        .Replace("https://csfd.cz/film/", null)
+        .Replace("/recenze", null)
+        .Replace("/prehled",null)
+        .Replace("/", null);
+
       var statusMessage = new StatusMessage(3)
       {
         MessageStatusState = MessageStatusState.Processing,
-        Message = $"Downloading {url.Replace("https://www.csfd.cz/", null).Replace("/prehled", null)}"
+        Message = $"Downloading {nameF}"
       };
 
       statusManager.UpdateMessage(statusMessage);
@@ -527,11 +536,24 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       var originalName = GetClearText(document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div[2]/div/header/div/ul/li")?.FirstOrDefault()?.InnerText);
 
+      var seasonNode = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div[2]/div/header/h2")?.FirstOrDefault();
+
+      string tvShowUrl = null;
+      if (seasonNode?.ChildNodes.Count >= 2)
+      {
+        var url = seasonNode.ChildNodes[1].Attributes.FirstOrDefault()?.Value;
+
+        if (!string.IsNullOrEmpty(url))
+        {
+          tvShowUrl = baseUrl + url;
+        }
+      }
+
       var nameNode = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div[2]/div/header/div")?.FirstOrDefault();
 
       List<string> parameters = new List<string>();
 
-      KeyValuePair<int, int> number = new KeyValuePair<int, int>(-1, -1);
+      TvShowEpisodeNumbers number = null;
 
       if (nameNode != null)
       {
@@ -593,13 +615,14 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       }
 
 
+      cSFDTVShowSeasonEpisode.TvShowUrl = tvShowUrl;
       cSFDTVShowSeasonEpisode.Year = year;
       cSFDTVShowSeasonEpisode.Actors = actors;
       cSFDTVShowSeasonEpisode.Directors = directors;
       cSFDTVShowSeasonEpisode.OriginalName = originalName?.Replace("(více)", null);
       cSFDTVShowSeasonEpisode.Generes = generes;
-      cSFDTVShowSeasonEpisode.SeasonNumber = number.Key != -1 ? (int?)number.Key : null;
-      cSFDTVShowSeasonEpisode.EpisodeNumber = number.Value != -1 ? (int?)number.Value : null;
+      cSFDTVShowSeasonEpisode.SeasonNumber = number?.SeasonNumber;
+      cSFDTVShowSeasonEpisode.EpisodeNumber = number?.EpisodeNumber;
       cSFDTVShowSeasonEpisode.Parameters = parameters.ToArray();
     }
 
@@ -633,7 +656,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     private CSFDItem bestItem;
     private string lastParsedName;
 
-    public async Task<CSFDItem> GetBestFind(string name, CancellationToken cancellationToken, int? year = null, bool onlySingleItem = false, string tvShowUrl = null, string tvShowName = null, int? seasonNumber = null, int? episodeNumber = null)
+    public async Task<CSFDItem> GetBestFind(string name, CancellationToken cancellationToken, int? year = null, bool onlySingleItem = false, string tvShowUrl = null, string tvShowName = null, int? seasonNumber = null, int? episodeNumber = null, bool downloadOneSeason = false)
     {
       var statusMessage = new StatusMessage(1)
       {
@@ -676,75 +699,96 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       parsedName = parsedName.Replace(".", " ").Replace("-", null);
 
-
       var episodeKeys = DataLoader.DataLoader.GetTvShowSeriesNumber(name);
 
-      if (seasonNumber != null)
+      if (!onlySingleItem)
       {
-        episodeKeys = new KeyValuePair<int, int>(seasonNumber.Value, episodeKeys.Value);
-      }
-
-      if (episodeNumber != null)
-      {
-        episodeKeys = new KeyValuePair<int, int>(episodeKeys.Key, episodeNumber.Value);
-      }
-
-      if (DataLoader.DataLoader.IsTvShow(episodeKeys) && !onlySingleItem)
-      {
-        if (tvShowName == null)
+        if (tvShowName == null && episodeKeys != null)
         {
-          var match = Regex.Match(parsedName, @"\D*");
-
-          if (match.Success)
-          {
-            parsedName = match.Value;
-          }
-
-          tvShowName = parsedName;
+          tvShowName = System.IO.Path.ChangeExtension(episodeKeys.ParsedName, null);
         }
+
+        if (episodeKeys != null && seasonNumber == null)
+        {
+          seasonNumber = episodeKeys.SeasonNumber;
+        }
+
+        if (episodeKeys != null && episodeNumber == null && !downloadOneSeason)
+        {
+          episodeNumber = episodeKeys.EpisodeNumber;
+        }
+
+        CSFDTVShow tvShow = null;
 
         if (tvShowUrl == null)
         {
-          var tvShowFind = await FindSingleCsfdItem(tvShowName, year, episodeKeys, cancellationToken);
+          var tvShowFind = await FindSingleCsfdItem(tvShowName, year, episodeKeys != null ||
+                                                                      seasonNumber != null ||
+                                                                      episodeNumber != null ||
+                                                                      !string.IsNullOrEmpty(tvShowName), cancellationToken);
 
           if (tvShowFind == null)
           {
+            statusMessage.Message = "NOT FOUND!";
+            statusMessage.MessageStatusState = MessageStatusState.Done;
+
+            statusManager.UpdateMessage(statusMessage);
             return null;
           }
 
           tvShowUrl = tvShowFind.Url;
-        }
 
-        var tvSHow = LoadTvShow(tvShowUrl, cancellationToken, episodeKeys.Key, episodeNumber);
-
-        if (tvSHow != null)
-        {
-          if (tvSHow.Seasons != null)
+          if (tvShowFind.Parameters.Contains("epizoda"))
           {
-            if (tvSHow.Seasons.Count >= episodeKeys.Key)
+            var episode = new CSFDTVShowSeasonEpisode()
             {
-              var season = tvSHow.Seasons[episodeKeys.Key - 1];
+              Url = tvShowFind.Url
+            };
 
-              if (season.SeasonEpisodes != null)
+            await Task.Run(() => LoadCsfdEpisode(episode));
+
+            if (!string.IsNullOrEmpty(episode.TvShowUrl))
+              tvShow = LoadTvShow(episode.TvShowUrl, cancellationToken, seasonNumber, episodeNumber);
+          }
+        }
+      
+
+        if (tvShow == null)
+          tvShow = LoadTvShow(tvShowUrl, cancellationToken, seasonNumber, episodeNumber);
+
+        if (tvShow != null)
+        {
+          if (tvShow.Seasons != null && episodeKeys?.SeasonNumber != null)
+          {
+            if (tvShow.Seasons.Count >= episodeKeys.SeasonNumber)
+            {
+              var season = tvShow.Seasons[episodeKeys.SeasonNumber.Value - 1];
+
+              if (season.SeasonEpisodes != null && !downloadOneSeason)
               {
                 if (season.SeasonEpisodes.Count == 1)
                 {
                   return season.SeasonEpisodes[0];
                 }
-                else if (episodeKeys.Value != -1 && season.SeasonEpisodes.Count >= episodeKeys.Value)
+                else if (episodeKeys?.EpisodeNumber != null && season.SeasonEpisodes.Count >= episodeKeys.EpisodeNumber)
                 {
-                  return season.SeasonEpisodes[episodeKeys.Value - 1];
+                  return season.SeasonEpisodes[episodeKeys.EpisodeNumber.Value - 1];
                 }
               }
 
-              return season;
+              return tvShow;
             }
           }
 
-          return tvSHow;
+          return tvShow;
         }
         else
         {
+          statusMessage.Message = "NOT FOUND!";
+          statusMessage.MessageStatusState = MessageStatusState.Done;
+
+          statusManager.UpdateMessage(statusMessage);
+
           return null;
         }
       }
@@ -758,7 +802,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         }
 
 
-        return await FindSingleCsfdItem(parsedName, year, episodeKeys, cancellationToken, true);
+        return await FindSingleCsfdItem(parsedName, year, episodeKeys != null, cancellationToken, true);
       }
     }
 
@@ -766,7 +810,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region FindSingleCsfdItem
 
-    private async Task<CSFDItem> FindSingleCsfdItem(string parsedName, int? year, KeyValuePair<int, int> episodeNumber, CancellationToken cancellationToken,  bool showStatusMassage = false)
+    private async Task<CSFDItem> FindSingleCsfdItem(string parsedName, int? year, bool isTvSHow, CancellationToken cancellationToken, bool showStatusMassage = false)
     {
       lastParsedName = parsedName;
 
@@ -795,27 +839,37 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       double minSimilarity = 0.55;
 
+      parsedName = parsedName.RemoveDiacritics();
+
+      var match = Regex.Match(parsedName, @"\D*");
+
+      if (match.Success)
+      {
+        parsedName = match.Value;
+      }
+
       var query = allItems.Where(x => x.OriginalName != null)
-        .Where(x => x.OriginalName.Similarity(parsedName) > minSimilarity)
-        .OrderByDescending(x => x.OriginalName.Similarity(parsedName)).AsEnumerable();
+        .Where(x => x.OriginalName.RemoveDiacritics().Similarity(parsedName) > minSimilarity)
+        .OrderByDescending(x => x.OriginalName.RemoveDiacritics().Similarity(parsedName)).AsEnumerable();
+
 
       query = query.Concat(allItems.Where(x => x.Name != null)
-        .Where(x => x.Name.Similarity(parsedName) > minSimilarity)
-        .OrderByDescending(x => x.Name.Similarity(parsedName)).AsEnumerable());
+        .Where(x => x.Name.RemoveDiacritics().Similarity(parsedName) > minSimilarity)
+        .OrderByDescending(x => x.Name.RemoveDiacritics().Similarity(parsedName)).AsEnumerable());
 
       if (year != null)
       {
         query = query.Where(x => x.Year == year);
       }
 
-      var sortedItemsQuery = query.OrderByDescending(x => x.RatingColor).ThenByDescending(x => x.Year).AsQueryable();
+      query = query.OrderByDescending(x => x.RatingColor).ThenByDescending(x => x.Year);
 
-      if (episodeNumber.Key != -1 && episodeNumber.Value != -1)
+      if (isTvSHow)
       {
-        sortedItemsQuery = sortedItemsQuery.Where(x => x.Parameters.Contains("TV seriál"));
+        query = query.Where(x => x.Parameters.Contains("TV seriál") || x.Parameters.Contains("epizoda"));
       }
 
-      var sortedItems = sortedItemsQuery.ToList();
+      var sortedItems = query.ToList();
 
       bestItem = sortedItems.FirstOrDefault();
 

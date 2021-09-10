@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
@@ -21,6 +23,13 @@ namespace VPlayer.AudioStorage.DataLoader
     Video
   }
 
+  public class TvShowEpisodeNumbers
+  {
+    public int? SeasonNumber { get; set; }
+    public int? EpisodeNumber { get; set; }
+    public string RegexExpression { get; set; }
+    public string ParsedName { get; set; }
+  }
 
   public class DataLoader
   {
@@ -120,20 +129,20 @@ namespace VPlayer.AudioStorage.DataLoader
       {
         var seriesNumber = GetTvShowSeriesNumber(file.Name);
 
-        tvShowSeason = tvShow.Seasons.SingleOrDefault(x => x.SeasonNumber == seriesNumber.Key);
+        tvShowSeason = tvShow.Seasons.SingleOrDefault(x => x.SeasonNumber == seriesNumber.SeasonNumber);
 
-        if (tvShowSeason == null)
+        if (tvShowSeason?.SeasonNumber != null)
         {
           tvShowSeason = new TvShowSeason()
           {
-            SeasonNumber = seriesNumber.Key,
+            SeasonNumber = seriesNumber.SeasonNumber.Value,
             Episodes = new List<TvShowEpisode>(),
             TvShow = tvShow
           };
 
           tvShow.Seasons.Add(tvShowSeason);
         }
-        else if(!clearedSeasons.Contains(tvShowSeason) && tvShowSeason.Id != 0)
+        else if (!clearedSeasons.Contains(tvShowSeason) && tvShowSeason.Id != 0)
         {
           tvShowSeason.Episodes.Clear();
           clearedSeasons.Add(tvShowSeason);
@@ -153,9 +162,9 @@ namespace VPlayer.AudioStorage.DataLoader
           VideoItem = videoItem
         };
 
-        if (seriesNumber.Key != -1)
+        if (seriesNumber?.EpisodeNumber != null)
         {
-          tvEpisode.EpisodeNumber = seriesNumber.Value;
+          tvEpisode.EpisodeNumber = seriesNumber.EpisodeNumber.Value;
         }
 
         tvShowSeason.Episodes.Add(tvEpisode);
@@ -168,7 +177,7 @@ namespace VPlayer.AudioStorage.DataLoader
 
     #region GetTvShowSeriesNumber
 
-    public static KeyValuePair<int, int> GetTvShowSeriesNumber(string name)
+    public static TvShowEpisodeNumbers GetTvShowSeriesNumber(string name)
     {
       List<string> regexExpressions = new List<string>()
       {
@@ -195,33 +204,49 @@ namespace VPlayer.AudioStorage.DataLoader
           string season = match.Groups["season"].Value;
           string episode = match.Groups["episode"].Value;
 
-          return new KeyValuePair<int, int>(int.Parse(season), int.Parse(episode));
+          int? seasonNumber = null;
+          int? episodeNumber = null;
+
+          if (int.TryParse(season, out var sNumber))
+          {
+            seasonNumber = sNumber;
+          }
+
+          if (int.TryParse(episode, out var eNumber))
+          {
+            episodeNumber = eNumber;
+          }
+
+
+          var parsedName = name.ToLower().Replace(match.Groups[0].Value, null);
+
+          CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+          TextInfo textInfo = cultureInfo.TextInfo;
+
+          var numbers = new TvShowEpisodeNumbers()
+          {
+            EpisodeNumber = episodeNumber,
+            SeasonNumber = seasonNumber,
+            RegexExpression = regexExpression,
+            ParsedName = textInfo.ToTitleCase(parsedName)
+          };
+
+          return numbers;
         }
       }
 
-      return new KeyValuePair<int, int>(-1, -1);
+      return null;
     }
 
     #endregion
 
     #region IsTvShow
 
-    public static bool IsTvShow(KeyValuePair<int, int> episodeNumber)
-    {
-      if (episodeNumber.Key != -1 && episodeNumber.Value != -1)
-      {
-        return true;
-      }
-
-      return false;
-    }
-
-
-    public static bool IsTvShow(string name )
+    public static bool IsTvShow(string name)
     {
       var episodeNumber = GetTvShowSeriesNumber(name);
 
-      if (episodeNumber.Key != -1 && episodeNumber.Value != -1)
+      if (episodeNumber != null)
       {
         return true;
       }

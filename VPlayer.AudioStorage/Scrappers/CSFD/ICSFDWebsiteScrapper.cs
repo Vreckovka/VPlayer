@@ -18,6 +18,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       string tvShowUrl = null,
       string tvShowName = null,
       int? seasonNumber = null, 
-      int? episodeNumber = null);
+      int? episodeNumber = null,
+      bool downloadSingleSeason = false);
   }
 }
