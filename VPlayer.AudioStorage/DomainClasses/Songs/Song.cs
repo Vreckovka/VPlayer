@@ -190,7 +190,7 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     public override string ToString()
     {
-      return $"{ItemModel.Name}|{Album}";
+      return $"{ItemModel?.Name}|{Album}";
     }
 
     public void Update(Song other)

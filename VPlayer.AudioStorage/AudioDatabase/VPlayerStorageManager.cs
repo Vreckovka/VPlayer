@@ -165,28 +165,44 @@ namespace VPlayer.AudioStorage.AudioDatabase
               audioInfoDownloader.UpdateItem(album);
             }
 
-            var fileInfo = new SoundFileInfo(audioInfo.DiskLocation, audioInfo.DiskLocation)
-            {
-              Indentificator = audioInfo.DiskLocation,
-              Artist = audioInfo.Artist,
-              Album = audioInfo.Album,
-              Title = audioInfo.Title,
-              Source = audioInfo.DiskLocation,
-              Name = Path.GetFileName(audioInfo.DiskLocation),
-            };
 
-            var soundItem = new SoundItem()
-            {
-              Duration = audioInfo.Duration,
-              NormalizedName = GetNormalizedName(audioInfo.Title),
-              FileInfo = fileInfo
-            };
+            var fileInfo = context.SoundFileInfos.SingleOrDefault(x => x.Indentificator == audioInfo.DiskLocation);
 
-            Song song = new Song(album)
+            if(fileInfo == null)
             {
-              ItemModel = soundItem
-            };
+              fileInfo = new SoundFileInfo(audioInfo.DiskLocation, audioInfo.DiskLocation)
+              {
+                Indentificator = audioInfo.DiskLocation,
+                Artist = audioInfo.Artist,
+                Album = audioInfo.Album,
+                Title = audioInfo.Title,
+                Source = audioInfo.DiskLocation,
+                Name = Path.GetFileName(audioInfo.DiskLocation),
+              };
+            }
 
+
+            var soundItem = context.SoundItems.SingleOrDefault(x => x.FileInfo == fileInfo);
+
+            if (soundItem == null)
+            {
+              soundItem = new SoundItem()
+              {
+                Duration = audioInfo.Duration,
+                NormalizedName = GetNormalizedName(audioInfo.Title),
+              };
+            }
+
+            soundItem.FileInfo = fileInfo;
+
+            var song = context.Songs.SingleOrDefault(x => x.ItemModel == soundItem);
+
+            if (song == null)
+            {
+              song = new Song(album);
+            }
+
+            song.ItemModel = soundItem;
 
             if (string.IsNullOrEmpty(song.ItemModel.Name))
             {

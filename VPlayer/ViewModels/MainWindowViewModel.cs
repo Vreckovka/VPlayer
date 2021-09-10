@@ -44,10 +44,7 @@ namespace VPlayer.ViewModels
   //TODO: Nastavit si hlavnu zlozku a ked spustis z inej, moznost presunut
   //TODO: Playlist hore pri menu, quick ze prides a uvidis napriklad 5 poslednych hore v rade , ako carusel (5/5)
   //TODO: Playlist nech sa automaticky nevytvara ak je niekolko pesniciek (nastavenie pre uzivatela aky pocet sa ma ukladat!) (3/5)
-  //TODO: Hore prenutie medzi windows a browser playermi , zmizne bocne menu
-  //TODO: Pridat loading indikator, mozno aj co prave robi
   //TODO: Reorder na playliste
-  //TODO: Upload lyrics do Google Drive
   //TODO: Moznost editovat lyrics
   //TODO: Mozno vyhladat titulky cez search a vybrat si
   //TODO: Hviezdicky pocet 
@@ -71,19 +68,15 @@ namespace VPlayer.ViewModels
   //TODO: Listview pre Artistov, Albumy atd ... selection a potom akcie (vyberiem si 10 a dam spojit do seba, aristov rovnakych, ale nejako ich nespojilo)
   //TODO: Moznost presunu zlozku a subory do Serialy napr, alebo rovno do nejakeho serialu (Mozno totalne daleko to potiahnut ze moznost vytvorit rovno aj noveho)
   //TODO: Highlight videa hover nad itemom v playliste
-  //TODO  Playlist sidebar aj vo fullscreene(why the fuck not) - schovany a rovnake mechanismus na zobrazenie
+
   //TODO: Tv show card (kludne aj artist) - pustit od posledneho playlistu (zacne to tam kde si skoncil)
   //TODO: Last time played, dat ktory den (25.7.2019 (Pondelok))
   //
   // *****Playlist sidebar*****
-  //TODO: Playlist sidebar - iconky do context menu
-  //TODO: Playlist sidebar - horne info - iconcy miesto textu?
-  //TODO: Playlist sidebar width na % z celkovej sirky(aby bol co najväcsi a stale pekne to bolo a video bolo velke)
-  //
+  //        TODO  Playlist sidebar - aj vo fullscreene(why the fuck not) - schovany a rovnake mechanismus na zobrazenie
   //
   //  *****Easy*****
   //        TODO: Pridat thumbnail zo suboru
-  //        TODO: Moznost vymazat automaticky nahrane lyrics a zakazat stahovanie
   //        TODO: Dvojklik na windows volume (nastavi dostpny dalsi device (hore ci dole????))
   //		    TODO: Ak Windows Volume je 100 a stale chcem viac tak dam VLC volume ++
   //		    TODO: Vymazat playlist + data iconka (iny trash button)
@@ -115,7 +108,7 @@ namespace VPlayer.ViewModels
   //        TODO: File Browser - Nahrat tv show rovno z tade
   //        TODO: File Browser - Nahrat artists rovno z tade
   //        TODO: Tv show prehrat od posledneho ulozene playlistu (to iste aj pre hudbu kludne), ked pribudne nova seria pusti to kde si skoncil, ale nacita ju
-  //        TODO: Prehravanie,pridavanie do playlistu albumov, tv show z detailu (tym padom mozno zalozka Albums nebude treba, aj tak tam nechodis, pojdes iba do artist)
+  //        TODO: Prehravanie,pridavanie do playlistu albumov, tv show z Detail viewu itemu (AlbumDetailView...) (tym padom mozno zalozka Albums nebude treba, aj tak tam nechodis, pojdes iba do artist)
   //        TODO: Vymazavat itemy z File browsera (ak je odkaz niekde do db na tu zlozku tak vymazat rovno aj tv show, ale spytat sa ci to chces a zapametat si ak ano)
   //        TODO: Mute button pri zvuku
   //        TODO: Umoznit simultalne spustit video a hudbu
@@ -139,6 +132,7 @@ namespace VPlayer.ViewModels
   //
   //  *****IMPORTANT!*****
   //        TODO: Po pridani novej serii nefunguje csfd download
+  //        TODO: Pridanie artista cez Load music neskontroluje ci to bolo spustane z filebrowsera (indentificator ci je jednoznacny), treba skusit vyhladat existujuci item 
   //       
   //
   //********************************************************************************************************************************
