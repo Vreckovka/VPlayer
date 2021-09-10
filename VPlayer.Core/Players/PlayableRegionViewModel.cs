@@ -426,9 +426,7 @@ namespace VPlayer.Core.ViewModels
     {
       ActualSavedPlaylist.IsUserCreated = !ActualSavedPlaylist.IsUserCreated;
 
-      UpdateActualSavedPlaylistPlaylist();
-
-      RaisePropertyChanged(nameof(ActualSavedPlaylist));
+      UpdateOrAddActualSavedPlaylist();
     }
 
     #endregion
@@ -452,9 +450,7 @@ namespace VPlayer.Core.ViewModels
 
     public void OnSavePlaylist()
     {
-      UpdateActualSavedPlaylistPlaylist();
-
-      RaisePropertyChanged(nameof(ActualSavedPlaylist));
+      UpdateOrAddActualSavedPlaylist();
     }
 
     #endregion
@@ -1191,7 +1187,7 @@ namespace VPlayer.Core.ViewModels
           {
             success = storageManager.StoreEntity(entityPlayList, out var dbEntityPlalist);
 
-            UpdateNonUserCreatedPlaylist(entityPlayList, dbEntityPlalist);
+            UpdatePlaylist(entityPlayList, dbEntityPlalist);
 
             Application.Current.Dispatcher.Invoke(() => { ActualSavedPlaylist = entityPlayList; });
           }
@@ -1199,7 +1195,7 @@ namespace VPlayer.Core.ViewModels
           {
             success = storageManager.StoreEntity(entityPlayList, out var dbEntityPlalist);
 
-            UpdateNonUserCreatedPlaylist(entityPlayList, dbEntityPlalist);
+            UpdatePlaylist(entityPlayList, dbEntityPlalist);
 
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -1216,7 +1212,7 @@ namespace VPlayer.Core.ViewModels
         {
           success = storageManager.StoreEntity(entityPlayList, out var dbEntityPlalist);
 
-          UpdateNonUserCreatedPlaylist(entityPlayList, dbEntityPlalist);
+          UpdatePlaylist(entityPlayList, dbEntityPlalist);
 
           Application.Current.Dispatcher.Invoke(() =>
           {
@@ -1254,9 +1250,9 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region UpdateNonUserCreatedPlaylist
+    #region UpdatePlaylist
 
-    protected virtual void UpdateNonUserCreatedPlaylist(TPlaylistModel playlistToUpdate, TPlaylistModel other)
+    protected virtual void UpdatePlaylist(TPlaylistModel playlistToUpdate, TPlaylistModel other)
     {
       if (playlistToUpdate.Id == 0)
         playlistToUpdate.Id = other.Id;
@@ -1268,21 +1264,25 @@ namespace VPlayer.Core.ViewModels
 
     #region UpdateActualSavedPlaylistPlaylist
 
-    protected Task UpdateActualSavedPlaylistPlaylist()
+    protected Task<bool> UpdateActualSavedPlaylistPlaylist()
     {
       return Task.Run(() =>
-       {
-         if (storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(ActualSavedPlaylist, out var updated))
-         {
-           Application.Current.Dispatcher.Invoke(() =>
-           {
-             if (VFocusManager.FocusedItems.Count(x => x.Name == "NameTextBox") == 0)
-             {
-               ActualSavedPlaylist = updated;
-             }
-           });
-         }
-       });
+      {
+        var result = storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(ActualSavedPlaylist, out var updated);
+
+        if (result)
+        {
+          Application.Current.Dispatcher.Invoke(() =>
+          {
+            if (VFocusManager.FocusedItems.Count(x => x.Name == "NameTextBox") == 0)
+            {
+              ActualSavedPlaylist = updated;
+            }
+          });
+        }
+
+        return result;
+      });
     }
 
     #endregion
@@ -1438,6 +1438,28 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    protected async Task UpdateOrAddActualSavedPlaylist()
+    {
+      var result = await UpdateActualSavedPlaylistPlaylist();
+
+      if (!result)
+      {
+        var success = storageManager.StoreEntity(ActualSavedPlaylist, out var dbEntityPlalist);
+
+        if (success)
+        {
+          UpdatePlaylist(ActualSavedPlaylist, dbEntityPlalist);
+
+          Application.Current.Dispatcher.Invoke(() =>
+          {
+            ActualSavedPlaylist = ActualSavedPlaylist;
+
+            ActualSavedPlaylist.LastPlayed = DateTime.Now;
+          });
+        }
+      }
+    }
+
     #region SetVolume
 
     public void SetVolume(int pVolume)
@@ -1585,7 +1607,5 @@ namespace VPlayer.Core.ViewModels
     #endregion
 
     #endregion
-
-
   }
 }

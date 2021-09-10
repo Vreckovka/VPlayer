@@ -327,11 +327,11 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region UpdateNonUserCreatedPlaylist
+    #region UpdatePlaylist
 
-    protected override void UpdateNonUserCreatedPlaylist(TPlaylistModel playlistToUpdate, TPlaylistModel other)
+    protected override void UpdatePlaylist(TPlaylistModel playlistToUpdate, TPlaylistModel other)
     {
-      base.UpdateNonUserCreatedPlaylist(playlistToUpdate, other);
+      base.UpdatePlaylist(playlistToUpdate, other);
 
       playlistToUpdate.Name = other.Name;
       playlistToUpdate.IsReapting = other.IsReapting;
