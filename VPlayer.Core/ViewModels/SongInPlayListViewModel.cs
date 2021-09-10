@@ -207,12 +207,17 @@ namespace VPlayer.Core.ViewModels
         {
           Model.IsAutomaticLyricsFindEnabled = !value;
 
-          UpdateDbModel();
-
           if (Model.IsAutomaticLyricsFindEnabled)
           {
             TryToRefreshUpdateLyrics();
           }
+          else
+          {
+            Lyrics = null;
+            LRCFile = null;
+          }
+
+          UpdateDbModel();
 
           RaisePropertyChanged();
         }

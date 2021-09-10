@@ -566,8 +566,8 @@
 
             <Grid.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Command="{Binding DeleteItemFromPlaylist}" Header="Delete song from playlist" />
-                    <MenuItem Command="{Binding DeleteSongFromPlaylistWithAlbum}" Header="Delete song album from playlist" />
+                    <MenuItem Command="{Binding DeleteItemFromPlaylist}" Header="Remove song from playlist" />
+                    <MenuItem Command="{Binding DeleteSongFromPlaylistWithAlbum}" Header="Remove album from playlist" />
 
                     <MenuItem IsHitTestVisible="False" />
 
@@ -918,34 +918,30 @@
 
             <Grid.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Command="{Binding DeleteItemFromPlaylist}" Header="Delete song from playlist" />
-                    <MenuItem Command="{Binding DeleteSongFromPlaylistWithAlbum}" Header="Delete song album from playlist" />
-
-                    <MenuItem IsHitTestVisible="False" />
-
+                    <ContextMenu.Resources>
+                        <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
+                            <Setter Property="Width" Value="280" />
+                            <Setter Property="Margin" Value="-17,-5,-23,-6" />
+                            <Setter Property="IconWidth" Value="18" />
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="IconHeight" Value="18" />
+                            <Setter Property="IconMargin" Value="20 0 0 0" />
+                            <Setter Property="Padding" Value="15,9" />
+                            <Setter Property="HorizontalContentAlignment" Value="Left" />
+                            <Setter Property="ForegroundDefaultColor" Value="#656565" />
+                            <Setter Property="IsReadOnly" Value="True" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
+                        </Style>
+                    </ContextMenu.Resources>
                     <MenuItem>
                         <MenuItem.HeaderTemplate>
                             <DataTemplate>
                                 <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu, Mode=FindAncestor}, Path=DataContext}">
-                                    <controls2:PathButton Margin="-8,0,0,0"
-                                                          Padding="0"
-                                                          ForegroundCheckedColor="#aaa"
-                                                          ForegroundDefaultColor="#454545"
-                                                          IconHeight="18"
-                                                          IconWidth="18"
-                                                          IsChecked="{Binding IsAutomaticLyricsDownloadDisabled, Mode=TwoWay}"
-                                                          PathCheckedBrush="{StaticResource DefaultRedBrush}"
-                                                          PathStyle="{StaticResource text-slash}"
-                                                          ToolTip="ENABLE or DISABLE automatic lyrics download">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
+                                    <controls2:PathButton Command="{Binding DeleteItemFromPlaylist}"
+                                                          Content="Remove SONG from playlist"
+                                                          PathStyle="{StaticResource layer-minus}"
+                                                          ToolTip="Removes SINGLE SONG from playlist">
 
-                                            <!--<CheckBox IsChecked="{Binding IsAutomaticLyricsDownloadEnabled}" wpf/>-->
-                                            <TextBlock Grid.Column="1" Text="Automatic lyrics download" />
-                                        </Grid>
                                         <b:Interaction.Behaviors>
                                             <buttons:CloseContextMenuOnClickBehavior />
                                         </b:Interaction.Behaviors>
@@ -955,9 +951,67 @@
                         </MenuItem.HeaderTemplate>
                     </MenuItem>
 
-                    <MenuItem IsHitTestVisible="False" />
+                    <MenuItem>
+                        <MenuItem.HeaderTemplate>
+                            <DataTemplate>
+                                <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu, Mode=FindAncestor}, Path=DataContext}">
+                                    <controls2:PathButton Command="{Binding DeleteSongFromPlaylistWithAlbum}"
+                                                          Content="Remove song's ALBUM from playlist"
+                                                          IconHeight="16"
+                                                          PathStyle="{StaticResource TrashList}"
+                                                          ToolTip="Removes ALL SONGS in ALBUM from playlist">
+                                        <b:Interaction.Behaviors>
+                                            <buttons:CloseContextMenuOnClickBehavior />
+                                        </b:Interaction.Behaviors>
+                                    </controls2:PathButton>
+                                </Grid>
+                            </DataTemplate>
+                        </MenuItem.HeaderTemplate>
+                    </MenuItem>
 
-                    <MenuItem Command="{Binding OpenContainingFolder}" Header="Open folder" />
+                    <Separator Margin="5,5" />
+
+                    <MenuItem>
+                        <MenuItem.HeaderTemplate>
+                            <DataTemplate>
+                                <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu, Mode=FindAncestor}, Path=DataContext}">
+                                    <controls2:PathButton Content="Automatic lyrics download"
+                                                          ForegroundCheckedColor="#ddd"
+                                                          IsChecked="{Binding IsAutomaticLyricsDownloadDisabled, Mode=TwoWay}"
+                                                          IsReadOnly="False"
+                                                          PathCheckedBrush="{StaticResource DefaultRedBrush}"
+                                                          PathStyle="{StaticResource text-slash}"
+                                                          ToolTip="{Binding}">
+
+                                        <b:Interaction.Behaviors>
+                                            <buttons:CloseContextMenuOnClickBehavior />
+                                        </b:Interaction.Behaviors>
+                                    </controls2:PathButton>
+                                </Grid>
+                            </DataTemplate>
+                        </MenuItem.HeaderTemplate>
+                    </MenuItem>
+
+                    <Separator Margin="5,5" />
+
+                    <MenuItem>
+                        <MenuItem.HeaderTemplate>
+                            <DataTemplate>
+                                <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu, Mode=FindAncestor}, Path=DataContext}">
+                                    <controls2:PathButton Command="{Binding OpenContainingFolder}"
+                                                          Content="Open containing folder"
+                                                          IconHeight="14"
+                                                          PathStyle="{StaticResource FolderOpen}"
+                                                          ToolTip=" Opens containing folder in filebrowser">
+
+                                        <b:Interaction.Behaviors>
+                                            <buttons:CloseContextMenuOnClickBehavior />
+                                        </b:Interaction.Behaviors>
+                                    </controls2:PathButton>
+                                </Grid>
+                            </DataTemplate>
+                        </MenuItem.HeaderTemplate>
+                    </MenuItem>
                 </ContextMenu>
             </Grid.ContextMenu>
         </Grid>

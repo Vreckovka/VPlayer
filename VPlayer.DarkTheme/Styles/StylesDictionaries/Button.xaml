@@ -295,8 +295,8 @@
                             <Path x:Name="PathIcon"
                                   Width="{TemplateBinding IconWidth}"
                                   Height="{TemplateBinding IconHeight}"
-                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
                                   Fill="{TemplateBinding IconBrush}"
                                   Stretch="{TemplateBinding IconStretch}"
                                   Style="{TemplateBinding PathStyle}" />
@@ -304,8 +304,8 @@
                             <ContentPresenter x:Name="MyContentPresenter"
                                               Grid.Column="1"
                                               Margin="{TemplateBinding IconMargin}"
-                                              HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                               Content="{TemplateBinding Content}" />
                         </Grid>
 

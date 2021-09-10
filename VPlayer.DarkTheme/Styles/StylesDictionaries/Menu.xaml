@@ -87,9 +87,9 @@
 
     <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="{x:Type Separator}">
         <Setter Property="Height" Value="1" />
-        <Setter Property="Width" Value="1" />
+        <Setter Property="Width" Value="auto" />
         <Setter Property="Margin" Value="0,4,0,4" />
-        <Setter Property="Background" Value="{DynamicResource BorderMediumColor}" />
+        <Setter Property="Background" Value="#202020" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Separator}">
