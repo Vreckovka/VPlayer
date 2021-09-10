@@ -405,6 +405,34 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region ChangePlaylistFavorite
+
+    private ActionCommand changePlaylistFavorite;
+
+    public ICommand ChangePlaylistFavorite
+    {
+      get
+      {
+        if (changePlaylistFavorite == null)
+        {
+          changePlaylistFavorite = new ActionCommand(OnChangePlaylistFavorite);
+        }
+
+        return changePlaylistFavorite;
+      }
+    }
+
+    public void OnChangePlaylistFavorite()
+    {
+      ActualSavedPlaylist.IsUserCreated = !ActualSavedPlaylist.IsUserCreated;
+
+      UpdateActualSavedPlaylistPlaylist();
+
+      RaisePropertyChanged(nameof(ActualSavedPlaylist));
+    }
+
+    #endregion
+
     #region SavePlaylistCommand
 
     private ActionCommand savePlaylistCommand;
@@ -422,10 +450,9 @@ namespace VPlayer.Core.ViewModels
       }
     }
 
-    public void OnSavePlaylist()
+    public async void OnSavePlaylist()
     {
-      ActualSavedPlaylist.IsUserCreated = !ActualSavedPlaylist.IsUserCreated;
-
+      await Task.Delay(1000);
       UpdateActualSavedPlaylistPlaylist();
 
       RaisePropertyChanged(nameof(ActualSavedPlaylist));
@@ -993,7 +1020,6 @@ namespace VPlayer.Core.ViewModels
       Application.Current.Dispatcher.Invoke(() =>
       {
         IsActive = true;
-
         PlayList.Clear();
         PlayList.AddRange(songs);
         RequestReloadVirtulizedPlaylist();
@@ -1242,7 +1268,13 @@ namespace VPlayer.Core.ViewModels
        {
          if (storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(ActualSavedPlaylist, out var updated))
          {
-           Application.Current.Dispatcher.Invoke(() => { ActualSavedPlaylist = updated; });
+           Application.Current.Dispatcher.Invoke(() =>
+           {
+             if (VFocusManager.FocusedItems.Count(x => x.Name == "NameTextBox") == 0)
+             {
+               ActualSavedPlaylist = updated; 
+             }
+           });
          }
        });
     }

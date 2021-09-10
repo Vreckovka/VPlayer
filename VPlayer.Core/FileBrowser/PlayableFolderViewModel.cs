@@ -191,6 +191,20 @@ namespace VPlayer.Core.FileBrowser
             }
             else
             {
+              if (string.IsNullOrEmpty(existing.FileInfo.Source) && existing.FileInfo != null)
+              {
+                cancellationTokenSource?.Token.ThrowIfCancellationRequested();
+
+                var result = await folderViewModel.GetItemSource(existing.FileInfo);
+
+                if (result?.Source != null)
+                {
+                  existing.FileInfo.Source = result.Source;
+
+                  await storageManager.UpdateEntityAsync(existing.FileInfo);
+                }
+              }
+
               soundItems.Add(existing);
             }
 

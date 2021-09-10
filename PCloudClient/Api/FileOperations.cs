@@ -369,11 +369,18 @@ namespace PCloud
       return new FileInfo(response.metadata());
     }
 
-    public static async Task<string> GetFilePublicLink(this Connection conn, long id)
+    public static async Task<string> GetFilePublicLink(this Connection conn, long id, DateTime? expire = null)
     {
       string link = null;
+      
+      if (expire == null)
+      {
+        expire = DateTime.MaxValue;
+      }
+
       var req = conn.newRequest("getfilelink");
       req.add("fileid", id);
+      req.add("expire", expire.ToString());
       req.unixTimestamps();
 
       var response = await conn.send(req);

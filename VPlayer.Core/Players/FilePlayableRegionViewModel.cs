@@ -457,11 +457,14 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region DownloadItemInfo
 
     protected virtual Task DownloadItemInfo(CancellationToken cancellationToken)
     {
       return Task.CompletedTask;
     }
+
+    #endregion
 
     #region Dispose
 

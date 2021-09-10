@@ -855,6 +855,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region BeforePlayEvent
+
     protected override void BeforePlayEvent(PlayItemsEventData<SoundItemInPlaylistViewModel> data)
     {
       var songs = data.Items.OfType<SongInPlayListViewModel>().ToList();
@@ -887,6 +889,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       data.Items = newList;
     }
+
+    #endregion
 
     #region OnPlayEvent
 
@@ -949,6 +953,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
             downloadingSongTask.Token.ThrowIfCancellationRequested();
 
             await DownloadSongInfo(item, downloadingSongTask.Token);
+
+            TrySetNewPlaylistName();
           }
         }
         catch (OperationCanceledException)
@@ -1020,11 +1026,22 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-    private string GetGenericPlaylistName()
+    #region TrySetNewPlaylistName
+
+    private void TrySetNewPlaylistName()
     {
-      return "Generated playlist: " + DateTime.Now.ToLongDateString();
+      if (ActualSavedPlaylist != null && string.IsNullOrEmpty(ActualSavedPlaylist.Name))
+      {
+        ActualSavedPlaylist.Name = GetNewPlaylistName();
+
+        Application.Current?.Dispatcher?.Invoke(() =>
+        {
+          OnSavePlaylist();
+        });
+      }
     }
 
+    #endregion
 
     private string GetNewPlaylistName()
     {
@@ -1032,7 +1049,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       if (actaulPlaylist == null)
       {
-        return GetGenericPlaylistName();
+        return null;
       }
 
       var artists = actaulPlaylist.OfType<SongInPlayListViewModel>()
@@ -1044,10 +1061,20 @@ namespace VPlayer.WindowsPlayer.ViewModels
       if (artists.Count > 0)
       {
         playlistName = string.Join(", ", artists.Select(x => x.Key).ToArray());
+
+        var albums = actaulPlaylist.OfType<SongInPlayListViewModel>()
+          .Where(x => !string.IsNullOrEmpty(x?.AlbumViewModel?.Name))
+          .GroupBy(x => x.AlbumViewModel.Name).ToList();
+
+        if (albums.Count == 1)
+        {
+          playlistName += $" - {albums[0].Key}";
+        }
       }
-      else
+      else 
       {
-        var splits = actaulPlaylist.Select(x => x.Model.Source.Split("\\")).ToList();
+        var splits = actaulPlaylist.Where(x => x?.Model?.Source != null)
+          .Select(x => x.Model.Source.Split("\\")).ToList();
 
         if (splits.Count > 0)
         {
@@ -1069,13 +1096,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
             }
             else if (i == 0)
             {
-              playlistName = GetGenericPlaylistName();
+              playlistName = null;
             }
           }
         }
         else
         {
-          playlistName = GetGenericPlaylistName();
+          playlistName = null;
         }
       }
 
@@ -1115,7 +1142,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         IsReapting = IsRepeate,
         IsShuffle = IsShuffle,
-        Name = string.IsNullOrEmpty(playlistName) ? GetGenericPlaylistName() : playlistName,
+        Name = string.IsNullOrEmpty(playlistName) ? "" : playlistName,
         ItemCount = playlistModels?.Count,
         PlaylistItems = playlistModels,
         LastItemElapsedTime = ActualSavedPlaylist.LastItemElapsedTime,

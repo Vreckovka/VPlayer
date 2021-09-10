@@ -10,16 +10,16 @@ using VPlayer.Core.ViewModels.Artists;
 
 namespace VPlayer.Library.ViewModels
 {
-  public abstract class PlaylistViewModel<TPlaylistItemViewModel,TPlaylistModel, TPlaylistItemModel> : 
-    PlayableViewModel<TPlaylistItemViewModel, TPlaylistModel> 
+  public abstract class PlaylistViewModel<TPlaylistItemViewModel, TPlaylistModel, TPlaylistItemModel> :
+    PlayableViewModel<TPlaylistItemViewModel, TPlaylistModel>
     where TPlaylistModel : class, IPlaylist<TPlaylistItemModel>
     where TPlaylistItemModel : class, IEntity
   {
     protected readonly IStorageManager storageManager;
-   
+
 
     protected PlaylistViewModel(
-      TPlaylistModel model, 
+      TPlaylistModel model,
       IEventAggregator eventAggregator,
       IStorageManager storageManager) : base(model, eventAggregator)
     {
@@ -136,7 +136,7 @@ namespace VPlayer.Library.ViewModels
       RaisePropertyChanged(nameof(IsUserCreated));
       RaisePropertyChanged(nameof(ItemsCount));
       RaisePropertyChanged(nameof(HashCode));
-     
+
       RaisePropertyChanged(nameof(TotalPlayedTime));
     }
 
