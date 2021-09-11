@@ -925,9 +925,10 @@
                             <Setter Property="IconWidth" Value="18" />
                             <Setter Property="Background" Value="Transparent" />
                             <Setter Property="IconHeight" Value="18" />
-                            <Setter Property="IconMargin" Value="20 0 0 0" />
+                            <Setter Property="IconMargin" Value="0 0 20 0" />
                             <Setter Property="Padding" Value="15,9" />
                             <Setter Property="HorizontalContentAlignment" Value="Left" />
+                            <Setter Property="HorizontalIconAlignment" Value="Left" />
                             <Setter Property="ForegroundDefaultColor" Value="#656565" />
                             <Setter Property="IsReadOnly" Value="True" />
                             <Setter Property="FontWeight" Value="SemiBold" />
@@ -971,13 +972,17 @@
 
                     <Separator Margin="5,5" />
 
+
                     <MenuItem>
                         <MenuItem.HeaderTemplate>
                             <DataTemplate>
                                 <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu, Mode=FindAncestor}, Path=DataContext}">
                                     <controls2:PathButton Content="Automatic lyrics download"
+                                                          ForegroundCheckedColor="#ddd"
                                                           IsChecked="{Binding IsAutomaticLyricsDownloadDisabled, Mode=TwoWay}"
-                                                          Style="{StaticResource AutomaticLyricsDownload}">
+                                                          PathCheckedBrush="{StaticResource YellowBrush}"
+                                                          PathStyle="{StaticResource text-slash}"
+                                                          ToolTip="Turn ON/OFF automatic LYRICS download">
 
                                         <b:Interaction.Behaviors>
                                             <buttons:CloseContextMenuOnClickBehavior />

@@ -387,7 +387,7 @@
                             </Grid>
 
                             <Border Grid.Row="1"
-                                    Margin="0 0 0 0"
+                                    Margin="0,0,0,0"
                                     Background="{StaticResource BackgroudBrush}"
                                     BorderBrush="{StaticResource BackgroudBrush}"
                                     BorderThickness="0,0">
@@ -404,7 +404,8 @@
                                                Margin="5"
                                                FontSize="20"
                                                Foreground="WhiteSmoke"
-                                               Text="{TemplateBinding HeaderText}">
+                                               Text="{TemplateBinding HeaderText}"
+                                               ToolTip="{TemplateBinding HeaderText}">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Background" Value="Transparent" />
@@ -430,10 +431,11 @@
                                         </b:Interaction.Behaviors>
                                     </TextBlock>
 
-                                    <Border Grid.Row="1" Background="#aa101010" Margin="-1,0,-1,0" Padding="0 3 0 3">
-                                        <StackPanel HorizontalAlignment="Center" 
-                                                  
-                                                    Orientation="Horizontal">
+                                    <Border Grid.Row="1"
+                                            Margin="-1,0,-1,0"
+                                            Padding="0,3,0,3"
+                                            Background="#aa101010">
+                                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                                             <TextBlock HorizontalAlignment="Center"
                                                        FontSize="15"
                                                        Foreground="#757575"

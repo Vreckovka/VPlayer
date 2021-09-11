@@ -902,6 +902,26 @@ namespace VPlayer.WindowsPlayer.ViewModels
       }
 
       data.Items = newList;
+
+      Application.Current?.Dispatcher?.Invoke(() =>
+      {
+        if (PlayList.Count > 0)
+        {
+          var allArtists = PlayList.OfType<SongInPlayListViewModel>().Where(x => x.ArtistViewModel != null).GroupBy(x => x.ArtistViewModel);
+
+          foreach (var artist in allArtists.Select(x => x.Key))
+          {
+            artist.IsInPlaylist = false;
+          }
+
+          var allAlbums = PlayList.OfType<SongInPlayListViewModel>().Where(x => x.AlbumViewModel != null).GroupBy(x => x.AlbumViewModel);
+
+          foreach (var album in allAlbums.Select(x => x.Key))
+          {
+            album.IsInPlaylist = false;
+          }
+        }
+      });
     }
 
     #endregion
@@ -913,6 +933,26 @@ namespace VPlayer.WindowsPlayer.ViewModels
     protected override void OnPlayEvent(PlayItemsEventData<SoundItemInPlaylistViewModel> data)
     {
       base.OnPlayEvent(data);
+
+      Application.Current?.Dispatcher?.Invoke(() =>
+      {
+        if (PlayList.Count > 0)
+        {
+          var allArtists = PlayList.OfType<SongInPlayListViewModel>().Where(x => x.ArtistViewModel != null).GroupBy(x => x.ArtistViewModel);
+
+          foreach (var artist in allArtists.Select(x => x.Key))
+          {
+            artist.IsInPlaylist = true;
+          }
+
+          var allAlbums = PlayList.OfType<SongInPlayListViewModel>().Where(x => x.AlbumViewModel != null).GroupBy(x => x.AlbumViewModel);
+
+          foreach (var album in allAlbums.Select(x => x.Key))
+          {
+            album.IsInPlaylist = true;
+          }
+        }
+      });
 
       DownloadSongInfos(PlayList);
     }

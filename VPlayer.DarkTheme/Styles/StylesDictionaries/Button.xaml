@@ -273,7 +273,7 @@
         <Setter Property="PathCheckedBrush" Value="#FFEFDF" />
         <Setter Property="IconDefaultColor" Value="#50FFEFDF" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="IconMargin" Value="10 0 0 0" />
+        <Setter Property="IconMargin" Value="0 0 10 0" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="Template">
@@ -288,25 +288,28 @@
                             CornerRadius="{TemplateBinding CornerRadius}">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
                                 <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
 
-                            <Path x:Name="PathIcon"
-                                  Width="{TemplateBinding IconWidth}"
-                                  Height="{TemplateBinding IconHeight}"
-                                  HorizontalAlignment="Center"
-                                  VerticalAlignment="Center"
-                                  Fill="{TemplateBinding IconBrush}"
-                                  Stretch="{TemplateBinding IconStretch}"
-                                  Style="{TemplateBinding PathStyle}" />
+                            <Border Width="{TemplateBinding IconWidth}"
+                                    Height="{TemplateBinding IconHeight}"
+                                    Margin="{TemplateBinding IconMargin}">
+                                <Path x:Name="PathIcon"
+                                      HorizontalAlignment="{TemplateBinding HorizontalIconAlignment}"
+                                      VerticalAlignment="{TemplateBinding VerticalIconAlignment}"
+                                      Fill="{TemplateBinding IconBrush}"
+                                      Stretch="{TemplateBinding IconStretch}"
+                                      Style="{TemplateBinding PathStyle}" />
+                            </Border>
 
-                            <ContentPresenter x:Name="MyContentPresenter"
-                                              Grid.Column="1"
-                                              Margin="{TemplateBinding IconMargin}"
-                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                              Content="{TemplateBinding Content}" />
+                            <Border Grid.Column="1">
+                                <ContentPresenter x:Name="MyContentPresenter"
+                                                  HorizontalAlignment="Left"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  Content="{TemplateBinding Content}" />
+                            </Border>
+
                         </Grid>
 
                         <i:Interaction.Triggers>
@@ -761,7 +764,8 @@
         <Setter Property="Padding" Value="35,10" />
         <Setter Property="IconHeight" Value="15" />
         <Setter Property="CornerRadius" Value="8" />
-        <Setter Property="IconMargin" Value="10,0,0,0" />
+        <Setter Property="IconMargin" Value="0,0,20,0" />
+
     </Style>
 
 </ResourceDictionary>

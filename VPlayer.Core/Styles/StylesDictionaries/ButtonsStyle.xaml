@@ -357,13 +357,6 @@
 
 
 
-    <Style x:Key="AutomaticLyricsDownload"
-           BasedOn="{StaticResource {x:Type controls:PathButton}}"
-           TargetType="controls:PathButton">
-        <Setter Property="ForegroundCheckedColor" Value="#ddd" />
-        <Setter Property="PathCheckedBrush" Value="{StaticResource DefaultRedBrush}" />
-        <Setter Property="PathStyle" Value="{StaticResource text-slash}" />
-        <Setter Property="ToolTip" Value="Turn ON/OFF automatic LYRICS download" />
-    </Style>
+   
 
 </ResourceDictionary>

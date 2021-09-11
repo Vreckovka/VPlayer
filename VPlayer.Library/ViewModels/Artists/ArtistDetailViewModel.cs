@@ -26,16 +26,19 @@ namespace VPlayer.Home.ViewModels.Artists
   public class ArtistDetailViewModel : DetailViewModel<ArtistViewModel, Artist, ArtistDetailView>
   {
     private readonly IViewModelsFactory viewModelsFactory;
+    private readonly IAlbumsViewModel albumsViewModel;
     private readonly IStorageManager storageManager;
 
     public ArtistDetailViewModel(
       IRegionProvider regionProvider,
       IViewModelsFactory viewModelsFactory,
+      IAlbumsViewModel albumsViewModel,
       IStorageManager storageManager,
       ArtistViewModel model,
       IWindowManager windowManager) : base(regionProvider, storageManager, model, windowManager)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+      this.albumsViewModel = albumsViewModel ?? throw new ArgumentNullException(nameof(albumsViewModel));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
     }
 
@@ -117,9 +120,9 @@ namespace VPlayer.Home.ViewModels.Artists
 
     #region LoadEntity
 
-    protected override Task LoadEntity()
+    protected override  Task LoadEntity()
     {
-      return Task.Run(() =>
+      return Task.Run(async () =>
       {
         var albumsDb = storageManager.GetRepository<Album>()
           .Where(x => x.Artist == ViewModel.Model)
@@ -128,21 +131,25 @@ namespace VPlayer.Home.ViewModels.Artists
           .ThenInclude(x => x.FileInfo)
           .ToList();
 
-        Application.Current.Dispatcher.Invoke(() =>
+        await Application.Current.Dispatcher.InvokeAsync(async () =>
         {
-          Albums = albumsDb.Select(x => viewModelsFactory.Create<AlbumViewModel>(x)).ToList();
-
           allSong = new List<SongDetailViewModel>();
+          Albums = (await albumsViewModel.GetViewModelsAsync()).Where(x => albumsDb.Select(y => y.Id).Contains(x.ModelId)).ToList();
 
-          foreach (var album in Albums.Where(x => x.Model.Songs != null))
+          foreach (var album in Albums)
           {
-            foreach (var song in album.Model.Songs)
+            album.Model = albumsDb.SingleOrDefault(x => x.Id == album.ModelId);
+
+            if (album.Model?.Songs != null)
             {
-              var songD = viewModelsFactory.Create<SongDetailViewModel>(song);
+              foreach (var song in album.Model.Songs)
+              {
+                var songD = viewModelsFactory.Create<SongDetailViewModel>(song);
 
-              songD.Info = album.Name;
+                songD.Info = album.Name;
 
-              allSong.Add(songD);
+                allSong.Add(songD);
+              }
             }
           }
 
