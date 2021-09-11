@@ -671,9 +671,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
           foreach (var entity in entities)
           {
             PublishItemChanged(entity, Changed.Added);
-           
           }
-
         }
 
         return result;
@@ -705,7 +703,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
               logger.Log(Logger.MessageType.Success, $"Entity was updated {newVersion} update count {updateCount}");
 
-              PublishItemChanged(foundEntity)
+              PublishItemChanged(foundEntity);
 
              
 
