@@ -131,11 +131,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
               logger.Log(Logger.MessageType.Success, $"New artist was added {artist.Name}");
 
-              itemChanged.OnNext(new ItemChanged()
-              {
-                Item = artist,
-                Changed = Changed.Added
-              });
+              PublishItemChanged(artist, Changed.Added);
 
               audioInfoDownloader.UpdateItem(artist);
             }
@@ -166,11 +162,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
               logger.Log(Logger.MessageType.Success, $"New album was added {album.Name}");
 
-              itemChanged.OnNext(new ItemChanged()
-              {
-                Item = album,
-                Changed = Changed.Added
-              });
+              PublishItemChanged(album, Changed.Added);
 
               audioInfoDownloader.UpdateItem(album);
             }
@@ -222,11 +214,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
               context.Songs.Add(song);
               context.SaveChanges();
 
-              itemChanged.OnNext(new ItemChanged()
-              {
-                Item = song,
-                Changed = Changed.Added
-              });
+              PublishItemChanged(song, Changed.Added);
 
               logger.Log(Logger.MessageType.Success, $"New song was added {song.Name}");
             }
@@ -234,11 +222,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
             {
               song.ItemModel.FileInfo.Source = audioInfo.DiskLocation;
 
-              itemChanged.OnNext(new ItemChanged()
-              {
-                Item = song,
-                Changed = Changed.Updated
-              });
+              PublishItemChanged(song);
 
               context.SaveChanges();
 
@@ -504,11 +488,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
                   logger.Log(Logger.MessageType.Success,
                     $"Album was updated in database {album.Name}");
 
-                  itemChanged.OnNext(new ItemChanged()
-                  {
-                    Changed = Changed.Updated,
-                    Item = originalAlbum
-                  });
+                  PublishItemChanged(originalAlbum);
                 }
                 else
                 {
@@ -523,11 +503,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
                   if (originalCopy != null)
                   {
                     originalCopy.Id = oldId;
-                    itemChanged.OnNext(new ItemChanged()
-                    {
-                      Changed = Changed.Updated,
-                      Item = originalCopy
-                    });
+
+                    PublishItemChanged(originalCopy);
+
                   }
                 }
               }
@@ -560,11 +538,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
                 originalAlbum.Artist.AlbumIdCover = originalAlbum.Id;
                 context.SaveChanges();
 
-                itemChanged.OnNext(new ItemChanged()
-                {
-                  Changed = Changed.Updated,
-                  Item = originalAlbum.Artist
-                });
+                PublishItemChanged(originalAlbum.Artist);
+
               }
             }
             else
@@ -576,7 +551,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
                   .ThenInclude(x => x.ItemModel)
                   .ThenInclude(x => x.FileInfo)
                   .Include(x => x.Artist).SingleOrDefault();
-
 
 
                 if (dbAlbum == null)
@@ -623,17 +597,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
         context.SaveChanges();
 
-        itemChanged.OnNext(new ItemChanged()
-        {
-          Changed = Changed.Removed,
-          Item = albumToCombine
-        });
-
-        itemChanged.OnNext(new ItemChanged()
-        {
-          Changed = Changed.Updated,
-          Item = originalAlbum
-        });
+        PublishItemChanged(albumToCombine, Changed.Removed);
+        PublishItemChanged(originalAlbum);
 
         logger.Log(Logger.MessageType.Warning, $"Combining album {albumToCombine.Name} to {originalAlbum.Name}");
 
@@ -673,11 +638,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
             if (log)
               logger.Log(Logger.MessageType.Success, $"Entity was stored {entity}");
 
-            itemChanged.OnNext(new ItemChanged()
-            {
-              Item = entity,
-              Changed = Changed.Added
-            });
+            PublishItemChanged(entity, Changed.Added);
+          
           }
 
           return result;
@@ -708,11 +670,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           foreach (var entity in entities)
           {
-            itemChanged.OnNext(new ItemChanged()
-            {
-              Item = entity,
-              Changed = Changed.Added
-            });
+            PublishItemChanged(entity, Changed.Added);
+           
           }
 
         }
@@ -746,11 +705,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
               logger.Log(Logger.MessageType.Success, $"Entity was updated {newVersion} update count {updateCount}");
 
-              itemChanged.OnNext(new ItemChanged()
-              {
-                Item = foundEntity,
-                Changed = Changed.Updated
-              });
+              PublishItemChanged(foundEntity)
+
+             
 
               return result;
             }
@@ -802,11 +759,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
             logger.Log(Logger.MessageType.Success, $"Entity was removed {foundEntity} {removedResult}");
 
-            itemChanged.OnNext(new ItemChanged()
-            {
-              Item = foundEntity,
-              Changed = Changed.Removed
-            });
+            PublishItemChanged(foundEntity, Changed.Removed);
+
+        
           }
 
           return result;
@@ -832,11 +787,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           logger.Log(Logger.MessageType.Success, $"Entity was updated {entity}");
 
-          itemChanged.OnNext(new ItemChanged()
-          {
-            Item = foundEntity,
-            Changed = Changed.Updated
-          });
+          PublishItemChanged(foundEntity);
+
         }
       }
     }
@@ -890,11 +842,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
           {
             logger.Log(Logger.MessageType.Success, $"Entity ALBUM was deleted {album.Name}");
 
-            itemChanged.OnNext(new ItemChanged()
-            {
-              Item = foundEntity,
-              Changed = Changed.Removed
-            });
+            PublishItemChanged(foundEntity, Changed.Removed);
+
+
           }
         }
         else
@@ -950,11 +900,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
               else
                 logger.Log(MessageType.Warning, $"Item was not deleted {songsPlaylist} {songsPlaylist.Id} result count {results}");
 
-              itemChanged.OnNext(new ItemChanged()
-              {
-                Item = songsPlaylist,
-                Changed = Changed.Removed
-              });
+
+              PublishItemChanged(songsPlaylist, Changed.Removed);
+            
             }
           }
         }
@@ -1019,11 +967,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           if (result)
           {
-            itemChanged.OnNext(new ItemChanged()
-            {
-              Item = playlist,
-              Changed = Changed.Updated
-            });
+            PublishItemChanged(playlist);
+
           }
 
           if (result)
@@ -1074,11 +1019,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           logger.Log(Logger.MessageType.Success, $"Entity was removed {foundEntity} {removedResult}");
 
-          itemChanged.OnNext(new ItemChanged()
-          {
-            Item = foundEntity,
-            Changed = Changed.Removed
-          });
+
+          PublishItemChanged(foundEntity, Changed.Removed);
+
         }
 
         return result;
@@ -1120,11 +1063,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
               logger.Log(Logger.MessageType.Success, $"Entity was updated {result}");
 
-              itemChanged.OnNext(new ItemChanged()
-              {
-                Item = foundEntity,
-                Changed = Changed.Updated
-              });
+              PublishItemChanged(foundEntity);
+              
 
               return true;
             }
@@ -1212,11 +1152,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
           {
             logger.Log(Logger.MessageType.Success, $"Entity TVSHOW was deleted {tvShow.Name}");
 
-            itemChanged.OnNext(new ItemChanged()
-            {
-              Item = foundEntity,
-              Changed = Changed.Removed
-            });
+            PublishItemChanged(foundEntity, Changed.Removed);
+          
           }
         }
 
@@ -1251,11 +1188,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
           {
             logger.Log(Logger.MessageType.Success, $"Entity was removed {tvChannelGroup} {resultCount}");
 
-            itemChanged.OnNext(new ItemChanged()
-            {
-              Item = tvChannelGroup,
-              Changed = Changed.Removed
-            });
+            PublishItemChanged(tvChannelGroup, Changed.Removed);
           }
           else
             logger.Log(Logger.MessageType.Error, $"Entity was not removed {tvChannelGroup} {resultCount}");
@@ -1360,11 +1293,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           context.SaveChanges();
 
-          itemChanged.OnNext(new ItemChanged()
-          {
-            Item = tvShow,
-            Changed = Changed.Added
-          });
+          PublishItemChanged(tvShow, Changed.Added);
 
           return tvShow.Id;
         }
