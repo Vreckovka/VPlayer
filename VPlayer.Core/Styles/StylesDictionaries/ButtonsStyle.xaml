@@ -123,68 +123,6 @@
         </Setter>
     </Style>
 
-
-
-    <Style TargetType="{x:Type controls:PathButton}">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="#DB505050" />
-        <Setter Property="Width" Value="20" />
-        <Setter Property="Height" Value="20" />
-        <Setter Property="PathCheckedBrush" Value="#FFEFDF" />
-        <Setter Property="IconDefaultColor" Value="#50FFEFDF" />
-
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type controls:PathButton}">
-                    <Border Padding="0"
-                            Background="{TemplateBinding Background}"
-                            CornerRadius="4">
-                        <Grid>
-                            <Path x:Name="PathIcon"
-                                  Width="{TemplateBinding Width}"
-                                  Height="{TemplateBinding Height}"
-                                  HorizontalAlignment="Stretch"
-                                  VerticalAlignment="Stretch"
-                                  Fill="{TemplateBinding Foreground}"
-                                  Stretch="Fill"
-                                  Style="{TemplateBinding PathStyle}" />
-
-                            <ContentPresenter x:Name="MyContentPresenter"
-                                              Margin="0,0,0,0"
-                                              HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"
-                                              Content="{TemplateBinding Content}" />
-                        </Grid>
-
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseEnter">
-                                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AnimateHoverColor}" />
-                            </i:EventTrigger>
-
-                            <i:EventTrigger EventName="MouseLeave">
-                                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AnimateDefaultColor}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </Border>
-
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="PathIcon" Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=PathCheckedBrush}" />
-                        </Trigger>
-
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Cursor" Value="Hand" />
-                        </Trigger>
-
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="PathIcon" Property="Fill" Value="GhostWhite" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <Style x:Key="PlayButton"
            BasedOn="{StaticResource {x:Type Button}}"
            TargetType="{x:Type Button}">
@@ -224,7 +162,6 @@
             </Setter.Value>
         </Setter>
     </Style>
-
 
     <Style x:Key="PlayMiniWithCircle" TargetType="Button">
         <Setter Property="Template">
@@ -338,7 +275,6 @@
         </Setter>
     </Style>
 
-
     <Style x:Key="MetroButtonRightStyle" TargetType="{x:Type Path}">
         <Setter Property="Width" Value="60" />
         <Setter Property="Height" Value="60" />
@@ -417,6 +353,17 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+
+
+    <Style x:Key="AutomaticLyricsDownload"
+           BasedOn="{StaticResource {x:Type controls:PathButton}}"
+           TargetType="controls:PathButton">
+        <Setter Property="ForegroundCheckedColor" Value="#ddd" />
+        <Setter Property="PathCheckedBrush" Value="{StaticResource DefaultRedBrush}" />
+        <Setter Property="PathStyle" Value="{StaticResource text-slash}" />
+        <Setter Property="ToolTip" Value="Turn ON/OFF automatic LYRICS download" />
     </Style>
 
 </ResourceDictionary>

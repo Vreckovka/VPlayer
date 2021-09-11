@@ -111,10 +111,9 @@ namespace VPlayer.AudioStorage.DataLoader
 
     #region AddtvTvShowSeasons
 
-    private List<TvShowSeason> clearedSeasons = new List<TvShowSeason>();
     public void AddtvTvShowSeasons(string path, TvShow tvShow)
     {
-      var statusMessage = new StatusMessage(1)
+      var statusMessage = new StatusMessageViewModel(1)
       {
         Message = "Getting file info"
       };
@@ -123,36 +122,39 @@ namespace VPlayer.AudioStorage.DataLoader
 
       var files = LoadData(DataType.Video, path, true);
 
-      TvShowSeason tvShowSeason;
+      TvShowSeason tvShowSeason = null;
 
       foreach (var file in files)
       {
         var seriesNumber = GetTvShowSeriesNumber(file.Name);
 
-        tvShowSeason = tvShow.Seasons.SingleOrDefault(x => x.SeasonNumber == seriesNumber.SeasonNumber);
+        if(seriesNumber != null)
+        {
+          tvShowSeason = tvShow.Seasons.SingleOrDefault(x => x.SeasonNumber == seriesNumber.SeasonNumber);
+        }
 
-        if (tvShowSeason?.SeasonNumber != null)
+        if(tvShowSeason == null)
         {
           tvShowSeason = new TvShowSeason()
           {
-            SeasonNumber = seriesNumber.SeasonNumber.Value,
             Episodes = new List<TvShowEpisode>(),
             TvShow = tvShow
           };
 
+          if (seriesNumber?.SeasonNumber != null)
+          {
+            tvShowSeason.SeasonNumber = seriesNumber.SeasonNumber.Value;
+          }
+
           tvShow.Seasons.Add(tvShowSeason);
         }
-        else if (!clearedSeasons.Contains(tvShowSeason) && tvShowSeason.Id != 0)
-        {
-          tvShowSeason.Episodes.Clear();
-          clearedSeasons.Add(tvShowSeason);
-        }
-
+      
         var videoItem = new VideoItem()
         {
           Source = file.FullName,
           Duration = (int)GetFileDuration(file.FullName).TotalSeconds,
           Name = file.Name,
+         
         };
 
         var tvEpisode = new TvShowEpisode()

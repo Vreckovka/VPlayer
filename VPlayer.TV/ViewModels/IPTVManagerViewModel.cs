@@ -338,7 +338,7 @@ namespace VPlayer.IPTV
 
     #region OnTvSourceChanged
 
-    private void OnTvSourceChanged(ItemChanged<TvSource> tvSource)
+    private void OnTvSourceChanged(IItemChanged<TvSource> tvSource)
     {
       var vm = TVSources.ViewModels.SingleOrDefault(x => x.Model.Id == tvSource.Item.Id);
 
@@ -362,7 +362,7 @@ namespace VPlayer.IPTV
 
     #region OnTvGroupChanged
 
-    private void OnTvGroupChanged(ItemChanged<TvChannelGroup> itemChanged)
+    private void OnTvGroupChanged(IItemChanged<TvChannelGroup> itemChanged)
     {
       var vm = TVGroups.ViewModels.SingleOrDefault(x => x.Model.Id == itemChanged.Item.Id);
 

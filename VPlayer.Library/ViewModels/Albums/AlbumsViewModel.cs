@@ -65,7 +65,7 @@ namespace VPlayer.Home.ViewModels.Albums
 
     #region SongChange
 
-    protected void SongChange(ItemChanged<Song> itemChanged)
+    protected void SongChange(IItemChanged<Song> itemChanged)
     {
       var song = itemChanged.Item;
 

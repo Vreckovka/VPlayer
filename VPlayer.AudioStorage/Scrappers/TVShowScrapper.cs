@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Logger;
 using Microsoft.EntityFrameworkCore;
-
+using VCore.WPF.Controls.StatusMessage;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -43,9 +43,9 @@ namespace VPlayer.AudioStorage.Scrappers
       {
         try
         {
-          var statusMessage = new StatusMessage(1)
+          var statusMessage = new StatusMessageViewModel(1)
           {
-            MessageStatusState = MessageStatusState.Beggining,
+            Status = StatusType.Starting,
             Message = "Starting to scrape tv show"
           };
 
@@ -57,11 +57,7 @@ namespace VPlayer.AudioStorage.Scrappers
 
           Application.Current.Dispatcher.Invoke(() =>
           {
-            storageManager.ItemChanged.OnNext(new VCore.Modularity.Events.ItemChanged()
-            {
-              Changed = VCore.Modularity.Events.Changed.Updated,
-              Item = dbTvShow
-            });
+            storageManager.PublishItemChanged(dbTvShow);
           });
 
           ctsUpdateTvShowFromCsfd?.Cancel();
@@ -71,13 +67,10 @@ namespace VPlayer.AudioStorage.Scrappers
 
           if (csfdTvShow == null)
           {
-            statusMessage = new StatusMessage(1)
+            statusMessage = new StatusMessageViewModel(1)
             {
-              MessageStatusState = MessageStatusState.Failed,
-
+              Status = StatusType.Failed,
               Message = "Unable to scrape Tv show"
-
-
             };
 
             statusManager.UpdateMessage(statusMessage);
@@ -127,9 +120,9 @@ namespace VPlayer.AudioStorage.Scrappers
 
           await storageManager.DeepUpdateTvShow(dbTvShow);
 
-          statusMessage = new StatusMessage(1)
+          statusMessage = new StatusMessageViewModel(1)
           {
-            MessageStatusState = MessageStatusState.Processing,
+            Status = StatusType.Processing,
             Message = "Updating tv show in database"
           };
 
@@ -137,16 +130,15 @@ namespace VPlayer.AudioStorage.Scrappers
 
           statusMessage.ProcessedCount++;
 
-          statusMessage.MessageStatusState = MessageStatusState.Done;
+          statusMessage.Status = StatusType.Done;
 
           statusManager.UpdateMessage(statusMessage);
         }
         catch (Exception ex)
         {
-          var statusMessage = new StatusMessage(1)
+          var statusMessage = new StatusMessageViewModel(1)
           {
-            MessageStatusState = MessageStatusState.Failed,
-
+            Status = StatusType.Error,
             Message = "Updating tv show in database"
           };
 
@@ -174,11 +166,7 @@ namespace VPlayer.AudioStorage.Scrappers
 
           Application.Current.Dispatcher.Invoke(() =>
           {
-            storageManager.ItemChanged.OnNext(new VCore.Modularity.Events.ItemChanged()
-            {
-              Changed = VCore.Modularity.Events.Changed.Updated,
-              Item = dbTvShowSeason
-            });
+            storageManager.PublishItemChanged(dbTvShowSeason);
           });
 
           ctsUpdateTvShowSeasonFromCsfd?.Cancel();
@@ -188,9 +176,9 @@ namespace VPlayer.AudioStorage.Scrappers
 
           if (csfdtvShowSeason == null)
           {
-            var statusMessage1 = new StatusMessage(1)
+            var statusMessage1 = new StatusMessageViewModel(1)
             {
-              MessageStatusState = MessageStatusState.Failed,
+              Status = StatusType.Failed,
               Message = "Unable to scrape Tv show season"
             };
 
@@ -223,9 +211,9 @@ namespace VPlayer.AudioStorage.Scrappers
 
           await storageManager.UpdateEntityAsync(dbTvShowSeason);
 
-          var statusMessage = new StatusMessage(1)
+          var statusMessage = new StatusMessageViewModel(1)
           {
-            MessageStatusState = MessageStatusState.Processing,
+            Status = StatusType.Processing,
             Message = "Updating tv show season in database"
           };
 
@@ -233,15 +221,15 @@ namespace VPlayer.AudioStorage.Scrappers
 
           statusMessage.ProcessedCount++;
 
-          statusMessage.MessageStatusState = MessageStatusState.Done;
+          statusMessage.Status = StatusType.Done;
 
           statusManager.UpdateMessage(statusMessage);
         }
         catch (Exception ex)
         {
-          var statusMessage = new StatusMessage(1)
+          var statusMessage = new StatusMessageViewModel(1)
           {
-            MessageStatusState = MessageStatusState.Failed,
+            Status = StatusType.Error,
             Message = "Updating tv show season in database"
           };
 

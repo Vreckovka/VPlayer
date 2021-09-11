@@ -6,6 +6,7 @@ using VCore;
 using VCore.Modularity.Events;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard;
+using VCore.Standard.Helpers;
 using VCore.Standard.Modularity.Interfaces;
 using VCore.ViewModels;
 using VCore.WPF.Managers;
@@ -33,10 +34,10 @@ namespace VPlayer.Home.ViewModels
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       ViewModel = model ?? throw new ArgumentNullException(nameof(model));
 
-      storageManager.ItemChanged.Where(x =>
-        x.Item is TModel &&
-        x.Changed == VCore.Modularity.Events.Changed.Updated).Subscribe(OnDbUpdate);
+   
     }
+
+    #region Properties
 
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
 
@@ -56,6 +57,8 @@ namespace VPlayer.Home.ViewModels
         }
       }
     }
+
+    #endregion
 
     #endregion
 
@@ -118,15 +121,43 @@ namespace VPlayer.Home.ViewModels
       }
     }
 
-    protected abstract void OnUpdate();
-
-    #endregion
-
-    #endregion
-
-    protected virtual void OnDbUpdate(ItemChanged itemChanged)
+    protected virtual void OnUpdate()
     {
-      ViewModel.Model = (TModel)itemChanged.Item;
+
     }
+
+    #endregion
+
+    #endregion
+
+    #region Methods
+
+    #region Initialize
+
+    public override void Initialize()
+    {
+      base.Initialize();
+
+      storageManager.OnItemChanged.OfType<IItemChanged<TModel>>().Where(x =>
+        x.Changed == VCore.Modularity.Events.Changed.Updated).Subscribe(OnDbUpdate).DisposeWith(this);
+
+      LoadEntity();
+    }
+
+    #endregion
+
+    #region OnDbUpdate
+
+    protected virtual void OnDbUpdate(IItemChanged<TModel> itemChanged)
+    {
+      ViewModel.Model = itemChanged.Item;
+    }
+
+    #endregion
+
+    protected abstract Task LoadEntity();
+    
+
+    #endregion
   }
 }

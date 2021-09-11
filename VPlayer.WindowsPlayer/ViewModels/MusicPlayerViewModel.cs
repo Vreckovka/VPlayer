@@ -795,7 +795,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region OnAlbumChange
 
-    private void OnAlbumChange(ItemChanged<Album> change)
+    private void OnAlbumChange(IItemChanged<Album> change)
     {
       var album = change.Item;
 
@@ -812,7 +812,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region OnSongChange
 
-    private void OnSongChange(ItemChanged<Song> itemChanged)
+    private void OnSongChange(IItemChanged<Song> itemChanged)
     {
       var song = itemChanged.Item;
 

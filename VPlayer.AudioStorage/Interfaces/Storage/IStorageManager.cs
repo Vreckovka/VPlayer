@@ -21,9 +21,9 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
 
     Subject<Unit> ActionIsDone { get; }
 
-    ReplaySubject<ItemChanged> ItemChanged { get; }
+    IObservable<IItemChanged> OnItemChanged { get; }
 
-    #endregion 
+    #endregion
 
     #region Methods
 
@@ -53,9 +53,9 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
     Task<bool> DeleteTvChannelGroup(TvChannelGroup tvChannelGroup);
 
 
-
-    IDisposable SubscribeToItemChange<TModel>(Action<ItemChanged<TModel>> observer);
-    IObservable<ItemChanged<TModel>> ObserveOnItemChange<TModel>();
+    void PublishItemChanged<TModel>(TModel model, Changed changed = Changed.Updated);
+    IDisposable SubscribeToItemChange<TModel>(Action<IItemChanged<TModel>> observer);
+    IObservable<IItemChanged<TModel>> ObserveOnItemChange<TModel>();
 
     Task<bool> DeepUpdateTvShow(TvShow newVersion);
     bool DeleteTvShow(TvShow tvShow);

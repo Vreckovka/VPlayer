@@ -15,6 +15,7 @@ using Prism.Modularity;
 using VCore.Standard.Modularity.NinjectModules;
 using VCore.Standard.Providers;
 using VCore.WPF;
+using VCore.WPF.Controls.StatusMessage;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Managers;
 using VCore.WPF.ViewModels.Windows;
@@ -148,13 +149,13 @@ namespace VPlayer
         }
 
         if (statusManager != null &&
-            statusManager.ActualMessage != null &&
-            (statusManager.ActualMessage.MessageStatusState != MessageStatusState.Done ||
-             statusManager.ActualMessage.MessageStatusState != MessageStatusState.Failed))
+            statusManager.ActualMessageViewModel != null &&
+            (statusManager.ActualMessageViewModel.Status != StatusType.Done ||
+             statusManager.ActualMessageViewModel.Status != StatusType.Failed))
         {
-          statusManager.UpdateMessage(new StatusMessage(1)
+          statusManager.UpdateMessage(new StatusMessageViewModel(1)
           {
-            MessageStatusState = MessageStatusState.Failed,
+            Status = StatusType.Error,
             Message = "Error occured: " + exception.ToString()
           });
         }

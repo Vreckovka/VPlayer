@@ -2,17 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using Logger;
+using Microsoft.EntityFrameworkCore;
 using VCore;
+using VCore.ItemsCollections.VirtualList;
+using VCore.ItemsCollections.VirtualList.VirtualLists;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
+using VCore.WPF.Controls.StatusMessage;
 using VCore.WPF.Managers;
+using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Managers.Status;
 using VPlayer.Core.ViewModels.Albums;
+using VPlayer.Home.ViewModels.Artists;
 using VPlayer.Home.Views.Music.Albums;
 
 namespace VPlayer.Home.ViewModels.Albums
@@ -53,7 +60,70 @@ namespace VPlayer.Home.ViewModels.Albums
 
     #region Properties
 
-    public IEnumerable<Song> AlbumSongs => ViewModel?.Model?.Songs;
+    #region Songs
+
+    private List<SongDetailViewModel> allSong;
+    private VirtualList<SongDetailViewModel> songs;
+
+    public VirtualList<SongDetailViewModel> Songs
+    {
+      get { return songs; }
+      set
+      {
+        if (value != songs)
+        {
+          songs = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+    #endregion
+
+    #region TotalDuration
+
+    private TimeSpan totalDuration;
+
+    public TimeSpan TotalDuration
+    {
+      get { return totalDuration; }
+      set
+      {
+        if (value != totalDuration)
+        {
+          totalDuration = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region IsAllSongHasLyricsOff
+
+    private bool isAllSongHasLyricsOff;
+
+    public bool IsAllSongHasLyricsOff
+    {
+      get { return isAllSongHasLyricsOff; }
+      set
+      {
+        if (value != isAllSongHasLyricsOff)
+        {
+          isAllSongHasLyricsOff = value;
+
+          ChangeIsAutomaticLyricsFindEnabledForAllSongs(!value);
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    private void SetIsAllSongHasLyricsOff(bool value)
+    {
+      isAllSongHasLyricsOff = value;
+      RaisePropertyChanged(nameof(IsAllSongHasLyricsOff));
+    }
+
+    #endregion
 
     #endregion Properties
 
@@ -89,11 +159,11 @@ namespace VPlayer.Home.ViewModels.Albums
     {
       Task.Run(() =>
       {
-        var songs = AlbumSongs.ToList();
+        var songs = Songs.ToList();
 
-        var statusMessage = new StatusMessage(songs.Count)
+        var statusMessage = new StatusMessageViewModel(songs.Count)
         {
-          MessageStatusState = MessageStatusState.Processing,
+          Status = StatusType.Processing,
           Message = "Updating album songs from fingerprint"
         };
 
@@ -101,8 +171,8 @@ namespace VPlayer.Home.ViewModels.Albums
 
         if (songs.Count == 0)
         {
-          statusMessage.MessageStatusState = MessageStatusState.Failed;
-          statusMessage.FailedMessage = "Album has no songs";
+          statusMessage.Status = StatusType.Failed;
+          statusMessage.Message = "Album has no songs";
 
           statusManager.UpdateMessage(statusMessage);
           return;
@@ -112,26 +182,26 @@ namespace VPlayer.Home.ViewModels.Albums
         {
           foreach (var song in songs)
           {
-            var audioInfo = audioInfoDownloader.GetAudioInfoByFingerPrint(song.Source);
+            var audioInfo = audioInfoDownloader.GetAudioInfoByFingerPrint(song.Model.Source);
 
             if (audioInfo != null)
             {
-              song.ItemModel.FileInfo.Name = audioInfo.Title;
+              song.Model.ItemModel.FileInfo.Name = audioInfo.Title;
             }
 
-            storageManager.UpdateEntityAsync(song);
+            storageManager.UpdateEntityAsync(song.Model);
 
             statusMessage.ProcessedCount++;
 
             statusManager.UpdateMessage(statusMessage);
           }
 
-          statusMessage.MessageStatusState = MessageStatusState.Done;
+          statusMessage.Status = StatusType.Done;
           statusManager.UpdateMessage(statusMessage);
         }
         catch (Exception ex)
         {
-          statusMessage.MessageStatusState = MessageStatusState.Failed;
+          statusMessage.Status = StatusType.Error;
           statusManager.UpdateMessage(statusMessage);
 
           logger.Log(ex);
@@ -141,5 +211,58 @@ namespace VPlayer.Home.ViewModels.Albums
 
     #endregion
 
+    protected override Task LoadEntity()
+    {
+      return Task.Run(() =>
+      {
+        var songsDb = storageManager.GetRepository<Song>()
+          .Where(x => x.Album == ViewModel.Model)
+          .Include(x => x.ItemModel)
+          .ThenInclude(x => x.FileInfo)
+          .ToList();
+
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+          allSong = songsDb.Select(x => viewModelsFactory.Create<SongDetailViewModel>(x)).ToList();
+          var generator = new ItemsGenerator<SongDetailViewModel>(allSong, 25);
+
+          Songs = new VirtualList<SongDetailViewModel>(generator);
+          TotalDuration = TimeSpan.FromSeconds(allSong.Sum(x => x.Model.Duration));
+
+          SetIsAllSongHasLyricsOff(allSong.All(x => !x.Model.ItemModel.IsAutomaticLyricsFindEnabled));
+        });
+      });
+    }
+
+
+    private void ChangeIsAutomaticLyricsFindEnabledForAllSongs(bool value)
+    {
+      using (var context = new AudioDatabaseContext())
+      {
+        var songs = storageManager.GetRepository<Song>(context)
+          .Where(x => x.Album == ViewModel.Model)
+          .Include(x => x.ItemModel);
+
+        foreach (var song in songs)
+        {
+          song.ItemModel.IsAutomaticLyricsFindEnabled = value;
+          song.Chartlyrics_Lyric = null;
+          song.Chartlyrics_LyricCheckSum = null;
+          song.Chartlyrics_LyricId = null;
+          song.LRCLyrics = null;
+
+          context.Update(song.ItemModel);
+        }
+
+        context.SaveChanges();
+
+        foreach (var item in allSong)
+        {
+          item.IsAutomaticDownload = !value;
+
+          storageManager.PublishItemChanged(item.Model);
+        }
+      }
+    }
   }
 }

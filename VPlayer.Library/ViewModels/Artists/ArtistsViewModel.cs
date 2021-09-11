@@ -49,7 +49,7 @@ namespace VPlayer.Home.ViewModels.Artists
 
     #region AlbumChange
 
-    private void AlbumChange(ItemChanged<Album> itemChanged)
+    private void AlbumChange(IItemChanged<Album> itemChanged)
     {
       if (itemChanged.Item is Album album && LibraryCollection.WasLoaded)
       {

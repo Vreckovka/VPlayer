@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore;
 using VCore.Standard.Factories.ViewModels;
+using VCore.WPF.Controls.StatusMessage;
 using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -179,9 +180,9 @@ namespace VPlayer.IPTV.ViewModels
       }
 
 
-      var statusMessage = new StatusMessage(1)
+      var statusMessage = new StatusMessageViewModel(1)
       {
-        MessageStatusState = MessageStatusState.Processing,
+        Status = StatusType.Processing,
         Message = $"Fetching tv channels for stalker service {Name}"
       };
 
@@ -196,15 +197,15 @@ namespace VPlayer.IPTV.ViewModels
         }
         catch (Exception ex)
         {
-          statusMessage.MessageStatusState = MessageStatusState.Failed;
+          statusMessage.Status = StatusType.Error;
           statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
         }
       });
 
 
-      var statusMessage1 = new StatusMessage(1)
+      var statusMessage1 = new StatusMessageViewModel(1)
       {
-        MessageStatusState = MessageStatusState.Processing,
+        Status = StatusType.Processing,
         Message = $"Storing tv channels",
         NumberOfProcesses = serviceStalker.Channels.data.Count
       };

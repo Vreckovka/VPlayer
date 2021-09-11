@@ -13,6 +13,7 @@ using Logger;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using VCore;
+using VCore.WPF.Controls.StatusMessage;
 using VPlayer.AudioStorage.DataLoader;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.Scrappers.CSFD.Domain;
@@ -91,9 +92,9 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         .Replace("/prehled",null)
         .Replace("/", null);
 
-      var statusMessage = new StatusMessage(3)
+      var statusMessage = new StatusMessageViewModel(3)
       {
-        MessageStatusState = MessageStatusState.Processing,
+        Status = StatusType.Processing,
         Message = $"Downloading {nameF}"
       };
 
@@ -134,7 +135,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         return tvShow;
       }
 
-      statusMessage.MessageStatusState = MessageStatusState.Failed;
+      statusMessage.Status = StatusType.Failed;
 
       return null;
     }
@@ -147,9 +148,9 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     {
       Initialize();
 
-      var statusMessage = new StatusMessage(2)
+      var statusMessage = new StatusMessageViewModel(2)
       {
-        MessageStatusState = MessageStatusState.Processing,
+        Status = StatusType.Processing,
         Message = "Downloading tv show season"
       };
 
@@ -159,9 +160,9 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       document.LoadHtml(chromeDriver.PageSource);
 
-      statusMessage = new StatusMessage(1)
+      statusMessage = new StatusMessageViewModel(1)
       {
-        MessageStatusState = MessageStatusState.Processing,
+        Status = StatusType.Processing,
         Message = "Downloading tv show seasons"
       };
 
@@ -284,7 +285,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region LoadSeasons
 
-    private List<CSFDTVShowSeason> LoadSeasons(StatusMessage statusMessage, int? seasonNumber, int? episodeNumber, CancellationToken cancellationToken)
+    private List<CSFDTVShowSeason> LoadSeasons(StatusMessageViewModel statusMessageViewModel, int? seasonNumber, int? episodeNumber, CancellationToken cancellationToken)
     {
       var seasons = new List<CSFDTVShowSeason>();
 
@@ -300,15 +301,15 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         return seasons;
       }
 
-      statusMessage = new StatusMessage(nodes.Count)
+      statusMessageViewModel = new StatusMessageViewModel(nodes.Count)
       {
-        MessageStatusState = MessageStatusState.Processing,
+        Status = StatusType.Processing,
         Message = "Downloading tv show seasons",
-        IsMinimized = statusMessage.IsMinimized,
-        IsClosed = statusMessage.IsClosed,
+        IsMinimized = statusMessageViewModel.IsMinimized,
+        IsClosed = statusMessageViewModel.IsClosed,
       };
 
-      statusManager.UpdateMessage(statusMessage);
+      statusManager.UpdateMessage(statusMessageViewModel);
 
       foreach (var node in nodes)
       {
@@ -341,8 +342,8 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           SeasonNumber = 1
         };
 
-        statusMessage.Message = "Single seasoned: Downlading episodes";
-        statusManager.UpdateMessage(statusMessage);
+        statusMessageViewModel.Message = "Single seasoned: Downlading episodes";
+        statusManager.UpdateMessage(statusMessageViewModel);
 
         episodeNumber = 1;
         foreach (var season in seasons)
@@ -360,7 +361,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
           episodes.Add(newEpisode);
 
-          statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+          statusManager.UpdateMessageAndIncreaseProcessCount(statusMessageViewModel);
           episodeNumber++;
         }
 
@@ -374,22 +375,22 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         {
           cancellationToken.ThrowIfCancellationRequested();
 
-          season.SeasonEpisodes = LoadSeasonEpisodes(season.SeasonNumber, season.Url, statusMessage);
+          season.SeasonEpisodes = LoadSeasonEpisodes(season.SeasonNumber, season.Url, statusMessageViewModel);
 
-          statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+          statusManager.UpdateMessageAndIncreaseProcessCount(statusMessageViewModel);
         }
       }
       else
       {
-        statusMessage.ProcessedCount = 0;
-        statusMessage.NumberOfProcesses = 1;
+        statusMessageViewModel.ProcessedCount = 0;
+        statusMessageViewModel.NumberOfProcesses = 1;
 
         var season = seasons[seasonNumber.Value - 1];
 
         if (season != null)
         {
           cancellationToken.ThrowIfCancellationRequested();
-          season.SeasonEpisodes = LoadSeasonEpisodes(seasonNumber.Value, season.Url, statusMessage, episodeNumber);
+          season.SeasonEpisodes = LoadSeasonEpisodes(seasonNumber.Value, season.Url, statusMessageViewModel, episodeNumber);
         }
         else
         {
@@ -397,7 +398,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         }
 
         cancellationToken.ThrowIfCancellationRequested();
-        statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+        statusManager.UpdateMessageAndIncreaseProcessCount(statusMessageViewModel);
       }
 
 
@@ -409,7 +410,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region LoadSeasonEpisodes
 
-    private List<CSFDTVShowSeasonEpisode> LoadSeasonEpisodes(int seasonNumber, string url, StatusMessage statusMessage, int? episodeNumber = null)
+    private List<CSFDTVShowSeasonEpisode> LoadSeasonEpisodes(int seasonNumber, string url, StatusMessageViewModel statusMessageViewModel, int? episodeNumber = null)
     {
       try
       {
@@ -442,15 +443,15 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           return episodes;
         }
 
-        statusMessage = new StatusMessage(nodes.Count)
+        statusMessageViewModel = new StatusMessageViewModel(nodes.Count)
         {
-          MessageStatusState = MessageStatusState.Processing,
+          Status = StatusType.Processing,
           Message = $"Downloading season ({seasonNumber}) episodes",
-          IsMinimized = statusMessage.IsMinimized,
-          IsClosed = statusMessage.IsClosed
+          IsMinimized = statusMessageViewModel.IsMinimized,
+          IsClosed = statusMessageViewModel.IsClosed
         };
 
-        statusManager.UpdateMessage(statusMessage);
+        statusManager.UpdateMessage(statusMessageViewModel);
 
 
 
@@ -467,14 +468,14 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
             episodes.Add(newEpisode);
 
             logger.Log(MessageType.Success, $"Tv show episode: {newEpisode.Name}");
-            statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+            statusManager.UpdateMessageAndIncreaseProcessCount(statusMessageViewModel);
           }
         }
         else
         {
           var node = nodes[episodeNumber.Value - 1];
-          statusMessage.ProcessedCount = 0;
-          statusMessage.NumberOfProcesses = 1;
+          statusMessageViewModel.ProcessedCount = 0;
+          statusMessageViewModel.NumberOfProcesses = 1;
 
           var newEpisode = new CSFDTVShowSeasonEpisode();
 
@@ -485,7 +486,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           episodes.Add(newEpisode);
 
           logger.Log(MessageType.Success, $"Tv show episode: {newEpisode.Name}");
-          statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+          statusManager.UpdateMessageAndIncreaseProcessCount(statusMessageViewModel);
         }
 
 
@@ -658,9 +659,9 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     public async Task<CSFDItem> GetBestFind(string name, CancellationToken cancellationToken, int? year = null, bool onlySingleItem = false, string tvShowUrl = null, string tvShowName = null, int? seasonNumber = null, int? episodeNumber = null, bool downloadOneSeason = false)
     {
-      var statusMessage = new StatusMessage(1)
+      var statusMessage = new StatusMessageViewModel(1)
       {
-        MessageStatusState = MessageStatusState.Processing,
+        Status = StatusType.Processing,
         Message = $"Finding {name}"
       };
 
@@ -730,7 +731,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           if (tvShowFind == null)
           {
             statusMessage.Message = "NOT FOUND!";
-            statusMessage.MessageStatusState = MessageStatusState.Done;
+            statusMessage.Status = StatusType.Done;
 
             statusManager.UpdateMessage(statusMessage);
             return null;
@@ -785,7 +786,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         else
         {
           statusMessage.Message = "NOT FOUND!";
-          statusMessage.MessageStatusState = MessageStatusState.Done;
+          statusMessage.Status = StatusType.Done;
 
           statusManager.UpdateMessage(statusMessage);
 
@@ -814,9 +815,18 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     {
       lastParsedName = parsedName;
 
-      var statusMessage = new StatusMessage(2)
+      parsedName = parsedName.RemoveDiacritics().Replace(".",null);
+
+      var match = Regex.Match(parsedName, @"\D*");
+
+      if (match.Success)
       {
-        MessageStatusState = MessageStatusState.Processing,
+        parsedName = match.Value;
+      }
+
+      var statusMessage = new StatusMessageViewModel(2)
+      {
+        Status = StatusType.Processing,
         Message = $"Finding item"
       };
 
@@ -839,14 +849,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       double minSimilarity = 0.55;
 
-      parsedName = parsedName.RemoveDiacritics();
-
-      var match = Regex.Match(parsedName, @"\D*");
-
-      if (match.Success)
-      {
-        parsedName = match.Value;
-      }
+     
 
       var query = allItems.Where(x => x.OriginalName != null)
         .Where(x => x.OriginalName.RemoveDiacritics().Similarity(parsedName) > minSimilarity)

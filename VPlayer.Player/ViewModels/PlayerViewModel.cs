@@ -119,11 +119,11 @@ namespace VPlayer.Player.ViewModels
 
     #region StatusMessage
 
-    public StatusMessage StatusMessage
+    public StatusMessageViewModel StatusMessageViewModel
     {
       get
       {
-        return statusManager.ActualMessage;
+        return statusManager.ActualMessageViewModel;
       }
     }
 
@@ -257,7 +257,7 @@ namespace VPlayer.Player.ViewModels
       {
         Application.Current.Dispatcher.Invoke(() =>
         {
-          RaisePropertyChanged(nameof(StatusMessage));
+          RaisePropertyChanged(nameof(StatusMessageViewModel));
         });
 
       }).DisposeWith(this);

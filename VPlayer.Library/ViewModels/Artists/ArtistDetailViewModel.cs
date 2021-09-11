@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.EntityFrameworkCore;
 using VCore.ItemsCollections.VirtualList;
 using VCore.ItemsCollections.VirtualList.VirtualLists;
+using VCore.Modularity.Events;
 using VCore.Modularity.RegionProviders;
-using VCore.Standard;
 using VCore.Standard.Factories.ViewModels;
+using VCore.Standard.Helpers;
 using VCore.ViewModels;
 using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses;
@@ -21,40 +23,6 @@ using VPlayer.Home.Views.Music.Artists;
 
 namespace VPlayer.Home.ViewModels.Artists
 {
-  public class DetailItemViewModel<TModel> : ViewModel<TModel>
-  {
-    public DetailItemViewModel(TModel model) : base(model)
-    {
-    }
-
-    #region Info
-
-    private string info;
-
-    public string Info
-    {
-      get { return info; }
-      set
-      {
-        if (value != info)
-        {
-          info = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
-
-  }
-
-  public class SongDetailViewModel : DetailItemViewModel<Song>
-  {
-    public SongDetailViewModel(Song model) : base(model)
-    {
-    }
-  }
-
   public class ArtistDetailViewModel : DetailViewModel<ArtistViewModel, Artist, ArtistDetailView>
   {
     private readonly IViewModelsFactory viewModelsFactory;
@@ -69,11 +37,6 @@ namespace VPlayer.Home.ViewModels.Artists
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
-
-      Task.Run(() =>
-        {
-          LoadAlbums();
-        });
     }
 
     #region Properties
@@ -104,7 +67,7 @@ namespace VPlayer.Home.ViewModels.Artists
     #region Songs
 
     private VirtualList<SongDetailViewModel> songs;
-
+    private List<SongDetailViewModel> allSong;
     public VirtualList<SongDetailViewModel> Songs
     {
       get { return songs; }
@@ -142,49 +105,69 @@ namespace VPlayer.Home.ViewModels.Artists
 
     #region Methods
 
-    #region LoadAlbums
-
-    private void LoadAlbums()
+    public override void Initialize()
     {
-      var albumsDb = storageManager.GetRepository<Album>()
-        .Where(x => x.Artist == ViewModel.Model)
-        .Include(x => x.Songs)
-        .ThenInclude(x => x.ItemModel)
-        .ThenInclude(x => x.FileInfo)
-        .ToList();
+      base.Initialize();
 
-      Application.Current.Dispatcher.Invoke(() =>
+      storageManager.OnItemChanged.Where(x => x.Changed == Changed.Updated)
+        .ObserveOn(Application.Current.Dispatcher)
+        .OfType<ItemChanged<Song>>()
+        .Subscribe(OnSongUpdated).DisposeWith(this);
+    }
+
+    #region LoadEntity
+
+    protected override Task LoadEntity()
+    {
+      return Task.Run(() =>
       {
-        Albums = albumsDb.Select(x => viewModelsFactory.Create<AlbumViewModel>(x)).ToList();
+        var albumsDb = storageManager.GetRepository<Album>()
+          .Where(x => x.Artist == ViewModel.Model)
+          .Include(x => x.Songs)
+          .ThenInclude(x => x.ItemModel)
+          .ThenInclude(x => x.FileInfo)
+          .ToList();
 
-        List<SongDetailViewModel> allSong = new List<SongDetailViewModel>();
-
-        foreach (var album in Albums.Where(x => x.Model.Songs != null))
+        Application.Current.Dispatcher.Invoke(() =>
         {
-          foreach (var song in album.Model.Songs)
+          Albums = albumsDb.Select(x => viewModelsFactory.Create<AlbumViewModel>(x)).ToList();
+
+          allSong = new List<SongDetailViewModel>();
+
+          foreach (var album in Albums.Where(x => x.Model.Songs != null))
           {
-            var songD = viewModelsFactory.Create<SongDetailViewModel>(song);
+            foreach (var song in album.Model.Songs)
+            {
+              var songD = viewModelsFactory.Create<SongDetailViewModel>(song);
 
-            songD.Info = album.Name;
+              songD.Info = album.Name;
 
-            allSong.Add(songD);
+              allSong.Add(songD);
+            }
           }
-        }
 
 
-        var generator = new ItemsGenerator<SongDetailViewModel>(allSong, 25);
+          var generator = new ItemsGenerator<SongDetailViewModel>(allSong, 25);
 
-        Songs = new VirtualList<SongDetailViewModel>(generator);
-        TotalLength = TimeSpan.FromSeconds(allSong.Sum(x => x.Model.Duration));
+          Songs = new VirtualList<SongDetailViewModel>(generator);
+          TotalLength = TimeSpan.FromSeconds(allSong.Sum(x => x.Model.Duration));
+        });
       });
     }
 
     #endregion
 
-    protected override void OnUpdate()
-    {
-    }
 
+    private void OnSongUpdated(ItemChanged<Song> song)
+    {
+      var existingSOng = allSong?.SingleOrDefault(x => x.Model.Id == song.Item.Id);
+
+      if (existingSOng != null)
+      {
+        existingSOng.Model.Update(song.Item);
+        existingSOng.RaisePropertyChanges();
+      }
+    }
 
     #endregion
 

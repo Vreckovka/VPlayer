@@ -99,7 +99,7 @@ namespace VPlayer.Home.ViewModels
 
     #region ItemsChanged
 
-    protected virtual async void ItemsChanged(ItemChanged<TModel> itemChanged)
+    protected virtual async void ItemsChanged(IItemChanged<TModel> itemChanged)
     {
       var model = itemChanged.Item;
 

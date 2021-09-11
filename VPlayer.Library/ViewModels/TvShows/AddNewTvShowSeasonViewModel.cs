@@ -8,10 +8,12 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using VCore;
 using VCore.Standard.Providers;
 using VCore.ViewModels;
+using VCore.WPF.Controls.StatusMessage;
 using VPlayer.AudioStorage.DataLoader;
 using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core;
+using VPlayer.Core.Managers.Status;
 using VPlayer.Library.ViewModels.TvShows;
 
 namespace VPlayer.Home.ViewModels.TvShows
@@ -22,6 +24,7 @@ namespace VPlayer.Home.ViewModels.TvShows
     private readonly TvShow tvShow;
     private readonly IStorageManager storageManager;
     private readonly ITvShowScrapper tvShowScrapper;
+    private readonly IStatusManager statusManager;
     private readonly ISettingsProvider settingsProvider;
     private readonly ILogger logger;
 
@@ -30,6 +33,7 @@ namespace VPlayer.Home.ViewModels.TvShows
       TvShow tvShow,
       IStorageManager storageManager,
       ITvShowScrapper tvShowScrapper,
+      IStatusManager statusManager,
       ISettingsProvider settingsProvider,
       ILogger logger)
     {
@@ -37,6 +41,7 @@ namespace VPlayer.Home.ViewModels.TvShows
       this.tvShow = tvShow ?? throw new ArgumentNullException(nameof(tvShow));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.tvShowScrapper = tvShowScrapper ?? throw new ArgumentNullException(nameof(tvShowScrapper));
+      this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
       this.settingsProvider = settingsProvider ?? throw new ArgumentNullException(nameof(settingsProvider));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -192,6 +197,12 @@ namespace VPlayer.Home.ViewModels.TvShows
         }
         catch (Exception ex)
         {
+          statusManager.UpdateMessage(new StatusMessageViewModel(1)
+          {
+            Status = StatusType.Error,
+            Message = "Error occured: " + ex
+          });
+
           logger.Log(ex);
         }
       });

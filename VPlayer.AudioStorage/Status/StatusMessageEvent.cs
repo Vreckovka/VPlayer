@@ -2,7 +2,7 @@
 
 namespace VPlayer.Core.Managers.Status
 {
-  public class StatusMessageEvent : PubSubEvent<StatusMessage>
+  public class StatusMessageEvent : PubSubEvent<StatusMessageViewModel>
   {
 
   }

@@ -30,7 +30,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
     private readonly AudioInfoDownloader audioInfoDownloader;
     private readonly ILogger logger;
 
-    public ReplaySubject<ItemChanged> ItemChanged { get; } = new ReplaySubject<ItemChanged>(1);
+    public ReplaySubject<IItemChanged> itemChanged { get; } = new ReplaySubject<IItemChanged>(1);
 
     #endregion Fields
 
@@ -49,6 +49,13 @@ namespace VPlayer.AudioStorage.AudioDatabase
     #region Properties
 
     public Subject<Unit> ActionIsDone { get; } = new Subject<Unit>();
+
+
+    public IObservable<IItemChanged> OnItemChanged
+    {
+      get { return itemChanged.AsObservable(); }
+    }
+
 
     #endregion Properties
 
@@ -124,7 +131,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
               logger.Log(Logger.MessageType.Success, $"New artist was added {artist.Name}");
 
-              ItemChanged.OnNext(new ItemChanged()
+              itemChanged.OnNext(new ItemChanged()
               {
                 Item = artist,
                 Changed = Changed.Added
@@ -159,7 +166,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
               logger.Log(Logger.MessageType.Success, $"New album was added {album.Name}");
 
-              ItemChanged.OnNext(new ItemChanged()
+              itemChanged.OnNext(new ItemChanged()
               {
                 Item = album,
                 Changed = Changed.Added
@@ -215,7 +222,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
               context.Songs.Add(song);
               context.SaveChanges();
 
-              ItemChanged.OnNext(new ItemChanged()
+              itemChanged.OnNext(new ItemChanged()
               {
                 Item = song,
                 Changed = Changed.Added
@@ -227,7 +234,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
             {
               song.ItemModel.FileInfo.Source = audioInfo.DiskLocation;
 
-              ItemChanged.OnNext(new ItemChanged()
+              itemChanged.OnNext(new ItemChanged()
               {
                 Item = song,
                 Changed = Changed.Updated
@@ -497,7 +504,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
                   logger.Log(Logger.MessageType.Success,
                     $"Album was updated in database {album.Name}");
 
-                  ItemChanged.OnNext(new ItemChanged()
+                  itemChanged.OnNext(new ItemChanged()
                   {
                     Changed = Changed.Updated,
                     Item = originalAlbum
@@ -516,7 +523,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
                   if (originalCopy != null)
                   {
                     originalCopy.Id = oldId;
-                    ItemChanged.OnNext(new ItemChanged()
+                    itemChanged.OnNext(new ItemChanged()
                     {
                       Changed = Changed.Updated,
                       Item = originalCopy
@@ -553,7 +560,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
                 originalAlbum.Artist.AlbumIdCover = originalAlbum.Id;
                 context.SaveChanges();
 
-                ItemChanged.OnNext(new ItemChanged()
+                itemChanged.OnNext(new ItemChanged()
                 {
                   Changed = Changed.Updated,
                   Item = originalAlbum.Artist
@@ -616,13 +623,13 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
         context.SaveChanges();
 
-        ItemChanged.OnNext(new ItemChanged()
+        itemChanged.OnNext(new ItemChanged()
         {
           Changed = Changed.Removed,
           Item = albumToCombine
         });
 
-        ItemChanged.OnNext(new ItemChanged()
+        itemChanged.OnNext(new ItemChanged()
         {
           Changed = Changed.Updated,
           Item = originalAlbum
@@ -666,7 +673,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
             if (log)
               logger.Log(Logger.MessageType.Success, $"Entity was stored {entity}");
 
-            ItemChanged.OnNext(new ItemChanged()
+            itemChanged.OnNext(new ItemChanged()
             {
               Item = entity,
               Changed = Changed.Added
@@ -701,7 +708,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           foreach (var entity in entities)
           {
-            ItemChanged.OnNext(new ItemChanged()
+            itemChanged.OnNext(new ItemChanged()
             {
               Item = entity,
               Changed = Changed.Added
@@ -739,7 +746,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
               logger.Log(Logger.MessageType.Success, $"Entity was updated {newVersion} update count {updateCount}");
 
-              ItemChanged.OnNext(new ItemChanged()
+              itemChanged.OnNext(new ItemChanged()
               {
                 Item = foundEntity,
                 Changed = Changed.Updated
@@ -795,7 +802,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
             logger.Log(Logger.MessageType.Success, $"Entity was removed {foundEntity} {removedResult}");
 
-            ItemChanged.OnNext(new ItemChanged()
+            itemChanged.OnNext(new ItemChanged()
             {
               Item = foundEntity,
               Changed = Changed.Removed
@@ -825,7 +832,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           logger.Log(Logger.MessageType.Success, $"Entity was updated {entity}");
 
-          ItemChanged.OnNext(new ItemChanged()
+          itemChanged.OnNext(new ItemChanged()
           {
             Item = foundEntity,
             Changed = Changed.Updated
@@ -883,7 +890,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
           {
             logger.Log(Logger.MessageType.Success, $"Entity ALBUM was deleted {album.Name}");
 
-            ItemChanged.OnNext(new ItemChanged()
+            itemChanged.OnNext(new ItemChanged()
             {
               Item = foundEntity,
               Changed = Changed.Removed
@@ -943,7 +950,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
               else
                 logger.Log(MessageType.Warning, $"Item was not deleted {songsPlaylist} {songsPlaylist.Id} result count {results}");
 
-              ItemChanged.OnNext(new ItemChanged()
+              itemChanged.OnNext(new ItemChanged()
               {
                 Item = songsPlaylist,
                 Changed = Changed.Removed
@@ -1012,7 +1019,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           if (result)
           {
-            ItemChanged.OnNext(new ItemChanged()
+            itemChanged.OnNext(new ItemChanged()
             {
               Item = playlist,
               Changed = Changed.Updated
@@ -1067,7 +1074,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           logger.Log(Logger.MessageType.Success, $"Entity was removed {foundEntity} {removedResult}");
 
-          ItemChanged.OnNext(new ItemChanged()
+          itemChanged.OnNext(new ItemChanged()
           {
             Item = foundEntity,
             Changed = Changed.Removed
@@ -1113,7 +1120,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
               logger.Log(Logger.MessageType.Success, $"Entity was updated {result}");
 
-              ItemChanged.OnNext(new ItemChanged()
+              itemChanged.OnNext(new ItemChanged()
               {
                 Item = foundEntity,
                 Changed = Changed.Updated
@@ -1205,7 +1212,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
           {
             logger.Log(Logger.MessageType.Success, $"Entity TVSHOW was deleted {tvShow.Name}");
 
-            ItemChanged.OnNext(new ItemChanged()
+            itemChanged.OnNext(new ItemChanged()
             {
               Item = foundEntity,
               Changed = Changed.Removed
@@ -1244,7 +1251,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
           {
             logger.Log(Logger.MessageType.Success, $"Entity was removed {tvChannelGroup} {resultCount}");
 
-            ItemChanged.OnNext(new ItemChanged()
+            itemChanged.OnNext(new ItemChanged()
             {
               Item = tvChannelGroup,
               Changed = Changed.Removed
@@ -1257,6 +1264,22 @@ namespace VPlayer.AudioStorage.AudioDatabase
           return result;
         }
       });
+    }
+
+
+
+    #endregion
+
+    #region PublishItemChanged
+
+    public void PublishItemChanged<TModel>(TModel model, Changed changed = Changed.Updated)
+    {
+      var newEvent = new ItemChanged<TModel>(model)
+      {
+        Changed = changed,
+      };
+
+      itemChanged.OnNext(newEvent);
     }
 
     #endregion
@@ -1298,20 +1321,18 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region SubscribeToItemChange
 
-    public IDisposable SubscribeToItemChange<TModel>(Action<ItemChanged<TModel>> observer)
+    public IDisposable SubscribeToItemChange<TModel>(Action<IItemChanged<TModel>> observer)
     {
-      return ItemChanged.Where(x => x.Item.GetType() == typeof(TModel))
-        .Select(x => new ItemChanged<TModel>((TModel)x.Item, x.Changed)).Subscribe(observer);
+      return itemChanged.OfType<IItemChanged<TModel>>().Subscribe(observer);
     }
 
     #endregion
 
     #region ObserveOnItemChange
 
-    public IObservable<ItemChanged<TModel>> ObserveOnItemChange<TModel>()
+    public IObservable<IItemChanged<TModel>> ObserveOnItemChange<TModel>()
     {
-      return ItemChanged.Where(x => x.Item.GetType() == typeof(TModel))
-        .Select(x => new ItemChanged<TModel>((TModel)x.Item, x.Changed));
+      return itemChanged.OfType<IItemChanged<TModel>>();
     }
 
     #endregion
@@ -1320,7 +1341,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     public void PushAction(ItemChanged itemChanged)
     {
-      ItemChanged.OnNext(itemChanged);
+      this.itemChanged.OnNext(itemChanged);
     }
 
     #endregion
@@ -1339,7 +1360,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           context.SaveChanges();
 
-          ItemChanged.OnNext(new ItemChanged()
+          itemChanged.OnNext(new ItemChanged()
           {
             Item = tvShow,
             Changed = Changed.Added
@@ -1356,7 +1377,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     public void Dispose()
     {
-      ItemChanged?.Dispose();
+      itemChanged?.Dispose();
       ActionIsDone?.Dispose();
       disposable?.Dispose();
     }

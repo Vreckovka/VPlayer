@@ -7,6 +7,7 @@ using Prism.Events;
 using VCore;
 using VCore.Standard;
 using VCore.Standard.Helpers;
+using VCore.WPF.Controls.StatusMessage;
 
 namespace VPlayer.Core.Managers.Status
 {
@@ -15,7 +16,7 @@ namespace VPlayer.Core.Managers.Status
     #region Fields
 
     private readonly IEventAggregator eventAggregator;
-    private ReplaySubject<StatusMessage> onStatusMessageUpdatedSubject = new ReplaySubject<StatusMessage>(1);
+    private ReplaySubject<StatusMessageViewModel> onStatusMessageUpdatedSubject = new ReplaySubject<StatusMessageViewModel>(1);
 
     #endregion
 
@@ -32,16 +33,16 @@ namespace VPlayer.Core.Managers.Status
 
     #region ActualMessage
 
-    private StatusMessage actualMessage;
+    private StatusMessageViewModel actualMessageViewModel;
 
-    public StatusMessage ActualMessage
+    public StatusMessageViewModel ActualMessageViewModel
     {
-      get { return actualMessage; }
+      get { return actualMessageViewModel; }
       private set
       {
-        if (value != actualMessage)
+        if (value != actualMessageViewModel)
         {
-          actualMessage = value;
+          actualMessageViewModel = value;
           RaisePropertyChanged();
         }
       }
@@ -53,7 +54,7 @@ namespace VPlayer.Core.Managers.Status
 
     #region OnStatusMessageUpdated
 
-    public IObservable<StatusMessage> OnStatusMessageUpdated
+    public IObservable<StatusMessageViewModel> OnStatusMessageUpdated
     {
       get
       {
@@ -82,54 +83,55 @@ namespace VPlayer.Core.Managers.Status
 
     #region OnStatusEvent
 
-    private void OnStatusEvent(StatusMessage statusMessage)
+    private void OnStatusEvent(StatusMessageViewModel statusMessageViewModel)
     {
-      UpdateMessage(statusMessage);
+      UpdateMessage(statusMessageViewModel);
     }
 
     #endregion
 
     #region UpdateMessage
 
-    public void UpdateMessage(StatusMessage statusMessage)
+    public void UpdateMessage(StatusMessageViewModel statusMessageViewModel)
     {
       Application.Current?.Dispatcher?.Invoke(() =>
       {
-        if (ActualMessage == null || ActualMessage.Id != statusMessage.Id)
+        if (ActualMessageViewModel == null || ActualMessageViewModel.Id != statusMessageViewModel.Id)
         {
-          ActualMessage = statusMessage;
+          ActualMessageViewModel = statusMessageViewModel;
         }
         else
         {
-          ActualMessage.Update(statusMessage);
+          ActualMessageViewModel.Update(statusMessageViewModel);
         }
 
-        CheckMessage(ActualMessage);
+        CheckMessage(ActualMessageViewModel);
 
-        onStatusMessageUpdatedSubject.OnNext(ActualMessage);
+        onStatusMessageUpdatedSubject.OnNext(ActualMessageViewModel);
       });
     }
 
     #endregion
 
 
-    public void UpdateMessageAndIncreaseProcessCount(StatusMessage statusMessage, int count = 1)
+    public void UpdateMessageAndIncreaseProcessCount(StatusMessageViewModel statusMessageViewModel, int count = 1)
     {
       Application.Current.Dispatcher.Invoke(() =>
       {
-        statusMessage.ProcessedCount++;
+        statusMessageViewModel.ProcessedCount++;
 
-        UpdateMessage(statusMessage);
+        UpdateMessage(statusMessageViewModel);
       });
     }
 
     #endregion
 
-    private void CheckMessage(StatusMessage statusMessage)
+    private void CheckMessage(StatusMessageViewModel statusMessageViewModel)
     {
-      if (statusMessage.ProcessedCount == statusMessage.NumberOfProcesses && statusMessage.MessageStatusState != MessageStatusState.Failed)
+      if (statusMessageViewModel.ProcessedCount == statusMessageViewModel.NumberOfProcesses && 
+          statusMessageViewModel.Status != StatusType.Failed)
       {
-        statusMessage.MessageStatusState = MessageStatusState.Done;
+        statusMessageViewModel.Status = StatusType.Done;
       }
     }
   }

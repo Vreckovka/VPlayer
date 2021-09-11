@@ -4,12 +4,12 @@ namespace VPlayer.Core.Managers.Status
 {
   public interface IStatusManager
   {
-    StatusMessage ActualMessage { get; }
+    StatusMessageViewModel ActualMessageViewModel { get; }
 
-    IObservable<StatusMessage> OnStatusMessageUpdated { get; }
+    IObservable<StatusMessageViewModel> OnStatusMessageUpdated { get; }
 
-    void UpdateMessage(StatusMessage statusMessage);
+    void UpdateMessage(StatusMessageViewModel statusMessageViewModel);
 
-    void UpdateMessageAndIncreaseProcessCount(StatusMessage statusMessage, int count = 1);
+    void UpdateMessageAndIncreaseProcessCount(StatusMessageViewModel statusMessageViewModel, int count = 1);
   }
 }

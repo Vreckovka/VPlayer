@@ -16,10 +16,7 @@
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal">
-            <controls:PathButton Margin="15,5"
-                                 HorizontalContentAlignment="Center"
-                                 IconMargin="0 0 0 0"
-                                 Style="{StaticResource BackButton}" />
+            <controls:PathButton Margin="15,5" Style="{StaticResource BackButton}" />
 
         </StackPanel>
 
@@ -28,7 +25,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="1.5*" />
             </Grid.ColumnDefinitions>
-            <Grid Margin="5,0" Background="{StaticResource 3_WhiteTransparentBrush}">
+            <Grid Margin="5,0">
 
                 <Grid.Resources>
                     <Style BasedOn="{StaticResource {x:Type controls:PlayableWrapPanelItem}}" TargetType="{x:Type controls:PlayableWrapPanelItem}">
@@ -38,8 +35,8 @@
 
                 </Grid.Resources>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="2*" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
 
                 <controls:PlayableWrapPanel Margin="5,0" ItemsSource="{Binding Albums}">
@@ -55,10 +52,11 @@
 
 
                 <Grid Grid.Row="1">
-                    <Border Margin="5,10,0,0"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            Background="{StaticResource BackgroudBrush}">
+                    <Border Margin="0,5,0,0"
+                            Padding="0,5,10,5"
+                            Background="#080808"
+                            BorderBrush="#85252525"
+                            BorderThickness="1,1,1,1">
 
                         <Border.Resources>
                             <Style BasedOn="{StaticResource Base}" TargetType="TextBlock" />
@@ -71,25 +69,30 @@
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
 
-                            <TextBlock Margin="10"
+                            <TextBlock Margin="0,5,0,0"
                                        HorizontalAlignment="Center"
                                        FontSize="30"
-                                       Text="{Binding ActualArtist.Name}" />
+                                       Text="{Binding ViewModel.Name}" />
 
                             <Border Grid.Row="1"
+                                    Margin="0,5,0,0"
                                     Padding="0,5,10,5"
-                                    Background="#101010">
+                                    Background="#121212"
+                                    BorderBrush="#cc252525"
+                                    BorderThickness="1,1,1,1">
                                 <StackPanel Orientation="Horizontal">
 
                                     <StackPanel.Resources>
                                         <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
                                             <Setter Property="Width" Value="35" />
                                             <Setter Property="IconHeight" Value="20" />
-                                            <Setter Property="Margin" Value="5" />
+                                            <Setter Property="Margin" Value="0" />
                                             <Setter Property="IsReadOnly" Value="True" />
                                             <Setter Property="IconMargin" Value="0" />
+                                            <Setter Property="Background" Value="Transparent" />
                                         </Style>
                                     </StackPanel.Resources>
+
                                     <controls:PathButton Command="{Binding Update}"
                                                          IconDefaultColor="#aa9bf046"
                                                          IconHoverColor="#9bf046"

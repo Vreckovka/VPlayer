@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using VCore;
 using VCore.Modularity.Events;
@@ -76,12 +77,16 @@ namespace VPlayer.Home.ViewModels.TvShows
     #endregion
 
 
-    protected override void OnDbUpdate(ItemChanged itemChanged)
+    protected override void OnDbUpdate(IItemChanged<TvShow> itemChanged)
     {
       base.OnDbUpdate(itemChanged);
 
       RaisePropertyChanged(nameof(Seasons));
     }
 
+    protected override Task LoadEntity()
+    {
+      return Task.CompletedTask;
+    }
   }
 }

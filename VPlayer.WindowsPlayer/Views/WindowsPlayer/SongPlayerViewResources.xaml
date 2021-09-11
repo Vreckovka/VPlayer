@@ -976,12 +976,8 @@
                             <DataTemplate>
                                 <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu, Mode=FindAncestor}, Path=DataContext}">
                                     <controls2:PathButton Content="Automatic lyrics download"
-                                                          ForegroundCheckedColor="#ddd"
                                                           IsChecked="{Binding IsAutomaticLyricsDownloadDisabled, Mode=TwoWay}"
-                                                          IsReadOnly="False"
-                                                          PathCheckedBrush="{StaticResource DefaultRedBrush}"
-                                                          PathStyle="{StaticResource text-slash}"
-                                                          ToolTip="{Binding}">
+                                                          Style="{StaticResource AutomaticLyricsDownload}">
 
                                         <b:Interaction.Behaviors>
                                             <buttons:CloseContextMenuOnClickBehavior />

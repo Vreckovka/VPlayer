@@ -2,21 +2,20 @@
 using System.Windows.Input;
 using VCore;
 using VCore.Standard.Common;
+using VCore.WPF.Controls.StatusMessage;
 using VPlayer.AudioStorage.DomainClasses;
 
 namespace VPlayer.Core.Managers.Status
 {
-  public class StatusMessage : VBindableBase, IUpdateable<StatusMessage>
+  public class StatusMessageViewModel : VBindableBase, IUpdateable<StatusMessageViewModel>
   {
-    public StatusMessage(int numberOfProcesses)
+    public StatusMessageViewModel(int numberOfProcesses)
     {
       if (numberOfProcesses <= 0) throw new ArgumentOutOfRangeException(nameof(numberOfProcesses));
 
       Id = Guid.NewGuid();
       NumberOfProcesses = numberOfProcesses;
     }
-
-
 
     #region Properties
 
@@ -102,37 +101,18 @@ namespace VPlayer.Core.Managers.Status
 
     #endregion
 
-    #region ActualStatus
+    #region MessageStatus
 
-    private MessageStatusState messageStatusState;
+    private StatusType status;
 
-    public MessageStatusState MessageStatusState
+    public StatusType Status
     {
-      get { return messageStatusState; }
+      get { return status; }
       set
       {
-        if (value != messageStatusState)
+        if (value != status)
         {
-          messageStatusState = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
-
-    #region FailedMessage
-
-    private string failedMessage;
-
-    public string FailedMessage
-    {
-      get { return failedMessage; }
-      set
-      {
-        if (value != failedMessage)
-        {
-          failedMessage = value;
+          status = value;
           RaisePropertyChanged();
         }
       }
@@ -183,6 +163,28 @@ namespace VPlayer.Core.Managers.Status
     }
 
     #endregion
+
+    #region IsPinned
+
+    private bool isPinned;
+
+    public bool IsPinned
+    {
+      get { return isPinned; }
+      set
+      {
+        if (value != isPinned)
+        {
+          isPinned = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+
+
 
     #endregion
 
@@ -243,7 +245,7 @@ namespace VPlayer.Core.Managers.Status
 
     #region Update
 
-    public void Update(StatusMessage other)
+    public void Update(StatusMessageViewModel other)
     {
       ProcessedCount = other.ProcessedCount;
 
@@ -258,17 +260,17 @@ namespace VPlayer.Core.Managers.Status
 
       Message = other.Message;
 
-      MessageStatusState = other.MessageStatusState;
+      Status = other.Status;
 
-      if (ProcessedCount == NumberOfProcesses && MessageStatusState != MessageStatusState.Failed)
+      if (ProcessedCount == NumberOfProcesses && 
+          Status != StatusType.Error && 
+          Status != StatusType.Failed)
       {
-        MessageStatusState = MessageStatusState.Done;
+        Status = StatusType.Done;
       }
 
       IsClosed = other.IsClosed;
       isMinimized = other.IsMinimized;
-
-      FailedMessage = other.FailedMessage;
     }
 
     #endregion

@@ -11,10 +11,12 @@ using VCore;
 using VCore.Standard;
 using VCore.Standard.Providers;
 using VCore.ViewModels;
+using VCore.WPF.Controls.StatusMessage;
 using VPlayer.AudioStorage.DataLoader;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core;
+using VPlayer.Core.Managers.Status;
 using VPlayer.Library.ViewModels.TvShows;
 
 namespace VPlayer.WindowsPlayer.ViewModels.Windows
@@ -25,6 +27,7 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
     private readonly IStorageManager storageManager;
     private readonly ITvShowScrapper tvShowScrapper;
     private readonly ISettingsProvider settingsProvider;
+    private readonly IStatusManager statusManager;
     private readonly ILogger logger;
 
     public AddNewTvShowViewModel(
@@ -32,12 +35,14 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
        IStorageManager storageManager,
        ITvShowScrapper tvShowScrapper,
        ISettingsProvider settingsProvider,
+       IStatusManager statusManager,
        ILogger logger)
     {
       this.dataLoader = dataLoader ?? throw new ArgumentNullException(nameof(dataLoader));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.tvShowScrapper = tvShowScrapper ?? throw new ArgumentNullException(nameof(tvShowScrapper));
       this.settingsProvider = settingsProvider ?? throw new ArgumentNullException(nameof(settingsProvider));
+      this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -126,7 +131,7 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
     }
 
     #endregion
-    
+
     #region Commands
 
     #region ChoosePath
@@ -203,6 +208,15 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
         catch (Exception ex)
         {
           logger.Log(ex);
+
+          Application.Current?.Dispatcher?.Invoke(() =>
+          {
+            statusManager.UpdateMessage(new StatusMessageViewModel(1)
+            {
+              Status = StatusType.Error,
+              Message = "Error occured: " + ex
+            });
+          });
         }
       });
 

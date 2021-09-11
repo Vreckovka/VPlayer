@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+                    xmlns:buttons="clr-namespace:VCore.WPF.Behaviors.Buttons;assembly=VCore.WPF"
                     xmlns:controls="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
                     xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
                     xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF"
@@ -30,34 +31,48 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto" />
-                                <ColumnDefinition Width="auto" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="auto" />
                             </Grid.ColumnDefinitions>
 
-                            <Button Margin="2.5,0,8,0"
-                                    Command="{Binding Play}"
-                                    Style="{StaticResource PlayMini}" />
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel.Resources>
+                                    <Style BasedOn="{StaticResource {x:Type controls1:PathButton}}" TargetType="controls1:PathButton">
+                                        <Setter Property="Margin" Value="0" />
+                                        <Setter Property="Padding" Value="0" />
+                                        <Setter Property="IconDefaultColor" Value="#353535" />
+                                        <Setter Property="IconHeight" Value="12" />
+                                        <Setter Property="IconWidth" Value="12" />
+                                    </Style>
+                                </StackPanel.Resources>
+                                <Button Margin="2.5,0,8,0"
+                                        Command="{Binding Play}"
+                                        Style="{StaticResource PlayMini}" />
 
-                            <controls1:PathButton Grid.Column="1"
-                                                  HorizontalAlignment="Left"
-                                                  VerticalAlignment="Center"
-                                                  IconDefaultColor="#353535"
-                                                  IconHeight="12"
-                                                  IconHoverColor="{StaticResource BlueColor}"
-                                                  IconWidth="12"
-                                                  IsChecked="{Binding Model.ItemModel.IsFavorite, Mode=TwoWay}"
-                                                  PathCheckedBrush="{StaticResource BlueBrush}"
-                                                  PathStyle="{StaticResource star-solid}" />
+                                <controls1:PathButton IconHoverColor="{StaticResource BlueColor}"
+                                                      IsChecked="{Binding Model.ItemModel.IsFavorite, Mode=TwoWay}"
+                                                      PathCheckedBrush="{StaticResource BlueBrush}"
+                                                      PathStyle="{StaticResource star-solid}" />
+
+                                <controls1:PathButton IsChecked="{Binding IsAutomaticDownload, Mode=TwoWay}"
+                                                      PathCheckedBrush="{StaticResource DefaultRedBrush}"
+                                                      PathStyle="{StaticResource text-slash}" />
+
+                                <controls1:PathButton PathStyle="{StaticResource down-solid}" />
+
+
+                            </StackPanel>
+
 
                             <Grid Name="Container"
-                                  Grid.Column="2"
+                                  Grid.Column="1"
                                   Margin="5,0"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch"
                                   Background="Transparent"
                                   ClipToBounds="True">
+
                                 <TextBlock HorizontalAlignment="Left"
                                            VerticalAlignment="Center"
                                            FontSize="19"
@@ -73,21 +88,18 @@
                                 </TextBlock>
                             </Grid>
 
+                            <Grid Grid.Column="2"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center">
 
+                                <TextBlock FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Foreground="#606060"
+                                           Text="{Binding Info}"
+                                           TextAlignment="Left" />
+                            </Grid>
 
                             <TextBlock Grid.Column="3"
-                                       Margin="0,0,0,0"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       FontSize="14"
-                                       FontWeight="SemiBold"
-                                       Foreground="#606060"
-                                       Text="{Binding Info}"
-                                       TextAlignment="Left" />
-
-
-
-                            <TextBlock Grid.Column="4"
                                        HorizontalAlignment="Right"
                                        VerticalAlignment="Center"
                                        FontSize="14"

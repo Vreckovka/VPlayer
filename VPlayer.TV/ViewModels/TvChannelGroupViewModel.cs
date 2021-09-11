@@ -227,7 +227,7 @@ namespace VPlayer.IPTV
 
     #region OnTvChannelChanged
 
-    private void OnTvChannelChanged(ItemChanged<TvChannelGroupItem> itemChanged)
+    private void OnTvChannelChanged(IItemChanged<TvChannelGroupItem> itemChanged)
     {
       switch (itemChanged.Changed)
       {
