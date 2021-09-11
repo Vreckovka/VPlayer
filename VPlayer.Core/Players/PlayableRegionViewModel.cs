@@ -1153,6 +1153,7 @@ namespace VPlayer.Core.ViewModels
         return false;
       }
 
+      entityPlayList.LastPlayed = DateTime.Now;
       entityPlayList.HashCode = hashCode;
 
       bool success = false;
@@ -1208,30 +1209,14 @@ namespace VPlayer.Core.ViewModels
       }
       else
       {
-        if (!storedPlaylist.IsUserCreated)
+        storedPlaylist.Update(entityPlayList);
+
+        if (storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(storedPlaylist, out var updated))
         {
-          success = storageManager.StoreEntity(entityPlayList, out var dbEntityPlalist);
-
-          UpdatePlaylist(entityPlayList, dbEntityPlalist);
-
           Application.Current.Dispatcher.Invoke(() =>
           {
-            ActualSavedPlaylist = entityPlayList;
-
-            ActualSavedPlaylist.LastPlayed = DateTime.Now;
+            ActualSavedPlaylist = updated;
           });
-        }
-        else
-        {
-          storedPlaylist.Update(entityPlayList);
-
-          if (storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(storedPlaylist, out var updated))
-          {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-              ActualSavedPlaylist = updated;
-            });
-          }
         }
       }
 

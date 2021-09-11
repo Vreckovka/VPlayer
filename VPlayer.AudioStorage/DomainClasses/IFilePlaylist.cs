@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
   public interface IPlaylist : INamedEntity, ITrackable, IUpdateable<IPlaylist>
   {
     int Id { get; set; }
+
     long? HashCode { get; set; }
     int? ItemCount { get; set; }
     TimeSpan TotalPlayedTime { get; set; }

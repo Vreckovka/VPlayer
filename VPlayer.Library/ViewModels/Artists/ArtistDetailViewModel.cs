@@ -1,64 +1,193 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using Microsoft.EntityFrameworkCore;
+using VCore.ItemsCollections.VirtualList;
+using VCore.ItemsCollections.VirtualList.VirtualLists;
 using VCore.Modularity.RegionProviders;
+using VCore.Standard;
+using VCore.Standard.Factories.ViewModels;
 using VCore.ViewModels;
+using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.Interfaces.Storage;
+using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
+using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Core.ViewModels.Artists;
 using VPlayer.Home.Views.Music.Artists;
 
 namespace VPlayer.Home.ViewModels.Artists
 {
-  public class ArtistDetailViewModel : RegionViewModel<ArtistDetailView>
+  public class DetailItemViewModel<TModel> : ViewModel<TModel>
   {
-    #region Constructors
-
-    public ArtistDetailViewModel(IRegionProvider regionProvider, ArtistViewModel artist) : base(regionProvider)
+    public DetailItemViewModel(TModel model) : base(model)
     {
-      ActualArtist = artist;
     }
 
-    #endregion Constructors
+    #region Info
+
+    private string info;
+
+    public string Info
+    {
+      get { return info; }
+      set
+      {
+        if (value != info)
+        {
+          info = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+  }
+
+  public class SongDetailViewModel : DetailItemViewModel<Song>
+  {
+    public SongDetailViewModel(Song model) : base(model)
+    {
+    }
+  }
+
+  public class ArtistDetailViewModel : DetailViewModel<ArtistViewModel, Artist, ArtistDetailView>
+  {
+    private readonly IViewModelsFactory viewModelsFactory;
+    private readonly IStorageManager storageManager;
+
+    public ArtistDetailViewModel(
+      IRegionProvider regionProvider,
+      IViewModelsFactory viewModelsFactory,
+      IStorageManager storageManager,
+      ArtistViewModel model,
+      IWindowManager windowManager) : base(regionProvider, storageManager, model, windowManager)
+    {
+      this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+      this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
+
+      Task.Run(() =>
+        {
+          LoadAlbums();
+        });
+    }
 
     #region Properties
 
-    public ArtistViewModel ActualArtist { get; set; }
-    public ICollection<Album> Albums => ActualArtist?.Model.Albums;
+    #region Albums
+
+    private ICollection<AlbumViewModel> albums;
+
+    public ICollection<AlbumViewModel> Albums
+    {
+      get { return albums; }
+      set
+      {
+        if (value != albums)
+        {
+          albums = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     public override bool ContainsNestedRegions => false;
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
 
-    public IEnumerable<Song> Songs
-    {
-      get { return Albums?.SelectMany(d => d.Songs).ToList(); }
-    }
 
-    public TimeSpan TotalLength
+    #region Songs
+
+    private VirtualList<SongDetailViewModel> songs;
+
+    public VirtualList<SongDetailViewModel> Songs
     {
-      get
+      get { return songs; }
+      set
       {
-        if (Albums != null)
-          return TimeSpan.FromSeconds((from x in Albums
-                                       select
-                                       (
-                                           from y in x.Songs select y.Length
-                                       ).Sum()).Sum());
+        if (value != songs)
+        {
+          songs = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+    #endregion
 
-        return TimeSpan.FromSeconds(0);
+    #region TotalLength
+
+    private TimeSpan? totalLength;
+
+    public TimeSpan? TotalLength
+    {
+      get { return totalLength; }
+      set
+      {
+        if (value != totalLength)
+        {
+          totalLength = value;
+          RaisePropertyChanged();
+        }
       }
     }
 
-    public int TotalNumberOfSongs
+    #endregion
+
+    #endregion
+
+    #region Methods
+
+    #region LoadAlbums
+
+    private void LoadAlbums()
     {
-      get
+      var albumsDb = storageManager.GetRepository<Album>()
+        .Where(x => x.Artist == ViewModel.Model)
+        .Include(x => x.Songs)
+        .ThenInclude(x => x.ItemModel)
+        .ThenInclude(x => x.FileInfo)
+        .ToList();
+
+      Application.Current.Dispatcher.Invoke(() =>
       {
-        if (Albums != null)
-          return (from x in Albums select x.Songs.Count()).Sum();
-        else
-          return 0;
-      }
+        Albums = albumsDb.Select(x => viewModelsFactory.Create<AlbumViewModel>(x)).ToList();
+
+        List<SongDetailViewModel> allSong = new List<SongDetailViewModel>();
+
+        foreach (var album in Albums.Where(x => x.Model.Songs != null))
+        {
+          foreach (var song in album.Model.Songs)
+          {
+            var songD = viewModelsFactory.Create<SongDetailViewModel>(song);
+
+            songD.Info = album.Name;
+
+            allSong.Add(songD);
+          }
+        }
+
+
+        var generator = new ItemsGenerator<SongDetailViewModel>(allSong, 25);
+
+        Songs = new VirtualList<SongDetailViewModel>(generator);
+        TotalLength = TimeSpan.FromSeconds(allSong.Sum(x => x.Model.Duration));
+      });
     }
 
-    #endregion Properties
+    #endregion
+
+    protected override void OnUpdate()
+    {
+    }
+
+
+    #endregion
+
+
   }
 }

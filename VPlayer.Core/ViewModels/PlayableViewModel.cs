@@ -76,7 +76,7 @@ namespace VPlayer.Core.ViewModels
     {
       get
       {
-        return "";
+        return null;
       }
     }
 

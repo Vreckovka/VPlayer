@@ -123,10 +123,14 @@
     </Style>
 
     <Style TargetType="{x:Type controls:PlayableWrapPanelItem}">
+        <Setter Property="Width" Value="210" />
+        <Setter Property="Height" Value="275" />
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:PlayableWrapPanelItem">
                     <Border Margin="5"
+                            Padding="0"
                             BorderBrush="{StaticResource 10_WhiteTransparentBrush}"
                             BorderThickness="2.5"
                             CornerRadius="5">
@@ -135,13 +139,11 @@
                         </Border.Effect>
 
                         <Grid Name="A"
-                              Width="200"
-                              Height="265"
-                              Background="{StaticResource BackgroudGradientBrush}">
-
+                              Background="{StaticResource BackgroudGradientBrush}"
+                              ClipToBounds="True">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
-                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="60" />
                             </Grid.RowDefinitions>
 
                             <Grid x:Name="LoadingBar"
@@ -185,25 +187,20 @@
 
                             <Image Name="coverImage"
                                    Grid.Row="0"
-                                   Width="200"
-                                   Height="200"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Top"
                                    Source="{TemplateBinding ImageThumbnail,
                                                             Converter={library:CacheImageConverter},
-                                                            ConverterParameter=250}" />
+                                                            ConverterParameter=250}"
+                                   Stretch="UniformToFill" />
 
                             <Grid Grid.Row="0" Background="{StaticResource GlassGradient}" />
 
                             <Grid Name="ImageGrid"
                                   Grid.Row="0"
-                                  Width="200"
-                                  Height="200"
-                                  VerticalAlignment="Top"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Stretch"
                                   Style="{DynamicResource PlayGridOverlay}">
-
-
-
 
                                 <Border Padding="0,0,0,15"
                                         HorizontalAlignment="Stretch"
@@ -389,15 +386,16 @@
                                 </Button>
                             </Grid>
 
-                            <Border Grid.Row="0"
+                            <Border Grid.Row="1"
+                                    Margin="0 0 0 0"
+                                    Background="{StaticResource BackgroudBrush}"
                                     BorderBrush="{StaticResource BackgroudBrush}"
-                                    BorderThickness="1">
+                                    BorderThickness="0,0">
                                 <Grid Name="GridParent"
-                                      VerticalAlignment="Bottom"
-                                      Background="{StaticResource BackgroudBrush}"
+                                      VerticalAlignment="Top"
                                       ClipToBounds="True">
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="37" />
                                         <RowDefinition Height="*" />
                                     </Grid.RowDefinitions>
 
@@ -432,25 +430,19 @@
                                         </b:Interaction.Behaviors>
                                     </TextBlock>
 
-                                    <StackPanel Grid.Row="1">
-                                        <TextBlock HorizontalAlignment="Stretch"
-                                                   FontSize="15"
-                                                   Text="{TemplateBinding BottomText}"
-                                                   TextAlignment="Center">
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="Foreground" Value="{StaticResource 50_WhiteTransparentBrush}" />
-                                                    <Setter Property="Background">
-                                                        <Setter.Value>
-                                                            <SolidColorBrush Opacity="0.01" Color="{StaticResource DefaultWhiteColor}" />
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                </Style>
-                                            </TextBlock.Style>
+                                    <Border Grid.Row="1" Background="#aa101010" Margin="-1,0,-1,0" Padding="0 3 0 3">
+                                        <StackPanel HorizontalAlignment="Center" 
+                                                  
+                                                    Orientation="Horizontal">
+                                            <TextBlock HorizontalAlignment="Center"
+                                                       FontSize="15"
+                                                       Foreground="#757575"
+                                                       Text="{TemplateBinding BottomText}"
+                                                       TextAlignment="Center" />
 
                                             <Path x:Name="IconPath"
-                                                  Width="10"
-                                                  Height="10"
+                                                  Width="12"
+                                                  Height="12"
                                                   Margin="10,0,0,0"
                                                   Data="{Binding BottomPathData}"
                                                   Stretch="Uniform">
@@ -466,9 +458,18 @@
                                                 </Path.Style>
                                             </Path>
 
-                                        </TextBlock>
-                                    </StackPanel>
+                                            <StackPanel.Style>
+                                                <Style TargetType="StackPanel">
+                                                    <Setter Property="Background">
+                                                        <Setter.Value>
+                                                            <SolidColorBrush Opacity="0.01" Color="{StaticResource DefaultWhiteColor}" />
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </StackPanel.Style>
+                                        </StackPanel>
 
+                                    </Border>
                                 </Grid>
                             </Border>
                         </Grid>

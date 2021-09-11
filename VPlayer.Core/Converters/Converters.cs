@@ -80,7 +80,6 @@ namespace VPlayer.Library
         {
           double newTextSize = textSize * (multiplicator + 0.02);
           var newThickness = new Thickness((gridSize - (newTextSize)), 0, 0, 0);
-          Console.WriteLine(newThickness);
           return newThickness;
 
         }

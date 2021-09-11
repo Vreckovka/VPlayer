@@ -80,7 +80,20 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
       base.OnConfiguring(optionsBuilder);
     }
-  
+
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+      base.OnModelCreating(modelBuilder);
+
+      modelBuilder.Entity<SoundItemFilePlaylist>()
+        .HasIndex(nameof(SoundItemFilePlaylist.HashCode), nameof(SoundItemFilePlaylist.IsUserCreated))
+        .IsUnique();
+
+      modelBuilder.Entity<VideoFilePlaylist>()
+        .HasIndex(nameof(SoundItemFilePlaylist.HashCode), nameof(SoundItemFilePlaylist.IsUserCreated))
+        .IsUnique();
+    }
 
     public override int SaveChanges()
     {

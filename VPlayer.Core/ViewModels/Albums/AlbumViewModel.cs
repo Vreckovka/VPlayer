@@ -40,11 +40,11 @@ namespace VPlayer.Core.ViewModels.Albums
 
     #region Properties
 
-    public override string BottomText => $"{Model.Artist?.Name}\nNumber of song: {Model.Songs?.Count.ToString()}";
+    public override string BottomText => GetBottomText();
     public override string ImageThumbnail => !string.IsNullOrEmpty(Model.AlbumFrontCoverFilePath) ? Model.AlbumFrontCoverFilePath : GetEmptyImage();
     public string Image => !string.IsNullOrEmpty(Model.AlbumFrontCoverFilePath) ? Model.AlbumFrontCoverFilePath : GetEmptyImage();
 
-    #endregion Properties
+    #endregion 
 
     #region Methods
 
@@ -65,6 +65,7 @@ namespace VPlayer.Core.ViewModels.Albums
 
     #endregion
 
+    #region PublishPlayEvent
 
     public override void PublishPlayEvent(IEnumerable<SongInPlayListViewModel> viewModels, EventAction eventAction)
     {
@@ -73,12 +74,18 @@ namespace VPlayer.Core.ViewModels.Albums
       eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SongInPlayListViewModel>>().Publish(e);
     }
 
+    #endregion
+
+    #region PublishAddToPlaylistEvent
+
     public override void PublishAddToPlaylistEvent(IEnumerable<SongInPlayListViewModel> viewModels)
     {
       var e = new PlayItemsEventData<SongInPlayListViewModel>(viewModels, EventAction.Add, this);
 
       eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SongInPlayListViewModel>>().Publish(e);
     }
+
+    #endregion
 
     #region Update
 
@@ -111,6 +118,34 @@ namespace VPlayer.Core.ViewModels.Albums
 
     #endregion
 
-    #endregion Methods
+    #region GetBottomText
+
+    private string GetBottomText()
+    {
+      string artistPart = "";
+      string albumPart = "";
+      string delimiter = "";
+
+      if (!string.IsNullOrEmpty(Model.Artist?.Name))
+      {
+        artistPart = Model.Artist?.Name + "";
+      }
+
+      if (Model.Songs != null && Model.Songs.Count > 0)
+      {
+        albumPart = Model.Songs.Count + " songs";
+      }
+
+      if (!string.IsNullOrEmpty(artistPart) && !string.IsNullOrEmpty(albumPart))
+      {
+        delimiter = " , ";
+      }
+
+      return $"{artistPart}{delimiter}{albumPart}";
+    }
+
+    #endregion
+
+    #endregion 
   }
 }
