@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,10 +13,12 @@ using System.Windows.Input;
 using Logger;
 using VCore;
 using VCore.Modularity.RegionProviders;
+using VCore.Standard.Helpers;
 using VCore.ViewModels;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.InfoDownloader.Models;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPlayer.Core.Managers.Status;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Home.Views.Music.Albums;
@@ -30,6 +33,7 @@ namespace VPlayer.Home.ViewModels.Albums
     private readonly AudioInfoDownloader audioInfoDownloader;
     private readonly AlbumViewModel albumViewModel;
     private readonly IStorageManager storage;
+    private readonly IStatusManager statusManager;
     private readonly ILogger logger;
     private CancellationTokenSource cancellationTokenSource;
     private string path;
@@ -43,12 +47,14 @@ namespace VPlayer.Home.ViewModels.Albums
       AudioInfoDownloader audioInfoDownloader,
       AlbumViewModel albumViewModel,
       IStorageManager storage,
+      IStatusManager statusManager,
       string regionName,
       ILogger logger) : base(regionProvider)
     {
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
       this.albumViewModel = albumViewModel ?? throw new ArgumentNullException(nameof(albumViewModel));
       this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
+      this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
       RegionName = regionName;
@@ -58,12 +64,106 @@ namespace VPlayer.Home.ViewModels.Albums
 
     #region Properties
 
-    public ObservableCollection<AlbumCover> AlbumCovers { get; set; } = new ObservableCollection<AlbumCover>();
+    public ObservableCollection<AlbumCoverViewModel> AlbumCovers { get; set; } = new ObservableCollection<AlbumCoverViewModel>();
     public override bool ContainsNestedRegions => false;
-    public double DownloadedProcessValue { get; set; }
-    public int FoundConvers { get; set; }
     public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
-    public AlbumCover SelectedCover { get; set; }
+
+
+    #region DownloadedProcessValue
+
+    private double downloadedProcessValue;
+
+    public double DownloadedProcessValue
+    {
+      get { return downloadedProcessValue; }
+      set
+      {
+        if (value != downloadedProcessValue)
+        {
+          downloadedProcessValue = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region FoundConvers
+
+    private int foundConvers;
+
+    public int FoundConvers
+    {
+      get { return foundConvers; }
+      set
+      {
+        if (value != foundConvers)
+        {
+          foundConvers = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region SelectedCover
+
+    private AlbumCoverViewModel selectedCover;
+
+    public AlbumCoverViewModel SelectedCover
+    {
+      get { return selectedCover; }
+      set
+      {
+        if (value != selectedCover)
+        {
+          selectedCover = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region IsDownloading
+
+    private bool isDownloading;
+
+    public bool IsDownloading
+    {
+      get { return isDownloading; }
+      set
+      {
+        if (value != isDownloading)
+        {
+          isDownloading = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region CoverUrlToDownload
+
+    private string coverUrlToDownload;
+
+    public string CoverUrlToDownload
+    {
+      get { return coverUrlToDownload; }
+      set
+      {
+        if (value != coverUrlToDownload)
+        {
+          coverUrlToDownload = value;
+          downloadFromUrl?.RaiseCanExecuteChanged();
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     #endregion Properties
 
@@ -71,7 +171,7 @@ namespace VPlayer.Home.ViewModels.Albums
 
     #region SelectCover
 
-    private ActionCommand<AlbumCover> selectCover;
+    private ActionCommand<AlbumCoverViewModel> selectCover;
 
     public ICommand SelectCover
     {
@@ -79,21 +179,148 @@ namespace VPlayer.Home.ViewModels.Albums
       {
         if (selectCover == null)
         {
-          selectCover = new ActionCommand<AlbumCover>(OnSelectCover);
+          selectCover = new ActionCommand<AlbumCoverViewModel>(OnSelectCover);
         }
 
         return selectCover;
       }
     }
 
-    private async void OnSelectCover(AlbumCover albumCover)
+    private async void OnSelectCover(AlbumCoverViewModel albumCover)
     {
+      AlbumCovers.Where(x => x.IsSelected).ForEach(x => x.IsSelected = false);
+      SelectedCover = null;
+
       SelectedCover = albumCover;
-      SaveImage(SelectedCover);
+      SelectedCover.IsSelected = true;
+
+      await SaveImage(SelectedCover);
+
+      statusManager.UpdateMessage(new StatusMessageViewModel(1)
+      {
+        ProcessedCount = 1,
+        Status = VCore.WPF.Controls.StatusMessage.StatusType.Done,
+        Message = "Cover updated"
+      });
     }
 
 
-    #endregion SelectCover
+    #endregion
+
+    #region Stop
+
+    private ActionCommand stop;
+
+    public ICommand Stop
+    {
+      get
+      {
+        if (stop == null)
+        {
+          stop = new ActionCommand(OnStop);
+        }
+
+        return stop;
+      }
+    }
+
+    private void OnStop()
+    {
+      IsDownloading = false;
+      cancellationTokenSource?.Cancel();
+    }
+
+
+    #endregion
+
+    #region DownloadFromUrl
+
+    private ActionCommand downloadFromUrl;
+
+    public ICommand DownloadFromUrl
+    {
+      get
+      {
+        if (downloadFromUrl == null)
+        {
+          downloadFromUrl = new ActionCommand(OnDownloadFromUrl, () => { return !string.IsNullOrEmpty(CoverUrlToDownload); });
+        }
+
+        return downloadFromUrl;
+      }
+    }
+
+    private async void OnDownloadFromUrl()
+    {
+      DownloadedProcessValue = 0;
+      FoundConvers = 1;
+      AlbumCovers.Clear();
+
+      var webClient = new WebClient();
+      cancellationTokenSource?.Cancel();
+      cancellationTokenSource = new CancellationTokenSource();
+
+      var result = await DowloadImage(webClient, new AlbumCover()
+      {
+        Url = CoverUrlToDownload
+      });
+
+      if (result)
+      {
+        DownloadedProcessValue = 100;
+      }
+    }
+
+
+    #endregion
+
+    #region FindCovers
+
+    private ActionCommand findCovers;
+
+    public ICommand FindCovers
+    {
+      get
+      {
+        if (findCovers == null)
+        {
+          findCovers = new ActionCommand(OnFindCovers);
+        }
+
+        return findCovers;
+      }
+    }
+
+    private async void OnFindCovers()
+    {
+      FoundConvers = 0;
+      DownloadedProcessValue = 0;
+      AlbumCovers.Clear();
+      IsDownloading = true;
+
+      cancellationTokenSource?.Cancel();
+      cancellationTokenSource = new CancellationTokenSource();
+
+      var resul = await audioInfoDownloader.GetAlbumFrontCoversUrls(albumViewModel.Model, cancellationTokenSource.Token);
+
+      if (resul == null)
+      {
+        FoundConvers = 0;
+        DownloadedProcessValue = 0;
+        cancellationTokenSource?.Cancel();
+        IsDownloading = false;
+
+        statusManager.UpdateMessage(new StatusMessageViewModel(1)
+        {
+          ProcessedCount = 1,
+          Status = VCore.WPF.Controls.StatusMessage.StatusType.Failed,
+          Message = $"Failed to download covers ARTIST (Model ID: {albumViewModel.Model?.Id} Name: {albumViewModel?.Model?.Name})"
+        });
+      }
+    }
+
+
+    #endregion 
 
     #endregion
 
@@ -107,42 +334,43 @@ namespace VPlayer.Home.ViewModels.Albums
 
       path = albumViewModel.Model.AlbumFrontCoverFilePath;
 
-      cancellationTokenSource = new CancellationTokenSource();
-      var cancellationToken = cancellationTokenSource.Token;
-
       audioInfoDownloader.CoversDownloaded += Instance_CoversDownloaded;
-
-      audioInfoDownloader.GetAlbumFrontCoversUrls(albumViewModel.Model, cancellationToken);
     }
 
     #endregion
 
     #region SaveImage
 
-    private void SaveImage(AlbumCover albumCover)
+    private Task<string> SaveImage(AlbumCoverViewModel albumCover)
     {
-      MemoryStream ms = new MemoryStream(albumCover.DownloadedCover);
-      Image i = Image.FromStream(ms);
-
-      var directory = Path.Combine(AudioInfoDownloader.GetDefaultPicturesPath(), $"Albums\\{albumViewModel.Model.Id}");
-      var finalPath = Path.Combine(directory, "frontConver.jpg");
-
-      finalPath.EnsureDirectoryExists();
-
-      if (File.Exists(finalPath))
-        File.Delete(finalPath);
-
-      i.Save(finalPath, ImageFormat.Jpeg);
-
-      CacheImageConverter.RefreshDictionary(finalPath);
-
-      albumViewModel.RaisePropertyChange(nameof(AlbumViewModel.ImageThumbnail));
-      albumViewModel.RaisePropertyChange(nameof(AlbumViewModel.Image));
-
-      storage.PushAction(new VCore.Modularity.Events.ItemChanged()
+      return Task.Run(() =>
       {
-        Changed = VCore.Modularity.Events.Changed.Updated,
-        Item = albumViewModel.Model
+        MemoryStream ms = new MemoryStream(albumCover.Model.DownloadedCover);
+        Image i = Image.FromStream(ms);
+
+        var finalPath = albumViewModel.Model.AlbumFrontCoverFilePath;
+
+        if (string.IsNullOrEmpty(finalPath))
+        {
+          finalPath = Path.Combine(AudioInfoDownloader.GetAlbumCoverImagePath(albumViewModel.Model));
+
+          albumViewModel.Model.AlbumFrontCoverFilePath = finalPath;
+        }
+
+        finalPath.EnsureDirectoryExists();
+
+        if (File.Exists(finalPath))
+          File.Delete(finalPath);
+
+        i.Save(finalPath, ImageFormat.Jpeg);
+
+        CacheImageConverter.RefreshDictionary(finalPath);
+
+        storage.UpdateEntityAsync(albumViewModel.Model);
+
+        
+
+        return finalPath;
       });
     }
 
@@ -171,67 +399,89 @@ namespace VPlayer.Home.ViewModels.Albums
 
     #region Instance_CoversDownloaded
 
-    private object batton = new object();
-    private Semaphore semaphore = new Semaphore(5, 5);
+
+    private SemaphoreSlim semaphore = new SemaphoreSlim(5, 1000);
+
     private void Instance_CoversDownloaded(object sender, List<AlbumCover> e)
     {
-      FoundConvers += e.Count;
-      try
+      Application.Current?.Dispatcher?.Invoke(() =>
       {
-        lock (batton)
+        FoundConvers += e.Count;
+      });
+
+      Task.Run(async () =>
+      {
+        foreach (var cover in e)
         {
-          Task.Run(async () =>
+
+          await semaphore.WaitAsync();
+          var client = new WebClient();
+
+          try
           {
-            foreach (var cover in e)
+            var result = await DowloadImage(client, cover);
+
+            if (result)
             {
-              try
+              Application.Current?.Dispatcher?.Invoke(() =>
               {
-                using (var client = new WebClient())
-                using (var registration = cancellationTokenSource.Token.Register(() => client.CancelAsync()))
-                {
-                  semaphore.WaitOne();
-
-                  if (cancellationTokenSource.IsCancellationRequested)
-                    return;
-
-                  var downloadedCover = await client.DownloadDataTaskAsync(cover.Url);
-
-                  if (downloadedCover != null)
-                  {
-                    Application.Current?.Dispatcher?.Invoke(() =>
-                    {
-                      cover.DownloadedCover = downloadedCover;
-                      cover.Size = downloadedCover.Length;
-
-                      AlbumCovers.Add(cover);
-
-                      DownloadedProcessValue = (double)(AlbumCovers.Count * 100) / FoundConvers;
-                    });
-                  }
-
-                  semaphore.Release();
-                }
-              }
-              catch (WebException ex) when (ex.Status == WebExceptionStatus.RequestCanceled)
-              {
-                logger.Log(Logger.MessageType.Inform, "Downloading was stopped");
-              }
-              catch (Exception ex)
-              {
-                logger.Log(ex);
-              }
+                DownloadedProcessValue = (double)(AlbumCovers.Count * 100) / FoundConvers;
+              });
             }
-          }, cancellationTokenSource.Token);
-        };
-      }
-      catch (WebException ex) when (ex.Status == WebExceptionStatus.RequestCanceled)
-      {
-        logger.Log(Logger.MessageType.Inform, "Downloading was stopped");
-      }
+          }
+          catch (WebException ex) when (ex.Status == WebExceptionStatus.RequestCanceled)
+          {
+            logger.Log(Logger.MessageType.Inform, "Downloading was stopped");
+          }
+          catch (Exception ex)
+          {
+            logger.Log(ex);
+          }
+          finally
+          {
+            semaphore.Release();
+          }
+        }
+      });
     }
 
 
-    #endregion Instance_CoversDownloaded
+    #endregion
+
+    #region DowloadImage
+
+    private async Task<bool> DowloadImage(WebClient client, AlbumCover cover)
+    {
+      using (var registration = cancellationTokenSource.Token.Register(client.CancelAsync))
+      {
+        if (cancellationTokenSource.IsCancellationRequested)
+          return false;
+
+        var downloadedCover = await client.DownloadDataTaskAsync(cover.Url);
+
+        if (downloadedCover != null)
+        {
+          Application.Current?.Dispatcher?.Invoke(() =>
+          {
+            cover.DownloadedCover = downloadedCover;
+            cover.Size = downloadedCover.Length;
+
+            var vm = new AlbumCoverViewModel(cover);
+
+            AlbumCovers.Add(vm);
+
+            if (albumViewModel?.Model?.AlbumFrontCoverURI == cover.Url && !string.IsNullOrEmpty(cover.Url))
+            {
+              vm.IsSelected = true;
+            }
+          });
+        }
+
+        return downloadedCover != null;
+      }
+    }
+
+    #endregion
 
     #region OnBackCommand
 
@@ -239,7 +489,7 @@ namespace VPlayer.Home.ViewModels.Albums
     {
       base.OnBackCommand();
 
-      cancellationTokenSource.Cancel();
+      cancellationTokenSource?.Cancel();
     }
 
     #endregion

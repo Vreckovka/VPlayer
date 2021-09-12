@@ -271,13 +271,13 @@
 
     <Style TargetType="{x:Type controls:PathButton}">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="#DB505050" />
+        <Setter Property="Foreground" Value="Green" />
         <Setter Property="PathCheckedBrush" Value="#FFEFDF" />
         <Setter Property="IconDefaultColor" Value="#50FFEFDF" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="IconMargin" Value="0 0 10 0" />
-        <Setter Property="VerticalContentAlignment" Value="Stretch" />
-        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:PathButton}">
@@ -307,7 +307,7 @@
 
                             <Border Grid.Column="1">
                                 <ContentPresenter x:Name="MyContentPresenter"
-                                                  HorizontalAlignment="Left"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                                   Content="{TemplateBinding Content}" />
                             </Border>
@@ -328,6 +328,7 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="PathIcon" Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=PathCheckedBrush}" />
+                            <Setter Property="Foreground" Value="Yellow" />
                         </Trigger>
 
                         <Trigger Property="IsMouseOver" Value="True">
@@ -339,7 +340,8 @@
                         </Trigger>-->
 
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="PathIcon" Property="Fill" Value="#191919" />
+                            <Setter Property="IconDefaultColor" Value="#191919" />
+                            <Setter Property="ForegroundDefaultColor" Value="#252525" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

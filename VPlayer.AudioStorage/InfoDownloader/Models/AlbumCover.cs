@@ -1,8 +1,38 @@
 ﻿using System;
+using VCore.Standard;
 
 namespace VPlayer.AudioStorage.InfoDownloader.Models
 {
-  public class AlbumCover
+  public class AlbumCoverViewModel : ViewModel<AlbumCover>
+  {
+    public AlbumCoverViewModel(AlbumCover model) : base(model)
+    {
+    }
+
+    #region IsSelected
+
+    private bool isSelected;
+
+    public bool IsSelected
+    {
+      get { return isSelected; }
+      set
+      {
+        if (value != isSelected)
+        {
+          isSelected = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+
+
+  }
+
+  public class AlbumCover 
   {
     #region Properties
 
@@ -17,6 +47,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Models
 
     public string Type { get; set; }
     public string Url { get; set; }
+
 
     #endregion Properties
 

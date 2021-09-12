@@ -709,8 +709,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
               PublishItemChanged(foundEntity);
 
-
-
               return result;
             }
 
@@ -1272,14 +1270,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #endregion
 
-    #region PushAction
-
-    public void PushAction(ItemChanged itemChanged)
-    {
-      this.itemChanged.OnNext(itemChanged);
-    }
-
-    #endregion
+  
 
     #region StoreTvShow
 

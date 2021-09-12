@@ -50,6 +50,11 @@ namespace VPlayer.AudioStorage.DomainClasses
       MusicBrainzId = album.MusicBrainzId;
       ReleaseDate = album.ReleaseDate;
       InfoDownloadStatus = album.InfoDownloadStatus;
+      
+
+      if (album.ArtistId != 0)
+        ArtistId = album.ArtistId;
+
 
       if (album.Songs != null)
         Songs = album.Songs;

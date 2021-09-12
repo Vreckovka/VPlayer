@@ -150,7 +150,10 @@ namespace VPlayer.Home.ViewModels
 
     protected virtual void OnDbUpdate(IItemChanged<TModel> itemChanged)
     {
-      ViewModel.Model = itemChanged.Item;
+      if(itemChanged.Item.Id == ViewModel.Model.Id)
+      {
+        ViewModel.Model = itemChanged.Item;
+      }
     }
 
     #endregion

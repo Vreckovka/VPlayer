@@ -30,6 +30,8 @@ using VPlayer.AudioStorage.InfoDownloader.LRC;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;
 using VCore;
 using VCore.Standard;
+using VCore.WPF.Controls.StatusMessage;
+using VPlayer.Core.Managers.Status;
 
 namespace VPlayer.AudioStorage.InfoDownloader
 {
@@ -39,6 +41,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
   public class AudioInfoDownloader : IInitializable
   {
     private readonly ILogger logger;
+    private readonly IStatusManager statusManager;
 
     #region Fields
 
@@ -57,12 +60,10 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     #region Constructors
 
-    public AudioInfoDownloader(ILogger logger)
+    public AudioInfoDownloader(ILogger logger, IStatusManager statusManager)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
-
-
+      this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
     }
 
     #endregion Constructors
@@ -326,6 +327,11 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
           DomainClasses.Artist newArtist = album.Artist;
 
+          if (newArtist == null)
+          {
+            return null;
+          }
+
           if (album.Artist.MusicBrainzId == null)
           {
             newArtist = await UpdateArtist(album.Artist.Name);
@@ -421,11 +427,21 @@ namespace VPlayer.AudioStorage.InfoDownloader
       });
     }
 
+    #region UpdateAlbum
+
     public async Task<Album> UpdateAlbum(Album album)
     {
       try
       {
         var albumName = album.Name;
+
+        var statusMessage = new StatusMessageViewModel(3)
+        {
+          Message = $"Getting album info ({album.Name})",
+          Status = StatusType.Processing
+        };
+
+        statusManager.UpdateMessage(statusMessage);
 
         // The album known sometimes as The Black Album is already in this database,
         // it is correctly named simply Metallica. This is because The Black Album is only a fan-composed name
@@ -435,7 +451,6 @@ namespace VPlayer.AudioStorage.InfoDownloader
         }
 
         await musibrainzAPISempathore.WaitAsync();
-
 
 
         album.InfoDownloadStatus = InfoDownloadStatus.Downloading;
@@ -614,6 +629,10 @@ namespace VPlayer.AudioStorage.InfoDownloader
           }
         }
 
+        statusMessage.Message = $"Finding cover for ({release.Title})";
+
+        statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+
         string albumCoverUrl = await GetAlbumFrontConverURL(release.Id);
 
         if (albumCoverUrl == null)
@@ -645,9 +664,17 @@ namespace VPlayer.AudioStorage.InfoDownloader
             logger.Log(Logger.MessageType.Warning,
               $"Album info was download without cover {album.Name} - {artistName}");
 
+            statusMessage.Message = $"Cover not found";
+            statusMessage.Status = StatusType.Done;
+
+            statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+
             return album;
           }
         }
+
+        statusMessage.Message = $"Downloading cover ({release.Title})";
+        statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
 
         byte[] albumCoverBlob = await GetAlbumFrontConverBLOB(release.Id, albumCoverUrl);
 
@@ -677,6 +704,10 @@ namespace VPlayer.AudioStorage.InfoDownloader
         };
 
         logger.Log(Logger.MessageType.Success, $"Album info was succesfully downloaded {album.Name} - {artistName}");
+
+
+        statusMessage.Message = $"Album successfuly updated";
+        statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
 
         return album;
       }
@@ -711,6 +742,10 @@ namespace VPlayer.AudioStorage.InfoDownloader
       }
     }
 
+    #endregion
+
+    #region GetDefaultPicturesPath
+
     public static string GetDefaultPicturesPath()
     {
       var directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VPlayer/Pictures");
@@ -722,11 +757,12 @@ namespace VPlayer.AudioStorage.InfoDownloader
       return directory;
     }
 
-    private string SaveAlbumCover(Album album, byte[] blob)
-    {
-      MemoryStream ms = new MemoryStream(blob);
-      Image i = Image.FromStream(ms);
+    #endregion
 
+    #region GetAlbumCoverImagePath
+
+    public static string GetAlbumCoverImagePath(Album album)
+    {
       string path = null;
 
       if (!string.IsNullOrEmpty(album.Artist.Name))
@@ -739,7 +775,21 @@ namespace VPlayer.AudioStorage.InfoDownloader
       }
 
       var directory = Path.Combine(GetDefaultPicturesPath(), path);
-      var finalPath = Path.Combine(directory, $"frontConver.jpg");
+
+      return Path.Combine(directory, $"frontConver.jpg");
+    }
+
+    #endregion
+
+    #region SaveAlbumCover
+
+    private string SaveAlbumCover(Album album, byte[] blob)
+    {
+      MemoryStream ms = new MemoryStream(blob);
+      Image i = Image.FromStream(ms);
+
+
+      var finalPath = GetAlbumCoverImagePath(album);
 
       finalPath.EnsureDirectoryExists();
 
@@ -753,22 +803,33 @@ namespace VPlayer.AudioStorage.InfoDownloader
       return finalPath;
     }
 
+    #endregion
+
+    #region UpdateArtist
+
     public async Task<DomainClasses.Artist> UpdateArtist(string artistName)
     {
       try
       {
+        var statusMessage = new StatusMessageViewModel(2)
+        {
+          Message = $"Waiting for Musibrainz API ({artistName})",
+          Status = StatusType.Starting
+        };
+
+        statusManager.UpdateMessage(statusMessage);
+
         await musibrainzAPISempathore.WaitAsync();
 
         // Make sure that TLS 1.2 is available.
         ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
 
-        // Get path for local file cache.
-        var location = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-        var client = new MusicBrainzClient()
-        {
+        var client = new MusicBrainzClient();
 
-        };
+        statusMessage.Status = StatusType.Processing;
+        statusMessage.Message = $"Searching... ({artistName})";
+        statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
 
         //API rate limit
         Thread.Sleep(1000);
@@ -790,11 +851,26 @@ namespace VPlayer.AudioStorage.InfoDownloader
         logger.Log(Logger.MessageType.Success, $"Artist's data was updated {artistName}");
         //artist = await Artist.GetAsync(artist.Id, "artist-rels", "url-rels");
 
-        return new DomainClasses.Artist()
+        if (artist != null)
         {
-          Name = artist.Name,
-          MusicBrainzId = artist.Id,
-        };
+          statusMessage.Message = $"Found ({artist?.Name})";
+          statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+
+          return new DomainClasses.Artist()
+          {
+            Name = artist.Name,
+            MusicBrainzId = artist.Id,
+          };
+        }
+        else
+        {
+          statusMessage.Status = StatusType.Failed;
+          statusMessage.Message = $"NOT FOUND ({artist?.Name})";
+          statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+
+          return null;
+        }
+
       }
       catch (Exception ex)
       {
@@ -806,6 +882,10 @@ namespace VPlayer.AudioStorage.InfoDownloader
         musibrainzAPISempathore.Release();
       }
     }
+
+    #endregion
+
+    #region GetAlbumFrontConverBLOB
 
     /// <summary>
     /// Returns byte[] for album front image
@@ -867,6 +947,10 @@ namespace VPlayer.AudioStorage.InfoDownloader
       });
     }
 
+    #endregion
+
+    #region MyRegion
+
     /// <summary>
     /// Returns URL for album front image
     /// </summary>
@@ -918,6 +1002,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
           if (converUrl == null)
             converUrl = stuff.images[0].thumbnails.small;
 
+
           return (string)converUrl.ToString();
         }
         catch (Exception ex)
@@ -928,6 +1013,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
       });
     }
 
+    #endregion
     /// <summary>
     /// Returns MBID of album
     /// </summary>
@@ -1431,7 +1517,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     #endregion
 
-   
+
     #region Methods
 
     public void Initialize()

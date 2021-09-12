@@ -60,7 +60,6 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
     Task<bool> DeepUpdateTvShow(TvShow newVersion);
     bool DeleteTvShow(TvShow tvShow);
 
-    void PushAction(ItemChanged itemChanged);
     Task<int> StoreTvShow(TvShow tvShow);
 
 

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -137,7 +139,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
 
       });
 
-      Recreate();
+      RequestReloadVirtulizedPlaylist();
     }
 
     #endregion Add
@@ -159,13 +161,8 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
 
           if (items.Count > 0)
           {
-            Recreate();
+            RequestReloadVirtulizedPlaylist();
           }
-          else
-          {
-          }
-
-
         }
       });
     }
@@ -195,7 +192,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
 
           if (wasChnaged)
           {
-            Recreate();
+            RequestReloadVirtulizedPlaylist();
           }
         }
       });
@@ -218,10 +215,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
       {
         originalItem.Update(entity);
 
-        if (entity.Name != originalItem.Name)
-        {
-          //Recreate();
-        }
+        RequestReloadVirtulizedPlaylist();
       }
 
     }
@@ -253,7 +247,36 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
       }
       else
       {
-        Recreate();
+        RequestReloadVirtulizedPlaylist();
+      }
+    }
+
+    #endregion
+
+    #region ReloadVirtulizedPlaylist
+
+    private Stopwatch stopwatchReloadVirtulizedPlaylist;
+    private object batton = new object();
+    private SerialDisposable serialDisposable = new SerialDisposable();
+
+    public void RequestReloadVirtulizedPlaylist()
+    {
+      int dueTime = 1500;
+      lock (batton)
+      {
+        serialDisposable.Disposable = Observable.Timer(TimeSpan.FromMilliseconds(dueTime)).Subscribe((x) =>
+        {
+          stopwatchReloadVirtulizedPlaylist = null;
+          Recreate();
+        });
+
+        if (stopwatchReloadVirtulizedPlaylist == null || stopwatchReloadVirtulizedPlaylist.ElapsedMilliseconds > dueTime)
+        {
+          Recreate();
+
+          stopwatchReloadVirtulizedPlaylist = new Stopwatch();
+          stopwatchReloadVirtulizedPlaylist.Start();
+        }
       }
     }
 

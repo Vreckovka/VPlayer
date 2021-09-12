@@ -139,6 +139,7 @@ namespace VPlayer.Home.ViewModels.Artists
           foreach (var album in Albums)
           {
             album.Model = albumsDb.SingleOrDefault(x => x.Id == album.ModelId);
+            album.Model.Artist = ViewModel.Model;
 
             if (album.Model?.Songs != null)
             {

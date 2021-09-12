@@ -199,7 +199,7 @@ namespace VPlayer.Home.ViewModels
         {
           Application.Current.Dispatcher.Invoke(() =>
           {
-            LibraryCollection.Recreate();
+            LibraryCollection.RequestReloadVirtulizedPlaylist(); 
             RaisePropertyChanged(nameof(ViewModels));
             RaisePropertyChanged(nameof(View));
           });
