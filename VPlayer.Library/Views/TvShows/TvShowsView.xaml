@@ -9,19 +9,19 @@
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
-  <Grid>
-    <controls:PlayableWrapPanel Margin="5,0"
-                                ItemsSource="{Binding View}"
-                                SnapsToDevicePixels="False">
-      <controls:PlayableWrapPanel.ItemTemplate>
-        <DataTemplate>
-          <controls:PlayableWrapPanelItem BottomText="{Binding BottomText}"
-                                          Width="180"
-                                          HeaderText="{Binding Name}"
-                                          ImageThumbnail="{Binding ImageThumbnail, Converter={library:CacheImageConverter}, ConverterParameter=250, IsAsync=True}"
-                                          IsPlaying="{Binding IsPlaying}" />
-        </DataTemplate>
-      </controls:PlayableWrapPanel.ItemTemplate>
-    </controls:PlayableWrapPanel>
-  </Grid>
+    <Grid>
+        <controls:PlayableWrapPanel Margin="5,0"
+                                    ItemsSource="{Binding View}"
+                                    SnapsToDevicePixels="False">
+            <controls:PlayableWrapPanel.ItemTemplate>
+                <DataTemplate>
+                    <controls:PlayableWrapPanelItem Width="170"
+                                                    BottomText="{Binding BottomText}"
+                                                    HeaderText="{Binding Name}"
+                                                    ImageThumbnail="{Binding ImageThumbnail, Converter={library:CacheImageConverter}, ConverterParameter=250, IsAsync=True}"
+                                                    IsPlaying="{Binding IsPlaying}" />
+                </DataTemplate>
+            </controls:PlayableWrapPanel.ItemTemplate>
+        </controls:PlayableWrapPanel>
+    </Grid>
 </UserControl>

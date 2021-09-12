@@ -28,13 +28,15 @@ namespace VPlayer.Home.ViewModels.Albums
         IRegionProvider regionProvider,
         IViewModelsFactory viewModelsFactory,
         IStorageManager storageManager,
-        LibraryCollection<AlbumViewModel, Album> libraryCollection, 
+        LibraryCollection<AlbumViewModel, Album> libraryCollection,
         IEventAggregator eventAggregator,
         ILogger logger)
         : base(regionProvider, viewModelsFactory, storageManager, libraryCollection, eventAggregator)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       EventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
+
+      this.storageManager.SubscribeToItemChange<Artist>(ArtistChanged).DisposeWith(this);
     }
 
     #endregion Constructors
@@ -62,6 +64,31 @@ namespace VPlayer.Home.ViewModels.Albums
     }
 
     #endregion
+
+    #region ArtistChanged
+
+    protected void ArtistChanged(IItemChanged<Artist> itemChanged)
+    {
+      var artist = itemChanged.Item;
+
+      if (LibraryCollection.WasLoaded && artist != null)
+      {
+        var albums = LibraryCollection.Items.Where(x => x.Model?.ArtistId != null).Where(x => x.Model.ArtistId == artist.Id);
+
+        switch (itemChanged.Changed)
+        {
+          case Changed.Removed:
+
+            LibraryCollection.Remove(albums.Select(x => x.Model).ToList());
+
+            RaisePropertyChanged(nameof(View));
+            break;
+        }
+      }
+    }
+
+    #endregion
+
 
     #region SongChange
 
@@ -103,7 +130,7 @@ namespace VPlayer.Home.ViewModels.Albums
     }
 
     #endregion
-    
+
     #endregion
 
   }

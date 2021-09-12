@@ -64,13 +64,29 @@ namespace VPlayer.Home.ViewModels.Artists
 
         if (artist != null && !artist.Model.Albums.Contains(album))
         {
+          var existing = artist.Model.Albums.SingleOrDefault(x => x.Id == album.Id);
+
           switch (itemChanged.Changed)
           {
             case Changed.Added:
-              artist.Model.Albums.Add(album);
+              {
+                if (existing == null)
+                {
+                  artist.Model.Albums.Add(album);
+                  artist.RaisePropertyChange(nameof(artist.BottomText));
+                }
+              }
+
               break;
             case Changed.Removed:
-              artist.Model.Albums.Remove(album);
+              {
+                if (existing != null)
+                {
+                  artist.Model.Albums.Remove(existing);
+                  artist.RaisePropertyChange(nameof(artist.BottomText));
+                }
+              }
+
               break;
             case Changed.Updated:
               break;
@@ -113,7 +129,7 @@ namespace VPlayer.Home.ViewModels.Artists
             throw new ArgumentOutOfRangeException();
         }
       }
-    } 
+    }
 
     #endregion
   }

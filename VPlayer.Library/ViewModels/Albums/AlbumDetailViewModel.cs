@@ -45,7 +45,7 @@ namespace VPlayer.Home.ViewModels.Albums
       IStorageManager storageManager,
       IWindowManager windowManager,
       AudioInfoDownloader audioInfoDownloader,
-      StatusManager statusManager,
+      IStatusManager statusManager,
       ILogger logger
       ) : base(regionProvider, storageManager, album, windowManager)
     {

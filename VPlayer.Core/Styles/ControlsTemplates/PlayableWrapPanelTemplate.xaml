@@ -123,7 +123,7 @@
     </Style>
 
     <Style TargetType="{x:Type controls:PlayableWrapPanelItem}">
-        <Setter Property="Width" Value="210" />
+        <Setter Property="Width" Value="200" />
         <Setter Property="Height" Value="275" />
 
         <Setter Property="Template">
@@ -143,47 +143,9 @@
                               ClipToBounds="True">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
-                                <RowDefinition Height="60" />
+                                <RowDefinition Height="65" />
+                                <RowDefinition Height="auto" />
                             </Grid.RowDefinitions>
-
-                            <Grid x:Name="LoadingBar"
-                                  Grid.Row="1"
-                                  Height="2"
-                                  Margin="0,2,0,0">
-                                <Grid.Style>
-                                    <Style TargetType="Grid">
-                                        <Setter Property="Background" Value="Transparent" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.Downloading}">
-                                                <DataTrigger.EnterActions>
-                                                    <RemoveStoryboard BeginStoryboardName="RemoveDownloadingStoryboard" />
-                                                    <BeginStoryboard x:Name="DownloadingStoryboard">
-                                                        <Storyboard>
-                                                            <ColorAnimation AutoReverse="True"
-                                                                            RepeatBehavior="Forever"
-                                                                            Storyboard.TargetProperty="Background.Color"
-                                                                            From="#3fe8bb"
-                                                                            To="#3fade8"
-                                                                            Duration="0:0:0:2" />
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-                                                </DataTrigger.EnterActions>
-                                                <DataTrigger.ExitActions>
-                                                    <RemoveStoryboard BeginStoryboardName="DownloadingStoryboard" />
-                                                    <BeginStoryboard x:Name="RemoveDownloadingStoryboard">
-                                                        <Storyboard>
-                                                            <ColorAnimation Storyboard.TargetProperty="Background.Color"
-                                                                            To="Transparent"
-                                                                            Duration="0:0:0:.3" />
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-                                                </DataTrigger.ExitActions>
-
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Grid.Style>
-                            </Grid>
 
                             <Image Name="coverImage"
                                    Grid.Row="0"
@@ -445,7 +407,7 @@
                                     <TextBlock Name="NameTxt"
                                                Grid.Row="0"
                                                Margin="5"
-                                               FontSize="20"
+                                               FontSize="18"
                                                Foreground="WhiteSmoke"
                                                Text="{TemplateBinding HeaderText}"
                                                ToolTip="{TemplateBinding HeaderText}">
@@ -468,7 +430,7 @@
                                             </Style>
                                         </TextBlock.Style>
                                         <b:Interaction.Behaviors>
-                                            <text:PanningTextWithFontSizeBehavior BiggerFontSize="25"
+                                            <text:PanningTextWithFontSizeBehavior BiggerFontSize="22"
                                                                                   Container="{Binding ElementName=GridParent}"
                                                                                   IsMouseOverRelativeToContainer="True" />
                                         </b:Interaction.Behaviors>
@@ -517,6 +479,46 @@
                                     </Border>
                                 </Grid>
                             </Border>
+
+
+                            <Grid x:Name="LoadingBar"
+                                  Grid.Row="2"
+                                  Height="2"
+                                  Margin="0,-3,0,0">
+                                <Grid.Style>
+                                    <Style TargetType="Grid">
+                                        <Setter Property="Background" Value="#cc202020" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.Downloading}">
+                                                <DataTrigger.EnterActions>
+                                                    <RemoveStoryboard BeginStoryboardName="RemoveDownloadingStoryboard" />
+                                                    <BeginStoryboard x:Name="DownloadingStoryboard">
+                                                        <Storyboard>
+                                                            <ColorAnimation AutoReverse="True"
+                                                                            RepeatBehavior="Forever"
+                                                                            Storyboard.TargetProperty="Background.Color"
+                                                                            From="#3fe8bb"
+                                                                            To="#3fade8"
+                                                                            Duration="0:0:0:2" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </DataTrigger.EnterActions>
+                                                <DataTrigger.ExitActions>
+                                                    <RemoveStoryboard BeginStoryboardName="DownloadingStoryboard" />
+                                                    <BeginStoryboard x:Name="RemoveDownloadingStoryboard">
+                                                        <Storyboard>
+                                                            <ColorAnimation Storyboard.TargetProperty="Background.Color"
+                                                                            To="#cc202020"
+                                                                            Duration="0:0:0:.65" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </DataTrigger.ExitActions>
+
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Grid.Style>
+                            </Grid>
                         </Grid>
                     </Border>
                 </ControlTemplate>

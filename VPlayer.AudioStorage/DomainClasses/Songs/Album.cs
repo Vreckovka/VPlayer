@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
@@ -19,7 +20,9 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     public string AlbumFrontCoverURI { get; set; }
 
-    public virtual Artist Artist { get; set; }
+    [ForeignKey(nameof(Artist))]
+    public int ArtistId { get; set; }
+    public Artist Artist { get; set; }
 
     [Key] public int Id { get; set; }
 

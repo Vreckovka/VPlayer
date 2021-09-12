@@ -170,7 +170,38 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
       });
     }
 
-    #endregion Remove
+    #endregion
+
+    #region Remove
+
+    public void Remove(IEnumerable<TModel> entities)
+    {
+      Application.Current?.Dispatcher?.Invoke(() =>
+      {
+        if (WasLoaded)
+        {
+          bool wasChnaged = false;
+
+          foreach(var entity in entities)
+          {
+            var items = Items.Where(x => x.ModelId == entity.Id).ToList();
+
+            foreach (var item in items)
+            {
+              Items.Remove(item);
+              wasChnaged = true;
+            }
+          }
+
+          if (wasChnaged)
+          {
+            Recreate();
+          }
+        }
+      });
+    }
+
+    #endregion 
 
     #region Update
 

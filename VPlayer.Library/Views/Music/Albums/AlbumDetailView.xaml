@@ -88,6 +88,7 @@
                                              IconDefaultColor="#aaf04d46"
                                              IconHoverColor="#f04d46"
                                              IconWidth="17"
+                                             Margin="5,0,-3,0"
                                              PathStyle="{StaticResource Trash}"
                                              ToolTip="Pernamently remove" />
 

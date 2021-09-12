@@ -4,6 +4,7 @@
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:controls="clr-namespace:VPlayer.WindowsPlayer.Vlc.Controls;assembly=VVLC"
              xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
+             xmlns:controls2="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:popups="clr-namespace:VCore.WPF.Behaviors.Popups;assembly=VCore.WPF"
@@ -11,7 +12,6 @@
              xmlns:statusMessage="clr-namespace:VCore.WPF.Controls.StatusMessage;assembly=VCore.WPF"
              xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
              xmlns:views="clr-namespace:VPlayer.Player.Views"
-             xmlns:controls2="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
              Focusable="False"
              mc:Ignorable="d">
 
@@ -109,13 +109,13 @@
         </Border>
 
         <controls2:NonTopmostPopup Grid.Column="2"
-                               HorizontalAlignment="Right"
-                               AllowsTransparency="True"
-                               IsOpen="True"
-                               Placement="Top"
-                               PlacementTarget="{Binding ElementName=PlayerGrid}"
-                               PopupAnimation="Fade"
-                               StaysOpen="true">
+                                   HorizontalAlignment="Right"
+                                   AllowsTransparency="True"
+                                   IsOpen="True"
+                                   Placement="Top"
+                                   PlacementTarget="{Binding ElementName=PlayerGrid}"
+                                   PopupAnimation="Fade"
+                                   StaysOpen="true">
             <Grid DataContext="{Binding StatusMessageViewModel}">
                 <Grid.Resources>
                     <Style x:Key="Styleeee" TargetType="{x:Type statusMessage:StatusMessage}">
@@ -203,7 +203,8 @@
                                                                ClipToBounds="True"
                                                                Foreground="#555555"
                                                                Text="{TemplateBinding Message}"
-                                                               TextTrimming="CharacterEllipsis" />
+                                                               TextTrimming="CharacterEllipsis"
+                                                               ToolTip="{TemplateBinding Message}" />
                                                 </Grid>
 
 
