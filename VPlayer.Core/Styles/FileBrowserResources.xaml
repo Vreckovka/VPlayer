@@ -20,7 +20,7 @@
     <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
         <Setter Property="IconHeight" Value="14" />
         <Setter Property="IconWidth" Value="15" />
-        <Setter Property="Width" Value="30" />
+        <Setter Property="Width" Value="25" />
         <Setter Property="Height" Value="20" />
         <Setter Property="IsReadOnly" Value="True" />
         <Setter Property="Padding" Value="0" />
@@ -83,7 +83,7 @@
                                        RunStyle="{StaticResource FileNameStyle}" />
 
     <DataTemplate x:Key="FolderTreeViewTemplate">
-        <Grid>
+        <Grid Margin="0,0,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="auto" />
@@ -94,7 +94,10 @@
                 <StackPanel.Resources />
 
 
-                <controls:PathButton Command="{Binding PlayButton}" CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}">
+                <controls:PathButton Width="25"
+                                     Margin="-5,0,5,0"
+                                     Command="{Binding PlayButton}"
+                                     CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}">
                     <controls:PathButton.Style>
                         <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
                             <Setter Property="Visibility" Value="Hidden" />
@@ -117,13 +120,17 @@
                     </controls:PathButton.Style>
                 </controls:PathButton>
 
-                <controls:PathButton Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.DeleteItemCommand}"
+                <controls:PathButton Margin="-3,0,3,0"
+                                     Background="Transparent"
+                                     Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.DeleteItemCommand}"
                                      CommandParameter="{Binding Model.Indentificator}"
                                      IconHoverColor="{StaticResource LightRedColor}"
+                                     IconMargin="0 0 0 0"
                                      PathStyle="{StaticResource Trash}"
                                      ToolTip="Delete (to trash)" />
 
-                <controls:PathButton Margin="-1,0,1,0"
+                <controls:PathButton Margin="-3,0,3,0"
+                                     Background="Transparent"
                                      Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.ChangeDirectory}"
                                      CommandParameter="{Binding Model.Indentificator}"
                                      IconHoverColor="{StaticResource GreenColor}"
@@ -131,31 +138,41 @@
                                      PathStyle="{StaticResource InBoxIn}"
                                      ToolTip="Go inside" />
 
-                <controls:PathButton Command="{Binding OpenContainingFolder}"
+                <controls:PathButton Margin="0,0,0,0"
+                                     Background="Transparent"
+                                     Command="{Binding OpenContainingFolder}"
                                      CommandParameter="{Binding Model.Indentificator}"
                                      IconHeight="13"
                                      IconHoverColor="{StaticResource BlueColor}"
+                                     IconMargin="0 0 0 0"
                                      PathStyle="{StaticResource ArrowUpSquare}"
                                      ToolTip="Open in filebrowser" />
 
-                <controls:PathButton Width="30"
-                                     Margin="1,2,0,0"
+                <controls:PathButton Width="26"
+                                     Height="20"
+                                     Margin="0,3,0,0"
+                                     Background="Transparent"
                                      Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.AddBookmark}"
                                      CommandParameter="{Binding}"
                                      FontSize="14"
                                      ForegroundCheckedColor="{StaticResource YellowColor}"
                                      ForegroundDefaultColor="#20ffffff"
                                      ForegroundHoverColor="{StaticResource YellowColor}"
+                                     IconMargin="2.5 0 0 0"
                                      IsChecked="{Binding IsBookmarked}"
                                      Opacity="0.8"
                                      Style="{StaticResource bookmark}"
                                      ToolTip="Save as BOOKMARK" />
 
-                <controls:PathButton Margin="1,0,-1,0"
+                <controls:PathButton Width="25"
+                                     Height="20"
+                                     Margin="0,0,2,0"
+                                     Background="Transparent"
                                      ClickMode="Hover"
                                      Cursor="Arrow"
                                      IconHeight="10"
                                      IconHoverColor="#757575"
+                                     IconMargin="4 0 0 0"
                                      IconWidth="11"
                                      IsChecked="{Binding WasLoaded, Mode=OneWay}"
                                      IsReadOnly="True"
@@ -212,6 +229,7 @@
 
 
             <ContentControl Grid.Column="2"
+                            Margin="1,0,0,0"
                             VerticalAlignment="Center"
                             Content="{Binding HighlitedText, Converter={StaticResource FolderHighlightTextConverter}, Mode=OneTime}"
                             ToolTip="{Binding Path, Mode=OneTime}" />
@@ -259,7 +277,7 @@
             <Grid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Command="{Binding OpenContainingFolder}" Header="Open folder" />
-                    <MenuItem Command="{Binding LoadNewItem}" >
+                    <MenuItem Command="{Binding LoadNewItem}">
                         <MenuItem.Style>
                             <Style BasedOn="{StaticResource {x:Type MenuItem}}" TargetType="MenuItem">
                                 <Setter Property="Visibility" Value="Hidden" />
@@ -299,14 +317,12 @@
                         Margin="0,0,0,0"
                         Orientation="Horizontal">
 
-                <Grid Width="30"
-                      Height="11"
-                      Background="Transparent" />
+                <Grid Width="75" Background="Transparent" />
 
                 <controls:PathButton Command="{Binding PlayButton}"
                                      CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}"
                                      IconHoverColor="{StaticResource DefaultRedColor}"
-                                     PathStyle="{StaticResource PlaySign}"
+                                     PathStyle="{StaticResource play}"
                                      ToolTip="Play">
                     <controls:PathButton.Style>
                         <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
@@ -320,16 +336,21 @@
                     </controls:PathButton.Style>
                 </controls:PathButton>
 
-                <controls:PathButton Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.DeleteItemCommand}"
+                <controls:PathButton Background="Transparent"
+                                     Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.DeleteItemCommand}"
                                      CommandParameter="{Binding Model.FullName}"
                                      IconHoverColor="{StaticResource LightRedColor}"
+                                     IconMargin="2 0 0 0"
                                      PathStyle="{StaticResource Trash}"
                                      ToolTip="Delete (to trash)" />
 
-                <controls:PathButton Command="{Binding OpenContainingFolder}"
+                <controls:PathButton Margin="0,0,1,0"
+                                     Background="Transparent"
+                                     Command="{Binding OpenContainingFolder}"
                                      CommandParameter="{Binding Model.FullName}"
                                      IconHeight="13"
                                      IconHoverColor="{StaticResource BlueColor}"
+                                     IconMargin="3 0 0 0"
                                      PathStyle="{StaticResource ArrowUpSquare}"
                                      ToolTip="Open in filebrowser" />
             </StackPanel>
@@ -338,7 +359,7 @@
 
             <Grid Grid.Column="2"
                   Width="21"
-                  Margin="-4,0,5,0">
+                  Margin="-3,0,5,0">
                 <Image Width="15"
                        Height="15"
                        Margin="0,0,0,0"
@@ -372,7 +393,7 @@
             </Grid>
 
             <StackPanel Grid.Column="3" Orientation="Horizontal">
-                <ContentControl Margin="0,0,0,0"
+                <ContentControl Margin="1,0,0,0"
                                 VerticalAlignment="Center"
                                 Content="{Binding HighlitedText, Converter={StaticResource FileHighlightTextConverter}, Mode=OneTime}" />
 
