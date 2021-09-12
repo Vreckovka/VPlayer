@@ -34,12 +34,12 @@ namespace VPlayer.Core.ViewModels
   {
     public FolderRxObservableCollection()
     {
-      
+
     }
 
     public FolderRxObservableCollection(IEnumerable<TFolderViewModel> items) : base(items)
     {
-        
+
     }
 
     protected override string KeySelector(TFolderViewModel other)
@@ -345,50 +345,56 @@ namespace VPlayer.Core.ViewModels
 
     #region LoadBookmarks
 
+    private bool wasBookamarksLaoded;
     private Task LoadBookmarks()
     {
+
       return Task.Run(() =>
       {
-        var allBookmarks = storageManager.GetRepository<ItemBookmark>()
-          .Where(x => x.FileBrowserType == FileBrowserType);
-
-        Application.Current.Dispatcher.Invoke(async () =>
+        if (!wasBookamarksLaoded)
         {
-          List<TFolderViewModel> bookmarks = new List<TFolderViewModel>();
+          var allBookmarks = storageManager.GetRepository<ItemBookmark>()
+            .Where(x => x.FileBrowserType == FileBrowserType);
 
-          if (RootFolder?.SubItems != null)
+          Application.Current.Dispatcher.Invoke(async () =>
           {
-            var ids = allBookmarks.Select(x => x.Identificator).ToList();
+            List<TFolderViewModel> bookmarks = new List<TFolderViewModel>();
 
-            var existings = AllLoadedFolders.Where(x => ids.Contains(x.Model.Indentificator));
-            var nonExistings = ids.Where(x => !AllLoadedFolders.Select(y => y.Model.Indentificator).Contains(x));
-
-            foreach (var existing in existings)
+            if (RootFolder?.SubItems != null)
             {
-              bookmarks.Add(existing);
-              existing.IsBookmarked = true;
-            }
+              var ids = allBookmarks.Select(x => x.Identificator).ToList();
 
-            foreach (var nonExisting in nonExistings)
-            {
-              var vm = await GetNewFolderViewModel(nonExisting);
-              bookmarks.Add(vm);
-              vm.IsBookmarked = true;
-            }
+              var existings = AllLoadedFolders.Where(x => ids.Contains(x.Model.Indentificator));
+              var nonExistings = ids.Where(x => !AllLoadedFolders.Select(y => y.Model.Indentificator).Contains(x));
 
-            Bookmarks = new FolderRxObservableCollection<TFolderViewModel>(bookmarks);
-          }
-          else
-          {
-            foreach (var nonExisting in allBookmarks)
-            {
-              bookmarks.Add(await GetNewFolderViewModel(nonExisting.Identificator));
+              foreach (var existing in existings)
+              {
+                bookmarks.Add(existing);
+              }
+
+              foreach (var nonExisting in nonExistings)
+              {
+                var vm = await GetNewFolderViewModel(nonExisting);
+                bookmarks.Add(vm);
+              }
+
+              Bookmarks = new FolderRxObservableCollection<TFolderViewModel>(bookmarks);
+              Bookmarks.ForEach(x =>
+              {
+                x.IsBookmarked = true;
+                x.RaiseNotifications(nameof(x.IsBookmarked));
+              });
             }
-          }
-        });
+            else
+            {
+              foreach (var nonExisting in allBookmarks)
+              {
+                bookmarks.Add(await GetNewFolderViewModel(nonExisting.Identificator));
+              }
+            }
+          });
+        }
       });
-
-
     }
 
     #endregion
@@ -458,6 +464,7 @@ namespace VPlayer.Core.ViewModels
       try
       {
         BaseDirectoryPath = newPath;
+        wasBookamarksLaoded = false;
 
         if (!string.IsNullOrEmpty(newPath) && await DirectoryExists(newPath))
         {

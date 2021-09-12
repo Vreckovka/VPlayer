@@ -220,6 +220,7 @@
                 <TextBlock Margin="150,0,0,0"
                            HorizontalAlignment="Left"
                            VerticalAlignment="Center"
+                           FontWeight="Bold"
                            Foreground="#ccc">
                     <Run Text="Loading..." />
                     <Run Text="{Binding LoadingMessage}" />

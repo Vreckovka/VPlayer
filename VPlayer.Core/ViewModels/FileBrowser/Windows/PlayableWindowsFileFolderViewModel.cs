@@ -15,19 +15,16 @@ namespace VPlayer.Home.ViewModels.FileBrowser
   {
     private readonly IWindowManager windowManager;
     private readonly IStorageManager storageManager;
-    private readonly WindowsFileBrowserViewModel windowsFileBrowserViewModel;
 
     public PlayableWindowsFileFolderViewModel(
       WindowsFolderViewModel folderViewModel,
       IEventAggregator eventAggregator,
       IViewModelsFactory viewModelsFactory,
       IWindowManager windowManager,
-      IStorageManager storageManager,
-      WindowsFileBrowserViewModel windowsFileBrowserViewModel) : base(folderViewModel, eventAggregator, viewModelsFactory, storageManager)
+      IStorageManager storageManager) : base(folderViewModel, eventAggregator, viewModelsFactory, storageManager)
     {
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
-      this.windowsFileBrowserViewModel = windowsFileBrowserViewModel ?? throw new ArgumentNullException(nameof(windowsFileBrowserViewModel));
     }
 
     #region CreateNewFolderItem
@@ -37,20 +34,6 @@ namespace VPlayer.Home.ViewModels.FileBrowser
       var folderVm = viewModelsFactory.Create<WindowsFolderViewModel>(directoryInfo);
 
       return viewModelsFactory.Create<PlayableWindowsFileFolderViewModel>(folderVm);
-    }
-
-    #endregion
-
-    #region OnGetFolderInfo
-
-    protected override void OnGetFolderInfo()
-    {
-      base.OnGetFolderInfo();
-
-      if (windowsFileBrowserViewModel?.Bookmarks != null)
-      {
-        IsBookmarked = windowsFileBrowserViewModel.Bookmarks.Any(x => x.Model.Indentificator == Model.Indentificator);
-      }
     }
 
     #endregion

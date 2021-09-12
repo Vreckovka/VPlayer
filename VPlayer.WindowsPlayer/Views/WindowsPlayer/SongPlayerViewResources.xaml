@@ -972,15 +972,15 @@
 
                     <Separator Margin="5,5" />
 
-
-                    <MenuItem>
+                    <MenuItem ToolTip="{Binding IsAutomaticLyricsDownloadDisabled}">
                         <MenuItem.HeaderTemplate>
                             <DataTemplate>
                                 <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu, Mode=FindAncestor}, Path=DataContext}">
                                     <controls2:PathButton Content="Automatic lyrics download"
                                                           ForegroundCheckedColor="#ddd"
                                                           IsChecked="{Binding IsAutomaticLyricsDownloadDisabled, Mode=TwoWay}"
-                                                          PathCheckedBrush="{StaticResource YellowBrush}"
+                                                          IsReadOnly="False"
+                                                          PathCheckedBrush="{StaticResource DefaultRedBrush}"
                                                           PathStyle="{StaticResource text-slash}"
                                                           ToolTip="Turn ON/OFF automatic LYRICS download">
 

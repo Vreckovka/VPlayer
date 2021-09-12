@@ -74,70 +74,103 @@
                                     <Border Margin="5,5,15,5"
                                             BorderBrush="#252525"
                                             BorderThickness="0,0,0,1">
-                                        <Grid ToolTip="{Binding Model.Indentificator}">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="auto" />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-
-                                            <StackPanel Margin="2,2" Orientation="Horizontal">
-                                                <controls:PathButton Width="22"
-                                                                     Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl, Mode=FindAncestor}, Path=DataContext.AddBookmark}"
-                                                                     CommandParameter="{Binding}"
-                                                                     FontSize="12.5"
-                                                                     ForegroundDefaultColor="#20ffffff"
-                                                                     ForegroundHoverColor="{StaticResource DefaultRedColor}"
-                                                                     IsReadOnly="True"
-                                                                     Style="{StaticResource bookmark-slash}"
-                                                                     ToolTip="Remove BOOKMARK" />
-
-                                                <controls:PathButton Width="22"
-                                                                     Command="{Binding PlayButton}"
-                                                                     FontSize="13"
-                                                                     ForegroundDefaultColor="#20ffffff"
-                                                                     ForegroundHoverColor="#ddd"
-                                                                     IsReadOnly="True"
-                                                                     Style="{StaticResource play-regular}"
-                                                                     ToolTip="Play" />
-
-                                                <controls:PathButton Width="25"
-                                                                     Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl, Mode=FindAncestor}, Path=DataContext.ChangeDirectory}"
-                                                                     CommandParameter="{Binding Model.Indentificator}"
-                                                                     FontSize="13"
-                                                                     ForegroundDefaultColor="#20ffffff"
-                                                                     ForegroundHoverColor="#ddd"
-                                                                     IsReadOnly="True"
-                                                                     Style="{StaticResource arrow-right-to-bracket}"
-                                                                     ToolTip="Go inside" />
-
-                                                <controls:PathButton Width="25"
-                                                                     Command="{Binding OpenContainingFolder}"
-                                                                     FontSize="13"
-                                                                     ForegroundDefaultColor="#20ffffff"
-                                                                     ForegroundHoverColor="#ddd"
-                                                                     IsReadOnly="True"
-                                                                     Style="{StaticResource arrow-up-right-from-square}"
-                                                                     ToolTip="Open in filebrowser" />
-
-                                                <controls:PathButton Width="25"
-                                                                     FontSize="13"
-                                                                     ForegroundDefaultColor="#20ffffff"
-                                                                     ForegroundHoverColor="#ddd"
-                                                                     IsReadOnly="True"
-                                                                     Style="{StaticResource circle-question}"
-                                                                     ToolTip="{Binding Model.Indentificator}" />
-                                            </StackPanel>
+                                        <Grid>
 
 
-                                            <TextBlock Grid.Column="1"
-                                                       VerticalAlignment="Center"
-                                                       FontSize="14"
-                                                       FontWeight="SemiBold"
-                                                       Foreground="#aaa">
-                                                <Run Text="{Binding Model.Name}" />
+                                            <Grid ToolTip="{Binding Model.Indentificator}">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="auto" />
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
 
-                                                <!--<Run Foreground="#555555" Text="{Binding Model.Indentificator, StringFormat={} ({0})}" />-->
-                                            </TextBlock>
+                                                <StackPanel Margin="2,2" Orientation="Horizontal">
+                                                    <controls:PathButton Width="22"
+                                                                         Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl, Mode=FindAncestor}, Path=DataContext.AddBookmark}"
+                                                                         CommandParameter="{Binding}"
+                                                                         FontSize="12.5"
+                                                                         ForegroundDefaultColor="#20ffffff"
+                                                                         ForegroundHoverColor="{StaticResource DefaultRedColor}"
+                                                                         IsReadOnly="True"
+                                                                         Style="{StaticResource bookmark-slash}"
+                                                                         ToolTip="Remove BOOKMARK" />
+
+                                                    <controls:PathButton Width="22"
+                                                                         Command="{Binding PlayButton}"
+                                                                         FontSize="13"
+                                                                         ForegroundDefaultColor="#20ffffff"
+                                                                         ForegroundHoverColor="#ddd"
+                                                                         IsReadOnly="True"
+                                                                         Style="{StaticResource play-regular}"
+                                                                         ToolTip="Play" />
+
+                                                    <controls:PathButton Width="25"
+                                                                         Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl, Mode=FindAncestor}, Path=DataContext.ChangeDirectory}"
+                                                                         CommandParameter="{Binding Model.Indentificator}"
+                                                                         FontSize="13"
+                                                                         ForegroundDefaultColor="#20ffffff"
+                                                                         ForegroundHoverColor="#ddd"
+                                                                         IsReadOnly="True"
+                                                                         Style="{StaticResource arrow-right-to-bracket}"
+                                                                         ToolTip="Go inside" />
+
+                                                    <controls:PathButton Width="25"
+                                                                         Command="{Binding OpenContainingFolder}"
+                                                                         FontSize="13"
+                                                                         ForegroundDefaultColor="#20ffffff"
+                                                                         ForegroundHoverColor="#ddd"
+                                                                         IsReadOnly="True"
+                                                                         Style="{StaticResource arrow-up-right-from-square}"
+                                                                         ToolTip="Open in filebrowser" />
+
+                                                    <controls:PathButton Width="25"
+                                                                         FontSize="13"
+                                                                         ForegroundDefaultColor="#20ffffff"
+                                                                         ForegroundHoverColor="#ddd"
+                                                                         IsReadOnly="True"
+                                                                         Style="{StaticResource circle-question}"
+                                                                         ToolTip="{Binding Model.Indentificator}" />
+                                                </StackPanel>
+
+
+                                                <TextBlock Grid.Column="1"
+                                                           VerticalAlignment="Center"
+                                                           FontSize="14"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="#aaa">
+                                                    <Run Text="{Binding Model.Name}" />
+
+                                                    <!--<Run Foreground="#555555" Text="{Binding Model.Indentificator, StringFormat={} ({0})}" />-->
+                                                </TextBlock>
+
+
+                                            </Grid>
+
+                                            <Grid Background="#cc050505" Margin="0 -10 0 0">
+                                                <TextBlock Margin="10,0,0,0"
+                                                           HorizontalAlignment="Left"
+                                                           VerticalAlignment="Center"
+                                                           FontSize="14"
+                                                           FontWeight="Bold"
+                                                           Foreground="#ccc">
+                                                    <Run Text="Loading..." />
+                                                    <Run Text="{Binding LoadingMessage}" />
+                                                </TextBlock>
+
+                                                <Grid.Style>
+                                                    <Style TargetType="Grid">
+                                                        <Setter Property="Background" Value="#cc141414" />
+                                                        <Setter Property="Visibility" Value="Hidden" />
+
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsLoading}" Value="true">
+                                                                <Setter Property="Visibility" Value="Visible" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+
+
+                                                    </Style>
+                                                </Grid.Style>
+                                            </Grid>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
