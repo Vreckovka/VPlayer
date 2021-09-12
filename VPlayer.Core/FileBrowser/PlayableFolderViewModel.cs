@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore;
 using VCore.Standard.Factories.ViewModels;
+using VCore.Standard.Helpers;
 using VCore.Standard.ViewModels.WindowsFile;
 using VCore.WPF.ViewModels.WindowsFiles;
 using VPlayer.AudioStorage.DomainClasses;
@@ -60,8 +61,7 @@ namespace VPlayer.Core.FileBrowser
     }
 
     #endregion
-
-
+    
     #region Commands
 
     #region PlayButton
@@ -83,7 +83,28 @@ namespace VPlayer.Core.FileBrowser
 
     #endregion
 
+    #region LoadNewItem
+
+    private ActionCommand loadNewItem;
+
+    public ICommand LoadNewItem
+    {
+      get
+      {
+        if (loadNewItem == null)
+        {
+          loadNewItem = new ActionCommand(OnLoadNewItem);
+        }
+
+        return loadNewItem;
+      }
+    }
+
     #endregion
+
+    #endregion
+
+    #region Methods
 
     #region Play
 
@@ -330,5 +351,12 @@ namespace VPlayer.Core.FileBrowser
     {
       folderViewModel.OnOpenContainingFolder();
     }
+
+    public virtual void OnLoadNewItem()
+    {
+      
+    }
+ 
+    #endregion
   }
 }

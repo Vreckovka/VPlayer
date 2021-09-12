@@ -7,6 +7,8 @@ using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Providers;
 using VCore.WPF.Managers;
 using VCore.WPF.ViewModels.WindowsFiles;
+using VPlayer.AudioStorage.DomainClasses.FolderStructure;
+using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core;
 using VPlayer.Core.FileBrowser;
 using VPlayer.Core.ViewModels;
@@ -23,7 +25,8 @@ namespace VPlayer.PCloud.ViewModels
       ICloudService cloudService,
       ISettingsProvider settingsProvider,
       IViewModelsFactory viewModelsFactory,
-      IWindowManager windowManager) : base(regionProvider, viewModelsFactory, windowManager, settingsProvider)
+      IWindowManager windowManager,
+      IStorageManager storageManager) : base(regionProvider, viewModelsFactory, windowManager, settingsProvider, storageManager)
     {
       this.cloudService = cloudService ?? throw new ArgumentNullException(nameof(cloudService));
 
@@ -31,6 +34,7 @@ namespace VPlayer.PCloud.ViewModels
     }
 
     public override Visibility FinderVisibility => Visibility.Collapsed;
+    public override FileBrowserType FileBrowserType { get; } = FileBrowserType.Cloud;
 
     protected override void OnDeleteItem(string indentificator)
     {

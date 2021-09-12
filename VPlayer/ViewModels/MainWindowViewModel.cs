@@ -50,6 +50,7 @@ namespace VPlayer.ViewModels
   //TODO: Hviezdicky pocet 
   //TODO: TV Channels editor dotiahnut
   //TODO: Save UPnP Sever (mozno je, bojim sa skusit)
+  //TODO: load artists z foldra(zadarmo len ten viewmodel co je loadmusic a dat mu cestu)
   //
   // *****File Browser*****
   //TODO: File Browser - File watcher nad aktualnou zlozkou

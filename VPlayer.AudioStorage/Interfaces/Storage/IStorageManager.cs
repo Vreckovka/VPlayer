@@ -34,7 +34,7 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
     #region Generic methods
 
     bool StoreEntity<TEntity>(TEntity model, out TEntity entityModel, bool log = true) where TEntity : class, IEntity;
-    bool StoreRangeEntity<TEntity>(List<TEntity> entities , bool log = true) where TEntity : class, IEntity;
+    bool StoreRangeEntity<TEntity>(List<TEntity> entities, bool log = true) where TEntity : class, IEntity;
 
     bool DeleteEntity<TEntity>(TEntity entity) where TEntity : class, IEntity;
     Task<bool> UpdateEntityAsync<TEntity>(TEntity newVersion) where TEntity : class, IEntity, IUpdateable<TEntity>;
@@ -44,7 +44,7 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
       where TPlaylist : class, IPlaylist<TPlaylistItem>
       where TPlaylistItem : class;
 
-    bool UpdatePlaylist<TPlaylist, TPlaylistItem>(TPlaylist playlist, out TPlaylist updatedPlaylist) where TPlaylist : class, IPlaylist<TPlaylistItem> where TPlaylistItem: IEntity;
+    bool UpdatePlaylist<TPlaylist, TPlaylistItem>(TPlaylist playlist, out TPlaylist updatedPlaylist) where TPlaylist : class, IPlaylist<TPlaylistItem> where TPlaylistItem : IEntity;
 
     #endregion
 

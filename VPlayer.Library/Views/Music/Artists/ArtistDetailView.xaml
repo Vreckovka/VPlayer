@@ -15,8 +15,8 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal">
-            <controls:PathButton Margin="15,5" Style="{StaticResource BackButton}" />
+        <StackPanel Margin="15,10" Orientation="Horizontal">
+            <controls:PathButton Style="{StaticResource BackButton}" />
 
         </StackPanel>
 

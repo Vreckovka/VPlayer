@@ -21,6 +21,7 @@
         <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/ControlsTemplates/FinderTemplate.xaml" />
 
         <ResourceDictionary Source="pack://application:,,,/VCore.WPF;component/Controls/NumericUpAndDown/NumericUpAndDownTemplate.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VCore.WPF;component/StylesDictionaries/FontAwesome6Glyphs.xaml" />
         <ResourceDictionary Source="pack://application:,,,/VCore.WPF;component/StylesDictionaries/Paths.xaml" />
     </ResourceDictionary.MergedDictionaries>
 

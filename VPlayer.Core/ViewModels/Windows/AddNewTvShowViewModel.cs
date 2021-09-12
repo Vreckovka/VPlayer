@@ -59,7 +59,7 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
         if (value != tvShowPath)
         {
           tvShowPath = value;
-          load.RaiseCanExecuteChanged();
+          load?.RaiseCanExecuteChanged();
           RaisePropertyChanged();
         }
       }
@@ -79,7 +79,7 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
         if (value != temporaryName)
         {
           temporaryName = value;
-          load.RaiseCanExecuteChanged();
+          load?.RaiseCanExecuteChanged();
           RaisePropertyChanged();
         }
       }
@@ -105,7 +105,7 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
             TemporaryName = value;
           }
 
-          load.RaiseCanExecuteChanged();
+          load?.RaiseCanExecuteChanged();
           RaisePropertyChanged();
         }
       }

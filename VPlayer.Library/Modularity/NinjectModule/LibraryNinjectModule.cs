@@ -7,7 +7,9 @@ using VPlayer.Core.Modularity.Regions;
 using VPlayer.Home.ViewModels;
 using VPlayer.Home.ViewModels.Albums;
 using VPlayer.Home.ViewModels.Artists;
+using VPlayer.Home.ViewModels.FileBrowser;
 using VPlayer.Home.ViewModels.TvShows;
+using VPlayer.PCloud.ViewModels;
 
 namespace VPlayer.Home.Modularity.NinjectModule
 {
@@ -37,6 +39,8 @@ namespace VPlayer.Home.Modularity.NinjectModule
       Kernel.Bind<SongPlaylistsViewModel>().ToSelf().InSingletonScope();
       Kernel.Bind<VideoPlaylistsViewModel>().ToSelf().InSingletonScope();
 
+      Kernel.Bind<WindowsFileBrowserViewModel>().ToSelf().InSingletonScope();
+      Kernel.Bind<PCloudFileBrowserViewModel>().ToSelf().InSingletonScope();
 
 
       Kernel.BindToSelf<AlbumDetailViewModel>();

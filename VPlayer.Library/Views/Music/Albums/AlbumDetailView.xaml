@@ -17,11 +17,11 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Margin="0,10" Orientation="Horizontal">
-            <controls:PathButton Margin="15,0" Style="{StaticResource BackButton}" />
+        <StackPanel Margin="15,10" Orientation="Horizontal">
+            <controls:PathButton Style="{StaticResource BackButton}" />
 
-            <controls:PathButton Margin="0,0"
-                                 Padding="20,10"
+            <controls:PathButton Padding="20,10"
+                                 Margin="10 0 00 0"
                                  Command="{Binding GetCovers}"
                                  Content="Get more covers"
                                  IconHeight="20"

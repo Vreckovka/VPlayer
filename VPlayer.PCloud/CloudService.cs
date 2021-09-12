@@ -50,6 +50,32 @@ namespace VPlayer.PCloud
 
     #endregion
 
+    #region GetAudioLink
+
+    public async Task<string> GetAudioLink(long id)
+    {
+      if (credentials != null)
+      {
+        using (var conn = await Connection.open(ssl, host))
+        {
+          try
+          {
+            await conn.login(credentials.Email, credentials.Password);
+
+            return await conn.GetAudioLink(id);
+          }
+          finally
+          {
+            await Logout(conn);
+          }
+        }
+      }
+
+      return null;
+    }
+
+    #endregion
+
     #region GetFileStats
 
     public async Task<PCloudResponse<Stats>> GetFileStats(long id)
@@ -77,7 +103,7 @@ namespace VPlayer.PCloud
     #endregion
 
     #region GetPublicLink
-    
+
     public async Task<string> GetPublicLink(long id)
     {
       if (credentials != null)
@@ -106,8 +132,6 @@ namespace VPlayer.PCloud
     }
 
     #endregion
-
-
 
     #region GetFilesAsync
 

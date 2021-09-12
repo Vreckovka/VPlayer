@@ -18,6 +18,7 @@ namespace VPLayer.Domain.Contracts.CloudService.Providers
     Task<bool> ExistsFolderAsync(long id);
     Task<MemoryStream> ReadFile(long id);
     Task<string> GetPublicLink(long id);
+    Task<string> GetAudioLink(long id);
     Task<PCloudResponse<Stats>> GetFileStats(long id);
     Task<FolderInfo> CreateFolder(string name, long? parentId);
     Task<long?> CreateFile(string name, long id);

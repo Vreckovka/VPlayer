@@ -7,6 +7,8 @@ using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Providers;
 using VCore.WPF.Managers;
 using VCore.WPF.ViewModels.WindowsFiles;
+using VPlayer.AudioStorage.DomainClasses.FolderStructure;
+using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core;
 using VPlayer.Core.ViewModels;
 
@@ -18,10 +20,13 @@ namespace VPlayer.Home.ViewModels.FileBrowser
       IRegionProvider regionProvider,
       IViewModelsFactory viewModelsFactory,
       ISettingsProvider settingsProvider,
-      IWindowManager windowManager) : base(regionProvider, viewModelsFactory, windowManager, settingsProvider)
+      IWindowManager windowManager,
+      IStorageManager storageManager) : base(regionProvider, viewModelsFactory, windowManager, settingsProvider, storageManager)
     {
       BaseDirectoryPath = settingsProvider.GetSetting(GlobalSettings.FileBrowserInitialDirectory)?.Value;
     }
+
+    public override FileBrowserType FileBrowserType { get; } = FileBrowserType.Local;
 
     protected override void OnDeleteItem(string indentificator)
     {

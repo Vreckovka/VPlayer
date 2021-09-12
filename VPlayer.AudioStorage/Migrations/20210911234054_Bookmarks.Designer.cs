@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VPlayer.AudioStorage.AudioDatabase;
 
 namespace VPlayer.AudioStorage.Migrations
 {
     [DbContext(typeof(AudioDatabaseContext))]
-    partial class AudioDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20210911234054_Bookmarks")]
+    partial class Bookmarks
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -100,13 +102,13 @@ namespace VPlayer.AudioStorage.Migrations
                     b.Property<int>("FileBrowserType")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Identificator")
+                    b.Property<string>("Indentificator")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("Modified")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Path")
+                    b.Property<string>("Source")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

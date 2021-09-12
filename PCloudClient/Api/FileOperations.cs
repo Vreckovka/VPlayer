@@ -348,8 +348,9 @@ namespace PCloud
       return conn.send(req);
     }
 
-    /// <summary>Delete a file</summary>
-    public static Task deleteFile(this Connection conn, long fileId)
+    #region DeleteFile
+
+    public static Task DeleteFile(this Connection conn, long fileId)
     {
       var req = conn.newRequest("deletefile");
       req.add("fileid", fileId);
@@ -358,8 +359,11 @@ namespace PCloud
       return conn.send(req);
     }
 
-    /// <summary>Refresh file metadata</summary>
-    public static async Task<FileInfo> getFileInfo(this Connection conn, long id)
+    #endregion
+
+    #region GetFileInfo
+
+    public static async Task<FileInfo> GetFileInfo(this Connection conn, long id)
     {
       var req = conn.newRequest("stat");
       req.add("fileid", id);
@@ -369,10 +373,14 @@ namespace PCloud
       return new FileInfo(response.metadata());
     }
 
+    #endregion
+
+    #region GetFilePublicLink
+
     public static async Task<string> GetFilePublicLink(this Connection conn, long id, DateTime? expire = null)
     {
       string link = null;
-      
+
       if (expire == null)
       {
         expire = DateTime.MaxValue;
@@ -393,6 +401,29 @@ namespace PCloud
       return link;
     }
 
+    #endregion
+
+    #region GetAudioLink
+
+    public static async Task<string> GetAudioLink(this Connection conn, long id)
+    {
+      string link = null;
+
+      var req = conn.newRequest("getfilelink");
+      req.add("fileid", id);
+      req.unixTimestamps();
+
+      var response = await conn.send(req);
+
+      var host = ((object[])response.dict["hosts"])[0].ToString();
+      var path = response.dict["path"];
+
+      link = "http://" + host + path;
+
+      return link;
+    }
+
+    #endregion
 
     public static async Task<PCloudResponse<Stats>> GetFileStats(this Connection conn, long id)
     {

@@ -364,26 +364,69 @@
                                     </Button.Style>
                                 </Button>
 
-                                <Button Margin="5,0,0,5"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Bottom"
-                                        Command="{Binding Detail}"
-                                        Content="Detail"
-                                        FontSize="15"
-                                        Style="{StaticResource PlayableWrapPanelItemButtons}" />
+                                <controls:PathButton Margin="5,0,0,5"
+                                                     HorizontalAlignment="Left"
+                                                     VerticalAlignment="Bottom"
+                                                     Command="{Binding Detail}"
+                                                     FontSize="25"
+                                                     ForegroundDefaultColor="#95cccccc"
+                                                     ToolTip="Open DETAIL view">
+                                    <controls:PathButton.Style>
+                                        <Style BasedOn="{StaticResource circle-question}" TargetType="controls:PathButton">
+                                            <Setter Property="Opacity" Value="0" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ElementName=ImageGrid, Path=IsMouseOver}" Value="True">
+                                                    <DataTrigger.EnterActions>
+                                                        <BeginStoryboard Name="VisibilityStoryboard">
+                                                            <Storyboard>
+                                                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                                                 From="0.0"
+                                                                                 To="1.0"
+                                                                                 Duration="{StaticResource AnimationDuration}" />
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </DataTrigger.EnterActions>
+                                                    <DataTrigger.ExitActions>
+                                                        <RemoveStoryboard BeginStoryboardName="VisibilityStoryboard" />
+                                                    </DataTrigger.ExitActions>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </controls:PathButton.Style>
+                                </controls:PathButton>
 
-                                <Button Margin="0,0,5,5"
-                                        Padding="3"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Bottom"
-                                        Command="{Binding AddToPlaylist}"
-                                        Style="{StaticResource PlayableWrapPanelItemButtons}">
-                                    <Button.Content>
-                                        <Path Height="25"
-                                              Fill="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}, Path=Foreground}"
-                                              Style="{StaticResource AddToList}" />
-                                    </Button.Content>
-                                </Button>
+                                <controls:PathButton Margin="0,0,5,5"
+                                                     Padding="3"
+                                                     HorizontalAlignment="Right"
+                                                     VerticalAlignment="Bottom"
+                                                     Command="{Binding AddToPlaylist}"
+                                                     FontSize="25"
+                                                     ForegroundDefaultColor="#95cccccc"
+                                                     ToolTip="Add to ACTUAL PLAYLIST">
+                                    <controls:PathButton.Style>
+                                        <Style BasedOn="{StaticResource layer-plus}" TargetType="controls:PathButton">
+                                            <Setter Property="Opacity" Value="0" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ElementName=ImageGrid, Path=IsMouseOver}" Value="True">
+                                                    <DataTrigger.EnterActions>
+                                                        <BeginStoryboard Name="VisibilityStoryboard">
+                                                            <Storyboard>
+                                                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                                                 From="0.0"
+                                                                                 To="1.0"
+                                                                                 Duration="{StaticResource AnimationDuration}" />
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </DataTrigger.EnterActions>
+                                                    <DataTrigger.ExitActions>
+                                                        <RemoveStoryboard BeginStoryboardName="VisibilityStoryboard" />
+                                                    </DataTrigger.ExitActions>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+
+                                    </controls:PathButton.Style>
+                                </controls:PathButton>
                             </Grid>
 
                             <Border Grid.Row="1"

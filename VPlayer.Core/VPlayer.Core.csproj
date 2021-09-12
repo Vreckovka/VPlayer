@@ -14,6 +14,7 @@
     <PackageReference Include="VirtualizingWrapPanel" Version="1.5.3" />
     <PackageReference Include="LibVLCSharp" Version="3.4.9" />
     <PackageReference Include="WindowsAPICodePack" Version="1.1.1" />
+    <PackageReference Include="CefSharp.Wpf" Version="89.0.170" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CustomLibraries\Logger\Logger.csproj" />
@@ -27,6 +28,9 @@
     <ProjectReference Include="..\VVLC\VVLC.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="CefSharp.Wpf">
+      <HintPath>..\..\..\NugetPackages\cefsharp.wpf\89.0.170\lib\net452\CefSharp.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="Hqub.MusicBrainz.API">
       <HintPath>..\DLL\Hqub.MusicBrainz.API.dll</HintPath>
     </Reference>
@@ -41,6 +45,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\FileBrowserView.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Views\Windows\AddNewTvShowPrompt.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
   </ItemGroup>

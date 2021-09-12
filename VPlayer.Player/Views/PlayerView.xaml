@@ -11,6 +11,7 @@
              xmlns:statusMessage="clr-namespace:VCore.WPF.Controls.StatusMessage;assembly=VCore.WPF"
              xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
              xmlns:views="clr-namespace:VPlayer.Player.Views"
+             xmlns:controls2="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
              Focusable="False"
              mc:Ignorable="d">
 
@@ -107,7 +108,7 @@
             </Grid>
         </Border>
 
-        <views:NonTopmostPopup Grid.Column="2"
+        <controls2:NonTopmostPopup Grid.Column="2"
                                HorizontalAlignment="Right"
                                AllowsTransparency="True"
                                IsOpen="True"
@@ -312,7 +313,7 @@
             <b:Interaction.Behaviors>
                 <popups:MovePopupWithParentBehavior />
             </b:Interaction.Behaviors>
-        </views:NonTopmostPopup>
+        </controls2:NonTopmostPopup>
 
 
 

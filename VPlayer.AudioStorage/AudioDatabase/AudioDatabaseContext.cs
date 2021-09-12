@@ -9,6 +9,7 @@ using Ninject;
 using VCore.Standard;
 using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses.FolderStructure;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.DomainClasses.UPnP;
 using VPlayer.AudioStorage.DomainClasses.Video;
@@ -63,6 +64,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
     public DbSet<TvChannel> TvChannels { get; set; }
     public DbSet<TvPlaylist> TvPlaylists { get; set; }
 
+
+
+    public DbSet<ItemBookmark> Bookmarks { get; set; }
 
     #endregion Properties
 

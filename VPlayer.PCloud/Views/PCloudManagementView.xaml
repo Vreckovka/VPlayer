@@ -1,6 +1,7 @@
 ﻿<UserControl x:Class="VPlayer.PCloud.Views.PCloudManagementView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:fileBrowser="clr-namespace:VPlayer.Home.Views.FileBrowser;assembly=VPlayer.Core"
              xmlns:local="clr-namespace:VPlayer.PCloud.Views"
@@ -9,7 +10,29 @@
              d:DesignWidth="800"
              mc:Ignorable="d">
     <Grid>
-        <TextBlock Text="PCLoud" />
-        <fileBrowser:FileBrowserView DataContext="{Binding PCloudFileBrowserViewModel}" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <StackPanel Margin="0,5,0,5"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal">
+            <controls:PathButton Margin="0,0,0,0"
+                                 VerticalContentAlignment="Center"
+                                 Content="PCloud"
+                                 FontSize="18"
+                                 ForegroundDefaultColor="#20ffffff"
+                                 IconDefaultColor="#20ffffff"
+                                 IconHoverColor="{StaticResource BlueColor}"
+                                 IconMargin="0 0 10 0"
+                                 IconWidth="30"
+                                 IsReadOnly="True"
+                                 PathStyle="{StaticResource cloud-solid}" />
+
+        </StackPanel>
+
+
+        <fileBrowser:FileBrowserView Grid.Row="1" DataContext="{Binding PCloudFileBrowserViewModel}" />
     </Grid>
 </UserControl>

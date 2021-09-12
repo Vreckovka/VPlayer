@@ -85,7 +85,11 @@ namespace VPlayer.AudioStorage.AudioDatabase
       return dbContext.Set<T>();
     }
 
+
+
     #endregion
+
+    #region GetNormalizedName
 
     public static string GetNormalizedName(string name)
     {
@@ -97,7 +101,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       return new String(name.RemoveDiacritics().ToLower().Where(x => Char.IsLetterOrDigit(x)).ToArray());
     }
 
-
+    #endregion
 
     #region StoreData
 
@@ -639,7 +643,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
               logger.Log(Logger.MessageType.Success, $"Entity was stored {entity}");
 
             PublishItemChanged(entity, Changed.Added);
-          
+
           }
 
           return result;
@@ -705,7 +709,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
               PublishItemChanged(foundEntity);
 
-             
+
 
               return result;
             }
@@ -759,7 +763,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
             PublishItemChanged(foundEntity, Changed.Removed);
 
-        
+
           }
 
           return result;
@@ -900,7 +904,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
 
               PublishItemChanged(songsPlaylist, Changed.Removed);
-            
+
             }
           }
         }
@@ -1062,7 +1066,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
               logger.Log(Logger.MessageType.Success, $"Entity was updated {result}");
 
               PublishItemChanged(foundEntity);
-              
+
 
               return true;
             }
@@ -1151,7 +1155,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
             logger.Log(Logger.MessageType.Success, $"Entity TVSHOW was deleted {tvShow.Name}");
 
             PublishItemChanged(foundEntity, Changed.Removed);
-          
+
           }
         }
 
