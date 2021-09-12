@@ -1248,14 +1248,18 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     private void OnAlbumUpdated(ItemUpdatedEventArgs<AlbumViewModel> itemUpdatedEventArgs)
     {
-      var songsInAlbum = PlayList.OfType<SongInPlayListViewModel>().Where(x => x.AlbumViewModel.ModelId == itemUpdatedEventArgs.Model.ModelId);
-
-      foreach (var songInAlbum in songsInAlbum)
+      if (itemUpdatedEventArgs.Model != null)
       {
-        if (songInAlbum.AlbumViewModel != itemUpdatedEventArgs.Model)
-          songInAlbum.AlbumViewModel = itemUpdatedEventArgs.Model;
-        else
-          songInAlbum.UpdateAlbumViewModel(itemUpdatedEventArgs.Model.Model);
+        var songsInAlbum = PlayList.OfType<SongInPlayListViewModel>().Where(x => x.AlbumViewModel != null)
+          .Where(x => x.AlbumViewModel.ModelId == itemUpdatedEventArgs.Model.ModelId);
+
+        foreach (var songInAlbum in songsInAlbum)
+        {
+          if (songInAlbum.AlbumViewModel != itemUpdatedEventArgs.Model)
+            songInAlbum.AlbumViewModel = itemUpdatedEventArgs.Model;
+          else
+            songInAlbum.UpdateAlbumViewModel(itemUpdatedEventArgs.Model.Model);
+        }
       }
     }
 
