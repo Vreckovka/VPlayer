@@ -132,20 +132,40 @@
                                                 </StackPanel>
 
 
-                                                <TextBlock Grid.Column="1"
-                                                           VerticalAlignment="Center"
-                                                           FontSize="14"
-                                                           FontWeight="SemiBold"
-                                                           Foreground="#aaa">
-                                                    <Run Text="{Binding Model.Name}" />
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                    <TextBlock VerticalAlignment="Center"
+                                                               FontSize="14"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="#aaa"
+                                                               Text="{Binding Model.Name, Mode=OneWay}" />
 
-                                                    <!--<Run Foreground="#555555" Text="{Binding Model.Indentificator, StringFormat={} ({0})}" />-->
-                                                </TextBlock>
+                                                    <TextBlock Margin="5,0,0,0"
+                                                               VerticalAlignment="Center"
+                                                               FontSize="14"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="#555555"
+                                                               Text="(" />
+
+                                                    <TextBlock MaxWidth="150"
+                                                               VerticalAlignment="Center"
+                                                               FontSize="14"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="#555555"
+                                                               Text="{Binding Model.Indentificator, Mode=OneWay}"
+                                                               TextTrimming="CharacterEllipsis" />
+
+                                                    <TextBlock VerticalAlignment="Center"
+                                                               FontSize="14"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="#555555"
+                                                               Text=")" />
+                                                </StackPanel>
+
 
 
                                             </Grid>
 
-                                            <Grid Background="#cc050505" Margin="0 -10 0 0">
+                                            <Grid Margin="0,-10,0,0" Background="#cc050505">
                                                 <TextBlock Margin="10,0,0,0"
                                                            HorizontalAlignment="Left"
                                                            VerticalAlignment="Center"
