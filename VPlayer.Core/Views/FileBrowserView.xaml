@@ -38,8 +38,8 @@
             </Grid.ColumnDefinitions>
 
             <controls:PathButton x:Name="BookmarkPathButton"
-                                 Margin="0,5,10,0"
-                                 FontSize="20"
+                                 Margin="6,15,10,0"
+                                 FontSize="28"
                                  ForegroundCheckedColor="{StaticResource YellowColor}"
                                  ForegroundDefaultColor="#353535"
                                  ForegroundHoverColor="{StaticResource YellowColor}"
@@ -207,7 +207,7 @@
 
 
             <TextBox Grid.Column="1"
-                     Margin="0,0,0,0"
+                     Margin="0,10,15,0"
                      FontSize="15"
                      FontWeight="Bold"
                      Foreground="#ccc"

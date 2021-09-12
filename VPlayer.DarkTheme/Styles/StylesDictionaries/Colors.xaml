@@ -29,6 +29,7 @@
     <Color x:Key="BlueColor">#1887db</Color>
     <Color x:Key="DarkBlueColor">#2747fe</Color>
     <Color x:Key="GreenColor">#36d66e</Color>
+    <Color x:Key="GreenColor2">#4fd66c</Color>
 
     <Color x:Key="235_DefaultWhiteColor"
            A="235"
