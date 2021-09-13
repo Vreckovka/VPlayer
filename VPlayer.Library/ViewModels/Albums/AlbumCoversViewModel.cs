@@ -377,21 +377,24 @@ namespace VPlayer.Home.ViewModels.Albums
       }
     }
 
-    private string SaveCover(byte[] data)
+    private Task<string> SaveCover(byte[] data)
     {
-      MemoryStream ms = new MemoryStream(data);
-      Image i = Image.FromStream(ms);
+      return Task.Run(() =>
+      {
+        MemoryStream ms = new MemoryStream(data);
+        Image i = Image.FromStream(ms);
 
-      var finalPath = tmpFolderPath + "\\" + Guid.NewGuid() + ".jpg";
+        var finalPath = tmpFolderPath + "\\" + Guid.NewGuid() + ".jpg";
 
-      finalPath.EnsureDirectoryExists();
+        finalPath.EnsureDirectoryExists();
 
-      if (File.Exists(finalPath))
-        File.Delete(finalPath);
+        if (File.Exists(finalPath))
+          File.Delete(finalPath);
 
-      i.Save(finalPath, ImageFormat.Jpeg);
+        i.Save(finalPath, ImageFormat.Jpeg);
 
-      return finalPath;
+        return finalPath;
+      });
     }
 
     #region SaveImage
@@ -516,10 +519,12 @@ namespace VPlayer.Home.ViewModels.Albums
 
         if (downloadedCover != null)
         {
+          var path = await SaveCover(downloadedCover);
+
           Application.Current?.Dispatcher?.Invoke(() =>
           {
-            cover.DownloadedCoverPath = SaveCover(downloadedCover);
             cover.Size = downloadedCover.Length;
+            cover.DownloadedCoverPath = path;
 
             var vm = new AlbumCoverViewModel(cover);
 
@@ -591,7 +596,7 @@ namespace VPlayer.Home.ViewModels.Albums
 
     private void ReloadVirtulizedPlaylist()
     {
-      var generator = new ItemsGenerator<AlbumCoverViewModel>(AlbumCovers.OrderByDescending(x => x.Model.Size).Take(50), 15);
+      var generator = new ItemsGenerator<AlbumCoverViewModel>(AlbumCovers.OrderByDescending(x => x.Model.Size), 15);
 
       Application.Current?.Dispatcher?.Invoke(() =>
       {
