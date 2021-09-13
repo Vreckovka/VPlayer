@@ -103,7 +103,7 @@
         <Run Text="{Binding DownloadedProcessValue, StringFormat={}{0:N0}%}" />
 
         <Run Foreground="#555555" Text=" (" />
-        <Run Foreground="#555555" Text="{Binding View.Count, Mode=OneWay}" />
+        <Run Foreground="#555555" Text="{Binding AlbumCovers.Count, Mode=OneWay}" />
         <Run Foreground="#555555" Text="/" />
         <Run Foreground="#555555" Text="{Binding FoundConvers}" />
         <Run Foreground="#555555" Text=")" />
@@ -151,9 +151,7 @@
                           <Image Grid.Row="0"
                                  HorizontalAlignment="Center"
                                  VerticalAlignment="Top"
-                                 Source="{TemplateBinding ImageThumbnail,
-                                                          ConverterParameter=200,
-                                                          Converter={library:CacheImageConverter}}" />
+                                 Source="{Binding ImageThumbnail, RelativeSource={RelativeSource AncestorType=controls1:PlayableWrapPanelItem, Mode=FindAncestor}, ConverterParameter=200, Converter={library:CacheImageConverter}, IsAsync=True}" />
 
                           <Grid Grid.Row="0" Background="{StaticResource GlassGradient}" />
 

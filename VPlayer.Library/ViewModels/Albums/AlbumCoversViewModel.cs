@@ -71,7 +71,7 @@ namespace VPlayer.Home.ViewModels.Albums
 
     #region Properties
 
-    private ObservableCollection<AlbumCoverViewModel> AlbumCovers { get; set; } = new ObservableCollection<AlbumCoverViewModel>();
+    public ObservableCollection<AlbumCoverViewModel> AlbumCovers { get; set; } = new ObservableCollection<AlbumCoverViewModel>();
 
     public override bool ContainsNestedRegions => false;
     public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
@@ -591,7 +591,7 @@ namespace VPlayer.Home.ViewModels.Albums
 
     private void ReloadVirtulizedPlaylist()
     {
-      var generator = new ItemsGenerator<AlbumCoverViewModel>(AlbumCovers.OrderByDescending(x => x.Model.Size), 15);
+      var generator = new ItemsGenerator<AlbumCoverViewModel>(AlbumCovers.OrderByDescending(x => x.Model.Size).Take(50), 15);
 
       Application.Current?.Dispatcher?.Invoke(() =>
       {

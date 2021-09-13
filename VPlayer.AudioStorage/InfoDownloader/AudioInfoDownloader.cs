@@ -435,7 +435,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
       {
         var albumName = album.Name;
 
-        var statusMessage = new StatusMessageViewModel(3)
+        var statusMessage = new StatusMessageViewModel(4)
         {
           Message = $"Getting album info ({album.Name})",
           Status = StatusType.Processing
@@ -683,6 +683,17 @@ namespace VPlayer.AudioStorage.InfoDownloader
           byte[] albumCoverBlob = await GetAlbumFrontConverBLOB(release.Id, albumCoverUrl);
 
           coverPath = SaveAlbumCover(album, albumCoverBlob);
+
+          logger.Log(Logger.MessageType.Success, $"Album info was succesfully downloaded {album.Name} - {artistName}");
+
+
+          statusMessage.Message = $"Album COVER successfuly DOWNLOADED";
+          statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+        }
+        else
+        {
+          statusMessage.Message = $"Album COVER was retrevied from CACHE";
+          statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
         }
 
         albumName = release.Title;
@@ -707,9 +718,6 @@ namespace VPlayer.AudioStorage.InfoDownloader
           AlbumFrontCoverURI = albumCoverUrl,
           AlbumFrontCoverFilePath = coverPath,
         };
-
-        logger.Log(Logger.MessageType.Success, $"Album info was succesfully downloaded {album.Name} - {artistName}");
-
 
         statusMessage.Message = $"Album successfuly updated";
         statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
