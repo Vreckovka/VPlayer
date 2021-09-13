@@ -281,18 +281,20 @@ namespace VPlayer.Home.ViewModels.Albums
       ResetViewModel();
       FoundConvers = 1;
 
-      var webClient = new WebClient();
-      cancellationTokenSource?.Cancel();
-      cancellationTokenSource = new CancellationTokenSource();
-
-      var result = await DowloadImage(webClient, new AlbumCover()
+      using (var webClient = new WebClient())
       {
-        Url = CoverUrlToDownload
-      });
+        cancellationTokenSource?.Cancel();
+        cancellationTokenSource = new CancellationTokenSource();
 
-      if (result)
-      {
-        DownloadedProcessValue = 100;
+        var result = await DowloadImage(webClient, new AlbumCover()
+        {
+          Url = CoverUrlToDownload
+        });
+
+        if (result)
+        {
+          DownloadedProcessValue = 100;
+        }
       }
     }
 
@@ -393,6 +395,9 @@ namespace VPlayer.Home.ViewModels.Albums
 
         i.Save(finalPath, ImageFormat.Jpeg);
 
+        ms?.Dispose();
+        i?.Dispose();
+
         return finalPath;
       });
     }
@@ -473,18 +478,19 @@ namespace VPlayer.Home.ViewModels.Albums
         {
 
           await semaphore.WaitAsync();
-          var client = new WebClient();
-
           try
           {
-            var result = await DowloadImage(client, cover);
-
-            if (result)
+            using (var client = new WebClient())
             {
-              Application.Current?.Dispatcher?.Invoke(() =>
+              var result = await DowloadImage(client, cover);
+
+              if (result)
               {
-                DownloadedProcessValue = (double)(AlbumCovers.Count * 100) / FoundConvers;
-              });
+                Application.Current?.Dispatcher?.Invoke(() =>
+                {
+                  DownloadedProcessValue = (double)(AlbumCovers.Count * 100) / FoundConvers;
+                });
+              }
             }
           }
           catch (WebException ex) when (ex.Status == WebExceptionStatus.RequestCanceled)
@@ -497,6 +503,7 @@ namespace VPlayer.Home.ViewModels.Albums
           }
           finally
           {
+
             semaphore.Release();
           }
         }
@@ -572,6 +579,13 @@ namespace VPlayer.Home.ViewModels.Albums
     protected void RequestReloadVirtulizedPlaylist()
     {
       int dueTime = 1500;
+
+      if (AlbumCovers.Count > 50)
+      {
+        dueTime = 5000;
+      }
+     
+
       lock (batton)
       {
         serialDisposable.Disposable = Observable.Timer(TimeSpan.FromMilliseconds(dueTime)).Subscribe((x) =>
@@ -584,6 +598,7 @@ namespace VPlayer.Home.ViewModels.Albums
         {
           ReloadVirtulizedPlaylist();
 
+          serialDisposable.Disposable?.Dispose();
           stopwatchReloadVirtulizedPlaylist = new Stopwatch();
           stopwatchReloadVirtulizedPlaylist.Start();
         }
@@ -603,6 +618,7 @@ namespace VPlayer.Home.ViewModels.Albums
         View = new VirtualList<AlbumCoverViewModel>(generator);
       });
 
+      GC.Collect();
 
     }
 

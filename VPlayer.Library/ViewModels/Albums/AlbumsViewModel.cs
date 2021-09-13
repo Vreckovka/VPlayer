@@ -91,10 +91,9 @@ namespace VPlayer.Home.ViewModels.Albums
 
     protected override void OnUpdateItemChange(Album model)
     {
-      var originalItem = LibraryCollection.Items.SingleOrDefault(x => x.ModelId == model.Id);
+      var originalItem = LibraryCollection.Items?.SingleOrDefault(x => x.ModelId == model.Id);
 
       base.OnUpdateItemChange(model);
-
 
       if (originalItem != null && originalItem.Model.Artist != null && model.Artist == null)
       {

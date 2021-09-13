@@ -139,7 +139,7 @@ namespace VPlayer.Home.ViewModels
         LibraryCollection.Update(model);
       });
 
-      var vm = LibraryCollection.Items.SingleOrDefault(x => x.ModelId == model.Id);
+      var vm = LibraryCollection.Items?.SingleOrDefault(x => x.ModelId == model.Id);
 
       if(vm != null)
       {

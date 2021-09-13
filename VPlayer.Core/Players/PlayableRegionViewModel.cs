@@ -1318,6 +1318,7 @@ namespace VPlayer.Core.ViewModels
         {
           ReloadVirtulizedPlaylist();
 
+          serialDisposable.Disposable?.Dispose();
           stopwatchReloadVirtulizedPlaylist = new Stopwatch();
           stopwatchReloadVirtulizedPlaylist.Start();
         }

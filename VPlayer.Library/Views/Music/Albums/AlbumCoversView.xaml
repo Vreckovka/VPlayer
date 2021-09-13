@@ -13,7 +13,108 @@
              d:DesignWidth="800"
              mc:Ignorable="d">
 
+  <UserControl.Resources>
+    <Style TargetType="{x:Type controls1:PlayableWrapPanelItem}">
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="controls1:PlayableWrapPanelItem">
+            <Border Margin="5"
+                    BorderBrush="{StaticResource 10_WhiteTransparentBrush}"
+                    BorderThickness="2.5"
+                    CornerRadius="5">
+              <Border.Effect>
+                <DropShadowEffect BlurRadius="10" ShadowDepth="5" />
+              </Border.Effect>
 
+              <Grid Name="A"
+                    Width="200"
+                    Height="235"
+                    Background="{StaticResource BackgroudBrush}">
+
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="*" />
+                  <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+
+                <Image Grid.Row="0"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Top"
+                       Source="{Binding Model.DownloadedCoverPath, ConverterParameter=200, Converter={library:CacheImageConverter}, IsAsync=True}" />
+
+                <Grid Grid.Row="0" Background="{StaticResource GlassGradient}" />
+
+
+
+                <controls1:PathButton HorizontalAlignment="Stretch"
+                                      VerticalAlignment="Stretch"
+                                      HorizontalContentAlignment="Center"
+                                      VerticalContentAlignment="Center"
+                                      Background="#85050505"
+                                      Command="{Binding RelativeSource={RelativeSource AncestorType=controls1:PlayableWrapPanel, Mode=FindAncestor}, Path=DataContext.SelectCover}"
+                                      CommandParameter="{Binding}"
+                                      CornerRadius="10"
+                                      FontSize="55"
+                                      IsChecked="{Binding IsSelected, Mode=OneWay}"
+                                      IsReadOnly="True">
+                  <controls1:PathButton.Style>
+                    <Style BasedOn="{StaticResource circle-check}" TargetType="controls1:PathButton">
+                      <Setter Property="Opacity" Value="0" />
+                      <Setter Property="ForegroundCheckedColor" Value="{StaticResource GreenColor}" />
+
+                      <Style.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                          <Setter Property="Opacity" Value="1" />
+                        </Trigger>
+
+                        <Trigger Property="IsMouseOver" Value="True">
+                          <Setter Property="Opacity" Value="1" />
+                        </Trigger>
+                      </Style.Triggers>
+                    </Style>
+                  </controls1:PathButton.Style>
+                </controls1:PathButton>
+
+
+
+                <Border Grid.Row="0"
+                        BorderBrush="{StaticResource BackgroudBrush}"
+                        BorderThickness="1"
+                        ToolTip="{Binding}">
+                  <Grid Name="GridParent"
+                        VerticalAlignment="Bottom"
+                        Background="{StaticResource BackgroudBrush}"
+                        ClipToBounds="True">
+
+
+                    <TextBlock HorizontalAlignment="Stretch"
+                               FontSize="15"
+                               Text="{Binding Model.SizeString}"
+                               TextAlignment="Center">
+                      <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                          <Setter Property="Foreground">
+                            <Setter.Value>
+                              <SolidColorBrush Opacity="0.5" Color="{StaticResource DefaultWhiteColor}" />
+                            </Setter.Value>
+                          </Setter>
+
+                          <Setter Property="Background">
+                            <Setter.Value>
+                              <SolidColorBrush Opacity="0.02" Color="{StaticResource DefaultWhiteColor}" />
+                            </Setter.Value>
+                          </Setter>
+                        </Style>
+                      </TextBlock.Style>
+                    </TextBlock>
+                  </Grid>
+                </Border>
+              </Grid>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </UserControl.Resources>
 
   <Grid Margin="10,0,1,0">
     <Grid.RowDefinitions>
@@ -121,148 +222,6 @@
 
     <controls1:PlayableWrapPanel Grid.Row="4"
                                  Margin="0,0"
-                                 ItemsSource="{Binding View, Mode=OneWay}">
-      <controls1:PlayableWrapPanel.ItemTemplate>
-        <DataTemplate>
-          <controls1:PlayableWrapPanelItem BottomText="{Binding Model.SizeString}" ImageThumbnail="{Binding Model.DownloadedCoverPath, Converter={library1:ImageLazyLoadingConverter}}">
-            <controls1:PlayableWrapPanelItem.Style>
-              <Style TargetType="{x:Type controls1:PlayableWrapPanelItem}">
-                <Setter Property="Template">
-                  <Setter.Value>
-                    <ControlTemplate TargetType="controls1:PlayableWrapPanelItem">
-                      <Border Margin="5"
-                              BorderBrush="{StaticResource 10_WhiteTransparentBrush}"
-                              BorderThickness="2.5"
-                              CornerRadius="5">
-                        <Border.Effect>
-                          <DropShadowEffect BlurRadius="10" ShadowDepth="5" />
-                        </Border.Effect>
-
-                        <Grid Name="A"
-                              Width="200"
-                              Height="235"
-                              Background="{StaticResource BackgroudBrush}">
-
-                          <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="auto" />
-                          </Grid.RowDefinitions>
-
-                          <Image Grid.Row="0"
-                                 HorizontalAlignment="Center"
-                                 VerticalAlignment="Top"
-                                 Source="{Binding ImageThumbnail, RelativeSource={RelativeSource AncestorType=controls1:PlayableWrapPanelItem, Mode=FindAncestor}, ConverterParameter=200, Converter={library:CacheImageConverter}, IsAsync=True}" />
-
-                          <Grid Grid.Row="0" Background="{StaticResource GlassGradient}" />
-
-
-
-                          <controls1:PathButton HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Stretch"
-                                                HorizontalContentAlignment="Center"
-                                                VerticalContentAlignment="Center"
-                                                Background="#85050505"
-                                                Command="{Binding RelativeSource={RelativeSource AncestorType=controls1:PlayableWrapPanel, Mode=FindAncestor}, Path=DataContext.SelectCover}"
-                                                CommandParameter="{Binding}"
-                                                CornerRadius="10"
-                                                FontSize="55"
-                                                IsChecked="{Binding IsSelected, Mode=OneWay}"
-                                                IsReadOnly="True"
-                                                ToolTip="SAVE cover and set as DEFAULT">
-                            <controls1:PathButton.Style>
-                              <Style BasedOn="{StaticResource circle-check}" TargetType="controls1:PathButton">
-                                <Setter Property="Opacity" Value="0" />
-                                <Setter Property="ForegroundCheckedColor" Value="{StaticResource GreenColor}" />
-
-                                <Style.Triggers>
-                                  <Trigger Property="IsChecked" Value="True">
-                                    <Setter Property="Opacity" Value="1" />
-                                  </Trigger>
-
-                                  <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Opacity" Value="1" />
-                                  </Trigger>
-                                </Style.Triggers>
-                              </Style>
-                            </controls1:PathButton.Style>
-                          </controls1:PathButton>
-
-
-
-                          <Border Grid.Row="0"
-                                  BorderBrush="{StaticResource BackgroudBrush}"
-                                  BorderThickness="1">
-                            <Grid Name="GridParent"
-                                  VerticalAlignment="Bottom"
-                                  Background="{StaticResource BackgroudBrush}"
-                                  ClipToBounds="True">
-                              <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                              </Grid.RowDefinitions>
-
-                              <TextBlock Name="NameTxt"
-                                         Grid.Row="0"
-                                         FontSize="20"
-                                         Text="{TemplateBinding HeaderText}">
-                                <TextBlock.Style>
-                                  <Style TargetType="TextBlock">
-                                    <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="VerticalAlignment" Value="Top" />
-                                    <Setter Property="HorizontalAlignment" Value="Center" />
-                                    <Style.Triggers>
-                                      <DataTrigger Value="True">
-                                        <DataTrigger.Binding>
-                                          <MultiBinding Converter="{library:IsBiggerConverter}">
-                                            <Binding ElementName="NameTxt" Path="ActualWidth" />
-                                            <Binding ElementName="GridParent" Path="ActualWidth" />
-                                          </MultiBinding>
-                                        </DataTrigger.Binding>
-                                        <Setter Property="HorizontalAlignment" Value="Left" />
-                                      </DataTrigger>
-                                    </Style.Triggers>
-                                  </Style>
-                                </TextBlock.Style>
-                                <b:Interaction.Behaviors>
-                                  <text:PanningTextWithFontSizeBehavior BiggerFontSize="25"
-                                                                        Container="{Binding ElementName=A}"
-                                                                        IsMouseOverRelativeToContainer="True" />
-                                </b:Interaction.Behaviors>
-                              </TextBlock>
-
-                              <TextBlock Grid.Row="1"
-                                         HorizontalAlignment="Stretch"
-                                         FontSize="15"
-                                         Text="{TemplateBinding BottomText}"
-                                         TextAlignment="Center">
-                                <TextBlock.Style>
-                                  <Style TargetType="TextBlock">
-                                    <Setter Property="Foreground">
-                                      <Setter.Value>
-                                        <SolidColorBrush Opacity="0.5" Color="{StaticResource DefaultWhiteColor}" />
-                                      </Setter.Value>
-                                    </Setter>
-
-                                    <Setter Property="Background">
-                                      <Setter.Value>
-                                        <SolidColorBrush Opacity="0.02" Color="{StaticResource DefaultWhiteColor}" />
-                                      </Setter.Value>
-                                    </Setter>
-                                  </Style>
-                                </TextBlock.Style>
-                              </TextBlock>
-                            </Grid>
-                          </Border>
-                        </Grid>
-                      </Border>
-                    </ControlTemplate>
-                  </Setter.Value>
-                </Setter>
-              </Style>
-            </controls1:PlayableWrapPanelItem.Style>
-          </controls1:PlayableWrapPanelItem>
-        </DataTemplate>
-      </controls1:PlayableWrapPanel.ItemTemplate>
-    </controls1:PlayableWrapPanel>
+                                 ItemsSource="{Binding View, Mode=OneWay}" />
   </Grid>
 </UserControl>

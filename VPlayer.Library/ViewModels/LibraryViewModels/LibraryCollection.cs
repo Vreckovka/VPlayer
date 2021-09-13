@@ -274,6 +274,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
         {
           Recreate();
 
+          serialDisposable.Disposable?.Dispose();
           stopwatchReloadVirtulizedPlaylist = new Stopwatch();
           stopwatchReloadVirtulizedPlaylist.Start();
         }

@@ -78,7 +78,7 @@ namespace VPlayer.PCloud.ViewModels
     {
       var folders = await cloudService.GetFoldersAsync(long.Parse(Model.Indentificator));
 
-      return folders.Select(x => new FolderInfo()
+      return folders?.Select(x => new FolderInfo()
       {
         Indentificator = x.id.ToString(),
         Name = x.name,

@@ -39,7 +39,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
     {
       if (!wasPCloudInitilized)
       {
-        artistsFolders = (await cloudService.GetFoldersAsync(lyricsFolderId)).ToList();
+        artistsFolders = (await cloudService.GetFoldersAsync(lyricsFolderId))?.ToList();
 
         if (artistsFolders != null)
         {
@@ -66,7 +66,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
         if (await InitilizePCloud())
         {
-          var artist = artistsFolders.SingleOrDefault(x => GetNormalizedName(x.name) == GetNormalizedName(lRCFile.Artist));
+          var artist = artistsFolders?.SingleOrDefault(x => GetNormalizedName(x.name) == GetNormalizedName(lRCFile.Artist));
 
           if (artist != null)
           {
