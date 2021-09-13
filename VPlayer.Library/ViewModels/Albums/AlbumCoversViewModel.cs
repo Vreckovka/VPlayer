@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Logger;
 using VCore;
+using VCore.ItemsCollections.VirtualList;
+using VCore.ItemsCollections.VirtualList.VirtualLists;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Helpers;
 using VCore.ViewModels;
@@ -36,7 +41,7 @@ namespace VPlayer.Home.ViewModels.Albums
     private readonly IStatusManager statusManager;
     private readonly ILogger logger;
     private CancellationTokenSource cancellationTokenSource;
-    private string path;
+    private string tmpFolderPath;
 
     #endregion Fields
 
@@ -58,16 +63,37 @@ namespace VPlayer.Home.ViewModels.Albums
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
       RegionName = regionName;
+
+      tmpFolderPath = Path.Combine(AudioInfoDownloader.GetDefaultPicturesPath() + "\\covers_tmp");
     }
 
     #endregion Constructors
 
     #region Properties
 
-    public ObservableCollection<AlbumCoverViewModel> AlbumCovers { get; set; } = new ObservableCollection<AlbumCoverViewModel>();
+    private ObservableCollection<AlbumCoverViewModel> AlbumCovers { get; set; } = new ObservableCollection<AlbumCoverViewModel>();
+
     public override bool ContainsNestedRegions => false;
     public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
 
+    #region View
+
+    private VirtualList<AlbumCoverViewModel> view;
+
+    public VirtualList<AlbumCoverViewModel> View
+    {
+      get { return view; }
+      set
+      {
+        if (value != view)
+        {
+          view = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     #region DownloadedProcessValue
 
@@ -252,9 +278,8 @@ namespace VPlayer.Home.ViewModels.Albums
 
     private async void OnDownloadFromUrl()
     {
-      DownloadedProcessValue = 0;
+      ResetViewModel();
       FoundConvers = 1;
-      AlbumCovers.Clear();
 
       var webClient = new WebClient();
       cancellationTokenSource?.Cancel();
@@ -293,10 +318,7 @@ namespace VPlayer.Home.ViewModels.Albums
 
     private async void OnFindCovers()
     {
-      FoundConvers = 0;
-      DownloadedProcessValue = 0;
-      AlbumCovers.Clear();
-      IsDownloading = true;
+      ResetViewModel();
 
       cancellationTokenSource?.Cancel();
       cancellationTokenSource = new CancellationTokenSource();
@@ -332,12 +354,45 @@ namespace VPlayer.Home.ViewModels.Albums
     {
       base.Initialize();
 
-      path = albumViewModel.Model.AlbumFrontCoverFilePath;
-
       audioInfoDownloader.CoversDownloaded += Instance_CoversDownloaded;
     }
 
     #endregion
+
+    private void ResetViewModel()
+    {
+      FoundConvers = 0;
+      DownloadedProcessValue = 0;
+      AlbumCovers.Clear();
+      RequestReloadVirtulizedPlaylist();
+      IsDownloading = true;
+      ClearTmpFolder();
+    }
+
+    private void ClearTmpFolder()
+    {
+      if (Directory.Exists(tmpFolderPath))
+      {
+        Directory.Delete(tmpFolderPath, true);
+      }
+    }
+
+    private string SaveCover(byte[] data)
+    {
+      MemoryStream ms = new MemoryStream(data);
+      Image i = Image.FromStream(ms);
+
+      var finalPath = tmpFolderPath + "\\" + Guid.NewGuid() + ".jpg";
+
+      finalPath.EnsureDirectoryExists();
+
+      if (File.Exists(finalPath))
+        File.Delete(finalPath);
+
+      i.Save(finalPath, ImageFormat.Jpeg);
+
+      return finalPath;
+    }
 
     #region SaveImage
 
@@ -345,7 +400,7 @@ namespace VPlayer.Home.ViewModels.Albums
     {
       return Task.Run(() =>
       {
-        MemoryStream ms = new MemoryStream(albumCover.Model.DownloadedCover);
+        MemoryStream ms = new MemoryStream(File.ReadAllBytes(albumCover.Model.DownloadedCoverPath));
         Image i = Image.FromStream(ms);
 
         var finalPath = albumViewModel.Model.AlbumFrontCoverFilePath;
@@ -368,7 +423,7 @@ namespace VPlayer.Home.ViewModels.Albums
 
         storage.UpdateEntityAsync(albumViewModel.Model);
 
-        
+
 
         return finalPath;
       });
@@ -463,12 +518,13 @@ namespace VPlayer.Home.ViewModels.Albums
         {
           Application.Current?.Dispatcher?.Invoke(() =>
           {
-            cover.DownloadedCover = downloadedCover;
+            cover.DownloadedCoverPath = SaveCover(downloadedCover);
             cover.Size = downloadedCover.Length;
 
             var vm = new AlbumCoverViewModel(cover);
 
             AlbumCovers.Add(vm);
+            RequestReloadVirtulizedPlaylist();
 
             if (albumViewModel?.Model?.AlbumFrontCoverURI == cover.Url && !string.IsNullOrEmpty(cover.Url))
             {
@@ -501,6 +557,59 @@ namespace VPlayer.Home.ViewModels.Albums
       return RegionNames.HomeContentRegion;
     }
     #endregion
+
+    #region RequestReloadVirtulizedPlaylist
+
+    private Stopwatch stopwatchReloadVirtulizedPlaylist;
+    private object batton = new object();
+    private SerialDisposable serialDisposable = new SerialDisposable();
+
+    protected void RequestReloadVirtulizedPlaylist()
+    {
+      int dueTime = 1500;
+      lock (batton)
+      {
+        serialDisposable.Disposable = Observable.Timer(TimeSpan.FromMilliseconds(dueTime)).Subscribe((x) =>
+        {
+          stopwatchReloadVirtulizedPlaylist = null;
+          ReloadVirtulizedPlaylist();
+        });
+
+        if (stopwatchReloadVirtulizedPlaylist == null || stopwatchReloadVirtulizedPlaylist.ElapsedMilliseconds > dueTime)
+        {
+          ReloadVirtulizedPlaylist();
+
+          stopwatchReloadVirtulizedPlaylist = new Stopwatch();
+          stopwatchReloadVirtulizedPlaylist.Start();
+        }
+      }
+    }
+
+    #endregion
+
+    #region ReloadVirtulizedPlaylist
+
+    private void ReloadVirtulizedPlaylist()
+    {
+      var generator = new ItemsGenerator<AlbumCoverViewModel>(AlbumCovers.OrderByDescending(x => x.Model.Size), 15);
+
+      Application.Current?.Dispatcher?.Invoke(() =>
+      {
+        View = new VirtualList<AlbumCoverViewModel>(generator);
+      });
+
+
+    }
+
+    #endregion
+
+
+    public override void Dispose()
+    {
+      base.Dispose();
+
+      ClearTmpFolder();
+    }
 
     #endregion
   }

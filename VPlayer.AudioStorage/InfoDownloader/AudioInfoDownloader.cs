@@ -676,9 +676,14 @@ namespace VPlayer.AudioStorage.InfoDownloader
         statusMessage.Message = $"Downloading cover ({release.Title})";
         statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
 
-        byte[] albumCoverBlob = await GetAlbumFrontConverBLOB(release.Id, albumCoverUrl);
+        var coverPath = GetAlbumCoverImagePath(album);
 
-        var coverPath = SaveAlbumCover(album, albumCoverBlob);
+        if (!File.Exists(coverPath))
+        {
+          byte[] albumCoverBlob = await GetAlbumFrontConverBLOB(release.Id, albumCoverUrl);
+
+          coverPath = SaveAlbumCover(album, albumCoverBlob);
+        }
 
         albumName = release.Title;
 

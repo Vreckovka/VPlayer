@@ -578,6 +578,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
                   });
 
                   songInPlayListViewModel.RaiseNotifyPropertyChanged(nameof(SoundItemFilePlaylist.Name));
+                  songInPlayListViewModel.RaiseNotifyPropertyChanged(nameof(SongInPlayListViewModel.AlbumViewModel));
+                  songInPlayListViewModel.RaiseNotifyPropertyChanged(nameof(SongInPlayListViewModel.ArtistViewModel));
+                  albumDetail?.RaiseCanExecuteChanged();
                 }
 
                 catch (TaskCanceledException)

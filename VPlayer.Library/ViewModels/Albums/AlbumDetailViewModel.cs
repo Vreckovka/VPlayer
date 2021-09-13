@@ -211,6 +211,8 @@ namespace VPlayer.Home.ViewModels.Albums
 
     #endregion
 
+    #region LoadEntity
+
     protected override Task LoadEntity()
     {
       return Task.Run(() =>
@@ -234,6 +236,10 @@ namespace VPlayer.Home.ViewModels.Albums
       });
     }
 
+
+    #endregion
+
+    #region ChangeIsAutomaticLyricsFindEnabledForAllSongs
 
     private void ChangeIsAutomaticLyricsFindEnabledForAllSongs(bool value)
     {
@@ -264,5 +270,7 @@ namespace VPlayer.Home.ViewModels.Albums
         }
       }
     }
+
+    #endregion
   }
 }

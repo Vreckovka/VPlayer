@@ -1297,7 +1297,7 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region ReloadVirtulizedPlaylist
+    #region RequestReloadVirtulizedPlaylist
 
     private Stopwatch stopwatchReloadVirtulizedPlaylist;
     private object batton = new object();

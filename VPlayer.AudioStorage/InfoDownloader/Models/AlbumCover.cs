@@ -36,7 +36,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Models
   {
     #region Properties
 
-    public byte[] DownloadedCover { get; set; }
+    public string DownloadedCoverPath { get; set; }
     public string Mbid { get; set; }
     public long Size { get; set; }
 
