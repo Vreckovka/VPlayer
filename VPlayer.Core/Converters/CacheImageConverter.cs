@@ -14,6 +14,9 @@ namespace VPlayer.Library
 {
   public class CacheImageConverter : MarkupExtension, IValueConverter
   {
+    public int? DecodeWidth { get; set; }
+    public int? DecodeHeight { get; set; }
+
     public static Dictionary<string, List<CacheImageConverter>> AllConverters = new Dictionary<string, List<CacheImageConverter>>();
     string lastLoadedImagePath;
     BitmapImage lastLoadedImage;
@@ -66,9 +69,19 @@ namespace VPlayer.Library
       bitmapImage.BeginInit();
       bitmapImage.StreamSource = new FileStream(path, FileMode.Open, FileAccess.Read);
 
-      if (parameter is int pixelWidth)
+      if (int.TryParse(parameter?.ToString(), out var pixelSize) || DecodeWidth != null || DecodeHeight != null)
       {
-        bitmapImage.DecodePixelWidth = pixelWidth;
+        if (pixelSize > 0)
+          bitmapImage.DecodePixelWidth = pixelSize;
+
+        if (pixelSize > 0)
+          bitmapImage.DecodePixelHeight = pixelSize;
+
+        if(DecodeWidth != null)
+          bitmapImage.DecodePixelWidth = DecodeWidth.Value;
+
+        if(DecodeHeight != null)
+          bitmapImage.DecodePixelHeight = DecodeHeight.Value;
       }
 
       bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
@@ -91,7 +104,7 @@ namespace VPlayer.Library
     {
       if (AllConverters.TryGetValue(imagePath, out var converters))
       {
-        foreach(var converter in converters)
+        foreach (var converter in converters)
         {
           converter.lastLoadedImage = null;
           converter.lastLoadedImagePath = null;
@@ -105,7 +118,7 @@ namespace VPlayer.Library
 
     private void AddConverterToDictionary()
     {
-     
+
     }
 
     public object ConvertBack(

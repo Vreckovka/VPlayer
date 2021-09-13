@@ -17,6 +17,10 @@
 
   <Duration x:Key="AnimationDuration">0:0:0:0.15</Duration>
 
+  <library:CacheImageConverter x:Key="CacheImageConverter"
+                               DecodeHeight="250"
+                               DecodeWidth="250" />
+
   <Style x:Key="PlayableWrapPanelItemButtons"
          BasedOn="{StaticResource BorderlessButtonStyle}"
          TargetType="Button">
@@ -129,7 +133,7 @@
     <Setter Property="HeaderText" Value="{Binding Name}" />
     <Setter Property="ImageThumbnail" Value="{Binding ImageThumbnail, Converter={library:CacheImageConverter}, ConverterParameter=250, IsAsync=True}" />
     <Setter Property="IsPlaying" Value="{Binding IsPlaying}" />
-   
+
 
     <Setter Property="Template">
       <Setter.Value>
@@ -157,7 +161,7 @@
                      HorizontalAlignment="Center"
                      VerticalAlignment="Top"
                      Source="{TemplateBinding ImageThumbnail,
-                                              Converter={library:CacheImageConverter},
+                                              Converter={StaticResource CacheImageConverter},
                                               ConverterParameter=250}"
                      Stretch="UniformToFill" />
 

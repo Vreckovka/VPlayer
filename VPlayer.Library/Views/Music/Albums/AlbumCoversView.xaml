@@ -14,6 +14,10 @@
              mc:Ignorable="d">
 
   <UserControl.Resources>
+    <library:CacheImageConverter x:Key="CacheImageConverter"
+                                 DecodeHeight="250"
+                                 DecodeWidth="250" />
+
     <Style TargetType="{x:Type controls1:PlayableWrapPanelItem}">
       <Setter Property="Template">
         <Setter.Value>
@@ -39,7 +43,7 @@
                 <Image Grid.Row="0"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Top"
-                       Source="{Binding Model.DownloadedCoverPath, ConverterParameter=200, Converter={library:CacheImageConverter}, IsAsync=True}" />
+                       Source="{Binding Model.DownloadedCoverPath, Converter={StaticResource CacheImageConverter}, IsAsync=True}" />
 
                 <Grid Grid.Row="0" Background="{StaticResource GlassGradient}" />
 
