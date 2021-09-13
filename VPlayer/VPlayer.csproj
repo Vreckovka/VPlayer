@@ -9,11 +9,15 @@
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<ContentWithTargetPath Include="$(ProjectDir)\bin\x86\Debug\netcoreapp3.1\chromedriver.exe" CopyToOutputDirectory="PreserveNewest" TargetPath="chromedriver.exe" />
+		<ContentWithTargetPath Include="$(ProjectDir)\bin\Debug\netcoreapp3.1\chromedriver.exe" CopyToOutputDirectory="PreserveNewest" TargetPath="chromedriver.exe" />
 	</ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <ContentWithTargetPath Include="$(ProjectDir)\bin\x86\Debug\netcoreapp3.1\chromedriver.exe" CopyToOutputDirectory="PreserveNewest" TargetPath="chromedriver.exe" />
+    <ContentWithTargetPath Include="$(ProjectDir)\bin\Debug\netcoreapp3.1\chromedriver.exe" CopyToOutputDirectory="PreserveNewest" TargetPath="chromedriver.exe" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ContentWithTargetPath Include="$(ProjectDir)\bin\Debug\netcoreapp3.1\chromedriver.exe" CopyToOutputDirectory="PreserveNewest" TargetPath="chromedriver.exe" />
   </ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
