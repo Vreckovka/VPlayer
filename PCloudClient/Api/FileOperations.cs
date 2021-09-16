@@ -375,26 +375,27 @@ namespace PCloud
 
     #endregion
 
-    #region GetFilePublicLink
+    #region GetFileLink
 
-    public static async Task<string> GetFilePublicLink(this Connection conn, long id, DateTime? expire = null)
+    public static async Task<string> GetFileLink(this Connection conn, long id, DateTime? expire = null)
     {
       string link = null;
 
       if (expire == null)
       {
-        expire = DateTime.MaxValue;
+        expire = new DateTime(2022,1,1);
       }
 
       var req = conn.newRequest("getfilelink");
       req.add("fileid", id);
-      req.add("expire", expire.ToString());
       req.unixTimestamps();
 
       var response = await conn.send(req);
 
       var host = ((object[])response.dict["hosts"])[0].ToString();
       var path = response.dict["path"];
+
+      var expires = response.dict["expires"];
 
       link = "http://" + host + path;
 

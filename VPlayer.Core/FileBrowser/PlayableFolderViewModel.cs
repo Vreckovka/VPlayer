@@ -187,7 +187,7 @@ namespace VPlayer.Core.FileBrowser
             {
               var sourceModel = item.Model;
 
-              if (string.IsNullOrEmpty(sourceModel.Source) && sourceModel != null)
+              //if (string.IsNullOrEmpty(sourceModel.Source) && sourceModel != null)
               {
                 IsLoading = true;
                 cancellationTokenSource?.Token.ThrowIfCancellationRequested();

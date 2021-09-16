@@ -3,13 +3,16 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using PCloud;
 using PCloudClient.Domain;
 using VCore;
 using VPLayer.Domain.Contracts.CloudService.Providers;
+using VPlayer.PCloud.JsonResponses;
 using FileInfo = PCloudClient.Domain.FileInfo;
 
 namespace VPlayer.PCloud
@@ -102,9 +105,40 @@ namespace VPlayer.PCloud
 
     #endregion
 
-    #region GetPublicLink
+    private async Task<GetFilePublicLinkResponse> GetFilePublicLink(Connection conn, long id)
+    {
 
-    public async Task<string> GetPublicLink(long id)
+      try
+      {
+        await conn.login(credentials.Email, credentials.Password);
+
+        var token = conn.authToken;
+        var methodName = "getfilepublink";
+        
+        var request = $"https://{host}/{methodName}?auth={token}&fileid={id}";
+
+        HttpClient client = new HttpClient();
+        HttpResponseMessage responseMessage = await client.GetAsync(request);
+        string responseBody = await responseMessage.Content.ReadAsStringAsync();
+
+        return JsonSerializer.Deserialize<GetFilePublicLinkResponse>(responseBody);
+      }
+      catch (Exception ex)
+      {
+
+      }
+      finally
+      {
+        await Logout(conn);
+      }
+
+      return null;
+    }
+
+
+    #region GetFileLink
+
+    public async Task<string> GetFileLink(long id)
     {
       if (credentials != null)
       {
@@ -114,7 +148,23 @@ namespace VPlayer.PCloud
           {
             await conn.login(credentials.Email, credentials.Password);
 
-            return await conn.GetFilePublicLink(id);
+            //var publicLink = await GetFilePublicLink(conn, id);
+
+            //var token = conn.authToken;
+            //var methodName = "getpubaudiolink";
+            //var expires = ((DateTimeOffset)new DateTime(2022,1,1)).ToUnixTimeSeconds();
+
+            //var request = $"https://{host}/{methodName}?auth={token}&code={publicLink.code}&expires={expires}";
+
+            //HttpClient client = new HttpClient();
+            //HttpResponseMessage response = await client.GetAsync(request);
+            //string responseBody = await response.Content.ReadAsStringAsync();
+
+            return await conn.GetFileLink(id);
+          }
+          catch (Exception ex)
+          {
+
           }
           finally
           {
@@ -385,6 +435,8 @@ namespace VPlayer.PCloud
 
     #endregion
 
+    #region ReadFile
+
     public async Task<MemoryStream> ReadFile(long id)
     {
       if (credentials != null)
@@ -413,6 +465,7 @@ namespace VPlayer.PCloud
       return null;
     }
 
+    #endregion
 
     #region Logout
 

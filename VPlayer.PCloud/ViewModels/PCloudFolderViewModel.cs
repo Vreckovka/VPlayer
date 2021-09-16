@@ -64,7 +64,7 @@ namespace VPlayer.PCloud.ViewModels
 
       if (type == FileType.Video || type == FileType.Sound)
       {
-        fileInfo.Source = await cloudService.GetPublicLink(long.Parse(fileInfo.Indentificator));
+        fileInfo.Source = await cloudService.GetFileLink(long.Parse(fileInfo.Indentificator));
       }
 
       return fileInfo;
