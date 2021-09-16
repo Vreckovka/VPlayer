@@ -377,16 +377,11 @@ namespace PCloud
 
     #region GetFileLink
 
-    public static async Task<string> GetFileLink(this Connection conn, long id, DateTime? expire = null)
+    public static async Task<string> GetFileLink(this Connection conn, long id)
     {
       string link = null;
 
-      if (expire == null)
-      {
-        expire = new DateTime(2022,1,1);
-      }
-
-      var req = conn.newRequest("getfilelink");
+      var req = conn.newRequest("getaudiolink");
       req.add("fileid", id);
       req.unixTimestamps();
 

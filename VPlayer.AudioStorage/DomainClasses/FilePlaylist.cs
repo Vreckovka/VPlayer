@@ -26,11 +26,6 @@ namespace VPlayer.AudioStorage.DomainClasses
     }
   }
 
-  public enum PlaylistType
-  {
-    Stored,
-    Filebrowser
-  }
 
   public class FilePlaylist<TPlaylistItems> : Playlist<TPlaylistItems>, IFilePlaylist<TPlaylistItems>
   {

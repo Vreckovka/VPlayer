@@ -1,4 +1,5 @@
-﻿using System.Data.Common;
+﻿using System.Configuration;
+using System.Data.Common;
 using System.Reflection;
 using Ninject;
 using VCore.Modularity.NinjectModules;
@@ -6,10 +7,12 @@ using VCore.Standard.Modularity.NinjectModules;
 using VCore.Standard.Providers;
 using VPlayer.Core.Modularity.Ninject;
 using VPlayer.Core.Providers;
+using VPLayer.Domain;
 using VPLayer.Domain.Contracts.CloudService.Providers;
 using VPlayer.IPTV.Modularity;
 using VPlayer.PCloud;
 using VPlayer.Player.ViewModels;
+using VPlayer.Providers;
 using VPlayer.UPnP.Modularity;
 using VPlayer.ViewModels;
 using VPlayer.WindowsPlayer.Modularity.NinjectModule;
@@ -37,9 +40,14 @@ namespace VPlayer.Modularity.NinjectModules
       {
         Kernel.Bind<IVPlayerInfoProvider>().To<VPlayerInfoProvider>();
 
-        Kernel.Bind<ICloudService>().To<CloudService>()
+        Kernel.Bind<IVPlayerCloudService>().To<VPlayerCloudService>()
           .InSingletonScope()
-          .WithConstructorArgument(System.Configuration.ConfigurationManager.AppSettings["PCloudPath"])
+          .WithConstructorArgument(ConfigurationManager.AppSettings["PCloudPath"])
+          .OnActivation(x => x.Initilize()); ;
+
+        Kernel.Bind<ICloudService>().To<VPlayerCloudService>()
+          .InSingletonScope()
+          .WithConstructorArgument(ConfigurationManager.AppSettings["PCloudPath"])
           .OnActivation(x => x.Initilize());
 
         Kernel.Load<VPlayerCoreModule>();
@@ -59,6 +67,7 @@ namespace VPlayer.Modularity.NinjectModules
       base.RegisterViewModels();
 
       Kernel.Bind<MainWindowViewModel>().ToSelf().InSingletonScope();
+     
     }
   }
 }

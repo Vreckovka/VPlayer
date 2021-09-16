@@ -92,6 +92,7 @@ namespace PCloud
           stringR += "\"" + item.Value.ToString()
                             .Replace("\\", "\\\\")
                             .Replace("\n", "\\n")
+                            .Replace("\"", "\\\"")
                             .Replace("\r", "\\r")
                             .Replace("\t", "\\t")
                             .Replace("\b", "\\b")

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore.Standard.Factories.ViewModels;
@@ -50,17 +51,20 @@ namespace VPlayer.Core.ViewModels.Albums
 
     #region GetSongsToPlay
 
-    public override IEnumerable<SongInPlayListViewModel> GetItemsToPlay()
+    public override Task<IEnumerable<SongInPlayListViewModel>> GetItemsToPlay()
     {
-      var songs = storage.GetRepository<Song>()
-        .Include(x => x.ItemModel)
-        .ThenInclude(x => x.FileInfo)
-        .Include(x => x.Album)
-        .Where(x => x.Album.Id == Model.Id).ToList();
+      return Task.Run(() =>
+      {
+        var songs = storage.GetRepository<Song>()
+          .Include(x => x.ItemModel)
+          .ThenInclude(x => x.FileInfo)
+          .Include(x => x.Album)
+          .Where(x => x.Album.Id == Model.Id).ToList();
 
-      var playListSong = songs.Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x));
+        var playListSong = songs.Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x));
 
-      return playListSong;
+        return playListSong;
+      });
     }
 
     #endregion

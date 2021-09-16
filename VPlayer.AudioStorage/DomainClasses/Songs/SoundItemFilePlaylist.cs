@@ -2,9 +2,15 @@
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
+  public enum PlaylistType
+  {
+    Local,
+    Cloud
+  }
+
   public class SoundItemFilePlaylist : FilePlaylist<PlaylistSoundItem>
   {
-
+    public PlaylistType PlaylistType { get; set; }
   }
 }
 

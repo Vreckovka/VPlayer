@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
@@ -33,38 +34,42 @@ namespace VPlayer.Home.ViewModels.IPTV
 
     #region GetItemsToPlay
 
-    public override IEnumerable<TvItemInPlaylistItemViewModel> GetItemsToPlay()
+    public override Task<IEnumerable<TvItemInPlaylistItemViewModel>> GetItemsToPlay()
     {
-      var groups = storageManager.GetRepository<TvChannelGroup>().Include(x => x.TvChannelGroupItems).ThenInclude(x => x.TvChannel).ThenInclude(x => x.TvSource).Include(x => x.TvItem);
-
-      var items = storageManager.GetRepository<TvPlaylist>()
-        .Include(x => x.PlaylistItems)
-        .ThenInclude(x => x.ReferencedItem)
-        .SelectMany(x => x.PlaylistItems);
-
-      var list = new List<TvItemInPlaylistItemViewModel>();
-
-      foreach (var item in items)
+      return Task.Run(() =>
       {
-        var group = groups.SingleOrDefault(x => x.Id == item.ReferencedItem.Id);
+        var groups = storageManager.GetRepository<TvChannelGroup>().Include(x => x.TvChannelGroupItems).ThenInclude(x => x.TvChannel).ThenInclude(x => x.TvSource).Include(x => x.TvItem);
 
-        if (group != null)
+        var items = storageManager.GetRepository<TvPlaylist>()
+          .Include(x => x.PlaylistItems)
+          .ThenInclude(x => x.ReferencedItem)
+          .SelectMany(x => x.PlaylistItems);
+
+        var list = new List<TvItemInPlaylistItemViewModel>();
+
+        foreach (var item in items)
         {
-          var groupViewModel = viewModelsFactory.Create<TvChannelGroupViewModel>(group);
-          groupViewModel.Initialize();
+          var group = groups.SingleOrDefault(x => x.Id == item.ReferencedItem.Id);
 
-          foreach (var groupItemViewModel in groupViewModel.SubItems.ViewModels)
+          if (group != null)
           {
-            groupItemViewModel.Initialize();
+            var groupViewModel = viewModelsFactory.Create<TvChannelGroupViewModel>(group);
+            groupViewModel.Initialize();
+
+            foreach (var groupItemViewModel in groupViewModel.SubItems.ViewModels)
+            {
+              groupItemViewModel.Initialize();
+            }
+
+            groupViewModel.SelectedTvChannel.IsSelected = true;
+
+            list.Add(viewModelsFactory.CreateTvItemInPlaylistItemViewModel(groupViewModel.Model.TvItem, groupViewModel));
           }
-
-          groupViewModel.SelectedTvChannel.IsSelected = true;
-
-          list.Add(viewModelsFactory.CreateTvItemInPlaylistItemViewModel(groupViewModel.Model.TvItem, groupViewModel));
         }
-      }
 
-      return list;
+        return list.AsEnumerable();
+      });
+
     }
 
     #endregion

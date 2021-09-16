@@ -16,6 +16,7 @@ using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.ViewModels.TvShows;
+using VPLayer.Domain;
 using FileInfo = VCore.WPF.ViewModels.WindowsFiles.FileInfo;
 
 namespace VPlayer.Core.FileBrowser
@@ -61,7 +62,7 @@ namespace VPlayer.Core.FileBrowser
     }
 
     #endregion
-    
+
     #region Commands
 
     #region PlayButton
@@ -173,33 +174,30 @@ namespace VPlayer.Core.FileBrowser
 
           var playableFilesList = playableFiles.Concat(itemsInFolder).Where(x => x.FileType == FileType.Sound).ToList();
 
-          var soundItems = new List<SoundItem>();
+          isLoadedSubject.OnNext(true);
+          LoadingMessage = $" getting source for {playableFilesList.Count}";
 
-          int actaulIndex = 1;
-          LoadingMessage = $" getting source for {actaulIndex}/{playableFilesList.Count}";
+          var soundItems = storageManager.GetRepository<SoundItem>().Include(x => x.FileInfo)
+               .Where(x => playableFilesList.Select(y => y.Model.Indentificator)
+              .Contains(x.FileInfo.Indentificator)).ToList();
 
-          foreach (var item in playableFilesList)
+          await GetItemSources(soundItems.Select(x => x.FileInfo));
+
+          var soundItemsIds = soundItems.Select(y => y.FileInfo.Indentificator);
+
+          var notExisting = playableFilesList.Where(x => !soundItemsIds.Contains(x.Model.Indentificator)).ToList();
+
+          if (notExisting.Count > 0)
           {
-            var existing = storageManager.GetRepository<SoundItem>().Include(x => x.FileInfo)
-              .SingleOrDefault(x => x.FileInfo.Indentificator == item.Model.Indentificator);
+            var notInSources = await GetItemSources(notExisting.Select(x => x.Model));
 
-            if (existing == null)
+            foreach (var item in notInSources)
             {
-              var sourceModel = item.Model;
-
-              //if (string.IsNullOrEmpty(sourceModel.Source) && sourceModel != null)
+              var fileInfo = new SoundFileInfo(item.FullName, item.Source)
               {
-                IsLoading = true;
-                cancellationTokenSource?.Token.ThrowIfCancellationRequested();
-
-                sourceModel = await folderViewModel.GetItemSource(sourceModel);
-              }
-
-              var fileInfo = new SoundFileInfo(sourceModel.FullName, sourceModel.Source)
-              {
-                Length = sourceModel.Length,
-                Indentificator = sourceModel.Indentificator,
-                Name = sourceModel.Name,
+                Length = item.Length,
+                Indentificator = item.Indentificator,
+                Name = item.Name,
               };
 
               var soudItem = new SoundItem()
@@ -210,38 +208,16 @@ namespace VPlayer.Core.FileBrowser
               storageManager.StoreEntity(soudItem, out var stored);
 
               soundItems.Add(stored);
+
             }
-            else
-            {
-              if (string.IsNullOrEmpty(existing.FileInfo.Source) && existing.FileInfo != null)
-              {
-                cancellationTokenSource?.Token.ThrowIfCancellationRequested();
-
-                var result = await folderViewModel.GetItemSource(existing.FileInfo);
-
-                if (result?.Source != null)
-                {
-                  IsLoading = true;
-                  existing.FileInfo.Source = result.Source;
-
-                  await storageManager.UpdateEntityAsync(existing.FileInfo);
-                }
-              }
-
-              soundItems.Add(existing);
-            }
-
-            actaulIndex++;
-            LoadingMessage = $" getting source for {actaulIndex}/{playableFilesList.Count}";
           }
+
 
           var data = new PlayItemsEventData<SoundItemInPlaylistViewModel>(
             soundItems.Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x)), EventAction.Play, this);
 
           eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(data);
         }
-
-
       }
       catch (TaskCanceledException) { }
       catch (OperationCanceledException) { }
@@ -354,9 +330,9 @@ namespace VPlayer.Core.FileBrowser
 
     public virtual void OnLoadNewItem()
     {
-      
+
     }
- 
+
     #endregion
   }
 }

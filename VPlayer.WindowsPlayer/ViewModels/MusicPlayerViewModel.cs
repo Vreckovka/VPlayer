@@ -29,6 +29,7 @@ using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Core.ViewModels.Artists;
 using VPlayer.Core.ViewModels.TvShows;
+using VPLayer.Domain;
 using VPLayer.Domain.Contracts.CloudService.Providers;
 using VPlayer.PCloud.ViewModels;
 using VPlayer.Player.Views.WindowsPlayer;
@@ -51,7 +52,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private readonly IViewModelsFactory viewModelsFactory;
     private readonly IEventAggregator eventAggregator;
     private readonly AudioInfoDownloader audioInfoDownloader;
-    private readonly ICloudService cloudService;
+    private readonly IVPlayerCloudService cloudService;
     private readonly VLCPlayer vLcPlayer;
     private Dictionary<SongInPlayListViewModel, bool> playBookInCycle = new Dictionary<SongInPlayListViewModel, bool>();
 
@@ -68,7 +69,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       IStorageManager storageManager,
       AudioInfoDownloader audioInfoDownloader,
       UPnPManagerViewModel uPnPManagerViewModel,
-      ICloudService cloudService,
+      IVPlayerCloudService cloudService,
       ILogger logger,
       IWindowManager windowManager,
       VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, vLCPlayer)
@@ -466,7 +467,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
               string artistName = viewmodel?.Model?.FileInfo.Artist;
               string albumName = viewmodel?.Model?.FileInfo.Album;
 
-             
+
               if (artistName == null || albumName == null)
               {
                 if (long.TryParse(fileInfo.Indentificator, out var id))
@@ -497,7 +498,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
                   if (!string.IsNullOrEmpty(info?.Title))
                   {
-                    fileInfo.Name =  AudioInfoDownloader.GetClearName(info.Title);
+                    fileInfo.Name = AudioInfoDownloader.GetClearName(info.Title);
                   }
                 }
               }
@@ -867,14 +868,14 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
       }
 
-     
+
     }
 
     #endregion
 
     #region BeforePlayEvent
 
-    protected override void BeforePlayEvent(PlayItemsEventData<SoundItemInPlaylistViewModel> data)
+    protected override async Task BeforePlayEvent(PlayItemsEventData<SoundItemInPlaylistViewModel> data)
     {
       var songs = data.Items.OfType<SongInPlayListViewModel>().ToList();
 
@@ -925,9 +926,22 @@ namespace VPlayer.WindowsPlayer.ViewModels
           }
         }
       });
+
+      
     }
 
     #endregion
+
+
+    protected override void OnPlayPlaylist(PlayItemsEventData<SoundItemInPlaylistViewModel> data)
+    {
+      base.OnPlayPlaylist(data);
+
+      if (ActualSavedPlaylist.PlaylistType != PlaylistType.Cloud && data.Items.Select(x => x.Model.Source).Any(y => y.Contains("http")))
+      {
+        ActualSavedPlaylist.PlaylistType = PlaylistType.Cloud;
+      }
+    }
 
     #region OnPlayEvent
 
@@ -1036,7 +1050,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           .Where(x => x.AlbumViewModel != null)
           .Any(x => x.AlbumViewModel.ModelId == songInPlayListViewModel.AlbumViewModel.ModelId);
 
-        if (!anyAlbum && songInPlayListViewModel.AlbumViewModel != null)  
+        if (!anyAlbum && songInPlayListViewModel.AlbumViewModel != null)
         {
           songInPlayListViewModel.AlbumViewModel.IsInPlaylist = false;
         }

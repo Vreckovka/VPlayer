@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
@@ -72,23 +73,26 @@ namespace VPlayer.Core.ViewModels.TvShows
 
     #region GetItemsToPlay
 
-    public override IEnumerable<TvShowEpisodeInPlaylistViewModel> GetItemsToPlay()
+    public override Task<IEnumerable<TvShowEpisodeInPlaylistViewModel>> GetItemsToPlay()
     {
-      var tvShow = storage
-        .GetRepository<TvShow>()
-        .Include(x => x.Seasons).ThenInclude(x => x.Episodes).ThenInclude(x => x.VideoItem).SingleOrDefault(x => x.Id == ModelId);
-
-      if (tvShow != null)
+      return Task.Run(() =>
       {
-        var tvShowEpisodes = tvShow.Seasons.OrderBy(x => x.SeasonNumber)
-          .Select(x => x.Episodes.OrderBy(x => x.EpisodeNumber).Select(y => viewModelsFactory.CreateTvShowEpisodeInPlayList(y.VideoItem, y)))
-          .SelectMany(x => x);
+        var tvShow = storage
+          .GetRepository<TvShow>()
+          .Include(x => x.Seasons).ThenInclude(x => x.Episodes).ThenInclude(x => x.VideoItem).SingleOrDefault(x => x.Id == ModelId);
+
+        if (tvShow != null)
+        {
+          var tvShowEpisodes = tvShow.Seasons.OrderBy(x => x.SeasonNumber)
+            .Select(x => x.Episodes.OrderBy(x => x.EpisodeNumber).Select(y => viewModelsFactory.CreateTvShowEpisodeInPlayList(y.VideoItem, y)))
+            .SelectMany(x => x);
 
 
-        return tvShowEpisodes;
-      }
+          return tvShowEpisodes;
+        }
 
-      return null;
+        return null;
+      });
     }
 
     #endregion

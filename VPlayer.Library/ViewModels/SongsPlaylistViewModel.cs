@@ -10,18 +10,21 @@ using VCore.Standard.Factories.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
+using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.TvShows;
+using VPLayer.Domain;
 using VPlayer.Library.ViewModels;
 
 namespace VPlayer.Home.ViewModels
 {
   public class SongsPlaylistViewModel : FilePlaylistViewModel<SoundItemInPlaylistViewModel, SoundItemFilePlaylist, PlaylistSoundItem>
-{
+  {
     #region Fields
 
     private readonly IViewModelsFactory viewModelsFactory;
     private readonly SongPlaylistsViewModel songPlaylistsViewModel;
+    private readonly IVPlayerCloudService vPlayerCloudService;
     private readonly IStorageManager storageManager;
     private readonly ILogger logger;
 
@@ -34,11 +37,13 @@ namespace VPlayer.Home.ViewModels
       IEventAggregator eventAggregator,
       IViewModelsFactory viewModelsFactory,
       SongPlaylistsViewModel songPlaylistsViewModel,
-      IStorageManager storageManager,
+      IVPlayerCloudService vPlayerCloudService,
+        IStorageManager storageManager,
       ILogger logger) : base(model, eventAggregator, storageManager)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.songPlaylistsViewModel = songPlaylistsViewModel ?? throw new ArgumentNullException(nameof(songPlaylistsViewModel));
+      this.vPlayerCloudService = vPlayerCloudService ?? throw new ArgumentNullException(nameof(vPlayerCloudService));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -52,7 +57,7 @@ namespace VPlayer.Home.ViewModels
 
     #region GetItemsToPlay
 
-    public override IEnumerable<SoundItemInPlaylistViewModel> GetItemsToPlay()
+    public override async Task<IEnumerable<SoundItemInPlaylistViewModel>> GetItemsToPlay()
     {
       var playlist = storageManager.GetRepository<SoundItemFilePlaylist>()
         .Include(x => x.PlaylistItems)
@@ -63,7 +68,7 @@ namespace VPlayer.Home.ViewModels
 
       if (playlist != null)
       {
-        var playlistItems = playlist.PlaylistItems.OrderBy(x => x.OrderInPlaylist);
+        var playlistItems = playlist.PlaylistItems.OrderBy(x => x.OrderInPlaylist).ToList();
 
         var songsItems = storageManager.GetRepository<Song>()
           .Where(x => playlistItems.Select(y => y.IdReferencedItem).Contains(x.ItemModel.Id))
@@ -72,6 +77,14 @@ namespace VPlayer.Home.ViewModels
           .Include(x => x.ItemModel)
           .ThenInclude(x => x.FileInfo)
           .ToList();
+
+
+        if (playlist.PlaylistType == PlaylistType.Cloud || playlistItems.Select(x => x.ReferencedItem.Source).Any(y => y.Contains("http")))
+        {
+          var fileInfos = playlistItems.Select(x => x.ReferencedItem.FileInfo).ToList();
+
+          var result = await vPlayerCloudService.GetItemSources(fileInfos);
+        }
 
         if (songsItems.Count > 0)
         {
@@ -88,7 +101,7 @@ namespace VPlayer.Home.ViewModels
 
     #endregion
 
-    public override void PublishPlayEvent(IEnumerable<SoundItemInPlaylistViewModel> viewModels, EventAction eventAction )
+    public override void PublishPlayEvent(IEnumerable<SoundItemInPlaylistViewModel> viewModels, EventAction eventAction)
     {
       var e = new PlayItemsEventData<SoundItemInPlaylistViewModel>(viewModels, eventAction, this);
 
@@ -109,9 +122,9 @@ namespace VPlayer.Home.ViewModels
     {
       songPlaylistsViewModel.IsBusy = true;
 
-      Task.Run(() =>
+      Task.Run(async  () =>
       {
-        var data = GetItemsToPlay().ToList();
+        var data = (await GetItemsToPlay()).ToList();
 
         var e = new PlayItemsEventData<SoundItemInPlaylistViewModel>(data, action, IsShuffle, IsRepeating, Model.LastItemElapsedTime, Model);
 

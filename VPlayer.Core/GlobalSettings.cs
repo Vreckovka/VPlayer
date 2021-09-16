@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using VCore.WPF.ViewModels.WindowsFiles;
 
 namespace VPlayer.Core
 {
@@ -11,4 +14,6 @@ namespace VPlayer.Core
     public const string FileBrowserInitialDirectory = nameof(FileBrowserInitialDirectory);
     public const string CloudBrowserInitialDirectory =  nameof(CloudBrowserInitialDirectory);
   }
+
+ 
 }

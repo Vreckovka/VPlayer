@@ -19,7 +19,7 @@ namespace VPlayer.PCloud.JsonResponses
       public long fileid { get; set; }
       public int trackno { get; set; }
       public bool isshared { get; set; }
-      public long hash { get; set; }
+      public ulong hash { get; set; }
       public int comments { get; set; }
       public int category { get; set; }
       public string id { get; set; }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using VCore.Standard.Factories.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
@@ -66,11 +67,14 @@ namespace VPlayer.Core.ViewModels.Artists
 
     #region GetSongsToPlay
 
-    public override IEnumerable<SongInPlayListViewModel> GetItemsToPlay()
+    public override Task<IEnumerable<SongInPlayListViewModel>> GetItemsToPlay()
     {
-      var songs = storage.GetRepository<Artist>().Include(x => x.Albums).ThenInclude(x => x.Songs).ThenInclude(x => x.ItemModel).ThenInclude(x => x.FileInfo).Where(x => x.Id == Model.Id).ToList();
+      return Task.Run(() =>
+      {
+        var songs = storage.GetRepository<Artist>().Include(x => x.Albums).ThenInclude(x => x.Songs).ThenInclude(x => x.ItemModel).ThenInclude(x => x.FileInfo).Where(x => x.Id == Model.Id).ToList();
 
-      return songs.SelectMany(x => x.Albums.SelectMany(y => y.Songs)).Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x));
+        return songs.SelectMany(x => x.Albums.SelectMany(y => y.Songs)).Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x));
+      });
     }
 
     #endregion

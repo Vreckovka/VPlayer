@@ -1040,25 +1040,25 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    protected virtual void BeforePlayEvent(PlayItemsEventData<TItemViewModel> data)
+    protected virtual Task BeforePlayEvent(PlayItemsEventData<TItemViewModel> data)
     {
-
+      return Task.CompletedTask;
     }
 
     #region PlayItemsFromEvent
 
-    protected void PlayItemsFromEvent(PlayItemsEventData<TItemViewModel> data)
+    protected async void PlayItemsFromEvent(PlayItemsEventData<TItemViewModel> data)
     {
       if (!data.Items.Any())
         return;
 
       if (ActualSavedPlaylist.Id > 0)
       {
-        UpdateActualSavedPlaylistPlaylist();
+        await UpdateActualSavedPlaylistPlaylist();
         ActualSavedPlaylist = new TPlaylistModel() { Id = -1 };
       }
 
-      BeforePlayEvent(data);
+      await BeforePlayEvent(data);
 
       switch (data.EventAction)
       {

@@ -1,18 +1,28 @@
-﻿using Prism.Events;
+﻿using System;
+using Prism.Events;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using VCore.Standard.Factories.ViewModels;
 using VCore.WPF.ViewModels.WindowsFiles;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.FileBrowser;
+using VPLayer.Domain;
 
 namespace VPlayer.PCloud.ViewModels
 {
   public class PlayblePCloudFolderViewModel : PlayableFolderViewModel<PCloudFolderViewModel, PCloudFileViewModel>
   {
-    public PlayblePCloudFolderViewModel(PCloudFolderViewModel folderViewModel,
-      IEventAggregator eventAggregator, IViewModelsFactory viewModelsFactory,
+    private readonly IVPlayerCloudService iVPlayerCloudService;
+
+    public PlayblePCloudFolderViewModel(
+      PCloudFolderViewModel folderViewModel,
+      IEventAggregator eventAggregator, 
+      IViewModelsFactory viewModelsFactory,
+      IVPlayerCloudService iVPlayerCloudService,
       IStorageManager storageManager) : base(folderViewModel, eventAggregator, 
       viewModelsFactory, storageManager)
     {
+      this.iVPlayerCloudService = iVPlayerCloudService ?? throw new ArgumentNullException(nameof(iVPlayerCloudService));
     }
 
     public override int MaxAutomaticLoadLevel => 0;
@@ -29,5 +39,10 @@ namespace VPlayer.PCloud.ViewModels
     }
 
     #endregion
+
+    public override Task<IEnumerable<FileInfo>> GetItemSources(IEnumerable<FileInfo> fileInfo)
+    {
+      return iVPlayerCloudService.GetItemSources(fileInfo);
+    }
   }
 }

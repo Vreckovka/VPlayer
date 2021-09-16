@@ -17,7 +17,8 @@ namespace VPLayer.Domain.Contracts.CloudService.Providers
     void SaveLoginInfo(string email, string password);
     Task<bool> ExistsFolderAsync(long id);
     Task<MemoryStream> ReadFile(long id);
-    Task<string> GetFileLink(long id);
+    Task<KeyValuePair<string,string>?> GetFileLink(long id);
+    Task<List<KeyValuePair<long, string>>> GetFileLinks(IEnumerable<long> ids);
     Task<string> GetAudioLink(long id);
     Task<PCloudResponse<Stats>> GetFileStats(long id);
     Task<FolderInfo> CreateFolder(string name, long? parentId);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VPlayer.AudioStorage.DomainClasses;
@@ -43,49 +44,53 @@ namespace VPlayer.Home.ViewModels.TvShows
 
     #region GetItemsToPlay
 
-    public override IEnumerable<VideoItemInPlaylistViewModel> GetItemsToPlay()
+    public override Task<IEnumerable<VideoItemInPlaylistViewModel>> GetItemsToPlay()
     {
-      var playlist = storage.GetRepository<VideoFilePlaylist>()
-        .Include(x => x.PlaylistItems)
-        .ThenInclude(x => x.ReferencedItem)
-        .SingleOrDefault(x => x.Id == Model.Id);
-     
-
-      if (playlist != null)
+      return Task.Run(() =>
       {
-        var playlistItems = playlist.PlaylistItems.OrderBy(x => x.OrderInPlaylist).ToList();
+        var playlist = storage.GetRepository<VideoFilePlaylist>()
+          .Include(x => x.PlaylistItems)
+          .ThenInclude(x => x.ReferencedItem)
+          .SingleOrDefault(x => x.Id == Model.Id);
 
-        var list = new List<TvShowEpisodeInPlaylistViewModel>();
 
-        var fristEpisode = storage.GetRepository<TvShowEpisode>().Where(x => x.VideoItem.Id == playlistItems[0].IdReferencedItem).Include(x => x.TvShow).SingleOrDefault();
-
-        if (fristEpisode != null)
+        if (playlist != null)
         {
+          var playlistItems = playlist.PlaylistItems.OrderBy(x => x.OrderInPlaylist).ToList();
 
-          var tvShows = storage.GetRepository<TvShow>()
-            .Where(x => x.Id == fristEpisode.TvShow.Id)
-            .Include(x => x.Seasons)
-            .ThenInclude(x => x.Episodes)
-            .ThenInclude(x => x.VideoItem).Single();
+          var list = new List<TvShowEpisodeInPlaylistViewModel>();
 
-          var tvShowEpisodes = tvShows.Seasons.SelectMany(x => x.Episodes).ToList();
+          var fristEpisode = storage.GetRepository<TvShowEpisode>().Where(x => x.VideoItem.Id == playlistItems[0].IdReferencedItem).Include(x => x.TvShow).SingleOrDefault();
 
-          foreach (var item in playlistItems)
+          if (fristEpisode != null)
           {
-            var tvShowEpisode = tvShowEpisodes.Single(x => x.VideoItem.Id == item.ReferencedItem.Id);
 
-            list.Add(viewModelsFactory.Create<TvShowEpisodeInPlaylistViewModel>(tvShowEpisode.VideoItem, tvShowEpisode));
+            var tvShows = storage.GetRepository<TvShow>()
+              .Where(x => x.Id == fristEpisode.TvShow.Id)
+              .Include(x => x.Seasons)
+              .ThenInclude(x => x.Episodes)
+              .ThenInclude(x => x.VideoItem).Single();
+
+            var tvShowEpisodes = tvShows.Seasons.SelectMany(x => x.Episodes).ToList();
+
+            foreach (var item in playlistItems)
+            {
+              var tvShowEpisode = tvShowEpisodes.Single(x => x.VideoItem.Id == item.ReferencedItem.Id);
+
+              list.Add(viewModelsFactory.Create<TvShowEpisodeInPlaylistViewModel>(tvShowEpisode.VideoItem, tvShowEpisode));
+            }
+
+            return list;
           }
-
-          return list;
+          else
+          {
+            return playlistItems.Select(x => viewModelsFactory.Create<VideoItemInPlaylistViewModel>(x.ReferencedItem));
+          }
         }
-        else
-        {
-          return playlistItems.Select(x => viewModelsFactory.Create<VideoItemInPlaylistViewModel>(x.ReferencedItem));
-        }
-      }
 
-      return null;
+        return null;
+      });
+
     }
 
     #endregion
@@ -94,7 +99,7 @@ namespace VPlayer.Home.ViewModels.TvShows
 
     public override void PublishPlayEvent(IEnumerable<VideoItemInPlaylistViewModel> viewModels, EventAction eventAction)
     {
-      var e = new PlayItemsEventData<VideoItemInPlaylistViewModel>(viewModels, eventAction, Model.IsShuffle, Model.IsReapting,null, Model);
+      var e = new PlayItemsEventData<VideoItemInPlaylistViewModel>(viewModels, eventAction, Model.IsShuffle, Model.IsReapting, null, Model);
 
       eventAggregator.GetEvent<PlayItemsEvent<VideoItem, VideoItemInPlaylistViewModel>>().Publish(e);
     }

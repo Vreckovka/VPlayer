@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using VCore;
 using VCore.Standard;
@@ -187,9 +188,9 @@ namespace VPlayer.Core.ViewModels
       }
     }
 
-    protected virtual void OnPlay(EventAction o)
+    protected virtual async void OnPlay(EventAction o)
     {
-      var data = GetItemsToPlay();
+      var data = await GetItemsToPlay();
 
       if (data != null)
         PublishPlayEvent(data, o);
@@ -247,9 +248,9 @@ namespace VPlayer.Core.ViewModels
       }
     }
 
-    public void OnAddToPlaylist()
+    public async void OnAddToPlaylist()
     {
-      var data = GetItemsToPlay();
+      var data = await GetItemsToPlay();
 
       if (data != null)
         PublishAddToPlaylistEvent(data);
@@ -263,7 +264,7 @@ namespace VPlayer.Core.ViewModels
     #region Methods
 
 
-    public abstract IEnumerable<TViewModelInPlaylist> GetItemsToPlay();
+    public abstract Task<IEnumerable<TViewModelInPlaylist>> GetItemsToPlay();
     public abstract void PublishPlayEvent(IEnumerable<TViewModelInPlaylist> viewModels, EventAction eventAction );
     public abstract void PublishAddToPlaylistEvent(IEnumerable<TViewModelInPlaylist> viewModels);
 

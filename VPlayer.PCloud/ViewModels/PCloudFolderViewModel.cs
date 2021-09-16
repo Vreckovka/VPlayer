@@ -46,7 +46,7 @@ namespace VPlayer.PCloud.ViewModels
           Length = file.length,
         };
 
-      
+
 
         list.Add(fileInfo);
       }
@@ -56,21 +56,8 @@ namespace VPlayer.PCloud.ViewModels
 
     #endregion
 
-    #region GetItemSource
+  
 
-    public override async Task<FileInfo> GetItemSource(FileInfo fileInfo)
-    {
-      var type = fileInfo.Extension.GetFileType();
-
-      if (type == FileType.Video || type == FileType.Sound)
-      {
-        fileInfo.Source = await cloudService.GetFileLink(long.Parse(fileInfo.Indentificator));
-      }
-
-      return fileInfo;
-    }
-
-    #endregion
 
     #region GetFolders
 
