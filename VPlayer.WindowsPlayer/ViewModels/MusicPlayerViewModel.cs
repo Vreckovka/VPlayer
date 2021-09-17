@@ -472,20 +472,22 @@ namespace VPlayer.WindowsPlayer.ViewModels
               {
                 if (long.TryParse(fileInfo.Indentificator, out var id))
                 {
-                  var stats = (await cloudService.GetFileStats(id))?.metadata;
+                  var stats = (await cloudService.GetFileStats(id));
 
-                  if (stats != null)
+                  var data = stats?.metadata;
+
+                  if (data != null)
                   {
-                    fileInfo.Artist = AudioInfoDownloader.GetClearName(stats.artist);
-                    fileInfo.Album = AudioInfoDownloader.GetClearName(stats.album);
+                    fileInfo.Artist = AudioInfoDownloader.GetClearName(data.artist);
+                    fileInfo.Album = AudioInfoDownloader.GetClearName(data.album);
 
                     artistName = fileInfo.Artist;
                     albumName = fileInfo.Album;
 
 
-                    if (!string.IsNullOrEmpty(stats.title))
+                    if (!string.IsNullOrEmpty(data.title))
                     {
-                      fileInfo.Name = AudioInfoDownloader.GetClearName(stats.title);
+                      fileInfo.Name = AudioInfoDownloader.GetClearName(data.title);
                     }
                   }
                 }
@@ -509,14 +511,28 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
               var result = await storageManager.UpdateEntityAsync(fileInfo);
 
-              if (downloadingArtist == null || VPlayerStorageManager.GetNormalizedName(artistName)?.Similarity(VPlayerStorageManager.GetNormalizedName(downloadingArtist.Name), true) < 0.9)
-                downloadingArtist = await GetArist(artistName, cancellationToken);
+              if (!string.IsNullOrEmpty(artistName))
+              {
+                if (downloadingArtist == null || VPlayerStorageManager.GetNormalizedName(artistName)?.Similarity(VPlayerStorageManager.GetNormalizedName(downloadingArtist.Name), true) < 0.9)
+                  downloadingArtist = await GetArist(artistName, cancellationToken);
+              }
+              else
+              {
+                downloadingArtist = null;
+              }
 
-              var normalizedAlbumName = AudioInfoDownloader.GetClearName(VPlayerStorageManager.GetNormalizedName(albumName));
 
-              if (downloadingAlbum == null || normalizedAlbumName?.Similarity(VPlayerStorageManager.GetNormalizedName(downloadingAlbum.Name), true, true) < 0.9)
-                downloadingAlbum = await GetAlbum(downloadingArtist, albumName, cancellationToken);
+              if (!string.IsNullOrEmpty(albumName))
+              {
+                var normalizedAlbumName = AudioInfoDownloader.GetClearName(VPlayerStorageManager.GetNormalizedName(albumName));
 
+                if (downloadingAlbum == null || normalizedAlbumName?.Similarity(VPlayerStorageManager.GetNormalizedName(downloadingAlbum.Name), true, true) < 0.9)
+                  downloadingAlbum = await GetAlbum(downloadingArtist, albumName, cancellationToken);
+              }
+              else
+              {
+                downloadingAlbum = null;
+              }
 
               if (downloadingArtist != null)
               {
@@ -927,7 +943,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
       });
 
-      
+
     }
 
     #endregion
