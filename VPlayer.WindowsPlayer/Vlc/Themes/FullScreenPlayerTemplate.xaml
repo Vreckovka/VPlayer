@@ -7,6 +7,7 @@
                     xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF"
                     xmlns:domain="clr-namespace:VPlayer.AudioStorage.Scrappers.CSFD.Domain;assembly=VPlayer.AudioStorage"
                     xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.DarkTheme"
+                    xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
                     xmlns:soundManagement="clr-namespace:SoundManagement;assembly=SoundManagement"
                     xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors;assembly=VPlayer.Core">
 
@@ -22,8 +23,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls2:FullscreenPlayer}">
-
-                    <Border Margin="0,0,0,17"
+                    <Border Width="900"
+                            Height="120"
+                            Margin="0,0,0,17"
                             Padding="10,5"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Bottom"
@@ -33,12 +35,12 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
 
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition SharedSizeGroup="A" />
-                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
                                 <ColumnDefinition SharedSizeGroup="A" />
                             </Grid.ColumnDefinitions>
 
@@ -334,53 +336,48 @@
 
                             <Grid Grid.Row="2"
                                   Grid.Column="0"
+                                  Margin="0,5,0,0"
+                                  VerticalAlignment="Center"
                                   DataContext="{Binding ActualViewModel}">
 
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="auto" />
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
 
-                                <controls1:ButtonWithIcon Margin="0,2,0,10"
-                                                          Padding="2"
-                                                          HorizontalAlignment="Left"
-                                                          VerticalAlignment="Top"
-                                                          Panel.ZIndex="2"
-                                                          DataContext="{Binding ActualItem}"
-                                                          IconHeight="11"
-                                                          IconPathStyle="{StaticResource Info}"
-                                                          IconWidth="11">
+                                <Border Grid.Column="0"
+                                        Height="auto"
+                                        Margin="0,0,10,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Bottom"
+                                        Background="Transparent"
+                                        BorderThickness="1">
+                                    <Border.Resources>
+                                        <library1:CacheImageConverter x:Key="CacheImageConverter" DecodeWidth="100" />
+                                    </Border.Resources>
 
-                                    <controls1:ButtonWithIcon.Style>
-                                        <Style BasedOn="{StaticResource {x:Type controls1:ButtonWithIcon}}" TargetType="{x:Type controls1:ButtonWithIcon}">
-                                            <Setter Property="IconHoverColor" Value="#4291db" />
-                                            <Setter Property="IconDefaultColor" Value="#3b668f" />
-                                            <Setter Property="Opacity" Value="1" />
-                                            <Setter Property="Margin" Value="0,-5,0,-5" />
+                                    <Image HorizontalAlignment="Center"
+                                           Source="{Binding ActualItem.ImagePath, Converter={StaticResource CacheImageConverter}}"
+                                           Stretch="UniformToFill" />
 
+                                    <Border.Style>
+                                        <Style TargetType="Border">
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding CSFDItem}" Value="{x:Null}">
-                                                    <Setter Property="IconHoverColor" Value="#757575" />
-                                                    <Setter Property="IconDefaultColor" Value="#656565" />
+                                                <DataTrigger Binding="{Binding ActualItem.ImagePath}" Value="{x:Null}">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
                                                 </DataTrigger>
                                             </Style.Triggers>
-
                                         </Style>
-                                    </controls1:ButtonWithIcon.Style>
+                                    </Border.Style>
+                                </Border>
 
-                                    <controls1:ButtonWithIcon.ToolTip>
-                                        <Border Background="Transparent">
-                                            <Grid>
-                                                <ContentPresenter Content="{Binding}" ContentTemplateSelector="{StaticResource WindowsPlayerItemsTooltipTemplateSelector}" />
-                                            </Grid>
-                                        </Border>
-                                    </controls1:ButtonWithIcon.ToolTip>
-                                </controls1:ButtonWithIcon>
 
-                                <ContentPresenter Grid.Column="1"
+                                <ContentPresenter Grid.Column="2"
                                                   MaxWidth="250"
-                                                  Margin="0,0,0,0"
+                                                  Margin="0,0,0,1"
                                                   HorizontalAlignment="Left"
+                                                  VerticalAlignment="Bottom"
                                                   Content="{Binding}"
                                                   ContentTemplate="{StaticResource PlayerDetail}" />
                             </Grid>

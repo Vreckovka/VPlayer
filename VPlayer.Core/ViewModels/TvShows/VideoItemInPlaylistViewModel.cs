@@ -164,11 +164,14 @@ namespace VPlayer.Core.ViewModels.TvShows
         {
           cSFDItem = value;
           RaisePropertyChanged();
+          RaiseNotifyPropertyChanged(nameof(ImagePath));
         }
       }
     }
 
     #endregion
+
+    public string ImagePath => CSFDItem?.Model?.ImagePath;
 
     protected override void PublishRemoveFromPlaylist()
     {

@@ -135,7 +135,6 @@
               VerticalAlignment="Bottom"
               Background="#DD000000">
 
-
             <userControls:SoundVizualizer Grid.Row="0"
                                           Height="45"
                                           HorizontalAlignment="Stretch"
@@ -165,6 +164,81 @@
                 </userControls:SoundVizualizer.Style>
 
             </userControls:SoundVizualizer>
+
+            <StackPanel Name="Container"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        ClipToBounds="True">
+                <TextBox Name="NameTxt"
+                         Margin="0,0,0,0"
+                         BorderThickness="0"
+                         FontSize="43"
+                         FontWeight="Bold"
+                         Foreground="#f7ede1"
+                         IsReadOnly="True"
+                         Text="{Binding ActualItem.Name, Mode=OneWay}">
+
+                    <TextBox.Style>
+                        <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
+                            <Setter Property="HorizontalAlignment" Value="Center" />
+                            <Style.Triggers>
+                                <DataTrigger Value="True">
+                                    <DataTrigger.Binding>
+                                        <MultiBinding Converter="{library:IsBiggerConverter}">
+                                            <Binding ElementName="NameTxt" Path="ActualWidth" />
+                                            <Binding ElementName="Container" Path="ActualWidth" />
+                                        </MultiBinding>
+                                    </DataTrigger.Binding>
+                                    <Setter Property="HorizontalAlignment" Value="Left" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                    <TextBox.Effect>
+                        <DropShadowEffect BlurRadius="2" ShadowDepth="3" />
+                    </TextBox.Effect>
+
+                    <!--<i:Interaction.Behaviors>
+              <text:PanningTextWithFontSizeBehavior BiggerFontSize="35"
+                                                    Container="{Binding ElementName=Container}"
+                                                    IgnoreSizeAnimation="{Binding IsPlaying}"
+                                                    IsMouseOverRelativeToContainer="True" />
+            </i:Interaction.Behaviors>-->
+                </TextBox>
+
+                <Border Margin="0,-3,0,1"
+                        HorizontalAlignment="Center"
+                        CornerRadius="8">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0 1" EndPoint="1 0">
+                            <GradientStop Offset="0" Color="#00252525" />
+                            <GradientStop Offset="0.3" Color="#252525" />
+                            <GradientStop Offset="0.7" Color="#252525" />
+                            <GradientStop Offset="1" Color="#00252525" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <TextBlock Margin="65,5"
+                               HorizontalAlignment="Center"
+                               FontSize="14"
+                               FontWeight="SemiBold">
+                        <Run Foreground="#ddedfffa" Text="{Binding ActualItem.ArtistViewModel.Name, Mode=OneWay}" />
+                        <Run Foreground="#85edfffa" Text="{Binding ActualItem.AlbumViewModel.Name, Mode=OneWay, StringFormat={}({0})}" />
+                    </TextBlock>
+                </Border>
+            </StackPanel>
+
+            <controls:PathButton Margin="0,0,5,5"
+                                 HorizontalAlignment="Right"
+                                 VerticalAlignment="Bottom"
+                                 IsChecked="{Binding IsRepeate}"
+                                 PathStyle="{StaticResource Repeate}" />
+
+            <controls:PathButton Margin="0,0,35,5"
+                                 HorizontalAlignment="Right"
+                                 VerticalAlignment="Bottom"
+                                 BorderThickness="0"
+                                 IsChecked="{Binding IsShuffle}"
+                                 PathStyle="{StaticResource Shuffle}" />
 
             <Button Grid.Row="0"
                     Width="50"
@@ -237,73 +311,6 @@
 
             </Button>
 
-            <StackPanel Name="Container"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        ClipToBounds="True">
-                <TextBox Name="NameTxt"
-                         Margin="0,0,0,0"
-                         BorderThickness="0"
-                         FontSize="43"
-                         FontWeight="Bold"
-                         Foreground="#f7ede1"
-                         IsReadOnly="True"
-                         Text="{Binding ActualItem.Name, Mode=OneWay}">
-
-                    <TextBox.Style>
-                        <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
-                            <Setter Property="HorizontalAlignment" Value="Center" />
-                            <Style.Triggers>
-                                <DataTrigger Value="True">
-                                    <DataTrigger.Binding>
-                                        <MultiBinding Converter="{library:IsBiggerConverter}">
-                                            <Binding ElementName="NameTxt" Path="ActualWidth" />
-                                            <Binding ElementName="Container" Path="ActualWidth" />
-                                        </MultiBinding>
-                                    </DataTrigger.Binding>
-                                    <Setter Property="HorizontalAlignment" Value="Left" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBox.Style>
-                    <TextBox.Effect>
-                        <DropShadowEffect BlurRadius="2" ShadowDepth="3" />
-                    </TextBox.Effect>
-
-                    <!--<i:Interaction.Behaviors>
-              <text:PanningTextWithFontSizeBehavior BiggerFontSize="35"
-                                                    Container="{Binding ElementName=Container}"
-                                                    IgnoreSizeAnimation="{Binding IsPlaying}"
-                                                    IsMouseOverRelativeToContainer="True" />
-            </i:Interaction.Behaviors>-->
-                </TextBox>
-
-                <TextBlock HorizontalAlignment="Center"
-                           FontSize="15"
-                           FontWeight="DemiBold"
-                           Foreground="#f2e0cb"
-                           Opacity="0.7">
-                    <Run Text="{Binding ActualItem.ArtistViewModel.Name, Mode=OneWay}" />
-                    <Run Text="{Binding ActualItem.AlbumViewModel.Name, Mode=OneWay, StringFormat={}({0})}" />
-
-                    <TextBlock.Effect>
-                        <DropShadowEffect BlurRadius="2" ShadowDepth="2" />
-                    </TextBlock.Effect>
-                </TextBlock>
-            </StackPanel>
-
-            <controls:PathButton Margin="0,0,5,5"
-                                 HorizontalAlignment="Right"
-                                 VerticalAlignment="Bottom"
-                                 IsChecked="{Binding IsRepeate}"
-                                 PathStyle="{StaticResource Repeate}" />
-
-            <controls:PathButton Margin="0,0,35,5"
-                                 HorizontalAlignment="Right"
-                                 VerticalAlignment="Bottom"
-                                 BorderThickness="0"
-                                 IsChecked="{Binding IsShuffle}"
-                                 PathStyle="{StaticResource Shuffle}" />
         </Grid>
 
         <StackPanel Margin="0,0,50,0"

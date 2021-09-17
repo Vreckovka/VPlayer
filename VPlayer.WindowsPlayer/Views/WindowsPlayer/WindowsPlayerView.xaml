@@ -22,340 +22,342 @@
              d:DesignHeight="450"
              d:DesignWidth="1900"
              mc:Ignorable="d">
-  <UserControl.Resources>
-    <ResourceDictionary>
-      <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Views/WindowsPlayer/WindowsPlayerViewResources.xaml" />
-      </ResourceDictionary.MergedDictionaries>
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Views/WindowsPlayer/WindowsPlayerViewResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
 
 
-    </ResourceDictionary>
-  </UserControl.Resources>
+        </ResourceDictionary>
+    </UserControl.Resources>
 
-  <Grid>
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="*" />
-      <ColumnDefinition Width="5" />
-      <ColumnDefinition Width="350" />
-    </Grid.ColumnDefinitions>
-
-    <Grid Grid.Column="0"
-          Margin="0,0,0,15"
-          Focusable="True"
-          IsHitTestVisible="True">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="*" />
-        <RowDefinition Height="auto" />
-        <RowDefinition Height="auto" />
-      </Grid.RowDefinitions>
-
-
-      <ContentControl x:Name="ContentControl" regions:RegionManager.RegionName="{x:Static regions11:RegionNames.PlayerContentRegion}" />
-
-
-      <Slider x:Name="Slider_Time"
-              Grid.Row="1"
-              Margin="10,0,1,0"
-              Padding="0"
-              IsMoveToPointEnabled="True"
-              Maximum="1"
-              Value="{Binding ActualItem.ActualPosition}">
-        <b:Interaction.Behaviors>
-          <behaviors:SliderValueChangedManualy Duration="{Binding ActualItem.Duration}" />
-        </b:Interaction.Behaviors>
-      </Slider>
-
-      <TextBlock Grid.Row="2"
-                 Margin="10,0,0,0"
-                 HorizontalAlignment="Left"
-                 FontSize="14"
-                 FontWeight="SemiBold"
-                 Foreground="#aaa"
-                 Text="{Binding ActualItem.ActualTime, StringFormat=hh\\:mm\\:ss}" />
-      <TextBlock Grid.Row="2"
-                 Margin="0,0,1,0"
-                 HorizontalAlignment="Right"
-                 FontSize="14"
-                 FontWeight="SemiBold"
-                 Foreground="#aaa"
-                 Text="{Binding ActualItem.Duration, Converter={converters1:TimeConverter TimeType=Second}}" />
-
-
-    </Grid>
-
-    <GridSplitter x:Name="GridSplitter"
-                  Grid.Column="1"
-                  Margin="2,0,0,0"
-                  HorizontalAlignment="Stretch"
-                  Focusable="False"
-                  IsEnabled="{Binding ElementName=HideBehavior, Path=CanHide}">
-      <GridSplitter.Style>
-        <Style TargetType="GridSplitter">
-          <Setter Property="Width" Value="2" />
-          <Setter Property="Background" Value="{StaticResource 30_WhiteTransparentBrush}" />
-        </Style>
-      </GridSplitter.Style>
-    </GridSplitter>
-
-    <Grid Grid.Column="2">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="auto" />
-        <RowDefinition />
-      </Grid.RowDefinitions>
-
-      <Border Margin="0,0,0,0"
-              Padding="0,5"
-              BorderBrush="#10ffffff"
-              BorderThickness="0,0,0,1">
-        <Grid>
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto" />
+    <Grid>
+        <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-          </Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="350" />
+        </Grid.ColumnDefinitions>
 
-          <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
-            <RowDefinition />
-          </Grid.RowDefinitions>
-
-          <Grid Grid.Column="1">
+        <Grid Grid.Column="0"
+              Margin="0,0,0,8"
+              Focusable="True"
+              IsHitTestVisible="True">
             <Grid.RowDefinitions>
-              <RowDefinition />
-              <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="*" />
-              <ColumnDefinition Width="auto" />
-              <ColumnDefinition Width="auto" />
-            </Grid.ColumnDefinitions>
+
+            <ContentControl x:Name="ContentControl" regions:RegionManager.RegionName="{x:Static regions11:RegionNames.PlayerContentRegion}" />
 
 
-            <Border Margin="10,0,5,0" Padding="10,0">
-              <Border.Style>
-                <Style TargetType="Border">
-                  <Setter Property="Background" Value="#10ffffff" />
-                  <Setter Property="CornerRadius" Value="12" />
-                  <Setter Property="BorderThickness" Value="1" />
-                  <Setter Property="Margin" Value="12,0,0,0" />
-
-                  <Style.Triggers>
-                    <DataTrigger Binding="{Binding ElementName=NameTextBox, Path=IsFocused}" Value="true">
-                      <Setter Property="BorderBrush" Value="#20ffffff" />
-                      <Setter Property="BorderThickness" Value="1" />
-                      <Setter Property="Background" Value="#10ffffff" />
-                      <Setter Property="Margin" Value="14,0,0,0" />
-                      <Setter Property="CornerRadius" Value="0" />
-                    </DataTrigger>
-                  </Style.Triggers>
-                </Style>
-              </Border.Style>
-
-              <TextBox x:Name="NameTextBox"
-                       MinWidth="0"
-                       Margin="2,0,0,0"
-                       Padding="0"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Center"
-                       Cursor="IBeam">
-                <TextBox.Text>
-                  <MultiBinding Converter="{converters3:PlaylistNameConverter}">
-                    <Binding Mode="TwoWay"
-                             Path="Name"
-                             UpdateSourceTrigger="PropertyChanged" />
-
-                    <Binding Mode="OneWay"
-                             Path="DataContext.ActualSavedPlaylist"
-                             RelativeSource="{RelativeSource AncestorType=Border,
-                                                             Mode=FindAncestor}" />
-                  </MultiBinding>
-                </TextBox.Text>
-
-                <TextBox.Style>
-                  <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
-                    <Setter Property="Foreground" Value="#bbffffff" />
-                    <Setter Property="FontWeight" Value="Bold" />
-                    <Setter Property="FontSize" Value="25" />
-
-                    <Setter Property="BorderThickness" Value="0,0,0,1" />
-
-                    <Style.Triggers>
-                      <Trigger Property="IsFocused" Value="True">
-                        <Setter Property="BorderBrush" Value="#50ffffff" />
-                      </Trigger>
-
-                      <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="BorderBrush" Value="#50ffffff" />
-                      </Trigger>
-
-                      <Trigger Property="IsFocused" Value="False">
-                        <Setter Property="Template">
-                          <Setter.Value>
-                            <ControlTemplate TargetType="TextBox">
-                              <Border Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}">
-                                <TextBlock MinWidth="100"
-                                           Margin="3,0,0,0"
-                                           Text="{TemplateBinding Text}"
-                                           TextTrimming="CharacterEllipsis" />
-                              </Border>
-                            </ControlTemplate>
-                          </Setter.Value>
-                        </Setter>
-                      </Trigger>
-
-                      <DataTrigger Binding="{Binding ActualSavedPlaylist.IsUserCreated}" Value="False">
-                        <Setter Property="FontWeight" Value="Light" />
-                        <Setter Property="FontStyle" Value="Italic" />
-                        <Setter Property="Foreground" Value="#757575" />
-                        <Setter Property="FontSize" Value="20" />
-                      </DataTrigger>
-                    </Style.Triggers>
-                  </Style>
-                </TextBox.Style>
+            <Slider x:Name="Slider_Time"
+                    Grid.Row="1"
+                    Height="2.5"
+                    Margin="5,0,1,0"
+                    Padding="0"
+                    IsMoveToPointEnabled="True"
+                    Maximum="1"
+                    Value="{Binding ActualItem.ActualPosition}">
 
                 <b:Interaction.Behaviors>
-                  <behaviors3:FocusBehavior OnLostFocusCommand="{Binding SavePlaylistCommand}" SetFocusManager="True" />
+                    <behaviors:SliderValueChangedManualy Duration="{Binding ActualItem.Duration}" />
                 </b:Interaction.Behaviors>
-              </TextBox>
-            </Border>
+            </Slider>
 
+            <TextBlock Grid.Row="2"
+                       Margin="5,0,0,0"
+                       HorizontalAlignment="Left"
+                       FontSize="14"
+                       FontWeight="SemiBold"
+                       Foreground="#aaa"
+                       Text="{Binding ActualItem.ActualTime, StringFormat=hh\\:mm\\:ss}" />
+            <TextBlock Grid.Row="2"
+                       Margin="0,0,1,0"
+                       HorizontalAlignment="Right"
+                       FontSize="14"
+                       FontWeight="SemiBold"
+                       Foreground="#aaa"
+                       Text="{Binding ActualItem.Duration, Converter={converters1:TimeConverter TimeType=Second}}" />
 
-            <Border Grid.Row="1" Grid.Column="0">
-              <StackPanel Margin="0,10,0,0"
-                          HorizontalAlignment="Right"
-                          Orientation="Horizontal">
-
-                <StackPanel.Resources>
-                  <Style BasedOn="{StaticResource {x:Type controls1:PathButton}}" TargetType="controls1:PathButton">
-                    <Setter Property="IconHeight" Value="20" />
-                    <Setter Property="Width" Value="25" />
-                    <Setter Property="Margin" Value="5,0" />
-                    <Setter Property="Padding" Value="0" />
-                    <Setter Property="BorderThickness" Value="0,0,0,0" />
-                    <Setter Property="IconMargin" Value="0" />
-                    <Setter Property="IconDefaultColor" Value="#353535" />
-                    <Setter Property="IconHoverColor" Value="#959595" />
-                    <Setter Property="IsReadOnly" Value="True" />
-                  </Style>
-                </StackPanel.Resources>
-
-                <controls1:PathButton Command="{Binding ReloadFile}"
-                                      IconWidth="20"
-                                      PathStyle="{StaticResource arrows-rotate}"
-                                      ToolTip="Reload file" />
-
-                <controls1:PathButton Command="{Binding ClearPlaylistCommand}"
-                                      IconWidth="25"
-                                      PathStyle="{StaticResource TrashList}"
-                                      ToolTip="Clear actual playlist" />
-
-                <controls1:PathButton Command="{Binding SavePlaylistCommand}"
-                                      IconHoverColor="#ccc"
-                                      IconWidth="25"
-                                      PathStyle="{StaticResource floppy-disk-pen}"
-                                      ToolTip="Save playlist" />
-
-                <controls1:PathButton Command="{Binding ChangePlaylistFavorite}"
-                                      IconWidth="20"
-                                      IsChecked="{Binding ActualSavedPlaylist.IsUserCreated, Mode=OneWay}"
-                                      IsReadOnly="False"
-                                      PathStyle="{StaticResource star}"
-                                      ToolTip="Is favorite" />
-
-              </StackPanel>
-            </Border>
-
-
-
-
-            <StackPanel Grid.Row="0"
-                        Grid.Column="2"
-                        Margin="5,0"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        Opacity="0.5"
-                        Orientation="Vertical">
-
-              <TextBlock Margin="0,0,5,0" FontWeight="Bold">
-                <Run Foreground="#ccc" Text="COUNT:" />
-                <Run Foreground="#858585" Text="{Binding PlayList.Count, Mode=OneWay}" />
-              </TextBlock>
-
-              <TextBlock Margin="0,0,5,0" FontWeight="Bold">
-                <Run Foreground="#ccc" Text="DURATION:" />
-                <Run Foreground="#858585" Text="{Binding TotalPlaylistDuration, Mode=OneWay, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}" />
-              </TextBlock>
-
-              <TextBlock Margin="0,0,5,0" FontWeight="Bold">
-                <Run Foreground="#ccc" Text="TOTAL PLAYED:" />
-                <Run Foreground="{StaticResource YellowBrush}" Text="{Binding PlaylistTotalTimePlayed, Mode=OneWay, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}" />
-              </TextBlock>
-            </StackPanel>
-
-          </Grid>
-
-          <controls1:Finder Grid.Row="1"
-                            Grid.Column="0"
-                            Grid.ColumnSpan="2"
-                            Height="40"
-                            Margin="15,7,15,0"
-                            FontSize="14"
-                            KeyDownCommand="{Binding FinderKeyDown}"
-                            Text="{Binding ActualSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         </Grid>
 
-      </Border>
+        <GridSplitter x:Name="GridSplitter"
+                      Grid.Column="1"
+                      Margin="2,0,0,0"
+                      HorizontalAlignment="Stretch"
+                      Focusable="False"
+                      IsEnabled="{Binding ElementName=HideBehavior, Path=CanHide}">
+            <GridSplitter.Style>
+                <Style TargetType="GridSplitter">
+                    <Setter Property="Width" Value="2" />
+                    <Setter Property="Background" Value="{StaticResource 30_WhiteTransparentBrush}" />
+                </Style>
+            </GridSplitter.Style>
+        </GridSplitter>
+
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <Border Margin="0,0,0,0"
+                    Padding="0,5"
+                    BorderBrush="#10ffffff"
+                    BorderThickness="0,0,0,1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
 
 
-      <ListView x:Name="ListView_Tracks"
-                Grid.Row="1"
-                Margin="1,0,0,0"
-                HorizontalAlignment="Stretch"
-                Panel.ZIndex="0"
-                AllowDrop="True"
-                ItemsSource="{Binding VirtualizedPlayList}"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                Style="{StaticResource WindowsPlayerSongs}">
-        <b:Interaction.Behaviors>
-          <behaviors:AutoScrollBehavior Kernel="{Binding Kernel}" StepSize="50" />
-          <behaviors1:FixListViewItemResizeBehavior ValueDecrease="25" />
-        </b:Interaction.Behaviors>
-      </ListView>
+                        <Border Margin="10,0,5,0" Padding="10,0">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Background" Value="#10ffffff" />
+                                    <Setter Property="CornerRadius" Value="12" />
+                                    <Setter Property="BorderThickness" Value="1" />
+                                    <Setter Property="Margin" Value="12,0,0,0" />
 
-      <b:Interaction.Behaviors>
-        <behaviors3:HideBehavior x:Name="HideBehavior"
-                                 GridSplitterName="GridSplitter"
-                                 InitialWidthValue="{Binding ActualSavedPlaylist.Name, Converter={converters1:CountCharactersAndAddValue CharacterWidth=15}, ConverterParameter=260, Mode=OneWay}"
-                                 MaxInitialWidth="425"
-                                 MinValue="0"
-                                 ResizeParameter="Width"
-                                 Duration="0:0:0:.30" />
-      </b:Interaction.Behaviors>
-    </Grid>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=NameTextBox, Path=IsFocused}" Value="true">
+                                            <Setter Property="BorderBrush" Value="#20ffffff" />
+                                            <Setter Property="BorderThickness" Value="1" />
+                                            <Setter Property="Background" Value="#10ffffff" />
+                                            <Setter Property="Margin" Value="14,0,0,0" />
+                                            <Setter Property="CornerRadius" Value="0" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
 
-    <controls1:PathButton x:Name="HideButton"
-                          Grid.Row="0"
-                          Grid.Column="0"
-                          Margin="10,8,-26,0"
-                          Padding="2"
-                          HorizontalAlignment="Right"
-                          VerticalAlignment="Top"
-                          Background="Transparent"
-                          Command="{Binding ExpandHidePlaylist}"
-                          Cursor="Hand"
-                          FontSize="12"
-                          IconHeight="24"
-                          IconWidth="22"
-                          Opacity="0.85"
-                          PathCheckedBrush="{StaticResource DefaultRedBrush}"
-                          PathStyle="{StaticResource arrows-to-line-solid}">
-      <controls1:PathButton.RenderTransform>
-        <RotateTransform Angle="90" />
-      </controls1:PathButton.RenderTransform>
-    </controls1:PathButton>
+                            <TextBox x:Name="NameTextBox"
+                                     MinWidth="0"
+                                     Margin="2,0,0,0"
+                                     Padding="0"
+                                     HorizontalAlignment="Left"
+                                     VerticalAlignment="Center"
+                                     Cursor="IBeam">
+                                <TextBox.Text>
+                                    <MultiBinding Converter="{converters3:PlaylistNameConverter}">
+                                        <Binding Mode="TwoWay"
+                                                 Path="Name"
+                                                 UpdateSourceTrigger="PropertyChanged" />
 
-    <!--<Button>
+                                        <Binding Mode="OneWay"
+                                                 Path="DataContext.ActualSavedPlaylist"
+                                                 RelativeSource="{RelativeSource AncestorType=Border,
+                                                                                 Mode=FindAncestor}" />
+                                    </MultiBinding>
+                                </TextBox.Text>
+
+                                <TextBox.Style>
+                                    <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
+                                        <Setter Property="Foreground" Value="#bbffffff" />
+                                        <Setter Property="FontWeight" Value="Bold" />
+                                        <Setter Property="FontSize" Value="25" />
+
+                                        <Setter Property="BorderThickness" Value="0,0,0,1" />
+
+                                        <Style.Triggers>
+                                            <Trigger Property="IsFocused" Value="True">
+                                                <Setter Property="BorderBrush" Value="#50ffffff" />
+                                            </Trigger>
+
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="BorderBrush" Value="#50ffffff" />
+                                            </Trigger>
+
+                                            <Trigger Property="IsFocused" Value="False">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="TextBox">
+                                                            <Border Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}">
+                                                                <TextBlock MinWidth="100"
+                                                                           Margin="3,0,0,0"
+                                                                           Text="{TemplateBinding Text}"
+                                                                           TextTrimming="CharacterEllipsis" />
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Trigger>
+
+                                            <DataTrigger Binding="{Binding ActualSavedPlaylist.IsUserCreated}" Value="False">
+                                                <Setter Property="FontWeight" Value="Light" />
+                                                <Setter Property="FontStyle" Value="Italic" />
+                                                <Setter Property="Foreground" Value="#757575" />
+                                                <Setter Property="FontSize" Value="20" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBox.Style>
+
+                                <b:Interaction.Behaviors>
+                                    <behaviors3:FocusBehavior OnLostFocusCommand="{Binding SavePlaylistCommand}" SetFocusManager="True" />
+                                </b:Interaction.Behaviors>
+                            </TextBox>
+                        </Border>
+
+
+                        <Border Grid.Row="1" Grid.Column="0">
+                            <StackPanel Margin="0,10,0,0"
+                                        HorizontalAlignment="Right"
+                                        Orientation="Horizontal">
+
+                                <StackPanel.Resources>
+                                    <Style BasedOn="{StaticResource {x:Type controls1:PathButton}}" TargetType="controls1:PathButton">
+                                        <Setter Property="IconHeight" Value="20" />
+                                        <Setter Property="Width" Value="25" />
+                                        <Setter Property="Margin" Value="5,0" />
+                                        <Setter Property="Padding" Value="0" />
+                                        <Setter Property="BorderThickness" Value="0,0,0,0" />
+                                        <Setter Property="IconMargin" Value="0" />
+                                        <Setter Property="IconDefaultColor" Value="#353535" />
+                                        <Setter Property="IconHoverColor" Value="#959595" />
+                                        <Setter Property="IsReadOnly" Value="True" />
+                                    </Style>
+                                </StackPanel.Resources>
+
+                                <controls1:PathButton Command="{Binding ReloadFile}"
+                                                      IconWidth="20"
+                                                      PathStyle="{StaticResource arrows-rotate}"
+                                                      ToolTip="Reload file" />
+
+                                <controls1:PathButton Command="{Binding ClearPlaylistCommand}"
+                                                      IconWidth="25"
+                                                      PathStyle="{StaticResource TrashList}"
+                                                      ToolTip="Clear actual playlist" />
+
+                                <controls1:PathButton Command="{Binding SavePlaylistCommand}"
+                                                      IconHoverColor="#ccc"
+                                                      IconWidth="25"
+                                                      PathStyle="{StaticResource floppy-disk-pen}"
+                                                      ToolTip="Save playlist" />
+
+                                <controls1:PathButton Command="{Binding ChangePlaylistFavorite}"
+                                                      IconWidth="20"
+                                                      IsChecked="{Binding ActualSavedPlaylist.IsUserCreated, Mode=OneWay}"
+                                                      IsReadOnly="False"
+                                                      PathStyle="{StaticResource star}"
+                                                      ToolTip="Is favorite" />
+
+                            </StackPanel>
+                        </Border>
+
+
+
+
+                        <StackPanel Grid.Row="0"
+                                    Grid.Column="2"
+                                    Margin="5,0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Opacity="0.5"
+                                    Orientation="Vertical">
+
+                            <TextBlock Margin="0,0,5,0" FontWeight="Bold">
+                                <Run Foreground="#ccc" Text="COUNT:" />
+                                <Run Foreground="#858585" Text="{Binding PlayList.Count, Mode=OneWay}" />
+                            </TextBlock>
+
+                            <TextBlock Margin="0,0,5,0" FontWeight="Bold">
+                                <Run Foreground="#ccc" Text="DURATION:" />
+                                <Run Foreground="#858585" Text="{Binding TotalPlaylistDuration, Mode=OneWay, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}" />
+                            </TextBlock>
+
+                            <TextBlock Margin="0,0,5,0" FontWeight="Bold">
+                                <Run Foreground="#ccc" Text="TOTAL PLAYED:" />
+                                <Run Foreground="{StaticResource YellowBrush}" Text="{Binding PlaylistTotalTimePlayed, Mode=OneWay, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}" />
+                            </TextBlock>
+                        </StackPanel>
+
+                    </Grid>
+
+                    <controls1:Finder Grid.Row="1"
+                                      Grid.Column="0"
+                                      Grid.ColumnSpan="2"
+                                      Height="40"
+                                      Margin="15,7,15,0"
+                                      FontSize="14"
+                                      KeyDownCommand="{Binding FinderKeyDown}"
+                                      Text="{Binding ActualSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                </Grid>
+
+            </Border>
+
+
+            <ListView x:Name="ListView_Tracks"
+                      Grid.Row="1"
+                      Margin="1,0,0,0"
+                      HorizontalAlignment="Stretch"
+                      Panel.ZIndex="0"
+                      AllowDrop="True"
+                      ItemsSource="{Binding VirtualizedPlayList}"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                      Style="{StaticResource WindowsPlayerSongs}">
+                <b:Interaction.Behaviors>
+                    <behaviors:AutoScrollBehavior Kernel="{Binding Kernel}" StepSize="50" />
+                    <behaviors1:FixListViewItemResizeBehavior ValueDecrease="25" />
+                </b:Interaction.Behaviors>
+            </ListView>
+
+            <b:Interaction.Behaviors>
+                <behaviors3:HideBehavior x:Name="HideBehavior"
+                                         GridSplitterName="GridSplitter"
+                                         InitialWidthValue="{Binding ActualSavedPlaylist.Name, Converter={converters1:CountCharactersAndAddValue CharacterWidth=15}, ConverterParameter=260, Mode=OneWay}"
+                                         MaxInitialWidth="425"
+                                         MinValue="0"
+                                         ResizeParameter="Width"
+                                         Duration="0:0:0:.30" />
+            </b:Interaction.Behaviors>
+        </Grid>
+
+        <controls1:PathButton x:Name="HideButton"
+                              Grid.Row="0"
+                              Grid.Column="0"
+                              Margin="10,8,-26,0"
+                              Padding="2"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Top"
+                              Background="Transparent"
+                              Command="{Binding ExpandHidePlaylist}"
+                              Cursor="Hand"
+                              FontSize="12"
+                              IconHeight="24"
+                              IconWidth="22"
+                              Opacity="0.85"
+                              PathCheckedBrush="{StaticResource DefaultRedBrush}"
+                              PathStyle="{StaticResource arrows-to-line-solid}">
+            <controls1:PathButton.RenderTransform>
+                <RotateTransform Angle="90" />
+            </controls1:PathButton.RenderTransform>
+        </controls1:PathButton>
+
+        <!--<Button>
             <Button.Style>
                 <Style TargetType="Button">
                     <Setter Property="Template">
@@ -412,5 +414,5 @@
                 </Style>
             </Button.Style>
         </Button>-->
-  </Grid>
+    </Grid>
 </UserControl>

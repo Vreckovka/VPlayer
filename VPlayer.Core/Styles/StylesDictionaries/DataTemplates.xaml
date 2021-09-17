@@ -2,6 +2,7 @@
                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+                    xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore.WPF"
                     xmlns:library="clr-namespace:VPlayer.Library"
                     xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.DarkTheme"
                     xmlns:local="clr-namespace:VPlayer.StylesDictionaries"
@@ -433,11 +434,50 @@
                     <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
 
-                <TextBlock FontSize="14"
-                           FontWeight="DemiBold"
-                           Foreground="#9ca379"
-                           Grid.IsSharedSizeScope="True"
-                           Text="{Binding ActualItem.Model.Name}" />
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontSize="14"
+                               FontWeight="DemiBold"
+                               Foreground="#9ca379"
+                               Grid.IsSharedSizeScope="True"
+                               Text="{Binding ActualItem.Model.Name}" />
+
+                    <controls:ButtonWithIcon Margin="2,0,0,0"
+                                             Padding="2"
+                                             HorizontalAlignment="Left"
+                                             VerticalAlignment="Center"
+                                             Panel.ZIndex="2"
+                                             DataContext="{Binding ActualItem}"
+                                             IconHeight="11"
+                                             IconPathStyle="{StaticResource Info}"
+                                             IconWidth="11">
+
+                        <controls:ButtonWithIcon.Style>
+                            <Style BasedOn="{StaticResource {x:Type controls:ButtonWithIcon}}" TargetType="{x:Type controls:ButtonWithIcon}">
+                                <Setter Property="IconHoverColor" Value="#4291db" />
+                                <Setter Property="IconDefaultColor" Value="#3b668f" />
+                                <Setter Property="Opacity" Value="1" />
+                                <Setter Property="Margin" Value="0,-5,0,-5" />
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CSFDItem}" Value="{x:Null}">
+                                        <Setter Property="IconHoverColor" Value="#757575" />
+                                        <Setter Property="IconDefaultColor" Value="#656565" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+
+                            </Style>
+                        </controls:ButtonWithIcon.Style>
+
+                        <controls:ButtonWithIcon.ToolTip>
+                            <Border Background="Transparent">
+                                <Grid>
+                                    <ContentPresenter Content="{Binding}" ContentTemplateSelector="{StaticResource WindowsPlayerItemsTooltipTemplateSelector}" />
+                                </Grid>
+                            </Border>
+                        </controls:ButtonWithIcon.ToolTip>
+                    </controls:ButtonWithIcon>
+                </StackPanel>
+
 
                 <ContentControl x:Name="DescriptionText"
                                 Grid.Row="1"
@@ -481,23 +521,16 @@
     </DataTemplate>
 
     <DataTemplate x:Key="TvShowEpisodeDescriptionDataTemplate">
-        <TextBlock FontSize="12">
+        <TextBlock FontSize="12" FontWeight="SemiBold">
             <Run Foreground="#948b79" Text="{Binding TvShow.Name, Mode=OneWay}" />
 
             <Run Foreground="#50edfffa" Text="(" />
-            <Run FontWeight="Normal"
-                 Foreground="#30edfffa"
-                 Text="Season" />
+            <Run Foreground="#30edfffa" Text="Season" />
             <Run FontSize="13"
-                 FontWeight="DemiBold"
                  Foreground="#70edfffa"
                  Text="{Binding TvShowSeason.SeasonNumber, Mode=OneWay}" />
-            <Run FontWeight="Normal"
-                 Foreground="#30edfffa"
-                 Text="Episode" />
-            <Run FontWeight="DemiBold"
-                 Foreground="#70edfffa"
-                 Text="{Binding TvShowEpisode.EpisodeNumber, Mode=OneWay}" />
+            <Run Foreground="#30edfffa" Text="Episode" />
+            <Run Foreground="#70edfffa" Text="{Binding TvShowEpisode.EpisodeNumber, Mode=OneWay}" />
             <Run Foreground="#50edfffa" Text=")" />
         </TextBlock>
     </DataTemplate>
