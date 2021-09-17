@@ -353,12 +353,15 @@ namespace VPlayer.Core.ViewModels
 
         await storageManager.UpdateEntityAsync(ActualItem.Model);
 
+
         if (ActualItem != null && reloadPosition != null)
         {
           MediaPlayer.Position = reloadPosition.Value;
 
           reloadPosition = null;
         }
+
+        RaisePropertyChanged(nameof(TotalPlaylistDuration));
       });
     }
 
