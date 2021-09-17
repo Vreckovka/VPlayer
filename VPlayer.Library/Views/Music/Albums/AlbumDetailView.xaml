@@ -20,8 +20,8 @@
         <StackPanel Margin="15,10" Orientation="Horizontal">
             <controls:PathButton Style="{StaticResource BackButton}" />
 
-            <controls:PathButton Padding="20,10"
-                                 Margin="10 0 00 0"
+            <controls:PathButton Margin="10,0,00,0"
+                                 Padding="20,10"
                                  Command="{Binding GetCovers}"
                                  Content="Get more covers"
                                  IconHeight="20"
@@ -84,11 +84,11 @@
                                              PathStyle="{StaticResource cloud-arrow-down}"
                                              ToolTip="Update/Download info" />
 
-                        <controls:PathButton Command="{Binding Delete}"
+                        <controls:PathButton Margin="5,0,-3,0"
+                                             Command="{Binding Delete}"
                                              IconDefaultColor="#aaf04d46"
                                              IconHoverColor="#f04d46"
                                              IconWidth="17"
-                                             Margin="5,0,-3,0"
                                              PathStyle="{StaticResource Trash}"
                                              ToolTip="Pernamently remove" />
 
@@ -166,7 +166,7 @@
                     Margin="5,0"
                     BorderBrush="{StaticResource 3_WhiteTransparentBrush}"
                     BorderThickness="2,0,0,0">
-                <ListView Background="{StaticResource 3_WhiteTransparentBrush}" ItemsSource="{Binding Songs}">
+                <ListView Background="{StaticResource 3_WhiteTransparentBrush}" ItemsSource="{Binding SongsView}">
                     <ListView.Style>
                         <Style BasedOn="{StaticResource AlbumsSongs}" TargetType="ListView">
                             <Setter Property="ItemContainerStyle">

@@ -33,7 +33,7 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     public InfoDownloadStatus InfoDownloadStatus { get; set; }
 
-    public virtual List<Song> Songs { get; set; }
+    public virtual List<Song> Songs { get; set; } = new List<Song>();
 
 
     #endregion Properties

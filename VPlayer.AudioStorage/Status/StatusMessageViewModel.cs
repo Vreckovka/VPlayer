@@ -1,13 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Input;
 using VCore;
 using VCore.Standard.Common;
 using VCore.WPF.Controls.StatusMessage;
-using VPlayer.AudioStorage.DomainClasses;
 
 namespace VPlayer.Core.Managers.Status
 {
-  public class StatusMessageViewModel : VBindableBase, IUpdateable<StatusMessageViewModel>
+  public class StatusMessageViewModel : VBindableBase
   {
     public StatusMessageViewModel(int numberOfProcesses)
     {
@@ -21,6 +21,7 @@ namespace VPlayer.Core.Managers.Status
 
     public Guid Id { get; }
 
+    public Guid OriginalMessageId { get; set; }
 
     #region NumberOfProcesses
 
@@ -120,43 +121,22 @@ namespace VPlayer.Core.Managers.Status
 
     #endregion
 
-    #region IsMinimized
+    #region MessageState
+
 
 #if DEBUG
-    private bool isMinimized = false;
+    private MessageStatusState messageState = MessageStatusState.Open;
 #else
-   private bool isMinimized = true;
+   private MessageStatusState messageState = MessageStatusState.Minimized;
 #endif
-
-
-
-    public bool IsMinimized
+    public MessageStatusState MessageState
     {
-      get { return isMinimized; }
+      get { return messageState; }
       set
       {
-        if (value != isMinimized)
+        if (value != messageState)
         {
-          isMinimized = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
-
-    #region IsClosed
-
-    private bool isClosed;
-
-    public bool IsClosed
-    {
-      get { return isClosed; }
-      set
-      {
-        if (value != isClosed)
-        {
-          isClosed = value;
+          messageState = value;
           RaisePropertyChanged();
         }
       }
@@ -183,8 +163,7 @@ namespace VPlayer.Core.Managers.Status
 
     #endregion
 
-
-
+    public List<StatusMessageViewModel> SubItems { get; set; } = new List<StatusMessageViewModel>();
 
     #endregion
 
@@ -209,7 +188,15 @@ namespace VPlayer.Core.Managers.Status
 
     public void OnMinimized()
     {
-      IsMinimized = !IsMinimized;
+      if (MessageStatusState.Minimized == MessageState)
+      {
+        MessageState = MessageStatusState.Open;
+      }
+      else
+      {
+        MessageState = MessageStatusState.Minimized;
+      }
+
     }
 
     #endregion
@@ -233,7 +220,7 @@ namespace VPlayer.Core.Managers.Status
 
     public void OnClose()
     {
-      IsClosed = !IsClosed;
+      MessageState = MessageStatusState.Closed;
     }
 
     #endregion
@@ -243,34 +230,71 @@ namespace VPlayer.Core.Managers.Status
 
     #region Methods
 
-    #region Update
-
-    public void Update(StatusMessageViewModel other)
+    public void AddChild()
     {
-      ProcessedCount = other.ProcessedCount;
 
-      if (other.NumberOfProcesses == 1)
+    }
+
+    //#region Update
+
+    //public void Update(StatusMessageViewModel other)
+    //{
+    //  ProcessedCount = other.ProcessedCount;
+
+    //  if (other.NumberOfProcesses == 1)
+    //  {
+    //    Process = other.Process;
+    //  }
+    //  else
+    //  {
+    //    Process = ProcessedCount * 100.0 / NumberOfProcesses;
+    //  }
+
+    //  Message = other.Message;
+    //  Status = other.Status;
+
+    //  if (ProcessedCount == NumberOfProcesses && 
+    //      Status != StatusType.Error && 
+    //      Status != StatusType.Failed)
+    //  {
+    //    Status = StatusType.Done;
+    //  }
+
+    //  CopyParentState(other);
+    //}
+
+    //#endregion
+
+    #region CopyParentState
+
+    public void CopyParentState(StatusMessageViewModel statusMessageViewModel)
+    {
+      MessageState = statusMessageViewModel.MessageState;
+      IsPinned = statusMessageViewModel.IsPinned;
+    }
+
+    #endregion
+
+    public StatusMessageViewModel Copy()
+    {
+      return new StatusMessageViewModel(NumberOfProcesses)
       {
-        Process = other.Process;
-      }
-      else
-      {
-        Process = ProcessedCount * 100.0 / NumberOfProcesses;
-      }
+        IsPinned = IsPinned,
+        MessageState = MessageState,
+        Message = Message,
+        NumberOfProcesses = NumberOfProcesses,
+        ProcessedCount = ProcessedCount,
+        Process = Process,
+        Status = Status,
+        OriginalMessageId = OriginalMessageId
+      };
+    }
 
-      Message = other.Message;
+    #region ToString
 
-      Status = other.Status;
-
-      if (ProcessedCount == NumberOfProcesses && 
-          Status != StatusType.Error && 
-          Status != StatusType.Failed)
-      {
-        Status = StatusType.Done;
-      }
-
-      IsClosed = other.IsClosed;
-      isMinimized = other.IsMinimized;
+    public override string ToString()
+    {
+      return Id + " " + Status + " " + Message + " " + ProcessedCount + "/" + NumberOfProcesses;
     }
 
     #endregion

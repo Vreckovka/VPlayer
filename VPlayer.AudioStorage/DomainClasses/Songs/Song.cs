@@ -102,6 +102,24 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     public bool IsAutomaticLyricsFindEnabled { get; set; } = true;
 
+    public SoundItem Copy()
+    {
+      return new SoundItem()
+      {
+        Created = Created,
+        Duration = Duration,
+        FileInfo = FileInfo,
+        Id = Id,
+        IsAutomaticLyricsFindEnabled = IsAutomaticLyricsFindEnabled,
+        IsFavorite = IsFavorite,
+        Length = Length,
+        Modified = Modified,
+        Name = Name,
+        NormalizedName = NormalizedName,
+        Source = Source
+      };
+    }
+
   }
 
   public class Song : DomainEntity, IUpdateable<Song>, IPlayableModel<SoundItem>
@@ -205,6 +223,24 @@ namespace VPlayer.AudioStorage.DomainClasses
       LRCLyrics = other.LRCLyrics;
     }
 
-    #endregion Methods
+    public Song Copy()
+    {
+      return new Song()
+      {
+        Album = Album,
+        Chartlyrics_Lyric = Chartlyrics_Lyric,
+        Chartlyrics_LyricCheckSum = Chartlyrics_LyricCheckSum,
+        Chartlyrics_LyricId = Chartlyrics_LyricId,
+        Created = Created,
+        Id = Id,
+        ItemModel = ItemModel.Copy(),
+        LRCLyrics = LRCLyrics,
+        Modified = Modified,
+        MusicBrainzId = MusicBrainzId,
+        UPnPPath = UPnPPath
+      };
+    }
+
+    #endregion 
   }
 }

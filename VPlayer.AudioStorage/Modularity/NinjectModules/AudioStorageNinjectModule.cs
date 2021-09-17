@@ -29,7 +29,7 @@ namespace VPlayer.AudioStorage.Modularity.NinjectModules
       Kernel.BindToSelf<AudioInfoDownloader>().InSingletonScope();
 
       Kernel.Bind<ICSFDWebsiteScrapper>().To<CSFDWebsiteScrapper>();
-      Kernel.Bind<IStatusManager>().To<StatusManager>().InSingletonScope();
+     
       Kernel.Bind<ITvShowScrapper>().To<TVShowScrapper>().InSingletonScope();
 
     }

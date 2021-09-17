@@ -1064,7 +1064,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
         return false;
       }
 
-      return r.Media[0].Format == "CD";
+      return r.Media[0].Format == "CD" || r.Media[0].Format == "Digital Media";
     }
 
     /// <summary>

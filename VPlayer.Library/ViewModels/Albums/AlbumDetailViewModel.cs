@@ -63,16 +63,16 @@ namespace VPlayer.Home.ViewModels.Albums
     #region Songs
 
     private List<SongDetailViewModel> allSong;
-    private VirtualList<SongDetailViewModel> songs;
+    private VirtualList<SongDetailViewModel> songsVirtualList;
 
-    public VirtualList<SongDetailViewModel> Songs
+    public VirtualList<SongDetailViewModel> SongsView
     {
-      get { return songs; }
+      get { return songsVirtualList; }
       set
       {
-        if (value != songs)
+        if (value != songsVirtualList)
         {
-          songs = value;
+          songsVirtualList = value;
           RaisePropertyChanged();
         }
       }
@@ -159,9 +159,7 @@ namespace VPlayer.Home.ViewModels.Albums
     {
       Task.Run(() =>
       {
-        var songs = Songs.ToList();
-
-        var statusMessage = new StatusMessageViewModel(songs.Count)
+        var statusMessage = new StatusMessageViewModel(allSong.Count)
         {
           Status = StatusType.Processing,
           Message = "Updating album songs from fingerprint"
@@ -169,7 +167,7 @@ namespace VPlayer.Home.ViewModels.Albums
 
         statusManager.UpdateMessage(statusMessage);
 
-        if (songs.Count == 0)
+        if (allSong.Count == 0)
         {
           statusMessage.Status = StatusType.Failed;
           statusMessage.Message = "Album has no songs";
@@ -180,7 +178,7 @@ namespace VPlayer.Home.ViewModels.Albums
 
         try
         {
-          foreach (var song in songs)
+          foreach (var song in allSong)
           {
             var audioInfo = audioInfoDownloader.GetAudioInfoByFingerPrint(song.Model.Source);
 
@@ -217,18 +215,29 @@ namespace VPlayer.Home.ViewModels.Albums
     {
       return Task.Run(() =>
       {
-        var songsDb = storageManager.GetRepository<Song>()
-          .Where(x => x.Album == ViewModel.Model)
-          .Include(x => x.ItemModel)
-          .ThenInclude(x => x.FileInfo)
-          .ToList();
+        if (ViewModel.Model.Songs.Count == 0)
+        {
+          var songsDb = storageManager.GetRepository<Song>()
+            .Where(x => x.Album == ViewModel.Model)
+            .Include(x => x.ItemModel)
+            .ThenInclude(x => x.FileInfo)
+            .ToList();
+
+          if (songsDb.Count != 0)
+          {
+            allSong = songsDb.Select(x => viewModelsFactory.Create<SongDetailViewModel>(x)).ToList();
+          }
+        }
+        else
+        {
+          allSong = ViewModel.Model.Songs.Select(x => viewModelsFactory.Create<SongDetailViewModel>(x.Copy())).ToList();
+        }
 
         Application.Current.Dispatcher.Invoke(() =>
         {
-          allSong = songsDb.Select(x => viewModelsFactory.Create<SongDetailViewModel>(x)).ToList();
           var generator = new ItemsGenerator<SongDetailViewModel>(allSong, 25);
+          SongsView = new VirtualList<SongDetailViewModel>(generator);
 
-          Songs = new VirtualList<SongDetailViewModel>(generator);
           TotalDuration = TimeSpan.FromSeconds(allSong.Sum(x => x.Model.Duration));
 
           SetIsAllSongHasLyricsOff(allSong.All(x => !x.Model.ItemModel.IsAutomaticLyricsFindEnabled));
@@ -245,28 +254,25 @@ namespace VPlayer.Home.ViewModels.Albums
     {
       using (var context = new AudioDatabaseContext())
       {
-        var songs = storageManager.GetRepository<Song>(context)
-          .Where(x => x.Album == ViewModel.Model)
-          .Include(x => x.ItemModel);
+        var soundItems = storageManager.GetRepository<SoundItem>(context)
+          .Where(x => allSong.Select(y => y.Model.ItemModel.Id).Contains(x.Id));
 
-        foreach (var song in songs)
+        foreach (var song in soundItems)
         {
-          song.ItemModel.IsAutomaticLyricsFindEnabled = value;
-          song.Chartlyrics_Lyric = null;
-          song.Chartlyrics_LyricCheckSum = null;
-          song.Chartlyrics_LyricId = null;
-          song.LRCLyrics = null;
+          song.IsAutomaticLyricsFindEnabled = value;
 
-          context.Update(song.ItemModel);
+          context.Update(song);
         }
 
         context.SaveChanges();
 
+     
         foreach (var item in allSong)
         {
           item.IsAutomaticDownload = !value;
 
           storageManager.PublishItemChanged(item.Model);
+          storageManager.PublishItemChanged(item.Model.ItemModel);
         }
       }
     }

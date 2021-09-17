@@ -32,9 +32,8 @@ namespace VPlayer.Home.ViewModels
     {
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
-      ViewModel = model ?? throw new ArgumentNullException(nameof(model));
-
    
+      ViewModel = model ?? throw new ArgumentNullException(nameof(model));
     }
 
     #region Properties

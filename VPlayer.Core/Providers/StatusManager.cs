@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 using Prism.Events;
-using VCore;
 using VCore.Standard;
 using VCore.Standard.Helpers;
 using VCore.WPF.Controls.StatusMessage;
@@ -17,6 +20,7 @@ namespace VPlayer.Core.Managers.Status
 
     private readonly IEventAggregator eventAggregator;
     private ReplaySubject<StatusMessageViewModel> onStatusMessageUpdatedSubject = new ReplaySubject<StatusMessageViewModel>(1);
+    private Subject<StatusMessageViewModel> onUpdateMessage = new Subject<StatusMessageViewModel>();
 
     #endregion
 
@@ -75,8 +79,10 @@ namespace VPlayer.Core.Managers.Status
     {
       base.Initialize();
 
-      eventAggregator.GetEvent<StatusMessageEvent>().Subscribe(OnStatusEvent).DisposeWith(this);
       onStatusMessageUpdatedSubject.DisposeWith(this);
+
+      onUpdateMessage.ObserveOn(Application.Current.Dispatcher).Subscribe(OnUpdateMessage).DisposeWith(this);
+      eventAggregator.GetEvent<StatusMessageEvent>().Subscribe(OnStatusEvent).DisposeWith(this);
     }
 
     #endregion
@@ -90,29 +96,63 @@ namespace VPlayer.Core.Managers.Status
 
     #endregion
 
-    #region UpdateMessage
+    #region OnUpdateMessage
 
-    public void UpdateMessage(StatusMessageViewModel statusMessageViewModel)
+    private SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
+    private StatusMessageViewModel lastProcessedMessage;
+    private async void OnUpdateMessage(StatusMessageViewModel statusMessageViewModel)
     {
-      Application.Current?.Dispatcher?.Invoke(() =>
+      try
       {
-        if (ActualMessageViewModel == null || ActualMessageViewModel.Id != statusMessageViewModel.Id)
-        {
-          ActualMessageViewModel = statusMessageViewModel;
-        }
-        else
-        {
-          ActualMessageViewModel.Update(statusMessageViewModel);
-        }
+        await semaphoreSlim.WaitAsync();
 
-        CheckMessage(ActualMessageViewModel);
+        if (statusMessageViewModel != null)
+          CheckMessage(statusMessageViewModel);
 
+        ActualMessageViewModel = statusMessageViewModel;
         onStatusMessageUpdatedSubject.OnNext(ActualMessageViewModel);
-      });
+
+        if (statusMessageViewModel != null)
+        {
+          if (lastProcessedMessage != null && lastProcessedMessage.OriginalMessageId == ActualMessageViewModel.OriginalMessageId)
+          {
+            await Task.Delay(0);
+          }
+          else if(ActualMessageViewModel != null &&
+                  ActualMessageViewModel.ProcessedCount != 0 && 
+                  ActualMessageViewModel.Status != StatusType.Processing)
+            await Task.Delay(3000);
+        }
+
+        lastProcessedMessage = ActualMessageViewModel;
+      }
+      finally
+      {
+        semaphoreSlim.Release();
+      }
     }
 
     #endregion
 
+    #region UpdateMessage
+
+    private List<StatusMessageViewModel> messages = new List<StatusMessageViewModel>();
+  
+
+    public void UpdateMessage(StatusMessageViewModel statusMessageViewModel)
+    {
+      var messageCopy = statusMessageViewModel.Copy();
+      messageCopy.OriginalMessageId = statusMessageViewModel.Id;
+
+      messages.Add(messageCopy);
+      onUpdateMessage.OnNext(messageCopy);
+    }
+
+    #endregion
+
+    #endregion
+
+    #region UpdateMessageAndIncreaseProcessCount
 
     public void UpdateMessageAndIncreaseProcessCount(StatusMessageViewModel statusMessageViewModel, int count = 1)
     {
@@ -126,13 +166,18 @@ namespace VPlayer.Core.Managers.Status
 
     #endregion
 
+    #region CheckMessage
+
     private void CheckMessage(StatusMessageViewModel statusMessageViewModel)
     {
-      if (statusMessageViewModel.ProcessedCount == statusMessageViewModel.NumberOfProcesses && 
+      if (statusMessageViewModel.ProcessedCount == statusMessageViewModel.NumberOfProcesses &&
           statusMessageViewModel.Status != StatusType.Failed)
       {
         statusMessageViewModel.Status = StatusType.Done;
       }
     }
+
+    #endregion
+
   }
 }

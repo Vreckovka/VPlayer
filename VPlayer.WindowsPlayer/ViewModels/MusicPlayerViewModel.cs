@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -353,11 +354,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       IsPlaying = false;
 
-      storageManager.SubscribeToItemChange<Song>(OnSongChange).DisposeWith(this);
-      storageManager.SubscribeToItemChange<Album>(OnAlbumChange).DisposeWith(this);
+      storageManager.ObserveOnItemChange<Song>().ObserveOn(Application.Current.Dispatcher).Subscribe(OnSongChange).DisposeWith(this);
+      storageManager.ObserveOnItemChange<Album>().ObserveOn(Application.Current.Dispatcher).Subscribe(OnAlbumChange).DisposeWith(this);
+      storageManager.ObserveOnItemChange<SoundItem>().ObserveOn(Application.Current.Dispatcher).Subscribe(OnSoundItemUpdated).DisposeWith(this);
+
+
 
       eventAggregator.GetEvent<ItemUpdatedEvent<AlbumViewModel>>().Subscribe(OnAlbumUpdated).DisposeWith(this);
-
       eventAggregator.GetEvent<RemoveFromPlaylistEvent<SongInPlayListViewModel>>().Subscribe(RemoveFromPlaystSongs).DisposeWith(this);
       eventAggregator.GetEvent<PlaySongsFromPlayListEvent<SongInPlayListViewModel>>().Subscribe(PlayItemFromPlayList).DisposeWith(this);
       eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SongInPlayListViewModel>>().Subscribe(PlaySongItems).DisposeWith(this);
@@ -367,6 +370,30 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
 
     #endregion
+
+    private async void OnSoundItemUpdated(IItemChanged<SoundItem> soundItemChanged)
+    {
+      if (soundItemChanged.Changed == Changed.Updated)
+      {
+        var inPlaylist = PlayList.SingleOrDefault(x => x.Model.Id == soundItemChanged.Item.Id);
+
+        if (inPlaylist != null)
+        {
+          var lastIsAutomaticLyricsFindEnabled = inPlaylist.Model.IsAutomaticLyricsFindEnabled;
+
+          inPlaylist.Model.Update(soundItemChanged.Item);
+
+          inPlaylist.RaiseNotifyPropertyChanged(nameof(SoundItemInPlaylistViewModel.Model));
+
+          if (inPlaylist is SongInPlayListViewModel song && lastIsAutomaticLyricsFindEnabled != song.Model.IsAutomaticLyricsFindEnabled)
+          {
+            song.RaiseNotifyPropertyChanged(nameof(SongInPlayListViewModel.IsAutomaticLyricsDownloadDisabled));
+
+            await song.TryToRefreshUpdateLyrics();
+          }
+        }
+      }
+    }
 
     #region PlaySongItems
 
@@ -544,7 +571,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
                     Name = albumName
                   };
                 }
-
               }
               else
               {
@@ -575,11 +601,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
                   if (songInPlayListViewModel.AlbumViewModel == null && songInPlayListViewModel.SongModel.Album != null)
                   {
                     songInPlayListViewModel.AlbumViewModel = viewModelsFactory.Create<AlbumViewModel>(songInPlayListViewModel.SongModel.Album);
+                    songInPlayListViewModel.AlbumViewModel.Model = downloadingAlbum;
                   }
 
                   if (songInPlayListViewModel.ArtistViewModel == null && songInPlayListViewModel.SongModel.Album?.Artist != null)
                   {
                     songInPlayListViewModel.ArtistViewModel = viewModelsFactory.Create<ArtistViewModel>(songInPlayListViewModel.SongModel.Album.Artist);
+                    songInPlayListViewModel.ArtistViewModel.Model = downloadingArtist;
                   }
 
                   cancellationToken.ThrowIfCancellationRequested();
@@ -594,10 +622,19 @@ namespace VPlayer.WindowsPlayer.ViewModels
                     }
                   });
 
+                  songInPlayListViewModel.SongModel.Album.Songs.Add(songInPlayListViewModel.SongModel);
+
+                  //ActualItem.ImagePath
                   songInPlayListViewModel.RaiseNotifyPropertyChanged(nameof(SoundItemFilePlaylist.Name));
                   songInPlayListViewModel.RaiseNotifyPropertyChanged(nameof(SongInPlayListViewModel.AlbumViewModel));
                   songInPlayListViewModel.RaiseNotifyPropertyChanged(nameof(SongInPlayListViewModel.ArtistViewModel));
                   albumDetail?.RaiseCanExecuteChanged();
+
+                  if (songInPlayListViewModel == ActualItem)
+                  {
+                    RaisePropertyChanged(nameof(ActualItem));
+                    songInPlayListViewModel.RaiseNotifyPropertyChanged(nameof(SongInPlayListViewModel.ImagePath));
+                  }
                 }
 
                 catch (TaskCanceledException)

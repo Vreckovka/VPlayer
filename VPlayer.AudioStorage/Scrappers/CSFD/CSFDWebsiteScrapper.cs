@@ -285,7 +285,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region LoadSeasons
 
-    private List<CSFDTVShowSeason> LoadSeasons(StatusMessageViewModel statusMessageViewModel, int? seasonNumber, int? episodeNumber, CancellationToken cancellationToken)
+    private List<CSFDTVShowSeason> LoadSeasons(StatusMessageViewModel pStatusMessageViewModel, int? seasonNumber, int? episodeNumber, CancellationToken cancellationToken)
     {
       var seasons = new List<CSFDTVShowSeason>();
 
@@ -301,13 +301,13 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         return seasons;
       }
 
-      statusMessageViewModel = new StatusMessageViewModel(nodes.Count)
+      var statusMessageViewModel = new StatusMessageViewModel(nodes.Count)
       {
         Status = StatusType.Processing,
         Message = "Downloading tv show seasons",
-        IsMinimized = statusMessageViewModel.IsMinimized,
-        IsClosed = statusMessageViewModel.IsClosed,
       };
+
+      statusMessageViewModel.CopyParentState(pStatusMessageViewModel);
 
       statusManager.UpdateMessage(statusMessageViewModel);
 
@@ -410,7 +410,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region LoadSeasonEpisodes
 
-    private List<CSFDTVShowSeasonEpisode> LoadSeasonEpisodes(int seasonNumber, string url, StatusMessageViewModel statusMessageViewModel, int? episodeNumber = null)
+    private List<CSFDTVShowSeasonEpisode> LoadSeasonEpisodes(int seasonNumber, string url, StatusMessageViewModel pStatusMessageViewModel, int? episodeNumber = null)
     {
       try
       {
@@ -443,14 +443,13 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           return episodes;
         }
 
-        statusMessageViewModel = new StatusMessageViewModel(nodes.Count)
+        var statusMessageViewModel = new StatusMessageViewModel(nodes.Count)
         {
           Status = StatusType.Processing,
           Message = $"Downloading season ({seasonNumber}) episodes",
-          IsMinimized = statusMessageViewModel.IsMinimized,
-          IsClosed = statusMessageViewModel.IsClosed
         };
 
+        statusMessageViewModel.CopyParentState(pStatusMessageViewModel);
         statusManager.UpdateMessage(statusMessageViewModel);
 
 
