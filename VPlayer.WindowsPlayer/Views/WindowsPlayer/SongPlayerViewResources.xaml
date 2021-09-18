@@ -363,73 +363,16 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel>
-                    <controls2:PathButton x:Name="SettingsButton"
-                                          HorizontalAlignment="Left"
-                                          FontWeight="Bold"
-                                          ForegroundCheckedColor="White"
+                    <controls2:PathButton Margin="0,0"
+                                          HorizontalAlignment="Center"
+                                          Command="{Binding SaveLRC}"
+                                          FontSize="25"
                                           ForegroundDefaultColor="#454545"
-                                          ForegroundHoverColor="#ccc"
-                                          IconDefaultColor="#555555"
-                                          IconHoverColor="#ccc"
-                                          PathCheckedBrush="{StaticResource DefaultRedBrush}"
-                                          PathStyle="{StaticResource gear}">
-                        Lyrics
-                    </controls2:PathButton>
+                                          ForegroundHoverColor="#80b1ff"
+                                          PathCheckedBrush="{StaticResource YellowBrush}"
+                                          Style="{StaticResource floppy-disk-glyph}"
+                                          ToolTip="Save" />
 
-                    <Popup Margin="0,0,0,0"
-                           HorizontalAlignment="Left"
-                           IsOpen="{Binding ElementName=SettingsButton, Path=IsChecked}"
-                           VerticalOffset="-40">
-                        <Border Padding="10"
-                                Background="#cc101010"
-                                BorderBrush="#95454545"
-                                BorderThickness="1"
-                                CornerRadius="5">
-                            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center">
-
-                                <controls2:PathButton Padding="10"
-                                                      HorizontalAlignment="Left"
-                                                      Background="#151515"
-                                                      BorderBrush="#45cccccc"
-                                                      BorderThickness="1"
-                                                      Command="{Binding SaveLRC}"
-                                                      FontWeight="Bold"
-                                                      ForegroundCheckedColor="White"
-                                                      ForegroundDefaultColor="#454545"
-                                                      ForegroundHoverColor="#ccc"
-                                                      IconDefaultColor="#555555"
-                                                      IconHoverColor="{StaticResource BlueColor}"
-                                                      IsReadOnly="True"
-                                                      PathCheckedBrush="{StaticResource YellowBrush}"
-                                                      PathStyle="{StaticResource Save}">
-                                    Save pernamently
-                                </controls2:PathButton>
-
-                                <TextBlock Margin="0,10,0,0">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding UpdateStatus, Mode=OneWay}" Value="true">
-                                                    <Setter Property="Text" Value="Success" />
-                                                    <Setter Property="Foreground" Value="{StaticResource GreenBrush}" />
-                                                </DataTrigger>
-
-                                                <DataTrigger Binding="{Binding UpdateStatus, Mode=OneWay}" Value="false">
-                                                    <Setter Property="Text" Value="Failed" />
-                                                    <Setter Property="Foreground" Value="{StaticResource DefaultRedBrush}" />
-                                                </DataTrigger>
-
-                                                <DataTrigger Binding="{Binding UpdateStatus, Mode=OneWay}" Value="{x:Null}">
-                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-                            </StackPanel>
-                        </Border>
-
-                    </Popup>
 
                     <controls2:PathButton Margin="0,10"
                                           HorizontalAlignment="Left"

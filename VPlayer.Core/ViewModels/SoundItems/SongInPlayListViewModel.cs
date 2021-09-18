@@ -431,8 +431,6 @@ namespace VPlayer.Core.ViewModels.SoundItems
             case LRCProviders.PCloud:
               LRCFile = new LRCFileViewModel(lrc, provider, pCloudLyricsProvider, pCloudLyricsProvider);
               break;
-            default:
-              throw new ArgumentOutOfRangeException();
           }
         }
       }

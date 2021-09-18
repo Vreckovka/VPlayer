@@ -11,8 +11,10 @@ using VCore.Helpers;
 using VCore.ItemsCollections;
 using VCore.Standard;
 using VCore.Standard.Helpers;
+using VPlayer.AudioStorage.InfoDownloader.LRC;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;
+using VPlayer.AudioStorage.Interfaces.Storage;
 
 namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
 {
@@ -20,11 +22,13 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
   {
     private readonly SongInPlayListViewModel model;
     private readonly PCloudLyricsProvider pCloudLyricsProvider;
+    private readonly IStorageManager storageManager;
 
-    public LRCCreatorViewModel(SongInPlayListViewModel model, PCloudLyricsProvider pCloudLyricsProvider) : base(model)
+    public LRCCreatorViewModel(SongInPlayListViewModel model, PCloudLyricsProvider pCloudLyricsProvider, IStorageManager storageManager) : base(model)
     {
       this.model = model ?? throw new ArgumentNullException(nameof(model));
       this.pCloudLyricsProvider = pCloudLyricsProvider ?? throw new ArgumentNullException(nameof(pCloudLyricsProvider));
+      this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
 
       model.ObservePropertyChange(x => x.ActualPosition)
         .ObserveOn(Application.Current.Dispatcher)
@@ -156,9 +160,15 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
 
       if (Model != null)
       {
-        Model.LRCFile = new LRCFileViewModel(lrcFile, AudioStorage.InfoDownloader.LRC.LRCProviders.Created, pCloudLyricsProvider);
-        Model.LRCCreatorViewModel = null;
+        Model.LRCFile = new LRCFileViewModel(lrcFile, LRCProviders.PCloud, pCloudLyricsProvider);
         Model.LRCFile.OnApplyPernamently();
+        Model.LRCCreatorViewModel = null;
+
+        if (Model.SongModel.Id > 0)
+        {
+          Model.SongModel.LRCLyrics = (int)Model.LRCFile.Provider + ";" + lrcFile.GetString();
+          storageManager.UpdateEntityAsync(Model.SongModel);
+        }
 
         Model.RaiseLyricsChange();
       }
