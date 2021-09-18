@@ -8,6 +8,11 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
 {
   public class AddLyricsPromptViewModel : BasePromptViewModel
   {
+    public AddLyricsPromptViewModel()
+    {
+      CancelVisibility = System.Windows.Visibility.Visible;
+    }
+
     #region Lyrics
 
     private string lyrics = "";

@@ -286,21 +286,24 @@
                                                                                   Command="{Binding SetTime}"
                                                                                   Style="{StaticResource pencil-glyph}" />
 
-                                                            <TextBox Width="100"
+                                                            <TextBox Width="95"
                                                                      Margin="5,0"
+                                                                     HorizontalAlignment="Center"
                                                                      VerticalAlignment="Center"
+                                                                     HorizontalContentAlignment="Center"
                                                                      Background="Transparent"
                                                                      BorderThickness="0"
-                                                                     FontSize="20"
                                                                      FontWeight="Bold">
                                                                 <TextBox.Style>
                                                                     <Style TargetType="TextBox">
                                                                         <Setter Property="Text" Value="{Binding Time, StringFormat={}{0:hh\\:mm\\:ss}}" />
                                                                         <Setter Property="Foreground" Value="#aaffffff" />
+                                                                        <Setter Property="FontSize" Value="20" />
 
                                                                         <Style.Triggers>
                                                                             <DataTrigger Binding="{Binding Time}" Value="{x:Null}">
-                                                                                <Setter Property="Text" Value="00:00:00" />
+                                                                                <Setter Property="Text" Value="--:--:--" />
+                                                                                <Setter Property="FontSize" Value="23" />
                                                                                 <Setter Property="Foreground" Value="#15ffffff" />
                                                                             </DataTrigger>
                                                                         </Style.Triggers>
@@ -311,7 +314,7 @@
 
 
                                                         <TextBox Grid.Column="1"
-                                                                 Width="650"
+                                                                 Width="750"
                                                                  HorizontalAlignment="Left"
                                                                  HorizontalContentAlignment="Left"
                                                                  Text="{Binding Text, Mode=OneWay}">
@@ -319,7 +322,7 @@
                                                                 <Style BasedOn="{StaticResource LyricsStyle}" TargetType="TextBox">
                                                                     <Style.Triggers>
                                                                         <DataTrigger Binding="{Binding IsActual}" Value="true">
-                                                                            <Setter Property="FontSize" Value="30" />
+                                                                            <Setter Property="FontSize" Value="32" />
                                                                             <Setter Property="TextWrapping" Value="Wrap" />
                                                                         </DataTrigger>
                                                                     </Style.Triggers>

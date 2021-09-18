@@ -264,6 +264,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       var vm = viewModelsFactory.Create<AddLyricsPromptViewModel>();
 
+      if(soundItemInPlaylistViewModel is SongInPlayListViewModel songInPlayList)
+      {
+        vm.Lyrics = songInPlayList.Lyrics;
+      }
+     
+
       windowManager.ShowPrompt<AddLyricsPromptView>(vm);
 
       if(vm.PromptResult == PromptResult.Ok && soundItemInPlaylistViewModel is SongInPlayListViewModel song)
