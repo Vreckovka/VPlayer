@@ -171,6 +171,11 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
         }
 
         Model.RaiseLyricsChange();
+
+        if (FilePlayableRegionViewModel != null)
+        {
+          FilePlayableRegionViewModel.PlayNextItemOnEndReached = true;
+        }
       }
     }
 

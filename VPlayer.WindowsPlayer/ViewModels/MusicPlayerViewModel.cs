@@ -310,6 +310,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
         song.LRCCreatorViewModel = vm;
 
         song.RaiseLyricsChange();
+
+        PlayNextItemOnEndReached = false;
       }
     }
 
@@ -339,6 +341,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
         song.LRCCreatorViewModel = null;
 
         song.RaiseLyricsChange();
+
+        PlayNextItemOnEndReached = true;
       }
     }
 

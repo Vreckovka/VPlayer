@@ -375,6 +375,7 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    public bool PlayNextItemOnEndReached { get; set; } = true;
 
     #endregion
 
@@ -794,22 +795,25 @@ namespace VPlayer.Core.ViewModels
 
     protected virtual void OnEndReached()
     {
-      Task.Run(() =>
+      if (PlayNextItemOnEndReached)
       {
-        TItemViewModel nextItem = null;
-
-        if (IsRepeate && actualItemIndex >= PlayList.Count - 1)
+        Task.Run(() =>
         {
-          actualItemIndex = 0;
+          TItemViewModel nextItem = null;
 
-          if (PlayList.Count > 0)
+          if (IsRepeate && actualItemIndex >= PlayList.Count - 1)
           {
-            nextItem = PlayList[actualItemIndex];
-          }
-        }
+            actualItemIndex = 0;
 
-        PlayNextWithItem(nextItem);
-      });
+            if (PlayList.Count > 0)
+            {
+              nextItem = PlayList[actualItemIndex];
+            }
+          }
+
+          PlayNextWithItem(nextItem);
+        });
+      }
     }
 
     #endregion
