@@ -975,7 +975,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         if (album != null && !string.IsNullOrEmpty(album.Name))
         {
-          var albumSongs = PlayList.OfType<SongInPlayListViewModel>().Where(x => x.SongModel?.Album == album.Model).ToList();
+          var albumSongs = PlayList.OfType<SongInPlayListViewModel>().Where(x => x.SongModel?.Album.Id == album.Model.Id).ToList();
 
           foreach (var albumSong in albumSongs)
           {
@@ -997,8 +997,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
           PlayList.Remove(item);
         }
       }
-
-
     }
 
     #endregion

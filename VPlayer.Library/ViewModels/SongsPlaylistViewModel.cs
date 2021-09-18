@@ -89,7 +89,13 @@ namespace VPlayer.Home.ViewModels
 
         if (songsItems.Count > 0)
         {
-          return songsItems.Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x));
+          var grouppedSongs = songsItems.Select(x => new
+          {
+            Song = x,
+            PlaylistItem = playlistItems.Single(y => y.IdReferencedItem == x.ItemModel.Id)
+          });
+
+          return grouppedSongs.OrderBy(x => x.PlaylistItem.OrderInPlaylist).Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x.Song));
         }
         else
         {
