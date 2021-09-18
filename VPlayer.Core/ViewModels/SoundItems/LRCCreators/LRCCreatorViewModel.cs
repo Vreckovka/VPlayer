@@ -158,6 +158,7 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
       {
         Model.LRCFile = new LRCFileViewModel(lrcFile, AudioStorage.InfoDownloader.LRC.LRCProviders.Created, pCloudLyricsProvider);
         Model.LRCCreatorViewModel = null;
+        Model.LRCFile.OnApplyPernamently();
 
         Model.RaiseLyricsChange();
       }
