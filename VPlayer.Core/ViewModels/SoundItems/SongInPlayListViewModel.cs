@@ -550,13 +550,16 @@ namespace VPlayer.Core.ViewModels.SoundItems
       {
         await LoadLRCFromPCloud();
 
-        Lyrics = await pCloudLyricsProvider.GetTextLyrics(SongModel.Name, AlbumViewModel?.Name, ArtistViewModel?.Name);
-
-        if (!string.IsNullOrEmpty(Lyrics))
+        if (LRCFile == null)
         {
-          RaiseLyricsChange();
+          Lyrics = await pCloudLyricsProvider.GetTextLyrics(SongModel.Name, AlbumViewModel?.Name, ArtistViewModel?.Name);
 
-          return true;
+          if (!string.IsNullOrEmpty(Lyrics))
+          {
+            RaiseLyricsChange();
+
+            return true;
+          }
         }
       }
 
