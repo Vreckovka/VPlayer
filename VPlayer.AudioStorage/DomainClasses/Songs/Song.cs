@@ -233,7 +233,7 @@ namespace VPlayer.AudioStorage.DomainClasses
         Chartlyrics_LyricId = Chartlyrics_LyricId,
         Created = Created,
         Id = Id,
-        ItemModel = ItemModel.Copy(),
+        ItemModel = ItemModel?.Copy(),
         LRCLyrics = LRCLyrics,
         Modified = Modified,
         MusicBrainzId = MusicBrainzId,

@@ -175,7 +175,7 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
     {
       if (!string.IsNullOrEmpty(Lyrics))
       {
-        var stringLines = Lyrics.Split("\n");
+        var stringLines = Lyrics.Replace("\r", "").Split("\n");
 
         var list = new List<LRCCreatorLyricsLine>();
 
