@@ -147,10 +147,13 @@ namespace VPlayer.UPnP.ViewModels
     {
       base.Initialize();
 
-      //await LoadRenderers();
+      LoadServers();
+      LoadRenderers();
     }
 
     #endregion
+
+    #region OnActivation
 
     public override async void OnActivation(bool firstActivation)
     {
@@ -158,11 +161,11 @@ namespace VPlayer.UPnP.ViewModels
 
       if (firstActivation)
       {
-        await LoadServers();
-
         MediaServers.OnActualItemChanged.Where(x => x != null).Subscribe(DiscoverServer).DisposeWith(this);
       }
     }
+
+    #endregion
 
     #region LoadServers
 

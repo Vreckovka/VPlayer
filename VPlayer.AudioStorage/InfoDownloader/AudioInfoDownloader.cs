@@ -1561,6 +1561,8 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     }
 
+    #region TryGetLRCLyricsAsync
+
     public Task<ILRCFile> TryGetLRCLyricsAsync<TClient>(TClient client, Song song, string artistName, string albumName) where TClient : ILrcProvider
     {
       return Task.Run(async () =>
@@ -1582,7 +1584,10 @@ namespace VPlayer.AudioStorage.InfoDownloader
       });
     }
 
-    #endregion Methods
+    #endregion
+
+    #endregion 
+
 
   }
 }

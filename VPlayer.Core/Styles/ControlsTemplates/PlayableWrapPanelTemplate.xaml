@@ -10,554 +10,554 @@
                     xmlns:library="clr-namespace:VPlayer.Library"
                     xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF">
 
-  <ResourceDictionary.MergedDictionaries>
-    <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
-    <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/ControlsTemplates/ButtonWithIconTemplate.xaml" />
-  </ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/ControlsTemplates/ButtonWithIconTemplate.xaml" />
+    </ResourceDictionary.MergedDictionaries>
 
-  <Duration x:Key="AnimationDuration">0:0:0:0.15</Duration>
+    <Duration x:Key="AnimationDuration">0:0:0:0.15</Duration>
 
-  <library:CacheImageConverter x:Key="CacheImageConverter"
-                               DecodeHeight="250"
-                               DecodeWidth="250" />
+    <library:CacheImageConverter x:Key="CacheImageConverter"
+                                 DecodeHeight="250"
+                                 DecodeWidth="250" />
 
-  <Style x:Key="PlayableWrapPanelItemButtons"
-         BasedOn="{StaticResource BorderlessButtonStyle}"
-         TargetType="Button">
-    <Setter Property="Opacity" Value="0" />
-    <Style.Triggers>
-      <DataTrigger Binding="{Binding ElementName=ImageGrid, Path=IsMouseOver}" Value="True">
-        <DataTrigger.EnterActions>
-          <BeginStoryboard Name="VisibilityStoryboard">
-            <Storyboard>
-              <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                               From="0.0"
-                               To="1.0"
-                               Duration="{StaticResource AnimationDuration}" />
-            </Storyboard>
-          </BeginStoryboard>
-        </DataTrigger.EnterActions>
-        <DataTrigger.ExitActions>
-          <RemoveStoryboard BeginStoryboardName="VisibilityStoryboard" />
-        </DataTrigger.ExitActions>
-      </DataTrigger>
-    </Style.Triggers>
-  </Style>
-
-  <!--  66 / 6 = 11, 11 /2 = 5.5, 11 * 2 = 22  -->
-  <Style x:Key="PlayButtonStyle" TargetType="Button">
-    <Setter Property="OverridesDefaultStyle" Value="True" />
-    <Setter Property="Opacity" Value="0" />
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="Button">
-          <Grid Width="66" Height="66">
-            <Path x:Name="Elipse" Stretch="Uniform">
-              <Path.Style>
-                <Style TargetType="Path">
-                  <Setter Property="Fill" Value="#50FFFFFF" />
-                </Style>
-              </Path.Style>
-              <Path.Data>
-                <EllipseGeometry RadiusX="11" RadiusY="11" />
-              </Path.Data>
-            </Path>
-
-            <Path Name="PlaySign"
-                  Width="22"
-                  Margin="5.5,0,0,0"
-                  HorizontalAlignment="Center"
-                  VerticalAlignment="Center"
-                  Fill="#A0FFFFFF"
-                  Style="{StaticResource PlaySign}" />
-          </Grid>
-
-          <ControlTemplate.Triggers>
-            <DataTrigger Binding="{Binding Path=IsPlaying}" Value="True">
-              <Setter TargetName="PlaySign" Property="Data" Value="M282.856,0H169.714c-31.228,0-56.571,25.344-56.571,56.571v678.857c0,31.228,25.344,56.571,                                      56.571,56.571h113.143 c31.256,0,56.572-25.315,56.572-56.571V56.571C339.428,25.344,314.112,0,282.856,0z                                      M622.285,0H509.143 c-31.256,0-56.572,25.344-56.572,56.571v678.857c0,31.228,25.316,56.571,56.572                                     56.571h113.143 c31.256,0,56.572-25.315,56.572-56.571V56.571C678.857,25.344,653.541,0,622.285,0z" />
-              <Setter TargetName="PlaySign" Property="Fill" Value="{StaticResource DefaultRedBrush}" />
-              <Setter TargetName="PlaySign" Property="Margin" Value="0,0,0,0" />
-              <Setter TargetName="Elipse" Property="Fill" Value="{StaticResource TopWindowsBrush}" />
+    <Style x:Key="PlayableWrapPanelItemButtons"
+           BasedOn="{StaticResource BorderlessButtonStyle}"
+           TargetType="Button">
+        <Setter Property="Opacity" Value="0" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding ElementName=ImageGrid, Path=IsMouseOver}" Value="True">
+                <DataTrigger.EnterActions>
+                    <BeginStoryboard Name="VisibilityStoryboard">
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                             From="0.0"
+                                             To="1.0"
+                                             Duration="{StaticResource AnimationDuration}" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.EnterActions>
+                <DataTrigger.ExitActions>
+                    <RemoveStoryboard BeginStoryboardName="VisibilityStoryboard" />
+                </DataTrigger.ExitActions>
             </DataTrigger>
+        </Style.Triggers>
+    </Style>
 
-            <Trigger Property="IsMouseOver" Value="True">
-              <Setter Property="Cursor" Value="Hand" />
-              <Trigger.EnterActions>
-                <RemoveStoryboard BeginStoryboardName="ExitColorOverlay" />
-                <BeginStoryboard Name="EnterColorOverlay">
-                  <Storyboard>
-                    <ColorAnimation Storyboard.TargetName="PlaySign"
-                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                    From="{StaticResource StrongerGrayOverlay}"
-                                    To="{StaticResource DefaultWhiteColor}"
-                                    Duration="0:0:0.1" />
-
-                    <ColorAnimation Storyboard.TargetName="Elipse"
-                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                    From="{StaticResource StrongerGrayOverlay}"
-                                    To="{StaticResource DefaultRedColor}"
-                                    Duration="0:0:0.1" />
-                  </Storyboard>
-                </BeginStoryboard>
-              </Trigger.EnterActions>
-
-              <Trigger.ExitActions>
-                <RemoveStoryboard BeginStoryboardName="EnterColorOverlay" />
-                <BeginStoryboard Name="ExitColorOverlay">
-                  <Storyboard FillBehavior="Stop">
-                    <ColorAnimation Storyboard.TargetName="PlaySign"
-                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                    From="{StaticResource DefaultWhiteColor}"
-                                    To="{StaticResource StrongerGrayOverlay}"
-                                    Duration="0:0:0.1" />
-
-                    <ColorAnimation Storyboard.TargetName="Elipse"
-                                    Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
-                                    From="{StaticResource DefaultRedColor}"
-                                    To="{StaticResource StrongerGrayOverlay}"
-                                    Duration="0:0:0.1" />
-                  </Storyboard>
-                </BeginStoryboard>
-              </Trigger.ExitActions>
-            </Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
-
-  <Style TargetType="{x:Type controls:PlayableWrapPanelItem}">
-    <Setter Property="Width" Value="200" />
-    <Setter Property="Height" Value="275" />
-    <Setter Property="BottomText" Value="{Binding BottomText}" />
-    <Setter Property="HeaderText" Value="{Binding Name}" />
-    <Setter Property="ImageThumbnail" Value="{Binding ImageThumbnail, Converter={library:CacheImageConverter}, ConverterParameter=250, IsAsync=True}" />
-    <Setter Property="IsPlaying" Value="{Binding IsPlaying}" />
-
-
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="controls:PlayableWrapPanelItem">
-          <Border Margin="5"
-                  Padding="0"
-                  BorderBrush="{StaticResource 10_WhiteTransparentBrush}"
-                  BorderThickness="2.5"
-                  CornerRadius="5">
-            <Border.Effect>
-              <DropShadowEffect BlurRadius="10" ShadowDepth="5" />
-            </Border.Effect>
-
-            <Grid Name="A"
-                  Background="{StaticResource BackgroudGradientBrush}"
-                  ClipToBounds="True">
-              <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="65" />
-                <RowDefinition Height="auto" />
-              </Grid.RowDefinitions>
-
-              <Image Name="coverImage"
-                     Grid.Row="0"
-                     HorizontalAlignment="Center"
-                     VerticalAlignment="Top"
-                     Source="{TemplateBinding ImageThumbnail,
-                                              Converter={StaticResource CacheImageConverter},
-                                              ConverterParameter=250}"
-                     Stretch="UniformToFill" />
-
-              <Grid Grid.Row="0" Background="{StaticResource GlassGradient}" />
-
-              <Grid Name="ImageGrid"
-                    Grid.Row="0"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Style="{DynamicResource PlayGridOverlay}">
-
-                <Border Padding="0,0,0,15"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Top">
-                  <Border.Background>
-                    <LinearGradientBrush StartPoint="0,1" EndPoint="0 0">
-                      <GradientStop Offset="0.8" Color="#80000000" />
-                      <GradientStop Offset="0.4" Color="#30000000" />
-                      <GradientStop Offset="0.1" Color="#00000000" />
-                    </LinearGradientBrush>
-                  </Border.Background>
-
-                  <Grid>
-                    <Path Height="30"
-                          Margin="5"
-                          HorizontalAlignment="Right"
-                          Fill="#c3ff00"
-                          Style="{StaticResource MusicNote}"
-                          Visibility="{Binding IsInPlaylist, Converter={converters:VisibilityConverter}}">
-                      <Path.Effect>
-                        <DropShadowEffect BlurRadius="2" ShadowDepth="1.5" />
-                      </Path.Effect>
-                    </Path>
-
-
-
-                    <Grid Opacity="0">
-                      <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="auto" />
-                      </Grid.ColumnDefinitions>
-
-                      <Grid.Style>
-                        <Style TargetType="Grid">
-                          <Style.Triggers>
-                            <DataTrigger Binding="{Binding ElementName=ImageGrid, Path=IsMouseOver}" Value="True">
-                              <DataTrigger.EnterActions>
-                                <BeginStoryboard Name="VisibilityStoryboard1">
-                                  <Storyboard>
-                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                     From="0.0"
-                                                     To="1.0"
-                                                     Duration="{StaticResource AnimationDuration}" />
-                                  </Storyboard>
-                                </BeginStoryboard>
-                              </DataTrigger.EnterActions>
-                              <DataTrigger.ExitActions>
-                                <RemoveStoryboard BeginStoryboardName="VisibilityStoryboard1" />
-                              </DataTrigger.ExitActions>
-                            </DataTrigger>
-                          </Style.Triggers>
-                        </Style>
-                      </Grid.Style>
-
-
-
-                      <Grid Height="30"
-                            Margin="5"
-                            HorizontalAlignment="Left">
-                        <Path Margin="5" Stretch="Uniform">
-                          <Path.Style>
-                            <Style TargetType="Path">
-                              <Setter Property="Fill" Value="White" />
-                              <Style.Triggers>
-                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.Downloading}">
-                                  <Setter Property="Opacity" Value="0" />
-                                </DataTrigger>
-                              </Style.Triggers>
-                            </Style>
-                          </Path.Style>
-                          <Path.Data>
-                            <EllipseGeometry RadiusX="1" RadiusY="1" />
-                          </Path.Data>
+    <!--  66 / 6 = 11, 11 /2 = 5.5, 11 * 2 = 22  -->
+    <Style x:Key="PlayButtonStyle" TargetType="Button">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Opacity" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid Width="66" Height="66">
+                        <Path x:Name="Elipse" Stretch="Uniform">
+                            <Path.Style>
+                                <Style TargetType="Path">
+                                    <Setter Property="Fill" Value="#50FFFFFF" />
+                                </Style>
+                            </Path.Style>
+                            <Path.Data>
+                                <EllipseGeometry RadiusX="11" RadiusY="11" />
+                            </Path.Data>
                         </Path>
 
-                        <Path>
-                          <Path.Style>
-                            <Style BasedOn="{StaticResource GearCircle}" TargetType="Path">
-                              <Style.Triggers>
-                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.Downloaded}">
-                                  <Setter Property="Fill" Value="#80e83f" />
-                                  <Setter Property="ToolTip" Value="Downloaded" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.Downloading}">
-                                  <Setter Property="Fill" Value="#3fade8" />
-                                  <Setter Property="ToolTip" Value="Downloading" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.Failed}">
-                                  <Setter Property="Fill" Value="#e8453f" />
-                                  <Setter Property="ToolTip" Value="Failed" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.UnableToFind}">
-                                  <Setter Property="Fill" Value="#e8453f" />
-                                  <Setter Property="ToolTip" Value="Unable to find" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.Waiting}">
-                                  <Setter Property="Fill" Value="#e8a43f" />
-                                  <Setter Property="ToolTip" Value="Waiting" />
-                                </DataTrigger>
-
-                              </Style.Triggers>
-                            </Style>
-                          </Path.Style>
-
-                          <Path.Effect>
-                            <DropShadowEffect BlurRadius="0.5" ShadowDepth="0.5" />
-                          </Path.Effect>
-                        </Path>
-
-
-                        <Path Height="15"
-                              Fill="BlanchedAlmond"
-                              Stretch="Uniform">
-                          <Path.Style>
-                            <Style TargetType="Path">
-                              <Setter Property="Opacity" Value="1" />
-                              <Setter Property="Data" Value="M 93.148438 80.832031 C 109.5 57.742188 104.03125 25.769531 80.941406 9.421875 C 57.851562 -6.925781 25.878906 -1.460938 9.53125 21.632812 C -6.816406 44.722656 -1.351562 76.691406 21.742188 93.039062 C 38.222656 104.707031 60.011719 105.605469 77.394531 95.339844 L 115.164062 132.882812 C 119.242188 137.175781 126.027344 137.347656 130.320312 133.269531 C 134.613281 129.195312 134.785156 122.410156 130.710938 118.117188 C 130.582031 117.980469 130.457031 117.855469 130.320312 117.726562 Z M 51.308594 84.332031 C 33.0625 84.335938 18.269531 69.554688 18.257812 51.308594 C 18.253906 33.0625 33.035156 18.269531 51.285156 18.261719 C 69.507812 18.253906 84.292969 33.011719 84.328125 51.234375 C 84.359375 69.484375 69.585938 84.300781 51.332031 84.332031 C 51.324219 84.332031 51.320312 84.332031 51.308594 84.332031 Z M 51.308594 84.332031 " />
-                              <Style.Triggers>
-                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.Failed}">
-                                  <Setter Property="Data" Value="m194.800781 164.769531 128.210938-128.214843c8.34375-8.339844 8.34375-21.824219 0-30.164063-8.339844-8.339844-21.824219-8.339844-30.164063 0l-128.214844 128.214844-128.210937-128.214844c-8.34375-8.339844-21.824219-8.339844-30.164063 0-8.34375 8.339844-8.34375 21.824219 0 30.164063l128.210938 128.214843-128.210938 128.214844c-8.34375 8.339844-8.34375 21.824219 0 30.164063 4.15625 4.160156 9.621094 6.25 15.082032 6.25 5.460937 0 10.921875-2.089844 15.082031-6.25l128.210937-128.214844 128.214844 128.214844c4.160156 4.160156 9.621094 6.25 15.082032 6.25 5.460937 0 10.921874-2.089844 15.082031-6.25 8.34375-8.339844 8.34375-21.824219 0-30.164063zm0 0" />
-                                </DataTrigger>
-                              </Style.Triggers>
-                            </Style>
-                          </Path.Style>
-                        </Path>
-                      </Grid>
+                        <Path Name="PlaySign"
+                              Width="22"
+                              Margin="5.5,0,0,0"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              Fill="#A0FFFFFF"
+                              Style="{StaticResource PlaySign}" />
                     </Grid>
 
-                  </Grid>
-                </Border>
-
-                <Button Grid.Row="0" Command="{Binding Play}">
-                  <Button.Style>
-                    <Style BasedOn="{StaticResource PlayButtonStyle}" TargetType="Button">
-                      <Style.Triggers>
-                        <MultiDataTrigger>
-                          <MultiDataTrigger.Conditions>
-                            <Condition Binding="{Binding ElementName=ImageGrid, Path=IsMouseOver}" Value="True" />
-                            <Condition Binding="{Binding IsPlaying}" Value="False" />
-                          </MultiDataTrigger.Conditions>
-                          <MultiDataTrigger.EnterActions>
-                            <BeginStoryboard Name="VisibilityStoryboard">
-                              <Storyboard>
-                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                 From="0.0"
-                                                 To="1.0"
-                                                 Duration="{StaticResource AnimationDuration}" />
-                              </Storyboard>
-                            </BeginStoryboard>
-                          </MultiDataTrigger.EnterActions>
-                          <MultiDataTrigger.ExitActions>
-                            <RemoveStoryboard BeginStoryboardName="VisibilityStoryboard" />
-                          </MultiDataTrigger.ExitActions>
-                        </MultiDataTrigger>
-
-                        <DataTrigger Binding="{Binding IsPlaying}" Value="True">
-                          <Setter Property="Opacity" Value="1" />
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding Path=IsPlaying}" Value="True">
+                            <Setter TargetName="PlaySign" Property="Data" Value="M282.856,0H169.714c-31.228,0-56.571,25.344-56.571,56.571v678.857c0,31.228,25.344,56.571,                                      56.571,56.571h113.143 c31.256,0,56.572-25.315,56.572-56.571V56.571C339.428,25.344,314.112,0,282.856,0z                                      M622.285,0H509.143 c-31.256,0-56.572,25.344-56.572,56.571v678.857c0,31.228,25.316,56.571,56.572                                     56.571h113.143 c31.256,0,56.572-25.315,56.572-56.571V56.571C678.857,25.344,653.541,0,622.285,0z" />
+                            <Setter TargetName="PlaySign" Property="Fill" Value="{StaticResource DefaultRedBrush}" />
+                            <Setter TargetName="PlaySign" Property="Margin" Value="0,0,0,0" />
+                            <Setter TargetName="Elipse" Property="Fill" Value="{StaticResource TopWindowsBrush}" />
                         </DataTrigger>
-                      </Style.Triggers>
-                    </Style>
-                  </Button.Style>
-                </Button>
 
-                <controls:PathButton Margin="5,0,0,5"
-                                     HorizontalAlignment="Left"
-                                     VerticalAlignment="Bottom"
-                                     Command="{Binding Detail}"
-                                     FontSize="25"
-                                     ForegroundDefaultColor="#95cccccc"
-                                     ToolTip="Open DETAIL view">
-                  <controls:PathButton.Style>
-                    <Style BasedOn="{StaticResource circle-question}" TargetType="controls:PathButton">
-                      <Setter Property="Opacity" Value="0" />
-                      <Style.Triggers>
-                        <DataTrigger Binding="{Binding ElementName=ImageGrid, Path=IsMouseOver}" Value="True">
-                          <DataTrigger.EnterActions>
-                            <BeginStoryboard Name="VisibilityStoryboard">
-                              <Storyboard>
-                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                 From="0.0"
-                                                 To="1.0"
-                                                 Duration="{StaticResource AnimationDuration}" />
-                              </Storyboard>
-                            </BeginStoryboard>
-                          </DataTrigger.EnterActions>
-                          <DataTrigger.ExitActions>
-                            <RemoveStoryboard BeginStoryboardName="VisibilityStoryboard" />
-                          </DataTrigger.ExitActions>
-                        </DataTrigger>
-                      </Style.Triggers>
-                    </Style>
-                  </controls:PathButton.Style>
-                </controls:PathButton>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Cursor" Value="Hand" />
+                            <Trigger.EnterActions>
+                                <RemoveStoryboard BeginStoryboardName="ExitColorOverlay" />
+                                <BeginStoryboard Name="EnterColorOverlay">
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="PlaySign"
+                                                        Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                                        From="{StaticResource StrongerGrayOverlay}"
+                                                        To="{StaticResource DefaultWhiteColor}"
+                                                        Duration="0:0:0.1" />
 
-                <controls:PathButton Margin="0,0,5,5"
-                                     Padding="3"
-                                     HorizontalAlignment="Right"
-                                     VerticalAlignment="Bottom"
-                                     Command="{Binding AddToPlaylist}"
-                                     FontSize="25"
-                                     ForegroundDefaultColor="#95cccccc"
-                                     ToolTip="Add to ACTUAL PLAYLIST">
-                  <controls:PathButton.Style>
-                    <Style BasedOn="{StaticResource layer-plus}" TargetType="controls:PathButton">
-                      <Setter Property="Opacity" Value="0" />
-                      <Style.Triggers>
-                        <DataTrigger Binding="{Binding ElementName=ImageGrid, Path=IsMouseOver}" Value="True">
-                          <DataTrigger.EnterActions>
-                            <BeginStoryboard Name="VisibilityStoryboard">
-                              <Storyboard>
-                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                 From="0.0"
-                                                 To="1.0"
-                                                 Duration="{StaticResource AnimationDuration}" />
-                              </Storyboard>
-                            </BeginStoryboard>
-                          </DataTrigger.EnterActions>
-                          <DataTrigger.ExitActions>
-                            <RemoveStoryboard BeginStoryboardName="VisibilityStoryboard" />
-                          </DataTrigger.ExitActions>
-                        </DataTrigger>
-                      </Style.Triggers>
-                    </Style>
+                                        <ColorAnimation Storyboard.TargetName="Elipse"
+                                                        Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                                        From="{StaticResource StrongerGrayOverlay}"
+                                                        To="{StaticResource DefaultRedColor}"
+                                                        Duration="0:0:0.1" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
 
-                  </controls:PathButton.Style>
-                </controls:PathButton>
-              </Grid>
+                            <Trigger.ExitActions>
+                                <RemoveStoryboard BeginStoryboardName="EnterColorOverlay" />
+                                <BeginStoryboard Name="ExitColorOverlay">
+                                    <Storyboard FillBehavior="Stop">
+                                        <ColorAnimation Storyboard.TargetName="PlaySign"
+                                                        Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                                        From="{StaticResource DefaultWhiteColor}"
+                                                        To="{StaticResource StrongerGrayOverlay}"
+                                                        Duration="0:0:0.1" />
 
-              <Border Grid.Row="1"
-                      Margin="0,0,0,0"
-                      Background="{StaticResource BackgroudBrush}"
-                      BorderBrush="{StaticResource BackgroudBrush}"
-                      BorderThickness="0,0">
-                <Grid Name="GridParent"
-                      VerticalAlignment="Top"
-                      ClipToBounds="True">
-                  <Grid.RowDefinitions>
-                    <RowDefinition Height="37" />
-                    <RowDefinition Height="*" />
-                  </Grid.RowDefinitions>
+                                        <ColorAnimation Storyboard.TargetName="Elipse"
+                                                        Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                                        From="{StaticResource DefaultRedColor}"
+                                                        To="{StaticResource StrongerGrayOverlay}"
+                                                        Duration="0:0:0.1" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-                  <TextBlock Name="NameTxt"
-                             Grid.Row="0"
-                             Margin="5"
-                             FontSize="18"
-                             Foreground="WhiteSmoke"
-                             Text="{TemplateBinding HeaderText}"
-                             ToolTip="{TemplateBinding HeaderText}">
-                    <TextBlock.Style>
-                      <Style TargetType="TextBlock">
-                        <Setter Property="Background" Value="Transparent" />
-                        <Setter Property="VerticalAlignment" Value="Top" />
-                        <Setter Property="HorizontalAlignment" Value="Center" />
-                        <Style.Triggers>
-                          <DataTrigger Value="True">
-                            <DataTrigger.Binding>
-                              <MultiBinding Converter="{library:IsBiggerConverter}">
-                                <Binding ElementName="NameTxt" Path="ActualWidth" />
-                                <Binding ElementName="GridParent" Path="ActualWidth" />
-                              </MultiBinding>
-                            </DataTrigger.Binding>
-                            <Setter Property="HorizontalAlignment" Value="Left" />
-                          </DataTrigger>
-                        </Style.Triggers>
-                      </Style>
-                    </TextBlock.Style>
-                    <b:Interaction.Behaviors>
-                      <text:PanningTextWithFontSizeBehavior BiggerFontSize="22"
-                                                            Container="{Binding ElementName=GridParent}"
-                                                            IsMouseOverRelativeToContainer="True" />
-                    </b:Interaction.Behaviors>
-                  </TextBlock>
-
-                  <Border Grid.Row="1"
-                          Margin="-1,0,-1,0"
-                          Padding="0,3,0,3"
-                          Background="#aa101010">
-                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                      <TextBlock HorizontalAlignment="Center"
-                                 FontSize="15"
-                                 Foreground="#757575"
-                                 Text="{TemplateBinding BottomText}"
-                                 TextAlignment="Center" />
-
-                      <Path x:Name="IconPath"
-                            Width="12"
-                            Height="12"
-                            Margin="10,0,0,0"
-                            Data="{Binding BottomPathData}"
-                            Stretch="Uniform">
-                        <Path.Style>
-                          <Style TargetType="Path">
-                            <Setter Property="Fill" Value="{StaticResource 120_WhiteTransparentBrush}" />
-                            <Style.Triggers>
-                              <Trigger Property="Data" Value="{x:Null}">
-                                <Setter Property="Visibility" Value="Collapsed" />
-                              </Trigger>
-                            </Style.Triggers>
-                          </Style>
-                        </Path.Style>
-                      </Path>
-
-                      <StackPanel.Style>
-                        <Style TargetType="StackPanel">
-                          <Setter Property="Background">
-                            <Setter.Value>
-                              <SolidColorBrush Opacity="0.01" Color="{StaticResource DefaultWhiteColor}" />
-                            </Setter.Value>
-                          </Setter>
-                        </Style>
-                      </StackPanel.Style>
-                    </StackPanel>
-
-                  </Border>
-                </Grid>
-              </Border>
+    <Style TargetType="{x:Type controls:PlayableWrapPanelItem}">
+        <Setter Property="Width" Value="200" />
+        <Setter Property="Height" Value="275" />
+        <Setter Property="BottomText" Value="{Binding BottomText}" />
+        <Setter Property="HeaderText" Value="{Binding Name}" />
+        <Setter Property="ImageThumbnail" Value="{Binding ImageThumbnail, Converter={library:CacheImageConverter}, ConverterParameter=250, IsAsync=True}" />
+        <Setter Property="IsPlaying" Value="{Binding IsPlaying}" />
 
 
-              <Grid x:Name="LoadingBar"
-                    Grid.Row="2"
-                    Height="2"
-                    Margin="0,-3,0,0">
-                <Grid.Style>
-                  <Style TargetType="Grid">
-                    <Setter Property="Background" Value="#cc202020" />
-                    <Style.Triggers>
-                      <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.Downloading}">
-                        <DataTrigger.EnterActions>
-                          <RemoveStoryboard BeginStoryboardName="RemoveDownloadingStoryboard" />
-                          <BeginStoryboard x:Name="DownloadingStoryboard">
-                            <Storyboard>
-                              <ColorAnimation AutoReverse="True"
-                                              RepeatBehavior="Forever"
-                                              Storyboard.TargetProperty="Background.Color"
-                                              From="#3fe8bb"
-                                              To="#3fade8"
-                                              Duration="0:0:0:2" />
-                            </Storyboard>
-                          </BeginStoryboard>
-                        </DataTrigger.EnterActions>
-                        <DataTrigger.ExitActions>
-                          <RemoveStoryboard BeginStoryboardName="DownloadingStoryboard" />
-                          <BeginStoryboard x:Name="RemoveDownloadingStoryboard">
-                            <Storyboard>
-                              <ColorAnimation Storyboard.TargetProperty="Background.Color"
-                                              To="#cc202020"
-                                              Duration="0:0:0:.65" />
-                            </Storyboard>
-                          </BeginStoryboard>
-                        </DataTrigger.ExitActions>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:PlayableWrapPanelItem">
+                    <Border Margin="5"
+                            Padding="0"
+                            BorderBrush="{StaticResource 10_WhiteTransparentBrush}"
+                            BorderThickness="2.5"
+                            CornerRadius="5">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="10" ShadowDepth="5" />
+                        </Border.Effect>
 
-                      </DataTrigger>
-                    </Style.Triggers>
-                  </Style>
-                </Grid.Style>
-              </Grid>
-            </Grid>
-          </Border>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+                        <Grid Name="A"
+                              Background="{StaticResource BackgroudGradientBrush}"
+                              ClipToBounds="True">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="65" />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
 
-  <Style TargetType="{x:Type controls:PlayableWrapPanel}">
-    <Setter Property="Background" Value="{StaticResource BackgroudGradientBrush}" />
-    <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True" />
-    <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
-    <Setter Property="ItemsPanel">
-      <Setter.Value>
-        <ItemsPanelTemplate>
-          <controls1:VirtualizingWrapPanel Orientation="Vertical" />
-        </ItemsPanelTemplate>
-      </Setter.Value>
-    </Setter>
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate TargetType="controls:PlayableWrapPanel">
-          <Grid Background="{TemplateBinding Panel.Background}" SnapsToDevicePixels="True">
-            <ScrollViewer Padding="{TemplateBinding Control.Padding}"
-                          attachedProperties1:AttachedProperty.ScrollSpeed="5"
-                          Focusable="False">
-              <ItemsPresenter SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
-            </ScrollViewer>
-          </Grid>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
-  </Style>
+                            <Image Name="coverImage"
+                                   Grid.Row="0"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Top"
+                                   Source="{TemplateBinding ImageThumbnail,
+                                                            Converter={StaticResource CacheImageConverter},
+                                                            ConverterParameter=250}"
+                                   Stretch="UniformToFill" />
+
+                            <Grid Grid.Row="0" Background="{StaticResource GlassGradient}" />
+
+                            <Grid Name="ImageGrid"
+                                  Grid.Row="0"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Stretch"
+                                  Style="{DynamicResource PlayGridOverlay}">
+
+                                <Border Padding="0,0,0,15"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Top">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,1" EndPoint="0 0">
+                                            <GradientStop Offset="0.8" Color="#80000000" />
+                                            <GradientStop Offset="0.4" Color="#30000000" />
+                                            <GradientStop Offset="0.1" Color="#00000000" />
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+
+                                    <Grid>
+                                        <Path Height="30"
+                                              Margin="5"
+                                              HorizontalAlignment="Right"
+                                              Fill="#c3ff00"
+                                              Style="{StaticResource MusicNote}"
+                                              Visibility="{Binding IsInPlaylist, Converter={converters:VisibilityConverter}}">
+                                            <Path.Effect>
+                                                <DropShadowEffect BlurRadius="2" ShadowDepth="1.5" />
+                                            </Path.Effect>
+                                        </Path>
+
+
+
+                                        <Grid Opacity="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <Grid.Style>
+                                                <Style TargetType="Grid">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ElementName=ImageGrid, Path=IsMouseOver}" Value="True">
+                                                            <DataTrigger.EnterActions>
+                                                                <BeginStoryboard Name="VisibilityStoryboard1">
+                                                                    <Storyboard>
+                                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                                                         From="0.0"
+                                                                                         To="1.0"
+                                                                                         Duration="{StaticResource AnimationDuration}" />
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </DataTrigger.EnterActions>
+                                                            <DataTrigger.ExitActions>
+                                                                <RemoveStoryboard BeginStoryboardName="VisibilityStoryboard1" />
+                                                            </DataTrigger.ExitActions>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Grid.Style>
+
+
+
+                                            <Grid Height="30"
+                                                  Margin="5"
+                                                  HorizontalAlignment="Left">
+                                                <Path Margin="5" Stretch="Uniform">
+                                                    <Path.Style>
+                                                        <Style TargetType="Path">
+                                                            <Setter Property="Fill" Value="White" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.Downloading}">
+                                                                    <Setter Property="Opacity" Value="0" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Path.Style>
+                                                    <Path.Data>
+                                                        <EllipseGeometry RadiusX="1" RadiusY="1" />
+                                                    </Path.Data>
+                                                </Path>
+
+                                                <Path>
+                                                    <Path.Style>
+                                                        <Style BasedOn="{StaticResource GearCircle}" TargetType="Path">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.Downloaded}">
+                                                                    <Setter Property="Fill" Value="#80e83f" />
+                                                                    <Setter Property="ToolTip" Value="Downloaded" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.Downloading}">
+                                                                    <Setter Property="Fill" Value="#3fade8" />
+                                                                    <Setter Property="ToolTip" Value="Downloading" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.Failed}">
+                                                                    <Setter Property="Fill" Value="#e8453f" />
+                                                                    <Setter Property="ToolTip" Value="Failed" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.UnableToFind}">
+                                                                    <Setter Property="Fill" Value="#e8453f" />
+                                                                    <Setter Property="ToolTip" Value="Unable to find" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.Waiting}">
+                                                                    <Setter Property="Fill" Value="#e8a43f" />
+                                                                    <Setter Property="ToolTip" Value="Waiting" />
+                                                                </DataTrigger>
+
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Path.Style>
+
+                                                    <Path.Effect>
+                                                        <DropShadowEffect BlurRadius="0.5" ShadowDepth="0.5" />
+                                                    </Path.Effect>
+                                                </Path>
+
+
+                                                <Path Height="15"
+                                                      Fill="BlanchedAlmond"
+                                                      Stretch="Uniform">
+                                                    <Path.Style>
+                                                        <Style TargetType="Path">
+                                                            <Setter Property="Opacity" Value="1" />
+                                                            <Setter Property="Data" Value="M 93.148438 80.832031 C 109.5 57.742188 104.03125 25.769531 80.941406 9.421875 C 57.851562 -6.925781 25.878906 -1.460938 9.53125 21.632812 C -6.816406 44.722656 -1.351562 76.691406 21.742188 93.039062 C 38.222656 104.707031 60.011719 105.605469 77.394531 95.339844 L 115.164062 132.882812 C 119.242188 137.175781 126.027344 137.347656 130.320312 133.269531 C 134.613281 129.195312 134.785156 122.410156 130.710938 118.117188 C 130.582031 117.980469 130.457031 117.855469 130.320312 117.726562 Z M 51.308594 84.332031 C 33.0625 84.335938 18.269531 69.554688 18.257812 51.308594 C 18.253906 33.0625 33.035156 18.269531 51.285156 18.261719 C 69.507812 18.253906 84.292969 33.011719 84.328125 51.234375 C 84.359375 69.484375 69.585938 84.300781 51.332031 84.332031 C 51.324219 84.332031 51.320312 84.332031 51.308594 84.332031 Z M 51.308594 84.332031 " />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.Failed}">
+                                                                    <Setter Property="Data" Value="m194.800781 164.769531 128.210938-128.214843c8.34375-8.339844 8.34375-21.824219 0-30.164063-8.339844-8.339844-21.824219-8.339844-30.164063 0l-128.214844 128.214844-128.210937-128.214844c-8.34375-8.339844-21.824219-8.339844-30.164063 0-8.34375 8.339844-8.34375 21.824219 0 30.164063l128.210938 128.214843-128.210938 128.214844c-8.34375 8.339844-8.34375 21.824219 0 30.164063 4.15625 4.160156 9.621094 6.25 15.082032 6.25 5.460937 0 10.921875-2.089844 15.082031-6.25l128.210937-128.214844 128.214844 128.214844c4.160156 4.160156 9.621094 6.25 15.082032 6.25 5.460937 0 10.921874-2.089844 15.082031-6.25 8.34375-8.339844 8.34375-21.824219 0-30.164063zm0 0" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Path.Style>
+                                                </Path>
+                                            </Grid>
+                                        </Grid>
+
+                                    </Grid>
+                                </Border>
+
+                                <Button Grid.Row="0" Command="{Binding Play}">
+                                    <Button.Style>
+                                        <Style BasedOn="{StaticResource PlayButtonStyle}" TargetType="Button">
+                                            <Style.Triggers>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding ElementName=ImageGrid, Path=IsMouseOver}" Value="True" />
+                                                        <Condition Binding="{Binding IsPlaying}" Value="False" />
+                                                    </MultiDataTrigger.Conditions>
+                                                    <MultiDataTrigger.EnterActions>
+                                                        <BeginStoryboard Name="VisibilityStoryboard">
+                                                            <Storyboard>
+                                                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                                                 From="0.0"
+                                                                                 To="1.0"
+                                                                                 Duration="{StaticResource AnimationDuration}" />
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </MultiDataTrigger.EnterActions>
+                                                    <MultiDataTrigger.ExitActions>
+                                                        <RemoveStoryboard BeginStoryboardName="VisibilityStoryboard" />
+                                                    </MultiDataTrigger.ExitActions>
+                                                </MultiDataTrigger>
+
+                                                <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                                    <Setter Property="Opacity" Value="1" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+
+                                <controls:PathButton Margin="5,0,0,5"
+                                                     HorizontalAlignment="Left"
+                                                     VerticalAlignment="Bottom"
+                                                     Command="{Binding Detail}"
+                                                     FontSize="25"
+                                                     ForegroundDefaultColor="#95cccccc"
+                                                     ToolTip="Open DETAIL view">
+                                    <controls:PathButton.Style>
+                                        <Style BasedOn="{StaticResource circle-question}" TargetType="controls:PathButton">
+                                            <Setter Property="Opacity" Value="0" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ElementName=ImageGrid, Path=IsMouseOver}" Value="True">
+                                                    <DataTrigger.EnterActions>
+                                                        <BeginStoryboard Name="VisibilityStoryboard">
+                                                            <Storyboard>
+                                                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                                                 From="0.0"
+                                                                                 To="1.0"
+                                                                                 Duration="{StaticResource AnimationDuration}" />
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </DataTrigger.EnterActions>
+                                                    <DataTrigger.ExitActions>
+                                                        <RemoveStoryboard BeginStoryboardName="VisibilityStoryboard" />
+                                                    </DataTrigger.ExitActions>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </controls:PathButton.Style>
+                                </controls:PathButton>
+
+                                <controls:PathButton Margin="0,0,5,5"
+                                                     Padding="3"
+                                                     HorizontalAlignment="Right"
+                                                     VerticalAlignment="Bottom"
+                                                     Command="{Binding AddToPlaylist}"
+                                                     FontSize="25"
+                                                     ForegroundDefaultColor="#95cccccc"
+                                                     ToolTip="Add to ACTUAL PLAYLIST">
+                                    <controls:PathButton.Style>
+                                        <Style BasedOn="{StaticResource layer-plus}" TargetType="controls:PathButton">
+                                            <Setter Property="Opacity" Value="0" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ElementName=ImageGrid, Path=IsMouseOver}" Value="True">
+                                                    <DataTrigger.EnterActions>
+                                                        <BeginStoryboard Name="VisibilityStoryboard">
+                                                            <Storyboard>
+                                                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                                                 From="0.0"
+                                                                                 To="1.0"
+                                                                                 Duration="{StaticResource AnimationDuration}" />
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </DataTrigger.EnterActions>
+                                                    <DataTrigger.ExitActions>
+                                                        <RemoveStoryboard BeginStoryboardName="VisibilityStoryboard" />
+                                                    </DataTrigger.ExitActions>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+
+                                    </controls:PathButton.Style>
+                                </controls:PathButton>
+                            </Grid>
+
+                            <Border Grid.Row="1"
+                                    Margin="0,0,0,0"
+                                    Background="{StaticResource BackgroudBrush}"
+                                    BorderBrush="{StaticResource BackgroudBrush}"
+                                    BorderThickness="0,0">
+                                <Grid Name="GridParent"
+                                      VerticalAlignment="Top"
+                                      ClipToBounds="True">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="37" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Name="NameTxt"
+                                               Grid.Row="0"
+                                               Margin="5"
+                                               FontSize="18"
+                                               Foreground="WhiteSmoke"
+                                               Text="{TemplateBinding HeaderText}"
+                                               ToolTip="{TemplateBinding HeaderText}">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Background" Value="Transparent" />
+                                                <Setter Property="VerticalAlignment" Value="Top" />
+                                                <Setter Property="HorizontalAlignment" Value="Center" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Value="True">
+                                                        <DataTrigger.Binding>
+                                                            <MultiBinding Converter="{library:IsBiggerConverter}">
+                                                                <Binding ElementName="NameTxt" Path="ActualWidth" />
+                                                                <Binding ElementName="GridParent" Path="ActualWidth" />
+                                                            </MultiBinding>
+                                                        </DataTrigger.Binding>
+                                                        <Setter Property="HorizontalAlignment" Value="Left" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                        <b:Interaction.Behaviors>
+                                            <text:PanningTextWithFontSizeBehavior BiggerFontSize="22"
+                                                                                  Container="{Binding ElementName=GridParent}"
+                                                                                  IsMouseOverRelativeToContainer="True" />
+                                        </b:Interaction.Behaviors>
+                                    </TextBlock>
+
+                                    <Border Grid.Row="1"
+                                            Margin="-1,0,-1,0"
+                                            Padding="0,3,0,3"
+                                            Background="#aa101010">
+                                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                            <TextBlock HorizontalAlignment="Center"
+                                                       FontSize="15"
+                                                       Foreground="#757575"
+                                                       Text="{TemplateBinding BottomText}"
+                                                       TextAlignment="Center" />
+
+                                            <Path x:Name="IconPath"
+                                                  Width="12"
+                                                  Height="12"
+                                                  Margin="10,0,0,0"
+                                                  Data="{Binding BottomPathData}"
+                                                  Stretch="Uniform">
+                                                <Path.Style>
+                                                    <Style TargetType="Path">
+                                                        <Setter Property="Fill" Value="{StaticResource 120_WhiteTransparentBrush}" />
+                                                        <Style.Triggers>
+                                                            <Trigger Property="Data" Value="{x:Null}">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                            </Trigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Path.Style>
+                                            </Path>
+
+                                            <StackPanel.Style>
+                                                <Style TargetType="StackPanel">
+                                                    <Setter Property="Background">
+                                                        <Setter.Value>
+                                                            <SolidColorBrush Opacity="0.01" Color="{StaticResource DefaultWhiteColor}" />
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </StackPanel.Style>
+                                        </StackPanel>
+
+                                    </Border>
+                                </Grid>
+                            </Border>
+
+
+                            <Grid x:Name="LoadingBar"
+                                  Grid.Row="2"
+                                  Height="2"
+                                  Margin="0,-3,0,0">
+                                <Grid.Style>
+                                    <Style TargetType="Grid">
+                                        <Setter Property="Background" Value="#cc202020" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding InfoDownloadStatus}" Value="{x:Static domainClasses1:InfoDownloadStatus.Downloading}">
+                                                <DataTrigger.EnterActions>
+                                                    <RemoveStoryboard BeginStoryboardName="RemoveDownloadingStoryboard" />
+                                                    <BeginStoryboard x:Name="DownloadingStoryboard">
+                                                        <Storyboard>
+                                                            <ColorAnimation AutoReverse="True"
+                                                                            RepeatBehavior="Forever"
+                                                                            Storyboard.TargetProperty="Background.Color"
+                                                                            From="#3fe8bb"
+                                                                            To="#3fade8"
+                                                                            Duration="0:0:0:2" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </DataTrigger.EnterActions>
+                                                <DataTrigger.ExitActions>
+                                                    <RemoveStoryboard BeginStoryboardName="DownloadingStoryboard" />
+                                                    <BeginStoryboard x:Name="RemoveDownloadingStoryboard">
+                                                        <Storyboard>
+                                                            <ColorAnimation Storyboard.TargetProperty="Background.Color"
+                                                                            To="#cc202020"
+                                                                            Duration="0:0:0:.65" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </DataTrigger.ExitActions>
+
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Grid.Style>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type controls:PlayableWrapPanel}">
+        <Setter Property="Background" Value="{StaticResource BackgroudGradientBrush}" />
+        <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True" />
+        <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <controls1:VirtualizingWrapPanel Orientation="Vertical" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:PlayableWrapPanel">
+                    <Grid Background="{TemplateBinding Panel.Background}" SnapsToDevicePixels="True">
+                        <ScrollViewer Padding="{TemplateBinding Control.Padding}"
+                                      attachedProperties1:AttachedProperty.ScrollSpeed="5"
+                                      Focusable="False">
+                            <ItemsPresenter SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+                        </ScrollViewer>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

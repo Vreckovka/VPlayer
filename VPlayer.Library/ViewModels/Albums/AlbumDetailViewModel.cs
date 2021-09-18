@@ -233,15 +233,18 @@ namespace VPlayer.Home.ViewModels.Albums
           allSong = ViewModel.Model.Songs.Select(x => viewModelsFactory.Create<SongDetailViewModel>(x.Copy())).ToList();
         }
 
-        Application.Current.Dispatcher.Invoke(() =>
+        if (allSong != null)
         {
-          var generator = new ItemsGenerator<SongDetailViewModel>(allSong, 25);
-          SongsView = new VirtualList<SongDetailViewModel>(generator);
+          Application.Current.Dispatcher.Invoke(() =>
+          {
+            var generator = new ItemsGenerator<SongDetailViewModel>(allSong, 25);
+            SongsView = new VirtualList<SongDetailViewModel>(generator);
 
-          TotalDuration = TimeSpan.FromSeconds(allSong.Sum(x => x.Model.Duration));
+            TotalDuration = TimeSpan.FromSeconds(allSong.Sum(x => x.Model.Duration));
 
-          SetIsAllSongHasLyricsOff(allSong.All(x => !x.Model.ItemModel.IsAutomaticLyricsFindEnabled));
-        });
+            SetIsAllSongHasLyricsOff(allSong.All(x => !x.Model.ItemModel.IsAutomaticLyricsFindEnabled));
+          });
+        }
       });
     }
 

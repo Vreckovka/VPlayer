@@ -1,14 +1,11 @@
-﻿using Prism.Events;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Prism.Events;
 using VCore;
-using VCore.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics;
@@ -21,9 +18,9 @@ using VPlayer.Core.Events;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Core.ViewModels.Artists;
-using VPlayer.Core.ViewModels.TvShows;
+using VPlayer.Core.ViewModels.SoundItems.LRCCreators;
 
-namespace VPlayer.Core.ViewModels
+namespace VPlayer.Core.ViewModels.SoundItems
 {
   public class SongInPlayListViewModel : SoundItemInPlaylistViewModel
   {
@@ -32,7 +29,7 @@ namespace VPlayer.Core.ViewModels
     private readonly IAlbumsViewModel albumsViewModel;
     private readonly IArtistsViewModel artistsViewModel;
     private readonly AudioInfoDownloader audioInfoDownloader;
-    private readonly PCloudLrcProvider pCloudLrcProvider;
+    private readonly PCloudLyricsProvider pCloudLyricsProvider;
     private readonly GoogleDriveLrcProvider googleDriveLrcProvider;
     private readonly IStorageManager storageManager;
 
@@ -45,7 +42,7 @@ namespace VPlayer.Core.ViewModels
       IAlbumsViewModel albumsViewModel,
       IArtistsViewModel artistsViewModel,
       AudioInfoDownloader audioInfoDownloader,
-      PCloudLrcProvider pCloudLrcProvider,
+      PCloudLyricsProvider pCloudLyricsProvider,
       Song model,
       GoogleDriveLrcProvider googleDriveLrcProvider,
       IStorageManager storageManager) : base(model.ItemModel, eventAggregator, storageManager)
@@ -53,7 +50,7 @@ namespace VPlayer.Core.ViewModels
       this.albumsViewModel = albumsViewModel ?? throw new ArgumentNullException(nameof(albumsViewModel));
       this.artistsViewModel = artistsViewModel ?? throw new ArgumentNullException(nameof(artistsViewModel));
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
-      this.pCloudLrcProvider = pCloudLrcProvider ?? throw new ArgumentNullException(nameof(pCloudLrcProvider));
+      this.pCloudLyricsProvider = pCloudLyricsProvider ?? throw new ArgumentNullException(nameof(pCloudLyricsProvider));
       this.googleDriveLrcProvider = googleDriveLrcProvider ?? throw new ArgumentNullException(nameof(googleDriveLrcProvider));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       SongModel = model ?? throw new ArgumentNullException(nameof(model));
@@ -149,6 +146,10 @@ namespace VPlayer.Core.ViewModels
         if (value != SongModel.Chartlyrics_Lyric)
         {
           SongModel.Chartlyrics_Lyric = value;
+
+          if (!string.IsNullOrEmpty(value))
+            SaveTextLyrics(value);
+
           RaisePropertyChanged(nameof(LyricsObject));
           RaisePropertyChanged();
         }
@@ -157,20 +158,35 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+
+    public LRCCreatorViewModel LRCCreatorViewModel { get; set; }
+
     #region LyricsObject
 
     public object LyricsObject
     {
       get
       {
-        if (LRCLyrics == null)
+        if (LRCCreatorViewModel != null)
         {
-          return Lyrics;
+          return LRCCreatorViewModel;
         }
-        else
+
+        if (IsAutomaticLyricsDownloadDisabled)
+        {
+          return false;
+        }
+
+        if (LRCFile != null)
         {
           return LRCFile;
         }
+        else if (!string.IsNullOrEmpty(Lyrics))
+        {
+          return Lyrics;
+        }
+
+        return null;
       }
     }
 
@@ -220,6 +236,7 @@ namespace VPlayer.Core.ViewModels
           UpdateDbModel();
 
           RaisePropertyChanged();
+          RaiseNotifyPropertyChanged(nameof(LyricsObject));
         }
       }
     }
@@ -390,10 +407,10 @@ namespace VPlayer.Core.ViewModels
           switch (provider)
           {
             case LRCProviders.NotIdentified:
-              LRCFile = new LRCFileViewModel(lrc, provider, pCloudLrcProvider);
+              LRCFile = new LRCFileViewModel(lrc, provider, pCloudLyricsProvider);
               break;
             case LRCProviders.Google:
-              LRCFile = new LRCFileViewModel(lrc, provider, pCloudLrcProvider, googleDriveLrcProvider);
+              LRCFile = new LRCFileViewModel(lrc, provider, pCloudLyricsProvider, googleDriveLrcProvider);
 
               LRCFile.Model.Title = Name;
               LRCFile.Model.Artist = artistViewModel?.Name;
@@ -407,12 +424,12 @@ namespace VPlayer.Core.ViewModels
               break;
             case LRCProviders.Local:
               var localProvider = new LocalLrcProvider("C:\\Lyrics");
-              LRCFile = new LRCFileViewModel(lrc, provider, pCloudLrcProvider, localProvider);
+              LRCFile = new LRCFileViewModel(lrc, provider, pCloudLyricsProvider, localProvider);
               break;
             case LRCProviders.MiniLyrics:
               break;
             case LRCProviders.PCloud:
-              LRCFile = new LRCFileViewModel(lrc, provider, pCloudLrcProvider, pCloudLrcProvider);
+              LRCFile = new LRCFileViewModel(lrc, provider, pCloudLyricsProvider, pCloudLyricsProvider);
               break;
             default:
               throw new ArgumentOutOfRangeException();
@@ -438,7 +455,7 @@ namespace VPlayer.Core.ViewModels
         var lrc = await audioInfoDownloader.TryGetLRCLyricsAsync(provider, SongModel, ArtistViewModel?.Name, AlbumViewModel?.Name);
 
         if (lrc != null)
-          LRCFile = new LRCFileViewModel(lrc, provider.LRCProvider, pCloudLrcProvider, provider);
+          LRCFile = new LRCFileViewModel(lrc, provider.LRCProvider, pCloudLyricsProvider, provider);
 
       }
     }
@@ -452,7 +469,7 @@ namespace VPlayer.Core.ViewModels
       var lrc = (GoogleLRCFile)await audioInfoDownloader.TryGetLRCLyricsAsync(googleDriveLrcProvider, SongModel, ArtistViewModel?.Name, AlbumViewModel?.Name);
 
       if (lrc != null)
-        LRCFile = new LRCFileViewModel(lrc, googleDriveLrcProvider.LRCProvider, pCloudLrcProvider, googleDriveLrcProvider);
+        LRCFile = new LRCFileViewModel(lrc, googleDriveLrcProvider.LRCProvider, pCloudLyricsProvider, googleDriveLrcProvider);
 
     }
 
@@ -462,14 +479,12 @@ namespace VPlayer.Core.ViewModels
 
     private async Task LoadLRCFromPCloud()
     {
-      var lrc = (PCloudLRCFile)await audioInfoDownloader.TryGetLRCLyricsAsync(pCloudLrcProvider, SongModel, ArtistViewModel?.Name, AlbumViewModel?.Name);
+      var lrc = (PCloudLRCFile)await audioInfoDownloader.TryGetLRCLyricsAsync(pCloudLyricsProvider, SongModel, ArtistViewModel?.Name, AlbumViewModel?.Name);
 
       if (lrc != null)
       {
-        LRCFile = new LRCFileViewModel(lrc, pCloudLrcProvider.LRCProvider, pCloudLrcProvider, googleDriveLrcProvider);
+        LRCFile = new LRCFileViewModel(lrc, pCloudLyricsProvider.LRCProvider, pCloudLyricsProvider, googleDriveLrcProvider);
       }
-        
-
     }
 
     #endregion
@@ -509,7 +524,7 @@ namespace VPlayer.Core.ViewModels
 
         SongModel.LRCLyrics = lrcString;
 
-        LRCFile = new LRCFileViewModel(lrc, LRCProviders.MiniLyrics, pCloudLrcProvider, client);
+        LRCFile = new LRCFileViewModel(lrc, LRCProviders.MiniLyrics, pCloudLyricsProvider, client);
       }
 
     }
@@ -523,7 +538,7 @@ namespace VPlayer.Core.ViewModels
       LRCFile = null;
       Lyrics = null;
 
-      if(IsAutomaticLyricsDownloadDisabled)
+      if (IsAutomaticLyricsDownloadDisabled)
       {
         return false;
       }
@@ -532,7 +547,19 @@ namespace VPlayer.Core.ViewModels
         return false;
 
       if (LRCFile == null)
+      {
         await LoadLRCFromPCloud();
+
+        Lyrics = await pCloudLyricsProvider.GetTextLyrics(SongModel.Name, AlbumViewModel?.Name, ArtistViewModel?.Name);
+
+        if (!string.IsNullOrEmpty(Lyrics))
+        {
+          RaiseLyricsChange();
+
+          return true;
+        }
+      }
+
 
       if (LRCFile == null)
       {
@@ -553,7 +580,6 @@ namespace VPlayer.Core.ViewModels
           LRCFile.OnApplyPernamently();
         }
       }
-       
 
       if (LRCFile == null)
         await LoadLRCFromLocal();
@@ -567,18 +593,40 @@ namespace VPlayer.Core.ViewModels
       }
 
 
+      RaiseLyricsChange();
 
+      return LRCFile != null;
+    }
+
+    #endregion
+
+    public void RaiseLyricsChange()
+    {
       Application.Current?.Dispatcher?.Invoke(() =>
       {
         RaisePropertyChanged(nameof(LRCFile));
         RaisePropertyChanged(nameof(Lyrics));
         RaisePropertyChanged(nameof(LyricsObject));
       });
-
-      return LRCFile != null;
     }
 
-    #endregion
+
+    private async void SaveTextLyrics(string lyrics)
+    {
+      var result = await pCloudLyricsProvider.SaveTextLyrics(SongModel.Name, AlbumViewModel?.Name, ArtistViewModel?.Name, lyrics);
+
+      if (result)
+      {
+        if (IsAutomaticLyricsDownloadDisabled)
+        {
+          IsAutomaticLyricsDownloadDisabled = false;
+        }
+
+        Lyrics = lyrics;
+
+        RaiseLyricsChange();
+      }
+    }
 
     #region UpdateAlbumViewModel
 

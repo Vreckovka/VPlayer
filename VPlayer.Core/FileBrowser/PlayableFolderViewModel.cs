@@ -15,6 +15,7 @@ using VCore.WPF.ViewModels.WindowsFiles;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
+using VPlayer.Core.ViewModels.SoundItems;
 using VPlayer.Core.ViewModels.TvShows;
 using VPLayer.Domain;
 using FileInfo = VCore.WPF.ViewModels.WindowsFiles.FileInfo;

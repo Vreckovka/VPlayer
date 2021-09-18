@@ -1,0 +1,30 @@
+﻿<UserControl x:Class="VPlayer.WindowsPlayer.Views.Prompts.AddLyricsPromptView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:VPlayer.WindowsPlayer.Views.Prompts"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:prompts="clr-namespace:VCore.WPF.Prompts;assembly=VCore.WPF"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             mc:Ignorable="d">
+    <Grid Width="350" Height="250">
+
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <TextBox VerticalContentAlignment="Top"
+                 AcceptsReturn="True"
+                 Background="#15ffffff"
+                 BorderThickness="0"
+                 Foreground="White"
+                 Text="{Binding Lyrics, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 TextWrapping="Wrap"
+                 VerticalScrollBarVisibility="Visible" />
+
+        <prompts:GenericPromptFooter Grid.Row="1" Margin="0,-15,10,0" />
+    </Grid>
+</UserControl>

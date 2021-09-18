@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using VPlayer.Core.ViewModels;
+using VPlayer.Core.ViewModels.SoundItems;
 using VPlayer.Core.ViewModels.TvShows;
 using VPlayer.IPTV.ViewModels;
 

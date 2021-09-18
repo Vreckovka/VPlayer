@@ -7,6 +7,7 @@ using VCore.Standard.Factories.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.Core.ViewModels;
+using VPlayer.Core.ViewModels.SoundItems;
 using VPlayer.Core.ViewModels.TvShows;
 using VPLayer.Domain.Contracts.IPTV;
 using VPlayer.IPTV.ViewModels;

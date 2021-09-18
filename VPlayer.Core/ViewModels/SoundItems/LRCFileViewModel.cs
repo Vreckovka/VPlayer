@@ -7,27 +7,26 @@ using System.Windows;
 using System.Windows.Input;
 using VCore;
 using VCore.Standard;
-using VCore.ViewModels;
 using VPlayer.AudioStorage.InfoDownloader.LRC;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;
 
-namespace VPlayer.Core.ViewModels
+namespace VPlayer.Core.ViewModels.SoundItems
 {
   public class LRCFileViewModel : ViewModel<ILRCFile>
   {
     #region Fields
 
-    private readonly PCloudLrcProvider pCloudLrcProvider;
+    private readonly PCloudLyricsProvider pCloudLyricsProvider;
     private readonly ILrcProvider sourceProvider;
 
     #endregion
 
     #region Constructors
 
-    public LRCFileViewModel(ILRCFile model, LRCProviders lRcProvider, PCloudLrcProvider pCloudLrcProvider, ILrcProvider lrcProvider = null) : base(model)
+    public LRCFileViewModel(ILRCFile model, LRCProviders lRcProvider, PCloudLyricsProvider pCloudLyricsProvider, ILrcProvider lrcProvider = null) : base(model)
     {
-      this.pCloudLrcProvider = pCloudLrcProvider ?? throw new ArgumentNullException(nameof(pCloudLrcProvider));
+      this.pCloudLyricsProvider = pCloudLyricsProvider ?? throw new ArgumentNullException(nameof(pCloudLyricsProvider));
 
       sourceProvider = lrcProvider;
       Provider = lRcProvider;
@@ -252,7 +251,7 @@ namespace VPlayer.Core.ViewModels
 
         Application.Current.Dispatcher.Invoke(() => { IsLoading = true; UpdateStatus = null; });
 
-        var result =  await pCloudLrcProvider.Update(Model);
+        var result =  await pCloudLyricsProvider.Update(Model);
 
         Application.Current.Dispatcher.Invoke(() =>
         {

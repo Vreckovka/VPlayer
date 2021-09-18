@@ -31,7 +31,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients
 
     #region FindFile
 
-    protected override Task<FileInfo> GetFile(string songName, string artistName, string albumName)
+    protected override Task<FileInfo> GetFile(string songName, string artistName, string albumName, string extension)
     {
       return Task.Run(() =>
       {
@@ -51,7 +51,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients
         {
           var directory = new DirectoryInfo(directoryPath);
 
-          var filesInDir = directory.GetFiles($"*{GetFileName(artistName, songName)}*.lrc").ToList();
+          var filesInDir = directory.GetFiles($"*{GetFileName(artistName, songName)}*.{extension}").ToList();
 
           if (filesInDir.Count == 1)
           {
@@ -79,7 +79,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients
     {
       return Task.Run<KeyValuePair<string[], ILRCFile>>(async () =>
       {
-        var lrcFile = (await GetFile(songName, artistName, albumName))?.FullName;
+        var lrcFile = (await GetFile(songName, artistName, albumName,".lrc"))?.FullName;
 
         if (!string.IsNullOrEmpty(lrcFile))
         {

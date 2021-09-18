@@ -82,11 +82,16 @@
                                         <Setter Property="IconDefaultColor" Value="#3b668f" />
                                         <Setter Property="Opacity" Value="1" />
                                         <Setter Property="Margin" Value="0,-5,0,-5" />
+                                        <Setter Property="Visibility" Value="Visible" />
 
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding CSFDItem}" Value="{x:Null}">
                                                 <Setter Property="IconHoverColor" Value="#757575" />
                                                 <Setter Property="IconDefaultColor" Value="#656565" />
+                                            </DataTrigger>
+
+                                            <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Collapsed" />
                                             </DataTrigger>
                                         </Style.Triggers>
 
@@ -148,13 +153,16 @@
             </Border>
 
             <controls2:NonTopmostPopup Grid.Column="3"
+                                       Margin="0"
                                        HorizontalAlignment="Right"
                                        AllowsTransparency="True"
+                                       HorizontalOffset="-4"
                                        IsOpen="True"
                                        Placement="Top"
                                        PlacementTarget="{Binding ElementName=PlayerGrid}"
                                        PopupAnimation="Fade"
-                                       StaysOpen="true">
+                                       StaysOpen="true"
+                                       VerticalOffset="-5">
                 <Grid DataContext="{Binding StatusMessageViewModel}">
                     <Grid.Resources>
                         <Style TargetType="{x:Type statusMessage:StatusMessage}">
@@ -344,7 +352,7 @@
                         </Style>
                     </Grid.Resources>
 
-                    <statusMessage:StatusMessage />
+                    <statusMessage:StatusMessage Margin="0,0,0,0" />
 
                 </Grid>
                 <b:Interaction.Behaviors>

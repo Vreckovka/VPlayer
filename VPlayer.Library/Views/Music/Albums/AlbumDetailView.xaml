@@ -155,7 +155,7 @@
                             <StackPanel Grid.Column="1">
                                 <TextBlock Text="{Binding ViewModel.Model.ReleaseDate}" />
                                 <TextBlock Text="{Binding AlbumSongs.Count}" />
-                                <TextBlock Text="01:24:38" />
+                                <TextBlock Text="{Binding TotalDuration}" />
                             </StackPanel>
                         </Grid>
                     </Border>

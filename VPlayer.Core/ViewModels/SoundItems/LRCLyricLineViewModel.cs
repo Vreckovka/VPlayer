@@ -1,7 +1,7 @@
 ﻿using VCore.Standard;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;
 
-namespace VPlayer.Core.ViewModels
+namespace VPlayer.Core.ViewModels.SoundItems
 {
   public class LRCLyricLineViewModel : ViewModel<LRCLyricLine>
   {

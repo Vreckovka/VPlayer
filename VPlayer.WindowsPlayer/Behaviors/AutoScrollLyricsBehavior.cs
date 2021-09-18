@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Microsoft.Xaml.Behaviors;
+using VCore.Helpers;
 using VCore.WPF.Behaviors;
 using VPlayer.Core.ViewModels;
+using VPlayer.Core.ViewModels.SoundItems;
+using VPlayer.Core.ViewModels.SoundItems.LRCCreators;
 
 namespace VPlayer.Player.Behaviors
 {
@@ -55,20 +59,33 @@ namespace VPlayer.Player.Behaviors
 
 
     private SerialDisposable serialDisposable = new SerialDisposable();
+
     private void SubcsribeToSongChange()
     {
       if (AssociatedObject.DataContext != null)
       {
         if (AssociatedObject.DataContext is LRCFileViewModel lRCFileViewModel)
         {
-          serialDisposable.Disposable = lRCFileViewModel.ActualLineChanged.Subscribe(OnSongChanged);
+          serialDisposable.Disposable = lRCFileViewModel.ActualLineChanged.Subscribe(OnLineChanged);
+        }
+        else if (AssociatedObject.DataContext is LRCCreatorViewModel creatorViewModel)
+        {
+          serialDisposable.Disposable = creatorViewModel.ObservePropertyChange(x => x.ActualLine)
+            .ObserveOn(Application.Current.Dispatcher)
+            .Subscribe((x) =>
+            {
+              if (x != null)
+              {
+                OnLineChanged(creatorViewModel.Lines.IndexOf(x));
+              }
+            });
         }
       }
     }
 
     private Decorator border;
     private ScrollViewer scrollViewer;
-    private void OnSongChanged(int songInPlayListIndex)
+    private void OnLineChanged(int lineIndex)
     {
       try
       {
@@ -85,7 +102,7 @@ namespace VPlayer.Player.Behaviors
             scrollViewer = border?.Child as ScrollViewer;
           }
 
-          var scrollIndexOffset = (songInPlayListIndex - 1 < 0 ? 0 : songInPlayListIndex - 1) * StepSize;
+          var scrollIndexOffset = (lineIndex - 1 < 0 ? 0 : lineIndex - 1) * StepSize;
 
           if (scrollViewer != null)
           {

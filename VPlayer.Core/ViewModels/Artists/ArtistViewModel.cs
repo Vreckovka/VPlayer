@@ -9,6 +9,7 @@ using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
+using VPlayer.Core.ViewModels.SoundItems;
 
 namespace VPlayer.Core.ViewModels.Artists
 {

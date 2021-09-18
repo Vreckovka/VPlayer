@@ -19,6 +19,7 @@ using VCore.Modularity.Events;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
 using VCore.WPF.Managers;
+using VCore.WPF.ViewModels.Prompt;
 using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
@@ -29,6 +30,8 @@ using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Core.ViewModels.Artists;
+using VPlayer.Core.ViewModels.SoundItems;
+using VPlayer.Core.ViewModels.SoundItems.LRCCreators;
 using VPlayer.Core.ViewModels.TvShows;
 using VPLayer.Domain;
 using VPLayer.Domain.Contracts.CloudService.Providers;
@@ -38,6 +41,8 @@ using VPlayer.UPnP.ViewModels;
 using VPlayer.UPnP.ViewModels.Player;
 using VPlayer.UPnP.ViewModels.UPnP;
 using VPlayer.WindowsPlayer.Players;
+using VPlayer.WindowsPlayer.ViewModels.Windows;
+using VPlayer.WindowsPlayer.Views.Prompts;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer;
 using FileInfo = VCore.WPF.ViewModels.WindowsFiles;
 
@@ -54,6 +59,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private readonly IEventAggregator eventAggregator;
     private readonly AudioInfoDownloader audioInfoDownloader;
     private readonly IVPlayerCloudService cloudService;
+    private readonly IWindowManager windowManager;
     private readonly VLCPlayer vLcPlayer;
     private Dictionary<SongInPlayListViewModel, bool> playBookInCycle = new Dictionary<SongInPlayListViewModel, bool>();
 
@@ -80,6 +86,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
       this.cloudService = cloudService ?? throw new ArgumentNullException(nameof(cloudService));
+      this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       UPnPManagerViewModel = uPnPManagerViewModel ?? throw new ArgumentNullException(nameof(uPnPManagerViewModel));
 
       SelectedMediaRendererViewModel = uPnPManagerViewModel.Renderers.View.FirstOrDefault();
@@ -234,38 +241,104 @@ namespace VPlayer.WindowsPlayer.ViewModels
       return false;
     }
 
-    #endregion 
+    #endregion
 
-    #region NextGif
+    #region AddLyrics
 
-    private ActionCommand nextGif;
+    private ActionCommand<SoundItemInPlaylistViewModel> addLyrics;
 
-    public ICommand NextGif
+    public ICommand AddLyrics
     {
       get
       {
-        if (nextGif == null)
+        if (addLyrics == null)
         {
-          nextGif = new ActionCommand(OnNextGif);
+          addLyrics = new ActionCommand<SoundItemInPlaylistViewModel>(OnAddLyrics);
         }
 
-        return nextGif;
+        return addLyrics;
       }
     }
 
-    public async void OnNextGif()
+    public async void OnAddLyrics(SoundItemInPlaylistViewModel soundItemInPlaylistViewModel)
     {
-      GiphyClient giphyClient = new GiphyClient();
+      var vm = viewModelsFactory.Create<AddLyricsPromptViewModel>();
 
-      var gif = await giphyClient.GetRandomGif(GifTag);
+      windowManager.ShowPrompt<AddLyricsPromptView>(vm);
 
-      if (gif != null)
+      if(vm.PromptResult == PromptResult.Ok && soundItemInPlaylistViewModel is SongInPlayListViewModel song)
       {
-        RandomGifUrl = gif.Url.Replace("&", "&amp;");
+        var lyrics = vm.Lyrics;
+        song.Lyrics = lyrics;
+
+        await storageManager.UpdateEntityAsync(song.SongModel);
+
+        song.RaiseLyricsChange();
       }
-      else
+    }
+
+    #endregion
+
+    #region CreateLRCLyrics
+
+    private ActionCommand<SoundItemInPlaylistViewModel> createLRCLyrics;
+
+    public ICommand CreateLRCLyrics
+    {
+      get
       {
-        logger.Log(MessageType.Error, "GIF IS NULL");
+        if (createLRCLyrics == null)
+        {
+          createLRCLyrics = new ActionCommand<SoundItemInPlaylistViewModel>(OnCreateLRCLyrics);
+        }
+
+        return createLRCLyrics;
+      }
+    }
+
+    public void OnCreateLRCLyrics(SoundItemInPlaylistViewModel soundItem)
+    {
+      if(soundItem is SongInPlayListViewModel song && !string.IsNullOrEmpty(song.Lyrics))
+      {
+        var vm = viewModelsFactory.Create<LRCCreatorViewModel>(song);
+
+        vm.Lyrics = song.Lyrics;
+        vm.FilePlayableRegionViewModel = this;
+
+        vm.PrepareLyrics();
+
+        song.LRCCreatorViewModel = vm;
+
+        song.RaiseLyricsChange();
+      }
+    }
+
+    #endregion
+
+    #region ExitLRCEditor
+
+    private ActionCommand<SoundItemInPlaylistViewModel> exitLRCEditor;
+
+    public ICommand ExitLRCEditor
+    {
+      get
+      {
+        if (exitLRCEditor == null)
+        {
+          exitLRCEditor = new ActionCommand<SoundItemInPlaylistViewModel>(OnExitLRCEditor);
+        }
+
+        return exitLRCEditor;
+      }
+    }
+
+    public void OnExitLRCEditor(SoundItemInPlaylistViewModel soundItem)
+    {
+      if (soundItem is SongInPlayListViewModel song && !string.IsNullOrEmpty(song.Lyrics))
+      {
+        song.LRCCreatorViewModel = null;
+
+        song.RaiseLyricsChange();
       }
     }
 
@@ -371,6 +444,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region OnSoundItemUpdated
+
     private async void OnSoundItemUpdated(IItemChanged<SoundItem> soundItemChanged)
     {
       if (soundItemChanged.Changed == Changed.Updated)
@@ -394,6 +469,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
       }
     }
+
+    #endregion
 
     #region PlaySongItems
 
@@ -757,9 +834,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
         {
           if (ActualItem is SongInPlayListViewModel songInPlay)
           {
-            bool wasLyricsNull = songInPlay.LRCLyrics == null;
+            bool wasLyricsNull = songInPlay.LRCLyrics == null && songInPlay.Lyrics == null;
 
-            if (string.IsNullOrEmpty(songInPlay.LRCLyrics))
+            if (string.IsNullOrEmpty(songInPlay.LRCLyrics) && string.IsNullOrEmpty(songInPlay.Lyrics))
             {
               cancellationToken.ThrowIfCancellationRequested();
 
@@ -985,6 +1062,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region OnPlayPlaylist
 
     protected override void OnPlayPlaylist(PlayItemsEventData<SoundItemInPlaylistViewModel> data)
     {
@@ -995,6 +1073,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
         ActualSavedPlaylist.PlaylistType = PlaylistType.Cloud;
       }
     }
+
+    #endregion
 
     #region OnPlayEvent
 

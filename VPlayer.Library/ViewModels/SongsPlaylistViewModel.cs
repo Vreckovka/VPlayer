@@ -12,6 +12,7 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
+using VPlayer.Core.ViewModels.SoundItems;
 using VPlayer.Core.ViewModels.TvShows;
 using VPLayer.Domain;
 using VPlayer.Library.ViewModels;

@@ -49,7 +49,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
     #region GetFile
 
     private Semaphore semaphore = new Semaphore(1, 1);
-    protected override Task<GoogleDriveFile> GetFile(string songName, string artistName, string albumName)
+    protected override Task<GoogleDriveFile> GetFile(string songName, string artistName, string albumName, string extension)
     {
       return Task.Run(() =>
       {
@@ -71,7 +71,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
             if (albumFolder != null)
             {
-              var fileName = GetFileName(artistName, songName) + ".lrc";
+              var fileName = GetFileName(artistName, songName) + extension;
 
               var lyricsFile = albumFolder.TryGetValueFromFolder(fileName, GoogleMimeTypes.GoogleDriveFile);
 
@@ -96,7 +96,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
     protected override async Task<KeyValuePair<string[], ILRCFile>> GetLinesLrcFileAsync(string songName, string artistName, string albumName)
     {
-      var lyricsFile = await GetFile(songName, artistName, albumName);
+      var lyricsFile = await GetFile(songName, artistName, albumName, ".lrc");
 
       if (lyricsFile != null)
       {

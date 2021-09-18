@@ -4,7 +4,7 @@ using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 
-namespace VPlayer.Core.ViewModels.TvShows
+namespace VPlayer.Core.ViewModels.SoundItems
 {
   public class SoundItemInPlaylistViewModel : FileItemInPlayList<SoundItem>
   {
