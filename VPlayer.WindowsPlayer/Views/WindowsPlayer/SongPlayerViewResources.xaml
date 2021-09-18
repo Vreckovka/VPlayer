@@ -353,7 +353,7 @@
                 </ListView.Style>
 
                 <b:Interaction.Behaviors>
-                    <behaviors:AutoScrollLyricsBehavior AnimationTime="0:0:0:0.6" StepSize="39" />
+                    <behaviors:AutoScrollLyricsBehavior AnimationTime="0:0:0:0.35" StepSize="39" />
                 </b:Interaction.Behaviors>
             </ListView>
 

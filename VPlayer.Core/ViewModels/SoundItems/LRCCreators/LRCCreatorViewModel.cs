@@ -195,6 +195,18 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
 
         var list = new List<LRCCreatorLyricsLine>();
 
+        if (stringLines.Length > 0)
+        {
+          if (stringLines[0] != "")
+          {
+            list.Add(new LRCCreatorLyricsLine()
+            {
+              Text = ""
+            });
+          }
+        }
+        
+
         foreach (var stringLine in stringLines)
         {
           var newLine = new LRCCreatorLyricsLine()
@@ -204,6 +216,18 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
 
           list.Add(newLine);
         }
+
+        if (stringLines.Length > 0)
+        {
+          if (stringLines[stringLines.Length - 1] != "")
+          {
+            list.Add(new LRCCreatorLyricsLine()
+            {
+              Text = ""
+            });
+          }
+        }
+
 
         Lines = new RxObservableCollection<LRCCreatorLyricsLine>(list);
 

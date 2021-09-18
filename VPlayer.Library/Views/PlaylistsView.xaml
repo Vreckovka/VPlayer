@@ -115,46 +115,41 @@
                         <GridViewColumn Width="65" Header="Resume">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <controls1:ButtonWithIcon Width="65"
-                                                              HorizontalContentAlignment="Center"
-                                                              Command="{Binding Play}"
-                                                              CommandParameter="{x:Static events1:EventAction.PlayFromPlaylistLast}"
-                                                              FontSize="14"
-                                                              FontWeight="Normal"
-                                                              IconDefaultColor="#50f5936c"
-                                                              IconHeight="20"
-                                                              IconHoverColor="{StaticResource OrangeColor}"
-                                                              IconMargin="0 0 5 0"
-                                                              IconPathStyle="{StaticResource PlaySign}"
-                                                              ToolTip="Resume" />
+                                    <controls1:PathButton Width="65"
+                                                          HorizontalContentAlignment="Center"
+                                                          Command="{Binding Play}"
+                                                          CommandParameter="{x:Static events1:EventAction.PlayFromPlaylistLast}"
+                                                          FontSize="20"
+                                                          FontWeight="Normal"
+                                                          ForegroundDefaultColor="#15ffffff"
+                                                          ForegroundHoverColor="#67a3db"
+                                                          Style="{StaticResource play-pause}"
+                                                          ToolTip="Resume" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Width="65" Header="Fresh">
+                        <GridViewColumn Width="45" Header="Fresh">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <controls1:ButtonWithIcon Width="65"
-                                                              HorizontalContentAlignment="Center"
-                                                              Command="{Binding Play}"
-                                                              CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}"
-                                                              FontSize="14"
-                                                              FontWeight="Normal"
-                                                              IconDefaultColor="#50db515a"
-                                                              IconHeight="20"
-                                                              IconHoverColor="{StaticResource DefaultRedColor}"
-                                                              IconMargin="0 0 5 0"
-                                                              IconPathStyle="{StaticResource PlaySign}"
-                                                              ToolTip="Fresh" />
+                                    <controls1:PathButton HorizontalContentAlignment="Center"
+                                                          Command="{Binding Play}"
+                                                          CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}"
+                                                          FontSize="20"
+                                                          FontWeight="Normal"
+                                                          ForegroundDefaultColor="#15ffffff"
+                                                          ForegroundHoverColor="{StaticResource DefaultRedColor}"
+                                                          Style="{StaticResource play-regular}"
+                                                          ToolTip="Fresh" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
 
-                        <GridViewColumn Width="295" Header="Name">
+                        <GridViewColumn Width="395" Header="Name">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock FontSize="15"
+                                    <TextBlock FontSize="16"
                                                FontWeight="Normal"
-                                               Foreground="#ccc"
+                                               Foreground="#95ffffff"
                                                ToolTip="{Binding Name}">
                                         <TextBlock.Text>
                                             <MultiBinding Converter="{converters:PlaylistNameConverter}">
@@ -167,6 +162,29 @@
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
 
+
+                        <GridViewColumn Width="140" Header="Last time played">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Margin="5,0,0,0" FontWeight="Normal">
+                                        <Run FontSize="14"
+                                             FontWeight="Bold"
+                                             Foreground="#65c8d1db"
+                                             Text="{Binding LastPlayed, StringFormat={}dd.MM.yy}" />
+                                        <Run Text="" />
+                                        <Run Foreground="#35ffffff" Text="{Binding LastPlayed, StringFormat={}HH:mm:ss}" />
+
+                                    </TextBlock>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Width="120"
+                                        DisplayMemberBinding="{Binding TotalPlayedTime, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}"
+                                        Header="Total played time" />
+                        <GridViewColumn Width="150"
+                                        DisplayMemberBinding="{Binding HashCode, Converter={library:HashConverter}, ConverterParameter=18}"
+                                        Header="Hash" />
+
                         <GridViewColumn Width="75" Header="Last item">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
@@ -177,15 +195,6 @@
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
 
-                        <GridViewColumn Width="140"
-                                        DisplayMemberBinding="{Binding LastPlayed, StringFormat={}dd.MM.yy / HH:mm:ss}"
-                                        Header="Last time played" />
-                        <GridViewColumn Width="140"
-                                        DisplayMemberBinding="{Binding TotalPlayedTime, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}"
-                                        Header="Total played time" />
-                        <GridViewColumn Width="150"
-                                        DisplayMemberBinding="{Binding HashCode, Converter={library:HashConverter}, ConverterParameter=18}"
-                                        Header="Hash" />
                         <GridViewColumn Width="70" Header="Count">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
@@ -203,7 +212,8 @@
                                                               IconHeight="15"
                                                               IconWidth="15"
                                                               IsChecked="{Binding IsRepeating}"
-                                                              PathStyle="{StaticResource Repeate}" />
+                                                              PathStyle="{StaticResource Repeate}"
+                                                              ToolTip="Repeate" />
 
                                         <controls1:PathButton Margin="0,0,35,5"
                                                               HorizontalAlignment="Right"
@@ -211,7 +221,8 @@
                                                               IconHeight="15"
                                                               IconWidth="15"
                                                               IsChecked="{Binding IsShuffle}"
-                                                              PathStyle="{StaticResource Shuffle}" />
+                                                              PathStyle="{StaticResource Shuffle}"
+                                                              ToolTip="Shuffle" />
                                     </StackPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
@@ -225,7 +236,8 @@
                                                                   IconDefaultColor="#783734"
                                                                   IconHeight="12"
                                                                   IconHoverColor="#f04d46"
-                                                                  IconPathStyle="{StaticResource Delete}" />
+                                                                  IconPathStyle="{StaticResource Delete}"
+                                                                  ToolTip="Delete (Prenamently)" />
                                     </StackPanel>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
