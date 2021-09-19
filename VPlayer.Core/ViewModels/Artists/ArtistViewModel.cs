@@ -84,10 +84,8 @@ namespace VPlayer.Core.ViewModels.Artists
 
         var songsAll = songs
           .SelectMany(x => x.Albums.OrderBy(y => y.ReleaseDate)
-          .SelectMany(y => y.Songs)
-          .OrderBy(y => y.Source.Split("\\").Last(), myComparer)).ToList();
-
-
+          .SelectMany(y => y.Songs.OrderBy(z => z.Source.Split("\\").Last(), myComparer))
+          ).ToList();
 
         return songsAll.Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x));
       });
