@@ -145,7 +145,7 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
         if (line.Time != null)
           lrcLines.Add(new LRCLyricLine()
           {
-            Text = line.Text,
+            Text = line.Text.Trim(),
             Timestamp = line.Time
           });
       }
