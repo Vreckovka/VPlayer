@@ -160,7 +160,8 @@
                                           VerticalAlignment="Bottom"
                                           Background="Transparent"
                                           BottomColor="#252525"
-                                          IsEnabled="{Binding IsPlaying}"
+                                          DataContext="{Binding ActualItem}"
+                                          IsEnabled="{Binding DataContext.IsPlaying, RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}}"
                                           MaxFrequency="10000"
                                           MiddleColor="#101b1f"
                                           MinimumBarWidth="3"
@@ -175,7 +176,7 @@
                     <Style TargetType="userControls:SoundVizualizer">
                         <Setter Property="Visibility" Value="Collapsed" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                            <DataTrigger Binding="{Binding DataContext.IsPlaying, RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}}" Value="true">
                                 <Setter Property="Visibility" Value="Visible" />
                             </DataTrigger>
                         </Style.Triggers>

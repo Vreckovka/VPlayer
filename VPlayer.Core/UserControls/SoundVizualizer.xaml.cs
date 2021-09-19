@@ -72,6 +72,7 @@ namespace VPlayer.Player.UserControls
       this.Loaded += SoundVizualizer_Loaded;
       this.SizeChanged += SoundVizualizer_SizeChanged;
       this.IsEnabledChanged += SoundVizualizer_IsEnabledChanged;
+      this.DataContextChanged += SoundVizualizer_DataContextChanged;
       Unloaded += SoundVizualizer_Unloaded;
 
       Application.Current.Dispatcher.ShutdownStarted += Dispatcher_ShutdownStarted;
@@ -82,6 +83,17 @@ namespace VPlayer.Player.UserControls
 
       if (soundInSource != null)
         AssignSpectrum();
+    }
+
+    private async void SoundVizualizer_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      if (IsEnabled && isTimerDisposed && IsLoaded)
+      {
+        AssignSpectrum();
+
+        InitlizeTimer();
+      }
+     
     }
 
     private void SoundVizualizer_Unloaded(object sender, RoutedEventArgs e)
@@ -372,7 +384,7 @@ namespace VPlayer.Player.UserControls
     #region InitilizeSoundSource
 
     private static SemaphoreSlim initilizeSempahore = new SemaphoreSlim(1, 1);
-    private static async  void  InitilizeSoundSource()
+    private static async void InitilizeSoundSource()
     {
       try
       {
@@ -395,7 +407,7 @@ namespace VPlayer.Player.UserControls
           });
         }
       }
-      finally 
+      finally
       {
         initilizeSempahore.Release();
       }
@@ -423,6 +435,18 @@ namespace VPlayer.Player.UserControls
       if (!isTimerDisposed && IsEnabled)
       {
         timer.Start();
+      }
+
+
+      if (IsEnabled && isTimerDisposed && IsLoaded)
+      {
+        AssignSpectrum();
+
+        InitlizeTimer();
+      }
+      else if (!isTimerDisposed && !IsEnabled)
+      {
+        DisposeTimer();
       }
     }
 

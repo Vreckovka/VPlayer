@@ -69,7 +69,9 @@
                        FontWeight="Normal"
                        Foreground="#30ffffff"
                        Text="SYNCED" />
-            <ListView Background="Transparent"
+            <ListView Width="750"
+                      HorizontalAlignment="Center"
+                      Background="#02ffffff"
                       BorderThickness="0"
                       ItemsSource="{Binding Lines}"
                       ScrollViewer.CanContentScroll="False"
@@ -85,22 +87,61 @@
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                                <Border Margin="0" Padding="0">
-                                                    <TextBox Text="{Binding Text, Mode=OneWay}">
-                                                        <TextBox.Style>
-                                                            <Style BasedOn="{StaticResource LyricsStyle}" TargetType="TextBox">
-                                                                <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding IsActual}" Value="true">
-                                                                        <Setter Property="FontSize" Value="32" />
-                                                                        <Setter Property="Margin" Value="25" />
-                                                                        <Setter Property="Padding" Value="10" />
-                                                                        <Setter Property="Background" Value="#80000000" />
-                                                                        <Setter Property="TextWrapping" Value="Wrap" />
-                                                                    </DataTrigger>
-                                                                </Style.Triggers>
-                                                            </Style>
-                                                        </TextBox.Style>
-                                                    </TextBox>
+                                                <Border Margin="5">
+                                                    <Grid ToolTip="{Binding Model.Timestamp}">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="auto" />
+                                                            <ColumnDefinition />
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBox Width="95"
+                                                                     Margin="5,0"
+                                                                     HorizontalAlignment="Center"
+                                                                     VerticalAlignment="Center"
+                                                                     HorizontalContentAlignment="Center"
+                                                                     Background="Transparent"
+                                                                     BorderThickness="0"
+                                                                     FontWeight="Bold">
+                                                                <TextBox.Style>
+                                                                    <Style TargetType="TextBox">
+                                                                        <Setter Property="Text" Value="{Binding Model.Timestamp, StringFormat={}{0:hh\\:mm\\:ss}}" />
+                                                                        <Setter Property="Foreground" Value="#25ffffff" />
+                                                                        <Setter Property="FontSize" Value="18" />
+                                                                    </Style>
+                                                                </TextBox.Style>
+                                                            </TextBox>
+                                                        </StackPanel>
+
+
+                                                        <TextBox Grid.Column="1"
+                                                                 HorizontalAlignment="Left"
+                                                                 HorizontalContentAlignment="Left"
+                                                                 Text="{Binding Text, Mode=OneWay}">
+                                                            <TextBox.Style>
+                                                                <Style BasedOn="{StaticResource LyricsStyle}" TargetType="TextBox">
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsActual}" Value="true">
+                                                                            <Setter Property="FontSize" Value="32" />
+                                                                            <Setter Property="TextWrapping" Value="Wrap" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBox.Style>
+                                                        </TextBox>
+                                                    </Grid>
+
+                                                    <Border.Style>
+                                                        <Style TargetType="Border">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsActual}" Value="true">
+                                                                    <Setter Property="Margin" Value="25" />
+                                                                    <Setter Property="Padding" Value="0,5,0,5" />
+                                                                    <Setter Property="Background" Value="#95000000" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
                                                 </Border>
                                             </ControlTemplate>
                                         </Setter.Value>
@@ -112,7 +153,7 @@
                 </ListView.Style>
 
                 <b:Interaction.Behaviors>
-                    <behaviors:AutoScrollLyricsBehavior AnimationTime="0:0:0:0.6" StepSize="29" />
+                    <behaviors:AutoScrollLyricsBehavior AnimationTime="0:0:0:0.6" StepSize="39" />
                 </b:Interaction.Behaviors>
             </ListView>
 
