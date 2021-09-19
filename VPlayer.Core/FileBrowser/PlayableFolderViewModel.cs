@@ -214,13 +214,11 @@ namespace VPlayer.Core.FileBrowser
             }
           }
 
-          var myComparer = new NumberStringComparer();
+      
+
 
           var data = new PlayItemsEventData<SoundItemInPlaylistViewModel>(
-            soundItems
-              .OrderBy(y => y.Source, myComparer)
-              .ThenBy(y => y.Source.Split("\\").Last(), myComparer)
-            .Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x)), 
+            soundItems.Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x)), 
             EventAction.Play, 
             this);
 
