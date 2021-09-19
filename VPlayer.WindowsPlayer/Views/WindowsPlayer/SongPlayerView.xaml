@@ -356,31 +356,68 @@
         </Grid>
 
         <Border Grid.Row="0"
+                Height="45"
                 Padding="15,5"
-                HorizontalAlignment="Stretch"
+                HorizontalAlignment="Right"
                 VerticalAlignment="Top"
                 Background="#85000000">
             <StackPanel Margin="0,0,50,0"
                         HorizontalAlignment="Right"
                         Orientation="Horizontal">
-                <controls:PathButton Margin="5"
-                                     Command="{Binding PlayPauseUPnP}"
-                                     Content="Play UPnP"
-                                     FontSize="13"
-                                     FontWeight="Bold"
-                                     ForegroundDefaultColor="#45ffffff"
-                                     IconDefaultColor="#45ffffff"
-                                     IconHoverColor="{StaticResource YellowColor}"
-                                     IsChecked="False"
-                                     IsReadOnly="True"
-                                     PathStyle="{StaticResource play}" />
-                <ComboBox Background="Transparent"
-                          BorderThickness="0"
-                          DisplayMemberPath="Model.DeviceDescription.Device.FriendlyName"
-                          FontSize="15"
-                          FontWeight="Bold"
-                          ItemsSource="{Binding UPnPManagerViewModel.Renderers.View}"
-                          SelectedItem="{Binding SelectedMediaRendererViewModel}" />
+                <controls:PathButton x:Name="openUpnpButton"
+                                     VerticalAlignment="Center"
+                                     FontFamily="{StaticResource FontAwesome6Pro_Solid}"
+                                     FontSize="20"
+                                     ForegroundCheckedColor="{StaticResource BlueColor}"
+                                     ForegroundDefaultColor="#25ffffff"
+                                     ForegroundHoverColor="{StaticResource BlueColor}"
+                                     IsReadOnly="False"
+                                     Style="{StaticResource rss}" />
+
+                <Popup IsOpen="{Binding ElementName=openUpnpButton, Path=IsChecked}"
+                       PlacementTarget="{Binding ElementName=openUpnpButton}"
+                       StaysOpen="False">
+                    <Border Padding="15,10"
+                            Background="#151515"
+                            BorderBrush="#353535"
+                            BorderThickness="1,1,2,1">
+                        <Grid Margin="0,0,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <controls:PathButton Margin="0,0,5,0"
+                                                 Padding="15,3"
+                                                 Background="#08ffffff"
+                                                 BorderBrush="#15ffffff"
+                                                 BorderThickness="1"
+                                                 Command="{Binding PlayPauseUPnP}"
+                                                 Content="PLAY UPnP"
+                                                 CornerRadius="5"
+                                                 FontSize="15"
+                                                 FontWeight="Bold"
+                                                 ForegroundDefaultColor="#45ffffff"
+                                                 IconDefaultColor="{StaticResource YellowColor}"
+                                                 IconHeight="15"
+                                                 IconHoverColor="{StaticResource YellowColor}"
+                                                 IconWidth="13"
+                                                 IsChecked="False"
+                                                 IsReadOnly="True"
+                                                 PathStyle="{StaticResource play}" />
+                            <ComboBox Grid.Column="1"
+                                      MinWidth="150"
+                                      Background="#08ffffff"
+                                      BorderThickness="0"
+                                      DisplayMemberPath="Model.DeviceDescription.Device.FriendlyName"
+                                      FontSize="15"
+                                      FontWeight="Bold"
+                                      ItemsSource="{Binding UPnPManagerViewModel.Renderers.View}"
+                                      SelectedItem="{Binding SelectedMediaRendererViewModel}" />
+                        </Grid>
+                    </Border>
+                </Popup>
+
 
             </StackPanel>
 

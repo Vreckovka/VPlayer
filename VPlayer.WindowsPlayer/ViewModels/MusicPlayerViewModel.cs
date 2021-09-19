@@ -91,10 +91,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       SelectedMediaRendererViewModel = uPnPManagerViewModel.Renderers.View.FirstOrDefault();
 
-
-
       vLcPlayer = vLCPlayer ?? throw new ArgumentNullException(nameof(vLCPlayer));
     }
+
+    
 
     #endregion Constructors
 
@@ -442,7 +442,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
       storageManager.ObserveOnItemChange<SoundItem>().ObserveOn(Application.Current.Dispatcher).Subscribe(OnSoundItemUpdated).DisposeWith(this);
 
 
-
       eventAggregator.GetEvent<ItemUpdatedEvent<AlbumViewModel>>().Subscribe(OnAlbumUpdated).DisposeWith(this);
       eventAggregator.GetEvent<RemoveFromPlaylistEvent<SongInPlayListViewModel>>().Subscribe(RemoveFromPlaystSongs).DisposeWith(this);
       eventAggregator.GetEvent<PlaySongsFromPlayListEvent<SongInPlayListViewModel>>().Subscribe(PlayItemFromPlayList).DisposeWith(this);
@@ -450,6 +449,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       PlayList.ItemRemoved.Subscribe(ItemsRemoved).DisposeWith(this);
       PlayList.ItemAdded.Subscribe(ItemsAdded).DisposeWith(this);
+
+
+
+      UPnPManagerViewModel.Renderers.OnActualItemChanged
+        .ObserveOn(Application.Current.Dispatcher)
+        .Subscribe((x) => SelectedMediaRendererViewModel = x)
+        .DisposeWith(this);
     }
 
     #endregion

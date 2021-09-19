@@ -42,12 +42,11 @@ namespace VPlayer.ViewModels
   //TODO: Playlist hore pri menu, quick ze prides a uvidis napriklad 5 poslednych hore v rade , ako carusel (5/5)
   //TODO: Playlist nech sa automaticky nevytvara ak je niekolko pesniciek (nastavenie pre uzivatela aky pocet sa ma ukladat!) (3/5)
   //TODO: Reorder na playliste
-  //TODO: Moznost editovat lyrics
+  //TODO: Moznost editovat LRC
   //TODO: Mozno vyhladat titulky cez search a vybrat si
   //TODO: Hviezdicky pocet 
   //TODO: TV Channels editor dotiahnut
   //TODO: Save UPnP Sever (mozno je, bojim sa skusit)
-  //TODO: load artists z foldra(zadarmo len ten viewmodel co je loadmusic a dat mu cestu)
   //
   // *****File Browser*****
   //TODO: File Browser - File watcher nad aktualnou zlozkou
@@ -126,7 +125,6 @@ namespace VPlayer.ViewModels
   //TODO: Nespaja niektorych aristov pri load
   //TODO: Sem tam ostanie vysiet appka
   //TODO: Po roztiahnuti okna spadlo
-  //TODO: Status message: Failed template je nejaky vadny
   //
   //  *****IMPORTANT!*****
   //        TODO: Po pridani novej serii nefunguje csfd download

@@ -3,5 +3,5 @@
                     xmlns:drawing="clr-namespace:System.Drawing;assembly=System.Drawing.Common">
 
     <FontFamily x:Key="FontAwesome6Pro_Solid">pack://application:,,,/VCore.WPF;component/Resources/Fonts/FontAwesome/#Font Awesome 6 Pro Solid</FontFamily>
-
+    <FontFamily x:Key="FontAwesome6Pro_Duotone">pack://application:,,,/VCore.WPF;component/Resources/Fonts/FontAwesome/#Font Awesome 6 Pro Duotone</FontFamily>
 </ResourceDictionary>
