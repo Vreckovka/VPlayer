@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
+using VCore.Standard.Comparers;
 using VCore.Standard.Factories.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -62,9 +64,11 @@ namespace VPlayer.Core.ViewModels.Albums
           .Include(x => x.Album)
           .Where(x => x.Album.Id == Model.Id).ToList();
 
-        var playListSong = songs.Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x));
+        var myComparer = new NumberStringComparer();
 
-        return playListSong;
+        var playListSong = songs.OrderBy(x => x.Source.Split("\\").Last(), myComparer).ToList();
+
+        return playListSong.Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x));
       });
     }
 
@@ -150,6 +154,8 @@ namespace VPlayer.Core.ViewModels.Albums
     }
 
     #endregion
+
+   
 
     #endregion 
   }

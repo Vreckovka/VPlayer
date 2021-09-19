@@ -8,6 +8,7 @@ using System.Windows.Input;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore;
+using VCore.Standard.Comparers;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
 using VCore.Standard.ViewModels.WindowsFile;
@@ -213,9 +214,13 @@ namespace VPlayer.Core.FileBrowser
             }
           }
 
+          var myComparer = new NumberStringComparer();
 
           var data = new PlayItemsEventData<SoundItemInPlaylistViewModel>(
-            soundItems.Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x)), EventAction.Play, this);
+            soundItems.OrderBy(y => y.Source.Split("\\").Last(), myComparer)
+            .Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x)), 
+            EventAction.Play, 
+            this);
 
           eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(data);
         }

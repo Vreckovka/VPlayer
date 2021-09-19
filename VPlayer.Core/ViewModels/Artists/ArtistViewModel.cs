@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using VCore.Standard.Comparers;
 using VCore.Standard.Factories.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -72,9 +73,23 @@ namespace VPlayer.Core.ViewModels.Artists
     {
       return Task.Run(() =>
       {
-        var songs = storage.GetRepository<Artist>().Include(x => x.Albums).ThenInclude(x => x.Songs).ThenInclude(x => x.ItemModel).ThenInclude(x => x.FileInfo).Where(x => x.Id == Model.Id).ToList();
+        var songs = storage.GetRepository<Artist>()
+          .Include(x => x.Albums)
+          .ThenInclude(x => x.Songs)
+          .ThenInclude(x => x.ItemModel)
+          .ThenInclude(x => x.FileInfo)
+          .Where(x => x.Id == Model.Id).ToList();
 
-        return songs.SelectMany(x => x.Albums.SelectMany(y => y.Songs)).Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x));
+        var myComparer = new NumberStringComparer();
+
+        var songsAll = songs
+          .SelectMany(x => x.Albums.OrderBy(y => y.ReleaseDate)
+          .SelectMany(y => y.Songs)
+          .OrderBy(y => y.Source.Split("\\").Last(), myComparer)).ToList();
+
+
+
+        return songsAll.Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x));
       });
     }
 
