@@ -211,7 +211,7 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
         {
           var newLine = new LRCCreatorLyricsLine()
           {
-            Text = stringLine
+            Text = stringLine.Trim()
           };
 
           list.Add(newLine);
