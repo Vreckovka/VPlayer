@@ -92,7 +92,38 @@ namespace VPlayer.Core.ViewModels.SoundItems
     #endregion
 
     public List<LRCLyricLineViewModel> Lines { get; }
-    public LRCLyricLineViewModel ActualLine { get; private set; }
+
+
+
+    #region ActualLine
+
+    private LRCLyricLineViewModel actualLine;
+
+    public LRCLyricLineViewModel ActualLine
+    {
+      get { return actualLine; }
+      private set
+      {
+        if (value != actualLine)
+        {
+          actualLine = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+    
+    #endregion
+    
+    #region TimeAdjustmentSeconds
+
+    public double TimeAdjustmentSeconds
+    {
+      get { return timeAdjustment / 1000.0; }
+     
+    }
+
+    #endregion
+
 
     #region TimeAdjustment
 
@@ -106,6 +137,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
         {
           timeAdjustment = value;
           RaisePropertyChanged();
+          RaisePropertyChanged(nameof(TimeAdjustmentSeconds));
         }
       }
     }

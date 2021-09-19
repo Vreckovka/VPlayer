@@ -9,6 +9,7 @@
                     xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
                     xmlns:controls2="clr-namespace:VCore.Controls;assembly=VCore.WPF"
                     xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
+                    xmlns:library1="clr-namespace:VPlayer.Library;assembly=VCore.WPF"
                     xmlns:local="clr-namespace:VPlayer.WindowsPlayer.Views.WindowsPlayer"
                     xmlns:lrc="clr-namespace:VPlayer.AudioStorage.InfoDownloader.LRC;assembly=VCore.WPF"
                     xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
@@ -88,15 +89,14 @@
                                         <Setter.Value>
                                             <ControlTemplate TargetType="{x:Type ListViewItem}">
                                                 <Border Margin="5">
-                                                    <Grid ToolTip="{Binding Model.Timestamp}">
+                                                    <Grid>
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="auto" />
                                                             <ColumnDefinition />
                                                         </Grid.ColumnDefinitions>
 
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <TextBox Width="95"
-                                                                     Margin="5,0"
+                                                        <StackPanel Margin="10,0" Orientation="Horizontal">
+                                                            <TextBox Width="75"
                                                                      HorizontalAlignment="Center"
                                                                      VerticalAlignment="Center"
                                                                      HorizontalContentAlignment="Center"
@@ -111,7 +111,39 @@
                                                                     </Style>
                                                                 </TextBox.Style>
                                                             </TextBox>
+
+                                                            <TextBlock Margin="5,0,0,0"
+                                                                       VerticalAlignment="Center"
+                                                                       FontSize="13"
+                                                                       FontWeight="Bold">
+                                                                <TextBlock.Text>
+                                                                    <MultiBinding Converter="{library1:ExtractMilisecondFromTimeSpanConverter}" StringFormat="{}({0})">
+                                                                        <Binding Path="Model.Timestamp" />
+                                                                        <Binding Path="DataContext.TimeAdjustment" RelativeSource="{RelativeSource AncestorType=ListView, Mode=FindAncestor}" />
+                                                                    </MultiBinding>
+                                                                </TextBlock.Text>
+
+                                                                <TextBlock.Style>
+                                                                    <Style TargetType="TextBlock">
+                                                                        <Setter Property="Foreground" Value="White" />
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding DataContext.TimeAdjustment, RelativeSource={RelativeSource AncestorType=ListView, Mode=FindAncestor}}" Value="0">
+                                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                            </DataTrigger>
+
+                                                                            <DataTrigger Binding="{Binding DataContext.TimeAdjustment, RelativeSource={RelativeSource AncestorType=ListView, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=0}" Value="true">
+                                                                                <Setter Property="Foreground" Value="#70aacc" />
+                                                                            </DataTrigger>
+
+                                                                            <DataTrigger Binding="{Binding DataContext.TimeAdjustment, RelativeSource={RelativeSource AncestorType=ListView, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=0}" Value="false">
+                                                                                <Setter Property="Foreground" Value="#bf213c" />
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </TextBlock.Style>
+                                                            </TextBlock>
                                                         </StackPanel>
+
 
 
                                                         <TextBox Grid.Column="1"
