@@ -9,6 +9,7 @@ using VCore.Standard.Factories.ViewModels;
 using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPlayer.Core.Managers.Status;
 using VPlayer.Core.ViewModels.TvShows;
 using VPlayer.Home.Views.TvShows;
 
@@ -24,7 +25,8 @@ namespace VPlayer.Home.ViewModels.TvShows
        IStorageManager storageManager,
       TvShowViewModel model,
      IWindowManager windowManager,
-      IViewModelsFactory viewModelsFactory) : base(regionProvider, storageManager, model, windowManager)
+      IStatusManager statusManager,
+      IViewModelsFactory viewModelsFactory) : base(regionProvider, storageManager, statusManager, model, windowManager)
     {
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));

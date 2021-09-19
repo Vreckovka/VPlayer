@@ -11,5 +11,11 @@ namespace VPlayer.Core.Managers.Status
     void UpdateMessage(StatusMessageViewModel statusMessageViewModel);
 
     void UpdateMessageAndIncreaseProcessCount(StatusMessageViewModel statusMessageViewModel, int count = 1);
+
+    void ShowDoneMessage(string text);
+
+    void ShowErrorMessage(string text);
+
+    void ShowFailedMessage(string text);
   }
 }

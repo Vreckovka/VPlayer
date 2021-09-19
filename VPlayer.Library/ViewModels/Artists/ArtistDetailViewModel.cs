@@ -16,6 +16,7 @@ using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Interfaces.ViewModels;
+using VPlayer.Core.Managers.Status;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Core.ViewModels.Artists;
@@ -34,8 +35,9 @@ namespace VPlayer.Home.ViewModels.Artists
       IViewModelsFactory viewModelsFactory,
       IAlbumsViewModel albumsViewModel,
       IStorageManager storageManager,
+      IStatusManager statusManager,
       ArtistViewModel model,
-      IWindowManager windowManager) : base(regionProvider, storageManager, model, windowManager)
+      IWindowManager windowManager) : base(regionProvider, storageManager, statusManager,model, windowManager)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.albumsViewModel = albumsViewModel ?? throw new ArgumentNullException(nameof(albumsViewModel));

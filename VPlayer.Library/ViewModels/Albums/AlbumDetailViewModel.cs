@@ -47,7 +47,7 @@ namespace VPlayer.Home.ViewModels.Albums
       AudioInfoDownloader audioInfoDownloader,
       IStatusManager statusManager,
       ILogger logger
-      ) : base(regionProvider, storageManager, album, windowManager)
+      ) : base(regionProvider, storageManager, statusManager,album, windowManager)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));

@@ -164,7 +164,45 @@ namespace VPlayer.Core.Managers.Status
       });
     }
 
+
+
     #endregion
+
+    public void ShowDoneMessage(string text)
+    {
+      var message = new StatusMessageViewModel(1)
+      {
+        Message = text,
+        Status = StatusType.Done,
+        ProcessedCount = 1
+      };
+
+      UpdateMessage(message);
+    }
+
+    public void ShowErrorMessage(string text)
+    {
+      var message = new StatusMessageViewModel(1)
+      {
+        Message = text,
+        Status = StatusType.Error,
+        ProcessedCount = 1
+      };
+
+      UpdateMessage(message);
+    }
+
+    public void ShowFailedMessage(string text)
+    {
+      var message = new StatusMessageViewModel(1)
+      {
+        Message = text,
+        Status = StatusType.Failed,
+        ProcessedCount = 1
+      };
+
+      UpdateMessage(message);
+    }
 
     #region CheckMessage
 

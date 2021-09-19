@@ -100,6 +100,13 @@
                                              PathCheckedBrush="{StaticResource DefaultRedBrush}"
                                              PathStyle="{StaticResource text-slash}"
                                              ToolTip="All songs has turned ON/OFF automatic LYRICS download" />
+
+                        <controls:PathButton HorizontalAlignment="Left"
+                                             Command="{Binding Save}"
+                                             FontSize="25"
+                                             ForegroundDefaultColor="#377b9e"
+                                             Style="{StaticResource floppy-disk-glyph}"
+                                             ToolTip="Save" />
                     </StackPanel>
                 </Border>
 
@@ -153,9 +160,10 @@
                             </StackPanel>
 
                             <StackPanel Grid.Column="1">
-                                <TextBlock Text="{Binding ViewModel.Model.ReleaseDate}" />
+                                <TextBox Text="{Binding ViewModel.Model.ReleaseDate, UpdateSourceTrigger=PropertyChanged}" />
                                 <TextBlock Text="{Binding AlbumSongs.Count}" />
                                 <TextBlock Text="{Binding TotalDuration}" />
+
                             </StackPanel>
                         </Grid>
                     </Border>

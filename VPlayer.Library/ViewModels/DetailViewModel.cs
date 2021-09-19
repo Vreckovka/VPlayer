@@ -12,6 +12,7 @@ using VCore.ViewModels;
 using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPlayer.Core.Managers.Status;
 using VPlayer.Core.Modularity.Regions;
 
 namespace VPlayer.Home.ViewModels
@@ -19,18 +20,21 @@ namespace VPlayer.Home.ViewModels
   public abstract class DetailViewModel<TViewModel, TModel, TDetailView> : RegionViewModel<TDetailView>
     where TDetailView : class, IView
     where TViewModel : class, IViewModel<TModel>
-    where TModel : class,INamedEntity
+    where TModel : class,INamedEntity, IUpdateable<TModel>
   {
     private readonly IStorageManager storageManager;
+    private readonly IStatusManager statusManager;
     private readonly IWindowManager windowManager;
 
     protected DetailViewModel(
       IRegionProvider regionProvider,
       IStorageManager storageManager,
+      IStatusManager statusManager,
       TViewModel model,
       IWindowManager windowManager) : base(regionProvider)
     {
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
+      this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
    
       ViewModel = model ?? throw new ArgumentNullException(nameof(model));
@@ -123,6 +127,38 @@ namespace VPlayer.Home.ViewModels
     protected virtual void OnUpdate()
     {
 
+    }
+
+    #endregion
+
+    #region Save
+
+    private ActionCommand save;
+
+    public ICommand Save
+    {
+      get
+      {
+        if (save == null)
+        {
+          save = new ActionCommand(OnSave);
+        }
+
+        return save;
+      }
+    }
+
+    protected  virtual async void OnSave()
+    {
+      if (await storageManager.UpdateEntityAsync(ViewModel.Model))
+      {
+        statusManager.ShowDoneMessage($"Album: {ViewModel.Model.Name} UPDATED");
+      }
+      else
+      {
+        statusManager.ShowFailedMessage($"Album: {ViewModel.Model.Name} FAILED TO UPDATED");
+      }
+     
     }
 
     #endregion
