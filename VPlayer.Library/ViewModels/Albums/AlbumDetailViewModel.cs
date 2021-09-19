@@ -215,7 +215,7 @@ namespace VPlayer.Home.ViewModels.Albums
     {
       return Task.Run(() =>
       {
-        if (ViewModel.Model.Songs.Count == 0)
+        if (ViewModel.Model.Songs.Count(x => x.ItemModel != null) == 0)
         {
           var songsDb = storageManager.GetRepository<Song>()
             .Where(x => x.Album == ViewModel.Model)

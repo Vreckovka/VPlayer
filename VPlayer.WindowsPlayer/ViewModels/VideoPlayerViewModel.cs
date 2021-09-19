@@ -642,7 +642,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
           singleSeason = episodeInSeason > 1 && episodeInSeason <= 20;
         }
-      
+
 
         item = await iCsfdWebsiteScrapper.GetBestFind(viewModel.Name, cancellationToken, downloadSingleSeason: singleSeason);
       }
@@ -815,6 +815,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region ReloadSubtitles
 
+    private int? lastSPUValue = null;
     private async Task ReloadSubtitles()
     {
       await Application.Current.Dispatcher.InvokeAsync(async () =>
@@ -832,24 +833,40 @@ namespace VPlayer.WindowsPlayer.ViewModels
           {
             MediaPlayer.SetSpu(ActualItem.Model.SubtitleTrack.Value);
           }
-          else if (Subtitles.Count >= 2)
+          else if (Subtitles.Count >= 2 && MediaPlayer.Spu == -1)
           {
-            var englishSubtitle = Subtitles.FirstOrDefault(x => x.Description.ToLower().Contains("anglicky"));
+            SubtitleViewModel lastExisting = null;
 
-            if (englishSubtitle == null)
+            if (lastSPUValue != null)
             {
-              englishSubtitle = Subtitles.FirstOrDefault(x => x.Description.ToLower().Contains("anglický"));
+              lastExisting = Subtitles.FirstOrDefault(x => x.Model.Id == lastSPUValue);
             }
 
-            if (englishSubtitle != null)
+            if (lastSPUValue == null)
             {
-              OnSubtitleSelected(englishSubtitle);
+              var englishSubtitle = Subtitles.FirstOrDefault(x => x.Description.ToLower().Contains("anglicky"));
+
+              if (englishSubtitle == null)
+              {
+                englishSubtitle = Subtitles.FirstOrDefault(x => x.Description.ToLower().Contains("anglický"));
+              }
+
+              if (englishSubtitle != null)
+              {
+                OnSubtitleSelected(englishSubtitle);
+              }
+            }
+            else
+            {
+              OnSubtitleSelected(lastExisting);
             }
           }
 
           var actualSub = Subtitles.Single(x => MediaPlayer.Spu == x.Model.Id);
 
           actualSub.IsSelected = true;
+
+          lastSPUValue = MediaPlayer.Spu;
         }
       });
     }

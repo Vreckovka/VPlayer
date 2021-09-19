@@ -328,7 +328,7 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="PathIcon" Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=PathCheckedBrush}" />
-                            <Setter Property="Foreground" Value="Yellow" />
+                            
                         </Trigger>
 
                         <Trigger Property="IsMouseOver" Value="True">

@@ -119,9 +119,10 @@
                                                           HorizontalContentAlignment="Center"
                                                           Command="{Binding Play}"
                                                           CommandParameter="{x:Static events1:EventAction.PlayFromPlaylistLast}"
+                                                          FontFamily="{StaticResource FontAwesome6Pro_Solid}"
                                                           FontSize="20"
                                                           FontWeight="Normal"
-                                                          ForegroundDefaultColor="#15ffffff"
+                                                          ForegroundDefaultColor="#4567a3db"
                                                           ForegroundHoverColor="#67a3db"
                                                           Style="{StaticResource play-pause}"
                                                           ToolTip="Resume" />
@@ -133,10 +134,11 @@
                                 <DataTemplate>
                                     <controls1:PathButton HorizontalContentAlignment="Center"
                                                           Command="{Binding Play}"
+                                                          FontFamily="{StaticResource FontAwesome6Pro_Solid}"
                                                           CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}"
                                                           FontSize="20"
                                                           FontWeight="Normal"
-                                                          ForegroundDefaultColor="#15ffffff"
+                                                          ForegroundDefaultColor="#45fe2754"
                                                           ForegroundHoverColor="{StaticResource DefaultRedColor}"
                                                           Style="{StaticResource play-regular}"
                                                           ToolTip="Fresh" />
