@@ -226,7 +226,8 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
           {
             list.Add(new LRCCreatorLyricsLine()
             {
-              Text = ""
+              Text = "",
+              Index = index++
             });
           }
         }
@@ -249,7 +250,8 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
           {
             list.Add(new LRCCreatorLyricsLine()
             {
-              Text = ""
+              Text = "",
+              Index = index
             });
           }
         }
@@ -336,36 +338,44 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
 
       List<int> checkedOldIndexes = new List<int>();
 
-      foreach (var line in newLines.Where(x => x.Index != null))
+      if (newLines != null)
       {
-        var oldLine = validOldLines.SingleOrDefault(x => x.Index == line.Index);
-
-        if (oldLine != null)
+        foreach (var line in newLines.Where(x => x.Index != null))
         {
-          checkedOldIndexes.Add(oldLine.Index.Value);
+          var oldLine = validOldLines.SingleOrDefault(x => x.Index == line.Index);
 
-          if (oldLine.Text != line.Text)
+          if (oldLine != null)
           {
-            Lines.Insert(oldLine.Index.Value, line);
+            checkedOldIndexes.Add(oldLine.Index);
 
-            validOldLines.Where(x => x.Index >= oldLine.Index).ForEach(x => x.Index++);
+            if (oldLine.Text != line.Text)
+            {
+              Lines.Insert(oldLine.Index, line);
+
+              validOldLines.Where(x => x.Index >= oldLine.Index).ForEach(x => x.Index++);
+
+            }
+          }
+          else
+          {
+            Lines.Insert(Lines.Count - 1, line);
           }
         }
-        else
+
+
+        var removedLines = validOldLines.Where(x => !checkedOldIndexes.Contains(x.Index)).ToList();
+
+        foreach (var removed in removedLines)
         {
-          Lines.Insert(Lines.Count - 2, line);
+          Lines.Remove(removed);
         }
-      }
 
-
-      var removedLines = validOldLines.Where(x => !checkedOldIndexes.Contains(x.Index.Value)).ToList();
-
-      foreach (var removed in removedLines)
-      {
-        Lines.Remove(removed);
+        Lines.Sort((x, y) => x.Index.CompareTo(y.Index));
       }
     }
 
     #endregion
   }
+
+
 }
