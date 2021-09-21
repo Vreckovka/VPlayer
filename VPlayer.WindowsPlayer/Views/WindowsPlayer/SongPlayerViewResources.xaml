@@ -204,7 +204,7 @@
 
       <ListView Grid.Column="1"
                 Margin="0,0,10,0"
-                Background="#10ffffff"
+                Background="#05ffffff"
                 BorderThickness="0"
                 ItemsSource="{Binding Lines}"
                 ScrollViewer.CanContentScroll="False"
