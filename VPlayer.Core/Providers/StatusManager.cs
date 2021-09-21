@@ -118,8 +118,8 @@ namespace VPlayer.Core.Managers.Status
           {
             await Task.Delay(0);
           }
-          else if(ActualMessageViewModel != null &&
-                  ActualMessageViewModel.ProcessedCount != 0 && 
+          else if (ActualMessageViewModel != null &&
+                  ActualMessageViewModel.ProcessedCount != 0 &&
                   ActualMessageViewModel.Status != StatusType.Processing)
             await Task.Delay(3000);
         }
@@ -137,7 +137,7 @@ namespace VPlayer.Core.Managers.Status
     #region UpdateMessage
 
     private List<StatusMessageViewModel> messages = new List<StatusMessageViewModel>();
-  
+
 
     public void UpdateMessage(StatusMessageViewModel statusMessageViewModel)
     {
@@ -168,40 +168,30 @@ namespace VPlayer.Core.Managers.Status
 
     #endregion
 
-    public void ShowDoneMessage(string text)
+    public void ShowDoneMessage(string text, bool isPinned = false)
     {
-      var message = new StatusMessageViewModel(1)
-      {
-        Message = text,
-        Status = StatusType.Done,
-        ProcessedCount = 1
-      };
-
-      UpdateMessage(message);
+      UpdateMessage(SingleMessage(text, StatusType.Done, isPinned));
     }
 
-    public void ShowErrorMessage(string text)
+    public void ShowErrorMessage(string text, bool isPinned = false)
     {
-      var message = new StatusMessageViewModel(1)
-      {
-        Message = text,
-        Status = StatusType.Error,
-        ProcessedCount = 1
-      };
-
-      UpdateMessage(message);
+      UpdateMessage(SingleMessage(text, StatusType.Error, isPinned));
     }
 
-    public void ShowFailedMessage(string text)
+    public void ShowFailedMessage(string text, bool isPinned = false)
     {
-      var message = new StatusMessageViewModel(1)
+      UpdateMessage(SingleMessage(text, StatusType.Failed, isPinned));
+    }
+
+    private StatusMessageViewModel SingleMessage(string text, StatusType statusType, bool isPinned = false)
+    {
+      return new StatusMessageViewModel(1)
       {
         Message = text,
-        Status = StatusType.Failed,
-        ProcessedCount = 1
+        Status = statusType,
+        ProcessedCount = 1,
+        IsPinned = isPinned
       };
-
-      UpdateMessage(message);
     }
 
     #region CheckMessage

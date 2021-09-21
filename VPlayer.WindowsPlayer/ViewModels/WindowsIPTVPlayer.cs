@@ -10,6 +10,7 @@ using VCore;
 using VCore.Modularity.RegionProviders;
 using VCore.WPF.Managers;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPlayer.Core.Managers.Status;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.IPTV.ViewModels;
 using VPlayer.Player.Views.WindowsPlayer;
@@ -20,18 +21,19 @@ namespace VPlayer.WindowsPlayer.ViewModels
 {
   public class WindowsIPTVPlayer : TvPlayerViewModel<WindowsPlayerView>
   {
-   
+
 
     public WindowsIPTVPlayer(IRegionProvider regionProvider, IKernel kernel, ILogger logger,
       IStorageManager storageManager,
       IEventAggregator eventAggregator,
       IIptvStalkerServiceProvider iptvStalkerServiceProvider,
       IWindowManager windowManager,
-      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, iptvStalkerServiceProvider,windowManager, vLCPlayer)
+      IStatusManager statusManager,
+      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, iptvStalkerServiceProvider, windowManager, statusManager, vLCPlayer)
     {
     }
 
-   
+
 
     #region Methods
 
@@ -48,7 +50,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
 
     #endregion
-    
+
     #endregion
   }
 }

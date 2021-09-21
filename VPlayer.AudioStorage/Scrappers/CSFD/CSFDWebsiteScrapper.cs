@@ -89,7 +89,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         .Replace("https://www.csfd.cz/film/", null)
         .Replace("https://csfd.cz/film/", null)
         .Replace("/recenze", null)
-        .Replace("/prehled",null)
+        .Replace("/prehled", null)
         .Replace("/", null);
 
       var statusMessage = new StatusMessageViewModel(3)
@@ -722,6 +722,15 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         if (tvShowUrl == null)
         {
+
+          if (string.IsNullOrEmpty(tvShowName))
+          {
+            if (!string.IsNullOrEmpty(parsedName))
+              tvShowName = parsedName;
+            else tvShowName = name;
+
+          }
+
           var tvShowFind = await FindSingleCsfdItem(tvShowName, year, episodeKeys != null ||
                                                                       seasonNumber != null ||
                                                                       episodeNumber != null ||
@@ -751,7 +760,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
               tvShow = LoadTvShow(episode.TvShowUrl, cancellationToken, seasonNumber, episodeNumber);
           }
         }
-      
+
 
         if (tvShow == null)
           tvShow = LoadTvShow(tvShowUrl, cancellationToken, seasonNumber, episodeNumber);
@@ -785,7 +794,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         else
         {
           statusMessage.Message = "NOT FOUND!";
-          statusMessage.Status = StatusType.Done;
+          statusMessage.Status = StatusType.Failed;
 
           statusManager.UpdateMessage(statusMessage);
 
@@ -814,7 +823,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     {
       lastParsedName = parsedName;
 
-      parsedName = parsedName.RemoveDiacritics().Replace(".",null);
+      parsedName = parsedName.RemoveDiacritics().Replace(".", null);
 
       var match = Regex.Match(parsedName, @"\D*");
 
@@ -848,7 +857,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       double minSimilarity = 0.55;
 
-     
+
 
       var query = allItems.Where(x => x.OriginalName != null)
         .Where(x => x.OriginalName.RemoveDiacritics().Similarity(parsedName) > minSimilarity)
@@ -895,7 +904,9 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     {
       cancellationToken.ThrowIfCancellationRequested();
       CSFDQueryResult result = new CSFDQueryResult();
-      chromeDriver.Url = url;
+
+      var urlParsed = url.Replace("[","").Replace("]","").Replace("(","").Replace(")","");
+      chromeDriver.Url = urlParsed;
       chromeDriver.Navigate();
 
       var document = new HtmlDocument();

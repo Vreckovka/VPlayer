@@ -40,6 +40,7 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.AudioStorage.Scrappers.CSFD;
 using VPlayer.AudioStorage.Scrappers.CSFD.Domain;
 using VPlayer.Core.Events;
+using VPlayer.Core.Managers.Status;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.Providers;
 using VPlayer.Core.ViewModels;
@@ -72,8 +73,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
       IEventAggregator eventAggregator,
       VLCPlayer vLCPlayer,
       IWindowManager windowManager,
+      IStatusManager statusManager,
       ICSFDWebsiteScrapper iCsfdWebsiteScrapper) :
-      base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, vLCPlayer)
+      base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager,statusManager, vLCPlayer)
     {
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       this.iCsfdWebsiteScrapper = iCsfdWebsiteScrapper ?? throw new ArgumentNullException(nameof(iCsfdWebsiteScrapper));
@@ -634,7 +636,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         bool singleSeason = false;
         var acutalEpisode = DataLoader.GetTvShowSeriesNumber(viewModel.Name);
 
-        if (acutalEpisode.EpisodeNumber != null)
+        if (acutalEpisode?.EpisodeNumber != null)
         {
           var episodeInSeason = PlayList.Select(x => DataLoader.GetTvShowSeriesNumber(x.Name))
             .Where(x => x != null)

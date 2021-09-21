@@ -35,6 +35,7 @@ using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
+using VPlayer.Core.Managers.Status;
 using VPlayer.Core.Providers;
 using VPlayer.WindowsPlayer.Players;
 
@@ -52,6 +53,7 @@ namespace VPlayer.Core.ViewModels
 
     protected readonly ILogger logger;
     protected readonly IStorageManager storageManager;
+    private readonly IStatusManager statusManager;
     private readonly IWindowManager windowManager;
     protected int actualItemIndex;
     protected HashSet<TItemViewModel> shuffleList = new HashSet<TItemViewModel>();
@@ -67,11 +69,13 @@ namespace VPlayer.Core.ViewModels
       ILogger logger,
       IStorageManager storageManager,
       IEventAggregator eventAggregator,
+      IStatusManager statusManager,
       IWindowManager windowManager,
       VLCPlayer vLCPlayer) : base(regionProvider)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
+      this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       EventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
 
@@ -847,11 +851,28 @@ namespace VPlayer.Core.ViewModels
       {
         if (model.Source != null)
         {
-          var fileUri = new Uri(model.Source);
+          try
+          {
+            var fileUri = new Uri(model.Source);
 
-          await MediaPlayer.SetNewMedia(fileUri);
+            await MediaPlayer.SetNewMedia(fileUri);
 
-          OnNewItemPlay();
+            OnNewItemPlay();
+          }
+          catch (UriFormatException ex)
+          {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+              statusManager.ShowFailedMessage($"Item source was not in correct format.\nURI: \"{model.Source}\"", true);
+            });
+          }
+        }
+        else
+        {
+          Application.Current.Dispatcher.Invoke(() =>
+          {
+            statusManager.ShowFailedMessage($"Item source is NULL", true);
+          });
         }
       });
     }
@@ -1428,6 +1449,8 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region UpdateOrAddActualSavedPlaylist
+
     protected async Task UpdateOrAddActualSavedPlaylist()
     {
       var result = await UpdateActualSavedPlaylistPlaylist();
@@ -1449,6 +1472,8 @@ namespace VPlayer.Core.ViewModels
         }
       }
     }
+
+    #endregion
 
     #region SetVolume
 

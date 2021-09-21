@@ -27,6 +27,7 @@ using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
+using VPlayer.Core.Managers.Status;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.Providers;
 using VPlayer.Core.ViewModels;
@@ -47,7 +48,8 @@ namespace VPlayer.IPTV.ViewModels
       IEventAggregator eventAggregator,
       IIptvStalkerServiceProvider iptvStalkerServiceProvider,
       IWindowManager windowManager,
-      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator,windowManager, vLCPlayer)
+      IStatusManager statusManager,
+      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator,statusManager,windowManager, vLCPlayer)
     {
       this.iptvStalkerServiceProvider = iptvStalkerServiceProvider ?? throw new ArgumentNullException(nameof(iptvStalkerServiceProvider));
     }

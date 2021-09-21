@@ -19,6 +19,7 @@ using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
+using VPlayer.Core.Managers.Status;
 using VPlayer.Core.Providers;
 using VPlayer.IPTV.ViewModels;
 using VPlayer.WindowsPlayer.Players;
@@ -43,7 +44,8 @@ namespace VPlayer.Core.ViewModels
       IStorageManager storageManager,
       IEventAggregator eventAggregator,
       IWindowManager windowManager,
-      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, vLCPlayer)
+      IStatusManager statusManager,
+      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, statusManager, windowManager, vLCPlayer)
     {
       BufferingSubject.Throttle(TimeSpan.FromSeconds(0.5)).Subscribe(x =>
       {
@@ -149,6 +151,7 @@ namespace VPlayer.Core.ViewModels
 
     #region OnNewItemPlay
 
+    private CancellationTokenSource cTSOnActualItemChanged;
     public override void OnNewItemPlay()
     {
       base.OnNewItemPlay();
@@ -156,6 +159,14 @@ namespace VPlayer.Core.ViewModels
       if (MediaPlayer.Media != null)
       {
         MediaPlayer.Media.DurationChanged += Media_DurationChanged;
+
+        cTSOnActualItemChanged?.Cancel();
+        cTSOnActualItemChanged = new CancellationTokenSource();
+
+        Task.Run(() =>
+        {
+          return DownloadItemInfo(cTSOnActualItemChanged.Token);
+        });
       }
     }
 
@@ -436,26 +447,13 @@ namespace VPlayer.Core.ViewModels
 
     #region OnActualItemChanged
 
-    private CancellationTokenSource cTSOnActualItemChanged;
     protected override void OnActualItemChanged()
     {
       base.OnActualItemChanged();
 
 
-      if (cTSOnActualItemChanged != null)
-      {
-        cTSOnActualItemChanged.Cancel();
-      }
-    
-      cTSOnActualItemChanged = new CancellationTokenSource();
-
       if (ActualItem != null)
         ActualItem.ActualPosition = 0;
-
-      Task.Run(() =>
-      {
-        return DownloadItemInfo(cTSOnActualItemChanged.Token);
-      });
     }
 
     #endregion

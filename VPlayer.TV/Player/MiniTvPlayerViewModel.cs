@@ -8,6 +8,7 @@ using VCore.Standard.Helpers;
 using VCore.WPF.Managers;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Factories;
+using VPlayer.Core.Managers.Status;
 using VPLayer.Domain.Contracts.IPTV;
 using VPlayer.IPTV.Events;
 using VPlayer.IPTV.Views;
@@ -25,7 +26,8 @@ namespace VPlayer.IPTV.ViewModels
       IVPlayerViewModelsFactory viewModelsFactory,
       IIptvStalkerServiceProvider iptvStalkerServiceProvider,
       IWindowManager windowManager,
-      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, iptvStalkerServiceProvider,windowManager, vLCPlayer)
+      IStatusManager statusManager,
+      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, iptvStalkerServiceProvider,windowManager,statusManager, vLCPlayer)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
     }

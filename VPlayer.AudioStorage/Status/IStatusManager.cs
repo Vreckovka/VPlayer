@@ -12,10 +12,10 @@ namespace VPlayer.Core.Managers.Status
 
     void UpdateMessageAndIncreaseProcessCount(StatusMessageViewModel statusMessageViewModel, int count = 1);
 
-    void ShowDoneMessage(string text);
+    void ShowDoneMessage(string text, bool isPinned = false);
 
-    void ShowErrorMessage(string text);
+    void ShowErrorMessage(string text, bool isPinned = false);
 
-    void ShowFailedMessage(string text);
+    void ShowFailedMessage(string text, bool isPinned = false);
   }
 }
