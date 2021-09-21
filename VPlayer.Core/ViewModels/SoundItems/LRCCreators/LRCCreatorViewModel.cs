@@ -230,7 +230,7 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
             });
           }
         }
-        
+
 
         foreach (var stringLine in stringLines)
         {
@@ -302,6 +302,12 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
           if (ActualLine == line)
           {
             var index = Lines.IndexOf(ActualLine);
+
+            if (!FilePlayableRegionViewModel.IsPlaying)
+            {
+              ActualLine.Time = Model.ActualTime;
+              return;
+            }
 
             if (index + 1 < Lines.Count)
             {
