@@ -81,7 +81,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       ILogger logger,
       IWindowManager windowManager,
       IStatusManager statusManager,
-      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager,statusManager, vLCPlayer)
+      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, statusManager, vLCPlayer)
     {
       this.vPlayerRegionProvider = regionProvider ?? throw new ArgumentNullException(nameof(regionProvider));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
@@ -96,7 +96,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       vLcPlayer = vLCPlayer ?? throw new ArgumentNullException(nameof(vLCPlayer));
     }
 
-    
+
 
     #endregion Constructors
 
@@ -266,20 +266,23 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       var vm = viewModelsFactory.Create<AddLyricsPromptViewModel>();
 
-      if(soundItemInPlaylistViewModel is SongInPlayListViewModel songInPlayList)
+      if (soundItemInPlaylistViewModel is SongInPlayListViewModel songInPlayList)
       {
         vm.Lyrics = songInPlayList.Lyrics;
       }
-     
+
 
       windowManager.ShowPrompt<AddLyricsPromptView>(vm);
 
-      if(vm.PromptResult == PromptResult.Ok && soundItemInPlaylistViewModel is SongInPlayListViewModel song)
+      if (vm.PromptResult == PromptResult.Ok && soundItemInPlaylistViewModel is SongInPlayListViewModel song)
       {
         var lyrics = vm.Lyrics;
         song.Lyrics = lyrics;
 
         await storageManager.UpdateEntityAsync(song.SongModel);
+
+        if (song.LRCCreatorViewModel != null && song.IsInEditMode)
+          song.LRCCreatorViewModel.ChangeLyrics(song.Lyrics);
 
         song.RaiseLyricsChange();
       }
@@ -306,16 +309,25 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public void OnCreateLRCLyrics(SoundItemInPlaylistViewModel soundItem)
     {
-      if(soundItem is SongInPlayListViewModel song && !string.IsNullOrEmpty(song.Lyrics))
+      if (soundItem is SongInPlayListViewModel song && !string.IsNullOrEmpty(song.Lyrics))
       {
-        var vm = viewModelsFactory.Create<LRCCreatorViewModel>(song);
+        if (song.LRCCreatorViewModel == null)
+        {
+          var vm = viewModelsFactory.Create<LRCCreatorViewModel>(song);
 
-        vm.Lyrics = song.Lyrics;
-        vm.FilePlayableRegionViewModel = this;
+          song.LRCCreatorViewModel = vm;
 
-        vm.PrepareLyrics();
+          vm.Lyrics = song.Lyrics;
+          vm.FilePlayableRegionViewModel = this;
 
-        song.LRCCreatorViewModel = vm;
+          vm.PrepareViewModel();
+        }
+        else
+        {
+          song.LRCCreatorViewModel.ChangeLyrics(song.Lyrics);
+        }
+
+        song.IsInEditMode = true;
 
         song.RaiseLyricsChange();
 
@@ -346,7 +358,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       if (soundItem is SongInPlayListViewModel song && !string.IsNullOrEmpty(song.Lyrics))
       {
-        song.LRCCreatorViewModel = null;
+        song.IsInEditMode = false;
 
         song.RaiseLyricsChange();
 

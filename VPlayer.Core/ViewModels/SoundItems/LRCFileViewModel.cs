@@ -25,7 +25,11 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     #region Constructors
 
-    public LRCFileViewModel(ILRCFile model, LRCProviders lRcProvider, PCloudLyricsProvider pCloudLyricsProvider, ILrcProvider lrcProvider = null) : base(model)
+    public LRCFileViewModel(
+      ILRCFile model, 
+      LRCProviders lRcProvider,
+      PCloudLyricsProvider pCloudLyricsProvider, 
+      ILrcProvider lrcProvider = null) : base(model)
     {
       this.pCloudLyricsProvider = pCloudLyricsProvider ?? throw new ArgumentNullException(nameof(pCloudLyricsProvider));
 
@@ -97,6 +101,25 @@ namespace VPlayer.Core.ViewModels.SoundItems
     public List<LRCLyricLineViewModel> AllLine { get; set; }
     public VirtualList<LRCLyricLineViewModel> LinesView { get; }
 
+    #region IsMenuOpened
+
+    private bool isMenuOpened;
+
+    public bool IsMenuOpened
+    {
+      get { return isMenuOpened; }
+      set
+      {
+        if (value != isMenuOpened)
+        {
+          isMenuOpened = value;
+          UpdateStatus = null;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     #region ActualLine
 

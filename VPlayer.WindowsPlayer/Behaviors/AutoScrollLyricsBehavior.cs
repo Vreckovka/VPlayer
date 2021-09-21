@@ -31,13 +31,15 @@ namespace VPlayer.Player.Behaviors
     {
       Application.Current?.Dispatcher?.Invoke(() =>
       {
-        // Get the border of the listview (first child of a listview)
-        Decorator border = VisualTreeHelper.GetChild(AssociatedObject, 0) as Decorator;
+        var childCount = VisualTreeHelper.GetChildrenCount(AssociatedObject);
+        
+        if (childCount > 0)
+        {
+          Decorator border = VisualTreeHelper.GetChild(AssociatedObject, 0) as Decorator;
+          ScrollViewer scrollViewer = border?.Child as ScrollViewer;
+          scrollViewer?.ScrollToTop();
+        }
 
-        // Get scrollviewer
-        ScrollViewer scrollViewer = border?.Child as ScrollViewer;
-
-        scrollViewer?.ScrollToTop();
       });
 
       SubcsribeToSongChange();

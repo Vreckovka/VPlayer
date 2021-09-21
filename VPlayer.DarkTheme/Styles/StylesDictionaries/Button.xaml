@@ -296,10 +296,10 @@
 
                             <Border Width="{TemplateBinding IconWidth}"
                                     Height="{TemplateBinding IconHeight}"
-                                    Margin="{TemplateBinding IconMargin}">
+                                    Margin="{TemplateBinding IconMargin}"
+                                    HorizontalAlignment="{TemplateBinding HorizontalIconAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalIconAlignment}">
                                 <Path x:Name="PathIcon"
-                                      HorizontalAlignment="{TemplateBinding HorizontalIconAlignment}"
-                                      VerticalAlignment="{TemplateBinding VerticalIconAlignment}"
                                       Fill="{TemplateBinding IconBrush}"
                                       Stretch="{TemplateBinding IconStretch}"
                                       Style="{TemplateBinding PathStyle}" />
@@ -328,7 +328,7 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="PathIcon" Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=PathCheckedBrush}" />
-                            
+
                         </Trigger>
 
                         <Trigger Property="IsMouseOver" Value="True">

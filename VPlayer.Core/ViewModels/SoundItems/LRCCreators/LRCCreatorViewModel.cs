@@ -185,13 +185,38 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
 
     #region Methods
 
-    #region PrepareLyrics
+    #region PrepareViewModel
 
-    public void PrepareLyrics()
+    public void PrepareViewModel()
     {
-      if (!string.IsNullOrEmpty(Lyrics))
+      Lines = GetLines(Lyrics);
+
+      if (Lines != null)
       {
-        var stringLines = Lyrics.Replace("\r", "").Split("\n");
+        ActualLine = Lines.FirstOrDefault();
+
+        if (ActualLine != null)
+        {
+          ActualLine.SetIsActual(true);
+          ActualLine.Time = new TimeSpan(0);
+        }
+
+        Lines.ItemUpdated.ObserveOn(Application.Current.Dispatcher)
+          .Where(x => x.EventArgs.PropertyName == nameof(LRCCreatorLyricsLine.IsActual))
+          .Subscribe(OnActualLineChanged).DisposeWith(this);
+      }
+    }
+
+    #endregion
+
+    #region GetLines
+
+    private RxObservableCollection<LRCCreatorLyricsLine> GetLines(string lyrics)
+    {
+      if (!string.IsNullOrEmpty(lyrics))
+      {
+        int index = 0;
+        var stringLines = lyrics.Replace("\r", "").Split("\n");
 
         var list = new List<LRCCreatorLyricsLine>();
 
@@ -211,7 +236,8 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
         {
           var newLine = new LRCCreatorLyricsLine()
           {
-            Text = stringLine.Trim()
+            Text = stringLine.Trim(),
+            Index = index++
           };
 
           list.Add(newLine);
@@ -228,22 +254,10 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
           }
         }
 
-
-        Lines = new RxObservableCollection<LRCCreatorLyricsLine>(list);
-
-        ActualLine = Lines.FirstOrDefault();
-
-        if (ActualLine != null)
-        {
-          ActualLine.SetIsActual(true);
-          ActualLine.Time = new TimeSpan(0);
-        }
-         
-
-        Lines.ItemUpdated.ObserveOn(Application.Current.Dispatcher)
-          .Where(x => x.EventArgs.PropertyName == nameof(LRCCreatorLyricsLine.IsActual))
-          .Subscribe(OnActualLineChanged).DisposeWith(this);
+        return new RxObservableCollection<LRCCreatorLyricsLine>(list);
       }
+
+      return null;
     }
 
     #endregion
@@ -306,6 +320,45 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
     }
 
     #endregion 
+
+    public void ChangeLyrics(string newLyrics)
+    {
+      var oldLInes = Lines.ToList();
+      var newLines = GetLines(newLyrics);
+
+      var validOldLines = oldLInes.Where(x => x.Index != null).ToList();
+
+      List<int> checkedOldIndexes = new List<int>();
+
+      foreach (var line in newLines.Where(x => x.Index != null))
+      {
+        var oldLine = validOldLines.SingleOrDefault(x => x.Index == line.Index);
+
+        if (oldLine != null)
+        {
+          checkedOldIndexes.Add(oldLine.Index.Value);
+
+          if (oldLine.Text != line.Text)
+          {
+            Lines.Insert(oldLine.Index.Value, line);
+
+            validOldLines.Where(x => x.Index >= oldLine.Index).ForEach(x => x.Index++);
+          }
+        }
+        else
+        {
+          Lines.Insert(Lines.Count - 2, line);
+        }
+      }
+
+
+      var removedLines = validOldLines.Where(x => !checkedOldIndexes.Contains(x.Index.Value)).ToList();
+
+      foreach (var removed in removedLines)
+      {
+        Lines.Remove(removed);
+      }
+    }
 
     #endregion
   }

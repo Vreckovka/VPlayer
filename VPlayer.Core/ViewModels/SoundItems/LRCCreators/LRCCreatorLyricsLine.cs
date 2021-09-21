@@ -7,6 +7,8 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
 {
   public class LRCCreatorLyricsLine : ViewModel
   {
+    public int? Index { get; set; }
+
     #region Text
 
     private string text;

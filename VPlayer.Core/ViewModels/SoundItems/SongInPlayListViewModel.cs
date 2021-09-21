@@ -158,7 +158,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     #endregion
 
-
+    public bool IsInEditMode { get; set; }
     public LRCCreatorViewModel LRCCreatorViewModel { get; set; }
 
     #region LyricsObject
@@ -167,7 +167,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
     {
       get
       {
-        if (LRCCreatorViewModel != null)
+        if (LRCCreatorViewModel != null && IsInEditMode)
         {
           return LRCCreatorViewModel;
         }
