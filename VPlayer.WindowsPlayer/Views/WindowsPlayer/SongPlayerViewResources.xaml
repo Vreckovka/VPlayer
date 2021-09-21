@@ -7,6 +7,7 @@
                     xmlns:behaviors2="clr-namespace:VCore.WPF.Behaviors;assembly=VCore.WPF"
                     xmlns:buttons="clr-namespace:VCore.WPF.Behaviors.Buttons;assembly=VCore.WPF"
                     xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
+                    xmlns:controls1="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
                     xmlns:controls2="clr-namespace:VCore.Controls;assembly=VCore.WPF"
                     xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
                     xmlns:library1="clr-namespace:VPlayer.Library;assembly=VCore.WPF"
@@ -203,16 +204,44 @@
                  Text="SYNCED" />
 
       <ListView Grid.Column="1"
+                Height="150"
                 Margin="0,0,10,0"
                 Background="#05ffffff"
                 BorderThickness="0"
-                ItemsSource="{Binding Lines}"
-                ScrollViewer.CanContentScroll="False"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                ItemsSource="{Binding LinesView}">
+
+
         <ListView.Style>
           <Style TargetType="ListView">
+
             <Setter Property="Padding" Value="0" />
+            <Setter Property="Template">
+              <Setter.Value>
+                <ControlTemplate TargetType="ItemsControl">
+                  <Border Background="{TemplateBinding Background}">
+                    <ScrollViewer>
+                      <ItemsPresenter />
+                    </ScrollViewer>
+                  </Border>
+                </ControlTemplate>
+              </Setter.Value>
+            </Setter>
+
+            <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+            <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True" />
+            <Setter Property="VirtualizingPanel.ScrollUnit" Value="Pixel" />
+            <Setter Property="VirtualizingPanel.IsContainerVirtualizable" Value="True" />
+
+            <Setter Property="ItemsPanel">
+              <Setter.Value>
+                <ItemsPanelTemplate>
+                  <VirtualizingStackPanel VirtualizingPanel.IsVirtualizing="True"
+                                          VirtualizingPanel.ScrollUnit="Pixel"
+                                          VirtualizingPanel.VirtualizationMode="Recycling" />
+                </ItemsPanelTemplate>
+              </Setter.Value>
+            </Setter>
+
             <Setter Property="ItemContainerStyle">
               <Setter.Value>
                 <Style TargetType="ListViewItem">

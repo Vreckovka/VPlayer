@@ -6,6 +6,7 @@ using System.Reactive.Subjects;
 using System.Windows;
 using System.Windows.Input;
 using VCore;
+using VCore.ItemsCollections.VirtualList.VirtualLists;
 using VCore.Standard;
 using VPlayer.AudioStorage.InfoDownloader.LRC;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google;
@@ -31,16 +32,16 @@ namespace VPlayer.Core.ViewModels.SoundItems
       sourceProvider = lrcProvider;
       Provider = lRcProvider;
 
-      Lines = model?.Lines.Select(x => new LRCLyricLineViewModel(x)).ToList();
+      AllLine = model?.Lines.Select(x => new LRCLyricLineViewModel(x)).ToList();
 
-      if (Lines != null)
+      if (AllLine != null)
       {
-        var last = Lines.LastOrDefault();
-        var first = Lines.FirstOrDefault();
+        var last = AllLine.LastOrDefault();
+        var first = AllLine.FirstOrDefault();
 
         if (last != null && string.IsNullOrEmpty(last.Text))
         {
-          Lines.Add(new LRCLyricLineViewModel(new LRCLyricLine()
+          AllLine.Add(new LRCLyricLineViewModel(new LRCLyricLine()
           {
             Text = "(End)",
             Timestamp = last.Model.Timestamp + TimeSpan.FromSeconds(1)
@@ -50,13 +51,15 @@ namespace VPlayer.Core.ViewModels.SoundItems
         if (first != null && first.Model.Timestamp > TimeSpan.FromSeconds(0))
         {
 
-          Lines.Insert(0, new LRCLyricLineViewModel(new LRCLyricLine()
+          AllLine.Insert(0, new LRCLyricLineViewModel(new LRCLyricLine()
           {
             Text = null,
             Timestamp = TimeSpan.FromSeconds(0)
           }));
         }
       }
+
+      LinesView = new VirtualList<LRCLyricLineViewModel>(AllLine, 5);
     }
 
     #endregion
@@ -91,8 +94,8 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     #endregion
 
-    public List<LRCLyricLineViewModel> Lines { get; }
-
+    public List<LRCLyricLineViewModel> AllLine { get; set; }
+    public VirtualList<LRCLyricLineViewModel> LinesView { get; }
 
 
     #region ActualLine
@@ -111,19 +114,18 @@ namespace VPlayer.Core.ViewModels.SoundItems
         }
       }
     }
-    
+
     #endregion
-    
+
     #region TimeAdjustmentSeconds
 
     public double TimeAdjustmentSeconds
     {
       get { return timeAdjustment / 1000.0; }
-     
+
     }
 
     #endregion
-
 
     #region TimeAdjustment
 
@@ -154,8 +156,8 @@ namespace VPlayer.Core.ViewModels.SoundItems
     {
       lock (batton)
       {
-        if (lastTimestamp == null || 
-            (lastTimestamp <= timeSpan && nextTimestamp <= timeSpan) || 
+        if (lastTimestamp == null ||
+            (lastTimestamp <= timeSpan && nextTimestamp <= timeSpan) ||
             (lastTimestamp > timeSpan))
         {
           if (ActualLine != null)
@@ -163,27 +165,27 @@ namespace VPlayer.Core.ViewModels.SoundItems
             ActualLine.IsActual = false;
           }
 
-          var newLine = Lines.Where(x => x.Model.Timestamp != null &&
-                                         x.Model.Timestamp.Value.TotalMilliseconds + TimeAdjustment <= timeSpan.TotalMilliseconds).OrderByDescending(x => x.Model.Timestamp).FirstOrDefault();
+          var newLine = AllLine.Where(x => x.Model.Timestamp != null &&
+                                           x.Model.Timestamp.Value.TotalMilliseconds + TimeAdjustment <= timeSpan.TotalMilliseconds).OrderByDescending(x => x.Model.Timestamp).FirstOrDefault();
 
           if (newLine != null && ActualLine != newLine)
           {
             newLine.IsActual = true;
-            var oldIndex = Lines.IndexOf(newLine);
+            var oldIndex = AllLine.IndexOf(newLine);
 
-            if (oldIndex + 1 < Lines.Count)
+            if (oldIndex + 1 < AllLine.Count)
             {
-              var oldTimestamp = Lines[oldIndex].Model.Timestamp;
+              var oldTimestamp = AllLine[oldIndex].Model.Timestamp;
 
               var nextTimestampIndex = oldIndex;
-              
+
               do
               {
                 nextTimestampIndex++;
 
-                var nextLineTimestamp = Lines[nextTimestampIndex].Model.Timestamp;
+                var nextLineTimestamp = AllLine[nextTimestampIndex].Model.Timestamp;
 
-                if (nextTimestampIndex < Lines.Count && nextLineTimestamp.HasValue)
+                if (nextTimestampIndex < AllLine.Count && nextLineTimestamp.HasValue)
                 {
                   nextTimestamp = TimeSpan.FromMilliseconds(nextLineTimestamp.Value.TotalMilliseconds + TimeAdjustment);
                 }
@@ -194,7 +196,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
                 }
 
 
-              } while (nextTimestamp == oldTimestamp && nextTimestampIndex + 1 < Lines.Count);
+              } while (nextTimestamp == oldTimestamp && nextTimestampIndex + 1 < AllLine.Count);
 
 
             }
@@ -211,7 +213,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
           if (ActualLine != null)
           {
-            actualLineSubject.OnNext(Lines.IndexOf(ActualLine));
+            actualLineSubject.OnNext(AllLine.IndexOf(ActualLine));
           }
         }
       }
@@ -283,7 +285,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
         Application.Current.Dispatcher.Invoke(() => { IsLoading = true; UpdateStatus = null; });
 
-        var result =  await pCloudLyricsProvider.Update(Model);
+        var result = await pCloudLyricsProvider.Update(Model);
 
         Application.Current.Dispatcher.Invoke(() =>
         {
