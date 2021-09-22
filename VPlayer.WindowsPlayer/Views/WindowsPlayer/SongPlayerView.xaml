@@ -316,7 +316,7 @@
                 </TextBox>
 
                 <Border Margin="0,0,0,3"
-                        Padding="0 2 0 2"
+                        Padding="0,2,0,2"
                         HorizontalAlignment="Center"
                         CornerRadius="8">
                     <Border.Background>
@@ -358,14 +358,11 @@
         </Grid>
 
         <Border Grid.Row="0"
-                Height="45"
-                Padding="15,5"
+                Padding="15,15"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
                 Background="#85000000">
-            <StackPanel Margin="0,0,50,0"
-                        HorizontalAlignment="Right"
-                        Orientation="Horizontal">
+            <StackPanel HorizontalAlignment="Right" Margin="0 30 0 0" Orientation="Horizontal">
                 <controls:PathButton x:Name="openUpnpButton"
                                      VerticalAlignment="Center"
                                      FontFamily="{StaticResource FontAwesome6Pro_Solid}"
