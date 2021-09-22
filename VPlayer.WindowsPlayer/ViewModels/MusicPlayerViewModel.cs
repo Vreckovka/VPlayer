@@ -696,6 +696,23 @@ namespace VPlayer.WindowsPlayer.ViewModels
                 }
               }
 
+              bool wasChanged = false;
+
+              if (!string.IsNullOrEmpty(downloadingAlbum.Name) && downloadingAlbum.Name != fileInfo.Album)
+              {
+                fileInfo.Album = downloadingAlbum.Name;
+                wasChanged = true;
+              }
+
+              if (!string.IsNullOrEmpty(downloadingArtist.Name) && downloadingArtist.Name != fileInfo.Artist)
+              {
+                fileInfo.Artist = downloadingArtist.Name;
+                wasChanged = true;
+              }
+
+              if (wasChanged)
+                result = await storageManager.UpdateEntityAsync(fileInfo);
+
               Application.Current.Dispatcher.InvokeAsync(async () =>
               {
                 try
