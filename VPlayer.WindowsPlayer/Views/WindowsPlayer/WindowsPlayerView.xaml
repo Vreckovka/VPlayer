@@ -133,7 +133,9 @@
                         </Grid.ColumnDefinitions>
 
 
-                        <Border Margin="10,0,5,0" Padding="10,0">
+                        <Border Margin="10,0,5,0"
+                                Padding="10,7"
+                                VerticalAlignment="Center">
                             <Border.Style>
                                 <Style TargetType="Border">
                                     <Setter Property="Background" Value="#10ffffff" />
@@ -278,20 +280,76 @@
                                     Opacity="0.5"
                                     Orientation="Vertical">
 
-                            <TextBlock Margin="0,0,5,0" FontWeight="Bold">
-                                <Run Foreground="#ccc" Text="COUNT:" />
-                                <Run Foreground="#858585" Text="{Binding PlayList.Count, Mode=OneWay}" />
-                            </TextBlock>
+                            <StackPanel Margin="0,2,0,5" Orientation="Horizontal">
 
-                            <TextBlock Margin="0,0,5,0" FontWeight="Bold">
-                                <Run Foreground="#ccc" Text="DURATION:" />
-                                <Run Foreground="#858585" Text="{Binding TotalPlaylistDuration, Mode=OneWay, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}" />
-                            </TextBlock>
+                                <controls1:PathButton Width="20"
+                                                      FontSize="16"
+                                                      ForegroundDefaultColor="#30ffffff"
+                                                      Style="{StaticResource tally}"
+                                                      ToolTip="NUMBER of ITEMS in playlist" />
 
-                            <TextBlock Margin="0,0,5,0" FontWeight="Bold">
-                                <Run Foreground="#ccc" Text="TOTAL PLAYED:" />
-                                <Run Foreground="{StaticResource YellowBrush}" Text="{Binding PlaylistTotalTimePlayed, Mode=OneWay, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}" />
-                            </TextBlock>
+                                <!--<TextBlock Margin="5,0,9,0"
+                                           VerticalAlignment="Center"
+                                           FontSize="10"
+                                           FontWeight="Bold"
+                                           Foreground="#20ffffff"
+                                           Text="Count" />-->
+
+                                <TextBlock Margin="5,0,0,0"
+                                           VerticalAlignment="Center"
+                                           FontWeight="Bold"
+                                           Foreground="#858585"
+                                           Text="{Binding PlayList.Count, Mode=OneWay}" />
+                            </StackPanel>
+
+
+                            <StackPanel Margin="0,2,0,5" Orientation="Horizontal">
+
+                                <controls1:PathButton Width="15"
+                                                      Margin="4,0,0,0"
+                                                      FontSize="16"
+                                                      ForegroundDefaultColor="#30ffffff"
+                                                      ToolTip="Total LENGTH of playlist"
+                                                      Style="{StaticResource hourglass}" />
+
+                                <!--<TextBlock Margin="5,0,5,0"
+                                           VerticalAlignment="Center"
+                                           FontSize="10"
+                                           FontWeight="Bold"
+                                           Foreground="#20ffffff"
+                                           Text="Length" />-->
+
+                                <TextBlock Margin="5,0,5,0"
+                                           VerticalAlignment="Center"
+                                           FontWeight="Bold"
+                                           Foreground="#858585"
+                                           Text="{Binding TotalPlaylistDuration, Mode=OneWay, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}" />
+                            </StackPanel>
+
+
+
+                            <StackPanel Margin="0,2,0,5" Orientation="Horizontal">
+
+                                <controls1:PathButton Width="18"
+                                                      Margin="2,0,0,0"
+                                                      FontSize="18"
+                                                      ForegroundDefaultColor="#30ffffff"
+                                                      ToolTip="Total PLAYED TIME of playlist"
+                                                      Style="{StaticResource stopwatch}" />
+
+                                <!--<TextBlock Margin="5,1,5,0"
+                                           VerticalAlignment="Center"
+                                           FontSize="10"
+                                           FontWeight="Bold"
+                                           Foreground="#20ffffff"
+                                           Text="Played" />-->
+
+                                <TextBlock Margin="5,2,5,0"
+                                           VerticalAlignment="Center"
+                                           FontWeight="Bold"
+                                           Foreground="{StaticResource YellowBrush}"
+                                           Text="{Binding PlaylistTotalTimePlayed, Mode=OneWay, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}" />
+                            </StackPanel>
                         </StackPanel>
 
                     </Grid>

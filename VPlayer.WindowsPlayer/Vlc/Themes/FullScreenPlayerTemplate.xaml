@@ -374,7 +374,7 @@
 
 
                                 <ContentPresenter Grid.Column="2"
-                                                  MaxWidth="250"
+                                                  MaxWidth="290"
                                                   Margin="0,0,0,1"
                                                   HorizontalAlignment="Left"
                                                   VerticalAlignment="Bottom"

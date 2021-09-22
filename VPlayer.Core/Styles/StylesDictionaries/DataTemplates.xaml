@@ -400,12 +400,15 @@
                    HorizontalAlignment="Left"
                    VerticalAlignment="Bottom"
                    Foreground="#70edfffa"
-                   Text="{Binding Description}" />
+                   Text="{Binding Description}"
+                   ToolTip="{Binding Description}" />
     </DataTemplate>
 
     <DataTemplate x:Key="SongDescriptionTemplate">
         <TextBlock Margin="0,0,0,0" FontSize="12">
-            <Run FontSize="13" Text="{Binding ArtistViewModel.Name, Mode=OneWay}">
+            <Run FontSize="13"
+                 Text="{Binding ArtistViewModel.Name, Mode=OneWay}"
+                 ToolTip="{Binding ArtistViewModel.Name, Mode=OneWay}">
                 <Run.Style>
                     <Style TargetType="Run">
                         <Setter Property="Foreground" Value="#948b79" />
@@ -414,7 +417,7 @@
                     </Style>
                 </Run.Style>
             </Run>
-            <Run Text="{Binding AlbumViewModel.Name, Mode=OneWay, StringFormat={}({0})}">
+            <Run Text="{Binding AlbumViewModel.Name, Mode=OneWay}" ToolTip="{Binding AlbumViewModel.Name, Mode=OneWay}">
                 <Run.Style>
                     <Style TargetType="Run">
                         <Setter Property="Foreground" Value="#70edfffa" />
@@ -434,14 +437,14 @@
                     <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
 
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock FontSize="14"
-                               FontWeight="DemiBold"
-                               Foreground="#9ca379"
-                               Grid.IsSharedSizeScope="True"
-                               Text="{Binding ActualItem.Model.Name}" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition />
 
-                    <controls:ButtonWithIcon Margin="2,0,0,0"
+                    </Grid.ColumnDefinitions>
+
+                    <controls:ButtonWithIcon Margin="-2,0,0,0"
                                              Padding="2"
                                              HorizontalAlignment="Left"
                                              VerticalAlignment="Center"
@@ -476,7 +479,17 @@
                             </Border>
                         </controls:ButtonWithIcon.ToolTip>
                     </controls:ButtonWithIcon>
-                </StackPanel>
+
+                    <TextBlock Grid.Column="1"
+                               FontSize="14"
+                               FontWeight="DemiBold"
+                               Foreground="#9ca379"
+                               Grid.IsSharedSizeScope="True"
+                               Text="{Binding ActualItem.Model.Name}"
+                               ToolTip="{Binding ActualItem.Model.Name}" />
+
+
+                </Grid>
 
 
                 <ContentControl x:Name="DescriptionText"

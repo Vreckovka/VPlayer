@@ -16,1354 +16,1379 @@
                     xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
                     xmlns:windowsPlayer="clr-namespace:VPlayer.Player.Views.WindowsPlayer">
 
-  <library:CacheImageConverter x:Key="CacheImageConverter" />
+    <library:CacheImageConverter x:Key="CacheImageConverter" />
 
-  <Style x:Key="LyricsStyle" TargetType="TextBox">
-    <Setter Property="FontSize" Value="24" />
-    <Setter Property="HorizontalContentAlignment" Value="Center" />
-    <Setter Property="HorizontalAlignment" Value="Center" />
-    <Setter Property="Foreground" Value="{StaticResource YellowBrush}" />
+    <Style x:Key="LyricsStyle" TargetType="TextBox">
+        <Setter Property="FontSize" Value="24" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="Foreground" Value="{StaticResource YellowBrush}" />
 
-    <Setter Property="FontWeight" Value="DemiBold" />
-    <Setter Property="IsReadOnly" Value="True" />
-    <Setter Property="Background" Value="Transparent" />
-    <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="Padding" Value="0" />
-    <Setter Property="Effect">
-      <Setter.Value>
-        <DropShadowEffect BlurRadius="0.05"
-                          RenderingBias="Quality"
-                          ShadowDepth="5" />
-      </Setter.Value>
-    </Setter>
-  </Style>
+        <Setter Property="FontWeight" Value="DemiBold" />
+        <Setter Property="IsReadOnly" Value="True" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect BlurRadius="0.05"
+                                  RenderingBias="Quality"
+                                  ShadowDepth="5" />
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-  <DataTemplate x:Key="LyricsDataTemplate">
+    <DataTemplate x:Key="LyricsDataTemplate">
 
-    <Grid>
+        <Grid>
 
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="auto" />
-        <ColumnDefinition />
-      </Grid.ColumnDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
 
-      <controls2:PathButton Margin="10,10,0,0"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
-                            Command="{Binding CreateLRCLyrics}"
-                            CommandParameter="{Binding ActualItem}"
-                            DataContext="{Binding RelativeSource={RelativeSource AncestorType=Border, Mode=FindAncestor}, Mode=OneWay, Path=DataContext}"
-                            FontSize="25"
-                            Foreground="White"
-                            ForegroundCheckedColor="Yellow"
-                            ForegroundDefaultColor="#20ffffff"
-                            Style="{StaticResource file-pen}"
-                            ToolTip="Create LRC lyrics" />
-
-
-      <ScrollViewer Grid.Column="1"
-                    HorizontalScrollBarVisibility="Auto"
-                    VerticalScrollBarVisibility="Hidden">
-        <TextBox VerticalAlignment="Top"
-                 Style="{StaticResource LyricsStyle}"
-                 Text="{Binding Mode=OneWay}" />
-      </ScrollViewer>
-    </Grid>
-
-  </DataTemplate>
-
-  <DataTemplate x:Key="SyncedLyricsDataTemplate">
-    <Grid Margin="5,5,0,0">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="100" />
-        <ColumnDefinition />
-      </Grid.ColumnDefinitions>
+            <controls2:PathButton Margin="10,10,0,0"
+                                  HorizontalAlignment="Left"
+                                  VerticalAlignment="Top"
+                                  Command="{Binding CreateLRCLyrics}"
+                                  CommandParameter="{Binding ActualItem}"
+                                  DataContext="{Binding RelativeSource={RelativeSource AncestorType=Border, Mode=FindAncestor}, Mode=OneWay, Path=DataContext}"
+                                  FontSize="25"
+                                  Foreground="White"
+                                  ForegroundCheckedColor="Yellow"
+                                  ForegroundDefaultColor="#20ffffff"
+                                  Style="{StaticResource file-pen}"
+                                  ToolTip="Create LRC lyrics" />
 
 
-      <StackPanel Grid.Column="0"
-                  Margin="10,5,0,0"
+            <ScrollViewer Grid.Column="1"
+                          HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Hidden">
+                <TextBox VerticalAlignment="Top"
+                         Style="{StaticResource LyricsStyle}"
+                         Text="{Binding Mode=OneWay}" />
+            </ScrollViewer>
+        </Grid>
+
+    </DataTemplate>
+
+    <DataTemplate x:Key="SyncedLyricsDataTemplate">
+        <Grid Margin="5,5,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+
+            <StackPanel Grid.Column="0"
+                        Margin="10,5,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top">
+                <controls2:PathButton x:Name="SettingsButton"
+                                      HorizontalAlignment="Left"
+                                      FontSize="13"
+                                      FontWeight="Bold"
+                                      ForegroundCheckedColor="White"
+                                      ForegroundDefaultColor="#15ffffff"
+                                      ForegroundHoverColor="#ccc"
+                                      IconDefaultColor="#555555"
+                                      IconHoverColor="#ccc"
+                                      IsChecked="{Binding IsMenuOpened}"
+                                      PathCheckedBrush="{StaticResource DefaultRedBrush}"
+                                      PathStyle="{StaticResource gear}">
+                    <controls2:PathButton.Style>
+                        <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
+                            <Setter Property="Content" Value="Lyrics" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=711}" Value="false">
+                                    <Setter Property="Content" Value="" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </controls2:PathButton.Style>
+                </controls2:PathButton>
+
+                <Popup IsOpen="{Binding ElementName=SettingsButton, Path=IsChecked}" StaysOpen="False">
+                    <Grid>
+                        <Border Padding="5"
+                                HorizontalAlignment="Left"
+                                Background="#cc101010"
+                                BorderBrush="#95454545"
+                                BorderThickness="1"
+                                CornerRadius="5">
+                            <StackPanel>
+
+
+                                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+
+                                    <TextBlock Margin="0,0,10,0"
+                                               VerticalAlignment="Bottom"
+                                               FontWeight="Bold"
+                                               Foreground="#30ffffff"
+                                               Text="Adjust lyrics (ms)" />
+
+                                    <controls:NumericUpAndDown VerticalAlignment="Center"
+                                                               FontWeight="Bold"
+                                                               StepSize="500"
+                                                               Value="{Binding TimeAdjustment, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                                        <b:Interaction.Behaviors>
+                                            <behaviors2:FocusBehavior SetFocusManager="True" />
+                                        </b:Interaction.Behaviors>
+                                    </controls:NumericUpAndDown>
+
+
+
+
+
+
+                                </StackPanel>
+
+
+
+                                <controls2:PathButton Margin="0,10,0,0"
+                                                      Padding="55,9"
+                                                      HorizontalAlignment="Center"
+                                                      Background="#08ffffff"
+                                                      BorderThickness="1"
+                                                      Command="{Binding ApplyPernamently}"
+                                                      Content="APPLY PERNAMENTLY"
+                                                      FontWeight="Bold"
+                                                      ForegroundDefaultColor="#80ffffff"
+                                                      IconDefaultColor="#555555"
+                                                      IconHoverColor="{StaticResource BlueColor}"
+                                                      IsReadOnly="True"
+                                                      PathCheckedBrush="{StaticResource YellowBrush}"
+                                                      PathStyle="{StaticResource Save}" />
+
+                                <TextBlock Margin="0,5,0,0"
+                                           HorizontalAlignment="Center"
+                                           FontSize="14"
+                                           FontWeight="Bold">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding UpdateStatus, Mode=OneWay}" Value="true">
+                                                    <Setter Property="Text" Value="Success" />
+                                                    <Setter Property="Foreground" Value="{StaticResource GreenBrush}" />
+                                                </DataTrigger>
+
+                                                <DataTrigger Binding="{Binding UpdateStatus, Mode=OneWay}" Value="false">
+                                                    <Setter Property="Text" Value="Failed" />
+                                                    <Setter Property="Foreground" Value="{StaticResource DefaultRedBrush}" />
+                                                </DataTrigger>
+
+                                                <DataTrigger Binding="{Binding UpdateStatus, Mode=OneWay}" Value="{x:Null}">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Visibility" Value="Hidden" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=SettingsButton, Path=IsChecked}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                        </Border>
+
+                        <Border Grid.Row="1" Background="#85050505">
+                            <TextBlock HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontSize="18"
+                                       Text="Saving..." />
+
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsLoading}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                        </Border>
+                    </Grid>
+                </Popup>
+
+                <controls2:PathButton Margin="0,15,0,0"
+                                      HorizontalAlignment="Left"
+                                      Command="{Binding Edit}"
+                                      FontSize="13"
+                                      FontWeight="Bold"
+                                      ForegroundCheckedColor="White"
+                                      ForegroundDefaultColor="#15ffffff"
+                                      ForegroundHoverColor="#ccc"
+                                      IconDefaultColor="#555555"
+                                      IconHoverColor="#ccc"
+                                      IconMargin="0 0 11 0"
+                                      IsReadOnly="True"
+                                      PathStyle="{StaticResource Pencil}"
+                                      ToolTip="Edit">
+                    <controls2:PathButton.Style>
+                        <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
+                            <Setter Property="Content" Value="Edit" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=711}" Value="false">
+                                    <Setter Property="Content" Value="" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </controls2:PathButton.Style>
+                </controls2:PathButton>
+            </StackPanel>
+
+
+
+            <ListView Grid.Column="1"
+                      Margin="0,0,10,0"
+                      Background="#05ffffff"
+                      BorderThickness="0"
+                      ItemsSource="{Binding LinesView}">
+
+
+                <ListView.Style>
+                    <Style TargetType="ListView">
+
+                        <Setter Property="Padding" Value="0" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ItemsControl">
+                                    <Border Background="{TemplateBinding Background}">
+                                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Hidden">
+                                            <ItemsPresenter />
+                                        </ScrollViewer>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+
+                        <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+                        <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True" />
+                        <Setter Property="VirtualizingPanel.ScrollUnit" Value="Pixel" />
+                        <Setter Property="VirtualizingPanel.IsContainerVirtualizable" Value="True" />
+
+                        <Setter Property="ItemsPanel">
+                            <Setter.Value>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel VirtualizingPanel.IsVirtualizing="True"
+                                                            VirtualizingPanel.ScrollUnit="Pixel"
+                                                            VirtualizingPanel.VirtualizationMode="Recycling" />
+                                </ItemsPanelTemplate>
+                            </Setter.Value>
+                        </Setter>
+
+                        <Setter Property="ItemContainerStyle">
+                            <Setter.Value>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="Background" Value="Red" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                                <Border Margin="5">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="auto" />
+                                                            <ColumnDefinition />
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <StackPanel Margin="10,0" Orientation="Horizontal">
+                                                            <TextBox Width="65"
+                                                                     HorizontalAlignment="Center"
+                                                                     VerticalAlignment="Center"
+                                                                     HorizontalContentAlignment="Center"
+                                                                     Background="Transparent"
+                                                                     BorderThickness="0"
+                                                                     FontSize="15"
+                                                                     FontWeight="Bold">
+                                                                <TextBox.Style>
+                                                                    <Style TargetType="TextBox">
+                                                                        <Setter Property="Text" Value="{Binding Model.Timestamp, StringFormat={}{0:hh\\:mm\\:ss}}" />
+                                                                        <Setter Property="Foreground" Value="#25ffffff" />
+                                                                        <Setter Property="FontSize" Value="18" />
+                                                                    </Style>
+                                                                </TextBox.Style>
+                                                            </TextBox>
+
+                                                            <TextBlock Margin="5,0,0,0"
+                                                                       VerticalAlignment="Center"
+                                                                       FontSize="13"
+                                                                       FontWeight="Bold">
+                                                                <TextBlock.Text>
+                                                                    <MultiBinding Converter="{library1:ExtractMilisecondFromTimeSpanConverter}" StringFormat="{}({0})">
+                                                                        <Binding Path="Model.Timestamp" />
+                                                                        <Binding Path="DataContext.TimeAdjustment" RelativeSource="{RelativeSource AncestorType=ListView, Mode=FindAncestor}" />
+                                                                    </MultiBinding>
+                                                                </TextBlock.Text>
+
+                                                                <TextBlock.Style>
+                                                                    <Style TargetType="TextBlock">
+                                                                        <Setter Property="Foreground" Value="White" />
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding DataContext.TimeAdjustment, RelativeSource={RelativeSource AncestorType=ListView, Mode=FindAncestor}}" Value="0">
+                                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                            </DataTrigger>
+
+                                                                            <DataTrigger Binding="{Binding DataContext.TimeAdjustment, RelativeSource={RelativeSource AncestorType=ListView, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=0}" Value="true">
+                                                                                <Setter Property="Foreground" Value="#70aacc" />
+                                                                            </DataTrigger>
+
+                                                                            <DataTrigger Binding="{Binding DataContext.TimeAdjustment, RelativeSource={RelativeSource AncestorType=ListView, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=0}" Value="false">
+                                                                                <Setter Property="Foreground" Value="#bf213c" />
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </TextBlock.Style>
+                                                            </TextBlock>
+                                                        </StackPanel>
+
+
+
+                                                        <TextBox Grid.Column="1"
+                                                                 HorizontalAlignment="Left"
+                                                                 HorizontalContentAlignment="Left"
+                                                                 Text="{Binding Text, Mode=OneWay}">
+                                                            <TextBox.Style>
+                                                                <Style BasedOn="{StaticResource LyricsStyle}" TargetType="TextBox">
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsActual}" Value="true">
+                                                                            <Setter Property="FontSize" Value="32" />
+                                                                            <Setter Property="TextWrapping" Value="Wrap" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBox.Style>
+                                                        </TextBox>
+                                                    </Grid>
+
+                                                    <Border.Style>
+                                                        <Style TargetType="Border">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsActual}" Value="true">
+                                                                    <Setter Property="Margin" Value="25" />
+                                                                    <Setter Property="Padding" Value="0,5,0,5" />
+                                                                    <Setter Property="Background" Value="#95000000" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.Style>
+
+                <b:Interaction.Behaviors>
+                    <behaviors:AutoScrollLyricsBehavior AnimationTime="0:0:0:0.6" StepSize="39" />
+                </b:Interaction.Behaviors>
+            </ListView>
+
+            <TextBlock Margin="0,0,0,5"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Bottom"
+                       FontSize="13"
+                       FontWeight="Normal"
+                       Foreground="#20ffffff"
+                       Text="SYNCED">
+                <TextBlock.Style>
+                    <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=711}" Value="false">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+            <TextBlock Grid.Column="1"
+                       MaxWidth="120"
+                       Margin="0,0,17,8"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Bottom"
+                       FontSize="13"
+                       FontWeight="Normal"
+                       Foreground="#20ffffff"
+                       Text="{Binding Model.By, StringFormat={}by {0}}"
+                       TextTrimming="CharacterEllipsis"
+                       ToolTip="{Binding Model}">
+                <TextBlock.Style>
+                    <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=711}" Value="false">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SyncedCreatorLyricsDataTemplate">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <Grid Margin="15,10,0,0"
                   HorizontalAlignment="Left"
                   VerticalAlignment="Top">
-        <controls2:PathButton x:Name="SettingsButton"
-                              HorizontalAlignment="Left"
-                              Content="Lyrics"
-                              FontSize="13"
-                              FontWeight="Bold"
-                              ForegroundCheckedColor="White"
-                              ForegroundDefaultColor="#15ffffff"
-                              ForegroundHoverColor="#ccc"
-                              IconDefaultColor="#555555"
-                              IconHoverColor="#ccc"
-                              IsChecked="{Binding IsMenuOpened}"
-                              PathCheckedBrush="{StaticResource DefaultRedBrush}"
-                              PathStyle="{StaticResource gear}" />
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <StackPanel>
+                    <controls2:PathButton Margin="0,0"
+                                          HorizontalAlignment="Center"
+                                          Command="{Binding SaveLRC}"
+                                          FontSize="25"
+                                          ForegroundDefaultColor="#454545"
+                                          ForegroundHoverColor="#80b1ff"
+                                          PathCheckedBrush="{StaticResource YellowBrush}"
+                                          Style="{StaticResource floppy-disk-glyph}"
+                                          ToolTip="Save" />
 
 
-        <Popup IsOpen="{Binding ElementName=SettingsButton, Path=IsChecked}" StaysOpen="False">
-          <Grid>
-            <Border Padding="5"
-                    HorizontalAlignment="Left"
-                    Background="#cc101010"
-                    BorderBrush="#95454545"
-                    BorderThickness="1"
-                    CornerRadius="5">
-              <StackPanel>
-
-
-                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-
-                  <TextBlock Margin="0,0,10,0"
-                             VerticalAlignment="Bottom"
-                             FontWeight="Bold"
-                             Foreground="#30ffffff"
-                             Text="Adjust lyrics (ms)" />
-
-                  <controls:NumericUpAndDown VerticalAlignment="Center"
-                                             FontWeight="Bold"
-                                             StepSize="500"
-                                             Value="{Binding TimeAdjustment, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
-                    <b:Interaction.Behaviors>
-                      <behaviors2:FocusBehavior SetFocusManager="True" />
-                    </b:Interaction.Behaviors>
-                  </controls:NumericUpAndDown>
-
-
-
-
-
-
+                    <controls2:PathButton Margin="0,10"
+                                          HorizontalAlignment="Left"
+                                          Command="{Binding ExitLRCEditor}"
+                                          CommandParameter="{Binding ActualItem}"
+                                          DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContentControl, Mode=FindAncestor}, Path=DataContext}"
+                                          FontSize="25"
+                                          ForegroundDefaultColor="#454545"
+                                          ForegroundHoverColor="{StaticResource DefaultRedColor}"
+                                          Style="{StaticResource door-open}"
+                                          ToolTip="Exit CREATOR MODE" />
                 </StackPanel>
 
 
 
-                <controls2:PathButton Margin="0,10,0,0"
-                                      Padding="55,9"
-                                      HorizontalAlignment="Center"
-                                      Background="#08ffffff"
-                                      BorderThickness="1"
-                                      Command="{Binding ApplyPernamently}"
-                                      Content="APPLY PERNAMENTLY"
-                                      FontWeight="Bold"
-                                      ForegroundDefaultColor="#80ffffff"
-                                      IconDefaultColor="#555555"
-                                      IconHoverColor="{StaticResource BlueColor}"
-                                      IsReadOnly="True"
-                                      PathCheckedBrush="{StaticResource YellowBrush}"
-                                      PathStyle="{StaticResource Save}" />
+                <Border Grid.Row="1" Background="#85050505">
+                    <TextBlock HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               FontSize="18"
+                               Text="Saving..." />
 
-                <TextBlock Margin="0,5,0,0"
-                           HorizontalAlignment="Center"
-                           FontSize="14"
-                           FontWeight="Bold">
-                  <TextBlock.Style>
-                    <Style TargetType="TextBlock">
-                      <Style.Triggers>
-                        <DataTrigger Binding="{Binding UpdateStatus, Mode=OneWay}" Value="true">
-                          <Setter Property="Text" Value="Success" />
-                          <Setter Property="Foreground" Value="{StaticResource GreenBrush}" />
-                        </DataTrigger>
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsLoading}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                </Border>
 
-                        <DataTrigger Binding="{Binding UpdateStatus, Mode=OneWay}" Value="false">
-                          <Setter Property="Text" Value="Failed" />
-                          <Setter Property="Foreground" Value="{StaticResource DefaultRedBrush}" />
-                        </DataTrigger>
+            </Grid>
 
-                        <DataTrigger Binding="{Binding UpdateStatus, Mode=OneWay}" Value="{x:Null}">
-                          <Setter Property="Visibility" Value="Collapsed" />
-                        </DataTrigger>
-                      </Style.Triggers>
+            <TextBlock Grid.Column="0"
+                       Margin="15,8"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Bottom"
+                       FontSize="13"
+                       FontWeight="Normal"
+                       Foreground="#30ffffff"
+                       Text="IN CREATOR&#x0a;MODE" />
+
+            <ListView Grid.Column="1"
+                      Margin="0,0,0,0"
+                      HorizontalAlignment="Left"
+                      Background="Transparent"
+                      BorderThickness="0"
+                      ItemsSource="{Binding Lines}"
+                      ScrollViewer.CanContentScroll="False"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                      ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                <ListView.Style>
+                    <Style TargetType="ListView">
+                        <Setter Property="Padding" Value="0" />
+                        <Setter Property="ItemContainerStyle">
+                            <Setter.Value>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="Background" Value="Red" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                                <Border Margin="5">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="auto" />
+                                                            <ColumnDefinition />
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <StackPanel Orientation="Horizontal">
+
+                                                            <controls2:PathButton Margin="5,0"
+                                                                                  Command="{Binding RelativeSource={RelativeSource AncestorType=ListView, Mode=FindAncestor}, Path=DataContext.SetActualLine}"
+                                                                                  CommandParameter="{Binding}"
+                                                                                  IsChecked="{Binding IsActual, Mode=TwoWay}"
+                                                                                  IsReadOnly="True"
+                                                                                  Style="{StaticResource check-glyph}" />
+
+                                                            <controls2:PathButton Margin="5,0"
+                                                                                  Command="{Binding SetTime}"
+                                                                                  Style="{StaticResource pencil-glyph}" />
+
+                                                            <TextBox Width="95"
+                                                                     Margin="5,0"
+                                                                     HorizontalAlignment="Center"
+                                                                     VerticalAlignment="Center"
+                                                                     HorizontalContentAlignment="Center"
+                                                                     Background="Transparent"
+                                                                     BorderThickness="0"
+                                                                     FontWeight="Bold">
+                                                                <TextBox.Style>
+                                                                    <Style TargetType="TextBox">
+                                                                        <Setter Property="Text" Value="{Binding Time, StringFormat={}{0:hh\\:mm\\:ss}}" />
+                                                                        <Setter Property="Foreground" Value="#aaffffff" />
+                                                                        <Setter Property="FontSize" Value="20" />
+
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding Time}" Value="{x:Null}">
+                                                                                <Setter Property="Text" Value="--:--:--" />
+                                                                                <Setter Property="FontSize" Value="23" />
+                                                                                <Setter Property="Foreground" Value="#15ffffff" />
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </TextBox.Style>
+                                                            </TextBox>
+                                                        </StackPanel>
+
+
+                                                        <TextBox Grid.Column="1"
+                                                                 HorizontalAlignment="Left"
+                                                                 HorizontalContentAlignment="Left"
+                                                                 Text="{Binding Text, Mode=OneWay}">
+                                                            <TextBox.Style>
+                                                                <Style BasedOn="{StaticResource LyricsStyle}" TargetType="TextBox">
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsActual}" Value="true">
+                                                                            <Setter Property="FontSize" Value="32" />
+                                                                            <Setter Property="TextWrapping" Value="Wrap" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBox.Style>
+                                                        </TextBox>
+                                                    </Grid>
+
+                                                    <Border.Style>
+                                                        <Style TargetType="Border">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsActual}" Value="true">
+                                                                    <Setter Property="Margin" Value="25" />
+                                                                    <Setter Property="Padding" Value="0,5,0,5" />
+                                                                    <Setter Property="Background" Value="#80000000" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Setter.Value>
+                        </Setter>
                     </Style>
-                  </TextBlock.Style>
-                </TextBlock>
-              </StackPanel>
+                </ListView.Style>
 
-              <Border.Style>
-                <Style TargetType="Border">
-                  <Setter Property="Visibility" Value="Hidden" />
-                  <Style.Triggers>
-                    <DataTrigger Binding="{Binding ElementName=SettingsButton, Path=IsChecked}" Value="True">
-                      <Setter Property="Visibility" Value="Visible" />
-                    </DataTrigger>
-                  </Style.Triggers>
-                </Style>
-              </Border.Style>
-            </Border>
-
-            <Border Grid.Row="1" Background="#85050505">
-              <TextBlock HorizontalAlignment="Center"
-                         VerticalAlignment="Center"
-                         FontSize="18"
-                         Text="Saving..." />
-
-              <Border.Style>
-                <Style TargetType="Border">
-                  <Setter Property="Visibility" Value="Collapsed" />
-                  <Style.Triggers>
-                    <DataTrigger Binding="{Binding IsLoading}" Value="True">
-                      <Setter Property="Visibility" Value="Visible" />
-                    </DataTrigger>
-                  </Style.Triggers>
-                </Style>
-              </Border.Style>
-            </Border>
-          </Grid>
-        </Popup>
-
-        <controls2:PathButton Margin="0,15,0,0"
-                              HorizontalAlignment="Left"
-                              Command="{Binding Edit}"
-                              Content="Edit"
-                              FontSize="13"
-                              FontWeight="Bold"
-                              ForegroundCheckedColor="White"
-                              ForegroundDefaultColor="#15ffffff"
-                              ForegroundHoverColor="#ccc"
-                              IconDefaultColor="#555555"
-                              IconHoverColor="#ccc"
-                              IconMargin="0 0 11 0"
-                              IsReadOnly="True"
-                              PathStyle="{StaticResource Pencil}"
-                              ToolTip="Edit" />
-      </StackPanel>
+                <b:Interaction.Behaviors>
+                    <behaviors:AutoScrollLyricsBehavior AnimationTime="0:0:0:0.35" StepSize="39" />
+                </b:Interaction.Behaviors>
+            </ListView>
 
 
 
-      <ListView Grid.Column="1"
-                Margin="0,0,10,0"
-                Background="#05ffffff"
-                BorderThickness="0"
-                ItemsSource="{Binding LinesView}">
+        </Grid>
+    </DataTemplate>
 
 
-        <ListView.Style>
-          <Style TargetType="ListView">
-
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="Template">
-              <Setter.Value>
-                <ControlTemplate TargetType="ItemsControl">
-                  <Border Background="{TemplateBinding Background}">
-                    <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled">
-                      <ItemsPresenter />
-                    </ScrollViewer>
-                  </Border>
-                </ControlTemplate>
-              </Setter.Value>
-            </Setter>
-
-            <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
-            <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True" />
-            <Setter Property="VirtualizingPanel.ScrollUnit" Value="Pixel" />
-            <Setter Property="VirtualizingPanel.IsContainerVirtualizable" Value="True" />
-
-            <Setter Property="ItemsPanel">
-              <Setter.Value>
-                <ItemsPanelTemplate>
-                  <VirtualizingStackPanel VirtualizingPanel.IsVirtualizing="True"
-                                          VirtualizingPanel.ScrollUnit="Pixel"
-                                          VirtualizingPanel.VirtualizationMode="Recycling" />
-                </ItemsPanelTemplate>
-              </Setter.Value>
-            </Setter>
-
-            <Setter Property="ItemContainerStyle">
-              <Setter.Value>
-                <Style TargetType="ListViewItem">
-                  <Setter Property="Background" Value="Red" />
-                  <Setter Property="Template">
-                    <Setter.Value>
-                      <ControlTemplate TargetType="{x:Type ListViewItem}">
-                        <Border Margin="5">
-                          <Grid>
-                            <Grid.ColumnDefinitions>
-                              <ColumnDefinition Width="auto" />
-                              <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-
-                            <StackPanel Margin="10,0" Orientation="Horizontal">
-                              <TextBox Width="65"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       HorizontalContentAlignment="Center"
-                                       Background="Transparent"
-                                       BorderThickness="0"
-                                       FontSize="15"
-                                       FontWeight="Bold">
-                                <TextBox.Style>
-                                  <Style TargetType="TextBox">
-                                    <Setter Property="Text" Value="{Binding Model.Timestamp, StringFormat={}{0:hh\\:mm\\:ss}}" />
-                                    <Setter Property="Foreground" Value="#25ffffff" />
-                                    <Setter Property="FontSize" Value="18" />
-                                  </Style>
-                                </TextBox.Style>
-                              </TextBox>
-
-                              <TextBlock Margin="5,0,0,0"
-                                         VerticalAlignment="Center"
-                                         FontSize="13"
-                                         FontWeight="Bold">
-                                <TextBlock.Text>
-                                  <MultiBinding Converter="{library1:ExtractMilisecondFromTimeSpanConverter}" StringFormat="{}({0})">
-                                    <Binding Path="Model.Timestamp" />
-                                    <Binding Path="DataContext.TimeAdjustment" RelativeSource="{RelativeSource AncestorType=ListView, Mode=FindAncestor}" />
-                                  </MultiBinding>
-                                </TextBlock.Text>
-
-                                <TextBlock.Style>
-                                  <Style TargetType="TextBlock">
-                                    <Setter Property="Foreground" Value="White" />
-                                    <Style.Triggers>
-                                      <DataTrigger Binding="{Binding DataContext.TimeAdjustment, RelativeSource={RelativeSource AncestorType=ListView, Mode=FindAncestor}}" Value="0">
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                      </DataTrigger>
-
-                                      <DataTrigger Binding="{Binding DataContext.TimeAdjustment, RelativeSource={RelativeSource AncestorType=ListView, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=0}" Value="true">
-                                        <Setter Property="Foreground" Value="#70aacc" />
-                                      </DataTrigger>
-
-                                      <DataTrigger Binding="{Binding DataContext.TimeAdjustment, RelativeSource={RelativeSource AncestorType=ListView, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=0}" Value="false">
-                                        <Setter Property="Foreground" Value="#bf213c" />
-                                      </DataTrigger>
-                                    </Style.Triggers>
-                                  </Style>
-                                </TextBlock.Style>
-                              </TextBlock>
-                            </StackPanel>
-
-
-
-                            <TextBox Grid.Column="1"
-                                     HorizontalAlignment="Left"
-                                     HorizontalContentAlignment="Left"
-                                     Text="{Binding Text, Mode=OneWay}">
-                              <TextBox.Style>
-                                <Style BasedOn="{StaticResource LyricsStyle}" TargetType="TextBox">
-                                  <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsActual}" Value="true">
-                                      <Setter Property="FontSize" Value="32" />
-                                      <Setter Property="TextWrapping" Value="Wrap" />
-                                    </DataTrigger>
-                                  </Style.Triggers>
-                                </Style>
-                              </TextBox.Style>
-                            </TextBox>
-                          </Grid>
-
-                          <Border.Style>
-                            <Style TargetType="Border">
-                              <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsActual}" Value="true">
-                                  <Setter Property="Margin" Value="25" />
-                                  <Setter Property="Padding" Value="0,5,0,5" />
-                                  <Setter Property="Background" Value="#95000000" />
-                                </DataTrigger>
-                              </Style.Triggers>
-                            </Style>
-                          </Border.Style>
-                        </Border>
-                      </ControlTemplate>
-                    </Setter.Value>
-                  </Setter>
-                </Style>
-              </Setter.Value>
-            </Setter>
-          </Style>
-        </ListView.Style>
-
-        <b:Interaction.Behaviors>
-          <behaviors:AutoScrollLyricsBehavior AnimationTime="0:0:0:0.6" StepSize="39" />
-        </b:Interaction.Behaviors>
-      </ListView>
-
-      <TextBlock Margin="15,0,0,5"
-                 HorizontalAlignment="Left"
-                 VerticalAlignment="Bottom"
-                 FontSize="13"
-                 FontWeight="Normal"
-                 Foreground="#30ffffff"
-                 Text="SYNCED" />
-    </Grid>
-  </DataTemplate>
-
-  <DataTemplate x:Key="SyncedCreatorLyricsDataTemplate">
-    <Grid>
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="auto"/>
-        <ColumnDefinition />
-      </Grid.ColumnDefinitions>
-
-      <Grid Margin="15,10,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top">
-        <Grid.RowDefinitions>
-          <RowDefinition Height="auto" />
-          <RowDefinition />
-        </Grid.RowDefinitions>
-
-        <StackPanel>
-          <controls2:PathButton Margin="0,0"
-                                HorizontalAlignment="Center"
-                                Command="{Binding SaveLRC}"
-                                FontSize="25"
-                                ForegroundDefaultColor="#454545"
-                                ForegroundHoverColor="#80b1ff"
-                                PathCheckedBrush="{StaticResource YellowBrush}"
-                                Style="{StaticResource floppy-disk-glyph}"
-                                ToolTip="Save" />
-
-
-          <controls2:PathButton Margin="0,10"
-                                HorizontalAlignment="Left"
-                                Command="{Binding ExitLRCEditor}"
-                                CommandParameter="{Binding ActualItem}"
-                                DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContentControl, Mode=FindAncestor}, Path=DataContext}"
-                                FontSize="25"
-                                ForegroundDefaultColor="#454545"
-                                ForegroundHoverColor="{StaticResource DefaultRedColor}"
-                                Style="{StaticResource door-open}"
-                                ToolTip="Exit CREATOR MODE" />
-        </StackPanel>
-
-
-
-        <Border Grid.Row="1" Background="#85050505">
-          <TextBlock HorizontalAlignment="Center"
-                     VerticalAlignment="Center"
-                     FontSize="18"
-                     Text="Saving..." />
-
-          <Border.Style>
-            <Style TargetType="Border">
-              <Setter Property="Visibility" Value="Collapsed" />
-              <Style.Triggers>
-                <DataTrigger Binding="{Binding IsLoading}" Value="True">
-                  <Setter Property="Visibility" Value="Visible" />
-                </DataTrigger>
-              </Style.Triggers>
-            </Style>
-          </Border.Style>
-        </Border>
-
-      </Grid>
-
-      <TextBlock Margin="15,8"
-                 Grid.Column="0"
-                 HorizontalAlignment="Left"
-                 VerticalAlignment="Bottom"
-                 FontSize="13"
-                 FontWeight="Normal"
-                 Foreground="#30ffffff"
-                 Text="IN CREATOR&#x0a;MODE" />
-
-      <ListView Margin="0,0,0,0"
-                Grid.Column="1"
-                HorizontalAlignment="Left"
-                Background="Transparent"
-                BorderThickness="0"
-                ItemsSource="{Binding Lines}"
-                ScrollViewer.CanContentScroll="False"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                ScrollViewer.VerticalScrollBarVisibility="Hidden">
-        <ListView.Style>
-          <Style TargetType="ListView">
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="ItemContainerStyle">
-              <Setter.Value>
-                <Style TargetType="ListViewItem">
-                  <Setter Property="Background" Value="Red" />
-                  <Setter Property="Template">
-                    <Setter.Value>
-                      <ControlTemplate TargetType="{x:Type ListViewItem}">
-                        <Border Margin="5">
-                          <Grid>
-                            <Grid.ColumnDefinitions>
-                              <ColumnDefinition Width="auto" />
-                              <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-
-                            <StackPanel Orientation="Horizontal">
-
-                              <controls2:PathButton Margin="5,0"
-                                                    Command="{Binding RelativeSource={RelativeSource AncestorType=ListView, Mode=FindAncestor}, Path=DataContext.SetActualLine}"
-                                                    CommandParameter="{Binding}"
-                                                    IsChecked="{Binding IsActual, Mode=TwoWay}"
-                                                    IsReadOnly="True"
-                                                    Style="{StaticResource check-glyph}" />
-
-                              <controls2:PathButton Margin="5,0"
-                                                    Command="{Binding SetTime}"
-                                                    Style="{StaticResource pencil-glyph}" />
-
-                              <TextBox Width="95"
-                                       Margin="5,0"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       HorizontalContentAlignment="Center"
-                                       Background="Transparent"
-                                       BorderThickness="0"
-                                       FontWeight="Bold">
-                                <TextBox.Style>
-                                  <Style TargetType="TextBox">
-                                    <Setter Property="Text" Value="{Binding Time, StringFormat={}{0:hh\\:mm\\:ss}}" />
-                                    <Setter Property="Foreground" Value="#aaffffff" />
-                                    <Setter Property="FontSize" Value="20" />
-
-                                    <Style.Triggers>
-                                      <DataTrigger Binding="{Binding Time}" Value="{x:Null}">
-                                        <Setter Property="Text" Value="--:--:--" />
-                                        <Setter Property="FontSize" Value="23" />
-                                        <Setter Property="Foreground" Value="#15ffffff" />
-                                      </DataTrigger>
-                                    </Style.Triggers>
-                                  </Style>
-                                </TextBox.Style>
-                              </TextBox>
-                            </StackPanel>
-
-
-                            <TextBox Grid.Column="1"
-                                     HorizontalAlignment="Left"
-                                     HorizontalContentAlignment="Left"
-                                     Text="{Binding Text, Mode=OneWay}">
-                              <TextBox.Style>
-                                <Style BasedOn="{StaticResource LyricsStyle}" TargetType="TextBox">
-                                  <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsActual}" Value="true">
-                                      <Setter Property="FontSize" Value="32" />
-                                      <Setter Property="TextWrapping" Value="Wrap" />
-                                    </DataTrigger>
-                                  </Style.Triggers>
-                                </Style>
-                              </TextBox.Style>
-                            </TextBox>
-                          </Grid>
-
-                          <Border.Style>
-                            <Style TargetType="Border">
-                              <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsActual}" Value="true">
-                                  <Setter Property="Margin" Value="25" />
-                                  <Setter Property="Padding" Value="0,5,0,5" />
-                                  <Setter Property="Background" Value="#80000000" />
-                                </DataTrigger>
-                              </Style.Triggers>
-                            </Style>
-                          </Border.Style>
-                        </Border>
-                      </ControlTemplate>
-                    </Setter.Value>
-                  </Setter>
-                </Style>
-              </Setter.Value>
-            </Setter>
-          </Style>
-        </ListView.Style>
-
-        <b:Interaction.Behaviors>
-          <behaviors:AutoScrollLyricsBehavior AnimationTime="0:0:0:0.35" StepSize="39" />
-        </b:Interaction.Behaviors>
-      </ListView>
-
-     
-
-    </Grid>
-  </DataTemplate>
-
-
-  <Style x:Key="SyncLyricsSubIconStyle" TargetType="Path">
-    <Setter Property="Opacity" Value="0.3" />
-    <Style.Triggers>
-      <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=controls2:ButtonWithIcon}, Path=DataContext.IsPlaying}" Value="true">
-        <Setter Property="Fill" Value="{Binding RelativeSource={RelativeSource AncestorType=controls2:ButtonWithIcon}, Path=IconBrush}" />
-      </DataTrigger>
-    </Style.Triggers>
-  </Style>
-
-  <DataTemplate x:Key="PCloudLyricsDataTemplate">
-    <Path Width="10"
-          Height="10"
-          Margin="-2,-6,0,0"
-          ToolTip="Cloud">
-      <Path.Style>
-        <Style BasedOn="{attachedProperties:MultiStyle cloud-solid SyncLyricsSubIconStyle}" TargetType="Path">
-          <Setter Property="Fill" Value="#4285f4" />
-
-          <Style.Triggers>
-            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=controls2:ButtonWithIcon}, Path=IsMouseOver}" Value="true">
-              <DataTrigger.EnterActions>
-                <RemoveStoryboard BeginStoryboardName="HoverStoryboardEnd" />
-                <BeginStoryboard x:Name="HoverStoryboardStart">
-                  <Storyboard>
-                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                     To="0.75"
-                                     Duration="0:0:0:0.15" />
-                  </Storyboard>
-                </BeginStoryboard>
-              </DataTrigger.EnterActions>
-
-              <DataTrigger.ExitActions>
-                <RemoveStoryboard BeginStoryboardName="HoverStoryboardStart" />
-                <BeginStoryboard x:Name="HoverStoryboardEnd">
-                  <Storyboard>
-                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                     To="0.3"
-                                     Duration="0:0:0:0.15" />
-                  </Storyboard>
-                </BeginStoryboard>
-              </DataTrigger.ExitActions>
+    <Style x:Key="SyncLyricsSubIconStyle" TargetType="Path">
+        <Setter Property="Opacity" Value="0.3" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=DataContext.IsPlaying, RelativeSource={RelativeSource AncestorType=ListViewItem, Mode=FindAncestor}}" Value="true">
+                <Setter Property="Fill" Value="{Binding RelativeSource={RelativeSource AncestorType=controls2:ButtonWithIcon}, Path=IconBrush}" />
             </DataTrigger>
-          </Style.Triggers>
-        </Style>
-      </Path.Style>
-    </Path>
-  </DataTemplate>
+        </Style.Triggers>
+    </Style>
 
-  <DataTemplate x:Key="GoogleLyricsDataTemplate">
-    <Path Width="10"
-          Height="10"
-          Margin="-2,-6,0,0"
-          ToolTip="Google drive">
-      <Path.Style>
-        <Style BasedOn="{attachedProperties:MultiStyle GoogleDrive SyncLyricsSubIconStyle}" TargetType="Path">
-          <Setter Property="Fill" Value="#4285f4" />
+    <DataTemplate x:Key="PCloudLyricsDataTemplate">
+        <Path Width="10"
+              Height="10"
+              Margin="-2,-6,0,0"
+              ToolTip="PCloud">
+            <Path.Style>
+                <Style BasedOn="{attachedProperties:MultiStyle cloud-solid SyncLyricsSubIconStyle}" TargetType="Path">
+                    <Setter Property="Fill" Value="#4285f4" />
 
-          <Style.Triggers>
-            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=controls2:ButtonWithIcon}, Path=IsMouseOver}" Value="true">
-              <DataTrigger.EnterActions>
-                <RemoveStoryboard BeginStoryboardName="HoverStoryboardEnd" />
-                <BeginStoryboard x:Name="HoverStoryboardStart">
-                  <Storyboard>
-                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                     To="0.75"
-                                     Duration="0:0:0:0.15" />
-                  </Storyboard>
-                </BeginStoryboard>
-              </DataTrigger.EnterActions>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=controls2:ButtonWithIcon}, Path=IsMouseOver}" Value="true">
+                            <DataTrigger.EnterActions>
+                                <RemoveStoryboard BeginStoryboardName="HoverStoryboardEnd" />
+                                <BeginStoryboard x:Name="HoverStoryboardStart">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                         To="1"
+                                                         Duration="0:0:0:0.15" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
 
-              <DataTrigger.ExitActions>
-                <RemoveStoryboard BeginStoryboardName="HoverStoryboardStart" />
-                <BeginStoryboard x:Name="HoverStoryboardEnd">
-                  <Storyboard>
-                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                     To="0.3"
-                                     Duration="0:0:0:0.15" />
-                  </Storyboard>
-                </BeginStoryboard>
-              </DataTrigger.ExitActions>
-            </DataTrigger>
-          </Style.Triggers>
-        </Style>
-      </Path.Style>
-    </Path>
-  </DataTemplate>
+                            <DataTrigger.ExitActions>
+                                <RemoveStoryboard BeginStoryboardName="HoverStoryboardStart" />
+                                <BeginStoryboard x:Name="HoverStoryboardEnd">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                         To="0.3"
+                                                         Duration="0:0:0:0.15" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.ExitActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Path.Style>
+        </Path>
+    </DataTemplate>
 
-  <DataTemplate x:Key="LocalLyricsDataTemplate">
-    <Path Width="9"
-          Height="9"
-          Margin="0,-6,0,0"
-          ToolTip="Local file">
+    <DataTemplate x:Key="GoogleLyricsDataTemplate">
+        <Path Width="10"
+              Height="10"
+              Margin="-2,-6,0,0"
+              ToolTip="Google drive">
+            <Path.Style>
+                <Style BasedOn="{attachedProperties:MultiStyle GoogleDrive SyncLyricsSubIconStyle}" TargetType="Path">
+                    <Setter Property="Fill" Value="#4285f4" />
 
-      <Path.Style>
-        <Style BasedOn="{attachedProperties:MultiStyle Folder SyncLyricsSubIconStyle}" TargetType="Path">
-          <Setter Property="Fill" Value="#f4d642" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=controls2:ButtonWithIcon}, Path=IsMouseOver}" Value="true">
+                            <DataTrigger.EnterActions>
+                                <RemoveStoryboard BeginStoryboardName="HoverStoryboardEnd" />
+                                <BeginStoryboard x:Name="HoverStoryboardStart">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                         To="0.75"
+                                                         Duration="0:0:0:0.15" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
 
-          <Style.Triggers>
-            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=controls2:ButtonWithIcon}, Path=IsMouseOver}" Value="true">
-              <DataTrigger.EnterActions>
-                <RemoveStoryboard BeginStoryboardName="HoverStoryboardEnd" />
-                <BeginStoryboard x:Name="HoverStoryboardStart">
-                  <Storyboard>
-                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                     To="1"
-                                     Duration="0:0:0:0.15" />
-                  </Storyboard>
-                </BeginStoryboard>
-              </DataTrigger.EnterActions>
+                            <DataTrigger.ExitActions>
+                                <RemoveStoryboard BeginStoryboardName="HoverStoryboardStart" />
+                                <BeginStoryboard x:Name="HoverStoryboardEnd">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                         To="0.3"
+                                                         Duration="0:0:0:0.15" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.ExitActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Path.Style>
+        </Path>
+    </DataTemplate>
 
-              <DataTrigger.ExitActions>
-                <RemoveStoryboard BeginStoryboardName="HoverStoryboardStart" />
-                <BeginStoryboard x:Name="HoverStoryboardEnd">
-                  <Storyboard>
-                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                     To="0.5"
-                                     Duration="0:0:0:0.15" />
-                  </Storyboard>
-                </BeginStoryboard>
-              </DataTrigger.ExitActions>
-            </DataTrigger>
-          </Style.Triggers>
-        </Style>
-      </Path.Style>
-    </Path>
-  </DataTemplate>
+    <DataTemplate x:Key="LocalLyricsDataTemplate">
+        <Path Width="9"
+              Height="9"
+              Margin="0,-6,0,0"
+              ToolTip="Local file">
 
-  <DataTemplate x:Key="AlbumImageDatatemplate">
-    <Grid>
+            <Path.Style>
+                <Style BasedOn="{attachedProperties:MultiStyle Folder SyncLyricsSubIconStyle}" TargetType="Path">
+                    <Setter Property="Fill" Value="#f4d642" />
 
-      <Grid VerticalAlignment="Stretch">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=controls2:ButtonWithIcon}, Path=IsMouseOver}" Value="true">
+                            <DataTrigger.EnterActions>
+                                <RemoveStoryboard BeginStoryboardName="HoverStoryboardEnd" />
+                                <BeginStoryboard x:Name="HoverStoryboardStart">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                         To="1"
+                                                         Duration="0:0:0:0.15" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.EnterActions>
+
+                            <DataTrigger.ExitActions>
+                                <RemoveStoryboard BeginStoryboardName="HoverStoryboardStart" />
+                                <BeginStoryboard x:Name="HoverStoryboardEnd">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                         To="0.5"
+                                                         Duration="0:0:0:0.15" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </DataTrigger.ExitActions>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Path.Style>
+        </Path>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AlbumImageDatatemplate">
         <Grid>
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-          </Grid.ColumnDefinitions>
 
-          <Image Grid.Column="0"
-                 Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualItem.ImagePath, Converter={StaticResource CacheImageConverter}, IsAsync=True}"
-                 Stretch="UniformToFill" />
-
-          <Image Grid.Column="1"
-                 Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualItem.ImagePath, Converter={StaticResource CacheImageConverter}, IsAsync=True}"
-                 Stretch="UniformToFill" />
-        </Grid>
-
-        <Grid>
-          <Grid.Background>
-            <LinearGradientBrush StartPoint="1,0" EndPoint="0 0">
-              <GradientStop Offset="1" Color="#FF000000" />
-              <GradientStop Offset="0.5" Color="#00000000" />
-              <GradientStop Offset="0.0" Color="#00000000" />
-              <GradientStop Offset="0.0" Color="#FF000000" />
-            </LinearGradientBrush>
-          </Grid.Background>
-        </Grid>
-
-        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-          <Grid.Background>
-            <LinearGradientBrush StartPoint="0,1" EndPoint="0 0">
-              <GradientStop Offset="1" Color="#5A000000" />
-              <GradientStop Offset="0.6" Color="#5A000000" />
-              <GradientStop Offset="0.05" Color="#5A000000" />
-            </LinearGradientBrush>
-          </Grid.Background>
-        </Grid>
-      </Grid>
-
-
-      <Border Margin="0,15,0,15"
-              HorizontalAlignment="Center"
-              VerticalAlignment="Center"
-              Panel.ZIndex="0"
-              BorderBrush="#FF080808"
-              BorderThickness="5">
-        <Image Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualItem.ImagePath, Converter={StaticResource CacheImageConverter}, IsAsync=True}" />
-
-        <Border.Effect>
-          <DropShadowEffect BlurRadius="20"
-                            Direction="0"
-                            ShadowDepth="15" />
-        </Border.Effect>
-      </Border>
-
-      <Grid Grid.Row="0">
-        <Grid.Background>
-          <LinearGradientBrush StartPoint="0,1" EndPoint="0 0">
-            <GradientStop Offset="1" Color="#2A000000" />
-            <GradientStop Offset="0.85" Color="#00000000" />
-            <GradientStop Offset="0.15" Color="#00000000" />
-            <GradientStop Offset="0.0" Color="#2A000000" />
-          </LinearGradientBrush>
-        </Grid.Background>
-      </Grid>
-
-      <Grid>
-        <Grid.Background>
-          <LinearGradientBrush StartPoint="1,0" EndPoint="0 1">
-            <GradientStop Offset="1" Color="#80000000" />
-            <GradientStop Offset="0.65" Color="#00000000" />
-            <GradientStop Offset="0.35" Color="#00000000" />
-            <GradientStop Offset="0.0" Color="#80000000" />
-          </LinearGradientBrush>
-        </Grid.Background>
-      </Grid>
-    </Grid>
-
-  </DataTemplate>
-
-  <DataTemplate x:Key="GifImageDatatemplate">
-    <Grid>
-      <Image Name="Image"
-             behaviors1:ImageBehavior.AnimatedSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.RandomGifUrl}"
-             Stretch="Uniform" />
-
-      <Grid Grid.RowSpan="2">
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="auto" />
-          <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-
-
-        <StackPanel Margin="80,10,0,0"
-                    VerticalAlignment="Top"
-                    Orientation="Horizontal">
-          <TextBlock Text="GIF tag: " />
-          <TextBox Margin="0,-10,0,0"
-                   Text="AHoj"
-                   Visibility="Visible" />
-        </StackPanel>
-
-        <controls2:ButtonWithIcon Grid.Column="1"
-                                  Margin="25"
-                                  HorizontalAlignment="Right"
-                                  VerticalAlignment="Center"
-                                  Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.NextGif}"
-                                  Content="Next GIF"
-                                  IconHeight="30"
-                                  IconMargin="0 0 5 0"
-                                  IconPathStyle="{StaticResource NextInCircle}"
-                                  IconWidth="30" />
-      </Grid>
-
-    </Grid>
-
-  </DataTemplate>
-
-  <DataTemplate x:Key="TextLyricsIconDataTemplate">
-    <controls2:ButtonWithIcon Margin="1,0,0,0"
-                              Padding="0"
-                              HorizontalAlignment="Left"
-                              IconHeight="11"
-                              IconPathStyle="{StaticResource TextLyrics}"
-                              IconWidth="11"
-                              ToolTip="Lyrics">
-      <controls2:ButtonWithIcon.Style>
-        <Style BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}" TargetType="{x:Type controls2:ButtonWithIcon}">
-          <Setter Property="IconHoverColor" Value="#59ad55" />
-          <Setter Property="IconDefaultColor" Value="#2b5229" />
-          <Setter Property="Opacity" Value="1" />
-
-          <Style.Triggers>
-            <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-              <Setter Property="IconHoverColor" Value="#522e05" />
-              <Setter Property="IconDefaultColor" Value="#FF050505" />
-            </DataTrigger>
-          </Style.Triggers>
-        </Style>
-      </controls2:ButtonWithIcon.Style>
-
-    </controls2:ButtonWithIcon>
-  </DataTemplate>
-
-  <DataTemplate x:Key="SyncedLyricsIconDataTemplate">
-    <controls2:ButtonWithIcon Margin="0,0,0,-3"
-                              Padding="0"
-                              HorizontalAlignment="Right"
-                              VerticalAlignment="Center"
-                              IconHeight="11"
-                              IconPathStyle="{StaticResource Microphone}"
-                              IconWidth="11"
-                              ToolTip="Synced lyrics">
-
-      <controls2:ButtonWithIcon.Style>
-        <Style BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}" TargetType="{x:Type controls2:ButtonWithIcon}">
-          <Setter Property="IconHoverColor" Value="#050505" />
-          <Setter Property="IconDefaultColor" Value="#414236" />
-          <Setter Property="Opacity" Value="1" />
-          <Setter Property="Margin" Value="0,0,0,0" />
-
-          <Setter Property="Template">
-            <Setter.Value>
-              <ControlTemplate TargetType="{x:Type controls2:ButtonWithIcon}">
-                <Border Width="{TemplateBinding Width}"
-                        Height="{TemplateBinding Height}"
-                        Margin="{TemplateBinding Margin}"
-                        Padding="{TemplateBinding Padding}"
-                        HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                        VerticalAlignment="{TemplateBinding VerticalAlignment}"
-                        Background="{TemplateBinding Background}">
-                  <Grid HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+            <Grid VerticalAlignment="Stretch">
+                <Grid>
                     <Grid.ColumnDefinitions>
-                      <ColumnDefinition Width="auto" />
-                      <ColumnDefinition />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <Grid.RowDefinitions>
-                      <RowDefinition />
-                      <RowDefinition />
-                    </Grid.RowDefinitions>
+                    <Image Grid.Column="0"
+                           Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualItem.ImagePath, Converter={StaticResource CacheImageConverter}, IsAsync=True}"
+                           Stretch="UniformToFill" />
 
-                    <Path Name="ButtonIcon"
-                          Width="{TemplateBinding IconWidth}"
-                          Height="{TemplateBinding IconHeight}"
-                          Margin="0"
-                          Fill="{TemplateBinding IconBrush}"
-                          Style="{TemplateBinding IconPathStyle}" />
+                    <Image Grid.Column="1"
+                           Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualItem.ImagePath, Converter={StaticResource CacheImageConverter}, IsAsync=True}"
+                           Stretch="UniformToFill" />
+                </Grid>
 
+                <Grid>
+                    <Grid.Background>
+                        <LinearGradientBrush StartPoint="1,0" EndPoint="0 0">
+                            <GradientStop Offset="1" Color="#FF000000" />
+                            <GradientStop Offset="0.5" Color="#00000000" />
+                            <GradientStop Offset="0.0" Color="#00000000" />
+                            <GradientStop Offset="0.0" Color="#FF000000" />
+                        </LinearGradientBrush>
+                    </Grid.Background>
+                </Grid>
 
-                    <ContentControl Grid.Row="1"
-                                    Grid.Column="1"
-                                    Width="9"
-                                    Height="4"
-                                    BorderThickness="0"
-                                    Content="{Binding Provider}"
-                                    ContentTemplateSelector="{StaticResource LyricsProviderTemplateSelector}" />
-
-
-                  </Grid>
-
-                  <b:Interaction.Triggers>
-                    <b:EventTrigger EventName="MouseEnter">
-                      <b:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AnimateHoverColor}" />
-                    </b:EventTrigger>
-
-                    <b:EventTrigger EventName="MouseLeave">
-                      <b:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AnimateDefaultColor}" />
-                    </b:EventTrigger>
-                  </b:Interaction.Triggers>
-
-                </Border>
-                <ControlTemplate.Triggers>
-                  <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Cursor" Value="Hand" />
-                    <Trigger.EnterActions>
-                      <RemoveStoryboard BeginStoryboardName="ResetForegroundStoryBoard" />
-
-                      <BeginStoryboard x:Name="ChangeForegroundStoryBoard">
-                        <Storyboard>
-                          <ColorAnimation Storyboard.TargetProperty="Foreground.Color"
-                                          To="{StaticResource DefaultWhiteColor}"
-                                          Duration="0:0:.15" />
-                        </Storyboard>
-                      </BeginStoryboard>
-
-
-                    </Trigger.EnterActions>
-                    <Trigger.ExitActions>
-                      <RemoveStoryboard BeginStoryboardName="ChangeForegroundStoryBoard" />
-                      <BeginStoryboard x:Name="ResetForegroundStoryBoard">
-                        <Storyboard>
-                          <ColorAnimation Storyboard.TargetProperty="Foreground.Color"
-                                          To="{StaticResource 85_DefaultWhiteColor}"
-                                          Duration="0:0:.15" />
-                        </Storyboard>
-                      </BeginStoryboard>
-                    </Trigger.ExitActions>
-                  </Trigger>
-                </ControlTemplate.Triggers>
-              </ControlTemplate>
-            </Setter.Value>
-          </Setter>
-
-          <Style.Triggers>
-            <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-              <Setter Property="IconHoverColor" Value="#522e05" />
-              <Setter Property="IconDefaultColor" Value="#FF050505" />
-            </DataTrigger>
-
-            <DataTrigger Binding="{Binding LRCFile.Provider}" Value="{x:Static lrc:LRCProviders.Google}">
-              <Setter Property="Margin" Value="2,-5,0,-9" />
-            </DataTrigger>
-
-            <DataTrigger Binding="{Binding LRCFile.Provider}" Value="{x:Static lrc:LRCProviders.Local}">
-              <Setter Property="Margin" Value="2,-7,0,-9" />
-            </DataTrigger>
-          </Style.Triggers>
-
-        </Style>
-      </controls2:ButtonWithIcon.Style>
-    </controls2:ButtonWithIcon>
-  </DataTemplate>
-
-  <DataTemplate x:Key="LRCEditorIconDataTemplate">
-    <controls2:PathButton FontSize="13"
-                          IsHitTestVisible="False"
-                          Style="{StaticResource pencil-glyph}" />
-  </DataTemplate>
-
-  <DataTemplate x:Key="DisabledLyricsIconDataTemplate">
-    <controls2:PathButton IconHeight="13"
-                          IconWidth="13"
-                          IsReadOnly="True"
-                          PathStyle="{StaticResource text-slash-solid}"
-                          ToolTip="Automatic download is DISABLED">
-      <controls2:PathButton.Style>
-        <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
-          <Setter Property="IconDefaultColor" Value="#454545" />
-          <Setter Property="IconHoverColor" Value="{StaticResource DefaultRedColor}" />
-          <Setter Property="Opacity" Value="0.85" />
-
-          <Style.Triggers>
-            <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-              <Setter Property="IconDefaultColor" Value="#454545" />
-              <Setter Property="IconHoverColor" Value="#151515" />
-            </DataTrigger>
-          </Style.Triggers>
-        </Style>
-      </controls2:PathButton.Style>
-    </controls2:PathButton>
-  </DataTemplate>
-
-  <templateSelectors:LyricsTemplateSelector x:Key="LyricsTemplateSelector"
-                                            CreatingLRC="{StaticResource SyncedCreatorLyricsDataTemplate}"
-                                            DisabledLyrics="{x:Null}"
-                                            LyricsDataTemplate="{StaticResource LyricsDataTemplate}"
-                                            SyncLyricsDataTemplate="{StaticResource SyncedLyricsDataTemplate}" />
-
-  <templateSelectors:LyricsProviderTemplateSelector x:Key="LyricsProviderTemplateSelector"
-                                                    GoogleDataTemplate="{StaticResource GoogleLyricsDataTemplate}"
-                                                    LocalDataTemplate="{StaticResource LocalLyricsDataTemplate}"
-                                                    PCloudDataTemplate="{StaticResource PCloudLyricsDataTemplate}" />
-
-  <templateSelectors:SongImageTemplateSelector x:Key="SongImageTemplateSelector"
-                                               AlbumDataTemplate="{StaticResource AlbumImageDatatemplate}"
-                                               GifDataTemplate="{StaticResource GifImageDatatemplate}" />
-
-
-  <templateSelectors:LyricsTemplateSelector x:Key="LyricsIconTypeTemplateSelector"
-                                            CreatingLRC="{StaticResource LRCEditorIconDataTemplate}"
-                                            DisabledLyrics="{StaticResource DisabledLyricsIconDataTemplate}"
-                                            LyricsDataTemplate="{StaticResource TextLyricsIconDataTemplate}"
-                                            SyncLyricsDataTemplate="{StaticResource SyncedLyricsIconDataTemplate}" />
-
-
-
-  <DataTemplate x:Key="PlayListSoundDataTemplate">
-    <Grid Background="Transparent">
-      <Border Padding="0,0,5,5">
-        <Grid VerticalAlignment="Bottom">
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition Width="auto" />
-          </Grid.ColumnDefinitions>
-
-          <TextBlock Margin="22,01,0,0" Text="Downloading info...">
-            <TextBlock.Style>
-              <Style TargetType="TextBlock">
-                <Setter Property="Visibility" Value="Collapsed" />
-                <Setter Property="Foreground" Value="#555555" />
-
-                <Style.Triggers>
-                  <DataTrigger Binding="{Binding IsDownloading}" Value="true">
-                    <Setter Property="Visibility" Value="Visible" />
-                  </DataTrigger>
-
-                  <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-                    <Setter Property="Foreground" Value="#101010" />
-                  </DataTrigger>
-                </Style.Triggers>
-              </Style>
-            </TextBlock.Style>
-          </TextBlock>
-
-
-          <Grid Grid.Column="1" Margin="0,0,0,0">
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="*" />
-              <ColumnDefinition Width="auto" />
-            </Grid.ColumnDefinitions>
-
-            <Grid Width="60"
-                  Margin="0,0,10,3"
-                  HorizontalAlignment="Right">
-              <Grid.Resources>
-                <Style BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}" TargetType="controls2:ButtonWithIcon">
-                  <Setter Property="IconHeight" Value="11" />
-                  <Setter Property="IconWidth" Value="11" />
-                </Style>
-              </Grid.Resources>
-
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition />
-              </Grid.ColumnDefinitions>
-
-              <controls2:PathButton Grid.Column="0"
-                                    Margin="0,0,0,0"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Panel.ZIndex="1"
-                                    IconHeight="13"
-                                    IconWidth="13"
-                                    IsChecked="{Binding IsFavorite}"
-                                    PathStyle="{StaticResource Favorite}"
-                                    ToolTip="Favorite">
-                <controls2:PathButton.Style>
-                  <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
-                    <Setter Property="IconDefaultColor" Value="#10ffffff" />
-                    <Setter Property="IconHoverColor" Value="#8fd4f2" />
-                    <Setter Property="PathCheckedBrush" Value="#aa39b2e6" />
-                    <Style.Triggers>
-                      <DataTrigger Binding="{Binding IsPlaying}" Value="True">
-                        <Setter Property="IconDefaultColor" Value="#30522e05" />
-                        <Setter Property="IconHoverColor" Value="#79b1c9" />
-                        <Setter Property="PathCheckedBrush" Value="#39b2e6" />
-                      </DataTrigger>
-
-                    </Style.Triggers>
-                  </Style>
-                </controls2:PathButton.Style>
-              </controls2:PathButton>
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid.Background>
+                        <LinearGradientBrush StartPoint="0,1" EndPoint="0 0">
+                            <GradientStop Offset="1" Color="#5A000000" />
+                            <GradientStop Offset="0.6" Color="#5A000000" />
+                            <GradientStop Offset="0.05" Color="#5A000000" />
+                        </LinearGradientBrush>
+                    </Grid.Background>
+                </Grid>
             </Grid>
-          </Grid>
+
+
+            <Border Margin="0,15,0,15"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Panel.ZIndex="0"
+                    BorderBrush="#FF080808"
+                    BorderThickness="5">
+                <Image Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualItem.ImagePath, Converter={StaticResource CacheImageConverter}, IsAsync=True}" />
+
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="20"
+                                      Direction="0"
+                                      ShadowDepth="15" />
+                </Border.Effect>
+            </Border>
+
+            <Grid Grid.Row="0">
+                <Grid.Background>
+                    <LinearGradientBrush StartPoint="0,1" EndPoint="0 0">
+                        <GradientStop Offset="1" Color="#2A000000" />
+                        <GradientStop Offset="0.85" Color="#00000000" />
+                        <GradientStop Offset="0.15" Color="#00000000" />
+                        <GradientStop Offset="0.0" Color="#2A000000" />
+                    </LinearGradientBrush>
+                </Grid.Background>
+            </Grid>
+
+            <Grid>
+                <Grid.Background>
+                    <LinearGradientBrush StartPoint="1,0" EndPoint="0 1">
+                        <GradientStop Offset="1" Color="#80000000" />
+                        <GradientStop Offset="0.65" Color="#00000000" />
+                        <GradientStop Offset="0.35" Color="#00000000" />
+                        <GradientStop Offset="0.0" Color="#80000000" />
+                    </LinearGradientBrush>
+                </Grid.Background>
+            </Grid>
         </Grid>
-      </Border>
 
-      <Grid.ContextMenu>
-        <ContextMenu>
-          <MenuItem Command="{Binding DeleteItemFromPlaylist}" Header="Remove song from playlist" />
-          <MenuItem Command="{Binding DeleteSongFromPlaylistWithAlbum}" Header="Remove album from playlist" />
+    </DataTemplate>
 
-          <MenuItem IsHitTestVisible="False" />
+    <DataTemplate x:Key="GifImageDatatemplate">
+        <Grid>
+            <Image Name="Image"
+                   behaviors1:ImageBehavior.AnimatedSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.RandomGifUrl}"
+                   Stretch="Uniform" />
 
-          <MenuItem Command="{Binding OpenContainingFolder}" Header="Open folder" />
-        </ContextMenu>
-      </Grid.ContextMenu>
-    </Grid>
-  </DataTemplate>
-
-  <DataTemplate x:Key="PlayListSongDataTemplate">
-    <Grid Background="Transparent">
-      <Border Padding="0,0,5,5">
-        <Grid VerticalAlignment="Bottom">
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition Width="auto" />
-          </Grid.ColumnDefinitions>
-
-          <TextBlock Margin="22,01,0,0" Text="Downloading info...">
-            <TextBlock.Style>
-              <Style TargetType="TextBlock">
-                <Setter Property="Visibility" Value="Collapsed" />
-                <Setter Property="Foreground" Value="#555555" />
-
-                <Style.Triggers>
-                  <DataTrigger Binding="{Binding IsDownloading}" Value="true">
-                    <Setter Property="Visibility" Value="Visible" />
-                  </DataTrigger>
-
-                  <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-                    <Setter Property="Foreground" Value="#101010" />
-                  </DataTrigger>
-                </Style.Triggers>
-              </Style>
-            </TextBlock.Style>
-          </TextBlock>
-
-          <TextBlock Margin="5,0,0,0" FontSize="12">
-            <Run FontSize="13" Text="{Binding ArtistViewModel.Name, Mode=OneWay}">
-              <Run.Style>
-                <Style TargetType="Run">
-                  <Setter Property="Foreground" Value="#f2e0cb" />
-                  <Setter Property="FontWeight" Value="Bold" />
-                  <Style.Triggers>
-                    <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-                      <Setter Property="Foreground" Value="#24140c" />
-                      <Setter Property="FontWeight" Value="Bold" />
-                    </DataTrigger>
-                  </Style.Triggers>
-                </Style>
-              </Run.Style>
-            </Run>
-
-            <Run Text="{Binding AlbumViewModel.Name, Mode=OneWay, StringFormat={}({0})}">
-              <Run.Style>
-                <Style TargetType="Run">
-                  <Setter Property="Foreground" Value="#edfffa" />
-                  <Setter Property="FontWeight" Value="DemiBold" />
-                  <Style.Triggers>
-                    <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-                      <Setter Property="Foreground" Value="#24140c" />
-                    </DataTrigger>
-                  </Style.Triggers>
-                </Style>
-              </Run.Style>
-            </Run>
-
-            <TextBlock.Style>
-              <Style TargetType="TextBlock">
-                <Setter Property="Foreground" Value="{StaticResource OrangeBrush}" />
-                <Setter Property="Opacity" Value="0.35" />
-                <Style.Triggers>
-                  <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-                    <Setter Property="Opacity" Value="0.75" />
-                  </DataTrigger>
-                </Style.Triggers>
-              </Style>
-            </TextBlock.Style>
-          </TextBlock>
-
-          <Grid Grid.Column="1" Margin="0,0,0,0">
-            <Grid.ColumnDefinitions>
-              <ColumnDefinition Width="*" />
-              <ColumnDefinition Width="auto" />
-            </Grid.ColumnDefinitions>
-
-            <Grid Width="50"
-                  Margin="0,0,10,3"
-                  HorizontalAlignment="Right">
-              <Grid.Resources>
-                <Style BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}" TargetType="controls2:ButtonWithIcon">
-                  <Setter Property="IconHeight" Value="11" />
-                  <Setter Property="IconWidth" Value="11" />
-                </Style>
-              </Grid.Resources>
-
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition />
-              </Grid.ColumnDefinitions>
-
-              <controls2:PathButton Grid.Column="0"
-                                    Margin="5,0,0,0"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Center"
-                                    Panel.ZIndex="1"
-                                    IconHeight="13"
-                                    IconHoverColor="#39b2e6"
-                                    IconWidth="13"
-                                    IsChecked="{Binding IsFavorite}"
-                                    PathCheckedBrush="#39b2e6"
-                                    PathStyle="{StaticResource Favorite}"
-                                    ToolTip="Favorite">
-                <controls2:PathButton.Style>
-                  <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
-                    <Setter Property="IconDefaultColor" Value="#10ffffff" />
-
-                    <Style.Triggers>
-                      <DataTrigger Binding="{Binding IsPlaying}" Value="True">
-                        <Setter Property="IconDefaultColor" Value="#30522e05" />
-                      </DataTrigger>
-                    </Style.Triggers>
-                  </Style>
-                </controls2:PathButton.Style>
-              </controls2:PathButton>
-
-              <Grid Grid.Column="1" HorizontalAlignment="Left">
+            <Grid Grid.RowSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
 
 
-                <ContentPresenter Content="{Binding LyricsObject}" ContentTemplateSelector="{StaticResource LyricsIconTypeTemplateSelector}" />
+                <StackPanel Margin="80,10,0,0"
+                            VerticalAlignment="Top"
+                            Orientation="Horizontal">
+                    <TextBlock Text="GIF tag: " />
+                    <TextBox Margin="0,-10,0,0"
+                             Text="AHoj"
+                             Visibility="Visible" />
+                </StackPanel>
 
-
-
-              </Grid>
-
-
+                <controls2:ButtonWithIcon Grid.Column="1"
+                                          Margin="25"
+                                          HorizontalAlignment="Right"
+                                          VerticalAlignment="Center"
+                                          Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.NextGif}"
+                                          Content="Next GIF"
+                                          IconHeight="30"
+                                          IconMargin="0 0 5 0"
+                                          IconPathStyle="{StaticResource NextInCircle}"
+                                          IconWidth="30" />
             </Grid>
 
-            <controls2:ButtonWithIcon Grid.Column="1"
-                                      Margin="0,0,0,0"
-                                      Padding="0"
-                                      HorizontalAlignment="Right"
-                                      Command="{Binding Refresh}"
-                                      IconHeight="12"
-                                      IconPathStyle="{StaticResource Repeate}"
-                                      IconWidth="12"
-                                      ToolTip="Reload lyrics">
-              <controls2:ButtonWithIcon.Style>
+        </Grid>
+
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextLyricsIconDataTemplate">
+        <controls2:ButtonWithIcon Margin="1,0,0,0"
+                                  Padding="0"
+                                  HorizontalAlignment="Left"
+                                  IconHeight="11"
+                                  IconPathStyle="{StaticResource TextLyrics}"
+                                  IconWidth="11"
+                                  ToolTip="Lyrics">
+            <controls2:ButtonWithIcon.Style>
                 <Style BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}" TargetType="{x:Type controls2:ButtonWithIcon}">
-                  <Setter Property="IconHoverColor" Value="Gold" />
-                  <Style.Triggers>
-                    <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-                      <Setter Property="IconHoverColor" Value="#522e05" />
-                      <Setter Property="IconDefaultColor" Value="#FF151515" />
-                    </DataTrigger>
-                  </Style.Triggers>
+                    <Setter Property="IconHoverColor" Value="#59ad55" />
+                    <Setter Property="IconDefaultColor" Value="#2b5229" />
+                    <Setter Property="Opacity" Value="1" />
+
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                            <Setter Property="IconHoverColor" Value="#522e05" />
+                            <Setter Property="IconDefaultColor" Value="#FF050505" />
+                        </DataTrigger>
+                    </Style.Triggers>
                 </Style>
-              </controls2:ButtonWithIcon.Style>
-            </controls2:ButtonWithIcon>
-          </Grid>
+            </controls2:ButtonWithIcon.Style>
+
+        </controls2:ButtonWithIcon>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SyncedLyricsIconDataTemplate">
+        <controls2:ButtonWithIcon Margin="0,0,0,-3"
+                                  Padding="0"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Center"
+                                  IconHeight="11"
+                                  IconPathStyle="{StaticResource Microphone}"
+                                  IconWidth="11"
+                                  ToolTip="Synced lyrics">
+
+            <controls2:ButtonWithIcon.Style>
+                <Style BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}" TargetType="{x:Type controls2:ButtonWithIcon}">
+                    <Setter Property="IconHoverColor" Value="#aaa" />
+                    <Setter Property="IconDefaultColor" Value="#353535" />
+                    <Setter Property="Opacity" Value="1" />
+                    <Setter Property="Margin" Value="0,0,0,0" />
+                    <Setter Property="Cursor" Value="Hand" />
+
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type controls2:ButtonWithIcon}">
+                                <Border Width="{TemplateBinding Width}"
+                                        Height="{TemplateBinding Height}"
+                                        Margin="{TemplateBinding Margin}"
+                                        Padding="{TemplateBinding Padding}"
+                                        HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                        VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                                        Background="{TemplateBinding Background}">
+                                    <Grid HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition />
+                                            <RowDefinition />
+                                        </Grid.RowDefinitions>
+
+                                        <Path Name="ButtonIcon"
+                                              Width="{TemplateBinding IconWidth}"
+                                              Height="{TemplateBinding IconHeight}"
+                                              Margin="0"
+                                              Fill="{TemplateBinding IconBrush}"
+                                              Style="{TemplateBinding IconPathStyle}" />
+
+
+                                        <ContentControl Grid.Row="1"
+                                                        Grid.Column="1"
+                                                        Width="9"
+                                                        Height="4"
+                                                        BorderThickness="0"
+                                                        Content="{Binding Provider}"
+                                                        ContentTemplateSelector="{StaticResource LyricsProviderTemplateSelector}" />
+
+
+                                    </Grid>
+
+                                    <b:Interaction.Triggers>
+                                        <b:EventTrigger EventName="MouseEnter">
+                                            <b:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AnimateHoverColor}" />
+                                        </b:EventTrigger>
+
+                                        <b:EventTrigger EventName="MouseLeave">
+                                            <b:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AnimateDefaultColor}" />
+                                        </b:EventTrigger>
+                                    </b:Interaction.Triggers>
+
+                                </Border>
+
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=DataContext.IsPlaying, RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}}" Value="true">
+                            <Setter Property="IconHoverColor" Value="#42382c" />
+                            <Setter Property="IconDefaultColor" Value="#404040" />
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding LRCFile.Provider}" Value="{x:Static lrc:LRCProviders.Google}">
+                            <Setter Property="Margin" Value="2,-5,0,-9" />
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding LRCFile.Provider}" Value="{x:Static lrc:LRCProviders.Local}">
+                            <Setter Property="Margin" Value="2,-7,0,-9" />
+                        </DataTrigger>
+                    </Style.Triggers>
+
+                </Style>
+            </controls2:ButtonWithIcon.Style>
+        </controls2:ButtonWithIcon>
+    </DataTemplate>
+
+    <DataTemplate x:Key="LRCEditorIconDataTemplate">
+        <controls2:PathButton FontSize="13"
+                              IsHitTestVisible="False"
+                              Style="{StaticResource pencil-glyph}" />
+    </DataTemplate>
+
+    <DataTemplate x:Key="DisabledLyricsIconDataTemplate">
+        <controls2:PathButton IconHeight="13"
+                              IconWidth="13"
+                              IsReadOnly="True"
+                              PathStyle="{StaticResource text-slash-solid}"
+                              ToolTip="Automatic download is DISABLED">
+            <controls2:PathButton.Style>
+                <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
+                    <Setter Property="IconDefaultColor" Value="#454545" />
+                    <Setter Property="IconHoverColor" Value="{StaticResource DefaultRedColor}" />
+                    <Setter Property="Opacity" Value="0.85" />
+
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                            <Setter Property="IconDefaultColor" Value="#454545" />
+                            <Setter Property="IconHoverColor" Value="#151515" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </controls2:PathButton.Style>
+        </controls2:PathButton>
+    </DataTemplate>
+
+    <templateSelectors:LyricsTemplateSelector x:Key="LyricsTemplateSelector"
+                                              CreatingLRC="{StaticResource SyncedCreatorLyricsDataTemplate}"
+                                              DisabledLyrics="{x:Null}"
+                                              LyricsDataTemplate="{StaticResource LyricsDataTemplate}"
+                                              SyncLyricsDataTemplate="{StaticResource SyncedLyricsDataTemplate}" />
+
+    <templateSelectors:LyricsProviderTemplateSelector x:Key="LyricsProviderTemplateSelector"
+                                                      GoogleDataTemplate="{StaticResource GoogleLyricsDataTemplate}"
+                                                      LocalDataTemplate="{StaticResource LocalLyricsDataTemplate}"
+                                                      PCloudDataTemplate="{StaticResource PCloudLyricsDataTemplate}" />
+
+    <templateSelectors:SongImageTemplateSelector x:Key="SongImageTemplateSelector"
+                                                 AlbumDataTemplate="{StaticResource AlbumImageDatatemplate}"
+                                                 GifDataTemplate="{StaticResource GifImageDatatemplate}" />
+
+
+    <templateSelectors:LyricsTemplateSelector x:Key="LyricsIconTypeTemplateSelector"
+                                              CreatingLRC="{StaticResource LRCEditorIconDataTemplate}"
+                                              DisabledLyrics="{StaticResource DisabledLyricsIconDataTemplate}"
+                                              LyricsDataTemplate="{StaticResource TextLyricsIconDataTemplate}"
+                                              SyncLyricsDataTemplate="{StaticResource SyncedLyricsIconDataTemplate}" />
+
+
+
+    <DataTemplate x:Key="PlayListSoundDataTemplate">
+        <Grid Background="Transparent">
+            <Border Padding="0,0,5,5">
+                <Grid VerticalAlignment="Bottom">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Margin="22,01,0,0" Text="Downloading info...">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Setter Property="Foreground" Value="#555555" />
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsDownloading}" Value="true">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+
+                                    <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                        <Setter Property="Foreground" Value="#101010" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+
+                    <Grid Grid.Column="1" Margin="0,0,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid Width="60"
+                              Margin="0,0,10,3"
+                              HorizontalAlignment="Right">
+                            <Grid.Resources>
+                                <Style BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}" TargetType="controls2:ButtonWithIcon">
+                                    <Setter Property="IconHeight" Value="11" />
+                                    <Setter Property="IconWidth" Value="11" />
+                                </Style>
+                            </Grid.Resources>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <controls2:PathButton Grid.Column="0"
+                                                  Margin="0,0,0,0"
+                                                  HorizontalAlignment="Left"
+                                                  VerticalAlignment="Center"
+                                                  Panel.ZIndex="1"
+                                                  IconHeight="13"
+                                                  IconWidth="13"
+                                                  IsChecked="{Binding IsFavorite}"
+                                                  PathStyle="{StaticResource Favorite}"
+                                                  ToolTip="Favorite">
+                                <controls2:PathButton.Style>
+                                    <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
+                                        <Setter Property="IconDefaultColor" Value="#10ffffff" />
+                                        <Setter Property="IconHoverColor" Value="#8fd4f2" />
+                                        <Setter Property="PathCheckedBrush" Value="#aa39b2e6" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                                <Setter Property="IconDefaultColor" Value="#30522e05" />
+                                                <Setter Property="IconHoverColor" Value="#79b1c9" />
+                                                <Setter Property="PathCheckedBrush" Value="#39b2e6" />
+                                            </DataTrigger>
+
+                                        </Style.Triggers>
+                                    </Style>
+                                </controls2:PathButton.Style>
+                            </controls2:PathButton>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <Grid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Command="{Binding DeleteItemFromPlaylist}" Header="Remove song from playlist" />
+                    <MenuItem Command="{Binding DeleteSongFromPlaylistWithAlbum}" Header="Remove album from playlist" />
+
+                    <MenuItem IsHitTestVisible="False" />
+
+                    <MenuItem Command="{Binding OpenContainingFolder}" Header="Open folder" />
+                </ContextMenu>
+            </Grid.ContextMenu>
         </Grid>
-      </Border>
+    </DataTemplate>
 
-      <Grid.ContextMenu>
-        <ContextMenu>
-          <ContextMenu.Resources>
-            <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
-              <Setter Property="Width" Value="280" />
-              <Setter Property="Margin" Value="-17,-5,-23,-6" />
-              <Setter Property="IconWidth" Value="18" />
-              <Setter Property="Background" Value="Transparent" />
-              <Setter Property="IconHeight" Value="18" />
-              <Setter Property="IconMargin" Value="0 0 20 0" />
-              <Setter Property="Padding" Value="15,9" />
-              <Setter Property="HorizontalContentAlignment" Value="Left" />
-              <Setter Property="HorizontalIconAlignment" Value="Left" />
-              <Setter Property="ForegroundDefaultColor" Value="#656565" />
-              <Setter Property="IsReadOnly" Value="True" />
-              <Setter Property="FontWeight" Value="SemiBold" />
-            </Style>
-          </ContextMenu.Resources>
-          <MenuItem>
-            <MenuItem.HeaderTemplate>
-              <DataTemplate>
-                <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu, Mode=FindAncestor}, Path=DataContext}">
-                  <controls2:PathButton Command="{Binding DeleteItemFromPlaylist}"
-                                        Content="Remove SONG from playlist"
-                                        PathStyle="{StaticResource layer-minus}"
-                                        ToolTip="Removes SINGLE SONG from playlist">
+    <DataTemplate x:Key="PlayListSongDataTemplate">
+        <Grid Background="Transparent">
+            <Border Padding="0,0,5,5">
+                <Grid VerticalAlignment="Bottom">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
 
-                    <b:Interaction.Behaviors>
-                      <buttons:CloseContextMenuOnClickBehavior />
-                    </b:Interaction.Behaviors>
-                  </controls2:PathButton>
+                    <TextBlock Margin="22,01,0,0" Text="Downloading info...">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Setter Property="Foreground" Value="#555555" />
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsDownloading}" Value="true">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+
+                                    <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                        <Setter Property="Foreground" Value="#101010" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <TextBlock Margin="5,0,0,0" FontSize="12">
+                        <Run FontSize="13" Text="{Binding ArtistViewModel.Name, Mode=OneWay}">
+                            <Run.Style>
+                                <Style TargetType="Run">
+                                    <Setter Property="Foreground" Value="#f2e0cb" />
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                            <Setter Property="Foreground" Value="#24140c" />
+                                            <Setter Property="FontWeight" Value="Bold" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Run.Style>
+                        </Run>
+
+                        <Run Text="{Binding AlbumViewModel.Name, Mode=OneWay, StringFormat={}({0})}">
+                            <Run.Style>
+                                <Style TargetType="Run">
+                                    <Setter Property="Foreground" Value="#edfffa" />
+                                    <Setter Property="FontWeight" Value="DemiBold" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                            <Setter Property="Foreground" Value="#24140c" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Run.Style>
+                        </Run>
+
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="{StaticResource OrangeBrush}" />
+                                <Setter Property="Opacity" Value="0.35" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                        <Setter Property="Opacity" Value="0.75" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <Grid Grid.Column="1" Margin="0,0,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid Width="50"
+                              Margin="0,0,10,3"
+                              HorizontalAlignment="Right">
+                            <Grid.Resources>
+                                <Style BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}" TargetType="controls2:ButtonWithIcon">
+                                    <Setter Property="IconHeight" Value="11" />
+                                    <Setter Property="IconWidth" Value="11" />
+                                </Style>
+                            </Grid.Resources>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <controls2:PathButton Grid.Column="0"
+                                                  Margin="5,0,0,0"
+                                                  HorizontalAlignment="Right"
+                                                  VerticalAlignment="Center"
+                                                  Panel.ZIndex="1"
+                                                  IconHeight="13"
+                                                  IconHoverColor="#39b2e6"
+                                                  IconWidth="13"
+                                                  IsChecked="{Binding IsFavorite}"
+                                                  PathCheckedBrush="#39b2e6"
+                                                  PathStyle="{StaticResource Favorite}"
+                                                  ToolTip="Favorite">
+                                <controls2:PathButton.Style>
+                                    <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
+                                        <Setter Property="IconDefaultColor" Value="#10ffffff" />
+
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                                <Setter Property="IconDefaultColor" Value="#30522e05" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </controls2:PathButton.Style>
+                            </controls2:PathButton>
+
+                            <Grid Grid.Column="1" HorizontalAlignment="Left">
+
+
+                                <ContentPresenter Content="{Binding LyricsObject}" ContentTemplateSelector="{StaticResource LyricsIconTypeTemplateSelector}" />
+
+
+
+                            </Grid>
+
+
+                        </Grid>
+
+                        <controls2:ButtonWithIcon Grid.Column="1"
+                                                  Margin="0,0,0,0"
+                                                  Padding="0"
+                                                  HorizontalAlignment="Right"
+                                                  Command="{Binding Refresh}"
+                                                  IconHeight="12"
+                                                  IconPathStyle="{StaticResource Repeate}"
+                                                  IconWidth="12"
+                                                  ToolTip="Reload lyrics">
+                            <controls2:ButtonWithIcon.Style>
+                                <Style BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}" TargetType="{x:Type controls2:ButtonWithIcon}">
+                                    <Setter Property="IconHoverColor" Value="Gold" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                            <Setter Property="IconHoverColor" Value="#522e05" />
+                                            <Setter Property="IconDefaultColor" Value="#FF151515" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </controls2:ButtonWithIcon.Style>
+                        </controls2:ButtonWithIcon>
+                    </Grid>
                 </Grid>
-              </DataTemplate>
-            </MenuItem.HeaderTemplate>
-          </MenuItem>
+            </Border>
 
-          <MenuItem>
-            <MenuItem.HeaderTemplate>
-              <DataTemplate>
-                <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu, Mode=FindAncestor}, Path=DataContext}">
-                  <controls2:PathButton Command="{Binding DeleteSongFromPlaylistWithAlbum}"
-                                        Content="Remove song's ALBUM from playlist"
-                                        IconHeight="16"
-                                        PathStyle="{StaticResource TrashList}"
-                                        ToolTip="Removes ALL SONGS in ALBUM from playlist">
-                    <b:Interaction.Behaviors>
-                      <buttons:CloseContextMenuOnClickBehavior />
-                    </b:Interaction.Behaviors>
-                  </controls2:PathButton>
-                </Grid>
-              </DataTemplate>
-            </MenuItem.HeaderTemplate>
-          </MenuItem>
+            <Grid.ContextMenu>
+                <ContextMenu>
+                    <ContextMenu.Resources>
+                        <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
+                            <Setter Property="Width" Value="280" />
+                            <Setter Property="Margin" Value="-17,-5,-23,-6" />
+                            <Setter Property="IconWidth" Value="18" />
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="IconHeight" Value="18" />
+                            <Setter Property="IconMargin" Value="0 0 20 0" />
+                            <Setter Property="Padding" Value="15,9" />
+                            <Setter Property="HorizontalContentAlignment" Value="Left" />
+                            <Setter Property="HorizontalIconAlignment" Value="Left" />
+                            <Setter Property="ForegroundDefaultColor" Value="#656565" />
+                            <Setter Property="IsReadOnly" Value="True" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
+                        </Style>
+                    </ContextMenu.Resources>
+                    <MenuItem>
+                        <MenuItem.HeaderTemplate>
+                            <DataTemplate>
+                                <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu, Mode=FindAncestor}, Path=DataContext}">
+                                    <controls2:PathButton Command="{Binding DeleteItemFromPlaylist}"
+                                                          Content="Remove SONG from playlist"
+                                                          PathStyle="{StaticResource layer-minus}"
+                                                          ToolTip="Removes SINGLE SONG from playlist">
 
-          <Separator Margin="5,5" />
+                                        <b:Interaction.Behaviors>
+                                            <buttons:CloseContextMenuOnClickBehavior />
+                                        </b:Interaction.Behaviors>
+                                    </controls2:PathButton>
+                                </Grid>
+                            </DataTemplate>
+                        </MenuItem.HeaderTemplate>
+                    </MenuItem>
 
-          <MenuItem ToolTip="{Binding IsAutomaticLyricsDownloadDisabled}">
-            <MenuItem.HeaderTemplate>
-              <DataTemplate>
-                <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu, Mode=FindAncestor}, Path=DataContext}">
-                  <controls2:PathButton Content="Automatic lyrics download"
-                                        ForegroundCheckedColor="#ddd"
-                                        IsChecked="{Binding IsAutomaticLyricsDownloadDisabled, Mode=TwoWay}"
-                                        IsReadOnly="False"
-                                        PathCheckedBrush="{StaticResource DefaultRedBrush}"
-                                        PathStyle="{StaticResource text-slash}"
-                                        ToolTip="Turn ON/OFF automatic LYRICS download">
+                    <MenuItem>
+                        <MenuItem.HeaderTemplate>
+                            <DataTemplate>
+                                <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu, Mode=FindAncestor}, Path=DataContext}">
+                                    <controls2:PathButton Command="{Binding DeleteSongFromPlaylistWithAlbum}"
+                                                          Content="Remove song's ALBUM from playlist"
+                                                          IconHeight="16"
+                                                          PathStyle="{StaticResource TrashList}"
+                                                          ToolTip="Removes ALL SONGS in ALBUM from playlist">
+                                        <b:Interaction.Behaviors>
+                                            <buttons:CloseContextMenuOnClickBehavior />
+                                        </b:Interaction.Behaviors>
+                                    </controls2:PathButton>
+                                </Grid>
+                            </DataTemplate>
+                        </MenuItem.HeaderTemplate>
+                    </MenuItem>
 
-                    <b:Interaction.Behaviors>
-                      <buttons:CloseContextMenuOnClickBehavior />
-                    </b:Interaction.Behaviors>
-                  </controls2:PathButton>
-                </Grid>
-              </DataTemplate>
-            </MenuItem.HeaderTemplate>
-          </MenuItem>
+                    <Separator Margin="5,5" />
 
-          <Separator Margin="5,5" />
+                    <MenuItem ToolTip="{Binding IsAutomaticLyricsDownloadDisabled}">
+                        <MenuItem.HeaderTemplate>
+                            <DataTemplate>
+                                <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu, Mode=FindAncestor}, Path=DataContext}">
+                                    <controls2:PathButton Content="Automatic lyrics download"
+                                                          ForegroundCheckedColor="#ddd"
+                                                          IsChecked="{Binding IsAutomaticLyricsDownloadDisabled, Mode=TwoWay}"
+                                                          IsReadOnly="False"
+                                                          PathCheckedBrush="{StaticResource DefaultRedBrush}"
+                                                          PathStyle="{StaticResource text-slash}"
+                                                          ToolTip="Turn ON/OFF automatic LYRICS download">
 
-          <MenuItem>
-            <MenuItem.HeaderTemplate>
-              <DataTemplate>
-                <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu, Mode=FindAncestor}, Path=DataContext}">
-                  <controls2:PathButton Command="{Binding OpenContainingFolder}"
-                                        Content="Open containing folder"
-                                        IconHeight="14"
-                                        PathStyle="{StaticResource FolderOpen}"
-                                        ToolTip=" Opens containing folder in filebrowser">
+                                        <b:Interaction.Behaviors>
+                                            <buttons:CloseContextMenuOnClickBehavior />
+                                        </b:Interaction.Behaviors>
+                                    </controls2:PathButton>
+                                </Grid>
+                            </DataTemplate>
+                        </MenuItem.HeaderTemplate>
+                    </MenuItem>
 
-                    <b:Interaction.Behaviors>
-                      <buttons:CloseContextMenuOnClickBehavior />
-                    </b:Interaction.Behaviors>
-                  </controls2:PathButton>
-                </Grid>
-              </DataTemplate>
-            </MenuItem.HeaderTemplate>
-          </MenuItem>
-        </ContextMenu>
-      </Grid.ContextMenu>
-    </Grid>
-  </DataTemplate>
+                    <Separator Margin="5,5" />
+
+                    <MenuItem>
+                        <MenuItem.HeaderTemplate>
+                            <DataTemplate>
+                                <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu, Mode=FindAncestor}, Path=DataContext}">
+                                    <controls2:PathButton Command="{Binding OpenContainingFolder}"
+                                                          Content="Open containing folder"
+                                                          IconHeight="14"
+                                                          PathStyle="{StaticResource FolderOpen}"
+                                                          ToolTip=" Opens containing folder in filebrowser">
+
+                                        <b:Interaction.Behaviors>
+                                            <buttons:CloseContextMenuOnClickBehavior />
+                                        </b:Interaction.Behaviors>
+                                    </controls2:PathButton>
+                                </Grid>
+                            </DataTemplate>
+                        </MenuItem.HeaderTemplate>
+                    </MenuItem>
+                </ContextMenu>
+            </Grid.ContextMenu>
+        </Grid>
+    </DataTemplate>
 
 </ResourceDictionary>

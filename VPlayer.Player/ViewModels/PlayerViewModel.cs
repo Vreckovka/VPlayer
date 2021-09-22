@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -268,7 +269,7 @@ namespace VPlayer.Player.ViewModels
       AudioDeviceManager.Instance.ObservePropertyChange(x => x.SelectedSoundDevice).Subscribe(async x =>
       {
         await Task.Delay(500);
-        
+
         ActualViewModel?.SetVolume(ActualVolume);
 
       }).DisposeWith(this);
@@ -280,7 +281,7 @@ namespace VPlayer.Player.ViewModels
 
     private void SubscribeToPlayers()
     {
-      var allPlayers = kernel.GetAll<IPlayableRegionViewModel>();
+      var allPlayers = kernel.GetAll<IPlayableRegionViewModel>().ToList();
 
       keyListener.OnKeyPressed += KeyListener_OnKeyPressed;
 
@@ -294,11 +295,10 @@ namespace VPlayer.Player.ViewModels
 
         player.ObservePropertyChange(x => x.CanPlay).Subscribe(x =>
         {
-          if (x && player.IsActive)
+          if (x && player.IsActive && player != ActualViewModel)
           {
             ChangeActualViewModel(player);
           }
-
         }).DisposeWith(this);
 
 
@@ -311,6 +311,7 @@ namespace VPlayer.Player.ViewModels
                 if (ActualViewModel != player1)
                 {
                   player1.Pause();
+                  player1.IsSelectedToPlay = false;
                 }
               }
             }
@@ -325,6 +326,17 @@ namespace VPlayer.Player.ViewModels
           {
             ChangeActualViewModel(player);
           }
+
+          if (player == ActualViewModel && originalActualViewModel != null)
+          {
+            if (!x && originalActualViewModel.IsPlaying && !ActualViewModel.IsPlaying)
+            {
+              ChangeActualViewModel(originalActualViewModel);
+              originalActualViewModel = null;
+            }
+          }
+
+
         }).DisposeWith(this);
       }
     }
@@ -333,21 +345,25 @@ namespace VPlayer.Player.ViewModels
 
     #region ChangeActualViewModel
 
+    private IPlayableRegionViewModel originalActualViewModel = null;
     private void ChangeActualViewModel(IPlayableRegionViewModel newPlayer)
     {
-
-
       if (ActualViewModel != null)
       {
-        ActualViewModel.IsSelectedToPlay = false;
+      if (ActualViewModel.IsPlaying && !newPlayer.IsPlaying)
+        {
+          originalActualViewModel = ActualViewModel;
+        }
+        else 
+        {
+          ActualViewModel.IsSelectedToPlay = false;
+        }
       }
 
+
       ActualViewModel = newPlayer;
-
       ActualViewModel.IsSelectedToPlay = true;
-
       IsPlaying = ActualViewModel.IsPlaying;
-
       CanPlay = ActualViewModel.CanPlay;
     }
 
