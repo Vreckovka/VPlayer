@@ -134,7 +134,8 @@
 
 
                         <Border Margin="10,0,5,0"
-                                Padding="10,7"
+                                Padding="10,0"
+                                Height="50"
                                 VerticalAlignment="Center">
                             <Border.Style>
                                 <Style TargetType="Border">

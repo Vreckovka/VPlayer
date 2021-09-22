@@ -156,7 +156,7 @@ namespace VPlayer.Core.Managers.Status
 
     public void UpdateMessageAndIncreaseProcessCount(StatusMessageViewModel statusMessageViewModel, int count = 1)
     {
-      Application.Current.Dispatcher.Invoke(() =>
+      Application.Current?.Dispatcher?.Invoke(() =>
       {
         statusMessageViewModel.ProcessedCount++;
 

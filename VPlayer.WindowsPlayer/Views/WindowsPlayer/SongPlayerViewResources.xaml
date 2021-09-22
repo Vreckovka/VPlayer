@@ -81,7 +81,7 @@
 
 
             <StackPanel Grid.Column="0"
-                        Margin="10,5,0,0"
+                        Margin="10,5,10,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top">
                 <controls2:PathButton x:Name="SettingsButton"
