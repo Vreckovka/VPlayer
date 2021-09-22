@@ -452,15 +452,31 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel>
-                    <controls2:PathButton Margin="0,0"
-                                          HorizontalAlignment="Center"
+                    <controls2:PathButton x:Name="SettingsButton"
+                                          HorizontalAlignment="Left"
                                           Command="{Binding SaveLRC}"
-                                          FontSize="25"
-                                          ForegroundDefaultColor="#454545"
-                                          ForegroundHoverColor="#80b1ff"
-                                          PathCheckedBrush="{StaticResource YellowBrush}"
-                                          Style="{StaticResource floppy-disk-glyph}"
-                                          ToolTip="Save" />
+                                          FontWeight="Bold"
+                                          ForegroundDefaultColor="#15ffffff"
+                                          ForegroundHoverColor="#ccc"
+                                          IconDefaultColor="#454545"
+                                          IconHoverColor="#80b1ff"
+                                          PathCheckedBrush="{StaticResource DefaultRedBrush}"
+                                          PathStyle="{StaticResource floppy-disk}"
+                                          ToolTip="Save">
+                        <controls2:PathButton.Style>
+                            <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
+                                <Setter Property="Content" Value="Save" />
+                                <Setter Property="Margin" Value="0,0,10,0" />
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=711}" Value="false">
+                                        <Setter Property="Content" Value="" />
+                                        <Setter Property="Margin" Value="0,0,0,0" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </controls2:PathButton.Style>
+                    </controls2:PathButton>
 
 
                     <controls2:PathButton Margin="0,10"
@@ -468,14 +484,25 @@
                                           Command="{Binding ExitLRCEditor}"
                                           CommandParameter="{Binding ActualItem}"
                                           DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContentControl, Mode=FindAncestor}, Path=DataContext}"
-                                          FontSize="25"
-                                          ForegroundDefaultColor="#454545"
-                                          ForegroundHoverColor="{StaticResource DefaultRedColor}"
-                                          Style="{StaticResource door-open}"
-                                          ToolTip="Exit CREATOR MODE" />
+                                          FontWeight="Bold"
+                                          ForegroundDefaultColor="#15ffffff"
+                                          ForegroundHoverColor="#ccc"
+                                          IconDefaultColor="#454545"
+                                          IconHoverColor="{StaticResource DefaultRedColor}"
+                                          PathStyle="{StaticResource door-open-path}"
+                                          ToolTip="Exit">
+                        <controls2:PathButton.Style>
+                            <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
+                                <Setter Property="Content" Value="Exit" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=711}" Value="false">
+                                        <Setter Property="Content" Value="" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </controls2:PathButton.Style>
+                    </controls2:PathButton>
                 </StackPanel>
-
-
 
                 <Border Grid.Row="1" Background="#85050505">
                     <TextBlock HorizontalAlignment="Center"
@@ -498,13 +525,24 @@
             </Grid>
 
             <TextBlock Grid.Column="0"
-                       Margin="15,8"
+                       Margin="15,0,0,8"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Bottom"
-                       FontSize="13"
+                       FontSize="10"
                        FontWeight="Normal"
                        Foreground="#30ffffff"
-                       Text="IN CREATOR&#x0a;MODE" />
+                       Text="IN&#x0a;CREATOR&#x0a;MODE">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=711}" Value="false">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+
+            </TextBlock>
 
             <ListView Grid.Column="1"
                       Margin="0,0,0,0"
@@ -518,6 +556,36 @@
                 <ListView.Style>
                     <Style TargetType="ListView">
                         <Setter Property="Padding" Value="0" />
+
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ItemsControl">
+                                    <Border Background="{TemplateBinding Background}">
+                                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Hidden">
+                                            <ItemsPresenter />
+                                        </ScrollViewer>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+
+                        <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+                        <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True" />
+                        <Setter Property="VirtualizingPanel.ScrollUnit" Value="Pixel" />
+                        <Setter Property="VirtualizingPanel.IsContainerVirtualizable" Value="True" />
+
+                        <Setter Property="ItemsPanel">
+                            <Setter.Value>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel VirtualizingPanel.IsVirtualizing="True"
+                                                            VirtualizingPanel.ScrollUnit="Pixel"
+                                                            VirtualizingPanel.VirtualizationMode="Recycling" />
+                                </ItemsPanelTemplate>
+                            </Setter.Value>
+                        </Setter>
+
+
+
                         <Setter Property="ItemContainerStyle">
                             <Setter.Value>
                                 <Style TargetType="ListViewItem">
@@ -545,7 +613,7 @@
                                                                                   Command="{Binding SetTime}"
                                                                                   Style="{StaticResource pencil-glyph}" />
 
-                                                            <TextBox Width="95"
+                                                            <TextBox Width="115"
                                                                      Margin="5,0"
                                                                      HorizontalAlignment="Center"
                                                                      VerticalAlignment="Center"
@@ -555,13 +623,13 @@
                                                                      FontWeight="Bold">
                                                                 <TextBox.Style>
                                                                     <Style TargetType="TextBox">
-                                                                        <Setter Property="Text" Value="{Binding Time, StringFormat={}{0:hh\\:mm\\:ss}}" />
+                                                                        <Setter Property="Text" Value="{Binding Time, StringFormat={}{0:hh\\:mm\\:ss\\.ff}}" />
                                                                         <Setter Property="Foreground" Value="#aaffffff" />
                                                                         <Setter Property="FontSize" Value="20" />
 
                                                                         <Style.Triggers>
                                                                             <DataTrigger Binding="{Binding Time}" Value="{x:Null}">
-                                                                                <Setter Property="Text" Value="--:--:--" />
+                                                                                <Setter Property="Text" Value="--:--:--.--" />
                                                                                 <Setter Property="FontSize" Value="23" />
                                                                                 <Setter Property="Foreground" Value="#15ffffff" />
                                                                             </DataTrigger>
@@ -575,7 +643,8 @@
                                                         <TextBox Grid.Column="1"
                                                                  HorizontalAlignment="Left"
                                                                  HorizontalContentAlignment="Left"
-                                                                 Text="{Binding Text, Mode=OneWay}">
+                                                                 Text="{Binding Text, Mode=OneWay}"
+                                                                 TextWrapping="Wrap">
                                                             <TextBox.Style>
                                                                 <Style BasedOn="{StaticResource LyricsStyle}" TargetType="TextBox">
                                                                     <Style.Triggers>
@@ -614,8 +683,6 @@
                     <behaviors:AutoScrollLyricsBehavior AnimationTime="0:0:0:0.35" StepSize="39" />
                 </b:Interaction.Behaviors>
             </ListView>
-
-
 
         </Grid>
     </DataTemplate>
