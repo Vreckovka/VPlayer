@@ -1137,14 +1137,14 @@
 
     <DataTemplate x:Key="PlayListSongDataTemplate">
         <Grid Background="Transparent">
-            <Border Padding="0,0,5,5">
+            <Border Padding="0,0,0,5">
                 <Grid VerticalAlignment="Bottom">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition Width="auto" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Margin="22,01,0,0" Text="Downloading info...">
+                    <TextBlock Margin="22,1,0,0" Text="Downloading info...">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
                                 <Setter Property="Visibility" Value="Collapsed" />

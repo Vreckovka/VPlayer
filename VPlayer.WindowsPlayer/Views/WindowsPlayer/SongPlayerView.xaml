@@ -315,14 +315,15 @@
                     </TextBox.Effect>
                 </TextBox>
 
-                <Border Margin="0,0,0,1"
+                <Border Margin="0,0,0,3"
+                        Padding="0 2 0 2"
                         HorizontalAlignment="Center"
                         CornerRadius="8">
                     <Border.Background>
                         <LinearGradientBrush StartPoint="0 1" EndPoint="1 0">
                             <GradientStop Offset="0" Color="#00252525" />
-                            <GradientStop Offset="0.3" Color="#252525" />
-                            <GradientStop Offset="0.7" Color="#252525" />
+                            <GradientStop Offset="0.3" Color="#101010" />
+                            <GradientStop Offset="0.7" Color="#101010" />
                             <GradientStop Offset="1" Color="#00252525" />
                         </LinearGradientBrush>
                     </Border.Background>
