@@ -422,7 +422,7 @@
                        Foreground="#20ffffff"
                        Text="{Binding Model.By, StringFormat={}by {0}}"
                        TextTrimming="CharacterEllipsis"
-                       ToolTip="{Binding Model}">
+                       ToolTip="{Binding Model.By}">
                 <TextBlock.Style>
                     <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
                         <Style.Triggers>
@@ -1232,11 +1232,11 @@
                                                   HorizontalAlignment="Right"
                                                   VerticalAlignment="Center"
                                                   Panel.ZIndex="1"
-                                                  Opacity="0.55"
                                                   IconHeight="13"
                                                   IconHoverColor="#39b2e6"
                                                   IconWidth="13"
                                                   IsChecked="{Binding IsFavorite}"
+                                                  Opacity="0.55"
                                                   PathCheckedBrush="#39b2e6"
                                                   PathStyle="{StaticResource Favorite}"
                                                   ToolTip="Favorite">
