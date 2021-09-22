@@ -1232,6 +1232,7 @@
                                                   HorizontalAlignment="Right"
                                                   VerticalAlignment="Center"
                                                   Panel.ZIndex="1"
+                                                  Opacity="0.55"
                                                   IconHeight="13"
                                                   IconHoverColor="#39b2e6"
                                                   IconWidth="13"
@@ -1241,11 +1242,11 @@
                                                   ToolTip="Favorite">
                                 <controls2:PathButton.Style>
                                     <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
-                                        <Setter Property="IconDefaultColor" Value="#10ffffff" />
+                                        <Setter Property="IconDefaultColor" Value="#20ffffff" />
 
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding IsPlaying}" Value="True">
-                                                <Setter Property="IconDefaultColor" Value="#30522e05" />
+                                                <Setter Property="IconDefaultColor" Value="#60522e05" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
