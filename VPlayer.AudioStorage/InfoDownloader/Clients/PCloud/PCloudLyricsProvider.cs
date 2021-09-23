@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using VCore.Standard;
-using VCore.WPF.ViewModels.WindowsFiles;
+using System.Windows;
+using VCore.WPF.Managers;
+using VPlayer.AudioStorage.InfoDownloader.LRC;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;
 using VPLayer.Domain.Contracts.CloudService.Providers;
 
-namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
+namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
 {
   public class PCloudLRCFile : LRCFile
   {
@@ -25,15 +25,17 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
   public class PCloudLyricsProvider : LrcProvider<PCloudLRCFile>
   {
     private readonly ICloudService cloudService;
+    private readonly IWindowManager windowManager;
     private bool wasPCloudInitilized = false;
     private long lyricsFolderId = 1302392188;
     private List<PCloudClient.Domain.FolderInfo> artistsFolders = new List<PCloudClient.Domain.FolderInfo>();
 
     private string lrcExtension = ".lrc";
 
-    public PCloudLyricsProvider(ICloudService cloudService)
+    public PCloudLyricsProvider(ICloudService cloudService, IWindowManager windowManager)
     {
       this.cloudService = cloudService ?? throw new ArgumentNullException(nameof(cloudService));
+      this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
     }
 
     private async Task<bool> InitilizePCloud()
@@ -68,16 +70,29 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
           if (album != null)
           {
             var songs = (await cloudService.GetFilesAsync(album.id)).ToList();
+            var fileName = GetFileName(artistName, songName).ToLower();
 
-            var existingSong = songs.SingleOrDefault(x => x.name.Replace(fileExtension, null).ToLower() == GetFileName(artistName, songName).ToLower());
+            var existingSongs =  songs.Where(x => x.name.Replace(fileExtension, null).ToLower() == fileName).ToList();
 
-            if (existingSong != null)
+            if (existingSongs.Count > 1)
             {
-              return await cloudService.WriteToFile(content, existingSong.id);
+              Application.Current.Dispatcher.Invoke(() =>
+              {
+                windowManager.ShowErrorPrompt($"Multiple ({existingSongs.Count}) LRC files with same name {album.name}\\{fileName}");
+              });
             }
             else
             {
-              return await cloudService.CreateFileAndWrite(GetFileName(artistName, songName) + fileExtension, content, album.id);
+              var existingSong = existingSongs.SingleOrDefault();
+
+              if (existingSong != null)
+              {
+                return await cloudService.WriteToFile(content, existingSong.id);
+              }
+              else
+              {
+                return await cloudService.CreateFileAndWrite(GetFileName(artistName, songName) + fileExtension, content, album.id);
+              }
             }
           }
           else
@@ -185,14 +200,28 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
           {
             var songs = (await cloudService.GetFilesAsync(album.id)).ToList();
 
-            var existingSong = songs.SingleOrDefault(x => x.name.ToLower() == GetFileName(artistName, songName).ToLower() + extesion);
+            var fileName = (GetFileName(artistName, songName) + extesion).ToLower();
 
-            if (existingSong != null)
+            var existingSongs = songs.Where(x => x.name.ToLower() == fileName).ToList();
+
+            if (existingSongs.Count > 1)
             {
-              return new PCloudLRCFile(null)
+              Application.Current.Dispatcher.Invoke(() =>
               {
-                Id = existingSong.id
-              };
+                windowManager.ShowErrorPrompt($"Multiple ({existingSongs.Count}) LRC files with same name {album.name}\\{fileName}");
+              });
+            }
+            else if(existingSongs.Count > 0)
+            {
+              var existingSong = existingSongs.SingleOrDefault();
+
+              if (existingSong != null)
+              {
+                return new PCloudLRCFile(null)
+                {
+                  Id = existingSong.id
+                };
+              }
             }
           }
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,6 +14,7 @@ using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
 using VCore.Standard.ViewModels.WindowsFile;
 using VCore.WPF.ViewModels.WindowsFiles;
+using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
@@ -129,7 +131,10 @@ namespace VPlayer.Core.FileBrowser
 
         await LoadSubFolders(this, cancellationTokenSource.Token);
 
-        var playableFiles = SubItems.ViewModels.SelectManyRecursive(x => x.SubItems.ViewModels)
+        var numberStringComparer = new NumberStringComparer();
+
+        var playableFiles = SubItems.ViewModels
+          .SelectManyRecursive(x => x.SubItems.ViewModels)
           .OfType<PlayableFileViewModel>();
 
         if (FolderType == FolderType.Video)
@@ -214,12 +219,64 @@ namespace VPlayer.Core.FileBrowser
             }
           }
 
-      
+          var folders = SubItems.ViewModels
+            .SelectManyRecursive(x => x.SubItems.ViewModels)
+            .OfType<PlayableFolderViewModel<TFolderViewModel, TFileViewModel>>();
 
+          folders = folders.Concat(SubItems.ViewModels.OfType<PlayableFolderViewModel<TFolderViewModel, TFileViewModel>>());
+
+
+          var albums = soundItems.GroupBy(x => x.FileInfo.Album).Select(x => new FolderGrouping()
+          {
+            Name = x.Key,
+            NormalizedName = VPlayerStorageManager.GetNormalizedName(x.Key),
+            Items = x,
+            WasProccessed = false
+          }).ToList();
+
+          List<SoundItem> soundItems1 = new List<SoundItem>();
+
+          foreach (var folder in folders)
+          {
+            var name = folder.Name;
+            if (folder.Name[0] == '[' && folder.Name[5] == ']')
+            {
+              name = name.Substring(6, name.Length - 6);
+            }
+
+            var normalizedFolderName = VPlayerStorageManager.GetNormalizedName(name);
+
+            var album = albums.SingleOrDefault(x => normalizedFolderName.Contains(x.NormalizedName) ||
+                                                    x.NormalizedName.Contains(normalizedFolderName));
+
+            if (album != null)
+            {
+              album.WasProccessed = true;
+              soundItems1.AddRange(album.Items.OrderBy(x => x.FileInfo.FullName, numberStringComparer));
+            }
+            else
+            {
+              var albumsGood = albums.Where(x => normalizedFolderName.Similarity(x.NormalizedName) > .8).ToList();
+
+              if (albumsGood.Count == 1)
+              {
+                album = albumsGood.First();
+                album.WasProccessed = true;
+                soundItems1.AddRange(album.Items.OrderBy(x => x.FileInfo.FullName, numberStringComparer));
+              }
+            }
+          }
+
+          var notProcesseds = albums.Where(x => !x.WasProccessed);
+
+          foreach (var notProcessedAlbum in notProcesseds)
+          {
+            soundItems1.AddRange(notProcessedAlbum.Items.OrderBy(x => x.FileInfo.FullName, numberStringComparer));
+          }
 
           var data = new PlayItemsEventData<SoundItemInPlaylistViewModel>(
-            soundItems.Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x)), 
-            EventAction.Play, 
+            soundItems1.Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x)),
+            EventAction.Play,
             this);
 
           eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(data);
@@ -340,5 +397,14 @@ namespace VPlayer.Core.FileBrowser
     }
 
     #endregion
+  }
+
+  public class FolderGrouping
+  {
+    public string Name { get; set; }
+
+    public string NormalizedName { get; set; }
+    public IEnumerable<SoundItem> Items { get; set; }
+    public bool WasProccessed { get; set; }
   }
 }

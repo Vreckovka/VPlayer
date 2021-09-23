@@ -8,6 +8,7 @@ using System.Windows.Input;
 using VCore;
 using VCore.ItemsCollections.VirtualList.VirtualLists;
 using VCore.Standard;
+using VPlayer.AudioStorage.InfoDownloader.Clients.PCloud;
 using VPlayer.AudioStorage.InfoDownloader.LRC;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;

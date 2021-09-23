@@ -1,6 +1,7 @@
 ﻿using VCore.Standard.Modularity.NinjectModules;
 using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.InfoDownloader;
+using VPlayer.AudioStorage.InfoDownloader.Clients.PCloud;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.AudioStorage.Scrappers;

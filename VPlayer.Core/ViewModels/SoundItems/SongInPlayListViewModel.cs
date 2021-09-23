@@ -9,6 +9,7 @@ using VCore;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics;
+using VPlayer.AudioStorage.InfoDownloader.Clients.PCloud;
 using VPlayer.AudioStorage.InfoDownloader.LRC;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Clients;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google;

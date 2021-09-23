@@ -480,9 +480,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       if (soundItemChanged.Changed == Changed.Updated)
       {
-        var inPlaylist = PlayList.SingleOrDefault(x => x.Model.Id == soundItemChanged.Item.Id);
+        var insPlaylist = PlayList.Where(x => x.Model.Id == soundItemChanged.Item.Id);
 
-        if (inPlaylist != null)
+        foreach (var inPlaylist in insPlaylist)
         {
           var lastIsAutomaticLyricsFindEnabled = inPlaylist.Model.IsAutomaticLyricsFindEnabled;
 
@@ -490,7 +490,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
           inPlaylist.RaiseNotifyPropertyChanged(nameof(SoundItemInPlaylistViewModel.Model));
 
-          if (inPlaylist is SongInPlayListViewModel song && lastIsAutomaticLyricsFindEnabled != song.Model.IsAutomaticLyricsFindEnabled)
+          if (inPlaylist is SongInPlayListViewModel song &&
+              lastIsAutomaticLyricsFindEnabled != song.Model.IsAutomaticLyricsFindEnabled)
           {
             song.RaiseNotifyPropertyChanged(nameof(SongInPlayListViewModel.IsAutomaticLyricsDownloadDisabled));
 
@@ -1381,6 +1382,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
           x.IsPlaying = false;
           x.IsInPlaylist = false;
         });
+
+
+      downloadingSongTask?.Cancel();
+      downloadingSongTask = null;
     }
 
     #endregion
@@ -1417,8 +1422,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         var items = PlayList.Where(x => IsInFind(x.Name, predictate)).ToList();
 
-        var other = PlayList.OfType<SongInPlayListViewModel>().Where(x => IsInFind(x.AlbumViewModel.Name, predictate) ||
-                                                                          IsInFind(x.ArtistViewModel.Name, predictate));
+        var other = PlayList.OfType<SongInPlayListViewModel>()
+          .Where(x => x.AlbumViewModel != null)
+          .Where(x => x.ArtistViewModel != null)
+          .Where(x => IsInFind(x.AlbumViewModel.Name, predictate) || 
+                      IsInFind(x.ArtistViewModel.Name, predictate));
 
         var notIn = other.Where(x => !items.Contains(x));
 
