@@ -511,6 +511,7 @@
                                               IsEnabled="{Binding IsPlaying, Mode=OneWay, FallbackValue=False}"
                                               MaxFrequency="100000"
                                               MiddleColor="{StaticResource DefaultRedColor}"
+                                              NormlizedDataMaxSilentValue="5"
                                               NormlizedDataMaxValue="10"
                                               NormlizedDataMinValue="2"
                                               NumberOfColumns="97"

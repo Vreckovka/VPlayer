@@ -133,9 +133,9 @@
                         </Grid.ColumnDefinitions>
 
 
-                        <Border Margin="10,0,5,0"
+                        <Border Height="50"
+                                Margin="10,0,5,0"
                                 Padding="10,0"
-                                Height="50"
                                 VerticalAlignment="Center">
                             <Border.Style>
                                 <Style TargetType="Border">
@@ -310,8 +310,8 @@
                                                       Margin="4,0,0,0"
                                                       FontSize="16"
                                                       ForegroundDefaultColor="#30ffffff"
-                                                      ToolTip="Total LENGTH of playlist"
-                                                      Style="{StaticResource hourglass}" />
+                                                      Style="{StaticResource hourglass}"
+                                                      ToolTip="Total LENGTH of playlist" />
 
                                 <!--<TextBlock Margin="5,0,5,0"
                                            VerticalAlignment="Center"
@@ -335,8 +335,8 @@
                                                       Margin="2,0,0,0"
                                                       FontSize="18"
                                                       ForegroundDefaultColor="#30ffffff"
-                                                      ToolTip="Total PLAYED TIME of playlist"
-                                                      Style="{StaticResource stopwatch}" />
+                                                      Style="{StaticResource stopwatch}"
+                                                      ToolTip="Total PLAYED TIME of playlist" />
 
                                 <!--<TextBlock Margin="5,1,5,0"
                                            VerticalAlignment="Center"
@@ -406,10 +406,10 @@
                               Command="{Binding ExpandHidePlaylist}"
                               Cursor="Hand"
                               FontSize="12"
+                              IconCheckedColor="{StaticResource DefaultRedColor}"
                               IconHeight="24"
                               IconWidth="22"
                               Opacity="0.85"
-                              PathCheckedBrush="{StaticResource DefaultRedBrush}"
                               PathStyle="{StaticResource arrows-to-line-solid}">
             <controls1:PathButton.RenderTransform>
                 <RotateTransform Angle="90" />

@@ -134,12 +134,12 @@
                             <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
                                 <Setter Property="IconDefaultColor" Value="#10ffffff" />
                                 <Setter Property="IconHoverColor" Value="#8fd4f2" />
-                                <Setter Property="PathCheckedBrush" Value="#aa39b2e6" />
+                                <Setter Property="IconCheckedColor" Value="#aa39b2e6" />
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsPlaying}" Value="True">
                                         <Setter Property="IconDefaultColor" Value="#30522e05" />
                                         <Setter Property="IconHoverColor" Value="#79b1c9" />
-                                        <Setter Property="PathCheckedBrush" Value="#39b2e6" />
+                                        <Setter Property="IconCheckedColor" Value="#39b2e6" />
                                     </DataTrigger>
 
                                 </Style.Triggers>

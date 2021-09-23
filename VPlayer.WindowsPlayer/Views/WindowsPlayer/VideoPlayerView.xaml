@@ -232,7 +232,7 @@
                                          IconHeight="24"
                                          IconWidth="22"
                                          Opacity="0.85"
-                                         PathCheckedBrush="{StaticResource DefaultRedBrush}"
+                                         IconCheckedColor="{StaticResource DefaultRedColor}"
                                          PathStyle="{StaticResource arrows-to-line-solid}">
                         <controls:PathButton.RenderTransform>
                             <RotateTransform Angle="90" />

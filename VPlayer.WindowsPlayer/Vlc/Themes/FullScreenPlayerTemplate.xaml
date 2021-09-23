@@ -103,7 +103,7 @@
                                                           IconDefaultColor="#656565"
                                                           IconHoverColor="#4298f5"
                                                           IsChecked="False"
-                                                          PathCheckedBrush="#4298f5"
+                                                          IconCheckedColor="#4298f5"
                                                           PathStyle="{StaticResource Windows}"
                                                           ToolTip="Windows volume">
                                         <controls1:PathButton.Style>
@@ -160,7 +160,7 @@
 
                                                             <ControlTemplate.Triggers>
                                                                 <Trigger Property="IsChecked" Value="True">
-                                                                    <Setter TargetName="PathIcon" Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=PathCheckedBrush}" />
+                                                                    <Setter TargetName="PathIcon" Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IconCheckedColor}" />
 
                                                                     <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}" />
 

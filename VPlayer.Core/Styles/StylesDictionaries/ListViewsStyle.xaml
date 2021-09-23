@@ -52,11 +52,11 @@
 
                                 <controls1:PathButton IconHoverColor="{StaticResource BlueColor}"
                                                       IsChecked="{Binding Model.ItemModel.IsFavorite, Mode=TwoWay}"
-                                                      PathCheckedBrush="{StaticResource BlueBrush}"
+                                                      IconCheckedColor="{StaticResource BlueColor}"
                                                       PathStyle="{StaticResource star-solid}" />
 
                                 <controls1:PathButton IsChecked="{Binding IsAutomaticDownload, Mode=TwoWay}"
-                                                      PathCheckedBrush="{StaticResource DefaultRedBrush}"
+                                                      IconCheckedColor="{StaticResource DefaultRedColor}"
                                                       PathStyle="{StaticResource text-slash}" />
 
                                 <controls1:PathButton PathStyle="{StaticResource down-solid}" />

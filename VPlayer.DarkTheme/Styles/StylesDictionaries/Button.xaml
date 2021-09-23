@@ -272,7 +272,7 @@
     <Style TargetType="{x:Type controls:PathButton}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="Green" />
-        <Setter Property="PathCheckedBrush" Value="#FFEFDF" />
+        <Setter Property="IconCheckedColor" Value="#FFEFDF" />
         <Setter Property="IconDefaultColor" Value="#50FFEFDF" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="IconMargin" Value="0 0 10 0" />
@@ -326,10 +326,11 @@
                     </Border>
 
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="PathIcon" Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=PathCheckedBrush}" />
-
-                        </Trigger>
+                        <!--<Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="PathIcon" Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IconCheckedBrush}" />
+                            <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=ForegroundCheckedColor}" />
+                            <Setter TargetName="PathIcon" Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IconCheckedBrush}" />
+                        </Trigger>-->
 
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Cursor" Value="Hand" />

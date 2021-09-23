@@ -102,6 +102,25 @@ namespace VPlayer.Core.ViewModels.SoundItems
     public List<LRCLyricLineViewModel> AllLine { get; set; }
     public VirtualList<LRCLyricLineViewModel> LinesView { get; }
 
+    #region LyricsColor
+
+    private string lyricsColor = "#fec827";
+
+    public string LyricsColor
+    {
+      get { return lyricsColor; }
+      set
+      {
+        if (value != lyricsColor)
+        {
+          lyricsColor = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #region IsMenuOpened
 
     private bool isMenuOpened;
@@ -115,6 +134,31 @@ namespace VPlayer.Core.ViewModels.SoundItems
         {
           isMenuOpened = value;
           UpdateStatus = null;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region PinMenu
+
+    private bool pinMenu;
+
+    public bool PinMenu
+    {
+      get { return pinMenu; }
+      set
+      {
+        if (value != pinMenu)
+        {
+          pinMenu = value;
+
+          if (!pinMenu)
+          {
+            IsMenuOpened = false;
+          }
+
           RaisePropertyChanged();
         }
       }

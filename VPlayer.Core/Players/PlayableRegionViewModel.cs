@@ -1282,7 +1282,7 @@ namespace VPlayer.Core.ViewModels
 
         if (result)
         {
-          Application.Current.Dispatcher.Invoke(() =>
+          Application.Current?.Dispatcher?.Invoke(() =>
           {
             if (VFocusManager.FocusedItems.Count(x => x.Name == "NameTextBox") == 0)
             {

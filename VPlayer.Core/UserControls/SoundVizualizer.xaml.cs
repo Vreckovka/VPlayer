@@ -53,8 +53,6 @@ namespace VPlayer.Player.UserControls
     private bool isTimerDisposed = true;
 
     private static IWaveSource waveSource;
-    private double normlizedDataMinValue = 1;
-    private double normlizedDataMaxValue = 30;
 
 
     System.Drawing.Color bottomColor = System.Drawing.Color.Green;
@@ -299,7 +297,7 @@ namespace VPlayer.Player.UserControls
         nameof(NormlizedDataMaxValue),
         typeof(double),
         typeof(SoundVizualizer),
-        new PropertyMetadata(30.0, (x, y) =>
+        new PropertyMetadata(20.0, (x, y) =>
         {
           if (x is SoundVizualizer soundVizualizer)
           {
@@ -309,8 +307,6 @@ namespace VPlayer.Player.UserControls
             {
               soundVizualizer.lineSpectrum.NormlizedDataMaxValue = newValue;
             }
-
-            soundVizualizer.normlizedDataMaxValue = newValue;
           }
         }));
 
@@ -330,7 +326,7 @@ namespace VPlayer.Player.UserControls
         nameof(NormlizedDataMinValue),
         typeof(double),
         typeof(SoundVizualizer),
-        new PropertyMetadata(0.0, (x, y) =>
+        new PropertyMetadata(3.0, (x, y) =>
         {
           if (x is SoundVizualizer soundVizualizer)
           {
@@ -340,8 +336,35 @@ namespace VPlayer.Player.UserControls
             {
               soundVizualizer.lineSpectrum.NormlizedDataMinValue = newValue;
             }
+          }
+        }));
 
-            soundVizualizer.normlizedDataMinValue = newValue;
+
+    #endregion
+
+    #region NormlizedDataMaxSilentValue
+
+    public double NormlizedDataMaxSilentValue
+    {
+      get { return (double)GetValue(NormlizedDataMaxSilentValueProperty); }
+      set { SetValue(NormlizedDataMaxSilentValueProperty, value); }
+    }
+
+    public static readonly DependencyProperty NormlizedDataMaxSilentValueProperty =
+      DependencyProperty.Register(
+        nameof(NormlizedDataMaxSilentValue),
+        typeof(double),
+        typeof(SoundVizualizer),
+        new PropertyMetadata(5.0, (x, y) =>
+        {
+          if (x is SoundVizualizer soundVizualizer)
+          {
+            var newValue = (double)y.NewValue;
+
+            if (soundVizualizer.lineSpectrum != null)
+            {
+              soundVizualizer.lineSpectrum.NormlizedDataMaxSilentValue = newValue;
+            }
           }
         }));
 
@@ -543,8 +566,9 @@ namespace VPlayer.Player.UserControls
         MinimumFrequency = 0,
         MinimumBarWidth = MinimumBarWidth,
         UseSkew = UseSkew,
-        NormlizedDataMaxValue = normlizedDataMaxValue,
-        NormlizedDataMinValue = normlizedDataMinValue
+        NormlizedDataMaxValue = NormlizedDataMaxValue,
+        NormlizedDataMinValue = NormlizedDataMinValue,
+        NormlizedDataMaxSilentValue = NormlizedDataMaxSilentValue
       };
     }
 

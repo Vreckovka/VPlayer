@@ -184,7 +184,7 @@
                                      IconWidth="11"
                                      IsChecked="{Binding WasLoaded, Mode=OneWay}"
                                      IsReadOnly="True"
-                                     PathCheckedBrush="#2f6e30"
+                                     IconCheckedColor="#2f6e30"
                                      PathStyle="{StaticResource check}"
                                      ToolTip="Loaded indicator" />
 

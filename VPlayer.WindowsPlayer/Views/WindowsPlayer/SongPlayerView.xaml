@@ -167,6 +167,7 @@
                                           MinimumBarWidth="3"
                                           NormlizedDataMaxValue="25"
                                           NormlizedDataMinValue="5"
+                                          NormlizedDataMaxSilentValue="7"
                                           NumberOfColumns="250"
                                           Opacity="0.8"
                                           TopColor="#8bcde0"
@@ -345,13 +346,13 @@
                 <controls:PathButton IconDefaultColor="#55cccccc"
                                      IconHoverColor="#ccffffff"
                                      IsChecked="{Binding IsRepeate}"
-                                     PathCheckedBrush="#ccffffff"
+                                     IconCheckedColor="#ccffffff"
                                      PathStyle="{StaticResource Repeate}" />
 
                 <controls:PathButton IconDefaultColor="#55cccccc"
                                      IconHoverColor="#ccffffff"
                                      IsChecked="{Binding IsShuffle}"
-                                     PathCheckedBrush="#ccffffff"
+                                     IconCheckedColor="#ccffffff"
                                      PathStyle="{StaticResource Shuffle}" />
             </StackPanel>
 

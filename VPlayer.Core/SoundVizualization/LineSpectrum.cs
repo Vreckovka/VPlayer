@@ -23,7 +23,7 @@ namespace WinformsVisualization.Visualization
 
     public double NormlizedDataMaxValue { get; set; } = 30;
     public double NormlizedDataMinValue { get; set; } = 0;
-
+    public double NormlizedDataMaxSilentValue { get; set; } = 5;
     public bool UseSkew { get; set; }
 
     #region AutomaticBarCountCalculation
@@ -249,23 +249,47 @@ namespace WinformsVisualization.Visualization
       double dataMin = data.Min(x => x.Value);
       double range = dataMax - dataMin;
 
-      var normalized =
-         data.Select(d => (d.Value - dataMin) / range)
-        .Select(n => (double)((1 - n) * min + n * max))
-        .ToArray();
-
-      var normalizeSpectrum = new SpectrumPointData[data.Length];
-
-      for (int i = 0; i < data.Length; i++)
+      if (range != 0)
       {
-        normalizeSpectrum[i] = new SpectrumPointData()
+        if (range < min)
         {
-          SpectrumPointIndex = data[i].SpectrumPointIndex,
-          Value = normalized[i]
-        };
+          for (int i = 0; i < data.Length; i++)
+          {
+            data[i].Value = data[i].Value * 500000;
+
+            while (data[i].Value < 0.1)
+            {
+              data[i].Value *= 10;
+            }
+          }
+
+          max = NormlizedDataMaxSilentValue;
+          dataMax = data.Max(x => x.Value);
+          dataMin = data.Min(x => x.Value);
+          range = dataMax - dataMin;
+        }
+
+        var normalized =
+          data.Select(d => (d.Value - dataMin) / range)
+            .Select(n => (double)((1 - n) * min + n * max))
+            .ToArray();
+
+        var normalizeSpectrum = new SpectrumPointData[data.Length];
+
+        for (int i = 0; i < data.Length; i++)
+        {
+          normalizeSpectrum[i] = new SpectrumPointData()
+          {
+            SpectrumPointIndex = data[i].SpectrumPointIndex,
+            Value = normalized[i]
+          };
+        }
+
+        return normalizeSpectrum;
+
       }
 
-      return normalizeSpectrum;
+      return data;
     }
 
     #endregion

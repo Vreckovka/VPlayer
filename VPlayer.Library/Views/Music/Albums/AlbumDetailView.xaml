@@ -97,7 +97,7 @@
                                              IconWidth="17"
                                              IsChecked="{Binding IsAllSongHasLyricsOff}"
                                              IsReadOnly="False"
-                                             PathCheckedBrush="{StaticResource DefaultRedBrush}"
+                                             IconCheckedColor="{StaticResource DefaultRedColor}"
                                              PathStyle="{StaticResource text-slash}"
                                              ToolTip="All songs has turned ON/OFF automatic LYRICS download" />
 

@@ -38,14 +38,19 @@
                                  Padding="10,5"
                                  HorizontalAlignment="Left"
                                  BorderBrush="{StaticResource 30_WhiteTransparentBrush}"
+                                 BorderCheckedColor="#454545"
+                                 BorderDefaultColor="#252525"
+                                 BorderHoverColor="#454545"
                                  BorderThickness="1"
                                  Command="{Binding Discover}"
                                  Foreground="#30ffffff"
                                  ForegroundDefaultColor="#30ffffff"
                                  ForegroundHoverColor="White"
-                                 IconHoverColor="{StaticResource DefaultRedColorDim}"
+                                 IconCheckedColor="{StaticResource DefaultRedColor}"
+                                 IconHoverColor="{StaticResource DefaultRedColor}"
+                                 EnableBorderAnimation="True"
+
                                  IsChecked="{Binding IsDiscovering, Mode=OneWay}"
-                                 PathCheckedBrush="{StaticResource RedBlueGradientBrush}"
                                  PathStyle="{StaticResource MagnifyingGlass}">
                 <controls:PathButton.Content>
                     <TextBlock Margin="-2,0,0,0"
@@ -105,9 +110,9 @@
                                                  HorizontalAlignment="Left"
                                                  VerticalAlignment="Center"
                                                  Command="{Binding Save}"
+                                                 IconCheckedColor="#36d66e"
                                                  IconHoverColor="#36d66e"
                                                  IsChecked="{Binding IsStored, Mode=OneWay}"
-                                                 PathCheckedBrush="#36d66e"
                                                  PathStyle="{StaticResource Save}">
                                 <controls:PathButton.ToolTip>
                                     <TextBlock>
@@ -199,9 +204,9 @@
                                                      HorizontalAlignment="Left"
                                                      VerticalAlignment="Center"
                                                      Command="{Binding Save}"
+                                                     IconCheckedColor="#36d66e"
                                                      IconHoverColor="#36d66e"
                                                      IsChecked="{Binding IsStored, Mode=OneWay}"
-                                                     PathCheckedBrush="#36d66e"
                                                      PathStyle="{StaticResource Save}">
                                     <controls:PathButton.ToolTip>
                                         <TextBlock>
