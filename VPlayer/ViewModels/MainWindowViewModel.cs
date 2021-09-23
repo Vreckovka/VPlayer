@@ -119,7 +119,6 @@ namespace VPlayer.ViewModels
   //*********************************************************************************************************************************
   //
   //*****BUGS*****
-  //TODO: Niekedy ked prepnes automaticky output sound device tak equalizer sa zastavi a da sa reloadnut ze pausnes a znovu spustis hudubu - mal som pusteny tv show a potom som z playlistu pustil hudbu
   //TODO: Ked je buffering v prehravaci a das vypnut appku tak spadne a nevypne sa poriadne (zostane aj niekedy bezat potom na pozadi, nejaky thread niekde asi)
   //TODO: Nespojilo playlisty s rovnakym hash po spusteni (neviem ci TV show alebo hudba) (mozno tv show ze pustis z detailu a das save a potom znovu z detailu)
   //TODO: Nespaja niektorych aristov pri load

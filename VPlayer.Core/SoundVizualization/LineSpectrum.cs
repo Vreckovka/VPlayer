@@ -251,7 +251,7 @@ namespace WinformsVisualization.Visualization
 
       if (range != 0)
       {
-        if (range < min)
+        if (range < 0.2)
         {
           for (int i = 0; i < data.Length; i++)
           {

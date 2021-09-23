@@ -448,7 +448,6 @@
                                       IconCheckedColor="#4298f5"
                                       IconDefaultColor="#353535"
                                       IconHoverColor="#4298f5"
-                                      IsChecked="False"
                                       PathStyle="{StaticResource Windows}"
                                       ToolTip="Windows volume">
                     <controls1:PathButton.Style>
@@ -499,7 +498,6 @@
 
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsChecked" Value="True">
-                                                <Setter TargetName="PathIcon" Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IconCheckedColor}" />
 
                                                 <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}" />
 
@@ -564,15 +562,17 @@
                     </controls1:PathButton.Style>
                 </controls1:PathButton>
 
-                <Popup HorizontalAlignment="Right"
+                <Popup x:Name="WindowsPopup"
+                       HorizontalAlignment="Right"
                        AllowsTransparency="True"
                        HorizontalOffset="-125"
                        IsOpen="{Binding ElementName=HideButton, Path=IsChecked}"
+                       Opened="Popup_Opened"
                        Placement="Top"
                        PlacementTarget="{Binding ElementName=HideButton}"
                        PopupAnimation="Slide"
                        StaysOpen="False"
-                       VerticalOffset="-17">
+                       VerticalOffset="-14">
                     <Border Width="300"
                             Height="100"
                             VerticalAlignment="Bottom"
@@ -596,14 +596,16 @@
                                   Margin="10,3,10,5"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Bottom">
-                                <Slider Grid.Row="0"
+                                <Slider x:Name="WindowsSlider"
+                                        Grid.Row="0"
                                         Height="4"
                                         Margin="0,0,0,0"
                                         Padding="0"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Top"
+                                        PreviewMouseLeftButtonUp="Slider_MouseLeftButtonUp"
+                                        Focusable="True"
                                         Foreground="{StaticResource DefaultRedBrush}"
-                                        IsMoveToPointEnabled="True"
                                         Maximum="100"
                                         Value="{Binding ActualVolume, Mode=TwoWay}" />
 
@@ -647,6 +649,8 @@
                         Foreground="{StaticResource DefaultRedBrush}"
                         IsMoveToPointEnabled="True"
                         Maximum="300"
+                        PreviewMouseLeftButtonUp="Slider_MouseLeftButtonUp"
+                        MouseWheel="Slider_PreviewMouseWheel"
                         Value="{Binding ActualVolume, Mode=TwoWay}">
                     <Slider.Style>
                         <Style BasedOn="{StaticResource {x:Type Slider}}" TargetType="Slider">

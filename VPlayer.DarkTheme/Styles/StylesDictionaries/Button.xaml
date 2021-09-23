@@ -326,11 +326,11 @@
                     </Border>
 
                     <ControlTemplate.Triggers>
-                        <!--<Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="PathIcon" Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IconCheckedBrush}" />
-                            <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=ForegroundCheckedColor}" />
-                            <Setter TargetName="PathIcon" Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IconCheckedBrush}" />
-                        </Trigger>-->
+                        <Trigger Property="IsChecked" Value="True">
+                            <!--<Setter TargetName="PathIcon" Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IconCheckedBrush}" />-->
+                            <!--<Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=ForegroundCheckedColor}" />-->
+                            <!--<Setter TargetName="PathIcon" Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IconCheckedBrush}" />-->
+                        </Trigger>
 
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Cursor" Value="Hand" />
