@@ -5,6 +5,7 @@
                     xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore.WPF"
                     xmlns:controls1="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
                     xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF"
+                    xmlns:converters1="clr-namespace:VPlayer.Core.Converters"
                     xmlns:domainClasses="clr-namespace:VPlayer.AudioStorage.DomainClasses;assembly=VPlayer.AudioStorage"
                     xmlns:domainClasses1="clr-namespace:VPlayer.AudioStorage.DomainClasses;assembly=VPLayer.Domain"
                     xmlns:library="clr-namespace:VPlayer.Library"
@@ -17,9 +18,7 @@
 
     <Duration x:Key="AnimationDuration">0:0:0:0.15</Duration>
 
-    <library:CacheImageConverter x:Key="CacheImageConverter"
-                                 DecodeHeight="250"
-                                 DecodeWidth="250" />
+    <library:CacheImageConverter x:Key="CacheImageConverter" />
 
     <Style x:Key="PlayableWrapPanelItemButtons"
            BasedOn="{StaticResource BorderlessButtonStyle}"

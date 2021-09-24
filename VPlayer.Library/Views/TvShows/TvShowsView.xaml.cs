@@ -13,4 +13,6 @@ namespace VPlayer.Home.Views.TvShows
       InitializeComponent();
     }
   }
+
+
 }

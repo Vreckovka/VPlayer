@@ -15,6 +15,9 @@ namespace VPlayer.Core.Managers.Status
 
       Id = Guid.NewGuid();
       NumberOfProcesses = numberOfProcesses;
+
+
+      
     }
 
     #region Properties

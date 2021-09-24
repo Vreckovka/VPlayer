@@ -20,6 +20,10 @@
 
     <library:CacheImageConverter x:Key="CacheImageConverter" />
 
+    <library:CacheImageConverter x:Key="CacheImageConverterLowerQuality"
+                                 DecodeHeight="350"
+                                 DecodeWidth="350" />
+
     <Style x:Key="LyricsStyle" TargetType="TextBox">
         <Setter Property="FontSize" Value="24" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -227,7 +231,6 @@
 
                                     <controls2:PathButton Margin="5,15,5,7"
                                                           Padding="55,9"
-                                                          CornerRadius="5"
                                                           HorizontalAlignment="Center"
                                                           Background="#08ffffff"
                                                           BorderDefaultColor="#252525"
@@ -235,6 +238,7 @@
                                                           BorderThickness="1"
                                                           Command="{Binding ApplyPernamently}"
                                                           Content="APPLY PERNAMENTLY"
+                                                          CornerRadius="5"
                                                           EnableBorderAnimation="True"
                                                           FontWeight="Bold"
                                                           ForegroundDefaultColor="#80ffffff"
@@ -889,15 +893,15 @@
                     </Grid.ColumnDefinitions>
 
                     <Image Grid.Column="0"
-                           Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualItem.ImagePath, Converter={StaticResource CacheImageConverter}, IsAsync=True}"
+                           Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualItem.ImagePath, Converter={StaticResource CacheImageConverterLowerQuality}, IsAsync=True}"
                            Stretch="UniformToFill" />
 
                     <Image Grid.Column="1"
-                           Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualItem.ImagePath, Converter={StaticResource CacheImageConverter}, IsAsync=True}"
+                           Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualItem.ImagePath, Converter={StaticResource CacheImageConverterLowerQuality}, IsAsync=True}"
                            Stretch="UniformToFill" />
                 </Grid>
 
-                <Grid>
+                <Grid Opacity="1">
                     <Grid.Background>
                         <LinearGradientBrush StartPoint="1,0" EndPoint="0 0">
                             <GradientStop Offset="1" Color="#FF000000" />

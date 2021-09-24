@@ -12,6 +12,12 @@ using VPlayer.Core.ViewModels.Albums;
 
 namespace VPlayer.Library
 {
+  public class CacheImageParameters
+  {
+    public int? DecodeHeight { get; set; }
+    public int? DecodeWidth { get; set; }
+  }
+
   public class CacheImageConverter : MarkupExtension, IValueConverter
   {
     public int? DecodeWidth { get; set; }
@@ -31,13 +37,7 @@ namespace VPlayer.Library
       return this;
     }
 
-    #region Convert
-
-    public object Convert(
-      object value,
-      Type targetType,
-      object parameter,
-      CultureInfo culture)
+    protected BitmapImage GetBitmapImage(object value, object parameter)
     {
       if (value is BitmapImage bitmapImage1)
       {
@@ -69,20 +69,7 @@ namespace VPlayer.Library
       bitmapImage.BeginInit();
       bitmapImage.StreamSource = new FileStream(path, FileMode.Open, FileAccess.Read);
 
-      if (int.TryParse(parameter?.ToString(), out var pixelSize) || DecodeWidth != null || DecodeHeight != null)
-      {
-        if (pixelSize > 0)
-          bitmapImage.DecodePixelWidth = pixelSize;
-
-        if (pixelSize > 0)
-          bitmapImage.DecodePixelHeight = pixelSize;
-
-        if(DecodeWidth != null)
-          bitmapImage.DecodePixelWidth = DecodeWidth.Value;
-
-        if(DecodeHeight != null)
-          bitmapImage.DecodePixelHeight = DecodeHeight.Value;
-      }
+      DecodePixelSize(parameter, bitmapImage);
 
       bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
       bitmapImage.EndInit();
@@ -92,12 +79,28 @@ namespace VPlayer.Library
       lastLoadedImage = bitmapImage;
 
 
-
       return bitmapImage;
     }
 
-    #endregion
+    #region Convert
 
+    public virtual object Convert(
+      object value,
+      Type targetType,
+      object parameter,
+      CultureInfo culture)
+    {
+      if (parameter is CacheImageParameters imageParameters)
+      {
+        DecodeHeight = imageParameters.DecodeHeight;
+        DecodeWidth = imageParameters.DecodeWidth;
+      }
+
+      return GetBitmapImage(value, parameter);
+    }
+
+    #endregion
+ 
     #region RefreshDictionary
 
     public static void RefreshDictionary(string imagePath)
@@ -115,6 +118,24 @@ namespace VPlayer.Library
     }
 
     #endregion
+
+    protected virtual void  DecodePixelSize(object parameter, BitmapImage bitmapImage)
+    {
+      if (int.TryParse(parameter?.ToString(), out var pixelSize) || DecodeWidth != null || DecodeHeight != null)
+      {
+        if (pixelSize > 0)
+          bitmapImage.DecodePixelWidth = pixelSize;
+
+        if (pixelSize > 0)
+          bitmapImage.DecodePixelHeight = pixelSize;
+
+        if (DecodeWidth != null)
+          bitmapImage.DecodePixelWidth = DecodeWidth.Value;
+
+        if (DecodeHeight != null)
+          bitmapImage.DecodePixelHeight = DecodeHeight.Value;
+      }
+    }
 
     private void AddConverterToDictionary()
     {

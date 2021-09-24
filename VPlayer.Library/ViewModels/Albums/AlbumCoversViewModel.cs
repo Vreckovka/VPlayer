@@ -361,6 +361,8 @@ namespace VPlayer.Home.ViewModels.Albums
 
     #endregion
 
+    #region ResetViewModel
+
     private void ResetViewModel()
     {
       FoundConvers = 0;
@@ -371,6 +373,11 @@ namespace VPlayer.Home.ViewModels.Albums
       ClearTmpFolder();
     }
 
+    #endregion
+
+    #region ClearTmpFolder
+
+
     private void ClearTmpFolder()
     {
       if (Directory.Exists(tmpFolderPath))
@@ -378,6 +385,10 @@ namespace VPlayer.Home.ViewModels.Albums
         Directory.Delete(tmpFolderPath, true);
       }
     }
+
+    #endregion
+
+    #region SaveCover
 
     private Task<string> SaveCover(byte[] data)
     {
@@ -402,6 +413,8 @@ namespace VPlayer.Home.ViewModels.Albums
       });
     }
 
+    #endregion
+
     #region SaveImage
 
     private Task<string> SaveImage(AlbumCoverViewModel albumCover)
@@ -416,7 +429,7 @@ namespace VPlayer.Home.ViewModels.Albums
         if (string.IsNullOrEmpty(finalPath))
         {
           finalPath = Path.Combine(AudioInfoDownloader.GetAlbumCoverImagePath(albumViewModel.Model));
-
+        
           albumViewModel.Model.AlbumFrontCoverFilePath = finalPath;
         }
 
@@ -429,6 +442,8 @@ namespace VPlayer.Home.ViewModels.Albums
 
         CacheImageConverter.RefreshDictionary(finalPath);
 
+
+        albumViewModel.Model.AlbumFrontCoverURI = albumCover.Model.Url;
         storage.UpdateEntityAsync(albumViewModel.Model);
 
 
