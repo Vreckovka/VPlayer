@@ -111,13 +111,15 @@ namespace VPlayer.Core.ViewModels
     {
       reloadPosition = ActualItem.ActualPosition;
 
-      ((VLCPlayer)base.MediaPlayer).Reload();
+      MediaPlayer.Reload();
 
       await SetMedia(ActualItem.Model);
 
-      IsPlayFnished = false;
-
-      await Play();
+      if (IsPlaying)
+      {
+        IsPlayFnished = false;
+        await Play();
+      }
     }
 
     #endregion

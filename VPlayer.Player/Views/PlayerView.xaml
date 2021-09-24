@@ -14,6 +14,7 @@
              xmlns:statusMessage="clr-namespace:VCore.WPF.Controls.StatusMessage;assembly=VCore.WPF"
              xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
              xmlns:views="clr-namespace:VPlayer.Player.Views"
+             xmlns:views1="clr-namespace:VPlayer.Player.Views;assembly=VCore.WPF"
              Focusable="False"
              mc:Ignorable="d">
 
@@ -603,11 +604,14 @@
                                         Padding="0"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Top"
-                                        PreviewMouseLeftButtonUp="Slider_MouseLeftButtonUp"
                                         Focusable="True"
                                         Foreground="{StaticResource DefaultRedBrush}"
                                         Maximum="100"
-                                        Value="{Binding ActualVolume, Mode=TwoWay}" />
+                                        Value="{Binding ActualVolume, Mode=TwoWay}">
+                                    <b:Interaction.Behaviors>
+                                        <views1:SliderHookBehavior Step="5" />
+                                    </b:Interaction.Behaviors>
+                                </Slider>
 
                                 <TextBlock Margin="0,0,0,0"
                                            HorizontalAlignment="Left"
@@ -649,8 +653,6 @@
                         Foreground="{StaticResource DefaultRedBrush}"
                         IsMoveToPointEnabled="True"
                         Maximum="300"
-                        PreviewMouseLeftButtonUp="Slider_MouseLeftButtonUp"
-                        MouseWheel="Slider_PreviewMouseWheel"
                         Value="{Binding ActualVolume, Mode=TwoWay}">
                     <Slider.Style>
                         <Style BasedOn="{StaticResource {x:Type Slider}}" TargetType="Slider">
@@ -662,6 +664,9 @@
                             </Style.Triggers>
                         </Style>
                     </Slider.Style>
+                    <b:Interaction.Behaviors>
+                        <views1:SliderHookBehavior Step="5" />
+                    </b:Interaction.Behaviors>
                 </Slider>
 
                 <Grid Grid.Row="1" Margin="0,5,0,10">

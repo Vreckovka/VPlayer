@@ -9,7 +9,9 @@
                     xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.DarkTheme"
                     xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
                     xmlns:soundManagement="clr-namespace:SoundManagement;assembly=SoundManagement"
-                    xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors;assembly=VPlayer.Core">
+                    xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors;assembly=VPlayer.Core"
+                    xmlns:themes="clr-namespace:VPlayer.WindowsPlayer.Vlc.Themes"
+                    xmlns:views="clr-namespace:VPlayer.Player.Views;assembly=VCore.WPF">
 
 
     <ResourceDictionary.MergedDictionaries>
@@ -26,10 +28,10 @@
                     <Border Width="900"
                             Height="120"
                             Margin="0,0,0,17"
-                            Padding="10,5"
+                            Padding="12,5,15,8"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Bottom"
-                            Background="#cc252525"
+                            Background="#f0252525"
                             CornerRadius="0 0 0 0">
                         <Grid Grid.IsSharedSizeScope="True">
                             <Grid.RowDefinitions>
@@ -79,11 +81,12 @@
 
                             <Grid Grid.Row="2"
                                   Grid.Column="2"
-                                  HorizontalAlignment="Right"
+                                  Margin="5,0,0,0"
                                   VerticalAlignment="Center">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="auto" />
                                     <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
 
                                 <Grid Grid.Column="0"
@@ -100,10 +103,9 @@
                                                           Foreground="#50ffffff"
                                                           ForegroundCheckedColor="White"
                                                           ForegroundDefaultColor="#50ffffff"
-                                                          IconDefaultColor="#656565"
-                                                          IconHoverColor="#4298f5"
-                                                          IsChecked="False"
                                                           IconCheckedColor="#4298f5"
+                                                          IconDefaultColor="#555555"
+                                                          IconHoverColor="#4298f5"
                                                           PathStyle="{StaticResource Windows}"
                                                           ToolTip="Windows volume">
                                         <controls1:PathButton.Style>
@@ -159,16 +161,7 @@
                                                             </Border>
 
                                                             <ControlTemplate.Triggers>
-                                                                <Trigger Property="IsChecked" Value="True">
-                                                                    <Setter TargetName="PathIcon" Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IconCheckedColor}" />
-
-                                                                    <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}" />
-
-                                                                    <Trigger.EnterActions>
-                                                                        <RemoveStoryboard BeginStoryboardName="ResetForegroundStoryBoard" />
-                                                                        <RemoveStoryboard BeginStoryboardName="ChangeForegroundStoryBoard" />
-                                                                    </Trigger.EnterActions>
-                                                                </Trigger>
+                                                                <Trigger Property="IsChecked" Value="True" />
 
                                                                 <Trigger Property="IsMouseOver" Value="True">
                                                                     <Setter Property="Cursor" Value="Hand" />
@@ -237,8 +230,8 @@
                                         <Border Width="300"
                                                 Height="100"
                                                 VerticalAlignment="Bottom"
-                                                Background="#101010"
-                                                BorderBrush="#202020"
+                                                Background="#ee252525"
+                                                BorderBrush="#454545"
                                                 BorderThickness="1">
                                             <Grid>
                                                 <Grid.RowDefinitions>
@@ -257,16 +250,22 @@
                                                       Margin="10,3,10,5"
                                                       HorizontalAlignment="Stretch"
                                                       VerticalAlignment="Bottom">
-                                                    <Slider Grid.Row="0"
+                                                    <Slider x:Name="WindowsSlider"
+                                                            Grid.Row="0"
                                                             Height="4"
                                                             Margin="0,0,0,0"
                                                             Padding="0"
                                                             HorizontalAlignment="Stretch"
                                                             VerticalAlignment="Top"
+                                                            Focusable="True"
                                                             Foreground="{StaticResource DefaultRedBrush}"
                                                             IsMoveToPointEnabled="True"
                                                             Maximum="100"
-                                                            Value="{Binding ActualVolume, Mode=TwoWay}" />
+                                                            Value="{Binding ActualVolume, Mode=TwoWay}">
+                                                        <b:Interaction.Behaviors>
+                                                            <views:SliderHookBehavior Step="5" />
+                                                        </b:Interaction.Behaviors>
+                                                    </Slider>
 
                                                     <TextBlock Margin="0,0,0,0"
                                                                HorizontalAlignment="Left"
@@ -286,10 +285,37 @@
                                                 </Grid>
                                             </Grid>
                                         </Border>
+
+                                        <b:Interaction.Behaviors>
+                                            <themes:PopupOpenedHookToSliderBehavior Slider="{Binding ElementName=WindowsSlider}" />
+                                        </b:Interaction.Behaviors>
                                     </Popup>
                                 </Grid>
 
-                                <Grid Grid.Column="1">
+                                <StackPanel Grid.Column="1"
+                                            VerticalAlignment="Center"
+                                            DataContext="{Binding ActualViewModel}"
+                                            Orientation="Horizontal"
+                                            Margin="-10 0 5 15"
+                                            ToolTip="{Binding ActualViewModel}">
+                                    <controls1:PathButton Margin="0,0"
+                                                          Command="{Binding ReloadFile}"
+                                                          IconWidth="20"
+                                                          IsReadOnly="True"
+                                                          PathStyle="{StaticResource arrows-rotate}"
+                                                          ToolTip="Reload file" />
+
+
+                                    <controls1:PathButton Margin="5,0"
+                                                          Command="{Binding ChangePlaylistFavorite}"
+                                                          IconWidth="20"
+                                                          IsChecked="{Binding ActualItem.IsFavorite, Mode=TwoWay}"
+                                                          IsReadOnly="False"
+                                                          PathStyle="{StaticResource star}"
+                                                          ToolTip="Is favorite" />
+                                </StackPanel>
+
+                                <Grid Grid.Column="2" HorizontalAlignment="Stretch">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="auto" />
                                         <RowDefinition Height="*" />
@@ -309,15 +335,19 @@
                                                Text="Volume" />
 
                                     <Slider Grid.Row="0"
+                                            Grid.Column="0"
                                             Grid.ColumnSpan="2"
-                                            Width="150"
                                             Height="4"
-                                            HorizontalAlignment="Right"
+                                            HorizontalAlignment="Stretch"
                                             VerticalAlignment="Bottom"
                                             Foreground="{StaticResource DefaultRedBrush}"
                                             IsMoveToPointEnabled="True"
                                             Maximum="300"
-                                            Value="{Binding ActualVolume, Mode=TwoWay}" />
+                                            Value="{Binding ActualVolume, Mode=TwoWay}">
+                                        <b:Interaction.Behaviors>
+                                            <views:SliderHookBehavior Step="5" />
+                                        </b:Interaction.Behaviors>
+                                    </Slider>
 
 
 
