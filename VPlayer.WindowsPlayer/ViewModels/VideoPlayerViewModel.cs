@@ -603,6 +603,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region DownloadItemInfo
+
     protected override async Task DownloadItemInfo(CancellationToken cancellationToken)
     {
       await base.DownloadItemInfo(cancellationToken);
@@ -610,6 +612,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       await FindOnCsfd(ActualItem, cancellationToken);
     }
 
+    #endregion
 
     #region FindOnCsfd
 
@@ -717,6 +720,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
             UpdateVideoItem(viewModel, item, item.Name);
           }
         }
+        else
+        {
+          DownloadedItemsCount++;
+        }
       });
     }
 
@@ -738,7 +745,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
         {
           tvShowItem.CSFDItem.OriginalName = string.IsNullOrEmpty(csfdEpisode.OriginalName) ? csfdEpisode.Name : csfdEpisode.OriginalName;
         }
+
+        DownloadedItemsCount++;
       }
+
+     
     }
 
     #endregion

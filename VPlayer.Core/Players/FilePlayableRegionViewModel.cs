@@ -91,6 +91,30 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+
+
+    #region DownloadedItemsCount
+
+    private int downloadedItemsCount;
+
+    public int DownloadedItemsCount
+    {
+      get { return downloadedItemsCount; }
+      set
+      {
+        if (value != downloadedItemsCount)
+        {
+          downloadedItemsCount = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+
+
+
     #endregion
 
     #region Commands
@@ -479,6 +503,27 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
+
+    protected override Task BeforePlayEvent(PlayItemsEventData<TItemViewModel> data)
+    {
+      Application.Current.Dispatcher.Invoke(() =>
+      {
+        DownloadedItemsCount = 0;
+      });
+    
+
+      return base.BeforePlayEvent(data);
+    }
+
+    protected override void BeforeClearPlaylist()
+    {
+      Application.Current.Dispatcher.Invoke(() =>
+      {
+        DownloadedItemsCount = 0;
+      });
+
+      base.BeforeClearPlaylist();
+    }
 
     #region Dispose
 

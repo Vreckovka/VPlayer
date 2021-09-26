@@ -1080,6 +1080,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
                   addArtists?.RaiseCanExecuteChanged();
                   addAlbums?.RaiseCanExecuteChanged();
+
+                  DownloadedItemsCount++;
                 }
 
                 catch (TaskCanceledException)
@@ -1375,6 +1377,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     protected override async Task BeforePlayEvent(PlayItemsEventData<SoundItemInPlaylistViewModel> data)
     {
+      await base.BeforePlayEvent(data);
+
       Application.Current?.Dispatcher?.Invoke(() =>
       {
         WasAllSongProcessed = false;
@@ -1841,6 +1845,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
 
     #endregion
+
+    //protected override Task DownloadItemInfo(CancellationToken cancellationToken)
+    //{
+    //  return DownloadSongInfo(ActualItem, cancellationToken);
+    //}
 
     #region Dispose
 
