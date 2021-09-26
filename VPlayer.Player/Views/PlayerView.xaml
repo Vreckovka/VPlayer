@@ -15,6 +15,7 @@
              xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
              xmlns:views="clr-namespace:VPlayer.Player.Views"
              xmlns:views1="clr-namespace:VPlayer.Player.Views;assembly=VCore.WPF"
+             xmlns:sliders="clr-namespace:VCore.WPF.Behaviors.Sliders;assembly=VCore.WPF"
              Focusable="False"
              mc:Ignorable="d">
 
@@ -609,7 +610,7 @@
                                         Maximum="100"
                                         Value="{Binding ActualVolume, Mode=TwoWay}">
                                     <b:Interaction.Behaviors>
-                                        <views1:SliderHookBehavior Step="5" />
+                                        <sliders:SliderHookBehavior Step="5" />
                                     </b:Interaction.Behaviors>
                                 </Slider>
 
@@ -665,7 +666,7 @@
                         </Style>
                     </Slider.Style>
                     <b:Interaction.Behaviors>
-                        <views1:SliderHookBehavior Step="5" />
+                        <sliders:SliderHookBehavior Step="5" />
                     </b:Interaction.Behaviors>
                 </Slider>
 

@@ -49,18 +49,13 @@ namespace VPlayer.Home.ViewModels.Artists
 
     #region AlbumChange
 
-    private void AlbumChange(IItemChanged<Album> itemChanged)
+    private async void AlbumChange(IItemChanged<Album> itemChanged)
     {
       if (itemChanged.Item is Album album && LibraryCollection.WasLoaded)
       {
         ArtistViewModel artist = null;
 
-        if (album.Artist == null)
-        {
-          artist = LibraryCollection.Items.SingleOrDefault(x => x.Model.Albums.Count(y => y.Id == album.Id) != 0);
-        }
-        else
-          artist = LibraryCollection.Items.SingleOrDefault(x => x.ModelId == album.Artist.Id);
+        artist = LibraryCollection.Items.SingleOrDefault(x => x.ModelId == album.ArtistId);
 
         if (artist != null && !artist.Model.Albums.Contains(album))
         {
@@ -72,8 +67,22 @@ namespace VPlayer.Home.ViewModels.Artists
               {
                 if (existing == null)
                 {
+                  bool wasCoverSet = false;
+                  if(artist.Model.Albums.Count == 0)
+                  {
+                    artist.Model.AlbumIdCover = album.Id;
+                    wasCoverSet = true;
+                  }
+
                   artist.Model.Albums.Add(album);
+
                   artist.RaisePropertyChange(nameof(artist.BottomText));
+
+                  if(wasCoverSet)
+                  {
+                    artist.RaisePropertyChange(nameof(artist.ImageThumbnail));
+                    await storageManager.UpdateEntityAsync(artist.Model);
+                  }
                 }
               }
 

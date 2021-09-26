@@ -11,7 +11,8 @@
                     xmlns:soundManagement="clr-namespace:SoundManagement;assembly=SoundManagement"
                     xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors;assembly=VPlayer.Core"
                     xmlns:themes="clr-namespace:VPlayer.WindowsPlayer.Vlc.Themes"
-                    xmlns:views="clr-namespace:VPlayer.Player.Views;assembly=VCore.WPF">
+                    xmlns:views="clr-namespace:VPlayer.Player.Views;assembly=VCore.WPF"
+                    xmlns:sliders="clr-namespace:VCore.WPF.Behaviors.Sliders;assembly=VCore.WPF">
 
 
     <ResourceDictionary.MergedDictionaries>
@@ -263,7 +264,7 @@
                                                             Maximum="100"
                                                             Value="{Binding ActualVolume, Mode=TwoWay}">
                                                         <b:Interaction.Behaviors>
-                                                            <views:SliderHookBehavior Step="5" />
+                                                            <sliders:SliderHookBehavior Step="5" />
                                                         </b:Interaction.Behaviors>
                                                     </Slider>
 
@@ -345,7 +346,7 @@
                                             Maximum="300"
                                             Value="{Binding ActualVolume, Mode=TwoWay}">
                                         <b:Interaction.Behaviors>
-                                            <views:SliderHookBehavior Step="5" />
+                                            <sliders:SliderHookBehavior Step="5" />
                                         </b:Interaction.Behaviors>
                                     </Slider>
 

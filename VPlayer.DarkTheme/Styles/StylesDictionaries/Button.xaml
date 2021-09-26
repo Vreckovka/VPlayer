@@ -271,7 +271,7 @@
 
     <Style TargetType="{x:Type controls:PathButton}">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="Green" />
+        <Setter Property="ForegroundDefaultColor" Value="Green" />
         <Setter Property="IconCheckedColor" Value="#FFEFDF" />
         <Setter Property="IconDefaultColor" Value="#50FFEFDF" />
         <Setter Property="BorderThickness" Value="0" />
@@ -299,10 +299,15 @@
                                     Margin="{TemplateBinding IconMargin}"
                                     HorizontalAlignment="{TemplateBinding HorizontalIconAlignment}"
                                     VerticalAlignment="{TemplateBinding VerticalIconAlignment}">
-                                <Path x:Name="PathIcon"
-                                      Fill="{TemplateBinding IconBrush}"
-                                      Stretch="{TemplateBinding IconStretch}"
-                                      Style="{TemplateBinding PathStyle}" />
+                                <Grid>
+                                    <Path x:Name="PathIcon"
+                                          Fill="{TemplateBinding IconBrush}"
+                                          Stretch="{TemplateBinding IconStretch}"
+                                          Style="{TemplateBinding PathStyle}" />
+
+                                    <TextBlock Foreground="{TemplateBinding IconBrush}" Text="{Binding Glyph}" />
+                                </Grid>
+
                             </Border>
 
                             <Border Grid.Column="1">
@@ -342,7 +347,7 @@
 
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="IconDefaultColor" Value="#191919" />
-                            <Setter Property="ForegroundDefaultColor" Value="#252525" />
+                            <Setter Property="ForegroundDefaultColor" Value="#151515" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

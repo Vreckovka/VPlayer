@@ -97,7 +97,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
           }
           else
           {
-            var newAlbum = await cloudService.CreateFolder(albumName, artist.id);
+            var newAlbum = await cloudService.CreateFolder(GetPathValidName(albumName), artist.id);
 
             if (newAlbum != null)
             {
@@ -107,13 +107,13 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
         }
         else if (!string.IsNullOrEmpty(artistName))
         {
-          var newArtistFolder = await cloudService.CreateFolder(artistName, lyricsFolderId);
+          var newArtistFolder = await cloudService.CreateFolder(GetPathValidName(artistName), lyricsFolderId);
 
           artistsFolders?.Add(newArtistFolder);
 
           if (!string.IsNullOrEmpty(albumName) && newArtistFolder != null)
           {
-            var newAlbum = await cloudService.CreateFolder(albumName, newArtistFolder.id);
+            var newAlbum = await cloudService.CreateFolder(GetPathValidName(albumName), newArtistFolder.id);
 
             if (newAlbum != null)
             {

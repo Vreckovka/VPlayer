@@ -152,8 +152,8 @@ namespace VPlayer.Core.ViewModels
           }
           actualItemSubject.OnNext(PlayList.IndexOf(actualItem));
 
-          OnActualItemChanged();
           RaisePropertyChanged();
+          OnActualItemChanged();
         }
       }
     }
@@ -735,13 +735,21 @@ namespace VPlayer.Core.ViewModels
 
       if (actualItemIndex >= PlayList.Count)
       {
-        Application.Current?.Dispatcher?.Invoke(() =>
+        if (!IsRepeate)
         {
-          IsPlayFnished = true;
-        });
+          Application.Current?.Dispatcher?.Invoke(() =>
+          {
+            IsPlayFnished = true;
+          });
 
-        Pause();
-        return;
+          Pause();
+          return;
+        }
+        else if (actualItemIndex > PlayList.Count - 1)
+        {
+          actualItemIndex = 0;
+          songIndex = 0;
+        }
       }
 
       Application.Current?.Dispatcher?.Invoke(() =>

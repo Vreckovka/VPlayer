@@ -12,6 +12,7 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.SoundItems;
+using VPLayer.Domain;
 
 namespace VPlayer.Core.ViewModels.Albums
 {
@@ -21,6 +22,7 @@ namespace VPlayer.Core.ViewModels.Albums
 
     private readonly IStorageManager storage;
     private readonly IViewModelsFactory viewModelsFactory;
+    private readonly IVPlayerCloudService iVPlayerCloudService;
     private readonly IVPlayerRegionProvider ivPlayerRegionProvider;
 
     #endregion Fields
@@ -32,10 +34,12 @@ namespace VPlayer.Core.ViewModels.Albums
       IEventAggregator eventAggregator,
       IStorageManager storage,
       IViewModelsFactory viewModelsFactory,
+      IVPlayerCloudService iVPlayerCloudService,
       IVPlayerRegionProvider ivPlayerRegionProvider) : base(model, eventAggregator)
     {
       this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+      this.iVPlayerCloudService = iVPlayerCloudService ?? throw new ArgumentNullException(nameof(iVPlayerCloudService));
       this.ivPlayerRegionProvider = ivPlayerRegionProvider ?? throw new ArgumentNullException(nameof(ivPlayerRegionProvider));
 
     }
@@ -56,19 +60,25 @@ namespace VPlayer.Core.ViewModels.Albums
 
     public override Task<IEnumerable<SongInPlayListViewModel>> GetItemsToPlay()
     {
-      return Task.Run(() =>
+      return Task.Run(async () =>
       {
         var songs = storage.GetRepository<Song>()
           .Include(x => x.ItemModel)
           .ThenInclude(x => x.FileInfo)
           .Include(x => x.Album)
+          .ThenInclude(x => x.Artist)
           .Where(x => x.Album.Id == Model.Id).ToList();
 
         var myComparer = new NumberStringComparer();
 
-        var playListSong = songs.OrderBy(x => x.Source.Split("\\").Last(), myComparer).ToList();
+        var songsAll = songs.OrderBy(x => x.Source.Split("\\").Last(), myComparer).ToList();
 
-        return playListSong.Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x));
+
+        var cloudSOngs = songsAll.Where(x => x.Source.Contains("http")).ToList();
+
+        await iVPlayerCloudService.GetItemSources(cloudSOngs.Select(x => x.ItemModel.FileInfo));
+
+        return songsAll.Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x));
       });
     }
 

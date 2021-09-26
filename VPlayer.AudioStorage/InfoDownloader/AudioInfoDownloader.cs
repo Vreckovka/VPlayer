@@ -717,6 +717,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
           ReleaseDate = release.Date,
           AlbumFrontCoverURI = albumCoverUrl,
           AlbumFrontCoverFilePath = coverPath,
+          NormalizedName = album.NormalizedName
         };
 
         statusMessage.Message = $"Album successfuly updated";

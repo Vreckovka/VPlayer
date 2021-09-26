@@ -19,7 +19,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     #region Properties
 
     public int? AlbumIdCover { get; set; }
-    public virtual ICollection<Album> Albums { get; set; }
+    public virtual ICollection<Album> Albums { get; set; } = new List<Album>();
     public string ArtistCover { get; set; }
     public string MusicBrainzId { get; set; }
     public string Name { get; set; }

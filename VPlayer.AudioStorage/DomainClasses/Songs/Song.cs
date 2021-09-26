@@ -29,7 +29,8 @@ namespace VPlayer.AudioStorage.DomainClasses
       Id = other.Id;
       Created = other.Created;
       Modified = other.Modified;
-
+      Artist = other.Artist;
+      Album = other.Album;
     }
   }
 
@@ -140,6 +141,9 @@ namespace VPlayer.AudioStorage.DomainClasses
     #region Properties
 
     public Album Album { get; set; }
+
+    [ForeignKey(nameof(ItemModel))]
+    public int ItemModelId { get; set; }
     public SoundItem ItemModel { get; set; }
 
     public string MusicBrainzId { get; set; }

@@ -184,6 +184,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
                 Title = audioInfo.Title,
                 Source = audioInfo.DiskLocation,
                 Name = Path.GetFileName(audioInfo.DiskLocation),
+                FullName = Path.GetFileName(audioInfo.DiskLocation)
               };
             }
 
@@ -548,7 +549,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
             }
             else
             {
-              if (album.Songs == null)
+              if (album.Songs == null || album.Songs.Count == 0)
               {
                 var dbAlbum = context.Albums.Where(x => x.Id == album.Id)
                   .Include(x => x.Songs)
@@ -587,34 +588,37 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     private Album CombineAlbums(Album originalAlbum, Album albumToCombine, AudioDatabaseContext context)
     {
-      try
+      if (originalAlbum.Id != albumToCombine.Id)
       {
+        try
+        {
+          var songsToAdd = (from x in albumToCombine.Songs
+                            where originalAlbum.Songs.All(y => y.ItemModel.NormalizedName != x.ItemModel.NormalizedName)
+                            select x)
+            .ToList();
 
-        var songsToAdd = (from x in albumToCombine.Songs
-                          where originalAlbum.Songs.All(y => y.ItemModel.NormalizedName != x.ItemModel.NormalizedName)
-                          select x)
-          .ToList();
+          originalAlbum.Songs.AddRange(songsToAdd);
 
-        originalAlbum.Songs.AddRange(songsToAdd);
+          context.Albums.Remove(albumToCombine);
+          context.SaveChanges();
 
-        context.Albums.Remove(albumToCombine);
+          PublishItemChanged(albumToCombine, Changed.Removed);
+          PublishItemChanged(originalAlbum);
 
-        context.SaveChanges();
+          logger.Log(Logger.MessageType.Warning, $"Combining album {albumToCombine.Name} to {originalAlbum.Name}");
 
-        PublishItemChanged(albumToCombine, Changed.Removed);
-        PublishItemChanged(originalAlbum);
+          ActionIsDone.OnNext(Unit.Default);
 
-        logger.Log(Logger.MessageType.Warning, $"Combining album {albumToCombine.Name} to {originalAlbum.Name}");
-
-        ActionIsDone.OnNext(Unit.Default);
-
-        return originalAlbum;
+          return originalAlbum;
+        }
+        catch (Exception ex)
+        {
+          logger.Log(ex);
+          return null;
+        }
       }
-      catch (Exception ex)
-      {
-        logger.Log(ex);
-        return null;
-      }
+
+      return originalAlbum;
     }
 
     #endregion CombineAlbums
@@ -795,7 +799,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #endregion
 
-    #region DeleteTvShow
+    #region DeleteAlbum
 
     public bool DeleteAlbum(Album album, AudioDatabaseContext context = null)
     {
@@ -819,15 +823,15 @@ namespace VPlayer.AudioStorage.AudioDatabase
       {
         foreach (var song in foundEntity.Songs)
         {
-          if (song.ItemModel != null)
-          {
-            if (song.ItemModel.FileInfo != null)
-            {
-              context.Remove(song.ItemModel?.FileInfo);
-            }
+          //if (song.ItemModel != null)
+          //{
+          //  if (song.ItemModel.FileInfo != null)
+          //  {
+          //    context.Remove(song.ItemModel?.FileInfo);
+          //  }
 
-            context.Remove(song.ItemModel);
-          }
+          //  context.Remove(song.ItemModel);
+          //}
 
           context.Remove(song);
         }
@@ -859,6 +863,47 @@ namespace VPlayer.AudioStorage.AudioDatabase
       }
 
       return result;
+    }
+
+    #endregion
+
+    #region DeleteArtist
+
+    public bool DeleteArtist(Artist artist)
+    {
+      using (var context = new AudioDatabaseContext())
+      {
+        var foundEntity = GetRepository<Artist>(context)
+          .Include(x => x.Albums)
+          .SingleOrDefault(x => x.Id == artist.Id);
+
+        bool result = false;
+
+        if (foundEntity != null)
+        {
+          if (foundEntity.Albums != null)
+          {
+            foreach (var album in foundEntity.Albums)
+            {
+              DeleteAlbum(album, context);
+            }
+          }
+
+          context.Remove(foundEntity);
+
+          var removedResult = context.SaveChanges();
+
+          result = removedResult > 0;
+
+          logger.Log(Logger.MessageType.Success, $"Entity was removed {foundEntity} {removedResult}");
+
+
+          PublishItemChanged(foundEntity, Changed.Removed);
+
+        }
+
+        return result;
+      }
     }
 
     #endregion
@@ -988,48 +1033,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
     #endregion
 
     #endregion
-
-    #region DeleteArtist
-
-    public bool DeleteArtist(Artist artist)
-    {
-      using (var context = new AudioDatabaseContext())
-      {
-        var foundEntity = GetRepository<Artist>(context)
-          .Include(x => x.Albums)
-          .SingleOrDefault(x => x.Id == artist.Id);
-
-        bool result = false;
-
-        if (foundEntity != null)
-        {
-          if (foundEntity.Albums != null)
-          {
-            foreach (var album in foundEntity.Albums)
-            {
-              DeleteAlbum(album, context);
-            }
-          }
-
-          context.Remove(foundEntity);
-
-          var removedResult = context.SaveChanges();
-
-          result = removedResult > 0;
-
-          logger.Log(Logger.MessageType.Success, $"Entity was removed {foundEntity} {removedResult}");
-
-
-          PublishItemChanged(foundEntity, Changed.Removed);
-
-        }
-
-        return result;
-      }
-    }
-
-    #endregion
-
+  
     #region TvShow methods
 
     #region UpdateWholeTvShow
@@ -1270,7 +1274,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #endregion
 
-  
+
 
     #region StoreTvShow
 

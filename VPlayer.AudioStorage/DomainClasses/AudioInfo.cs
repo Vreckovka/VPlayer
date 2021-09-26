@@ -17,6 +17,7 @@
     public string ArtistMbid { get; set; }
     public string DiskLocation { get; set; }
 
+
     /// <summary>
     /// Audio duration in seconds
     /// </summary>

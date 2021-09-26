@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
@@ -13,6 +15,8 @@ using Prism.Events;
 using SoundManagement;
 using VCore;
 using VCore.Helpers;
+using VCore.ItemsCollections.VirtualList;
+using VCore.ItemsCollections.VirtualList.VirtualLists;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Modularity.Interfaces;
 using VCore.WPF.Managers;
@@ -34,6 +38,7 @@ namespace VPlayer.Core.ViewModels
     where TPlaylistModel : class, IFilePlaylist<TPlaylistItemModel>, new()
     where TPlaylistItemModel : IItemInPlaylist<TModel>
   {
+    private readonly VLCPlayer vLcPlayer;
     private long lastTimeChangedMs;
 
 
@@ -47,6 +52,7 @@ namespace VPlayer.Core.ViewModels
       IStatusManager statusManager,
       VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, statusManager, windowManager, vLCPlayer)
     {
+      vLcPlayer = vLCPlayer ?? throw new ArgumentNullException(nameof(vLCPlayer));
       BufferingSubject.Throttle(TimeSpan.FromSeconds(0.5)).Subscribe(x =>
       {
         IsBuffering = x;
@@ -109,16 +115,19 @@ namespace VPlayer.Core.ViewModels
     private float? reloadPosition;
     public async void OnReloadFile()
     {
-      reloadPosition = ActualItem.ActualPosition;
-
-      MediaPlayer.Reload();
-
-      await SetMedia(ActualItem.Model);
-
-      if (IsPlaying)
+      if (ActualItem != null)
       {
-        IsPlayFnished = false;
-        await Play();
+        reloadPosition = ActualItem.ActualPosition;
+
+        MediaPlayer.Reload();
+
+        await SetMedia(ActualItem.Model);
+
+        if (IsPlaying)
+        {
+          IsPlayFnished = false;
+          await Play();
+        }
       }
     }
 
@@ -268,6 +277,8 @@ namespace VPlayer.Core.ViewModels
         ActualItem.ActualPosition = MediaPlayer.Position;
 
         lastTimeChangedMs = (long)(ActualItem.ActualPosition * (double)ActualItem.Duration) * 1000;
+
+      
       }
     }
 
