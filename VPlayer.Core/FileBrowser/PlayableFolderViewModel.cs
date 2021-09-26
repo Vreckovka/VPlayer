@@ -241,7 +241,7 @@ namespace VPlayer.Core.FileBrowser
 
           foreach (var file in acutalFolderfilesOrdered)
           {
-            var soundItem = soundItems.SingleOrDefault(x => x.FileInfo.FullName == file.Name);
+            var soundItem = soundItems.SingleOrDefault(x => x.FileInfo.Indentificator == file.Path);
 
             if (soundItem != null)
             {
@@ -255,7 +255,7 @@ namespace VPlayer.Core.FileBrowser
 
             foreach(var file in filesOrdered)
             {
-              var soundItem = soundItems.SingleOrDefault(x => x.FileInfo.FullName == file.Name);
+              var soundItem = soundItems.SingleOrDefault(x => x.FileInfo.Indentificator == file.Path);
 
               if(soundItem != null)
               {
