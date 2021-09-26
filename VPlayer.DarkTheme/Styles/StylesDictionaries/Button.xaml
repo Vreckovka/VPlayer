@@ -7,6 +7,7 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/VCore.WPF;component/StylesDictionaries/Paths.xaml" />
         <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VCore.WPF;component/StylesDictionaries/Fonts.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <Style TargetType="{x:Type Button}">
@@ -272,6 +273,7 @@
     <Style TargetType="{x:Type controls:PathButton}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="ForegroundDefaultColor" Value="Green" />
+        <Setter Property="GlyphFontFamily" Value="{StaticResource FontAwesome6Pro_Regular}" />
         <Setter Property="IconCheckedColor" Value="#FFEFDF" />
         <Setter Property="IconDefaultColor" Value="#50FFEFDF" />
         <Setter Property="BorderThickness" Value="0" />
@@ -305,7 +307,12 @@
                                           Stretch="{TemplateBinding IconStretch}"
                                           Style="{TemplateBinding PathStyle}" />
 
-                                    <TextBlock Foreground="{TemplateBinding IconBrush}" Text="{Binding Glyph}" />
+                                    <TextBlock HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontFamily="{TemplateBinding GlyphFontFamily}"
+                                               FontSize="{TemplateBinding GlyphFontSize}"
+                                               Foreground="{TemplateBinding IconBrush}"
+                                               Text="{TemplateBinding Glyph}" />
                                 </Grid>
 
                             </Border>

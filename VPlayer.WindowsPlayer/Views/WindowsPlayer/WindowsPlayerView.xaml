@@ -26,6 +26,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Views/WindowsPlayer/WindowsPlayerViewResources.xaml" />
+
             </ResourceDictionary.MergedDictionaries>
 
 
@@ -243,47 +244,51 @@
                                         <Setter Property="IsReadOnly" Value="True" />
                                     </Style>
 
+                                    <Style x:Key="plusStyle"
+                                           BasedOn="{StaticResource plus}"
+                                           TargetType="controls1:PathButton">
+                                        <Setter Property="Content" Value="+" />
+                                        <Setter Property="IsReadOnly" Value="True" />
+                                        <Setter Property="IsChecked" Value="False" />
+                                        <Setter Property="Margin" Value="2,0" />
+                                        <Setter Property="FontSize" Value="15" />
+                                        <Setter Property="ForegroundDefaultColor" Value="#454545" />
+                                        <Setter Property="IconDefaultColor" Value="#454545" />
+                                        <Setter Property="IconHoverColor" Value="#ccffffff" />
+
+                                        <Setter Property="GlyphFontFamily" Value="{StaticResource FontAwesome6Pro_Solid}" />
+                                        <Setter Property="GlyphFontSize" Value="13" />
+                                        <Setter Property="IconWidth" Value="auto" />
+                                        <Setter Property="IconMargin" Value="0 0 10 0" />
+                                        <Setter Property="Background" Value="#cc151515" />
+                                        <Setter Property="Padding" Value="7" />
+                                        <Setter Property="CornerRadius" Value="5" />
+                                    </Style>
+
                                     <DataTemplate x:Key="MusicPlayerTemplate">
                                         <StackPanel Margin="15,0,0,0"
                                                     HorizontalAlignment="Left"
                                                     Orientation="Horizontal">
-                                            <StackPanel.Resources>
-                                                <Style BasedOn="{StaticResource {x:Type controls1:PathButton}}" TargetType="controls1:PathButton">
-                                                    <Setter Property="Content" Value="+" />
-                                                    <Setter Property="IsReadOnly" Value="True" />
-                                                    <Setter Property="IsChecked" Value="False" />
-                                                    <Setter Property="Margin" Value="2,0" />
-                                                    <Setter Property="FontSize" Value="15" />
-                                                    <Setter Property="IconMargin" Value="0 0 3 0" />
-                                                    <Setter Property="ForegroundDefaultColor" Value="#454545" />
-                                                    <!--<Setter Property="FontFamily" Value="{StaticResource FontAwesome6Pro_Regular}" />-->
-                                                </Style>
-                                            </StackPanel.Resources>
-
                                             <StackPanel Orientation="Horizontal">
                                                 <controls1:PathButton Width="auto"
-                                                                      Padding="7"
-                                                                      Background="#cc151515"
                                                                       Command="{Binding AddArtists}"
-                                                                      CornerRadius="5"
-                                                                      IconHeight="10"
-                                                                      IconHoverColor="#ccffff"
-                                                                      IconWidth="10"
-                                                                      PathStyle="{StaticResource plus}"
+                                                                      Style="{StaticResource plusStyle}"
                                                                       ToolTip="Add artists">
                                                     <controls1:PathButton Width="auto"
                                                                           Content="{Binding ArtistThatCanBeAddedCount, StringFormat={}{0} +}"
                                                                           FontWeight="Bold"
                                                                           IconMargin="0 0 10 0"
-                                                                          IconWidth="23"
-                                                                          IsHitTestVisible="False"
-                                                                          PathStyle="{StaticResource user-music_path}">
+                                                                          IconWidth="20"
+                                                                          IsHitTestVisible="False">
                                                         <controls1:PathButton.Style>
-                                                            <Style BasedOn="{StaticResource {x:Type controls1:PathButton}}" TargetType="controls1:PathButton">
+                                                            <Style BasedOn="{StaticResource user-music}" TargetType="controls1:PathButton">
+
+                                                                <Setter Property="ForegroundDefaultColor" Value="#454545" />
+                                                                <Setter Property="IconDefaultColor" Value="#454545" />
                                                                 <Style.Triggers>
                                                                     <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=controls1:PathButton}}" Value="true">
-                                                                        <Setter Property="ForegroundDefaultColor" Value="{StaticResource BlueColor}" />
-                                                                        <Setter Property="IconDefaultColor" Value="#ccccffff" />
+                                                                        <Setter Property="ForegroundDefaultColor" Value="{StaticResource YellowColor}" />
+                                                                        <Setter Property="IconDefaultColor" Value="#ccffffff" />
                                                                     </DataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>
@@ -293,29 +298,88 @@
                                             </StackPanel>
 
                                             <StackPanel Orientation="Horizontal">
-                                                <controls1:PathButton Width="auto"
-                                                                      Padding="7"
-                                                                      Background="#cc151515"
-                                                                      Command="{Binding AddAlbums}"
-                                                                      CornerRadius="5"
-                                                                      IconHeight="12"
-                                                                      IconHoverColor="#ccffff"
-                                                                      IconWidth="12"
-                                                                      PathStyle="{StaticResource plus}"
+                                                <controls1:PathButton Command="{Binding AddAlbums}"
+                                                                      Style="{StaticResource plusStyle}"
                                                                       ToolTip="Add albums">
                                                     <controls1:PathButton Width="auto"
                                                                           Content="{Binding AlbumsThatCanBeAddedCount, StringFormat={}{0} +}"
                                                                           FontWeight="Bold"
                                                                           IconMargin="0 0 10 0"
                                                                           IconWidth="20"
-                                                                          IsHitTestVisible="False"
-                                                                          PathStyle="{StaticResource compact-disc_path}">
+                                                                          IsHitTestVisible="False">
                                                         <controls1:PathButton.Style>
-                                                            <Style BasedOn="{StaticResource {x:Type controls1:PathButton}}" TargetType="controls1:PathButton">
+                                                            <Style BasedOn="{StaticResource compact-disc}" TargetType="controls1:PathButton">
+                                                                <Setter Property="ForegroundDefaultColor" Value="#454545" />
+                                                                <Setter Property="IconDefaultColor" Value="#454545" />
+
                                                                 <Style.Triggers>
                                                                     <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=controls1:PathButton}}" Value="true">
-                                                                        <Setter Property="ForegroundDefaultColor" Value="{StaticResource GreenColor2}" />
-                                                                        <Setter Property="IconDefaultColor" Value="#ccccffff" />
+                                                                        <Setter Property="ForegroundDefaultColor" Value="{StaticResource YellowColor}" />
+                                                                        <Setter Property="IconDefaultColor" Value="#ccffffff" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </controls1:PathButton.Style>
+                                                    </controls1:PathButton>
+                                                </controls1:PathButton>
+                                            </StackPanel>
+
+
+                                        </StackPanel>
+
+                                    </DataTemplate>
+
+                                    <DataTemplate x:Key="VideoPlayerTemplate">
+                                        <StackPanel Margin="15,0,0,0"
+                                                    HorizontalAlignment="Left"
+                                                    Orientation="Horizontal">
+
+                                            <StackPanel Orientation="Horizontal">
+                                                <controls1:PathButton IsEnabled="False"
+                                                                      Style="{StaticResource plusStyle}"
+                                                                      ToolTip="Add tv show">
+                                                    <controls1:PathButton Width="auto"
+                                                                          Content="0"
+                                                                          FontWeight="Bold"
+                                                                          IconMargin="0 0 10 0"
+                                                                          IconWidth="20"
+                                                                          IsHitTestVisible="False">
+                                                        <controls1:PathButton.Style>
+                                                            <Style BasedOn="{StaticResource tv-retro}" TargetType="controls1:PathButton">
+                                                                <Setter Property="ForegroundDefaultColor" Value="#454545" />
+                                                                <Setter Property="IconDefaultColor" Value="#454545" />
+
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=controls1:PathButton}}" Value="true">
+                                                                        <Setter Property="ForegroundDefaultColor" Value="{StaticResource YellowColor}" />
+                                                                        <Setter Property="IconDefaultColor" Value="#ccffffff" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </controls1:PathButton.Style>
+                                                    </controls1:PathButton>
+                                                </controls1:PathButton>
+                                            </StackPanel>
+
+                                            <StackPanel Orientation="Horizontal">
+                                                <controls1:PathButton IsEnabled="False"
+                                                                      Style="{StaticResource plusStyle}"
+                                                                      ToolTip="Add seasons">
+                                                    <controls1:PathButton Width="auto"
+                                                                          Content="0"
+                                                                          FontWeight="Bold"
+                                                                          IconMargin="0 0 10 0"
+                                                                          IconWidth="20"
+                                                                          IsHitTestVisible="False">
+                                                        <controls1:PathButton.Style>
+                                                            <Style BasedOn="{StaticResource album-collection}" TargetType="controls1:PathButton">
+                                                                <Setter Property="ForegroundDefaultColor" Value="#454545" />
+                                                                <Setter Property="IconDefaultColor" Value="#454545" />
+
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=controls1:PathButton}}" Value="true">
+                                                                        <Setter Property="ForegroundDefaultColor" Value="{StaticResource YellowColor}" />
+                                                                        <Setter Property="IconDefaultColor" Value="#ccffffff" />
                                                                     </DataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>
@@ -325,12 +389,6 @@
                                             </StackPanel>
 
                                         </StackPanel>
-
-
-                                    </DataTemplate>
-
-                                    <DataTemplate x:Key="VideoPlayerTemplate">
-                                        <TextBlock Text="Ja som video" />
                                     </DataTemplate>
 
                                     <templateSelectors:PlayerTemplateSelector x:Key="PlayerTemplateSelector"
