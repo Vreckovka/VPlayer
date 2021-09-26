@@ -1225,7 +1225,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     public Task DownloadAllNotYetDownloaded(bool tryDownloadBroken = false)
     {
-      return Task.Run(() =>
+      return Task.Run(async () =>
       {
         using (var context = new AudioDatabaseContext())
         {
@@ -1237,7 +1237,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           foreach (var album in notUpdatedAlbums)
           {
-            audioInfoDownloader.UpdateItem(album);
+            await audioInfoDownloader.UpdateItem(album);
           }
 
           if (tryDownloadBroken)
@@ -1247,9 +1247,11 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
             foreach (var album in brokenAlbums)
             {
-              audioInfoDownloader.UpdateItem(album);
+              await audioInfoDownloader.UpdateItem(album);
             }
           }
+
+          context.SaveChanges();
         }
       });
     }

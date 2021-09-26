@@ -84,14 +84,14 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     #region UpdateItem
 
-    public void UpdateItem(dynamic item)
+    public Task UpdateItem(dynamic item)
     {
-      UpdateItem(item);
+      return UpdateItem(item);
     }
 
-    private void UpdateItem(DomainClasses.Artist artist)
+    private Task UpdateItem(DomainClasses.Artist artist)
     {
-      Task.Run(async () =>
+      return Task.Run(async () =>
       {
         try
         {
@@ -111,9 +111,9 @@ namespace VPlayer.AudioStorage.InfoDownloader
       });
     }
 
-    private void UpdateItem(Album album)
+    private Task UpdateItem(Album album)
     {
-      Task.Run(async () =>
+      return Task.Run(async () =>
       {
         try
         {
@@ -122,8 +122,8 @@ namespace VPlayer.AudioStorage.InfoDownloader
           if (updateAlbum != null)
           {
             updateAlbum.Id = album.Id;
-
             updateAlbum.InfoDownloadStatus = InfoDownloadStatus.Downloaded;
+            album.InfoDownloadStatus = InfoDownloadStatus.Downloaded;
 
             ItemUpdated.OnNext(updateAlbum);
           }
