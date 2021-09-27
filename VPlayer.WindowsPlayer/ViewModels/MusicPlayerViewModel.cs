@@ -914,7 +914,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
                   downloadingArtist = storageManager.GetRepository<Artist>().SingleOrDefault(x => x.NormalizedName == normalizedArtistName);
 
                 if ((downloadingArtist == null ||
-                    normalizedArtistName?.Similarity(normalizedDownloadingAristName, true) < 0.9) &&
+                    normalizedArtistName?.Similarity(normalizedDownloadingAristName, true) < 0.9)  && 
+                    !string.IsNullOrEmpty(normalizedArtistName) &&
                     originalDownlaodedArtistName != artistName)
                 {
                   downloadingArtist = await GetArist(artistName, cancellationToken);
@@ -944,7 +945,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
               if (!string.IsNullOrEmpty(albumName))
               {
-                var normalizedAlbumName = AudioInfoDownloader.GetClearName(VPlayerStorageManager.GetNormalizedName(albumName));
+                var normalizedName = VPlayerStorageManager.GetNormalizedName(albumName);
 
                 string normalizedDownloadingAlbumName = null;
 
@@ -952,11 +953,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
                   normalizedDownloadingAlbumName = VPlayerStorageManager.GetNormalizedName(downloadingAlbum.Name);
 
                 if (downloadingAlbum == null)
-                  downloadingAlbum = storageManager.GetRepository<Album>().SingleOrDefault(x => x.NormalizedName == normalizedAlbumName);
+                  downloadingAlbum = storageManager.GetRepository<Album>().SingleOrDefault(x => x.NormalizedName == normalizedName);
 
-                if ((downloadingAlbum == null ||
-                     normalizedAlbumName?.Similarity(normalizedDownloadingAlbumName, true) < 0.9) &&
-                      originalDownlaodedAlbumName != albumName)
+                if ((downloadingAlbum == null || 
+                     normalizedName?.Similarity(normalizedDownloadingAlbumName, true) < 0.9 &&
+                     !string.IsNullOrEmpty(normalizedDownloadingAlbumName)) && 
+                    
+                    originalDownlaodedAlbumName != albumName)
                 {
                   downloadingAlbum = await GetAlbum(downloadingArtist, albumName, cancellationToken);
 
@@ -1054,19 +1057,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
                   cancellationToken.ThrowIfCancellationRequested();
 
-                  await Task.Run(async () =>
-                  {
-                    var resultLyrics = await songInPlayListViewModel.TryToRefreshUpdateLyrics();
 
-                    if (resultLyrics && viewmodel.Model != null)
-                    {
-                      await storageManager.UpdateEntityAsync(viewmodel.Model);
-                    }
-                  });
-
-                  songInPlayListViewModel.SongModel.Album.Songs.Add(songInPlayListViewModel.SongModel);
-
-                  //ActualItem.ImagePath
+                  songInPlayListViewModel.SongModel.Album?.Songs.Add(songInPlayListViewModel.SongModel);
                   songInPlayListViewModel.RaiseNotifyPropertyChanged(nameof(SoundItemFilePlaylist.Name));
                   songInPlayListViewModel.RaiseNotifyPropertyChanged(nameof(SongInPlayListViewModel.AlbumViewModel));
                   songInPlayListViewModel.RaiseNotifyPropertyChanged(nameof(SongInPlayListViewModel.ArtistViewModel));
@@ -1082,6 +1074,18 @@ namespace VPlayer.WindowsPlayer.ViewModels
                   addAlbums?.RaiseCanExecuteChanged();
 
                   DownloadedItemsCount++;
+
+                  await Task.Run(async () =>
+                  {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    var resultLyrics = await songInPlayListViewModel.TryToRefreshUpdateLyrics();
+
+                    if (resultLyrics && viewmodel.Model != null)
+                    {
+                      cancellationToken.ThrowIfCancellationRequested();
+                      await storageManager.UpdateEntityAsync(viewmodel.Model);
+                    }
+                  });
                 }
 
                 catch (TaskCanceledException)
