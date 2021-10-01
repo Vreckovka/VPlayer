@@ -10,12 +10,12 @@
              xmlns:library1="clr-namespace:VPlayer.Library;assembly=VCore.WPF"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:popups="clr-namespace:VCore.WPF.Behaviors.Popups;assembly=VCore.WPF"
+             xmlns:sliders="clr-namespace:VCore.WPF.Behaviors.Sliders;assembly=VCore.WPF"
              xmlns:soundManagement="clr-namespace:SoundManagement;assembly=SoundManagement"
              xmlns:statusMessage="clr-namespace:VCore.WPF.Controls.StatusMessage;assembly=VCore.WPF"
              xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
              xmlns:views="clr-namespace:VPlayer.Player.Views"
              xmlns:views1="clr-namespace:VPlayer.Player.Views;assembly=VCore.WPF"
-             xmlns:sliders="clr-namespace:VCore.WPF.Behaviors.Sliders;assembly=VCore.WPF"
              Focusable="False"
              mc:Ignorable="d">
 
@@ -29,7 +29,9 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Border Height="75" Padding="4">
+    <Border Height="75"
+            Padding="4"
+            Focusable="True">
         <Border.Background>
             <LinearGradientBrush StartPoint="0 1" EndPoint="0 0">
                 <GradientStop Offset="1" Color="#101010" />

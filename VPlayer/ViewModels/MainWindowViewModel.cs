@@ -47,6 +47,7 @@ namespace VPlayer.ViewModels
   //TODO: Hviezdicky pocet 
   //TODO: TV Channels editor dotiahnut
   //TODO: Save UPnP Sever (mozno je, bojim sa skusit)
+  //TODO: Slider na koliecko (ak je open hook na windows eventy mysky a ked je close tak -=)
   //
   // *****File Browser*****
   //TODO: File Browser - File watcher nad aktualnou zlozkou

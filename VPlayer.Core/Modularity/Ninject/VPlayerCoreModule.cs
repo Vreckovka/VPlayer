@@ -24,7 +24,7 @@ namespace VPlayer.Core.Modularity.Ninject
       Kernel.Rebind<IViewModelsFactory>().To<VPlayerViewModelsFactory>();
 
       Kernel.Bind<IVlcProvider>().To<VlcProvider>().InSingletonScope();
-      Kernel.Bind<IStatusManager>().To<StatusManager>().InSingletonScope();
+      Kernel.Bind<IStatusManager>().To<VPlayerStatusManager>().InSingletonScope();
     }
   }
 }

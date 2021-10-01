@@ -29,8 +29,8 @@ namespace VPlayer.AudioStorage.Modularity.NinjectModules
       Kernel.BindToSelf<PCloudLyricsProvider>().InSingletonScope();
       Kernel.BindToSelf<AudioInfoDownloader>().InSingletonScope();
 
-      Kernel.Bind<ICSFDWebsiteScrapper>().To<CSFDWebsiteScrapper>();
-     
+      Kernel.Bind<ICSFDWebsiteScrapper>().To<CSFDWebsiteScrapper>().InSingletonScope();
+
       Kernel.Bind<ITvShowScrapper>().To<TVShowScrapper>().InSingletonScope();
 
     }

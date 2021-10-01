@@ -251,6 +251,18 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #endregion
 
+    protected string GetPathValidName(string name)
+    {
+      string invalid = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+
+      foreach (char c in invalid)
+      {
+        name = name.Replace(c.ToString(), "-");
+      }
+
+      return name.Trim();
+    }
+
     #region SaveImage
 
     private string SaveImage(string tvShowName, byte[] image, CancellationToken cancellationToken)
@@ -258,7 +270,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       MemoryStream ms = new MemoryStream(image);
       Image i = Image.FromStream(ms);
 
-      var directory = Path.Combine(AudioInfoDownloader.GetDefaultPicturesPath(), $"TvShows\\{tvShowName}");
+      var directory = Path.Combine(AudioInfoDownloader.GetDefaultPicturesPath(), $"TvShows\\{GetPathValidName(tvShowName)}");
       var finalPath = Path.Combine(directory, "poster.jpg");
 
       cancellationToken.ThrowIfCancellationRequested();
@@ -680,11 +692,11 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
             if (parsedNameMatch.Groups.Count >= 3 && int.TryParse(parsedNameMatch.Groups[2].Value, out var pYear))
             {
-              if (year > 1887)
+              if (pYear > 1887)
               {
                 year = pYear;
               }
-              else
+              else 
               {
                 year = null;
               }
@@ -738,11 +750,13 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
           if (tvShowFind == null)
           {
-            statusMessage.Message = "NOT FOUND!";
+            statusMessage.Message = "TV SHOW NOT FOUND, TRYING MOVIE";
+            statusMessage.ProcessedCount = statusMessage.NumberOfProcesses;
             statusMessage.Status = StatusType.Done;
 
             statusManager.UpdateMessage(statusMessage);
-            return null;
+
+            return await FindSingleCsfdItem(parsedName, year, episodeKeys != null, cancellationToken, true);
           }
 
           tvShowUrl = tvShowFind.Url;
@@ -844,11 +858,11 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       }
 
       var items = await FindItems(parsedName, cancellationToken);
-
+      
       if (showStatusMassage)
         statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
 
-      var allItems = items.AllItems?.ToList();
+      var allItems = items?.AllItems?.ToList();
 
       if (allItems == null || allItems.Count == 0)
       {
@@ -856,7 +870,6 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       }
 
       double minSimilarity = 0.55;
-
 
 
       var query = allItems.Where(x => x.OriginalName != null)
@@ -870,7 +883,14 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       if (year != null)
       {
-        query = query.Where(x => x.Year == year);
+        var list = query.ToList();
+
+        var yearQuery = list.Where(x => x.Year == year).ToList();
+
+        if (yearQuery.Count() != 0)
+        {
+          query = yearQuery;
+        }
       }
 
       query = query.OrderByDescending(x => x.RatingColor).ThenByDescending(x => x.Year);

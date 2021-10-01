@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
+using VCore.WPF.Managers;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.ViewModels;
 
@@ -35,15 +36,9 @@ namespace VPlayer.Views
 
     private void Window_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
-      IInputElement focusedControl = Keyboard.FocusedElement;
-
-      if (focusedControl != null)
+      if (!IsFocused)
       {
-        FocusManager.SetFocusedElement(this, this);
-
-        focusedControl.ReleaseMouseCapture();
-
-        Keyboard.ClearFocus();
+        VFocusManager.SetFocus(this);
       }
     }
   }

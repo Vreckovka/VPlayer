@@ -30,6 +30,7 @@
     <Color x:Key="DarkBlueColor">#2747fe</Color>
     <Color x:Key="GreenColor">#36d66e</Color>
     <Color x:Key="GreenColor2">#4fd66c</Color>
+    <Color x:Key="GreenColor3">#a0ed53</Color>
 
     <Color x:Key="235_DefaultWhiteColor"
            A="235"
@@ -96,6 +97,7 @@
     <SolidColorBrush x:Key="BlueBrush" Color="{StaticResource BlueColor}" />
     <SolidColorBrush x:Key="DarkBlueBrush" Color="{StaticResource BlueColor}" />
     <SolidColorBrush x:Key="GreenBrush" Color="{StaticResource GreenColor}" />
+    <SolidColorBrush x:Key="GreenBrush3" Color="{StaticResource GreenColor3}" />
     <SolidColorBrush x:Key="LightRedBrush" Color="{StaticResource LightRedColor}" />
 
     <SolidColorBrush x:Key="BackgroudBrush" Color="{StaticResource BackgroudColor}" />
