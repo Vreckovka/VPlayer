@@ -350,11 +350,11 @@ namespace VPlayer.Player.ViewModels
     {
       if (ActualViewModel != null)
       {
-      if (ActualViewModel.IsPlaying && !newPlayer.IsPlaying)
+        if (ActualViewModel.IsPlaying && !newPlayer.IsPlaying)
         {
           originalActualViewModel = ActualViewModel;
         }
-        else 
+        else
         {
           ActualViewModel.IsSelectedToPlay = false;
         }
@@ -391,50 +391,49 @@ namespace VPlayer.Player.ViewModels
 
     private void KeyListener_OnKeyPressed(object sender, KeyPressedArgs e)
     {
-      switch (e.KeyPressed)
+      Application.Current.Dispatcher.Invoke(() =>
       {
-        case Key.MediaPlayPause:
-          {
-            ActualViewModel?.PlayPause();
-            break;
-          }
+        var filePlayable = CanUseKey();
 
-        case Key.MediaNextTrack:
+        if (filePlayable != null)
+        {
+          switch (e.KeyPressed)
           {
-            PlayNext();
-            break;
-          }
+            case Key.MediaPlayPause:
+              {
+                ActualViewModel?.PlayPause();
+                break;
+              }
 
-        case Key.MediaPreviousTrack:
-          {
-            PlayPrevious();
-            break;
+            case Key.MediaNextTrack:
+              {
+                PlayNext();
+                break;
+              }
+
+            case Key.MediaPreviousTrack:
+              {
+                PlayPrevious();
+                break;
+              }
+            case Key.Left:
+              {
+                filePlayable?.SeekBackward();
+                break;
+              }
+            case Key.Right:
+              {
+                filePlayable?.SeekForward();
+                break;
+              }
+            case Key.Space:
+              {
+                filePlayable?.PlayPause();
+                break;
+              }
           }
-        case Key.Left:
-          {
-            if (CanUseKey(out var filePlayable))
-            {
-              filePlayable?.SeekBackward();
-            }
-            break;
-          }
-        case Key.Right:
-          {
-            if (CanUseKey(out var filePlayable))
-            {
-              filePlayable?.SeekForward();
-            }
-            break;
-          }
-        case Key.Space:
-          {
-            if (CanUseKey(out var filePlayable))
-            {
-              filePlayable?.PlayPause();
-            }
-            break;
-          }
-      }
+        }
+      });
     }
 
     #endregion KeyListener_OnKeyPressed
@@ -442,20 +441,21 @@ namespace VPlayer.Player.ViewModels
     #region CanUseKey
 
 
-    private bool CanUseKey(out IFilePlayableRegionViewModel filePlayable)
+    private IFilePlayableRegionViewModel CanUseKey()
     {
-      if (ActualViewModel != null && ActualViewModel.IsActive &&
-          ActualViewModel is IFilePlayableRegionViewModel filePlayable1 &&
-          mainWindow.IsActive &&
-          mainWindow.WindowState != WindowState.Minimized &&
-          !VFocusManager.IsAnyFocused())
+      return Application.Current.Dispatcher.Invoke(() =>
       {
-        filePlayable = filePlayable1;
-        return true;
-      }
+        if (ActualViewModel != null && ActualViewModel.IsActive &&
+            ActualViewModel is IFilePlayableRegionViewModel filePlayable1 &&
+            mainWindow.IsActive &&
+            mainWindow.WindowState != WindowState.Minimized &&
+            !VFocusManager.IsAnyFocused())
+        {
+          return filePlayable1;
+        }
 
-      filePlayable = null;
-      return false;
+        return null;
+      });
     }
 
     #endregion
