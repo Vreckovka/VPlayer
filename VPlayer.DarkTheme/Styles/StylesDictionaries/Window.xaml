@@ -99,19 +99,18 @@
 
                                     <StackPanel HorizontalAlignment="Left"
                                                 VerticalAlignment="Top"
+                                                Opacity="0.75"
                                                 Orientation="Horizontal">
                                         <!--  Icon  -->
-                                        <Image Width="20"
-                                               Height="20"
-                                               Margin="8,8,15,0"
+                                        <Image Margin="11,4,8,5"
                                                Opacity="1"
                                                Source="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Icon}" />
                                         <!--  Title  -->
-                                        <TextBlock Margin="0,3,0,0"
-                                                   VerticalAlignment="Center"
-                                                   FontSize="15"
-                                                   FontWeight="Bold"
-                                                   Foreground="#20ffffff"
+                                        <TextBlock Margin="0,0,0,3"
+                                                   VerticalAlignment="Bottom"
+                                                   FontSize="12"
+                                                   FontWeight="DemiBold"
+                                                   Foreground="#cc353535"
                                                    Text="{Binding Title}" />
                                     </StackPanel>
                                     <!--  Window buttons  -->
