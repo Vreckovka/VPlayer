@@ -385,7 +385,7 @@
                             <library1:CacheImageConverter x:Key="CacheImageConverter" DecodeWidth="350" />
                         </Border.Resources>
 
-                        <Image Width="95" Source="{Binding ImagePath, Converter={StaticResource CacheImageConverter}}" />
+                        <Image Width="95" Source="{Binding ImagePath}" />
 
                         <Border.Effect>
                             <DropShadowEffect Opacity="0.5"
@@ -672,10 +672,6 @@
                 </TextBlock.Style>
             </TextBlock>
         </Grid>
-
-
-
-
     </DataTemplate>
 
     <DataTemplate x:Key="ToolTipFallBack">

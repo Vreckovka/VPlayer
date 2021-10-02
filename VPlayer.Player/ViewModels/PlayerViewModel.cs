@@ -118,7 +118,7 @@ namespace VPlayer.Player.ViewModels
 
     #endregion
 
-    #region StatusMessage
+    #region StatusMessageViewModel
 
     public StatusMessageViewModel StatusMessageViewModel
     {
@@ -391,7 +391,7 @@ namespace VPlayer.Player.ViewModels
 
     private void KeyListener_OnKeyPressed(object sender, KeyPressedArgs e)
     {
-      Application.Current.Dispatcher.Invoke(() =>
+      Application.Current?.Dispatcher?.Invoke(() =>
       {
         var filePlayable = CanUseKey();
 

@@ -181,7 +181,7 @@
                             <Setter Property="Message" Value="{Binding Message}" />
                             <Setter Property="Status" Value="{Binding Status}" />
                             <Setter Property="IsPinned" Value="{Binding IsPinned}" />
-                            <Setter Property="MessageState" Value="{Binding MessageState}" />
+                            <Setter Property="MessageState" Value="{Binding MessageState, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             <Setter Property="Padding" Value="5" />
                             <Setter Property="Opacity" Value="0" />
                             <Setter Property="BorderThickness" Value="1" />
@@ -271,7 +271,8 @@
                                                                 VerticalAlignment="Top"
                                                                 Orientation="Horizontal">
 
-                                                        <controls1:PathButton Height="15"
+                                                        <controls1:PathButton x:Name="MinimizeButton"
+                                                                              Height="15"
                                                                               HorizontalAlignment="Right"
                                                                               Background="Transparent"
                                                                               BorderThickness="0"
@@ -354,6 +355,7 @@
 
                                             <Trigger Property="MessageState" Value="{x:Static statusMessage:MessageStatusState.Closed}">
                                                 <Setter Property="Visibility" Value="Hidden" />
+                                                <Setter TargetName="MinimizeButton" Property="IsChecked" Value="false" />
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
@@ -757,12 +759,9 @@
                     VerticalAlignment="Bottom"
                     Background="Transparent"
                     BorderThickness="1">
-                <Border.Resources>
-                    <library:CacheImageConverter x:Key="CacheImageConverter" DecodeWidth="100" />
-                </Border.Resources>
 
                 <Image HorizontalAlignment="Center"
-                       Source="{Binding ActualViewModel.ActualItem.ImagePath, Converter={StaticResource CacheImageConverter}}"
+                       Source="{Binding ActualViewModel.ActualItem.ImagePath}"
                        Stretch="UniformToFill" />
 
                 <Border.Style>

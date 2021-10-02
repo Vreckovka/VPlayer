@@ -790,10 +790,22 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
       var directory = Path.Combine(GetDefaultPicturesPath(), path);
 
-      return Path.Combine(directory, $"frontConver.jpg");
+      return GetPathValidName(Path.Combine(directory, $"frontConver.jpg"));
     }
 
     #endregion
+
+    public static string GetPathValidName(string name)
+    {
+      string invalid = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+
+      foreach (char c in invalid)
+      {
+        name = name.Replace(c.ToString(), "-");
+      }
+
+      return name.Trim();
+    }
 
     #region SaveAlbumCover
 

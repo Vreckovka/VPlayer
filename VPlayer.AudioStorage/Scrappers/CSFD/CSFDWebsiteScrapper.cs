@@ -270,11 +270,12 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       MemoryStream ms = new MemoryStream(image);
       Image i = Image.FromStream(ms);
 
-      var directory = Path.Combine(AudioInfoDownloader.GetDefaultPicturesPath(), $"TvShows\\{GetPathValidName(tvShowName)}");
+      var directory = Path.Combine(AudioInfoDownloader.GetDefaultPicturesPath(), $"TvShows\\{tvShowName}");
       var finalPath = Path.Combine(directory, "poster.jpg");
 
       cancellationToken.ThrowIfCancellationRequested();
 
+      finalPath = GetPathValidName(finalPath);
       finalPath.EnsureDirectoryExists();
 
       if (File.Exists(finalPath))

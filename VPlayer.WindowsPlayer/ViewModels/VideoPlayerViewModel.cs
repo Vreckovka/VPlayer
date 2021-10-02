@@ -722,7 +722,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
         else
         {
-          DownloadedItemsCount++;
+          MarkViewModelAsChecked(viewModel);
         }
       });
     }
@@ -746,10 +746,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
           tvShowItem.CSFDItem.OriginalName = string.IsNullOrEmpty(csfdEpisode.OriginalName) ? csfdEpisode.Name : csfdEpisode.OriginalName;
         }
 
-        DownloadedItemsCount++;
+        MarkViewModelAsChecked(tvShowItem);
       }
-
-     
     }
 
     #endregion

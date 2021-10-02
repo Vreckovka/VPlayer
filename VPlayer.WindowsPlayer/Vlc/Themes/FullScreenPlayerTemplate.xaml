@@ -8,11 +8,11 @@
                     xmlns:domain="clr-namespace:VPlayer.AudioStorage.Scrappers.CSFD.Domain;assembly=VPlayer.AudioStorage"
                     xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.DarkTheme"
                     xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
+                    xmlns:sliders="clr-namespace:VCore.WPF.Behaviors.Sliders;assembly=VCore.WPF"
                     xmlns:soundManagement="clr-namespace:SoundManagement;assembly=SoundManagement"
                     xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors;assembly=VPlayer.Core"
                     xmlns:themes="clr-namespace:VPlayer.WindowsPlayer.Vlc.Themes"
-                    xmlns:views="clr-namespace:VPlayer.Player.Views;assembly=VCore.WPF"
-                    xmlns:sliders="clr-namespace:VCore.WPF.Behaviors.Sliders;assembly=VCore.WPF">
+                    xmlns:views="clr-namespace:VPlayer.Player.Views;assembly=VCore.WPF">
 
 
     <ResourceDictionary.MergedDictionaries>
@@ -26,7 +26,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls2:FullscreenPlayer}">
-                    <Border Width="900"
+                    <Border Width="930"
                             Height="120"
                             Margin="0,0,0,17"
                             Padding="12,5,15,8"
@@ -294,10 +294,10 @@
                                 </Grid>
 
                                 <StackPanel Grid.Column="1"
+                                            Margin="-10,0,5,15"
                                             VerticalAlignment="Center"
                                             DataContext="{Binding ActualViewModel}"
                                             Orientation="Horizontal"
-                                            Margin="-10 0 5 15"
                                             ToolTip="{Binding ActualViewModel}">
                                     <controls1:PathButton Margin="0,0"
                                                           Command="{Binding ReloadFile}"
@@ -316,7 +316,9 @@
                                                           ToolTip="Is favorite" />
                                 </StackPanel>
 
-                                <Grid Grid.Column="2" HorizontalAlignment="Stretch">
+                                <Grid Grid.Column="2"
+                                      Width="150"
+                                      HorizontalAlignment="Left">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="auto" />
                                         <RowDefinition Height="*" />
@@ -346,7 +348,7 @@
                                             Maximum="300"
                                             Value="{Binding ActualVolume, Mode=TwoWay}">
                                         <b:Interaction.Behaviors>
-                                            <sliders:SliderHookBehavior Step="5" />
+                                            <sliders:SliderHookBehavior HookWhenFullscreen="True" Step="5" />
                                         </b:Interaction.Behaviors>
                                     </Slider>
 
@@ -389,7 +391,7 @@
                                     </Border.Resources>
 
                                     <Image HorizontalAlignment="Center"
-                                           Source="{Binding ActualItem.ImagePath, Converter={StaticResource CacheImageConverter}}"
+                                           Source="{Binding ActualItem.ImagePath}"
                                            Stretch="UniformToFill" />
 
                                     <Border.Style>

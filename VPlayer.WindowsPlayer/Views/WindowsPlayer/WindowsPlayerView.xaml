@@ -37,7 +37,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="5" />
-            <ColumnDefinition Width="410" />
+            <ColumnDefinition Width="445" />
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Column="0"
@@ -194,7 +194,7 @@
                                        VerticalAlignment="Center"
                                        FontWeight="Bold"
                                        Foreground="#50ffffff">
-                                <Run Text="{Binding DownloadedItemsCount, Mode=OneWay}" />
+                                <Run Text="{Binding CheckedFiles.Count, Mode=OneWay}" />
                                 <Run Text="/" />
                                 <Run Text="{Binding PlayList.Count, Mode=OneWay}" />
                             </TextBlock>

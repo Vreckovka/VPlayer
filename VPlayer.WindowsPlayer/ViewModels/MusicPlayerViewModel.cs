@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -265,6 +266,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
 
     #endregion
+
+
 
     #endregion
 
@@ -827,6 +830,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private string originalDownlaodedArtistName;
     private string originalDownlaodedAlbumName;
 
+
     private Artist downloadingArtist;
     private Album downloadingAlbum;
 
@@ -845,6 +849,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
               songInPlayListViewModel.AlbumViewModel == null &&
               songInPlayListViewModel.ArtistViewModel == null)
           {
+            if (CheckedFiles.Contains(viewmodel))
+            {
+              await Application.Current?.Dispatcher?.InvokeAsync(async () => { CheckedFiles.Remove(viewmodel); });
+            }
+
             var fileInfo = viewmodel?.Model?.FileInfo;
 
             Application.Current.Dispatcher.Invoke(() => { viewmodel.IsDownloading = true; });
@@ -914,7 +923,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
                   downloadingArtist = storageManager.GetRepository<Artist>().SingleOrDefault(x => x.NormalizedName == normalizedArtistName);
 
                 if ((downloadingArtist == null ||
-                    normalizedArtistName?.Similarity(normalizedDownloadingAristName, true) < 0.9)  && 
+                    normalizedArtistName?.Similarity(normalizedDownloadingAristName, true) < 0.9) &&
                     !string.IsNullOrEmpty(normalizedArtistName) &&
                     originalDownlaodedArtistName != artistName)
                 {
@@ -955,10 +964,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
                 if (downloadingAlbum == null)
                   downloadingAlbum = storageManager.GetRepository<Album>().SingleOrDefault(x => x.NormalizedName == normalizedName);
 
-                if ((downloadingAlbum == null || 
+                if ((downloadingAlbum == null ||
                      normalizedName?.Similarity(normalizedDownloadingAlbumName, true) < 0.9 &&
-                     !string.IsNullOrEmpty(normalizedDownloadingAlbumName)) && 
-                    
+                     !string.IsNullOrEmpty(normalizedDownloadingAlbumName)) &&
+
                     originalDownlaodedAlbumName != albumName)
                 {
                   downloadingAlbum = await GetAlbum(downloadingArtist, albumName, cancellationToken);
@@ -1034,7 +1043,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
               if (wasChanged)
                 result = await storageManager.UpdateEntityAsync(fileInfo);
 
-              await Application.Current.Dispatcher.InvokeAsync(async () =>
+              await Application.Current?.Dispatcher?.InvokeAsync(async () =>
               {
                 try
                 {
@@ -1073,7 +1082,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
                   addArtists?.RaiseCanExecuteChanged();
                   addAlbums?.RaiseCanExecuteChanged();
 
-                  DownloadedItemsCount++;
+                  MarkViewModelAsChecked(viewmodel);
 
                   await Task.Run(async () =>
                   {
@@ -1097,6 +1106,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
                 }
               });
             }
+          }
+          else
+          {
+            MarkViewModelAsChecked(viewmodel);
           }
         }
         catch (TaskCanceledException)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Disposables;
@@ -25,6 +26,7 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Managers.Status;
 using VPlayer.Core.Providers;
+using VPlayer.Core.ViewModels.SoundItems;
 using VPlayer.IPTV.ViewModels;
 using VPlayer.WindowsPlayer.Players;
 
@@ -91,29 +93,24 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region CheckedFiles
 
+    private ObservableCollection<TItemViewModel> checkedFiles = new ObservableCollection<TItemViewModel>();
 
-    #region DownloadedItemsCount
-
-    private int downloadedItemsCount;
-
-    public int DownloadedItemsCount
+    public ObservableCollection<TItemViewModel> CheckedFiles
     {
-      get { return downloadedItemsCount; }
+      get { return checkedFiles; }
       set
       {
-        if (value != downloadedItemsCount)
+        if (value != checkedFiles)
         {
-          downloadedItemsCount = value;
+          checkedFiles = value;
           RaisePropertyChanged();
         }
       }
     }
 
     #endregion
-
-
-
 
     #endregion
 
@@ -508,7 +505,7 @@ namespace VPlayer.Core.ViewModels
     {
       Application.Current.Dispatcher.Invoke(() =>
       {
-        DownloadedItemsCount = 0;
+        CheckedFiles.Clear();
       });
     
 
@@ -519,10 +516,21 @@ namespace VPlayer.Core.ViewModels
     {
       Application.Current.Dispatcher.Invoke(() =>
       {
-        DownloadedItemsCount = 0;
+        CheckedFiles.Clear();
       });
 
       base.BeforeClearPlaylist();
+    }
+
+    protected void MarkViewModelAsChecked(TItemViewModel itemViewModel)
+    {
+      Application.Current?.Dispatcher?.InvokeAsync(() =>
+      {
+        if (!CheckedFiles.Contains(itemViewModel))
+        {
+          CheckedFiles.Add(itemViewModel);
+        }
+      });
     }
 
     #region Dispose
