@@ -35,7 +35,7 @@ using VPlayer.Views;
 
 namespace VPlayer
 {
-  public class VPlayerApplication : VApplication<MainWindow, MainWindowViewModel, SplashScreenView>
+  public class VPlayerApplication : VApplication<MainWindow, MainWindowViewModel, VPlayerSplashScreen>
   {
     #region LoadModules
 

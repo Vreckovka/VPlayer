@@ -20,7 +20,7 @@
         Focusable="True"
         FontFamily="pack://application:,,,/VPlayer;component/Resources/Fonts/Roboto/#Roboto"
         FontSize="12"
-        Icon="/Includes/VPlayerLogo.png"
+        Icon="/Includes/VPlayerLogo_transparent.png"
         MouseLeftButtonDown="Window_MouseLeftButtonDown"
         Style="{StaticResource {x:Type Window}}"
         WindowStartupLocation="CenterScreen"

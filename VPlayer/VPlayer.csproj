@@ -4,7 +4,7 @@
 		<TargetFramework>netcoreapp3.1</TargetFramework>
 		<UseWPF>true</UseWPF>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-		<ApplicationIcon>Includes/VPlayerLogo.ico</ApplicationIcon>
+		<ApplicationIcon>Includes\VPlayerLogo.ico</ApplicationIcon>
 		<Platforms>AnyCPU;x86</Platforms>
 	</PropertyGroup>
 
@@ -44,6 +44,11 @@
 	<ItemGroup>
 		<None Remove="Includes\VPlayerLogo.ico" />
 		<None Remove="Includes\VPlayerLogo.png" />
+		<None Remove="Includes\VPlayerLogo_2.ico" />
+		<None Remove="Includes\VPlayerLogo_2.png" />
+		<None Remove="Includes\VPlayerLogo_blackAndWhite.png" />
+		<None Remove="Includes\VPlayerLogo_transparent.ico" />
+		<None Remove="Includes\VPlayerLogo_transparent.png" />
 		<None Remove="Resources\Fonts\MartelSans\MartelSans-Black.ttf" />
 		<None Remove="Resources\Fonts\MartelSans\MartelSans-Bold.ttf" />
 		<None Remove="Resources\Fonts\MartelSans\MartelSans-ExtraBold.ttf" />
@@ -100,6 +105,9 @@
 		<None Remove="Resources\VPlayer_Artist.png" />
 	</ItemGroup>
 	<ItemGroup>
+		<Resource Include="Includes\VPlayerLogo_blackAndWhite.png" />
+		<Resource Include="Includes\VPlayerLogo_transparent.ico" />
+		<Resource Include="Includes\VPlayerLogo_transparent.png" />
 		<Resource Include="Resources\Fonts\MartelSans\MartelSans-Black.ttf" />
 		<Resource Include="Resources\Fonts\MartelSans\MartelSans-Bold.ttf" />
 		<Resource Include="Resources\Fonts\MartelSans\MartelSans-ExtraBold.ttf" />

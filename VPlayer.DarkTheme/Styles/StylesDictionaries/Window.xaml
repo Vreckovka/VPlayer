@@ -104,13 +104,14 @@
                                         <Image Width="20"
                                                Height="20"
                                                Margin="8,8,15,0"
+                                               Opacity="1"
                                                Source="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Icon}" />
                                         <!--  Title  -->
                                         <TextBlock Margin="0,3,0,0"
                                                    VerticalAlignment="Center"
                                                    FontSize="15"
-                                                   FontWeight="DemiBold"
-                                                   Foreground="#ccffffff"
+                                                   FontWeight="Bold"
+                                                   Foreground="#20ffffff"
                                                    Text="{Binding Title}" />
                                     </StackPanel>
                                     <!--  Window buttons  -->
