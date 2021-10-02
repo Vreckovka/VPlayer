@@ -436,7 +436,9 @@ namespace VPlayer.Home.ViewModels.Albums
         finalPath.EnsureDirectoryExists();
 
         if (File.Exists(finalPath))
+        {
           File.Delete(finalPath);
+        }
 
         i.Save(finalPath, ImageFormat.Jpeg);
 

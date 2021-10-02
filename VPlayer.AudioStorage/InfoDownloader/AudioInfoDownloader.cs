@@ -140,7 +140,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
       });
     }
 
-    #endregion UpdateItem
+    #endregion
 
     #region Info methods
 
@@ -174,6 +174,8 @@ namespace VPlayer.AudioStorage.InfoDownloader
     }
 
     private Semaphore semaphore = new Semaphore(15, 15);
+
+    #region GetAudioInfosFromDirectory
 
     public void GetAudioInfosFromDirectory(string directoryPath, bool getSubDirectories = false)
     {
@@ -227,7 +229,9 @@ namespace VPlayer.AudioStorage.InfoDownloader
       }
     }
 
-    #endregion Info methods
+    #endregion
+
+    #endregion 
 
     #region MusicBrainz Lookups
 
@@ -239,6 +243,8 @@ namespace VPlayer.AudioStorage.InfoDownloader
     /// <param name="album"></param>
     /// <returns></returns>
     private bool apiExeed;
+
+    #region GetAlbumFrontCoversUrls
 
     /// <summary>
     /// Returns all avaible album covers
@@ -317,6 +323,10 @@ namespace VPlayer.AudioStorage.InfoDownloader
       }, cancellationToken);
     }
 
+    #endregion
+
+    #region GetAlbumFrontCoversUrls
+
     public Task<List<AlbumCover>> GetAlbumFrontCoversUrls(Album album, CancellationToken cancellationToken)
     {
       return Task.Run(async () =>
@@ -379,6 +389,10 @@ namespace VPlayer.AudioStorage.InfoDownloader
       }, cancellationToken);
     }
 
+    #endregion
+
+    #region GetArtistsAlbums
+
     public Task<List<Album>> GetArtistsAlbums(string artistMbid)
     {
       return Task<List<Album>>.Run(async () =>
@@ -426,6 +440,8 @@ namespace VPlayer.AudioStorage.InfoDownloader
         }
       });
     }
+
+    #endregion
 
     #region UpdateAlbum
 
@@ -781,19 +797,21 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
       if (!string.IsNullOrEmpty(album.Artist.Name))
       {
-        path = $"Albums\\{album.Artist.Name}\\{album.Name}\\{album.Id}";
+        path = $"Albums\\{GetPathValidName(album.Artist.Name)}\\{GetPathValidName(album.Name)}\\{album.Id}";
       }
       else
       {
-        path = $"Albums\\{album.Name}\\{album.Id}";
+        path = $"Albums\\{GetPathValidName(album.Name)}\\{album.Id}";
       }
 
       var directory = Path.Combine(GetDefaultPicturesPath(), path);
 
-      return GetPathValidName(Path.Combine(directory, $"frontConver.jpg"));
+      return Path.Combine(directory, $"frontConver.jpg");
     }
 
     #endregion
+
+    #region GetPathValidName
 
     public static string GetPathValidName(string name)
     {
@@ -807,13 +825,14 @@ namespace VPlayer.AudioStorage.InfoDownloader
       return name.Trim();
     }
 
+    #endregion
+
     #region SaveAlbumCover
 
     private string SaveAlbumCover(Album album, byte[] blob)
     {
       MemoryStream ms = new MemoryStream(blob);
       Image i = Image.FromStream(ms);
-
 
       var finalPath = GetAlbumCoverImagePath(album);
 
@@ -1543,7 +1562,6 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     #endregion
 
-
     #region Methods
 
     public void Initialize()
@@ -1600,7 +1618,6 @@ namespace VPlayer.AudioStorage.InfoDownloader
     #endregion
 
     #endregion 
-
 
   }
 }

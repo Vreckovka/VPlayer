@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.Common;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -86,7 +87,7 @@ namespace VPlayer
     protected override async void OnContainerCreated()
     {
       base.OnContainerCreated();
-      
+
 
       LoadSettings();
 
@@ -167,7 +168,6 @@ namespace VPlayer
 
   public partial class App : VPlayerApplication
   {
-
-
+   
   }
 }
