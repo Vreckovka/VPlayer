@@ -348,7 +348,7 @@
                                             Maximum="300"
                                             Value="{Binding ActualVolume, Mode=TwoWay}">
                                         <b:Interaction.Behaviors>
-                                            <sliders:SliderHookBehavior HookWhenFullscreen="True" Step="5" />
+                                            <sliders:SliderHookBehavior HookWhenFullscreen="False" Step="5" />
                                         </b:Interaction.Behaviors>
                                     </Slider>
 

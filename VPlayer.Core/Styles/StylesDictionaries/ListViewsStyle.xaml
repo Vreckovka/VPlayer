@@ -50,13 +50,13 @@
                                         Command="{Binding Play}"
                                         Style="{StaticResource PlayMini}" />
 
-                                <controls1:PathButton IconHoverColor="{StaticResource BlueColor}"
+                                <controls1:PathButton IconCheckedColor="{StaticResource BlueColor}"
+                                                      IconHoverColor="{StaticResource BlueColor}"
                                                       IsChecked="{Binding Model.ItemModel.IsFavorite, Mode=TwoWay}"
-                                                      IconCheckedColor="{StaticResource BlueColor}"
                                                       PathStyle="{StaticResource star-solid}" />
 
-                                <controls1:PathButton IsChecked="{Binding IsAutomaticDownload, Mode=TwoWay}"
-                                                      IconCheckedColor="{StaticResource DefaultRedColor}"
+                                <controls1:PathButton IconCheckedColor="{StaticResource DefaultRedColor}"
+                                                      IsChecked="{Binding IsAutomaticDownload, Mode=TwoWay}"
                                                       PathStyle="{StaticResource text-slash}" />
 
                                 <controls1:PathButton PathStyle="{StaticResource down-solid}" />
