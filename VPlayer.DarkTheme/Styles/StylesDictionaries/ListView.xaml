@@ -19,14 +19,15 @@
     </ResourceDictionary.MergedDictionaries>
 
 
-    <system:Double x:Key="ListView_MenuStyle_IconSize">20</system:Double>
+    <system:Double x:Key="ListView_MenuStyle_IconSize">19</system:Double>
 
     <Style x:Key="ListViewMenuItemStyle" TargetType="ListViewItem">
         <Setter Property="Foreground" Value="{StaticResource SecondaryForegroundBrush}" />
         <Setter Property="IsSelected" Value="{Binding IsActive}" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Padding" Value="15,7" />
-        <Setter Property="Margin" Value="0,0,0,0" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
 
         <Setter Property="Template">
@@ -445,7 +446,7 @@
 
         <Setter Property="BorderBrush" Value="#252525" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="ItemContainerStyle" Value="{StaticResource ListViewMenuItemStyle}"/>
+        <Setter Property="ItemContainerStyle" Value="{StaticResource ListViewMenuItemStyle}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListView">
