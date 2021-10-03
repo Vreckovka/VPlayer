@@ -63,7 +63,10 @@
 
 
 
-        <ContentControl Grid.Row="1" prism:RegionManager.RegionName="{x:Static regions1:RegionNames.ContentRegion}" />
+        <Border Grid.Row="1">
+            <ContentControl prism:RegionManager.RegionName="{x:Static regions1:RegionNames.ContentRegion}" />
+        </Border>
+
 
 
 

@@ -93,7 +93,6 @@
                                 </Grid.RowDefinitions>
                                 <Grid x:Name="WindowsChromeGrid"
                                       Height="35"
-                                      Panel.ZIndex="1"
                                       Background="{StaticResource TopWindowsBrush}"
                                       Visibility="{Binding WindowChromeVisiblity}">
 
@@ -103,14 +102,14 @@
                                                 Orientation="Horizontal">
                                         <!--  Icon  -->
                                         <Image Margin="11,4,8,5"
-                                               Opacity="1"
+                                               Opacity="0"
                                                Source="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Icon}" />
                                         <!--  Title  -->
                                         <TextBlock Margin="0,0,0,3"
-                                                   VerticalAlignment="Bottom"
+                                                   VerticalAlignment="Center"
                                                    FontSize="12"
                                                    FontWeight="DemiBold"
-                                                   Foreground="#cc353535"
+                                                   Foreground="Snow"
                                                    Text="{Binding Title}" />
                                     </StackPanel>
                                     <!--  Window buttons  -->

@@ -22,7 +22,7 @@ namespace VPlayer.AudioStorage.Modularity.NinjectModules
       base.RegisterProviders();
 
       Kernel.Bind<IStorageManager>().To<VPlayerStorageManager>().InSingletonScope();
-
+      Kernel.Bind<IChromeDriverProvider>().To<ChromeDriverProvider>().InSingletonScope(); 
       Kernel.Bind<IGoogleDriveServiceProvider>().To<GoogleDriveServiceProvider>().InSingletonScope().WithConstructorArgument("keyPath", googleApi);
 
       Kernel.BindToSelf<GoogleDriveLrcProvider>().InSingletonScope();

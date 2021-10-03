@@ -21,19 +21,21 @@ using VPlayer.Core.Managers.Status;
 
 namespace VPlayer.AudioStorage.Scrappers.CSFD
 {
+  public interface IChromeDriverProvider
+  {
+    ChromeDriver ChromeDriver { get; set; }
+    bool Initialize();
+  }
 
-  public class CSFDWebsiteScrapper : ICSFDWebsiteScrapper
+  public class ChromeDriverProvider : IChromeDriverProvider
   {
     private readonly ILogger logger;
-    private readonly IStatusManager statusManager;
-    private ChromeDriver chromeDriver;
-    private string baseUrl = "https://csfd.cz";
     private bool wasInitilized;
+    public ChromeDriver ChromeDriver { get; set; }
 
-    public CSFDWebsiteScrapper(ILogger logger, IStatusManager statusManager)
+    public ChromeDriverProvider(ILogger logger)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-      this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
     }
 
     #region Initialize
@@ -53,7 +55,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
           chromeDriverService.HideCommandPromptWindow = true;
 
-          chromeDriver = new ChromeDriver(chromeDriverService, chromeOptions);
+          ChromeDriver = new ChromeDriver(chromeDriverService, chromeOptions);
 
           wasInitilized = true;
         }
@@ -69,12 +71,29 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     }
 
     #endregion
+  }
+
+  public class CSFDWebsiteScrapper : ICSFDWebsiteScrapper
+  {
+    private readonly ILogger logger;
+    private readonly IStatusManager statusManager;
+    private readonly IChromeDriverProvider chromeDriverProvider;
+    private string baseUrl = "https://csfd.cz";
+    private bool wasInitilized;
+
+    public CSFDWebsiteScrapper(ILogger logger, IStatusManager statusManager, IChromeDriverProvider chromeDriverProvider)
+    {
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+      this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
+      this.chromeDriverProvider = chromeDriverProvider ?? throw new ArgumentNullException(nameof(chromeDriverProvider));
+    }
+
 
     #region LoadTvShow
 
     public CSFDTVShow LoadTvShow(string url, CancellationToken cancellationToken, int? seasonNumber = null, int? episodeNumber = null)
     {
-      if (!Initialize())
+      if (!chromeDriverProvider.Initialize())
       {
         return null;
       }
@@ -146,7 +165,10 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     public CSFDTVShowSeason LoadTvShowSeason(string url, CancellationToken cancellationToken)
     {
-      Initialize();
+      if (!chromeDriverProvider.Initialize())
+      {
+        return null;
+      };
 
       var statusMessage = new StatusMessageViewModel(2)
       {
@@ -158,7 +180,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       var document = new HtmlDocument();
 
-      document.LoadHtml(chromeDriver.PageSource);
+      document.LoadHtml(chromeDriverProvider.ChromeDriver.PageSource);
 
       statusMessage = new StatusMessageViewModel(1)
       {
@@ -195,13 +217,13 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         .Replace("https://csfd.sk", baseUrl)
         .Replace("https://www.csfd.sk", baseUrl);
 
-      chromeDriver.Url = url;
-      chromeDriver.Navigate();
+      chromeDriverProvider.ChromeDriver.Url = url;
+      chromeDriverProvider.ChromeDriver.Navigate();
 
       var document = new HtmlDocument();
 
       cancellationToken.ThrowIfCancellationRequested();
-      document.LoadHtml(chromeDriver.PageSource);
+      document.LoadHtml(chromeDriverProvider.ChromeDriver.PageSource);
 
       string node = null;
       int maxCount = 10;
@@ -219,7 +241,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
           logger.Log(MessageType.Success, $"Tv show name: {name}");
 
-          var posterNode = chromeDriver.FindElement(By.XPath("/html/body/div[3]/div/div[1]/div/div[1]/div/div/div[1]/div[1]/a/img"));
+          var posterNode = chromeDriverProvider.ChromeDriver.FindElement(By.XPath("/html/body/div[3]/div/div[1]/div/div[1]/div/div/div[1]/div[1]/a/img"));
 
           posterUrl = posterNode.GetAttribute("src");
 
@@ -305,7 +327,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       var document = new HtmlDocument();
 
       cancellationToken.ThrowIfCancellationRequested();
-      document.LoadHtml(chromeDriver.PageSource);
+      document.LoadHtml(chromeDriverProvider.ChromeDriver.PageSource);
 
       var nodes = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/section[1]/div[2]/div/ul/li/h3/a");
 
@@ -429,12 +451,12 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       {
         List<CSFDTVShowSeasonEpisode> episodes = new List<CSFDTVShowSeasonEpisode>();
 
-        chromeDriver.Url = url;
-        chromeDriver.Navigate();
+        chromeDriverProvider.ChromeDriver.Url = url;
+        chromeDriverProvider.ChromeDriver.Navigate();
 
         HtmlDocument document = new HtmlDocument();
 
-        var html = chromeDriver.PageSource;
+        var html = chromeDriverProvider.ChromeDriver.PageSource;
 
         document.LoadHtml(html);
 
@@ -517,12 +539,12 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     private void LoadCsfdEpisode(CSFDTVShowSeasonEpisode cSFDTVShowSeasonEpisode)
     {
-      chromeDriver.Url = cSFDTVShowSeasonEpisode.Url;
-      chromeDriver.Navigate();
+      chromeDriverProvider.ChromeDriver.Url = cSFDTVShowSeasonEpisode.Url;
+      chromeDriverProvider.ChromeDriver.Navigate();
 
       var document = new HtmlDocument();
 
-      document.LoadHtml(chromeDriver.PageSource);
+      document.LoadHtml(chromeDriverProvider.ChromeDriver.PageSource);
 
       var ratingNode = GetClearText(document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/aside/div/div[2]/div")?.FirstOrDefault()?.InnerText);
       int.TryParse(ratingNode, out var rating);
@@ -654,7 +676,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       cancellationToken.ThrowIfCancellationRequested();
 
-      if (!Initialize())
+      if (!chromeDriverProvider.Initialize())
       {
         return null;
       }
@@ -697,7 +719,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
               {
                 year = pYear;
               }
-              else 
+              else
               {
                 year = null;
               }
@@ -859,7 +881,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       }
 
       var items = await FindItems(parsedName, cancellationToken);
-      
+
       if (showStatusMassage)
         statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
 
@@ -926,14 +948,14 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       cancellationToken.ThrowIfCancellationRequested();
       CSFDQueryResult result = new CSFDQueryResult();
 
-      var urlParsed = url.Replace("[","").Replace("]","").Replace("(","").Replace(")","");
-      chromeDriver.Url = urlParsed;
-      chromeDriver.Navigate();
+      var urlParsed = url.Replace("[", "").Replace("]", "").Replace("(", "").Replace(")", "");
+      chromeDriverProvider.ChromeDriver.Url = urlParsed;
+      chromeDriverProvider.ChromeDriver.Navigate();
 
       var document = new HtmlDocument();
 
       cancellationToken.ThrowIfCancellationRequested();
-      document.LoadHtml(chromeDriver.PageSource);
+      document.LoadHtml(chromeDriverProvider.ChromeDriver.PageSource);
 
       cancellationToken.ThrowIfCancellationRequested();
       var movies = await GetMoviesFromFind(document, cancellationToken);
@@ -967,12 +989,12 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     private int? GetCsfdRating(CSFDItem cSFDItem)
     {
-      chromeDriver.Url = cSFDItem.Url;
-      chromeDriver.Navigate();
+      chromeDriverProvider.ChromeDriver.Url = cSFDItem.Url;
+      chromeDriverProvider.ChromeDriver.Navigate();
 
       var document = new HtmlDocument();
 
-      document.LoadHtml(chromeDriver.PageSource);
+      document.LoadHtml(chromeDriverProvider.ChromeDriver.PageSource);
 
       var ratingNode = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/aside/div[1]/div[2]/div")?.FirstOrDefault()?.InnerText.Replace("\t", null).Replace("\r", null).Replace("\n", null).Replace("%", null);
 
@@ -999,14 +1021,14 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     private string GetCsfdImage(CSFDItem cSFDItem)
     {
-      chromeDriver.Url = cSFDItem.Url;
-      chromeDriver.Navigate();
+      chromeDriverProvider.ChromeDriver.Url = cSFDItem.Url;
+      chromeDriverProvider.ChromeDriver.Navigate();
 
       var document = new HtmlDocument();
 
-      if (chromeDriver.PageSource != null)
+      if (chromeDriverProvider.ChromeDriver.PageSource != null)
       {
-        document.LoadHtml(chromeDriver.PageSource);
+        document.LoadHtml(chromeDriverProvider.ChromeDriver.PageSource);
 
         var node = document?.DocumentNode?.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[1]/a/img")?.FirstOrDefault();
 
