@@ -761,7 +761,7 @@
                     BorderThickness="1">
 
                 <Image HorizontalAlignment="Center"
-                       Source="{Binding ActualViewModel.ActualItem.ImagePath}"
+                       Source="{Binding ActualViewModel.ActualItem.ImagePath, Converter={library:CacheImageConverter}}"
                        Stretch="UniformToFill" />
 
                 <Border.Style>

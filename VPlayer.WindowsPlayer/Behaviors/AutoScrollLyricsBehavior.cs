@@ -110,7 +110,7 @@ namespace VPlayer.Player.Behaviors
           {
             var diff = Math.Abs(scrollViewer.VerticalOffset - scrollIndexOffset);
 
-            if (diff > StepSize * 3)
+            if (diff > StepSize * 10)
             {
               scrollViewer.ScrollToVerticalOffset(scrollIndexOffset);
             }

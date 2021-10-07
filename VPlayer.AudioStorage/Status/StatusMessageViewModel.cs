@@ -130,7 +130,7 @@ namespace VPlayer.Core.Managers.Status
 #if DEBUG
     private MessageStatusState messageState = MessageStatusState.Open;
 #else
-   private MessageStatusState messageState = MessageStatusState.Minimized;
+   private MessageStatusState messageState = MessageStatusState.Open;
 #endif
     public MessageStatusState MessageState
     {

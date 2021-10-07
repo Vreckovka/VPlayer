@@ -164,26 +164,35 @@ namespace VPlayer.Player.Behaviors
           }
           else if (songInPlayListIndex != last_songInPlayListIndex)
           {
-            DoubleAnimation verticalAnimation = new DoubleAnimation();
+            var diff = Math.Abs(scrollViewer.VerticalOffset - scrollIndexOffset);
 
-            verticalAnimation.From = scrollViewer.VerticalOffset;
-            verticalAnimation.To = scrollIndexOffset;
-
-            if (last_songInPlayListIndex == songInPlayListIndex - 1)
+            if (diff > StepSize * 3)
             {
-              verticalAnimation.Duration = new Duration(AnimationTime);
+              scrollViewer.ScrollToVerticalOffset(scrollIndexOffset);
             }
             else
             {
-              verticalAnimation.Duration = new Duration(TimeSpan.FromSeconds(0.50));
+              DoubleAnimation verticalAnimation = new DoubleAnimation();
+
+              verticalAnimation.From = scrollViewer.VerticalOffset;
+              verticalAnimation.To = scrollIndexOffset;
+
+              if (last_songInPlayListIndex == songInPlayListIndex - 1)
+              {
+                verticalAnimation.Duration = new Duration(AnimationTime);
+              }
+              else
+              {
+                verticalAnimation.Duration = new Duration(TimeSpan.FromSeconds(0.50));
+              }
+
+              Storyboard storyboard = new Storyboard();
+
+              storyboard.Children.Add(verticalAnimation);
+              Storyboard.SetTarget(verticalAnimation, scrollViewer);
+              Storyboard.SetTargetProperty(verticalAnimation, new PropertyPath(ScrollAnimationBehavior.VerticalOffsetProperty));
+              storyboard.Begin();
             }
-
-            Storyboard storyboard = new Storyboard();
-
-            storyboard.Children.Add(verticalAnimation);
-            Storyboard.SetTarget(verticalAnimation, scrollViewer);
-            Storyboard.SetTargetProperty(verticalAnimation, new PropertyPath(ScrollAnimationBehavior.VerticalOffsetProperty));
-            storyboard.Begin();
           }
         }
 

@@ -29,7 +29,7 @@ namespace VPlayer.Library
 
     public CacheImageConverter()
     {
-      //AllConverters.Add(null, this);
+
     }
 
     public override object ProvideValue(IServiceProvider serviceProvider)
@@ -46,16 +46,17 @@ namespace VPlayer.Library
 
       string path = "";
 
+
       if (value != DependencyProperty.UnsetValue && value != null)
       {
-        path = value.ToString().Replace("file:///", "");
+        path = value.ToString()?.Replace("file:///", "");
       }
       else
       {
         path = PlayableViewModelWithThumbnail<AlbumViewModel, Album>.GetEmptyImage();
       }
 
-      if (!System.IO.File.Exists(path))
+      if (!File.Exists(path))
       {
         path = PlayableViewModelWithThumbnail<AlbumViewModel, Album>.GetEmptyImage();
       }
@@ -78,6 +79,32 @@ namespace VPlayer.Library
       lastLoadedImagePath = path;
       lastLoadedImage = bitmapImage;
 
+      if (!AllConverters.ContainsKey(path))
+      {
+        AllConverters.Add(path, new List<CacheImageConverter>()
+        {
+          this
+        });
+      }
+      else
+      {
+        var allConvertes = AllConverters[path];
+
+        if (allConvertes == null)
+        {
+          allConvertes = new List<CacheImageConverter>()
+          {
+            this
+          };
+        }
+        else if (!allConvertes.Contains(this))
+        {
+          allConvertes.Add(this);
+        }
+
+        AllConverters[path] = allConvertes;
+      }
+
 
       return bitmapImage;
     }
@@ -90,17 +117,30 @@ namespace VPlayer.Library
       object parameter,
       CultureInfo culture)
     {
+      if (value == null)
+      {
+        return null;
+      }
+
       if (parameter is CacheImageParameters imageParameters)
       {
         DecodeHeight = imageParameters.DecodeHeight;
         DecodeWidth = imageParameters.DecodeWidth;
       }
 
+      var stringValue = value?.ToString();
+
+      if (stringValue != null && stringValue.Contains("http"))
+      {
+        return stringValue;
+      }
+
+
       return GetBitmapImage(value, parameter);
     }
 
     #endregion
- 
+
     #region RefreshDictionary
 
     public static void RefreshDictionary(string imagePath)
@@ -119,7 +159,7 @@ namespace VPlayer.Library
 
     #endregion
 
-    protected virtual void  DecodePixelSize(object parameter, BitmapImage bitmapImage)
+    protected virtual void DecodePixelSize(object parameter, BitmapImage bitmapImage)
     {
       if (int.TryParse(parameter?.ToString(), out var pixelSize) || DecodeWidth != null || DecodeHeight != null)
       {
