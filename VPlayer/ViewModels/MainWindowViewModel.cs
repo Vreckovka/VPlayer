@@ -52,11 +52,8 @@ namespace VPlayer.ViewModels
   // *****File Browser*****
   //TODO: File Browser - File watcher nad aktualnou zlozkou
   //TODO: File Browser - Prepinanie diskov (C,D,E...)
-  //TODO: File Browser - Right click open folder
-  //TODO: File Browser - Nastavit zlozku ako hlavnu
   //TODO: File Browser - zobrazuje slideshow obrazkov z videa(FFMPEG)
   //TODO: File Browser - Mark videne (ako dlho som to pozeral - % pozrete, kludne z celej zloky), ak som to pozeral aspon 5min a datum
-  //TODO: File Browser - Oblubene cesty (nejaky dropdown potom)
   //
   //TODO: Pridavanie do playlistu vyber do akeho, alebo ci aktualne prehravajuceho, alebo chces vytvorit novy
   //TODO: Dotiahnut sezony zvlast ako update z csfd
