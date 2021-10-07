@@ -12,6 +12,7 @@ using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
 using VCore.Standard.Modularity.Interfaces;
 using VCore.ViewModels;
+using VCore.WPF;
 using VCore.WPF.Interfaces;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -48,11 +49,15 @@ namespace VPlayer.Home.ViewModels
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       LibraryCollection = libraryCollection ?? throw new ArgumentNullException(nameof(libraryCollection));
+
+      LoadingStatus = new LoadingStatus();
     }
 
     #endregion Constructors
 
     #region Properties
+
+    public LoadingStatus LoadingStatus { get; }
 
     public abstract override bool ContainsNestedRegions { get; }
     public LibraryCollection<TViewModel, TModel> LibraryCollection { get; set; }

@@ -15,7 +15,11 @@
                 <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/TextBlocksStyle.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/StylesDictionaries/OverlayStyles.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/ControlsTemplates/PlayableWrapPanelTemplate.xaml" />
+
+
                 <ResourceDictionary Source="pack://application:,,,/VCore.WPF;component/Controls/VPasswordBoxTemplate.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/VCore.WPF;component/Controls/LoadingIndicator/LoadingIndicatorTemplate.xaml" />
+
 
                 <ResourceDictionary Source="pack://application:,,,/VVLC;component/Themes/VideoViewTemplate.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Vlc/Themes/FullScreenPlayerTemplate.xaml" />

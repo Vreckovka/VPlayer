@@ -93,7 +93,7 @@ namespace VPlayer.Home.ViewModels
 
           Application.Current.Dispatcher.Invoke(() =>
           {
-            songPlaylistsViewModel.LoadingStatus.TotalProcessCount = itemSourcesProcess.InternalProcessesCount;
+            songPlaylistsViewModel.LoadingStatus.NumberOfProcesses = itemSourcesProcess.InternalProcessesCount;
           });
 
           serialDisposable.Disposable = itemSourcesProcess.OnInternalProcessedCountChanged.Subscribe(x =>

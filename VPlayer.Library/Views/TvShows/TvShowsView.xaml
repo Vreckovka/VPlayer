@@ -7,12 +7,13 @@
              xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
              xmlns:local="clr-namespace:VPlayer.Home.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:converters1="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
     <Grid>
         <Grid.Resources>
-            <library:CacheImageParameters x:Key="CacheImageParameters"
+            <converters1:CacheImageParameters x:Key="CacheImageParameters"
                                           DecodeHeight="199"
                                           DecodeWidth="140" />
         </Grid.Resources>
@@ -24,7 +25,7 @@
                 <Style BasedOn="{StaticResource {x:Type controls:PlayableWrapPanelItem}}" TargetType="controls:PlayableWrapPanelItem">
                     <Setter Property="Width" Value="175" />
                     <Setter Property="Height" Value="305" />
-                    <Setter Property="ImageThumbnail" Value="{Binding ImageThumbnail, Converter={library:CacheImageConverter}, ConverterParameter={StaticResource CacheImageParameters}, IsAsync=True}" />
+                    <Setter Property="ImageThumbnail" Value="{Binding ImageThumbnail, Converter={converters1:CacheImageConverter}, ConverterParameter={StaticResource CacheImageParameters}, IsAsync=True}" />
                 </Style>
             </controls:PlayableWrapPanel.Resources>
         </controls:PlayableWrapPanel>

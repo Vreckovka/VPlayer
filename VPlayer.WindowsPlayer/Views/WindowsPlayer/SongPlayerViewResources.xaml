@@ -18,9 +18,9 @@
                     xmlns:windowsPlayer="clr-namespace:VPlayer.Player.Views.WindowsPlayer"
                     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit">
 
-  <library:CacheImageConverter x:Key="CacheImageConverter" />
+  <converters:CacheImageConverter x:Key="CacheImageConverter" />
 
-  <library:CacheImageConverter x:Key="CacheImageConverterLowerQuality"
+  <converters:CacheImageConverter x:Key="CacheImageConverterLowerQuality"
                                DecodeHeight="350"
                                DecodeWidth="350" />
 

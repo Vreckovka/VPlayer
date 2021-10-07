@@ -1,6 +1,7 @@
 ﻿using Prism.Events;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
+using VCore.WPF;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Modularity.Regions;
@@ -19,6 +20,7 @@ namespace VPlayer.Home.ViewModels.TvShows
       IEventAggregator eventAggregator) :
       base(regionProvider, viewModelsFactory, storageManager, libraryCollection, eventAggregator)
     {
+      LoadingStatus = new LoadingStatus();
     }
 
     public override bool ContainsNestedRegions => false;

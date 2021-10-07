@@ -6,6 +6,7 @@
              xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
              xmlns:local="clr-namespace:VPlayer.Home.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
              d:DesignHeight="936"
              d:DesignWidth="1596"
              Background="{StaticResource BackgroudBrush}"
@@ -53,7 +54,7 @@
                     </Border.Effect>
 
                     <Grid>
-                        <Image VerticalAlignment="Top" Source="{Binding ViewModel.ImageThumbnail, Converter={library:CacheImageConverter}, IsAsync=True}" />
+                        <Image VerticalAlignment="Top" Source="{Binding ViewModel.ImageThumbnail, Converter={converters:CacheImageConverter}, IsAsync=True}" />
                         <Grid Background="{StaticResource GlassGradient}" />
                     </Grid>
                 </Border>

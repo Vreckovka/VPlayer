@@ -263,7 +263,6 @@ namespace VPlayer.Core.ViewModels
 
     #region Methods
 
-
     public abstract Task<IEnumerable<TViewModelInPlaylist>> GetItemsToPlay();
     public abstract void PublishPlayEvent(IEnumerable<TViewModelInPlaylist> viewModels, EventAction eventAction );
     public abstract void PublishAddToPlaylistEvent(IEnumerable<TViewModelInPlaylist> viewModels);

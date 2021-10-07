@@ -9,7 +9,8 @@
                     xmlns:domainClasses="clr-namespace:VPlayer.AudioStorage.DomainClasses;assembly=VPlayer.AudioStorage"
                     xmlns:domainClasses1="clr-namespace:VPlayer.AudioStorage.DomainClasses;assembly=VPLayer.Domain"
                     xmlns:library="clr-namespace:VPlayer.Library"
-                    xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF">
+                    xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF"
+                    xmlns:converters2="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
@@ -18,7 +19,7 @@
 
     <Duration x:Key="AnimationDuration">0:0:0:0.15</Duration>
 
-    <library:CacheImageConverter x:Key="CacheImageConverter" />
+    <converters2:CacheImageConverter x:Key="CacheImageConverter" />
 
     <Style x:Key="PlayableWrapPanelItemButtons"
            BasedOn="{StaticResource BorderlessButtonStyle}"
@@ -130,7 +131,7 @@
         <Setter Property="Height" Value="275" />
         <Setter Property="BottomText" Value="{Binding BottomText}" />
         <Setter Property="HeaderText" Value="{Binding Name}" />
-        <Setter Property="ImageThumbnail" Value="{Binding ImageThumbnail, Converter={library:CacheImageConverter}, ConverterParameter=250, IsAsync=True}" />
+        <Setter Property="ImageThumbnail" Value="{Binding ImageThumbnail, Converter={converters2:CacheImageConverter}, ConverterParameter=250, IsAsync=True}" />
         <Setter Property="IsPlaying" Value="{Binding IsPlaying}" />
 
 

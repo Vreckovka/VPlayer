@@ -12,7 +12,8 @@
                     xmlns:soundManagement="clr-namespace:SoundManagement;assembly=SoundManagement"
                     xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors;assembly=VPlayer.Core"
                     xmlns:themes="clr-namespace:VPlayer.WindowsPlayer.Vlc.Themes"
-                    xmlns:views="clr-namespace:VPlayer.Player.Views;assembly=VCore.WPF">
+                    xmlns:views="clr-namespace:VPlayer.Player.Views;assembly=VCore.WPF"
+                    xmlns:converters1="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF">
 
 
     <ResourceDictionary.MergedDictionaries>
@@ -387,7 +388,7 @@
                                         Background="Transparent"
                                         BorderThickness="1">
                                     <Border.Resources>
-                                        <library1:CacheImageConverter x:Key="CacheImageConverter" DecodeWidth="100" />
+                                        <converters1:CacheImageConverter x:Key="CacheImageConverter" DecodeWidth="100" />
                                     </Border.Resources>
 
                                     <Image HorizontalAlignment="Center"

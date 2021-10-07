@@ -16,6 +16,7 @@
              xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
              xmlns:views="clr-namespace:VPlayer.Player.Views"
              xmlns:views1="clr-namespace:VPlayer.Player.Views;assembly=VCore.WPF"
+             xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
              Focusable="False"
              mc:Ignorable="d">
 
@@ -761,7 +762,7 @@
                     BorderThickness="1">
 
                 <Image HorizontalAlignment="Center"
-                       Source="{Binding ActualViewModel.ActualItem.ImagePath, Converter={library:CacheImageConverter}}"
+                       Source="{Binding ActualViewModel.ActualItem.ImagePath, Converter={converters:CacheImageConverter}}"
                        Stretch="UniformToFill" />
 
                 <Border.Style>

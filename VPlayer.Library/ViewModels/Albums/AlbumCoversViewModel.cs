@@ -20,6 +20,7 @@ using VCore.ItemsCollections.VirtualList.VirtualLists;
 using VCore.Modularity.RegionProviders;
 using VCore.Standard.Helpers;
 using VCore.ViewModels;
+using VCore.WPF.Converters;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.InfoDownloader.Models;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -441,15 +442,12 @@ namespace VPlayer.Home.ViewModels.Albums
         }
 
         i.Save(finalPath, ImageFormat.Jpeg);
-
         CacheImageConverter.RefreshDictionary(finalPath);
-
 
         albumViewModel.Model.AlbumFrontCoverURI = albumCover.Model.Url;
         storage.UpdateEntityAsync(albumViewModel.Model);
 
-
-
+        
         return finalPath;
       });
     }

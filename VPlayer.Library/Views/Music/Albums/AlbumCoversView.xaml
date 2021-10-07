@@ -9,12 +9,13 @@
              xmlns:local="clr-namespace:VPlayer.Home.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF"
+             xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
 
     <UserControl.Resources>
-        <library:CacheImageConverter x:Key="CacheImageConverter"
+        <converters:CacheImageConverter x:Key="CacheImageConverter"
                                      DecodeHeight="250"
                                      DecodeWidth="250" />
 

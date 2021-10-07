@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Threading.Tasks;
+using System.Windows;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore.Standard.Comparers;
@@ -10,6 +12,7 @@ using VCore.Standard.Factories.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
+using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.SoundItems;
 using VPLayer.Domain;
@@ -21,6 +24,7 @@ namespace VPlayer.Core.ViewModels.Albums
     #region Fields
 
     private readonly IStorageManager storage;
+    private readonly IAlbumsViewModel albumsViewModel;
     private readonly IViewModelsFactory viewModelsFactory;
     private readonly IVPlayerCloudService iVPlayerCloudService;
     private readonly IVPlayerRegionProvider ivPlayerRegionProvider;
@@ -33,11 +37,13 @@ namespace VPlayer.Core.ViewModels.Albums
       Album model,
       IEventAggregator eventAggregator,
       IStorageManager storage,
+      IAlbumsViewModel albumsViewModel,
       IViewModelsFactory viewModelsFactory,
       IVPlayerCloudService iVPlayerCloudService,
       IVPlayerRegionProvider ivPlayerRegionProvider) : base(model, eventAggregator)
     {
       this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
+      this.albumsViewModel = albumsViewModel ?? throw new ArgumentNullException(nameof(albumsViewModel));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.iVPlayerCloudService = iVPlayerCloudService ?? throw new ArgumentNullException(nameof(iVPlayerCloudService));
       this.ivPlayerRegionProvider = ivPlayerRegionProvider ?? throw new ArgumentNullException(nameof(ivPlayerRegionProvider));
@@ -58,27 +64,68 @@ namespace VPlayer.Core.ViewModels.Albums
 
     #region GetSongsToPlay
 
+    private SerialDisposable serialDisposable = new SerialDisposable();
     public override Task<IEnumerable<SongInPlayListViewModel>> GetItemsToPlay()
     {
+
       return Task.Run(async () =>
       {
-        var songs = storage.GetRepository<Song>()
-          .Include(x => x.ItemModel)
-          .ThenInclude(x => x.FileInfo)
-          .Include(x => x.Album)
-          .ThenInclude(x => x.Artist)
-          .Where(x => x.Album.Id == Model.Id).ToList();
+        bool wasBusySet = false;
+        try
+        {
 
-        var myComparer = new NumberStringComparer();
+          var songs = storage.GetRepository<Song>()
+            .Include(x => x.ItemModel)
+            .ThenInclude(x => x.FileInfo)
+            .Include(x => x.Album)
+            .ThenInclude(x => x.Artist)
+            .Where(x => x.Album.Id == Model.Id).ToList();
 
-        var songsAll = songs.OrderBy(x => x.Source.Split("\\").Last(), myComparer).ToList();
+          var myComparer = new NumberStringComparer();
+
+          var songsAll = songs.OrderBy(x => x.Source.Split("\\").Last(), myComparer).ToList();
 
 
-        var cloudSOngs = songsAll.Where(x => x.Source.Contains("http")).ToList();
+          var cloudSOngs = songsAll.Where(x => x.Source.Contains("http")).ToList();
 
-        await iVPlayerCloudService.GetItemSources(cloudSOngs.Select(x => x.ItemModel.FileInfo)).Process;
+          var process = iVPlayerCloudService.GetItemSources(cloudSOngs.Select(x => x.ItemModel.FileInfo));
 
-        return songsAll.Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x));
+          if (process.InternalProcessesCount != 0)
+          {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+              wasBusySet = true;
+              albumsViewModel.LoadingStatus.IsLoading = true;
+            });
+          }
+
+          Application.Current.Dispatcher.Invoke(() =>
+          {
+            albumsViewModel.LoadingStatus.NumberOfProcesses = process.InternalProcessesCount;
+          });
+
+          serialDisposable.Disposable = process.OnInternalProcessedCountChanged.Subscribe(x =>
+          {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+              albumsViewModel.LoadingStatus.ProcessedCount = x;
+            });
+          });
+
+          await process.Process;
+
+          return songsAll.Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x));
+        }
+        finally
+        {
+          if(wasBusySet )
+          {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+              albumsViewModel.LoadingStatus.IsLoading = false;
+            });
+          }
+        }
       });
     }
 
@@ -165,8 +212,8 @@ namespace VPlayer.Core.ViewModels.Albums
 
     #endregion
 
-   
 
-    #endregion 
+
+    #endregion
   }
 }

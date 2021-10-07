@@ -7,7 +7,8 @@
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                     xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.DarkTheme"
                     xmlns:library1="clr-namespace:VPlayer.Library"
-                    xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors">
+                    xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
+                    xmlns:converters1="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/VCore.WPF;component/StylesDictionaries/Paths.xaml" />
@@ -382,7 +383,7 @@
                             BorderBrush="#45000000"
                             BorderThickness="2">
                         <Border.Resources>
-                            <library1:CacheImageConverter x:Key="CacheImageConverter" DecodeWidth="350" />
+                            <converters1:CacheImageConverter x:Key="CacheImageConverter" DecodeWidth="350" />
                         </Border.Resources>
 
                         <Image Width="95" Source="{Binding ImagePath}" />

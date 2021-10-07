@@ -4,6 +4,7 @@
              xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
+             xmlns:loadingIndicator="clr-namespace:VCore.WPF.Controls.LoadingIndicator;assembly=VCore.WPF"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:VPlayer.Home.Desing.ViewModels"
              d:DataContext="{d:DesignInstance Type={x:Type viewModels:AlbumsDesignViewModel}, IsDesignTimeCreatable=True}"
@@ -11,9 +12,11 @@
              d:DesignWidth="800"
              mc:Ignorable="d">
 
-  <Grid>
-    <Grid>
-      <controls:PlayableWrapPanel Margin="5,0" ItemsSource="{Binding View}"/>
-    </Grid>
-  </Grid>
+    <loadingIndicator:LoadingIndicator MessageDataContext="{Binding LoadingStatus, Mode=OneWay}">
+        <Grid>
+            <Grid>
+                <controls:PlayableWrapPanel Margin="5,0" ItemsSource="{Binding View}" />
+            </Grid>
+        </Grid>
+    </loadingIndicator:LoadingIndicator>
 </UserControl>

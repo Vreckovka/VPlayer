@@ -4,6 +4,7 @@
              xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
+             xmlns:loadingIndicator="clr-namespace:VCore.WPF.Controls.LoadingIndicator;assembly=VCore.WPF"
              xmlns:local="clr-namespace:VPlayer.Home.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:mvvm="http://prismlibrary.com/"
@@ -11,11 +12,12 @@
              d:DesignWidth="800"
              mc:Ignorable="d">
 
-  <Grid>
+    <loadingIndicator:LoadingIndicator MessageDataContext="{Binding LoadingStatus, Mode=OneWay}">
+        <Grid>
+            <controls1:PlayableWrapPanel Margin="5,0"
+                                         ItemsSource="{Binding View}"
+                                         SnapsToDevicePixels="False" />
 
-    <controls1:PlayableWrapPanel Margin="5,0"
-                                 ItemsSource="{Binding View}"
-                                 SnapsToDevicePixels="False" />
-
-  </Grid>
+        </Grid>
+    </loadingIndicator:LoadingIndicator>
 </UserControl>
