@@ -47,7 +47,6 @@ namespace VPlayer.ViewModels
   //TODO: Hviezdicky pocet 
   //TODO: TV Channels editor dotiahnut
   //TODO: Save UPnP Sever (mozno je, bojim sa skusit)
-  //TODO: Slider na koliecko (ak je open hook na windows eventy mysky a ked je close tak -=)
   //
   // *****File Browser*****
   //TODO: File Browser - File watcher nad aktualnou zlozkou
@@ -100,8 +99,6 @@ namespace VPlayer.ViewModels
   //
   //
   //  *****TOPKY*****
-  //        TODO: File Browser - Nahrat tv show rovno z tade
-  //        TODO: File Browser - Nahrat artists rovno z tade
   //        TODO: Tv show prehrat od posledneho ulozene playlistu (to iste aj pre hudbu kludne), ked pribudne nova seria pusti to kde si skoncil, ale nacita ju
   //        TODO: Prehravanie,pridavanie do playlistu albumov, tv show z Detail viewu itemu (AlbumDetailView...) (tym padom mozno zalozka Albums nebude treba, aj tak tam nechodis, pojdes iba do artist)
   //        TODO: Vymazavat itemy z File browsera (ak je odkaz niekde do db na tu zlozku tak vymazat rovno aj tv show, ale spytat sa ci to chces a zapametat si ak ano)
