@@ -10,9 +10,11 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Logger;
 using PCloud;
 using PCloudClient.Domain;
 using VCore;
+using VCore.Standard;
 using VPLayer.Domain.Contracts.CloudService.Providers;
 using VPlayer.PCloud.JsonResponses;
 using FileInfo = PCloudClient.Domain.FileInfo;
@@ -24,6 +26,7 @@ namespace VPlayer.PCloud
     #region Fields
 
     private readonly string filePath;
+    private readonly ILogger logger;
     private readonly string host;
     private readonly bool ssl;
 
@@ -33,9 +36,10 @@ namespace VPlayer.PCloud
 
     #region Constructors
 
-    public PCloudCloudService(string filePath)
+    public PCloudCloudService(string filePath, ILogger logger)
     {
       this.filePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       host = "eapi.pcloud.com";
       ssl = true;
     }
@@ -148,49 +152,62 @@ namespace VPlayer.PCloud
     }
 
     #endregion
-
-
-   
+    
 
     public Task<KeyValuePair<string, string>?> GetFileLink(long id)
     {
       throw new NotImplementedException();
     }
 
-    public async Task<List<KeyValuePair<long,string>>> GetFileLinks(IEnumerable<long> ids)
+    #region GetFileLinks
+
+    public AsyncProcess<List<KeyValuePair<long, string>>> GetFileLinks(IEnumerable<long> ids)
     {
-      if (credentials != null)
+      var process = new AsyncProcess<List<KeyValuePair<long, string>>>();
+      var idsList = ids.ToList();
+      process.InternalProcessesCount = idsList.Count;
+
+      process.Process = Task.Run(async () =>
       {
-        using (var conn = await Connection.open(ssl, host))
+        if (credentials != null)
         {
-          try
+          using (var conn = await Connection.open(ssl, host))
           {
-            await conn.login(credentials.Email, credentials.Password);
-
-            var links = new List<KeyValuePair<long, string>>();
-
-            foreach (var id in ids)
+            try
             {
-              var link = await conn.GetAudioLink(id);
+              await conn.login(credentials.Email, credentials.Password);
 
-              links.Add(new KeyValuePair<long, string>(id, link));
+              var links = new List<KeyValuePair<long, string>>();
+
+              foreach (var id in idsList)
+              {
+                var link = await conn.GetAudioLink(id);
+
+                process.ProcessedCount++;
+                links.Add(new KeyValuePair<long, string>(id, link));
+              }
+
+              return links;
             }
-
-            return links;
-          }
-          catch (Exception ex)
-          {
-
-          }
-          finally
-          {
-            await Logout(conn);
+            catch (Exception ex)
+            {
+              logger.Log(ex);
+            }
+            finally
+            {
+              await Logout(conn);
+            }
           }
         }
-      }
 
-      return null;
+        return null;
+
+      });
+
+      return process;
     }
+
+    #endregion
 
     #region IsUserLoggedIn
 

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Threading.Tasks;
 using System.Windows;
 using Logger;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore.Standard.Factories.ViewModels;
+using VCore.WPF.ViewModels.WindowsFiles;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
@@ -58,6 +60,7 @@ namespace VPlayer.Home.ViewModels
 
     #region GetItemsToPlay
 
+    private SerialDisposable serialDisposable = new SerialDisposable();
     public override async Task<IEnumerable<SoundItemInPlaylistViewModel>> GetItemsToPlay()
     {
       var playlist = storageManager.GetRepository<SoundItemFilePlaylist>()
@@ -79,12 +82,29 @@ namespace VPlayer.Home.ViewModels
           .ThenInclude(x => x.FileInfo)
           .ToList();
 
+        List<FileInfo> sources = new List<FileInfo>();
 
         if (playlist.PlaylistType == PlaylistType.Cloud || playlistItems.Select(x => x.ReferencedItem.Source).Any(y => y.Contains("http")))
         {
           var fileInfos = playlistItems.Select(x => x.ReferencedItem.FileInfo).ToList();
 
-          var result = await vPlayerCloudService.GetItemSources(fileInfos);
+          var itemSourcesProcess = vPlayerCloudService.GetItemSources(fileInfos);
+
+
+          Application.Current.Dispatcher.Invoke(() =>
+          {
+            songPlaylistsViewModel.LoadingStatus.TotalProcessCount = itemSourcesProcess.InternalProcessesCount;
+          });
+
+          serialDisposable.Disposable = itemSourcesProcess.OnInternalProcessedCountChanged.Subscribe(x =>
+          {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+              songPlaylistsViewModel.LoadingStatus.ProcessedCount = x;
+            });
+          });
+
+          sources = (await itemSourcesProcess.Process)?.ToList();
         }
 
         if (songsItems.Count > 0)
@@ -95,7 +115,25 @@ namespace VPlayer.Home.ViewModels
             PlaylistItem = playlistItems.Single(y => y.IdReferencedItem == x.ItemModel.Id)
           });
 
-          return grouppedSongs.OrderBy(x => x.PlaylistItem.OrderInPlaylist).Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x.Song));
+          var songs = grouppedSongs.OrderBy(x => x.PlaylistItem.OrderInPlaylist)
+            .Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x.Song)).ToList();
+
+          if (sources != null)
+          {
+            foreach (var song in songs)
+            {
+              var source =
+                sources.SingleOrDefault(x => x.Indentificator == song.SongModel.ItemModel.FileInfo.Indentificator);
+
+              if (source != null)
+              {
+                song.SongModel.ItemModel.FileInfo.Source = source.Source;
+              }
+            }
+          }
+         
+
+          return songs;
         }
         else
         {
@@ -127,32 +165,38 @@ namespace VPlayer.Home.ViewModels
 
     protected override void OnPlay(EventAction action)
     {
-      songPlaylistsViewModel.IsBusy = true;
-
-      Task.Run(async  () =>
+      Task.Run(async () =>
       {
-        var data = (await GetItemsToPlay()).ToList();
-
-        var e = new PlayItemsEventData<SoundItemInPlaylistViewModel>(data, action, IsShuffle, IsRepeating, Model.LastItemElapsedTime, Model);
-
         try
         {
+          Application.Current.Dispatcher.Invoke(() =>
+          {
+            songPlaylistsViewModel.LoadingStatus.IsLoading = true;
+          });
+
+          var data = (await GetItemsToPlay()).ToList();
+
+          var e = new PlayItemsEventData<SoundItemInPlaylistViewModel>(data, action, IsShuffle, IsRepeating, Model.LastItemElapsedTime, Model);
           eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(e);
         }
-        catch (Exception ex)
+        finally
         {
-
-          throw;
+          Application.Current.Dispatcher.Invoke(() =>
+          {
+            songPlaylistsViewModel.LoadingStatus.IsLoading = false;
+          });
         }
-
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-          songPlaylistsViewModel.IsBusy = false;
-        });
       });
     }
 
     #endregion
 
+
+    public override void Dispose()
+    {
+      base.Dispose();
+
+      serialDisposable?.Dispose();
+    }
   }
 }

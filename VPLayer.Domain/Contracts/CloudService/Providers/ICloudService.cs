@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PCloud;
 using PCloudClient.Domain;
+using VCore.Standard;
 using FileInfo = PCloudClient.Domain.FileInfo;
 
 namespace VPLayer.Domain.Contracts.CloudService.Providers
@@ -18,7 +19,7 @@ namespace VPLayer.Domain.Contracts.CloudService.Providers
     Task<bool> ExistsFolderAsync(long id);
     Task<MemoryStream> ReadFile(long id);
     Task<KeyValuePair<string,string>?> GetFileLink(long id);
-    Task<List<KeyValuePair<long, string>>> GetFileLinks(IEnumerable<long> ids);
+    AsyncProcess<List<KeyValuePair<long, string>>> GetFileLinks(IEnumerable<long> ids);
     Task<string> GetAudioLink(long id);
     Task<PCloudResponse<Stats>> GetFileStats(long id);
     Task<FolderInfo> CreateFolder(string name, long? parentId);

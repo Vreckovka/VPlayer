@@ -94,7 +94,7 @@ namespace VPlayer.Core.ViewModels.Artists
 
         var cloudSOngs = songsAll.Where(x => x.Source.Contains("http")).ToList();
 
-        await iVPlayerCloudService.GetItemSources(cloudSOngs.Select(x => x.ItemModel.FileInfo));
+        await iVPlayerCloudService.GetItemSources(cloudSOngs.Select(x => x.ItemModel.FileInfo)).Process;
 
         return songsAll.Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x));
       });

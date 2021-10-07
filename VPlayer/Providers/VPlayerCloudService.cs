@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Logger;
+using VCore.Standard;
 using VCore.WPF.ViewModels.WindowsFiles;
 using VPLayer.Domain;
 using VPlayer.PCloud;
@@ -9,24 +13,38 @@ namespace VPlayer.Providers
 {
   public class VPlayerCloudService : PCloudCloudService, IVPlayerCloudService
   {
-    public VPlayerCloudService(string filePath) : base(filePath)
+    public VPlayerCloudService(string filePath, ILogger logger) : base(filePath, logger)
     {
     }
 
-    public async Task<IEnumerable<FileInfo>> GetItemSources(IEnumerable<FileInfo> fileInfos)
+    public AsyncProcess<IEnumerable<FileInfo>> GetItemSources(IEnumerable<FileInfo> fileInfos)
     {
+      var process = new AsyncProcess<IEnumerable<FileInfo>>();
       var list = fileInfos.ToList();
+      var linksProcess = GetFileLinks(list.Select(x => long.Parse(x.Indentificator)));
 
-      var links = await GetFileLinks(list.Select(x => long.Parse(x.Indentificator)));
+      process.InternalProcessesCount = linksProcess.InternalProcessesCount;
 
-      foreach (var item in links)
+      process.Process = Task.Run(async () =>
       {
-        var info = list.Single(x => x.Indentificator == item.Key.ToString());
+        linksProcess.OnInternalProcessedCountChanged.Subscribe((x) =>
+        {
+          process.ProcessedCount = x;
+        });
 
-        info.Source = item.Value;
-      }
+        var links = await linksProcess.Process;
 
-      return list;
+        foreach (var item in links)
+        {
+          var info = list.Single(x => x.Indentificator == item.Key.ToString());
+
+          info.Source = item.Value;
+        }
+
+        return list.AsEnumerable();
+      });
+
+      return process;
     }
   }
 }

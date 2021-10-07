@@ -42,7 +42,7 @@ namespace VPlayer.PCloud.ViewModels
 
     public override Task<IEnumerable<FileInfo>> GetItemSources(IEnumerable<FileInfo> fileInfo)
     {
-      return iVPlayerCloudService.GetItemSources(fileInfo);
+      return iVPlayerCloudService.GetItemSources(fileInfo).Process;
     }
   }
 }

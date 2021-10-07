@@ -11,6 +11,7 @@
         xmlns:prism="http://prismlibrary.com/"
         xmlns:regions="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPlayer.Core"
         xmlns:regions1="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPLayer.Domain"
+        xmlns:system="clr-namespace:System;assembly=System.Runtime"
         Title="{Binding Title}"
         Width="1488"
         Height="830"
@@ -20,67 +21,68 @@
         Focusable="True"
         FontFamily="pack://application:,,,/VPlayer;component/Resources/Fonts/Roboto/#Roboto"
         FontSize="12"
-        Icon="/Includes/VPlayerLogo_transparent.png"
+        Icon="/Includes/VPlayerLogo.png"
         MouseLeftButtonDown="Window_MouseLeftButtonDown"
         Style="{StaticResource {x:Type Window}}"
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d">
 
-    <Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/VCore.WPF;component/StylesDictionaries/Paths.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Window.Resources>
+  <Window.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/VCore.WPF;component/StylesDictionaries/Paths.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer;component/Views/MainWindowResources.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </Window.Resources>
 
-    <Window.TaskbarItemInfo>
-        <TaskbarItemInfo>
-            <TaskbarItemInfo.ThumbButtonInfos>
-                <ThumbButtonInfo Command="{Binding PlayStop}"
-                                 Description="Play Stop"
-                                 ImageSource="pack://application:,,,/Resources/play-and-pause-button.png" />
-                <ThumbButtonInfo Command="{Binding SwitchScreenCommand}"
-                                 Description="Move to active screen"
-                                 ImageSource="pack://application:,,,/VCore.WPF;component/Resources/window_switch.png" />
-            </TaskbarItemInfo.ThumbButtonInfos>
-        </TaskbarItemInfo>
-    </Window.TaskbarItemInfo>
+  <Window.TaskbarItemInfo>
+    <TaskbarItemInfo>
+      <TaskbarItemInfo.ThumbButtonInfos>
+        <ThumbButtonInfo Command="{Binding PlayStop}"
+                         Description="Play Stop"
+                         ImageSource="pack://application:,,,/Resources/play-and-pause-button.png" />
+        <ThumbButtonInfo Command="{Binding SwitchScreenCommand}"
+                         Description="Move to active screen"
+                         ImageSource="pack://application:,,,/VCore.WPF;component/Resources/window_switch.png" />
+      </TaskbarItemInfo.ThumbButtonInfos>
+    </TaskbarItemInfo>
+  </Window.TaskbarItemInfo>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
-            <RowDefinition />
-            <RowDefinition Height="auto" />
-        </Grid.RowDefinitions>
-
-
-
-
-        <Button Click="Button_Click"
-                Content="DELETE ALL"
-                Visibility="Collapsed" />
-
-
-
-        <Border Grid.Row="1">
-            <ContentControl prism:RegionManager.RegionName="{x:Static regions1:RegionNames.ContentRegion}" />
-        </Border>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="auto" />
+      <RowDefinition />
+      <RowDefinition Height="auto" />
+    </Grid.RowDefinitions>
 
 
 
 
-        <ContentControl Grid.Row="2"
-                        Grid.Column="0"
-                        prism:RegionManager.RegionName="{x:Static regions1:RegionNames.PlayerRegion}" />
+    <Button Click="Button_Click"
+            Content="DELETE ALL"
+            Visibility="Collapsed" />
 
 
 
-    </Grid>
+    <Border Grid.Row="1">
+      <ContentControl prism:RegionManager.RegionName="{x:Static regions1:RegionNames.ContentRegion}" />
+    </Border>
 
 
-    <b:Interaction.Behaviors>
-        <behaviors:ProperMaximizeWindowBehavior />
-        <behaviors:MoveToActiveScreenBehavior SwitchCommnd="{Binding SwitchBehaviorCommand, Mode=TwoWay}" />
-    </b:Interaction.Behaviors>
+
+
+    <ContentControl Grid.Row="2"
+                    Grid.Column="0"
+                    prism:RegionManager.RegionName="{x:Static regions1:RegionNames.PlayerRegion}" />
+
+
+
+  </Grid>
+
+
+  <b:Interaction.Behaviors>
+    <behaviors:ProperMaximizeWindowBehavior />
+    <behaviors:MoveToActiveScreenBehavior SwitchCommnd="{Binding SwitchBehaviorCommand, Mode=TwoWay}" />
+  </b:Interaction.Behaviors>
 </Window>

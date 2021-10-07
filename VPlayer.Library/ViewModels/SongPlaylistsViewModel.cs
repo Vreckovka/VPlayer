@@ -1,5 +1,6 @@
 ﻿using Prism.Events;
 using VCore.Modularity.RegionProviders;
+using VCore.Standard;
 using VCore.Standard.Factories.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -9,6 +10,67 @@ using VPlayer.Home.Views;
 
 namespace VPlayer.Home.ViewModels
 {
+  public class LoadingStatus : ViewModel
+  {
+    #region IsLoading
+
+    private bool isLoading;
+
+    public bool IsLoading
+    {
+      get { return isLoading; }
+      set
+      {
+        if (value != isLoading)
+        {
+          isLoading = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region TotalProcessCount
+
+    private int totalProcessCount;
+
+    public int TotalProcessCount
+    {
+      get { return totalProcessCount; }
+      set
+      {
+        if (value != totalProcessCount)
+        {
+          totalProcessCount = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region ProcessedCount
+
+    private int processedCount;
+
+    public int ProcessedCount
+    {
+      get { return processedCount; }
+      set
+      {
+        if (value != processedCount)
+        {
+          processedCount = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+  }
+
+
   public class SongPlaylistsViewModel : PlayableItemsViewModel<PlaylistsView, SongsPlaylistViewModel, SoundItemFilePlaylist>
   {
     public SongPlaylistsViewModel(
@@ -19,29 +81,14 @@ namespace VPlayer.Home.ViewModels
       IEventAggregator eventAggregator) : 
       base(regionProvider, viewModelsFactory, storageManager, libraryCollection, eventAggregator)
     {
+      LoadingStatus = new LoadingStatus();
     }
 
     public override bool ContainsNestedRegions => false;
     public override string Header { get; } = "Music";
     public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
 
-    #region IsBusy
 
-    private bool isBusy;
-
-    public bool IsBusy
-    {
-      get { return isBusy; }
-      set
-      {
-        if (value != isBusy)
-        {
-          isBusy = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
+    public LoadingStatus LoadingStatus { get;  }
   }
 }

@@ -25,23 +25,6 @@ namespace VPlayer.Home.ViewModels.TvShows
     public override string Header { get; } = "Videos";
     public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
 
-    #region IsBusy
-
-    private bool isBusy;
-
-    public bool IsBusy
-    {
-      get { return isBusy; }
-      set
-      {
-        if (value != isBusy)
-        {
-          isBusy = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
+    public LoadingStatus LoadingStatus { get;  }
   }
 }
