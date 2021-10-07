@@ -119,6 +119,7 @@ namespace VPlayer.ViewModels
   //TODO: Nespaja niektorych aristov pri load
   //TODO: Sem tam ostanie vysiet appka
   //TODO: Po roztiahnuti okna spadlo
+  //TODO: Rap mixy maju nejaky problem pri loading artistov
   //
   //  *****IMPORTANT!*****
   //        TODO: Po pridani novej serii nefunguje csfd download

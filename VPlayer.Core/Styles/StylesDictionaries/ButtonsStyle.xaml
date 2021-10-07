@@ -3,12 +3,12 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore.WPF"
                     xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF"
+                    xmlns:converters1="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
                     xmlns:domain="clr-namespace:VPlayer.AudioStorage.Scrappers.CSFD.Domain;assembly=VPlayer.AudioStorage"
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                     xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.DarkTheme"
                     xmlns:library1="clr-namespace:VPlayer.Library"
-                    xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
-                    xmlns:converters1="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF">
+                    xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/VCore.WPF;component/StylesDictionaries/Paths.xaml" />
@@ -386,7 +386,7 @@
                             <converters1:CacheImageConverter x:Key="CacheImageConverter" DecodeWidth="350" />
                         </Border.Resources>
 
-                        <Image Width="95" Source="{Binding ImagePath}" />
+                        <Image Width="95" Source="{Binding ImagePath, Converter={converters1:CacheImageConverter}}" />
 
                         <Border.Effect>
                             <DropShadowEffect Opacity="0.5"
