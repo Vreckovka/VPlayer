@@ -95,7 +95,7 @@
 
 
                 <controls:PathButton Width="25"
-                                     Margin="-5,0,5,0"
+                                     Margin="0,1,0,0"
                                      Command="{Binding PlayButton}"
                                      CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}">
                     <controls:PathButton.Style>
@@ -131,7 +131,7 @@
 
                 <controls:PathButton Width="26"
                                      Height="20"
-                                     Margin="0,2,0,0"
+                                     Margin="0,0,0,0"
                                      Background="Transparent"
                                      Command="{Binding OpenContainingFolder}"
                                      CommandParameter="{Binding Model.Indentificator}"
@@ -144,7 +144,7 @@
 
                 <controls:PathButton Width="26"
                                      Height="20"
-                                     Margin="0,1,0,0"
+                                     Margin="-1,-1,0,0"
                                      Background="Transparent"
                                      Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.ChangeDirectory}"
                                      CommandParameter="{Binding Model.Indentificator}"
@@ -158,7 +158,7 @@
 
                 <controls:PathButton Width="26"
                                      Height="20"
-                                     Margin="0,2,0,0"
+                                     Margin="0,0,0,0"
                                      Background="Transparent"
                                      Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.AddBookmark}"
                                      CommandParameter="{Binding}"

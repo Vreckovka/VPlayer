@@ -44,6 +44,7 @@ namespace VPlayer.Home.ViewModels
         {
           totalProcessCount = value;
           RaisePropertyChanged();
+          RaisePropertyChanged(nameof(Progress));
         }
       }
     }
@@ -63,11 +64,25 @@ namespace VPlayer.Home.ViewModels
         {
           processedCount = value;
           RaisePropertyChanged();
+          RaisePropertyChanged(nameof(Progress));
         }
       }
     }
 
     #endregion
+
+    #region Progress
+
+    public double Progress
+    {
+      get { return ProcessedCount * 100.0 / TotalProcessCount; }
+     
+    }
+
+    #endregion
+
+
+
   }
 
 
@@ -81,7 +96,12 @@ namespace VPlayer.Home.ViewModels
       IEventAggregator eventAggregator) : 
       base(regionProvider, viewModelsFactory, storageManager, libraryCollection, eventAggregator)
     {
-      LoadingStatus = new LoadingStatus();
+      LoadingStatus = new LoadingStatus()
+      {
+        IsLoading = true,
+        ProcessedCount = 5,
+        TotalProcessCount = 10
+      };
     }
 
     public override bool ContainsNestedRegions => false;
