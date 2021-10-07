@@ -376,20 +376,27 @@
                                               Style="{StaticResource plusStyle}"
                                               ToolTip="Add artists">
                           <controls1:PathButton Width="auto"
-                                                Content="{Binding ArtistThatCanBeAddedCount, StringFormat={}{0} +}"
                                                 FontWeight="Bold"
                                                 IconMargin="0 0 10 0"
                                                 IconWidth="20"
                                                 IsHitTestVisible="False">
                             <controls1:PathButton.Style>
                               <Style BasedOn="{StaticResource user-music}" TargetType="controls1:PathButton">
-
                                 <Setter Property="ForegroundDefaultColor" Value="#454545" />
+                                <Setter Property="Content" Value="{Binding ArtistThatCanBeAddedCount, StringFormat={}{0} +}" />
                                 <Setter Property="IconDefaultColor" Value="#454545" />
                                 <Style.Triggers>
                                   <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=controls1:PathButton}}" Value="true">
                                     <Setter Property="ForegroundDefaultColor" Value="{StaticResource YellowColor}" />
                                     <Setter Property="IconDefaultColor" Value="#ccffffff" />
+                                  </DataTrigger>
+
+                                  <DataTrigger Binding="{Binding WasAllSongProcessed}" Value="true">
+                                    <Setter Property="ForegroundDefaultColor" Value="{StaticResource YellowColor}" />
+                                    <Setter Property="IconDefaultColor" Value="#ffffff" />
+                                    <Setter Property="Content" Value="{Binding DistinctArtistsCount, StringFormat={}{0} +}" />
+
+                                    <Setter Property="Opacity" Value="0.75" />
                                   </DataTrigger>
                                 </Style.Triggers>
                               </Style>
@@ -403,7 +410,6 @@
                                               Style="{StaticResource plusStyle}"
                                               ToolTip="Add albums">
                           <controls1:PathButton Width="auto"
-                                                Content="{Binding AlbumsThatCanBeAddedCount, StringFormat={}{0} +}"
                                                 FontWeight="Bold"
                                                 IconMargin="0 0 10 0"
                                                 IconWidth="20"
@@ -412,11 +418,19 @@
                               <Style BasedOn="{StaticResource compact-disc}" TargetType="controls1:PathButton">
                                 <Setter Property="ForegroundDefaultColor" Value="#454545" />
                                 <Setter Property="IconDefaultColor" Value="#454545" />
+                                <Setter Property="Content" Value="{Binding AlbumsThatCanBeAddedCount, StringFormat={}{0} +}" />
 
                                 <Style.Triggers>
                                   <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=controls1:PathButton}}" Value="true">
                                     <Setter Property="ForegroundDefaultColor" Value="{StaticResource YellowColor}" />
                                     <Setter Property="IconDefaultColor" Value="#ccffffff" />
+                                  </DataTrigger>
+
+                                  <DataTrigger Binding="{Binding WasAllSongProcessed}" Value="true">
+                                    <Setter Property="ForegroundDefaultColor" Value="{StaticResource YellowColor}" />
+                                    <Setter Property="IconDefaultColor" Value="#ffffff" />
+                                    <Setter Property="Opacity" Value="0.75" />
+                                    <Setter Property="Content" Value="{Binding DistinctAlbumsCount, StringFormat={}{0} +}" />
                                   </DataTrigger>
                                 </Style.Triggers>
                               </Style>

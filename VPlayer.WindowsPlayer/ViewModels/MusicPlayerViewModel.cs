@@ -260,6 +260,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
           addAlbums?.RaiseCanExecuteChanged();
           addArtists?.RaiseCanExecuteChanged();
 
+          if (wasAllSongProcessed)
+          {
+            RaisePropertyChanged(nameof(DistinctArtistsCount));
+            RaisePropertyChanged(nameof(DistinctAlbumsCount));
+          }
+
           RaisePropertyChanged();
         }
       }
@@ -267,7 +273,25 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region DistinctArtistsCount
 
+    public int DistinctArtistsCount
+    {
+      get { return PlayList.OfType<SongInPlayListViewModel>().Where(x => x.ArtistViewModel != null).GroupBy(x => x.ArtistViewModel.Model).Count(); }
+    
+    }
+
+    #endregion
+
+    #region DistinctAlbumsCount
+
+    public int DistinctAlbumsCount
+    {
+      get { return PlayList.OfType<SongInPlayListViewModel>().Where(x => x.AlbumViewModel != null).GroupBy(x => x.AlbumViewModel.Model).Count();; }
+     
+    }
+
+    #endregion
 
     #endregion
 
@@ -459,6 +483,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
               }
 
               album.Artist = null;
+              album.InfoDownloadStatus = InfoDownloadStatus.Downloaded;
 
               var storeResult = storageManager.StoreEntity(album, out var newVersion);
 
@@ -927,7 +952,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
                     !string.IsNullOrEmpty(normalizedArtistName) &&
                     originalDownlaodedArtistName != artistName)
                 {
-                  downloadingArtist = await GetArist(artistName, cancellationToken);
+                  downloadingArtist = await GetArtist(artistName, cancellationToken);
                   originalDownlaodedArtistName = artistName;
 
                   if (downloadingArtist != null)
@@ -1131,9 +1156,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-    #region GetArist
+    #region GetArtist
 
-    private async Task<Artist> GetArist(string artistName, CancellationToken cancellationToken)
+    private async Task<Artist> GetArtist(string artistName, CancellationToken cancellationToken)
     {
       Artist artist = null;
 
