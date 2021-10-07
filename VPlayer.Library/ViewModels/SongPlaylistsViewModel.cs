@@ -96,12 +96,8 @@ namespace VPlayer.Home.ViewModels
       IEventAggregator eventAggregator) : 
       base(regionProvider, viewModelsFactory, storageManager, libraryCollection, eventAggregator)
     {
-      LoadingStatus = new LoadingStatus()
-      {
-        IsLoading = true,
-        ProcessedCount = 5,
-        TotalProcessCount = 10
-      };
+      LoadingStatus = new LoadingStatus();
+
     }
 
     public override bool ContainsNestedRegions => false;
