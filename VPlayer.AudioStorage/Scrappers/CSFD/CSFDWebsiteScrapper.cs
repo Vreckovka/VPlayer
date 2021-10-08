@@ -54,7 +54,18 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
           chromeOptions.AddArguments(new List<string>() {
             "--headless",
-            "--log-level=3"
+            "--disable-gpu",
+            "--no-sandbox",
+            "--start-maximized",
+            "--disable-infobars",
+            "--disable-extensions",
+            "--log-level=3",
+            "--disable-cookie-encryption=false",
+            "--block-new-web-contents",
+            "--enable-precise-memory-info",
+            "--test-type",
+            "--test-type=browser",
+            "--ignore-certificate-errors"
           });
 
           chromeOptions.Proxy = null;
@@ -98,7 +109,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       {
         return ChromeDriver.PageSource;
       });
-    } 
+    }
 
     #endregion
   }
@@ -972,7 +983,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       CSFDQueryResult result = new CSFDQueryResult();
 
       var urlParsed = url.Replace("[", "").Replace("]", "").Replace("(", "").Replace(")", "");
-      
+
       var html = chromeDriverProvider.SafeNavigate(urlParsed);
 
       var document = new HtmlDocument();
@@ -1013,7 +1024,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     private int? GetCsfdRating(CSFDItem cSFDItem)
     {
       var html = chromeDriverProvider.SafeNavigate(cSFDItem.Url);
-      
+
       var document = new HtmlDocument();
       document.LoadHtml(html);
 
