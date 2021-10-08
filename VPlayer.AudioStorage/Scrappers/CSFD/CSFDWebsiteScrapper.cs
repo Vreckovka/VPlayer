@@ -12,6 +12,8 @@ using HtmlAgilityPack;
 using Logger;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Remote;
+using OpenQA.Selenium.Support.UI;
 using VCore;
 using VCore.WPF.Controls.StatusMessage;
 using VPlayer.AudioStorage.DataLoader;
@@ -25,6 +27,8 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
   {
     ChromeDriver ChromeDriver { get; set; }
     bool Initialize();
+
+    public string SafeNavigate(string url, double secondsToWait = 10);
   }
 
   public class ChromeDriverProvider : IChromeDriverProvider
@@ -48,7 +52,12 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         {
           var chromeOptions = new ChromeOptions();
 
-          chromeOptions.AddArguments(new List<string>() { "headless", "disable-infobars", "--log-level=3" });
+          chromeOptions.AddArguments(new List<string>() {
+            "--headless",
+            "--log-level=3"
+          });
+
+          chromeOptions.Proxy = null;
 
           var dir = Directory.GetCurrentDirectory();
           var chromeDriverService = ChromeDriverService.CreateDefaultService(dir, "chromedriver.exe");
@@ -71,6 +80,27 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     }
 
     #endregion
+
+    #region SafeNavigate
+
+    public string SafeNavigate(string url, double secondsToWait)
+    {
+      if (!Initialize())
+      {
+        return null;
+      }
+
+      ChromeDriver.Navigate().GoToUrl(url);
+
+      WebDriverWait wait = new WebDriverWait(ChromeDriver, TimeSpan.FromSeconds(secondsToWait));
+
+      return wait.Until((x) =>
+      {
+        return ChromeDriver.PageSource;
+      });
+    } 
+
+    #endregion
   }
 
   public class CSFDWebsiteScrapper : ICSFDWebsiteScrapper
@@ -79,7 +109,6 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     private readonly IStatusManager statusManager;
     private readonly IChromeDriverProvider chromeDriverProvider;
     private string baseUrl = "https://csfd.cz";
-    private bool wasInitilized;
 
     public CSFDWebsiteScrapper(ILogger logger, IStatusManager statusManager, IChromeDriverProvider chromeDriverProvider)
     {
@@ -217,13 +246,12 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         .Replace("https://csfd.sk", baseUrl)
         .Replace("https://www.csfd.sk", baseUrl);
 
-      chromeDriverProvider.ChromeDriver.Url = url;
-      chromeDriverProvider.ChromeDriver.Navigate();
+      var html = chromeDriverProvider.SafeNavigate(url);
 
       var document = new HtmlDocument();
 
       cancellationToken.ThrowIfCancellationRequested();
-      document.LoadHtml(chromeDriverProvider.ChromeDriver.PageSource);
+      document.LoadHtml(html);
 
       string node = null;
       int maxCount = 10;
@@ -328,6 +356,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       cancellationToken.ThrowIfCancellationRequested();
       document.LoadHtml(chromeDriverProvider.ChromeDriver.PageSource);
+
 
       var nodes = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/section[1]/div[2]/div/ul/li/h3/a");
 
@@ -450,16 +479,11 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       try
       {
         List<CSFDTVShowSeasonEpisode> episodes = new List<CSFDTVShowSeasonEpisode>();
-
-        chromeDriverProvider.ChromeDriver.Url = url;
-        chromeDriverProvider.ChromeDriver.Navigate();
-
         HtmlDocument document = new HtmlDocument();
 
-        var html = chromeDriverProvider.ChromeDriver.PageSource;
+        var html = chromeDriverProvider.SafeNavigate(url);
 
         document.LoadHtml(html);
-
 
         var nodes = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div[3]/div/ul/li/a");
 
@@ -539,12 +563,11 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     private void LoadCsfdEpisode(CSFDTVShowSeasonEpisode cSFDTVShowSeasonEpisode)
     {
-      chromeDriverProvider.ChromeDriver.Url = cSFDTVShowSeasonEpisode.Url;
-      chromeDriverProvider.ChromeDriver.Navigate();
+      var html = chromeDriverProvider.SafeNavigate(cSFDTVShowSeasonEpisode.Url);
 
       var document = new HtmlDocument();
 
-      document.LoadHtml(chromeDriverProvider.ChromeDriver.PageSource);
+      document.LoadHtml(html);
 
       var ratingNode = GetClearText(document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/aside/div/div[2]/div")?.FirstOrDefault()?.InnerText);
       int.TryParse(ratingNode, out var rating);
@@ -949,13 +972,13 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       CSFDQueryResult result = new CSFDQueryResult();
 
       var urlParsed = url.Replace("[", "").Replace("]", "").Replace("(", "").Replace(")", "");
-      chromeDriverProvider.ChromeDriver.Url = urlParsed;
-      chromeDriverProvider.ChromeDriver.Navigate();
+      
+      var html = chromeDriverProvider.SafeNavigate(urlParsed);
 
       var document = new HtmlDocument();
 
       cancellationToken.ThrowIfCancellationRequested();
-      document.LoadHtml(chromeDriverProvider.ChromeDriver.PageSource);
+      document.LoadHtml(html);
 
       cancellationToken.ThrowIfCancellationRequested();
       var movies = await GetMoviesFromFind(document, cancellationToken);
@@ -989,12 +1012,10 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     private int? GetCsfdRating(CSFDItem cSFDItem)
     {
-      chromeDriverProvider.ChromeDriver.Url = cSFDItem.Url;
-      chromeDriverProvider.ChromeDriver.Navigate();
-
+      var html = chromeDriverProvider.SafeNavigate(cSFDItem.Url);
+      
       var document = new HtmlDocument();
-
-      document.LoadHtml(chromeDriverProvider.ChromeDriver.PageSource);
+      document.LoadHtml(html);
 
       var ratingNode = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/aside/div[1]/div[2]/div")?.FirstOrDefault()?.InnerText.Replace("\t", null).Replace("\r", null).Replace("\n", null).Replace("%", null);
 
@@ -1021,14 +1042,13 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     private string GetCsfdImage(CSFDItem cSFDItem)
     {
-      chromeDriverProvider.ChromeDriver.Url = cSFDItem.Url;
-      chromeDriverProvider.ChromeDriver.Navigate();
+      var html = chromeDriverProvider.SafeNavigate(cSFDItem.Url);
 
       var document = new HtmlDocument();
 
-      if (chromeDriverProvider.ChromeDriver.PageSource != null)
+      if (!string.IsNullOrEmpty(html))
       {
-        document.LoadHtml(chromeDriverProvider.ChromeDriver.PageSource);
+        document.LoadHtml(html);
 
         var node = document?.DocumentNode?.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[1]/a/img")?.FirstOrDefault();
 
