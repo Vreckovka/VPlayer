@@ -1,4 +1,5 @@
-﻿using VCore.Standard.Modularity.NinjectModules;
+﻿using ChromeDriverScrapper;
+using VCore.Standard.Modularity.NinjectModules;
 using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.InfoDownloader.Clients.PCloud;

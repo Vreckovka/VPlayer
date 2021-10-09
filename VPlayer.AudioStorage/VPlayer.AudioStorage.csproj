@@ -19,6 +19,7 @@
 		<PackageReference Include="WatiN" Version="2.1.0" />
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\..\CustomLibraries\Custom\ChromeDriverScrapper\ChromeDriverScrapper.csproj" />
 		<ProjectReference Include="..\..\CustomLibraries\Logger\Logger.csproj" />
 		<ProjectReference Include="..\..\CustomLibraries\VCore.Standard\VCore.Standard.csproj" />
 		<ProjectReference Include="..\..\CustomLibraries\VCore\VCore.WPF.csproj" />

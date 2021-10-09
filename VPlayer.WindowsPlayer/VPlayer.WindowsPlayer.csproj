@@ -26,7 +26,7 @@
 		<PackageReference Include="System.Reactive" Version="5.0.0" />
 		<PackageReference Include="System.Reactive.Linq" Version="5.0.0" />
 		<PackageReference Include="WindowsAPICodePack" Version="1.1.1" />
-		<PackageReference Include="CefSharp.Wpf" Version="89.0.170" />
+		<PackageReference Include="CefSharp.Wpf" Version="93.1.111" />
 	</ItemGroup>
 
 	<ItemGroup>

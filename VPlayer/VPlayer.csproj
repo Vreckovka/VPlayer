@@ -170,7 +170,7 @@
 	<ItemGroup>
 		<PackageReference Include="LibVLCSharp" Version="3.4.9" />
 		<PackageReference Include="NAudio" Version="2.0.0" />
-    <PackageReference Include="System.Reactive.Linq" Version="5.0.0" />
+		<PackageReference Include="System.Reactive.Linq" Version="5.0.0" />
 		<PackageReference Include="Ninject" Version="3.3.4" />
 		<PackageReference Include="Prism.Ninject" Version="7.2.0.1422" />
 		<PackageReference Include="Prism.Wpf" Version="7.2.0.1422" />
@@ -178,10 +178,14 @@
 		<PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
 		<PackageReference Include="System.Reactive.Linq" Version="5.0.0" />
 		<PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.12" />
+
 		<PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="93.0.4577.6300" />
-		<PackageReference Include="System.Globalization" Version="4.3.0" />
 		<PackageReference Include="CefSharp.Wpf" Version="93.1.111" />
 		<PackageReference Include="OpenQA.Selenium.Winium" Version="1.0.0.4" />
+
+		<PackageReference Include="System.Globalization" Version="4.3.0" />
+
+
 		<PackageReference Include="SharpVectors" Version="1.7.6" />
 	</ItemGroup>
 
