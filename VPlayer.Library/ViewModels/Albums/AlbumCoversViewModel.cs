@@ -22,6 +22,7 @@ using VCore.Standard.Helpers;
 using VCore.ViewModels;
 using VCore.WPF.Converters;
 using VPlayer.AudioStorage.InfoDownloader;
+using VPlayer.AudioStorage.InfoDownloader.Clients.PCloud.Images;
 using VPlayer.AudioStorage.InfoDownloader.Models;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Managers.Status;
@@ -41,6 +42,7 @@ namespace VPlayer.Home.ViewModels.Albums
     private readonly IStorageManager storage;
     private readonly IStatusManager statusManager;
     private readonly ILogger logger;
+    private readonly IPCloudAlbumCoverProvider iPCloudAlbumCoverProvider;
     private CancellationTokenSource cancellationTokenSource;
     private string tmpFolderPath;
 
@@ -55,13 +57,15 @@ namespace VPlayer.Home.ViewModels.Albums
       IStorageManager storage,
       IStatusManager statusManager,
       string regionName,
-      ILogger logger) : base(regionProvider)
+      ILogger logger,
+      IPCloudAlbumCoverProvider iPCloudAlbumCoverProvider) : base(regionProvider)
     {
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
       this.albumViewModel = albumViewModel ?? throw new ArgumentNullException(nameof(albumViewModel));
       this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
       this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+      this.iPCloudAlbumCoverProvider = iPCloudAlbumCoverProvider ?? throw new ArgumentNullException(nameof(iPCloudAlbumCoverProvider));
 
       RegionName = regionName;
 
@@ -222,6 +226,9 @@ namespace VPlayer.Home.ViewModels.Albums
       SelectedCover.IsSelected = true;
 
       await SaveImage(SelectedCover);
+
+
+    
 
       statusManager.UpdateMessage(new StatusMessageViewModel(1)
       {
@@ -420,9 +427,10 @@ namespace VPlayer.Home.ViewModels.Albums
 
     private Task<string> SaveImage(AlbumCoverViewModel albumCover)
     {
-      return Task.Run(() =>
+      return Task.Run(async () =>
       {
-        MemoryStream ms = new MemoryStream(File.ReadAllBytes(albumCover.Model.DownloadedCoverPath));
+        var bytes = File.ReadAllBytes(albumCover.Model.DownloadedCoverPath);
+        MemoryStream ms = new MemoryStream(bytes);
         Image i = Image.FromStream(ms);
 
         var finalPath = albumViewModel.Model.AlbumFrontCoverFilePath;
@@ -445,9 +453,13 @@ namespace VPlayer.Home.ViewModels.Albums
         CacheImageConverter.RefreshDictionary(finalPath);
 
         albumViewModel.Model.AlbumFrontCoverURI = albumCover.Model.Url;
-        storage.UpdateEntityAsync(albumViewModel.Model);
+        await storage.UpdateEntityAsync(albumViewModel.Model);
 
-        
+        if (!string.IsNullOrEmpty(albumViewModel.Model?.Artist?.Name) && !string.IsNullOrEmpty(albumViewModel.Name))
+        {
+          await iPCloudAlbumCoverProvider.UpdateOrCreateAlbumCover(albumViewModel.Model.Artist.Name, albumViewModel.Name, bytes);
+        }
+
         return finalPath;
       });
     }

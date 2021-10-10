@@ -709,10 +709,15 @@ namespace VPlayer.AudioStorage.InfoDownloader
           else
             logger.Log(Logger.MessageType.Success, $"Album info was succesfully downloaded from PCLOUD {album.Name} - {artistName}");
 
-          coverPath = SaveAlbumCover(album, albumCover);
+          if (albumCover != null)
+          {
+            await iPCloudAlbumCoverProvider.UpdateOrCreateAlbumCover(artistName, albumName, albumCover);
 
-          statusMessage.Message = $"Album COVER successfuly DOWNLOADED";
-          statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+            coverPath = SaveAlbumCover(album, albumCover);
+
+            statusMessage.Message = $"Album COVER successfuly DOWNLOADED";
+            statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+          }
         }
         else
         {
