@@ -3,7 +3,7 @@
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
                     xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
-                    xmlns:controls2="clr-namespace:VPlayer.WindowsPlayer.Vlc.Controls;assembly=VVLC"
+                    xmlns:controls2="clr-namespace:VVLC.Controls;assembly=VVLC"
                     xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF"
                     xmlns:converters1="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
                     xmlns:domain="clr-namespace:VPlayer.AudioStorage.Scrappers.CSFD.Domain;assembly=VPlayer.AudioStorage"
@@ -67,7 +67,7 @@
                                     Maximum="1"
                                     Value="{Binding ActualItem.ActualPosition}">
                                 <b:Interaction.Behaviors>
-                                    <behaviors:SliderValueChangedManualy Duration="{Binding ActualItem.Duration}" />
+                                    <behaviors:SliderValueChangedManualy Duration="{Binding ActualItem.Duration}"/>
                                 </b:Interaction.Behaviors>
                             </Slider>
 
@@ -265,7 +265,7 @@
                                                             Maximum="100"
                                                             Value="{Binding ActualVolume, Mode=TwoWay}">
                                                         <b:Interaction.Behaviors>
-                                                            <sliders:SliderHookBehavior Step="5" />
+                                                            <sliders:SliderHookBehavior  />
                                                         </b:Interaction.Behaviors>
                                                     </Slider>
 
@@ -349,7 +349,7 @@
                                             Maximum="300"
                                             Value="{Binding ActualVolume, Mode=TwoWay}">
                                         <b:Interaction.Behaviors>
-                                            <sliders:SliderHookBehavior HookWhenFullscreen="False" Step="5" />
+                                            <sliders:SliderHookBehavior HookWhenFullscreen="False"  />
                                         </b:Interaction.Behaviors>
                                     </Slider>
 

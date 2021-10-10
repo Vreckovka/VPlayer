@@ -6,11 +6,11 @@
                     xmlns:controls1="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
                     xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF"
                     xmlns:converters1="clr-namespace:VPlayer.Core.Converters"
+                    xmlns:converters2="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
                     xmlns:domainClasses="clr-namespace:VPlayer.AudioStorage.DomainClasses;assembly=VPlayer.AudioStorage"
                     xmlns:domainClasses1="clr-namespace:VPlayer.AudioStorage.DomainClasses;assembly=VPLayer.Domain"
                     xmlns:library="clr-namespace:VPlayer.Library"
-                    xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF"
-                    xmlns:converters2="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF">
+                    xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />

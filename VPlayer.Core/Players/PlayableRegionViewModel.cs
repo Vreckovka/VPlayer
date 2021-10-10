@@ -36,8 +36,8 @@ using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Managers.Status;
-using VPlayer.Core.Providers;
 using VPlayer.WindowsPlayer.Players;
+using VVLC.Players;
 
 namespace VPlayer.Core.ViewModels
 {
@@ -58,6 +58,7 @@ namespace VPlayer.Core.ViewModels
     protected int actualItemIndex;
     protected HashSet<TItemViewModel> shuffleList = new HashSet<TItemViewModel>();
     private bool wasVlcInitilized;
+    private Subject<int> volumeSubject = new Subject<int>();
 
     #endregion
 
@@ -379,7 +380,23 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region PlayNextItemOnEndReached
+
     public bool PlayNextItemOnEndReached { get; set; } = true;
+
+    #endregion
+
+    #region OnVolumeChanged
+
+    public IObservable<int> OnVolumeChanged
+    {
+      get
+      {
+        return volumeSubject.AsObservable();
+      }
+    }
+
+    #endregion
 
     #endregion
 
@@ -1483,9 +1500,17 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+
+    public void SetVolumeAndRaiseNotification(int pVolume)
+    {
+      SetVolumeWihtoutNotification(pVolume);
+
+      volumeSubject.OnNext(pVolume);
+    }
+
     #region SetVolume
 
-    public void SetVolume(int pVolume)
+    public void SetVolumeWihtoutNotification(int pVolume)
     {
       if (MediaPlayer != null)
       {
@@ -1606,7 +1631,6 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-
     #region Dispose
 
     public override void Dispose()
@@ -1614,17 +1638,12 @@ namespace VPlayer.Core.ViewModels
       if (ActualSavedPlaylist != null && ActualSavedPlaylist.Id != -1)
         UpdateActualSavedPlaylistPlaylist();
 
-      Task.Run(() =>
-      {
+      volumeSubject?.Dispose();
 
-        MediaPlayer.Playing -= OnVlcPlayingChanged;
+      MediaPlayer.Playing -= OnVlcPlayingChanged;
+      MediaPlayer.Dispose();
 
-        MediaPlayer.Dispose();
-
-
-
-        base.Dispose();
-      });
+      base.Dispose();
     }
 
     #endregion

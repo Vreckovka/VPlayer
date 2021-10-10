@@ -16,6 +16,7 @@ using VPlayer.IPTV.ViewModels;
 using VPlayer.Player.Views.WindowsPlayer;
 using VPlayer.WindowsPlayer.Players;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer.IPTV;
+using VVLC.Players;
 
 namespace VPlayer.WindowsPlayer.ViewModels
 {

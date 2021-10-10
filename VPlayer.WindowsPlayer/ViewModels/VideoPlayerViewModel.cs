@@ -42,7 +42,6 @@ using VPlayer.AudioStorage.Scrappers.CSFD.Domain;
 using VPlayer.Core.Events;
 using VPlayer.Core.Managers.Status;
 using VPlayer.Core.Modularity.Regions;
-using VPlayer.Core.Providers;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.TvShows;
 using VPlayer.IPTV.ViewModels;
@@ -52,6 +51,7 @@ using VPlayer.WindowsPlayer.ViewModels.VideoProperties;
 using VPlayer.WindowsPlayer.ViewModels.Windows;
 using VPlayer.WindowsPlayer.Views.Prompts;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer;
+using VVLC.Players;
 using Application = System.Windows.Application;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 

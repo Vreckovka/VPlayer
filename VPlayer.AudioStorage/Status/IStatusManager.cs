@@ -26,6 +26,8 @@ namespace VPlayer.Core.Managers.Status
 
     void ShowErrorMessage(string text, bool isPinned = false);
 
+    void ShowErrorMessage(Exception ex, bool isPinned = false);
+
     void ShowFailedMessage(string text, bool isPinned = false);
   }
 
@@ -189,6 +191,11 @@ namespace VPlayer.Core.Managers.Status
     public void ShowErrorMessage(string text, bool isPinned = false)
     {
       UpdateMessage(SingleMessage(text, StatusType.Error, isPinned));
+    }
+
+    public void ShowErrorMessage(Exception ex, bool isPinned = false)
+    {
+      UpdateMessage(SingleMessage(ex.ToString(), StatusType.Error, isPinned));
     }
 
     public void ShowFailedMessage(string text, bool isPinned = false)

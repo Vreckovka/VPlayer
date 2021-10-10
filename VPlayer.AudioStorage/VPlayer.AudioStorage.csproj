@@ -9,7 +9,6 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.3" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.3" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.3" />
-		<PackageReference Include="OpenQA.Selenium.Winium" Version="1.0.0.4" />
 		<PackageReference Include="Prism.Core" Version="7.2.0.1422" />
 		<PackageReference Include="System.Globalization" Version="4.3.0" />
 		<PackageReference Include="System.Reactive.Linq" Version="5.0.0" />

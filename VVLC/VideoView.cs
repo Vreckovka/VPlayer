@@ -1,38 +1,55 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms.Integration;
-using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Media;
 using LibVLCSharp.Shared;
-using VPlayer.WindowsPlayer.Vlc.Controls;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 
-namespace VPlayer.WindowsPlayer.Vlc
+namespace VVLC
 {
-
   public class VideoView : ContentControl, IVideoView, IDisposable
   {
-    /// <summary>
-    /// WPF VideoView constructor
-    /// </summary>
+    #region Fields
+
+    private bool IsDesignMode => (bool)DesignerProperties.IsInDesignModeProperty.GetMetadata(typeof(DependencyObject)).DefaultValue;
+    private ForegroundWindow? ForegroundWindow { get; set; }
+    private bool IsUpdatingContent { get; set; }
+    private UIElement? ViewContent { get; set; }
+    private IntPtr Hwnd { get; set; }
+
+    #endregion
+
     public VideoView()
     {
       DefaultStyleKey = typeof(VideoView);
 
       DataContextChanged += VideoView_DataContextChanged;
+
       Application.Current.Exit += Current_Exit;
 
     }
 
-    protected override void OnMouseMove(MouseEventArgs e)
+    #region Properties
+    
+    public static readonly DependencyProperty MediaPlayerProperty = DependencyProperty.Register(nameof(MediaPlayer),
+            typeof(MediaPlayer),
+            typeof(VideoView),
+            new PropertyMetadata(null, OnMediaPlayerChanged));
+
+
+    public MediaPlayer? MediaPlayer
     {
-      base.OnMouseMove(e);
+      get { return GetValue(MediaPlayerProperty) as MediaPlayer; }
+      set { SetValue(MediaPlayerProperty, value); }
     }
+
+    #endregion
+
+    #region Methods
+
+    #region VideoView_DataContextChanged
 
     private void VideoView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
@@ -40,28 +57,9 @@ namespace VPlayer.WindowsPlayer.Vlc
         ForegroundWindow.DataContext = DataContext;
     }
 
-    private void Current_Exit(object sender, ExitEventArgs e)
-    {
-      Dispose();
-    }
+    #endregion
 
-
-    /// <summary>
-    /// MediaPlayer WPF databinding property
-    /// </summary>
-    public static readonly DependencyProperty MediaPlayerProperty = DependencyProperty.Register(nameof(MediaPlayer),
-            typeof(MediaPlayer),
-            typeof(VideoView),
-            new PropertyMetadata(null, OnMediaPlayerChanged));
-
-    /// <summary>
-    /// MediaPlayer property for this VideoView
-    /// </summary>
-    public MediaPlayer? MediaPlayer
-    {
-      get { return GetValue(MediaPlayerProperty) as MediaPlayer; }
-      set { SetValue(MediaPlayerProperty, value); }
-    }
+    #region OnMediaPlayerChanged
 
     private static void OnMediaPlayerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -75,17 +73,11 @@ namespace VPlayer.WindowsPlayer.Vlc
       }
     }
 
-    private bool IsDesignMode => (bool)DesignerProperties.IsInDesignModeProperty.GetMetadata(typeof(DependencyObject)).DefaultValue;
-    private ForegroundWindow? ForegroundWindow { get; set; }
-    private bool IsUpdatingContent { get; set; }
-    private UIElement? ViewContent { get; set; }
-    private IntPtr Hwnd { get; set; }
 
-    public object PlayerDataContext { get; set; }
+    #endregion
 
-    /// <summary>
-    /// ForegroundWindow management and MediaPlayer setup.
-    /// </summary>
+    #region OnApplyTemplate
+
     public override void OnApplyTemplate()
     {
       base.OnApplyTemplate();
@@ -104,6 +96,10 @@ namespace VPlayer.WindowsPlayer.Vlc
       }
     }
 
+    #endregion
+
+    #region ForegroundWindow_Loaded
+
     private void ForegroundWindow_Loaded(object sender, RoutedEventArgs e)
     {
       Hwnd = (new WindowInteropHelper(ForegroundWindow)).Handle;
@@ -117,13 +113,9 @@ namespace VPlayer.WindowsPlayer.Vlc
       MediaPlayer.Hwnd = Hwnd;
     }
 
-    /// <summary>
-    /// Override to update the foreground window content
-    /// </summary>
-    /// <param name="oldContent">old content</param>
-    /// <param name="newContent">new content</param>
-    ///
+    #endregion
 
+    #region OnContentChanged
 
     private object originalContent;
     protected override void OnContentChanged(object oldContent, object newContent)
@@ -156,8 +148,7 @@ namespace VPlayer.WindowsPlayer.Vlc
       }
     }
 
-
-
+    #endregion
 
     #region MakeFullScreen
 
@@ -173,6 +164,15 @@ namespace VPlayer.WindowsPlayer.Vlc
     public void ResetFullScreen()
     {
       ForegroundWindow.WindowState = WindowState.Normal;
+    }
+
+    #endregion
+
+    #region Current_Exit
+
+    private void Current_Exit(object sender, ExitEventArgs e)
+    {
+      Dispose();
     }
 
     #endregion
@@ -211,6 +211,7 @@ namespace VPlayer.WindowsPlayer.Vlc
 
     #endregion
 
+    #endregion
   }
 }
 

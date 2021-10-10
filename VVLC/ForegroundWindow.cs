@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using LibVLCSharp.Shared;
 
-namespace VPlayer.WindowsPlayer.Vlc
+namespace VVLC
 {
   internal class ForegroundWindow : Window
   {
@@ -59,7 +57,6 @@ namespace VPlayer.WindowsPlayer.Vlc
 
       IsVisibleChanged += ForegroundWindow_IsVisibleChanged;
     }
-
 
     #endregion
 

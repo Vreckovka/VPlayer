@@ -1,5 +1,4 @@
-﻿using ChromeDriverScrapper;
-using VCore.Standard.Modularity.NinjectModules;
+﻿using VCore.Standard.Modularity.NinjectModules;
 using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.InfoDownloader.Clients.PCloud;
@@ -9,12 +8,13 @@ using VPlayer.AudioStorage.Scrappers;
 using VPlayer.AudioStorage.Scrappers.CSFD;
 using VPlayer.Core.Managers.Status;
 using VPlayer.Library.ViewModels.TvShows;
+using ChromeDriverScrapper;
 
 namespace VPlayer.AudioStorage.Modularity.NinjectModules
 {
   public class AudioStorageNinjectModule : BaseNinjectModule
   {
-    private string googleApi = "D:\\Google drive API\\client_secret_907316640180-haiji0coibj73q45gk9tdern7i1f5hsd.apps.googleusercontent.com.json";
+    private string googleApi = "Google drive API\\client_secret_907316640180-haiji0coibj73q45gk9tdern7i1f5hsd.apps.googleusercontent.com.json";
 
     #region Methods
 

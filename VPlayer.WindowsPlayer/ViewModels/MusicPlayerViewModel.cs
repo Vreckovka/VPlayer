@@ -46,6 +46,7 @@ using VPlayer.WindowsPlayer.Players;
 using VPlayer.WindowsPlayer.ViewModels.Windows;
 using VPlayer.WindowsPlayer.Views.Prompts;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer;
+using VVLC.Players;
 using FileInfo = VCore.WPF.ViewModels.WindowsFiles;
 
 

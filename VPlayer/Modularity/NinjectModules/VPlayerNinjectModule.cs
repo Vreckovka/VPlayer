@@ -6,7 +6,6 @@ using VCore.Modularity.NinjectModules;
 using VCore.Standard.Modularity.NinjectModules;
 using VCore.Standard.Providers;
 using VPlayer.Core.Modularity.Ninject;
-using VPlayer.Core.Providers;
 using VPLayer.Domain;
 using VPLayer.Domain.Contracts.CloudService.Providers;
 using VPlayer.IPTV.Modularity;

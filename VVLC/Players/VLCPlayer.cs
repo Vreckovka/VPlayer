@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using LibVLCSharp.Shared;
 using Logger;
 using VCore.Standard;
-using VPlayer.Core.Providers;
+using VPlayer.WindowsPlayer.Players;
+using VVLC.Providers;
 
-namespace VPlayer.WindowsPlayer.Players
+namespace VVLC.Players
 {
   public class VLCPlayer : ViewModel, IPlayer
   {

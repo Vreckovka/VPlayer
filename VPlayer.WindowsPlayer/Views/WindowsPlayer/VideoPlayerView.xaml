@@ -7,8 +7,6 @@
              xmlns:behaviors2="clr-namespace:VPlayer.WindowsPlayer.Behaviors;assembly=VPlayer.Core"
              xmlns:behaviors3="clr-namespace:VPlayer.WindowsPlayer.Behaviors;assembly=VCore.WPF"
              xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore.WPF"
-             xmlns:controls1="clr-namespace:VPlayer.WindowsPlayer.Vlc.Controls"
-             xmlns:controls2="clr-namespace:VPlayer.WindowsPlayer.Vlc.Controls;assembly=VVLC"
              xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF"
              xmlns:converters1="clr-namespace:VPlayer.WindowsPlayer.Converters"
              xmlns:converters2="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
@@ -17,8 +15,9 @@
              xmlns:local="clr-namespace:VPlayer.WindowsPlayer.Views.WindowsPlayer"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:popups="clr-namespace:VCore.WPF.Behaviors.Popups;assembly=VCore.WPF"
-             xmlns:vlc="clr-namespace:VPlayer.WindowsPlayer.Vlc"
-             xmlns:vlc1="clr-namespace:VPlayer.WindowsPlayer.Vlc;assembly=VVLC"
+             xmlns:vvlc="clr-namespace:VVLC;assembly=VVLC"
+             xmlns:controls1="clr-namespace:VVLC.Controls;assembly=VVLC"
+             xmlns:behaviors4="clr-namespace:VPlayer.Core.Behaviors;assembly=VPlayer.Core"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
@@ -26,9 +25,10 @@
 
     <ContentControl Margin="1,0,0,0">
         <Grid>
-            <vlc1:VideoView x:Name="VideoView" MediaPlayer="{Binding MediaPlayer}">
+            <vvlc:VideoView x:Name="VideoView" MediaPlayer="{Binding MediaPlayer}">
                 <Grid HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
+                      MouseWheel="Grid_MouseWheel"
                       Background="#01000000">
 
                     <Grid.RowDefinitions>
@@ -239,12 +239,12 @@
                         </controls:PathButton.RenderTransform>
                     </controls:PathButton>
 
-                    <controls2:FullscreenPlayer x:Name="FullscreenPlayer"
+                    <controls1:FullscreenPlayer x:Name="FullscreenPlayer"
                                                 Grid.Row="1"
                                                 Visibility="Hidden" />
 
                     <b:Interaction.Behaviors>
-                        <behaviors2:FullScreenBehavior x:Name="FullScreenBehavior" PlayerDataContext="{Binding PlayerViewModel}" />
+                        <behaviors4:FullScreenBehavior x:Name="FullScreenBehavior" PlayerDataContext="{Binding PlayerViewModel}" />
                     </b:Interaction.Behaviors>
                 </Grid>
 
@@ -255,7 +255,7 @@
                         <b:InvokeCommandAction Command="{Binding VideoViewInitlized}" />
                     </b:EventTrigger>
                 </b:Interaction.Triggers>
-            </vlc1:VideoView>
+            </vvlc:VideoView>
 
 
         </Grid>

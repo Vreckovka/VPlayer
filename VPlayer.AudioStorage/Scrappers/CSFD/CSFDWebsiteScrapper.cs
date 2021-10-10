@@ -43,17 +43,6 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     public CSFDTVShow LoadTvShow(string url, CancellationToken cancellationToken, int? seasonNumber = null, int? episodeNumber = null)
     {
-      if (!chromeDriverProvider.Initialize())
-      {
-        return null;
-      }
-
-      var tvShow = new CSFDTVShow()
-      {
-        Url = url
-      };
-
-
       var nameF = url
         .Replace("https://www.csfd.cz/film/", null)
         .Replace("https://csfd.cz/film/", null)
@@ -67,46 +56,66 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         Message = $"Downloading {nameF}"
       };
 
-      statusManager.UpdateMessage(statusMessage);
-
-      var name = GetTvShowName(url, out var posterUrl, cancellationToken);
-
-      if (name != null)
+      try
       {
-        tvShow.Name = name;
-
-        statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
-
-        var poster = DownloadPoster(posterUrl, cancellationToken);
-
-        if (poster != null)
+        if (!chromeDriverProvider.Initialize())
         {
-          tvShow.ImagePath = SaveImage(tvShow.Name, poster, cancellationToken);
+          return null;
         }
 
-        statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
-
-        tvShow.Seasons = LoadSeasons(statusMessage, seasonNumber, episodeNumber, cancellationToken);
-
-        if (tvShow.Seasons == null)
+        var tvShow = new CSFDTVShow()
         {
+          Url = url
+        };
+
+        statusManager.UpdateMessage(statusMessage);
+
+        var name = GetTvShowName(url, out var posterUrl, cancellationToken);
+
+        if (name != null)
+        {
+          tvShow.Name = name;
+
+          statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+
+          var poster = DownloadPoster(posterUrl, cancellationToken);
+
+          if (poster != null)
+          {
+            tvShow.ImagePath = SaveImage(tvShow.Name, poster, cancellationToken);
+          }
+
+          statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+
+          tvShow.Seasons = LoadSeasons(statusMessage, seasonNumber, episodeNumber, cancellationToken);
+
+          if (tvShow.Seasons == null)
+          {
+            return tvShow;
+          }
+
+          foreach (var item in tvShow.Seasons.Where(x => x.SeasonEpisodes != null).SelectMany(x => x.SeasonEpisodes))
+          {
+            item.ImagePath = tvShow.ImagePath;
+          }
+
+
+          statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+
           return tvShow;
         }
 
-        foreach (var item in tvShow.Seasons.Where(x => x.SeasonEpisodes != null).SelectMany(x => x.SeasonEpisodes))
-        {
-          item.ImagePath = tvShow.ImagePath;
-        }
+        statusMessage.Status = StatusType.Failed;
+        statusManager.UpdateMessage(statusMessage);
 
-
-        statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
-
-        return tvShow;
+        return null;
       }
+      catch (Exception ex)
+      {
+        statusManager.ShowErrorMessage(ex);
 
-      statusMessage.Status = StatusType.Failed;
-
-      return null;
+        return null;
+      }
     }
 
     #endregion
@@ -162,10 +171,11 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     private string GetTvShowName(string url, out string posterUrl, CancellationToken cancellationToken)
     {
+
       url = url
-        .Replace("https://new.csfd.sk", baseUrl)
-        .Replace("https://csfd.sk", baseUrl)
-        .Replace("https://www.csfd.sk", baseUrl);
+         .Replace("https://new.csfd.sk", baseUrl)
+         .Replace("https://csfd.sk", baseUrl)
+         .Replace("https://www.csfd.sk", baseUrl);
 
       var html = chromeDriverProvider.SafeNavigate(url);
 
@@ -174,30 +184,32 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       cancellationToken.ThrowIfCancellationRequested();
       document.LoadHtml(html);
 
-      string node = null;
-      int maxCount = 10;
-      int i = 0;
 
-      while (node == null && i < maxCount)
+      cancellationToken.ThrowIfCancellationRequested();
+
+      var node = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div/div/header/div/h1")?.FirstOrDefault()?.InnerText;
+
+      if (node == null)
       {
-        cancellationToken.ThrowIfCancellationRequested();
+        node = document.DocumentNode.SelectNodes("/html/body/div[5]/div/div[1]/div/div[1]/div[2]/div/header/div/h1")?.FirstOrDefault()?.InnerText;
+      }
 
-        node = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div/div/header/div/h1")?.FirstOrDefault()?.InnerText;
+      if (node != null)
+      {
+        var name = node.Replace("\t", string.Empty).Replace(" (TV seriál)", string.Empty).Replace("\r", null).Replace("\n", null);
 
-        if (node != null)
+        logger.Log(MessageType.Success, $"Tv show name: {name}");
+
+        var posterNode = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div/div/div[1]/div[1]/a/img")?.FirstOrDefault();
+
+        if (posterNode == null)
         {
-          var name = node.Replace("\t", string.Empty).Replace(" (TV seriál)", string.Empty).Replace("\r", null).Replace("\n", null);
-
-          logger.Log(MessageType.Success, $"Tv show name: {name}");
-
-          var posterNode = chromeDriverProvider.ChromeDriver.FindElement(By.XPath("/html/body/div[3]/div/div[1]/div/div[1]/div/div/div[1]/div[1]/a/img"));
-
-          posterUrl = posterNode.GetAttribute("src");
-
-          return name;
+          posterNode = document.DocumentNode.SelectNodes("/html/body/div[5]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[1]/a/img")?.FirstOrDefault();
         }
 
-        i++;
+        posterUrl = posterNode?.Attributes.SingleOrDefault(x => x.Name == "src")?.Value.Replace("//image.pmgstatic.com", "https://image.pmgstatic.com");
+
+        return name;
       }
 
       posterUrl = null;
@@ -221,18 +233,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     }
 
     #endregion
-
-    protected string GetPathValidName(string name)
-    {
-      string invalid = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
-
-      foreach (char c in invalid)
-      {
-        name = name.Replace(c.ToString(), "-");
-      }
-
-      return name.Trim();
-    }
+ 
 
     #region SaveImage
 
@@ -241,12 +242,12 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       MemoryStream ms = new MemoryStream(image);
       Image i = Image.FromStream(ms);
 
-      var directory = Path.Combine(AudioInfoDownloader.GetDefaultPicturesPath(), $"TvShows\\{tvShowName}");
+      var directory = Path.Combine(AudioInfoDownloader.GetDefaultPicturesPath(), $"TvShows\\{AudioInfoDownloader.GetPathValidName(tvShowName)}");
       var finalPath = Path.Combine(directory, "poster.jpg");
 
       cancellationToken.ThrowIfCancellationRequested();
 
-      finalPath = GetPathValidName(finalPath);
+      finalPath = AudioInfoDownloader.GetPathValidName(finalPath);
       finalPath.EnsureDirectoryExists();
 
       if (File.Exists(finalPath))
@@ -255,8 +256,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         File.Delete(finalPath);
       }
-
-
+      
       cancellationToken.ThrowIfCancellationRequested();
 
       i.Save(finalPath, ImageFormat.Jpeg);

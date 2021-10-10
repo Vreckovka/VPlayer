@@ -3,19 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:adornedControl="clr-namespace:AdornedControl;assembly=VCore.WPF"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-             xmlns:behaviors="clr-namespace:VCore.WPF.Behaviors;assembly=VCore.WPF"
              xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore.WPF"
              xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:drag="clr-namespace:VCore.WPF.Behaviors.Drag;assembly=VCore.WPF"
-             xmlns:interfaces="clr-namespace:VCore.WPF.Interfaces;assembly=VCore.WPF"
-             xmlns:listview="clr-namespace:VCore.WPF.Behaviors.Listview;assembly=VCore.WPF"
-             xmlns:local="clr-namespace:VPlayer.IPTV.Views"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:templateSelectors="clr-namespace:VPlayer.IPTV.TemplateSelectors"
-             xmlns:viewModels="clr-namespace:VPlayer.IPTV.ViewModels"
-             xmlns:vlc="clr-namespace:VPlayer.WindowsPlayer.Vlc;assembly=VVLC"
              xmlns:iptv="clr-namespace:VPlayer.WindowsPlayer.Views.WindowsPlayer.IPTV"
+             xmlns:listview="clr-namespace:VCore.WPF.Behaviors.Listview;assembly=VCore.WPF"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:VPlayer.IPTV.ViewModels"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
@@ -25,13 +20,9 @@
                 <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Listview.xaml" />
             </ResourceDictionary.MergedDictionaries>
-
-
-
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <!--<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">-->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />

@@ -1,7 +1,8 @@
 ﻿using System;
 using LibVLCSharp.Shared;
+using VPlayer.WindowsPlayer.Players;
 
-namespace VPlayer.WindowsPlayer.Players
+namespace VVLC.Players
 {
   public class VLCMedia : IMedia
   {

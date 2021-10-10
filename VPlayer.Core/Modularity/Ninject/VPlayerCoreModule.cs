@@ -4,7 +4,7 @@ using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Modularity.NinjectModules;
 using VPlayer.Core.Factories;
 using VPlayer.Core.Managers.Status;
-using VPlayer.Core.Providers;
+using VVLC.Providers;
 
 namespace VPlayer.Core.Modularity.Ninject
 {

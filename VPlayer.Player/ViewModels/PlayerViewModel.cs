@@ -34,7 +34,7 @@ namespace VPlayer.Player.ViewModels
     private readonly IEventAggregator eventAggregator;
     private Window mainWindow;
     private IDisposable audioDeviceManagerDisposable;
-
+    private SerialDisposable volumeDisposable;
 
     public PlayerViewModel(
       IRegionProvider regionProvider,
@@ -71,6 +71,16 @@ namespace VPlayer.Player.ViewModels
           if (actualViewModel != null)
           {
             ActualVolume = (int)actualViewModel.MediaPlayer.Volume;
+          }
+
+          volumeDisposable.Disposable?.Dispose();
+
+          if (actualViewModel != null)
+          {
+            volumeDisposable.Disposable = actualViewModel
+              .OnVolumeChanged
+              .ObserveOn(Application.Current.Dispatcher)
+              .Subscribe(x => ActualVolume = x);
           }
 
           RaisePropertyChanged();
@@ -145,7 +155,7 @@ namespace VPlayer.Player.ViewModels
 
           RaisePropertyChanged();
 
-          ActualViewModel?.SetVolume(value);
+          ActualViewModel?.SetVolumeWihtoutNotification(value);
         }
       }
     }
@@ -252,6 +262,8 @@ namespace VPlayer.Player.ViewModels
     {
       base.Initialize();
 
+      volumeDisposable = new SerialDisposable().DisposeWith(this);
+
       SubscribeToPlayers();
 
       statusManager.OnStatusMessageUpdated.Subscribe(x =>
@@ -270,7 +282,7 @@ namespace VPlayer.Player.ViewModels
       {
         await Task.Delay(500);
 
-        ActualViewModel?.SetVolume(ActualVolume);
+        ActualViewModel?.SetVolumeWihtoutNotification(ActualVolume);
 
       }).DisposeWith(this);
     }
@@ -439,8 +451,7 @@ namespace VPlayer.Player.ViewModels
     #endregion KeyListener_OnKeyPressed
 
     #region CanUseKey
-
-
+    
     private IFilePlayableRegionViewModel CanUseKey()
     {
       return Application.Current.Dispatcher.Invoke(() =>

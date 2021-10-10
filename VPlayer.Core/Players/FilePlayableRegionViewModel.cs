@@ -25,10 +25,10 @@ using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Managers.Status;
-using VPlayer.Core.Providers;
 using VPlayer.Core.ViewModels.SoundItems;
 using VPlayer.IPTV.ViewModels;
 using VPlayer.WindowsPlayer.Players;
+using VVLC.Players;
 
 namespace VPlayer.Core.ViewModels
 {

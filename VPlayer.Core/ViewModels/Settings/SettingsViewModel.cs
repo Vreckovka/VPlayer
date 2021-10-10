@@ -11,7 +11,6 @@ using VCore.ViewModels;
 using VCore.ViewModels.Navigation;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Modularity.Regions;
-using VPlayer.Core.Providers;
 using VPlayer.Core.Views;
 using VPlayer.Modularity.NinjectModules;
 

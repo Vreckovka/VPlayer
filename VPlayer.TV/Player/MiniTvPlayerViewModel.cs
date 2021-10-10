@@ -13,6 +13,7 @@ using VPLayer.Domain.Contracts.IPTV;
 using VPlayer.IPTV.Events;
 using VPlayer.IPTV.Views;
 using VPlayer.WindowsPlayer.Players;
+using VVLC.Players;
 
 namespace VPlayer.IPTV.ViewModels
 {

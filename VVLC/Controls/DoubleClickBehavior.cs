@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using Microsoft.Xaml.Behaviors;
 using VPlayer.WindowsPlayer.Behaviors;
 
-namespace VPlayer.WindowsPlayer.Vlc.Controls
+namespace VVLC.Controls
 {
   public class DoubleClickBehavior : Behavior<FrameworkElement>
   {

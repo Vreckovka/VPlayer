@@ -29,10 +29,10 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Managers.Status;
 using VPlayer.Core.Modularity.Regions;
-using VPlayer.Core.Providers;
 using VPlayer.Core.ViewModels;
 using VPLayer.Domain.Contracts.IPTV;
 using VPlayer.WindowsPlayer.Players;
+using VVLC.Players;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 
 namespace VPlayer.IPTV.ViewModels

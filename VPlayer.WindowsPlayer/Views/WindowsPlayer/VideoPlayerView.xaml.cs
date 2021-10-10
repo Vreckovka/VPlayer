@@ -33,5 +33,34 @@ namespace VPlayer.WindowsPlayer.Views.WindowsPlayer
       FullScreenBehavior.VideoMenu = VideoMenu;
       FullScreenBehavior.HideButton = HideButton;
     }
+
+    private void Grid_MouseWheel(object sender, MouseWheelEventArgs e)
+    {
+      int step = 2;
+      int max = 300;
+
+      if (VideoView.DataContext != null && VideoView.DataContext is VideoPlayerViewModel videoPlayerView)
+      {
+        if (e.Delta > 0)
+        {
+          if (videoPlayerView.MediaPlayer.Volume + step > max)
+          {
+            videoPlayerView.SetVolumeAndRaiseNotification(max);
+          }
+          else
+            videoPlayerView.SetVolumeAndRaiseNotification(videoPlayerView.MediaPlayer.Volume + step);
+        }
+
+        if (e.Delta < 0)
+        {
+          if (videoPlayerView.MediaPlayer.Volume - step < 0)
+          {
+            videoPlayerView.SetVolumeAndRaiseNotification(0);
+          }
+          else
+            videoPlayerView.SetVolumeAndRaiseNotification(videoPlayerView.MediaPlayer.Volume - step);
+        }
+      }
+    }
   }
 }

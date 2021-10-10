@@ -1,26 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Timers;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System;
+﻿using System;
 using System.Reactive.Disposables;
+using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using Microsoft.Xaml.Behaviors;
-using Ninject;
-using Prism.Events;
-using VCore.Helpers;
 using VCore.WPF.Managers;
-using VPlayer.Core.Events;
 using VPlayer.Core.ViewModels;
-using VPlayer.WindowsPlayer.Vlc;
-using VPlayer.WindowsPlayer.Vlc.Controls;
+using VPlayer.WindowsPlayer.Behaviors;
+using VVLC;
+using VVLC.Controls;
 
-namespace VPlayer.WindowsPlayer.Behaviors
+namespace VPlayer.Core.Behaviors
 {
   public class FullScreenBehavior : Behavior<FrameworkElement>
   {

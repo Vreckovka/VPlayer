@@ -25,8 +25,9 @@ namespace VPlayer.Core.ViewModels
     bool CanPlay { get; }
     IPlayer MediaPlayer { get; }
     IObservable<int> ActualItemChanged { get; }
-    void SetVolume(int pVolume);
-
+    IObservable<int> OnVolumeChanged { get; }
+    void SetVolumeWihtoutNotification(int pVolume);
+    void SetVolumeAndRaiseNotification(int pVolume);
     public bool PlayNextItemOnEndReached { get; set; }
   }
 }
