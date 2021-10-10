@@ -860,6 +860,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region DownloadHighQualityAlbumCover
+
     private Task DownloadHighQualityAlbumCover()
     {
       return Task.Run(async () =>
@@ -921,11 +923,17 @@ namespace VPlayer.WindowsPlayer.ViewModels
               CacheImageConverter.RefreshDictionary(finalPath);
 
               songInPlay.AlbumViewModel.HighQualityCover = cover;
+
+
+              albumViewModel.RaisePropertyChange(nameof(AlbumViewModel.Image));
+              albumViewModel.RaisePropertyChange(nameof(AlbumViewModel.ImageThumbnail));
             }
           }
         }
       });
     }
+
+    #endregion
 
     #region DownloadSongInfo
 

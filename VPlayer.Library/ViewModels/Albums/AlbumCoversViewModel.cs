@@ -460,6 +460,9 @@ namespace VPlayer.Home.ViewModels.Albums
           await iPCloudAlbumCoverProvider.UpdateOrCreateAlbumCover(albumViewModel.Model.Artist.Name, albumViewModel.Name, bytes);
         }
 
+        albumViewModel.RaisePropertyChange(nameof(AlbumViewModel.Image));
+        albumViewModel.RaisePropertyChange(nameof(AlbumViewModel.ImageThumbnail));
+
         return finalPath;
       });
     }
