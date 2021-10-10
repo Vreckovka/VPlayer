@@ -21,7 +21,7 @@ namespace VPlayer.Providers
     {
       var process = new AsyncProcess<IEnumerable<FileInfo>>();
       var list = fileInfos.ToList();
-      var linksProcess = GetFileLinks(list.Select(x => long.Parse(x.Indentificator)));
+      var linksProcess = GetAudioLinks(list.Select(x => long.Parse(x.Indentificator)));
 
       process.InternalProcessesCount = linksProcess.InternalProcessesCount;
 

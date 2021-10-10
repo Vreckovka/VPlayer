@@ -18,14 +18,14 @@ namespace VPLayer.Domain.Contracts.CloudService.Providers
     void SaveLoginInfo(string email, string password);
     Task<bool> ExistsFolderAsync(long id);
     Task<MemoryStream> ReadFile(long id);
-    Task<KeyValuePair<string,string>?> GetFileLink(long id);
-    AsyncProcess<List<KeyValuePair<long, string>>> GetFileLinks(IEnumerable<long> ids);
+    Task<string> GetFileLink(long id);
+    AsyncProcess<List<KeyValuePair<long, string>>> GetAudioLinks(IEnumerable<long> ids);
     Task<string> GetAudioLink(long id);
     Task<PCloudResponse<Stats>> GetFileStats(long id);
     Task<FolderInfo> CreateFolder(string name, long? parentId);
     Task<long?> CreateFile(string name, long id);
-    Task<bool> WriteToFile(string sourceString, long id);
-    Task<bool> CreateFileAndWrite(string name, string sourceString, long folderId);
+    Task<bool> WriteToFile(byte[] data, long id);
+    Task<bool> CreateFileAndWrite(string name, byte[] data, long folderId);
     bool IsUserLoggedIn();
   }
 }

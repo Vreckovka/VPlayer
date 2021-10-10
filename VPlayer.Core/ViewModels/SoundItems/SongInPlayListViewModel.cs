@@ -124,6 +124,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     public string LRCLyrics => SongModel.LRCLyrics;
 
+  
 
     #region OnActualPositionChanged
 
@@ -602,6 +603,8 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     #endregion
 
+    #region RaiseLyricsChange
+
     public void RaiseLyricsChange()
     {
       Application.Current?.Dispatcher?.Invoke(() =>
@@ -612,6 +615,9 @@ namespace VPlayer.Core.ViewModels.SoundItems
       });
     }
 
+    #endregion
+
+    #region SaveTextLyrics
 
     private async void SaveTextLyrics(string lyrics)
     {
@@ -629,6 +635,8 @@ namespace VPlayer.Core.ViewModels.SoundItems
         RaiseLyricsChange();
       }
     }
+
+    #endregion
 
     #region UpdateAlbumViewModel
 
@@ -655,6 +663,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
     }
 
     #endregion
+    
 
     #endregion
   }

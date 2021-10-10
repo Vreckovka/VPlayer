@@ -58,6 +58,25 @@ namespace VPlayer.Core.ViewModels.Albums
     public override string ImageThumbnail => !string.IsNullOrEmpty(Model.AlbumFrontCoverFilePath) ? Model.AlbumFrontCoverFilePath : GetEmptyImage();
     public string Image => !string.IsNullOrEmpty(Model.AlbumFrontCoverFilePath) ? Model.AlbumFrontCoverFilePath : GetEmptyImage();
 
+    #region HighQualityCover
+
+    private byte[] highQualityCover;
+
+    public byte[] HighQualityCover
+    {
+      get { return highQualityCover; }
+      set
+      {
+        if (value != highQualityCover)
+        {
+          highQualityCover = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #endregion 
 
     #region Methods
@@ -211,9 +230,7 @@ namespace VPlayer.Core.ViewModels.Albums
     }
 
     #endregion
-
-
-
+    
     #endregion
   }
 }

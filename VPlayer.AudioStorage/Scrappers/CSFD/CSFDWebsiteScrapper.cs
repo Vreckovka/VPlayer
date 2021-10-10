@@ -184,15 +184,16 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       cancellationToken.ThrowIfCancellationRequested();
       document.LoadHtml(html);
 
-
-      cancellationToken.ThrowIfCancellationRequested();
-
       var node = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div/div/header/div/h1")?.FirstOrDefault()?.InnerText;
 
       if (node == null)
       {
-        node = document.DocumentNode.SelectNodes("/html/body/div[5]/div/div[1]/div/div[1]/div[2]/div/header/div/h1")?.FirstOrDefault()?.InnerText;
+        cancellationToken.ThrowIfCancellationRequested();
+        html = chromeDriverProvider.SafeNavigate(url);
+        document.LoadHtml(html);
       }
+
+      node = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div/div/header/div/h1")?.FirstOrDefault()?.InnerText;
 
       if (node != null)
       {
@@ -201,11 +202,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         logger.Log(MessageType.Success, $"Tv show name: {name}");
 
         var posterNode = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div/div/div[1]/div[1]/a/img")?.FirstOrDefault();
-
-        if (posterNode == null)
-        {
-          posterNode = document.DocumentNode.SelectNodes("/html/body/div[5]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[1]/a/img")?.FirstOrDefault();
-        }
+       
 
         posterUrl = posterNode?.Attributes.SingleOrDefault(x => x.Name == "src")?.Value.Replace("//image.pmgstatic.com", "https://image.pmgstatic.com");
 
@@ -233,7 +230,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     }
 
     #endregion
- 
+
 
     #region SaveImage
 
@@ -247,7 +244,6 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       cancellationToken.ThrowIfCancellationRequested();
 
-      finalPath = AudioInfoDownloader.GetPathValidName(finalPath);
       finalPath.EnsureDirectoryExists();
 
       if (File.Exists(finalPath))
@@ -256,7 +252,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         File.Delete(finalPath);
       }
-      
+
       cancellationToken.ThrowIfCancellationRequested();
 
       i.Save(finalPath, ImageFormat.Jpeg);

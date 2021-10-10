@@ -31,6 +31,7 @@ using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;
 using VCore;
 using VCore.Standard;
 using VCore.WPF.Controls.StatusMessage;
+using VPlayer.AudioStorage.InfoDownloader.Clients.PCloud.Images;
 using VPlayer.Core.Managers.Status;
 
 namespace VPlayer.AudioStorage.InfoDownloader
@@ -42,6 +43,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
   {
     private readonly ILogger logger;
     private readonly IStatusManager statusManager;
+    private readonly IPCloudAlbumCoverProvider iPCloudAlbumCoverProvider;
 
     #region Fields
 
@@ -60,10 +62,11 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     #region Constructors
 
-    public AudioInfoDownloader(ILogger logger, IStatusManager statusManager)
+    public AudioInfoDownloader(ILogger logger, IStatusManager statusManager, IPCloudAlbumCoverProvider iPCloudAlbumCoverProvider)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
+      this.iPCloudAlbumCoverProvider = iPCloudAlbumCoverProvider ?? throw new ArgumentNullException(nameof(iPCloudAlbumCoverProvider));
     }
 
     #endregion Constructors
@@ -696,12 +699,17 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
         if (!File.Exists(coverPath))
         {
-          byte[] albumCoverBlob = await GetAlbumFrontConverBLOB(release.Id, albumCoverUrl);
+          byte[] albumCover = await iPCloudAlbumCoverProvider.GetAlbumCover(artistName, albumName);
 
-          coverPath = SaveAlbumCover(album, albumCoverBlob);
+          if(albumCover == null)
+          {
+            albumCover = await GetAlbumFrontConverBLOB(release.Id, albumCoverUrl);
+            logger.Log(Logger.MessageType.Success, $"Album info was succesfully downloaded {album.Name} - {artistName}");
+          }
+          else
+            logger.Log(Logger.MessageType.Success, $"Album info was succesfully downloaded from PCLOUD {album.Name} - {artistName}");
 
-          logger.Log(Logger.MessageType.Success, $"Album info was succesfully downloaded {album.Name} - {artistName}");
-
+          coverPath = SaveAlbumCover(album, albumCover);
 
           statusMessage.Message = $"Album COVER successfuly DOWNLOADED";
           statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);

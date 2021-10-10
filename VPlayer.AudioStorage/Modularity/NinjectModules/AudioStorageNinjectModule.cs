@@ -9,6 +9,7 @@ using VPlayer.AudioStorage.Scrappers.CSFD;
 using VPlayer.Core.Managers.Status;
 using VPlayer.Library.ViewModels.TvShows;
 using ChromeDriverScrapper;
+using VPlayer.AudioStorage.InfoDownloader.Clients.PCloud.Images;
 
 namespace VPlayer.AudioStorage.Modularity.NinjectModules
 {
@@ -22,6 +23,8 @@ namespace VPlayer.AudioStorage.Modularity.NinjectModules
     {
       base.RegisterProviders();
 
+      Kernel.Bind<IPCloudAlbumCoverProvider>().To<PCloudAlbumCoverProvider>().InSingletonScope();
+      Kernel.Bind<IPCloudProvider>().To<PCloudProvider>().InSingletonScope();
       Kernel.Bind<IStorageManager>().To<VPlayerStorageManager>().InSingletonScope();
       Kernel.Bind<IChromeDriverProvider>().To<ChromeDriverProvider>().InSingletonScope(); 
       Kernel.Bind<IGoogleDriveServiceProvider>().To<GoogleDriveServiceProvider>().InSingletonScope().WithConstructorArgument("keyPath", googleApi);

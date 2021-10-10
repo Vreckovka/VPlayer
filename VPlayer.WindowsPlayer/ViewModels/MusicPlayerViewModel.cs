@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -19,12 +22,14 @@ using VCore.ItemsCollections.VirtualList.VirtualLists;
 using VCore.Modularity.Events;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
+using VCore.WPF.Converters;
 using VCore.WPF.Managers;
 using VCore.WPF.ViewModels.Prompt;
 using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.InfoDownloader.Clients.GIfs;
+using VPlayer.AudioStorage.InfoDownloader.Clients.PCloud.Images;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Managers.Status;
@@ -62,6 +67,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private readonly IEventAggregator eventAggregator;
     private readonly AudioInfoDownloader audioInfoDownloader;
     private readonly IVPlayerCloudService cloudService;
+    private readonly IPCloudAlbumCoverProvider iPCloudAlbumCoverProvider;
     private readonly IWindowManager windowManager;
     private readonly IStatusManager statusManager;
     private readonly VLCPlayer vLcPlayer;
@@ -81,6 +87,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       AudioInfoDownloader audioInfoDownloader,
       UPnPManagerViewModel uPnPManagerViewModel,
       IVPlayerCloudService cloudService,
+      IPCloudAlbumCoverProvider iPCloudAlbumCoverProvider,
       ILogger logger,
       IWindowManager windowManager,
       IStatusManager statusManager,
@@ -91,6 +98,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
       this.cloudService = cloudService ?? throw new ArgumentNullException(nameof(cloudService));
+      this.iPCloudAlbumCoverProvider = iPCloudAlbumCoverProvider ?? throw new ArgumentNullException(nameof(iPCloudAlbumCoverProvider));
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
       UPnPManagerViewModel = uPnPManagerViewModel ?? throw new ArgumentNullException(nameof(uPnPManagerViewModel));
@@ -279,7 +287,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     public int DistinctArtistsCount
     {
       get { return PlayList.OfType<SongInPlayListViewModel>().Where(x => x.ArtistViewModel != null).GroupBy(x => x.ArtistViewModel.Model).Count(); }
-    
+
     }
 
     #endregion
@@ -288,8 +296,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public int DistinctAlbumsCount
     {
-      get { return PlayList.OfType<SongInPlayListViewModel>().Where(x => x.AlbumViewModel != null).GroupBy(x => x.AlbumViewModel.Model).Count();; }
-     
+      get { return PlayList.OfType<SongInPlayListViewModel>().Where(x => x.AlbumViewModel != null).GroupBy(x => x.AlbumViewModel.Model).Count(); ; }
+
     }
 
     #endregion
@@ -847,9 +855,77 @@ namespace VPlayer.WindowsPlayer.ViewModels
       base.OnNewItemPlay();
 
       DownloadLyrics();
+      DownloadHighQualityAlbumCover();
     }
 
     #endregion
+
+    private Task DownloadHighQualityAlbumCover()
+    {
+      return Task.Run(async () =>
+      {
+        if (ActualItem is SongInPlayListViewModel songInPlay)
+        {
+          var artistName = songInPlay?.ArtistViewModel?.Name;
+          var albumName = songInPlay?.AlbumViewModel?.Name;
+
+          if (!string.IsNullOrEmpty(artistName) && !string.IsNullOrEmpty(albumName) && songInPlay.AlbumViewModel.HighQualityCover == null)
+          {
+            var cover = await iPCloudAlbumCoverProvider.GetAlbumCover(artistName, albumName);
+
+            if (cover == null)
+            {
+              var coverPath = songInPlay?.AlbumViewModel?.Image;
+              byte[] actualCover = null;
+
+              if (File.Exists(coverPath))
+              {
+                actualCover = File.ReadAllBytes(coverPath);
+              }
+
+              if (actualCover != null)
+              {
+                var result = await iPCloudAlbumCoverProvider.UpdateOrCreateAlbumCover(artistName, albumName, actualCover);
+
+                if (result)
+                {
+                  songInPlay.AlbumViewModel.HighQualityCover = actualCover;
+                }
+              }
+            }
+            else
+            {
+              MemoryStream ms = new MemoryStream(cover);
+              Image i = Image.FromStream(ms);
+
+              var albumViewModel = songInPlay.AlbumViewModel;
+              var finalPath = albumViewModel.Model.AlbumFrontCoverFilePath;
+
+              if (string.IsNullOrEmpty(finalPath))
+              {
+                finalPath = Path.Combine(AudioInfoDownloader.GetAlbumCoverImagePath(albumViewModel.Model));
+
+                albumViewModel.Model.AlbumFrontCoverFilePath = finalPath;
+
+                await storageManager.UpdateEntityAsync(albumViewModel.Model);
+              }
+
+              finalPath.EnsureDirectoryExists();
+
+              if (File.Exists(finalPath))
+              {
+                File.Delete(finalPath);
+              }
+
+              i.Save(finalPath, ImageFormat.Jpeg);
+              CacheImageConverter.RefreshDictionary(finalPath);
+
+              songInPlay.AlbumViewModel.HighQualityCover = cover;
+            }
+          }
+        }
+      });
+    }
 
     #region DownloadSongInfo
 

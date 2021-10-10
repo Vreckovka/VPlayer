@@ -152,16 +152,42 @@ namespace VPlayer.PCloud
     }
 
     #endregion
-    
 
-    public Task<KeyValuePair<string, string>?> GetFileLink(long id)
+    #region GetFileLink
+
+    public async Task<string> GetFileLink(long id)
     {
-      throw new NotImplementedException();
+      if (credentials != null)
+      {
+        using (var conn = await Connection.open(ssl, host))
+        {
+          try
+          {
+            await conn.login(credentials.Email, credentials.Password);
+
+            var link = await conn.GetFileLink(id);
+
+            return link;
+          }
+          catch (Exception ex)
+          {
+            logger.Log(ex);
+          }
+          finally
+          {
+            await Logout(conn);
+          }
+        }
+      }
+
+      return null;
     }
+
+    #endregion
 
     #region GetFileLinks
 
-    public AsyncProcess<List<KeyValuePair<long, string>>> GetFileLinks(IEnumerable<long> ids)
+    public AsyncProcess<List<KeyValuePair<long, string>>> GetAudioLinks(IEnumerable<long> ids)
     {
       var process = new AsyncProcess<List<KeyValuePair<long, string>>>();
       var idsList = ids.ToList();
@@ -378,10 +404,10 @@ namespace VPlayer.PCloud
     }
 
     #endregion
-
+    
     #region WriteToFile
 
-    public async Task<bool> WriteToFile(string sourceString, long id)
+    public async Task<bool> WriteToFile(byte[] data, long id)
     {
       if (credentials != null)
       {
@@ -390,7 +416,8 @@ namespace VPlayer.PCloud
           try
           {
             await conn.login(credentials.Email, credentials.Password);
-            MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(sourceString), false);
+
+            MemoryStream ms = new MemoryStream(data, false);
 
             var fd = await conn.createFile(id, FileMode.Open, FileAccess.Write);
 
@@ -413,7 +440,7 @@ namespace VPlayer.PCloud
 
     #region CreateFileAndWrite
 
-    public async Task<bool> CreateFileAndWrite(string name, string sourceString, long folderId)
+    public async Task<bool> CreateFileAndWrite(string name, byte[] data, long folderId)
     {
       if (credentials != null)
       {
@@ -423,7 +450,7 @@ namespace VPlayer.PCloud
           {
             await conn.login(credentials.Email, credentials.Password);
 
-            MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(sourceString), false);
+            MemoryStream ms = new MemoryStream(data, false);
 
             var fd = await conn.createFile(folderId, name, FileMode.Create, FileAccess.Write);
 
