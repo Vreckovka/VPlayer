@@ -28,6 +28,7 @@ using VPlayer.Core.Managers.Status;
 using VPlayer.Core.Modularity.Ninject;
 using VPlayer.IPTV.Modularity;
 using VPlayer.Modularity.NinjectModules;
+using VPlayer.Providers;
 using VPlayer.UPnP.Modularity;
 using VPlayer.ViewModels;
 using VPlayer.Views;
@@ -44,6 +45,8 @@ namespace VPlayer
       base.LoadModules();
 
       Kernel.Load<VPlayerNinjectModule>();
+
+      Kernel.Rebind<IWindowManager>().To<VPlayerWindowManager>();
     }
 
     #endregion
@@ -66,75 +69,19 @@ namespace VPlayer
     }
 
     #endregion
-
-    #region TryMigrateDatabaseAsync
-
-    private async Task TryMigrateDatabaseAsync()
-    {
-      logger = Container.Resolve<ILogger>();
-
-      logger.Log(MessageType.Inform, "Migrating database");
-
-      var context = new AudioDatabaseContext();
-
-      await context.Database.MigrateAsync();
-    }
-
-    #endregion
-
+    
     #region OnContainerCreated
 
-    protected override async void OnContainerCreated()
+    protected override void OnContainerCreated()
     {
       base.OnContainerCreated();
 
 
       LoadSettings();
-
-      SplashScreenManager.AddProgress(5);
-
-      SplashScreenManager.SetText("Migrating database");
-
-      await TryMigrateDatabaseAsync();
-
-      SplashScreenManager.AddProgress(10);
     }
 
     #endregion
-
-    #region RegisterTypes
-
-    protected override async void RegisterTypes(IContainerRegistry containerRegistry)
-    {
-      base.RegisterTypes(containerRegistry);
-
-      AppDomain.CurrentDomain.AssemblyResolve += Resolver;
-
-    }
-
-    #endregion
-
-    #region Resolver
-
-    private Assembly Resolver(object sender, ResolveEventArgs args)
-    {
-      if (args.Name.StartsWith("CefSharp.Core.Runtime"))
-      {
-        string assemblyName = args.Name.Split(new[] { ',' }, 2)[0] + ".dll";
-        string archSpecificPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
-          Environment.Is64BitProcess ? "x64" : "x86",
-          assemblyName);
-
-        return File.Exists(archSpecificPath)
-          ? Assembly.LoadFile(archSpecificPath)
-          : null;
-      }
-
-      return null;
-    }
-
-    #endregion
-
+    
     #region OnUnhandledExceptionCaught
 
     private IStatusManager statusManager;

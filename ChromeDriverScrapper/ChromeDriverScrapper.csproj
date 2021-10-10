@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Platforms>x64</Platforms>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="93.0.4577.6300" />
+		<PackageReference Include="CefSharp.Wpf" Version="93.1.111" />
+		<PackageReference Include="OpenQA.Selenium.Winium" Version="1.0.0.4" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\CustomLibraries\Logger\Logger.csproj" />
+	</ItemGroup>
+</Project>
