@@ -71,11 +71,16 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google
 
             if (albumFolder != null)
             {
-              var fileName = GetFileName(artistName, songName) + extension;
+              var fileName = GetFileName(artistName, songName);
 
-              var lyricsFile = albumFolder.TryGetValueFromFolder(fileName, GoogleMimeTypes.GoogleDriveFile);
+              if (fileName != null)
+              {
+                fileName = fileName + extension;
 
-              return lyricsFile;
+                var lyricsFile = albumFolder.TryGetValueFromFolder(fileName, GoogleMimeTypes.GoogleDriveFile);
+
+                return lyricsFile;
+              }
             }
           }
 

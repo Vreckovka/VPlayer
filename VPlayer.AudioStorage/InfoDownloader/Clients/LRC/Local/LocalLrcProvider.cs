@@ -51,18 +51,23 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients
         {
           var directory = new DirectoryInfo(directoryPath);
 
-          var filesInDir = directory.GetFiles($"*{GetFileName(artistName, songName)}*.{extension}").ToList();
+          var fileName = GetFileName(artistName, songName);
 
-          if (filesInDir.Count == 1)
+          if (fileName != null)
           {
-            return filesInDir?.FirstOrDefault();
+            var filesInDir = directory.GetFiles($"*{fileName}*.{extension}").ToList();
+
+            if (filesInDir.Count == 1)
+            {
+              return filesInDir?.FirstOrDefault();
+            }
+            else if (filesInDir.Count == 0)
+            {
+              return null;
+            }
+            else
+              throw new Exception("More files were found '" + songName + "' in '" + directory.FullName + "'");
           }
-          else if (filesInDir.Count == 0)
-          {
-            return null;
-          }
-          else
-            throw new Exception("More files were found '" + songName + "' in '" + directory.FullName + "'");
         }
 
         return null;

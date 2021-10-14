@@ -39,7 +39,10 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
       var folders = new string[] { artistName, albumName };
       var fileName = GetFileName(artistName, songName);
 
-      return pCloudProvider.UpdateOrCreateFile(lyricsFolderId, folders, fileName, Encoding.UTF8.GetBytes(content), fileExtension);
+      if (fileName != null)
+        return pCloudProvider.UpdateOrCreateFile(lyricsFolderId, folders, fileName, Encoding.UTF8.GetBytes(content), fileExtension);
+
+      return Task.FromResult(false);
     }
 
     #endregion
@@ -51,16 +54,18 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
       var folders = new string[] { artistName, albumName };
       var fileName = GetFileName(artistName, songName);
 
-      var fileId = (await pCloudProvider.GetFile(lyricsFolderId, folders, fileName, extension))?.id;
-
-      if (fileId != null)
+      if (fileName != null)
       {
-        return new PCloudLRCFile(null)
-        {
-          Id = fileId.Value
-        };
-      }
+        var fileId = (await pCloudProvider.GetFile(lyricsFolderId, folders, fileName, extension))?.id;
 
+        if (fileId != null)
+        {
+          return new PCloudLRCFile(null)
+          {
+            Id = fileId.Value
+          };
+        }
+      }
 
       return null;
     }
