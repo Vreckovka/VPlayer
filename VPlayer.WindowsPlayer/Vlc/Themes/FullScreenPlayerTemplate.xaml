@@ -2,9 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
-                    xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
+                    xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
                     xmlns:controls2="clr-namespace:VVLC.Controls;assembly=VVLC"
-                    xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF"
                     xmlns:converters1="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
                     xmlns:domain="clr-namespace:VPlayer.AudioStorage.Scrappers.CSFD.Domain;assembly=VPlayer.AudioStorage"
                     xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.DarkTheme"
@@ -16,464 +15,464 @@
                     xmlns:views="clr-namespace:VPlayer.Player.Views;assembly=VCore.WPF">
 
 
-    <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.Player;component/Views/PlayerViewResources.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Views/WindowsPlayer/WindowsPlayerViewResources.xaml" />
-    </ResourceDictionary.MergedDictionaries>
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary Source="pack://application:,,,/VPlayer.Player;component/Views/PlayerViewResources.xaml" />
+    <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Views/WindowsPlayer/WindowsPlayerViewResources.xaml" />
+  </ResourceDictionary.MergedDictionaries>
 
 
 
-    <Style TargetType="{x:Type controls2:FullscreenPlayer}">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type controls2:FullscreenPlayer}">
-                    <Border Width="930"
-                            Height="120"
-                            Margin="0,0,0,17"
-                            Padding="12,5,15,8"
-                            HorizontalAlignment="Center"
+  <Style TargetType="{x:Type controls2:FullscreenPlayer}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls2:FullscreenPlayer}">
+          <Border Width="930"
+                  Height="120"
+                  Margin="0,0,0,17"
+                  Padding="12,5,15,8"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Bottom"
+                  Background="#f0252525"
+                  CornerRadius="0 0 0 0">
+            <Grid Grid.IsSharedSizeScope="True">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+              </Grid.RowDefinitions>
+
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="A" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition SharedSizeGroup="A" />
+              </Grid.ColumnDefinitions>
+
+              <TextBlock Grid.Row="1"
+                         Grid.Column="0"
+                         Margin="0,0,0,0"
+                         HorizontalAlignment="Left"
+                         DataContext="{Binding ActualViewModel}"
+                         FontSize="14"
+                         FontWeight="Bold"
+                         Foreground="{StaticResource 120_WhiteTransparentBrush}"
+                         Text="{Binding ActualItem.ActualTime, StringFormat=hh\\:mm\\:ss}" />
+
+              <Slider Grid.Row="0"
+                      Grid.Column="0"
+                      Grid.ColumnSpan="3"
+                      Padding="0"
+                      DataContext="{Binding ActualViewModel}"
+                      IsMoveToPointEnabled="True"
+                      Maximum="1"
+                      Value="{Binding ActualItem.ActualPosition}">
+                <b:Interaction.Behaviors>
+                  <behaviors:SliderValueChangedManualy Duration="{Binding ActualItem.Duration}" />
+                </b:Interaction.Behaviors>
+              </Slider>
+
+              <TextBlock Grid.Row="1"
+                         Grid.Column="2"
+                         Margin="0"
+                         HorizontalAlignment="Right"
+                         DataContext="{Binding ActualViewModel}"
+                         FontSize="14"
+                         FontWeight="Bold"
+                         Foreground="{StaticResource 120_WhiteTransparentBrush}"
+                         Text="{Binding ActualItem.Duration, Converter={converters1:TimeConverter TimeType=Second}}" />
+
+              <Grid Grid.Row="2"
+                    Grid.Column="2"
+                    Margin="5,0,0,0"
+                    VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="auto" />
+                  <ColumnDefinition Width="auto" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0"
+                      Margin="0,0,10,0"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      DataContext="{x:Static soundManagement:AudioDeviceManager.Instance}">
+
+                  <controls:PathButton x:Name="HideButton"
+                                       Width="50"
+                                       Height="50"
+                                       BorderThickness="0"
+                                       Cursor="Hand"
+                                       Foreground="#50ffffff"
+                                       ForegroundCheckedColor="White"
+                                       ForegroundDefaultColor="#50ffffff"
+                                       IconCheckedColor="#4298f5"
+                                       IconDefaultColor="#555555"
+                                       IconHoverColor="#4298f5"
+                                       PathStyle="{StaticResource Windows}"
+                                       ToolTip="Windows volume">
+                    <controls:PathButton.Style>
+                      <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
+                        <Setter Property="Template">
+                          <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type controls:PathButton}">
+                              <Border Width="{TemplateBinding Width}"
+                                      Height="{TemplateBinding Height}"
+                                      Margin="{TemplateBinding Margin}"
+                                      Padding="{TemplateBinding Padding}"
+                                      HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                      VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                                      Background="{TemplateBinding Background}"
+                                      BorderBrush="{TemplateBinding BorderBrush}"
+                                      BorderThickness="{TemplateBinding BorderThickness}"
+                                      CornerRadius="3">
+                                <Grid HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                                  <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto" />
+                                    <RowDefinition />
+                                  </Grid.RowDefinitions>
+
+                                  <Path x:Name="PathIcon"
+                                        Width="25"
+                                        Height="25"
+                                        Margin="0,0,5.5,0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Fill="{TemplateBinding IconBrush}"
+                                        Stretch="Fill"
+                                        Style="{TemplateBinding PathStyle}" />
+
+
+                                  <TextBlock Grid.Row="1"
+                                             Margin="0,10,2,0"
+                                             HorizontalAlignment="Center"
+                                             VerticalAlignment="Bottom"
+                                             FontWeight="Bold"
+                                             Foreground="{TemplateBinding Foreground}"
+                                             Text="{Binding ActualVolume, StringFormat={}{0:N0} %}" />
+                                </Grid>
+
+                                <b:Interaction.Triggers>
+                                  <b:EventTrigger EventName="MouseEnter">
+                                    <b:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AnimateHoverColor}" />
+                                  </b:EventTrigger>
+
+                                  <b:EventTrigger EventName="MouseLeave">
+                                    <b:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AnimateDefaultColor}" />
+                                  </b:EventTrigger>
+                                </b:Interaction.Triggers>
+                              </Border>
+
+                              <ControlTemplate.Triggers>
+                                <Trigger Property="IsChecked" Value="True" />
+
+                                <Trigger Property="IsMouseOver" Value="True">
+                                  <Setter Property="Cursor" Value="Hand" />
+                                </Trigger>
+
+                                <Trigger Property="IsPressed" Value="True">
+                                  <Setter TargetName="PathIcon" Property="Fill" Value="#8cc1fa" />
+                                  <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}" />
+                                </Trigger>
+
+                                <MultiTrigger>
+                                  <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True" />
+                                    <Condition Property="IsChecked" Value="False" />
+                                  </MultiTrigger.Conditions>
+
+                                  <MultiTrigger.EnterActions>
+                                    <RemoveStoryboard BeginStoryboardName="ResetForegroundStoryBoard" />
+                                    <BeginStoryboard x:Name="ChangeForegroundStoryBoard">
+                                      <Storyboard>
+                                        <ColorAnimation Storyboard.TargetProperty="Foreground.Color"
+                                                        From="#ccc"
+                                                        To="{StaticResource DefaultWhiteColor}"
+                                                        Duration="0:0:.15" />
+                                      </Storyboard>
+                                    </BeginStoryboard>
+
+                                  </MultiTrigger.EnterActions>
+                                </MultiTrigger>
+
+                                <MultiTrigger>
+                                  <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="False" />
+                                    <Condition Property="IsChecked" Value="False" />
+                                  </MultiTrigger.Conditions>
+
+                                  <MultiTrigger.EnterActions>
+                                    <RemoveStoryboard BeginStoryboardName="ChangeForegroundStoryBoard" />
+
+                                    <BeginStoryboard x:Name="ResetForegroundStoryBoard">
+                                      <Storyboard>
+                                        <ColorAnimation Storyboard.TargetProperty="Foreground.Color"
+                                                        To="#909090"
+                                                        Duration="0:0:.15" />
+                                      </Storyboard>
+                                    </BeginStoryboard>
+                                  </MultiTrigger.EnterActions>
+                                </MultiTrigger>
+                              </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                          </Setter.Value>
+                        </Setter>
+                      </Style>
+                    </controls:PathButton.Style>
+                  </controls:PathButton>
+
+                  <Popup HorizontalAlignment="Right"
+                         AllowsTransparency="True"
+                         HorizontalOffset="-125"
+                         IsOpen="{Binding ElementName=HideButton, Path=IsChecked}"
+                         Placement="Top"
+                         PlacementTarget="{Binding ElementName=HideButton}"
+                         PopupAnimation="Slide"
+                         StaysOpen="False"
+                         VerticalOffset="-17">
+                    <Border Width="300"
+                            Height="100"
                             VerticalAlignment="Bottom"
-                            Background="#f0252525"
-                            CornerRadius="0 0 0 0">
-                        <Grid Grid.IsSharedSizeScope="True">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
+                            Background="#ee252525"
+                            BorderBrush="#454545"
+                            BorderThickness="1">
+                      <Grid>
+                        <Grid.RowDefinitions>
+                          <RowDefinition Height="auto" />
+                          <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
 
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition SharedSizeGroup="A" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition SharedSizeGroup="A" />
-                            </Grid.ColumnDefinitions>
-
-                            <TextBlock Grid.Row="1"
-                                       Grid.Column="0"
-                                       Margin="0,0,0,0"
-                                       HorizontalAlignment="Left"
-                                       DataContext="{Binding ActualViewModel}"
-                                       FontSize="14"
-                                       FontWeight="Bold"
-                                       Foreground="{StaticResource 120_WhiteTransparentBrush}"
-                                       Text="{Binding ActualItem.ActualTime, StringFormat=hh\\:mm\\:ss}" />
-
-                            <Slider Grid.Row="0"
-                                    Grid.Column="0"
-                                    Grid.ColumnSpan="3"
-                                    Padding="0"
-                                    DataContext="{Binding ActualViewModel}"
-                                    IsMoveToPointEnabled="True"
-                                    Maximum="1"
-                                    Value="{Binding ActualItem.ActualPosition}">
-                                <b:Interaction.Behaviors>
-                                    <behaviors:SliderValueChangedManualy Duration="{Binding ActualItem.Duration}"/>
-                                </b:Interaction.Behaviors>
-                            </Slider>
-
-                            <TextBlock Grid.Row="1"
-                                       Grid.Column="2"
-                                       Margin="0"
-                                       HorizontalAlignment="Right"
-                                       DataContext="{Binding ActualViewModel}"
-                                       FontSize="14"
-                                       FontWeight="Bold"
-                                       Foreground="{StaticResource 120_WhiteTransparentBrush}"
-                                       Text="{Binding ActualItem.Duration, Converter={converters:TimeConverter TimeType=Second}}" />
-
-                            <Grid Grid.Row="2"
-                                  Grid.Column="2"
-                                  Margin="5,0,0,0"
-                                  VerticalAlignment="Center">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto" />
-                                    <ColumnDefinition Width="auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-
-                                <Grid Grid.Column="0"
-                                      Margin="0,0,10,0"
-                                      HorizontalAlignment="Center"
-                                      VerticalAlignment="Center"
-                                      DataContext="{x:Static soundManagement:AudioDeviceManager.Instance}">
-
-                                    <controls1:PathButton x:Name="HideButton"
-                                                          Width="50"
-                                                          Height="50"
-                                                          BorderThickness="0"
-                                                          Cursor="Hand"
-                                                          Foreground="#50ffffff"
-                                                          ForegroundCheckedColor="White"
-                                                          ForegroundDefaultColor="#50ffffff"
-                                                          IconCheckedColor="#4298f5"
-                                                          IconDefaultColor="#555555"
-                                                          IconHoverColor="#4298f5"
-                                                          PathStyle="{StaticResource Windows}"
-                                                          ToolTip="Windows volume">
-                                        <controls1:PathButton.Style>
-                                            <Style BasedOn="{StaticResource {x:Type controls1:PathButton}}" TargetType="controls1:PathButton">
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="{x:Type controls1:PathButton}">
-                                                            <Border Width="{TemplateBinding Width}"
-                                                                    Height="{TemplateBinding Height}"
-                                                                    Margin="{TemplateBinding Margin}"
-                                                                    Padding="{TemplateBinding Padding}"
-                                                                    HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                                                                    VerticalAlignment="{TemplateBinding VerticalAlignment}"
-                                                                    Background="{TemplateBinding Background}"
-                                                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                                                    CornerRadius="3">
-                                                                <Grid HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
-                                                                    <Grid.RowDefinitions>
-                                                                        <RowDefinition Height="auto" />
-                                                                        <RowDefinition />
-                                                                    </Grid.RowDefinitions>
-
-                                                                    <Path x:Name="PathIcon"
-                                                                          Width="25"
-                                                                          Height="25"
-                                                                          Margin="0,0,5.5,0"
-                                                                          HorizontalAlignment="Center"
-                                                                          VerticalAlignment="Center"
-                                                                          Fill="{TemplateBinding IconBrush}"
-                                                                          Stretch="Fill"
-                                                                          Style="{TemplateBinding PathStyle}" />
+                        <ComboBox Margin="10"
+                                  VerticalAlignment="Top"
+                                  DisplayMemberPath="Description"
+                                  ItemsSource="{Binding SoundDevices}"
+                                  SelectedItem="{Binding SelectedSoundDevice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
 
-                                                                    <TextBlock Grid.Row="1"
-                                                                               Margin="0,10,2,0"
-                                                                               HorizontalAlignment="Center"
-                                                                               VerticalAlignment="Bottom"
-                                                                               FontWeight="Bold"
-                                                                               Foreground="{TemplateBinding Foreground}"
-                                                                               Text="{Binding ActualVolume, StringFormat={}{0:N0} %}" />
-                                                                </Grid>
+                        <Grid Grid.Row="1"
+                              Margin="10,3,10,5"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Bottom">
+                          <Slider x:Name="WindowsSlider"
+                                  Grid.Row="0"
+                                  Height="4"
+                                  Margin="0,0,0,0"
+                                  Padding="0"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Top"
+                                  Focusable="True"
+                                  Foreground="{StaticResource DefaultRedBrush}"
+                                  IsMoveToPointEnabled="True"
+                                  Maximum="100"
+                                  Value="{Binding ActualVolume, Mode=TwoWay}">
+                            <b:Interaction.Behaviors>
+                              <sliders:SliderHookBehavior />
+                            </b:Interaction.Behaviors>
+                          </Slider>
 
-                                                                <b:Interaction.Triggers>
-                                                                    <b:EventTrigger EventName="MouseEnter">
-                                                                        <b:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AnimateHoverColor}" />
-                                                                    </b:EventTrigger>
+                          <TextBlock Margin="0,0,0,0"
+                                     HorizontalAlignment="Left"
+                                     VerticalAlignment="Bottom"
+                                     FontSize="14"
+                                     FontWeight="DemiBold"
+                                     Foreground="#656565"
+                                     Text="Volume" />
 
-                                                                    <b:EventTrigger EventName="MouseLeave">
-                                                                        <b:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AnimateDefaultColor}" />
-                                                                    </b:EventTrigger>
-                                                                </b:Interaction.Triggers>
-                                                            </Border>
-
-                                                            <ControlTemplate.Triggers>
-                                                                <Trigger Property="IsChecked" Value="True" />
-
-                                                                <Trigger Property="IsMouseOver" Value="True">
-                                                                    <Setter Property="Cursor" Value="Hand" />
-                                                                </Trigger>
-
-                                                                <Trigger Property="IsPressed" Value="True">
-                                                                    <Setter TargetName="PathIcon" Property="Fill" Value="#8cc1fa" />
-                                                                    <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}" />
-                                                                </Trigger>
-
-                                                                <MultiTrigger>
-                                                                    <MultiTrigger.Conditions>
-                                                                        <Condition Property="IsMouseOver" Value="True" />
-                                                                        <Condition Property="IsChecked" Value="False" />
-                                                                    </MultiTrigger.Conditions>
-
-                                                                    <MultiTrigger.EnterActions>
-                                                                        <RemoveStoryboard BeginStoryboardName="ResetForegroundStoryBoard" />
-                                                                        <BeginStoryboard x:Name="ChangeForegroundStoryBoard">
-                                                                            <Storyboard>
-                                                                                <ColorAnimation Storyboard.TargetProperty="Foreground.Color"
-                                                                                                From="#ccc"
-                                                                                                To="{StaticResource DefaultWhiteColor}"
-                                                                                                Duration="0:0:.15" />
-                                                                            </Storyboard>
-                                                                        </BeginStoryboard>
-
-                                                                    </MultiTrigger.EnterActions>
-                                                                </MultiTrigger>
-
-                                                                <MultiTrigger>
-                                                                    <MultiTrigger.Conditions>
-                                                                        <Condition Property="IsMouseOver" Value="False" />
-                                                                        <Condition Property="IsChecked" Value="False" />
-                                                                    </MultiTrigger.Conditions>
-
-                                                                    <MultiTrigger.EnterActions>
-                                                                        <RemoveStoryboard BeginStoryboardName="ChangeForegroundStoryBoard" />
-
-                                                                        <BeginStoryboard x:Name="ResetForegroundStoryBoard">
-                                                                            <Storyboard>
-                                                                                <ColorAnimation Storyboard.TargetProperty="Foreground.Color"
-                                                                                                To="#909090"
-                                                                                                Duration="0:0:.15" />
-                                                                            </Storyboard>
-                                                                        </BeginStoryboard>
-                                                                    </MultiTrigger.EnterActions>
-                                                                </MultiTrigger>
-                                                            </ControlTemplate.Triggers>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </controls1:PathButton.Style>
-                                    </controls1:PathButton>
-
-                                    <Popup HorizontalAlignment="Right"
-                                           AllowsTransparency="True"
-                                           HorizontalOffset="-125"
-                                           IsOpen="{Binding ElementName=HideButton, Path=IsChecked}"
-                                           Placement="Top"
-                                           PlacementTarget="{Binding ElementName=HideButton}"
-                                           PopupAnimation="Slide"
-                                           StaysOpen="False"
-                                           VerticalOffset="-17">
-                                        <Border Width="300"
-                                                Height="100"
-                                                VerticalAlignment="Bottom"
-                                                Background="#ee252525"
-                                                BorderBrush="#454545"
-                                                BorderThickness="1">
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="auto" />
-                                                    <RowDefinition Height="auto" />
-                                                </Grid.RowDefinitions>
-
-                                                <ComboBox Margin="10"
-                                                          VerticalAlignment="Top"
-                                                          DisplayMemberPath="Description"
-                                                          ItemsSource="{Binding SoundDevices}"
-                                                          SelectedItem="{Binding SelectedSoundDevice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-
-                                                <Grid Grid.Row="1"
-                                                      Margin="10,3,10,5"
-                                                      HorizontalAlignment="Stretch"
-                                                      VerticalAlignment="Bottom">
-                                                    <Slider x:Name="WindowsSlider"
-                                                            Grid.Row="0"
-                                                            Height="4"
-                                                            Margin="0,0,0,0"
-                                                            Padding="0"
-                                                            HorizontalAlignment="Stretch"
-                                                            VerticalAlignment="Top"
-                                                            Focusable="True"
-                                                            Foreground="{StaticResource DefaultRedBrush}"
-                                                            IsMoveToPointEnabled="True"
-                                                            Maximum="100"
-                                                            Value="{Binding ActualVolume, Mode=TwoWay}">
-                                                        <b:Interaction.Behaviors>
-                                                            <sliders:SliderHookBehavior  />
-                                                        </b:Interaction.Behaviors>
-                                                    </Slider>
-
-                                                    <TextBlock Margin="0,0,0,0"
-                                                               HorizontalAlignment="Left"
-                                                               VerticalAlignment="Bottom"
-                                                               FontSize="14"
-                                                               FontWeight="DemiBold"
-                                                               Foreground="#656565"
-                                                               Text="Volume" />
-
-                                                    <TextBlock Margin="0,20,0,0"
-                                                               HorizontalAlignment="Right"
-                                                               VerticalAlignment="Bottom"
-                                                               FontSize="14"
-                                                               FontWeight="DemiBold"
-                                                               Foreground="#ccc"
-                                                               Text="{Binding ActualVolume, StringFormat={}{0:N0} %}" />
-                                                </Grid>
-                                            </Grid>
-                                        </Border>
-
-                                        <b:Interaction.Behaviors>
-                                            <themes:PopupOpenedHookToSliderBehavior Slider="{Binding ElementName=WindowsSlider}" />
-                                        </b:Interaction.Behaviors>
-                                    </Popup>
-                                </Grid>
-
-                                <StackPanel Grid.Column="1"
-                                            Margin="-10,0,5,15"
-                                            VerticalAlignment="Center"
-                                            DataContext="{Binding ActualViewModel}"
-                                            Orientation="Horizontal"
-                                            ToolTip="{Binding ActualViewModel}">
-                                    <controls1:PathButton Margin="0,0"
-                                                          Command="{Binding ReloadFile}"
-                                                          IconWidth="20"
-                                                          IsReadOnly="True"
-                                                          PathStyle="{StaticResource arrows-rotate}"
-                                                          ToolTip="Reload file" />
-
-
-                                    <controls1:PathButton Margin="5,0"
-                                                          Command="{Binding ChangePlaylistFavorite}"
-                                                          IconWidth="20"
-                                                          IsChecked="{Binding ActualItem.IsFavorite, Mode=TwoWay}"
-                                                          IsReadOnly="False"
-                                                          PathStyle="{StaticResource star}"
-                                                          ToolTip="Is favorite" />
-                                </StackPanel>
-
-                                <Grid Grid.Column="2"
-                                      Width="150"
-                                      HorizontalAlignment="Left">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="auto" />
-                                        <RowDefinition Height="*" />
-                                    </Grid.RowDefinitions>
-
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock Grid.Row="1"
-                                               Margin="0,0,0,0"
-                                               HorizontalAlignment="Left"
-                                               VerticalAlignment="Bottom"
-                                               FontSize="14"
-                                               Foreground="#959595"
-                                               Text="Volume" />
-
-                                    <Slider Grid.Row="0"
-                                            Grid.Column="0"
-                                            Grid.ColumnSpan="2"
-                                            Height="4"
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Bottom"
-                                            Foreground="{StaticResource DefaultRedBrush}"
-                                            IsMoveToPointEnabled="True"
-                                            Maximum="300"
-                                            Value="{Binding ActualVolume, Mode=TwoWay}">
-                                        <b:Interaction.Behaviors>
-                                            <sliders:SliderHookBehavior HookWhenFullscreen="False"  />
-                                        </b:Interaction.Behaviors>
-                                    </Slider>
-
-
-
-                                    <TextBlock Grid.Row="1"
-                                               Grid.Column="1"
-                                               Margin="0,0,0,0"
-                                               HorizontalAlignment="Right"
-                                               VerticalAlignment="Bottom"
-                                               FontSize="14"
-                                               FontWeight="DemiBold"
-                                               Foreground="#ccc"
-                                               Text="{Binding ActualVolume, StringFormat={}{0} %}" />
-
-                                </Grid>
-                            </Grid>
-
-                            <Grid Grid.Row="2"
-                                  Grid.Column="0"
-                                  Margin="0,5,0,0"
-                                  VerticalAlignment="Center"
-                                  DataContext="{Binding ActualViewModel}">
-
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto" />
-                                    <ColumnDefinition Width="auto" />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-
-                                <Border Grid.Column="0"
-                                        Height="auto"
-                                        Margin="0,0,10,0"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Bottom"
-                                        Background="Transparent"
-                                        BorderThickness="1">
-                                    <Border.Resources>
-                                        <converters1:CacheImageConverter x:Key="CacheImageConverter" DecodeWidth="100" />
-                                    </Border.Resources>
-
-                                    <Image HorizontalAlignment="Center"
-                                           Source="{Binding ActualItem.ImagePath, Converter={converters1:CacheImageConverter}}"
-                                           Stretch="UniformToFill" />
-
-                                    <Border.Style>
-                                        <Style TargetType="Border">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding ActualItem.ImagePath}" Value="{x:Null}">
-                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Border.Style>
-                                </Border>
-
-
-                                <ContentPresenter Grid.Column="2"
-                                                  MaxWidth="290"
-                                                  Margin="0,0,0,1"
-                                                  HorizontalAlignment="Left"
-                                                  VerticalAlignment="Bottom"
-                                                  Content="{Binding}"
-                                                  ContentTemplate="{StaticResource PlayerDetail}" />
-                            </Grid>
-
-
-                            <Grid Grid.Row="2"
-                                  Grid.Column="1"
-                                  Margin="10,0"
-                                  VerticalAlignment="Center">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-
-                                <controls1:ButtonWithIcon Grid.Column="0"
-                                                          Margin="0,0,5,0"
-                                                          HorizontalAlignment="Right"
-                                                          BorderThickness="0"
-                                                          Command="{Binding PreviousCommand}"
-                                                          IconHeight="25"
-                                                          IconPathStyle="{StaticResource NextSong}"
-                                                          IconWidth="25"
-                                                          IsEnabled="{Binding CanPlay}"
-                                                          RenderTransformOrigin="0.5,0.5">
-                                    <controls1:ButtonWithIcon.RenderTransform>
-                                        <ScaleTransform ScaleX="-1" />
-                                    </controls1:ButtonWithIcon.RenderTransform>
-                                </controls1:ButtonWithIcon>
-
-                                <Button x:Name="Play_Button"
-                                        Grid.Column="1"
-                                        Height="50"
-                                        Margin="7"
-                                        Padding="15"
-                                        Background="{StaticResource DefaultRedBrush}"
-                                        BorderThickness="0"
-                                        Command="{Binding PlayButton}"
-                                        Style="{StaticResource PlayButton}" />
-
-                                <controls1:ButtonWithIcon Grid.Column="2"
-                                                          Margin="0,0,5,0"
-                                                          HorizontalAlignment="Left"
-                                                          BorderThickness="0"
-                                                          Command="{Binding NextCommand}"
-                                                          IconHeight="25"
-                                                          IconPathStyle="{StaticResource NextSong}"
-                                                          IconWidth="25"
-                                                          IsEnabled="{Binding CanPlay}"
-                                                          RenderTransformOrigin="0.5,0.5" />
-                            </Grid>
-
-
+                          <TextBlock Margin="0,20,0,0"
+                                     HorizontalAlignment="Right"
+                                     VerticalAlignment="Bottom"
+                                     FontSize="14"
+                                     FontWeight="DemiBold"
+                                     Foreground="#ccc"
+                                     Text="{Binding ActualVolume, StringFormat={}{0:N0} %}" />
                         </Grid>
-
-
-                        <b:Interaction.Behaviors>
-                            <behaviors:ShowHideMouseBehavior />
-                        </b:Interaction.Behaviors>
+                      </Grid>
                     </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
+
+                    <b:Interaction.Behaviors>
+                      <themes:PopupOpenedHookToSliderBehavior Slider="{Binding ElementName=WindowsSlider}" />
+                    </b:Interaction.Behaviors>
+                  </Popup>
+                </Grid>
+
+                <StackPanel Grid.Column="1"
+                            Margin="-10,0,5,15"
+                            VerticalAlignment="Center"
+                            DataContext="{Binding ActualViewModel}"
+                            Orientation="Horizontal"
+                            ToolTip="{Binding ActualViewModel}">
+                  <controls:PathButton Margin="0,0"
+                                       Command="{Binding ReloadFile}"
+                                       IconWidth="20"
+                                       IsReadOnly="True"
+                                       PathStyle="{StaticResource arrows-rotate}"
+                                       ToolTip="Reload file" />
+
+
+                  <controls:PathButton Margin="5,0"
+                                       Command="{Binding ChangePlaylistFavorite}"
+                                       IconWidth="20"
+                                       IsChecked="{Binding ActualItem.IsFavorite, Mode=TwoWay}"
+                                       IsReadOnly="False"
+                                       PathStyle="{StaticResource star}"
+                                       ToolTip="Is favorite" />
+                </StackPanel>
+
+                <Grid Grid.Column="2"
+                      Width="150"
+                      HorizontalAlignment="Left">
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*" />
+                  </Grid.RowDefinitions>
+
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                  </Grid.ColumnDefinitions>
+
+                  <TextBlock Grid.Row="1"
+                             Margin="0,0,0,0"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Bottom"
+                             FontSize="14"
+                             Foreground="#959595"
+                             Text="Volume" />
+
+                  <Slider Grid.Row="0"
+                          Grid.Column="0"
+                          Grid.ColumnSpan="2"
+                          Height="4"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Bottom"
+                          Foreground="{StaticResource DefaultRedBrush}"
+                          IsMoveToPointEnabled="True"
+                          Maximum="300"
+                          Value="{Binding ActualVolume, Mode=TwoWay}">
+                    <b:Interaction.Behaviors>
+                      <sliders:SliderHookBehavior HookWhenFullscreen="False" />
+                    </b:Interaction.Behaviors>
+                  </Slider>
+
+
+
+                  <TextBlock Grid.Row="1"
+                             Grid.Column="1"
+                             Margin="0,0,0,0"
+                             HorizontalAlignment="Right"
+                             VerticalAlignment="Bottom"
+                             FontSize="14"
+                             FontWeight="DemiBold"
+                             Foreground="#ccc"
+                             Text="{Binding ActualVolume, StringFormat={}{0} %}" />
+
+                </Grid>
+              </Grid>
+
+              <Grid Grid.Row="2"
+                    Grid.Column="0"
+                    Margin="0,5,0,0"
+                    VerticalAlignment="Center"
+                    DataContext="{Binding ActualViewModel}">
+
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="auto" />
+                  <ColumnDefinition Width="auto" />
+                  <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0"
+                        Height="auto"
+                        Margin="0,0,10,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        Background="Transparent"
+                        BorderThickness="1">
+                  <Border.Resources>
+                    <converters1:CacheImageConverter x:Key="CacheImageConverter" DecodeWidth="100" />
+                  </Border.Resources>
+
+                  <Image HorizontalAlignment="Center"
+                         Source="{Binding ActualItem.ImagePath, Converter={converters1:CacheImageConverter}}"
+                         Stretch="UniformToFill" />
+
+                  <Border.Style>
+                    <Style TargetType="Border">
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding ActualItem.ImagePath}" Value="{x:Null}">
+                          <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                      </Style.Triggers>
+                    </Style>
+                  </Border.Style>
+                </Border>
+
+
+                <ContentPresenter Grid.Column="2"
+                                  MaxWidth="290"
+                                  Margin="0,0,0,1"
+                                  HorizontalAlignment="Left"
+                                  VerticalAlignment="Bottom"
+                                  Content="{Binding}"
+                                  ContentTemplate="{StaticResource PlayerDetail}" />
+              </Grid>
+
+
+              <Grid Grid.Row="2"
+                    Grid.Column="1"
+                    Margin="10,0"
+                    VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="auto" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <controls:ButtonWithIcon Grid.Column="0"
+                                         Margin="0,0,5,0"
+                                         HorizontalAlignment="Right"
+                                         BorderThickness="0"
+                                         Command="{Binding PreviousCommand}"
+                                         IconHeight="25"
+                                         IconPathStyle="{StaticResource NextSong}"
+                                         IconWidth="25"
+                                         IsEnabled="{Binding CanPlay}"
+                                         RenderTransformOrigin="0.5,0.5">
+                  <controls:ButtonWithIcon.RenderTransform>
+                    <ScaleTransform ScaleX="-1" />
+                  </controls:ButtonWithIcon.RenderTransform>
+                </controls:ButtonWithIcon>
+
+                <Button x:Name="Play_Button"
+                        Grid.Column="1"
+                        Height="50"
+                        Margin="7"
+                        Padding="15"
+                        Background="{StaticResource DefaultRedBrush}"
+                        BorderThickness="0"
+                        Command="{Binding PlayButton}"
+                        Style="{StaticResource PlayButton}" />
+
+                <controls:ButtonWithIcon Grid.Column="2"
+                                         Margin="0,0,5,0"
+                                         HorizontalAlignment="Left"
+                                         BorderThickness="0"
+                                         Command="{Binding NextCommand}"
+                                         IconHeight="25"
+                                         IconPathStyle="{StaticResource NextSong}"
+                                         IconWidth="25"
+                                         IsEnabled="{Binding CanPlay}"
+                                         RenderTransformOrigin="0.5,0.5" />
+              </Grid>
+
+
+            </Grid>
+
+
+            <b:Interaction.Behaviors>
+              <behaviors:ShowHideMouseBehavior />
+            </b:Interaction.Behaviors>
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
 </ResourceDictionary>

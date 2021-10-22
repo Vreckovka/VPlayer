@@ -5,7 +5,8 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows.Data;
-using VCore.Converters;
+
+using VCore.WPF.Converters;
 
 namespace VPlayer.WindowsPlayer.Converters
 {

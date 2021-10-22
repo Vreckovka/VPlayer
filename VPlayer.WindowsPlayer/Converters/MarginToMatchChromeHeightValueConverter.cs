@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Windows;
-using VCore.Converters;
+using VCore.WPF.Converters;
 
 namespace VPlayer.WindowsPlayer.Converters
 {

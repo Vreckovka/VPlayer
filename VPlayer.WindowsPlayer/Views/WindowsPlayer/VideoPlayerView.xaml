@@ -6,8 +6,7 @@
              xmlns:behaviors1="clr-namespace:VPlayer.WindowsPlayer.Behaviors"
              xmlns:behaviors2="clr-namespace:VPlayer.WindowsPlayer.Behaviors;assembly=VPlayer.Core"
              xmlns:behaviors3="clr-namespace:VPlayer.WindowsPlayer.Behaviors;assembly=VCore.WPF"
-             xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore.WPF"
-             xmlns:converters="clr-namespace:VCore.Converters;assembly=VCore.WPF"
+
              xmlns:converters1="clr-namespace:VPlayer.WindowsPlayer.Converters"
              xmlns:converters2="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -18,6 +17,7 @@
              xmlns:vvlc="clr-namespace:VVLC;assembly=VVLC"
              xmlns:controls1="clr-namespace:VVLC.Controls;assembly=VVLC"
              xmlns:behaviors4="clr-namespace:VPlayer.Core.Behaviors;assembly=VPlayer.Core"
+             xmlns:controls2="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
@@ -146,8 +146,8 @@
                                            Text="Do you want to play from last position? " />
                                 <TextBlock VerticalAlignment="Center"
                                            Foreground="{StaticResource DefaultWhiteBrush}"
-                                           Text="{Binding ItemLastTime, Converter={converters:TimeConverter TimeType=Second}}" />
-                                <controls:ButtonWithIcon Margin="5,0,0,0"
+                                           Text="{Binding ItemLastTime, Converter={converters2:TimeConverter TimeType=Second}}" />
+                                <controls2:ButtonWithIcon Margin="5,0,0,0"
                                                          Padding="0"
                                                          VerticalAlignment="Center"
                                                          HorizontalContentAlignment="Center"
@@ -218,7 +218,7 @@
                         </Grid.Style>
                     </Grid>
 
-                    <controls:PathButton x:Name="HideButton"
+                    <controls2:PathButton x:Name="HideButton"
                                          Grid.Row="0"
                                          Grid.Column="0"
                                          Margin="0,3,-29,0"
@@ -234,10 +234,10 @@
                                          Opacity="0.85"
                                          IconCheckedColor="{StaticResource DefaultRedColor}"
                                          PathStyle="{StaticResource arrows-to-line-solid}">
-                        <controls:PathButton.RenderTransform>
+                        <controls2:PathButton.RenderTransform>
                             <RotateTransform Angle="90" />
-                        </controls:PathButton.RenderTransform>
-                    </controls:PathButton>
+                        </controls2:PathButton.RenderTransform>
+                    </controls2:PathButton>
 
                     <controls1:FullscreenPlayer x:Name="FullscreenPlayer"
                                                 Grid.Row="1"

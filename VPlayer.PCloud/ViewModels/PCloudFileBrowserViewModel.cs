@@ -2,10 +2,11 @@
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Providers;
+using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Managers;
+using VCore.WPF.Modularity.RegionProviders;
 using VCore.WPF.ViewModels.WindowsFiles;
 using VPlayer.AudioStorage.DomainClasses.FolderStructure;
 using VPlayer.AudioStorage.Interfaces.Storage;
