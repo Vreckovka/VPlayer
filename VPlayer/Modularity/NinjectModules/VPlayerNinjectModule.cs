@@ -2,7 +2,6 @@
 using System.Data.Common;
 using System.Reflection;
 using Ninject;
-using VCore.Modularity.NinjectModules;
 using VCore.Standard.Modularity.NinjectModules;
 using VCore.Standard.Providers;
 using VPlayer.Core.Modularity.Ninject;

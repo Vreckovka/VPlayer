@@ -4,6 +4,7 @@ using System.Reactive;
 using System.Text;
 using System.Windows;
 using Microsoft.Xaml.Behaviors;
+using VCore.WPF.Managers;
 using VPlayer.WindowsPlayer.Behaviors;
 
 namespace VPlayer.Player.Behaviors

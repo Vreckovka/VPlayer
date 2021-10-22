@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using VCore.ViewModels;
 using VCore.WPF.Prompts;
 
 namespace VPlayer.WindowsPlayer.ViewModels.Windows
