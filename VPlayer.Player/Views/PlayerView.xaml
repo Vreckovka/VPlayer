@@ -238,7 +238,7 @@
                                                   IconDefaultColor="#454545"
                                                   IconHoverColor="{StaticResource DefaultRedColor}"
                                                   IsReadOnly="True"
-                                                  PathStyle="{StaticResource xmark}"
+                                                  PathStyle="{StaticResource xmark_path}"
                                                   ToolTip="Close" />
 
                             <controls2:PathButton Margin="0,0,0,-2"
