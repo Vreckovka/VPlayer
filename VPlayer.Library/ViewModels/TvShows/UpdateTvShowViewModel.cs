@@ -3,7 +3,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Logger;
 using VCore;
-using VCore.ViewModels;
+using VCore.WPF.Misc;
+using VCore.WPF.ViewModels;
 using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.Library.ViewModels.TvShows;
 

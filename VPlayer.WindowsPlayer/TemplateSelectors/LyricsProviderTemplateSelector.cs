@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using VCore.WPF.LRC;
 using VPlayer.AudioStorage.InfoDownloader.LRC;
 using VPlayer.Core.ViewModels;
 

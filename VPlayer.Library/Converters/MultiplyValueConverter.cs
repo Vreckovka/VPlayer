@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Globalization;
-using VCore.Converters;
+using VCore.WPF.Converters;
 
 namespace VPlayer.Home.Converters
 {

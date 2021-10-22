@@ -1,8 +1,8 @@
 ﻿using Prism.Regions;
-using VCore.Modularity.Navigation;
-using VCore.Modularity.RegionProviders;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Factories.Views;
+using VCore.WPF.Modularity.Navigation;
+using VCore.WPF.Modularity.RegionProviders;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Core.ViewModels.Artists;

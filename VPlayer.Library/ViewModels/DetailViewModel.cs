@@ -3,13 +3,15 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using VCore;
-using VCore.Modularity.Events;
-using VCore.Modularity.RegionProviders;
 using VCore.Standard;
 using VCore.Standard.Helpers;
 using VCore.Standard.Modularity.Interfaces;
-using VCore.ViewModels;
+using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Managers;
+using VCore.WPF.Misc;
+using VCore.WPF.Modularity.Events;
+using VCore.WPF.Modularity.RegionProviders;
+using VCore.WPF.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Managers.Status;
@@ -174,7 +176,7 @@ namespace VPlayer.Home.ViewModels
       base.Initialize();
 
       storageManager.OnItemChanged.OfType<IItemChanged<TModel>>().Where(x =>
-        x.Changed == VCore.Modularity.Events.Changed.Updated).Subscribe(OnDbUpdate).DisposeWith(this);
+        x.Changed == VCore.WPF.Modularity.Events.Changed.Updated).Subscribe(OnDbUpdate).DisposeWith(this);
 
       LoadEntity();
     }

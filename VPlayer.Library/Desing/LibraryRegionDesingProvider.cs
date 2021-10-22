@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using VCore.Design;
 using VCore.Standard.Modularity.Interfaces;
+using VCore.WPF.Design;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Home.Desing.ViewModels;
 using VPlayer.Home.Views.Music.Albums;

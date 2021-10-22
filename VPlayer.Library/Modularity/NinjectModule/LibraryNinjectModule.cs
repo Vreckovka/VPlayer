@@ -1,6 +1,6 @@
 ﻿using Ninject;
-using VCore.Modularity.RegionProviders;
 using VCore.Standard.Modularity.NinjectModules;
+using VCore.WPF.Modularity.RegionProviders;
 using VPlayer.AudioStorage.Modularity.NinjectModules;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
