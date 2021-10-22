@@ -1,5 +1,4 @@
 ﻿using VCore.Standard;
-using VCore.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 
 namespace VPlayer.Core.Design.ViewModels

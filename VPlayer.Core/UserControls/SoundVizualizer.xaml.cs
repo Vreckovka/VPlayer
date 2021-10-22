@@ -18,7 +18,7 @@ using CSCore.Streams;
 using CSCore.Streams.Effects;
 using CSCore.Win32;
 using SoundManagement;
-using VCore.Helpers;
+using VCore.WPF.Helpers;
 using WinformsVisualization.Visualization;
 using Color = System.Windows.Media.Color;
 using Timer = System.Timers.Timer;

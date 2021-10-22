@@ -1,6 +1,5 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:attachedProperties="clr-namespace:VCore.AttachedProperties;assembly=VCore.WPF"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
                     xmlns:behaviors1="clr-namespace:VPlayer.WindowsPlayer.Behaviors"
@@ -8,7 +7,6 @@
                     xmlns:buttons="clr-namespace:VCore.WPF.Behaviors.Buttons;assembly=VCore.WPF"
                     xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
                     xmlns:controls1="clr-namespace:WpfToolkit.Controls;assembly=VirtualizingWrapPanel"
-                    xmlns:controls2="clr-namespace:VCore.Controls;assembly=VCore.WPF"
                     xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
                     xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
                     xmlns:library1="clr-namespace:VPlayer.Library;assembly=VCore.WPF"
@@ -16,7 +14,8 @@
                     xmlns:lrc="clr-namespace:VPlayer.AudioStorage.InfoDownloader.LRC;assembly=VCore.WPF"
                     xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
                     xmlns:windowsPlayer="clr-namespace:VPlayer.Player.Views.WindowsPlayer"
-                    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit">
+                    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+                    xmlns:multistyle="clr-namespace:VCore.WPF.AttachedProperties.Multistyle;assembly=VCore.WPF">
 
     <converters:CacheImageConverter x:Key="CacheImageConverter" />
 
@@ -53,7 +52,7 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <controls2:PathButton Margin="10,10,0,0"
+            <controls:PathButton Margin="10,10,0,0"
                                   HorizontalAlignment="Left"
                                   VerticalAlignment="Top"
                                   Command="{Binding CreateLRCLyrics}"
@@ -90,7 +89,7 @@
                         Margin="10,5,10,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top">
-                <controls2:PathButton x:Name="SettingsButton"
+                <controls:PathButton x:Name="SettingsButton"
                                       HorizontalAlignment="Left"
                                       FontSize="13"
                                       FontWeight="Bold"
@@ -102,17 +101,17 @@
                                       IconHoverColor="#ccc"
                                       IsChecked="{Binding IsMenuOpened}"
                                       PathStyle="{StaticResource gear}">
-                    <controls2:PathButton.Style>
-                        <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
+                    <controls:PathButton.Style>
+                        <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
                             <Setter Property="Content" Value="Lyrics" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=711}" Value="false">
+                                <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={converters:IsGreaterConverter}, ConverterParameter=711}" Value="false">
                                     <Setter Property="Content" Value="" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
-                    </controls2:PathButton.Style>
-                </controls2:PathButton>
+                    </controls:PathButton.Style>
+                </controls:PathButton>
 
                 <Popup AllowsTransparency="True"
                        HorizontalOffset="-10"
@@ -132,7 +131,7 @@
                             </Grid.RowDefinitions>
 
 
-                            <controls2:PathButton Margin="12,10,0,8"
+                            <controls:PathButton Margin="12,10,0,8"
                                                   HorizontalAlignment="Left"
                                                   IconCheckedColor="{StaticResource YellowColor}"
                                                   IconHeight="15"
@@ -190,7 +189,7 @@
                                                  Text="{Binding LyricsColor}" />
 
 
-                                        <controls2:PathButton x:Name="color_picker_toggle"
+                                        <controls:PathButton x:Name="color_picker_toggle"
                                                               Grid.Column="2"
                                                               Width="20"
                                                               Height="18"
@@ -229,7 +228,7 @@
                                         </controls:NumericUpAndDown>
                                     </StackPanel>
 
-                                    <controls2:PathButton Margin="5,15,5,7"
+                                    <controls:PathButton Margin="5,15,5,7"
                                                           Padding="55,9"
                                                           HorizontalAlignment="Center"
                                                           Background="#08ffffff"
@@ -284,7 +283,7 @@
                     </Border>
                 </Popup>
 
-                <controls2:PathButton Margin="0,15,0,0"
+                <controls:PathButton Margin="0,15,0,0"
                                       HorizontalAlignment="Left"
                                       Command="{Binding Edit}"
                                       FontSize="13"
@@ -298,17 +297,17 @@
                                       IsReadOnly="True"
                                       PathStyle="{StaticResource Pencil}"
                                       ToolTip="Edit">
-                    <controls2:PathButton.Style>
-                        <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
+                    <controls:PathButton.Style>
+                        <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
                             <Setter Property="Content" Value="Edit" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=711}" Value="false">
+                                <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={converters:IsGreaterConverter}, ConverterParameter=711}" Value="false">
                                     <Setter Property="Content" Value="" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
-                    </controls2:PathButton.Style>
-                </controls2:PathButton>
+                    </controls:PathButton.Style>
+                </controls:PathButton>
             </StackPanel>
 
 
@@ -388,7 +387,7 @@
                                                                        FontSize="13"
                                                                        FontWeight="Bold">
                                                                 <TextBlock.Text>
-                                                                    <MultiBinding Converter="{library1:ExtractMilisecondFromTimeSpanConverter}" StringFormat="{}({0})">
+                                                                    <MultiBinding Converter="{converters:ExtractMilisecondFromTimeSpanConverter}" StringFormat="{}({0})">
                                                                         <Binding Path="Model.Timestamp" />
                                                                         <Binding Path="DataContext.TimeAdjustment" RelativeSource="{RelativeSource AncestorType=ListView, Mode=FindAncestor}" />
                                                                     </MultiBinding>
@@ -402,11 +401,11 @@
                                                                                 <Setter Property="Visibility" Value="Collapsed" />
                                                                             </DataTrigger>
 
-                                                                            <DataTrigger Binding="{Binding DataContext.TimeAdjustment, RelativeSource={RelativeSource AncestorType=ListView, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=0}" Value="true">
+                                                                            <DataTrigger Binding="{Binding DataContext.TimeAdjustment, RelativeSource={RelativeSource AncestorType=ListView, Mode=FindAncestor}, Converter={converters:IsGreaterConverter}, ConverterParameter=0}" Value="true">
                                                                                 <Setter Property="Foreground" Value="#70aacc" />
                                                                             </DataTrigger>
 
-                                                                            <DataTrigger Binding="{Binding DataContext.TimeAdjustment, RelativeSource={RelativeSource AncestorType=ListView, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=0}" Value="false">
+                                                                            <DataTrigger Binding="{Binding DataContext.TimeAdjustment, RelativeSource={RelativeSource AncestorType=ListView, Mode=FindAncestor}, Converter={converters:IsGreaterConverter}, ConverterParameter=0}" Value="false">
                                                                                 <Setter Property="Foreground" Value="#bf213c" />
                                                                             </DataTrigger>
                                                                         </Style.Triggers>
@@ -471,7 +470,7 @@
                 <TextBlock.Style>
                     <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=711}" Value="false">
+                            <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={converters:IsGreaterConverter}, ConverterParameter=711}" Value="false">
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -493,7 +492,7 @@
                 <TextBlock.Style>
                     <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=711}" Value="false">
+                            <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={converters:IsGreaterConverter}, ConverterParameter=711}" Value="false">
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -519,7 +518,7 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel>
-                    <controls2:PathButton x:Name="SettingsButton"
+                    <controls:PathButton x:Name="SettingsButton"
                                           HorizontalAlignment="Left"
                                           Command="{Binding SaveLRC}"
                                           FontWeight="Bold"
@@ -530,23 +529,23 @@
                                           IconHoverColor="#80b1ff"
                                           PathStyle="{StaticResource floppy-disk}"
                                           ToolTip="Save">
-                        <controls2:PathButton.Style>
-                            <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
+                        <controls:PathButton.Style>
+                            <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
                                 <Setter Property="Content" Value="Save" />
                                 <Setter Property="Margin" Value="0,0,10,0" />
 
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=711}" Value="false">
+                                    <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={converters:IsGreaterConverter}, ConverterParameter=711}" Value="false">
                                         <Setter Property="Content" Value="" />
                                         <Setter Property="Margin" Value="0,0,0,0" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
-                        </controls2:PathButton.Style>
-                    </controls2:PathButton>
+                        </controls:PathButton.Style>
+                    </controls:PathButton>
 
 
-                    <controls2:PathButton Margin="0,10"
+                    <controls:PathButton Margin="0,10"
                                           HorizontalAlignment="Left"
                                           Command="{Binding ExitLRCEditor}"
                                           CommandParameter="{Binding ActualItem}"
@@ -558,17 +557,17 @@
                                           IconHoverColor="{StaticResource DefaultRedColor}"
                                           PathStyle="{StaticResource door-open-path}"
                                           ToolTip="Exit">
-                        <controls2:PathButton.Style>
-                            <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
+                        <controls:PathButton.Style>
+                            <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
                                 <Setter Property="Content" Value="Exit" />
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=711}" Value="false">
+                                    <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={converters:IsGreaterConverter}, ConverterParameter=711}" Value="false">
                                         <Setter Property="Content" Value="" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
-                        </controls2:PathButton.Style>
-                    </controls2:PathButton>
+                        </controls:PathButton.Style>
+                    </controls:PathButton>
                 </StackPanel>
 
                 <Border Grid.Row="1" Background="#85050505">
@@ -602,7 +601,7 @@
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=711}" Value="false">
+                            <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={converters:IsGreaterConverter}, ConverterParameter=711}" Value="false">
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -669,14 +668,14 @@
 
                                                         <StackPanel Orientation="Horizontal">
 
-                                                            <controls2:PathButton Margin="5,0"
+                                                            <controls:PathButton Margin="5,0"
                                                                                   Command="{Binding RelativeSource={RelativeSource AncestorType=ListView, Mode=FindAncestor}, Path=DataContext.SetActualLine}"
                                                                                   CommandParameter="{Binding}"
                                                                                   IsChecked="{Binding IsActual, Mode=TwoWay}"
                                                                                   IsReadOnly="True"
                                                                                   Style="{StaticResource check-glyph}" />
 
-                                                            <controls2:PathButton Margin="5,0"
+                                                            <controls:PathButton Margin="5,0"
                                                                                   Command="{Binding SetTime}"
                                                                                   Style="{StaticResource pencil-glyph}" />
 
@@ -759,7 +758,7 @@
         <Setter Property="Opacity" Value="0.3" />
         <Style.Triggers>
             <DataTrigger Binding="{Binding Path=DataContext.IsPlaying, RelativeSource={RelativeSource AncestorType=ListViewItem, Mode=FindAncestor}}" Value="true">
-                <Setter Property="Fill" Value="{Binding RelativeSource={RelativeSource AncestorType=controls2:ButtonWithIcon}, Path=IconBrush}" />
+                <Setter Property="Fill" Value="{Binding RelativeSource={RelativeSource AncestorType=controls:ButtonWithIcon}, Path=IconBrush}" />
             </DataTrigger>
         </Style.Triggers>
     </Style>
@@ -770,11 +769,11 @@
               Margin="-2,-6,0,0"
               ToolTip="PCloud">
             <Path.Style>
-                <Style BasedOn="{attachedProperties:MultiStyle cloud-solid SyncLyricsSubIconStyle}" TargetType="Path">
+                <Style BasedOn="{multistyle:MultiStyle cloud-solid SyncLyricsSubIconStyle}" TargetType="Path">
                     <Setter Property="Fill" Value="#4285f4" />
 
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=controls2:ButtonWithIcon}, Path=IsMouseOver}" Value="true">
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=controls:ButtonWithIcon}, Path=IsMouseOver}" Value="true">
                             <DataTrigger.EnterActions>
                                 <RemoveStoryboard BeginStoryboardName="HoverStoryboardEnd" />
                                 <BeginStoryboard x:Name="HoverStoryboardStart">
@@ -809,11 +808,11 @@
               Margin="-2,-6,0,0"
               ToolTip="Google drive">
             <Path.Style>
-                <Style BasedOn="{attachedProperties:MultiStyle GoogleDrive SyncLyricsSubIconStyle}" TargetType="Path">
+                <Style BasedOn="{multistyle:MultiStyle GoogleDrive SyncLyricsSubIconStyle}" TargetType="Path">
                     <Setter Property="Fill" Value="#4285f4" />
 
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=controls2:ButtonWithIcon}, Path=IsMouseOver}" Value="true">
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=controls:ButtonWithIcon}, Path=IsMouseOver}" Value="true">
                             <DataTrigger.EnterActions>
                                 <RemoveStoryboard BeginStoryboardName="HoverStoryboardEnd" />
                                 <BeginStoryboard x:Name="HoverStoryboardStart">
@@ -849,11 +848,11 @@
               ToolTip="Local file">
 
             <Path.Style>
-                <Style BasedOn="{attachedProperties:MultiStyle Folder SyncLyricsSubIconStyle}" TargetType="Path">
+                <Style BasedOn="{multistyle:MultiStyle Folder SyncLyricsSubIconStyle}" TargetType="Path">
                     <Setter Property="Fill" Value="#f4d642" />
 
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=controls2:ButtonWithIcon}, Path=IsMouseOver}" Value="true">
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=controls:ButtonWithIcon}, Path=IsMouseOver}" Value="true">
                             <DataTrigger.EnterActions>
                                 <RemoveStoryboard BeginStoryboardName="HoverStoryboardEnd" />
                                 <BeginStoryboard x:Name="HoverStoryboardStart">
@@ -986,7 +985,7 @@
                              Visibility="Visible" />
                 </StackPanel>
 
-                <controls2:ButtonWithIcon Grid.Column="1"
+                <controls:ButtonWithIcon Grid.Column="1"
                                           Margin="25"
                                           HorizontalAlignment="Right"
                                           VerticalAlignment="Center"
@@ -1003,15 +1002,15 @@
     </DataTemplate>
 
     <DataTemplate x:Key="TextLyricsIconDataTemplate">
-        <controls2:ButtonWithIcon Margin="1,0,0,0"
+        <controls:ButtonWithIcon Margin="1,0,0,0"
                                   Padding="0"
                                   HorizontalAlignment="Left"
                                   IconHeight="11"
                                   IconPathStyle="{StaticResource TextLyrics}"
                                   IconWidth="11"
                                   ToolTip="Lyrics">
-            <controls2:ButtonWithIcon.Style>
-                <Style BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}" TargetType="{x:Type controls2:ButtonWithIcon}">
+            <controls:ButtonWithIcon.Style>
+                <Style BasedOn="{StaticResource {x:Type controls:ButtonWithIcon}}" TargetType="{x:Type controls:ButtonWithIcon}">
                     <Setter Property="IconHoverColor" Value="#59ad55" />
                     <Setter Property="IconDefaultColor" Value="#2b5229" />
                     <Setter Property="Opacity" Value="1" />
@@ -1023,13 +1022,13 @@
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </controls2:ButtonWithIcon.Style>
+            </controls:ButtonWithIcon.Style>
 
-        </controls2:ButtonWithIcon>
+        </controls:ButtonWithIcon>
     </DataTemplate>
 
     <DataTemplate x:Key="SyncedLyricsIconDataTemplate">
-        <controls2:ButtonWithIcon Margin="0,0,0,-3"
+        <controls:ButtonWithIcon Margin="0,0,0,-3"
                                   Padding="0"
                                   HorizontalAlignment="Right"
                                   VerticalAlignment="Center"
@@ -1038,8 +1037,8 @@
                                   IconWidth="11"
                                   ToolTip="Synced lyrics">
 
-            <controls2:ButtonWithIcon.Style>
-                <Style BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}" TargetType="{x:Type controls2:ButtonWithIcon}">
+            <controls:ButtonWithIcon.Style>
+                <Style BasedOn="{StaticResource {x:Type controls:ButtonWithIcon}}" TargetType="{x:Type controls:ButtonWithIcon}">
                     <Setter Property="IconHoverColor" Value="#aaa" />
                     <Setter Property="IconDefaultColor" Value="#353535" />
                     <Setter Property="Opacity" Value="1" />
@@ -1048,7 +1047,7 @@
 
                     <Setter Property="Template">
                         <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type controls2:ButtonWithIcon}">
+                            <ControlTemplate TargetType="{x:Type controls:ButtonWithIcon}">
                                 <Border Width="{TemplateBinding Width}"
                                         Height="{TemplateBinding Height}"
                                         Margin="{TemplateBinding Margin}"
@@ -1112,24 +1111,24 @@
                     </Style.Triggers>
 
                 </Style>
-            </controls2:ButtonWithIcon.Style>
-        </controls2:ButtonWithIcon>
+            </controls:ButtonWithIcon.Style>
+        </controls:ButtonWithIcon>
     </DataTemplate>
 
     <DataTemplate x:Key="LRCEditorIconDataTemplate">
-        <controls2:PathButton FontSize="13"
+        <controls:PathButton FontSize="13"
                               IsHitTestVisible="False"
                               Style="{StaticResource pencil-glyph}" />
     </DataTemplate>
 
     <DataTemplate x:Key="DisabledLyricsIconDataTemplate">
-        <controls2:PathButton IconHeight="13"
+        <controls:PathButton IconHeight="13"
                               IconWidth="13"
                               IsReadOnly="True"
                               PathStyle="{StaticResource text-slash-solid}"
                               ToolTip="Automatic download is DISABLED">
-            <controls2:PathButton.Style>
-                <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
+            <controls:PathButton.Style>
+                <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
                     <Setter Property="IconDefaultColor" Value="#454545" />
                     <Setter Property="IconHoverColor" Value="{StaticResource DefaultRedColor}" />
                     <Setter Property="Opacity" Value="0.85" />
@@ -1141,8 +1140,8 @@
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </controls2:PathButton.Style>
-        </controls2:PathButton>
+            </controls:PathButton.Style>
+        </controls:PathButton>
     </DataTemplate>
 
     <templateSelectors:LyricsTemplateSelector x:Key="LyricsTemplateSelector"
@@ -1208,7 +1207,7 @@
                               Margin="0,0,10,3"
                               HorizontalAlignment="Right">
                             <Grid.Resources>
-                                <Style BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}" TargetType="controls2:ButtonWithIcon">
+                                <Style BasedOn="{StaticResource {x:Type controls:ButtonWithIcon}}" TargetType="controls:ButtonWithIcon">
                                     <Setter Property="IconHeight" Value="11" />
                                     <Setter Property="IconWidth" Value="11" />
                                 </Style>
@@ -1219,7 +1218,7 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
 
-                            <controls2:PathButton Grid.Column="0"
+                            <controls:PathButton Grid.Column="0"
                                                   Margin="0,0,0,0"
                                                   HorizontalAlignment="Left"
                                                   VerticalAlignment="Center"
@@ -1229,8 +1228,8 @@
                                                   IsChecked="{Binding IsFavorite}"
                                                   PathStyle="{StaticResource Favorite}"
                                                   ToolTip="Favorite">
-                                <controls2:PathButton.Style>
-                                    <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
+                                <controls:PathButton.Style>
+                                    <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
                                         <Setter Property="IconDefaultColor" Value="#10ffffff" />
                                         <Setter Property="IconHoverColor" Value="#8fd4f2" />
                                         <Setter Property="IconCheckedColor" Value="#aa39b2e6" />
@@ -1243,8 +1242,8 @@
 
                                         </Style.Triggers>
                                     </Style>
-                                </controls2:PathButton.Style>
-                            </controls2:PathButton>
+                                </controls:PathButton.Style>
+                            </controls:PathButton>
                         </Grid>
                     </Grid>
                 </Grid>
@@ -1344,7 +1343,7 @@
                               Margin="0,0,10,3"
                               HorizontalAlignment="Right">
                             <Grid.Resources>
-                                <Style BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}" TargetType="controls2:ButtonWithIcon">
+                                <Style BasedOn="{StaticResource {x:Type controls:ButtonWithIcon}}" TargetType="controls:ButtonWithIcon">
                                     <Setter Property="IconHeight" Value="11" />
                                     <Setter Property="IconWidth" Value="11" />
                                 </Style>
@@ -1355,7 +1354,7 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
 
-                            <controls2:PathButton Grid.Column="0"
+                            <controls:PathButton Grid.Column="0"
                                                   Margin="5,0,0,0"
                                                   HorizontalAlignment="Right"
                                                   VerticalAlignment="Center"
@@ -1368,8 +1367,8 @@
                                                   Opacity="0.55"
                                                   PathStyle="{StaticResource Favorite}"
                                                   ToolTip="Favorite">
-                                <controls2:PathButton.Style>
-                                    <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
+                                <controls:PathButton.Style>
+                                    <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
                                         <Setter Property="IconDefaultColor" Value="#20ffffff" />
 
                                         <Style.Triggers>
@@ -1378,8 +1377,8 @@
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
-                                </controls2:PathButton.Style>
-                            </controls2:PathButton>
+                                </controls:PathButton.Style>
+                            </controls:PathButton>
 
                             <Grid Grid.Column="1" HorizontalAlignment="Left">
 
@@ -1393,7 +1392,7 @@
 
                         </Grid>
 
-                        <controls2:ButtonWithIcon Grid.Column="1"
+                        <controls:ButtonWithIcon Grid.Column="1"
                                                   Margin="0,0,0,0"
                                                   Padding="0"
                                                   HorizontalAlignment="Right"
@@ -1402,8 +1401,8 @@
                                                   IconPathStyle="{StaticResource Repeate}"
                                                   IconWidth="12"
                                                   ToolTip="Reload lyrics">
-                            <controls2:ButtonWithIcon.Style>
-                                <Style BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}" TargetType="{x:Type controls2:ButtonWithIcon}">
+                            <controls:ButtonWithIcon.Style>
+                                <Style BasedOn="{StaticResource {x:Type controls:ButtonWithIcon}}" TargetType="{x:Type controls:ButtonWithIcon}">
                                     <Setter Property="IconHoverColor" Value="Gold" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsPlaying}" Value="true">
@@ -1412,8 +1411,8 @@
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
-                            </controls2:ButtonWithIcon.Style>
-                        </controls2:ButtonWithIcon>
+                            </controls:ButtonWithIcon.Style>
+                        </controls:ButtonWithIcon>
                     </Grid>
                 </Grid>
             </Border>
@@ -1421,7 +1420,7 @@
             <Grid.ContextMenu>
                 <ContextMenu>
                     <ContextMenu.Resources>
-                        <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
+                        <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
                             <Setter Property="Width" Value="280" />
                             <Setter Property="Margin" Value="-17,-5,-23,-6" />
                             <Setter Property="IconWidth" Value="18" />
@@ -1440,7 +1439,7 @@
                         <MenuItem.HeaderTemplate>
                             <DataTemplate>
                                 <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu, Mode=FindAncestor}, Path=DataContext}">
-                                    <controls2:PathButton Command="{Binding DeleteItemFromPlaylist}"
+                                    <controls:PathButton Command="{Binding DeleteItemFromPlaylist}"
                                                           Content="Remove SONG from playlist"
                                                           PathStyle="{StaticResource layer-minus}"
                                                           ToolTip="Removes SINGLE SONG from playlist">
@@ -1448,7 +1447,7 @@
                                         <b:Interaction.Behaviors>
                                             <buttons:CloseContextMenuOnClickBehavior />
                                         </b:Interaction.Behaviors>
-                                    </controls2:PathButton>
+                                    </controls:PathButton>
                                 </Grid>
                             </DataTemplate>
                         </MenuItem.HeaderTemplate>
@@ -1458,7 +1457,7 @@
                         <MenuItem.HeaderTemplate>
                             <DataTemplate>
                                 <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu, Mode=FindAncestor}, Path=DataContext}">
-                                    <controls2:PathButton Command="{Binding DeleteSongFromPlaylistWithAlbum}"
+                                    <controls:PathButton Command="{Binding DeleteSongFromPlaylistWithAlbum}"
                                                           Content="Remove song's ALBUM from playlist"
                                                           IconHeight="16"
                                                           PathStyle="{StaticResource TrashList}"
@@ -1466,7 +1465,7 @@
                                         <b:Interaction.Behaviors>
                                             <buttons:CloseContextMenuOnClickBehavior />
                                         </b:Interaction.Behaviors>
-                                    </controls2:PathButton>
+                                    </controls:PathButton>
                                 </Grid>
                             </DataTemplate>
                         </MenuItem.HeaderTemplate>
@@ -1478,7 +1477,7 @@
                         <MenuItem.HeaderTemplate>
                             <DataTemplate>
                                 <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu, Mode=FindAncestor}, Path=DataContext}">
-                                    <controls2:PathButton Content="Automatic lyrics download"
+                                    <controls:PathButton Content="Automatic lyrics download"
                                                           ForegroundCheckedColor="#ddd"
                                                           IconCheckedColor="{StaticResource DefaultRedColor}"
                                                           IsChecked="{Binding IsAutomaticLyricsDownloadDisabled, Mode=TwoWay}"
@@ -1489,7 +1488,7 @@
                                         <b:Interaction.Behaviors>
                                             <buttons:CloseContextMenuOnClickBehavior />
                                         </b:Interaction.Behaviors>
-                                    </controls2:PathButton>
+                                    </controls:PathButton>
                                 </Grid>
                             </DataTemplate>
                         </MenuItem.HeaderTemplate>
@@ -1501,7 +1500,7 @@
                         <MenuItem.HeaderTemplate>
                             <DataTemplate>
                                 <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu, Mode=FindAncestor}, Path=DataContext}">
-                                    <controls2:PathButton Command="{Binding OpenContainingFolder}"
+                                    <controls:PathButton Command="{Binding OpenContainingFolder}"
                                                           Content="Open containing folder"
                                                           IconHeight="14"
                                                           PathStyle="{StaticResource FolderOpen}"
@@ -1510,7 +1509,7 @@
                                         <b:Interaction.Behaviors>
                                             <buttons:CloseContextMenuOnClickBehavior />
                                         </b:Interaction.Behaviors>
-                                    </controls2:PathButton>
+                                    </controls:PathButton>
                                 </Grid>
                             </DataTemplate>
                         </MenuItem.HeaderTemplate>

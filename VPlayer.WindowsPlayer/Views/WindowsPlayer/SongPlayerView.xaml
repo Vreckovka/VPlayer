@@ -3,9 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:behaviors="clr-namespace:VCore.WPF.Behaviors;assembly=VCore.WPF"
-             xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore.WPF"
              xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
-             xmlns:converters1="clr-namespace:VCore.Converters;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
              xmlns:local="clr-namespace:VPlayer.WindowsPlayer.Views.WindowsPlayer"
@@ -13,6 +11,7 @@
              xmlns:popups="clr-namespace:VCore.WPF.Behaviors.Popups;assembly=VCore.WPF"
              xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF"
              xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
+             xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
@@ -53,7 +52,7 @@
                        Text="Do you want to play from last position? " />
             <TextBlock VerticalAlignment="Center"
                        Foreground="{StaticResource DefaultWhiteBrush}"
-                       Text="{Binding ItemLastTime, Converter={converters1:TimeConverter TimeType=Second}}" />
+                       Text="{Binding ItemLastTime, Converter={converters:TimeConverter TimeType=Second}}" />
             <controls:ButtonWithIcon Margin="5,0,0,0"
                                      Padding="0"
                                      VerticalAlignment="Center"
