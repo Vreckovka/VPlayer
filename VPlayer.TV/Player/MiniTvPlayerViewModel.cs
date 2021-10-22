@@ -2,10 +2,12 @@
 using Logger;
 using Ninject;
 using Prism.Events;
-using VCore.Modularity.RegionProviders;
+
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
+using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Managers;
+using VCore.WPF.Modularity.RegionProviders;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Factories;
 using VPlayer.Core.Managers.Status;

@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:controls="clr-namespace:VVLC.Controls;assembly=VVLC"
-             xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
+
              xmlns:controls2="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
              xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -67,7 +67,7 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
 
-                            <controls1:ButtonWithIcon Margin="-2,-0.5,0,1.5"
+                            <controls2:ButtonWithIcon Margin="-2,-0.5,0,1.5"
                                                       Padding="2"
                                                       HorizontalAlignment="Left"
                                                       VerticalAlignment="Center"
@@ -77,8 +77,8 @@
                                                       IconPathStyle="{StaticResource Info}"
                                                       IconWidth="11">
 
-                                <controls1:ButtonWithIcon.Style>
-                                    <Style BasedOn="{StaticResource {x:Type controls1:ButtonWithIcon}}" TargetType="{x:Type controls1:ButtonWithIcon}">
+                                <controls2:ButtonWithIcon.Style>
+                                    <Style BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}" TargetType="{x:Type controls2:ButtonWithIcon}">
                                         <Setter Property="IconHoverColor" Value="#4291db" />
                                         <Setter Property="IconDefaultColor" Value="#3b668f" />
                                         <Setter Property="Opacity" Value="1" />
@@ -97,16 +97,16 @@
                                         </Style.Triggers>
 
                                     </Style>
-                                </controls1:ButtonWithIcon.Style>
+                                </controls2:ButtonWithIcon.Style>
 
-                                <controls1:ButtonWithIcon.ToolTip>
+                                <controls2:ButtonWithIcon.ToolTip>
                                     <Border Background="Transparent">
                                         <Grid>
                                             <ContentPresenter Content="{Binding}" ContentTemplateSelector="{StaticResource WindowsPlayerItemsTooltipTemplateSelector}" />
                                         </Grid>
                                     </Border>
-                                </controls1:ButtonWithIcon.ToolTip>
-                            </controls1:ButtonWithIcon>
+                                </controls2:ButtonWithIcon.ToolTip>
+                            </controls2:ButtonWithIcon>
 
                             <TextBlock Grid.Column="1"
                                        FontSize="14"
@@ -223,7 +223,7 @@
 
                                                     <StackPanel VerticalAlignment="Top" Orientation="Horizontal">
                                                         <StackPanel.Resources>
-                                                            <Style BasedOn="{StaticResource {x:Type controls1:PathButton}}" TargetType="controls1:PathButton">
+                                                            <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
                                                                 <Setter Property="Margin" Value="1,0" />
                                                                 <Setter Property="Padding" Value="0" />
 
@@ -238,7 +238,7 @@
                                                             </Style>
                                                         </StackPanel.Resources>
 
-                                                        <controls1:PathButton Background="Transparent"
+                                                        <controls2:PathButton Background="Transparent"
                                                                               Command="{Binding Close}"
                                                                               IconDefaultColor="#454545"
                                                                               IconHoverColor="{StaticResource DefaultRedColor}"
@@ -246,7 +246,7 @@
                                                                               PathStyle="{StaticResource xmark}"
                                                                               ToolTip="Close" />
 
-                                                        <controls1:PathButton Margin="0,0,0,-2"
+                                                        <controls2:PathButton Margin="0,0,0,-2"
                                                                               IconCheckedColor="{StaticResource YellowColor}"
                                                                               IconHeight="13"
                                                                               IconHoverColor="{StaticResource YellowColor}"
@@ -272,7 +272,7 @@
                                                                 VerticalAlignment="Top"
                                                                 Orientation="Horizontal">
 
-                                                        <controls1:PathButton x:Name="MinimizeButton"
+                                                        <controls2:PathButton x:Name="MinimizeButton"
                                                                               Height="15"
                                                                               HorizontalAlignment="Right"
                                                                               Background="Transparent"
@@ -286,8 +286,8 @@
                                                                               IconWidth="11"
                                                                               IsReadOnly="True"
                                                                               ToolTip="Minimize">
-                                                            <controls1:PathButton.Style>
-                                                                <Style BasedOn="{StaticResource {x:Type controls1:PathButton}}" TargetType="controls1:PathButton">
+                                                            <controls2:PathButton.Style>
+                                                                <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
                                                                     <Setter Property="PathStyle" Value="{StaticResource angle-down}" />
 
                                                                     <Style.Triggers>
@@ -297,8 +297,8 @@
                                                                         </DataTrigger>
                                                                     </Style.Triggers>
                                                                 </Style>
-                                                            </controls1:PathButton.Style>
-                                                        </controls1:PathButton>
+                                                            </controls2:PathButton.Style>
+                                                        </controls2:PathButton>
 
                                                     </StackPanel>
 
@@ -401,7 +401,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <controls1:ButtonWithIcon Grid.Column="0"
+                        <controls2:ButtonWithIcon Grid.Column="0"
                                                   Margin="0,0,0,0"
                                                   HorizontalAlignment="Right"
                                                   BorderThickness="0"
@@ -411,10 +411,10 @@
                                                   IconWidth="25"
                                                   IsEnabled="{Binding CanPlay}"
                                                   RenderTransformOrigin="0.5,0.5">
-                            <controls1:ButtonWithIcon.RenderTransform>
+                            <controls2:ButtonWithIcon.RenderTransform>
                                 <ScaleTransform ScaleX="-1" />
-                            </controls1:ButtonWithIcon.RenderTransform>
-                        </controls1:ButtonWithIcon>
+                            </controls2:ButtonWithIcon.RenderTransform>
+                        </controls2:ButtonWithIcon>
 
                         <Button x:Name="Play_Button"
                                 Grid.Column="1"
@@ -425,7 +425,7 @@
                                 Command="{Binding PlayButton}"
                                 Style="{StaticResource PlayButton}" />
 
-                        <controls1:ButtonWithIcon Grid.Column="2"
+                        <controls2:ButtonWithIcon Grid.Column="2"
                                                   Margin="0,0,5,0"
                                                   HorizontalAlignment="Left"
                                                   BorderThickness="0"
@@ -444,7 +444,7 @@
                   HorizontalAlignment="Right"
                   DataContext="{x:Static soundManagement:AudioDeviceManager.Instance}">
 
-                <controls1:PathButton x:Name="HideButton"
+                <controls2:PathButton x:Name="HideButton"
                                       Width="50"
                                       Height="50"
                                       BorderThickness="0"
@@ -457,11 +457,11 @@
                                       IconHoverColor="#4298f5"
                                       PathStyle="{StaticResource Windows}"
                                       ToolTip="Windows volume">
-                    <controls1:PathButton.Style>
-                        <Style BasedOn="{StaticResource {x:Type controls1:PathButton}}" TargetType="controls1:PathButton">
+                    <controls2:PathButton.Style>
+                        <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="controls2:PathButton">
                             <Setter Property="Template">
                                 <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type controls1:PathButton}">
+                                    <ControlTemplate TargetType="{x:Type controls2:PathButton}">
                                         <Border Width="{TemplateBinding Width}"
                                                 Height="{TemplateBinding Height}"
                                                 Margin="{TemplateBinding Margin}"
@@ -566,8 +566,8 @@
                                 </Setter.Value>
                             </Setter>
                         </Style>
-                    </controls1:PathButton.Style>
-                </controls1:PathButton>
+                    </controls2:PathButton.Style>
+                </controls2:PathButton>
 
                 <Popup x:Name="WindowsPopup"
                        HorizontalAlignment="Right"
@@ -664,7 +664,7 @@
                         <Style BasedOn="{StaticResource {x:Type Slider}}" TargetType="Slider">
                             <Setter Property="Width" Value="160" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=711}" Value="false">
+                                <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={converters:IsGreaterConverter}, ConverterParameter=711}" Value="false">
                                     <Setter Property="Width" Value="95" />
                                 </DataTrigger>
                             </Style.Triggers>
@@ -686,7 +686,7 @@
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=711}" Value="false">
+                                    <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={converters:IsGreaterConverter}, ConverterParameter=711}" Value="false">
                                         <Setter Property="Visibility" Value="Collapsed" />
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -746,7 +746,7 @@
                     <Style TargetType="Grid">
                         <Setter Property="Margin" Value="0,0,15,0" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={library1:IsGreaterConverter}, ConverterParameter=711}" Value="false">
+                            <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={converters:IsGreaterConverter}, ConverterParameter=711}" Value="false">
                                 <Setter Property="Margin" Value="0,0,3,0" />
                             </DataTrigger>
                         </Style.Triggers>

@@ -18,12 +18,15 @@ using Logger;
 using Ninject;
 using Prism.Events;
 using VCore;
-using VCore.Helpers;
-using VCore.Modularity.RegionProviders;
+
 using VCore.Standard;
 using VCore.Standard.Modularity.Interfaces;
 using VCore.Standard.ViewModels.TreeView;
+using VCore.WPF.Helpers;
+using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Managers;
+using VCore.WPF.Misc;
+using VCore.WPF.Modularity.RegionProviders;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;

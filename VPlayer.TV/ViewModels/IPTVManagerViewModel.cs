@@ -6,13 +6,17 @@ using System.Text.RegularExpressions;
 using System.Windows.Input;
 using Microsoft.EntityFrameworkCore;
 using VCore;
-using VCore.Modularity.Events;
-using VCore.Modularity.RegionProviders;
+
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
-using VCore.ViewModels;
+
+using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.ItemsCollections;
 using VCore.WPF.Managers;
+using VCore.WPF.Misc;
+using VCore.WPF.Modularity.Events;
+using VCore.WPF.Modularity.RegionProviders;
+using VCore.WPF.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;

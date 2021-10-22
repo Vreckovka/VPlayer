@@ -13,12 +13,14 @@ using Microsoft.EntityFrameworkCore;
 using UPnP;
 using UPnP.Device;
 using VCore;
-using VCore.Modularity.RegionProviders;
+
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
-using VCore.ViewModels;
-using VCore.ViewModels.Navigation;
+
 using VCore.WPF.ItemsCollections;
+using VCore.WPF.Misc;
+using VCore.WPF.Modularity.RegionProviders;
+using VCore.WPF.ViewModels;
 using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.UPnP;

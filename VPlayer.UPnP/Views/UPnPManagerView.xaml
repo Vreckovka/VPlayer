@@ -1,7 +1,7 @@
 ﻿<UserControl x:Class="VPlayer.UPnP.Views.UPnPManagerView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore.WPF"
+             xmlns:controls1="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:VPlayer.UPnP.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -11,262 +11,261 @@
              d:DesignWidth="800"
              mc:Ignorable="d">
 
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/Generic.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/FileBrowserResources.xaml" />
-            </ResourceDictionary.MergedDictionaries>
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/Generic.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.Core;component/Styles/FileBrowserResources.xaml" />
+      </ResourceDictionary.MergedDictionaries>
 
-            <templateSelectors1:UPnPItemTemplateSelector x:Key="UPnPItemTemplateSelector"
-                                                         FileTemplate="{StaticResource FileTreeViewTemplate}"
-                                                         FolderTemplate="{StaticResource FolderTreeViewTemplate}" />
+      <templateSelectors1:UPnPItemTemplateSelector x:Key="UPnPItemTemplateSelector"
+                                                   FileTemplate="{StaticResource FileTreeViewTemplate}"
+                                                   FolderTemplate="{StaticResource FolderTreeViewTemplate}" />
 
-        </ResourceDictionary>
-    </UserControl.Resources>
+    </ResourceDictionary>
+  </UserControl.Resources>
 
-    <Grid Margin="5">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="150" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+  <Grid Margin="5">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="auto" />
+      <RowDefinition Height="150" />
+      <RowDefinition />
+    </Grid.RowDefinitions>
 
-        <StackPanel Margin="5,10,5,25" Orientation="Horizontal">
-            <controls:PathButton Width="auto"
-                                 Height="auto"
-                                 Padding="10,5"
-                                 HorizontalAlignment="Left"
-                                 BorderBrush="{StaticResource 30_WhiteTransparentBrush}"
-                                 BorderCheckedColor="#454545"
-                                 BorderDefaultColor="#252525"
-                                 BorderHoverColor="#454545"
-                                 BorderThickness="1"
-                                 Command="{Binding Discover}"
-                                 Foreground="#30ffffff"
-                                 ForegroundDefaultColor="#30ffffff"
-                                 ForegroundHoverColor="White"
-                                 IconCheckedColor="{StaticResource DefaultRedColor}"
-                                 IconHoverColor="{StaticResource DefaultRedColor}"
-                                 EnableBorderAnimation="True"
+    <StackPanel Margin="5,10,5,25" Orientation="Horizontal">
+      <controls1:PathButton Width="auto"
+                            Height="auto"
+                            Padding="10,5"
+                            HorizontalAlignment="Left"
+                            BorderBrush="{StaticResource 30_WhiteTransparentBrush}"
+                            BorderCheckedColor="#454545"
+                            BorderDefaultColor="#252525"
+                            BorderHoverColor="#454545"
+                            BorderThickness="1"
+                            Command="{Binding Discover}"
+                            EnableBorderAnimation="True"
+                            Foreground="#30ffffff"
+                            ForegroundDefaultColor="#30ffffff"
+                            ForegroundHoverColor="White"
+                            IconCheckedColor="{StaticResource DefaultRedColor}"
+                            IconHoverColor="{StaticResource DefaultRedColor}"
+                            IsChecked="{Binding IsDiscovering, Mode=OneWay}"
+                            PathStyle="{StaticResource MagnifyingGlass}">
+        <controls1:PathButton.Content>
+          <TextBlock Margin="-2,0,0,0"
+                     VerticalAlignment="Bottom"
+                     FontSize="13">
+            <TextBlock.Style>
+              <Style TargetType="TextBlock">
+                <Setter Property="Text" Value="Search for devices" />
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding IsDiscovering}" Value="true">
+                    <Setter Property="Text" Value="Searching for devices..." />
+                    <Setter Property="Foreground" Value="{StaticResource 200_WhiteTransparentBrush}" />
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </TextBlock.Style>
+          </TextBlock>
+        </controls1:PathButton.Content>
+      </controls1:PathButton>
 
-                                 IsChecked="{Binding IsDiscovering, Mode=OneWay}"
-                                 PathStyle="{StaticResource MagnifyingGlass}">
-                <controls:PathButton.Content>
-                    <TextBlock Margin="-2,0,0,0"
-                               VerticalAlignment="Bottom"
-                               FontSize="13">
-                        <TextBlock.Style>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="Text" Value="Search for devices" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsDiscovering}" Value="true">
-                                        <Setter Property="Text" Value="Searching for devices..." />
-                                        <Setter Property="Foreground" Value="{StaticResource 200_WhiteTransparentBrush}" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
-                </controls:PathButton.Content>
-            </controls:PathButton>
 
+    </StackPanel>
+
+
+    <Grid Grid.Row="1">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="auto" />
+        <RowDefinition />
+      </Grid.RowDefinitions>
+
+      <Border Margin="5"
+              Padding="5"
+              BorderBrush="{StaticResource 30_WhiteTransparentBrush}"
+              BorderThickness="0,1,0,0">
+        <StackPanel Orientation="Horizontal">
+          <TextBlock FontSize="17" Text="Renderers " />
+          <TextBlock FontSize="17" Text="{Binding Renderers.View.Count, StringFormat={}({0})}" />
 
         </StackPanel>
-
-
-        <Grid Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto" />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-
-            <Border Margin="5"
-                    Padding="5"
-                    BorderBrush="{StaticResource 30_WhiteTransparentBrush}"
-                    BorderThickness="0,1,0,0">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock FontSize="17" Text="Renderers " />
-                    <TextBlock FontSize="17" Text="{Binding Renderers.View.Count, StringFormat={}({0})}" />
-
-                </StackPanel>
-            </Border>
+      </Border>
 
 
 
-            <ListView Grid.Row="1"
-                      Background="Transparent"
-                      ItemsSource="{Binding Renderers.View}">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Margin="10,5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
+      <ListView Grid.Row="1"
+                Background="Transparent"
+                ItemsSource="{Binding Renderers.View}">
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <Grid Margin="10,5">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition />
+              </Grid.ColumnDefinitions>
 
-                            <controls:PathButton Grid.Column="0"
-                                                 Margin="0,0,10,0"
-                                                 HorizontalAlignment="Left"
-                                                 VerticalAlignment="Center"
-                                                 Command="{Binding Save}"
-                                                 IconCheckedColor="#36d66e"
-                                                 IconHoverColor="#36d66e"
-                                                 IsChecked="{Binding IsStored, Mode=OneWay}"
-                                                 PathStyle="{StaticResource Save}">
-                                <controls:PathButton.ToolTip>
-                                    <TextBlock>
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Text" Value="Save device" />
+              <controls1:PathButton Grid.Column="0"
+                                    Margin="0,0,10,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Command="{Binding Save}"
+                                    IconCheckedColor="#36d66e"
+                                    IconHoverColor="#36d66e"
+                                    IsChecked="{Binding IsStored, Mode=OneWay}"
+                                    PathStyle="{StaticResource Save}">
+                <controls1:PathButton.ToolTip>
+                  <TextBlock>
+                    <TextBlock.Style>
+                      <Style TargetType="TextBlock">
+                        <Setter Property="Text" Value="Save device" />
 
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsStored}" Value="true">
-                                                        <Setter Property="Text" Value="Remove device" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </controls:PathButton.ToolTip>
-                            </controls:PathButton>
-
-
-                            <StackPanel Grid.Column="1">
-                                <TextBlock FontWeight="Bold"
-                                           Foreground="{StaticResource DefaultWhiteBrush}"
-                                           Text="{Binding Model.DeviceDescription.Device.FriendlyName}" />
-                                <TextBlock Foreground="#656565" Text="{Binding Model.PresentationURL}" />
-                            </StackPanel>
-
-                            <Grid Grid.Column="0"
-                                  Grid.ColumnSpan="2"
-                                  Margin="-13,-5"
-                                  Background="#85000000">
-                                <Grid Background="#aa000000">
-                                    <TextBlock HorizontalAlignment="Center"
-                                               VerticalAlignment="Center"
-                                               Foreground="White"
-                                               Text="Saving..." />
-                                </Grid>
-
-                                <Grid.Style>
-                                    <Style TargetType="Grid">
-                                        <Setter Property="Visibility" Value="Hidden" />
-
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsLoading}" Value="true">
-                                                <Setter Property="Visibility" Value="Visible" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Grid.Style>
-                            </Grid>
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                        <Style.Triggers>
+                          <DataTrigger Binding="{Binding IsStored}" Value="true">
+                            <Setter Property="Text" Value="Remove device" />
+                          </DataTrigger>
+                        </Style.Triggers>
+                      </Style>
+                    </TextBlock.Style>
+                  </TextBlock>
+                </controls1:PathButton.ToolTip>
+              </controls1:PathButton>
 
 
-        </Grid>
+              <StackPanel Grid.Column="1">
+                <TextBlock FontWeight="Bold"
+                           Foreground="{StaticResource DefaultWhiteBrush}"
+                           Text="{Binding Model.DeviceDescription.Device.FriendlyName}" />
+                <TextBlock Foreground="#656565" Text="{Binding Model.PresentationURL}" />
+              </StackPanel>
 
-        <Grid Grid.Row="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="150" />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-
-            <Border Margin="5"
-                    Padding="5"
-                    BorderBrush="{StaticResource 30_WhiteTransparentBrush}"
-                    BorderThickness="0,1,0,0">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock FontSize="17" Text="Media servers " />
-                    <TextBlock FontSize="17" Text="{Binding MediaServers.View.Count, StringFormat={}({0})}" />
-                </StackPanel>
-            </Border>
-
-            <ListView Grid.Row="1"
-                      Height="150"
-                      Background="Transparent"
-                      ItemsSource="{Binding MediaServers.View}">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto" />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-
-                            <StackPanel Margin="5" Orientation="Horizontal">
-                                <controls:PathButton Margin="0,0,10,0"
-                                                     HorizontalAlignment="Left"
-                                                     VerticalAlignment="Center"
-                                                     Command="{Binding Save}"
-                                                     IconCheckedColor="#36d66e"
-                                                     IconHoverColor="#36d66e"
-                                                     IsChecked="{Binding IsStored, Mode=OneWay}"
-                                                     PathStyle="{StaticResource Save}">
-                                    <controls:PathButton.ToolTip>
-                                        <TextBlock>
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="Text" Value="Save server" />
-
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsStored}" Value="true">
-                                                            <Setter Property="Text" Value="Remove server" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
-                                    </controls:PathButton.ToolTip>
-                                </controls:PathButton>
-
-                                <StackPanel>
-                                    <TextBlock FontWeight="Bold"
-                                               Foreground="{StaticResource DefaultWhiteBrush}"
-                                               Text="{Binding Model.DeviceDescription.Device.FriendlyName}" />
-                                    <TextBlock Foreground="#656565" Text="{Binding Model.PresentationURL}" />
-                                </StackPanel>
-
-                            </StackPanel>
-
-
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-
-            <Border Grid.Row="2"
-                    BorderBrush="{StaticResource 50_WhiteTransparentBrush}"
-                    BorderThickness="0,2,0,0"
-                    DataContext="{Binding MediaServers.SelectedItem}">
-
-                <Grid Margin="5">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-
-                    <StackPanel Margin="5" Orientation="Horizontal">
-                        <TextBlock Margin="5"
-                                   Foreground="{StaticResource DefaultWhiteBrush}"
-                                   Text="{Binding Model.DeviceDescription.Device.FriendlyName}" />
-                        <TextBlock Margin="5"
-                                   Foreground="{StaticResource DefaultWhiteBrush}"
-                                   Text="{Binding Model.AliasURL}" />
-                    </StackPanel>
-
-                    <TreeView Grid.Row="1"
-                              Background="Transparent"
-                              ItemTemplateSelector="{StaticResource UPnPItemTemplateSelector}"
-                              ItemsSource="{Binding Items.View}" />
+              <Grid Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    Margin="-13,-5"
+                    Background="#85000000">
+                <Grid Background="#aa000000">
+                  <TextBlock HorizontalAlignment="Center"
+                             VerticalAlignment="Center"
+                             Foreground="White"
+                             Text="Saving..." />
                 </Grid>
-            </Border>
-        </Grid>
+
+                <Grid.Style>
+                  <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Hidden" />
+
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding IsLoading}" Value="true">
+                        <Setter Property="Visibility" Value="Visible" />
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </Grid.Style>
+              </Grid>
+            </Grid>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+
 
     </Grid>
+
+    <Grid Grid.Row="2">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="auto" />
+        <RowDefinition Height="150" />
+        <RowDefinition />
+      </Grid.RowDefinitions>
+
+      <Border Margin="5"
+              Padding="5"
+              BorderBrush="{StaticResource 30_WhiteTransparentBrush}"
+              BorderThickness="0,1,0,0">
+        <StackPanel Orientation="Horizontal">
+          <TextBlock FontSize="17" Text="Media servers " />
+          <TextBlock FontSize="17" Text="{Binding MediaServers.View.Count, StringFormat={}({0})}" />
+        </StackPanel>
+      </Border>
+
+      <ListView Grid.Row="1"
+                Height="150"
+                Background="Transparent"
+                ItemsSource="{Binding MediaServers.View}">
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition />
+              </Grid.RowDefinitions>
+
+              <StackPanel Margin="5" Orientation="Horizontal">
+                <controls1:PathButton Margin="0,0,10,0"
+                                      HorizontalAlignment="Left"
+                                      VerticalAlignment="Center"
+                                      Command="{Binding Save}"
+                                      IconCheckedColor="#36d66e"
+                                      IconHoverColor="#36d66e"
+                                      IsChecked="{Binding IsStored, Mode=OneWay}"
+                                      PathStyle="{StaticResource Save}">
+                  <controls1:PathButton.ToolTip>
+                    <TextBlock>
+                      <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                          <Setter Property="Text" Value="Save server" />
+
+                          <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsStored}" Value="true">
+                              <Setter Property="Text" Value="Remove server" />
+                            </DataTrigger>
+                          </Style.Triggers>
+                        </Style>
+                      </TextBlock.Style>
+                    </TextBlock>
+                  </controls1:PathButton.ToolTip>
+                </controls1:PathButton>
+
+                <StackPanel>
+                  <TextBlock FontWeight="Bold"
+                             Foreground="{StaticResource DefaultWhiteBrush}"
+                             Text="{Binding Model.DeviceDescription.Device.FriendlyName}" />
+                  <TextBlock Foreground="#656565" Text="{Binding Model.PresentationURL}" />
+                </StackPanel>
+
+              </StackPanel>
+
+
+            </Grid>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+
+      <Border Grid.Row="2"
+              BorderBrush="{StaticResource 50_WhiteTransparentBrush}"
+              BorderThickness="0,2,0,0"
+              DataContext="{Binding MediaServers.SelectedItem}">
+
+        <Grid Margin="5">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+          </Grid.RowDefinitions>
+
+          <StackPanel Margin="5" Orientation="Horizontal">
+            <TextBlock Margin="5"
+                       Foreground="{StaticResource DefaultWhiteBrush}"
+                       Text="{Binding Model.DeviceDescription.Device.FriendlyName}" />
+            <TextBlock Margin="5"
+                       Foreground="{StaticResource DefaultWhiteBrush}"
+                       Text="{Binding Model.AliasURL}" />
+          </StackPanel>
+
+          <TreeView Grid.Row="1"
+                    Background="Transparent"
+                    ItemTemplateSelector="{StaticResource UPnPItemTemplateSelector}"
+                    ItemsSource="{Binding Items.View}" />
+        </Grid>
+      </Border>
+    </Grid>
+
+  </Grid>
 </UserControl>

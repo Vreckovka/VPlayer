@@ -5,12 +5,14 @@ using System.Reactive.Linq;
 using System.Windows;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
-using VCore.Modularity.Events;
+
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
 using VCore.Standard.ViewModels.TreeView;
+using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.ItemsCollections;
 using VCore.WPF.Managers;
+using VCore.WPF.Modularity.Events;
 using VCore.WPF.ViewModels.Prompt;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;

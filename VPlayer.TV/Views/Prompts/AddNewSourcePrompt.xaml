@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:VPlayer.IPTV.Views.Prompts"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:templateSelectors="clr-namespace:VPlayer.IPTV.TemplateSelectors"
+             xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
@@ -90,7 +91,7 @@
                   VerticalAlignment="Top"
                   DisplayMemberPath="Description"
                   FontSize="15"
-                  ItemsSource="{Binding SelectedTvSourceType, Converter={library:EnumToCollectionConverter}, Mode=OneTime}"
+                  ItemsSource="{Binding SelectedTvSourceType, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
                   SelectedValue="{Binding SelectedTvSourceType}"
                   SelectedValuePath="Value" />
 

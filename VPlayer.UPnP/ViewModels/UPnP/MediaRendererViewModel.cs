@@ -8,6 +8,7 @@ using DLNA;
 using UPnP.Common;
 using UPnP.Device;
 using VCore;
+using VCore.WPF.Misc;
 using VPlayer.AudioStorage.DomainClasses.UPnP;
 using VPlayer.AudioStorage.Interfaces.Storage;
 

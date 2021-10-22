@@ -7,9 +7,12 @@ using System.Windows.Input;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore;
-using VCore.Helpers;
+
 using VCore.Standard.Factories.ViewModels;
+using VCore.WPF.Helpers;
+using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Managers;
+using VCore.WPF.Misc;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;

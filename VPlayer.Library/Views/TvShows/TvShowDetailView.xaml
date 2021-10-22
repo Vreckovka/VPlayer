@@ -2,13 +2,14 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:attach=" VCore.AttachedProperties"
-             xmlns:attachedProperties="clr-namespace:VCore.AttachedProperties;assembly=VCore.WPF"
-             xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore.WPF"
+
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
              xmlns:local="clr-namespace:VPlayer.Home.Views.TvShows"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
+             xmlns:controls1="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
+             xmlns:attachedProperties="clr-namespace:VCore.WPF.AttachedProperties;assembly=VCore.WPF"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
@@ -70,14 +71,14 @@
                 <StackPanel Grid.Row="1"
                             Background="#cc080808"
                             Orientation="Horizontal">
-                    <controls:ButtonWithIcon Margin="0,0,0,0"
+                    <controls1:ButtonWithIcon Margin="0,0,0,0"
                                              Command="{Binding Update}"
                                              IconDefaultColor="#3c7834"
                                              IconHeight="25"
                                              IconHoverColor="#9bf046"
                                              IconPathStyle="{StaticResource Download}" />
 
-                    <controls:ButtonWithIcon Margin="0,0,0,0"
+                    <controls1:ButtonWithIcon Margin="0,0,0,0"
                                              Command="{Binding Delete}"
                                              IconDefaultColor="#783734"
                                              IconHeight="25"
