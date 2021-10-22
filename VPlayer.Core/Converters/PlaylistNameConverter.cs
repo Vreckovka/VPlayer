@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Markup;
-using VCore.Converters;
 using VPlayer.AudioStorage.DomainClasses;
 
 namespace VPlayer.Core.Converters

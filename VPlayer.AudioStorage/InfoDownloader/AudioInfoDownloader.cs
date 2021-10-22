@@ -24,13 +24,14 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using Logger;
-using VCore.Helpers;
 using VPlayer.AudioStorage.InfoDownloader.Clients.Chartlyrics;
 using VPlayer.AudioStorage.InfoDownloader.LRC;
-using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;
 using VCore;
 using VCore.Standard;
 using VCore.WPF.Controls.StatusMessage;
+using VCore.WPF.Helpers;
+using VCore.WPF.LRC;
+using VCore.WPF.LRC.Domain;
 using VPlayer.AudioStorage.InfoDownloader.Clients.PCloud.Images;
 using VPlayer.Core.Managers.Status;
 

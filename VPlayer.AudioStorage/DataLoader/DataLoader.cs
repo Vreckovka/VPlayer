@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
-using VCore.Helpers;
+using VCore.WPF.Helpers;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.Core.Managers.Status;

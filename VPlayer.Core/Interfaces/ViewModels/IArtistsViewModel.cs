@@ -1,6 +1,6 @@
 ﻿using Prism.Regions;
-using VCore.Interfaces.ViewModels;
-using VCore.ViewModels.Navigation;
+using VCore.WPF.Interfaces.ViewModels;
+using VCore.WPF.ViewModels.Navigation;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.Core.ViewModels.Artists;
 

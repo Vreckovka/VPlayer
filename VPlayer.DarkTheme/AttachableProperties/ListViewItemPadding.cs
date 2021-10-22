@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using VCore.Helpers;
+using VCore.WPF.Helpers;
 
 namespace TradingBroker.AttachableProperties
 {

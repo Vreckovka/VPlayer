@@ -1,5 +1,5 @@
 ﻿using VCore.Standard;
-using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;
+using VCore.WPF.LRC.Domain;
 
 namespace VPlayer.Core.ViewModels.SoundItems
 {

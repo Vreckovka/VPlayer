@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using VCore.Standard.Modularity.Interfaces;
 
 namespace VPlayer.AudioStorage.DomainClasses.Video
 {

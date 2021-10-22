@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using VCore.ViewModels;
+using VCore.WPF.ViewModels;
 using VPlayer.WindowsPlayer.Players;
 
 namespace VPlayer.Core.ViewModels

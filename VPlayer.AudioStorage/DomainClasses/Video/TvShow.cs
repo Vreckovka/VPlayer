@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VCore.Standard.Modularity.Interfaces;
 
 namespace VPlayer.AudioStorage.DomainClasses.Video
 {

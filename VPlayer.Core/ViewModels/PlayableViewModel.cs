@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using VCore;
 using VCore.Standard;
-using VCore.ViewModels;
+using VCore.WPF.Misc;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.Core.Events;

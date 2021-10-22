@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using VCore.Standard.Modularity.Interfaces;
 using VCore.WPF.ViewModels.WindowsFiles;
 using VPlayer.Core.ViewModels;
 

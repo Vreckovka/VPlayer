@@ -6,7 +6,6 @@ using System.Windows.Input;
 using Microsoft.Xaml.Behaviors;
 using VCore.WPF.Managers;
 using VPlayer.Core.ViewModels;
-using VPlayer.WindowsPlayer.Behaviors;
 using VVLC;
 using VVLC.Controls;
 

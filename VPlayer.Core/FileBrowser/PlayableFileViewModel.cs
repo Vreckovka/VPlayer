@@ -9,6 +9,7 @@ using VCore;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.ViewModels.WindowsFile;
 using VCore.WPF.Managers;
+using VCore.WPF.Misc;
 using VCore.WPF.ViewModels.WindowsFiles;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;

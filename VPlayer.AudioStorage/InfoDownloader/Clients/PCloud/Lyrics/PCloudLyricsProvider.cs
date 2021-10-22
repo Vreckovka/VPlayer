@@ -4,9 +4,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using PCloudClient.Domain;
-using VCore.WPF.Managers;
-using VPlayer.AudioStorage.InfoDownloader.LRC;
-using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;
+using VCore.WPF.Interfaces.Managers;
+using VCore.WPF.LRC;
+using VCore.WPF.LRC.Domain;
 using VPLayer.Domain.Contracts.CloudService.Providers;
 
 namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud

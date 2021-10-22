@@ -2,6 +2,7 @@
 using System.Linq;
 using Prism.Events;
 using VCore.Standard.Factories.ViewModels;
+using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Managers;
 using VCore.WPF.ViewModels.WindowsFiles;
 using VPlayer.AudioStorage.Interfaces.Storage;

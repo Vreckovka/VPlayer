@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using VCore.Standard;
+using VCore.Standard.Modularity.Interfaces;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.Core.ViewModels;

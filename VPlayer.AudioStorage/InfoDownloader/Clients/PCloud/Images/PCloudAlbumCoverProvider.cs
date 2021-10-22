@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Managers;
 using VPLayer.Domain.Contracts.CloudService.Providers;
 

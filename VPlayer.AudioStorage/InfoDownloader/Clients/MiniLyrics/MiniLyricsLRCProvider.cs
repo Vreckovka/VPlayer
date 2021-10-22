@@ -13,8 +13,9 @@ using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json;
 using unirest_net.http;
 using VCore;
+using VCore.WPF.LRC;
+using VCore.WPF.LRC.Domain;
 using VPlayer.AudioStorage.InfoDownloader.LRC;
-using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;
 
 namespace VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics
 {

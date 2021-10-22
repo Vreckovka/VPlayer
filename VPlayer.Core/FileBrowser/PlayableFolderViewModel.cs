@@ -13,6 +13,7 @@ using VCore.Standard.Comparers;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
 using VCore.Standard.ViewModels.WindowsFile;
+using VCore.WPF.Misc;
 using VCore.WPF.ViewModels.WindowsFiles;
 using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.DomainClasses;

@@ -1,5 +1,5 @@
-﻿using VCore.Interfaces.ViewModels;
-using VCore.ViewModels.Navigation;
+﻿using VCore.WPF.Interfaces.ViewModels;
+using VCore.WPF.ViewModels.Navigation;
 using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.Core.ViewModels.TvShows;
 

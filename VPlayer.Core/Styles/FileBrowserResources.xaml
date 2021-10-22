@@ -1,15 +1,12 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore.WPF"
                     xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
-                    xmlns:converters1="clr-namespace:VCore.Converters;assembly=VCore.WPF"
-                    xmlns:events="clr-namespace:VPlayer.Core.Events;assembly=VPlayer.Core"
-                    xmlns:events1="clr-namespace:VPlayer.Core.Events;assembly=VPLayer.Domain"
-                    xmlns:fileBrowser="clr-namespace:VPlayer.Home.ViewModels.FileBrowser;assembly=VPlayer.Home"
                     xmlns:fileBrowser1="clr-namespace:VPlayer.Home.ViewModels.FileBrowser"
                     xmlns:templateSelectors="clr-namespace:VPlayer.Library.TemplateSelectors"
                     xmlns:windowsFile="clr-namespace:VCore.Standard.ViewModels.WindowsFile;assembly=VCore.Standard"
-                    xmlns:windowsFiles="clr-namespace:VCore.WPF.ViewModels.WindowsFiles;assembly=VCore.WPF">
+                    xmlns:windowsFiles="clr-namespace:VCore.WPF.ViewModels.WindowsFiles;assembly=VCore.WPF"
+                    xmlns:controls1="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
+                    xmlns:events1="clr-namespace:VPlayer.Core.Events;assembly=VPLayer.Domain">
 
     <Color x:Key="VideoColorColor">#648afa</Color>
     <Color x:Key="SoundColorColor">#eb677b</Color>
@@ -17,7 +14,7 @@
     <SolidColorBrush x:Key="VideoColor">#648afa</SolidColorBrush>
     <SolidColorBrush x:Key="SoundColor">#eb677b</SolidColorBrush>
 
-    <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
+    <Style BasedOn="{StaticResource {x:Type controls1:PathButton}}" TargetType="controls1:PathButton">
         <Setter Property="IconHeight" Value="14" />
         <Setter Property="IconWidth" Value="15" />
         <Setter Property="Width" Value="25" />
@@ -94,12 +91,12 @@
                 <StackPanel.Resources />
 
 
-                <controls:PathButton Width="25"
+                <controls1:PathButton Width="25"
                                      Margin="0,1,0,0"
                                      Command="{Binding PlayButton}"
                                      CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}">
-                    <controls:PathButton.Style>
-                        <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
+                    <controls1:PathButton.Style>
+                        <Style BasedOn="{StaticResource {x:Type controls1:PathButton}}" TargetType="controls1:PathButton">
                             <Setter Property="Visibility" Value="Hidden" />
                             <Setter Property="PathStyle" Value="{StaticResource play}" />
                             <Setter Property="ToolTip" Value="Play" />
@@ -117,10 +114,10 @@
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
-                    </controls:PathButton.Style>
-                </controls:PathButton>
+                    </controls1:PathButton.Style>
+                </controls1:PathButton>
 
-                <controls:PathButton Margin="-0,0,0,0"
+                <controls1:PathButton Margin="-0,0,0,0"
                                      Background="Transparent"
                                      Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.DeleteItemCommand}"
                                      CommandParameter="{Binding Model.Indentificator}"
@@ -129,7 +126,7 @@
                                      PathStyle="{StaticResource Trash}"
                                      ToolTip="Delete (to trash)" />
 
-                <controls:PathButton Width="26"
+                <controls1:PathButton Width="26"
                                      Height="20"
                                      Margin="0,0,0,0"
                                      Background="Transparent"
@@ -142,7 +139,7 @@
                                      Style="{StaticResource browsers}"
                                      ToolTip="Open in filebrowser" />
 
-                <controls:PathButton Width="26"
+                <controls1:PathButton Width="26"
                                      Height="20"
                                      Margin="-1,-1,0,0"
                                      Background="Transparent"
@@ -156,7 +153,7 @@
 
 
 
-                <controls:PathButton Width="26"
+                <controls1:PathButton Width="26"
                                      Height="20"
                                      Margin="0,0,0,0"
                                      Background="Transparent"
@@ -172,7 +169,7 @@
                                      Style="{StaticResource bookmark}"
                                      ToolTip="Save as BOOKMARK" />
 
-                <controls:PathButton Width="25"
+                <controls1:PathButton Width="25"
                                      Height="20"
                                      Margin="0,0,0,0"
                                      Background="Transparent"
@@ -298,7 +295,7 @@
                                         <Setter Property="Header" Value="Add TV SHOW from this folder" />
                                     </DataTrigger>
 
-                                    <DataTrigger Binding="{Binding Converter={converters1:IsTypeConverter}, ConverterParameter={x:Type fileBrowser1:PlayableWindowsFileFolderViewModel}}" Value="true">
+                                    <DataTrigger Binding="{Binding Converter={converters:IsTypeConverter}, ConverterParameter={x:Type fileBrowser1:PlayableWindowsFileFolderViewModel}}" Value="true">
                                         <Setter Property="Visibility" Value="Visible" />
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -327,14 +324,14 @@
 
                 <Grid Width="75" Background="Transparent" />
 
-                <controls:PathButton Command="{Binding PlayButton}"
+                <controls1:PathButton Command="{Binding PlayButton}"
                                      CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}"
                                      IconHoverColor="{StaticResource DefaultRedColor}"
                                      PathStyle="{StaticResource play}"
                                      Margin="2 0 -2 0"
                                      ToolTip="Play">
-                    <controls:PathButton.Style>
-                        <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
+                    <controls1:PathButton.Style>
+                        <Style BasedOn="{StaticResource {x:Type controls1:PathButton}}" TargetType="controls1:PathButton">
                             <Setter Property="Visibility" Value="Hidden" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding CanPlay}" Value="true">
@@ -342,10 +339,10 @@
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
-                    </controls:PathButton.Style>
-                </controls:PathButton>
+                    </controls1:PathButton.Style>
+                </controls1:PathButton>
 
-                <controls:PathButton Background="Transparent"
+                <controls1:PathButton Background="Transparent"
                                      Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.DeleteItemCommand}"
                                      CommandParameter="{Binding Model.FullName}"
                                      IconHoverColor="{StaticResource LightRedColor}"
@@ -353,7 +350,7 @@
                                      PathStyle="{StaticResource Trash}"
                                      ToolTip="Delete (to trash)" />
 
-                <controls:PathButton Margin="0,0,1,0"
+                <controls1:PathButton Margin="0,0,1,0"
                                      Background="Transparent"
                                      Command="{Binding OpenContainingFolder}"
                                      CommandParameter="{Binding Model.FullName}"

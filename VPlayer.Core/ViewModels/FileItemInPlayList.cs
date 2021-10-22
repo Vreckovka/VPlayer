@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Prism.Events;
+using VCore.Standard.Modularity.Interfaces;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 

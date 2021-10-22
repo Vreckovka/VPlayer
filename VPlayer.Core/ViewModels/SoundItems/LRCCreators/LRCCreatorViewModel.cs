@@ -7,14 +7,14 @@ using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Input;
 using VCore;
-using VCore.Helpers;
 using VCore.ItemsCollections;
 using VCore.Standard;
 using VCore.Standard.Helpers;
+using VCore.WPF.Helpers;
+using VCore.WPF.LRC;
+using VCore.WPF.LRC.Domain;
+using VCore.WPF.Misc;
 using VPlayer.AudioStorage.InfoDownloader.Clients.PCloud;
-using VPlayer.AudioStorage.InfoDownloader.LRC;
-using VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google;
-using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;
 using VPlayer.AudioStorage.Interfaces.Storage;
 
 namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators

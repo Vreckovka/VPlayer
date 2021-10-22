@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
-using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;
+using VCore.WPF.LRC.Domain;
+
 
 namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
 {

@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using Prism.Events;
 using VCore;
-using VCore.ViewModels.Navigation;
+using VCore.WPF.Misc;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.ViewModels;

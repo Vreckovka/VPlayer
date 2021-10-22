@@ -1,128 +1,128 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:controls1="clr-namespace:VCore.Controls;assembly=VCore.WPF"
+                    xmlns:controls1="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                     xmlns:ie="http://schemas.microsoft.com/expression/2010/interactions"
                     xmlns:library="clr-namespace:VPlayer.Library">
 
-    <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/DataTemplates.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
-    </ResourceDictionary.MergedDictionaries>
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/DataTemplates.xaml" />
+    <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
+  </ResourceDictionary.MergedDictionaries>
 
-    <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="{x:Type controls1:ButtonWithIcon}">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="VerticalContentAlignment" Value="Stretch" />
-        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        <Setter Property="IconDefaultColor" Value="{StaticResource 85_DefaultWhiteColor}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="BorderBrush" Value="Transparent" />
-        <Setter Property="Padding" Value="7" />
-        <Setter Property="IconMargin" Value="0 0 5 0" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type controls1:ButtonWithIcon}">
-                    <Border Width="{TemplateBinding Width}"
-                            Height="{TemplateBinding Height}"
-                            Margin="{TemplateBinding Margin}"
-                            Padding="{TemplateBinding Padding}"
-                            HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalAlignment}"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="3">
-                        <Grid HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
+  <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="{x:Type controls1:ButtonWithIcon}">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="IconDefaultColor" Value="{StaticResource 85_DefaultWhiteColor}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="Padding" Value="7" />
+    <Setter Property="IconMargin" Value="0 0 5 0" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type controls1:ButtonWithIcon}">
+          <Border Width="{TemplateBinding Width}"
+                  Height="{TemplateBinding Height}"
+                  Margin="{TemplateBinding Margin}"
+                  Padding="{TemplateBinding Padding}"
+                  HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                  VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                  Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}"
+                  CornerRadius="3">
+            <Grid HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition />
+              </Grid.ColumnDefinitions>
 
-                            <Path Name="ButtonIcon"
-                                  Width="{TemplateBinding IconWidth}"
-                                  Height="{TemplateBinding IconHeight}"
-                                  Margin="{TemplateBinding IconMargin}"
-                                  Fill="{TemplateBinding IconBrush}"
-                                  Style="{TemplateBinding IconPathStyle}" />
+              <Path Name="ButtonIcon"
+                    Width="{TemplateBinding IconWidth}"
+                    Height="{TemplateBinding IconHeight}"
+                    Margin="{TemplateBinding IconMargin}"
+                    Fill="{TemplateBinding IconBrush}"
+                    Style="{TemplateBinding IconPathStyle}" />
 
-                            <ContentPresenter Grid.Column="1" VerticalAlignment="Center" />
-                        </Grid>
+              <ContentPresenter Grid.Column="1" VerticalAlignment="Center" />
+            </Grid>
 
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseEnter">
-                                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AnimateHoverColor}" />
-                            </i:EventTrigger>
+            <i:Interaction.Triggers>
+              <i:EventTrigger EventName="MouseEnter">
+                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AnimateHoverColor}" />
+              </i:EventTrigger>
 
-                            <i:EventTrigger EventName="MouseLeave">
-                                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AnimateDefaultColor}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
+              <i:EventTrigger EventName="MouseLeave">
+                <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=AnimateDefaultColor}" />
+              </i:EventTrigger>
+            </i:Interaction.Triggers>
 
-                    </Border>
-                    <ControlTemplate.Triggers>
+          </Border>
+          <ControlTemplate.Triggers>
 
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsMouseOver" Value="True" />
-                                <Condition Property="HasContent" Value="true" />
-                            </MultiTrigger.Conditions>
+            <MultiTrigger>
+              <MultiTrigger.Conditions>
+                <Condition Property="IsMouseOver" Value="True" />
+                <Condition Property="HasContent" Value="true" />
+              </MultiTrigger.Conditions>
 
-                            <MultiTrigger.EnterActions>
-                                <RemoveStoryboard BeginStoryboardName="ResetBackgroundStoryBoard" />
-                                <BeginStoryboard x:Name="ChangeBackgroundStoryBoard">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetProperty="Background.Color"
-                                                        To="#15ffffff"
-                                                        Duration="0:0:.15" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </MultiTrigger.EnterActions>
+              <MultiTrigger.EnterActions>
+                <RemoveStoryboard BeginStoryboardName="ResetBackgroundStoryBoard" />
+                <BeginStoryboard x:Name="ChangeBackgroundStoryBoard">
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetProperty="Background.Color"
+                                    To="#15ffffff"
+                                    Duration="0:0:.15" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </MultiTrigger.EnterActions>
 
-                            <MultiTrigger.ExitActions>
-                                <RemoveStoryboard BeginStoryboardName="ChangeBackgroundStoryBoard" />
-
-
-                                <BeginStoryboard x:Name="ResetBackgroundStoryBoard">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetProperty="Background.Color"
-                                                        To="Transparent"
-                                                        Duration="0:0:.15" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </MultiTrigger.ExitActions>
-                        </MultiTrigger>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Cursor" Value="Hand" />
-
-                            <Trigger.EnterActions>
-                                <RemoveStoryboard BeginStoryboardName="ResetForegroundStoryBoard" />
-                                <BeginStoryboard x:Name="ChangeForegroundStoryBoard">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetProperty="Foreground.Color"
-                                                        To="{StaticResource DefaultWhiteColor}"
-                                                        Duration="0:0:.15" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-
-                            </Trigger.EnterActions>
+              <MultiTrigger.ExitActions>
+                <RemoveStoryboard BeginStoryboardName="ChangeBackgroundStoryBoard" />
 
 
-                            <Trigger.ExitActions>
-                                <RemoveStoryboard BeginStoryboardName="ChangeForegroundStoryBoard" />
+                <BeginStoryboard x:Name="ResetBackgroundStoryBoard">
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetProperty="Background.Color"
+                                    To="Transparent"
+                                    Duration="0:0:.15" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </MultiTrigger.ExitActions>
+            </MultiTrigger>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter Property="Cursor" Value="Hand" />
 
-                                <BeginStoryboard x:Name="ResetForegroundStoryBoard">
-                                    <Storyboard>
-                                        <ColorAnimation Storyboard.TargetProperty="Foreground.Color"
-                                                        To="{StaticResource 85_DefaultWhiteColor}"
-                                                        Duration="0:0:.15" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.ExitActions>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
+              <Trigger.EnterActions>
+                <RemoveStoryboard BeginStoryboardName="ResetForegroundStoryBoard" />
+                <BeginStoryboard x:Name="ChangeForegroundStoryBoard">
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetProperty="Foreground.Color"
+                                    To="{StaticResource DefaultWhiteColor}"
+                                    Duration="0:0:.15" />
+                  </Storyboard>
+                </BeginStoryboard>
+
+              </Trigger.EnterActions>
+
+
+              <Trigger.ExitActions>
+                <RemoveStoryboard BeginStoryboardName="ChangeForegroundStoryBoard" />
+
+                <BeginStoryboard x:Name="ResetForegroundStoryBoard">
+                  <Storyboard>
+                    <ColorAnimation Storyboard.TargetProperty="Foreground.Color"
+                                    To="{StaticResource 85_DefaultWhiteColor}"
+                                    Duration="0:0:.15" />
+                  </Storyboard>
+                </BeginStoryboard>
+              </Trigger.ExitActions>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
 
 </ResourceDictionary>

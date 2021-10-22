@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using VCore;
 using VCore.Standard;
+using VCore.WPF.Misc;
 
 namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
 {

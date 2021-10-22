@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using VCore;
+using VCore.WPF.Misc;
 
 namespace VVLC.Controls
 {

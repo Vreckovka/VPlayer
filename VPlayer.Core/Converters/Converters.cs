@@ -12,6 +12,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media.Imaging;
 using VCore.Converters;
+using VCore.WPF.Converters;
 using VPlayer.Core.ViewModels;
 using BitmapImage = System.Windows.Media.Imaging.BitmapImage;
 using DependencyProperty = System.Windows.DependencyProperty;

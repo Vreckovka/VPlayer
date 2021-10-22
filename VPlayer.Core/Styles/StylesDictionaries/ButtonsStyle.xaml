@@ -473,7 +473,7 @@
                                     <Style BasedOn="{StaticResource Content}" TargetType="TextBlock">
                                         <Setter Property="Visibility" Value="Hidden" />
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Model, Converter={converters:IsTypeConverter}, ConverterParameter={x:Type domain:CSFDTVShowSeasonEpisode}}" Value="true">
+                                            <DataTrigger Binding="{Binding Model, Converter={converters1:IsTypeConverter}, ConverterParameter={x:Type domain:CSFDTVShowSeasonEpisode}}" Value="true">
                                                 <Setter Property="Visibility" Value="Visible" />
                                             </DataTrigger>
                                         </Style.Triggers>

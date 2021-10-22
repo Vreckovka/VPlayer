@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using Microsoft.Xaml.Behaviors;
-using VPlayer.WindowsPlayer.Behaviors;
+using VCore.WPF.Managers;
 
 namespace VVLC.Controls
 {

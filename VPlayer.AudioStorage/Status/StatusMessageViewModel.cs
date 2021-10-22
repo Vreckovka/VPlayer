@@ -4,6 +4,7 @@ using System.Windows.Input;
 using VCore;
 using VCore.Standard.Common;
 using VCore.WPF.Controls.StatusMessage;
+using VCore.WPF.Misc;
 
 namespace VPlayer.Core.Managers.Status
 {

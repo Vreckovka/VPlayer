@@ -1,4 +1,5 @@
-﻿using VPlayer.AudioStorage.DomainClasses.Video;
+﻿using VCore.Standard.Modularity.Interfaces;
+using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.Core.ViewModels;
 
 namespace VPlayer.AudioStorage.DomainClasses

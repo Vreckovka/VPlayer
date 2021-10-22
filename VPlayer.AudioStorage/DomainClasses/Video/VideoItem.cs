@@ -1,4 +1,5 @@
-﻿using VPlayer.Core.ViewModels;
+﻿using VCore.Standard.Modularity.Interfaces;
+using VPlayer.Core.ViewModels;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {

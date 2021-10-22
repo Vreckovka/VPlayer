@@ -5,7 +5,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Google.Apis.Drive.v3;
-using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;
+using VCore.WPF.LRC;
+using VCore.WPF.LRC.Domain;
 using File = Google.Apis.Drive.v3.Data.File;
 
 namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google

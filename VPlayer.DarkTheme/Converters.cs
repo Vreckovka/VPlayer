@@ -9,7 +9,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
 using System.Windows.Media.Imaging;
-using VCore.Converters;
+using VCore.WPF.Converters;
 
 namespace VPlayer.Library
 {

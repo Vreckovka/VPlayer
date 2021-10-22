@@ -6,12 +6,14 @@ using System.Reactive.Subjects;
 using System.Windows;
 using System.Windows.Input;
 using VCore;
-using VCore.ItemsCollections.VirtualList.VirtualLists;
 using VCore.Standard;
+using VCore.WPF.ItemsCollections.VirtualList.VirtualLists;
+using VCore.WPF.LRC;
+using VCore.WPF.LRC.Domain;
+using VCore.WPF.Misc;
 using VPlayer.AudioStorage.InfoDownloader.Clients.PCloud;
 using VPlayer.AudioStorage.InfoDownloader.LRC;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google;
-using VPlayer.AudioStorage.InfoDownloader.LRC.Domain;
 
 namespace VPlayer.Core.ViewModels.SoundItems
 {

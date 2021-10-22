@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using VCore.Standard.Modularity.Interfaces;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {

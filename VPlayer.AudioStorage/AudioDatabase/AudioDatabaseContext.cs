@@ -7,6 +7,7 @@ using Logger;
 using Microsoft.EntityFrameworkCore;
 using Ninject;
 using VCore.Standard;
+using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.FolderStructure;
