@@ -556,7 +556,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       string[] generes = null;
       int? year = null;
 
-      if (infoNode != null)
+      if (infoNode != null && infoNode.ChildNodes.Count > 5)
       {
         generes = infoNode.ChildNodes[1].InnerText.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("/");
 
@@ -565,10 +565,10 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           year = year1;
         }
 
-        if (infoNode.ChildNodes.Count >= 6)
-        {
-          var creatorsNode = infoNode.ChildNodes[5];
+        var creatorsNode = infoNode.ChildNodes[5];
 
+        if (creatorsNode.ChildNodes.Count > 3)
+        {
           var textDirectors = creatorsNode.ChildNodes[3].InnerText;
 
           if (textDirectors.Contains("Režie:"))
@@ -577,7 +577,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           }
 
 
-          if (creatorsNode.ChildNodes.Count >= 12)
+          if (creatorsNode.ChildNodes.Count > 11)
           {
             var textActors = creatorsNode.ChildNodes[11].InnerText;
 
