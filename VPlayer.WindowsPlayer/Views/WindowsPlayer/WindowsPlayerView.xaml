@@ -363,11 +363,16 @@
                                         <Setter Property="CornerRadius" Value="5" />
 
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding WasAllSongProcessed}" Value="true">
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding WasAllSongProcessed}" Value="true" />
+                                                    <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Mode=Self}}" Value="false" />
+                                                </MultiDataTrigger.Conditions>
+
                                                 <Setter Property="Glyph" Value="" />
                                                 <Setter Property="IconMargin" Value="0 0 2 0" />
                                                 <Setter Property="Background" Value="#85151515" />
-                                            </DataTrigger>
+                                            </MultiDataTrigger>
                                         </Style.Triggers>
                                     </Style>
 
@@ -389,13 +394,8 @@
                                                         <controls:PathButton.Style>
                                                             <Style BasedOn="{StaticResource user-music}" TargetType="controls:PathButton">
                                                                 <Setter Property="ForegroundDefaultColor" Value="#454545" />
-                                                                <Setter Property="Content">
-                                                                    <Setter.Value>
-                                                                        <TextBlock>
-                                                                            <Run Text="{Binding ArtistThatCanBeAddedCount, StringFormat={}+ {0}}" />
-                                                                        </TextBlock>
-                                                                    </Setter.Value>
-                                                                </Setter>
+                                                                <Setter Property="Content" Value="{Binding ArtistThatCanBeAddedCount}" />
+
                                                                 <Setter Property="IconDefaultColor" Value="#454545" />
                                                                 <Style.Triggers>
                                                                     <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=controls:PathButton}}" Value="true">
@@ -411,7 +411,7 @@
 
                                                                         <Setter Property="ForegroundDefaultColor" Value="{StaticResource YellowColor}" />
                                                                         <Setter Property="IconDefaultColor" Value="#ffffff" />
-                                                                        <Setter Property="Content" Value="{Binding DistinctArtistsCount, StringFormat={}{0} +}" />
+                                                                        <Setter Property="Content" Value="{Binding DistinctArtistsCount}" />
 
                                                                         <Setter Property="Opacity" Value="0.75" />
 
@@ -438,14 +438,7 @@
                                                             <Style BasedOn="{StaticResource compact-disc}" TargetType="controls:PathButton">
                                                                 <Setter Property="ForegroundDefaultColor" Value="#454545" />
                                                                 <Setter Property="IconDefaultColor" Value="#454545" />
-
-                                                                <Setter Property="Content">
-                                                                    <Setter.Value>
-                                                                        <TextBlock>
-                                                                            <Run Text="{Binding AlbumsThatCanBeAddedCount, StringFormat={}+ {0}}" />
-                                                                        </TextBlock>
-                                                                    </Setter.Value>
-                                                                </Setter>
+                                                                <Setter Property="Content" Value="{Binding AlbumsThatCanBeAddedCount}" />
 
                                                                 <Style.Triggers>
                                                                     <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=controls:PathButton}}" Value="true">
@@ -462,7 +455,7 @@
                                                                         <Setter Property="ForegroundDefaultColor" Value="{StaticResource YellowColor}" />
                                                                         <Setter Property="IconDefaultColor" Value="#ffffff" />
                                                                         <Setter Property="Opacity" Value="0.75" />
-                                                                        <Setter Property="Content" Value="{Binding DistinctAlbumsCount, StringFormat={}{0} +}" />
+                                                                        <Setter Property="Content" Value="{Binding DistinctAlbumsCount}" />
 
                                                                     </MultiDataTrigger>
 
