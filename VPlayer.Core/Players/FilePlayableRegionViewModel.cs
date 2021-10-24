@@ -183,9 +183,9 @@ namespace VPlayer.Core.ViewModels
     #region OnNewItemPlay
 
     private CancellationTokenSource cTSOnActualItemChanged;
-    public override void OnNewItemPlay()
+    public override void OnNewItemPlay(TModel model)
     {
-      base.OnNewItemPlay();
+      base.OnNewItemPlay(model);
 
       if (MediaPlayer.Media != null)
       {

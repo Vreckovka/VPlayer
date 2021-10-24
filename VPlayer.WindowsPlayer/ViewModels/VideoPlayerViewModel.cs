@@ -566,9 +566,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region OnNewItemPlay
 
-    public override void OnNewItemPlay()
+    public override void OnNewItemPlay(VideoItem videoItem)
     {
-      base.OnNewItemPlay();
+      base.OnNewItemPlay(videoItem);
 
       Application.Current.Dispatcher.Invoke(() =>
       {

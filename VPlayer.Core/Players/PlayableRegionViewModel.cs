@@ -880,11 +880,15 @@ namespace VPlayer.Core.ViewModels
         {
           try
           {
+            await MediaPlayer.SetNewMedia(null);
+
+            await BeforeSetMedia(model);
+
             var fileUri = new Uri(model.Source);
 
             await MediaPlayer.SetNewMedia(fileUri);
 
-            OnNewItemPlay();
+            OnNewItemPlay(model);
           }
           catch (UriFormatException ex)
           {
@@ -1527,7 +1531,7 @@ namespace VPlayer.Core.ViewModels
 
     #region OnNewItemPlay
 
-    public virtual void OnNewItemPlay()
+    public virtual void OnNewItemPlay(TModel model)
     {
     }
 
@@ -1589,6 +1593,11 @@ namespace VPlayer.Core.ViewModels
     protected virtual void BeforeClearPlaylist()
     {
 
+    }
+
+    protected virtual Task BeforeSetMedia(TModel model)
+    {
+      return Task.CompletedTask;
     }
 
     protected virtual void OnPlay()

@@ -82,29 +82,33 @@ namespace VPlayer.Home.ViewModels
           .ThenInclude(x => x.FileInfo)
           .ToList();
 
+        var cacheBefore = false;
         List<FileInfo> sources = new List<FileInfo>();
 
-        if (playlist.PlaylistType == PlaylistType.Cloud || playlistItems.Select(x => x.ReferencedItem.Source).Any(y => y.Contains("http")))
+        if (cacheBefore)
         {
-          var fileInfos = playlistItems.Select(x => x.ReferencedItem.FileInfo).ToList();
-
-          var itemSourcesProcess = vPlayerCloudService.GetItemSources(fileInfos);
-
-
-          Application.Current.Dispatcher.Invoke(() =>
+          if (playlist.PlaylistType == PlaylistType.Cloud || playlistItems.Select(x => x.ReferencedItem.Source).Any(y => y.Contains("http")))
           {
-            songPlaylistsViewModel.LoadingStatus.NumberOfProcesses = itemSourcesProcess.InternalProcessesCount;
-          });
+            var fileInfos = playlistItems.Select(x => x.ReferencedItem.FileInfo).ToList();
 
-          serialDisposable.Disposable = itemSourcesProcess.OnInternalProcessedCountChanged.Subscribe(x =>
-          {
+            var itemSourcesProcess = vPlayerCloudService.GetItemSources(fileInfos);
+
             Application.Current.Dispatcher.Invoke(() =>
             {
-              songPlaylistsViewModel.LoadingStatus.ProcessedCount = x;
+              songPlaylistsViewModel.LoadingStatus.NumberOfProcesses = itemSourcesProcess.InternalProcessesCount;
             });
-          });
 
-          sources = (await itemSourcesProcess.Process)?.ToList();
+            serialDisposable.Disposable = itemSourcesProcess.OnInternalProcessedCountChanged.Subscribe(x =>
+            {
+              Application.Current.Dispatcher.Invoke(() =>
+              {
+                songPlaylistsViewModel.LoadingStatus.ProcessedCount = x;
+              });
+            });
+
+            sources = (await itemSourcesProcess.Process)?.ToList();
+
+          }
         }
 
         if (songsItems.Count > 0)
@@ -118,20 +122,21 @@ namespace VPlayer.Home.ViewModels
           var songs = grouppedSongs.OrderBy(x => x.PlaylistItem.OrderInPlaylist)
             .Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x.Song)).ToList();
 
-          if (sources != null)
+          if (cacheBefore)
           {
-            foreach (var song in songs)
+            if (sources != null)
             {
-              var source =
-                sources.SingleOrDefault(x => x.Indentificator == song.SongModel.ItemModel.FileInfo.Indentificator);
-
-              if (source != null)
+              foreach (var song in songs)
               {
-                song.SongModel.ItemModel.FileInfo.Source = source.Source;
+                var source = sources.SingleOrDefault(x => x.Indentificator == song.SongModel.ItemModel.FileInfo.Indentificator);
+
+                if (source != null)
+                {
+                  song.SongModel.ItemModel.FileInfo.Source = source.Source;
+                }
               }
             }
           }
-         
 
           return songs;
         }

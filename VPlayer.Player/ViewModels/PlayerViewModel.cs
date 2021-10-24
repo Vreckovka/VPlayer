@@ -406,7 +406,7 @@ namespace VPlayer.Player.ViewModels
     {
       Application.Current?.Dispatcher?.Invoke(() =>
       {
-        var filePlayable = CanUseKey();
+        var filePlayable = CanUseKey(e.KeyPressed);
 
         if (filePlayable != null)
         {
@@ -452,19 +452,28 @@ namespace VPlayer.Player.ViewModels
     #endregion KeyListener_OnKeyPressed
 
     #region CanUseKey
-    
-    private IFilePlayableRegionViewModel CanUseKey()
+
+    private IFilePlayableRegionViewModel CanUseKey(Key key)
     {
       return Application.Current.Dispatcher.Invoke(() =>
       {
-        if (ActualViewModel != null && ActualViewModel.IsActive &&
-            ActualViewModel is IFilePlayableRegionViewModel filePlayable1 &&
-            mainWindow.IsActive &&
-            mainWindow.WindowState != WindowState.Minimized &&
-            !VFocusManager.IsAnyFocused())
+        if (ActualViewModel != null && ActualViewModel is IFilePlayableRegionViewModel filePlayable1)
         {
-          return filePlayable1;
+          if (ActualViewModel.IsActive &&
+              mainWindow.IsActive && 
+              mainWindow.WindowState != WindowState.Minimized && 
+              !VFocusManager.IsAnyFocused())
+          {
+            return filePlayable1;
+          }
+          else if (key == Key.MediaPlayPause ||
+                   key == Key.MediaNextTrack ||
+                   key == Key.MediaPreviousTrack)
+          {
+            return filePlayable1;
+          }
         }
+
 
         return null;
       });

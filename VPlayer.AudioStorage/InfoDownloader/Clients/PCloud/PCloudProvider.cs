@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Logger;
 using PCloudClient.Domain;
 using VCore.Standard;
 using VCore.WPF.Interfaces.Managers;
@@ -14,11 +15,13 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
   {
     private readonly ICloudService cloudService;
     private readonly IWindowManager windowManager;
+    private readonly ILogger logger;
 
-    public PCloudProvider(ICloudService cloudService, IWindowManager windowManager)
+    public PCloudProvider(ICloudService cloudService, IWindowManager windowManager, ILogger logger)
     {
       this.cloudService = cloudService ?? throw new ArgumentNullException(nameof(cloudService));
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     #region UpdateOrCreateFile
@@ -34,10 +37,20 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
       long previousFolderId = parentId;
       int startIndex = 0;
 
-      var parentFolders = (await cloudService.GetFoldersAsync(parentId)).ToList();
+      var parentFolders = (await cloudService.GetFoldersAsync(parentId))?.ToList();
+
+      if(parentFolders == null)
+      {
+        return false;
+      }
 
       if (parentFolders.Count == 0)
       {
+        if (string.IsNullOrEmpty(folderNames[0]))
+        {
+          return false;
+        }
+
         acutalFolder = await cloudService.CreateFolder(PathStringProvider.GetPathValidName(folderNames[0]), previousFolderId);
 
         previousFolderId = acutalFolder.id;
@@ -48,16 +61,19 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
       {
         var acutalFolderName = folderNames[i];
 
-        acutalFolder = parentFolders.SingleOrDefault(x => PathStringProvider.GetNormalizedName(x.name) == PathStringProvider.GetNormalizedName(acutalFolderName));
-
-        if (acutalFolder == null)
+        if (!string.IsNullOrEmpty(acutalFolderName))
         {
-          acutalFolder = await cloudService.CreateFolder(PathStringProvider.GetPathValidName(acutalFolderName), previousFolderId);
+          acutalFolder = parentFolders.SingleOrDefault(x => PathStringProvider.GetNormalizedName(x.name) == PathStringProvider.GetNormalizedName(acutalFolderName));
+
+          if (acutalFolder == null)
+          {
+            acutalFolder = await cloudService.CreateFolder(PathStringProvider.GetPathValidName(acutalFolderName), previousFolderId);
+          }
+
+          previousFolderId = acutalFolder.id;
+
+          parentFolders = (await cloudService.GetFoldersAsync(previousFolderId)).ToList();
         }
-
-        previousFolderId = acutalFolder.id;
-
-        parentFolders = (await cloudService.GetFoldersAsync(previousFolderId)).ToList(); 
       }
 
       if (acutalFolder != null)
@@ -97,9 +113,9 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
 
     public async Task<FileInfo> GetFile(long parentId, string[] folderNames, string pFileName, string extension)
     {
-      var parentFolders = (await cloudService.GetFoldersAsync(parentId)).ToList();
+      var parentFolders = (await cloudService.GetFoldersAsync(parentId))?.ToList();
 
-      if (parentFolders.Count > 0)
+      if (parentFolders != null && parentFolders.Count > 0)
       {
         FolderInfo acutalFolder = null;
 

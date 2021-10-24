@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using PCloud;
 using PCloudClient.Domain;
@@ -18,8 +19,8 @@ namespace VPLayer.Domain.Contracts.CloudService.Providers
     void SaveLoginInfo(string email, string password);
     Task<bool> ExistsFolderAsync(long id);
     Task<MemoryStream> ReadFile(long id);
-    Task<string> GetFileLink(long id);
-    AsyncProcess<List<KeyValuePair<long, string>>> GetAudioLinks(IEnumerable<long> ids);
+    Task<PublicLink> GetFileLink(long id);
+   
     Task<string> GetAudioLink(long id);
     Task<PCloudResponse<Stats>> GetFileStats(long id);
     Task<FolderInfo> CreateFolder(string name, long? parentId);
@@ -27,5 +28,9 @@ namespace VPLayer.Domain.Contracts.CloudService.Providers
     Task<bool> WriteToFile(byte[] data, long id);
     Task<bool> CreateFileAndWrite(string name, byte[] data, long folderId);
     bool IsUserLoggedIn();
+
+
+    AsyncProcess<List<KeyValuePair<long, PublicLink>>> GetAudioLinks(IEnumerable<long> ids, CancellationToken cancellationToken);
+    AsyncProcess<List<KeyValuePair<long, PublicLink>>> GetFileLinks(IEnumerable<long> ids, CancellationToken cancellationToken = default);
   }
 }

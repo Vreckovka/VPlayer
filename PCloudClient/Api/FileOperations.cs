@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using PCloudClient.Domain;
@@ -375,51 +376,62 @@ namespace PCloud
 
     #endregion
 
-    #region GetFileLink
+    #region GetPublicLink
 
-    public static async Task<string> GetFileLink(this Connection conn, long id)
+    public static async Task<PublicLink> GetPublicLink(this Connection conn, string actionName, long id)
     {
       string link = null;
 
-      var req = conn.newRequest("getaudiolink");
+      var req = conn.newRequest(actionName);
       req.add("fileid", id);
       req.unixTimestamps();
 
       var response = await conn.send(req);
 
-      var host = ((object[])response.dict["hosts"])[0].ToString();
+      var hosts = (object[])response.dict["hosts"];
+      var host = hosts[0].ToString();
       var path = response.dict["path"];
-
-      var expires = response.dict["expires"];
 
       link = "http://" + host + path;
 
-      return link;
+      var expires = response.dict["expires"].ToString();
+
+      var newLink = new PublicLink()
+      {
+        Hosts = hosts.Select(x => x.ToString()).ToArray(),
+        Link = link
+      };
+
+      if (long.TryParse(expires, out var expiresLong))
+      {
+        newLink.Exipires = expiresLong;
+        newLink.ExpiresDate = DateTimeOffset.FromUnixTimeSeconds(expiresLong).DateTime;
+      }
+
+      return newLink;
     }
 
     #endregion
 
     #region GetAudioLink
 
-    public static async Task<string> GetAudioLink(this Connection conn, long id)
+    public static Task<PublicLink> GetAudioLink(this Connection conn, long id)
     {
-      string link = null;
-
-      var req = conn.newRequest("getfilelink");
-      req.add("fileid", id);
-      req.unixTimestamps();
-
-      var response = await conn.send(req);
-
-      var host = ((object[])response.dict["hosts"])[0].ToString();
-      var path = response.dict["path"];
-
-      link = "http://" + host + path;
-
-      return link;
+      return conn.GetPublicLink("getaudiolink", id);
     }
 
     #endregion
+
+    #region GetFileLink
+
+    public static Task<PublicLink> GetFileLink(this Connection conn, long id)
+    {
+      return conn.GetPublicLink("getfilelink", id);
+    }
+
+    #endregion
+
+    #region GetFileStats
 
     public static async Task<PCloudResponse<Stats>> GetFileStats(this Connection conn, long id)
     {
@@ -442,9 +454,11 @@ namespace PCloud
         data = JsonSerializer.Deserialize<PCloudResponse<Stats>>(json, options);
 
       }
-    
+
 
       return data;
-    }
+    } 
+
+    #endregion
   }
 }

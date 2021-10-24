@@ -202,7 +202,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         logger.Log(MessageType.Success, $"Tv show name: {name}");
 
         var posterNode = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div/div/div[1]/div[1]/a/img")?.FirstOrDefault();
-       
+
 
         posterUrl = posterNode?.Attributes.SingleOrDefault(x => x.Name == "src")?.Value.Replace("//image.pmgstatic.com", "https://image.pmgstatic.com");
 
@@ -480,125 +480,133 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     private void LoadCsfdEpisode(CSFDTVShowSeasonEpisode cSFDTVShowSeasonEpisode)
     {
-      var html = chromeDriverProvider.SafeNavigate(cSFDTVShowSeasonEpisode.Url);
-
-      var document = new HtmlDocument();
-
-      document.LoadHtml(html);
-
-      var ratingNode = GetClearText(document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/aside/div/div[2]/div")?.FirstOrDefault()?.InnerText);
-      int.TryParse(ratingNode, out var rating);
-
-      cSFDTVShowSeasonEpisode.Rating = rating;
-
-      if (rating >= 70)
+      try
       {
-        cSFDTVShowSeasonEpisode.RatingColor = RatingColor.Red;
-      }
-      else if (rating >= 30)
-      {
-        cSFDTVShowSeasonEpisode.RatingColor = RatingColor.Blue;
-      }
-      else if (rating > 0)
-      {
-        cSFDTVShowSeasonEpisode.RatingColor = RatingColor.Gray;
-      }
-      else
-      {
-        cSFDTVShowSeasonEpisode.RatingColor = RatingColor.LightGray;
-      }
+        var html = chromeDriverProvider.SafeNavigate(cSFDTVShowSeasonEpisode.Url);
 
+        var document = new HtmlDocument();
 
-      var originalName = GetClearText(document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div[2]/div/header/div/ul/li")?.FirstOrDefault()?.InnerText);
+        document.LoadHtml(html);
 
-      var seasonNode = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div[2]/div/header/h2")?.FirstOrDefault();
+        var ratingNode = GetClearText(document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/aside/div/div[2]/div")?.FirstOrDefault()?.InnerText);
+        int.TryParse(ratingNode, out var rating);
 
-      string tvShowUrl = null;
-      if (seasonNode?.ChildNodes.Count >= 2)
-      {
-        var url = seasonNode.ChildNodes[1].Attributes.FirstOrDefault()?.Value;
+        cSFDTVShowSeasonEpisode.Rating = rating;
 
-        if (!string.IsNullOrEmpty(url))
+        if (rating >= 70)
         {
-          tvShowUrl = baseUrl + url;
+          cSFDTVShowSeasonEpisode.RatingColor = RatingColor.Red;
         }
-      }
-
-      var nameNode = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div[2]/div/header/div")?.FirstOrDefault();
-
-      List<string> parameters = new List<string>();
-
-      TvShowEpisodeNumbers number = null;
-
-      if (nameNode != null)
-      {
-        var fullname = GetClearText(nameNode.ChildNodes[1].InnerText);
-
-        number = DataLoader.DataLoader.GetTvShowSeriesNumber(fullname);
-
-        var properties = GetClearText(nameNode.ChildNodes[3].InnerText);
-
-        var regex1 = new Regex(@"\((.*?)\)");
-
-        var ads = regex1.Matches(properties);
-
-        for (int i = 0; i < ads.Count; i++)
+        else if (rating >= 30)
         {
-          parameters.Add(ads[i].Groups[1].Captures[0].Value);
+          cSFDTVShowSeasonEpisode.RatingColor = RatingColor.Blue;
         }
-      }
-
-
-      var infoNode = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div[2]/div/div[2]")?.FirstOrDefault();
-
-      string[] actors = null;
-      string[] directors = null;
-      string[] generes = null;
-      int? year = null;
-
-      if (infoNode != null && infoNode.ChildNodes.Count > 5)
-      {
-        generes = infoNode.ChildNodes[1].InnerText.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("/");
-
-        if (int.TryParse(infoNode.ChildNodes[3].ChildNodes[1].InnerText, out var year1))
+        else if (rating > 0)
         {
-          year = year1;
+          cSFDTVShowSeasonEpisode.RatingColor = RatingColor.Gray;
+        }
+        else
+        {
+          cSFDTVShowSeasonEpisode.RatingColor = RatingColor.LightGray;
         }
 
-        var creatorsNode = infoNode.ChildNodes[5];
 
-        if (creatorsNode.ChildNodes.Count > 3)
+        var originalName = GetClearText(document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div[2]/div/header/div/ul/li")?.FirstOrDefault()?.InnerText);
+
+        var seasonNode = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div[2]/div/header/h2")?.FirstOrDefault();
+
+        string tvShowUrl = null;
+        if (seasonNode?.ChildNodes.Count > 1)
         {
-          var textDirectors = creatorsNode.ChildNodes[3].InnerText;
+          var url = seasonNode.ChildNodes[1].Attributes.FirstOrDefault()?.Value;
 
-          if (textDirectors.Contains("Režie:"))
+          if (!string.IsNullOrEmpty(url))
           {
-            directors = textDirectors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Režie:")[1].Split(",");
+            tvShowUrl = baseUrl + url;
+          }
+        }
+
+        var nameNode = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div[2]/div/header/div")?.FirstOrDefault();
+
+        List<string> parameters = new List<string>();
+
+        TvShowEpisodeNumbers number = null;
+
+        if (nameNode != null && nameNode.ChildNodes.Count > 3)
+        {
+          var fullname = GetClearText(nameNode.ChildNodes[1].InnerText);
+
+          number = DataLoader.DataLoader.GetTvShowSeriesNumber(fullname);
+
+          var properties = GetClearText(nameNode.ChildNodes[3].InnerText);
+
+          var regex1 = new Regex(@"\((.*?)\)");
+
+          var ads = regex1.Matches(properties);
+
+          for (int i = 0; i < ads.Count; i++)
+          {
+            if (ads[i].Groups.Count > 1 && ads[i].Groups[1].Captures.Count > 0)
+              parameters.Add(ads[i].Groups[1].Captures[0].Value);
+          }
+        }
+
+
+        var infoNode = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div[2]/div/div[2]")?.FirstOrDefault();
+
+        string[] actors = null;
+        string[] directors = null;
+        string[] generes = null;
+        int? year = null;
+
+        if (infoNode != null && infoNode.ChildNodes.Count > 5)
+        {
+          generes = infoNode.ChildNodes[1].InnerText.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("/");
+
+          if (infoNode.ChildNodes[3].ChildNodes.Count > 1 && int.TryParse(infoNode.ChildNodes[3].ChildNodes[1].InnerText, out var year1))
+          {
+            year = year1;
           }
 
+          var creatorsNode = infoNode.ChildNodes[5];
 
-          if (creatorsNode.ChildNodes.Count > 11)
+          if (creatorsNode.ChildNodes.Count > 3)
           {
-            var textActors = creatorsNode.ChildNodes[11].InnerText;
+            var textDirectors = creatorsNode.ChildNodes[3].InnerText;
 
-            if (textActors.Contains("Hrají:"))
+            if (textDirectors.Contains("Režie:"))
             {
-              actors = textActors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Hrají:")[1].Split(",");
+              directors = textDirectors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Režie:")[1].Split(",");
+            }
+
+
+            if (creatorsNode.ChildNodes.Count > 11)
+            {
+              var textActors = creatorsNode.ChildNodes[11].InnerText;
+
+              if (textActors.Contains("Hrají:"))
+              {
+                actors = textActors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Hrají:")[1].Split(",");
+              }
             }
           }
         }
+
+
+        cSFDTVShowSeasonEpisode.TvShowUrl = tvShowUrl;
+        cSFDTVShowSeasonEpisode.Year = year;
+        cSFDTVShowSeasonEpisode.Actors = actors;
+        cSFDTVShowSeasonEpisode.Directors = directors;
+        cSFDTVShowSeasonEpisode.OriginalName = originalName?.Replace("(více)", null);
+        cSFDTVShowSeasonEpisode.Generes = generes;
+        cSFDTVShowSeasonEpisode.SeasonNumber = number?.SeasonNumber;
+        cSFDTVShowSeasonEpisode.EpisodeNumber = number?.EpisodeNumber;
+        cSFDTVShowSeasonEpisode.Parameters = parameters.ToArray();
       }
-
-
-      cSFDTVShowSeasonEpisode.TvShowUrl = tvShowUrl;
-      cSFDTVShowSeasonEpisode.Year = year;
-      cSFDTVShowSeasonEpisode.Actors = actors;
-      cSFDTVShowSeasonEpisode.Directors = directors;
-      cSFDTVShowSeasonEpisode.OriginalName = originalName?.Replace("(více)", null);
-      cSFDTVShowSeasonEpisode.Generes = generes;
-      cSFDTVShowSeasonEpisode.SeasonNumber = number?.SeasonNumber;
-      cSFDTVShowSeasonEpisode.EpisodeNumber = number?.EpisodeNumber;
-      cSFDTVShowSeasonEpisode.Parameters = parameters.ToArray();
+      catch (Exception ex)
+      {
+        logger.Log(ex);
+      }
     }
 
     #endregion

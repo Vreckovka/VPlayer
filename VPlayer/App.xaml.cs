@@ -38,6 +38,12 @@ namespace VPlayer
 {
   public class VPlayerApplication : VApplication<MainWindow, MainWindowViewModel, VPlayerSplashScreen>
   {
+    protected override void ShowConsole()
+    {
+      IsConsoleVisible = true;
+      base.ShowConsole();
+    }
+
     #region LoadModules
 
     protected override void LoadModules()

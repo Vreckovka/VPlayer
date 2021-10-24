@@ -74,7 +74,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private readonly IStatusManager statusManager;
     private readonly VLCPlayer vLcPlayer;
     private Dictionary<SongInPlayListViewModel, bool> playBookInCycle = new Dictionary<SongInPlayListViewModel, bool>();
-
+    private Dictionary<SoundItem, PublicLink> publicLinks = new Dictionary<SoundItem, PublicLink>();
 
     #endregion Fields
 
@@ -288,7 +288,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public int DistinctArtistsCount
     {
-      get { return PlayList.OfType<SongInPlayListViewModel>().Where(x => x.ArtistViewModel != null).GroupBy(x => x.ArtistViewModel.Model).Count(); }
+      get { return PlayList
+        .OfType<SongInPlayListViewModel>()
+        .Where(x => x.ArtistViewModel != null)
+        .Where(x => !string.IsNullOrEmpty(x.ArtistViewModel.Name))
+        .GroupBy(x => x.ArtistViewModel.Model).Count(); }
 
     }
 
@@ -298,7 +302,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public int DistinctAlbumsCount
     {
-      get { return PlayList.OfType<SongInPlayListViewModel>().Where(x => x.AlbumViewModel != null).GroupBy(x => x.AlbumViewModel.Model).Count(); ; }
+      get { return PlayList
+        .OfType<SongInPlayListViewModel>()
+        .Where(x => x.AlbumViewModel != null)
+        .Where(x => !string.IsNullOrEmpty(x.AlbumViewModel.Name))
+        .GroupBy(x => x.AlbumViewModel.Model).Count(); ; }
 
     }
 
@@ -369,6 +377,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         var validItems = PlayList.OfType<SongInPlayListViewModel>()
           .Where(x => x.ArtistViewModel.Model.Id == 0)
+          .Where(x => !string.IsNullOrEmpty(x.ArtistViewModel.Name))
           .GroupBy(x => x.ArtistViewModel.Model)
           .ToList();
 
@@ -386,7 +395,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         var validItems = PlayList.OfType<SongInPlayListViewModel>()
           .Where(x => x.AlbumViewModel != null)
-          .Where(x => x.AlbumViewModel.Model.Id == 0);
+          .Where(x => x.AlbumViewModel.Model.Id == 0)
+          .Where(x => !string.IsNullOrEmpty(x.AlbumViewModel.Name));
 
         bool result = true;
 
@@ -440,6 +450,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
             {
               var validItems = PlayList.OfType<SongInPlayListViewModel>()
                 .Where(x => x.AlbumViewModel.Model.Id == 0)
+                .Where(x => !string.IsNullOrEmpty(x.AlbumViewModel.Name))
                 .GroupBy(x => x.AlbumViewModel.Model)
                 .ToList();
 
@@ -462,7 +473,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         var validItems = PlayList.OfType<SongInPlayListViewModel>()
           .Where(x => x.AlbumViewModel != null)
-          .Where(x => x.AlbumViewModel.Model.Id == 0);
+          .Where(x => x.AlbumViewModel.Model.Id == 0)
+          .Where(x => !string.IsNullOrEmpty(x.AlbumViewModel.Name))
+          .Where(x => !string.IsNullOrEmpty(x.AlbumViewModel.Model.Artist.Name));
 
         bool result = true;
 
@@ -849,15 +862,145 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region OnNewItemPlay
 
-    CancellationTokenSource downloadingLyricsTask;
 
-
-    public override void OnNewItemPlay()
+    public override void OnNewItemPlay(SoundItem soundItem)
     {
-      base.OnNewItemPlay();
+      base.OnNewItemPlay(soundItem);
+    }
 
-      DownloadLyrics();
-      DownloadHighQualityAlbumCover();
+    #endregion
+
+    #region DownloadItemInfo
+
+    protected override Task DownloadItemInfo(CancellationToken cancellationToken)
+    {
+      return Task.Run(() =>
+      {
+        base.DownloadItemInfo(cancellationToken);
+
+        DownloadPublicLinks(cancellationToken);
+        DownloadLyrics(cancellationToken);
+        DownloadHighQualityAlbumCover();
+      });
+    }
+
+    #endregion
+
+    #region BeforeSetMedia
+
+    protected override async Task BeforeSetMedia(SoundItem model)
+    {
+      await base.BeforeSetMedia(model);
+
+      await DownloadUrlLink(model);
+    }
+
+    #endregion
+
+    #region DownloadUrlLink
+
+    private async Task DownloadUrlLink(SoundItem soundItem)
+    {
+      if (soundItem != null && 
+          soundItem.FileInfo != null && 
+          long.TryParse(soundItem.FileInfo.Indentificator, out var id))
+      {
+        if (publicLinks.TryGetValue(soundItem, out var storedPublicLink) &&
+           storedPublicLink.ExpiresDate > DateTime.Now)
+        {
+          return;
+        }
+
+        var publicLink = await cloudService.GetFileLink(id);
+
+        if(publicLink != null)
+        {
+          var oldLink = soundItem.FileInfo.Source;
+
+          if (publicLink.Link != oldLink)
+          {
+            soundItem.FileInfo.Source = publicLink.Link;
+          }
+
+          if (storedPublicLink != null)
+          {
+            publicLinks[soundItem] = publicLink;
+          }
+          else
+          {
+            publicLinks.Add(soundItem, publicLink);
+          }
+        }
+       
+      }
+    }
+
+    #endregion
+
+    #region DownloadUrlLinks
+
+    private async Task DownloadUrlLinks(IEnumerable<SoundItem> soundItems, CancellationToken cancellationToken)
+    {
+      var list = soundItems.ToList();
+      var onlyNeededList = new List<SoundItem>();
+
+      foreach (var soundItem in list)
+      {
+        if (publicLinks.TryGetValue(soundItem, out var storedPublicLink) &&
+            storedPublicLink.ExpiresDate > DateTime.Now)
+        {
+          continue;
+        }
+        else if(long.TryParse(soundItem.FileInfo.Indentificator, out var parsed))
+        {
+          onlyNeededList.Add(soundItem);
+        }
+      }
+
+      if (onlyNeededList.Count == 0)
+      {
+        return;
+      }
+
+      var validIds = onlyNeededList.Select(x => long.Parse(x.FileInfo.Indentificator));
+
+      var getLinksTask = cloudService.GetAudioLinks(validIds, cancellationToken);
+
+      var result = await getLinksTask.Process;
+
+      foreach (var keyPair in result)
+      {
+        var originalItem = onlyNeededList.SingleOrDefault(x => x.FileInfo.Indentificator == keyPair.Key.ToString());
+        var publicLink = keyPair.Value;
+
+        if (originalItem != null)
+        {
+          if (publicLinks.TryGetValue(originalItem, out var storedPublicLink) &&
+              storedPublicLink.ExpiresDate > DateTime.Now)
+          {
+            continue;
+          }
+
+          if (publicLink != null)
+          {
+            var oldLink = originalItem.FileInfo.Source;
+
+            if (publicLink.Link != oldLink)
+            {
+              originalItem.FileInfo.Source = publicLink.Link;
+            }
+
+            if (storedPublicLink != null)
+            {
+              publicLinks[originalItem] = publicLink;
+            }
+            else
+            {
+              publicLinks.Add(originalItem, publicLink);
+            }
+          }
+        }
+      }
     }
 
     #endregion
@@ -1320,16 +1463,37 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region DownloadLyrics
 
-    private Task DownloadLyrics()
+    private Task DownloadPublicLinks(CancellationToken cancellationToken)
     {
-      downloadingLyricsTask?.Cancel();
-      downloadingLyricsTask?.Dispose();
-
-      downloadingLyricsTask = new CancellationTokenSource();
-
-      var cancellationToken = downloadingLyricsTask.Token;
-
       return Task.Run(async () =>
+      {
+        try
+        {
+          var validItemsToUpdate = PlayList
+            .OfType<SongInPlayListViewModel>()
+            .Where(x => x.ArtistViewModel != null &&
+                        x.AlbumViewModel != null).ToList();
+
+          var itemsAfter = validItemsToUpdate.Skip(actualItemIndex);
+          var itemsBefore = validItemsToUpdate.Take(actualItemIndex);
+
+          await DownloadUrlLinks(itemsAfter.Select(x => x.SongModel.ItemModel), cancellationToken);
+          await DownloadUrlLinks(itemsBefore.Select(x => x.SongModel.ItemModel), cancellationToken);
+
+          logger.Log(MessageType.Success, "Public links were downloaded");
+        }
+        catch (OperationCanceledException)
+        {
+        }
+
+      }, cancellationToken);
+    }
+
+    #region DownloadLyrics
+
+    private Task DownloadLyrics(CancellationToken cancellationToken)
+    {
+     return Task.Run(async () =>
       {
         try
         {
@@ -1986,12 +2150,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       base.Dispose();
 
-      downloadingLyricsTask?.Cancel();
-      downloadingLyricsTask?.Dispose();
-
-      downloadingSongTask?.Cancel();
       downloadingSongTask?.Dispose();
     }
+
+    #endregion
 
     #endregion
 

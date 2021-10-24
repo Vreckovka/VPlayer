@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using Logger;
 using PCloud;
@@ -83,7 +84,7 @@ namespace VPlayer.PCloud
           {
             await conn.login(credentials.Email, credentials.Password);
 
-            return await conn.GetAudioLink(id);
+            return (await conn.GetAudioLink(id))?.Link;
           }
           finally
           {
@@ -155,7 +156,7 @@ namespace VPlayer.PCloud
 
     #region GetFileLink
 
-    public async Task<string> GetFileLink(long id)
+    public async Task<PublicLink> GetFileLink(long id)
     {
       if (credentials != null)
       {
@@ -185,11 +186,11 @@ namespace VPlayer.PCloud
 
     #endregion
 
-    #region GetFileLinks
+    #region GetPublicLinks
 
-    public AsyncProcess<List<KeyValuePair<long, string>>> GetAudioLinks(IEnumerable<long> ids)
+    public AsyncProcess<List<KeyValuePair<long, PublicLink>>> GetPublicLinks(IEnumerable<long> ids, string actionName, CancellationToken cancellationToken = default)
     {
-      var process = new AsyncProcess<List<KeyValuePair<long, string>>>();
+      var process = new AsyncProcess<List<KeyValuePair<long, PublicLink>>>();
       var idsList = ids.ToList();
       process.InternalProcessesCount = idsList.Count;
 
@@ -203,18 +204,20 @@ namespace VPlayer.PCloud
             {
               await conn.login(credentials.Email, credentials.Password);
 
-              var links = new List<KeyValuePair<long, string>>();
+              var links = new List<KeyValuePair<long, PublicLink>>();
 
               foreach (var id in idsList)
               {
-                var link = await conn.GetAudioLink(id);
+                cancellationToken.ThrowIfCancellationRequested();
+                var link = await conn.GetPublicLink(actionName, id);
 
                 process.ProcessedCount++;
-                links.Add(new KeyValuePair<long, string>(id, link));
+                links.Add(new KeyValuePair<long, PublicLink>(id, link));
               }
 
               return links;
             }
+            catch (OperationCanceledException ex) { }
             catch (Exception ex)
             {
               logger.Log(ex);
@@ -231,6 +234,24 @@ namespace VPlayer.PCloud
       });
 
       return process;
+    }
+
+    #endregion
+
+    #region GetAudioLinks
+
+    public AsyncProcess<List<KeyValuePair<long, PublicLink>>> GetAudioLinks(IEnumerable<long> ids, CancellationToken cancellationToken = default)
+    {
+      return GetPublicLinks(ids, "getaudiolink");
+    }
+
+    #endregion
+
+    #region GetFileinks
+
+    public AsyncProcess<List<KeyValuePair<long, PublicLink>>> GetFileLinks(IEnumerable<long> ids, CancellationToken cancellationToken = default)
+    {
+      return GetPublicLinks(ids, "getfilelink");
     }
 
     #endregion
@@ -404,7 +425,7 @@ namespace VPlayer.PCloud
     }
 
     #endregion
-    
+
     #region WriteToFile
 
     public async Task<bool> WriteToFile(byte[] data, long id)

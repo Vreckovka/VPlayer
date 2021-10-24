@@ -4,10 +4,9 @@
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
              xmlns:behaviors1="clr-namespace:VPlayer.WindowsPlayer.Behaviors"
-             xmlns:behaviors2="clr-namespace:VPlayer.WindowsPlayer.Behaviors;assembly=VCore.WPF"
              xmlns:behaviors3="clr-namespace:VCore.WPF.Behaviors;assembly=VCore.WPF"
+             xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
              xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
-             xmlns:converters2="clr-namespace:VCore.WPF.Converters"
              xmlns:converters3="clr-namespace:VPlayer.Core.Converters;assembly=VPlayer.Core"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
@@ -17,7 +16,6 @@
              xmlns:regions11="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPLayer.Domain"
              xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
              xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
-             xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
              d:DesignHeight="450"
              d:DesignWidth="1900"
              mc:Ignorable="d">
@@ -137,10 +135,10 @@
                         <StackPanel Margin="0,0,24,0" Style="{StaticResource Container}">
 
                             <controls:PathButton Width="20"
-                                                  FontSize="16"
-                                                  ForegroundDefaultColor="#30ffffff"
-                                                  Style="{StaticResource tally}"
-                                                  ToolTip="NUMBER of ITEMS in playlist" />
+                                                 FontSize="16"
+                                                 ForegroundDefaultColor="#30ffffff"
+                                                 Style="{StaticResource tally}"
+                                                 ToolTip="NUMBER of ITEMS in playlist" />
 
                             <TextBlock Margin="5,0,0,0"
                                        VerticalAlignment="Center"
@@ -152,10 +150,10 @@
                         <StackPanel Style="{StaticResource Container}">
 
                             <controls:PathButton Width="15"
-                                                  FontSize="16"
-                                                  ForegroundDefaultColor="#30ffffff"
-                                                  Style="{StaticResource hourglass}"
-                                                  ToolTip="Total LENGTH of playlist" />
+                                                 FontSize="16"
+                                                 ForegroundDefaultColor="#30ffffff"
+                                                 Style="{StaticResource hourglass}"
+                                                 ToolTip="Total LENGTH of playlist" />
 
 
                             <TextBlock Margin="5,0,5,0"
@@ -169,10 +167,10 @@
                         <StackPanel Style="{StaticResource Container}">
 
                             <controls:PathButton Width="18"
-                                                  FontSize="18"
-                                                  ForegroundDefaultColor="#30ffffff"
-                                                  Style="{StaticResource stopwatch}"
-                                                  ToolTip="Total PLAYED TIME of playlist" />
+                                                 FontSize="18"
+                                                 ForegroundDefaultColor="#30ffffff"
+                                                 Style="{StaticResource stopwatch}"
+                                                 ToolTip="Total PLAYED TIME of playlist" />
 
                             <TextBlock Margin="5,2,5,0"
                                        VerticalAlignment="Center"
@@ -184,10 +182,10 @@
                         <StackPanel Style="{StaticResource Container}">
 
                             <controls:PathButton Width="18"
-                                                  FontSize="18"
-                                                  ForegroundDefaultColor="#30ffffff"
-                                                  Style="{StaticResource file-check}"
-                                                  ToolTip="Checked files count" />
+                                                 FontSize="18"
+                                                 ForegroundDefaultColor="#30ffffff"
+                                                 Style="{StaticResource file-check}"
+                                                 ToolTip="Checked files count" />
 
                             <TextBlock Margin="5,2,5,0"
                                        VerticalAlignment="Center"
@@ -246,13 +244,13 @@
 
 
                                 <controls:PathButton Width="auto"
-                                                      Margin="5,0,-2,0"
-                                                      GlyphFontFamily="{StaticResource FontAwesome6Pro_Solid}"
-                                                      GlyphFontSize="18"
-                                                      IconDefaultColor="#454545"
-                                                      IconWidth="auto"
-                                                      IsHitTestVisible="False"
-                                                      Style="{StaticResource hashtag}" />
+                                                     Margin="5,0,-2,0"
+                                                     GlyphFontFamily="{StaticResource FontAwesome6Pro_Solid}"
+                                                     GlyphFontSize="18"
+                                                     IconDefaultColor="#454545"
+                                                     IconWidth="auto"
+                                                     IsHitTestVisible="False"
+                                                     Style="{StaticResource hashtag}" />
 
                                 <TextBox x:Name="NameTextBox"
                                          Grid.Column="1"
@@ -378,19 +376,26 @@
                                                     HorizontalAlignment="Left"
                                                     Orientation="Horizontal">
                                             <StackPanel Orientation="Horizontal">
-                                                <controls:PathButton Width="auto"
-                                                                      Command="{Binding AddArtists}"
-                                                                      Style="{StaticResource plusStyle}"
-                                                                      ToolTip="Add artists">
+                                                <controls:PathButton x:Name="PathButton_AddArtists"
+                                                                     Width="auto"
+                                                                     Command="{Binding AddArtists}"
+                                                                     Style="{StaticResource plusStyle}"
+                                                                     ToolTip="Add artists">
                                                     <controls:PathButton Width="auto"
-                                                                          FontWeight="Bold"
-                                                                          IconMargin="0 0 10 0"
-                                                                          IconWidth="20"
-                                                                          IsHitTestVisible="False">
+                                                                         FontWeight="Bold"
+                                                                         IconMargin="0 0 10 0"
+                                                                         IconWidth="20"
+                                                                         IsHitTestVisible="False">
                                                         <controls:PathButton.Style>
                                                             <Style BasedOn="{StaticResource user-music}" TargetType="controls:PathButton">
                                                                 <Setter Property="ForegroundDefaultColor" Value="#454545" />
-                                                                <Setter Property="Content" Value="{Binding ArtistThatCanBeAddedCount, StringFormat={}{0} +}" />
+                                                                <Setter Property="Content">
+                                                                    <Setter.Value>
+                                                                        <TextBlock>
+                                                                            <Run Text="{Binding ArtistThatCanBeAddedCount, StringFormat={}+ {0}}" />
+                                                                        </TextBlock>
+                                                                    </Setter.Value>
+                                                                </Setter>
                                                                 <Setter Property="IconDefaultColor" Value="#454545" />
                                                                 <Style.Triggers>
                                                                     <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=controls:PathButton}}" Value="true">
@@ -398,13 +403,20 @@
                                                                         <Setter Property="IconDefaultColor" Value="#ccffffff" />
                                                                     </DataTrigger>
 
-                                                                    <DataTrigger Binding="{Binding WasAllSongProcessed}" Value="true">
+                                                                    <MultiDataTrigger>
+                                                                        <MultiDataTrigger.Conditions>
+                                                                            <Condition Binding="{Binding WasAllSongProcessed}" Value="true" />
+                                                                            <Condition Binding="{Binding Path=IsEnabled, ElementName=PathButton_AddArtists}" Value="false" />
+                                                                        </MultiDataTrigger.Conditions>
+
                                                                         <Setter Property="ForegroundDefaultColor" Value="{StaticResource YellowColor}" />
                                                                         <Setter Property="IconDefaultColor" Value="#ffffff" />
                                                                         <Setter Property="Content" Value="{Binding DistinctArtistsCount, StringFormat={}{0} +}" />
 
                                                                         <Setter Property="Opacity" Value="0.75" />
-                                                                    </DataTrigger>
+
+                                                                    </MultiDataTrigger>
+
                                                                 </Style.Triggers>
                                                             </Style>
                                                         </controls:PathButton.Style>
@@ -413,19 +425,27 @@
                                             </StackPanel>
 
                                             <StackPanel Orientation="Horizontal">
-                                                <controls:PathButton Command="{Binding AddAlbums}"
-                                                                      Style="{StaticResource plusStyle}"
-                                                                      ToolTip="Add albums">
+                                                <controls:PathButton x:Name="PathButton_AddAlbums"
+                                                                     Command="{Binding AddAlbums}"
+                                                                     Style="{StaticResource plusStyle}"
+                                                                     ToolTip="Add albums">
                                                     <controls:PathButton Width="auto"
-                                                                          FontWeight="Bold"
-                                                                          IconMargin="0 0 10 0"
-                                                                          IconWidth="20"
-                                                                          IsHitTestVisible="False">
+                                                                         FontWeight="Bold"
+                                                                         IconMargin="0 0 10 0"
+                                                                         IconWidth="20"
+                                                                         IsHitTestVisible="False">
                                                         <controls:PathButton.Style>
                                                             <Style BasedOn="{StaticResource compact-disc}" TargetType="controls:PathButton">
                                                                 <Setter Property="ForegroundDefaultColor" Value="#454545" />
                                                                 <Setter Property="IconDefaultColor" Value="#454545" />
-                                                                <Setter Property="Content" Value="{Binding AlbumsThatCanBeAddedCount, StringFormat={}{0} +}" />
+
+                                                                <Setter Property="Content">
+                                                                    <Setter.Value>
+                                                                        <TextBlock>
+                                                                            <Run Text="{Binding AlbumsThatCanBeAddedCount, StringFormat={}+ {0}}" />
+                                                                        </TextBlock>
+                                                                    </Setter.Value>
+                                                                </Setter>
 
                                                                 <Style.Triggers>
                                                                     <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=controls:PathButton}}" Value="true">
@@ -433,12 +453,20 @@
                                                                         <Setter Property="IconDefaultColor" Value="#ccffffff" />
                                                                     </DataTrigger>
 
-                                                                    <DataTrigger Binding="{Binding WasAllSongProcessed}" Value="true">
+                                                                    <MultiDataTrigger>
+                                                                        <MultiDataTrigger.Conditions>
+                                                                            <Condition Binding="{Binding WasAllSongProcessed}" Value="true" />
+                                                                            <Condition Binding="{Binding Path=IsEnabled, ElementName=PathButton_AddAlbums}" Value="false" />
+                                                                        </MultiDataTrigger.Conditions>
+
                                                                         <Setter Property="ForegroundDefaultColor" Value="{StaticResource YellowColor}" />
                                                                         <Setter Property="IconDefaultColor" Value="#ffffff" />
                                                                         <Setter Property="Opacity" Value="0.75" />
                                                                         <Setter Property="Content" Value="{Binding DistinctAlbumsCount, StringFormat={}{0} +}" />
-                                                                    </DataTrigger>
+
+                                                                    </MultiDataTrigger>
+
+
                                                                 </Style.Triggers>
                                                             </Style>
                                                         </controls:PathButton.Style>
@@ -458,14 +486,14 @@
 
                                             <StackPanel Orientation="Horizontal">
                                                 <controls:PathButton IsEnabled="False"
-                                                                      Style="{StaticResource plusStyle}"
-                                                                      ToolTip="Add tv show">
+                                                                     Style="{StaticResource plusStyle}"
+                                                                     ToolTip="Add tv show">
                                                     <controls:PathButton Width="auto"
-                                                                          Content="0"
-                                                                          FontWeight="Bold"
-                                                                          IconMargin="0 0 10 0"
-                                                                          IconWidth="20"
-                                                                          IsHitTestVisible="False">
+                                                                         Content="0"
+                                                                         FontWeight="Bold"
+                                                                         IconMargin="0 0 10 0"
+                                                                         IconWidth="20"
+                                                                         IsHitTestVisible="False">
                                                         <controls:PathButton.Style>
                                                             <Style BasedOn="{StaticResource tv-retro}" TargetType="controls:PathButton">
                                                                 <Setter Property="ForegroundDefaultColor" Value="#454545" />
@@ -485,14 +513,14 @@
 
                                             <StackPanel Orientation="Horizontal">
                                                 <controls:PathButton IsEnabled="False"
-                                                                      Style="{StaticResource plusStyle}"
-                                                                      ToolTip="Add seasons">
+                                                                     Style="{StaticResource plusStyle}"
+                                                                     ToolTip="Add seasons">
                                                     <controls:PathButton Width="auto"
-                                                                          Content="0"
-                                                                          FontWeight="Bold"
-                                                                          IconMargin="0 0 10 0"
-                                                                          IconWidth="20"
-                                                                          IsHitTestVisible="False">
+                                                                         Content="0"
+                                                                         FontWeight="Bold"
+                                                                         IconMargin="0 0 10 0"
+                                                                         IconWidth="20"
+                                                                         IsHitTestVisible="False">
                                                         <controls:PathButton.Style>
                                                             <Style BasedOn="{StaticResource album-collection}" TargetType="controls:PathButton">
                                                                 <Setter Property="ForegroundDefaultColor" Value="#454545" />
@@ -527,28 +555,28 @@
                                             HorizontalAlignment="Left"
                                             Orientation="Horizontal">
                                     <controls:PathButton Command="{Binding ReloadFile}"
-                                                          IconWidth="20"
-                                                          PathStyle="{StaticResource arrows-rotate}"
-                                                          ToolTip="Reload file" />
+                                                         IconWidth="20"
+                                                         PathStyle="{StaticResource arrows-rotate_path}"
+                                                         ToolTip="Reload file" />
 
                                     <controls:PathButton Command="{Binding ClearPlaylistCommand}"
-                                                          IconWidth="25"
-                                                          PathStyle="{StaticResource TrashList}"
-                                                          ToolTip="Clear actual playlist" />
+                                                         IconWidth="25"
+                                                         PathStyle="{StaticResource TrashList}"
+                                                         ToolTip="Clear actual playlist" />
 
                                     <controls:PathButton Command="{Binding SavePlaylistCommand}"
-                                                          IconHoverColor="#ccc"
-                                                          IconWidth="25"
-                                                          PathStyle="{StaticResource floppy-disk-pen}"
-                                                          ToolTip="Save playlist" />
+                                                         IconHoverColor="#ccc"
+                                                         IconWidth="25"
+                                                         PathStyle="{StaticResource floppy-disk-pen}"
+                                                         ToolTip="Save playlist" />
 
                                     <controls:PathButton Command="{Binding ChangePlaylistFavorite}"
-                                                          IconCheckedColor="{StaticResource BlueColor}"
-                                                          IconWidth="20"
-                                                          IsChecked="{Binding ActualSavedPlaylist.IsUserCreated, Mode=OneWay}"
-                                                          IsReadOnly="False"
-                                                          PathStyle="{StaticResource star-solid}"
-                                                          ToolTip="Is favorite" />
+                                                         IconCheckedColor="{StaticResource BlueColor}"
+                                                         IconWidth="20"
+                                                         IsChecked="{Binding ActualSavedPlaylist.IsUserCreated, Mode=OneWay}"
+                                                         IsReadOnly="False"
+                                                         PathStyle="{StaticResource star-solid}"
+                                                         ToolTip="Is favorite" />
                                 </StackPanel>
 
                                 <ContentControl Grid.Column="1"
@@ -568,13 +596,13 @@
                     </Grid>
 
                     <controls:Finder Grid.Row="2"
-                                      Grid.Column="0"
-                                      Grid.ColumnSpan="2"
-                                      Height="40"
-                                      Margin="15,7,15,0"
-                                      FontSize="14"
-                                      KeyDownCommand="{Binding FinderKeyDown}"
-                                      Text="{Binding ActualSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                     Grid.Column="0"
+                                     Grid.ColumnSpan="2"
+                                     Height="40"
+                                     Margin="15,7,15,0"
+                                     FontSize="14"
+                                     KeyDownCommand="{Binding FinderKeyDown}"
+                                     Text="{Binding ActualSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                 </Grid>
 
@@ -608,21 +636,21 @@
         </Grid>
 
         <controls:PathButton x:Name="HideButton"
-                              Grid.Row="0"
-                              Grid.Column="0"
-                              Margin="10,8,-26,0"
-                              Padding="2"
-                              HorizontalAlignment="Right"
-                              VerticalAlignment="Top"
-                              Background="Transparent"
-                              Command="{Binding ExpandHidePlaylist}"
-                              Cursor="Hand"
-                              FontSize="12"
-                              IconCheckedColor="{StaticResource DefaultRedColor}"
-                              IconHeight="24"
-                              IconWidth="22"
-                              Opacity="0.85"
-                              PathStyle="{StaticResource arrows-to-line-solid}">
+                             Grid.Row="0"
+                             Grid.Column="0"
+                             Margin="10,8,-26,0"
+                             Padding="2"
+                             HorizontalAlignment="Right"
+                             VerticalAlignment="Top"
+                             Background="Transparent"
+                             Command="{Binding ExpandHidePlaylist}"
+                             Cursor="Hand"
+                             FontSize="12"
+                             IconCheckedColor="{StaticResource DefaultRedColor}"
+                             IconHeight="24"
+                             IconWidth="22"
+                             Opacity="0.85"
+                             PathStyle="{StaticResource arrows-to-line-solid}">
             <controls:PathButton.RenderTransform>
                 <RotateTransform Angle="90" />
             </controls:PathButton.RenderTransform>

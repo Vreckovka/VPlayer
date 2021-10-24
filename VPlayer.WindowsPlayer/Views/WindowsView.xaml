@@ -12,154 +12,153 @@
              d:DesignHeight="850"
              d:DesignWidth="800"
              mc:Ignorable="d">
-  <UserControl.Resources>
-    <ResourceDictionary>
-      <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/VPlayer;component/Views/MainWindowResources.xaml" />
-      </ResourceDictionary.MergedDictionaries>
-    </ResourceDictionary>
-  </UserControl.Resources>
-  <Grid>
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/VPlayer;component/Views/MainWindowResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
 
 
-    <Grid.RowDefinitions>
-      <RowDefinition Height="0" />
-      <RowDefinition Height="*" />
-    </Grid.RowDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-    <Grid Grid.Row="0">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="auto" />
-        <ColumnDefinition Width="*" />
-      </Grid.ColumnDefinitions>
-      <!--  Background="{StaticResource TopWindowsBrush}"  -->
-      <!--  Height="42"  -->
-      <!--  Margin="0,-40,0,0"  -->
-      <ListView Height="46"
-                Margin="{Binding Source={StaticResource ChromeGridHeight}, Converter={converters:MarginToMatchChromeHeightValueConverter}, Mode=OneWay}"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                VerticalContentAlignment="Center"
-                Background="{StaticResource TopWindowsBrush}"
-                BorderThickness="0,0,0,0"
-                Grid.IsSharedSizeScope="True"
-                ItemsSource="{Binding NavigationViewModel.Items}"
-                ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                Style="{StaticResource ListView_MenuStyle}"
-                WindowChrome.IsHitTestVisibleInChrome="True">
-        <ListView.ItemsPanel>
-          <ItemsPanelTemplate>
-            <StackPanel Orientation="Horizontal" />
-          </ItemsPanelTemplate>
-        </ListView.ItemsPanel>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <!--  Background="{StaticResource TopWindowsBrush}"  -->
+            <!--  Height="42"  -->
+            <!--  Margin="0,-40,0,0"  -->
+            <ListView Height="46"
+                      Margin="{Binding Source={StaticResource ChromeGridHeight}, Converter={converters:MarginToMatchChromeHeightValueConverter}, Mode=OneWay}"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Center"
+                      VerticalContentAlignment="Center"
+                      Background="{StaticResource TopWindowsBrush}"
+                      BorderThickness="0,0,0,0"
+                      Grid.IsSharedSizeScope="True"
+                      ItemsSource="{Binding NavigationViewModel.Items}"
+                      ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                      Style="{StaticResource ListView_MenuStyle}"
+                      WindowChrome.IsHitTestVisibleInChrome="True">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
 
-        <ListView.ItemContainerStyle>
-          <Style BasedOn="{StaticResource ListViewMenuItemStyle}" TargetType="ListViewItem">
-            <Style.Triggers>
-              <Trigger Property="IsSelected" Value="True">
-                <Setter Property="BorderThickness" Value="0,0,0,2" />
-                <Setter Property="BorderBrush" Value="#15fefefe" />
-              </Trigger>
-            </Style.Triggers>
-          </Style>
-        </ListView.ItemContainerStyle>
-      </ListView>
+                <ListView.ItemContainerStyle>
+                    <Style BasedOn="{StaticResource ListViewMenuItemStyle}" TargetType="ListViewItem">
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="BorderThickness" Value="0,0,0,2" />
+                                <Setter Property="BorderBrush" Value="#15fefefe" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
 
 
-      <Menu Grid.Column="1"
-            Margin="{Binding Source={StaticResource ChromeGridHeight}, Converter={converters:MarginToMatchChromeHeightValueConverter}, Mode=OneWay}"
-            HorizontalAlignment="Left"
-            Background="Transparent"
-            WindowChrome.IsHitTestVisibleInChrome="True">
-
-        <MenuItem Width="80"
-                  Height="{StaticResource ChromeGridHeight}"
+            <Menu Grid.Column="1"
+                  Margin="{Binding Source={StaticResource ChromeGridHeight}, Converter={converters:MarginToMatchChromeHeightValueConverter}, Mode=OneWay}"
+                  HorizontalAlignment="Left"
                   Background="Transparent"
-                  BorderThickness="0">
-          <MenuItem.Header>
-            <StackPanel Orientation="Horizontal">
-              <controls:PathButton Margin="0,0,10,0"
-                                   Cursor="Arrow"
-                                   FontSize="16"
-                                   IsHitTestVisible="False"
-                                   IsReadOnly="True">
-                <controls:PathButton.Style>
-                  <Style BasedOn="{StaticResource download}" TargetType="controls:PathButton">
+                  WindowChrome.IsHitTestVisibleInChrome="True">
 
-                    <Style.Triggers>
-                      <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=MenuItem, Mode=FindAncestor}}" Value="true">
-                        <Setter Property="ForegroundDefaultColor" Value="{StaticResource DefaultRedColor}" />
-                      </DataTrigger>
+                <MenuItem Width="80"
+                          Height="{StaticResource ChromeGridHeight}"
+                          Background="Transparent"
+                          BorderThickness="0">
+                    <MenuItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <controls:PathButton Margin="0,0,10,0"
+                                                 Cursor="Arrow"
+                                                 FontSize="16"
+                                                 IsHitTestVisible="False"
+                                                 IsReadOnly="True">
+                                <controls:PathButton.Style>
+                                    <Style BasedOn="{StaticResource download}" TargetType="controls:PathButton">
 
-                      <DataTrigger Binding="{Binding IsHighlighted, RelativeSource={RelativeSource AncestorType=MenuItem, Mode=FindAncestor}}" Value="true">
-                        <Setter Property="ForegroundDefaultColor" Value="{StaticResource DefaultRedColor}" />
-                      </DataTrigger>
-                    </Style.Triggers>
-                  </Style>
-                </controls:PathButton.Style>
-              </controls:PathButton>
-              <TextBlock Text="Import " />
-            </StackPanel>
-          </MenuItem.Header>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsHighlighted, RelativeSource={RelativeSource AncestorType=MenuItem, Mode=FindAncestor}}" Value="true">
+                                                <Setter Property="ForegroundDefaultColor" Value="{StaticResource DefaultRedColor}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsHighlighted, RelativeSource={RelativeSource AncestorType=MenuItem, Mode=FindAncestor}}" Value="false">
+                                                <Setter Property="ForegroundDefaultColor" Value="#555555" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </controls:PathButton.Style>
+                            </controls:PathButton>
+                            <TextBlock Text="Import " />
+                        </StackPanel>
+                    </MenuItem.Header>
 
-          <MenuItem Command="{Binding LoadFromFolder}">
-            <MenuItem.Header>
-              <StackPanel Orientation="Horizontal">
-                <controls:PathButton Margin="0,0,10,0"
-                                     Cursor="Arrow"
-                                     FontSize="16"
-                                     IconMargin="0 0 3 0"
-                                     IsHitTestVisible="False"
-                                     IsReadOnly="True">
-                  <controls:PathButton.Style>
-                    <Style BasedOn="{StaticResource music-note}" TargetType="controls:PathButton">
+                    <MenuItem Command="{Binding LoadFromFolder}">
+                        <MenuItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <controls:PathButton Margin="0,0,10,0"
+                                                     Cursor="Arrow"
+                                                     FontSize="16"
+                                                     IconMargin="0 0 3 0"
+                                                     IsHitTestVisible="False"
+                                                     IsReadOnly="True">
+                                    <controls:PathButton.Style>
+                                        <Style BasedOn="{StaticResource music-note}" TargetType="controls:PathButton">
 
-                      <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=MenuItem, Mode=FindAncestor}}" Value="true">
-                          <Setter Property="IconDefaultColor" Value="{StaticResource DefaultRedColor}" />
-                        </DataTrigger>
-                      </Style.Triggers>
-                    </Style>
-                  </controls:PathButton.Style>
-                </controls:PathButton>
-                <TextBlock Text="Music" />
-              </StackPanel>
-            </MenuItem.Header>
-          </MenuItem>
-          <MenuItem Command="{Binding LoadTvShow}">
-            <MenuItem.Header>
-              <StackPanel Orientation="Horizontal">
-                <controls:PathButton Margin="0,0,10,0"
-                                     Cursor="Arrow"
-                                     FontSize="16"
-                                     IconMargin="0 0 0 0"
-                                     IsHitTestVisible="False"
-                                     IsReadOnly="True">
-                  <controls:PathButton.Style>
-                    <Style BasedOn="{StaticResource tv-retro}" TargetType="controls:PathButton">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=MenuItem, Mode=FindAncestor}}" Value="true">
+                                                    <Setter Property="IconDefaultColor" Value="{StaticResource DefaultRedColor}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </controls:PathButton.Style>
+                                </controls:PathButton>
+                                <TextBlock Text="Music" />
+                            </StackPanel>
+                        </MenuItem.Header>
+                    </MenuItem>
+                    <MenuItem Command="{Binding LoadTvShow}">
+                        <MenuItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <controls:PathButton Margin="0,0,10,0"
+                                                     Cursor="Arrow"
+                                                     FontSize="16"
+                                                     IconMargin="0 0 0 0"
+                                                     IsHitTestVisible="False"
+                                                     IsReadOnly="True">
+                                    <controls:PathButton.Style>
+                                        <Style BasedOn="{StaticResource tv-retro}" TargetType="controls:PathButton">
 
-                      <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=MenuItem, Mode=FindAncestor}}" Value="true">
-                          <Setter Property="IconDefaultColor" Value="{StaticResource DefaultRedColor}" />
-                        </DataTrigger>
-                      </Style.Triggers>
-                    </Style>
-                  </controls:PathButton.Style>
-                </controls:PathButton>
-                <TextBlock Text="Tv show" />
-              </StackPanel>
-            </MenuItem.Header>
-          </MenuItem>
-        </MenuItem>
-      </Menu>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=MenuItem, Mode=FindAncestor}}" Value="true">
+                                                    <Setter Property="IconDefaultColor" Value="{StaticResource DefaultRedColor}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </controls:PathButton.Style>
+                                </controls:PathButton>
+                                <TextBlock Text="Tv show" />
+                            </StackPanel>
+                        </MenuItem.Header>
+                    </MenuItem>
+                </MenuItem>
+            </Menu>
+        </Grid>
+
+
+
+        <Border Grid.Row="1" Padding="0,1,0,0">
+            <Grid>
+                <ContentControl mvvm:RegionManager.RegionName="{x:Static regions1:RegionNames.WindowsPlayerContentRegion}" />
+            </Grid>
+        </Border>
     </Grid>
-
-
-
-    <Border Grid.Row="1" Padding="0,1,0,0">
-      <Grid>
-        <ContentControl mvvm:RegionManager.RegionName="{x:Static regions1:RegionNames.WindowsPlayerContentRegion}" />
-      </Grid>
-    </Border>
-  </Grid>
 </UserControl>
