@@ -40,7 +40,7 @@ namespace VPlayer
   {
     protected override void ShowConsole()
     {
-      IsConsoleVisible = true;
+      //IsConsoleVisible = true;
       base.ShowConsole();
     }
 
