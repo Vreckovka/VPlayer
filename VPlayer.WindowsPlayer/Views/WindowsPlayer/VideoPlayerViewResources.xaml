@@ -2,7 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
-                    xmlns:controls2="clr-namespace:VCore.Controls;assembly=VCore.WPF"
+                   
                     xmlns:local="clr-namespace:VPlayer.WindowsPlayer.Views.WindowsPlayer"
                     xmlns:lrc="clr-namespace:VPlayer.AudioStorage.InfoDownloader.LRC;assembly=VCore.WPF">
 
