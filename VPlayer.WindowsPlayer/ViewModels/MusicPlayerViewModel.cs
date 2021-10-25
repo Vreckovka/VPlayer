@@ -911,7 +911,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           return;
         }
 
-        var publicLink = await cloudService.GetAudioLink(id);
+        var publicLink = await cloudService.GetFileLink(id);
 
         if(publicLink != null)
         {
@@ -964,7 +964,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       var validIds = onlyNeededList.Select(x => long.Parse(x.FileInfo.Indentificator));
 
-      var getLinksTask = cloudService.GetAudioLinks(validIds, cancellationToken);
+      var getLinksTask = cloudService.GetFileLinks(validIds, cancellationToken);
 
       var result = await getLinksTask.Process;
 
