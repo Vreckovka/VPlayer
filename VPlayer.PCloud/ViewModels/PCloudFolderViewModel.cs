@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using PCloudClient;
 using PCloudClient.Domain;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.ViewModels.WindowsFile;
 using VCore.WPF.ViewModels.WindowsFiles;
-using VPLayer.Domain.Contracts.CloudService.Providers;
 using FileInfo = VCore.WPF.ViewModels.WindowsFiles.FileInfo;
 using FolderInfo = VCore.WPF.ViewModels.WindowsFiles.FolderInfo;
 
@@ -17,12 +17,12 @@ namespace VPlayer.PCloud.ViewModels
 {
   public class PCloudFolderViewModel : FolderViewModel<PCloudFileViewModel>
   {
-    private readonly ICloudService cloudService;
+    private readonly IPCloudService cloudService;
 
     public PCloudFolderViewModel(
       FolderInfo directoryInfo,
       IViewModelsFactory viewModelsFactory,
-      ICloudService cloudService) : base(directoryInfo, viewModelsFactory)
+      IPCloudService cloudService) : base(directoryInfo, viewModelsFactory)
     {
       this.cloudService = cloudService ?? throw new ArgumentNullException(nameof(cloudService));
     }

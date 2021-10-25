@@ -43,7 +43,7 @@ using VPlayer.Core.ViewModels.SoundItems;
 using VPlayer.Core.ViewModels.SoundItems.LRCCreators;
 using VPlayer.Core.ViewModels.TvShows;
 using VPLayer.Domain;
-using VPLayer.Domain.Contracts.CloudService.Providers;
+
 using VPlayer.PCloud.ViewModels;
 using VPlayer.Player.Views.WindowsPlayer;
 using VPlayer.UPnP.ViewModels;

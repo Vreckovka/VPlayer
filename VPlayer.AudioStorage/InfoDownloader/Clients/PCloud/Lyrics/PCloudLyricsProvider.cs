@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using PCloudClient;
 using PCloudClient.Domain;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.LRC;
 using VCore.WPF.LRC.Domain;
-using VPLayer.Domain.Contracts.CloudService.Providers;
+
 
 namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
 {
   public class PCloudLyricsProvider : LrcProvider<PCloudLRCFile>
   {
-    private readonly ICloudService cloudService;
+    private readonly IPCloudService cloudService;
     private readonly IWindowManager windowManager;
     private readonly IPCloudProvider pCloudProvider;
 
@@ -21,7 +22,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
 
     private string lrcExtension = ".lrc";
 
-    public PCloudLyricsProvider(ICloudService cloudService, IWindowManager windowManager, IPCloudProvider pCloudProvider)
+    public PCloudLyricsProvider(IPCloudService cloudService, IWindowManager windowManager, IPCloudProvider pCloudProvider)
     {
       this.cloudService = cloudService ?? throw new ArgumentNullException(nameof(cloudService));
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));

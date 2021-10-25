@@ -14,7 +14,7 @@
 	</PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PCloudClient\PCloudClient.csproj" />
+    <ProjectReference Include="..\..\CustomLibraries\Custom\PCloudClient\PCloudClient.csproj" />
     <ProjectReference Include="..\VPlayer.Core\VPlayer.Core.csproj" />
     <ProjectReference Include="..\VPLayer.Domain\VPLayer.Domain.csproj" />
   </ItemGroup>

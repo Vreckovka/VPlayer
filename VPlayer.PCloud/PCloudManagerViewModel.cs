@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using PCloudClient;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Managers;
 using VCore.WPF.Modularity.RegionProviders;
@@ -12,7 +13,6 @@ using VCore.WPF.ViewModels;
 using VCore.WPF.ViewModels.Prompt;
 using VPlayer.Core;
 using VPlayer.Core.Modularity.Regions;
-using VPLayer.Domain.Contracts.CloudService.Providers;
 using VPlayer.PCloud.ViewModels;
 using VPlayer.PCloud.Views;
 
@@ -20,12 +20,12 @@ namespace VPlayer.PCloud
 {
   public class PCloudManagerViewModel : RegionViewModel<PCloudManagementView>
   {
-    private readonly ICloudService cloudService;
+    private readonly IPCloudService cloudService;
     private readonly IWindowManager windowManager;
 
     public PCloudManagerViewModel(
       IRegionProvider regionProvider,
-      ICloudService cloudService,
+      IPCloudService cloudService,
       IWindowManager windowManager,
       PCloudFileBrowserViewModel pCloudFileBrowserViewModel) : base(regionProvider)
     {

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using PCloudClient;
 using VCore.WPF.Interfaces.Managers;
-using VCore.WPF.Managers;
-using VPLayer.Domain.Contracts.CloudService.Providers;
+
 
 namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud.Images
 {
@@ -17,13 +17,13 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud.Images
 
   public class PCloudAlbumCoverProvider : IPCloudAlbumCoverProvider
   {
-    private readonly ICloudService cloudService;
+    private readonly IPCloudService cloudService;
     private readonly IPCloudProvider pCloudProvider;
 
     private string fileExtension = ".jpg";
     private long lyricsFolderId = 1457701143;
 
-    public PCloudAlbumCoverProvider(ICloudService cloudService, IWindowManager windowManager, IPCloudProvider pCloudProvider)
+    public PCloudAlbumCoverProvider(IPCloudService cloudService, IWindowManager windowManager, IPCloudProvider pCloudProvider)
     {
       this.cloudService = cloudService ?? throw new ArgumentNullException(nameof(cloudService));
       this.pCloudProvider = pCloudProvider ?? throw new ArgumentNullException(nameof(pCloudProvider));

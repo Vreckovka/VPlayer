@@ -2,11 +2,11 @@
 using System.Data.Common;
 using System.Reflection;
 using Ninject;
+using PCloudClient;
 using VCore.Standard.Modularity.NinjectModules;
 using VCore.Standard.Providers;
 using VPlayer.Core.Modularity.Ninject;
 using VPLayer.Domain;
-using VPLayer.Domain.Contracts.CloudService.Providers;
 using VPlayer.IPTV.Modularity;
 using VPlayer.PCloud;
 using VPlayer.Player.ViewModels;
@@ -43,7 +43,7 @@ namespace VPlayer.Modularity.NinjectModules
           .WithConstructorArgument(ConfigurationManager.AppSettings["PCloudPath"])
           .OnActivation(x => x.Initilize()); ;
 
-        Kernel.Bind<ICloudService>().To<VPlayerCloudService>()
+        Kernel.Bind<IPCloudService>().To<VPlayerCloudService>()
           .InSingletonScope()
           .WithConstructorArgument(ConfigurationManager.AppSettings["PCloudPath"])
           .OnActivation(x => x.Initilize());

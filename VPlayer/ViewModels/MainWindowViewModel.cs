@@ -28,7 +28,6 @@ using VPlayer.AudioStorage.Scrappers.CSFD;
 using VPlayer.Core.Events;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
-using VPLayer.Domain.Contracts.CloudService.Providers;
 using VPlayer.Player.ViewModels;
 using VPlayer.UPnP.ViewModels;
 using VPlayer.WindowsPlayer.Behaviors;

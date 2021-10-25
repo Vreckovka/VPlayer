@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using PCloudClient;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Providers;
 using VCore.WPF.Interfaces.Managers;
@@ -13,17 +14,17 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core;
 using VPlayer.Core.FileBrowser;
 using VPlayer.Core.ViewModels;
-using VPLayer.Domain.Contracts.CloudService.Providers;
+
 
 namespace VPlayer.PCloud.ViewModels
 {
   public class PCloudFileBrowserViewModel : FileBrowserViewModel<PlayblePCloudFolderViewModel>
   {
-    private readonly ICloudService cloudService;
+    private readonly IPCloudService cloudService;
 
     public PCloudFileBrowserViewModel(
       IRegionProvider regionProvider,
-      ICloudService cloudService,
+      IPCloudService cloudService,
       ISettingsProvider settingsProvider,
       IViewModelsFactory viewModelsFactory,
       IWindowManager windowManager,

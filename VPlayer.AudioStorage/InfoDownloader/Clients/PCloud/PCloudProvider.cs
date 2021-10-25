@@ -4,22 +4,22 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using Logger;
+using PCloudClient;
 using PCloudClient.Domain;
 using VCore.Standard;
 using VCore.WPF.Interfaces.Managers;
-using VPLayer.Domain.Contracts.CloudService.Providers;
 
 namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
 {
   public class PCloudProvider : IPCloudProvider
   {
-    private readonly ICloudService cloudService;
+    private readonly IPCloudService ipCloudService;
     private readonly IWindowManager windowManager;
     private readonly ILogger logger;
 
-    public PCloudProvider(ICloudService cloudService, IWindowManager windowManager, ILogger logger)
+    public PCloudProvider(IPCloudService ipCloudService, IWindowManager windowManager, ILogger logger)
     {
-      this.cloudService = cloudService ?? throw new ArgumentNullException(nameof(cloudService));
+      this.ipCloudService = ipCloudService ?? throw new ArgumentNullException(nameof(ipCloudService));
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -37,7 +37,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
       long previousFolderId = parentId;
       int startIndex = 0;
 
-      var parentFolders = (await cloudService.GetFoldersAsync(parentId))?.ToList();
+      var parentFolders = (await ipCloudService.GetFoldersAsync(parentId))?.ToList();
 
       if(parentFolders == null)
       {
@@ -51,7 +51,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
           return false;
         }
 
-        acutalFolder = await cloudService.CreateFolder(PathStringProvider.GetPathValidName(folderNames[0]), previousFolderId);
+        acutalFolder = await ipCloudService.CreateFolder(PathStringProvider.GetPathValidName(folderNames[0]), previousFolderId);
 
         previousFolderId = acutalFolder.id;
         startIndex++;
@@ -67,18 +67,18 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
 
           if (acutalFolder == null)
           {
-            acutalFolder = await cloudService.CreateFolder(PathStringProvider.GetPathValidName(acutalFolderName), previousFolderId);
+            acutalFolder = await ipCloudService.CreateFolder(PathStringProvider.GetPathValidName(acutalFolderName), previousFolderId);
           }
 
           previousFolderId = acutalFolder.id;
 
-          parentFolders = (await cloudService.GetFoldersAsync(previousFolderId)).ToList();
+          parentFolders = (await ipCloudService.GetFoldersAsync(previousFolderId)).ToList();
         }
       }
 
       if (acutalFolder != null)
       {
-        var files = (await cloudService.GetFilesAsync(acutalFolder.id)).ToList();
+        var files = (await ipCloudService.GetFilesAsync(acutalFolder.id)).ToList();
 
         var fileName = pFileName + fileExtension;
 
@@ -94,11 +94,11 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
 
           if (existingFile != null)
           {
-            return await cloudService.WriteToFile(data, existingFile.id);
+            return await ipCloudService.WriteToFile(data, existingFile.id);
           }
           else
           {
-            return await cloudService.CreateFileAndWrite(fileName, data, acutalFolder.id);
+            return await ipCloudService.CreateFileAndWrite(fileName, data, acutalFolder.id);
           }
         }
       }
@@ -113,7 +113,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
 
     public async Task<FileInfo> GetFile(long parentId, string[] folderNames, string pFileName, string extension)
     {
-      var parentFolders = (await cloudService.GetFoldersAsync(parentId))?.ToList();
+      var parentFolders = (await ipCloudService.GetFoldersAsync(parentId))?.ToList();
 
       if (parentFolders != null && parentFolders.Count > 0)
       {
@@ -130,12 +130,12 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
             return null;
           }
 
-          parentFolders = (await cloudService.GetFoldersAsync(acutalFolder.id)).ToList();
+          parentFolders = (await ipCloudService.GetFoldersAsync(acutalFolder.id)).ToList();
         }
 
         if (acutalFolder != null)
         {
-          var files = (await cloudService.GetFilesAsync(acutalFolder.id)).ToList();
+          var files = (await ipCloudService.GetFilesAsync(acutalFolder.id)).ToList();
 
           var fileName = pFileName + extension;
 

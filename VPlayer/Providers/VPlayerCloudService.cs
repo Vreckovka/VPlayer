@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Logger;
+using PCloudClient;
 using VCore.Standard;
 using VCore.WPF.ViewModels.WindowsFiles;
 using VPLayer.Domain;
@@ -11,7 +12,7 @@ using VPlayer.PCloud;
 
 namespace VPlayer.Providers
 {
-  public class VPlayerCloudService : PCloudCloudService, IVPlayerCloudService
+  public class VPlayerCloudService : PCloudService, IVPlayerCloudService
   {
     public VPlayerCloudService(string filePath, ILogger logger) : base(filePath, logger)
     {
