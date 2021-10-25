@@ -5,5 +5,7 @@ namespace VPlayer.WindowsPlayer.Players
   public interface IMedia
   {
     public event EventHandler<MediaDurationChangedArgs> DurationChanged;
+
+    public long Duration{get;}
   }
 }

@@ -19,6 +19,7 @@ namespace VPlayer.UPnP.ViewModels.Player
   public class UNpNMedia : IMedia
   {
     public event EventHandler<MediaDurationChangedArgs> DurationChanged;
+    public long Duration { get; } 
   }
 
   public class MediaRendererPlayer : ViewModel<MediaRenderer>, IPlayer

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using LibVLCSharp.Shared;
 using VPlayer.WindowsPlayer.Players;
 
@@ -15,6 +17,9 @@ namespace VVLC.Players
 
       media.DurationChanged += Media_DurationChanged;
     }
+
+
+    public long Duration => media.Duration;
 
     private void Media_DurationChanged(object sender, MediaDurationChangedEventArgs e)
     {

@@ -911,7 +911,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           return;
         }
 
-        var publicLink = await cloudService.GetFileLink(id);
+        var publicLink = await cloudService.GetAudioLink(id);
 
         if(publicLink != null)
         {

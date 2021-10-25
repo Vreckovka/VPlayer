@@ -298,7 +298,7 @@ namespace VPlayer.Core.ViewModels
 
         lastTimeChangedMs = (long)(ActualItem.ActualPosition * (double)ActualItem.Duration) * 1000;
 
-      
+
       }
     }
 
@@ -345,7 +345,15 @@ namespace VPlayer.Core.ViewModels
       if (e.Cache != 100)
         BufferingSubject.OnNext(true);
       else
-        BufferingSubject.OnNext(false); ;
+      {
+        if (MediaPlayer.Media != null)
+        {
+          var dur = MediaPlayer.Media.Duration;
+        }
+
+        BufferingSubject.OnNext(false);
+      }
+
     }
 
     #endregion
@@ -390,22 +398,26 @@ namespace VPlayer.Core.ViewModels
     {
       Application.Current.Dispatcher.Invoke(async () =>
       {
-        ActualItem.Duration = (int)e.Duration / 1000;
-
-        if (MediaPlayer.Media != null)
-          MediaPlayer.Media.DurationChanged -= Media_DurationChanged;
-
-        await storageManager.UpdateEntityAsync(ActualItem.Model);
-
-
-        if (ActualItem != null && reloadPosition != null)
+        if (e.Duration != 0)
         {
-          MediaPlayer.Position = reloadPosition.Value;
+          ActualItem.Duration = (int)e.Duration / 1000;
 
-          reloadPosition = null;
+          if (MediaPlayer.Media != null)
+            MediaPlayer.Media.DurationChanged -= Media_DurationChanged;
+
+          await storageManager.UpdateEntityAsync(ActualItem.Model);
+
+
+          if (ActualItem != null && reloadPosition != null)
+          {
+            MediaPlayer.Position = reloadPosition.Value;
+
+            reloadPosition = null;
+          }
+
+          RaisePropertyChanged(nameof(TotalPlaylistDuration));
         }
 
-        RaisePropertyChanged(nameof(TotalPlaylistDuration));
       });
     }
 
@@ -506,7 +518,7 @@ namespace VPlayer.Core.ViewModels
       {
         CheckedFiles.Clear();
       });
-    
+
 
       return base.BeforePlayEvent(data);
     }
