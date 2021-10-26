@@ -376,6 +376,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       if (WasAllSongProcessed)
       {
         var validItems = PlayList.OfType<SongInPlayListViewModel>()
+          .Where(x => x.ArtistViewModel != null)
           .Where(x => x.ArtistViewModel.Model.Id == 0)
           .Where(x => !string.IsNullOrEmpty(x.ArtistViewModel.Name))
           .GroupBy(x => x.ArtistViewModel.Model)
@@ -449,6 +450,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
             if (WasAllSongProcessed)
             {
               var validItems = PlayList.OfType<SongInPlayListViewModel>()
+                .Where(x => x.AlbumViewModel != null)
                 .Where(x => x.AlbumViewModel.Model.Id == 0)
                 .Where(x => !string.IsNullOrEmpty(x.AlbumViewModel.Name))
                 .GroupBy(x => x.AlbumViewModel.Model)
@@ -1163,6 +1165,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
               cancellationToken.ThrowIfCancellationRequested();
 
               var result = await storageManager.UpdateEntityAsync(fileInfo);
+              var downloadArtist = true;
+              var downloadAlbum = true;
 
               if (!string.IsNullOrEmpty(artistName))
               {
@@ -1174,28 +1178,50 @@ namespace VPlayer.WindowsPlayer.ViewModels
                   normalizedDownloadingAristName = VPlayerStorageManager.GetNormalizedName(downloadingArtist.Name);
                 }
 
-                if (downloadingArtist == null)
+                if (downloadingArtist == null || string.IsNullOrEmpty(downloadingArtist.Name))
+                {
                   downloadingArtist = storageManager.GetRepository<Artist>().SingleOrDefault(x => x.NormalizedName == normalizedArtistName);
 
-                if ((downloadingArtist == null ||
+                  if (downloadingArtist == null && !string.IsNullOrEmpty(normalizedArtistName))
+                  {
+                    var artistGroup = PlayList.OfType<SongInPlayListViewModel>()
+                      .Where(x => x.ArtistViewModel != null)
+                      .GroupBy(x => x.ArtistViewModel.Model)
+                      .ToList();
+
+                    var existingArtist = artistGroup.SingleOrDefault(x => x.Key.NormalizedName == normalizedArtistName);
+
+                    if (existingArtist != null)
+                    {
+                      downloadingArtist = existingArtist.Key;
+                    }
+                  }
+
+                  if (downloadingArtist != null)
+                  {
+                    downloadArtist = false;
+                  }
+                }
+                 
+
+                if (((downloadingArtist == null ||
                     normalizedArtistName?.Similarity(normalizedDownloadingAristName, true) < 0.9) &&
                     !string.IsNullOrEmpty(normalizedArtistName) &&
-                    originalDownlaodedArtistName != artistName)
+                    originalDownlaodedArtistName != artistName) && downloadArtist)
                 {
                   downloadingArtist = await GetArtist(artistName, cancellationToken);
                   originalDownlaodedArtistName = artistName;
 
-                  if (downloadingArtist != null)
+                  if (downloadingArtist != null && !string.IsNullOrEmpty(downloadingArtist.NormalizedName))
                   {
-                    var existingAlbum = PlayList.OfType<SongInPlayListViewModel>()
+                    var existingArtist = PlayList.OfType<SongInPlayListViewModel>()
                       .Where(x => x.ArtistViewModel != null)
-                      .DistinctBy(x => x.ArtistViewModel.Model.Id)
-                      .SingleOrDefault(x => x.ArtistViewModel.Model.NormalizedName == downloadingArtist.NormalizedName);
+                      .GroupBy(x => x.ArtistViewModel.Model)
+                      .SingleOrDefault(x => x.Key.NormalizedName == downloadingArtist.NormalizedName);
 
-                    if (existingAlbum != null)
+                    if (existingArtist != null)
                     {
-                      downloadingArtist = existingAlbum.ArtistViewModel.Model;
-
+                      downloadingArtist = existingArtist.Key;
                     }
                   }
                 }
@@ -1216,28 +1242,48 @@ namespace VPlayer.WindowsPlayer.ViewModels
                 if (downloadingAlbum != null)
                   normalizedDownloadingAlbumName = VPlayerStorageManager.GetNormalizedName(downloadingAlbum.Name);
 
-                if (downloadingAlbum == null)
+                if (downloadingAlbum == null || string.IsNullOrEmpty(downloadingAlbum.Name))
+                {
                   downloadingAlbum = storageManager.GetRepository<Album>().SingleOrDefault(x => x.NormalizedName == normalizedName);
+
+                  if (downloadingAlbum == null && !string.IsNullOrEmpty(normalizedName))
+                  {
+                    var existingAlbum = PlayList.OfType<SongInPlayListViewModel>()
+                      .Where(x => x.AlbumViewModel != null)
+                      .GroupBy(x => x.AlbumViewModel.Model)
+                      .SingleOrDefault(x => x.Key.NormalizedName == normalizedName);
+
+                    if (existingAlbum != null)
+                    {
+                      downloadingAlbum = existingAlbum.Key;
+                    }
+                  }
+
+                  if (downloadingArtist != null)
+                  {
+                    downloadAlbum = false;
+                  }
+                }
+                 
 
                 if ((downloadingAlbum == null ||
                      normalizedName?.Similarity(normalizedDownloadingAlbumName, true) < 0.9 &&
                      !string.IsNullOrEmpty(normalizedDownloadingAlbumName)) &&
-
-                    originalDownlaodedAlbumName != albumName)
+                    originalDownlaodedAlbumName != albumName && downloadAlbum)
                 {
                   downloadingAlbum = await GetAlbum(downloadingArtist, albumName, cancellationToken);
 
-                  if (downloadingAlbum != null)
+                  if (downloadingAlbum != null && !string.IsNullOrEmpty(downloadingAlbum.NormalizedName))
                   {
                     var existingAlbum = PlayList.OfType<SongInPlayListViewModel>()
                       .Where(x => x.AlbumViewModel != null)
-                      .DistinctBy(x => x.AlbumViewModel.Model.Id)
-                      .SingleOrDefault(x => x.AlbumViewModel.Model.NormalizedName == downloadingAlbum.NormalizedName);
+                      .GroupBy(x => x.AlbumViewModel.Model)
+                      .SingleOrDefault(x => x.Key.NormalizedName == downloadingAlbum.NormalizedName);
 
 
                     if (existingAlbum != null)
                     {
-                      downloadingAlbum = existingAlbum.AlbumViewModel.Model;
+                      downloadingAlbum = existingAlbum.Key;
                     }
                   }
 
@@ -1394,19 +1440,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       if (!string.IsNullOrEmpty(artistName))
       {
-        var normalizedName = VPlayerStorageManager.GetNormalizedName(artistName);
-
         cancellationToken.ThrowIfCancellationRequested();
 
-        artist = storageManager.GetRepository<Artist>().Include(x => x.Albums).FirstOrDefault(x => x.NormalizedName == normalizedName);
-
-        if (artist == null)
-        {
-          cancellationToken.ThrowIfCancellationRequested();
-
-          artist = await audioInfoDownloader.UpdateArtist(artistName);
-          artist.NormalizedName = normalizedName;
-        }
+        artist = await audioInfoDownloader.UpdateArtist(artistName);
       }
 
       return artist;

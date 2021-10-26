@@ -44,29 +44,16 @@ namespace Listener
 
     #region Constructors
 
-    private Dispatcher myDispatcher;
     public KeyListener()
     {
-      ManualResetEvent dispatcherReadyEvent = new ManualResetEvent(false);
-
       new Thread((() =>
-      {
-        myDispatcher = Dispatcher.CurrentDispatcher;
-        dispatcherReadyEvent.Set();
-        Dispatcher.Run();
-      })).Start();
-
-      dispatcherReadyEvent.WaitOne();
-
-      myDispatcher.Invoke(() =>
       {
         _procKeyboard = HookCallbackKeyboard;
         _procMouse = HookCallbackMouse;
 
         HookKeyboard();
         HookMouse();
-      });
-     
+      })).Start();
     }
 
     #endregion Constructors

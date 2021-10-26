@@ -32,6 +32,7 @@ using VCore.WPF.Controls.StatusMessage;
 using VCore.WPF.Helpers;
 using VCore.WPF.LRC;
 using VCore.WPF.LRC.Domain;
+using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.InfoDownloader.Clients.PCloud.Images;
 using VPlayer.Core.Managers.Status;
 
@@ -702,7 +703,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
         {
           byte[] albumCover = await iPCloudAlbumCoverProvider.GetAlbumCover(artistName, albumName);
 
-          if(albumCover == null)
+          if (albumCover == null)
           {
             albumCover = await GetAlbumFrontConverBLOB(release.Id, albumCoverUrl);
             logger.Log(Logger.MessageType.Success, $"Album info was succesfully downloaded {album.Name} - {artistName}");
@@ -747,7 +748,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
           ReleaseDate = release.Date,
           AlbumFrontCoverURI = albumCoverUrl,
           AlbumFrontCoverFilePath = coverPath,
-          NormalizedName = album.NormalizedName
+          NormalizedName = VPlayerStorageManager.GetNormalizedName(albumName)
         };
 
         statusMessage.Message = $"Album successfuly updated";
@@ -919,6 +920,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
           {
             Name = artist.Name,
             MusicBrainzId = artist.Id,
+            NormalizedName = VPlayerStorageManager.GetNormalizedName(artist.Name)
           };
         }
         else
