@@ -8,6 +8,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using ChromeDriverScrapper;
 using HtmlAgilityPack;
 using Logger;
@@ -17,6 +18,7 @@ using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
 using VCore;
 using VCore.WPF.Controls.StatusMessage;
+using VCore.WPF.Interfaces.Managers;
 using VPlayer.AudioStorage.DataLoader;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.Scrappers.CSFD.Domain;
@@ -29,13 +31,15 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     private readonly ILogger logger;
     private readonly IStatusManager statusManager;
     private readonly IChromeDriverProvider chromeDriverProvider;
+    private readonly IWindowManager windowManager;
     private string baseUrl = "https://csfd.cz";
 
-    public CSFDWebsiteScrapper(ILogger logger, IStatusManager statusManager, IChromeDriverProvider chromeDriverProvider)
+    public CSFDWebsiteScrapper(ILogger logger, IStatusManager statusManager, IChromeDriverProvider chromeDriverProvider, IWindowManager windowManager)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
       this.chromeDriverProvider = chromeDriverProvider ?? throw new ArgumentNullException(nameof(chromeDriverProvider));
+      this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
     }
 
 
@@ -618,15 +622,28 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region FindItems
 
+    private bool chromeDriverInitError;
     public Task<CSFDQueryResult> FindItems(string name, CancellationToken cancellationToken)
     {
       var query = $"https://www.csfd.cz/hledat/?q={name}";
 
       cancellationToken.ThrowIfCancellationRequested();
 
-      if (!chromeDriverProvider.Initialize())
+      var initEx = chromeDriverProvider.InitializeWithExceptionReturn();
+
+      if (initEx != null)
       {
-        return null;
+        if (!chromeDriverInitError)
+        {
+          chromeDriverInitError = true;
+
+          Application.Current?.Dispatcher?.Invoke(() =>
+          {
+            windowManager.ShowErrorPrompt(initEx.Message);
+          });
+        }
+
+        return Task.FromResult<CSFDQueryResult>(null);
       }
 
       return GetItems(query, cancellationToken);
@@ -812,7 +829,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       var match = Regex.Match(parsedName, @"\D*");
 
-      if (match.Success)
+      if (match.Success && !string.IsNullOrEmpty(match.Value))
       {
         parsedName = match.Value;
       }
@@ -830,15 +847,21 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       var items = await FindItems(parsedName, cancellationToken);
 
-      if (showStatusMassage)
-        statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
-
       var allItems = items?.AllItems?.ToList();
 
       if (allItems == null || allItems.Count == 0)
       {
+        statusMessage.Status = StatusType.Failed;
+        statusMessage.Message = "Not found!";
+        
+        statusManager.UpdateMessage(statusMessage);
+        
         return null;
       }
+
+      if (showStatusMassage)
+        statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+
 
       double minSimilarity = 0.55;
 
