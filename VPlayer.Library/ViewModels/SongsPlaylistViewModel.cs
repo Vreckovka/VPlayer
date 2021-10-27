@@ -82,36 +82,7 @@ namespace VPlayer.Home.ViewModels
           .ThenInclude(x => x.FileInfo)
           .ToList();
 
-        var cacheBefore = false;
-        List<FileInfo> sources = new List<FileInfo>();
-
-        if (cacheBefore)
-        {
-          if (playlist.PlaylistType == PlaylistType.Cloud || playlistItems.Select(x => x.ReferencedItem.Source).Any(y => y.Contains("http")))
-          {
-            var fileInfos = playlistItems.Select(x => x.ReferencedItem.FileInfo).ToList();
-
-            var itemSourcesProcess = vPlayerCloudService.GetItemSources(fileInfos);
-
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-              songPlaylistsViewModel.LoadingStatus.NumberOfProcesses = itemSourcesProcess.InternalProcessesCount;
-            });
-
-            serialDisposable.Disposable = itemSourcesProcess.OnInternalProcessedCountChanged.Subscribe(x =>
-            {
-              Application.Current.Dispatcher.Invoke(() =>
-              {
-                songPlaylistsViewModel.LoadingStatus.ProcessedCount = x;
-              });
-            });
-
-            sources = (await itemSourcesProcess.Process)?.ToList();
-
-          }
-        }
-
-        if (songsItems.Count > 0)
+      if (songsItems.Count > 0)
         {
           var grouppedSongs = songsItems.Select(x => new
           {
@@ -121,22 +92,7 @@ namespace VPlayer.Home.ViewModels
 
           var songs = grouppedSongs.OrderBy(x => x.PlaylistItem.OrderInPlaylist)
             .Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x.Song)).ToList();
-
-          if (cacheBefore)
-          {
-            if (sources != null)
-            {
-              foreach (var song in songs)
-              {
-                var source = sources.SingleOrDefault(x => x.Indentificator == song.SongModel.ItemModel.FileInfo.Indentificator);
-
-                if (source != null)
-                {
-                  song.SongModel.ItemModel.FileInfo.Source = source.Source;
-                }
-              }
-            }
-          }
+          
 
           return songs;
         }

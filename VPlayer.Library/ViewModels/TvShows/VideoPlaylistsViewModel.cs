@@ -10,7 +10,7 @@ using VPlayer.Home.Views;
 
 namespace VPlayer.Home.ViewModels.TvShows
 {
-  public class VideoPlaylistsViewModel : PlayableItemsViewModel<PlaylistsView, VideoPlaylistViewModel, VideoFilePlaylist>
+  public class VideoPlaylistsViewModel : PlaylistsViewModel<PlaylistsView, VideoPlaylistViewModel, VideoFilePlaylist>
   {
     public VideoPlaylistsViewModel(
       IRegionProvider regionProvider, 
@@ -20,13 +20,10 @@ namespace VPlayer.Home.ViewModels.TvShows
       IEventAggregator eventAggregator) :
       base(regionProvider, viewModelsFactory, storageManager, libraryCollection, eventAggregator)
     {
-      LoadingStatus = new LoadingStatus();
     }
 
     public override bool ContainsNestedRegions => false;
     public override string Header { get; } = "Videos";
     public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
-
-    public LoadingStatus LoadingStatus { get;  }
   }
 }

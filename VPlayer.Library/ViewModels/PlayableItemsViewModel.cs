@@ -51,13 +51,14 @@ namespace VPlayer.Home.ViewModels
       LibraryCollection = libraryCollection ?? throw new ArgumentNullException(nameof(libraryCollection));
 
       LoadingStatus = new LoadingStatus();
+      LibraryCollection.DataLoadedCallback = OnDataLoaded;
     }
 
     #endregion Constructors
 
     #region Properties
 
-    public LoadingStatus LoadingStatus { get; }
+    public LoadingStatus LoadingStatus { get; protected set; }
 
     public abstract override bool ContainsNestedRegions { get; }
     public LibraryCollection<TViewModel, TModel> LibraryCollection { get; set; }
@@ -233,6 +234,7 @@ namespace VPlayer.Home.ViewModels
       if (!LibraryCollection.WasLoaded)
       {
         SubscribeToChanges();
+
         var result = await LibraryCollection.GetOrLoadDataAsync(optionalQuery);
 
         if (!result)
@@ -245,6 +247,10 @@ namespace VPlayer.Home.ViewModels
     }
 
     #endregion
+
+    protected virtual void OnDataLoaded()
+    {
+    }
 
     #region RecreateCollection
 

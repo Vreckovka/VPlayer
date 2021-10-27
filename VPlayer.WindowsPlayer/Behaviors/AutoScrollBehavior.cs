@@ -188,6 +188,9 @@ namespace VPlayer.Player.Behaviors
 
               Storyboard storyboard = new Storyboard();
 
+              verticalAnimation.EasingFunction = new SineEase() { EasingMode = EasingMode.EaseOut };
+              storyboard.SpeedRatio = 1.2;
+
               storyboard.Children.Add(verticalAnimation);
               Storyboard.SetTarget(verticalAnimation, scrollViewer);
               Storyboard.SetTargetProperty(verticalAnimation, new PropertyPath(ScrollAnimationBehavior.VerticalOffsetProperty));

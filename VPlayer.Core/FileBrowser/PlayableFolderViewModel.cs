@@ -189,36 +189,36 @@ namespace VPlayer.Core.FileBrowser
                .Where(x => playableFilesList.Select(y => y.Model.Indentificator)
               .Contains(x.FileInfo.Indentificator)).ToList();
 
-          await GetItemSources(soundItems.Select(x => x.FileInfo));
+          //await GetItemSources(soundItems.Select(x => x.FileInfo));
 
-          var soundItemsIds = soundItems.Select(y => y.FileInfo.Indentificator);
+          //var soundItemsIds = soundItems.Select(y => y.FileInfo.Indentificator);
 
-          var notExisting = playableFilesList.Where(x => !soundItemsIds.Contains(x.Model.Indentificator)).ToList();
+          //var notExisting = playableFilesList.Where(x => !soundItemsIds.Contains(x.Model.Indentificator)).ToList();
 
-          if (notExisting.Count > 0)
-          {
-            var notInSources = await GetItemSources(notExisting.Select(x => x.Model));
+          //if (notExisting.Count > 0)
+          //{
+          //  var notInSources = await GetItemSources(notExisting.Select(x => x.Model));
 
-            foreach (var item in notInSources)
-            {
-              var fileInfo = new SoundFileInfo(item.FullName, item.Source)
-              {
-                Length = item.Length,
-                Indentificator = item.Indentificator,
-                Name = item.Name,
-              };
+          //  foreach (var item in notInSources)
+          //  {
+          //    var fileInfo = new SoundFileInfo(item.FullName, item.Source)
+          //    {
+          //      Length = item.Length,
+          //      Indentificator = item.Indentificator,
+          //      Name = item.Name,
+          //    };
 
-              var soudItem = new SoundItem()
-              {
-                FileInfo = fileInfo
-              };
+          //    var soudItem = new SoundItem()
+          //    {
+          //      FileInfo = fileInfo
+          //    };
 
-              storageManager.StoreEntity(soudItem, out var stored);
+          //    storageManager.StoreEntity(soudItem, out var stored);
 
-              soundItems.Add(stored);
+          //    soundItems.Add(stored);
 
-            }
-          }
+          //  }
+          //}
 
           var folders = SubItems.ViewModels
             .SelectManyRecursive(x => x.SubItems.ViewModels)

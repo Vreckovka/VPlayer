@@ -62,9 +62,11 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
 
     public IEnumerable<TViewModel> FilteredItems { get; set; }
     public ObservableCollection<TViewModel> Items { get; set; }
+    public ObservableCollection<TViewModel> FilteredItemsCollection { get; set; }
     public IQueryable<TModel> LoadQuery { get; set; }
     public IObservable<bool> LoadData { get; }
     public bool WasLoaded { get; private set; }
+    public Action DataLoadedCallback { get; set; }
 
     #endregion Properties
 
@@ -87,11 +89,16 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
             else
               data = await optionalQuery.ToListAsync();
 
-            Items = new ObservableCollection<TViewModel>(data.Select(x => ViewModelsFactory.Create<TViewModel>(x)).ToList());
+            var vms = data.Select(x => ViewModelsFactory.Create<TViewModel>(x)).ToList();
+
+            Items = new ObservableCollection<TViewModel>(vms);
+            FilteredItemsCollection = new ObservableCollection<TViewModel>(vms);
 
             Recreate();
 
             WasLoaded = true;
+
+            DataLoadedCallback?.Invoke();
           }
 
           return true;
@@ -142,7 +149,25 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
       RequestReloadVirtulizedPlaylist();
     }
 
-    #endregion Add
+    public async Task AddRange(IEnumerable<TViewModel> entities)
+    {
+      var list = entities.ToList();
+
+      if (!WasLoaded)
+      {
+        await LoadInitilizedDataAsync();
+      }
+
+      Application.Current?.Dispatcher?.Invoke(() =>
+      {
+        Items.AddRange(list);
+        FilteredItemsCollection.AddRange(list);
+      });
+
+      RequestReloadVirtulizedPlaylist();
+    }
+
+    #endregion 
 
     #region Remove
 
@@ -234,8 +259,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
       }
     }
 
-
-    #endregion Filter
+    #endregion 
 
     #region Filter
 
@@ -244,6 +268,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
       if (!string.IsNullOrEmpty(predicated))
       {
         FilteredItems = Items.Where(x => x.Name.ToLower().Contains(predicated) || x.Name.Similarity(predicated) > 0.8);
+        FilteredItemsCollection = new ObservableCollection<TViewModel>(FilteredItems);
       }
       else
       {

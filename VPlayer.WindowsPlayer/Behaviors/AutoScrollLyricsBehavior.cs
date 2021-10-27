@@ -3,8 +3,10 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
 using Microsoft.Xaml.Behaviors;
 using VCore.WPF.Behaviors;
 using VCore.WPF.Helpers;
@@ -57,6 +59,8 @@ namespace VPlayer.Player.Behaviors
     private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
     {
       SubcsribeToSongChange();
+
+      RenderOptions.SetBitmapScalingMode(AssociatedObject, BitmapScalingMode.LowQuality);
     }
 
 
@@ -91,6 +95,8 @@ namespace VPlayer.Player.Behaviors
     {
       try
       {
+       
+
         Application.Current?.Dispatcher?.Invoke(() =>
         {
 
@@ -117,14 +123,17 @@ namespace VPlayer.Player.Behaviors
             else
             {
               DoubleAnimation verticalAnimation = new DoubleAnimation();
+              Storyboard storyboard = new Storyboard();
+
+              verticalAnimation.EasingFunction = new SineEase() { EasingMode = EasingMode.EaseOut };
+              storyboard.SpeedRatio = 1.42;
 
               verticalAnimation.From = scrollViewer.VerticalOffset;
               verticalAnimation.To = scrollIndexOffset;
               verticalAnimation.Duration = new Duration(AnimationTime);
 
-              Storyboard storyboard = new Storyboard();
-
               storyboard.Children.Add(verticalAnimation);
+
               Storyboard.SetTarget(verticalAnimation, scrollViewer);
               Storyboard.SetTargetProperty(verticalAnimation, new PropertyPath(ScrollAnimationBehavior.VerticalOffsetProperty));
               storyboard.Begin();

@@ -6,6 +6,7 @@ using System.Reactive.Disposables;
 using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.EntityFrameworkCore;
+using VCore.Standard;
 using VCore.Standard.Comparers;
 using VCore.Standard.Factories.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
@@ -18,7 +19,7 @@ using VPLayer.Domain;
 
 namespace VPlayer.Core.ViewModels.Artists
 {
-  public interface INamedEntityViewModel<TModel> where TModel : INamedEntity
+  public interface INamedEntityViewModel<TModel> : IViewModel<TModel> where TModel : INamedEntity
   {
     #region Properties
 
