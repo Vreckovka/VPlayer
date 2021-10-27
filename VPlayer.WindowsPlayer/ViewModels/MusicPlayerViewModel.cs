@@ -288,11 +288,14 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public int DistinctArtistsCount
     {
-      get { return PlayList
-        .OfType<SongInPlayListViewModel>()
-        .Where(x => x.ArtistViewModel != null)
-        .Where(x => !string.IsNullOrEmpty(x.ArtistViewModel.Name))
-        .GroupBy(x => x.ArtistViewModel.Model).Count(); }
+      get
+      {
+        return PlayList
+    .OfType<SongInPlayListViewModel>()
+    .Where(x => x.ArtistViewModel != null)
+    .Where(x => !string.IsNullOrEmpty(x.ArtistViewModel.Name))
+    .GroupBy(x => x.ArtistViewModel.Model).Count();
+      }
 
     }
 
@@ -302,11 +305,14 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public int DistinctAlbumsCount
     {
-      get { return PlayList
-        .OfType<SongInPlayListViewModel>()
-        .Where(x => x.AlbumViewModel != null)
-        .Where(x => !string.IsNullOrEmpty(x.AlbumViewModel.Name))
-        .GroupBy(x => x.AlbumViewModel.Model).Count(); ; }
+      get
+      {
+        return PlayList
+    .OfType<SongInPlayListViewModel>()
+    .Where(x => x.AlbumViewModel != null)
+    .Where(x => !string.IsNullOrEmpty(x.AlbumViewModel.Name))
+    .GroupBy(x => x.AlbumViewModel.Model).Count(); ;
+      }
 
     }
 
@@ -356,6 +362,15 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region AddArtists
 
+    private IEnumerable<SongInPlayListViewModel> GetArtistsToAdd()
+    {
+      return PlayList.OfType<SongInPlayListViewModel>()
+        .Where(x => x.ArtistViewModel != null)
+        .Where(x => x.ArtistViewModel.Model.Id == 0)
+        .Where(x => !string.IsNullOrEmpty(x.ArtistViewModel.Name));
+    }
+
+
     private ActionCommand addArtists;
 
     public ICommand AddArtists
@@ -375,10 +390,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       if (WasAllSongProcessed)
       {
-        var validItems = PlayList.OfType<SongInPlayListViewModel>()
-          .Where(x => x.ArtistViewModel != null)
-          .Where(x => x.ArtistViewModel.Model.Id == 0)
-          .Where(x => !string.IsNullOrEmpty(x.ArtistViewModel.Name))
+        var validItems = GetArtistsToAdd()
           .GroupBy(x => x.ArtistViewModel.Model)
           .ToList();
 
@@ -394,10 +406,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       Task.Run(async () =>
       {
-        var validItems = PlayList.OfType<SongInPlayListViewModel>()
-          .Where(x => x.AlbumViewModel != null)
-          .Where(x => x.AlbumViewModel.Model.Id == 0)
-          .Where(x => !string.IsNullOrEmpty(x.AlbumViewModel.Name));
+        var validItems = GetArtistsToAdd();
 
         bool result = true;
 
@@ -437,6 +446,16 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region AddAlbums
 
+    private IEnumerable<SongInPlayListViewModel> GetAlbumsToAdd()
+    {
+      return PlayList.OfType<SongInPlayListViewModel>()
+        .Where(x => x.AlbumViewModel != null)
+        .Where(x => x.AlbumViewModel.Model.Id == 0)
+        .Where(x => x.AlbumViewModel.Model.Artist != null)
+        .Where(x => !string.IsNullOrEmpty(x.AlbumViewModel.Name))
+        .Where(x => !string.IsNullOrEmpty(x.AlbumViewModel.Model.Artist.Name));
+    }
+
     private ActionCommand addAlbums;
 
     public ICommand AddAlbums
@@ -449,10 +468,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           {
             if (WasAllSongProcessed)
             {
-              var validItems = PlayList.OfType<SongInPlayListViewModel>()
-                .Where(x => x.AlbumViewModel != null)
-                .Where(x => x.AlbumViewModel.Model.Id == 0)
-                .Where(x => !string.IsNullOrEmpty(x.AlbumViewModel.Name))
+              var validItems = GetAlbumsToAdd()
                 .GroupBy(x => x.AlbumViewModel.Model)
                 .ToList();
 
@@ -473,11 +489,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       Task.Run(async () =>
       {
-        var validItems = PlayList.OfType<SongInPlayListViewModel>()
-          .Where(x => x.AlbumViewModel != null)
-          .Where(x => x.AlbumViewModel.Model.Id == 0)
-          .Where(x => !string.IsNullOrEmpty(x.AlbumViewModel.Name))
-          .Where(x => !string.IsNullOrEmpty(x.AlbumViewModel.Model.Artist.Name));
+        var validItems = GetAlbumsToAdd();
 
         bool result = true;
 
@@ -903,8 +915,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     private async Task DownloadUrlLink(SoundItem soundItem)
     {
-      if (soundItem != null && 
-          soundItem.FileInfo != null && 
+      if (soundItem != null &&
+          soundItem.FileInfo != null &&
           long.TryParse(soundItem.FileInfo.Indentificator, out var id))
       {
         if (publicLinks.TryGetValue(soundItem, out var storedPublicLink) &&
@@ -915,7 +927,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         var publicLink = await cloudService.GetFileLink(id);
 
-        if(publicLink != null)
+        if (publicLink != null)
         {
           var oldLink = soundItem.FileInfo.Source;
 
@@ -933,7 +945,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
             publicLinks.Add(soundItem, publicLink);
           }
         }
-       
+
       }
     }
 
@@ -953,7 +965,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         {
           continue;
         }
-        else if(long.TryParse(soundItem.FileInfo.Indentificator, out var parsed))
+        else if (long.TryParse(soundItem.FileInfo.Indentificator, out var parsed))
         {
           onlyNeededList.Add(soundItem);
         }
@@ -1202,7 +1214,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
                     downloadArtist = false;
                   }
                 }
-                 
+
 
                 if (((downloadingArtist == null ||
                     normalizedArtistName?.Similarity(normalizedDownloadingAristName, true) < 0.9) &&
@@ -1264,7 +1276,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
                     downloadAlbum = false;
                   }
                 }
-                 
+
 
                 if ((downloadingAlbum == null ||
                      normalizedName?.Similarity(normalizedDownloadingAlbumName, true) < 0.9 &&
@@ -1529,43 +1541,43 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     private Task DownloadLyrics(CancellationToken cancellationToken)
     {
-     return Task.Run(async () =>
-      {
-        try
-        {
-          if (ActualItem is SongInPlayListViewModel songInPlay)
-          {
-            bool wasLyricsNull = songInPlay.LRCLyrics == null && songInPlay.Lyrics == null;
+      return Task.Run(async () =>
+       {
+         try
+         {
+           if (ActualItem is SongInPlayListViewModel songInPlay)
+           {
+             bool wasLyricsNull = songInPlay.LRCLyrics == null && songInPlay.Lyrics == null;
 
-            if (string.IsNullOrEmpty(songInPlay.LRCLyrics) && string.IsNullOrEmpty(songInPlay.Lyrics))
-            {
-              cancellationToken.ThrowIfCancellationRequested();
+             if (string.IsNullOrEmpty(songInPlay.LRCLyrics) && string.IsNullOrEmpty(songInPlay.Lyrics))
+             {
+               cancellationToken.ThrowIfCancellationRequested();
 
-              await songInPlay.TryToRefreshUpdateLyrics();
-            }
+               await songInPlay.TryToRefreshUpdateLyrics();
+             }
 
-            if (songInPlay.LRCLyrics != null && wasLyricsNull)
-            {
-              cancellationToken.ThrowIfCancellationRequested();
+             if (songInPlay.LRCLyrics != null && wasLyricsNull)
+             {
+               cancellationToken.ThrowIfCancellationRequested();
 
-              await storageManager.UpdateEntityAsync(ActualItem.Model);
-            }
+               await storageManager.UpdateEntityAsync(ActualItem.Model);
+             }
 
-            var validItemsToUpdate = PlayList.OfType<SongInPlayListViewModel>()
-              .Where(x => x.ArtistViewModel != null && x.AlbumViewModel != null).ToList();
+             var validItemsToUpdate = PlayList.OfType<SongInPlayListViewModel>()
+               .Where(x => x.ArtistViewModel != null && x.AlbumViewModel != null).ToList();
 
-            var itemsAfter = validItemsToUpdate.Skip(actualItemIndex).Where(x => x.LyricsObject == null);
-            var itemsBefore = validItemsToUpdate.Take(actualItemIndex).Where(x => x.LyricsObject == null);
+             var itemsAfter = validItemsToUpdate.Skip(actualItemIndex).Where(x => x.LyricsObject == null);
+             var itemsBefore = validItemsToUpdate.Take(actualItemIndex).Where(x => x.LyricsObject == null);
 
-            await DownloadLyrics(itemsAfter, cancellationToken);
-            await DownloadLyrics(itemsBefore, cancellationToken);
-          }
-        }
-        catch (OperationCanceledException)
-        {
-        }
+             await DownloadLyrics(itemsAfter, cancellationToken);
+             await DownloadLyrics(itemsBefore, cancellationToken);
+           }
+         }
+         catch (OperationCanceledException)
+         {
+         }
 
-      }, cancellationToken);
+       }, cancellationToken);
     }
 
     private async Task DownloadLyrics(IEnumerable<SongInPlayListViewModel> songInPlayListViewModels, CancellationToken cancellationToken)
