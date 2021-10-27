@@ -416,6 +416,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
           result = result && storeResult;
 
+          newVersion.Albums = song.ArtistViewModel.Model.Albums;
+
           foreach (var item in PlayList.OfType<SongInPlayListViewModel>()
             .Where(x => x.ArtistViewModel != null)
             .Where(x => x.ArtistViewModel.Model == song.ArtistViewModel.Model))
