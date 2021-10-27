@@ -525,6 +525,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
               var storeResult = storageManager.StoreEntity(album, out var newVersion);
 
+              newVersion.Artist = artist;
               result = result && storeResult;
 
               songVm.AlbumViewModel.Model = newVersion;
@@ -533,6 +534,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
                 .Where(x => x.AlbumViewModel != null)
                 .Where(x => x.AlbumViewModel.Model == album))
               {
+
                 item.AlbumViewModel.Model = newVersion;
               }
             }
@@ -1525,8 +1527,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
           var itemsAfter = validItemsToUpdate.Skip(actualItemIndex);
           var itemsBefore = validItemsToUpdate.Take(actualItemIndex);
 
-          await DownloadUrlLinks(itemsAfter.Select(x => x.SongModel.ItemModel), cancellationToken);
-          await DownloadUrlLinks(itemsBefore.Select(x => x.SongModel.ItemModel), cancellationToken);
+          await DownloadUrlLinks(itemsAfter.Select(x => x.Model), cancellationToken);
+          await DownloadUrlLinks(itemsBefore.Select(x => x.Model), cancellationToken);
 
           logger.Log(MessageType.Success, "Public links were downloaded");
         }
