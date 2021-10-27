@@ -189,51 +189,13 @@ namespace VPlayer.Core.FileBrowser
                .Where(x => playableFilesList.Select(y => y.Model.Indentificator)
               .Contains(x.FileInfo.Indentificator)).ToList();
 
-          //await GetItemSources(soundItems.Select(x => x.FileInfo));
-
-          //var soundItemsIds = soundItems.Select(y => y.FileInfo.Indentificator);
-
-          //var notExisting = playableFilesList.Where(x => !soundItemsIds.Contains(x.Model.Indentificator)).ToList();
-
-          //if (notExisting.Count > 0)
-          //{
-          //  var notInSources = await GetItemSources(notExisting.Select(x => x.Model));
-
-          //  foreach (var item in notInSources)
-          //  {
-          //    var fileInfo = new SoundFileInfo(item.FullName, item.Source)
-          //    {
-          //      Length = item.Length,
-          //      Indentificator = item.Indentificator,
-          //      Name = item.Name,
-          //    };
-
-          //    var soudItem = new SoundItem()
-          //    {
-          //      FileInfo = fileInfo
-          //    };
-
-          //    storageManager.StoreEntity(soudItem, out var stored);
-
-          //    soundItems.Add(stored);
-
-          //  }
-          //}
-
+        
           var folders = SubItems.ViewModels
             .SelectManyRecursive(x => x.SubItems.ViewModels)
             .OfType<PlayableFolderViewModel<TFolderViewModel, TFileViewModel>>();
 
           folders = folders.Concat(SubItems.ViewModels.OfType<PlayableFolderViewModel<TFolderViewModel, TFileViewModel>>());
 
-
-          //var albums = soundItems.GroupBy(x => x.FileInfo.Album).Select(x => new FolderGrouping()
-          //{
-          //  Name = x.Key,
-          //  NormalizedName = VPlayerStorageManager.GetNormalizedName(x.Key),
-          //  Items = x,
-          //  WasProccessed = false
-          //}).ToList();
 
 
           List<SoundItem> soundItems1 = new List<SoundItem>();
@@ -264,42 +226,9 @@ namespace VPlayer.Core.FileBrowser
               }
             }
 
-            //  var name = folder.Name;
-            //  if (folder.Name[0] == '[' && folder.Name[5] == ']')
-            //  {
-            //    name = name.Substring(6, name.Length - 6);
-            //  }
-
-            //  var normalizedFolderName = VPlayerStorageManager.GetNormalizedName(name);
-
-            //  var album = albums.Where(x => x.NormalizedName != null)
-            //    .SingleOrDefault(x => normalizedFolderName.Contains(x.NormalizedName) ||
-            //                                          x.NormalizedName.Contains(normalizedFolderName));
-
-            //  if (album != null)
-            //  {
-            //    album.WasProccessed = true;
-            //    soundItems1.AddRange(album.Items.OrderBy(x => x.FileInfo.FullName, numberStringComparer));
-            //  }
-            //  else
-            //  {
-            //    var albumsGood = albums.Where(x => normalizedFolderName.Similarity(x.NormalizedName) > .8).ToList();
-
-            //    if (albumsGood.Count == 1)
-            //    {
-            //      album = albumsGood.First();
-            //      album.WasProccessed = true;
-            //      soundItems1.AddRange(album.Items.OrderBy(x => x.FileInfo.FullName, numberStringComparer));
-            //    }
-            //  }
+           
           }
 
-          //var notProcesseds = albums.Where(x => !x.WasProccessed);
-
-          //foreach (var notProcessedAlbum in notProcesseds)
-          //{
-          //  soundItems1.AddRange(notProcessedAlbum.Items.OrderBy(x => x.FileInfo.FullName, numberStringComparer));
-          //}
 
           var data = new PlayItemsEventData<SoundItemInPlaylistViewModel>(
             soundItems1.Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x)),
