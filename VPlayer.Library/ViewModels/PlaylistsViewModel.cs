@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using Prism.Events;
 using VCore.Standard.Factories.ViewModels;
@@ -69,6 +70,25 @@ namespace VPlayer.Home.ViewModels
 
 
     #endregion
+    
+    #region CanLoadMoreItems
+
+    private bool canLoadMoreItems;
+
+    public bool CanLoadMoreItems
+    {
+      get { return canLoadMoreItems; }
+      set
+      {
+        if (value != canLoadMoreItems)
+        {
+          canLoadMoreItems = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     private int actualSkip = 0;
     private int take = 30;
@@ -82,10 +102,17 @@ namespace VPlayer.Home.ViewModels
       var userCreated = AllUserCreatedItems;
       var notSavedPlaylists = AllGeneratedItems.Skip(actualSkip).Take(take);
 
-      LibraryCollection.FilteredItemsCollection = new ObservableCollection<TViewModel>(userCreated.Concat(notSavedPlaylists));
-
       actualSkip += take;
       take = 10;
+
+      Application.Current.Dispatcher.Invoke(() =>
+      {
+        LibraryCollection.FilteredItemsCollection = new ObservableCollection<TViewModel>(userCreated.Concat(notSavedPlaylists));
+
+        RaisePropertyChanged(nameof(ViewCollection));
+
+        CanLoadMoreItems = actualSkip < AllItems.Count();
+      });
     }
 
     private async void LoadPage()
@@ -96,6 +123,7 @@ namespace VPlayer.Home.ViewModels
 
       actualSkip += take;
 
+      CanLoadMoreItems = actualSkip < AllItems.Count();
       RaisePropertyChanged(nameof(View));
     }
 

@@ -80,14 +80,10 @@ namespace VPlayer.Core.ViewModels.Artists
 
     #region GetSongsToPlay
 
-    private SerialDisposable serialDisposable = new SerialDisposable();
-
     public override Task<IEnumerable<SongInPlayListViewModel>> GetItemsToPlay()
     {
       return Task.Run(async () =>
       {
-        bool wasBusySet = false;
-
         try
         {
           var songs = storage.GetRepository<Artist>()
@@ -105,45 +101,14 @@ namespace VPlayer.Core.ViewModels.Artists
             ).ToList();
 
 
-          var cloudSOngs = songsAll.Where(x => x.Source.Contains("http")).ToList();
-
-          var process = iVPlayerCloudService.GetItemSources(cloudSOngs.Select(x => x.ItemModel.FileInfo));
-
-          if (process.InternalProcessesCount != 0)
-          {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-              wasBusySet = true;
-              artistsViewModel.LoadingStatus.IsLoading = true;
-            });
-          }
-
-          Application.Current.Dispatcher.Invoke(() =>
-          {
-            artistsViewModel.LoadingStatus.NumberOfProcesses = process.InternalProcessesCount;
-          });
-
-          serialDisposable.Disposable = process.OnInternalProcessedCountChanged.Subscribe(x =>
-          {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-              artistsViewModel.LoadingStatus.ProcessedCount = x;
-            });
-          });
-
-          await process.Process;
-
           return songsAll.Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x));
         }
         finally
         {
-          if(wasBusySet)
+          Application.Current.Dispatcher.Invoke(() =>
           {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-              artistsViewModel.LoadingStatus.IsLoading = false;
-            });
-          }
+            artistsViewModel.LoadingStatus.IsLoading = false;
+          });
         }
       });
     }

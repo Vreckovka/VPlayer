@@ -143,7 +143,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
       Application.Current?.Dispatcher?.Invoke(() =>
       {
         Items.Add(viewModel);
-
+        FilteredItemsCollection.Add(viewModel);
       });
 
       RequestReloadVirtulizedPlaylist();
@@ -182,6 +182,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
           foreach (var item in items)
           {
             Items.Remove(item);
+            FilteredItemsCollection.Remove(item);
           }
 
           if (items.Count > 0)
@@ -211,6 +212,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
             foreach (var item in items)
             {
               Items.Remove(item);
+              FilteredItemsCollection.Remove(item);
               wasChnaged = true;
             }
           }

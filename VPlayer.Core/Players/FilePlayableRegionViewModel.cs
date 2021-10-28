@@ -512,15 +512,15 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    protected override Task BeforePlayEvent(PlayItemsEventData<TItemViewModel> data)
+    protected override async Task BeforePlayEvent(PlayItemsEventData<TItemViewModel> data)
     {
+      await base.BeforePlayEvent(data);
+
       Application.Current.Dispatcher.Invoke(() =>
       {
         CheckedFiles.Clear();
       });
-
-
-      return base.BeforePlayEvent(data);
+      
     }
 
     protected override void BeforeClearPlaylist()

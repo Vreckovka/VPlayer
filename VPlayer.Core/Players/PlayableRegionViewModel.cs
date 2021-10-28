@@ -1096,10 +1096,14 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    protected virtual Task BeforePlayEvent(PlayItemsEventData<TItemViewModel> data)
+    #region BeforePlayEvent
+
+    protected virtual async Task BeforePlayEvent(PlayItemsEventData<TItemViewModel> data)
     {
-      return Task.CompletedTask;
+      await MediaPlayer.SetNewMedia(null);
     }
+
+    #endregion
 
     #region PlayItemsFromEvent
 

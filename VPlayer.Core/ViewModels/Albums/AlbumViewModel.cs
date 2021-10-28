@@ -83,13 +83,10 @@ namespace VPlayer.Core.ViewModels.Albums
 
     #region GetSongsToPlay
 
-    private SerialDisposable serialDisposable = new SerialDisposable();
     public override Task<IEnumerable<SongInPlayListViewModel>> GetItemsToPlay()
     {
-
       return Task.Run(async () =>
       {
-        bool wasBusySet = false;
         try
         {
 
@@ -104,46 +101,14 @@ namespace VPlayer.Core.ViewModels.Albums
 
           var songsAll = songs.OrderBy(x => x.Source.Split("\\").Last(), myComparer).ToList();
 
-
-          var cloudSOngs = songsAll.Where(x => x.Source.Contains("http")).ToList();
-
-          var process = iVPlayerCloudService.GetItemSources(cloudSOngs.Select(x => x.ItemModel.FileInfo));
-
-          if (process.InternalProcessesCount != 0)
-          {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-              wasBusySet = true;
-              albumsViewModel.LoadingStatus.IsLoading = true;
-            });
-          }
-
-          Application.Current.Dispatcher.Invoke(() =>
-          {
-            albumsViewModel.LoadingStatus.NumberOfProcesses = process.InternalProcessesCount;
-          });
-
-          serialDisposable.Disposable = process.OnInternalProcessedCountChanged.Subscribe(x =>
-          {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-              albumsViewModel.LoadingStatus.ProcessedCount = x;
-            });
-          });
-
-          await process.Process;
-
           return songsAll.Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x));
         }
         finally
         {
-          if(wasBusySet )
+          Application.Current.Dispatcher.Invoke(() =>
           {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-              albumsViewModel.LoadingStatus.IsLoading = false;
-            });
-          }
+            albumsViewModel.LoadingStatus.IsLoading = false;
+          });
         }
       });
     }
@@ -230,7 +195,7 @@ namespace VPlayer.Core.ViewModels.Albums
     }
 
     #endregion
-    
+
     #endregion
   }
 }
