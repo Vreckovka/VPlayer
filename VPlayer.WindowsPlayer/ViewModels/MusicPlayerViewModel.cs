@@ -920,8 +920,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private async Task DownloadUrlLink(SoundItem soundItem)
     {
       if (soundItem != null &&
-          soundItem.FileInfo != null &&
-          long.TryParse(soundItem.FileInfo.Indentificator, out var id))
+          soundItem.FileInfo != null && long.TryParse(soundItem.FileInfo.Indentificator, out var id)) 
       {
         if (publicLinks.TryGetValue(soundItem, out var storedPublicLink) &&
            storedPublicLink.ExpiresDate > DateTime.Now)

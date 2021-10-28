@@ -876,14 +876,14 @@ namespace VPlayer.Core.ViewModels
     {
       return Task.Run(async () =>
       {
+        await MediaPlayer.SetNewMedia(null);
+
+        await BeforeSetMedia(model);
+
         if (model.Source != null)
         {
           try
           {
-            await MediaPlayer.SetNewMedia(null);
-
-            await BeforeSetMedia(model);
-
             var fileUri = new Uri(model.Source);
 
             await MediaPlayer.SetNewMedia(fileUri);
