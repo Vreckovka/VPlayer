@@ -182,20 +182,49 @@ namespace VPlayer.Core.FileBrowser
 
           var playableFilesList = playableFiles.Concat(itemsInFolder).Where(x => x.FileType == FileType.Sound).ToList();
 
-          isLoadedSubject.OnNext(true);
-          LoadingMessage = $" getting source for {playableFilesList.Count}";
+          //isLoadedSubject.OnNext(true);
+          //LoadingMessage = $" getting source for {playableFilesList.Count}";
 
           var soundItems = storageManager.GetRepository<SoundItem>().Include(x => x.FileInfo)
                .Where(x => playableFilesList.Select(y => y.Model.Indentificator)
               .Contains(x.FileInfo.Indentificator)).ToList();
 
-        
+          //await GetItemSources(soundItems.Select(x => x.FileInfo));
+
+          var soundItemsIds = soundItems.Select(y => y.FileInfo.Indentificator);
+
+          var notExisting = playableFilesList.Where(x => !soundItemsIds.Contains(x.Model.Indentificator)).ToList();
+
+          if (notExisting.Count > 0)
+          {
+            //var notInSources = await GetItemSources();
+
+            foreach (var item in notExisting.Select(x => x.Model))
+            {
+              var fileInfo = new SoundFileInfo(item.FullName, item.Source)
+              {
+                Length = item.Length,
+                Indentificator = item.Indentificator,
+                Name = item.Name,
+              };
+
+              var soudItem = new SoundItem()
+              {
+                FileInfo = fileInfo
+              };
+
+              storageManager.StoreEntity(soudItem, out var stored);
+
+              soundItems.Add(stored);
+
+            }
+          }
+
           var folders = SubItems.ViewModels
             .SelectManyRecursive(x => x.SubItems.ViewModels)
             .OfType<PlayableFolderViewModel<TFolderViewModel, TFileViewModel>>();
 
           folders = folders.Concat(SubItems.ViewModels.OfType<PlayableFolderViewModel<TFolderViewModel, TFileViewModel>>());
-
 
 
           List<SoundItem> soundItems1 = new List<SoundItem>();
@@ -216,19 +245,16 @@ namespace VPlayer.Core.FileBrowser
           {
             var filesOrdered = folder.SubItems.ViewModels.OfType<FileViewModel>().OrderBy(x => x.Name, numberStringComparer);
 
-            foreach(var file in filesOrdered)
+            foreach (var file in filesOrdered)
             {
               var soundItem = soundItems.SingleOrDefault(x => x.FileInfo.Indentificator == file.Path);
 
-              if(soundItem != null)
+              if (soundItem != null)
               {
                 soundItems1.Add(soundItem);
               }
             }
-
-           
           }
-
 
           var data = new PlayItemsEventData<SoundItemInPlaylistViewModel>(
             soundItems1.Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x)),
