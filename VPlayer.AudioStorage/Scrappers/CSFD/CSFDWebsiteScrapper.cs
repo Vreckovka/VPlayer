@@ -32,7 +32,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     private readonly IStatusManager statusManager;
     private readonly IChromeDriverProvider chromeDriverProvider;
     private readonly IWindowManager windowManager;
-    private string baseUrl = "https://csfd.cz";
+    private string baseUrl = "https://csfd.sk";
 
     public CSFDWebsiteScrapper(ILogger logger, IStatusManager statusManager, IChromeDriverProvider chromeDriverProvider, IWindowManager windowManager)
     {
@@ -177,9 +177,13 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     {
 
       url = url
+         .Replace("https://csfd.cz", baseUrl)
+         .Replace("https://www.csfd.cz", baseUrl)
+         .Replace("https://new.csfd.cz", baseUrl)
          .Replace("https://new.csfd.sk", baseUrl)
          .Replace("https://csfd.sk", baseUrl)
          .Replace("https://www.csfd.sk", baseUrl);
+
 
       var html = chromeDriverProvider.SafeNavigate(url);
 
@@ -330,25 +334,50 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         statusMessageViewModel.Message = "Single seasoned: Downlading episodes";
         statusManager.UpdateMessage(statusMessageViewModel);
 
-        episodeNumber = 1;
-        foreach (var season in seasons)
+        var episodeIndex = 0;
+
+        if(episodeNumber == null || episodeNumber > seasons.Count || episodeNumber <= 0)
         {
+          foreach (var season in seasons)
+          {
+            var newEpisode = new CSFDTVShowSeasonEpisode();
+
+            newEpisode.Name = season.Name;
+            newEpisode.Url = season.Url;
+
+            cancellationToken.ThrowIfCancellationRequested();
+            LoadCsfdEpisode(newEpisode);
+
+            if (newEpisode.EpisodeNumber == null)
+            {
+              newEpisode.EpisodeNumber = episodeIndex + 1;
+            }
+
+            episodes.Add(newEpisode);
+
+            statusManager.UpdateMessageAndIncreaseProcessCount(statusMessageViewModel);
+            episodeIndex++;
+          }
+        }
+        else
+        {
+          var season = seasons[episodeNumber.Value - 1];
           var newEpisode = new CSFDTVShowSeasonEpisode();
 
           newEpisode.Name = season.Name;
           newEpisode.Url = season.Url;
 
           cancellationToken.ThrowIfCancellationRequested();
+          
           LoadCsfdEpisode(newEpisode);
 
-          if (newEpisode.EpisodeNumber == null)
-            newEpisode.EpisodeNumber = episodeNumber;
+          newEpisode.EpisodeNumber = episodeNumber;
 
           episodes.Add(newEpisode);
 
           statusManager.UpdateMessageAndIncreaseProcessCount(statusMessageViewModel);
-          episodeNumber++;
         }
+
 
         return new List<CSFDTVShowSeason>() { newSingleSeason };
       }
@@ -492,7 +521,14 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         document.LoadHtml(html);
 
+                                                                       
         var ratingNode = GetClearText(document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/aside/div/div[2]/div")?.FirstOrDefault()?.InnerText);
+
+        if(ratingNode == null)
+        {
+          ratingNode = GetClearText(document.DocumentNode.SelectNodes("/html/body/div[4]/div/div[1]/aside/div/div[2]/div")?.FirstOrDefault()?.InnerText);
+        }
+
         int.TryParse(ratingNode, out var rating);
 
         cSFDTVShowSeasonEpisode.Rating = rating;
@@ -625,7 +661,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     private bool chromeDriverInitError;
     public Task<CSFDQueryResult> FindItems(string name, CancellationToken cancellationToken)
     {
-      var query = $"https://www.csfd.cz/hledat/?q={name}";
+      var query = $"{baseUrl}/hledat/?q={name}";
 
       cancellationToken.ThrowIfCancellationRequested();
 
@@ -761,11 +797,27 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
             if (!string.IsNullOrEmpty(episode.TvShowUrl))
               tvShow = LoadTvShow(episode.TvShowUrl, cancellationToken, seasonNumber, episodeNumber);
           }
+          else
+          {
+            var episodeName = name.Replace(tvShowFind.Name, null);
+            var episodeNumberMatch = Regex.Match(episodeName, @"([0-9]+) .*");
+
+            if (episodeNumberMatch.Success)
+            {
+              if (int.TryParse(episodeNumberMatch.Groups[1].Value?.Trim(), out var numberParsed))
+              {
+                return LoadTvShow(tvShowFind.Url, cancellationToken, seasonNumber, numberParsed);
+              }
+            }
+          }
         }
 
 
         if (tvShow == null)
+        {
           tvShow = LoadTvShow(tvShowUrl, cancellationToken, seasonNumber, episodeNumber);
+        }
+
 
         if (tvShow != null)
         {
@@ -853,9 +905,9 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       {
         statusMessage.Status = StatusType.Failed;
         statusMessage.Message = "Not found!";
-        
+
         statusManager.UpdateMessage(statusMessage);
-        
+
         return null;
       }
 
@@ -949,6 +1001,11 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       return Task.Run(() =>
       {
         var nodes = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[2]/div/div[1]/div/div[1]/section[1]/div/div[1]/article");
+
+        if (nodes == null)
+        {
+          nodes = document.DocumentNode.SelectNodes("/html/body/div[4]/div/div[2]/div/div[1]/div/div[1]/section[1]/div/div[1]/article");
+        }
 
         return ParseFindNodes(nodes, cancellationToken);
       });
@@ -1175,6 +1232,11 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       return Task.Run(() =>
       {
         var nodes = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[2]/div/div[1]/div/div[1]/section[2]/div/div[1]/article");
+
+        if (nodes == null)
+        {
+          nodes = document.DocumentNode.SelectNodes("/html/body/div[4]/div/div[2]/div/div[1]/div/div[1]/section[2]/div/div[1]/article");
+        }
 
         return ParseFindNodes(nodes, cancellationToken);
       });
