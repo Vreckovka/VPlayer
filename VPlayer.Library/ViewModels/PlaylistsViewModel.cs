@@ -91,7 +91,7 @@ namespace VPlayer.Home.ViewModels
     #endregion
 
     private int actualSkip = 0;
-    private int take = 30;
+    private int take = 10;
 
     protected override void OnDataLoaded()
     {
@@ -99,11 +99,12 @@ namespace VPlayer.Home.ViewModels
       AllUserCreatedItems = LibraryCollection.Items.Where(x => x.Model.IsUserCreated).ToList();
       AllGeneratedItems = LibraryCollection.Items.Where(x => !x.Model.IsUserCreated).ToList();
 
+      var initTake = 23;
       var userCreated = AllUserCreatedItems;
-      var notSavedPlaylists = AllGeneratedItems.Skip(actualSkip).Take(take);
+      var notSavedPlaylists = AllGeneratedItems.Take(initTake);
 
-      actualSkip += take;
-      take = 10;
+      actualSkip += initTake;
+    
 
       Application.Current.Dispatcher.Invoke(() =>
       {

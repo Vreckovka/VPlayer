@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
@@ -10,6 +11,7 @@ using System.Windows.Threading;
 using Microsoft.Xaml.Behaviors;
 using VCore.WPF.Behaviors;
 using VCore.WPF.Helpers;
+using VCore.WPF.Views;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.SoundItems;
 using VPlayer.Core.ViewModels.SoundItems.LRCCreators;
@@ -34,7 +36,7 @@ namespace VPlayer.Player.Behaviors
       Application.Current?.Dispatcher?.Invoke(() =>
       {
         var childCount = VisualTreeHelper.GetChildrenCount(AssociatedObject);
-        
+
         if (childCount > 0)
         {
           Decorator border = VisualTreeHelper.GetChild(AssociatedObject, 0) as Decorator;
@@ -95,7 +97,7 @@ namespace VPlayer.Player.Behaviors
     {
       try
       {
-       
+
 
         Application.Current?.Dispatcher?.Invoke(() =>
         {
@@ -125,8 +127,10 @@ namespace VPlayer.Player.Behaviors
               DoubleAnimation verticalAnimation = new DoubleAnimation();
               Storyboard storyboard = new Storyboard();
 
-              verticalAnimation.EasingFunction = new SineEase() { EasingMode = EasingMode.EaseOut };
-              storyboard.SpeedRatio = 1.42;
+              //verticalAnimation.EasingFunction = new SineEase() { EasingMode = EasingMode.EaseOut };
+              storyboard.SpeedRatio = 0.95;
+              storyboard.AccelerationRatio = 0.2;
+              storyboard.DecelerationRatio = 0.8;
 
               verticalAnimation.From = scrollViewer.VerticalOffset;
               verticalAnimation.To = scrollIndexOffset;
