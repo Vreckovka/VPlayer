@@ -1219,10 +1219,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
                 }
 
 
-                if (((downloadingArtist == null ||
-                    normalizedArtistName?.Similarity(normalizedDownloadingAristName, true) < 0.9) &&
-                    !string.IsNullOrEmpty(normalizedArtistName) &&
-                    originalDownlaodedArtistName != artistName) && downloadArtist)
+                if ((downloadingArtist == null || (!string.IsNullOrEmpty(normalizedArtistName)  && normalizedArtistName?.Similarity(normalizedDownloadingAristName, true) < 0.9)) &&
+                    originalDownlaodedArtistName != artistName && downloadArtist)
                 {
                   downloadingArtist = await GetArtist(artistName, cancellationToken);
                   originalDownlaodedArtistName = artistName;
@@ -1274,16 +1272,16 @@ namespace VPlayer.WindowsPlayer.ViewModels
                     }
                   }
 
-                  if (downloadingArtist != null)
+                  if (downloadingArtist == null)
                   {
                     downloadAlbum = false;
                   }
                 }
 
 
-                if ((downloadingAlbum == null ||
-                     normalizedName?.Similarity(normalizedDownloadingAlbumName, true) < 0.9 &&
-                     !string.IsNullOrEmpty(normalizedDownloadingAlbumName)) &&
+                if ((downloadingAlbum == null || 
+                     (!string.IsNullOrEmpty(normalizedDownloadingAlbumName) && 
+                      normalizedName?.Similarity(normalizedDownloadingAlbumName, true) < 0.9) ) &&
                     originalDownlaodedAlbumName != albumName && downloadAlbum)
                 {
                   downloadingAlbum = await GetAlbum(downloadingArtist, albumName, cancellationToken);
