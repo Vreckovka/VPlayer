@@ -19,7 +19,7 @@ namespace Listener
     WM_RBUTTONUP = 0x0205
   }
 
-  public class KeyListener
+  public class KeyListener : IDisposable
   {
     #region Fields
 
@@ -47,8 +47,6 @@ namespace Listener
     private Dispatcher myDispatcher;
     public KeyListener()
     {
-
-
       ManualResetEvent dispatcherReadyEvent = new ManualResetEvent(false);
 
       new Thread((() =>
@@ -110,11 +108,14 @@ namespace Listener
     public void UnHookKeyboard()
     {
       UnhookWindowsHookEx(_keyboardHookID);
+
+      _keyboardHookID = IntPtr.Zero;
     }
 
     public void UnHookMouse()
     {
       UnhookWindowsHookEx(_mouseHookID);
+
       _mouseHookID = IntPtr.Zero;
     }
 
@@ -260,6 +261,12 @@ namespace Listener
     }
 
     #endregion
+
+    public void Dispose()
+    {
+      UnHookMouse();
+      UnHookKeyboard();
+    }
   }
 
   public class KeyPressedArgs : EventArgs

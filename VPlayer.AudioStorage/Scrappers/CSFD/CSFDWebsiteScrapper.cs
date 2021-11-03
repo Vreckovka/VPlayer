@@ -74,7 +74,9 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         statusManager.UpdateMessage(statusMessage);
 
-        var name = GetTvShowName(url, out var posterUrl, cancellationToken);
+        var document = GetItemMainPage(url, cancellationToken);
+
+        var name = GetItemName(document, out var posterUrl);
 
         if (name != null)
         {
@@ -91,7 +93,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
           statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
 
-          tvShow.Seasons = LoadSeasons(statusMessage, seasonNumber, episodeNumber, cancellationToken);
+          tvShow.Seasons = LoadSeasons(document, statusMessage, seasonNumber, episodeNumber, cancellationToken);
 
           if (tvShow.Seasons == null)
           {
@@ -171,37 +173,11 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #endregion
 
-    #region GetTvShowName
+    #region GetItemName
 
-    private string GetTvShowName(string url, out string posterUrl, CancellationToken cancellationToken)
+    private string GetItemName(HtmlDocument document, out string posterUrl)
     {
-
-      url = url
-         .Replace("https://csfd.cz", baseUrl)
-         .Replace("https://www.csfd.cz", baseUrl)
-         .Replace("https://new.csfd.cz", baseUrl)
-         .Replace("https://new.csfd.sk", baseUrl)
-         .Replace("https://csfd.sk", baseUrl)
-         .Replace("https://www.csfd.sk", baseUrl);
-
-
-      var html = chromeDriverProvider.SafeNavigate(url);
-
-      var document = new HtmlDocument();
-
-      cancellationToken.ThrowIfCancellationRequested();
-      document.LoadHtml(html);
-
       var node = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div/div/header/div/h1")?.FirstOrDefault()?.InnerText;
-
-      if (node == null)
-      {
-        cancellationToken.ThrowIfCancellationRequested();
-        html = chromeDriverProvider.SafeNavigate(url);
-        document.LoadHtml(html);
-      }
-
-      node = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div/div/header/div/h1")?.FirstOrDefault()?.InnerText;
 
       if (node != null)
       {
@@ -239,7 +215,6 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #endregion
 
-
     #region SaveImage
 
     private string SaveImage(string tvShowName, byte[] image, CancellationToken cancellationToken)
@@ -273,15 +248,11 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region LoadSeasons
 
-    private List<CSFDTVShowSeason> LoadSeasons(StatusMessageViewModel pStatusMessageViewModel, int? seasonNumber, int? episodeNumber, CancellationToken cancellationToken)
+    private List<CSFDTVShowSeason> LoadSeasons(HtmlDocument document, StatusMessageViewModel pStatusMessageViewModel, int? seasonNumber, int? episodeNumber, CancellationToken cancellationToken, int? pageNumber = null)
     {
       var seasons = new List<CSFDTVShowSeason>();
 
-      var document = new HtmlDocument();
-
       cancellationToken.ThrowIfCancellationRequested();
-      document.LoadHtml(chromeDriverProvider.ChromeDriver.PageSource);
-
 
       var nodes = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/section[1]/div[2]/div/ul/li/h3/a");
 
@@ -336,7 +307,19 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         var episodeIndex = 0;
 
-        if(episodeNumber == null || episodeNumber > seasons.Count || episodeNumber <= 0)
+        if (episodeNumber > (seasons.Count) * (pageNumber ?? 1))
+        {
+          if (pageNumber == null)
+          {
+            pageNumber = 2;
+          }
+
+          var newDocument = GetItemMainPage(chromeDriverProvider.ChromeDriver.Url + $"?seriePage={pageNumber}", cancellationToken); 
+
+          return LoadSeasons(newDocument, pStatusMessageViewModel, seasonNumber, episodeNumber, cancellationToken, pageNumber);
+        }
+
+        if (episodeNumber == null || episodeNumber <= 0)
         {
           foreach (var season in seasons)
           {
@@ -361,14 +344,17 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         }
         else
         {
-          var season = seasons[episodeNumber.Value - 1];
+          var index = episodeNumber.Value - (((pageNumber ?? 1) - 1) * 50) - 1;
+
+          var season = seasons[index];
+
           var newEpisode = new CSFDTVShowSeasonEpisode();
 
           newEpisode.Name = season.Name;
           newEpisode.Url = season.Url;
 
           cancellationToken.ThrowIfCancellationRequested();
-          
+
           LoadCsfdEpisode(newEpisode);
 
           newEpisode.EpisodeNumber = episodeNumber;
@@ -521,10 +507,10 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         document.LoadHtml(html);
 
-                                                                       
+
         var ratingNode = GetClearText(document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/aside/div/div[2]/div")?.FirstOrDefault()?.InnerText);
 
-        if(ratingNode == null)
+        if (ratingNode == null)
         {
           ratingNode = GetClearText(document.DocumentNode.SelectNodes("/html/body/div[4]/div/div[1]/aside/div/div[2]/div")?.FirstOrDefault()?.InnerText);
         }
@@ -651,10 +637,40 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #endregion
 
+    #region GetItemMainPage
+
+    public HtmlDocument GetItemMainPage(string url, CancellationToken cancellationToken)
+    {
+      url = url
+        .Replace("https://csfd.cz", baseUrl)
+        .Replace("https://www.csfd.cz", baseUrl)
+        .Replace("https://new.csfd.cz", baseUrl)
+        .Replace("https://new.csfd.sk", baseUrl)
+        .Replace("https://csfd.sk", baseUrl)
+        .Replace("https://www.csfd.sk", baseUrl);
+
+
+      var html = chromeDriverProvider.SafeNavigate(url);
+
+      var document = new HtmlDocument();
+
+      cancellationToken.ThrowIfCancellationRequested();
+
+      document.LoadHtml(html);
+
+      return document;
+    }
+
+    #endregion
+
+    #region GetClearText
+
     private string GetClearText(string input)
     {
       return input?.Replace("\t", null).Replace("\r", null).Replace("\n", null).Replace("%", null);
     }
+
+    #endregion
 
     #region FindItems
 

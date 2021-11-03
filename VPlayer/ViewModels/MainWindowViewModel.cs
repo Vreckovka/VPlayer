@@ -149,8 +149,7 @@ namespace VPlayer.ViewModels
       IViewModelsFactory viewModelsFactory,
       IEventAggregator eventAggregator,
       ILogger logger,
-      ICSFDWebsiteScrapper iCsfdWebsiteScrapper
-     )
+      ICSFDWebsiteScrapper iCsfdWebsiteScrapper) : base(viewModelsFactory)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
