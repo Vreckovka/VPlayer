@@ -118,13 +118,6 @@ namespace VPlayer
     }
 
     #endregion
-
-    protected override void OnExit(ExitEventArgs e)
-    {
-      Kernel.Get<KeyListener>().Dispose();
-
-      base.OnExit(e);
-    }
   }
 
   public partial class App : VPlayerApplication
