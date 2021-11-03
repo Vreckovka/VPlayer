@@ -983,7 +983,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         var lastTime = GetLastItemElapsed(data.GetModel<VideoFilePlaylist>());
 
-        if (lastTime > 0.80)
+        if (lastTime > 0.65)
         {
           requestedLastPosition = lastTime;
         }
