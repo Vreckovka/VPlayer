@@ -52,7 +52,7 @@ namespace Listener
     {
       dispatcherReadyEvent = new ManualResetEvent(false);
 
-      var thread = new Thread(StartHooks);
+      thread = new Thread(StartHooks);
 
       thread.Start();
      
@@ -66,6 +66,18 @@ namespace Listener
       myDispatcher = Dispatcher.CurrentDispatcher;
       dispatcherReadyEvent.Set();
       Dispatcher.Run();
+
+
+#if RELEASE
+      myDispatcher.Invoke(() =>
+      {
+        _procKeyboard = HookCallbackKeyboard;
+        _procMouse = HookCallbackMouse;
+
+        HookKeyboard();
+        HookMouse();
+      });
+#endif
     }
 
     #region Events
