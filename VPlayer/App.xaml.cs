@@ -77,7 +77,7 @@ namespace VPlayer
     }
 
     #endregion
-    
+
     #region OnContainerCreated
 
     protected override void OnContainerCreated()
@@ -89,7 +89,7 @@ namespace VPlayer
     }
 
     #endregion
-    
+
     #region OnUnhandledExceptionCaught
 
     private IStatusManager statusManager;
@@ -122,16 +122,21 @@ namespace VPlayer
 
     protected override void OnExit(ExitEventArgs e)
     {
+      Task.Run(async () =>
+     {
+       await Task.Delay(TimeSpan.FromSeconds(10));
+
+       Process.GetCurrentProcess().Kill();
+     });
+
       Kernel.TryGet<IChromeDriverProvider>()?.ChromeDriver?.Close();
 
       base.OnExit(e);
-
-      Process.GetCurrentProcess().Kill();
     }
   }
 
   public partial class App : VPlayerApplication
   {
-   
+
   }
 }

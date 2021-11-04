@@ -271,7 +271,7 @@ namespace Listener
     {
       UnHookMouse();
       UnHookKeyboard();
-      thread?.Abort();
+
       myDispatcher?.InvokeShutdown();
       dispatcherReadyEvent?.Dispose();
     }

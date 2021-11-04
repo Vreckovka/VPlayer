@@ -553,7 +553,7 @@ namespace VPlayer.Core.ViewModels
       MediaPlayer.TimeChanged -= OnVlcTimeChanged;
       PlayList.CollectionChanged -= PlayList_CollectionChanged;
 
-
+      cTSOnActualItemChanged?.Cancel();
     }
 
     #endregion

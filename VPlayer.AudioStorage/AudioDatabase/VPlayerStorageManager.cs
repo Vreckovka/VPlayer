@@ -1034,7 +1034,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
     #endregion
 
     #endregion
-  
+
     #region TvShow methods
 
     #region UpdateWholeTvShow
@@ -1217,7 +1217,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
         Changed = changed,
       };
 
-      itemChanged.OnNext(newEvent);
+      if (!itemChanged.IsDisposed)
+        itemChanged.OnNext(newEvent);
     }
 
     #endregion

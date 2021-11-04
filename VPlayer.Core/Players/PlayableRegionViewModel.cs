@@ -1650,6 +1650,9 @@ namespace VPlayer.Core.ViewModels
 
     public override void Dispose()
     {
+      MediaPlayer.Media = null;
+      MediaPlayer.Stop();
+
       if (ActualSavedPlaylist != null && ActualSavedPlaylist.Id != -1)
         UpdateActualSavedPlaylistPlaylist();
 
