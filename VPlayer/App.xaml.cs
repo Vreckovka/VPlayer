@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using ChromeDriverScrapper;
 using Listener;
 using Logger;
 using Microsoft.EntityFrameworkCore;
@@ -118,6 +119,14 @@ namespace VPlayer
     }
 
     #endregion
+
+    protected override void OnExit(ExitEventArgs e)
+    {
+      Kernel.TryGet<IChromeDriverProvider>()?.ChromeDriver?.Close();
+
+
+      base.OnExit(e);
+    }
   }
 
   public partial class App : VPlayerApplication

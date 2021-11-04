@@ -45,33 +45,28 @@ namespace Listener
     #region Constructors
 
     private Dispatcher myDispatcher;
+    private Thread thread;
+    private ManualResetEvent dispatcherReadyEvent;
+
     public KeyListener()
     {
-      ManualResetEvent dispatcherReadyEvent = new ManualResetEvent(false);
+      dispatcherReadyEvent = new ManualResetEvent(false);
 
-      new Thread((() =>
-      {
-        myDispatcher = Dispatcher.CurrentDispatcher;
-        dispatcherReadyEvent.Set();
-        Dispatcher.Run();
-      })).Start();
+      var thread = new Thread(StartHooks);
 
+      thread.Start();
+     
       dispatcherReadyEvent.WaitOne();
-
-#if RELEASE
-      myDispatcher.Invoke(() =>
-      {
-        _procKeyboard = HookCallbackKeyboard;
-        _procMouse = HookCallbackMouse;
-
-        HookKeyboard();
-        HookMouse();
-      });
-#endif
-
     }
 
     #endregion Constructors
+
+    private void StartHooks()
+    {
+      myDispatcher = Dispatcher.CurrentDispatcher;
+      dispatcherReadyEvent.Set();
+      Dispatcher.Run();
+    }
 
     #region Events
 
@@ -266,6 +261,9 @@ namespace Listener
     {
       UnHookMouse();
       UnHookKeyboard();
+      thread?.Abort();
+      myDispatcher?.InvokeShutdown();
+      dispatcherReadyEvent?.Dispose();
     }
   }
 
