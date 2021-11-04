@@ -63,7 +63,7 @@ namespace Listener
 
       dispatcherReadyEvent.WaitOne();
 
-#if DEBUG
+#if RELEASE
       myDispatcher.Invoke(() =>
       {
         _procKeyboard = HookCallbackKeyboard;
