@@ -50,25 +50,20 @@ namespace Listener
 
     public KeyListener()
     {
-      dispatcherReadyEvent = new ManualResetEvent(false);
+      ManualResetEvent dispatcherReadyEvent = new ManualResetEvent(false);
 
-      thread = new Thread(StartHooks);
+      thread = new Thread((() =>
+      {
+        myDispatcher = Dispatcher.CurrentDispatcher;
+        dispatcherReadyEvent.Set();
+        Dispatcher.Run();
+      }));
 
       thread.Start();
-     
+
       dispatcherReadyEvent.WaitOne();
-    }
 
-    #endregion Constructors
-
-    private void StartHooks()
-    {
-      myDispatcher = Dispatcher.CurrentDispatcher;
-      dispatcherReadyEvent.Set();
-      Dispatcher.Run();
-
-
-#if RELEASE
+#if DEBUG
       myDispatcher.Invoke(() =>
       {
         _procKeyboard = HookCallbackKeyboard;
@@ -79,6 +74,9 @@ namespace Listener
       });
 #endif
     }
+
+    #endregion Constructors
+
 
     #region Events
 

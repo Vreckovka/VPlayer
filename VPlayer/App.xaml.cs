@@ -124,8 +124,9 @@ namespace VPlayer
     {
       Kernel.TryGet<IChromeDriverProvider>()?.ChromeDriver?.Close();
 
-
       base.OnExit(e);
+
+      Process.GetCurrentProcess().Kill();
     }
   }
 
