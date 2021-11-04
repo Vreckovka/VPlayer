@@ -122,13 +122,7 @@ namespace VPlayer
 
     protected override void OnExit(ExitEventArgs e)
     {
-      Task.Run(async () =>
-     {
-       await Task.Delay(TimeSpan.FromSeconds(10));
-
-       Process.GetCurrentProcess().Kill();
-     });
-
+   
       Kernel.TryGet<IChromeDriverProvider>()?.ChromeDriver?.Close();
 
       base.OnExit(e);
