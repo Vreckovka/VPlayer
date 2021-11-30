@@ -258,7 +258,12 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       if (nodes == null)
       {
-        return seasons;
+        nodes = document.DocumentNode.SelectNodes("/html/body/div[4]/div/div[1]/div/section[1]/div[2]/div/ul/li/h3/a");
+
+        if (nodes == null)
+        {
+          return seasons;
+        }
       }
 
       var statusMessageViewModel = new StatusMessageViewModel(nodes.Count)
@@ -312,6 +317,10 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           if (pageNumber == null)
           {
             pageNumber = 2;
+          }
+          else
+          {
+            pageNumber++;
           }
 
           var newDocument = GetItemMainPage(chromeDriverProvider.ChromeDriver.Url + $"?seriePage={pageNumber}", cancellationToken); 
