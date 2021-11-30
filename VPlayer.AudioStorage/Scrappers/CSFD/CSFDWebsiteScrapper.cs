@@ -299,6 +299,11 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       bool isSingleSeasoned = false;
       nodes = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/section[1]/div[1]/h3");
 
+      if (nodes == null)
+      {
+        nodes = document.DocumentNode.SelectNodes("/html/body/div[4]/div/div[1]/div/section[1]/div[1]/h3");
+      }
+
       if (nodes.Any())
       {
         isSingleSeasoned = !nodes.FirstOrDefault()?.InnerText.Contains("Série") ?? false;
