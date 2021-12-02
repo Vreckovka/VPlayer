@@ -812,8 +812,6 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
           }
 
-          await Task.Delay(5000);
-
           var tvShowFind = await FindSingleCsfdItem(tvShowName, year, episodeKeys != null ||
                                                                       seasonNumber != null ||
                                                                       episodeNumber != null ||
@@ -844,18 +842,9 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
             if (!string.IsNullOrEmpty(episode.TvShowUrl))
               tvShow = LoadTvShow(episode.TvShowUrl, cancellationToken, seasonNumber, episodeNumber, parentMessage: statusMessage);
           }
-          else
+          else if(episodeKeys != null)
           {
-            var episodeName = name.Replace(tvShowFind.Name, null);
-            var episodeNumberMatch = Regex.Match(episodeName, @"([0-9]+) .*");
-
-            if (episodeNumberMatch.Success)
-            {
-              if (int.TryParse(episodeNumberMatch.Groups[1].Value?.Trim(), out var numberParsed))
-              {
-                return LoadTvShow(tvShowFind.Url, cancellationToken, seasonNumber, numberParsed, parentMessage: statusMessage);
-              }
-            }
+            return LoadTvShow(tvShowFind.Url, cancellationToken, seasonNumber, episodeNumber, parentMessage: statusMessage);
           }
         }
 
