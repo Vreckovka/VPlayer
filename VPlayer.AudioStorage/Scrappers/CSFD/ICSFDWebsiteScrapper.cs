@@ -1,12 +1,13 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using VPlayer.AudioStorage.Scrappers.CSFD.Domain;
+using VPlayer.Core.Managers.Status;
 
 namespace VPlayer.AudioStorage.Scrappers.CSFD
 {
   public interface ICSFDWebsiteScrapper
   {
-    CSFDTVShow LoadTvShow(string url,CancellationToken cancellationToken, int? seasonNumber = null, int? episodeNumber = null);
+    CSFDTVShow LoadTvShow(string url,CancellationToken cancellationToken, int? seasonNumber = null, int? episodeNumber = null, StatusMessageViewModel parentMessage = null);
 
     CSFDTVShowSeason LoadTvShowSeason(string url, CancellationToken cancellationToken);
     Task<CSFDQueryResult> FindItems(string name, CancellationToken cancellationToken);

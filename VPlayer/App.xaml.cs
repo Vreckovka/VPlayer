@@ -122,7 +122,6 @@ namespace VPlayer
 
     protected override void OnExit(ExitEventArgs e)
     {
-   
       Kernel.TryGet<IChromeDriverProvider>()?.ChromeDriver?.Close();
 
       base.OnExit(e);

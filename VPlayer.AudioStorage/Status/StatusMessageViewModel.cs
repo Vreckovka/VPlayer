@@ -24,8 +24,26 @@ namespace VPlayer.Core.Managers.Status
     #region Properties
 
     public Guid Id { get; }
-
     public Guid OriginalMessageId { get; set; }
+
+    #region ParentMessage
+
+    private StatusMessageViewModel parentMessage;
+
+    public StatusMessageViewModel ParentMessage
+    {
+      get { return parentMessage; }
+      set
+      {
+        if (value != parentMessage)
+        {
+          parentMessage = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     #region NumberOfProcesses
 
@@ -234,47 +252,17 @@ namespace VPlayer.Core.Managers.Status
 
     #region Methods
 
-    public void AddChild()
-    {
-
-    }
-
-    //#region Update
-
-    //public void Update(StatusMessageViewModel other)
-    //{
-    //  ProcessedCount = other.ProcessedCount;
-
-    //  if (other.NumberOfProcesses == 1)
-    //  {
-    //    Process = other.Process;
-    //  }
-    //  else
-    //  {
-    //    Process = ProcessedCount * 100.0 / NumberOfProcesses;
-    //  }
-
-    //  Message = other.Message;
-    //  Status = other.Status;
-
-    //  if (ProcessedCount == NumberOfProcesses && 
-    //      Status != StatusType.Error && 
-    //      Status != StatusType.Failed)
-    //  {
-    //    Status = StatusType.Done;
-    //  }
-
-    //  CopyParentState(other);
-    //}
-
-    //#endregion
-
     #region CopyParentState
 
     public void CopyParentState(StatusMessageViewModel statusMessageViewModel)
     {
-      MessageState = statusMessageViewModel.MessageState;
-      IsPinned = statusMessageViewModel.IsPinned;
+      if(statusMessageViewModel != null)
+      {
+        MessageState = statusMessageViewModel.MessageState;
+        IsPinned = statusMessageViewModel.IsPinned;
+        ParentMessage = statusMessageViewModel;
+      }
+   
     }
 
     #endregion

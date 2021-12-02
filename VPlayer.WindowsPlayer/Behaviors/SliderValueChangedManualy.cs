@@ -57,6 +57,8 @@ namespace VPlayer.Player.Behaviors
         {
           playableRegionViewModel.SeekBackward();
         }
+
+        e.Handled = true;
       }
     }
 

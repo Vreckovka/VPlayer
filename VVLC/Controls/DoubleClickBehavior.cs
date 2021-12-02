@@ -42,6 +42,7 @@ namespace VVLC.Controls
       if(e.ClickCount == 2)
       {
         Command?.Execute(null);
+        e.Handled = true;
       }
     }
 

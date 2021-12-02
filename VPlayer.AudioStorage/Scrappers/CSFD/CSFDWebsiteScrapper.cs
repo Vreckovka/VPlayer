@@ -45,7 +45,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region LoadTvShow
 
-    public CSFDTVShow LoadTvShow(string url, CancellationToken cancellationToken, int? seasonNumber = null, int? episodeNumber = null)
+    public CSFDTVShow LoadTvShow(string url, CancellationToken cancellationToken, int? seasonNumber = null, int? episodeNumber = null, StatusMessageViewModel parentMessage = null)
     {
       var nameF = url
         .Replace("https://www.csfd.cz/film/", null)
@@ -59,6 +59,8 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         Status = StatusType.Processing,
         Message = $"Downloading {nameF}"
       };
+
+      statusMessage.CopyParentState(parentMessage);
 
       try
       {
@@ -83,6 +85,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           tvShow.Name = name;
 
           statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+
 
           var poster = DownloadPoster(posterUrl, cancellationToken);
 
@@ -118,7 +121,8 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       }
       catch (Exception ex)
       {
-        statusManager.ShowErrorMessage(ex);
+        if (statusMessage.MessageState != MessageStatusState.Closed)
+          statusManager.ShowErrorMessage(ex);
 
         return null;
       }
@@ -177,7 +181,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     private string GetItemName(HtmlDocument document, out string posterUrl)
     {
-      var node = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div/div/header/div/h1")?.FirstOrDefault()?.InnerText;
+      var node = TrySelectNodes(document.DocumentNode, "/div/div[1]/div/div[1]/div/div/header/div/h1")?.FirstOrDefault()?.InnerText;
 
       if (node != null)
       {
@@ -185,8 +189,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         logger.Log(MessageType.Success, $"Tv show name: {name}");
 
-        var posterNode = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div/div/div[1]/div[1]/a/img")?.FirstOrDefault();
-
+        var posterNode = TrySelectNodes(document.DocumentNode, "/div/div[1]/div/div[1]/div/div/div[1]/div[1]/a/img")?.FirstOrDefault();
 
         posterUrl = posterNode?.Attributes.SingleOrDefault(x => x.Name == "src")?.Value.Replace("//image.pmgstatic.com", "https://image.pmgstatic.com");
 
@@ -203,6 +206,9 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     private byte[] DownloadPoster(string coverUrl, CancellationToken cancellationToken)
     {
+      if (string.IsNullOrEmpty(coverUrl))
+        return null;
+
       using (var client = new WebClient())
       {
         cancellationToken.ThrowIfCancellationRequested();
@@ -335,7 +341,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
             pageNumber++;
           }
 
-          var newDocument = GetItemMainPage(chromeDriverProvider.ChromeDriver.Url + $"?seriePage={pageNumber}", cancellationToken); 
+          var newDocument = GetItemMainPage(chromeDriverProvider.ChromeDriver.Url + $"?seriePage={pageNumber}", cancellationToken);
 
           return LoadSeasons(newDocument, pStatusMessageViewModel, seasonNumber, episodeNumber, cancellationToken, pageNumber);
         }
@@ -737,6 +743,8 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         Message = $"Finding {name}"
       };
 
+
+
       statusManager.UpdateMessage(statusMessage);
 
       var parsedNameMatch = Regex.Match(name, @"(.*?)(\d\d\d\d)");
@@ -778,7 +786,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       {
         if (tvShowName == null && episodeKeys != null)
         {
-          tvShowName = System.IO.Path.ChangeExtension(episodeKeys.ParsedName, null);
+          tvShowName = Path.ChangeExtension(episodeKeys.ParsedName, null);
         }
 
         if (episodeKeys != null && seasonNumber == null)
@@ -804,10 +812,12 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
           }
 
+          await Task.Delay(5000);
+
           var tvShowFind = await FindSingleCsfdItem(tvShowName, year, episodeKeys != null ||
                                                                       seasonNumber != null ||
                                                                       episodeNumber != null ||
-                                                                      !string.IsNullOrEmpty(tvShowName), cancellationToken);
+                                                                      !string.IsNullOrEmpty(tvShowName), cancellationToken, parentMessage: statusMessage);
 
           if (tvShowFind == null)
           {
@@ -817,7 +827,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
             statusManager.UpdateMessage(statusMessage);
 
-            return await FindSingleCsfdItem(parsedName, year, episodeKeys != null, cancellationToken, true);
+            return await FindSingleCsfdItem(parsedName, year, episodeKeys != null, cancellationToken, true, parentMessage: statusMessage);
           }
 
           tvShowUrl = tvShowFind.Url;
@@ -832,7 +842,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
             await Task.Run(() => LoadCsfdEpisode(episode));
 
             if (!string.IsNullOrEmpty(episode.TvShowUrl))
-              tvShow = LoadTvShow(episode.TvShowUrl, cancellationToken, seasonNumber, episodeNumber);
+              tvShow = LoadTvShow(episode.TvShowUrl, cancellationToken, seasonNumber, episodeNumber, parentMessage: statusMessage);
           }
           else
           {
@@ -843,7 +853,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
             {
               if (int.TryParse(episodeNumberMatch.Groups[1].Value?.Trim(), out var numberParsed))
               {
-                return LoadTvShow(tvShowFind.Url, cancellationToken, seasonNumber, numberParsed);
+                return LoadTvShow(tvShowFind.Url, cancellationToken, seasonNumber, numberParsed, parentMessage: statusMessage);
               }
             }
           }
@@ -852,7 +862,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         if (tvShow == null)
         {
-          tvShow = LoadTvShow(tvShowUrl, cancellationToken, seasonNumber, episodeNumber);
+          tvShow = LoadTvShow(tvShowUrl, cancellationToken, seasonNumber, episodeNumber, parentMessage: statusMessage);
         }
 
 
@@ -902,7 +912,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         }
 
 
-        return await FindSingleCsfdItem(parsedName, year, episodeKeys != null, cancellationToken, true);
+        return await FindSingleCsfdItem(parsedName, year, episodeKeys != null, cancellationToken, true, parentMessage: statusMessage);
       }
     }
 
@@ -910,7 +920,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region FindSingleCsfdItem
 
-    private async Task<CSFDItem> FindSingleCsfdItem(string parsedName, int? year, bool isTvSHow, CancellationToken cancellationToken, bool showStatusMassage = false)
+    private async Task<CSFDItem> FindSingleCsfdItem(string parsedName, int? year, bool isTvSHow, CancellationToken cancellationToken, bool showStatusMassage = false, StatusMessageViewModel parentMessage = null)
     {
       lastParsedName = parsedName;
 
@@ -928,6 +938,8 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         Status = StatusType.Processing,
         Message = $"Finding item"
       };
+
+      statusMessage.CopyParentState(parentMessage);
 
       if (showStatusMassage)
       {
@@ -1037,12 +1049,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     {
       return Task.Run(() =>
       {
-        var nodes = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[2]/div/div[1]/div/div[1]/section[1]/div/div[1]/article");
-
-        if (nodes == null)
-        {
-          nodes = document.DocumentNode.SelectNodes("/html/body/div[4]/div/div[2]/div/div[1]/div/div[1]/section[1]/div/div[1]/article");
-        }
+        var nodes = TrySelectNodes(document.DocumentNode, "/div/div[2]/div/div[1]/div/div[1]/section[1]/div/div[1]/article");
 
         return ParseFindNodes(nodes, cancellationToken);
       });
@@ -1057,22 +1064,14 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       var html = chromeDriverProvider.SafeNavigate(cSFDItem.Url);
 
       var document = new HtmlDocument();
+
       document.LoadHtml(html);
 
-      var ratingNode = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/aside/div[1]/div[2]/div")?.FirstOrDefault()?.InnerText.Replace("\t", null).Replace("\r", null).Replace("\n", null).Replace("%", null);
+      var ratingNode = TrySelectNodes(document.DocumentNode, "/div/div[1]/aside/div[1]/div[2]/div")?.FirstOrDefault()?.InnerText.Replace("\t", null).Replace("\r", null).Replace("\n", null).Replace("%", null);
 
       if (int.TryParse(ratingNode, out var rating))
       {
         return rating;
-      }
-      else
-      {
-        ratingNode = document.DocumentNode.SelectNodes("/html/body/div[4]/div/div[1]/aside/div[1]/div[2]/div")?.FirstOrDefault()?.InnerText.Replace("\t", null).Replace("\r", null).Replace("\n", null).Replace("%", null);
-
-        if (int.TryParse(ratingNode, out rating))
-        {
-          return rating;
-        }
       }
 
       return null;
@@ -1092,12 +1091,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       {
         document.LoadHtml(html);
 
-        var node = document?.DocumentNode?.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div[2]/div/div[1]/div[1]/a/img")?.FirstOrDefault();
-
-        if (node == null)
-        {
-          node = document?.DocumentNode?.SelectNodes("/html/body/div[3]/div/div[1]/div/div/div[2]/div/div[1]/div[1]/img")?.FirstOrDefault();
-        }
+        var node = TrySelectNodes(document.DocumentNode, "/div/div[1]/div/div[1]/div[2]/div/div[1]/div[1]/a/img")?.FirstOrDefault();
 
         if (node != null)
         {
@@ -1115,6 +1109,20 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       return null;
 
+    }
+
+    #endregion
+
+    #region GetTvShowsFromFind
+
+    private Task<IEnumerable<CSFDItem>> GetTvShowsFromFind(HtmlDocument document, CancellationToken cancellationToken)
+    {
+      return Task.Run(() =>
+      {
+        var nodes = TrySelectNodes(document.DocumentNode, "/div/div[2]/div/div[1]/div/div[1]/section[2]/div/div[1]/article");
+
+        return ParseFindNodes(nodes, cancellationToken);
+      });
     }
 
     #endregion
@@ -1247,13 +1255,6 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           RatingColor = ratingColor
         };
 
-        //if (item.ImagePath != null)
-        //{
-        //  var webClient = new WebClient();
-
-        //  item.Image = webClient.DownloadData("https://image.pmgstatic.com/cache/resized/w60h85/files/images/film/posters/165/598/165598636_4a6e6f.jpg");
-        //}
-
         list.Add(item);
       }
 
@@ -1262,23 +1263,28 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #endregion
 
-    #region GetTvShowsFromFind
+    #region TrySelectNodes
 
-    private Task<IEnumerable<CSFDItem>> GetTvShowsFromFind(HtmlDocument document, CancellationToken cancellationToken)
+    private HtmlNodeCollection TrySelectNodes(HtmlNode htmlNode, string xPath, string baseXPath = "/html/body/div")
     {
-      return Task.Run(() =>
+      int[] divIndexes = new int[] { 3, 4, 2 };
+
+      foreach (var divIndex in divIndexes)
       {
-        var nodes = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[2]/div/div[1]/div/div[1]/section[2]/div/div[1]/article");
+        var finalXPath = $"{baseXPath}[{divIndex}]{xPath}";
 
-        if (nodes == null)
+        var resultHtmlNode = htmlNode.SelectNodes(finalXPath);
+
+        if (resultHtmlNode != null)
         {
-          nodes = document.DocumentNode.SelectNodes("/html/body/div[4]/div/div[2]/div/div[1]/div/div[1]/section[2]/div/div[1]/article");
+          return resultHtmlNode;
         }
+      }
 
-        return ParseFindNodes(nodes, cancellationToken);
-      });
+      return null;
     }
 
     #endregion
+
   }
 }

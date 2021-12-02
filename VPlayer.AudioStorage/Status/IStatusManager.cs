@@ -158,11 +158,8 @@ namespace VPlayer.Core.Managers.Status
 
     public void UpdateMessage(StatusMessageViewModel statusMessageViewModel)
     {
-      var messageCopy = statusMessageViewModel.Copy();
-      messageCopy.OriginalMessageId = statusMessageViewModel.Id;
-
-      messages.Add(messageCopy);
-      onUpdateMessage.OnNext(messageCopy);
+      messages.Add(statusMessageViewModel);
+      onUpdateMessage.OnNext(statusMessageViewModel);
     }
 
     #endregion
