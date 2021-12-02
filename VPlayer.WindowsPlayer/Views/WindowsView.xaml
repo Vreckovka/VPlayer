@@ -72,7 +72,7 @@
                   Background="Transparent"
                   WindowChrome.IsHitTestVisibleInChrome="True">
 
-                <MenuItem Width="80"
+                <MenuItem Width="100"
                           Height="{StaticResource ChromeGridHeight}"
                           Background="Transparent"
                           BorderThickness="0">
@@ -88,7 +88,7 @@
 
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding IsHighlighted, RelativeSource={RelativeSource AncestorType=MenuItem, Mode=FindAncestor}}" Value="true">
-                                                <Setter Property="ForegroundDefaultColor" Value="{StaticResource DefaultRedColor}" />
+                                                <Setter Property="ForegroundDefaultColor" Value="White" />
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding IsHighlighted, RelativeSource={RelativeSource AncestorType=MenuItem, Mode=FindAncestor}}" Value="false">
                                                 <Setter Property="ForegroundDefaultColor" Value="#555555" />
@@ -115,7 +115,7 @@
 
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=MenuItem, Mode=FindAncestor}}" Value="true">
-                                                    <Setter Property="IconDefaultColor" Value="{StaticResource DefaultRedColor}" />
+                                                    <Setter Property="IconDefaultColor" Value="White" />
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
@@ -139,7 +139,7 @@
 
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=MenuItem, Mode=FindAncestor}}" Value="true">
-                                                    <Setter Property="IconDefaultColor" Value="{StaticResource DefaultRedColor}" />
+                                                    <Setter Property="IconDefaultColor" Value="White" />
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
