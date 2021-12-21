@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Prism.Events;
 using VCore;
@@ -12,6 +14,7 @@ using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Managers;
 using VCore.WPF.Misc;
 using VCore.WPF.ViewModels.WindowsFiles;
+using VFfmpeg;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
@@ -20,28 +23,59 @@ using FileInfo = VCore.WPF.ViewModels.WindowsFiles.FileInfo;
 
 namespace VPlayer.Core.FileBrowser
 {
+  public class ThumbnailViewModel
+  {
+    public byte[] ImageData { get; set; }
+
+    public TimeSpan Time { get; set; }
+  }
+
   public class PlayableFileViewModel : FileViewModel
   {
     private readonly IEventAggregator eventAggregator;
     private readonly IStorageManager storageManager;
     private readonly IViewModelsFactory viewModelsFactory;
+    private readonly IVFfmpegProvider iVFfmpegProvider;
 
     public PlayableFileViewModel(
       FileInfo model,
       IEventAggregator eventAggregator,
       IStorageManager storageManager,
       IWindowManager windowManager,
-      IViewModelsFactory viewModelsFactory) : base(model)
+      IViewModelsFactory viewModelsFactory,
+      IVFfmpegProvider iVFfmpegProvider) : base(model)
     {
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+      this.iVFfmpegProvider = iVFfmpegProvider ?? throw new ArgumentNullException(nameof(iVFfmpegProvider));
 
       if (FileType == FileType.Video || FileType == FileType.Sound)
       {
         CanPlay = true;
       }
     }
+
+    public ObservableCollection<ThumbnailViewModel> Thumbnails { get; } = new ObservableCollection<ThumbnailViewModel>();
+
+    #region ThumbnailsLoading
+
+    private bool thumbnailsLoading;
+
+    public bool ThumbnailsLoading
+    {
+      get { return thumbnailsLoading; }
+      set
+      {
+        if (value != thumbnailsLoading)
+        {
+          thumbnailsLoading = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     #region CanPlay
 
@@ -128,6 +162,107 @@ namespace VPlayer.Core.FileBrowser
 
     #endregion
 
+    #region OnSelected
+
+    protected override async void OnSelected(bool isSelected)
+    {
+      base.OnSelected(isSelected);
+
+      if (isSelected)
+      {
+        await CreateThumbnails();
+      }
+
+      base.OnSelected(isSelected);
+    }
+
+    #endregion
+
+    #region CreateThumbnails
+
+    private async Task CreateThumbnails()
+    {
+      try
+      {
+        ThumbnailsLoading = true;
+        Thumbnails.Clear();
+        var thmbs = new List<ThumbnailViewModel>();
+
+        await Task.Run(async () =>
+        {
+          var ffprobeResult = await iVFfmpegProvider.RunFfprobe<ProcessOutputHandler>($"-v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 \"{Model.FullName}\"");
+
+          var allOutput = ffprobeResult.Output.ToList();
+          double? fileDuration = null;
+          int numberOfScreenshots = 5;
+
+          var thumbsFolder = "preview_thumbnails";
+
+          Directory.CreateDirectory(thumbsFolder);
+
+          var dur = allOutput.FirstOrDefault(x => x != null);
+
+          if (double.TryParse(dur, out var parsed))
+          {
+            fileDuration = parsed * 0.9;
+          }
+
+          if (fileDuration != null)
+          {
+            int screenInterval = (int)fileDuration / numberOfScreenshots;
+            string ffmpegParams = " ";
+
+            for (int i = 0; i < numberOfScreenshots; i++)
+            {
+              var actualDuration = (i + 1) * screenInterval;
+
+              var time = TimeSpan.FromSeconds(actualDuration);
+              var timeStr = TimeSpan.FromSeconds(actualDuration).ToString(@"hh\:mm\:ss");
+
+              ffmpegParams += $"-ss {timeStr} -i \"{Model.FullName}\" ";
+
+              thmbs.Add(new ThumbnailViewModel()
+              {
+                Time = time
+              });
+            }
+
+            for (int i = 0; i < numberOfScreenshots; i++)
+            {
+              ffmpegParams += $"-map {i}:v -vframes 1 {thumbsFolder}\\output_{i + 1}.png ";
+            }
+
+            ffmpegParams = ffmpegParams + " -y";
+
+            var result = await iVFfmpegProvider.RunFfmpeg<ProcessOutputHandler>(ffmpegParams, true);
+
+            for (int i = 0; i < numberOfScreenshots; i++)
+            {
+              var file = $"{thumbsFolder}\\output_{i + 1}.png";
+
+              if (File.Exists(file))
+              {
+                var bytes = File.ReadAllBytes(file);
+
+                thmbs[i].ImageData = bytes;
+
+                File.Delete(file);
+              }
+            }
+          }
+        });
+
+        Thumbnails.AddRange(thmbs);
+      }
+      finally
+      {
+        ThumbnailsLoading = false;
+      }
+    }
+
+    #endregion
+
+    #region OnOpenContainingFolder
 
     public override void OnOpenContainingFolder()
     {
@@ -151,5 +286,8 @@ namespace VPlayer.Core.FileBrowser
         }
       }
     }
+
+    #endregion
+
   }
 }

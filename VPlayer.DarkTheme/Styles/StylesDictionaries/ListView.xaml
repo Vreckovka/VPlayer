@@ -54,7 +54,7 @@
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
 
-                                <Grid Margin="0,0,8,0" HorizontalAlignment="Left">
+                                <Grid Margin="0,0,5,0" HorizontalAlignment="Left">
                                     <!--<Grid>
                     <Image Width="{StaticResource ListView_MenuStyle_IconSize}"
                            Height="{StaticResource ListView_MenuStyle_IconSize}"
@@ -111,16 +111,16 @@
 
                             <ListView x:Name="subItems"
                                       Grid.Row="1"
-                                      Margin="0,7,0,0"
+                                      Margin="0,5,0,0"
                                       Padding="0,0,0,0"
-                                      attachableProperties:ListViewAttachables.ListViewItemPadding="0 7"
+                                      attachableProperties:ListViewAttachables.ListViewItemPadding="0 0"
                                       Background="Transparent"
                                       BorderThickness="0"
                                       ItemsSource="{Binding SubItems}"
                                       Style="{DynamicResource ListView_MenuStyle}" />
 
                             <b:Interaction.Behaviors>
-                                <behaviors:SetSizeAfterLoadBehavior ExtraWidth="5" />
+                                <behaviors:SetSizeAfterLoadBehavior ExtraWidth="15" />
                             </b:Interaction.Behaviors>
                         </Grid>
 

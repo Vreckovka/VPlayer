@@ -17,6 +17,7 @@
     <PackageReference Include="WindowsAPICodePack" Version="1.1.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\CustomLibraries\Custom\VFfmpeg\VFfmpeg\VFfmpeg.csproj" />
     <ProjectReference Include="..\..\CustomLibraries\Logger\Logger.csproj" />
     <ProjectReference Include="..\..\CustomLibraries\SoundManagement\SoundManagement.csproj" />
     <ProjectReference Include="..\..\CustomLibraries\VCore.Standard\VCore.Standard.csproj" />
