@@ -220,7 +220,7 @@ namespace VPlayer.AudioStorage.DataLoader
           }
 
 
-          var parsedName = name.ToLower().Replace(match.Groups[0].Value, null);
+          var parsedName = name.ToLower().Split(match.Groups[0].Value)[0];
 
           CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
           TextInfo textInfo = cultureInfo.TextInfo;

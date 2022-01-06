@@ -101,7 +101,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           }
 
           statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
-          
+
           tvShow.Seasons = LoadSeasons(document, statusMessage, seasonNumber, episodeNumber, cancellationToken, fileName: fileName);
 
           if (tvShow.Seasons == null)
@@ -237,21 +237,27 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       var directory = Path.Combine(AudioInfoDownloader.GetDefaultPicturesPath(), $"TvShows\\{AudioInfoDownloader.GetPathValidName(tvShowName)}");
       var finalPath = Path.Combine(directory, "poster.jpg");
 
-      cancellationToken.ThrowIfCancellationRequested();
-
-      finalPath.EnsureDirectoryExists();
-
-      if (File.Exists(finalPath))
+      try
       {
         cancellationToken.ThrowIfCancellationRequested();
 
-        File.Delete(finalPath);
+        finalPath.EnsureDirectoryExists();
+
+        if (File.Exists(finalPath))
+        {
+          cancellationToken.ThrowIfCancellationRequested();
+
+          File.Delete(finalPath);
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        i.Save(finalPath, ImageFormat.Jpeg);
+        i.Dispose();
       }
-
-      cancellationToken.ThrowIfCancellationRequested();
-
-      i.Save(finalPath, ImageFormat.Jpeg);
-      i.Dispose();
+      catch (Exception ex)
+      {
+      }
 
       return finalPath;
     }
@@ -682,7 +688,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         cSFDTVShowSeasonEpisode.Year = year;
         cSFDTVShowSeasonEpisode.Actors = actors;
         cSFDTVShowSeasonEpisode.Directors = directors;
-        cSFDTVShowSeasonEpisode.OriginalName = originalName?.Replace("(více)", null);
+        cSFDTVShowSeasonEpisode.OriginalName = originalName?.Replace("(viac)", null);
         cSFDTVShowSeasonEpisode.Generes = generes;
         cSFDTVShowSeasonEpisode.SeasonNumber = number?.SeasonNumber;
         cSFDTVShowSeasonEpisode.EpisodeNumber = number?.EpisodeNumber;
@@ -791,7 +797,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
             if (parsedNameMatch.Groups.Count >= 3 && int.TryParse(parsedNameMatch.Groups[2].Value, out var pYear))
             {
-              if (pYear > 1887)
+              if (pYear > 1887 && pYear < DateTime.Now.Year)
               {
                 year = pYear;
               }
@@ -950,7 +956,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     {
       lastParsedName = parsedName;
 
-      parsedName = parsedName.RemoveDiacritics().Replace(".", null);
+      parsedName = parsedName.RemoveDiacritics().Replace(".", " ");
 
       if (parseYearFromName)
       {
@@ -986,7 +992,12 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         statusManager.UpdateMessage(statusMessage);
 
-        return null;
+        if (lastParsedName != parsedName)
+        {
+          return await FindSingleCsfdItem(lastParsedName, year, isTvSHow, cancellationToken, showStatusMassage, parentMessage, false);
+        }
+        else
+          return null;
       }
 
       if (showStatusMassage)
