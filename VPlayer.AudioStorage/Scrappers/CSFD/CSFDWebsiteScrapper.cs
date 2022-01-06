@@ -743,8 +743,6 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         Message = $"Finding {name}"
       };
 
-
-
       statusManager.UpdateMessage(statusMessage);
 
       var parsedNameMatch = Regex.Match(name, @"(.*?)(\d\d\d\d)");
@@ -825,7 +823,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
             statusManager.UpdateMessage(statusMessage);
 
-            return await FindSingleCsfdItem(parsedName, year, episodeKeys != null, cancellationToken, true, parentMessage: statusMessage);
+            return await FindSingleCsfdItem(parsedName, year, false, cancellationToken, true, statusMessage, isMovie: true);
           }
 
           tvShowUrl = tvShowFind.Url;
@@ -842,7 +840,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
             if (!string.IsNullOrEmpty(episode.TvShowUrl))
               tvShow = LoadTvShow(episode.TvShowUrl, cancellationToken, seasonNumber, episodeNumber, parentMessage: statusMessage);
           }
-          else if(episodeKeys != null)
+          else if (episodeKeys != null)
           {
             return LoadTvShow(tvShowFind.Url, cancellationToken, seasonNumber, episodeNumber, parentMessage: statusMessage);
           }
@@ -909,17 +907,28 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region FindSingleCsfdItem
 
-    private async Task<CSFDItem> FindSingleCsfdItem(string parsedName, int? year, bool isTvSHow, CancellationToken cancellationToken, bool showStatusMassage = false, StatusMessageViewModel parentMessage = null)
+    private async Task<CSFDItem> FindSingleCsfdItem(
+      string parsedName,
+      int? year,
+      bool isTvSHow,
+      CancellationToken cancellationToken,
+      bool showStatusMassage = false,
+      StatusMessageViewModel parentMessage = null,
+      bool parseYearFromName = true,
+      bool isMovie = false)
     {
       lastParsedName = parsedName;
 
       parsedName = parsedName.RemoveDiacritics().Replace(".", null);
 
-      var match = Regex.Match(parsedName, @"\D*");
-
-      if (match.Success && !string.IsNullOrEmpty(match.Value))
+      if (parseYearFromName)
       {
-        parsedName = match.Value;
+        var match = Regex.Match(parsedName, @"\D*");
+
+        if (match.Success && !string.IsNullOrEmpty(match.Value) && !Regex.IsMatch(parsedName, @"\d*th"))
+        {
+          parsedName = match.Value;
+        }
       }
 
       var statusMessage = new StatusMessageViewModel(2)
@@ -981,8 +990,13 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       if (isTvSHow)
       {
-        query = query.Where(x => x.Parameters.Contains("TV seriál") || x.Parameters.Contains("epizoda"));
+        query = query.Where(x => x.Parameters.Contains("seriál") || x.Parameters.Contains("epizóda") || x.Parameters.Contains("séria"));
       }
+      else if (isMovie)
+      {
+        query = query.Where(x => !x.Parameters.Contains("seriál") && !x.Parameters.Contains("epizóda"));
+      }
+
 
       var sortedItems = query.ToList();
 
@@ -992,12 +1006,18 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       {
         bestItem.Rating = GetCsfdRating(bestItem);
         bestItem.ImagePath = GetCsfdImage(bestItem);
+
+        if (showStatusMassage)
+          statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+
+        return bestItem;
       }
-
-      if (showStatusMassage)
-        statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
-
-      return bestItem;
+      else if (lastParsedName != parsedName)
+      {
+        return await FindSingleCsfdItem(lastParsedName, year, isTvSHow, cancellationToken, showStatusMassage, parentMessage, false);
+      }
+      else
+        return null;
     }
 
     #endregion
@@ -1084,9 +1104,9 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         if (node != null)
         {
-          if (node.Attributes.Count >= 3)
+          if (node.Attributes.Count >= 0)
           {
-            var urlValue = node.Attributes[2]?.Value;
+            var urlValue = node.Attributes.SingleOrDefault(x => x.Name == "src")?.Value;
 
             if (urlValue != null && !urlValue.Contains("data:image"))
             {
