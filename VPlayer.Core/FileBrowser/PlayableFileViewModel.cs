@@ -140,7 +140,7 @@ namespace VPlayer.Core.FileBrowser
 
     #region OnCreateThumbnails
 
-    private async Task OnCreateThumbnails()
+    public async Task OnCreateThumbnails()
     {
       if (Thumbnails.Count == 0)
       {
@@ -191,7 +191,7 @@ namespace VPlayer.Core.FileBrowser
 
               for (int i = 0; i < numberOfScreenshots; i++)
               {
-                ffmpegParams += $"-map {i}:v -vframes 1 {thumbsFolder}\\output_{i + 1}.png ";
+                ffmpegParams += $"-map {i}:v -vframes 1 -qscale:v 2 {thumbsFolder}\\output_{i + 1}.png ";
               }
 
               ffmpegParams = ffmpegParams + " -y";

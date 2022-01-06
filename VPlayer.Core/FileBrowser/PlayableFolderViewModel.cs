@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -49,6 +50,8 @@ namespace VPlayer.Core.FileBrowser
       Name = folderViewModel.Model.Name;
     }
 
+    #region Properties
+
     #region CanPlay
 
     private bool canPlay;
@@ -65,6 +68,29 @@ namespace VPlayer.Core.FileBrowser
         }
       }
     }
+
+    #endregion
+
+    public ObservableCollection<ThumbnailViewModel> Thumbnails { get; } = new ObservableCollection<ThumbnailViewModel>();
+
+    #region ThumbnailsLoading
+
+    private bool thumbnailsLoading;
+
+    public bool ThumbnailsLoading
+    {
+      get { return thumbnailsLoading; }
+      set
+      {
+        if (value != thumbnailsLoading)
+        {
+          thumbnailsLoading = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     #endregion
 
@@ -105,6 +131,54 @@ namespace VPlayer.Core.FileBrowser
         return loadNewItem;
       }
     }
+
+    #endregion
+
+    #region OnTooltip
+
+    private ActionCommand tooltipCommand;
+
+    public ICommand TooltipCommand
+    {
+      get
+      {
+        if (tooltipCommand == null)
+        {
+          tooltipCommand = new ActionCommand(async () => await OnTooltip());
+        }
+
+        return tooltipCommand;
+      }
+    }
+
+    #region OnHover
+
+    private async Task OnTooltip()
+    {
+      var videos = SubItems.View.OfType<PlayableFileViewModel>().Where(x => x.FileType == FileType.Video).ToList();
+
+      if (Thumbnails.Count == 0 && FolderType == FolderType.Video && videos.Count == 1)
+      {
+        try
+        {
+          var video = videos.First();
+
+          ThumbnailsLoading = true;
+          Thumbnails.Clear();
+
+          await video.OnCreateThumbnails();
+
+          Thumbnails.AddRange(video.Thumbnails);
+        }
+        finally
+
+        {
+          ThumbnailsLoading = false;
+        }
+      }
+    }
+
+    #endregion
 
     #endregion
 
