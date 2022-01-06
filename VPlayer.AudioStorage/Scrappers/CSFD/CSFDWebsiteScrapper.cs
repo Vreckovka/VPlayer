@@ -45,7 +45,13 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region LoadTvShow
 
-    public CSFDTVShow LoadTvShow(string url, CancellationToken cancellationToken, int? seasonNumber = null, int? episodeNumber = null, StatusMessageViewModel parentMessage = null)
+    public CSFDTVShow LoadTvShow(
+      string url,
+      CancellationToken cancellationToken,
+      int? seasonNumber = null,
+      int? episodeNumber = null,
+      StatusMessageViewModel parentMessage = null,
+      string fileName = null)
     {
       var nameF = url
         .Replace("https://www.csfd.cz/film/", null)
@@ -95,8 +101,8 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           }
 
           statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
-
-          tvShow.Seasons = LoadSeasons(document, statusMessage, seasonNumber, episodeNumber, cancellationToken);
+          
+          tvShow.Seasons = LoadSeasons(document, statusMessage, seasonNumber, episodeNumber, cancellationToken, fileName: fileName);
 
           if (tvShow.Seasons == null)
           {
@@ -254,7 +260,14 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region LoadSeasons
 
-    private List<CSFDTVShowSeason> LoadSeasons(HtmlDocument document, StatusMessageViewModel pStatusMessageViewModel, int? seasonNumber, int? episodeNumber, CancellationToken cancellationToken, int? pageNumber = null)
+    private List<CSFDTVShowSeason> LoadSeasons(
+      HtmlDocument document,
+      StatusMessageViewModel pStatusMessageViewModel,
+      int? seasonNumber,
+      int? episodeNumber,
+      CancellationToken cancellationToken,
+      int? pageNumber = null,
+      string fileName = null)
     {
       var seasons = new List<CSFDTVShowSeason>();
 
@@ -330,6 +343,14 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         var episodeIndex = 0;
 
+        if (seasonNumber == null && episodeNumber == null && !string.IsNullOrEmpty(fileName))
+        {
+          if (int.TryParse(Regex.Match(fileName, @"\d+").Value, out var parsedNumber))
+          {
+            episodeNumber = parsedNumber;
+          }
+        }
+
         if (episodeNumber > (seasons.Count) * (pageNumber ?? 1))
         {
           if (pageNumber == null)
@@ -341,7 +362,18 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
             pageNumber++;
           }
 
-          var newDocument = GetItemMainPage(chromeDriverProvider.ChromeDriver.Url + $"?seriePage={pageNumber}", cancellationToken);
+          var url = chromeDriverProvider.ChromeDriver.Url;
+
+          if (url.Contains("seriePage"))
+          {
+            url = url.Split("?seriePage")[0] + $"?seriePage={pageNumber}";
+          }
+          else
+          {
+            url += $"?seriePage={pageNumber}";
+          }
+
+          var newDocument = GetItemMainPage(url, cancellationToken);
 
           return LoadSeasons(newDocument, pStatusMessageViewModel, seasonNumber, episodeNumber, cancellationToken, pageNumber);
         }
@@ -846,10 +878,9 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           }
         }
 
-
         if (tvShow == null)
         {
-          tvShow = LoadTvShow(tvShowUrl, cancellationToken, seasonNumber, episodeNumber, parentMessage: statusMessage);
+          tvShow = LoadTvShow(tvShowUrl, cancellationToken, seasonNumber, episodeNumber, parentMessage: statusMessage, parsedName);
         }
 
 
@@ -925,7 +956,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       {
         var match = Regex.Match(parsedName, @"\D*");
 
-        if (match.Success && !string.IsNullOrEmpty(match.Value) && !Regex.IsMatch(parsedName, @"\d*th"))
+        if (match.Success && !string.IsNullOrEmpty(match.Value) && !Regex.IsMatch(parsedName, @"\d+th"))
         {
           parsedName = match.Value;
         }
