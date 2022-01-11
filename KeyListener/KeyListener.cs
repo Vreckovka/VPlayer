@@ -151,7 +151,7 @@ namespace Listener
         }
 
         //Return a dummy value to trap the keystroke
-        return (System.IntPtr)1;
+        //return (System.IntPtr)1;
       }
 
       return CallNextHookEx(_keyboardHookID, nCode, wParam, lParam);
