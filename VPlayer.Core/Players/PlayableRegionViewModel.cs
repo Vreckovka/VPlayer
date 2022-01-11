@@ -1037,7 +1037,7 @@ namespace VPlayer.Core.ViewModels
         }
       }
 
-      SetItemAndPlay(actualItemIndex);
+      SetItemAndPlay(actualItemIndex, true);
     }
 
     #endregion
@@ -1046,7 +1046,7 @@ namespace VPlayer.Core.ViewModels
 
     public virtual void PlayNext()
     {
-      SetItemAndPlay(null);
+      SetItemAndPlay(null, true);
     }
 
     #endregion

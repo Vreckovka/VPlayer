@@ -48,7 +48,7 @@ namespace VPlayer.Core.Behaviors
 
       AssociatedObject.MouseLeftButtonDown += AssociatedObject_MouseLeftButtonDown;
       AssociatedObject.MouseMove += AssociatedObject_MouseMove;
-      AssociatedObject.DataContextChanged += AssociatedObject_DataContextChanged;
+     // AssociatedObject.DataContextChanged += AssociatedObject_DataContextChanged;
      
 
       fullScrennDisposable.Disposable = FullScreenManager.OnFullScreen.Subscribe(DecideFullScreen);
@@ -58,16 +58,16 @@ namespace VPlayer.Core.Behaviors
     }
 
   
-    private void AssociatedObject_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-    {
-      if (e.NewValue is IFilePlayableRegionViewModel viewModel)
-      {
-        viewModel?.ActualItemChanged.Subscribe(x =>
-        {
-          Application.Current.MainWindow?.Focus();
-        });
-      }
-    }
+    //private void AssociatedObject_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+    //{
+    //  if (e.NewValue is IFilePlayableRegionViewModel viewModel)
+    //  {
+    //    viewModel?.ActualItemChanged.Subscribe(x =>
+    //    {
+    //      Application.Current.MainWindow?.Focus();
+    //    });
+    //  }
+    //}
 
 
     #endregion

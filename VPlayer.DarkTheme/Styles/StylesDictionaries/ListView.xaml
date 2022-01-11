@@ -535,6 +535,10 @@
             <Trigger Property="IsSelected" Value="true">
                 <Setter Property="Background" Value="{StaticResource 30_WhiteTransparentBrush}" />
             </Trigger>
+            <Trigger Property="IsEnabled" Value="false">
+                <Setter Property="Opacity" Value="0.25" />
+                <Setter Property="IsHitTestVisible" Value="False" />
+            </Trigger>
             <!--<DataTrigger Binding="{TemplateBinding GridView.ColumnCollection}" Value="{x:Null}">
                 <Setter TargetName="GridViewRowPresenter" Property="Visibility" Value="Collapsed" />
             </DataTrigger>
@@ -557,6 +561,7 @@
         <Setter Property="Template" Value="{DynamicResource ListViewItemTemplate}" />
         <Setter Property="Background" Value="{StaticResource 10_WhiteTransparentBrush}" />
         <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+        <Setter Property="IsEnabled" Value="{Binding IsEnabled}" />
     </Style>
 
     <Style TargetType="ListView">

@@ -406,7 +406,7 @@ namespace VPlayer.Player.ViewModels
     {
       Application.Current?.Dispatcher?.Invoke(() =>
       {
-        var filePlayable = CanUseKey(e.KeyPressed);
+         var filePlayable = CanUseKey(e.KeyPressed);
 
         if (filePlayable != null)
         {

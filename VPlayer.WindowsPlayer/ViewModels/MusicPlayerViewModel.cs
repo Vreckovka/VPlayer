@@ -985,35 +985,38 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       var result = await getLinksTask.Process;
 
-      foreach (var keyPair in result)
+      if (result != null)
       {
-        var originalItem = onlyNeededList.SingleOrDefault(x => x.FileInfo.Indentificator == keyPair.Key.ToString());
-        var publicLink = keyPair.Value;
-
-        if (originalItem != null)
+        foreach (var keyPair in result)
         {
-          if (publicLinks.TryGetValue(originalItem, out var storedPublicLink) &&
-              storedPublicLink.ExpiresDate > DateTime.Now)
-          {
-            continue;
-          }
+          var originalItem = onlyNeededList.SingleOrDefault(x => x.FileInfo.Indentificator == keyPair.Key.ToString());
+          var publicLink = keyPair.Value;
 
-          if (publicLink != null)
+          if (originalItem != null)
           {
-            var oldLink = originalItem.FileInfo.Source;
-
-            if (publicLink.Link != oldLink)
+            if (publicLinks.TryGetValue(originalItem, out var storedPublicLink) &&
+                storedPublicLink.ExpiresDate > DateTime.Now)
             {
-              originalItem.FileInfo.Source = publicLink.Link;
+              continue;
             }
 
-            if (storedPublicLink != null)
+            if (publicLink != null)
             {
-              publicLinks[originalItem] = publicLink;
-            }
-            else
-            {
-              publicLinks.Add(originalItem, publicLink);
+              var oldLink = originalItem.FileInfo.Source;
+
+              if (publicLink.Link != oldLink)
+              {
+                originalItem.FileInfo.Source = publicLink.Link;
+              }
+
+              if (storedPublicLink != null)
+              {
+                publicLinks[originalItem] = publicLink;
+              }
+              else
+              {
+                publicLinks.Add(originalItem, publicLink);
+              }
             }
           }
         }

@@ -23,12 +23,6 @@ namespace VPlayer.Views
       InitializeComponent();
     }
 
-
-    private void OnClosing(object sender, CancelEventArgs e)
-    {
-      (DataContext as MainWindowViewModel)?.Dispose();
-    }
-
     private void Button_Click(object sender, RoutedEventArgs e)
     {
       storageManager.ClearStorage();

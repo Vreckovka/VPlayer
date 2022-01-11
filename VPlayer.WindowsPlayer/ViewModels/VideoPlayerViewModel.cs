@@ -74,7 +74,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       IWindowManager windowManager,
       IStatusManager statusManager,
       ICSFDWebsiteScrapper iCsfdWebsiteScrapper) :
-      base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager,statusManager, vLCPlayer)
+      base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, statusManager, vLCPlayer)
     {
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       this.iCsfdWebsiteScrapper = iCsfdWebsiteScrapper ?? throw new ArgumentNullException(nameof(iCsfdWebsiteScrapper));
@@ -455,8 +455,14 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region OnSubtitleSelected
 
-    private void OnSubtitleSelected(SubtitleViewModel selectedItem)
+    private async void OnSubtitleSelected(SubtitleViewModel selectedItem)
     {
+      if (selectedItem == null)
+      {
+        MediaPlayer.SetSpu(-1);
+        return;
+      }
+
       if (MediaPlayer.Spu != selectedItem.Model.Id)
       {
         MediaPlayer.SetSpu(selectedItem.Model.Id);
@@ -467,7 +473,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
           model.SubtitleTrack = selectedItem.Model.Id;
 
-          storageManager.UpdateEntityAsync(model);
+          await storageManager.UpdateEntityAsync(model);
         }
       }
     }
@@ -764,8 +770,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
           AudioTracks.Clear();
 
-          await ReloadSubtitles();
-
           if (MediaPlayer.AudioTrackDescription.Length > 0)
           {
             foreach (var spu in MediaPlayer.AudioTrackDescription)
@@ -782,6 +786,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
             actualAudioTrack.IsSelected = true;
           }
+
+          await ReloadSubtitles();
+
 
           if (MediaPlayer.Media != null)
             MediaPlayer.Media.ParsedChanged -= MediaPlayer_ParsedChanged;
@@ -854,13 +861,37 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
             if (lastSPUValue == null)
             {
-              var englishSubtitle = Subtitles.FirstOrDefault(x => x.Description.ToLower().Contains("anglicky"));
+              SubtitleViewModel englishSubtitle = null;
+              AudioTrackViewModel czechAudioTrack = null;
 
-              if (englishSubtitle == null)
+              czechAudioTrack = AudioTracks.FirstOrDefault(x =>
               {
-                englishSubtitle = Subtitles.FirstOrDefault(x => x.Description.ToLower().Contains("anglický"));
-              }
+                var desc = x.Description.RemoveDiacritics().ToLower();
 
+                return desc.Contains("czech") || desc.Contains("cesky");
+              });
+
+
+              if (czechAudioTrack != null)
+              {
+                englishSubtitle = Subtitles.FirstOrDefault(x =>
+                {
+                  var desc = x.Description.RemoveDiacritics().ToLower();
+                  var forced = desc.Contains("forced");
+
+                  return forced && (desc.Contains("anglicky") || desc.Contains("english"));
+                });
+              }
+              else
+              {
+                englishSubtitle = Subtitles.FirstOrDefault(x =>
+                {
+                  var desc = x.Description.RemoveDiacritics().ToLower();
+
+                  return (desc.Contains("anglicky") || desc.Contains("english"));
+                });
+              }
+              
               if (englishSubtitle != null)
               {
                 OnSubtitleSelected(englishSubtitle);

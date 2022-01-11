@@ -288,12 +288,12 @@ namespace VPlayer.ViewModels
 
     public override void Dispose()
     {
-      base.Dispose();
+      //base.Dispose();
 
-      foreach (var item in NavigationViewModel.Items)
-      {
-        item?.Dispose();
-      }
+      //foreach (var item in NavigationViewModel.Items)
+      //{
+      //  item?.Dispose();
+      //}
     }
 
     #endregion

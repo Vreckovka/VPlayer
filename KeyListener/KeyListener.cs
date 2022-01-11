@@ -63,7 +63,7 @@ namespace Listener
 
       dispatcherReadyEvent.WaitOne();
 
-#if RELEASE
+      //#if RELEASE
       myDispatcher.Invoke(() =>
       {
         _procKeyboard = HookCallbackKeyboard;
@@ -72,7 +72,7 @@ namespace Listener
         HookKeyboard();
         HookMouse();
       });
-#endif
+      //#endif
     }
 
     #endregion Constructors
@@ -141,14 +141,17 @@ namespace Listener
       if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN || wParam == (IntPtr)WM_SYSKEYDOWN)
       {
         int vkCode = Marshal.ReadInt32(lParam);
+        var key = KeyInterop.KeyFromVirtualKey(vkCode);
+
+        Debug.WriteLine(key);
 
         if (OnKeyPressed != null)
         {
-          OnKeyPressed(null, new KeyPressedArgs(KeyInterop.KeyFromVirtualKey(vkCode)));
+          OnKeyPressed(null, new KeyPressedArgs(key));
         }
 
         //Return a dummy value to trap the keystroke
-        //return (System.IntPtr)1;
+        return (System.IntPtr)1;
       }
 
       return CallNextHookEx(_keyboardHookID, nCode, wParam, lParam);
