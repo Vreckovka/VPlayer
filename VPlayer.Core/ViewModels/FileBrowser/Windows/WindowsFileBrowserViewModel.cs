@@ -11,6 +11,7 @@ using VCore.WPF.ViewModels.WindowsFiles;
 using VPlayer.AudioStorage.DomainClasses.FolderStructure;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core;
+using VPlayer.Core.FileBrowser;
 using VPlayer.Core.ViewModels;
 
 namespace VPlayer.Home.ViewModels.FileBrowser
@@ -40,13 +41,45 @@ namespace VPlayer.Home.ViewModels.FileBrowser
         FileSystem.DeleteFile(indentificator, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
       }
 
-      var items = Items.OfType<PlayableWindowsFileFolderViewModel>().SelectMany(x => x.SubItems.ViewModels.OfType<PlayableWindowsFileFolderViewModel>());
+      var pathNames = indentificator.Split("\\");
+      var tmpItem = Items.First();
 
-      var deletedItem = items.Single(x => x.Model.Indentificator == indentificator);
+      int? indexParent = null;
 
-      if(deletedItem.ParentFolder != null)
+      for (int i = 0; i < pathNames.Length; i++)
       {
-        deletedItem.ParentFolder.SubItems.Remove(deletedItem);
+        if (tmpItem == null)
+          return;
+
+        if (tmpItem.Name == pathNames[i] && indexParent == null)
+        {
+          indexParent = i;
+        }
+        else if (indexParent != null)
+        {
+          if (i > indexParent)
+          {
+            var tmpTmpItem = tmpItem.SubItems.ViewModels.SingleOrDefault(x => x.Name == pathNames[i]);
+
+            if (tmpTmpItem is PlayableFileViewModel fileViewModel)
+            {
+              tmpItem.SubItems.Remove(fileViewModel);
+              return;
+            }
+            else
+            {
+              tmpItem = tmpTmpItem;
+            }
+          }
+        }
+      }
+
+      if (tmpItem != null && tmpItem is PlayableWindowsFileFolderViewModel deletedFolder)
+      {
+        if (deletedFolder.ParentFolder != null)
+        {
+          deletedFolder.ParentFolder.SubItems.Remove(deletedFolder);
+        }
       }
     }
 
