@@ -63,7 +63,7 @@ namespace Listener
 
       dispatcherReadyEvent.WaitOne();
 
-      //#if RELEASE
+#if RELEASE
       myDispatcher.Invoke(() =>
       {
         _procKeyboard = HookCallbackKeyboard;
@@ -72,7 +72,7 @@ namespace Listener
         HookKeyboard();
         HookMouse();
       });
-      //#endif
+#endif
     }
 
     #endregion Constructors

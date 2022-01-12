@@ -214,7 +214,7 @@ namespace VPlayer.Core.FileBrowser
             }
           });
 
-          Thumbnails.AddRange(thmbs);
+          Thumbnails.AddRange(thmbs.Where(x => x.ImageData != null));
         }
         finally
 
