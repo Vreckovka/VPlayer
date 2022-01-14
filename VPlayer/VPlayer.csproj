@@ -8,17 +8,6 @@
 		<Platforms>AnyCPU;x86</Platforms>
 	</PropertyGroup>
 
-	<ItemGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<ContentWithTargetPath Include="$(ProjectDir)\bin\Debug\netcoreapp3.1\chromedriver.exe" CopyToOutputDirectory="PreserveNewest" TargetPath="chromedriver.exe" />
-	</ItemGroup>
-
-  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <ContentWithTargetPath Include="$(ProjectDir)\bin\Debug\netcoreapp3.1\chromedriver.exe" CopyToOutputDirectory="PreserveNewest" TargetPath="chromedriver.exe" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ContentWithTargetPath Include="$(ProjectDir)\bin\Debug\netcoreapp3.1\chromedriver.exe" CopyToOutputDirectory="PreserveNewest" TargetPath="chromedriver.exe" />
-  </ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<PlatformTarget>AnyCPU</PlatformTarget>
@@ -27,18 +16,18 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
 		<PlatformTarget>x86</PlatformTarget>
 	</PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+		<PlatformTarget>x64</PlatformTarget>
+	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<OutputPath></OutputPath>
 		<PlatformTarget>x64</PlatformTarget>
 	</PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+		<PlatformTarget>x64</PlatformTarget>
+	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <PlatformTarget>x86</PlatformTarget>
+		<PlatformTarget>x86</PlatformTarget>
 	</PropertyGroup>
 
 	<ItemGroup>
