@@ -337,9 +337,6 @@ namespace VPlayer.Core.ViewModels
         }
 
         await SetUpManager();
-
-
-
       }
     }
 
@@ -403,16 +400,9 @@ namespace VPlayer.Core.ViewModels
 
     #region SetUpManager
 
-    public async Task<bool> SetUpManager()
+    public virtual async Task<bool> SetUpManager()
     {
       var result = await SetBaseDirectory();
-
-      if (!result)
-      {
-        baseDirectoryPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-
-        result = await SetBaseDirectory();
-      }
 
       return result;
     }
@@ -421,7 +411,7 @@ namespace VPlayer.Core.ViewModels
 
     #region SetBaseDirectory
 
-    private async Task<bool> SetBaseDirectory()
+    protected async Task<bool> SetBaseDirectory()
     {
       var dirExists = await DirectoryExists(baseDirectoryPath);
 

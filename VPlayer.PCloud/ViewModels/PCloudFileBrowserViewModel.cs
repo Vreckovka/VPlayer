@@ -38,6 +38,11 @@ namespace VPlayer.PCloud.ViewModels
     public override Visibility FinderVisibility => Visibility.Collapsed;
     public override FileBrowserType FileBrowserType { get; } = FileBrowserType.Cloud;
 
+    public override Task<bool> SetUpManager()
+    {
+      return base.SetUpManager();
+    }
+
     protected override void OnDeleteItem(string indentificator)
     {
       throw new NotImplementedException();

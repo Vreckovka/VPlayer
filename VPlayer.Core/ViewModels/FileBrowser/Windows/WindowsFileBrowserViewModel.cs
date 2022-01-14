@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualBasic.FileIO;
@@ -29,6 +30,21 @@ namespace VPlayer.Home.ViewModels.FileBrowser
     }
 
     public override FileBrowserType FileBrowserType { get; } = FileBrowserType.Local;
+
+    public override async Task<bool> SetUpManager()
+    {
+      var result = await base.SetUpManager();
+
+      if (!result)
+      {
+        BaseDirectoryPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+        result = await SetBaseDirectory();
+      }
+
+      return result;
+    }
+
 
     protected override void OnDeleteItem(string indentificator)
     {
