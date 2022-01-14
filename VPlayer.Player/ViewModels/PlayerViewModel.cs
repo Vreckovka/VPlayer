@@ -36,13 +36,15 @@ namespace VPlayer.Player.ViewModels
     private Window mainWindow;
     private IDisposable audioDeviceManagerDisposable;
     private SerialDisposable volumeDisposable;
+    private IPlayableRegionViewModel[] players;
 
     public PlayerViewModel(
       IRegionProvider regionProvider,
       IKernel kernel,
       KeyListener keyListener,
       IStatusManager statusManager,
-      IEventAggregator eventAggregator) : base(regionProvider)
+      IEventAggregator eventAggregator,
+      IPlayableRegionViewModel[] players) : base(regionProvider)
     {
       this.kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
       this.keyListener = keyListener ?? throw new ArgumentNullException(nameof(keyListener));
@@ -50,6 +52,7 @@ namespace VPlayer.Player.ViewModels
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
 
       mainWindow = Application.Current.MainWindow;
+      this.players = players;
     }
 
     #region Properties
@@ -294,11 +297,9 @@ namespace VPlayer.Player.ViewModels
 
     private void SubscribeToPlayers()
     {
-      var allPlayers = kernel.GetAll<IPlayableRegionViewModel>().ToList();
-
       keyListener.OnKeyPressed += KeyListener_OnKeyPressed;
 
-      foreach (var player in allPlayers)
+      foreach (var player in players)
       {
         if (player is VideoPlayerViewModel videoPlayerViewModel)
         {
@@ -319,7 +320,7 @@ namespace VPlayer.Player.ViewModels
           {
             if (x)
             {
-              foreach (var player1 in allPlayers)
+              foreach (var player1 in players)
               {
                 if (ActualViewModel != player1)
                 {

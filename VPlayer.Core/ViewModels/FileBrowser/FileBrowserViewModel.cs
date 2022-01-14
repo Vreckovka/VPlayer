@@ -169,7 +169,7 @@ namespace VPlayer.Core.ViewModels
 
     #region Bookmarks
 
-    private FolderRxObservableCollection<TFolderViewModel> bookmarks;
+    private FolderRxObservableCollection<TFolderViewModel> bookmarks = new FolderRxObservableCollection<TFolderViewModel>();
 
     public FolderRxObservableCollection<TFolderViewModel> Bookmarks
     {
@@ -337,6 +337,7 @@ namespace VPlayer.Core.ViewModels
         }
 
         await SetUpManager();
+        await LoadBookmarks();
       }
     }
 
@@ -347,7 +348,6 @@ namespace VPlayer.Core.ViewModels
     private bool wasBookamarksLaoded;
     private Task LoadBookmarks()
     {
-
       return Task.Run(() =>
       {
         if (!wasBookamarksLaoded)
@@ -359,38 +359,29 @@ namespace VPlayer.Core.ViewModels
           {
             List<TFolderViewModel> bookmarks = new List<TFolderViewModel>();
 
-            if (RootFolder?.SubItems != null)
+            var ids = allBookmarks.Select(x => x.Identificator).ToList();
+
+            var existings = AllLoadedFolders.Where(x => ids.Contains(x.Model.Indentificator));
+            var nonExistings = ids.Where(x => !AllLoadedFolders.Select(y => y.Model.Indentificator).Contains(x));
+
+            foreach (var existing in existings.Where(x => !Bookmarks.Any(y => y.Path == x.Path)))
             {
-              var ids = allBookmarks.Select(x => x.Identificator).ToList();
-
-              var existings = AllLoadedFolders.Where(x => ids.Contains(x.Model.Indentificator));
-              var nonExistings = ids.Where(x => !AllLoadedFolders.Select(y => y.Model.Indentificator).Contains(x));
-
-              foreach (var existing in existings)
-              {
-                bookmarks.Add(existing);
-              }
-
-              foreach (var nonExisting in nonExistings)
-              {
-                var vm = await GetNewFolderViewModel(nonExisting);
-                bookmarks.Add(vm);
-              }
-
-              Bookmarks = new FolderRxObservableCollection<TFolderViewModel>(bookmarks);
-              Bookmarks.ForEach(x =>
-              {
-                x.IsBookmarked = true;
-                x.RaiseNotifications(nameof(x.IsBookmarked));
-              });
+              bookmarks.Add(existing);
             }
-            else
+
+            foreach (var nonExisting in nonExistings.Where(x => !Bookmarks.Any(y => y.Path == x)))
             {
-              foreach (var nonExisting in allBookmarks)
-              {
-                bookmarks.Add(await GetNewFolderViewModel(nonExisting.Identificator));
-              }
+              var vm = await GetNewFolderViewModel(nonExisting);
+              bookmarks.Add(vm);
             }
+
+            Bookmarks.AddRange(bookmarks);
+
+            Bookmarks.ForEach(x =>
+            {
+              x.IsBookmarked = true;
+              x.RaiseNotifications(nameof(x.IsBookmarked));
+            });
           });
         }
       });

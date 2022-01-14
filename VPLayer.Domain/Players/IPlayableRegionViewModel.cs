@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
+using VCore.ItemsCollections;
+using VCore.Standard.ViewModels.TreeView;
 using VCore.WPF.ViewModels;
 using VPlayer.WindowsPlayer.Players;
 
@@ -29,5 +33,7 @@ namespace VPlayer.Core.ViewModels
     void SetVolumeWihtoutNotification(int pVolume);
     void SetVolumeAndRaiseNotification(int pVolume);
     public bool PlayNextItemOnEndReached { get; set; }
+    IEnumerable<string> GetAllItemsSources();
+    Task ClearPlaylist();
   }
 }

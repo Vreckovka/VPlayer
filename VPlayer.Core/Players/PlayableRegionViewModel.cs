@@ -385,7 +385,7 @@ namespace VPlayer.Core.ViewModels
     #region PlayNextItemOnEndReached
 
     public bool PlayNextItemOnEndReached { get; set; } = true;
-
+   
     #endregion
 
     #region OnVolumeChanged
@@ -498,23 +498,7 @@ namespace VPlayer.Core.ViewModels
 
     private async void OnClearPlaylistCallback()
     {
-      if (ActualSavedPlaylist.Id > 0)
-      {
-        await UpdateActualSavedPlaylistPlaylist();
-      }
-
-      BeforeClearPlaylist();
-
-      IsPlaying = false;
-      VirtualizedPlayList = null;
-      PlayList.Clear();
-      ActualItem = null;
-      MediaPlayer.Stop();
-      await MediaPlayer.SetNewMedia(null);
-      MediaPlayer.Reload();
-      actualItemIndex = 0;
-      PlaylistTotalTimePlayed = new TimeSpan(0);
-      ActualSavedPlaylist = new TPlaylistModel() { Id = -1 };
+      await ClearPlaylist();
     }
 
     #endregion
@@ -623,6 +607,32 @@ namespace VPlayer.Core.ViewModels
       OnVlcLoaded();
     }
 
+
+    #endregion
+
+    #region Clear
+
+    public async Task ClearPlaylist()
+    {
+      if (ActualSavedPlaylist.Id > 0)
+      {
+        await UpdateActualSavedPlaylistPlaylist();
+      }
+
+      BeforeClearPlaylist();
+
+      IsPlaying = false;
+      VirtualizedPlayList = null;
+      PlayList.Clear();
+      ActualItem = null;
+      MediaPlayer.Stop();
+      await MediaPlayer.SetNewMedia(null);
+      MediaPlayer.Reload();
+      MediaPlayer.Play();
+      actualItemIndex = 0;
+      PlaylistTotalTimePlayed = new TimeSpan(0);
+      ActualSavedPlaylist = new TPlaylistModel() { Id = -1 };
+    }
 
     #endregion
 
@@ -1510,6 +1520,16 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region GetAllItemsSources
+
+    public IEnumerable<string> GetAllItemsSources()
+    {
+      return PlayList.Select(x => x.Model.Source).ToArray();
+    }
+
+    #endregion
+
+    #region SetVolumeAndRaiseNotification
 
     public void SetVolumeAndRaiseNotification(int pVolume)
     {
@@ -1517,6 +1537,8 @@ namespace VPlayer.Core.ViewModels
 
       volumeSubject.OnNext(pVolume);
     }
+
+    #endregion
 
     #region SetVolume
 

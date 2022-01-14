@@ -19,14 +19,17 @@ namespace VPlayer.Home.ViewModels.FileBrowser
 {
   public class WindowsFileBrowserViewModel : FileBrowserViewModel<PlayableWindowsFileFolderViewModel>
   {
+    private IPlayableRegionViewModel[] allPlayers;
     public WindowsFileBrowserViewModel(
       IRegionProvider regionProvider,
       IViewModelsFactory viewModelsFactory,
       ISettingsProvider settingsProvider,
       IWindowManager windowManager,
-      IStorageManager storageManager) : base(regionProvider, viewModelsFactory, windowManager, settingsProvider, storageManager)
+      IStorageManager storageManager,
+      IPlayableRegionViewModel[] players) : base(regionProvider, viewModelsFactory, windowManager, settingsProvider, storageManager)
     {
       BaseDirectoryPath = settingsProvider.GetSetting(GlobalSettings.FileBrowserInitialDirectory)?.Value;
+      allPlayers = players;
     }
 
     public override FileBrowserType FileBrowserType { get; } = FileBrowserType.Local;
@@ -46,8 +49,32 @@ namespace VPlayer.Home.ViewModels.FileBrowser
     }
 
 
-    protected override void OnDeleteItem(string indentificator)
+    protected  override async void OnDeleteItem(string indentificator)
     {
+      foreach (var player in allPlayers.OrderByDescending(x => x.IsSelectedToPlay))
+      {
+        bool isItemInPlaylist = false;
+        var isDir = Directory.Exists(indentificator);
+
+        var items = player.GetAllItemsSources();
+
+        if (isDir)
+        {
+          isItemInPlaylist = items.Any(x => x.Contains(indentificator));
+        }
+        else
+        {
+          isItemInPlaylist = items.Contains(indentificator);
+        }
+
+
+        if (isItemInPlaylist)
+        {
+          await player.ClearPlaylist();
+          break;
+        }
+      }
+
       if (Directory.Exists(indentificator))
       {
         FileSystem.DeleteDirectory(indentificator, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
