@@ -20,12 +20,14 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using LibVLCSharp.Shared;
+using LibVLCSharp.Shared.Structures;
 using Logger;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Ninject;
 using Prism.Events;
 using VCore;
 using VCore.ItemsCollections;
+using VCore.Standard;
 using VCore.Standard.Helpers;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.ItemsCollections.VirtualList;
@@ -774,12 +776,22 @@ namespace VPlayer.WindowsPlayer.ViewModels
           {
             foreach (var spu in MediaPlayer.AudioTrackDescription)
             {
-              AudioTracks.Add(new AudioTrackViewModel(spu));
+              var vm = new AudioTrackViewModel(spu);
+
+              vm.Language = GetLanguange(vm);
+
+              AudioTracks.Add(vm);
             }
 
             if (ActualItem?.Model.AudioTrack != null)
             {
               MediaPlayer.SetAudioTrack(ActualItem.Model.AudioTrack.Value);
+            }
+            else
+            {
+              var audioSetting = TryGetSettingOrGetPreffered(AudioTracks, Language.Czech);
+
+              MediaPlayer.SetAudioTrack(audioSetting.Model.Id);
             }
 
             var actualAudioTrack = AudioTracks.Single(x => MediaPlayer.AudioTrack == x.Model.Id);
@@ -838,6 +850,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       await Application.Current.Dispatcher.InvokeAsync(async () =>
       {
         Subtitles.Clear();
+        SubtitleViewModel subtitleSetting = null;
 
         if (MediaPlayer.SpuDescription.Length > 0)
         {
@@ -852,54 +865,28 @@ namespace VPlayer.WindowsPlayer.ViewModels
           }
           else if (Subtitles.Count >= 2 && MediaPlayer.Spu == -1)
           {
-            SubtitleViewModel lastExisting = null;
-
             if (lastSPUValue != null)
             {
-              lastExisting = Subtitles.FirstOrDefault(x => x.Model.Id == lastSPUValue);
-            }
-
-            if (lastSPUValue == null)
-            {
-              SubtitleViewModel englishSubtitle = null;
-              AudioTrackViewModel czechAudioTrack = null;
-
-              czechAudioTrack = AudioTracks.FirstOrDefault(x =>
-              {
-                var desc = x.Description.RemoveDiacritics().ToLower();
-
-                return desc.Contains("czech") || desc.Contains("cesky");
-              });
-
-
-              if (czechAudioTrack != null)
-              {
-                englishSubtitle = Subtitles.FirstOrDefault(x =>
-                {
-                  var desc = x.Description.RemoveDiacritics().ToLower();
-                  var forced = desc.Contains("forced");
-
-                  return forced && (desc.Contains("anglicky") || desc.Contains("english"));
-                });
-              }
-              else
-              {
-                englishSubtitle = Subtitles.FirstOrDefault(x =>
-                {
-                  var desc = x.Description.RemoveDiacritics().ToLower();
-
-                  return (desc.Contains("anglicky") || desc.Contains("english"));
-                });
-              }
-              
-              if (englishSubtitle != null)
-              {
-                OnSubtitleSelected(englishSubtitle);
-              }
+              subtitleSetting = Subtitles.FirstOrDefault(x => x.Model.Id == lastSPUValue);
             }
             else
             {
-              OnSubtitleSelected(lastExisting);
+              var selectedAudio = AudioTracks.FirstOrDefault(x => x.IsSelected);
+
+              if (selectedAudio != null)
+              {
+                subtitleSetting = TryGetSettingOrGetPreffered(Subtitles, Language.Enghlish);
+
+                if (subtitleSetting.Language == Language.Czech && selectedAudio.Language == Language.Czech)
+                {
+                  subtitleSetting = Subtitles.FirstOrDefault(x => x.Model.Id == -1);
+                }
+              }
+            }
+
+            if (subtitleSetting != null)
+            {
+              OnSubtitleSelected(subtitleSetting);
             }
           }
 
@@ -1019,6 +1006,90 @@ namespace VPlayer.WindowsPlayer.ViewModels
           requestedLastPosition = lastTime;
         }
       }
+    }
+
+    #endregion
+
+    #region TryGetSettingOrGetPreffered
+
+    private TSettingViewModel TryGetSettingOrGetPreffered<TSettingViewModel>(IEnumerable<TSettingViewModel> allItems, Language settingLanguage)
+      where TSettingViewModel : class, IViewModel, IDescriptedEntity, IOrdered
+    {
+      var list = allItems.ToList();
+      var foundSettings = new List<TSettingViewModel>();
+
+      var czechSetting = GetLanguageViewModel(list, Language.Czech);
+      var englishSetting = GetLanguageViewModel(list, Language.Enghlish);
+
+      foundSettings.Add(czechSetting);
+      foundSettings.Add(englishSetting);
+
+      if (settingLanguage == Language.Czech && czechSetting != null)
+      {
+        return czechSetting;
+      }
+      else if (englishSetting != null)
+      {
+        return englishSetting;
+      }
+
+      return foundSettings.Concat(list).Where(x => x != null).OrderByDescending(x => x.OrderNumber).FirstOrDefault();
+    }
+
+    #endregion
+
+    #region GetLanguageViewModel
+
+    private TSettingViewModel GetLanguageViewModel<TSettingViewModel>(IEnumerable<TSettingViewModel> allItems, Language settingLanguage)
+      where TSettingViewModel : class, IViewModel, IDescriptedEntity
+    {
+      var list = allItems.ToList();
+
+      switch (settingLanguage)
+      {
+        case Language.Czech:
+          {
+            return list.FirstOrDefault(x =>
+            {
+              var desc = x.Description.RemoveDiacritics().ToLower();
+
+              return desc.Contains("czech") || desc.Contains("cesky");
+            });
+          }
+        case Language.Enghlish:
+          {
+            return list.FirstOrDefault(x =>
+            {
+              var desc = x.Description.RemoveDiacritics().ToLower();
+
+              return (desc.Contains("anglicky") || desc.Contains("english"));
+            });
+          }
+        default:
+          throw new ArgumentOutOfRangeException(nameof(settingLanguage), settingLanguage, null);
+      }
+    }
+
+    #endregion
+
+    #region GetLanguange
+
+    private Language GetLanguange<TSettingViewModel>(TSettingViewModel viewModel)
+      where TSettingViewModel : class, IViewModel, IDescriptedEntity
+    {
+      var desc = viewModel.Description.RemoveDiacritics().ToLower();
+
+      if (desc.Contains("czech") || desc.Contains("cesky"))
+      {
+        return Language.Czech;
+      }
+      else if (desc.Contains("anglicky") || desc.Contains("english"))
+      {
+        return Language.Enghlish;
+      }
+
+      return Language.Other;
+
     }
 
     #endregion

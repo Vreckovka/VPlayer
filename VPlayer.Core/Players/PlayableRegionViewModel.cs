@@ -385,7 +385,7 @@ namespace VPlayer.Core.ViewModels
     #region PlayNextItemOnEndReached
 
     public bool PlayNextItemOnEndReached { get; set; } = true;
-   
+
     #endregion
 
     #region OnVolumeChanged
@@ -1325,15 +1325,23 @@ namespace VPlayer.Core.ViewModels
       {
         var result = storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(ActualSavedPlaylist, out var updated);
 
-        if (result)
+        var dispatcher = Application.Current?.Dispatcher;
+
+        if (result && !isDisposing)
         {
-          Application.Current?.Dispatcher?.Invoke(() =>
+          try
           {
-            if (VFocusManager.FocusedItems.Count(x => x.Name == "NameTextBox") == 0)
+            dispatcher?.Invoke(() =>
             {
-              ActualSavedPlaylist = updated;
-            }
-          });
+              if (VFocusManager.FocusedItems.Count(x => x.Name == "NameTextBox") == 0)
+              {
+                ActualSavedPlaylist = updated;
+              }
+            });
+          }
+          catch (Exception)
+          {
+          }
         }
 
         return result;
@@ -1670,13 +1678,16 @@ namespace VPlayer.Core.ViewModels
 
     #region Dispose
 
-    public override void Dispose()
+    private bool isDisposing;
+    public override async void Dispose()
     {
+      isDisposing = true;
+      await ClearPlaylist();
       MediaPlayer.Media = null;
       MediaPlayer.Stop();
 
       if (ActualSavedPlaylist != null && ActualSavedPlaylist.Id != -1)
-        UpdateActualSavedPlaylistPlaylist();
+        await UpdateActualSavedPlaylistPlaylist();
 
       volumeSubject?.Dispose();
 

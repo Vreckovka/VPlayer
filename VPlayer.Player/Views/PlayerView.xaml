@@ -25,7 +25,8 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Border Height="75"
+    <Border x:Name="MainBorder"
+            Height="75"
             Padding="4"
             Focusable="True">
         <Border.Background>
@@ -162,13 +163,13 @@
                                        Margin="0"
                                        HorizontalAlignment="Right"
                                        AllowsTransparency="True"
-                                       HorizontalOffset="-4"
+                                       HorizontalOffset="-250"
                                        IsOpen="True"
-                                       Placement="Top"
-                                       PlacementTarget="{Binding ElementName=PlayerGrid}"
+                                       Placement="Relative"
+                                       PlacementTarget="{Binding ElementName=PlayerButtonsBorder}"
                                        PopupAnimation="Fade"
                                        StaysOpen="true"
-                                       VerticalOffset="-5">
+                                       VerticalOffset="-1">
                 <Grid DataContext="{Binding StatusMessageViewModel}">
                     <Grid.Resources>
                         <Style TargetType="{x:Type statusMessage:StatusMessage}">
@@ -181,16 +182,16 @@
                             <Setter Property="IsPinned" Value="{Binding IsPinned}" />
                             <Setter Property="Padding" Value="5" />
                             <Setter Property="Opacity" Value="0" />
-                            <Setter Property="BorderThickness" Value="1" />
+                            <Setter Property="BorderThickness" Value="0" />
 
-                            <Setter Property="Background">
+                            <!--<Setter Property="Background">
                                 <Setter.Value>
                                     <LinearGradientBrush StartPoint="0 1" EndPoint="0 0">
                                         <GradientStop Offset="1" Color="#101010" />
                                         <GradientStop Offset="0" Color="#080808" />
                                     </LinearGradientBrush>
                                 </Setter.Value>
-                            </Setter>
+                            </Setter>-->
 
                             <Setter Property="Template">
                                 <Setter.Value>
@@ -362,7 +363,7 @@
                         </Style>
                     </Grid.Resources>
 
-                    <statusMessage:StatusMessage Margin="0,0,0,0" />
+                    <statusMessage:StatusMessage Background="{Binding ElementName=MainBorder, Path=Background}" />
 
                 </Grid>
                 <b:Interaction.Behaviors>
@@ -370,7 +371,8 @@
                 </b:Interaction.Behaviors>
             </controls2:NonTopmostPopup>
 
-            <Border Grid.Column="1"
+            <Border Name="PlayerButtonsBorder"
+                    Grid.Column="1"
                     Grid.ColumnSpan="3"
                     Padding="0,5"
                     HorizontalAlignment="Center"

@@ -2,6 +2,13 @@
 
 namespace VPlayer.WindowsPlayer.ViewModels.VideoProperties
 {
+  public enum Language
+  {
+    Czech,
+    Enghlish,
+    Other
+  }
+
   public abstract class LanguageVideoProperty : VideoProperty
   {
     protected LanguageVideoProperty(TrackDescription model)
@@ -15,6 +22,8 @@ namespace VPlayer.WindowsPlayer.ViewModels.VideoProperties
 
     #endregion
 
+    public override int OrderNumber => Model.Id;
+
     #region Description
 
     public override string Description => Model.Name;
@@ -23,21 +32,22 @@ namespace VPlayer.WindowsPlayer.ViewModels.VideoProperties
 
     #region Language
 
-    private string myVar;
+    private Language language;
 
-    public string Language
+    public Language Language
     {
-      get { return myVar; }
+      get { return language; }
       set
       {
-        if (value != myVar)
+        if (value != language)
         {
-          myVar = value;
+          language = value;
           RaisePropertyChanged();
         }
       }
     }
 
     #endregion
+
   }
 }

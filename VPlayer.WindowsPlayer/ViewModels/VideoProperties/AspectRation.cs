@@ -16,6 +16,8 @@ namespace VPlayer.WindowsPlayer.ViewModels.VideoProperties
       Value = aspectRatio;
     }
 
+    public override int OrderNumber { get; } = 0;
+
     public override string Description => aspectRatio;
 
     public string Value { get; set; }
