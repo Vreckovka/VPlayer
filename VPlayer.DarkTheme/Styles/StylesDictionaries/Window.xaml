@@ -79,6 +79,7 @@
     <Style TargetType="{x:Type Window}">
         <Setter Property="Foreground" Value="GhostWhite" />
         <Setter Property="WindowStyle" Value="None" />
+        <Setter Property="WindowState" Value="{Binding WindowState}" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Topmost" Value="{Binding TopMost}" />
         <Setter Property="Background" Value="{StaticResource BackgroudGradientBrush}" />
@@ -99,20 +100,23 @@
                                       Background="{StaticResource TopWindowsBrush}"
                                       Visibility="{Binding WindowChromeVisiblity}">
 
-                                    <StackPanel HorizontalAlignment="Left"
-                                                VerticalAlignment="Top"
-                                                Opacity="0.75"
+                                    <StackPanel Margin="10"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                Opacity="1"
                                                 Orientation="Horizontal">
                                         <!--  Icon  -->
-                                        <Image Margin="11,4,8,5"
-                                               Opacity="0"
+                                        <Image Margin="0,0,7,0"
+                                               Opacity="1"
                                                Source="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Icon}" />
+
+                                        <!--<TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Icon}" />-->
                                         <!--  Title  -->
-                                        <TextBlock Margin="0,0,0,3"
+                                        <TextBlock Margin="0,-2,0,-2"
                                                    VerticalAlignment="Center"
-                                                   FontSize="12"
-                                                   FontWeight="DemiBold"
-                                                   Foreground="Snow"
+                                                   FontSize="13.5"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="White"
                                                    Text="{Binding Title}" />
                                     </StackPanel>
                                     <!--  Window buttons  -->

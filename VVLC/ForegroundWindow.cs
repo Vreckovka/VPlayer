@@ -164,7 +164,9 @@ namespace VVLC
 
       _wndhost.Closing += Wndhost_Closing;
       _bckgnd.SizeChanged += Wndhost_SizeChanged;
-      _bckgnd.DataContextChanged += _bckgnd_DataContextChanged;
+
+
+      _wndhost.IsVisibleChanged += Wndhost_IsVisibleChanged;
       _wndhost.LocationChanged += Wndhost_LocationChanged;
       _wndhost.SizeChanged += Wndhost_SizeChanged;
       _wndhost.StateChanged += Wndhost_StateChanged;
@@ -180,10 +182,13 @@ namespace VVLC
       }
     }
 
-    private void _bckgnd_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+    private void Wndhost_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
+      if (e.NewValue is false)
+      {
+        Hide();
+      }
     }
-
 
     #endregion
 
