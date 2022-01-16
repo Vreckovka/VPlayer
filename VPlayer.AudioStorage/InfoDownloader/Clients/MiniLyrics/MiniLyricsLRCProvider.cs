@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Logger;
 using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json;
 using unirest_net.http;
@@ -30,6 +31,11 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics
 
   public class MiniLyricsLRCProvider : ILrcProvider
   {
+    public MiniLyricsLRCProvider()
+    {
+
+    }
+
     private string url = "http://search.crintsoft.com/searchlyrics.htm";
 
     private string magickeyStr = "Mlv1clt4.0";
@@ -38,6 +44,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics
 
     public async Task<string> FindLRC(string artist, string title)
     {
+
       var results = await SearchLyrics(artist, title);
 
       if (results != null)
@@ -49,6 +56,8 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics
           return await DownloadLyrics(searchResult.Link);
         }
       }
+
+
 
       return null;
     }
@@ -230,7 +239,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics
       var magickey = Encoding.UTF8.GetBytes(magickeyStr);
 
       // Create the variable POG to be used in a dirt code
-      byte[] pog = new byte[value.Length + magickey.Length]; 
+      byte[] pog = new byte[value.Length + magickey.Length];
 
 
       Array.Copy(value, 0, pog, 0, value.Length);
@@ -240,7 +249,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics
       byte[] pog_md5 = MD5CryptoServiceProvider.Create().ComputeHash(pog);
 
 
-   
+
       int j = 0;
       for (int i = 0; i < value.Length; i++)
       {

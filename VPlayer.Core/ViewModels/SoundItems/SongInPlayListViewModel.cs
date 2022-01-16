@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Logger;
 using Prism.Events;
 using VCore;
 using VCore.WPF.LRC;
@@ -33,6 +34,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
     private readonly IArtistsViewModel artistsViewModel;
     private readonly AudioInfoDownloader audioInfoDownloader;
     private readonly PCloudLyricsProvider pCloudLyricsProvider;
+    private readonly ILogger logger;
     private readonly GoogleDriveLrcProvider googleDriveLrcProvider;
     private readonly IStorageManager storageManager;
 
@@ -47,6 +49,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
       AudioInfoDownloader audioInfoDownloader,
       PCloudLyricsProvider pCloudLyricsProvider,
       Song model,
+      ILogger logger,
       GoogleDriveLrcProvider googleDriveLrcProvider,
       IStorageManager storageManager) : base(model.ItemModel, eventAggregator, storageManager)
     {
@@ -54,6 +57,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
       this.artistsViewModel = artistsViewModel ?? throw new ArgumentNullException(nameof(artistsViewModel));
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
       this.pCloudLyricsProvider = pCloudLyricsProvider ?? throw new ArgumentNullException(nameof(pCloudLyricsProvider));
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       this.googleDriveLrcProvider = googleDriveLrcProvider ?? throw new ArgumentNullException(nameof(googleDriveLrcProvider));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       SongModel = model ?? throw new ArgumentNullException(nameof(model));
@@ -126,7 +130,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     public string LRCLyrics => SongModel.LRCLyrics;
 
-  
+
 
     #region OnActualPositionChanged
 
@@ -229,7 +233,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
           if (Model.IsAutomaticLyricsFindEnabled)
           {
-            TryToRefreshUpdateLyrics();
+            OnIsAutomaticLyricsDownloadDisabled(true);
           }
           else
           {
@@ -246,6 +250,12 @@ namespace VPlayer.Core.ViewModels.SoundItems
     }
 
     #endregion
+
+    private async void OnIsAutomaticLyricsDownloadDisabled(bool newValue)
+    {
+      if (newValue)
+        await TryToRefreshUpdateLyrics();
+    }
 
     private async void UpdateDbModel()
     {
@@ -276,9 +286,9 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     #region OnRefresh
 
-    private void OnRefresh()
+    private async void OnRefresh()
     {
-      TryToRefreshUpdateLyrics();
+      await TryToRefreshUpdateLyrics();
     }
 
     #endregion
@@ -537,68 +547,74 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     public async Task<bool> TryToRefreshUpdateLyrics()
     {
-      LRCFile = null;
-      Lyrics = null;
-
-      if (IsAutomaticLyricsDownloadDisabled)
+      try
       {
-        return false;
-      }
+        LRCFile = null;
+        Lyrics = null;
 
-      if (ArtistViewModel == null || AlbumViewModel == null)
-        return false;
+        if (IsAutomaticLyricsDownloadDisabled)
+        {
+          return false;
+        }
 
-      if (LRCFile == null)
-      {
-        await LoadLRCFromPCloud();
+        if (ArtistViewModel == null || AlbumViewModel == null)
+          return false;
 
         if (LRCFile == null)
         {
-          Lyrics = await pCloudLyricsProvider.GetTextLyrics(SongModel.Name, AlbumViewModel?.Name, ArtistViewModel?.Name);
+          await LoadLRCFromPCloud();
 
-          if (!string.IsNullOrEmpty(Lyrics))
+          if (LRCFile == null)
           {
-            RaiseLyricsChange();
+            Lyrics = await pCloudLyricsProvider.GetTextLyrics(SongModel.Name, AlbumViewModel?.Name, ArtistViewModel?.Name);
 
-            return true;
+            if (!string.IsNullOrEmpty(Lyrics))
+            {
+              RaiseLyricsChange();
+
+              return true;
+            }
           }
         }
-      }
 
 
-      if (LRCFile == null)
-      {
-        await LoadLRCFromGoogleDrive();
-
-        if (LRCFile != null)
+        if (LRCFile == null)
         {
-          LRCFile.OnApplyPernamently();
+          await LoadLRCFromGoogleDrive();
+
+          if (LRCFile != null)
+          {
+            LRCFile.OnApplyPernamently();
+          }
         }
-      }
 
-      if (LRCFile == null)
-      {
-        await LoadLRCFromMiniLyrics();
-
-        if (LRCFile != null)
+        if (LRCFile == null)
         {
-          LRCFile.OnApplyPernamently();
+          await LoadLRCFromMiniLyrics();
+
+          if (LRCFile != null)
+          {
+            LRCFile.OnApplyPernamently();
+          }
         }
+
+        if (LRCFile == null)
+          await LoadLRCFromLocal();
+
+        if (LRCFile == null)
+          LoadLRCFromEnitityLyrics();
+
+        if (LRCFile == null && Lyrics == null && !string.IsNullOrEmpty(ArtistViewModel?.Name))
+        {
+          await audioInfoDownloader.UpdateSongLyricsAsync(ArtistViewModel.Name, Name, SongModel);
+        }
+
+        RaiseLyricsChange();
       }
-
-      if (LRCFile == null)
-        await LoadLRCFromLocal();
-
-      if (LRCFile == null)
-        LoadLRCFromEnitityLyrics();
-
-      if (LRCFile == null && Lyrics == null && !string.IsNullOrEmpty(ArtistViewModel?.Name))
+      catch (Exception ex)
       {
-        await audioInfoDownloader.UpdateSongLyricsAsync(ArtistViewModel.Name, Name, SongModel);
+        logger.Log(ex);
       }
-
-
-      RaiseLyricsChange();
 
       return LRCFile != null;
     }
@@ -665,7 +681,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
     }
 
     #endregion
-    
+
 
     #endregion
   }
