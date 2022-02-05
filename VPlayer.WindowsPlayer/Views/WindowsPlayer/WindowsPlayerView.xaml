@@ -51,9 +51,11 @@
             <ContentControl x:Name="ContentControl" regions:RegionManager.RegionName="{x:Static regions11:RegionNames.PlayerContentRegion}" />
 
 
+
+
             <Slider x:Name="Slider_Time"
                     Grid.Row="1"
-                    Height="2.5"
+                    Height="5"
                     Margin="5,0,1,0"
                     Padding="0"
                     IsMoveToPointEnabled="True"
@@ -62,8 +64,53 @@
 
                 <b:Interaction.Behaviors>
                     <behaviors:SliderValueChangedManualy Duration="{Binding ActualItem.Duration}" />
+                    <behaviors1:ShowPopupBehavior Popup="{Binding ElementName=VideoPreviewPopup}" ViewModel="{Binding DetailViewModel}" />
                 </b:Interaction.Behaviors>
             </Slider>
+
+            <Popup x:Name="VideoPreviewPopup"
+                   Placement="MousePoint"
+                   VerticalOffset="-165">
+                <Popup.Style>
+                    <Style TargetType="Popup">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=Slider_Time, Path=IsMouseOver}" Value="true">
+                                <Setter Property="IsOpen" Value="True" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Popup.Style>
+
+                <Border MaxHeight="150"
+                        Padding="1"
+                        Background="#151515"
+                        BorderBrush="#75757575"
+                        BorderThickness="1"
+                        DataContext="{Binding DetailViewModel}">
+                    <Grid>
+                        <!--<Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>-->
+
+                        <Image Source="{Binding Image}" />
+
+                        <Border Margin="0,0"
+                                Padding="20,2"
+                                VerticalAlignment="Bottom"
+                                Background="#bf000000">
+                            <TextBlock HorizontalAlignment="Center"
+                                       FontSize="15"
+                                       FontWeight="SemiBold"
+                                       Text="{Binding ActualTime, StringFormat={}{0:hh\\:mm\\:ss}}" />
+                        </Border>
+
+                    </Grid>
+                </Border>
+
+
+
+            </Popup>
 
             <TextBlock Grid.Row="2"
                        Margin="5,0,0,0"

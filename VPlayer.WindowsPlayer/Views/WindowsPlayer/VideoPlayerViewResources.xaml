@@ -2,262 +2,261 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
-                   
                     xmlns:local="clr-namespace:VPlayer.WindowsPlayer.Views.WindowsPlayer"
                     xmlns:lrc="clr-namespace:VPlayer.AudioStorage.InfoDownloader.LRC;assembly=VCore.WPF">
 
-  <DataTemplate x:Key="PlayListTvShowEpisodeDescriptionDataTemplate">
-    <Grid Background="Transparent">
-      <Border Padding="0,0,5,5">
-        <Grid VerticalAlignment="Bottom">
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition Width="auto" />
-          </Grid.ColumnDefinitions>
+    <DataTemplate x:Key="PlayListTvShowEpisodeDescriptionDataTemplate">
+        <Grid Background="Transparent">
+            <Border Padding="0,0,5,5">
+                <Grid VerticalAlignment="Bottom">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
 
-          <TextBlock Margin="5,0,0,0"
-                     FontSize="12"
-                     FontWeight="DemiBold">
-            <Run Text="{Binding TvShow.Name, Mode=OneWay}">
-              <Run.Style>
-                <Style TargetType="Run">
-                  <Setter Property="Foreground" Value="#f2e0cb" />
-                  <Setter Property="FontWeight" Value="DemiBold" />
-                  <Style.Triggers>
-                    <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-                      <Setter Property="Foreground" Value="#24140c" />
-                      <Setter Property="FontWeight" Value="Bold" />
-                    </DataTrigger>
-                  </Style.Triggers>
-                </Style>
-              </Run.Style>
-            </Run>
-            <Run Text="(">
-              <Run.Style>
-                <Style TargetType="Run">
-                  <Setter Property="Foreground" Value="#ccedfffa" />
-                  <Style.Triggers>
-                    <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-                      <Setter Property="Foreground" Value="#24140c" />
-                    </DataTrigger>
-                  </Style.Triggers>
-                </Style>
-              </Run.Style>
-            </Run>
-            <Run Text="Season">
-              <Run.Style>
-                <Style TargetType="Run">
-                  <Setter Property="Foreground" Value="#70edfffa" />
-                  <Setter Property="FontWeight" Value="Normal" />
-                  <Style.Triggers>
-                    <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-                      <Setter Property="Foreground" Value="#24140c" />
-                    </DataTrigger>
-                  </Style.Triggers>
-                </Style>
-              </Run.Style>
-            </Run>
-            <Run FontSize="13" Text="{Binding TvShowSeason.SeasonNumber, Mode=OneWay}">
-              <Run.Style>
-                <Style TargetType="Run">
-                  <Setter Property="Foreground" Value="#edfffa" />
-                  <Setter Property="FontWeight" Value="DemiBold" />
-                  <Style.Triggers>
-                    <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-                      <Setter Property="Foreground" Value="#24140c" />
-                    </DataTrigger>
-                  </Style.Triggers>
-                </Style>
-              </Run.Style>
-            </Run>
-            <Run Text="Episode">
-              <Run.Style>
-                <Style TargetType="Run">
-                  <Setter Property="Foreground" Value="#70edfffa" />
-                  <Setter Property="FontWeight" Value="Normal" />
-                  <Style.Triggers>
-                    <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-                      <Setter Property="Foreground" Value="#24140c" />
-                    </DataTrigger>
-                  </Style.Triggers>
-                </Style>
-              </Run.Style>
-            </Run>
-            <Run Text="{Binding TvShowEpisode.EpisodeNumber, Mode=OneWay, StringFormat={}{0}}">
-              <Run.Style>
-                <Style TargetType="Run">
-                  <Setter Property="Foreground" Value="#edfffa" />
-                  <Setter Property="FontWeight" Value="DemiBold" />
-                  <Style.Triggers>
-                    <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-                      <Setter Property="Foreground" Value="#24140c" />
-                    </DataTrigger>
-                  </Style.Triggers>
-                </Style>
-              </Run.Style>
-            </Run>
-            <Run Text=")">
-              <Run.Style>
-                <Style TargetType="Run">
-                  <Setter Property="Foreground" Value="#ccedfffa" />
-                  <Style.Triggers>
-                    <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-                      <Setter Property="Foreground" Value="#24140c" />
-                    </DataTrigger>
-                  </Style.Triggers>
-                </Style>
-              </Run.Style>
-            </Run>
-            <TextBlock.Style>
-              <Style TargetType="TextBlock">
-                <Setter Property="Foreground" Value="{StaticResource OrangeBrush}" />
-                <Setter Property="Opacity" Value="0.35" />
-                <Style.Triggers>
-                  <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-                    <Setter Property="Opacity" Value="0.75" />
-                  </DataTrigger>
-                </Style.Triggers>
-              </Style>
-            </TextBlock.Style>
-          </TextBlock>
+                    <TextBlock Margin="5,0,0,0"
+                               FontSize="12"
+                               FontWeight="DemiBold">
+                        <Run Text="{Binding TvShow.Name, Mode=OneWay}">
+                            <Run.Style>
+                                <Style TargetType="Run">
+                                    <Setter Property="Foreground" Value="#f2e0cb" />
+                                    <Setter Property="FontWeight" Value="DemiBold" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                            <Setter Property="Foreground" Value="#24140c" />
+                                            <Setter Property="FontWeight" Value="Bold" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Run.Style>
+                        </Run>
+                        <Run Text="(">
+                            <Run.Style>
+                                <Style TargetType="Run">
+                                    <Setter Property="Foreground" Value="#ccedfffa" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                            <Setter Property="Foreground" Value="#24140c" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Run.Style>
+                        </Run>
+                        <Run Text="Season">
+                            <Run.Style>
+                                <Style TargetType="Run">
+                                    <Setter Property="Foreground" Value="#70edfffa" />
+                                    <Setter Property="FontWeight" Value="Normal" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                            <Setter Property="Foreground" Value="#24140c" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Run.Style>
+                        </Run>
+                        <Run FontSize="13" Text="{Binding TvShowSeason.SeasonNumber, Mode=OneWay}">
+                            <Run.Style>
+                                <Style TargetType="Run">
+                                    <Setter Property="Foreground" Value="#edfffa" />
+                                    <Setter Property="FontWeight" Value="DemiBold" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                            <Setter Property="Foreground" Value="#24140c" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Run.Style>
+                        </Run>
+                        <Run Text="Episode">
+                            <Run.Style>
+                                <Style TargetType="Run">
+                                    <Setter Property="Foreground" Value="#70edfffa" />
+                                    <Setter Property="FontWeight" Value="Normal" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                            <Setter Property="Foreground" Value="#24140c" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Run.Style>
+                        </Run>
+                        <Run Text="{Binding TvShowEpisode.EpisodeNumber, Mode=OneWay, StringFormat={}{0}}">
+                            <Run.Style>
+                                <Style TargetType="Run">
+                                    <Setter Property="Foreground" Value="#edfffa" />
+                                    <Setter Property="FontWeight" Value="DemiBold" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                            <Setter Property="Foreground" Value="#24140c" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Run.Style>
+                        </Run>
+                        <Run Text=")">
+                            <Run.Style>
+                                <Style TargetType="Run">
+                                    <Setter Property="Foreground" Value="#ccedfffa" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                            <Setter Property="Foreground" Value="#24140c" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Run.Style>
+                        </Run>
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="{StaticResource OrangeBrush}" />
+                                <Setter Property="Opacity" Value="0.35" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                        <Setter Property="Opacity" Value="0.75" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
 
-          <controls:PathButton Grid.Column="1"
-                               Margin="10,0,10,0"
-                               HorizontalAlignment="Left"
-                               VerticalAlignment="Center"
-                               Panel.ZIndex="1"
-                               IconHeight="13"
-                               IconWidth="13"
-                               IsChecked="{Binding IsFavorite}"
-                               PathStyle="{StaticResource Favorite}"
-                               ToolTip="Favorite">
-            <controls:PathButton.Style>
-              <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
-                <Setter Property="IconDefaultColor" Value="#10ffffff" />
-                <Setter Property="IconHoverColor" Value="#8fd4f2" />
-                <Setter Property="IconCheckedColor" Value="#aa39b2e6" />
-                <Style.Triggers>
-                  <DataTrigger Binding="{Binding IsPlaying}" Value="True">
-                    <Setter Property="IconDefaultColor" Value="#30522e05" />
-                    <Setter Property="IconHoverColor" Value="#79b1c9" />
-                    <Setter Property="IconCheckedColor" Value="#39b2e6" />
-                  </DataTrigger>
+                    <controls:PathButton Grid.Column="1"
+                                         Margin="10,0,10,0"
+                                         HorizontalAlignment="Left"
+                                         VerticalAlignment="Center"
+                                         Panel.ZIndex="1"
+                                         IconHeight="13"
+                                         IconWidth="13"
+                                         IsChecked="{Binding IsFavorite}"
+                                         PathStyle="{StaticResource Favorite}"
+                                         ToolTip="Favorite">
+                        <controls:PathButton.Style>
+                            <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
+                                <Setter Property="IconDefaultColor" Value="#10ffffff" />
+                                <Setter Property="IconHoverColor" Value="#8fd4f2" />
+                                <Setter Property="IconCheckedColor" Value="#aa39b2e6" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                        <Setter Property="IconDefaultColor" Value="#30522e05" />
+                                        <Setter Property="IconHoverColor" Value="#79b1c9" />
+                                        <Setter Property="IconCheckedColor" Value="#39b2e6" />
+                                    </DataTrigger>
 
-                </Style.Triggers>
-              </Style>
-            </controls:PathButton.Style>
-          </controls:PathButton>
+                                </Style.Triggers>
+                            </Style>
+                        </controls:PathButton.Style>
+                    </controls:PathButton>
+                </Grid>
+            </Border>
+
+            <Grid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Command="{Binding DeleteItemFromPlaylist}" Header="Delete episode from playlist" />
+
+                    <MenuItem IsHitTestVisible="False" />
+
+                    <MenuItem Command="{Binding OpenContainingFolder}" Header="Open folder" />
+                </ContextMenu>
+            </Grid.ContextMenu>
         </Grid>
-      </Border>
+    </DataTemplate>
 
-      <Grid.ContextMenu>
-        <ContextMenu>
-          <MenuItem Command="{Binding DeleteItemFromPlaylist}" Header="Delete episode from playlist" />
+    <DataTemplate x:Key="PlayListVideoItemDescriptionDataTemplate">
+        <Grid Background="Transparent">
+            <TextBlock Margin="5,0,0,0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Bottom"
+                       Text="{Binding Description}">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="#30edfffa" />
+                        <Setter Property="Visibility" Value="Hidden" />
 
-          <MenuItem IsHitTestVisible="False" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                <Setter Property="Foreground" Value="#24140c" />
+                                <Setter Property="FontWeight" Value="DemiBold" />
+                            </DataTrigger>
 
-          <MenuItem Command="{Binding OpenContainingFolder}" Header="Open folder" />
-        </ContextMenu>
-      </Grid.ContextMenu>
-    </Grid>
-  </DataTemplate>
+                            <DataTrigger Binding="{Binding CSFDItem}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
 
-  <DataTemplate x:Key="PlayListVideoItemDescriptionDataTemplate">
-    <Grid Background="Transparent">
-      <TextBlock Margin="5,0,0,0"
-                 HorizontalAlignment="Left"
-                 VerticalAlignment="Bottom"
-                 Text="{Binding Description}">
-        <TextBlock.Style>
-          <Style TargetType="TextBlock">
-            <Setter Property="Foreground" Value="#30edfffa" />
-            <Setter Property="Visibility" Value="Hidden" />
+            <Grid x:Name="CSFDInfo" DataContext="{Binding CSFDItem}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Margin="5,0,0,3"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Bottom"
+                               FontSize="13"
+                               FontWeight="Bold"
+                               Text="{Binding OriginalName, Mode=OneWay}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="#f2e0cb" />
+                                <Setter Property="Opacity" Value="0.35" />
 
-            <Style.Triggers>
-              <DataTrigger Binding="{Binding IsPlaying}" Value="true">
-                <Setter Property="Foreground" Value="#24140c" />
-                <Setter Property="FontWeight" Value="DemiBold" />
-              </DataTrigger>
-
-              <DataTrigger Binding="{Binding CSFDItem}" Value="{x:Null}">
-                <Setter Property="Visibility" Value="Visible" />
-              </DataTrigger>
-            </Style.Triggers>
-          </Style>
-        </TextBlock.Style>
-      </TextBlock>
-
-      <Grid x:Name="CSFDInfo" DataContext="{Binding CSFDItem}">
-        <StackPanel Orientation="Horizontal">
-          <TextBlock Margin="5,0,0,3"
-                     HorizontalAlignment="Left"
-                     VerticalAlignment="Bottom"
-                     FontSize="13"
-                     FontWeight="Bold"
-                     Text="{Binding OriginalName, Mode=OneWay}">
-            <TextBlock.Style>
-              <Style TargetType="TextBlock">
-                <Setter Property="Foreground" Value="#f2e0cb" />
-                <Setter Property="Opacity" Value="0.35" />
-
-                <Style.Triggers>
-                  <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ContentPresenter, Mode=FindAncestor}, Path=DataContext.IsPlaying}" Value="True">
-                    <Setter Property="Foreground" Value="#24140c" />
-                    <Setter Property="Opacity" Value=".8" />
-                  </DataTrigger>
-                </Style.Triggers>
-              </Style>
-            </TextBlock.Style>
-          </TextBlock>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ContentPresenter, Mode=FindAncestor}, Path=DataContext.IsPlaying}" Value="True">
+                                        <Setter Property="Foreground" Value="#24140c" />
+                                        <Setter Property="Opacity" Value=".8" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
 
 
-          <TextBlock Margin="3,0,0,3"
-                     HorizontalAlignment="Left"
-                     VerticalAlignment="Bottom"
-                     FontSize="12"
-                     Text="{Binding Year, StringFormat={}({0})}">
+                    <TextBlock Margin="3,0,0,3"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Bottom"
+                               FontSize="12"
+                               Text="{Binding Year, StringFormat={}({0})}">
 
-            <TextBlock.Style>
-              <Style TargetType="TextBlock">
-                <Setter Property="Foreground" Value="#edfffa" />
-                <Setter Property="Opacity" Value="0.35" />
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="#edfffa" />
+                                <Setter Property="Opacity" Value="0.35" />
 
-                <Style.Triggers>
-                  <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ContentPresenter, Mode=FindAncestor}, Path=DataContext.IsPlaying}" Value="True">
-                    <Setter Property="Foreground" Value="#24140c" />
-                    <Setter Property="Opacity" Value=".8" />
-                  </DataTrigger>
-                </Style.Triggers>
-              </Style>
-            </TextBlock.Style>
-          </TextBlock>
-
-
-        </StackPanel>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ContentPresenter, Mode=FindAncestor}, Path=DataContext.IsPlaying}" Value="True">
+                                        <Setter Property="Foreground" Value="#24140c" />
+                                        <Setter Property="Opacity" Value=".8" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
 
 
-        <Grid.Style>
-          <Style TargetType="Grid">
-            <Style.Triggers>
-              <Trigger Property="DataContext" Value="{x:Null}">
-                <Setter Property="Visibility" Value="Collapsed" />
-              </Trigger>
-            </Style.Triggers>
-          </Style>
-        </Grid.Style>
-      </Grid>
+                </StackPanel>
 
 
-      <Grid.ContextMenu>
-        <ContextMenu>
-          <MenuItem Command="{Binding DeleteItemFromPlaylist}" Header="Delete episode from playlist" />
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Style.Triggers>
+                            <Trigger Property="DataContext" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+            </Grid>
 
-          <MenuItem IsHitTestVisible="False" />
 
-          <MenuItem Command="{Binding OpenContainingFolder}" Header="Open folder" />
-        </ContextMenu>
-      </Grid.ContextMenu>
-    </Grid>
+            <Grid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Command="{Binding DeleteItemFromPlaylist}" Header="Delete episode from playlist" />
 
-  </DataTemplate>
+                    <MenuItem IsHitTestVisible="False" />
+
+                    <MenuItem Command="{Binding OpenContainingFolder}" Header="Open folder" />
+                </ContextMenu>
+            </Grid.ContextMenu>
+        </Grid>
+
+    </DataTemplate>
 </ResourceDictionary>

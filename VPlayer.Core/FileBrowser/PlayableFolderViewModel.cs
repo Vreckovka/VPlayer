@@ -166,7 +166,7 @@ namespace VPlayer.Core.FileBrowser
           ThumbnailsLoading = true;
           Thumbnails.Clear();
 
-          await video.OnCreateThumbnails();
+          await video.CreateImages();
 
           Thumbnails.AddRange(video.Thumbnails);
         }

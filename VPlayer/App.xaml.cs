@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using ChromeDriverScrapper;
+using Emgu.CV;
 using Listener;
 using Logger;
 using Microsoft.EntityFrameworkCore;
@@ -55,9 +56,17 @@ namespace VPlayer
       Kernel.Load<VPlayerNinjectModule>();
 
       Kernel.Rebind<IWindowManager>().To<VPlayerWindowManager>();
+
     }
 
     #endregion
+
+    public override void Initialize()
+    {
+      base.Initialize();
+
+      CvInvoke.Init();
+    }
 
     #region LoadSettings
 
@@ -74,6 +83,10 @@ namespace VPlayer
         provider.AddOrUpdateSetting(nameof(GlobalSettings.MusicInitialDirectory), new SettingParameters(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), true));
         provider.AddOrUpdateSetting(nameof(GlobalSettings.TvShowInitialDirectory), new SettingParameters(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), true));
       }
+
+
+
+ 
     }
 
     #endregion

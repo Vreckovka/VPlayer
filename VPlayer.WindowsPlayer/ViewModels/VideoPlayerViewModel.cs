@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -14,11 +15,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using Emgu.CV;
+using Emgu.CV.CvEnum;
 using LibVLCSharp.Shared;
 using LibVLCSharp.Shared.Structures;
 using Logger;
@@ -28,6 +30,7 @@ using Prism.Events;
 using VCore;
 using VCore.ItemsCollections;
 using VCore.Standard;
+using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.ItemsCollections.VirtualList;
@@ -41,12 +44,14 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.AudioStorage.Scrappers.CSFD;
 using VPlayer.AudioStorage.Scrappers.CSFD.Domain;
 using VPlayer.Core.Events;
+using VPlayer.Core.FileBrowser;
 using VPlayer.Core.Managers.Status;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.TvShows;
 using VPlayer.IPTV.ViewModels;
 using VPlayer.Player.Views.WindowsPlayer;
+using VPlayer.WindowsPlayer.Behaviors;
 using VPlayer.WindowsPlayer.Players;
 using VPlayer.WindowsPlayer.ViewModels.VideoProperties;
 using VPlayer.WindowsPlayer.ViewModels.Windows;
@@ -54,14 +59,147 @@ using VPlayer.WindowsPlayer.Views.Prompts;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer;
 using VVLC.Players;
 using Application = System.Windows.Application;
+using Image = System.Windows.Controls.Image;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 
 namespace VPlayer.WindowsPlayer.ViewModels
 {
+  public class VideoPopupDetailViewModel : ViewModel<VideoItem>, ISliderPopupViewModel
+  {
+    private VideoCapture videoCapture;
+    double frameCount;
+    public VideoPopupDetailViewModel(VideoItem model) : base(model)
+    {
+      TotalTime = TimeSpan.FromSeconds(model.Duration);
+      videoCapture = new VideoCapture(model.Source).DisposeWith(this);
+      frameCount = videoCapture.Get(CapProp.FrameCount);
+    }
+
+    #region ActualTime
+
+    public TimeSpan ActualTime
+    {
+      get
+      {
+        if (MaxValue > 0)
+          return TimeSpan.FromMilliseconds(TotalTime.TotalMilliseconds * ActualSliderValue / MaxValue);
+
+        return TimeSpan.Zero;
+      }
+
+    }
+
+    #endregion
+
+    #region TotalTime
+
+    public TimeSpan TotalTime { get; }
+
+    #endregion
+
+    #region ActualSliderValue
+
+    private double actualSliderValue;
+
+    public double ActualSliderValue
+    {
+      get { return actualSliderValue; }
+      set
+      {
+        if (value != actualSliderValue)
+        {
+          actualSliderValue = value;
+          RaisePropertyChanged();
+          Refresh();
+        }
+      }
+    }
+    #endregion
+
+    #region MaxValue
+
+    private double maxValue = 1;
+
+    public double MaxValue
+    {
+      get { return maxValue; }
+      set
+      {
+        if (value != maxValue)
+        {
+          maxValue = value;
+          RaisePropertyChanged();
+          Refresh();
+        }
+      }
+    }
+
+    #endregion
+
+    #region Image
+
+    private byte[] image;
+
+    public byte[] Image
+    {
+      get { return image; }
+      set
+      {
+        if (value != image)
+        {
+          image = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    private byte[] GetImage()
+    {
+
+      if (MaxValue > 0)
+      {
+        var frame = (ActualSliderValue / MaxValue) * frameCount;
+
+        videoCapture.Set(CapProp.PosFrames, frame);
+
+        var img = videoCapture.QueryFrame();
+
+        return ImageToByte(img.ToBitmap());
+      }
+
+      return null;
+    }
+
+    public byte[] ImageToByte(System.Drawing.Image img)
+    {
+      return (byte[])new ImageConverter().ConvertTo(img, typeof(byte[]));
+    }
+
+    private void Refresh()
+    {
+      try
+      {
+        Image = null;
+
+        RaisePropertyChanged(nameof(ActualTime));
+
+        Image = GetImage();
+      }
+      catch (Exception ex)
+      {
+
+      }
+
+    }
+  }
+
   public class VideoPlayerViewModel : FilePlayableRegionViewModel<WindowsPlayerView, VideoItemInPlaylistViewModel, VideoFilePlaylist, PlaylistVideoItem, VideoItem>
   {
     private readonly IWindowManager windowManager;
     private readonly ICSFDWebsiteScrapper iCsfdWebsiteScrapper;
+    private readonly IViewModelsFactory viewModelsFactory;
     private TaskCompletionSource<bool> loadedTask = new TaskCompletionSource<bool>();
 
     #region Constructors
@@ -75,11 +213,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
       VLCPlayer vLCPlayer,
       IWindowManager windowManager,
       IStatusManager statusManager,
-      ICSFDWebsiteScrapper iCsfdWebsiteScrapper) :
+      ICSFDWebsiteScrapper iCsfdWebsiteScrapper,
+      IViewModelsFactory viewModelsFactory) :
       base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, statusManager, vLCPlayer)
     {
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       this.iCsfdWebsiteScrapper = iCsfdWebsiteScrapper ?? throw new ArgumentNullException(nameof(iCsfdWebsiteScrapper));
+      this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
     }
 
     #endregion
@@ -187,6 +327,25 @@ namespace VPlayer.WindowsPlayer.ViewModels
         if (value != cropRatios)
         {
           cropRatios = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region DetailViewModel
+
+    private VideoPopupDetailViewModel detailViewModelar;
+
+    public VideoPopupDetailViewModel DetailViewModel
+    {
+      get { return detailViewModelar; }
+      set
+      {
+        if (value != detailViewModelar)
+        {
+          detailViewModelar = value;
           RaisePropertyChanged();
         }
       }
@@ -606,6 +765,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
           }
         }
       }
+
+      DetailViewModel?.Dispose();
+      DetailViewModel = viewModelsFactory.Create<VideoPopupDetailViewModel>(videoItem);
     }
 
     #endregion

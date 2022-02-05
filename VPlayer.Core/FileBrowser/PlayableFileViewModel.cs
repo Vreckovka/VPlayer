@@ -2,10 +2,19 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Media.Imaging;
+using Emgu.CV;
+using Emgu.CV.CvEnum;
+using Emgu.CV.Structure;
 using Prism.Events;
 using VCore;
 using VCore.Standard.Factories.ViewModels;
@@ -131,104 +140,74 @@ namespace VPlayer.Core.FileBrowser
       {
         if (createThumbnails == null)
         {
-          createThumbnails = new ActionCommand(async () => await OnCreateThumbnails());
+          createThumbnails = new ActionCommand(async () => await CreateImages());
         }
 
         return createThumbnails;
       }
     }
 
-    #region OnCreateThumbnails
+    #endregion
 
-    public async Task OnCreateThumbnails()
+    public byte[] ImageToByte(Image img)
     {
-      if (Thumbnails.Count == 0)
+      ImageConverter converter = new ImageConverter();
+      return (byte[])converter.ConvertTo(img, typeof(byte[]));
+    }
+
+    private SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
+    public async Task CreateImages()
+    {
+      if (semaphoreSlim.CurrentCount == 0)
+        return;
+
+      try
       {
-        try
-        {
-          ThumbnailsLoading = true;
-          Thumbnails.Clear();
-          var thmbs = new List<ThumbnailViewModel>();
+        await semaphoreSlim.WaitAsync();
 
-          await Task.Run(async () =>
-          {
-            var ffprobeResult = await iVFfmpegProvider.RunFfprobe<ProcessOutputHandler>($"-v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 \"{Model.FullName}\"");
-
-            var allOutput = ffprobeResult.Output.ToList();
-            double? fileDuration = null;
-            int numberOfScreenshots = 5;
-
-            var thumbsFolder = "preview_thumbnails";
-
-            Directory.CreateDirectory(thumbsFolder);
-
-            var dur = allOutput.FirstOrDefault(x => x != null);
-
-            if (double.TryParse(dur, out var parsed))
-            {
-              fileDuration = parsed * 0.9;
-            }
-
-            if (fileDuration != null)
-            {
-              int screenInterval = (int)fileDuration / numberOfScreenshots;
-              string ffmpegParams = " ";
-
-              for (int i = 0; i < numberOfScreenshots; i++)
-              {
-                var actualDuration = (i + 1) * screenInterval;
-
-                var time = TimeSpan.FromSeconds(actualDuration);
-                var timeStr = TimeSpan.FromSeconds(actualDuration).ToString(@"hh\:mm\:ss");
-
-                ffmpegParams += $"-ss {timeStr} -i \"{Model.FullName}\" ";
-
-                thmbs.Add(new ThumbnailViewModel()
-                {
-                  Time = time
-                });
-              }
-
-              for (int i = 0; i < numberOfScreenshots; i++)
-              {
-                ffmpegParams += $"-map {i}:v -vframes 1 -qscale:v 2 {thumbsFolder}\\output_{i + 1}.png ";
-              }
-
-              ffmpegParams = ffmpegParams + " -y";
-
-              var result = await iVFfmpegProvider.RunFfmpeg<ProcessOutputHandler>(ffmpegParams, true);
-
-              for (int i = 0; i < numberOfScreenshots; i++)
-              {
-                var file = $"{thumbsFolder}\\output_{i + 1}.png";
-
-                if (File.Exists(file))
-                {
-                  var bytes = File.ReadAllBytes(file);
-
-                  thmbs[i].ImageData = bytes;
-
-                  File.Delete(file);
-                }
-              }
-            }
-          });
-
-          Thumbnails.AddRange(thmbs.Where(x => x.ImageData != null));
-        }
-        finally
-
-        {
-          ThumbnailsLoading = false;
-        }
+        if (!Thumbnails.Any())
+          await TryCreateThumbnails();
+      }
+      finally
+      {
+        semaphoreSlim.Release();
       }
     }
 
     #endregion
 
-    #endregion
+    private async Task TryCreateThumbnails()
+    {
+      var thmbs = new List<ThumbnailViewModel>();
+      Thumbnails.Clear();
 
-    #endregion
+      await Task.Run(() =>
+      {
+        using (var video = new VideoCapture(Model.FullName))
+        {
+          var framesC = video.Get(CapProp.FrameCount) * 0.9;
+
+          int numberOfScreenshots = 5;
+          int screenInterval = (int)framesC / numberOfScreenshots;
+
+          for (int i = screenInterval; i < framesC + screenInterval; i += screenInterval)
+          {
+            video.Set(CapProp.PosFrames, i);
+            var img = video.QueryFrame();
+
+            if (img != null)
+            {
+              thmbs.Add(new ThumbnailViewModel()
+              {
+                ImageData = ImageToByte(img.ToBitmap())
+              });
+            }
+          }
+        }
+      });
+
+      Thumbnails.AddRange(thmbs);
+    }
 
     #region Methods
 
