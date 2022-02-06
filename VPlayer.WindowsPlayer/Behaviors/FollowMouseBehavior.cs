@@ -10,16 +10,11 @@ using System.Windows.Input;
 using Microsoft.Xaml.Behaviors;
 using Ninject;
 using VCore.Standard;
+using VPlayer.Core.ViewModels;
 using VPlayer.Player.Behaviors;
 
 namespace VPlayer.WindowsPlayer.Behaviors
 {
-  public interface ISliderPopupViewModel
-  {
-    double ActualSliderValue { get; set; }
-    double MaxValue { get; set; }
-  }
-
   public class ShowPopupBehavior : Behavior<Slider>
   {
     #region Popup

@@ -1,32 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Reactive;
-using System.Reactive.Linq;
-using System.Reflection;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Media;
-using Emgu.CV;
+﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
 using LibVLCSharp.Shared;
-using LibVLCSharp.Shared.Structures;
 using Logger;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Ninject;
 using Prism.Events;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using VCore;
 using VCore.ItemsCollections;
 using VCore.Standard;
@@ -35,7 +23,6 @@ using VCore.Standard.Helpers;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.ItemsCollections.VirtualList;
 using VCore.WPF.ItemsCollections.VirtualList.VirtualLists;
-using VCore.WPF.Managers;
 using VCore.WPF.Misc;
 using VCore.WPF.Modularity.RegionProviders;
 using VPlayer.AudioStorage.DataLoader;
@@ -44,97 +31,37 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.AudioStorage.Scrappers.CSFD;
 using VPlayer.AudioStorage.Scrappers.CSFD.Domain;
 using VPlayer.Core.Events;
-using VPlayer.Core.FileBrowser;
 using VPlayer.Core.Managers.Status;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.TvShows;
-using VPlayer.IPTV.ViewModels;
 using VPlayer.Player.Views.WindowsPlayer;
-using VPlayer.WindowsPlayer.Behaviors;
-using VPlayer.WindowsPlayer.Players;
 using VPlayer.WindowsPlayer.ViewModels.VideoProperties;
 using VPlayer.WindowsPlayer.ViewModels.Windows;
 using VPlayer.WindowsPlayer.Views.Prompts;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer;
 using VVLC.Players;
 using Application = System.Windows.Application;
-using Image = System.Windows.Controls.Image;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 
 namespace VPlayer.WindowsPlayer.ViewModels
 {
-  public class VideoPopupDetailViewModel : ViewModel<VideoItem>, ISliderPopupViewModel
+
+
+  public class VideoSliderPopupDetailViewModel : FileItemSliderPopupDetailViewModel<VideoItem>
   {
+    private readonly ILogger logger;
     private VideoCapture videoCapture;
     double frameCount;
-    public VideoPopupDetailViewModel(VideoItem model) : base(model)
+    private ImageConverter imageConverter;
+    public VideoSliderPopupDetailViewModel(VideoItem model, ILogger logger) : base(model)
     {
-      TotalTime = TimeSpan.FromSeconds(model.Duration);
-      videoCapture = new VideoCapture(model.Source).DisposeWith(this);
+      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+      videoCapture = new VideoCapture(model.Source);
       frameCount = videoCapture.Get(CapProp.FrameCount);
+      imageConverter = new ImageConverter();
     }
-
-    #region ActualTime
-
-    public TimeSpan ActualTime
-    {
-      get
-      {
-        if (MaxValue > 0)
-          return TimeSpan.FromMilliseconds(TotalTime.TotalMilliseconds * ActualSliderValue / MaxValue);
-
-        return TimeSpan.Zero;
-      }
-
-    }
-
-    #endregion
-
-    #region TotalTime
-
-    public TimeSpan TotalTime { get; }
-
-    #endregion
-
-    #region ActualSliderValue
-
-    private double actualSliderValue;
-
-    public double ActualSliderValue
-    {
-      get { return actualSliderValue; }
-      set
-      {
-        if (value != actualSliderValue)
-        {
-          actualSliderValue = value;
-          RaisePropertyChanged();
-          Refresh();
-        }
-      }
-    }
-    #endregion
-
-    #region MaxValue
-
-    private double maxValue = 1;
-
-    public double MaxValue
-    {
-      get { return maxValue; }
-      set
-      {
-        if (value != maxValue)
-        {
-          maxValue = value;
-          RaisePropertyChanged();
-          Refresh();
-        }
-      }
-    }
-
-    #endregion
 
     #region Image
 
@@ -155,47 +82,74 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+
     private byte[] GetImage()
     {
-
-      if (MaxValue > 0)
+      try
       {
-        var frame = (ActualSliderValue / MaxValue) * frameCount;
+        semaphoreSlim.Wait();
 
-        videoCapture.Set(CapProp.PosFrames, frame);
+        if (MaxValue > 0)
+        {
+          var frame = (ActualSliderValue / MaxValue) * frameCount;
 
-        var img = videoCapture.QueryFrame();
+          videoCapture.Set(CapProp.PosFrames, frame);
 
-        return ImageToByte(img.ToBitmap());
+          var img = videoCapture.QueryFrame();
+
+          return ImageToByte(img.ToBitmap());
+        }
+
+
+        return null;
+      }
+      catch (Exception ex)
+      {
+        logger.Log(ex);
+        return null;
+      }
+      finally
+      {
+        semaphoreSlim.Release();
       }
 
-      return null;
     }
 
     public byte[] ImageToByte(System.Drawing.Image img)
     {
-      return (byte[])new ImageConverter().ConvertTo(img, typeof(byte[]));
+      return (byte[])imageConverter.ConvertTo(img, typeof(byte[]));
     }
 
-    private void Refresh()
+    private SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
+
+
+    protected override async void Refresh()
     {
-      try
+      Image = null;
+
+      base.Refresh();
+
+      if (semaphoreSlim.CurrentCount == 1)
       {
-        Image = null;
-
-        RaisePropertyChanged(nameof(ActualTime));
-
-        Image = GetImage();
-      }
-      catch (Exception ex)
-      {
-
+        Image = await Task.Run(GetImage);
       }
 
+
+    }
+
+    public override async void Dispose()
+    {
+      base.Dispose();
+
+      await semaphoreSlim.WaitAsync();
+
+      videoCapture.Dispose();
+
+      semaphoreSlim.Release();
     }
   }
 
-  public class VideoPlayerViewModel : FilePlayableRegionViewModel<WindowsPlayerView, VideoItemInPlaylistViewModel, VideoFilePlaylist, PlaylistVideoItem, VideoItem>
+  public class VideoPlayerViewModel : FilePlayableRegionViewModel<WindowsPlayerView, VideoItemInPlaylistViewModel, VideoFilePlaylist, PlaylistVideoItem, VideoItem, VideoSliderPopupDetailViewModel>
   {
     private readonly IWindowManager windowManager;
     private readonly ICSFDWebsiteScrapper iCsfdWebsiteScrapper;
@@ -215,7 +169,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       IStatusManager statusManager,
       ICSFDWebsiteScrapper iCsfdWebsiteScrapper,
       IViewModelsFactory viewModelsFactory) :
-      base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, statusManager, vLCPlayer)
+      base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, statusManager, viewModelsFactory, vLCPlayer)
     {
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       this.iCsfdWebsiteScrapper = iCsfdWebsiteScrapper ?? throw new ArgumentNullException(nameof(iCsfdWebsiteScrapper));
@@ -334,24 +288,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-    #region DetailViewModel
-
-    private VideoPopupDetailViewModel detailViewModelar;
-
-    public VideoPopupDetailViewModel DetailViewModel
-    {
-      get { return detailViewModelar; }
-      set
-      {
-        if (value != detailViewModelar)
-        {
-          detailViewModelar = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
 
     #endregion
 
@@ -484,8 +420,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
 
     #endregion
-
-
 
     #endregion
 
@@ -766,8 +700,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
       }
 
-      DetailViewModel?.Dispose();
-      DetailViewModel = viewModelsFactory.Create<VideoPopupDetailViewModel>(videoItem);
+
     }
 
     #endregion

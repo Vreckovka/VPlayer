@@ -60,13 +60,11 @@ using FileInfo = VCore.WPF.ViewModels.WindowsFiles;
 namespace VPlayer.WindowsPlayer.ViewModels
 {
 
-  public class MusicPlayerViewModel : FilePlayableRegionViewModel<WindowsPlayerView, SoundItemInPlaylistViewModel, SoundItemFilePlaylist, PlaylistSoundItem, SoundItem>
+  public class MusicPlayerViewModel : FilePlayableRegionViewModel<WindowsPlayerView, SoundItemInPlaylistViewModel, SoundItemFilePlaylist, PlaylistSoundItem, SoundItem, FileItemSliderPopupDetailViewModel<SoundItem>>
   {
     #region Fields
 
     private readonly IVPlayerRegionProvider vPlayerRegionProvider;
-    private readonly IViewModelsFactory viewModelsFactory;
-    private readonly IEventAggregator eventAggregator;
     private readonly AudioInfoDownloader audioInfoDownloader;
     private readonly IVPlayerCloudService cloudService;
     private readonly IPCloudAlbumCoverProvider iPCloudAlbumCoverProvider;
@@ -93,11 +91,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
       ILogger logger,
       IWindowManager windowManager,
       IStatusManager statusManager,
-      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, statusManager, vLCPlayer)
+      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, statusManager, viewModelsFactory, vLCPlayer)
     {
       this.vPlayerRegionProvider = regionProvider ?? throw new ArgumentNullException(nameof(regionProvider));
-      this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
-      this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
       this.cloudService = cloudService ?? throw new ArgumentNullException(nameof(cloudService));
       this.iPCloudAlbumCoverProvider = iPCloudAlbumCoverProvider ?? throw new ArgumentNullException(nameof(iPCloudAlbumCoverProvider));
@@ -920,7 +916,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private async Task DownloadUrlLink(SoundItem soundItem)
     {
       if (soundItem != null &&
-          soundItem.FileInfo != null && long.TryParse(soundItem.FileInfo.Indentificator, out var id)) 
+          soundItem.FileInfo != null && long.TryParse(soundItem.FileInfo.Indentificator, out var id))
       {
         if (publicLinks.TryGetValue(soundItem, out var storedPublicLink) &&
            storedPublicLink.ExpiresDate > DateTime.Now)
@@ -1222,7 +1218,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
                 }
 
 
-                if ((downloadingArtist == null || (!string.IsNullOrEmpty(normalizedArtistName)  && normalizedArtistName?.Similarity(normalizedDownloadingAristName, true) < 0.9)) &&
+                if ((downloadingArtist == null || (!string.IsNullOrEmpty(normalizedArtistName) && normalizedArtistName?.Similarity(normalizedDownloadingAristName, true) < 0.9)) &&
                     originalDownlaodedArtistName != artistName && downloadArtist)
                 {
                   downloadingArtist = await GetArtist(artistName, cancellationToken);
@@ -1282,9 +1278,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
                 }
 
 
-                if ((downloadingAlbum == null || 
-                     (!string.IsNullOrEmpty(normalizedDownloadingAlbumName) && 
-                      normalizedName?.Similarity(normalizedDownloadingAlbumName, true) < 0.9) ) &&
+                if ((downloadingAlbum == null ||
+                     (!string.IsNullOrEmpty(normalizedDownloadingAlbumName) &&
+                      normalizedName?.Similarity(normalizedDownloadingAlbumName, true) < 0.9)) &&
                     originalDownlaodedAlbumName != albumName && downloadAlbum)
                 {
                   downloadingAlbum = await GetAlbum(downloadingArtist, albumName, cancellationToken);

@@ -1001,9 +1001,9 @@ namespace VPlayer.Core.ViewModels
 
     #region PlayPuse
 
-    public void PlayPause()
+    public async void PlayPause()
     {
-      Task.Run(() =>
+      await Task.Run(() =>
       {
         if (IsPlaying)
           Pause();

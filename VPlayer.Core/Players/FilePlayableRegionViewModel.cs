@@ -15,6 +15,8 @@ using Ninject;
 using Prism.Events;
 using SoundManagement;
 using VCore;
+using VCore.Standard;
+using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Modularity.Interfaces;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Managers;
@@ -31,14 +33,97 @@ using VVLC.Players;
 
 namespace VPlayer.Core.ViewModels
 {
-  public abstract class FilePlayableRegionViewModel<TView, TItemViewModel, TPlaylistModel, TPlaylistItemModel, TModel> :
+  public interface ISliderPopupViewModel
+  {
+    double ActualSliderValue { get; set; }
+    double MaxValue { get; set; }
+  }
+
+  public class FileItemSliderPopupDetailViewModel<TModel> : ViewModel<TModel>, ISliderPopupViewModel
+    where TModel : IFilePlayableModel
+  {
+    public FileItemSliderPopupDetailViewModel(TModel model) : base(model)
+    {
+      TotalTime = TimeSpan.FromSeconds(model.Duration);
+    }
+
+    #region ActualTime
+
+    public TimeSpan ActualTime
+    {
+      get
+      {
+        if (MaxValue > 0)
+          return TimeSpan.FromMilliseconds(TotalTime.TotalMilliseconds * ActualSliderValue / MaxValue);
+
+        return TimeSpan.Zero;
+      }
+
+    }
+
+    #endregion
+
+    #region TotalTime
+
+    public TimeSpan TotalTime { get; }
+
+    #endregion
+
+    #region ActualSliderValue
+
+    private double actualSliderValue;
+
+    public double ActualSliderValue
+    {
+      get { return actualSliderValue; }
+      set
+      {
+        if (value != actualSliderValue)
+        {
+          actualSliderValue = value;
+          RaisePropertyChanged();
+          Refresh();
+        }
+      }
+    }
+    #endregion
+
+    #region MaxValue
+
+    private double maxValue = 1;
+
+    public double MaxValue
+    {
+      get { return maxValue; }
+      set
+      {
+        if (value != maxValue)
+        {
+          maxValue = value;
+          RaisePropertyChanged();
+          Refresh();
+        }
+      }
+    }
+
+    #endregion
+
+    protected virtual void Refresh()
+    {
+      RaisePropertyChanged(nameof(ActualTime));
+    }
+  }
+
+  public abstract class FilePlayableRegionViewModel<TView, TItemViewModel, TPlaylistModel, TPlaylistItemModel, TModel, TPopupViewModel> :
     PlayableRegionViewModel<TView, TItemViewModel, TPlaylistModel, TPlaylistItemModel, TModel>, IFilePlayableRegionViewModel
     where TView : class, IView
     where TItemViewModel : class, IFileItemInPlayList<TModel>
-    where TModel : class, IPlayableModel, IUpdateable<TModel>
+    where TModel : class, IFilePlayableModel, IUpdateable<TModel>
     where TPlaylistModel : class, IFilePlaylist<TPlaylistItemModel>, new()
     where TPlaylistItemModel : IItemInPlaylist<TModel>
+  where TPopupViewModel : FileItemSliderPopupDetailViewModel<TModel>
   {
+    protected readonly IViewModelsFactory viewModelsFactory;
     private readonly VLCPlayer vLcPlayer;
     private long lastTimeChangedMs;
 
@@ -51,8 +136,10 @@ namespace VPlayer.Core.ViewModels
       IEventAggregator eventAggregator,
       IWindowManager windowManager,
       IStatusManager statusManager,
+      IViewModelsFactory viewModelsFactory,
       VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, statusManager, windowManager, vLCPlayer)
     {
+      this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       vLcPlayer = vLCPlayer ?? throw new ArgumentNullException(nameof(vLCPlayer));
       BufferingSubject.Throttle(TimeSpan.FromSeconds(0.5)).Subscribe(x =>
       {
@@ -104,6 +191,25 @@ namespace VPlayer.Core.ViewModels
         if (value != checkedFiles)
         {
           checkedFiles = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region DetailViewModel
+
+    private TPopupViewModel detailViewModelar;
+
+    public TPopupViewModel DetailViewModel
+    {
+      get { return detailViewModelar; }
+      set
+      {
+        if (value != detailViewModelar)
+        {
+          detailViewModelar = value;
           RaisePropertyChanged();
         }
       }
@@ -199,6 +305,9 @@ namespace VPlayer.Core.ViewModels
           return DownloadItemInfo(cTSOnActualItemChanged.Token);
         });
       }
+
+      DetailViewModel?.Dispose();
+      DetailViewModel = viewModelsFactory.Create<TPopupViewModel>(model);
     }
 
     #endregion
@@ -520,7 +629,7 @@ namespace VPlayer.Core.ViewModels
       {
         CheckedFiles.Clear();
       });
-      
+
     }
 
     protected override void BeforeClearPlaylist()

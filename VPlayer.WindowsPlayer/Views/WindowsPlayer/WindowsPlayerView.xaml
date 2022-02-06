@@ -16,6 +16,7 @@
              xmlns:regions11="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPLayer.Domain"
              xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
              xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
+             xmlns:viewModels="clr-namespace:VPlayer.WindowsPlayer.ViewModels"
              d:DesignHeight="450"
              d:DesignWidth="1900"
              mc:Ignorable="d">
@@ -69,30 +70,38 @@
             </Slider>
 
             <Popup x:Name="VideoPreviewPopup"
-                   Placement="MousePoint"
-                   VerticalOffset="-165">
+                   AllowsTransparency="True"
+                   DataContext="{Binding DetailViewModel}"
+                   Placement="MousePoint">
                 <Popup.Style>
                     <Style TargetType="Popup">
+                        <Setter Property="VerticalOffset" Value="-35" />
+
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding ElementName=Slider_Time, Path=IsMouseOver}" Value="true">
                                 <Setter Property="IsOpen" Value="True" />
                             </DataTrigger>
+
+                            <DataTrigger Binding="{Binding Converter={converters:IsTypeConverter}, ConverterParameter={x:Type viewModels:VideoSliderPopupDetailViewModel}}" Value="true">
+                                <Setter Property="VerticalOffset" Value="-160" />
+                                <Setter Property="Width" Value="260" />
+                                <Setter Property="Height" Value="150" />
+                            </DataTrigger>
+
                         </Style.Triggers>
                     </Style>
                 </Popup.Style>
 
-                <Border MaxHeight="150"
-                        Padding="1"
-                        Background="#151515"
-                        BorderBrush="#75757575"
-                        BorderThickness="1"
-                        DataContext="{Binding DetailViewModel}">
-                    <Grid>
-                        <!--<Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition Height="auto" />
-                        </Grid.RowDefinitions>-->
+                <Border Padding="1" BorderThickness="1">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Background" Value="#55000000" />
+                            <Setter Property="BorderBrush" Value="#55757575" />
 
+
+                        </Style>
+                    </Border.Style>
+                    <Grid>
                         <Image Source="{Binding Image}" />
 
                         <Border Margin="0,0"
