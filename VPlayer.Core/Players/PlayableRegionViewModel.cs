@@ -177,6 +177,11 @@ namespace VPlayer.Core.ViewModels
           isPlaying = value;
           OnIsPlayingChanged();
           RaisePropertyChanged();
+
+          if(ActualItem != null)
+          {
+            ActualItem.IsPlaying = isPlaying;
+          }
         }
       }
     }

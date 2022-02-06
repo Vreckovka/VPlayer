@@ -384,6 +384,7 @@
 
             </Grid.ColumnDefinitions>
 
+
             <StackPanel Grid.Column="0"
                         Margin="0,0,0,0"
                         Orientation="Horizontal">
@@ -402,6 +403,11 @@
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding CanPlay}" Value="true">
                                     <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+
+
+                                <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                    <Setter Property="IconDefaultColor" Value="{StaticResource DefaultRedColor}" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -563,6 +569,7 @@
                         <DataTrigger Binding="{Binding CanPlay}" Value="false">
                             <Setter Property="Opacity" Value="1" />
                         </DataTrigger>
+
                     </Style.Triggers>
                 </Style>
             </Grid.Style>

@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,6 +18,7 @@ using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Prism.Events;
 using VCore;
+using VCore.ItemsCollections;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.ViewModels.WindowsFile;
 using VCore.WPF.Interfaces.Managers;
@@ -100,6 +102,46 @@ namespace VPlayer.Core.FileBrowser
         if (value != canPlay)
         {
           canPlay = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    private RxObservableCollection<VideoItemInPlaylistViewModel> videoItemInPlaylistViewModels = new RxObservableCollection<VideoItemInPlaylistViewModel>();
+
+    #region VideoItemInPlaylistViewModel
+
+    private VideoItemInPlaylistViewModel videoItemInPlaylistViewModel;
+
+    public VideoItemInPlaylistViewModel VideoItemInPlaylistViewModel
+    {
+      get { return videoItemInPlaylistViewModel; }
+      set
+      {
+        if (value != videoItemInPlaylistViewModel)
+        {
+          videoItemInPlaylistViewModel = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region IsPlaying
+
+    private bool isPlaying;
+
+    public bool IsPlaying
+    {
+      get { return isPlaying; }
+      set
+      {
+        if (value != isPlaying)
+        {
+          isPlaying = value;
           RaisePropertyChanged();
         }
       }
@@ -247,7 +289,21 @@ namespace VPlayer.Core.FileBrowser
         videoItems.Add(existing);
       }
 
-      var data = new PlayItemsEventData<VideoItemInPlaylistViewModel>(videoItems.Select(x => viewModelsFactory.Create<VideoItemInPlaylistViewModel>(x)), EventAction.Play, this);
+      var vms = videoItems.Select(x => viewModelsFactory.Create<VideoItemInPlaylistViewModel>(x)).ToList();
+
+      videoItemInPlaylistViewModels.ItemUpdated.Subscribe((x) =>
+      {
+        var vm = ((VideoItemInPlaylistViewModel)x.Sender);
+        if (vm.Model.Source == Model.Indentificator)
+        {
+          IsPlaying = vm.IsPlaying;
+        }
+      });
+
+      videoItemInPlaylistViewModels.AddRange(vms);
+     
+
+      var data = new PlayItemsEventData<VideoItemInPlaylistViewModel>(vms, EventAction.Play, this);
 
       eventAggregator.GetEvent<PlayItemsEvent<VideoItem, VideoItemInPlaylistViewModel>>().Publish(data);
     }
@@ -282,5 +338,10 @@ namespace VPlayer.Core.FileBrowser
     #endregion
 
     #endregion
+
+    public override void Dispose()
+    {
+      base.Dispose();
+    }
   }
 }
