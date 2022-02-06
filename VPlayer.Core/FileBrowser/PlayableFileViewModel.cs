@@ -47,6 +47,7 @@ namespace VPlayer.Core.FileBrowser
     private readonly IStorageManager storageManager;
     private readonly IViewModelsFactory viewModelsFactory;
     private readonly IVFfmpegProvider iVFfmpegProvider;
+    ImageConverter converter = new ImageConverter();
 
     public PlayableFileViewModel(
       FileInfo model,
@@ -193,7 +194,6 @@ namespace VPlayer.Core.FileBrowser
 
     public byte[] ImageToByte(Image img)
     {
-      ImageConverter converter = new ImageConverter();
       return (byte[])converter.ConvertTo(img, typeof(byte[]));
     }
 
@@ -228,6 +228,10 @@ namespace VPlayer.Core.FileBrowser
         using (var video = new VideoCapture(Model.FullName))
         {
           var framesC = video.Get(CapProp.FrameCount) * 0.9;
+          video.Set(CapProp.FrameHeight, 640);
+          video.Set(CapProp.FrameWidth, 360);
+          video.Set(CapProp.Fps, 50);
+          video.Set(CapProp.HwAcceleration, 1);
 
           int numberOfScreenshots = 5;
           int screenInterval = (int)framesC / numberOfScreenshots;
@@ -235,7 +239,7 @@ namespace VPlayer.Core.FileBrowser
           for (int i = screenInterval; i < framesC + screenInterval; i += screenInterval)
           {
             video.Set(CapProp.PosFrames, i);
-            var img = video.QueryFrame();
+            var img = video.QuerySmallFrame();
 
             if (img != null)
             {

@@ -57,8 +57,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
     public VideoSliderPopupDetailViewModel(VideoItem model, ILogger logger) : base(model)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
       videoCapture = new VideoCapture(model.Source);
+
       frameCount = videoCapture.Get(CapProp.FrameCount);
       imageConverter = new ImageConverter();
     }
@@ -98,7 +98,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
           videoCapture.Set(CapProp.PosFrames, frame);
 
-          var img = videoCapture.QueryFrame();
+          var img = videoCapture.QuerySmallFrame();
 
           return ImageToByte(img.ToBitmap());
         }
