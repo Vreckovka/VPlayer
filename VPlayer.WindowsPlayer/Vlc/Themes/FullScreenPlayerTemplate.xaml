@@ -217,6 +217,9 @@
                                                 </Setter>
                                             </Style>
                                         </controls:PathButton.Style>
+                                        <b:Interaction.Behaviors>
+                                            <sliders:WheelSliderBehavior Slider="{Binding ElementName=WindowsSlider}" />
+                                        </b:Interaction.Behaviors>
                                     </controls:PathButton>
 
                                     <Popup HorizontalAlignment="Right"

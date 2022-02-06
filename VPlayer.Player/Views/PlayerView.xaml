@@ -6,6 +6,7 @@
              xmlns:controls2="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
              xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:global="clr-namespace:;assembly=VCore.WPF"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:popups="clr-namespace:VCore.WPF.Behaviors.Popups;assembly=VCore.WPF"
              xmlns:sliders="clr-namespace:VCore.WPF.Behaviors.Sliders;assembly=VCore.WPF"
@@ -565,6 +566,10 @@
                             </Setter>
                         </Style>
                     </controls2:PathButton.Style>
+
+                    <b:Interaction.Behaviors>
+                        <sliders:WheelSliderBehavior Slider="{Binding ElementName=WindowsSlider}" />
+                    </b:Interaction.Behaviors>
                 </controls2:PathButton>
 
                 <Popup x:Name="WindowsPopup"
