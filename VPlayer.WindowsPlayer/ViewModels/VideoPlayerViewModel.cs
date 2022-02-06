@@ -57,10 +57,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
     public VideoSliderPopupDetailViewModel(VideoItem model, ILogger logger) : base(model)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-      videoCapture = new VideoCapture(model.Source);
+      videoCapture = new VideoCapture(model.Source,VideoCapture.API.Any, new Tuple<CapProp, int>(CapProp.HwAcceleration, 1));
 
       frameCount = videoCapture.Get(CapProp.FrameCount);
       imageConverter = new ImageConverter();
+
+      videoCapture.Set(CapProp.FrameWidth, 460);
+      videoCapture.Set(CapProp.FrameWidth, 320);
     }
 
     #region Image

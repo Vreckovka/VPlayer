@@ -229,12 +229,11 @@ namespace VPlayer.Core.FileBrowser
 
         await Task.Run(() =>
         {
-          using (var video = new VideoCapture(Model.FullName, VideoCapture.API.Any, 
-            new Tuple<CapProp, int>(CapProp.HwAcceleration, 1),
-            new Tuple<CapProp, int>(CapProp.FrameHeight, 640),
-            new Tuple<CapProp, int>(CapProp.FrameWidth, 360)))
+          using (var video = new VideoCapture(Model.FullName, VideoCapture.API.Any, new Tuple<CapProp, int>(CapProp.HwAcceleration, 1)))
           {
             var framesC = video.Get(CapProp.FrameCount) * 0.9;
+            video.Set(CapProp.FrameWidth, 460);
+            video.Set(CapProp.FrameWidth, 320);
 
             int numberOfScreenshots = 5;
             int screenInterval = (int)framesC / numberOfScreenshots;
