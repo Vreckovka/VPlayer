@@ -198,6 +198,7 @@ namespace VPlayer.Core.FileBrowser
     }
 
     private SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
+
     public async Task CreateImages()
     {
       if (semaphoreSlim.CurrentCount == 0)
@@ -220,39 +221,47 @@ namespace VPlayer.Core.FileBrowser
 
     private async Task TryCreateThumbnails()
     {
-      var thmbs = new List<ThumbnailViewModel>();
-      Thumbnails.Clear();
-
-      await Task.Run(() =>
+      try
       {
-        using (var video = new VideoCapture(Model.FullName))
+        var thmbs = new List<ThumbnailViewModel>();
+        Thumbnails.Clear();
+        ThumbnailsLoading = true;
+
+        await Task.Run(() =>
         {
-          var framesC = video.Get(CapProp.FrameCount) * 0.9;
-          video.Set(CapProp.FrameHeight, 640);
-          video.Set(CapProp.FrameWidth, 360);
-          video.Set(CapProp.Fps, 50);
-          video.Set(CapProp.HwAcceleration, 1);
-
-          int numberOfScreenshots = 5;
-          int screenInterval = (int)framesC / numberOfScreenshots;
-
-          for (int i = screenInterval; i < framesC + screenInterval; i += screenInterval)
+          using (var video = new VideoCapture(Model.FullName, VideoCapture.API.Any, 
+            new Tuple<CapProp, int>(CapProp.HwAcceleration, 1),
+            new Tuple<CapProp, int>(CapProp.FrameHeight, 640),
+            new Tuple<CapProp, int>(CapProp.FrameWidth, 360)))
           {
-            video.Set(CapProp.PosFrames, i);
-            var img = video.QuerySmallFrame();
+            var framesC = video.Get(CapProp.FrameCount) * 0.9;
 
-            if (img != null)
+            int numberOfScreenshots = 5;
+            int screenInterval = (int)framesC / numberOfScreenshots;
+
+            for (int i = screenInterval; i < framesC + screenInterval; i += screenInterval)
             {
-              thmbs.Add(new ThumbnailViewModel()
+              video.Set(CapProp.PosFrames, i);
+              var img = video.QuerySmallFrame();
+
+              if (img != null)
               {
-                ImageData = ImageToByte(img.ToBitmap())
-              });
+                thmbs.Add(new ThumbnailViewModel()
+                {
+                  ImageData = ImageToByte(img.ToBitmap())
+                });
+              }
             }
           }
-        }
-      });
+        });
 
-      Thumbnails.AddRange(thmbs);
+        Thumbnails.AddRange(thmbs);
+
+      }
+      finally
+      {
+        ThumbnailsLoading = false;
+      }
     }
 
     #region Methods
@@ -305,7 +314,7 @@ namespace VPlayer.Core.FileBrowser
       });
 
       videoItemInPlaylistViewModels.AddRange(vms);
-     
+
 
       var data = new PlayItemsEventData<VideoItemInPlaylistViewModel>(vms, EventAction.Play, this);
 

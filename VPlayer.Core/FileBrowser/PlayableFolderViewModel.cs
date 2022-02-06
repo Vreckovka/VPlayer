@@ -174,7 +174,7 @@ namespace VPlayer.Core.FileBrowser
       }
     }
 
-    #region OnHover
+    #region OnTooltip
 
     private async Task OnTooltip()
     {
