@@ -45,7 +45,7 @@ namespace VPlayer.Core.ViewModels
 {
   public abstract class PlayableRegionViewModel<TView, TItemViewModel, TPlaylistModel, TPlaylistItemModel, TModel> : RegionViewModel<TView>, IPlayableRegionViewModel, IHideable
     where TView : class, IView
-    where TItemViewModel : class, IItemInPlayList<TModel>, ISelectable
+    where TItemViewModel : class, IItemInPlayList<TModel>, ISelectable, IDisposable
     where TModel : IPlayableModel
     where TPlaylistModel : class, IPlaylist<TPlaylistItemModel>, new()
     where TPlaylistItemModel : IItemInPlaylist<TModel>
@@ -617,7 +617,7 @@ namespace VPlayer.Core.ViewModels
 
     #region Clear
 
-    public async Task ClearPlaylist()
+    public virtual async Task ClearPlaylist()
     {
       if (ActualSavedPlaylist.Id > 0)
       {
@@ -628,6 +628,8 @@ namespace VPlayer.Core.ViewModels
 
       IsPlaying = false;
       VirtualizedPlayList = null;
+      PlayList?.OfType<IDisposable>().ForEach(x => x.Dispose());
+      ActualItem?.Dispose();
       PlayList.Clear();
       ActualItem = null;
       MediaPlayer.Stop();

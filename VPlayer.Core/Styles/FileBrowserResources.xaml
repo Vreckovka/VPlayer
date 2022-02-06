@@ -113,6 +113,10 @@
                                     <Setter Property="IconDefaultColor" Value="{StaticResource DefaultRedColor}" />
                                     <Setter Property="ToolTip" Value="Stop" />
                                 </DataTrigger>
+
+                                <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                    <Setter Property="IconDefaultColor" Value="{StaticResource DefaultRedColor}" />
+                                </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </controls1:PathButton.Style>

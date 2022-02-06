@@ -10,6 +10,7 @@ using System.Windows.Input;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore;
+using VCore.ItemsCollections;
 using VCore.Standard.Comparers;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
@@ -70,6 +71,28 @@ namespace VPlayer.Core.FileBrowser
     }
 
     #endregion
+
+    #region IsPlaying
+
+    private bool isPlaying;
+
+    public bool IsPlaying
+    {
+      get { return isPlaying; }
+      set
+      {
+        if (value != isPlaying)
+        {
+          isPlaying = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+
+
 
     public ObservableCollection<ThumbnailViewModel> Thumbnails { get; } = new ObservableCollection<ThumbnailViewModel>();
 
@@ -210,7 +233,9 @@ namespace VPlayer.Core.FileBrowser
 
         var playableFiles = SubItems.ViewModels
           .SelectManyRecursive(x => x.SubItems.ViewModels)
-          .OfType<PlayableFileViewModel>();
+          .OfType<PlayableFileViewModel>()
+          .ToList();
+    
 
         if (FolderType == FolderType.Video)
         {
@@ -244,8 +269,26 @@ namespace VPlayer.Core.FileBrowser
             }
           }
 
-          var data = new PlayItemsEventData<VideoItemInPlaylistViewModel>(
-            videoItems.Select(x => viewModelsFactory.Create<VideoItemInPlaylistViewModel>(x)), EventAction.Play, this);
+          var vms = videoItems.Select(x => viewModelsFactory.Create<VideoItemInPlaylistViewModel>(x)).ToList();
+
+          var rx = new RxObservableCollection<VideoItemInPlaylistViewModel>();
+          rx.AddRange(vms);
+
+          rx.ItemUpdated.Subscribe((updatedItem) =>
+          {
+            var vm = ((VideoItemInPlaylistViewModel)updatedItem.Sender);
+
+            var file = playableFiles.SingleOrDefault(x => x.Model.Source == vm.Model.Source);
+
+            if (file != null)
+            {
+              file.IsPlaying = true;
+            }
+
+            IsPlaying = vm.IsPlaying;
+          });
+
+          var data = new PlayItemsEventData<VideoItemInPlaylistViewModel>(vms, EventAction.Play, this);
 
           eventAggregator.GetEvent<PlayItemsEvent<VideoItem, VideoItemInPlaylistViewModel>>().Publish(data);
         }

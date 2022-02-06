@@ -89,6 +89,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         semaphoreSlim.Wait();
 
+        if (isDiposed)
+          return null;
+
         if (MaxValue > 0)
         {
           var frame = (ActualSliderValue / MaxValue) * frameCount;
@@ -137,13 +140,16 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     }
 
+    private bool isDiposed = false;
     public override async void Dispose()
     {
       base.Dispose();
 
       await semaphoreSlim.WaitAsync();
 
+      videoCapture.Stop();
       videoCapture.Dispose();
+      isDiposed = true;
 
       semaphoreSlim.Release();
     }

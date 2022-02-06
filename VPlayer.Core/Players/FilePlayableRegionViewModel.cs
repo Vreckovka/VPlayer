@@ -117,7 +117,7 @@ namespace VPlayer.Core.ViewModels
   public abstract class FilePlayableRegionViewModel<TView, TItemViewModel, TPlaylistModel, TPlaylistItemModel, TModel, TPopupViewModel> :
     PlayableRegionViewModel<TView, TItemViewModel, TPlaylistModel, TPlaylistItemModel, TModel>, IFilePlayableRegionViewModel
     where TView : class, IView
-    where TItemViewModel : class, IFileItemInPlayList<TModel>
+    where TItemViewModel : class, IFileItemInPlayList<TModel>, IDisposable
     where TModel : class, IFilePlayableModel, IUpdateable<TModel>
     where TPlaylistModel : class, IFilePlaylist<TPlaylistItemModel>, new()
     where TPlaylistItemModel : IItemInPlaylist<TModel>
@@ -651,6 +651,13 @@ namespace VPlayer.Core.ViewModels
           CheckedFiles.Add(itemViewModel);
         }
       });
+    }
+
+    public override Task ClearPlaylist()
+    {
+      DetailViewModel?.Dispose();
+
+      return base.ClearPlaylist();
     }
 
     #region Dispose
