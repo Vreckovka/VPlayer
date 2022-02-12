@@ -27,5 +27,6 @@ namespace VPlayer.Core.ViewModels
     string Name { get; }
     bool IsFavorite { get; set; }
     bool IsPlaying { get; set; }
+    bool IsInPlaylist { get; set; }
   }
 }

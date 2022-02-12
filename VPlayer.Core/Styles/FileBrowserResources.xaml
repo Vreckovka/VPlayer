@@ -114,7 +114,7 @@
                                     <Setter Property="ToolTip" Value="Stop" />
                                 </DataTrigger>
 
-                                <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                <DataTrigger Binding="{Binding IsInPlaylist}" Value="true">
                                     <Setter Property="IconDefaultColor" Value="{StaticResource DefaultRedColor}" />
                                 </DataTrigger>
                             </Style.Triggers>
@@ -410,7 +410,7 @@
                                 </DataTrigger>
 
 
-                                <DataTrigger Binding="{Binding IsPlaying}" Value="true">
+                                <DataTrigger Binding="{Binding IsInPlaylist}" Value="true">
                                     <Setter Property="IconDefaultColor" Value="{StaticResource DefaultRedColor}" />
                                 </DataTrigger>
                             </Style.Triggers>

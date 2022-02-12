@@ -31,6 +31,8 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.ViewModels.TvShows;
 using FileInfo = VCore.WPF.ViewModels.WindowsFiles.FileInfo;
+using VCore.Standard.Helpers;
+using VCore.WPF.Helpers;
 
 namespace VPlayer.Core.FileBrowser
 {
@@ -110,7 +112,6 @@ namespace VPlayer.Core.FileBrowser
 
     #endregion
 
-    private RxObservableCollection<VideoItemInPlaylistViewModel> videoItemInPlaylistViewModels = new RxObservableCollection<VideoItemInPlaylistViewModel>();
 
     #region VideoItemInPlaylistViewModel
 
@@ -131,18 +132,18 @@ namespace VPlayer.Core.FileBrowser
 
     #endregion
 
-    #region IsPlaying
+    #region IsInPlaylist
 
-    private bool isPlaying;
+    private bool isInPlaylist;
 
-    public bool IsPlaying
+    public bool IsInPlaylist
     {
-      get { return isPlaying; }
+      get { return isInPlaylist; }
       set
       {
-        if (value != isPlaying)
+        if (value != isInPlaylist)
         {
-          isPlaying = value;
+          isInPlaylist = value;
           RaisePropertyChanged();
         }
       }
@@ -219,50 +220,6 @@ namespace VPlayer.Core.FileBrowser
 
     #endregion
 
-    private async Task TryCreateThumbnails()
-    {
-      try
-      {
-        var thmbs = new List<ThumbnailViewModel>();
-        Thumbnails.Clear();
-        ThumbnailsLoading = true;
-
-        await Task.Run(() =>
-        {
-          using (var video = new VideoCapture(Model.FullName, VideoCapture.API.Any, new Tuple<CapProp, int>(CapProp.HwAcceleration, 1)))
-          {
-            var framesC = video.Get(CapProp.FrameCount) * 0.9;
-            video.Set(CapProp.FrameWidth, 460);
-            video.Set(CapProp.FrameWidth, 320);
-
-            int numberOfScreenshots = 5;
-            int screenInterval = (int)framesC / numberOfScreenshots;
-
-            for (int i = screenInterval; i < framesC + screenInterval; i += screenInterval)
-            {
-              video.Set(CapProp.PosFrames, i);
-              var img = video.QuerySmallFrame();
-
-              if (img != null)
-              {
-                thmbs.Add(new ThumbnailViewModel()
-                {
-                  ImageData = ImageToByte(img.ToBitmap())
-                });
-              }
-            }
-          }
-        });
-
-        Thumbnails.AddRange(thmbs);
-
-      }
-      finally
-      {
-        ThumbnailsLoading = false;
-      }
-    }
-
     #region Methods
 
     #region Play
@@ -281,41 +238,30 @@ namespace VPlayer.Core.FileBrowser
 
     private void PlayVideo()
     {
-      var existing = storageManager.GetRepository<VideoItem>().SingleOrDefault(x => x.Source == Model.Indentificator);
-      var videoItems = new List<VideoItem>();
+      VideoItem videoItem = storageManager.GetRepository<VideoItem>().SingleOrDefault(x => x.Source == Model.Indentificator);
 
-      if (existing == null)
+      if (videoItem == null)
       {
-        var videoItem = new VideoItem()
+        var pVideoItem = new VideoItem()
         {
           Name = Model.Name,
           Source = Model.Indentificator
         };
 
-        storageManager.StoreEntity<VideoItem>(videoItem, out var stored);
-
-        videoItems.Add(stored);
-      }
-      else
-      {
-        videoItems.Add(existing);
+        storageManager.StoreEntity<VideoItem>(pVideoItem, out videoItem);
       }
 
-      var vms = videoItems.Select(x => viewModelsFactory.Create<VideoItemInPlaylistViewModel>(x)).ToList();
+      if (videoItem == null)
+        return;
 
-      videoItemInPlaylistViewModels.ItemUpdated.Subscribe((x) =>
+      var vms = viewModelsFactory.Create<VideoItemInPlaylistViewModel>(videoItem);
+
+      vms.ObservePropertyChange(x => x.IsInPlaylist).ObserveOnDispatcher().Subscribe((x) =>
       {
-        var vm = ((VideoItemInPlaylistViewModel)x.Sender);
-        if (vm.Model.Source == Model.Indentificator)
-        {
-          IsPlaying = vm.IsPlaying;
-        }
+        IsInPlaylist = x;
       });
 
-      videoItemInPlaylistViewModels.AddRange(vms);
-
-
-      var data = new PlayItemsEventData<VideoItemInPlaylistViewModel>(vms, EventAction.Play, this);
+      var data = new PlayItemsEventData<VideoItemInPlaylistViewModel>(vms.AsList(), EventAction.Play, this);
 
       eventAggregator.GetEvent<PlayItemsEvent<VideoItem, VideoItemInPlaylistViewModel>>().Publish(data);
     }
@@ -349,11 +295,59 @@ namespace VPlayer.Core.FileBrowser
 
     #endregion
 
+    #region TryCreateThumbnails
+
+    private async Task TryCreateThumbnails()
+    {
+      try
+      {
+        var thmbs = new List<ThumbnailViewModel>();
+        Thumbnails.Clear();
+        ThumbnailsLoading = true;
+
+        await Task.Run(() =>
+        {
+          using (var video = new VideoCapture(Model.FullName, VideoCapture.API.Any, new Tuple<CapProp, int>(CapProp.HwAcceleration, 1)))
+          {
+            var framesC = video.Get(CapProp.FrameCount) * 0.9;
+            video.Set(CapProp.FrameWidth, 460);
+            video.Set(CapProp.FrameWidth, 320);
+
+            int numberOfScreenshots = 5;
+            int screenInterval = (int)framesC / numberOfScreenshots;
+
+            for (int i = screenInterval; i < framesC + screenInterval; i += screenInterval)
+            {
+              video.Set(CapProp.PosFrames, i);
+              var img = video.QuerySmallFrame();
+
+              if (img != null)
+              {
+                thmbs.Add(new ThumbnailViewModel()
+                {
+                  ImageData = ImageToByte(img.ToBitmap())
+                });
+
+                img.Dispose();
+              }
+            }
+          }
+        });
+
+        Thumbnails.AddRange(thmbs);
+
+      }
+      finally
+      {
+        ThumbnailsLoading = false;
+      }
+    }
+
+
     #endregion
 
-    public override void Dispose()
-    {
-      base.Dispose();
-    }
+    #endregion
+
+
   }
 }

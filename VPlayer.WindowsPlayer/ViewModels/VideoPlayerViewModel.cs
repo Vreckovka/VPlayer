@@ -103,6 +103,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
           var img = videoCapture.QuerySmallFrame();
 
+          if (img == null)
+            return null;
+
           return ImageToByte(img.ToBitmap());
         }
 

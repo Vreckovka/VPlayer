@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -74,16 +75,16 @@ namespace VPlayer.Core.FileBrowser
 
     #region IsPlaying
 
-    private bool isPlaying;
+    private bool isInPlaylist;
 
-    public bool IsPlaying
+    public bool IsInPlaylist
     {
-      get { return isPlaying; }
+      get { return isInPlaylist; }
       set
       {
-        if (value != isPlaying)
+        if (value != isInPlaylist)
         {
-          isPlaying = value;
+          isInPlaylist = value;
           RaisePropertyChanged();
         }
       }
@@ -274,7 +275,7 @@ namespace VPlayer.Core.FileBrowser
           var rx = new RxObservableCollection<VideoItemInPlaylistViewModel>();
           rx.AddRange(vms);
 
-          rx.ItemUpdated.Subscribe((updatedItem) =>
+          rx.ItemUpdated.Where(x => x.EventArgs.PropertyName == nameof(VideoItemInPlaylistViewModel.IsInPlaylist)).Subscribe((updatedItem) =>
           {
             var vm = ((VideoItemInPlaylistViewModel)updatedItem.Sender);
 
@@ -282,10 +283,10 @@ namespace VPlayer.Core.FileBrowser
 
             if (file != null)
             {
-              file.IsPlaying = true;
+              file.IsInPlaylist = vm.IsInPlaylist;
             }
 
-            IsPlaying = vm.IsPlaying;
+            IsInPlaylist = rx.Any(x => x.IsInPlaylist);
           });
 
           var data = new PlayItemsEventData<VideoItemInPlaylistViewModel>(vms, EventAction.Play, this);

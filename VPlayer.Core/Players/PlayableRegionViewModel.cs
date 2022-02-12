@@ -178,10 +178,7 @@ namespace VPlayer.Core.ViewModels
           OnIsPlayingChanged();
           RaisePropertyChanged();
 
-          if(ActualItem != null)
-          {
-            ActualItem.IsPlaying = isPlaying;
-          }
+
         }
       }
     }
@@ -557,6 +554,17 @@ namespace VPlayer.Core.ViewModels
       actualSearchSubject = new ReplaySubject<string>(1).DisposeWith(this);
 
       PlayList.DisposeWith(this);
+
+      PlayList.ItemAdded.ObserveOnDispatcher().Subscribe((x) =>
+      {
+        x.EventArgs.IsInPlaylist = true;
+
+      }).DisposeWith(this);
+
+      PlayList.ItemRemoved.ObserveOnDispatcher().Subscribe((x) =>
+      {
+        x.EventArgs.IsInPlaylist = false;
+      }).DisposeWith(this);
 
       actualSearchSubject.Throttle(TimeSpan.FromMilliseconds(150)).Subscribe(FilterByActualSearch).DisposeWith(this);
 
