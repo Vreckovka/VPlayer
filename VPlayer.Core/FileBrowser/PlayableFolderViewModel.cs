@@ -19,6 +19,7 @@ using VCore.Standard.ViewModels.WindowsFile;
 using VCore.WPF.Misc;
 using VCore.WPF.ViewModels.WindowsFiles;
 using VPlayer.AudioStorage.AudioDatabase;
+using VPlayer.AudioStorage.DataLoader;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
@@ -288,6 +289,13 @@ namespace VPlayer.Core.FileBrowser
 
             IsInPlaylist = rx.Any(x => x.IsInPlaylist);
           });
+
+
+          vms = vms.Select(x => new
+          {
+            item = x,
+            tvshowNumber = DataLoader.GetTvShowSeriesNumber(x.Name)
+          }).OrderBy(x => x.tvshowNumber.SeasonNumber).ThenBy(x => x.tvshowNumber.EpisodeNumber).Select(x => x.item).ToList();
 
           var data = new PlayItemsEventData<VideoItemInPlaylistViewModel>(vms, EventAction.Play, this);
 
