@@ -15,7 +15,7 @@ using VPlayer.Player.Behaviors;
 
 namespace VPlayer.WindowsPlayer.Behaviors
 {
-  public class ShowPopupBehavior : Behavior<Slider>
+  public class ShowPopupBehavior : Behavior<FrameworkElement>
   {
     #region Popup
 
@@ -30,6 +30,23 @@ namespace VPlayer.WindowsPlayer.Behaviors
     {
       get { return (Popup)GetValue(PopupProperty); }
       set { SetValue(PopupProperty, value); }
+    }
+
+    #endregion
+
+    #region Popup
+
+    public static readonly DependencyProperty SliderProperty =
+      DependencyProperty.Register(
+        nameof(Slider),
+        typeof(Slider),
+        typeof(ShowPopupBehavior),
+        new PropertyMetadata(null));
+
+    public Slider Slider
+    {
+      get { return (Slider)GetValue(SliderProperty); }
+      set { SetValue(SliderProperty, value); }
     }
 
     #endregion
@@ -56,9 +73,8 @@ namespace VPlayer.WindowsPlayer.Behaviors
     {
       base.OnAttached();
 
-      AssociatedObject.MouseMove += AssociatedObject_MouseMove;
       AssociatedObject.Loaded += AssociatedObject_Loaded;
-
+      AssociatedObject.MouseMove += AssociatedObject_MouseMove;
     }
 
     private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
@@ -99,7 +115,10 @@ namespace VPlayer.WindowsPlayer.Behaviors
 
     private double GetSliderValue(double horizontalOffset)
     {
-      return AssociatedObject.Maximum * horizontalOffset / AssociatedObject.ActualWidth;
+      if (Slider != null)
+        return Slider.Maximum * horizontalOffset / AssociatedObject.ActualWidth;
+
+      return 0;
     }
   }
 }

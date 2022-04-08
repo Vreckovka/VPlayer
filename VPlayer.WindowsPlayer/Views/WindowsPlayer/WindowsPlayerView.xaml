@@ -51,23 +51,29 @@
 
             <ContentControl x:Name="ContentControl" regions:RegionManager.RegionName="{x:Static regions11:RegionNames.PlayerContentRegion}" />
 
+            <Grid x:Name="slider_container"
+                  Grid.Row="1"
+                  Background="Transparent">
+                <Slider x:Name="Slider_Time"
+                        Height="5"
+                        Margin="5,0,1,0"
+                        Padding="0"
+                        IsMoveToPointEnabled="True"
+                        Maximum="1"
+                        Value="{Binding ActualItem.ActualPosition}">
 
-
-
-            <Slider x:Name="Slider_Time"
-                    Grid.Row="1"
-                    Height="5"
-                    Margin="5,0,1,0"
-                    Padding="0"
-                    IsMoveToPointEnabled="True"
-                    Maximum="1"
-                    Value="{Binding ActualItem.ActualPosition}">
+                    <b:Interaction.Behaviors>
+                        <behaviors:SliderValueChangedManualy Duration="{Binding ActualItem.Duration}" />
+                    </b:Interaction.Behaviors>
+                </Slider>
 
                 <b:Interaction.Behaviors>
-                    <behaviors:SliderValueChangedManualy Duration="{Binding ActualItem.Duration}" />
-                    <behaviors1:ShowPopupBehavior Popup="{Binding ElementName=VideoPreviewPopup}" ViewModel="{Binding DetailViewModel}" />
+                    <behaviors1:ShowPopupBehavior Popup="{Binding ElementName=VideoPreviewPopup}"
+                                                  Slider="{Binding ElementName=Slider_Time}"
+                                                  ViewModel="{Binding DetailViewModel}" />
                 </b:Interaction.Behaviors>
-            </Slider>
+            </Grid>
+
 
             <Popup x:Name="VideoPreviewPopup"
                    AllowsTransparency="True"
@@ -78,12 +84,12 @@
                         <Setter Property="VerticalOffset" Value="-35" />
 
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding ElementName=Slider_Time, Path=IsMouseOver}" Value="true">
+                            <DataTrigger Binding="{Binding ElementName=slider_container, Path=IsMouseOver}" Value="true">
                                 <Setter Property="IsOpen" Value="True" />
                             </DataTrigger>
 
                             <DataTrigger Binding="{Binding Converter={converters:IsTypeConverter}, ConverterParameter={x:Type viewModels:VideoSliderPopupDetailViewModel}}" Value="true">
-                                <Setter Property="VerticalOffset" Value="-160" />
+                                <Setter Property="VerticalOffset" Value="-180" />
                                 <Setter Property="Width" Value="260" />
                                 <Setter Property="Height" Value="150" />
                             </DataTrigger>

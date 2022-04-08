@@ -134,7 +134,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     protected override async void Refresh()
     {
-      Image = null;
+      //Image = null;
 
       base.Refresh();
 
@@ -142,8 +142,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         Image = await Task.Run(GetImage);
       }
-
-
     }
 
     private bool isDiposed = false;
