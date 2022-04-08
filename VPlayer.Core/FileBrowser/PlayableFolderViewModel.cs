@@ -295,7 +295,7 @@ namespace VPlayer.Core.FileBrowser
           {
             item = x,
             tvshowNumber = DataLoader.GetTvShowSeriesNumber(x.Name)
-          }).OrderBy(x => x.tvshowNumber.SeasonNumber).ThenBy(x => x.tvshowNumber.EpisodeNumber).Select(x => x.item).ToList();
+          }).OrderBy(x => x.tvshowNumber?.SeasonNumber).ThenBy(x => x.tvshowNumber?.EpisodeNumber).Select(x => x.item).ToList();
 
           var data = new PlayItemsEventData<VideoItemInPlaylistViewModel>(vms, EventAction.Play, this);
 
