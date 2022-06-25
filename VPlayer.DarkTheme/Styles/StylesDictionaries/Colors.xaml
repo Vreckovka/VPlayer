@@ -21,14 +21,17 @@
     <Color x:Key="OrangeColor">#f57542</Color>
     <Color x:Key="LightRedColor">#e83f62</Color>
     <Color x:Key="YellowColor">#fec827</Color>
+    <Color x:Key="YellowColor2">#fad91b</Color>
     <Color x:Key="DefaultRedColorDim">#db515a</Color>
     <Color x:Key="BrownColor">#c47216</Color>
+    <Color x:Key="BrownColor2">#e0923a</Color>
     <Color x:Key="DarkBrownColor">#522e05</Color>
     <Color x:Key="BlueColor">#1887db</Color>
     <Color x:Key="DarkBlueColor">#2747fe</Color>
     <Color x:Key="GreenColor">#36d66e</Color>
     <Color x:Key="GreenColor2">#4fd66c</Color>
     <Color x:Key="GreenColor3">#a0ed53</Color>
+    <Color x:Key="CookieColor">#E6CEA0</Color>
 
     <Color x:Key="235_DefaultWhiteColor"
            A="235"

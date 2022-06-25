@@ -213,8 +213,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
       musicPlayer.ObservePropertyChange(x => x.IsSelectedToPlay).ObserveOnDispatcher().Subscribe(x => musicPlayerNavigationItem.IsBackroundActive = x).DisposeWith(this);
       videoPlayer.ObservePropertyChange(x => x.IsSelectedToPlay).ObserveOnDispatcher().Subscribe(x => videoPlayerNavigationItem.IsBackroundActive = x).DisposeWith(this);
       tvPlayer.ObservePropertyChange(x => x.IsSelectedToPlay).ObserveOnDispatcher().Subscribe(x => tvPlayerNavigationItem.IsBackroundActive = x).DisposeWith(this);
-
-     
     }
 
     #region AddFolder

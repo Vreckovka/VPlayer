@@ -1694,15 +1694,17 @@ namespace VPlayer.Core.ViewModels
     #region Dispose
 
     private bool isDisposing;
-    public override async void Dispose()
+    public override void Dispose()
     {
       isDisposing = true;
-      await ClearPlaylist();
+
+      Task.Run(async () =>
+      {
+        await ClearPlaylist();
+      });
+
       MediaPlayer.Media = null;
       MediaPlayer.Stop();
-
-      if (ActualSavedPlaylist != null && ActualSavedPlaylist.Id != -1)
-        await UpdateActualSavedPlaylistPlaylist();
 
       volumeSubject?.Dispose();
 

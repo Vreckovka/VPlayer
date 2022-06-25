@@ -128,7 +128,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+                            <Setter Property="Foreground" Value="Red" />
                         </Trigger>
 
 
@@ -566,6 +566,7 @@
 
     <Style TargetType="ListView">
         <Setter Property="Background" Value="#121212" />
+        <Setter Property="Foreground" Value="#ccc" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="FontSize" Value="15" />
         <Setter Property="ItemContainerStyle" Value="{StaticResource ListViewItemStyle}" />
@@ -611,4 +612,37 @@
     </Style>
 
 
+    <ControlTemplate x:Key="ListViewGridViewItemTemplate" TargetType="{x:Type ListViewItem}">
+        <Border Name="border"
+                Padding="3"
+                Background="#07ffffff"
+                BorderBrush="#252525"
+                BorderThickness="0,1,0,0">
+            <Grid>
+                <GridViewRowPresenter Columns="{TemplateBinding GridView.ColumnCollection}" Content="{TemplateBinding Content}" />
+                <Grid Name="overlay"
+                      Background="Transparent"
+                      IsHitTestVisible="False" />
+            </Grid>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsSelected" Value="true">
+                <Setter TargetName="border" Property="Background" Value="#13ffffff" />
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter TargetName="border" Property="Background" Value="#10ffffff" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="false">
+                <Setter TargetName="overlay" Property="Background" Value="#99000000" />
+                <Setter TargetName="border" Property="Padding" Value="0" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <Style x:Key="ListViewGridViewItemStyle" TargetType="ListViewItem">
+        <Setter Property="Template" Value="{StaticResource ListViewGridViewItemTemplate}" />
+        <Setter Property="Background" Value="{StaticResource 10_WhiteTransparentBrush}" />
+        <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+        <Setter Property="IsEnabled" Value="{Binding IsEnabled}" />
+    </Style>
 </ResourceDictionary>

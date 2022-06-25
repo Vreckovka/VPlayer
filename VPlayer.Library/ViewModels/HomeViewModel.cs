@@ -115,7 +115,8 @@ namespace VPlayer.Home.ViewModels
 
       if (firstActivation)
       {
-        NavigationViewModel.Items.First().SubItems.First().IsActive = true;
+        var firstItem = NavigationViewModel.Items.OfType<NavigationItem>().First();
+        firstItem.SubItems.First().IsActive = true;
       }
     }
 
@@ -257,7 +258,7 @@ namespace VPlayer.Home.ViewModels
 
     public void Filter(string phrase)
     {
-      var acutal = NavigationViewModel.Items.SingleOrDefault(x => x.IsActive);
+      var acutal = NavigationViewModel.Items.OfType<NavigationItem>().SingleOrDefault(x => x.IsActive);
 
       if (acutal != null && acutal.Model is IFilterable filterable)
       {

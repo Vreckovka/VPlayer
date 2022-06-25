@@ -271,14 +271,12 @@ namespace VPlayer.ViewModels
 
       var windowsPlayer = viewModelsFactory.Create<WindowsViewModel>();
 
-      windowsPlayer.IsActive = true;
-
       NavigationViewModel.Items.Add(new NavigationItem(windowsPlayer));
 
       var player = viewModelsFactory.Create<PlayerViewModel>();
 
       player.IsActive = true;
-
+      windowsPlayer.IsActive = true;
 
     }
 
