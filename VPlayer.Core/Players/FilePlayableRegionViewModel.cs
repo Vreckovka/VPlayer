@@ -625,7 +625,7 @@ namespace VPlayer.Core.ViewModels
     {
       await base.BeforePlayEvent(data);
 
-      Application.Current.Dispatcher.Invoke(() =>
+      Application.Current?.Dispatcher?.Invoke(() =>
       {
         CheckedFiles.Clear();
       });
@@ -634,7 +634,7 @@ namespace VPlayer.Core.ViewModels
 
     protected override void BeforeClearPlaylist()
     {
-      Application.Current.Dispatcher.Invoke(() =>
+      Application.Current?.Dispatcher?.Invoke(() =>
       {
         CheckedFiles.Clear();
       });
