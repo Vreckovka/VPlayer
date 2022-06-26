@@ -984,7 +984,7 @@ namespace VPlayer.Core.ViewModels
 
     #region PlayPlaylist
 
-    private void PlayPlaylist(PlayItemsEventData<TItemViewModel> data, int? lastSongIndex = null)
+    private void PlayPlaylist(PlayItemsEventData<TItemViewModel> data, int? lastSongIndex = null, bool onlySet = false)
     {
       ActualSavedPlaylist = data.GetModel<TPlaylistModel>();
       ActualSavedPlaylist.LastPlayed = DateTime.Now;
@@ -997,11 +997,11 @@ namespace VPlayer.Core.ViewModels
 
       if (lastSongIndex == null)
       {
-        PlayItems(data.Items, false);
+        PlayItems(data.Items, false, onlyItemSet: onlySet);
       }
       else
       {
-        PlayItems(data.Items, false, lastSongIndex.Value);
+        PlayItems(data.Items, false, lastSongIndex.Value, onlyItemSet: onlySet);
 
         if (data.SetPostion.HasValue)
         {
@@ -1095,12 +1095,15 @@ namespace VPlayer.Core.ViewModels
     {
       Application.Current.Dispatcher.Invoke(() =>
       {
-        IsActive = true;
+        if (!onlyItemSet)
+          IsActive = true;
+
         PlayList.Clear();
         PlayList.AddRange(songs);
         RequestReloadVirtulizedPlaylist();
 
-        IsPlaying = true;
+        if (!onlyItemSet)
+          IsPlaying = true;
 
         SetItemAndPlay(songIndex, onlyItemSet: onlyItemSet);
 
@@ -1113,11 +1116,8 @@ namespace VPlayer.Core.ViewModels
             StorePlaylist(listPlaylist, editSaved: editSaved);
           }
         });
-
       });
     }
-
-
 
     #endregion
 
@@ -1172,6 +1172,13 @@ namespace VPlayer.Core.ViewModels
           {
             var model = data.GetModel<TPlaylistModel>();
             PlayPlaylist(data, model.LastItemIndex);
+          }
+
+          break;
+        case EventAction.SetPlaylist:
+          {
+            var model = data.GetModel<TPlaylistModel>();
+            PlayPlaylist(data, model.LastItemIndex, true);
           }
 
           break;

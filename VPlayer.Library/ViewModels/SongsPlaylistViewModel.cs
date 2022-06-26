@@ -82,7 +82,7 @@ namespace VPlayer.Home.ViewModels
           .ThenInclude(x => x.FileInfo)
           .ToList();
 
-      if (songsItems.Count > 0)
+        if (songsItems.Count > 0)
         {
           var grouppedSongs = songsItems.Select(x => new
           {
@@ -92,7 +92,7 @@ namespace VPlayer.Home.ViewModels
 
           var songs = grouppedSongs.OrderBy(x => x.PlaylistItem.OrderInPlaylist)
             .Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x.Song)).ToList();
-          
+
 
           return songs;
         }
@@ -130,10 +130,13 @@ namespace VPlayer.Home.ViewModels
       {
         try
         {
-          Application.Current.Dispatcher.Invoke(() =>
+          if (action != EventAction.SetPlaylist)
           {
-            songPlaylistsViewModel.LoadingStatus.IsLoading = true;
-          });
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+              songPlaylistsViewModel.LoadingStatus.IsLoading = true;
+            });
+          }
 
           var data = (await GetItemsToPlay()).ToList();
 
@@ -142,10 +145,13 @@ namespace VPlayer.Home.ViewModels
         }
         finally
         {
-          Application.Current.Dispatcher.Invoke(() =>
+          if (action != EventAction.SetPlaylist)
           {
-            songPlaylistsViewModel.LoadingStatus.IsLoading = false;
-          });
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+              songPlaylistsViewModel.LoadingStatus.IsLoading = false;
+            });
+          }
         }
       });
     }

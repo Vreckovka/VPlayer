@@ -779,7 +779,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
       PlayList.ItemAdded.Subscribe(ItemsAdded).DisposeWith(this);
 
 
-
       UPnPManagerViewModel.Renderers.OnActualItemChanged
         .ObserveOn(Application.Current.Dispatcher)
         .Subscribe((x) => SelectedMediaRendererViewModel = x)

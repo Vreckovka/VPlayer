@@ -32,7 +32,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     private readonly IStatusManager statusManager;
     private readonly IChromeDriverProvider chromeDriverProvider;
     private readonly IWindowManager windowManager;
-    private string baseUrl = "https://csfd.sk";
+    private string baseUrl = "https://csfd.sk/";
 
     public CSFDWebsiteScrapper(ILogger logger, IStatusManager statusManager, IChromeDriverProvider chromeDriverProvider, IWindowManager windowManager)
     {
@@ -744,7 +744,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     private bool chromeDriverInitError;
     public Task<CSFDQueryResult> FindItems(string name, CancellationToken cancellationToken)
     {
-      var query = $"{baseUrl}/hledat/?q={name}";
+      var query = $"{baseUrl}hledat/?q={name}";
 
       cancellationToken.ThrowIfCancellationRequested();
 
@@ -1208,7 +1208,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           posterUrl = urlValue.Replace("//image.pmgstatic.com", "https://image.pmgstatic.com");
         }
 
-        var url = baseUrl + posterNode.Attributes[1].Value;
+        var url = baseUrl + posterNode.Attributes[0].Value;
 
         var infoNode = node.ChildNodes[3];
         string originalName = null;

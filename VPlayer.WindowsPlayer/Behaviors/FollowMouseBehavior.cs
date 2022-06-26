@@ -75,6 +75,15 @@ namespace VPlayer.WindowsPlayer.Behaviors
 
       AssociatedObject.Loaded += AssociatedObject_Loaded;
       AssociatedObject.MouseMove += AssociatedObject_MouseMove;
+      AssociatedObject.MouseLeftButtonDown += AssociatedObject_MouseLeftButtonDown;
+    }
+
+    private void AssociatedObject_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+      if (Slider.DataContext is IFilePlayableRegionViewModel playableRegionViewModel)
+      {
+        playableRegionViewModel.SetMediaPosition((float)ViewModel.ActualSliderValue);
+      }
     }
 
     private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)

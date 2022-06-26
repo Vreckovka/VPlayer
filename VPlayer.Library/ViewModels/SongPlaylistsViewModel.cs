@@ -1,4 +1,5 @@
-﻿using Prism.Events;
+﻿using System.Linq;
+using Prism.Events;
 using VCore.Standard.Factories.ViewModels;
 using VCore.WPF;
 using VCore.WPF.Modularity.RegionProviders;
@@ -26,5 +27,12 @@ namespace VPlayer.Home.ViewModels
     public override bool ContainsNestedRegions => false;
     public override string Header { get; } = "Music";
     public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
+
+    protected override void OnDataLoaded()
+    {
+      base.OnDataLoaded();
+
+      LibraryCollection.Items.OrderByDescending(x => x.LastPlayed).FirstOrDefault()?.OnPlayButton(Core.Events.EventAction.SetPlaylist);
+    }
   }
 }

@@ -53,7 +53,8 @@
 
             <Grid x:Name="slider_container"
                   Grid.Row="1"
-                  Background="Transparent">
+                  Background="Transparent"
+                  Cursor="Hand">
                 <Slider x:Name="Slider_Time"
                         Height="5"
                         Margin="5,0,1,0"

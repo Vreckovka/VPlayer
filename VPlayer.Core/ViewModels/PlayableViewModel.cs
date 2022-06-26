@@ -196,7 +196,7 @@ namespace VPlayer.Core.ViewModels
         PublishPlayEvent(data, o);
     }
 
-    protected virtual void OnPlayButton(EventAction o)
+    public virtual void OnPlayButton(EventAction o)
     {
       if (!IsPlaying)
       {
