@@ -1214,7 +1214,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         var posterNode = node.ChildNodes[1].ChildNodes[1];
 
         var name = posterNode.Attributes[1].Value;
-        string originalName = name;
+       
 
         string posterUrl = null;
 
@@ -1230,7 +1230,13 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         var infoNode = node.ChildNodes[3];
 
         var tile = infoNode.ChildNodes[1].ChildNodes[1].InnerText;
+        string originalName = name;
 
+        if (infoNode.ChildNodes[1].ChildNodes.Count > 3)
+        {
+          originalName = infoNode.ChildNodes[1].ChildNodes[3].InnerText.Replace("(",null).Replace(")",null);
+        }
+      
 
         var regex = new Regex(@"\((.*?)\)");
         var ads = regex.Matches(tile);
