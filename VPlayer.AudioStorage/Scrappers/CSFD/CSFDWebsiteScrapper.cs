@@ -996,7 +996,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         if (lastParsedName != parsedName)
         {
-          return await FindSingleCsfdItem(lastParsedName, year, isTvSHow, cancellationToken, showStatusMassage, parentMessage, false);
+          return await FindSingleCsfdItem(parsedName, year, isTvSHow, cancellationToken, showStatusMassage, parentMessage, false);
         }
         else
           return null;
@@ -1035,6 +1035,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       if (isTvSHow)
       {
         query = query.Where(x => x.Parameters.Contains("seriál") || x.Parameters.Contains("epizóda") || x.Parameters.Contains("séria"));
+        query = query.OrderBy(x => GetOrderNumber(x.Parameters[0]));
       }
       else if (isMovie)
       {
@@ -1065,6 +1066,21 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     }
 
     #endregion
+
+    private int GetOrderNumber(string value)
+    {
+      switch (value)
+      {
+        case "seriál":
+          return 0;
+        case "séria":
+          return 1;
+        case "epizóda":
+          return 2;
+      }
+
+      return int.MaxValue;
+    }
 
     #region GetItems
 
@@ -1197,11 +1213,12 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         var posterNode = node.ChildNodes[1].ChildNodes[1];
 
-        var name = posterNode.Attributes[0].Value;
+        var name = posterNode.Attributes[1].Value;
+        string originalName = name;
 
         string posterUrl = null;
 
-        var urlValue = posterNode.ChildNodes[1].Attributes[1].Value;
+        var urlValue = posterNode.ChildNodes[1].Attributes[0].Value;
 
         if (!urlValue.Contains("data:image"))
         {
@@ -1211,32 +1228,26 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         var url = baseUrl + posterNode.Attributes[0].Value;
 
         var infoNode = node.ChildNodes[3];
-        string originalName = null;
 
-        if (infoNode.ChildNodes[1].ChildNodes.Count > 3)
-        {
-          originalName = infoNode.ChildNodes[1].ChildNodes[3].InnerText.Replace("(", null).Replace(")", null);
-        }
+        var tile = infoNode.ChildNodes[1].ChildNodes[1].InnerText;
 
-
-        var tile = infoNode.ChildNodes[1].ChildNodes[1].ChildNodes[3].InnerText;
-        var yearStr = tile.Substring(1, 4);
 
         var regex = new Regex(@"\((.*?)\)");
         var ads = regex.Matches(tile);
 
         List<string> parameters = new List<string>();
+        int year = 0;
 
-        if (ads.Count > 1)
+        for (int i = 0; i < ads.Count; i++)
         {
-          for (int i = 1; i < ads.Count; i++)
+          var value = ads[i].Groups[1].Captures[0].Value;
+          if (i == 0)
           {
-            parameters.Add(ads[i].Groups[1].Captures[0].Value);
+            year = int.Parse(value);
           }
+          else
+            parameters.Add(value);
         }
-
-        int year = int.Parse(yearStr);
-
 
         var generes = infoNode.ChildNodes[3].InnerText.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("/");
 
@@ -1247,9 +1258,9 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         {
           var textDirectors = infoNode.ChildNodes[5].InnerText;
 
-          if (textDirectors.Contains("Režie:"))
+          if (textDirectors.Contains("Réžia:"))
           {
-            directors = textDirectors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Režie:")[1].Split(",");
+            directors = textDirectors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Réžia:")[1].Split(",");
           }
         }
 
@@ -1257,9 +1268,9 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         {
           var textActors = infoNode.ChildNodes[7].InnerText;
 
-          if (textActors.Contains("Hrají:"))
+          if (textActors.Contains("Hrajú:"))
           {
-            actors = textActors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Hrají:")[1].Split(",");
+            actors = textActors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Hrajú:")[1].Split(",");
           }
         }
 
