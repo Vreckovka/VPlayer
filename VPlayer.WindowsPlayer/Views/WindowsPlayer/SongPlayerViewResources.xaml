@@ -1437,6 +1437,7 @@
                                 <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu, Mode=FindAncestor}, Path=DataContext}">
                                     <controls:PathButton Command="{Binding DeleteItemFromPlaylist}"
                                                          Content="Remove SONG from playlist"
+                                                         IconHoverColor="{StaticResource DefaultRedColor}"
                                                          PathStyle="{StaticResource layer-minus}"
                                                          ToolTip="Removes SINGLE SONG from playlist">
 
@@ -1456,6 +1457,7 @@
                                     <controls:PathButton Command="{Binding DeleteSongFromPlaylistWithAlbum}"
                                                          Content="Remove song's ALBUM from playlist"
                                                          IconHeight="16"
+                                                         IconHoverColor="{StaticResource DefaultRedColor}"
                                                          PathStyle="{StaticResource TrashList}"
                                                          ToolTip="Removes ALL SONGS in ALBUM from playlist">
                                         <b:Interaction.Behaviors>
@@ -1501,6 +1503,29 @@
                                                          IconHeight="14"
                                                          PathStyle="{StaticResource FolderOpen}"
                                                          ToolTip=" Opens containing folder in filebrowser">
+
+                                        <b:Interaction.Behaviors>
+                                            <buttons:CloseContextMenuOnClickBehavior />
+                                        </b:Interaction.Behaviors>
+                                    </controls:PathButton>
+                                </Grid>
+                            </DataTemplate>
+                        </MenuItem.HeaderTemplate>
+                    </MenuItem>
+
+                    <Separator Margin="5,5" />
+
+                    <MenuItem>
+                        <MenuItem.HeaderTemplate>
+                            <DataTemplate>
+                                <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu, Mode=FindAncestor}, Path=DataContext}">
+                                    <controls:PathButton Command="{Binding DeleteFile}"
+                                                         Content="[WARNING] DELETE FILE"
+                                                         ForegroundDefaultColor="#656565"
+                                                         Glyph="{StaticResource trash-xmark-glyph}"
+                                                         IconHoverColor="{StaticResource DefaultRedColor}"
+                                                         Style="{StaticResource FontAwesomeGlyphStyle}"
+                                                         ToolTip="[WARNING] DELETE FILE">
 
                                         <b:Interaction.Behaviors>
                                             <buttons:CloseContextMenuOnClickBehavior />

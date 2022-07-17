@@ -7,7 +7,8 @@ namespace VPlayer.Core.Events
   public enum DeleteType
   {
     SingleFromPlaylist,
-    AlbumFromPlaylist
+    AlbumFromPlaylist,
+    File
   }
   public class RemoveFromPlaylistEventArgs<TModel>
   {

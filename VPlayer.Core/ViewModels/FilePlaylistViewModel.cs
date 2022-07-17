@@ -1,4 +1,5 @@
 ﻿using Prism.Events;
+using VCore.WPF.Interfaces.Managers;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 
@@ -8,7 +9,7 @@ namespace VPlayer.Library.ViewModels
     where TPlaylistModel : class, IFilePlaylist<TPlaylistItemModel>
     where TPlaylistItemModel : class, IEntity
   {
-    protected FilePlaylistViewModel(TPlaylistModel model, IEventAggregator eventAggregator, IStorageManager storageManager) : base(model, eventAggregator, storageManager)
+    protected FilePlaylistViewModel(TPlaylistModel model, IEventAggregator eventAggregator, IStorageManager storageManager, IWindowManager windowManager) : base(model, eventAggregator, storageManager, windowManager)
     {
     }
 

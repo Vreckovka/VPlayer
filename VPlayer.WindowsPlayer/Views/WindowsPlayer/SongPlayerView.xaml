@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:behaviors="clr-namespace:VCore.WPF.Behaviors;assembly=VCore.WPF"
+             xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
              xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
@@ -11,123 +12,122 @@
              xmlns:popups="clr-namespace:VCore.WPF.Behaviors.Popups;assembly=VCore.WPF"
              xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF"
              xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
-             xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
 
-  <UserControl.Resources>
-    <ResourceDictionary>
-      <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Views/WindowsPlayer/SongPlayerViewResources.xaml" />
-      </ResourceDictionary.MergedDictionaries>
-    </ResourceDictionary>
-  </UserControl.Resources>
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Views/WindowsPlayer/SongPlayerViewResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
 
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="2*" />
-      <RowDefinition Height="*" />
-      <RowDefinition Height="auto" />
-    </Grid.RowDefinitions>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
 
 
 
-    <Grid Grid.RowSpan="3">
-      <ContentControl BorderThickness="0"
-                      Content="{Binding UseGif}"
-                      ContentTemplateSelector="{StaticResource SongImageTemplateSelector}" />
+        <Grid Grid.RowSpan="3">
+            <ContentControl BorderThickness="0"
+                            Content="{Binding UseGif}"
+                            ContentTemplateSelector="{StaticResource SongImageTemplateSelector}" />
 
-      <Grid Margin="5"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top">
-        <Border Padding="10"
-                Background="#aa151515"
-                BorderBrush="#252525"
-                BorderThickness="1"
-                CornerRadius="5">
-          <StackPanel Orientation="Horizontal">
-            <TextBlock VerticalAlignment="Center"
-                       Foreground="{StaticResource DefaultWhiteBrush}"
-                       Text="Do you want to play from last position? " />
-            <TextBlock VerticalAlignment="Center"
-                       Foreground="{StaticResource DefaultWhiteBrush}"
-                       Text="{Binding ItemLastTime, Converter={converters:TimeConverter TimeType=Second}}" />
-            <controls:ButtonWithIcon Margin="5,0,0,0"
-                                     Padding="0"
-                                     VerticalAlignment="Center"
-                                     HorizontalContentAlignment="Center"
-                                     Command="{Binding ResumePlaying}"
-                                     FontSize="14"
-                                     FontWeight="Normal"
-                                     IconDefaultColor="#50f5936c"
-                                     IconHeight="20"
-                                     IconHoverColor="{StaticResource OrangeColor}"
-                                     IconMargin="0 0 0 0"
-                                     IconPathStyle="{StaticResource PlaySign}"
-                                     ToolTip="Resume" />
-          </StackPanel>
+            <Grid Margin="5"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Top">
+                <Border Padding="10"
+                        Background="#aa151515"
+                        BorderBrush="#252525"
+                        BorderThickness="1"
+                        CornerRadius="5">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock VerticalAlignment="Center"
+                                   Foreground="{StaticResource DefaultWhiteBrush}"
+                                   Text="Do you want to play from last position? " />
+                        <TextBlock VerticalAlignment="Center"
+                                   Foreground="{StaticResource DefaultWhiteBrush}"
+                                   Text="{Binding ItemLastTime, Converter={converters:TimeConverter TimeType=Second}}" />
+                        <controls:ButtonWithIcon Margin="5,0,0,0"
+                                                 Padding="0"
+                                                 VerticalAlignment="Center"
+                                                 HorizontalContentAlignment="Center"
+                                                 Command="{Binding ResumePlaying}"
+                                                 FontSize="14"
+                                                 FontWeight="Normal"
+                                                 IconDefaultColor="#50f5936c"
+                                                 IconHeight="20"
+                                                 IconHoverColor="{StaticResource OrangeColor}"
+                                                 IconMargin="0 0 0 0"
+                                                 IconPathStyle="{StaticResource PlaySign}"
+                                                 ToolTip="Resume" />
+                    </StackPanel>
 
+                </Border>
+
+
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Setter Property="Opacity" Value="0" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ItemLastTime, Converter={converters:IsNullConverter}}" Value="False">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard x:Name="Show">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                             From="0"
+                                                             To="1"
+                                                             Duration="00:00:00.25" />
+
+                                            <DoubleAnimation BeginTime="00:00:10"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             From="1"
+                                                             To="0"
+                                                             Duration="00:00:00.25" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                                <DataTrigger.ExitActions>
+                                    <RemoveStoryboard BeginStoryboardName="Show" />
+                                </DataTrigger.ExitActions>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+            </Grid>
+        </Grid>
+
+
+        <Border Grid.Row="1" Margin="0,0,0,-2">
+            <Grid x:Name="lyrics_grid">
+                <ContentControl BorderThickness="0"
+                                Content="{Binding ActualItem.LyricsObject}"
+                                ContentTemplateSelector="{StaticResource LyricsTemplateSelector}" />
+
+            </Grid>
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Background" Value="#95000000" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ActualItem.LyricsObject}" Value="{x:Null}">
+                            <Setter Property="Visibility" Value="Hidden" />
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding ActualItem.LyricsObject}" Value="false">
+                            <Setter Property="Visibility" Value="Hidden" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
         </Border>
 
 
-        <Grid.Style>
-          <Style TargetType="Grid">
-            <Setter Property="Opacity" Value="0" />
-            <Style.Triggers>
-              <DataTrigger Binding="{Binding ItemLastTime, Converter={converters:IsNullConverter}}" Value="False">
-                <DataTrigger.EnterActions>
-                  <BeginStoryboard x:Name="Show">
-                    <Storyboard>
-                      <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                       From="0"
-                                       To="1"
-                                       Duration="00:00:00.25" />
-
-                      <DoubleAnimation BeginTime="00:00:10"
-                                       Storyboard.TargetProperty="Opacity"
-                                       From="1"
-                                       To="0"
-                                       Duration="00:00:00.25" />
-                    </Storyboard>
-                  </BeginStoryboard>
-                </DataTrigger.EnterActions>
-                <DataTrigger.ExitActions>
-                  <RemoveStoryboard BeginStoryboardName="Show" />
-                </DataTrigger.ExitActions>
-              </DataTrigger>
-            </Style.Triggers>
-          </Style>
-        </Grid.Style>
-      </Grid>
-    </Grid>
-
-
-    <Border Grid.Row="1" Margin="0,0,0,-2">
-      <Grid x:Name="lyrics_grid">
-        <ContentControl BorderThickness="0"
-                        Content="{Binding ActualItem.LyricsObject}"
-                        ContentTemplateSelector="{StaticResource LyricsTemplateSelector}" />
-
-      </Grid>
-      <Border.Style>
-        <Style TargetType="Border">
-          <Setter Property="Background" Value="#95000000" />
-          <Style.Triggers>
-            <DataTrigger Binding="{Binding ActualItem.LyricsObject}" Value="{x:Null}">
-              <Setter Property="Visibility" Value="Hidden" />
-            </DataTrigger>
-
-            <DataTrigger Binding="{Binding ActualItem.LyricsObject}" Value="false">
-              <Setter Property="Visibility" Value="Hidden" />
-            </DataTrigger>
-          </Style.Triggers>
-        </Style>
-      </Border.Style>
-    </Border>
-
-
-    <!--<Grid Grid.Row="0" Grid.RowSpan="3">
+        <!--<Grid Grid.Row="0" Grid.RowSpan="3">
             <controls:PathButton Width="50"
                                  Height="50"
                                  Margin="10"
@@ -141,324 +141,305 @@
         </Grid>-->
 
 
-    <Grid Grid.Row="2"
-          Height="75"
-          VerticalAlignment="Bottom"
-          Background="#DD000000">
+        <Grid Grid.Row="2"
+              Height="75"
+              VerticalAlignment="Bottom"
+              Background="#DD000000">
 
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="auto" />
-        <ColumnDefinition />
-        <ColumnDefinition Width="auto" />
-      </Grid.ColumnDefinitions>
-
-      <userControls:SoundVizualizer Grid.Row="0"
-                                    Grid.ColumnSpan="3"
-                                    Height="45"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Bottom"
-                                    Background="Transparent"
-                                    BottomColor="#252525"
-                                    DataContext="{Binding ActualItem}"
-                                    IsEnabled="{Binding DataContext.IsPlaying, RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}}"
-                                    MaxFrequency="10000"
-                                    MiddleColor="#101b1f"
-                                    MinimumBarWidth="3"
-                                    NormlizedDataMaxSilentValue="7"
-                                    NormlizedDataMaxValue="25"
-                                    NormlizedDataMinValue="5"
-                                    NumberOfColumns="250"
-                                    Opacity="0.8"
-                                    TopColor="#8bcde0"
-                                    UseSkew="True">
-
-        <userControls:SoundVizualizer.Style>
-          <Style TargetType="userControls:SoundVizualizer">
-            <Setter Property="Visibility" Value="Collapsed" />
-            <Style.Triggers>
-              <DataTrigger Binding="{Binding DataContext.IsPlaying, RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}}" Value="true">
-                <Setter Property="Visibility" Value="Visible" />
-              </DataTrigger>
-            </Style.Triggers>
-          </Style>
-        </userControls:SoundVizualizer.Style>
-
-      </userControls:SoundVizualizer>
-
-      <StackPanel Grid.Column="0"
-                  Margin="10,0,15,0"
-                  HorizontalAlignment="Left"
-                  VerticalAlignment="Center"
-                  Orientation="Horizontal">
-        <Button Width="40"
-                Command="{Binding AlbumDetail}"
-                Cursor="Hand"
-                FontSize="36"
-                ToolTip="Album detail">
-          <Button.Style>
-            <Style BasedOn="{StaticResource BorderlessButtonStyle}" TargetType="Button">
-              <Setter Property="FontWeight" Value="Bold" />
-              <Setter Property="Foreground" Value="#FF454555" />
-              <Setter Property="Template">
-                <Setter.Value>
-                  <ControlTemplate TargetType="Button">
-                    <Grid>
-                      <Grid Width="15"
-                            Height="25"
-                            VerticalAlignment="Center">
-                        <Grid.Style>
-                          <Style TargetType="Grid">
-                            <Setter Property="Background" Value="White" />
-                            <Style.Triggers>
-                              <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Button, Mode=FindAncestor}, Path=IsEnabled}" Value="False">
-                                <Setter Property="Background" Value="#858585" />
-                              </DataTrigger>
-                            </Style.Triggers>
-                          </Style>
-                        </Grid.Style>
-                      </Grid>
-                      <Path Data="M49.52,38.12c3.06,0,5.52-2.52,5.52-5.58c0-3-2.46-5.52-5.52-5.52S44,29.54,44,32.54C44,35.6,46.46,38.12,49.52,38.12z                             M55.4,45.86c0-2.52-2.04-4.5-4.5-4.5h-4.5c-2.52,0-4.5,1.98-4.5,4.5c0,2.46,1.98,4.5,4.5,4.5V63.5c-2.52,0-4.5,2.04-4.5,4.5                             c0,2.52,1.98,4.5,4.5,4.5h9c2.46,0,4.5-1.98,4.5-4.5c0-2.46-2.04-4.5-4.5-4.5V45.86z M50,5c24.84,0,45,20.16,45,45S74.84,95,50,95                             C25.1,95,5,74.84,5,50S25.1,5,50,5z"
-                            Fill="{Binding RelativeSource={RelativeSource AncestorType=Button, Mode=FindAncestor}, Path=Foreground}"
-                            Stroke="{Binding RelativeSource={RelativeSource AncestorType=Button, Mode=FindAncestor}, Path=Foreground}"
-                            StrokeThickness="0.2"
-                            Style="{StaticResource Information}" />
-                    </Grid>
-                    <ControlTemplate.Triggers>
-                      <Trigger Property="IsEnabled" Value="False">
-                        <Setter Property="Foreground" Value="#454545" />
-                      </Trigger>
-                      <Trigger Property="IsMouseOver" Value="True">
-                        <Trigger.EnterActions>
-                          <RemoveStoryboard BeginStoryboardName="Exit" />
-                          <BeginStoryboard x:Name="Enter">
-                            <Storyboard>
-                              <ColorAnimation Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"
-                                              To="{StaticResource DefaultRedColor}"
-                                              Duration="0:0:0:0.15" />
-                            </Storyboard>
-                          </BeginStoryboard>
-                        </Trigger.EnterActions>
-                        <Trigger.ExitActions>
-                          <RemoveStoryboard BeginStoryboardName="Enter" />
-                          <BeginStoryboard x:Name="Exit">
-                            <Storyboard>
-                              <ColorAnimation Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"
-                                              To="#FF454555"
-                                              Duration="0:0:0:0.15" />
-                            </Storyboard>
-                          </BeginStoryboard>
-                        </Trigger.ExitActions>
-                      </Trigger>
-                    </ControlTemplate.Triggers>
-                  </ControlTemplate>
-                </Setter.Value>
-              </Setter>
-            </Style>
-          </Button.Style>
-
-        </Button>
-
-        <controls:PathButton Margin="10,0,0,0"
-                             VerticalAlignment="Center"
-                             BorderThickness="0"
-                             Command="{Binding AddLyrics}"
-                             CommandParameter="{Binding ActualItem}"
-                             FontSize="25"
-                             ForegroundDefaultColor="#55cccccc"
-                             Style="{StaticResource message-plus}"
-                             ToolTip="Add LYRICS" />
-      </StackPanel>
-
-      <StackPanel Name="Container"
-                  Grid.Column="1"
-                  Margin="0,8,0,0"
-                  HorizontalAlignment="Stretch"
-                  VerticalAlignment="Center"
-                  ClipToBounds="True">
-        <TextBox Name="NameTxt"
-                 BorderThickness="0"
-                 FontSize="37"
-                 FontWeight="Bold"
-                 Foreground="#f7ede1"
-                 IsReadOnly="True"
-                 Text="{Binding ActualItem.Name, Mode=OneWay}"
-                 ToolTip="{Binding ActualItem.Name}">
-
-          <TextBox.Style>
-            <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
-              <Setter Property="HorizontalAlignment" Value="Center" />
-              <Style.Triggers>
-                <DataTrigger Value="True">
-                  <DataTrigger.Binding>
-                    <MultiBinding Converter="{library:IsBiggerConverter}">
-                      <Binding ElementName="NameTxt" Path="ActualWidth" />
-                      <Binding ElementName="Container" Path="ActualWidth" />
-                    </MultiBinding>
-                  </DataTrigger.Binding>
-                  <Setter Property="HorizontalAlignment" Value="Left" />
-                </DataTrigger>
-
-                <DataTrigger Binding="{Binding IsKeyboardFocused, RelativeSource={RelativeSource Self}}" Value="false">
-                  <Setter Property="Template">
-                    <Setter.Value>
-                      <ControlTemplate TargetType="TextBox">
-                        <TextBlock Text="{TemplateBinding Text}" TextTrimming="CharacterEllipsis" />
-                      </ControlTemplate>
-                    </Setter.Value>
-                  </Setter>
-                </DataTrigger>
-              </Style.Triggers>
-            </Style>
-          </TextBox.Style>
-          <TextBox.Effect>
-            <DropShadowEffect BlurRadius="2" ShadowDepth="3" />
-          </TextBox.Effect>
-        </TextBox>
-
-        <Border Margin="0,0,0,3"
-                Padding="0,2,0,2"
-                HorizontalAlignment="Center"
-                CornerRadius="8">
-          <Border.Background>
-            <LinearGradientBrush StartPoint="0 1" EndPoint="1 0">
-              <GradientStop Offset="0" Color="#00252525" />
-              <GradientStop Offset="0.3" Color="#101010" />
-              <GradientStop Offset="0.7" Color="#101010" />
-              <GradientStop Offset="1" Color="#00252525" />
-            </LinearGradientBrush>
-          </Border.Background>
-          <TextBlock Margin="65,5"
-                     HorizontalAlignment="Center"
-                     FontSize="14"
-                     FontWeight="SemiBold">
-            <Run Foreground="#ddedfffa" Text="{Binding ActualItem.ArtistViewModel.Name, Mode=OneWay}" />
-            <Run Foreground="#85edfffa" Text="{Binding ActualItem.AlbumViewModel.Name, Mode=OneWay, StringFormat={}({0})}" />
-          </TextBlock>
-        </Border>
-      </StackPanel>
-
-      <StackPanel Grid.Column="2"
-                  Margin="15,0,0,0"
-                  HorizontalAlignment="Right"
-                  VerticalAlignment="Center"
-                  Orientation="Horizontal">
-        <controls:PathButton IconCheckedColor="#ccffffff"
-                             IconDefaultColor="#55cccccc"
-                             IconHoverColor="#ccffffff"
-                             IsChecked="{Binding IsRepeate}"
-                             PathStyle="{StaticResource Repeate}" />
-
-        <controls:PathButton IconCheckedColor="#ccffffff"
-                             IconDefaultColor="#55cccccc"
-                             IconHoverColor="#ccffffff"
-                             IsChecked="{Binding IsShuffle}"
-                             PathStyle="{StaticResource Shuffle}" />
-      </StackPanel>
-
-    </Grid>
-
-    <Border Grid.Row="0"
-            Padding="15,15"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            Background="#85000000">
-      <StackPanel Margin="0,30,0,0"
-                  HorizontalAlignment="Right"
-                  Orientation="Horizontal">
-        <controls:PathButton x:Name="openUpnpButton"
-                             VerticalAlignment="Center"
-                             FontFamily="{StaticResource FontAwesome6Pro_Solid}"
-                             FontSize="20"
-                             ForegroundCheckedColor="{StaticResource BlueColor}"
-                             ForegroundDefaultColor="#25ffffff"
-                             ForegroundHoverColor="{StaticResource BlueColor}"
-                             IsReadOnly="False"
-                             Style="{StaticResource rss}" />
-
-        <Popup IsOpen="{Binding ElementName=openUpnpButton, Path=IsChecked}"
-               PlacementTarget="{Binding ElementName=openUpnpButton}"
-               StaysOpen="False">
-          <Border Padding="15,10"
-                  Background="#151515"
-                  BorderBrush="#353535"
-                  BorderThickness="1,1,2,1">
-            <Grid Margin="0,0,0,0">
-              <Grid.ColumnDefinitions>
+            <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition />
-              </Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
 
-              <controls:PathButton Margin="0,0,5,0"
-                                   Padding="15,3"
-                                   Background="#08ffffff"
-                                   BorderBrush="#15ffffff"
-                                   BorderThickness="1"
-                                   Command="{Binding PlayPauseUPnP}"
-                                   Content="PLAY UPnP"
-                                   CornerRadius="5"
-                                   FontSize="15"
-                                   FontWeight="Bold"
-                                   ForegroundDefaultColor="#45ffffff"
-                                   IconDefaultColor="{StaticResource YellowColor}"
-                                   IconHeight="15"
-                                   IconHoverColor="{StaticResource YellowColor}"
-                                   IconWidth="13"
-                                   IsChecked="False"
-                                   IsReadOnly="True"
-                                   PathStyle="{StaticResource play}" />
-              <ComboBox Grid.Column="1"
-                        MinWidth="150"
-                        Background="#08ffffff"
-                        BorderThickness="0"
-                        DisplayMemberPath="Model.DeviceDescription.Device.FriendlyName"
-                        FontSize="15"
-                        FontWeight="Bold"
-                        ItemsSource="{Binding UPnPManagerViewModel.Renderers.View}"
-                        SelectedItem="{Binding SelectedMediaRendererViewModel}" />
-            </Grid>
-          </Border>
-        </Popup>
+            <userControls:SoundVizualizer Grid.Row="0"
+                                          Grid.ColumnSpan="3"
+                                          Height="45"
+                                          HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Bottom"
+                                          Background="Transparent"
+                                          BottomColor="#252525"
+                                          DataContext="{Binding ActualItem}"
+                                          IsEnabled="{Binding DataContext.IsPlaying, RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}}"
+                                          MaxFrequency="10000"
+                                          MiddleColor="#101b1f"
+                                          MinimumBarWidth="3"
+                                          NormlizedDataMaxSilentValue="7"
+                                          NormlizedDataMaxValue="25"
+                                          NormlizedDataMinValue="5"
+                                          NumberOfColumns="250"
+                                          Opacity="0.8"
+                                          TopColor="#8bcde0"
+                                          UseSkew="True">
+
+                <userControls:SoundVizualizer.Style>
+                    <Style TargetType="userControls:SoundVizualizer">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding DataContext.IsPlaying, RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}}" Value="true">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </userControls:SoundVizualizer.Style>
+
+            </userControls:SoundVizualizer>
+
+            <StackPanel Grid.Column="0"
+                        Margin="10,0,15,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal">
+                <Button Width="40"
+                        Command="{Binding AlbumDetail}"
+                        Cursor="Hand"
+                        FontSize="36"
+                        ToolTip="Album detail">
+                    <Button.Style>
+                        <Style BasedOn="{StaticResource BorderlessButtonStyle}" TargetType="Button">
+                            <Setter Property="FontWeight" Value="Bold" />
+                            <Setter Property="Foreground" Value="#FF454555" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Grid>
+                                            <Grid Width="15"
+                                                  Height="25"
+                                                  VerticalAlignment="Center">
+                                                <Grid.Style>
+                                                    <Style TargetType="Grid">
+                                                        <Setter Property="Background" Value="White" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Button, Mode=FindAncestor}, Path=IsEnabled}" Value="False">
+                                                                <Setter Property="Background" Value="#858585" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Grid.Style>
+                                            </Grid>
+                                            <Path Data="M49.52,38.12c3.06,0,5.52-2.52,5.52-5.58c0-3-2.46-5.52-5.52-5.52S44,29.54,44,32.54C44,35.6,46.46,38.12,49.52,38.12z                             M55.4,45.86c0-2.52-2.04-4.5-4.5-4.5h-4.5c-2.52,0-4.5,1.98-4.5,4.5c0,2.46,1.98,4.5,4.5,4.5V63.5c-2.52,0-4.5,2.04-4.5,4.5                             c0,2.52,1.98,4.5,4.5,4.5h9c2.46,0,4.5-1.98,4.5-4.5c0-2.46-2.04-4.5-4.5-4.5V45.86z M50,5c24.84,0,45,20.16,45,45S74.84,95,50,95                             C25.1,95,5,74.84,5,50S25.1,5,50,5z"
+                                                  Fill="{Binding RelativeSource={RelativeSource AncestorType=Button, Mode=FindAncestor}, Path=Foreground}"
+                                                  Stroke="{Binding RelativeSource={RelativeSource AncestorType=Button, Mode=FindAncestor}, Path=Foreground}"
+                                                  StrokeThickness="0.2"
+                                                  Style="{StaticResource Information}" />
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Foreground" Value="#454545" />
+                                            </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Trigger.EnterActions>
+                                                    <RemoveStoryboard BeginStoryboardName="Exit" />
+                                                    <BeginStoryboard x:Name="Enter">
+                                                        <Storyboard>
+                                                            <ColorAnimation Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"
+                                                                            To="{StaticResource DefaultRedColor}"
+                                                                            Duration="0:0:0:0.15" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </Trigger.EnterActions>
+                                                <Trigger.ExitActions>
+                                                    <RemoveStoryboard BeginStoryboardName="Enter" />
+                                                    <BeginStoryboard x:Name="Exit">
+                                                        <Storyboard>
+                                                            <ColorAnimation Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"
+                                                                            To="#FF454555"
+                                                                            Duration="0:0:0:0.15" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </Trigger.ExitActions>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+
+                </Button>
+
+                <controls:PathButton Margin="10,0,0,0"
+                                     VerticalAlignment="Center"
+                                     BorderThickness="0"
+                                     Command="{Binding AddLyrics}"
+                                     CommandParameter="{Binding ActualItem}"
+                                     FontSize="25"
+                                     ForegroundDefaultColor="#55cccccc"
+                                     Style="{StaticResource message-plus}"
+                                     ToolTip="Add LYRICS" />
+            </StackPanel>
+
+            <StackPanel Name="Container"
+                        Grid.Column="1"
+                        Margin="0,8,0,0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        ClipToBounds="True">
+                <TextBox Name="NameTxt"
+                         BorderThickness="0"
+                         FontSize="37"
+                         FontWeight="Bold"
+                         Foreground="#f7ede1"
+                         IsReadOnly="True"
+                         Text="{Binding ActualItem.Name, Mode=OneWay}"
+                         ToolTip="{Binding ActualItem.Name}">
+
+                    <TextBox.Style>
+                        <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
+                            <Setter Property="HorizontalAlignment" Value="Center" />
+                            <Style.Triggers>
+                                <DataTrigger Value="True">
+                                    <DataTrigger.Binding>
+                                        <MultiBinding Converter="{library:IsBiggerConverter}">
+                                            <Binding ElementName="NameTxt" Path="ActualWidth" />
+                                            <Binding ElementName="Container" Path="ActualWidth" />
+                                        </MultiBinding>
+                                    </DataTrigger.Binding>
+                                    <Setter Property="HorizontalAlignment" Value="Left" />
+                                </DataTrigger>
+
+                                <DataTrigger Binding="{Binding IsKeyboardFocused, RelativeSource={RelativeSource Self}}" Value="false">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="TextBox">
+                                                <TextBlock Text="{TemplateBinding Text}" TextTrimming="CharacterEllipsis" />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+                    <TextBox.Effect>
+                        <DropShadowEffect BlurRadius="2" ShadowDepth="3" />
+                    </TextBox.Effect>
+                </TextBox>
+
+                <Border Margin="0,0,0,3"
+                        Padding="0,2,0,2"
+                        HorizontalAlignment="Center"
+                        CornerRadius="8">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0 1" EndPoint="1 0">
+                            <GradientStop Offset="0" Color="#00252525" />
+                            <GradientStop Offset="0.3" Color="#101010" />
+                            <GradientStop Offset="0.7" Color="#101010" />
+                            <GradientStop Offset="1" Color="#00252525" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <TextBlock Margin="65,5"
+                               HorizontalAlignment="Center"
+                               FontSize="14"
+                               FontWeight="SemiBold">
+                        <Run Foreground="#ddedfffa" Text="{Binding ActualItem.ArtistViewModel.Name, Mode=OneWay}" />
+                        <Run Foreground="#85edfffa" Text="{Binding ActualItem.AlbumViewModel.Name, Mode=OneWay, StringFormat={}({0})}" />
+                    </TextBlock>
+                </Border>
+            </StackPanel>
+        </Grid>
+
+        <Border Grid.Row="0"
+                Padding="15,15"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Background="#85000000">
+            <StackPanel Margin="0,30,0,0"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal">
+                <controls:PathButton x:Name="openUpnpButton"
+                                     VerticalAlignment="Center"
+                                     FontFamily="{StaticResource FontAwesome6Pro_Solid}"
+                                     FontSize="20"
+                                     ForegroundCheckedColor="{StaticResource BlueColor}"
+                                     ForegroundDefaultColor="#25ffffff"
+                                     ForegroundHoverColor="{StaticResource BlueColor}"
+                                     IsReadOnly="False"
+                                     Style="{StaticResource rss}" />
+
+                <Popup IsOpen="{Binding ElementName=openUpnpButton, Path=IsChecked}"
+                       PlacementTarget="{Binding ElementName=openUpnpButton}"
+                       StaysOpen="False">
+                    <Border Padding="15,10"
+                            Background="#151515"
+                            BorderBrush="#353535"
+                            BorderThickness="1,1,2,1">
+                        <Grid Margin="0,0,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <controls:PathButton Margin="0,0,5,0"
+                                                 Padding="15,3"
+                                                 Background="#08ffffff"
+                                                 BorderBrush="#15ffffff"
+                                                 BorderThickness="1"
+                                                 Command="{Binding PlayPauseUPnP}"
+                                                 Content="PLAY UPnP"
+                                                 CornerRadius="5"
+                                                 FontSize="15"
+                                                 FontWeight="Bold"
+                                                 ForegroundDefaultColor="#45ffffff"
+                                                 IconDefaultColor="{StaticResource YellowColor}"
+                                                 IconHeight="15"
+                                                 IconHoverColor="{StaticResource YellowColor}"
+                                                 IconWidth="13"
+                                                 IsChecked="False"
+                                                 IsReadOnly="True"
+                                                 PathStyle="{StaticResource play}" />
+                            <ComboBox Grid.Column="1"
+                                      MinWidth="150"
+                                      Background="#08ffffff"
+                                      BorderThickness="0"
+                                      DisplayMemberPath="Model.DeviceDescription.Device.FriendlyName"
+                                      FontSize="15"
+                                      FontWeight="Bold"
+                                      ItemsSource="{Binding UPnPManagerViewModel.Renderers.View}"
+                                      SelectedItem="{Binding SelectedMediaRendererViewModel}" />
+                        </Grid>
+                    </Border>
+                </Popup>
 
 
-      </StackPanel>
+            </StackPanel>
 
-      <Border.Style>
-        <Style TargetType="Border">
-          <Style.Triggers>
-            <DataTrigger Binding="{Binding UPnPManagerViewModel.Renderers.View.Count}" Value="0">
-              <Setter Property="Visibility" Value="Hidden" />
-            </DataTrigger>
-          </Style.Triggers>
-        </Style>
-      </Border.Style>
-    </Border>
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding UPnPManagerViewModel.Renderers.View.Count}" Value="0">
+                            <Setter Property="Visibility" Value="Hidden" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+        </Border>
 
 
 
-    <Grid Grid.Row="0"
-          Grid.RowSpan="3"
-          Background="#cc101010">
-      <Border Padding="15,5"
-              HorizontalAlignment="Center"
-              VerticalAlignment="Center"
-              Background="#cc080808"
-              BorderBrush="#50252525"
-              BorderThickness="1">
-        <TextBlock FontSize="18"
-                   Foreground="#ccc"
-                   Text="Buffering..." />
-      </Border>
-      <Grid.Style>
-        <Style TargetType="Grid">
-          <Setter Property="Visibility" Value="Collapsed" />
-          <Style.Triggers>
-            <DataTrigger Binding="{Binding IsBuffering}" Value="True">
-              <Setter Property="Visibility" Value="Visible" />
-            </DataTrigger>
-          </Style.Triggers>
-        </Style>
-      </Grid.Style>
+        <Grid Grid.Row="0"
+              Grid.RowSpan="3"
+              Background="#cc101010">
+            <Border Padding="15,5"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Background="#cc080808"
+                    BorderBrush="#50252525"
+                    BorderThickness="1">
+                <TextBlock FontSize="18"
+                           Foreground="#ccc"
+                           Text="Buffering..." />
+            </Border>
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsBuffering}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+        </Grid>
+
     </Grid>
-
-  </Grid>
 </UserControl>

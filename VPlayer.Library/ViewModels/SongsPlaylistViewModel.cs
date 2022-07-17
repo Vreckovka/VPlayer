@@ -8,6 +8,7 @@ using Logger;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore.Standard.Factories.ViewModels;
+using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.ViewModels.WindowsFiles;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -41,8 +42,9 @@ namespace VPlayer.Home.ViewModels
       IViewModelsFactory viewModelsFactory,
       SongPlaylistsViewModel songPlaylistsViewModel,
       IVPlayerCloudService vPlayerCloudService,
-        IStorageManager storageManager,
-      ILogger logger) : base(model, eventAggregator, storageManager)
+      IStorageManager storageManager,
+      ILogger logger,
+      IWindowManager windowManager) : base(model, eventAggregator, storageManager, windowManager)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.songPlaylistsViewModel = songPlaylistsViewModel ?? throw new ArgumentNullException(nameof(songPlaylistsViewModel));

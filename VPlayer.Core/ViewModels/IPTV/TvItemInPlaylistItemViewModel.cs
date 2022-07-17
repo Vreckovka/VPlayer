@@ -182,6 +182,11 @@ namespace VPlayer.IPTV.ViewModels
       throw new System.NotImplementedException();
     }
 
+    protected override void PublishDeleteFile()
+    {
+      throw new NotImplementedException();
+    }
+
     public override void Dispose()
     {
       base.Dispose();

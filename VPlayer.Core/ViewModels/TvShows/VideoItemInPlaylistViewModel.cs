@@ -185,5 +185,18 @@ namespace VPlayer.Core.ViewModels.TvShows
 
       eventAggregator.GetEvent<RemoveFromPlaylistEvent<VideoItemInPlaylistViewModel>>().Publish(args);
     }
+
+    protected override void PublishDeleteFile()
+    {
+      var songs = new List<VideoItemInPlaylistViewModel>() { this };
+
+      var args = new RemoveFromPlaylistEventArgs<VideoItemInPlaylistViewModel>()
+      {
+        DeleteType = DeleteType.File,
+        ItemsToRemove = songs
+      };
+
+      eventAggregator.GetEvent<RemoveFromPlaylistEvent<VideoItemInPlaylistViewModel>>().Publish(args);
+    }
   }
 }

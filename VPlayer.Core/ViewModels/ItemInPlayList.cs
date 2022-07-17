@@ -146,6 +146,30 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region DeleteFile
+
+    private ActionCommand deleteFile;
+
+    public ICommand DeleteFile
+    {
+      get
+      {
+        if (deleteFile == null)
+        {
+          deleteFile = new ActionCommand(OnDeleteFile);
+        }
+
+        return deleteFile;
+      }
+    }
+
+    public void OnDeleteFile()
+    {
+      PublishDeleteFile();
+    }
+
+    #endregion
+
     #region Play
 
     private ActionCommand play;
@@ -257,5 +281,7 @@ namespace VPlayer.Core.ViewModels
     protected abstract void PublishPlayEvent();
 
     protected abstract void PublishRemoveFromPlaylist();
+
+    protected abstract void PublishDeleteFile();
   }
 }

@@ -30,6 +30,19 @@ namespace VPlayer.Core.ViewModels.SoundItems
       eventAggregator.GetEvent<RemoveFromPlaylistEvent<SoundItemInPlaylistViewModel>>().Publish(args);
     }
 
+    protected override void PublishDeleteFile()
+    {
+      var songs = new List<SoundItemInPlaylistViewModel>() { this };
+
+      var args = new RemoveFromPlaylistEventArgs<SoundItemInPlaylistViewModel>()
+      {
+        DeleteType = DeleteType.File,
+        ItemsToRemove = songs
+      };
+
+      eventAggregator.GetEvent<RemoveFromPlaylistEvent<SoundItemInPlaylistViewModel>>().Publish(args);
+    }
+
     #region Update
 
     public void Update(SoundItem soundItem)
@@ -38,8 +51,6 @@ namespace VPlayer.Core.ViewModels.SoundItems
     }
 
     #endregion
-
-
 
     #region IsDownloading
 
@@ -59,8 +70,5 @@ namespace VPlayer.Core.ViewModels.SoundItems
     }
 
     #endregion
-
-
-
   }
 }

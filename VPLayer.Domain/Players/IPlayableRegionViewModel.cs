@@ -18,22 +18,28 @@ namespace VPlayer.Core.ViewModels
 
   public interface IPlayableRegionViewModel : IRegionViewModel
   {
+  
+    bool IsPlaying { get; set; }
+    bool IsSelectedToPlay { get; set; }
+    bool CanPlay { get; }
+    IPlayer MediaPlayer { get; }
+    string ActualSearch { get; set; }
+    IObservable<int> ActualItemChanged { get; }
+    IObservable<int> OnVolumeChanged { get; }
+    public bool PlayNextItemOnEndReached { get; set; }
+
+
+
+
+    void SetVolumeWihtoutNotification(int pVolume);
+    void SetVolumeAndRaiseNotification(int pVolume);
+    IEnumerable<string> GetAllItemsSources();
+    Task ClearPlaylist();
     Task Play();
     void PlayPause();
     void SetItemAndPlay(int? songIndex, bool forcePlay = false, bool onlyItemSet = false);
     void PlayPrevious();
     void PlayNext();
     void Pause();
-    bool IsPlaying { get; set; }
-    bool IsSelectedToPlay { get; set; }
-    bool CanPlay { get; }
-    IPlayer MediaPlayer { get; }
-    IObservable<int> ActualItemChanged { get; }
-    IObservable<int> OnVolumeChanged { get; }
-    void SetVolumeWihtoutNotification(int pVolume);
-    void SetVolumeAndRaiseNotification(int pVolume);
-    public bool PlayNextItemOnEndReached { get; set; }
-    IEnumerable<string> GetAllItemsSources();
-    Task ClearPlaylist();
   }
 }

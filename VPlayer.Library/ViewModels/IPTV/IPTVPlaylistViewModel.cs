@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
+using VCore.WPF.Interfaces.Managers;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
@@ -22,7 +23,8 @@ namespace VPlayer.Home.ViewModels.IPTV
       TvPlaylist model,
       IEventAggregator eventAggregator,
       IStorageManager storageManager,
-      IVPlayerViewModelsFactory viewModelsFactory) : base(model, eventAggregator, storageManager)
+      IVPlayerViewModelsFactory viewModelsFactory,
+      IWindowManager windowManager) : base(model, eventAggregator, storageManager, windowManager)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
     }

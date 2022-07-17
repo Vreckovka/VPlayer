@@ -144,7 +144,7 @@ namespace VPlayer.Player.Behaviors
     {
       try
       {
-        if (scrollViewer == null)
+        if (scrollViewer == null || !string.IsNullOrEmpty(managablePlayableRegionViewModel.ActualSearch))
         {
           return;
         }

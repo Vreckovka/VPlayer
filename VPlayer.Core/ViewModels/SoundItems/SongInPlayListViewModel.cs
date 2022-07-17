@@ -386,6 +386,19 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     #endregion
 
+    protected override void PublishDeleteFile()
+    {
+      var songs = new List<SongInPlayListViewModel>() { this };
+
+      var args = new RemoveFromPlaylistEventArgs<SongInPlayListViewModel>()
+      {
+        DeleteType = DeleteType.File,
+        ItemsToRemove = songs
+      };
+
+      eventAggregator.GetEvent<RemoveFromPlaylistEvent<SongInPlayListViewModel>>().Publish(args);
+    }
+
     #region Update
 
     public void Update(Song song)

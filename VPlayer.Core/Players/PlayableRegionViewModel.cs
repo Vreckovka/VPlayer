@@ -758,13 +758,13 @@ namespace VPlayer.Core.ViewModels
         songIndex = 0;
       }
 
-      if (!string.IsNullOrEmpty(actualSearch))
-      {
-        Application.Current?.Dispatcher?.Invoke(() =>
-        {
-          ActualSearch = null;
-        });
-      }
+      //if (!string.IsNullOrEmpty(actualSearch))
+      //{
+      //  Application.Current?.Dispatcher?.Invoke(() =>
+      //  {
+      //    ActualSearch = null;
+      //  });
+      //}
 
       IsPlayFnished = false;
 
@@ -1468,6 +1468,37 @@ namespace VPlayer.Core.ViewModels
         case DeleteType.AlbumFromPlaylist:
           OnRemoveItemsFromPlaylist(DeleteType.AlbumFromPlaylist, obj);
 
+          break;
+        case DeleteType.File:
+          {
+            foreach (var item in obj.ItemsToRemove)
+            {
+              var result = windowManager.ShowDeletePrompt(item.Name);
+
+              if (result == VCore.WPF.ViewModels.Prompt.PromptResult.Ok)
+              {
+                if (ActualItem == item)
+                {
+                  MediaPlayer.Stop();
+                  MediaPlayer.Media = null;
+                }
+
+                var songInPlaylist = PlayList.SingleOrDefault(x => x == item);
+
+                if (songInPlaylist != null)
+                {
+                  PlayList.Remove(songInPlaylist);
+                }
+
+                Task.Run(async () =>
+                {
+                  await Task.Delay(1000);
+
+                  File.Delete(item.Model.Source);
+                });
+              }
+            }
+          }
           break;
         default:
           throw new ArgumentOutOfRangeException();

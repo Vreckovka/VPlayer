@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
+using VCore.WPF.Interfaces.Managers;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -29,7 +30,8 @@ namespace VPlayer.Home.ViewModels.TvShows
       VideoFilePlaylist model,
       IEventAggregator eventAggregator,
       IStorageManager storage,
-       IVPlayerViewModelsFactory viewModelsFactory) : base(model, eventAggregator, storage)
+      IVPlayerViewModelsFactory viewModelsFactory,
+      IWindowManager windowManager) : base(model, eventAggregator, storage, windowManager)
     {
       this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));

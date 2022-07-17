@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using Prism.Events;
 using VCore;
+using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Misc;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -16,14 +17,17 @@ namespace VPlayer.Library.ViewModels
     where TPlaylistItemModel : class, IEntity
   {
     protected readonly IStorageManager storageManager;
+    private readonly IWindowManager windowManager;
 
 
     protected PlaylistViewModel(
       TPlaylistModel model,
       IEventAggregator eventAggregator,
-      IStorageManager storageManager) : base(model, eventAggregator)
+      IStorageManager storageManager,
+      IWindowManager windowManager) : base(model, eventAggregator)
     {
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
+      this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
     }
 
     #region Properties
@@ -118,7 +122,20 @@ namespace VPlayer.Library.ViewModels
 
     public void OnDelete()
     {
-      storageManager.DeletePlaylist<TPlaylistModel, TPlaylistItemModel>(Model);
+      bool delete = true;
+
+      if (Model.IsUserCreated)
+      {
+        var result = windowManager.ShowDeletePrompt(Model.Name);
+
+        if (result != VCore.WPF.ViewModels.Prompt.PromptResult.Ok)
+        {
+          delete = false;
+        }
+      }
+
+      if (delete)
+        storageManager.DeletePlaylist<TPlaylistModel, TPlaylistItemModel>(Model);
     }
 
     #endregion
