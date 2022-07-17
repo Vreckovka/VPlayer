@@ -1162,7 +1162,7 @@ namespace VPlayer.Core.ViewModels
           RequestReloadVirtulizedPlaylist();
           RaisePropertyChanged(nameof(CanPlay));
 
-          StorePlaylist(PlayList.ToList(), editSaved: true);
+          StorePlaylist(PlayList.ToList());
           break;
         case EventAction.PlayFromPlaylist:
           PlayPlaylist(data);
@@ -1254,7 +1254,7 @@ namespace VPlayer.Core.ViewModels
 
       if (storedPlaylist == null)
       {
-        if (editSaved && ActualSavedPlaylist.IsUserCreated)
+        if (editSaved || ActualSavedPlaylist.IsUserCreated)
         {
           if (hashCode != ActualSavedPlaylist.HashCode)
           {
@@ -1345,28 +1345,31 @@ namespace VPlayer.Core.ViewModels
     {
       return Task.Run(() =>
       {
-        var result = storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(ActualSavedPlaylist, out var updated);
-
-        var dispatcher = Application.Current?.Dispatcher;
-
-        if (result && !isDisposing)
+        lock (this)
         {
-          try
-          {
-            dispatcher?.Invoke(() =>
-            {
-              if (VFocusManager.FocusedItems.Count(x => x.Name == "NameTextBox") == 0)
-              {
-                ActualSavedPlaylist = updated;
-              }
-            });
-          }
-          catch (Exception)
-          {
-          }
-        }
+          var result = storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(ActualSavedPlaylist, out var updated);
 
-        return result;
+          var dispatcher = Application.Current?.Dispatcher;
+
+          if (result && !isDisposing)
+          {
+            try
+            {
+              dispatcher?.Invoke(() =>
+              {
+                if (VFocusManager.FocusedItems.Count(x => x.Name == "NameTextBox") == 0)
+                {
+                  ActualSavedPlaylist = updated;
+                }
+              });
+            }
+            catch (Exception)
+            {
+            }
+          }
+
+          return result; 
+        }
       });
     }
 
@@ -1462,7 +1465,7 @@ namespace VPlayer.Core.ViewModels
             }
           }
 
-          StorePlaylist(PlayList.ToList(), editSaved: true);
+          StorePlaylist(PlayList.ToList());
 
           break;
         case DeleteType.AlbumFromPlaylist:
@@ -1531,7 +1534,7 @@ namespace VPlayer.Core.ViewModels
       }
 
       RequestReloadVirtulizedPlaylist();
-      StorePlaylist(PlayList.ToList(), editSaved: true);
+      StorePlaylist(PlayList.ToList(), editSaved: obj.DeleteType == DeleteType.File);
     }
 
     #endregion

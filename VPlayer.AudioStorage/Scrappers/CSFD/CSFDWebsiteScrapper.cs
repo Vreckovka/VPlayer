@@ -863,7 +863,18 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
             statusManager.UpdateMessage(statusMessage);
 
-            return await FindSingleCsfdItem(parsedName, year, false, cancellationToken, true, statusMessage, isMovie: true);
+            var item = await FindSingleCsfdItem(parsedName, year, false, cancellationToken, true, statusMessage, isMovie: true);
+
+            if (item == null)
+            {
+              statusMessage.Message = "NOT FOUND";
+              statusMessage.ProcessedCount = statusMessage.NumberOfProcesses;
+              statusMessage.Status = StatusType.Failed;
+
+              statusManager.UpdateMessage(statusMessage);
+            }
+
+            return item;
           }
 
           tvShowUrl = tvShowFind.Url;
@@ -1214,7 +1225,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         var posterNode = node.ChildNodes[1].ChildNodes[1];
 
         var name = posterNode.Attributes[1].Value;
-       
+
 
         string posterUrl = null;
 
@@ -1234,9 +1245,9 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         if (infoNode.ChildNodes[1].ChildNodes.Count > 3)
         {
-          originalName = infoNode.ChildNodes[1].ChildNodes[3].InnerText.Replace("(",null).Replace(")",null);
+          originalName = infoNode.ChildNodes[1].ChildNodes[3].InnerText.Replace("(", null).Replace(")", null);
         }
-      
+
 
         var regex = new Regex(@"\((.*?)\)");
         var ads = regex.Matches(tile);
@@ -1249,7 +1260,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           var value = ads[i].Groups[1].Captures[0].Value;
           if (i == 0)
           {
-            year = int.Parse(value);
+            int.TryParse(value, out year);
           }
           else
             parameters.Add(value);
