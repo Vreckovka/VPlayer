@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Reactive.Disposables;
@@ -20,6 +21,7 @@ namespace VPlayer.UPnP.ViewModels.Player
   {
     public event EventHandler<MediaDurationChangedArgs> DurationChanged;
     public long Duration { get; } 
+
   }
 
   public class MediaRendererPlayer : ViewModel<MediaRenderer>, IPlayer
@@ -192,6 +194,7 @@ namespace VPlayer.UPnP.ViewModels.Player
     private bool wasEndReached = false;
     private TimeSpan? acutalMediaDuration;
     private int lastBufferingValue = 0;
+    private IMedia lastPlayedMedia;
 
     private async void ObserveTimeChanged()
     {
@@ -226,7 +229,8 @@ namespace VPlayer.UPnP.ViewModels.Player
         });
 
         if (!string.IsNullOrEmpty(trackPositionString)
-            && trackPositionString == trackDurationString)
+            && trackPositionString == trackDurationString &&
+            lastPlayedMedia == Media)
         {
           lock (endLock)
           {
@@ -246,6 +250,8 @@ namespace VPlayer.UPnP.ViewModels.Player
             }
           }
         }
+
+        lastPlayedMedia = Media;
       }
     }
 
@@ -259,42 +265,60 @@ namespace VPlayer.UPnP.ViewModels.Player
     {
       return Task.Run(async () =>
       {
-        wasNewMediaRequest = true;
-
-        OnBuffering(new PlayerBufferingEventArgs() { Cache = 0 });
-        
-        positionDisposable.Disposable?.Dispose();
-
-        dLNADevice?.StopPlay(0);
-        acutalMediaDuration = null;
-        wasEndReached = false;
-
-        SetPosition(0, false);
-
-        OnTimeChanged(new PlayerTimeChangedArgs()
+        try
         {
-          Time = 0
-        });
+          wasNewMediaRequest = true;
 
-        await streamingMediaServer.LoadFile(source.LocalPath);
+          OnBuffering(new PlayerBufferingEventArgs() { Cache = 0 });
 
-        if (lastUri != streamingMediaServer.Stream)
-        {
-          lastUri = streamingMediaServer.Stream;
+          positionDisposable.Disposable?.Dispose();
 
-          var response = dLNADevice?.UploadFileToPlay(streamingMediaServer.Stream);
+          dLNADevice?.StopPlay(0);
+          acutalMediaDuration = null;
+          wasEndReached = false;
 
-          Media = new UNpNMedia();
+          SetPosition(0, false);
+
+          OnTimeChanged(new PlayerTimeChangedArgs()
+          {
+            Time = 0
+          });
+
+          if (source != null)
+          {
+            string path = source.LocalPath;
+            string streamUri = streamingMediaServer.Stream;
+
+            if (File.Exists(path))
+            {
+              await streamingMediaServer.LoadFile(path);
+            }
+            else
+            {
+              await streamingMediaServer.PlayStream(source.AbsoluteUri);
+              streamUri = source.AbsoluteUri;
+            }
+
+            if (lastUri != streamUri)
+            {
+              lastUri = streamUri;
+
+              var response = dLNADevice?.UploadFileToPlay(streamUri);
+
+              Media = new UNpNMedia();
+            }
+
+            if (IsPlaying)
+            {
+              Play();
+            }
+          }
         }
-
-        if (IsPlaying)
+        finally
         {
-          Play();
-
           wasNewMediaRequest = false;
         }
       });
-
     }
 
     #endregion

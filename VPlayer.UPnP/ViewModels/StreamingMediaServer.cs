@@ -253,6 +253,14 @@ namespace VPlayer.UPnP.ViewModels
         await MediaFile.CopyToAsync(FS);
         MediaFile.Close();
       });
+    }
+
+    public Task PlayStream(string uri)
+    {
+      return Task.Run(async () =>
+      {
+        Filename = uri;
+      });
 
     }
   }
