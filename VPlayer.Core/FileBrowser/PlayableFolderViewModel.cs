@@ -237,7 +237,7 @@ namespace VPlayer.Core.FileBrowser
           .SelectManyRecursive(x => x.SubItems.ViewModels)
           .OfType<PlayableFileViewModel>()
           .ToList();
-    
+
 
         if (FolderType == FolderType.Video)
         {
@@ -291,11 +291,21 @@ namespace VPlayer.Core.FileBrowser
           });
 
 
-          vms = vms.Select(x => new
+          var vmsWithSeries = vms.Select(x => new
           {
             item = x,
             tvshowNumber = DataLoader.GetTvShowSeriesNumber(x.Name)
-          }).OrderBy(x => x.tvshowNumber?.SeasonNumber).ThenBy(x => x.tvshowNumber?.EpisodeNumber).Select(x => x.item).ToList();
+          }).ToList();
+
+          //if (vmsWithSeries.Count > 1 && vmsWithSeries.All(x => x.tvshowNumber == null))
+          //{
+          //  for (int i = 1; i < vmsWithSeries.Count; i++)
+          //  {
+          //    var newName = GetSubcratedString(vmsWithSeries[i - 1].item.Name, vmsWithSeries[i].item.Name);
+          //  }
+          //}
+
+          vms = vmsWithSeries.OrderBy(x => x.tvshowNumber?.SeasonNumber).ThenBy(x => x.tvshowNumber?.EpisodeNumber).Select(x => x.item).ToList();
 
           var data = new PlayItemsEventData<VideoItemInPlaylistViewModel>(vms, EventAction.Play, this);
 
@@ -405,6 +415,18 @@ namespace VPlayer.Core.FileBrowser
     }
 
     #endregion
+
+    private string GetSubcratedString(string original, string copy)
+    {
+      string newString = "";
+
+      var originalWords = original.Split(" ");
+      var copyWords = copy.Split(" ");
+
+      var left = originalWords.Where(p => copyWords.All(p2 => p2 != p));
+
+      return left.Aggregate((x, y) => x + " " + y);
+    }
 
     #region OnGetFolderInfo
 

@@ -195,6 +195,8 @@ namespace VPlayer.AudioStorage.DataLoader
         @"\[(?<season>\d{1,2}).(?<episode>\d{1,2})-(?<concatEpisode>\d{1,2})\]",
         //1-1
         @"(?<season>\d{1,2})-(?<episode>\d{1,2})",
+        //Only episode
+        @"- (?<episode>\b\d+\b)"
       };
 
       foreach (var regexExpression in regexExpressions)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -17,6 +18,8 @@ using VCore.Standard.Providers;
 using VCore.Standard.ViewModels.TreeView;
 using VCore.WPF.Interfaces;
 using VCore.WPF.Interfaces.Managers;
+using VCore.WPF.ItemsCollections.VirtualList;
+using VCore.WPF.ItemsCollections.VirtualList.VirtualLists;
 using VCore.WPF.Managers;
 using VCore.WPF.Misc;
 using VCore.WPF.Modularity.Events;
@@ -82,7 +85,23 @@ namespace VPlayer.Core.ViewModels
 
     #region Properties
 
-    public TFolderViewModel RootFolder { get; protected set; }
+    #region RootFolder
+
+    private TFolderViewModel rootFolder;
+
+    public TFolderViewModel RootFolder
+    {
+      get { return rootFolder; }
+      protected set
+      {
+        if (value != rootFolder)
+        {
+          rootFolder = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+    #endregion
 
     public virtual Visibility FinderVisibility => Visibility.Visible;
     public override string Header => "File browser";
@@ -150,9 +169,9 @@ namespace VPlayer.Core.ViewModels
 
     #region Items
 
-    private RxObservableCollection<TreeViewItemViewModel> items = new RxObservableCollection<TreeViewItemViewModel>();
+    private VirtualList<TreeViewItemViewModel> items;
 
-    public RxObservableCollection<TreeViewItemViewModel> Items
+    public VirtualList<TreeViewItemViewModel> Items
     {
       get { return items; }
       set
@@ -346,45 +365,59 @@ namespace VPlayer.Core.ViewModels
     #region LoadBookmarks
 
     private bool wasBookamarksLaoded;
-    private Task LoadBookmarks()
+    private SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
+
+    private async Task LoadBookmarks()
     {
-      return Task.Run(() =>
+      try
       {
-        if (!wasBookamarksLaoded)
+        await semaphoreSlim.WaitAsync();
+
+        await Task.Run(() =>
         {
-          var allBookmarks = storageManager.GetRepository<ItemBookmark>()
-            .Where(x => x.FileBrowserType == FileBrowserType);
-
-          Application.Current.Dispatcher.Invoke(async () =>
+          if (!wasBookamarksLaoded)
           {
-            List<TFolderViewModel> bookmarks = new List<TFolderViewModel>();
+            var allBookmarks = storageManager.GetRepository<ItemBookmark>()
+              .Where(x => x.FileBrowserType == FileBrowserType);
 
-            var ids = allBookmarks.Select(x => x.Identificator).ToList();
-
-            var existings = AllLoadedFolders.Where(x => ids.Contains(x.Model.Indentificator));
-            var nonExistings = ids.Where(x => !AllLoadedFolders.Select(y => y.Model.Indentificator).Contains(x));
-
-            foreach (var existing in existings.Where(x => !Bookmarks.Any(y => y.Path == x.Path)))
+            Application.Current.Dispatcher.Invoke(async () =>
             {
-              bookmarks.Add(existing);
-            }
+              List<TFolderViewModel> bookmarks = new List<TFolderViewModel>();
 
-            foreach (var nonExisting in nonExistings.Where(x => !Bookmarks.Any(y => y.Path == x)))
-            {
-              var vm = await GetNewFolderViewModel(nonExisting);
-              bookmarks.Add(vm);
-            }
+              var ids = allBookmarks.Select(x => x.Identificator).ToList();
+              var list = AllLoadedFolders.ToList();
 
-            Bookmarks.AddRange(bookmarks);
+              list.Add(RootFolder);
 
-            Bookmarks.ForEach(x =>
-            {
-              x.IsBookmarked = true;
-              x.RaiseNotifications(nameof(x.IsBookmarked));
+              var existings = list.Where(x => ids.Contains(x.Model.Indentificator));
+              var nonExistings = ids.Where(x => !list.Select(y => y.Model.Indentificator).Contains(x));
+
+              foreach (var existing in existings.Where(x => !Bookmarks.Any(y => y.Path == x.Path)))
+              {
+                bookmarks.Add(existing);
+              }
+
+              foreach (var nonExisting in nonExistings.Where(x => !Bookmarks.Any(y => y.Path == x)))
+              {
+                var vm = await GetNewFolderViewModel(nonExisting);
+                bookmarks.Add(vm);
+              }
+
+              Bookmarks.AddRange(bookmarks);
+
+              Bookmarks.ForEach(x =>
+              {
+                x.IsBookmarked = true;
+                x.RaiseNotifications(nameof(x.IsBookmarked));
+              });
             });
-          });
-        }
-      });
+          }
+        });
+      }
+      finally
+      {
+        semaphoreSlim.Release();
+      }
     }
 
     #endregion
@@ -447,7 +480,6 @@ namespace VPlayer.Core.ViewModels
       try
       {
         BaseDirectoryPath = newPath;
-        wasBookamarksLaoded = false;
 
         if (!string.IsNullOrEmpty(newPath) && await DirectoryExists(newPath))
         {
@@ -459,29 +491,23 @@ namespace VPlayer.Core.ViewModels
           RootFolder.IsRoot = true;
           RootFolder.IsExpanded = true;
           RootFolder.CanExpand = false;
-          RootFolder.FolderType = FolderType.Other;
-          RootFolder.PropertyChanged += RootFolder_PropertyChanged;
 
-          Items.Clear();
-          Items.Add(RootFolder);
+          if (Bookmarks.Any(x => x.Model.Indentificator == RootFolder.Model.Indentificator))
+          {
+            RootFolder.IsBookmarked = true;
+          }
+
+          await RootFolder.LoadFolder();
+
+          var generator = new ItemsGenerator<TreeViewItemViewModel>(RootFolder.SubItems.ViewModels.Select(x => x), 30);
+          Items = new VirtualList<TreeViewItemViewModel>(generator);
+
           IsBookmarkMenuOpened = false;
         }
       }
       catch (Exception ex)
       {
         windowManager.ShowErrorPrompt(ex);
-      }
-    }
-
-    private async void RootFolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-    {
-      if ((e.PropertyName == nameof(FolderViewModel<PlayableFileViewModel>.WasLoaded) ||
-           e.PropertyName == nameof(FolderViewModel<PlayableFileViewModel>.WasSubFoldersLoaded)) &&
-          sender is TFolderViewModel viewModel &&
-          viewModel.WasLoaded &&
-          viewModel.WasSubFoldersLoaded)
-      {
-        await LoadBookmarks();
       }
     }
 
