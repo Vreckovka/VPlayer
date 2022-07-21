@@ -9,6 +9,8 @@
              mc:Ignorable="d">
     <Border Width="350"
             Background="#141414"
+            BorderBrush="#30ffffff"
+            BorderThickness="0.8"
             CornerRadius="30">
         <Grid>
             <Grid.RowDefinitions>
