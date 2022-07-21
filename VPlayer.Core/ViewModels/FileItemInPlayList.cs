@@ -48,12 +48,14 @@ namespace VPlayer.Core.ViewModels
         if (value != actualPosition && !float.IsNaN(value) && !float.IsInfinity(value))
         {
 
-          var stringValue = value.ToString().Take(6).Aggregate("", (x, y) => x + y);
+          int multiplier = 10000;
 
-          var floatValue = float.Parse(stringValue);
+          var stringValue = Math.Round((value * multiplier));
+
+          var floatValue = stringValue / multiplier;
 
           if (floatValue <= 1)
-            actualPosition = floatValue;
+            actualPosition = (float)floatValue;
 
           RaisePropertyChanged();
           RaisePropertyChanged(nameof(ActualTime));

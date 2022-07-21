@@ -24,7 +24,16 @@ namespace VPlayer.WindowsPlayer.Behaviors
         nameof(Popup),
         typeof(Popup),
         typeof(ShowPopupBehavior),
-        new PropertyMetadata(null));
+        new PropertyMetadata(null, (x, y) =>
+        {
+          if (x is ShowPopupBehavior popupBehavior)
+          {
+            if (popupBehavior.Popup != null)
+            {
+              popupBehavior.Initilize();
+            }
+          }
+        }));
 
     public Popup Popup
     {
@@ -73,9 +82,26 @@ namespace VPlayer.WindowsPlayer.Behaviors
     {
       base.OnAttached();
 
-      AssociatedObject.Loaded += AssociatedObject_Loaded;
       AssociatedObject.MouseMove += AssociatedObject_MouseMove;
       AssociatedObject.MouseLeftButtonDown += AssociatedObject_MouseLeftButtonDown;
+      AssociatedObject.MouseWheel += AssociatedObject_MouseWheel;
+    }
+
+    private void AssociatedObject_MouseWheel(object sender, MouseWheelEventArgs e)
+    {
+      if (AssociatedObject.DataContext is IFilePlayableRegionViewModel playableRegionViewModel)
+      {
+        if (e.Delta > 0)
+        {
+          playableRegionViewModel.SeekForward();
+        }
+        else
+        {
+          playableRegionViewModel.SeekBackward();
+        }
+
+        e.Handled = true;
+      }
     }
 
     private void AssociatedObject_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -86,7 +112,7 @@ namespace VPlayer.WindowsPlayer.Behaviors
       }
     }
 
-    private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
+    private void Initilize()
     {
       Popup.Closed += Popup_Closed;
     }
@@ -128,6 +154,13 @@ namespace VPlayer.WindowsPlayer.Behaviors
         return Slider.Maximum * horizontalOffset / AssociatedObject.ActualWidth;
 
       return 0;
+    }
+
+    protected override void OnDetaching()
+    {
+      AssociatedObject.MouseMove -= AssociatedObject_MouseMove;
+      AssociatedObject.MouseLeftButtonDown -= AssociatedObject_MouseLeftButtonDown;
+      AssociatedObject.MouseWheel -= AssociatedObject_MouseWheel;
     }
   }
 }

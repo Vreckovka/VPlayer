@@ -2,6 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
+                    xmlns:behaviors1="clr-namespace:VPlayer.WindowsPlayer.Behaviors"
                     xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
                     xmlns:controls2="clr-namespace:VVLC.Controls;assembly=VVLC"
                     xmlns:converters1="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
@@ -12,6 +13,7 @@
                     xmlns:soundManagement="clr-namespace:SoundManagement;assembly=SoundManagement"
                     xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors;assembly=VPlayer.Core"
                     xmlns:themes="clr-namespace:VPlayer.WindowsPlayer.Vlc.Themes"
+                    xmlns:viewModels="clr-namespace:VPlayer.WindowsPlayer.ViewModels"
                     xmlns:views="clr-namespace:VPlayer.Player.Views;assembly=VCore.WPF">
 
 
@@ -57,7 +59,8 @@
                                        Foreground="{StaticResource 120_WhiteTransparentBrush}"
                                        Text="{Binding ActualItem.ActualTime, StringFormat=hh\\:mm\\:ss}" />
 
-                            <Slider Grid.Row="0"
+
+                            <!--<Slider Grid.Row="0"
                                     Grid.Column="0"
                                     Grid.ColumnSpan="3"
                                     Padding="0"
@@ -68,7 +71,85 @@
                                 <b:Interaction.Behaviors>
                                     <behaviors:SliderValueChangedManualy Duration="{Binding ActualItem.Duration}" />
                                 </b:Interaction.Behaviors>
-                            </Slider>
+                            </Slider>-->
+
+                            <Grid x:Name="slider_container"
+                                  Grid.Row="0"
+                                  Grid.Column="0"
+                                  Grid.ColumnSpan="3"
+                                  Background="Transparent"
+                                  Cursor="Hand"
+                                  DataContext="{Binding ActualViewModel}">
+                                <Slider x:Name="Slider_Time"
+                                        Height="5"
+                                        Margin="5,0,1,0"
+                                        Padding="0"
+                                        IsMoveToPointEnabled="True"
+                                        Maximum="1"
+                                        Value="{Binding ActualItem.ActualPosition}">
+
+                                    <b:Interaction.Behaviors>
+                                        <behaviors:SliderValueChangedManualy Duration="{Binding ActualItem.Duration}" />
+                                    </b:Interaction.Behaviors>
+                                </Slider>
+
+                                <b:Interaction.Behaviors>
+                                    <behaviors1:ShowPopupBehavior Popup="{Binding ElementName=VideoPreviewPopup}"
+                                                                  Slider="{Binding ElementName=Slider_Time}"
+                                                                  ViewModel="{Binding DetailViewModel}" />
+                                </b:Interaction.Behaviors>
+                            </Grid>
+
+
+                            <Popup x:Name="VideoPreviewPopup"
+                                   AllowsTransparency="True"
+                                   DataContext="{Binding ActualViewModel.DetailViewModel}"
+                                   Placement="MousePoint">
+                                <Popup.Style>
+                                    <Style TargetType="Popup">
+                                        <Setter Property="VerticalOffset" Value="-35" />
+
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ElementName=slider_container, Path=IsMouseOver}" Value="true">
+                                                <Setter Property="IsOpen" Value="True" />
+                                            </DataTrigger>
+
+                                            <DataTrigger Binding="{Binding Converter={converters1:IsTypeConverter}, ConverterParameter={x:Type viewModels:VideoSliderPopupDetailViewModel}}" Value="true">
+                                                <Setter Property="VerticalOffset" Value="-180" />
+                                                <Setter Property="Width" Value="260" />
+                                                <Setter Property="Height" Value="150" />
+                                            </DataTrigger>
+
+                                        </Style.Triggers>
+                                    </Style>
+                                </Popup.Style>
+
+                                <Border Padding="1" BorderThickness="1">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="#55000000" />
+                                            <Setter Property="BorderBrush" Value="#55757575" />
+
+
+                                        </Style>
+                                    </Border.Style>
+                                    <Grid>
+                                        <Image Source="{Binding Image}" />
+
+                                        <Border Margin="0,0"
+                                                Padding="20,2"
+                                                VerticalAlignment="Bottom"
+                                                Background="#bf000000">
+                                            <TextBlock HorizontalAlignment="Center"
+                                                       FontSize="15"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="White"
+                                                       Text="{Binding ActualTime, StringFormat={}{0:hh\\:mm\\:ss}}" />
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                            </Popup>
+
 
                             <TextBlock Grid.Row="1"
                                        Grid.Column="2"
