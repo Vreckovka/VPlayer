@@ -1497,7 +1497,13 @@ namespace VPlayer.Core.ViewModels
                 {
                   await Task.Delay(1000);
 
-                  File.Delete(item.Model.Source);
+                  try
+                  {
+                    File.Delete(item.Model.Source);
+                  }
+                  catch (Exception ex)
+                  {
+                  }
                 });
               }
             }

@@ -82,147 +82,155 @@
         <Setter Property="WindowState" Value="{Binding WindowState}" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Topmost" Value="{Binding TopMost}" />
+        <Setter Property="BorderBrush" Value="#25ffffff" />
         <Setter Property="Background" Value="{StaticResource BackgroudGradientBrush}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Window}">
-                    <Border>
+                    <Border Background="{TemplateBinding Background}">
                         <Grid>
                             <!--  The main window content  -->
-                            <Grid Background="{TemplateBinding Background}">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="auto" />
-                                    <RowDefinition Height="auto" />
-                                    <RowDefinition Height="*" />
-                                </Grid.RowDefinitions>
-                                <Grid x:Name="WindowsChromeGrid"
-                                      Height="{DynamicResource ChromeGridHeight}"
-                                      Background="{StaticResource TopWindowsBrush}"
-                                      Visibility="{Binding WindowChromeVisiblity}">
+                            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0.8">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Grid x:Name="WindowsChromeGrid"
+                                          Height="{DynamicResource ChromeGridHeight}"
+                                          Background="{StaticResource TopWindowsBrush}"
+                                          Visibility="{Binding WindowChromeVisiblity}">
 
-                                    <StackPanel Margin="10"
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Center"
-                                                Opacity="1"
-                                                Orientation="Horizontal">
-                                        <!--  Icon  -->
-                                        <Image Margin="0,0,7,0"
-                                               Opacity="1"
-                                               Source="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Icon}" />
+                                        <StackPanel Margin="10"
+                                                    HorizontalAlignment="Left"
+                                                    VerticalAlignment="Center"
+                                                    Opacity="1"
+                                                    Orientation="Horizontal">
+                                            <!--  Icon  -->
+                                            <Image Margin="0,0,7,0"
+                                                   Opacity="1"
+                                                   Source="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Icon}" />
 
-                                        <!--<TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Icon}" />-->
-                                        <!--  Title  -->
-                                        <TextBlock Margin="0,-2,0,-2"
-                                                   VerticalAlignment="Center"
-                                                   FontSize="13.5"
-                                                   FontWeight="SemiBold"
-                                                   Foreground="White"
-                                                   Text="{Binding Title}" />
-                                    </StackPanel>
-                                    <!--  Window buttons  -->
-                                    <Grid HorizontalAlignment="Right" VerticalAlignment="Stretch">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <Button x:Name="MinimizeButton"
-                                                Command="{Binding MinimizeCommand}"
-                                                Style="{StaticResource WindowsChromeButtonStyle}">
-                                            <Rectangle Width="10"
-                                                       Height="2"
+                                            <!--<TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Icon}" />-->
+                                            <!--  Title  -->
+                                            <TextBlock Margin="0,-2,0,-2"
                                                        VerticalAlignment="Center"
-                                                       Stretch="UniformToFill"
-                                                       Stroke="{Binding ElementName=MinimizeButton, Path=Foreground}"
-                                                       StrokeThickness="2" />
-                                        </Button>
+                                                       FontSize="13.5"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="White"
+                                                       Text="{Binding Title}" />
+                                        </StackPanel>
+                                        <!--  Window buttons  -->
+                                        <Grid HorizontalAlignment="Right" VerticalAlignment="Stretch">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="auto" />
+                                                <ColumnDefinition Width="auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
 
-                                        <Button x:Name="MaximizeButton"
-                                                Grid.Column="1"
-                                                Command="{Binding MaximizeCommand}">
-                                            <Button.Style>
-                                                <Style BasedOn="{StaticResource WindowsChromeButtonStyle}" TargetType="Button">
-                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                    <Style.Triggers>
-                                                        <MultiDataTrigger>
-                                                            <MultiDataTrigger.Conditions>
-                                                                <Condition Binding="{Binding WindowState, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" Value="Normal" />
-                                                            </MultiDataTrigger.Conditions>
-                                                            <Setter Property="Visibility" Value="Visible" />
-                                                        </MultiDataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Button.Style>
-                                            <Button.Content>
+                                            <Button x:Name="MinimizeButton"
+                                                    Command="{Binding MinimizeCommand}"
+                                                    Style="{StaticResource WindowsChromeButtonStyle}">
                                                 <Rectangle Width="10"
-                                                           Height="10"
+                                                           Height="2"
+                                                           VerticalAlignment="Center"
                                                            Stretch="UniformToFill"
-                                                           Stroke="{Binding ElementName=MaximizeButton, Path=Foreground}"
+                                                           Stroke="{Binding ElementName=MinimizeButton, Path=Foreground}"
                                                            StrokeThickness="2" />
-                                            </Button.Content>
-                                        </Button>
+                                            </Button>
 
-                                        <Button x:Name="NormalizeButton"
-                                                Grid.Column="1"
-                                                Command="{Binding NormalizeCommand}">
-                                            <Button.Style>
-                                                <Style BasedOn="{StaticResource WindowsChromeButtonStyle}" TargetType="Button">
-                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                            <Button x:Name="MaximizeButton"
+                                                    Grid.Column="1"
+                                                    Command="{Binding MaximizeCommand}">
+                                                <Button.Style>
+                                                    <Style BasedOn="{StaticResource WindowsChromeButtonStyle}" TargetType="Button">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                        <Style.Triggers>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding WindowState, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" Value="Normal" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Visibility" Value="Visible" />
+                                                            </MultiDataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                                <Button.Content>
+                                                    <Rectangle Width="10"
+                                                               Height="10"
+                                                               Stretch="UniformToFill"
+                                                               Stroke="{Binding ElementName=MaximizeButton, Path=Foreground}"
+                                                               StrokeThickness="2" />
+                                                </Button.Content>
+                                            </Button>
 
-                                                    <Style.Triggers>
-                                                        <MultiDataTrigger>
-                                                            <MultiDataTrigger.Conditions>
-                                                                <Condition Binding="{Binding WindowState, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" Value="Maximized" />
-                                                            </MultiDataTrigger.Conditions>
-                                                            <Setter Property="Visibility" Value="Visible" />
-                                                        </MultiDataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Button.Style>
-                                            <Button.Content>
-                                                <Path Width="10"
-                                                      Height="10"
-                                                      Data="M114.279,0v114.274H0v378.034h378.039V378.029h114.269V0H114.279z M358.346,472.615H19.692V133.966h338.654V472.615z M472.615,358.337h-94.577V114.274H133.971V19.692h338.644V358.337z"
-                                                      Stretch="UniformToFill"
-                                                      Stroke="{Binding ElementName=NormalizeButton, Path=Foreground}"
-                                                      StrokeThickness="1.5" />
-                                            </Button.Content>
-                                        </Button>
+                                            <Button x:Name="NormalizeButton"
+                                                    Grid.Column="1"
+                                                    Command="{Binding NormalizeCommand}">
+                                                <Button.Style>
+                                                    <Style BasedOn="{StaticResource WindowsChromeButtonStyle}" TargetType="Button">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
 
-                                        <Button x:Name="CloseButton"
-                                                Grid.Column="2"
-                                                HorizontalContentAlignment="Center"
-                                                VerticalContentAlignment="Center"
-                                                BorderThickness="0"
-                                                Command="{Binding CloseCommand}"
-                                                Content="X"
-                                                FontSize="15"
-                                                FontWeight="Bold">
-                                            <Button.Style>
-                                                <Style BasedOn="{StaticResource WindowsChromeButtonStyle}" TargetType="Button">
-                                                    <Style.Triggers>
-                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter Property="Foreground" Value="White" />
-                                                            <Setter Property="Cursor" Value="Hand" />
-                                                            <Setter Property="BorderBrush" Value="Transparent" />
-                                                            <Setter Property="Background" Value="#ccd43939" />
-                                                        </Trigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Button.Style>
-                                        </Button>
+                                                        <Style.Triggers>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding WindowState, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" Value="Maximized" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Visibility" Value="Visible" />
+                                                            </MultiDataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                                <Button.Content>
+                                                    <Path Width="10"
+                                                          Height="10"
+                                                          Data="M114.279,0v114.274H0v378.034h378.039V378.029h114.269V0H114.279z M358.346,472.615H19.692V133.966h338.654V472.615z M472.615,358.337h-94.577V114.274H133.971V19.692h338.644V358.337z"
+                                                          Stretch="UniformToFill"
+                                                          Stroke="{Binding ElementName=NormalizeButton, Path=Foreground}"
+                                                          StrokeThickness="1.5" />
+                                                </Button.Content>
+                                            </Button>
+
+                                            <Button x:Name="CloseButton"
+                                                    Grid.Column="2"
+                                                    HorizontalContentAlignment="Center"
+                                                    VerticalContentAlignment="Center"
+                                                    BorderThickness="0"
+                                                    Command="{Binding CloseCommand}"
+                                                    Content="X"
+                                                    FontSize="15"
+                                                    FontWeight="Bold">
+                                                <Button.Style>
+                                                    <Style BasedOn="{StaticResource WindowsChromeButtonStyle}" TargetType="Button">
+                                                        <Style.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="Foreground" Value="White" />
+                                                                <Setter Property="Cursor" Value="Hand" />
+                                                                <Setter Property="BorderBrush" Value="Transparent" />
+                                                                <Setter Property="Background" Value="#ccd43939" />
+                                                            </Trigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
+                                        </Grid>
                                     </Grid>
-                                </Grid>
 
-                                <Border Grid.Row="2">
-                                    <AdornerDecorator>
-                                        <ContentPresenter Content="{TemplateBinding Content}" />
-                                    </AdornerDecorator>
-                                </Border>
-                            </Grid>
+                                    <Border Grid.Row="2">
+                                        <AdornerDecorator>
+                                            <ContentPresenter Content="{TemplateBinding Content}" />
+                                        </AdornerDecorator>
+                                    </Border>
+                                </Grid>
+                            </Border>
                         </Grid>
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsActive" Value="True">
+                            <Setter Property="BorderBrush" Value="#30ffffff" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
