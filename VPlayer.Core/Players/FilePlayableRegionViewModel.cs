@@ -673,7 +673,20 @@ namespace VPlayer.Core.ViewModels
 
     #region TotalTime
 
-    public TimeSpan TotalTime { get; }
+    private TimeSpan totalTime;
+
+    public TimeSpan TotalTime
+    {
+      get { return totalTime; }
+      set
+      {
+        if (value != totalTime)
+        {
+          totalTime = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
 
     #endregion
 

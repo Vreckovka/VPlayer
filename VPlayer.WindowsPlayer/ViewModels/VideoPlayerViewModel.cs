@@ -797,7 +797,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
           if (MediaPlayer.Media != null)
             MediaPlayer.Media.ParsedChanged -= MediaPlayer_ParsedChanged;
 
-
+          if (DetailViewModel?.Model != null && MediaPlayer?.Media != null)
+          {
+            DetailViewModel.Model.Duration = ((int)MediaPlayer.Media.Duration) / 1000;
+            DetailViewModel.TotalTime = TimeSpan.FromSeconds(DetailViewModel.Model.Duration);
+          }
         }
         catch (Exception ex)
         {
@@ -1107,7 +1111,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           IsInFind(tvShowEpisodeInPlaylistViewModel.TvShow.Name, predictate) ||
           IsInFind(tvShowEpisodeInPlaylistViewModel.TvShowSeason.Name, predictate) ||
           ("season " + tvShowEpisodeInPlaylistViewModel.TvShowSeason.SeasonNumber == predictate) ||
-          "episode " + tvShowEpisodeInPlaylistViewModel.TvShowEpisode.EpisodeNumber == predictate) || 
+          "episode " + tvShowEpisodeInPlaylistViewModel.TvShowEpisode.EpisodeNumber == predictate) ||
           IsInFind(x.Model.Source, predictate)));
 
         var generator = new ItemsGenerator<VideoItemInPlaylistViewModel>(items, 15);
