@@ -3,12 +3,14 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media.Animation;
 using Logger;
 using Microsoft.Xaml.Behaviors;
 using Ninject;
 using VCore.WPF.Behaviors;
 using VCore.WPF.Helpers;
+using VCore.WPF.Misc;
 using VPlayer.Core.ViewModels;
 using Decorator = System.Windows.Controls.Decorator;
 using DependencyProperty = System.Windows.DependencyProperty;
@@ -42,6 +44,20 @@ namespace VPlayer.Player.Behaviors
     }
 
     #endregion Kernel
+
+    #region AutoscrollCommand
+
+    protected ActionCommand autoscrollCommand;
+
+    public ICommand AutoscrollCommand
+    {
+      get
+      {
+        return autoscrollCommand ??= new ActionCommand(() => Autoscroll(last_songInPlayListIndex, true));
+      }
+    }
+
+    #endregion
 
     public double StepSize { get; set; } = 1;
     public TimeSpan AnimationTime { get; set; } = TimeSpan.FromSeconds(1);
@@ -77,12 +93,15 @@ namespace VPlayer.Player.Behaviors
       AssociatedObject.LayoutUpdated -= AssociatedObject_LayoutUpdated;
       AssociatedObject.DataContextChanged -= AssociatedObject_DataContextChanged;
 
-      disposable.Dispose();
+      actualItemChangedDisposable.Dispose();
+      searchChanged.Dispose();
     }
 
 
 
-    private SerialDisposable disposable = new SerialDisposable();
+    private SerialDisposable actualItemChangedDisposable = new SerialDisposable();
+    private SerialDisposable searchChanged = new SerialDisposable();
+
     private ILogger logger;
 
     #region SubcsribeToSongChange
@@ -97,12 +116,12 @@ namespace VPlayer.Player.Behaviors
 
           if (lastDatacontext != AssociatedObject.DataContext)
           {
-            last_songInPlayListIndex = null;
+            last_songInPlayListIndex = 0;
             lastDatacontext = AssociatedObject.DataContext;
           }
-          else if (last_songInPlayListIndex != null)
+          else 
           {
-            var verticalOffset = GetScrollOffset(last_songInPlayListIndex.Value);
+            var verticalOffset = GetScrollOffset(last_songInPlayListIndex);
 
             if (scrollViewer.VerticalOffset != verticalOffset)
               scrollViewer.ScrollToVerticalOffset(verticalOffset);
@@ -115,9 +134,15 @@ namespace VPlayer.Player.Behaviors
 
             if (managablePlayableRegionViewModel != null)
             {
-              disposable.Disposable = managablePlayableRegionViewModel.ActualItemChanged
+              actualItemChangedDisposable.Disposable = managablePlayableRegionViewModel.ActualItemChanged
                 .ObserveOn(Application.Current.Dispatcher)
-                .Subscribe(OnSongChanged);
+                .Subscribe((x) => Autoscroll(x));
+
+              searchChanged.Disposable = managablePlayableRegionViewModel.ObservePropertyChange(x => x.ActualSearch)
+                .Throttle(TimeSpan.FromSeconds(0.5))
+                .Where(x => string.IsNullOrEmpty(x))
+                .ObserveOn(Application.Current.Dispatcher)
+                .Subscribe((x) => Autoscroll(last_songInPlayListIndex, true));
             }
           }
         }
@@ -132,15 +157,16 @@ namespace VPlayer.Player.Behaviors
 
 
     private ScrollViewer scrollViewer;
-    private int? last_songInPlayListIndex = null;
+    private int last_songInPlayListIndex = 0;
     private object lastDatacontext = null;
+
 
     private double GetScrollOffset(int songIndex)
     {
       return (songIndex - 3 < 0 ? 0 : songIndex - 3) * StepSize;
     }
 
-    private void OnSongChanged(int songInPlayListIndex)
+    private void Autoscroll(int songInPlayListIndex, bool force = false)
     {
       try
       {
@@ -155,10 +181,10 @@ namespace VPlayer.Player.Behaviors
 
         if (scrollViewer != null)
         {
-          if ((songInPlayListIndex > last_songInPlayListIndex + max &&
-               songInPlayListIndex > last_songInPlayListIndex) ||
-              (songInPlayListIndex < last_songInPlayListIndex - max &&
-               songInPlayListIndex < last_songInPlayListIndex))
+          if (((songInPlayListIndex > last_songInPlayListIndex + max &&
+                songInPlayListIndex > last_songInPlayListIndex) ||
+               (songInPlayListIndex < last_songInPlayListIndex - max &&
+                songInPlayListIndex < last_songInPlayListIndex)) || force)
           {
             scrollViewer.ScrollToVerticalOffset(scrollIndexOffset);
           }
@@ -188,7 +214,7 @@ namespace VPlayer.Player.Behaviors
 
               Storyboard storyboard = new Storyboard();
 
-              verticalAnimation.EasingFunction = new SineEase() { EasingMode = EasingMode.EaseOut };
+              verticalAnimation.EasingFunction = new SineEase() {EasingMode = EasingMode.EaseOut};
               storyboard.SpeedRatio = 1.2;
 
               storyboard.Children.Add(verticalAnimation);
@@ -198,12 +224,14 @@ namespace VPlayer.Player.Behaviors
             }
           }
         }
-
-        last_songInPlayListIndex = songInPlayListIndex;
       }
       catch (Exception ex)
       {
         logger?.Log(ex);
+      }
+      finally
+      {
+        last_songInPlayListIndex = songInPlayListIndex;
       }
     }
   }

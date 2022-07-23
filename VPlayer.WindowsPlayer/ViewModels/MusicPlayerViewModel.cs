@@ -251,23 +251,23 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-    #region WasAllSongProcessed
+    #region WasAllItemsProcessed
 
-    private bool wasAllSongProcessed;
+    private bool wasAllItemsProcessed;
 
-    public bool WasAllSongProcessed
+    public override bool WasAllItemsProcessed
     {
-      get { return wasAllSongProcessed; }
+      get { return wasAllItemsProcessed; }
       set
       {
-        if (value != wasAllSongProcessed)
+        if (value != wasAllItemsProcessed)
         {
-          wasAllSongProcessed = value;
+          wasAllItemsProcessed = value;
 
           addAlbums?.RaiseCanExecuteChanged();
           addArtists?.RaiseCanExecuteChanged();
 
-          if (wasAllSongProcessed)
+          if (wasAllItemsProcessed)
           {
             RaisePropertyChanged(nameof(DistinctArtistsCount));
             RaisePropertyChanged(nameof(DistinctAlbumsCount));
@@ -384,7 +384,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     private bool CanAddArtists()
     {
-      if (WasAllSongProcessed)
+      if (WasAllItemsProcessed)
       {
         var validItems = GetArtistsToAdd()
           .GroupBy(x => x.ArtistViewModel.Model)
@@ -464,7 +464,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         {
           addAlbums = new ActionCommand(OnAddAlbums, () =>
           {
-            if (WasAllSongProcessed)
+            if (WasAllItemsProcessed)
             {
               var validItems = GetAlbumsToAdd()
                 .GroupBy(x => x.AlbumViewModel.Model)
@@ -759,11 +759,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region Initialize
 
-    public override void Initialize()
+    public override async void Initialize()
     {
-      base.Initialize();
-
       IsPlaying = false;
+
+      await InitializeAsync();
 
       storageManager.ObserveOnItemChange<Song>().ObserveOn(Application.Current.Dispatcher).Subscribe(OnSongChange).DisposeWith(this);
       storageManager.ObserveOnItemChange<Album>().ObserveOn(Application.Current.Dispatcher).Subscribe(OnAlbumChange).DisposeWith(this);
@@ -1721,7 +1721,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       Application.Current?.Dispatcher?.Invoke(() =>
       {
-        WasAllSongProcessed = false;
+        WasAllItemsProcessed = false;
       });
 
 
@@ -1863,7 +1863,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         Application.Current?.Dispatcher?.Invoke(() =>
         {
-          WasAllSongProcessed = false;
+          WasAllItemsProcessed = false;
         });
 
 
@@ -1885,7 +1885,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
           Application.Current?.Dispatcher?.Invoke(() =>
           {
-            WasAllSongProcessed = true;
+            WasAllItemsProcessed = true;
           });
 
           TrySetNewPlaylistName();

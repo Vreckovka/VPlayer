@@ -200,6 +200,11 @@ namespace VPlayer.Core.ViewModels
 
           actualSearchSubject.OnNext(actualSearch);
 
+          if (string.IsNullOrEmpty(actualSearch))
+          {
+            PlaylistFromSearch = false;
+          }
+
           RaisePropertyChanged();
         }
       }
@@ -207,9 +212,75 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region PlaylistFromSearch
+
+    private bool playlistFromSearch;
+
+    public bool PlaylistFromSearch
+    {
+      get { return playlistFromSearch; }
+      set
+      {
+        if (value != playlistFromSearch)
+        {
+          playlistFromSearch = value;
+
+          OnPlaylistFromSearch(playlistFromSearch);
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    private RxObservableCollection<TItemViewModel> playlistCopy;
+    private int savedActualItemIndex;
+    private void OnPlaylistFromSearch(bool value)
+    {
+      if (value)
+      {
+        playlistCopy = new RxObservableCollection<TItemViewModel>();
+
+        foreach (var item in PlayList)
+        {
+          playlistCopy.Add(item);
+        }
+
+        var newPlaylist = new RxObservableCollection<TItemViewModel>();
+
+        foreach (var item in VirtualizedPlayList.Generator.AllItems)
+        {
+          newPlaylist.Add(item);
+        }
+
+        savedActualItemIndex = actualItemIndex;
+        PlayList = newPlaylist;
+        actualItemIndex = 0;
+      }
+      else
+      {
+        PlayList = playlistCopy;
+        actualItemIndex = savedActualItemIndex;
+      }
+    }
+
+    #endregion
+
     #region PlayList
 
-    public RxObservableCollection<TItemViewModel> PlayList { get; } = new RxObservableCollection<TItemViewModel>();
+    private RxObservableCollection<TItemViewModel> playList = new RxObservableCollection<TItemViewModel>();
+
+    public RxObservableCollection<TItemViewModel> PlayList
+    {
+      get { return playList; }
+      set
+      {
+        if (value != playList)
+        {
+          playList = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
 
     #endregion
 
@@ -566,7 +637,7 @@ namespace VPlayer.Core.ViewModels
         x.EventArgs.IsInPlaylist = false;
       }).DisposeWith(this);
 
-      actualSearchSubject.Throttle(TimeSpan.FromMilliseconds(150)).Subscribe(FilterByActualSearch).DisposeWith(this);
+      actualSearchSubject.Throttle(TimeSpan.FromMilliseconds(250)).Subscribe(FilterByActualSearch).DisposeWith(this);
 
       HookToPubSubEvents();
     }
@@ -731,7 +802,6 @@ namespace VPlayer.Core.ViewModels
 
     public virtual async void SetItemAndPlay(int? songIndex = null, bool forcePlay = false, bool onlyItemSet = false)
     {
-
       if (IsShuffle && songIndex == null)
       {
         var result = PlayList.Where(p => shuffleList.All(p2 => p2 != p)).ToList();
@@ -1382,8 +1452,9 @@ namespace VPlayer.Core.ViewModels
     protected bool IsInFind(string original, string phrase, bool useContains = true)
     {
       bool result = false;
+      phrase = phrase?.ToLower();
 
-      if (original != null)
+      if (original != null && phrase != null)
       {
         var lowerVariant = original.ToLower();
 

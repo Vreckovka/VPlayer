@@ -46,8 +46,6 @@ using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 
 namespace VPlayer.WindowsPlayer.ViewModels
 {
-
-
   public class VideoSliderPopupDetailViewModel : FileItemSliderPopupDetailViewModel<VideoItem>
   {
     private readonly ILogger logger;
@@ -1212,7 +1210,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private bool ifFiltered = false;
     protected override void FilterByActualSearch(string predictate)
     {
-      if (!string.IsNullOrEmpty(predictate) && predictate.Length > 2)
+      if (!string.IsNullOrEmpty(predictate))
       {
         ifFiltered = true;
         var items = PlayList.Where(x =>
@@ -1220,7 +1218,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
           IsInFind(tvShowEpisodeInPlaylistViewModel.TvShow.Name, predictate) ||
           IsInFind(tvShowEpisodeInPlaylistViewModel.TvShowSeason.Name, predictate) ||
           ("season " + tvShowEpisodeInPlaylistViewModel.TvShowSeason.SeasonNumber == predictate) ||
-          "episode " + tvShowEpisodeInPlaylistViewModel.TvShowEpisode.EpisodeNumber == predictate)));
+          "episode " + tvShowEpisodeInPlaylistViewModel.TvShowEpisode.EpisodeNumber == predictate) || 
+          IsInFind(x.Model.Source, predictate)));
 
         var generator = new ItemsGenerator<VideoItemInPlaylistViewModel>(items, 15);
 

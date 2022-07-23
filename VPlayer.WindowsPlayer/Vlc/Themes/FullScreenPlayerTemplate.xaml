@@ -59,20 +59,6 @@
                                        Foreground="{StaticResource 120_WhiteTransparentBrush}"
                                        Text="{Binding ActualItem.ActualTime, StringFormat=hh\\:mm\\:ss}" />
 
-
-                            <!--<Slider Grid.Row="0"
-                                    Grid.Column="0"
-                                    Grid.ColumnSpan="3"
-                                    Padding="0"
-                                    DataContext="{Binding ActualViewModel}"
-                                    IsMoveToPointEnabled="True"
-                                    Maximum="1"
-                                    Value="{Binding ActualItem.ActualPosition}">
-                                <b:Interaction.Behaviors>
-                                    <behaviors:SliderValueChangedManualy Duration="{Binding ActualItem.Duration}" />
-                                </b:Interaction.Behaviors>
-                            </Slider>-->
-
                             <Grid x:Name="slider_container"
                                   Grid.Row="0"
                                   Grid.Column="0"
@@ -161,6 +147,7 @@
                                        Foreground="{StaticResource 120_WhiteTransparentBrush}"
                                        Text="{Binding ActualItem.Duration, Converter={converters1:TimeConverter TimeType=Second}}" />
 
+
                             <Grid Grid.Row="2"
                                   Grid.Column="2"
                                   Margin="5,0,0,0"
@@ -169,6 +156,7 @@
                                     <ColumnDefinition Width="auto" />
                                     <ColumnDefinition Width="auto" />
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="auto" />
                                 </Grid.ColumnDefinitions>
 
                                 <Grid Grid.Column="0"
@@ -381,8 +369,7 @@
                                             Margin="-10,0,5,15"
                                             VerticalAlignment="Center"
                                             DataContext="{Binding ActualViewModel}"
-                                            Orientation="Horizontal"
-                                            ToolTip="{Binding ActualViewModel}">
+                                            Orientation="Horizontal">
                                     <controls:PathButton Margin="0,0"
                                                          Command="{Binding ReloadFile}"
                                                          IconWidth="20"
@@ -398,6 +385,9 @@
                                                          IsReadOnly="False"
                                                          PathStyle="{StaticResource star}"
                                                          ToolTip="Is favorite" />
+
+
+
                                 </StackPanel>
 
                                 <Grid Grid.Column="2"
@@ -497,7 +487,23 @@
 
 
                                     </Grid>
+
+
+
                                 </Grid>
+
+                                <controls:PathButton Grid.Column="3"
+                                                     HorizontalAlignment="Right"
+                                                     VerticalAlignment="Bottom"
+                                                     Command="{Binding DeleteFile}"
+                                                     DataContext="{Binding ActualViewModel.ActualItem}"
+                                                     Glyph="{StaticResource trash-can-glyph}"
+                                                     IconDefaultColor="#20ffffff"
+                                                     IconHoverColor="{StaticResource DefaultRedColor}"
+                                                     IconMargin="20 0 0 0"
+                                                     IsReadOnly="True"
+                                                     Style="{StaticResource FontAwesomeGlyphStyle}"
+                                                     ToolTip="[WARNING] DELETE FILE" />
                             </Grid>
 
                             <Grid Grid.Row="2"
@@ -595,8 +601,6 @@
                                                          IsEnabled="{Binding CanPlay}"
                                                          RenderTransformOrigin="0.5,0.5" />
                             </Grid>
-
-
                         </Grid>
 
 

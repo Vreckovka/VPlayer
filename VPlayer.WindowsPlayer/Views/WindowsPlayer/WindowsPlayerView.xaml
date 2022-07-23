@@ -429,7 +429,7 @@
                                         <Style.Triggers>
                                             <MultiDataTrigger>
                                                 <MultiDataTrigger.Conditions>
-                                                    <Condition Binding="{Binding WasAllSongProcessed}" Value="true" />
+                                                    <Condition Binding="{Binding WasAllItemsProcessed}" Value="true" />
                                                     <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Mode=Self}}" Value="false" />
                                                 </MultiDataTrigger.Conditions>
 
@@ -634,39 +634,78 @@
                                                          IsReadOnly="False"
                                                          PathStyle="{StaticResource star-solid}"
                                                          ToolTip="Is favorite" />
+
+                                    <controls:PathButton Command="{Binding ElementName=AutoscrollBehavrior_Playlist, Path=AutoscrollCommand}"
+                                                         Glyph="{StaticResource ballot-check-glyph}"
+                                                         IsReadOnly="True"
+                                                         Style="{StaticResource FontAwesomeGlyphStyle}"
+                                                         ToolTip="Scroll to acutal item" />
                                 </StackPanel>
 
-                                <Border Grid.Row="1"
-                                        Grid.Column="1"
-                                        Margin="0,5"
-                                        Padding="15,5"
-                                        HorizontalAlignment="Right"
-                                        Background="#15ffffff"
-                                        BorderBrush="#20ffffff"
-                                        BorderThickness="1"
-                                        CornerRadius="5">
-                                    <UniformGrid VerticalAlignment="Top" Rows="1">
-                                        <controls:PathButton Margin="2,0,2,0"
-                                                             IconCheckedColor="{StaticResource YellowColor}"
-                                                             IconDefaultColor="#55cccccc"
-                                                             IconHoverColor="#ccffffff"
-                                                             IsChecked="{Binding IsRepeate, Mode=TwoWay}"
-                                                             IsReadOnly="False"
-                                                             PathStyle="{StaticResource Repeate}"
-                                                             ToolTip="Repeate" />
+                                <Grid Grid.Row="1"
+                                      Grid.Column="0"
+                                      Grid.ColumnSpan="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
 
-                                        <controls:PathButton Width="20"
-                                                             Margin="2,0,1,0"
-                                                             IconCheckedColor="{StaticResource BrownColor2}"
-                                                             IconDefaultColor="#55cccccc"
-                                                             IconHoverColor="#ccffffff"
-                                                             IsChecked="{Binding IsShuffle, Mode=TwoWay}"
-                                                             IsReadOnly="False"
-                                                             PathStyle="{StaticResource Shuffle}"
-                                                             ToolTip="Shuffle" />
-                                    </UniformGrid>
-                                </Border>
+                                    <controls:Finder Grid.Column="0"
+                                                     Margin="0,0,10,0"
+                                                     FontSize="14"
+                                                     Text="{Binding ActualSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
+                                    <controls:PathButton Grid.Column="1"
+                                                         Margin="0,0,10,0"
+                                                         Glyph="{StaticResource thumbtack-glyph}"
+                                                         IconMargin="0"
+                                                         IsChecked="{Binding PlaylistFromSearch}"
+                                                         IsReadOnly="False"
+                                                         ToolTip="Pin search">
+                                        <controls:PathButton.Style>
+                                            <Style BasedOn="{StaticResource FontAwesomeGlyphStyle}" TargetType="controls:PathButton">
+                                                <Setter Property="IsEnabled" Value="True" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding ActualSearch, Converter={converters:IsStringNullOrEmptyConverter}}" Value="true">
+                                                        <Setter Property="IsEnabled" Value="False" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </controls:PathButton.Style>
+                                    </controls:PathButton>
+
+                                    <Border Grid.Column="2"
+                                            Margin="0,5"
+                                            Padding="15,5"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Background="#15ffffff"
+                                            BorderBrush="#20ffffff"
+                                            BorderThickness="1"
+                                            CornerRadius="5">
+                                        <UniformGrid VerticalAlignment="Top" Rows="1">
+                                            <controls:PathButton Margin="2,0,2,0"
+                                                                 IconCheckedColor="{StaticResource YellowColor}"
+                                                                 IconDefaultColor="#55cccccc"
+                                                                 IconHoverColor="#ccffffff"
+                                                                 IsChecked="{Binding IsRepeate, Mode=TwoWay}"
+                                                                 IsReadOnly="False"
+                                                                 PathStyle="{StaticResource Repeate}"
+                                                                 ToolTip="Repeate" />
+
+                                            <controls:PathButton Width="20"
+                                                                 Margin="2,0,1,0"
+                                                                 IconCheckedColor="{StaticResource BrownColor2}"
+                                                                 IconDefaultColor="#55cccccc"
+                                                                 IconHoverColor="#ccffffff"
+                                                                 IsChecked="{Binding IsShuffle, Mode=TwoWay}"
+                                                                 IsReadOnly="False"
+                                                                 PathStyle="{StaticResource Shuffle}"
+                                                                 ToolTip="Shuffle" />
+                                        </UniformGrid>
+                                    </Border>
+                                </Grid>
 
 
                                 <ContentControl Grid.Column="1"
@@ -674,27 +713,10 @@
                                                 Content="{Binding}"
                                                 ContentTemplateSelector="{StaticResource PlayerTemplateSelector}" />
 
-                                <controls:Finder Grid.Row="1"
-                                                 Grid.Column="0"
-                                                 Height="40"
-                                                 FontSize="14"
-                                                 KeyDownCommand="{Binding FinderKeyDown}"
-                                                 Text="{Binding ActualSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
                             </Grid>
                         </Border>
-
-
-
-
-
-
                     </Grid>
-
-
-
                 </Grid>
-
             </Border>
 
 
@@ -708,7 +730,9 @@
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                       Style="{StaticResource WindowsPlayerSongs}">
                 <b:Interaction.Behaviors>
-                    <behaviors:AutoScrollBehavior Kernel="{Binding Kernel}" StepSize="50" />
+                    <behaviors:AutoScrollBehavior x:Name="AutoscrollBehavrior_Playlist"
+                                                  Kernel="{Binding Kernel}"
+                                                  StepSize="50" />
                     <behaviors1:FixListViewItemResizeBehavior ValueDecrease="25" />
                 </b:Interaction.Behaviors>
             </ListView>

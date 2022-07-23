@@ -15,6 +15,7 @@ using Ninject;
 using Prism.Events;
 using SoundManagement;
 using VCore;
+using VCore.ItemsCollections;
 using VCore.Standard;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Modularity.Interfaces;
@@ -217,6 +218,26 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region WasAllItemsProcessed
+
+    private bool wasAllItemsProcessed;
+
+    public virtual bool WasAllItemsProcessed
+    {
+      get { return wasAllItemsProcessed; }
+      set
+      {
+        if (value != wasAllItemsProcessed)
+        {
+          wasAllItemsProcessed = value;
+
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+    
     #endregion
 
     #region Commands

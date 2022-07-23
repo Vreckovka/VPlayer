@@ -27,7 +27,7 @@
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="1">
-                            <ScrollViewer x:Name="PART_ContentHost" Margin="0,0" />
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="0" />
                         </Border>
 
                         <TextBlock x:Name="TextBlock_BackGroundText"

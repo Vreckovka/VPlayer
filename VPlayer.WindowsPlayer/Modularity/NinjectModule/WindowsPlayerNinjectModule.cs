@@ -30,11 +30,11 @@ namespace VPlayer.WindowsPlayer.Modularity.NinjectModule
 
       var videoPlayerViewModel = Kernel.Get<VideoPlayerViewModel>();
       var musicPlayerViewModel = Kernel.Get<MusicPlayerViewModel>();
-      var tvPlayerViewModel = Kernel.Get<WindowsIPTVPlayer>();
+      //var tvPlayerViewModel = Kernel.Get<WindowsIPTVPlayer>();
 
       Kernel.Bind<IPlayableRegionViewModel>().ToConstant(videoPlayerViewModel);
       Kernel.Bind<IPlayableRegionViewModel>().ToConstant(musicPlayerViewModel);
-      Kernel.Bind<IPlayableRegionViewModel>().ToConstant(tvPlayerViewModel);
+      //Kernel.Bind<IPlayableRegionViewModel>().ToConstant(tvPlayerViewModel);
 
     }
 
