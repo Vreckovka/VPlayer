@@ -67,6 +67,26 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+
+    #region ExtraData
+
+    private object extraData;
+
+    public object ExtraData
+    {
+      get { return extraData; }
+      set
+      {
+        if (value != extraData)
+        {
+          extraData = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     protected virtual void OnActualPositionChanged(float value)
     {
     }

@@ -6,7 +6,7 @@ using VPlayer.AudioStorage.DomainClasses;
 
 namespace VPlayer.Core.Converters
 {
-  public class PlaylistNameConverter : MarkupExtension, IMultiValueConverter
+  public class PlaylistNameConverter : MarkupExtension, IValueConverter
   {
     private IPlaylist savedPlaylist;
     public override object ProvideValue(IServiceProvider serviceProvider)
@@ -14,9 +14,13 @@ namespace VPlayer.Core.Converters
       return this;
     }
 
-    public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(
+      object value,
+      Type targetType,
+      object parameter,
+      CultureInfo culture)
     {
-      if (values.Length >= 2 && values[1] is IPlaylist playlist)
+      if (value is IPlaylist playlist)
       {
         savedPlaylist = playlist;
 
@@ -33,7 +37,11 @@ namespace VPlayer.Core.Converters
       return null;
     }
 
-    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+    public object ConvertBack(
+      object value,
+      Type targetType,
+      object parameter,
+      CultureInfo culture)
     {
       if (!string.IsNullOrEmpty(value?.ToString()))
       {

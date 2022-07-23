@@ -59,8 +59,7 @@ using FileInfo = VCore.WPF.ViewModels.WindowsFiles;
 
 namespace VPlayer.WindowsPlayer.ViewModels
 {
-
-  public class MusicPlayerViewModel : FilePlayableRegionViewModel<WindowsPlayerView, SoundItemInPlaylistViewModel, SoundItemFilePlaylist, PlaylistSoundItem, SoundItem, FileItemSliderPopupDetailViewModel<SoundItem>>
+  public class MusicPlayerViewModel : FilePlayableRegionViewModel<WindowsPlayerView, SoundItemInPlaylistViewModel, SoundItemFilePlaylist, PlaylistSoundItem, SoundItem, SoundSliderPopupDetailViewModel>
   {
     #region Fields
 
@@ -2205,5 +2204,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
     #endregion
 
     #endregion
+  }
+
+  public class SoundSliderPopupDetailViewModel : FileItemSliderPopupDetailViewModel<SoundItem>
+  {
+    public SoundSliderPopupDetailViewModel(SoundItem model) : base(model)
+    {
+      Image = GetEmptyImage();
+    }
   }
 }

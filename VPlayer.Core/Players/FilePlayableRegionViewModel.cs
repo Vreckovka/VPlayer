@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -34,87 +37,6 @@ using VVLC.Players;
 
 namespace VPlayer.Core.ViewModels
 {
-  public interface ISliderPopupViewModel
-  {
-    double ActualSliderValue { get; set; }
-    double MaxValue { get; set; }
-  }
-
-  public class FileItemSliderPopupDetailViewModel<TModel> : ViewModel<TModel>, ISliderPopupViewModel
-    where TModel : IFilePlayableModel
-  {
-    public FileItemSliderPopupDetailViewModel(TModel model) : base(model)
-    {
-      TotalTime = TimeSpan.FromSeconds(model.Duration);
-    }
-
-    #region ActualTime
-
-    public TimeSpan ActualTime
-    {
-      get
-      {
-        if (MaxValue > 0)
-          return TimeSpan.FromMilliseconds(TotalTime.TotalMilliseconds * ActualSliderValue / MaxValue);
-
-        return TimeSpan.Zero;
-      }
-
-    }
-
-    #endregion
-
-    #region TotalTime
-
-    public TimeSpan TotalTime { get; }
-
-    #endregion
-
-    #region ActualSliderValue
-
-    private double actualSliderValue;
-
-    public double ActualSliderValue
-    {
-      get { return actualSliderValue; }
-      set
-      {
-        if (value != actualSliderValue)
-        {
-          actualSliderValue = value;
-          RaisePropertyChanged();
-          Refresh();
-        }
-      }
-    }
-    #endregion
-
-    #region MaxValue
-
-    private double maxValue = 1;
-
-    public double MaxValue
-    {
-      get { return maxValue; }
-      set
-      {
-        if (value != maxValue)
-        {
-          maxValue = value;
-          RaisePropertyChanged();
-          Refresh();
-        }
-      }
-    }
-
-    #endregion
-
-    protected virtual void Refresh()
-    {
-      RaisePropertyChanged(nameof(ActualTime));
-    }
-  }
-
   public abstract class FilePlayableRegionViewModel<TView, TItemViewModel, TPlaylistModel, TPlaylistItemModel, TModel, TPopupViewModel> :
     PlayableRegionViewModel<TView, TItemViewModel, TPlaylistModel, TPlaylistItemModel, TModel>, IFilePlayableRegionViewModel
     where TView : class, IView
@@ -697,5 +619,120 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+  }
+
+  public interface ISliderPopupViewModel
+  {
+    double ActualSliderValue { get; set; }
+    double MaxValue { get; set; }
+  }
+
+  public class FileItemSliderPopupDetailViewModel<TModel> : ViewModel<TModel>, ISliderPopupViewModel
+    where TModel : IFilePlayableModel
+  {
+    public FileItemSliderPopupDetailViewModel(TModel model) : base(model)
+    {
+      TotalTime = TimeSpan.FromSeconds(model.Duration);
+    }
+
+
+    #region Image
+
+    private byte[] image;
+
+    public byte[] Image
+    {
+      get { return image; }
+      set
+      {
+        if (value != image)
+        {
+          image = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region ActualTime
+
+    public TimeSpan ActualTime
+    {
+      get
+      {
+        if (MaxValue > 0)
+          return TimeSpan.FromMilliseconds(TotalTime.TotalMilliseconds * ActualSliderValue / MaxValue);
+
+        return TimeSpan.Zero;
+      }
+
+    }
+
+    #endregion
+
+    #region TotalTime
+
+    public TimeSpan TotalTime { get; }
+
+    #endregion
+
+    #region ActualSliderValue
+
+    private double actualSliderValue;
+
+    public double ActualSliderValue
+    {
+      get { return actualSliderValue; }
+      set
+      {
+        if (value != actualSliderValue)
+        {
+          actualSliderValue = value;
+          RaisePropertyChanged();
+          Refresh();
+        }
+      }
+    }
+    #endregion
+
+    #region MaxValue
+
+    private double maxValue = 1;
+
+    public double MaxValue
+    {
+      get { return maxValue; }
+      set
+      {
+        if (value != maxValue)
+        {
+          maxValue = value;
+          RaisePropertyChanged();
+          Refresh();
+        }
+      }
+    }
+
+    #endregion
+
+
+    protected virtual void Refresh()
+    {
+      RaisePropertyChanged(nameof(ActualTime));
+    }
+
+    #region GetEmptyImage
+
+    protected byte[] GetEmptyImage()
+    {
+      var stream = new MemoryStream();
+      var emptyImage = new Bitmap(10, 10, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+      emptyImage.Save(stream, ImageFormat.Jpeg);
+
+      return stream.ToArray();
+    }
+
+    #endregion
   }
 }

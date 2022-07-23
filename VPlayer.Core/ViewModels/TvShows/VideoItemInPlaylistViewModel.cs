@@ -163,6 +163,8 @@ namespace VPlayer.Core.ViewModels.TvShows
         if (value != cSFDItem)
         {
           cSFDItem = value;
+          ExtraData = value;
+
           RaisePropertyChanged();
           RaiseNotifyPropertyChanged(nameof(ImagePath));
         }

@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using ChromeDriverScrapper;
 using Emgu.CV;
 using Listener;
@@ -41,6 +42,7 @@ namespace VPlayer
 {
   public class VPlayerApplication : VApplication<MainWindow, MainWindowViewModel, VPlayerSplashScreen>
   {
+
     protected override void ShowConsole()
     {
       //IsConsoleVisible = true;

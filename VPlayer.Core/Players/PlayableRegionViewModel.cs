@@ -259,6 +259,7 @@ namespace VPlayer.Core.ViewModels
       {
         PlayList = playlistCopy;
         actualItemIndex = savedActualItemIndex;
+        playlistCopy = new RxObservableCollection<TItemViewModel>();
       }
     }
 
@@ -629,12 +630,15 @@ namespace VPlayer.Core.ViewModels
       PlayList.ItemAdded.ObserveOnDispatcher().Subscribe((x) =>
       {
         x.EventArgs.IsInPlaylist = true;
-
       }).DisposeWith(this);
 
       PlayList.ItemRemoved.ObserveOnDispatcher().Subscribe((x) =>
       {
         x.EventArgs.IsInPlaylist = false;
+
+        if (PlaylistFromSearch)
+          playlistCopy?.Remove(x.EventArgs);
+
       }).DisposeWith(this);
 
       actualSearchSubject.Throttle(TimeSpan.FromMilliseconds(250)).Subscribe(FilterByActualSearch).DisposeWith(this);
@@ -1204,6 +1208,8 @@ namespace VPlayer.Core.ViewModels
 
     protected async void PlayItemsFromEvent(PlayItemsEventData<TItemViewModel> data)
     {
+      ActualSearch = "";
+
       if (!data.Items.Any())
         return;
 
@@ -1438,7 +1444,7 @@ namespace VPlayer.Core.ViewModels
             }
           }
 
-          return result; 
+          return result;
         }
       });
     }

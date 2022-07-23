@@ -56,9 +56,17 @@
 
                                 <Grid Margin="0,0,5,0" HorizontalAlignment="Left">
                                     <Grid>
-                                        <Image Width="{StaticResource ListView_MenuStyle_IconSize}"
-                                               Height="{StaticResource ListView_MenuStyle_IconSize}"
-                                               Source="{Binding ImagePath}" />
+                                        <Image Width="{StaticResource ListView_MenuStyle_IconSize}" Height="{StaticResource ListView_MenuStyle_IconSize}">
+                                            <Image.Style>
+                                                <Style TargetType="Image">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ImagePath, Converter={converters:IsStringNullOrEmptyConverter}}" Value="false">
+                                                            <Setter Property="Source" Value="{Binding ImagePath}" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Image.Style>
+                                        </Image>
 
                                         <Rectangle x:Name="ImageOpacityMask"
                                                    Width="{StaticResource ListView_MenuStyle_IconSize}"
@@ -66,15 +74,26 @@
                                             <Rectangle.Fill>
                                                 <SolidColorBrush Color="{StaticResource SecondaryForegroundColor}" />
                                             </Rectangle.Fill>
-                                            <Rectangle.OpacityMask>
-                                                <ImageBrush ImageSource="{Binding ImagePath}" />
-                                            </Rectangle.OpacityMask>
+                                            <Rectangle.Style>
+                                                <Style TargetType="Rectangle">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ImagePath, Converter={converters:IsStringNullOrEmptyConverter}}" Value="false">
+                                                            <!--  > TOTO AK JE OBRAZOK TREBA POZRIET - BIDING ERROR TO DAVA  -->
+                                                            <!--<Setter Property="OpacityMask">
+                                                                <Setter.Value>
+                                                                    <ImageBrush ImageSource="{Binding ImagePath}" />
+                                                                </Setter.Value>
+                                                            </Setter>-->
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Rectangle.Style>
                                         </Rectangle>
 
                                         <Grid.Style>
                                             <Style TargetType="Grid">
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding ImagePath}" Value="{x:Null}">
+                                                    <DataTrigger Binding="{Binding ImagePath, Converter={converters:IsStringNullOrEmptyConverter}}" Value="true">
                                                         <Setter Property="Visibility" Value="Collapsed" />
                                                     </DataTrigger>
                                                 </Style.Triggers>

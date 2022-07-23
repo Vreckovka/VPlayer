@@ -83,7 +83,7 @@
                                         <Setter Property="Visibility" Value="Visible" />
 
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding CSFDItem}" Value="{x:Null}">
+                                            <DataTrigger Binding="{Binding ExtraData}" Value="{x:Null}">
                                                 <Setter Property="IconHoverColor" Value="#757575" />
                                                 <Setter Property="IconDefaultColor" Value="#656565" />
                                             </DataTrigger>

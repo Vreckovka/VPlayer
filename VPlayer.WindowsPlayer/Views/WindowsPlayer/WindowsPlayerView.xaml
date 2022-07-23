@@ -320,22 +320,10 @@
                                          MinWidth="0"
                                          Margin="0,0,0,0"
                                          Padding="0"
-                                         HorizontalAlignment="Left"
+                                         HorizontalAlignment="Stretch"
                                          VerticalAlignment="Center"
-                                         Cursor="IBeam">
-                                    <TextBox.Text>
-                                        <MultiBinding Converter="{converters3:PlaylistNameConverter}">
-                                            <Binding Mode="TwoWay"
-                                                     Path="Name"
-                                                     UpdateSourceTrigger="PropertyChanged" />
-
-                                            <Binding Mode="OneWay"
-                                                     Path="DataContext.ActualSavedPlaylist"
-                                                     RelativeSource="{RelativeSource AncestorType=Border,
-                                                                                     Mode=FindAncestor}" />
-                                        </MultiBinding>
-                                    </TextBox.Text>
-
+                                         Cursor="IBeam"
+                                         Text="{Binding ActualSavedPlaylist, Converter={converters3:PlaylistNameConverter}}">
                                     <TextBox.Style>
                                         <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
                                             <Setter Property="Foreground" Value="#bbffffff" />
@@ -467,7 +455,7 @@
 
                                                                     <MultiDataTrigger>
                                                                         <MultiDataTrigger.Conditions>
-                                                                            <Condition Binding="{Binding WasAllSongProcessed}" Value="true" />
+                                                                            <Condition Binding="{Binding WasAllItemsProcessed}" Value="true" />
                                                                             <Condition Binding="{Binding Path=IsEnabled, ElementName=PathButton_AddArtists}" Value="false" />
                                                                         </MultiDataTrigger.Conditions>
 
@@ -510,7 +498,7 @@
 
                                                                     <MultiDataTrigger>
                                                                         <MultiDataTrigger.Conditions>
-                                                                            <Condition Binding="{Binding WasAllSongProcessed}" Value="true" />
+                                                                            <Condition Binding="{Binding WasAllItemsProcessed}" Value="true" />
                                                                             <Condition Binding="{Binding Path=IsEnabled, ElementName=PathButton_AddAlbums}" Value="false" />
                                                                         </MultiDataTrigger.Conditions>
 
@@ -637,6 +625,8 @@
 
                                     <controls:PathButton Command="{Binding ElementName=AutoscrollBehavrior_Playlist, Path=AutoscrollCommand}"
                                                          Glyph="{StaticResource ballot-check-glyph}"
+                                                         IconDefaultColor="#353535"
+                                                         IconHoverColor="#959595"
                                                          IsReadOnly="True"
                                                          Style="{StaticResource FontAwesomeGlyphStyle}"
                                                          ToolTip="Scroll to acutal item" />

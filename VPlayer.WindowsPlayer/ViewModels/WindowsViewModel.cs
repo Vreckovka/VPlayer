@@ -160,7 +160,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       base.OnActivation(firstActivation);
 
-      if(firstActivation)
+      if(firstActivation && NavigationViewModel.Items.Count > 0)
       {
         NavigationViewModel.Items[0].IsActive = true;
       }

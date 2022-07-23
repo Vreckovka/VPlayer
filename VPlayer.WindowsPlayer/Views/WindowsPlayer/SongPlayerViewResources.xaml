@@ -992,15 +992,14 @@
                                          IconPathStyle="{StaticResource NextInCircle}"
                                          IconWidth="30" />
             </Grid>
-
         </Grid>
-
     </DataTemplate>
 
     <DataTemplate x:Key="TextLyricsIconDataTemplate">
         <controls:ButtonWithIcon Margin="1,0,0,0"
                                  Padding="0"
                                  HorizontalAlignment="Left"
+                                 DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=ListViewItem, Mode=FindAncestor}}"
                                  IconHeight="11"
                                  IconPathStyle="{StaticResource TextLyrics}"
                                  IconWidth="11"
@@ -1102,10 +1101,7 @@
                             <Setter Property="IconHoverColor" Value="#42382c" />
                             <Setter Property="IconDefaultColor" Value="#404040" />
                         </DataTrigger>
-
-
                     </Style.Triggers>
-
                 </Style>
             </controls:ButtonWithIcon.Style>
         </controls:ButtonWithIcon>
@@ -1377,15 +1373,8 @@
                             </controls:PathButton>
 
                             <Grid Grid.Column="1" HorizontalAlignment="Left">
-
-
                                 <ContentPresenter Content="{Binding LyricsObject}" ContentTemplateSelector="{StaticResource LyricsIconTypeTemplateSelector}" />
-
-
-
                             </Grid>
-
-
                         </Grid>
 
                         <controls:ButtonWithIcon Grid.Column="1"
