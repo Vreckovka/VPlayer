@@ -1432,7 +1432,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
         finally
         {
-          Application.Current.Dispatcher.Invoke(() =>
+          Application.Current?.Dispatcher.Invoke(() =>
           {
             viewmodel.IsDownloading = false;
           });

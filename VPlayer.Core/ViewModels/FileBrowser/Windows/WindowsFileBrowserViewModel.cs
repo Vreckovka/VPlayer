@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.VisualBasic.FileIO;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Providers;
+using VCore.Standard.ViewModels.TreeView;
 using VCore.WPF.Interfaces.Managers;
+using VCore.WPF.ItemsCollections.VirtualList;
+using VCore.WPF.ItemsCollections.VirtualList.VirtualLists;
 using VCore.WPF.Managers;
 using VCore.WPF.Modularity.RegionProviders;
 using VCore.WPF.ViewModels.WindowsFiles;
@@ -49,7 +52,7 @@ namespace VPlayer.Home.ViewModels.FileBrowser
     }
 
 
-    protected  override async void OnDeleteItem(string indentificator)
+    protected override async void OnDeleteItem(string indentificator)
     {
       foreach (var player in allPlayers.OrderByDescending(x => x.IsSelectedToPlay))
       {
@@ -85,34 +88,37 @@ namespace VPlayer.Home.ViewModels.FileBrowser
       }
 
       var pathNames = indentificator.Split("\\");
-      var tmpItem = Items.First();
 
-      int? indexParent = null;
+      var allItems = Items.ToList();
+      allItems.Add(RootFolder);
+
+      TreeViewItemViewModel tmpItem = null;
 
       for (int i = 0; i < pathNames.Length; i++)
       {
         if (tmpItem == null)
-          return;
+          tmpItem = allItems.OfType<PlayableWindowsFileFolderViewModel>().SingleOrDefault(x => x.Name == pathNames[i]);
 
-        if (tmpItem.Name == pathNames[i] && indexParent == null)
+        if (tmpItem != null)
         {
-          indexParent = i;
-        }
-        else if (indexParent != null)
-        {
-          if (i > indexParent)
+          var tmpTmpItem = tmpItem.SubItems.ViewModels.SingleOrDefault(x => x.Name == pathNames[i]);
+
+          if (tmpTmpItem is PlayableFileViewModel fileViewModel)
           {
-            var tmpTmpItem = tmpItem.SubItems.ViewModels.SingleOrDefault(x => x.Name == pathNames[i]);
+            tmpItem.SubItems.Remove(fileViewModel);
 
-            if (tmpTmpItem is PlayableFileViewModel fileViewModel)
+            if (tmpItem == RootFolder)
             {
-              tmpItem.SubItems.Remove(fileViewModel);
-              return;
+              var generator = new ItemsGenerator<TreeViewItemViewModel>(RootFolder.SubItems.ViewModels.Select(x => x), 30);
+
+              Items = new VirtualList<TreeViewItemViewModel>(generator);
             }
-            else
-            {
-              tmpItem = tmpTmpItem;
-            }
+
+            return;
+          }
+          else if(tmpTmpItem != null)
+          {
+            tmpItem = tmpTmpItem;
           }
         }
       }
@@ -122,6 +128,13 @@ namespace VPlayer.Home.ViewModels.FileBrowser
         if (deletedFolder.ParentFolder != null)
         {
           deletedFolder.ParentFolder.SubItems.Remove(deletedFolder);
+
+          if (deletedFolder.ParentFolder == RootFolder)
+          {
+            var generator = new ItemsGenerator<TreeViewItemViewModel>(RootFolder.SubItems.ViewModels.Select(x => x), 30);
+
+            Items = new VirtualList<TreeViewItemViewModel>(generator);
+          }
         }
       }
     }

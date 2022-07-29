@@ -79,11 +79,11 @@
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding ImagePath, Converter={converters:IsStringNullOrEmptyConverter}}" Value="false">
                                                             <!--  > TOTO AK JE OBRAZOK TREBA POZRIET - BIDING ERROR TO DAVA  -->
-                                                            <!--<Setter Property="OpacityMask">
+                                                            <Setter Property="OpacityMask">
                                                                 <Setter.Value>
                                                                     <ImageBrush ImageSource="{Binding ImagePath}" />
                                                                 </Setter.Value>
-                                                            </Setter>-->
+                                                            </Setter>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>

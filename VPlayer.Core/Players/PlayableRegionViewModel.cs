@@ -23,6 +23,7 @@ using VCore.ItemsCollections;
 using VCore.Standard.Helpers;
 using VCore.Standard.Modularity.Interfaces;
 using LibVLCSharp.Shared;
+using SoundManagement;
 using VCore.Standard.ViewModels.TreeView;
 using VCore.WPF.Behaviors;
 using VCore.WPF.Helpers;
@@ -1680,9 +1681,16 @@ namespace VPlayer.Core.ViewModels
 
     public void SetVolumeAndRaiseNotification(int pVolume)
     {
-      SetVolumeWihtoutNotification(pVolume);
+      if (pVolume > 100 && AudioDeviceManager.Instance.ActualVolume < 100)
+      {
+        AudioDeviceManager.Instance.ActualVolume = AudioDeviceManager.Instance.ActualVolume + 2;
+      }
+      else
+      {
+        SetVolumeWihtoutNotification(pVolume);
 
-      volumeSubject.OnNext(pVolume);
+        volumeSubject.OnNext(pVolume);
+      }
     }
 
     #endregion

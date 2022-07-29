@@ -365,12 +365,14 @@
                                     </Popup>
                                 </Grid>
 
-                                <StackPanel Grid.Column="1"
-                                            Margin="-10,0,5,15"
-                                            VerticalAlignment="Center"
-                                            DataContext="{Binding ActualViewModel}"
-                                            Orientation="Horizontal">
-                                    <controls:PathButton Margin="0,0"
+                                <UniformGrid Grid.Column="1"
+                                             Width="80"
+                                             Margin="5,0,25,5"
+                                             VerticalAlignment="Center"
+                                             Columns="2"
+                                             DataContext="{Binding ActualViewModel}">
+                                    <controls:PathButton Width="20"
+                                                         Margin="0,0,18,8"
                                                          Command="{Binding ReloadFile}"
                                                          IconWidth="20"
                                                          IsReadOnly="True"
@@ -378,7 +380,8 @@
                                                          ToolTip="Reload file" />
 
 
-                                    <controls:PathButton Margin="5,0"
+                                    <controls:PathButton Width="20"
+                                                         Margin="0,0,0,8"
                                                          Command="{Binding ChangePlaylistFavorite}"
                                                          IconWidth="20"
                                                          IsChecked="{Binding ActualItem.IsFavorite, Mode=TwoWay}"
@@ -387,8 +390,43 @@
                                                          ToolTip="Is favorite" />
 
 
+                                    <Border Width="40"
+                                            Margin="-10 0 10 0"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Background="#15ffffff"
+                                            BorderBrush="#20ffffff"
+                                            BorderThickness="1"
+                                            CornerRadius="5">
+                                        <controls:PathButton Width="20"
+                                                             Background="#15000000"
+                                                             IconCheckedColor="{StaticResource YellowColor}"
+                                                             IconDefaultColor="#55cccccc"
+                                                             IconHoverColor="#ccffffff"
+                                                             IsChecked="{Binding IsRepeate, Mode=TwoWay}"
+                                                             IsReadOnly="False"
+                                                             PathStyle="{StaticResource Repeate}"
+                                                             ToolTip="Repeate" />
+                                    </Border>
 
-                                </StackPanel>
+
+                                    <Border Width="40"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Background="#15ffffff"
+                                            BorderBrush="#20ffffff"
+                                            BorderThickness="1"
+                                            CornerRadius="5">
+                                        <controls:PathButton Width="20"
+                                                             IconCheckedColor="{StaticResource BrownColor2}"
+                                                             IconDefaultColor="#55cccccc"
+                                                             IconHoverColor="#ccffffff"
+                                                             IsChecked="{Binding IsShuffle, Mode=TwoWay}"
+                                                             IsReadOnly="False"
+                                                             PathStyle="{StaticResource Shuffle}"
+                                                             ToolTip="Shuffle" />
+                                    </Border>
+                                </UniformGrid>
 
                                 <Grid Grid.Column="2"
                                       Width="150"

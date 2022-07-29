@@ -515,7 +515,7 @@ namespace VPlayer.Core.ViewModels
 
     #region DeleteItem
 
-    private void DeleteItem(string path)
+    private async void DeleteItem(string path)
     {
       var result = windowManager.ShowDeletePrompt(path);
 
@@ -549,7 +549,7 @@ namespace VPlayer.Core.ViewModels
 
         using (var context = new AudioStorage.AudioDatabase.AudioDatabaseContext())
         {
-          var existing = storageManager.GetRepository<ItemBookmark>(context).SingleOrDefault(x => x.Identificator == bookmark.Identificator);
+          var existing = storageManager.GetRepository<ItemBookmark>(context).FirstOrDefault(x => x.Identificator == bookmark.Identificator);
 
           if (existing == null)
           {
@@ -566,7 +566,7 @@ namespace VPlayer.Core.ViewModels
           {
             if (existing != null)
             {
-              var bookmarkExisting = Bookmarks.Single(x => x.Model.Indentificator == existing.Identificator);
+              var bookmarkExisting = Bookmarks.First(x => x.Model.Indentificator == existing.Identificator);
               bookmarkExisting.IsBookmarked = false;
 
               Bookmarks.Remove(bookmarkExisting);

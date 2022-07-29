@@ -14,6 +14,7 @@ using VPlayer.AudioStorage.DomainClasses.FolderStructure;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.DomainClasses.UPnP;
 using VPlayer.AudioStorage.DomainClasses.Video;
+using VPlayer.AudioStorage.Scrappers.CSFD.Domain;
 using VPlayer.IPTV.ViewModels;
 
 namespace VPlayer.AudioStorage.AudioDatabase
@@ -28,9 +29,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
     //STACI IBA add-migration MIGRATIONNAME 
 
     #region Properties
-
-
-   
 
     public DbSet<VideoItem> VideoItems { get; set; }
     public DbSet<SoundItem> SoundItems { get; set; }
@@ -68,6 +66,11 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
 
     public DbSet<ItemBookmark> Bookmarks { get; set; }
+
+
+
+    //public DbSet<CSFDItem> CSFDItems { get; set; }
+    //public DbSet<CSFDTVShowSeasonEpisodeEntity> CSFDTVShowSeasonEpisodes { get; set; }
 
     #endregion Properties
 
