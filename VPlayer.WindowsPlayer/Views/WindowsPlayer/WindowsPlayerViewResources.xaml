@@ -220,7 +220,6 @@
                                   Grid.Column="2"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch"
-                                  Background="Transparent"
                                   ClipToBounds="True">
                                 <Grid.Resources>
                                     <Style x:Key="ListViewTextBlockStyle" TargetType="TextBlock">
@@ -253,6 +252,7 @@
                                     <b:Interaction.Behaviors>
                                         <text:PanningTextWithFontSizeBehavior BiggerFontSize="21"
                                                                               Container="{Binding ElementName=Bd}"
+                                                                              ContainerSize="{Binding ElementName=Container, Path=ActualWidth}"
                                                                               IgnoreSizeAnimation="{Binding IsPlaying}"
                                                                               IsMouseOverRelativeToContainer="True" />
                                     </b:Interaction.Behaviors>
@@ -276,7 +276,8 @@
                                     </TextBlock.Style>
                                     <b:Interaction.Behaviors>
                                         <text:PanningTextWithFontSizeBehavior BiggerFontSize="21"
-                                                                              Container="{Binding ElementName=Container}"
+                                                                              Container="{Binding ElementName=Bd}"
+                                                                              ContainerSize="{Binding ElementName=Container, Path=ActualWidth}"
                                                                               IgnoreSizeAnimation="{Binding IsPlaying}"
                                                                               IsMouseOverRelativeToContainer="True" />
                                     </b:Interaction.Behaviors>
