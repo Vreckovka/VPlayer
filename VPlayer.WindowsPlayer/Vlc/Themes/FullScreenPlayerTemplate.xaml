@@ -34,8 +34,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Bottom"
                             Background="#f0252525"
-                            CornerRadius="0 0 0 0"
-                            Visibility="Visible">
+                            CornerRadius="0 0 0 0">
                         <Grid Grid.IsSharedSizeScope="True">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto" />
