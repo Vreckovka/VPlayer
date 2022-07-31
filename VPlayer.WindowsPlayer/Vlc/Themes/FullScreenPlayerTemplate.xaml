@@ -644,9 +644,9 @@
                         </Grid>
 
 
-                        <!--<b:Interaction.Behaviors>
+                        <b:Interaction.Behaviors>
                             <behaviors:ShowHideMouseBehavior />
-                        </b:Interaction.Behaviors>-->
+                        </b:Interaction.Behaviors>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
