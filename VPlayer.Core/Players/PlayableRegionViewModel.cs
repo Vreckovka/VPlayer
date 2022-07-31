@@ -23,6 +23,7 @@ using VCore.ItemsCollections;
 using VCore.Standard.Helpers;
 using VCore.Standard.Modularity.Interfaces;
 using LibVLCSharp.Shared;
+using Microsoft.VisualBasic.FileIO;
 using SoundManagement;
 using VCore.Standard.ViewModels.TreeView;
 using VCore.WPF.Behaviors;
@@ -1577,7 +1578,7 @@ namespace VPlayer.Core.ViewModels
 
                   try
                   {
-                    File.Delete(item.Model.Source);
+                    FileSystem.DeleteFile(item.Model.Source, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
                   }
                   catch (Exception ex)
                   {

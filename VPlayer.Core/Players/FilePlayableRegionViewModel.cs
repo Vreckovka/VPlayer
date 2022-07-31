@@ -467,6 +467,12 @@ namespace VPlayer.Core.ViewModels
             reloadPosition = null;
           }
 
+          if (DetailViewModel?.Model != null && MediaPlayer?.Media != null)
+          {
+            DetailViewModel.Model.Duration = ((int)MediaPlayer.Media.Duration) / 1000;
+            DetailViewModel.TotalTime = TimeSpan.FromSeconds(DetailViewModel.Model.Duration);
+          }
+
           RaisePropertyChanged(nameof(TotalPlaylistDuration));
         }
 

@@ -106,7 +106,7 @@ namespace VPlayer.WindowsPlayer.Behaviors
 
     private void AssociatedObject_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
-      if (Slider.DataContext is IFilePlayableRegionViewModel playableRegionViewModel)
+      if (Slider.DataContext is IFilePlayableRegionViewModel playableRegionViewModel && ViewModel != null)
       {
         playableRegionViewModel.SetMediaPosition((float)ViewModel.ActualSliderValue);
       }

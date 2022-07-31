@@ -753,15 +753,18 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private SemaphoreSlim parseChangedSemaphore = new SemaphoreSlim(1, 1);
     private async void MediaPlayer_ParsedChanged(object sender, EventArgs e)
     {
-      await Application.Current.Dispatcher.Invoke(async () =>
+
+      try
       {
-        try
+        await parseChangedSemaphore.WaitAsync();
+
+        await Application.Current.Dispatcher.Invoke(async () =>  {
+            AudioTracks.Clear();
+        });
+
+        if (MediaPlayer.AudioTrackDescription.Length > 0)
         {
-          await parseChangedSemaphore.WaitAsync();
-
-          AudioTracks.Clear();
-
-          if (MediaPlayer.AudioTrackDescription.Length > 0)
+          await Application.Current.Dispatcher.Invoke(async () =>
           {
             foreach (var spu in MediaPlayer.AudioTrackDescription)
             {
@@ -771,44 +774,38 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
               AudioTracks.Add(vm);
             }
+          });
 
-            if (ActualItem?.Model.AudioTrack != null)
-            {
-              MediaPlayer.SetAudioTrack(ActualItem.Model.AudioTrack.Value);
-            }
-            else
-            {
-              var audioSetting = TryGetSettingOrGetPreffered(AudioTracks, Language.Czech);
-
-              MediaPlayer.SetAudioTrack(audioSetting.Model.Id);
-            }
-
-            var actualAudioTrack = AudioTracks.Single(x => MediaPlayer.AudioTrack == x.Model.Id);
-
-            actualAudioTrack.IsSelected = true;
-          }
-
-          await ReloadSubtitles();
-
-
-          if (MediaPlayer.Media != null)
-            MediaPlayer.Media.ParsedChanged -= MediaPlayer_ParsedChanged;
-
-          if (DetailViewModel?.Model != null && MediaPlayer?.Media != null)
+          if (ActualItem?.Model.AudioTrack != null)
           {
-            DetailViewModel.Model.Duration = ((int)MediaPlayer.Media.Duration) / 1000;
-            DetailViewModel.TotalTime = TimeSpan.FromSeconds(DetailViewModel.Model.Duration);
+            MediaPlayer.SetAudioTrack(ActualItem.Model.AudioTrack.Value);
           }
+          else
+          {
+            var audioSetting = TryGetSettingOrGetPreffered(AudioTracks, Language.Czech);
+
+            MediaPlayer.SetAudioTrack(audioSetting.Model.Id);
+          }
+
+          var actualAudioTrack = AudioTracks.Single(x => MediaPlayer.AudioTrack == x.Model.Id);
+
+          actualAudioTrack.IsSelected = true;
         }
-        catch (Exception ex)
+
+        await Application.Current.Dispatcher.Invoke(async () =>
         {
-          throw;
-        }
-        finally
-        {
-          parseChangedSemaphore.Release();
-        }
-      });
+          await ReloadSubtitles();
+        });
+
+        if (MediaPlayer.Media != null)
+          MediaPlayer.Media.ParsedChanged -= MediaPlayer_ParsedChanged;
+
+      }
+      finally
+      {
+        parseChangedSemaphore.Release();
+      }
+
     }
 
     #endregion

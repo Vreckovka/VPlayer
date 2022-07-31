@@ -28,14 +28,14 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls2:FullscreenPlayer}">
-                    <Border Width="930"
-                            Height="120"
+                    <Border Height="120"
                             Margin="0,0,0,17"
                             Padding="12,5,15,8"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Bottom"
                             Background="#f0252525"
-                            CornerRadius="0 0 0 0">
+                            CornerRadius="0 0 0 0"
+                            Visibility="Visible">
                         <Grid Grid.IsSharedSizeScope="True">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto" />
@@ -44,7 +44,7 @@
                             </Grid.RowDefinitions>
 
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition SharedSizeGroup="A" />
+                                <ColumnDefinition SharedSizeGroup="A"  Width="360"/>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition SharedSizeGroup="A" />
                             </Grid.ColumnDefinitions>
@@ -68,7 +68,7 @@
                                   DataContext="{Binding ActualViewModel}">
                                 <Slider x:Name="Slider_Time"
                                         Height="5"
-                                        Margin="5,0,1,0"
+                                        Margin="0,0,0,0"
                                         Padding="0"
                                         IsMoveToPointEnabled="True"
                                         Maximum="1"
@@ -90,18 +90,17 @@
                             <Popup x:Name="VideoPreviewPopup"
                                    AllowsTransparency="True"
                                    DataContext="{Binding ActualViewModel.DetailViewModel}"
-                                   Placement="MousePoint">
+                                   Placement="Top"
+                                   PlacementTarget="{Binding ElementName=slider_container}"
+                                   VerticalOffset="-10">
                                 <Popup.Style>
                                     <Style TargetType="Popup">
-                                        <Setter Property="VerticalOffset" Value="-35" />
-
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding ElementName=slider_container, Path=IsMouseOver}" Value="true">
                                                 <Setter Property="IsOpen" Value="True" />
                                             </DataTrigger>
 
                                             <DataTrigger Binding="{Binding Converter={converters1:IsTypeConverter}, ConverterParameter={x:Type viewModels:VideoSliderPopupDetailViewModel}}" Value="true">
-                                                <Setter Property="VerticalOffset" Value="-180" />
                                                 <Setter Property="Width" Value="260" />
                                                 <Setter Property="Height" Value="150" />
                                             </DataTrigger>
@@ -134,6 +133,11 @@
                                         </Border>
                                     </Grid>
                                 </Border>
+
+
+                                <b:Interaction.Behaviors>
+                                    <behaviors1:PopupFollowMouseBehavior />
+                                </b:Interaction.Behaviors>
                             </Popup>
 
 
@@ -147,6 +151,99 @@
                                        Foreground="{StaticResource 120_WhiteTransparentBrush}"
                                        Text="{Binding ActualItem.Duration, Converter={converters1:TimeConverter TimeType=Second}}" />
 
+
+                            <Grid Grid.Row="2"
+                                  Grid.Column="0"
+                                  Margin="0,5,0,0"
+                                  VerticalAlignment="Center"
+                                  DataContext="{Binding ActualViewModel}">
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0"
+                                        Height="auto"
+                                        Margin="0,0,10,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Bottom"
+                                        Background="Transparent"
+                                        BorderThickness="1">
+                                    <Border.Resources>
+                                        <converters1:CacheImageConverter x:Key="CacheImageConverter" DecodeWidth="100" />
+                                    </Border.Resources>
+
+                                    <Image HorizontalAlignment="Center"
+                                           Source="{Binding ActualItem.ImagePath, Converter={converters1:CacheImageConverter}}"
+                                           Stretch="UniformToFill" />
+
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ActualItem.ImagePath}" Value="{x:Null}">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                </Border>
+
+
+                                <ContentPresenter Grid.Column="1"
+                                                  Margin="0,0,0,1"
+                                                  HorizontalAlignment="Left"
+                                                  VerticalAlignment="Bottom"
+                                                  Content="{Binding}"
+                                                  ContentTemplate="{StaticResource PlayerDetail}" />
+                            </Grid>
+
+                            <Grid Grid.Row="2"
+                                  Grid.Column="1"
+                                  Margin="10,0"
+                                  VerticalAlignment="Center">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <controls:ButtonWithIcon Grid.Column="0"
+                                                         Margin="0,0,5,0"
+                                                         HorizontalAlignment="Right"
+                                                         BorderThickness="0"
+                                                         Command="{Binding PreviousCommand}"
+                                                         IconHeight="25"
+                                                         IconPathStyle="{StaticResource NextSong}"
+                                                         IconWidth="25"
+                                                         IsEnabled="{Binding CanPlay}"
+                                                         RenderTransformOrigin="0.5,0.5">
+                                    <controls:ButtonWithIcon.RenderTransform>
+                                        <ScaleTransform ScaleX="-1" />
+                                    </controls:ButtonWithIcon.RenderTransform>
+                                </controls:ButtonWithIcon>
+
+                                <Button x:Name="Play_Button"
+                                        Grid.Column="1"
+                                        Height="50"
+                                        Margin="7"
+                                        Padding="15"
+                                        Background="{StaticResource DefaultRedBrush}"
+                                        BorderThickness="0"
+                                        Command="{Binding PlayButton}"
+                                        Style="{StaticResource PlayButton}" />
+
+                                <controls:ButtonWithIcon Grid.Column="2"
+                                                         Margin="0,0,5,0"
+                                                         HorizontalAlignment="Left"
+                                                         BorderThickness="0"
+                                                         Command="{Binding NextCommand}"
+                                                         IconHeight="25"
+                                                         IconPathStyle="{StaticResource NextSong}"
+                                                         IconWidth="25"
+                                                         IsEnabled="{Binding CanPlay}"
+                                                         RenderTransformOrigin="0.5,0.5" />
+                            </Grid>
 
                             <Grid Grid.Row="2"
                                   Grid.Column="2"
@@ -391,7 +488,8 @@
 
 
                                     <Border Width="40"
-                                            Margin="-10 0 10 0"
+                                            Margin="-10,0,10,0"
+                                            Padding="0,3"
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
                                             Background="#15ffffff"
@@ -411,6 +509,7 @@
 
 
                                     <Border Width="40"
+                                            Padding="0,3"
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
                                             Background="#15ffffff"
@@ -543,108 +642,12 @@
                                                      Style="{StaticResource FontAwesomeGlyphStyle}"
                                                      ToolTip="[WARNING] DELETE FILE" />
                             </Grid>
-
-                            <Grid Grid.Row="2"
-                                  Grid.Column="0"
-                                  Margin="0,5,0,0"
-                                  VerticalAlignment="Center"
-                                  DataContext="{Binding ActualViewModel}">
-
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto" />
-                                    <ColumnDefinition Width="auto" />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-
-                                <Border Grid.Column="0"
-                                        Height="auto"
-                                        Margin="0,0,10,0"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Bottom"
-                                        Background="Transparent"
-                                        BorderThickness="1">
-                                    <Border.Resources>
-                                        <converters1:CacheImageConverter x:Key="CacheImageConverter" DecodeWidth="100" />
-                                    </Border.Resources>
-
-                                    <Image HorizontalAlignment="Center"
-                                           Source="{Binding ActualItem.ImagePath, Converter={converters1:CacheImageConverter}}"
-                                           Stretch="UniformToFill" />
-
-                                    <Border.Style>
-                                        <Style TargetType="Border">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding ActualItem.ImagePath}" Value="{x:Null}">
-                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Border.Style>
-                                </Border>
-
-
-                                <ContentPresenter Grid.Column="2"
-                                                  MaxWidth="290"
-                                                  Margin="0,0,0,1"
-                                                  HorizontalAlignment="Left"
-                                                  VerticalAlignment="Bottom"
-                                                  Content="{Binding}"
-                                                  ContentTemplate="{StaticResource PlayerDetail}" />
-                            </Grid>
-
-
-                            <Grid Grid.Row="2"
-                                  Grid.Column="1"
-                                  Margin="10,0"
-                                  VerticalAlignment="Center">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-
-                                <controls:ButtonWithIcon Grid.Column="0"
-                                                         Margin="0,0,5,0"
-                                                         HorizontalAlignment="Right"
-                                                         BorderThickness="0"
-                                                         Command="{Binding PreviousCommand}"
-                                                         IconHeight="25"
-                                                         IconPathStyle="{StaticResource NextSong}"
-                                                         IconWidth="25"
-                                                         IsEnabled="{Binding CanPlay}"
-                                                         RenderTransformOrigin="0.5,0.5">
-                                    <controls:ButtonWithIcon.RenderTransform>
-                                        <ScaleTransform ScaleX="-1" />
-                                    </controls:ButtonWithIcon.RenderTransform>
-                                </controls:ButtonWithIcon>
-
-                                <Button x:Name="Play_Button"
-                                        Grid.Column="1"
-                                        Height="50"
-                                        Margin="7"
-                                        Padding="15"
-                                        Background="{StaticResource DefaultRedBrush}"
-                                        BorderThickness="0"
-                                        Command="{Binding PlayButton}"
-                                        Style="{StaticResource PlayButton}" />
-
-                                <controls:ButtonWithIcon Grid.Column="2"
-                                                         Margin="0,0,5,0"
-                                                         HorizontalAlignment="Left"
-                                                         BorderThickness="0"
-                                                         Command="{Binding NextCommand}"
-                                                         IconHeight="25"
-                                                         IconPathStyle="{StaticResource NextSong}"
-                                                         IconWidth="25"
-                                                         IsEnabled="{Binding CanPlay}"
-                                                         RenderTransformOrigin="0.5,0.5" />
-                            </Grid>
                         </Grid>
 
 
-                        <b:Interaction.Behaviors>
+                        <!--<b:Interaction.Behaviors>
                             <behaviors:ShowHideMouseBehavior />
-                        </b:Interaction.Behaviors>
+                        </b:Interaction.Behaviors>-->
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
