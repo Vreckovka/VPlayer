@@ -35,7 +35,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
     private readonly AudioInfoDownloader audioInfoDownloader;
     private readonly PCloudLyricsProvider pCloudLyricsProvider;
     private readonly ILogger logger;
-    private readonly GoogleDriveLrcProvider googleDriveLrcProvider;
+    //private readonly GoogleDriveLrcProvider googleDriveLrcProvider;
     private readonly IStorageManager storageManager;
 
     #endregion Fields
@@ -58,7 +58,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
       this.pCloudLyricsProvider = pCloudLyricsProvider ?? throw new ArgumentNullException(nameof(pCloudLyricsProvider));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-      this.googleDriveLrcProvider = googleDriveLrcProvider ?? throw new ArgumentNullException(nameof(googleDriveLrcProvider));
+      //this.googleDriveLrcProvider = googleDriveLrcProvider ?? throw new ArgumentNullException(nameof(googleDriveLrcProvider));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       SongModel = model ?? throw new ArgumentNullException(nameof(model));
     }
@@ -437,16 +437,16 @@ namespace VPlayer.Core.ViewModels.SoundItems
               LRCFile = new LRCFileViewModel(lrc, provider, pCloudLyricsProvider);
               break;
             case LRCProviders.Google:
-              LRCFile = new LRCFileViewModel(lrc, provider, pCloudLyricsProvider, googleDriveLrcProvider);
+              //LRCFile = new LRCFileViewModel(lrc, provider, pCloudLyricsProvider, googleDriveLrcProvider);
 
-              LRCFile.Model.Title = Name;
-              LRCFile.Model.Artist = artistViewModel?.Name;
-              LRCFile.Model.Album = albumViewModel?.Name;
+              //LRCFile.Model.Title = Name;
+              //LRCFile.Model.Artist = artistViewModel?.Name;
+              //LRCFile.Model.Album = albumViewModel?.Name;
 
-              if (LRCFile != null)
-              {
-                LRCFile.OnApplyPernamently();
-              }
+              //if (LRCFile != null)
+              //{
+              //  LRCFile.OnApplyPernamently();
+              //}
 
               break;
             case LRCProviders.Local:
@@ -487,18 +487,18 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     #endregion
 
-    #region LoadLRCFromGoogleDrive
+    //#region LoadLRCFromGoogleDrive
 
-    private async Task LoadLRCFromGoogleDrive()
-    {
-      var lrc = (GoogleLRCFile)await audioInfoDownloader.TryGetLRCLyricsAsync(googleDriveLrcProvider, SongModel, ArtistViewModel?.Name, AlbumViewModel?.Name);
+    //private async Task LoadLRCFromGoogleDrive()
+    //{
+    //  var lrc = (GoogleLRCFile)await audioInfoDownloader.TryGetLRCLyricsAsync(googleDriveLrcProvider, SongModel, ArtistViewModel?.Name, AlbumViewModel?.Name);
 
-      if (lrc != null)
-        LRCFile = new LRCFileViewModel(lrc, googleDriveLrcProvider.LRCProvider, pCloudLyricsProvider, googleDriveLrcProvider);
+    //  if (lrc != null)
+    //    LRCFile = new LRCFileViewModel(lrc, googleDriveLrcProvider.LRCProvider, pCloudLyricsProvider, googleDriveLrcProvider);
 
-    }
+    //}
 
-    #endregion
+    //#endregion
 
     #region LoadLRCFromPCloud
 
@@ -508,7 +508,8 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
       if (lrc != null)
       {
-        LRCFile = new LRCFileViewModel(lrc, pCloudLyricsProvider.LRCProvider, pCloudLyricsProvider, googleDriveLrcProvider);
+        var asd = default(IGoogleDriveServiceProvider);
+        LRCFile = new LRCFileViewModel(lrc, pCloudLyricsProvider.LRCProvider, pCloudLyricsProvider, pCloudLyricsProvider);
       }
     }
 
@@ -591,15 +592,15 @@ namespace VPlayer.Core.ViewModels.SoundItems
         }
 
 
-        if (LRCFile == null)
-        {
-          await LoadLRCFromGoogleDrive();
+        //if (LRCFile == null)
+        //{
+        //  await LoadLRCFromGoogleDrive();
 
-          if (LRCFile != null)
-          {
-            LRCFile.OnApplyPernamently();
-          }
-        }
+        //  if (LRCFile != null)
+        //  {
+        //    LRCFile.OnApplyPernamently();
+        //  }
+        //}
 
         if (LRCFile == null)
         {

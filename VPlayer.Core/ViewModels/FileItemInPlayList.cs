@@ -30,6 +30,7 @@ namespace VPlayer.Core.ViewModels
           Model.Duration = value;
 
           RaisePropertyChanged();
+          RaisePropertyChanged(nameof(ActualTime));
         }
       }
     }
@@ -66,7 +67,6 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
-
 
     #region ExtraData
 

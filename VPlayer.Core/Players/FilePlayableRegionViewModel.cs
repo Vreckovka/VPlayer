@@ -475,7 +475,6 @@ namespace VPlayer.Core.ViewModels
 
           RaisePropertyChanged(nameof(TotalPlaylistDuration));
         }
-
       });
     }
 
