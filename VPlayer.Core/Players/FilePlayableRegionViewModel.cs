@@ -450,7 +450,7 @@ namespace VPlayer.Core.ViewModels
     {
       Application.Current.Dispatcher.Invoke(async () =>
       {
-        if (e.Duration != 0)
+        if (e.Duration != 0 && ActualItem != null)
         {
           ActualItem.Duration = (int)e.Duration / 1000;
 

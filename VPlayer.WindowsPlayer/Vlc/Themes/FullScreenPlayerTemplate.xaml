@@ -44,7 +44,7 @@
                             </Grid.RowDefinitions>
 
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition SharedSizeGroup="A"  Width="360"/>
+                                <ColumnDefinition Width="360" SharedSizeGroup="A" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition SharedSizeGroup="A" />
                             </Grid.ColumnDefinitions>
@@ -168,10 +168,10 @@
                                         Margin="0,0,10,0"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Bottom"
-                                        Background="Transparent"
+                                        Background="Yellow"
                                         BorderThickness="1">
                                     <Border.Resources>
-                                        <converters1:CacheImageConverter x:Key="CacheImageConverter" DecodeWidth="100" />
+                                        <converters1:CacheImageConverter x:Key="CacheImageConverter" DecodeWidth="10" />
                                     </Border.Resources>
 
                                     <Image HorizontalAlignment="Center"
