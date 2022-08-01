@@ -16,6 +16,13 @@ namespace VPlayer.Core.ViewModels
       IStorageManager storageManager) : base(model, eventAggregator, storageManager)
     {
       Duration = model.Duration;
+
+
+      if (Duration == 0)
+      {
+        ;
+      }
+
     }
 
     #region Duration

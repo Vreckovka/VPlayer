@@ -471,7 +471,7 @@
                                                 BorderBrush="{TemplateBinding BorderBrush}"
                                                 BorderThickness="{TemplateBinding BorderThickness}"
                                                 CornerRadius="3">
-                                            <StackPanel HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                                            <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
                                                 <Path x:Name="PathIcon"
                                                       Width="25"
                                                       Height="25"

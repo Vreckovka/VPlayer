@@ -289,7 +289,7 @@
                                                                     BorderBrush="{TemplateBinding BorderBrush}"
                                                                     BorderThickness="{TemplateBinding BorderThickness}"
                                                                     CornerRadius="3">
-                                                                <Grid HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                                                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
                                                                     <Grid.RowDefinitions>
                                                                         <RowDefinition Height="auto" />
                                                                         <RowDefinition />

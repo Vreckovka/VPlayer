@@ -291,6 +291,11 @@ namespace VPlayer.Core.ViewModels
     {
       if (ActualItem != null)
       {
+        if (ActualItem.Duration <= 0)
+        {
+          ChangeDuration(MediaPlayer.Media.Duration);
+        }
+
         var position = ((eventArgs.Time * 100) / (ActualItem.Duration * (float)1000.0)) / 100;
 
         if (!double.IsNaN(position) && !double.IsInfinity(position))
@@ -426,6 +431,7 @@ namespace VPlayer.Core.ViewModels
       if (ActualItem != null && ItemLastTime != null)
       {
         MediaPlayer.Position = ((float)ItemLastTime / ActualItem.Duration);
+        ActualItem.ActualPosition = MediaPlayer.Position;
       }
     }
 
@@ -450,35 +456,39 @@ namespace VPlayer.Core.ViewModels
     {
       Application.Current.Dispatcher.Invoke(async () =>
       {
-        if (e.Duration != 0 && ActualItem != null)
-        {
-          ActualItem.Duration = (int)e.Duration / 1000;
-
-          if (MediaPlayer.Media != null)
-            MediaPlayer.Media.DurationChanged -= Media_DurationChanged;
-
-          await storageManager.UpdateEntityAsync(ActualItem.Model);
-
-
-          if (ActualItem != null && reloadPosition != null)
-          {
-            MediaPlayer.Position = reloadPosition.Value;
-
-            reloadPosition = null;
-          }
-
-          if (DetailViewModel?.Model != null && MediaPlayer?.Media != null)
-          {
-            DetailViewModel.Model.Duration = ((int)MediaPlayer.Media.Duration) / 1000;
-            DetailViewModel.TotalTime = TimeSpan.FromSeconds(DetailViewModel.Model.Duration);
-          }
-
-          RaisePropertyChanged(nameof(TotalPlaylistDuration));
-        }
+        ChangeDuration(e.Duration);
       });
     }
 
     #endregion
+
+    private async void ChangeDuration(float duration)
+    {
+      if (duration != 0 && ActualItem != null)
+      {
+        ActualItem.Duration = (int)duration / 1000;
+
+        if (MediaPlayer.Media != null)
+          MediaPlayer.Media.DurationChanged -= Media_DurationChanged;
+
+        await storageManager.UpdateEntityAsync(ActualItem.Model);
+
+        if (ActualItem != null && reloadPosition != null)
+        {
+          MediaPlayer.Position = reloadPosition.Value;
+
+          reloadPosition = null;
+        }
+
+        if (DetailViewModel?.Model != null && MediaPlayer?.Media != null)
+        {
+          DetailViewModel.Model.Duration = ((int)MediaPlayer.Media.Duration) / 1000;
+          DetailViewModel.TotalTime = TimeSpan.FromSeconds(DetailViewModel.Model.Duration);
+        }
+
+        RaisePropertyChanged(nameof(TotalPlaylistDuration));
+      }
+    }
 
     #region OnPlayPlaylist
 

@@ -18,7 +18,7 @@ namespace VPlayer.Core.Modularity.Ninject
     {
       base.RegisterProviders();
 
-      Kernel.BindToSelfInSingletonScope<KeyListener>();
+
 
       Kernel.Bind<IVFfmpegProvider>().To<VFfmpegProvider>().InSingletonScope().WithConstructorArgument("ffmpegFolderPath", "ffmpeg");
       Kernel.Bind<IVPlayerViewModelsFactory>().To<VPlayerViewModelsFactory>();

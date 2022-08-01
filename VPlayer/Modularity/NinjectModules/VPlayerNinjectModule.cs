@@ -56,7 +56,7 @@ namespace VPlayer.Modularity.NinjectModules
         Kernel.Load<WindowsPlayerNinjectModule>();
 
         Kernel.BindToSelfInSingletonScope<PlayerViewModel>();
-       
+        
       }
     }
 

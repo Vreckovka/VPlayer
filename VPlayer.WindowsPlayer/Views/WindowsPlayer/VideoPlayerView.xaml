@@ -124,41 +124,40 @@
                         </b:Interaction.Behaviors>
                     </Menu>
 
-                    <Grid Grid.Row="1"
-                          Margin="5"
-                          HorizontalAlignment="Left"
-                          VerticalAlignment="Top">
-                        <Border Padding="10"
-                                Background="#aa151515"
-                                BorderBrush="#252525"
-                                BorderThickness="1"
-                                CornerRadius="5">
+                    <Grid Grid.Row="0"
+                          Margin="0,0,50,0"
+                          HorizontalAlignment="Right"
+                          VerticalAlignment="Center">
+                        <controls2:ButtonWithIcon Padding="10,2,10,2"
+                                                  VerticalAlignment="Center"
+                                                  HorizontalContentAlignment="Center"
+                                                  BorderBrush="#15ffffff"
+                                                  BorderThickness="1"
+                                                  Command="{Binding ResumePlaying}"
+                                                  FontWeight="Normal"
+                                                  IconDefaultColor="#50f5936c"
+                                                  IconHeight="20"
+                                                  IconHoverColor="{StaticResource OrangeColor}"
+                                                  IconMargin="0 0 0 0"
+                                                  IconPathStyle="{StaticResource PlaySign}"
+                                                  ToolTip="Resume">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock VerticalAlignment="Center"
-                                           Foreground="{StaticResource DefaultWhiteBrush}"
-                                           Text="Do you want to play from last position? " />
-                                <TextBlock VerticalAlignment="Center"
+                                <TextBlock Margin="5,0,0,0"
+                                           VerticalAlignment="Center"
+                                           FontWeight="Bold"
                                            Foreground="{StaticResource DefaultWhiteBrush}"
                                            Text="{Binding ItemLastTime, Converter={converters2:TimeConverter TimeType=Second}}" />
-                                <controls2:ButtonWithIcon Margin="5,0,0,0"
-                                                          Padding="0"
-                                                          VerticalAlignment="Center"
-                                                          HorizontalContentAlignment="Center"
-                                                          Command="{Binding ResumePlaying}"
-                                                          FontSize="14"
-                                                          FontWeight="Normal"
-                                                          IconDefaultColor="#50f5936c"
-                                                          IconHeight="20"
-                                                          IconHoverColor="{StaticResource OrangeColor}"
-                                                          IconMargin="0 0 0 0"
-                                                          IconPathStyle="{StaticResource PlaySign}"
-                                                          ToolTip="Resume" />
+
+                                <TextBlock Margin="5,0,0,0"
+                                           VerticalAlignment="Center"
+                                           Foreground="{StaticResource DefaultWhiteBrush}"
+                                           Text="last position" />
                             </StackPanel>
+                        </controls2:ButtonWithIcon>
 
-                        </Border>
 
 
-                        <Grid.Style>
+                        <!--<Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Opacity" Value="0" />
                                 <Style.Triggers>
@@ -185,7 +184,7 @@
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
-                        </Grid.Style>
+                        </Grid.Style>-->
                     </Grid>
 
                     <Grid Grid.Row="1" Background="#cc101010">

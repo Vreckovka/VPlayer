@@ -59,6 +59,7 @@ namespace VPlayer
 
       Kernel.Rebind<IWindowManager>().To<VPlayerWindowManager>();
 
+      Kernel.BindToSelfInSingletonScope<KeyListener>();
     }
 
     #endregion
@@ -85,10 +86,6 @@ namespace VPlayer
         provider.AddOrUpdateSetting(nameof(GlobalSettings.MusicInitialDirectory), new SettingParameters(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), true));
         provider.AddOrUpdateSetting(nameof(GlobalSettings.TvShowInitialDirectory), new SettingParameters(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), true));
       }
-
-
-
- 
     }
 
     #endregion
@@ -99,6 +96,9 @@ namespace VPlayer
     {
       base.OnContainerCreated();
 
+      var keyListener = Container.Resolve<KeyListener>();
+
+      keyListener.HookKeyboard();
 
       LoadSettings();
     }

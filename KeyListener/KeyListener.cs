@@ -63,20 +63,19 @@ namespace Listener
 
       dispatcherReadyEvent.WaitOne();
 
-#if RELEASE
+      //#if RELEASE
       myDispatcher.Invoke(() =>
       {
         _procKeyboard = HookCallbackKeyboard;
         _procMouse = HookCallbackMouse;
 
-        HookKeyboard();
-        HookMouse();
+        //HookKeyboard();
+        //HookMouse();
       });
-#endif
+      //#endif
     }
 
     #endregion Constructors
-
 
     #region Events
 
@@ -92,8 +91,10 @@ namespace Listener
 
     public void HookKeyboard()
     {
-      _keyboardHookID = SetHookForKeyboard(_procKeyboard);
-
+      myDispatcher.Invoke(() =>
+      {
+        _keyboardHookID = SetHookForKeyboard(_procKeyboard);
+      });
     }
 
     #endregion
@@ -102,26 +103,35 @@ namespace Listener
 
     public void HookMouse()
     {
-      if (_mouseHookID == IntPtr.Zero)
+      myDispatcher.Invoke(() =>
       {
-        _mouseHookID = SetHookForMouse(_procMouse);
-      }
+        if (_mouseHookID == IntPtr.Zero)
+        {
+          _mouseHookID = SetHookForMouse(_procMouse);
+        }
+      });
     }
 
     #endregion
 
     public void UnHookKeyboard()
     {
-      UnhookWindowsHookEx(_keyboardHookID);
+      myDispatcher.Invoke(() =>
+      {
+        UnhookWindowsHookEx(_keyboardHookID);
 
-      _keyboardHookID = IntPtr.Zero;
+        _keyboardHookID = IntPtr.Zero;
+      });
     }
 
     public void UnHookMouse()
     {
-      UnhookWindowsHookEx(_mouseHookID);
+      myDispatcher.Invoke(() =>
+        {
+          UnhookWindowsHookEx(_mouseHookID);
 
-      _mouseHookID = IntPtr.Zero;
+          _mouseHookID = IntPtr.Zero;
+        });
     }
 
     [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
