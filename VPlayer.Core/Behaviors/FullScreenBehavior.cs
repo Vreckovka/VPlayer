@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reactive.Disposables;
 using System.Windows;
 using System.Windows.Controls.Primitives;
@@ -76,7 +77,8 @@ namespace VPlayer.Core.Behaviors
 
     private void AssociatedObject_MouseMove(object sender, MouseEventArgs e)
     {
-      FullScreenManager.ResetMouse();
+      if(FullScreenManager.IsFullscreen)
+        FullScreenManager.ResetMouse();
     }
 
     #endregion
