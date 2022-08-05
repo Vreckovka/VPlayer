@@ -464,6 +464,26 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region Volume
+
+    private int volume;
+
+    public int Volume
+    {
+      get { return volume; }
+      set
+      {
+        if (value != volume)
+        {
+          volume = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+  
+
     #region OnVolumeChanged
 
     public IObservable<int> OnVolumeChanged
@@ -693,6 +713,7 @@ namespace VPlayer.Core.ViewModels
       };
 
       MediaPlayer.Playing += OnVlcPlayingChanged;
+      Volume = MediaPlayer.Volume;
 
       OnVlcLoaded();
     }
@@ -1682,15 +1703,29 @@ namespace VPlayer.Core.ViewModels
 
     public void SetVolumeAndRaiseNotification(int pVolume)
     {
-      if (pVolume > 100 && AudioDeviceManager.Instance.ActualVolume < 100)
+      int step = 2;
+      bool raise = pVolume > MediaPlayer.Volume;
+
+      if (pVolume == 99 && raise)
       {
-        AudioDeviceManager.Instance.ActualVolume = AudioDeviceManager.Instance.ActualVolume + 2;
+        pVolume = 100;
+      }
+      else if (pVolume == 101 && !raise)
+      {
+        pVolume = 100;
+      }
+
+      if (pVolume > 100 && raise && AudioDeviceManager.Instance.ActualVolume < 100)
+      {
+        AudioDeviceManager.Instance.ActualVolume = AudioDeviceManager.Instance.ActualVolume + step;
+      }
+      else if (!raise && pVolume < 100 && AudioDeviceManager.Instance.ActualVolume > 0)
+      {
+        AudioDeviceManager.Instance.ActualVolume = AudioDeviceManager.Instance.ActualVolume - step;
       }
       else
       {
         SetVolumeWihtoutNotification(pVolume);
-
-        volumeSubject.OnNext(pVolume);
       }
     }
 
@@ -1703,6 +1738,8 @@ namespace VPlayer.Core.ViewModels
       if (MediaPlayer != null)
       {
         MediaPlayer.Volume = pVolume;
+        Volume = pVolume;
+        volumeSubject.OnNext(MediaPlayer.Volume);
       }
     }
 

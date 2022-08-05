@@ -70,21 +70,23 @@ namespace VPlayer.Player.ViewModels
       {
         if (value != actualViewModel)
         {
-          actualViewModel = value;
-
-          if (actualViewModel != null)
+          if (value != null && actualViewModel != null)
           {
-            ActualVolume = (int)actualViewModel.MediaPlayer.Volume;
+            value.Volume = actualViewModel.Volume;
           }
 
+          actualViewModel = value;
+
           volumeDisposable.Disposable?.Dispose();
+
+          RaisePropertyChanged(nameof(ActualVolume));
 
           if (actualViewModel != null)
           {
             volumeDisposable.Disposable = actualViewModel
               .OnVolumeChanged
               .ObserveOn(Application.Current.Dispatcher)
-              .Subscribe(x => ActualVolume = x);
+              .Subscribe(x => RaisePropertyChanged(nameof(ActualVolume)));
           }
 
           RaisePropertyChanged();
@@ -146,20 +148,31 @@ namespace VPlayer.Player.ViewModels
 
     #region ActualVolume
 
-    private int actualVolume = 100;
-
     public int ActualVolume
     {
-      get { return actualVolume; }
+      get
+      {
+        if (ActualViewModel != null)
+        {
+          return ActualViewModel.Volume;
+        }
+        else
+        {
+          return 100;
+        }
+      } 
       set
       {
-        if (value != actualVolume)
+        if (value != ActualViewModel?.Volume)
         {
-          actualVolume = value;
+          bool mouseIsDown = Mouse.LeftButton == MouseButtonState.Pressed;
 
-          RaisePropertyChanged();
-
-          ActualViewModel?.SetVolumeWihtoutNotification(value);
+          if (!mouseIsDown)
+            ActualViewModel?.SetVolumeAndRaiseNotification(value);
+          else
+          {
+            ActualViewModel?.SetVolumeWihtoutNotification(value);
+          }
         }
       }
     }
@@ -286,7 +299,7 @@ namespace VPlayer.Player.ViewModels
       {
         await Task.Delay(500);
 
-        ActualViewModel?.SetVolumeWihtoutNotification(ActualVolume);
+        RaisePropertyChanged(nameof(ActualVolume));
 
       }).DisposeWith(this);
     }
@@ -407,7 +420,7 @@ namespace VPlayer.Player.ViewModels
     {
       Application.Current?.Dispatcher?.Invoke(() =>
       {
-         var filePlayable = CanUseKey(e.KeyPressed);
+        var filePlayable = CanUseKey(e.KeyPressed);
 
         if (filePlayable != null)
         {
@@ -461,8 +474,8 @@ namespace VPlayer.Player.ViewModels
         if (ActualViewModel != null && ActualViewModel is IFilePlayableRegionViewModel filePlayable1)
         {
           if (ActualViewModel.IsActive &&
-              mainWindow.IsActive && 
-              mainWindow.WindowState != WindowState.Minimized && 
+              mainWindow.IsActive &&
+              mainWindow.WindowState != WindowState.Minimized &&
               !VFocusManager.IsAnyFocused())
           {
             return filePlayable1;

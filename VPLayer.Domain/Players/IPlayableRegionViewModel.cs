@@ -27,7 +27,7 @@ namespace VPlayer.Core.ViewModels
     IObservable<int> ActualItemChanged { get; }
     IObservable<int> OnVolumeChanged { get; }
     public bool PlayNextItemOnEndReached { get; set; }
-
+    public int Volume { get; set; }
 
 
 
