@@ -32,7 +32,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     private readonly IStatusManager statusManager;
     private readonly IChromeDriverProvider chromeDriverProvider;
     private readonly IWindowManager windowManager;
-    private string baseUrl = "https://csfd.sk/";
+    private string baseUrl = "https://www.csfd.cz/";
 
     public CSFDWebsiteScrapper(ILogger logger, IStatusManager statusManager, IChromeDriverProvider chromeDriverProvider, IWindowManager windowManager)
     {
@@ -967,9 +967,9 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       bool parseYearFromName = true,
       bool isMovie = false)
     {
-      lastParsedName = parsedName;
+      parsedName = parsedName.RemoveDiacritics().Replace(".", " ").Replace("avi", "").Replace("  ", " ");
 
-      parsedName = parsedName.RemoveDiacritics().Replace(".", " ");
+      lastParsedName = parsedName;
 
       if (parseYearFromName)
       {
