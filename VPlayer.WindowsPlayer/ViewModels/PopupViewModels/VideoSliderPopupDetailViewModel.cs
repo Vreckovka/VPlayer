@@ -87,6 +87,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       if (semaphoreSlim.CurrentCount == 1)
       {
+        if(videoCapture != null)
+        {
+          videoCapture.Dispose();
+          videoCapture = new VideoCapture(Model.Source, VideoCapture.API.Any, new Tuple<CapProp, int>(CapProp.HwAcceleration, 1));
+        }
+
         Image = await Task.Run(GetImage);
       }
     }

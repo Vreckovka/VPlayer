@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using Microsoft.Xaml.Behaviors;
+using System.Windows.Media;
 
 namespace VPlayer.WindowsPlayer.Behaviors
 {
@@ -20,9 +22,12 @@ namespace VPlayer.WindowsPlayer.Behaviors
 
     private void AssociatedObject_Opened(object sender, EventArgs e)
     {
-      Point p = Mouse.GetPosition((IInputElement)sender);
+      System.Drawing.Point p = System.Windows.Forms.Cursor.Position;
+
+      Point position = AssociatedObject.PlacementTarget.PointToScreen(new Point(0d, 0d));
 
       AssociatedObject.HorizontalOffset = p.X;
+      AssociatedObject.VerticalOffset = position.Y - AssociatedObject.Height;
     }
 
     protected override void OnDetaching()

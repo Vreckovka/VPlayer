@@ -79,7 +79,7 @@
             <Popup x:Name="VideoPreviewPopup"
                    AllowsTransparency="True"
                    DataContext="{Binding DetailViewModel}"
-                   Placement="Top"
+                   Placement="Absolute"
                    PlacementTarget="{Binding ElementName=slider_container}">
                 <Popup.Style>
                     <Style TargetType="Popup">

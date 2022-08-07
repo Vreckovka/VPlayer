@@ -89,9 +89,8 @@
                             <Popup x:Name="VideoPreviewPopup"
                                    AllowsTransparency="True"
                                    DataContext="{Binding ActualViewModel.DetailViewModel}"
-                                   Placement="Top"
-                                   PlacementTarget="{Binding ElementName=slider_container}"
-                                   VerticalOffset="-10">
+                                   Placement="Absolute"
+                                   PlacementTarget="{Binding ElementName=slider_container}">
                                 <Popup.Style>
                                     <Style TargetType="Popup">
                                         <Style.Triggers>
@@ -478,7 +477,6 @@
 
                                     <controls:PathButton Width="20"
                                                          Margin="0,0,0,8"
-                                                         Command="{Binding ChangePlaylistFavorite}"
                                                          IconWidth="20"
                                                          IsChecked="{Binding ActualItem.IsFavorite, Mode=TwoWay}"
                                                          IsReadOnly="False"
