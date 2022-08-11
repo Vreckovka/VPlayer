@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using VCore.Standard.Modularity.Interfaces;
 
 namespace VPlayer.AudioStorage.DomainClasses.Video
 {
+  [Serializable]
   public class TvShowSeason : DomainEntity, IDownloadableEntity, IUpdateable<TvShowSeason>
   {
     public TvShowSeason()

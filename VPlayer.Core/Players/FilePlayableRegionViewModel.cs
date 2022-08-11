@@ -49,7 +49,7 @@ namespace VPlayer.Core.ViewModels
     protected readonly IViewModelsFactory viewModelsFactory;
     private readonly VLCPlayer vLcPlayer;
     private long lastTimeChangedMs;
-
+    private PlayItemsEventData<TItemViewModel> actualPlaylistData;
 
     protected FilePlayableRegionViewModel(
       IRegionProvider regionProvider,
@@ -159,7 +159,7 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
-    
+
     #endregion
 
     #region Commands
@@ -198,6 +198,37 @@ namespace VPlayer.Core.ViewModels
           await Play();
         }
       }
+    }
+
+    #endregion
+
+    #region WatchFolderPlaylistCommand
+
+    private ActionCommand watchFolderPlaylistCommand;
+
+    public ICommand WatchFolderPlaylistCommand
+    {
+      get
+      {
+        if (watchFolderPlaylistCommand == null)
+        {
+          watchFolderPlaylistCommand = new ActionCommand(OnWatchFolderPlaylistCommand);
+        }
+
+        return watchFolderPlaylistCommand;
+      }
+    }
+
+    public void OnWatchFolderPlaylistCommand()
+    {
+      ActualSavedPlaylist.WatchFolder = !ActualSavedPlaylist.WatchFolder;
+
+      if (ActualSavedPlaylist.WatchFolder)
+      {
+        AddMissingFilesFromFolder(actualPlaylistData);
+      }
+       
+      UpdateOrAddActualSavedPlaylist();
     }
 
     #endregion
@@ -462,6 +493,8 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region ChangeDuration
+
     private async void ChangeDuration(float duration)
     {
       if (duration != 0 && ActualItem != null)
@@ -489,6 +522,8 @@ namespace VPlayer.Core.ViewModels
         RaisePropertyChanged(nameof(TotalPlaylistDuration));
       }
     }
+
+    #endregion
 
     #region OnPlayPlaylist
 
@@ -600,6 +635,58 @@ namespace VPlayer.Core.ViewModels
       base.BeforeClearPlaylist();
     }
 
+    protected override void PlayPlaylist(PlayItemsEventData<TItemViewModel> data, int? lastSongIndex = null, bool onlySet = false)
+    {
+      actualPlaylistData = data;
+      base.PlayPlaylist(data, lastSongIndex, onlySet);
+
+      if (ActualSavedPlaylist.WatchFolder)
+      {
+        AddMissingFilesFromFolder(data);
+      }
+    }
+
+    private void AddMissingFilesFromFolder(PlayItemsEventData<TItemViewModel> data)
+    {
+      var allFiles = data.Items?.Where(x => x.Model != null).Select(x => x.Model.Source).ToList();
+      var folders = allFiles.Select(x => Path.GetDirectoryName(x)).Distinct().ToList();
+
+      if (folders?.Count == 1)
+      {
+        var folder = folders.Single();
+        var files = Directory.GetFiles(folder);
+
+        var missingFilesInPlaylist = files.Where(x => !allFiles.Contains(x)).ToList();
+
+        foreach (var file in missingFilesInPlaylist)
+        {
+          var newModel = viewModelsFactory.Create<TModel>();
+          var fileInfo = new FileInfo(file);
+
+          newModel.Source = fileInfo.FullName;
+          newModel.Name = fileInfo.Name;
+
+          var existing = storageManager.GetRepository<TModel>()
+            .SingleOrDefault(x => x.Source == newModel.Source);
+
+          if (existing == null)
+          {
+            storageManager.StoreEntity(newModel, out existing);
+          }
+       
+          PlayList.Add(viewModelsFactory.Create<TItemViewModel>(existing));
+        }
+
+        if (missingFilesInPlaylist.Any())
+        {
+          RequestReloadVirtulizedPlaylist();
+          StorePlaylist(PlayList.ToList());
+        }
+      }
+    }
+
+    #region MarkViewModelAsChecked
+
     protected void MarkViewModelAsChecked(TItemViewModel itemViewModel)
     {
       Application.Current?.Dispatcher?.InvokeAsync(() =>
@@ -611,12 +698,18 @@ namespace VPlayer.Core.ViewModels
       });
     }
 
+    #endregion
+
+    #region ClearPlaylist
+
     public override Task ClearPlaylist()
     {
       DetailViewModel?.Dispose();
 
       return base.ClearPlaylist();
     }
+
+    #endregion
 
     #region Dispose
 

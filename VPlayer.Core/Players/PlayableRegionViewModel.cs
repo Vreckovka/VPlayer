@@ -1081,7 +1081,7 @@ namespace VPlayer.Core.ViewModels
 
     #region PlayPlaylist
 
-    private void PlayPlaylist(PlayItemsEventData<TItemViewModel> data, int? lastSongIndex = null, bool onlySet = false)
+    protected virtual void PlayPlaylist(PlayItemsEventData<TItemViewModel> data, int? lastSongIndex = null, bool onlySet = false)
     {
       ActualSavedPlaylist = data.GetModel<TPlaylistModel>();
       ActualSavedPlaylist.LastPlayed = DateTime.Now;
@@ -1361,12 +1361,6 @@ namespace VPlayer.Core.ViewModels
             {
               ActualSavedPlaylist.HashCode = hashCode;
 
-              foreach (var pItemInPlaylist in playlistModels)
-              {
-                pItemInPlaylist.Id = ActualSavedPlaylist.PlaylistItems
-                  .Single(x => x.IdReferencedItem == pItemInPlaylist.IdReferencedItem).Id;
-              }
-
               ActualSavedPlaylist.PlaylistItems = playlistModels;
               ActualSavedPlaylist.ItemCount = playlistModels.Count;
             });
@@ -1442,11 +1436,13 @@ namespace VPlayer.Core.ViewModels
 
     protected Task<bool> UpdateActualSavedPlaylistPlaylist()
     {
+      var copy = ActualSavedPlaylist.DeepClone();
+
       return Task.Run(() =>
       {
         lock (this)
         {
-          var result = storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(ActualSavedPlaylist, out var updated);
+          var result = storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(copy, out var updated);
 
           var dispatcher = Application.Current?.Dispatcher;
 

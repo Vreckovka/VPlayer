@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Logger;
@@ -30,11 +31,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region GetImage
 
-    private byte[] GetImage()
+    private async Task<byte[]> GetImage()
     {
       try
       {
-        semaphoreSlim.Wait();
+       await semaphoreSlim.WaitAsync();
 
         if (isDiposed)
           return null;
@@ -79,36 +80,55 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
 
 
-    protected override async void Refresh()
+    protected override void Refresh()
     {
-      //Image = null;
-
       base.Refresh();
-
-      if (semaphoreSlim.CurrentCount == 1)
+    
+      try
       {
-        if(videoCapture != null)
+        Task.Run(async () =>
         {
-          videoCapture.Dispose();
-          videoCapture = new VideoCapture(Model.Source, VideoCapture.API.Any, new Tuple<CapProp, int>(CapProp.HwAcceleration, 1));
-        }
+          if (semaphoreSlim.CurrentCount == 1)
+          {
+            if (videoCapture != null)
+            {
+              videoCapture.Stop();
+              videoCapture.Dispose();
+              videoCapture = new VideoCapture(Model.Source, VideoCapture.API.Any, new Tuple<CapProp, int>(CapProp.HwAcceleration, 1));
+            }
 
-        Image = await Task.Run(GetImage);
+            var image = await GetImage();
+
+            Application.Current?.Dispatcher?.Invoke(() =>
+            {
+              Image = image;
+            });
+          }
+        });
+      }
+      catch (Exception ex)
+      {
+        logger.Log(ex);
       }
     }
 
     private bool isDiposed = false;
     public override async void Dispose()
     {
-      base.Dispose();
+      try
+      {
+        base.Dispose();
 
-      await semaphoreSlim.WaitAsync();
+        await semaphoreSlim.WaitAsync();
 
-      videoCapture.Stop();
-      videoCapture.Dispose();
-      isDiposed = true;
-
-      semaphoreSlim.Release();
+        videoCapture.Stop();
+        videoCapture.Dispose();
+        isDiposed = true;
+      }
+      finally
+      {
+        semaphoreSlim.Release();
+      }
     }
   }
 }

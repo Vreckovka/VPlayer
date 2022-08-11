@@ -1,5 +1,8 @@
-﻿namespace VPlayer.AudioStorage.DomainClasses
+﻿using System;
+
+namespace VPlayer.AudioStorage.DomainClasses
 {
+  [Serializable]
   public class AudioInfo
   {
     #region Constructors

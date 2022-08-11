@@ -31,6 +31,6 @@ namespace VPlayer.AudioStorage.DomainClasses
     bool IsReapting { get; set; }
     bool IsShuffle { get; set; }
     float LastItemElapsedTime { get; set; }
-
+    public bool WatchFolder { get; set; }
   }
 }

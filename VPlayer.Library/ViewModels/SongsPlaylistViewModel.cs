@@ -142,6 +142,8 @@ namespace VPlayer.Home.ViewModels
 
           var data = (await GetItemsToPlay()).ToList();
 
+          Model = storageManager.GetRepository<SoundItemFilePlaylist>().Include(x => x.PlaylistItems).AsNoTracking().Single(x => x.Id == Model.Id);
+
           var e = new PlayItemsEventData<SoundItemInPlaylistViewModel>(data, action, IsShuffle, IsRepeating, Model.LastItemElapsedTime, Model);
           eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(e);
         }

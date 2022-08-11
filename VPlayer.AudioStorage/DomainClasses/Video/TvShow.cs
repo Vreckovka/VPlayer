@@ -7,6 +7,7 @@ using VCore.Standard.Modularity.Interfaces;
 
 namespace VPlayer.AudioStorage.DomainClasses.Video
 {
+  [Serializable]
   public class TvShow : DomainEntity, IDownloadableEntity, IUpdateable<TvShow>, INamedEntity
   {
     public virtual List<TvShowSeason> Seasons { get; set; }

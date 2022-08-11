@@ -1,8 +1,10 @@
-﻿using VCore.Standard.Modularity.Interfaces;
+﻿using System;
+using VCore.Standard.Modularity.Interfaces;
 using VPlayer.Core.ViewModels;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
+  [Serializable]
   public class PlaybleItem : DomainEntity, IUpdateable<PlaybleItem>, IFilePlayableModel, INamedEntity
   {
     public virtual string Source { get; set; }
@@ -24,6 +26,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     }
   }
 
+  [Serializable]
   public class VideoItem : PlaybleItem, IUpdateable<VideoItem>
   {
     public string AspectRatio { get; set; }

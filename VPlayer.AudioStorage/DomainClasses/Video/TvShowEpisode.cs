@@ -1,9 +1,11 @@
-﻿using VCore.Standard.Modularity.Interfaces;
+﻿using System;
+using VCore.Standard.Modularity.Interfaces;
 using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.Core.ViewModels;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
+  [Serializable]
   public class TvShowEpisode : DomainEntity, IUpdateable<TvShowEpisode>, IDownloadableEntity, IPlayableModel
   {
     public TvShowEpisode()

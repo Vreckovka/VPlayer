@@ -1,8 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using VPlayer.AudioStorage.DomainClasses.Video;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
+  [Serializable]
   public class PlaylistVideoItem : DomainEntity, IItemInPlaylist<VideoItem>
   {
     public int OrderInPlaylist { get; set; }

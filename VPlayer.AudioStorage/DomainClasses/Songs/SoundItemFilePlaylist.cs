@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
@@ -8,6 +9,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     Cloud
   }
 
+  [Serializable]
   public class SoundItemFilePlaylist : FilePlaylist<PlaylistSoundItem>
   {
     public PlaylistType PlaylistType { get; set; }

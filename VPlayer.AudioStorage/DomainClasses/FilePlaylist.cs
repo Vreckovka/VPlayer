@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
+  [Serializable]
   public class Playlist<TPlaylistItems> : DomainEntity, IPlaylist<TPlaylistItems>
   {
     public string Name { get; set; }
@@ -27,11 +28,13 @@ namespace VPlayer.AudioStorage.DomainClasses
   }
 
 
+  [Serializable]
   public class FilePlaylist<TPlaylistItems> : Playlist<TPlaylistItems>, IFilePlaylist<TPlaylistItems>
   {
     public bool IsReapting { get; set; }
     public bool IsShuffle { get; set; }
     public float LastItemElapsedTime { get; set; }
+    public bool WatchFolder { get; set; }
 
 
     public override void Update(IPlaylist other)
@@ -43,6 +46,7 @@ namespace VPlayer.AudioStorage.DomainClasses
         IsReapting = filePlaylistOther.IsReapting;
         IsShuffle = filePlaylistOther.IsShuffle;
         LastItemElapsedTime = filePlaylistOther.LastItemElapsedTime;
+        WatchFolder = filePlaylistOther.WatchFolder;
       }
     }
   }
