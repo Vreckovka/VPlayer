@@ -6,6 +6,7 @@ namespace VPlayer.WindowsPlayer.ViewModels.VideoProperties
   {
     Czech,
     Enghlish,
+    Japanese,
     Other
   }
 

@@ -480,6 +480,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         var model = ActualItem.Model;
 
         model.AudioTrack = selectedItem.Model.Id;
+        audioTrack = model.AudioTrack.Value;
 
         Task.Run(() => storageManager.UpdateEntityAsync(model));
       }
@@ -751,6 +752,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     #region MediaPlayer_ParsedChanged
 
     private SemaphoreSlim parseChangedSemaphore = new SemaphoreSlim(1, 1);
+    private int? audioTrack;
     private async void MediaPlayer_ParsedChanged(object sender, EventArgs e)
     {
 
@@ -779,12 +781,20 @@ namespace VPlayer.WindowsPlayer.ViewModels
           if (ActualItem?.Model.AudioTrack != null)
           {
             MediaPlayer.SetAudioTrack(ActualItem.Model.AudioTrack.Value);
+            audioTrack = ActualItem.Model.AudioTrack.Value;
           }
           else
           {
-            var audioSetting = TryGetSettingOrGetPreffered(AudioTracks, Language.Czech);
+            if (audioTrack != null && audioTracks.Count > audioTrack.Value)
+            {
+              MediaPlayer.SetAudioTrack(audioTrack.Value);
+            }
+            else
+            {
+              var audioSetting = TryGetSettingOrGetPreffered(AudioTracks, Language.Czech);
 
-            MediaPlayer.SetAudioTrack(audioSetting.Model.Id);
+              MediaPlayer.SetAudioTrack(audioSetting.Model.Id);
+            }
           }
 
           var actualAudioTrack = AudioTracks.Single(x => MediaPlayer.AudioTrack == x.Model.Id);
@@ -1190,6 +1200,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
 
     #endregion
+
+    protected override Task BeforePlayEvent(PlayItemsEventData<VideoItemInPlaylistViewModel> data)
+    {
+      audioTrack = null;
+
+      return base.BeforePlayEvent(data);
+    }
 
     #endregion
   }

@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -738,9 +739,14 @@ namespace VPlayer.Core.ViewModels
   public class FileItemSliderPopupDetailViewModel<TModel> : ViewModel<TModel>, ISliderPopupViewModel
     where TModel : IFilePlayableModel
   {
+    protected Subject<Unit> refreshSubject = new Subject<Unit>();
     public FileItemSliderPopupDetailViewModel(TModel model) : base(model)
     {
       TotalTime = TimeSpan.FromSeconds(model.Duration);
+      refreshSubject.Throttle(TimeSpan.FromMilliseconds(15)).Subscribe(x =>
+      {
+        Refresh();
+      });
     }
 
 
@@ -811,7 +817,7 @@ namespace VPlayer.Core.ViewModels
         {
           actualSliderValue = value;
           RaisePropertyChanged();
-          Refresh();
+          refreshSubject.OnNext(Unit.Default);
         }
       }
     }
@@ -830,7 +836,7 @@ namespace VPlayer.Core.ViewModels
         {
           maxValue = value;
           RaisePropertyChanged();
-          Refresh();
+          refreshSubject.OnNext(Unit.Default);
         }
       }
     }

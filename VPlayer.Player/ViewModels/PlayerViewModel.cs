@@ -319,6 +319,11 @@ namespace VPlayer.Player.ViewModels
           videoPlayerViewModel.PlayerViewModel = this;
         }
 
+        if (player is MusicPlayerViewModel)
+        {
+          ActualViewModel = player;
+        }
+
 
         player.ObservePropertyChange(x => x.CanPlay).Subscribe(x =>
         {

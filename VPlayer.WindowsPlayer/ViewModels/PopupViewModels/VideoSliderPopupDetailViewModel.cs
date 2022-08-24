@@ -31,12 +31,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region GetImage
 
-    private async Task<byte[]> GetImage()
+    private byte[] GetImage()
     {
       try
       {
-       await semaphoreSlim.WaitAsync();
-
         if (isDiposed)
           return null;
 
@@ -51,7 +49,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
           if (img == null)
             return null;
 
-          return ImageToByte(img.ToBitmap());
+          var bitMap = img.ToBitmap();
+          img.Dispose();
+          return ImageToByte(bitMap);
         }
 
 
@@ -62,10 +62,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         logger.Log(ex);
         return null;
       }
-      finally
-      {
-        semaphoreSlim.Release();
-      }
+
 
     }
 
@@ -83,33 +80,34 @@ namespace VPlayer.WindowsPlayer.ViewModels
     protected override void Refresh()
     {
       base.Refresh();
-    
-      try
+
+      Task.Run(async () =>
       {
-        Task.Run(async () =>
+        try
         {
-          if (semaphoreSlim.CurrentCount == 1)
+          await semaphoreSlim.WaitAsync();
+         
+          if(isDiposed)
           {
-            if (videoCapture != null)
-            {
-              videoCapture.Stop();
-              videoCapture.Dispose();
-              videoCapture = new VideoCapture(Model.Source, VideoCapture.API.Any, new Tuple<CapProp, int>(CapProp.HwAcceleration, 1));
-            }
-
-            var image = await GetImage();
-
-            Application.Current?.Dispatcher?.Invoke(() =>
-            {
-              Image = image;
-            });
+            return;
           }
-        });
-      }
-      catch (Exception ex)
-      {
-        logger.Log(ex);
-      }
+
+          var image = GetImage();
+
+          Application.Current?.Dispatcher?.Invoke(() =>
+          {
+            Image = image;
+          });
+        }
+        catch (Exception ex)
+        {
+          logger.Log(ex);
+        }
+        finally
+        {
+          semaphoreSlim.Release();
+        }
+      });
     }
 
     private bool isDiposed = false;
@@ -118,12 +116,15 @@ namespace VPlayer.WindowsPlayer.ViewModels
       try
       {
         base.Dispose();
-
         await semaphoreSlim.WaitAsync();
 
+        isDiposed = true;
         videoCapture.Stop();
         videoCapture.Dispose();
-        isDiposed = true;
+      }
+      catch (Exception ex)
+      {
+        logger.Log(ex);
       }
       finally
       {

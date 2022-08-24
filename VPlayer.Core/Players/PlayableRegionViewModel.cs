@@ -714,6 +714,7 @@ namespace VPlayer.Core.ViewModels
 
       MediaPlayer.Playing += OnVlcPlayingChanged;
       Volume = MediaPlayer.Volume;
+      volumeSubject.OnNext(Volume);
 
       OnVlcLoaded();
     }
@@ -905,7 +906,7 @@ namespace VPlayer.Core.ViewModels
 
       Application.Current?.Dispatcher?.Invoke(() =>
       {
-        IsPlaying = true;
+      
         ActualItem.IsPlaying = true;
       });
 
@@ -1070,6 +1071,11 @@ namespace VPlayer.Core.ViewModels
           if (ActualItem != null && MediaPlayer.Media != null)
           {
             MediaPlayer.Play();
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+              IsPlaying = true;
+            });
           }
         }
 
