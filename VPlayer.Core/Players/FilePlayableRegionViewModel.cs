@@ -244,6 +244,11 @@ namespace VPlayer.Core.ViewModels
     {
       PlayList.CollectionChanged += PlayList_CollectionChanged;
 
+      positionChangedSubject.Throttle(TimeSpan.FromMilliseconds(1000)).Subscribe(position =>
+      {
+        MediaPlayer.TimeChanged += OnVlcTimeChanged;
+      });
+
       return base.InitializeAsync();
     }
 
@@ -367,10 +372,16 @@ namespace VPlayer.Core.ViewModels
     #region SetMediaPosition
 
     private object positionBatton = new object();
+    private Subject<bool> positionChangedSubject = new Subject<bool>();
+
     public void SetMediaPosition(float position)
     {
       lock (positionBatton)
       {
+        MediaPlayer.TimeChanged -= OnVlcTimeChanged;
+
+        positionChangedSubject.OnNext(true);
+
         if (ActualItem == null)
         {
           return;
@@ -382,12 +393,10 @@ namespace VPlayer.Core.ViewModels
         }
 
         MediaPlayer.Position = position;
-
         ActualItem.ActualPosition = MediaPlayer.Position;
-
         lastTimeChangedMs = (long)(ActualItem.ActualPosition * (double)ActualItem.Duration) * 1000;
 
-
+        positionChangedSubject.OnNext(false);
       }
     }
 
@@ -397,10 +406,9 @@ namespace VPlayer.Core.ViewModels
 
     public void SeekForward(int seekSize = 50)
     {
-      var position = MediaPlayer.Position + GetSeekSize(seekSize);
+      var position = ActualItem.ActualPosition + GetSeekSize(seekSize);
 
       SetMediaPosition(position);
-
     }
 
     #endregion
@@ -409,7 +417,7 @@ namespace VPlayer.Core.ViewModels
 
     public void SeekBackward(int seekSize = 50)
     {
-      var position = MediaPlayer.Position - GetSeekSize(seekSize);
+      var position = ActualItem.ActualPosition - GetSeekSize(seekSize);
 
       SetMediaPosition(position);
     }

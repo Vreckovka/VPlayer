@@ -55,15 +55,9 @@ namespace VPlayer.Core.ViewModels
       {
         if (value != actualPosition && !float.IsNaN(value) && !float.IsInfinity(value))
         {
+          if (value <= 1)
+            actualPosition = value;
 
-          int multiplier = 10000;
-
-          var stringValue = Math.Round((value * multiplier));
-
-          var floatValue = stringValue / multiplier;
-
-          if (floatValue <= 1)
-            actualPosition = (float)floatValue;
 
           RaisePropertyChanged();
           RaisePropertyChanged(nameof(ActualTime));
