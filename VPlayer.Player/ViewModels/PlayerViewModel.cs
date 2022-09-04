@@ -74,21 +74,8 @@ namespace VPlayer.Player.ViewModels
           {
             value.Volume = actualViewModel.Volume;
           }
-
           actualViewModel = value;
-
-          volumeDisposable.Disposable?.Dispose();
-
           RaisePropertyChanged(nameof(ActualVolume));
-
-          if (actualViewModel != null)
-          {
-            volumeDisposable.Disposable = actualViewModel
-              .OnVolumeChanged
-              .ObserveOn(Application.Current.Dispatcher)
-              .Subscribe(x => RaisePropertyChanged(nameof(ActualVolume)));
-          }
-
           RaisePropertyChanged();
         }
       }
@@ -117,16 +104,16 @@ namespace VPlayer.Player.ViewModels
 
     #region CanPlay
 
-    private bool camPlay;
+    private bool canPlay;
 
     public bool CanPlay
     {
-      get { return camPlay; }
+      get { return canPlay; }
       set
       {
-        if (value != camPlay)
+        if (value != canPlay)
         {
-          camPlay = value;
+          canPlay = value;
           RaisePropertyChanged();
         }
       }
@@ -321,15 +308,19 @@ namespace VPlayer.Player.ViewModels
 
         if (player is MusicPlayerViewModel)
         {
-          ActualViewModel = player;
+          ChangeActualViewModel(player);
         }
 
 
-        player.ObservePropertyChange(x => x.CanPlay).Subscribe(x =>
+        player.ObservePropertyChange(x => x.CanPlay).Subscribe(playerCanPlay =>
         {
-          if (x && player.IsActive && player != ActualViewModel)
+          if (playerCanPlay && player.IsActive && player != ActualViewModel)
           {
             ChangeActualViewModel(player);
+          }
+          else if (ActualViewModel == player)
+          {
+            CanPlay = playerCanPlay;
           }
         }).DisposeWith(this);
 
@@ -380,6 +371,8 @@ namespace VPlayer.Player.ViewModels
     private IPlayableRegionViewModel originalActualViewModel = null;
     private void ChangeActualViewModel(IPlayableRegionViewModel newPlayer)
     {
+      volumeDisposable.Disposable?.Dispose();
+
       if (ActualViewModel != null)
       {
         if (ActualViewModel.IsPlaying && !newPlayer.IsPlaying)
@@ -390,8 +383,17 @@ namespace VPlayer.Player.ViewModels
         {
           ActualViewModel.IsSelectedToPlay = false;
         }
+
+      
       }
 
+      if (newPlayer != null)
+      {
+        volumeDisposable.Disposable = newPlayer
+          .OnVolumeChanged
+          .ObserveOn(Application.Current.Dispatcher)
+          .Subscribe(x => RaisePropertyChanged(nameof(ActualVolume)));
+      }
 
       ActualViewModel = newPlayer;
       ActualViewModel.IsSelectedToPlay = true;

@@ -554,11 +554,7 @@
                                             Foreground="{StaticResource DefaultRedBrush}"
                                             IsMoveToPointEnabled="True"
                                             Maximum="300"
-                                            Value="{Binding ActualVolume, Mode=TwoWay}">
-                                        <b:Interaction.Behaviors>
-                                            <sliders:SliderHookBehavior HookWhenFullscreen="False" />
-                                        </b:Interaction.Behaviors>
-                                    </Slider>
+                                            Value="{Binding ActualVolume, Mode=TwoWay}" />
 
 
 

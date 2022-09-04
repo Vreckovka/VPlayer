@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using LibVLCSharp.Shared;
+using VCore.WPF.Managers;
 
 namespace VVLC
 {
@@ -48,7 +49,7 @@ namespace VVLC
 
       overlayWindow.Content = _grid;
       overlayWindow.DataContext = _bckgnd.DataContext;
-      overlayWindow.MouseLeftButtonDown += OverlayWindow_GotFocus;
+      overlayWindow.MouseLeftButtonDown += OverlayWindow_MouseLeftButtonDown;
 
       _bckgnd.DataContextChanged += Background_DataContextChanged;
       _bckgnd.Loaded += Background_Loaded;
@@ -56,6 +57,11 @@ namespace VVLC
 
 
       IsVisibleChanged += ForegroundWindow_IsVisibleChanged;
+    }
+
+    private void OverlayWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+      VFocusManager.SetFocus(_wndhost);
     }
 
     #endregion
@@ -70,15 +76,6 @@ namespace VVLC
         Width = 0;
       }
     } 
-
-    #endregion
-
-    #region OverlayWindow_GotFocus
-
-    private void OverlayWindow_GotFocus(object sender, RoutedEventArgs e)
-    {
-      _wndhost?.Focus();
-    }
 
     #endregion
 
