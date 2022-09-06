@@ -46,6 +46,14 @@ namespace VVLC.Players
       get { return MediaPlayer.IsPlaying; }
     }
 
+    public bool IsMuted
+    {
+      get
+      {
+        return MediaPlayer.Mute;
+      }
+    }
+
     #endregion
 
     #region Position
@@ -126,6 +134,11 @@ namespace VVLC.Players
     {
       libVLC?.Dispose();
       libVLC = new LibVLC();
+    }
+
+    public void ToggleMute()
+    {
+      MediaPlayer?.ToggleMute();
     }
 
     #endregion

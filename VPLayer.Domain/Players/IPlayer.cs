@@ -9,6 +9,7 @@ namespace VPlayer.WindowsPlayer.Players
     public long Length { get; }
     public float Position { get; set; }
     public bool IsPlaying { get; }
+    public bool IsMuted { get; }
 
     public event EventHandler EncounteredError;
 
@@ -31,6 +32,7 @@ namespace VPlayer.WindowsPlayer.Players
     void Pause();
     void Stop();
     void Reload();
+    void ToggleMute();
     public Task SetNewMedia(Uri source);
 
    

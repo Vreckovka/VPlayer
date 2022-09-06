@@ -86,6 +86,14 @@ namespace VPlayer.UPnP.ViewModels.Player
 
     public bool IsPlaying { get; private set; }
 
+    public bool IsMuted
+    {
+      get
+      {
+        return false;
+      }
+    }
+
     public event EventHandler EncounteredError;
     public event EventHandler EndReached;
     public event EventHandler Paused;
@@ -147,6 +155,11 @@ namespace VPlayer.UPnP.ViewModels.Player
     public void Reload()
     {
       throw new NotImplementedException();
+    }
+
+    public void ToggleMute()
+    {
+      
     }
 
     #region SetPosition

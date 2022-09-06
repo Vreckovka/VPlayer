@@ -128,12 +128,12 @@ namespace VPlayer.AudioStorage.DataLoader
       {
         var seriesNumber = GetTvShowSeriesNumber(file.Name);
 
-        if(seriesNumber != null)
+        if (seriesNumber != null)
         {
           tvShowSeason = tvShow.Seasons.SingleOrDefault(x => x.SeasonNumber == seriesNumber.SeasonNumber);
         }
 
-        if(tvShowSeason == null)
+        if (tvShowSeason == null)
         {
           tvShowSeason = new TvShowSeason()
           {
@@ -148,13 +148,13 @@ namespace VPlayer.AudioStorage.DataLoader
 
           tvShow.Seasons.Add(tvShowSeason);
         }
-      
+
         var videoItem = new VideoItem()
         {
           Source = file.FullName,
           Duration = (int)GetFileDuration(file.FullName).TotalSeconds,
           Name = file.Name,
-         
+
         };
 
         var tvEpisode = new TvShowEpisode()
@@ -194,9 +194,9 @@ namespace VPlayer.AudioStorage.DataLoader
         //[1.01-02]
         @"\[(?<season>\d{1,2}).(?<episode>\d{1,2})-(?<concatEpisode>\d{1,2})\]",
         //1-1
-        @"(?<season>\d{1,2})-(?<episode>\d{1,2})",
+        @"(?<season>\D\d{1,2})-(?<episode>\d{1,2}(?:\D|)$)",
         //Only episode
-        @"- (?<episode>\b\d+\b)"
+        @"- (?<episode>\b\d+\b)",
       };
 
       foreach (var regexExpression in regexExpressions)
@@ -224,20 +224,23 @@ namespace VPlayer.AudioStorage.DataLoader
           }
 
 
-          var parsedName = name.ToLower().Split(match.Groups[0].Value)[0];
-
-          CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
-          TextInfo textInfo = cultureInfo.TextInfo;
-
-          var numbers = new TvShowEpisodeNumbers()
+          if (episodeNumber != null || seasonNumber != null)
           {
-            EpisodeNumber = episodeNumber,
-            SeasonNumber = seasonNumber,
-            RegexExpression = regexExpression,
-            ParsedName = textInfo.ToTitleCase(parsedName)
-          };
+            var parsedName = name.ToLower().Split(match.Groups[0].Value)[0];
 
-          return numbers;
+            CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+            TextInfo textInfo = cultureInfo.TextInfo;
+
+            var numbers = new TvShowEpisodeNumbers()
+            {
+              EpisodeNumber = episodeNumber,
+              SeasonNumber = seasonNumber,
+              RegexExpression = regexExpression,
+              ParsedName = textInfo.ToTitleCase(parsedName)
+            };
+
+            return numbers;
+          }
         }
       }
 

@@ -533,6 +533,7 @@
                                     </Grid.RowDefinitions>
 
                                     <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
                                         <ColumnDefinition />
                                         <ColumnDefinition Width="auto" />
                                     </Grid.ColumnDefinitions>
@@ -547,7 +548,7 @@
 
                                     <Slider Grid.Row="0"
                                             Grid.Column="0"
-                                            Grid.ColumnSpan="2"
+                                            Grid.ColumnSpan="3"
                                             Height="4"
                                             HorizontalAlignment="Stretch"
                                             VerticalAlignment="Bottom"
@@ -557,67 +558,69 @@
                                             Value="{Binding ActualVolume, Mode=TwoWay}" />
 
 
+                                    <Border Grid.Row="1"
+                                            Grid.Column="1"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            CornerRadius="5">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="#30000000" />
+                                                <Setter Property="BorderThickness" Value="2" />
+                                                <Setter Property="BorderBrush" Value="#15ffffff" />
+                                                <Setter Property="Padding" Value="10,2" />
 
-                                    <!--<TextBlock Margin="0,0,0,0"
-                                               HorizontalAlignment="Right"
-                                               VerticalAlignment="Bottom"
-                                               FontSize="14"
-                                               FontWeight="DemiBold"
-                                               Foreground="#ccc"
-                                               Text="{Binding ActualVolume, StringFormat={}{0} %}" />-->
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding ActualVolume}" Value="100">
+                                                        <Setter Property="BorderBrush" Value="Transparent" />
+                                                        <Setter Property="Background" Value="Transparent" />
+                                                        <Setter Property="Padding" Value="0" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
 
-
-                                    <Grid Grid.Row="1" Grid.Column="1">
-                                        <Border HorizontalAlignment="Right"
-                                                VerticalAlignment="Center"
-                                                CornerRadius="5">
-                                            <Border.Style>
-                                                <Style TargetType="Border">
-                                                    <Setter Property="Background" Value="#30000000" />
-                                                    <Setter Property="BorderThickness" Value="2" />
-                                                    <Setter Property="BorderBrush" Value="#15ffffff" />
-                                                    <Setter Property="Padding" Value="10,2" />
+                                        <TextBlock Margin="0,-2,0,0"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   FontSize="14"
+                                                   Text="{Binding ActualVolume, StringFormat={}{0} %}"
+                                                   ToolTip="Player volume (Double click to restore 100%)">
+                                            <TextBlock.Style>
+                                                <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
+                                                    <Setter Property="FontWeight" Value="Bold" />
+                                                    <Setter Property="Foreground" Value="#99ffffff" />
+                                                    <Setter Property="FontStyle" Value="Italic" />
+                                                    <Setter Property="Cursor" Value="Hand" />
 
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding ActualVolume}" Value="100">
-                                                            <Setter Property="BorderBrush" Value="Transparent" />
-                                                            <Setter Property="Background" Value="Transparent" />
-                                                            <Setter Property="Padding" Value="0" />
+                                                            <Setter Property="FontStyle" Value="Normal" />
+                                                            <Setter Property="Cursor" Value="Arrow" />
+                                                            <Setter Property="FontWeight" Value="Bold" />
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
-                                            </Border.Style>
 
-                                            <TextBlock HorizontalAlignment="Center"
-                                                       FontSize="14"
-                                                       Text="{Binding ActualVolume, StringFormat={}{0} %}"
-                                                       ToolTip="Player volume (Double click to restore 100%)">
-                                                <TextBlock.Style>
-                                                    <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
-                                                        <Setter Property="FontWeight" Value="Bold" />
-                                                        <Setter Property="Foreground" Value="#99ffffff" />
-                                                        <Setter Property="FontStyle" Value="Italic" />
-                                                        <Setter Property="Cursor" Value="Hand" />
+                                            </TextBlock.Style>
+                                            <b:Interaction.Behaviors>
+                                                <controls2:DoubleClickBehavior Command="{Binding ResetVolume}" />
+                                            </b:Interaction.Behaviors>
+                                        </TextBlock>
+                                    </Border>
 
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding ActualVolume}" Value="100">
-                                                                <Setter Property="FontStyle" Value="Normal" />
-                                                                <Setter Property="Cursor" Value="Arrow" />
-                                                                <Setter Property="FontWeight" Value="Bold" />
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-
-                                                </TextBlock.Style>
-                                                <b:Interaction.Behaviors>
-                                                    <controls2:DoubleClickBehavior Command="{Binding ResetVolume}" />
-                                                </b:Interaction.Behaviors>
-                                            </TextBlock>
-                                        </Border>
-
-
-                                    </Grid>
-
+                                    <controls:PathButton Grid.Row="1"
+                                                         Grid.Column="2"
+                                                         Margin="5,0,0,0"
+                                                         VerticalAlignment="Center"
+                                                         Command="{Binding ToggleMute}"
+                                                         DataContext="{Binding ActualViewModel}"
+                                                         Glyph="{StaticResource volume-xmark}"
+                                                         GlyphFontSize="15"
+                                                         IconCheckedColor="{StaticResource DefaultRedColor}"
+                                                         IconMargin="0"
+                                                         IsChecked="{Binding IsMuted, Mode=OneWay}"
+                                                         IsReadOnly="True" />
 
 
                                 </Grid>

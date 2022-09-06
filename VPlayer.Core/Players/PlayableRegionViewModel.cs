@@ -482,7 +482,6 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
-  
 
     #region OnVolumeChanged
 
@@ -492,6 +491,15 @@ namespace VPlayer.Core.ViewModels
       {
         return volumeSubject.AsObservable();
       }
+    }
+
+    #endregion
+
+    #region IsMuted
+
+    public bool IsMuted
+    {
+      get { return MediaPlayer.IsMuted; }
     }
 
     #endregion
@@ -622,6 +630,29 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region ToggleMute
+
+    private ActionCommand toggleMute;
+    public ICommand ToggleMute
+    {
+      get
+      {
+        if (toggleMute == null)
+        {
+          toggleMute = new ActionCommand(OnToggleMute);
+        }
+
+        return toggleMute;
+      }
+    }
+
+    public void OnToggleMute()
+    {
+      MediaPlayer.ToggleMute();
+    }
+
+    #endregion
+
     #endregion
 
     #region Methods
@@ -712,11 +743,22 @@ namespace VPlayer.Core.ViewModels
         OnMediaPlayerStopped();
       };
 
+      if(MediaPlayer is VLCPlayer vLCPlayer)
+      {
+        vLCPlayer.MediaPlayer.Muted += MediaPlayer_MutedChanged;
+        vLCPlayer.MediaPlayer.Unmuted += MediaPlayer_MutedChanged;
+      }
+
       MediaPlayer.Playing += OnVlcPlayingChanged;
       Volume = MediaPlayer.Volume;
       volumeSubject.OnNext(Volume);
 
       OnVlcLoaded();
+    }
+
+    private void MediaPlayer_MutedChanged(object sender, EventArgs e)
+    {
+      RaisePropertyChanged(nameof(IsMuted));
     }
 
 
