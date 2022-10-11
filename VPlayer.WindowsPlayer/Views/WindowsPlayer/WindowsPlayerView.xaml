@@ -7,6 +7,7 @@
              xmlns:behaviors3="clr-namespace:VCore.WPF.Behaviors;assembly=VCore.WPF"
              xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
              xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
+             xmlns:converters1="clr-namespace:VPlayer.Home.Converters;assembly=VCore.WPF"
              xmlns:converters3="clr-namespace:VPlayer.Core.Converters;assembly=VPlayer.Core"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
@@ -14,6 +15,7 @@
              xmlns:regions="http://prismlibrary.com/"
              xmlns:regions1="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPlayer.Core"
              xmlns:regions11="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPLayer.Domain"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
              xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
              xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
              xmlns:viewModels="clr-namespace:VPlayer.WindowsPlayer.ViewModels"
@@ -208,8 +210,23 @@
                             <TextBlock Margin="5,0,0,0"
                                        VerticalAlignment="Center"
                                        FontWeight="Bold"
-                                       Foreground="#858585"
-                                       Text="{Binding PlayList.Count, Mode=OneWay}" />
+                                       Foreground="#858585">
+                                <Run>
+                                    <Run.Resources>
+                                        <system:Int32 x:Key="one">1</system:Int32>
+                                    </Run.Resources>
+                                    <Run.Text>
+                                        <MultiBinding Converter="{converters1:BasicMathOperationConverter}"
+                                                      ConverterParameter="+"
+                                                      StringFormat="{}{0:N0}">
+                                            <Binding Mode="OneWay" Path="ActualItemIndex" />
+                                            <Binding Mode="OneWay" Source="{StaticResource one}" />
+                                        </MultiBinding>
+                                    </Run.Text>
+                                </Run>
+                                <Run Text="/" />
+                                <Run Text="{Binding PlayList.Count, Mode=OneWay}" />
+                            </TextBlock>
                         </StackPanel>
 
                         <StackPanel Style="{StaticResource Container}">

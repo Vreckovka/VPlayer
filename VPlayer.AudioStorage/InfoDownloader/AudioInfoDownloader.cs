@@ -905,10 +905,13 @@ namespace VPlayer.AudioStorage.InfoDownloader
         else
         {
           logger.Log(Logger.MessageType.Warning, $"Artist's data was not find {artistName}");
+          statusMessage.Message = $"NOT FOUND ({artist?.Name})";
+          statusMessage.Status = StatusType.Failed;
+          statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
           return null;
         }
 
-        logger.Log(Logger.MessageType.Success, $"Artist's data was updated {artistName}");
+        logger.Log(MessageType.Success, $"Artist's data was updated {artistName}");
         //artist = await Artist.GetAsync(artist.Id, "artist-rels", "url-rels");
 
         if (artist != null)

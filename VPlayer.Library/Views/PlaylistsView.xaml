@@ -4,6 +4,7 @@
              xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
              xmlns:converters="clr-namespace:VPlayer.Core.Converters;assembly=VPlayer.Core"
+             xmlns:converters1="clr-namespace:VPlayer.Home.Converters;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:events="clr-namespace:VPlayer.Core.Events;assembly=VPlayer.Core"
              xmlns:events1="clr-namespace:VPlayer.Core.Events;assembly=VPLayer.Domain"
@@ -12,6 +13,7 @@
              xmlns:loadingIndicator="clr-namespace:VCore.WPF.Controls.LoadingIndicator;assembly=VCore.WPF"
              xmlns:local="clr-namespace:VPlayer.Home.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              d:DesignHeight="450"
              d:DesignWidth="1800"
@@ -258,9 +260,19 @@
                             <GridViewColumn Width="75" Header="Last item">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Margin="5,0,0,0"
-                                                   FontWeight="Normal"
-                                                   Text="{Binding Model.LastItemIndex}" />
+                                        <TextBlock Margin="5,0,0,0" FontWeight="Normal">
+                                            <TextBlock.Resources>
+                                                <system:Int32 x:Key="one">1</system:Int32>
+                                            </TextBlock.Resources>
+                                            <TextBlock.Text>
+                                                <MultiBinding Converter="{converters1:BasicMathOperationConverter}"
+                                                              ConverterParameter="+"
+                                                              StringFormat="{}{0:N0}">
+                                                    <Binding Path="Model.LastItemIndex" />
+                                                    <Binding Source="{StaticResource one}" />
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>

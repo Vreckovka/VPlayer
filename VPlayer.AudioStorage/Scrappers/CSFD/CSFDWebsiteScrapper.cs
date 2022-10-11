@@ -30,7 +30,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
   {
     private readonly ILogger logger;
     private readonly IStatusManager statusManager;
-    private readonly IChromeDriverProvider chromeDriverProvider;
+    public readonly IChromeDriverProvider chromeDriverProvider;
     private readonly IWindowManager windowManager;
     private string baseUrl = "https://www.csfd.cz/";
 
@@ -1103,6 +1103,9 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       var urlParsed = url.Replace("[", "").Replace("]", "").Replace("(", "").Replace(")", "");
 
       var html = chromeDriverProvider.SafeNavigate(urlParsed);
+
+      if (html == null)
+        return result;
 
       var document = new HtmlDocument();
 

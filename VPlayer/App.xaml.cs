@@ -127,7 +127,7 @@ namespace VPlayer
           statusManager.UpdateMessage(new StatusMessageViewModel(1)
           {
             Status = StatusType.Error,
-            Message = "Error occured: " + exception.ToString()
+            Message = "Error occured: " + exception
           });
         }
       });

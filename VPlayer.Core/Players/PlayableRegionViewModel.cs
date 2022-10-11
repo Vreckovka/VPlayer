@@ -26,6 +26,7 @@ using LibVLCSharp.Shared;
 using Microsoft.VisualBasic.FileIO;
 using SoundManagement;
 using VCore.Standard.ViewModels.TreeView;
+using VCore.Standard.ViewModels.WindowsFile;
 using VCore.WPF.Behaviors;
 using VCore.WPF.Helpers;
 using VCore.WPF.Interfaces.Managers;
@@ -133,6 +134,14 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    public int ActualItemIndex
+    {
+      get
+      {
+        return actualItemIndex;
+      }
+    }
+
     #region ActualItem
 
     private TItemViewModel actualItem;
@@ -158,6 +167,7 @@ namespace VPlayer.Core.ViewModels
           actualItemSubject.OnNext(PlayList.IndexOf(actualItem));
 
           RaisePropertyChanged();
+          RaisePropertyChanged(nameof(ActualItemIndex));
           OnActualItemChanged();
         }
       }
@@ -1627,14 +1637,14 @@ namespace VPlayer.Core.ViewModels
                 if (ActualItem == item)
                 {
                   MediaPlayer.Stop();
-                  MediaPlayer.Media = null;
+                  MediaPlayer.SetNewMedia(null);
                 }
 
-                var songInPlaylist = PlayList.SingleOrDefault(x => x == item);
+                var itemInPlayList = PlayList.SingleOrDefault(x => x.Model.Id == item.Model.Id);
 
-                if (songInPlaylist != null)
+                if (itemInPlayList != null)
                 {
-                  PlayList.Remove(songInPlaylist);
+                  PlayList.Remove(item);
                 }
 
                 Task.Run(async () =>
@@ -1643,7 +1653,20 @@ namespace VPlayer.Core.ViewModels
 
                   try
                   {
-                    FileSystem.DeleteFile(item.Model.Source, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
+                    var parentDirectory = new DirectoryInfo(Path.GetDirectoryName(item.Model.Source));
+                    var files = parentDirectory.GetFiles();
+                    var sounds = files.Count(x => x.Extension.GetFileType() == FileType.Sound);
+                    var videos = files.Count(x => x.Extension.GetFileType() == FileType.Video);
+
+                    if (sounds + videos == 1)
+                    {
+                      FileSystem.DeleteDirectory(parentDirectory.FullName, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
+                    }
+                    else
+                    {
+                      FileSystem.DeleteFile(item.Model.Source, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
+                    }
+                
                   }
                   catch (Exception ex)
                   {

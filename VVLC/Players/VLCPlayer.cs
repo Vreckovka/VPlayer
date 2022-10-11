@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using LibVLCSharp.Shared;
 using Logger;
@@ -12,7 +13,7 @@ namespace VVLC.Players
   {
     private readonly IVlcProvider vlcProvider;
     private readonly ILogger logger;
-    private LibVLC libVLC; 
+    private LibVLC libVLC;
 
 
     public VLCPlayer(IVlcProvider vlcProvider, ILogger logger)
@@ -26,7 +27,7 @@ namespace VVLC.Players
 
     public int Volume
     {
-      get { return MediaPlayer?.Volume ??  100; }
+      get { return MediaPlayer?.Volume ?? 100; }
       set
       {
         if (MediaPlayer != null && value != MediaPlayer.Volume)
@@ -92,7 +93,7 @@ namespace VVLC.Players
     public event EventHandler<PlayerTimeChangedArgs> TimeChanged;
 
     public IMedia Media { get; set; }
-   
+
 
     #region MediaPlayer
 
@@ -132,8 +133,8 @@ namespace VVLC.Players
 
     public void Reload()
     {
-      libVLC?.Dispose();
-      libVLC = new LibVLC();
+      MediaPlayer.Dispose();
+      MediaPlayer = new MediaPlayer(libVLC);
     }
 
     public void ToggleMute()
@@ -218,9 +219,9 @@ namespace VVLC.Players
 
     public Task SetNewMedia(Uri source)
     {
-      return Task.Run(() =>
+      return Task.Run(async () =>
       {
-        if(source != null)
+        if (source != null)
         {
           var media = new Media(libVLC, source);
 
@@ -232,7 +233,6 @@ namespace VVLC.Players
         {
           MediaPlayer.Media = null;
         }
-      
       });
     }
 

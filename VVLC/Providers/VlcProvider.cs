@@ -25,8 +25,6 @@ namespace VVLC.Providers
           initilize = true;
         }
 
-        var path = "C:\\Users\\Roman Pecho\\Desktop\\Star.Trek.2009.720p.BluRay.x264.[YTS.MX]-English.srt";
-
         var libVLC = new LibVLC("--freetype-background-opacity=150", "--freetype-background-color=0", "--freetype-rel-fontsize=22");
 
         return new KeyValuePair<MediaPlayer, LibVLC>(new MediaPlayer(libVLC),libVLC);

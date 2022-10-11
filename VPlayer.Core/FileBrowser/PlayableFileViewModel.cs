@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
+using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore;
 using VCore.ItemsCollections;
@@ -33,6 +34,7 @@ using VPlayer.Core.ViewModels.TvShows;
 using FileInfo = VCore.WPF.ViewModels.WindowsFiles.FileInfo;
 using VCore.Standard.Helpers;
 using VCore.WPF.Helpers;
+using VPlayer.Core.ViewModels.SoundItems;
 
 namespace VPlayer.Core.FileBrowser
 {
@@ -230,6 +232,10 @@ namespace VPlayer.Core.FileBrowser
       {
         PlayVideo();
       }
+      else if (FileType == FileType.Sound)
+      {
+        PlaySound();
+      }
     }
 
     #endregion
@@ -264,6 +270,47 @@ namespace VPlayer.Core.FileBrowser
       var data = new PlayItemsEventData<VideoItemInPlaylistViewModel>(vms.AsList(), EventAction.Play, this);
 
       eventAggregator.GetEvent<PlayItemsEvent<VideoItem, VideoItemInPlaylistViewModel>>().Publish(data);
+    }
+
+    #endregion
+
+    #region PlaySound
+
+    private void PlaySound()
+    {
+      SoundItem soundItem = storageManager.GetRepository<SoundItem>().Include(x => x.FileInfo).SingleOrDefault(x => x.FileInfo.Source == Model.Indentificator);
+
+      if (soundItem == null)
+      {
+        var pSoundItem = new SoundItem()
+        {
+          Name = Model.Name,
+        };
+
+        SoundFileInfo fileInfo = new SoundFileInfo()
+        {
+          Name = Model.Name,
+          Source = Model.Indentificator
+        };
+
+        pSoundItem.FileInfo = fileInfo;
+
+        storageManager.StoreEntity<SoundItem>(pSoundItem, out soundItem);
+      }
+
+      if (soundItem == null)
+        return;
+
+      var vms = viewModelsFactory.Create<SoundItemInPlaylistViewModel>(soundItem);
+
+      vms.ObservePropertyChange(x => x.IsInPlaylist).ObserveOnDispatcher().Subscribe((x) =>
+      {
+        IsInPlaylist = x;
+      });
+
+      var data = new PlayItemsEventData<SoundItemInPlaylistViewModel>(vms.AsList(), EventAction.Play, this);
+
+      eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(data);
     }
 
     #endregion
