@@ -721,7 +721,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
             MediaPlayer = mediaRendererPlayer;
 
-            await HookToPlayerEvents();
+            HookToPlayerEvents();
           }
           else
             MediaPlayer = mediaRendererPlayer;
@@ -758,11 +758,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region Initialize
 
-    public override async void Initialize()
+    public override void Initialize()
     {
       IsPlaying = false;
 
-      await InitializeAsync();
+      InitializeAsync();
 
       storageManager.ObserveOnItemChange<Song>().ObserveOn(Application.Current.Dispatcher).Subscribe(OnSongChange).DisposeWith(this);
       storageManager.ObserveOnItemChange<Album>().ObserveOn(Application.Current.Dispatcher).Subscribe(OnAlbumChange).DisposeWith(this);

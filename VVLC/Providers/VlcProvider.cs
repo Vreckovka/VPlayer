@@ -8,32 +8,30 @@ namespace VVLC.Providers
 {
   public class VlcProvider : IVlcProvider
   {
-    private SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
-    private bool initilize;
+    private object lockObject = new object();
+    private bool initilized;
 
     #region LoadVlc
 
-    public async Task<KeyValuePair<MediaPlayer,LibVLC>> InitlizeVlc()
+    public KeyValuePair<MediaPlayer,LibVLC> InitlizeVlc()
     {
-      await semaphoreSlim.WaitAsync();
-
-      var player = await Task.Run(() =>
+      lock (lockObject)
       {
-        if(!initilize)
+        if (!initilized)
         {
-          LibVLCSharp.Shared.Core.Initialize();
-          initilize = true;
+          Core.Initialize();
+          initilized = true;
         }
 
-        var libVLC = new LibVLC("--freetype-background-opacity=150", "--freetype-background-color=0", "--freetype-rel-fontsize=22");
+        var libVlc = GetLibVLC();
 
-        return new KeyValuePair<MediaPlayer, LibVLC>(new MediaPlayer(libVLC),libVLC);
-      });
+        return new KeyValuePair<MediaPlayer, LibVLC>(new MediaPlayer(libVlc), libVlc); 
+      }
+    }
 
-
-      semaphoreSlim.Release();
-
-      return player;
+    public LibVLC GetLibVLC()
+    {
+      return new LibVLC("--freetype-background-opacity=150", "--freetype-background-color=0", "--freetype-rel-fontsize=22");
     }
 
     #endregion

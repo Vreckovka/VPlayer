@@ -20,7 +20,7 @@ namespace VPlayer.UPnP.ViewModels.Player
   public class UNpNMedia : IMedia
   {
     public event EventHandler<MediaDurationChangedArgs> DurationChanged;
-    public long Duration { get; } 
+    public long Duration { get; }
 
   }
 
@@ -63,7 +63,7 @@ namespace VPlayer.UPnP.ViewModels.Player
       Dispose();
     }
 
-  
+
 
     public int Volume { get; set; }
     public long Length { get; }
@@ -105,12 +105,9 @@ namespace VPlayer.UPnP.ViewModels.Player
 
     #region Initilize
 
-    public Task Initilize()
+    public void Initilize()
     {
-      return Task.Run(() =>
-      {
-        model.Init();
-      });
+      model.Init();
     }
 
     #endregion
@@ -159,7 +156,7 @@ namespace VPlayer.UPnP.ViewModels.Player
 
     public void ToggleMute()
     {
-      
+
     }
 
     #region SetPosition
@@ -228,7 +225,7 @@ namespace VPlayer.UPnP.ViewModels.Player
         {
           OnBuffering(new PlayerBufferingEventArgs() { Cache = 100 });
         }
-       
+
         var actualPosition = TimeSpan.Parse(trackPositionString);
         acutalMediaDuration = TimeSpan.Parse(trackDurationString);
 

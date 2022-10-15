@@ -240,7 +240,7 @@ namespace VPlayer.Core.ViewModels
 
     #region InitializeAsync
 
-    protected override Task InitializeAsync()
+    protected override void InitializeAsync()
     {
       PlayList.CollectionChanged += PlayList_CollectionChanged;
 
@@ -249,16 +249,16 @@ namespace VPlayer.Core.ViewModels
         MediaPlayer.TimeChanged += OnVlcTimeChanged;
       });
 
-      return base.InitializeAsync();
+      base.InitializeAsync();
     }
 
     #endregion
 
     #region HookToVlcEvents
 
-    protected override async Task HookToPlayerEvents()
+    protected override void HookToPlayerEvents()
     {
-      await base.HookToPlayerEvents();
+      base.HookToPlayerEvents();
 
       MediaPlayer.TimeChanged += OnVlcTimeChanged;
       MediaPlayer.Buffering += MediaPlayer_Buffering;

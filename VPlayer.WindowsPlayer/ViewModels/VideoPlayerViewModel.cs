@@ -321,10 +321,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region Initialize
 
-    public override async void Initialize()
+    public override void Initialize()
     {
       IsPlaying = false;
-      await base.InitializeAsync();
+      base.InitializeAsync();
 
       eventAggregator.GetEvent<RemoveFromPlaylistEvent<TvShowEpisodeInPlaylistViewModel>>().Subscribe(RemoveFromPlaystTvShow).DisposeWith(this);
       eventAggregator.GetEvent<PlaySongsFromPlayListEvent<TvShowEpisodeInPlaylistViewModel>>().Subscribe(PlayItemFromPlayList).DisposeWith(this);

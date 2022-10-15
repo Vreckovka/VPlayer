@@ -51,7 +51,7 @@ namespace VVLC.Players
     {
       get
       {
-        return MediaPlayer.Mute;
+        return MediaPlayer?.Mute ?? false;
       }
     }
 
@@ -116,12 +116,10 @@ namespace VVLC.Players
 
     #region Initilize
 
-    public async Task Initilize()
+    public void Initilize()
     {
-      var result = await vlcProvider.InitlizeVlc();
-
+      var result = vlcProvider.InitlizeVlc();
       MediaPlayer = result.Key;
-
       libVLC = result.Value;
 
       HookToVlcEvents();
@@ -133,8 +131,9 @@ namespace VVLC.Players
 
     public void Reload()
     {
-      MediaPlayer.Dispose();
-      MediaPlayer = new MediaPlayer(libVLC);
+      libVLC?.Dispose();
+      MediaPlayer?.Dispose();
+      Initilize();
     }
 
     public void ToggleMute()

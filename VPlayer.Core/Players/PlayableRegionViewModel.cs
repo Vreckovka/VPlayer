@@ -678,13 +678,13 @@ namespace VPlayer.Core.ViewModels
 
     #region InitializeAsync
 
-    protected virtual async Task InitializeAsync()
+    protected virtual void InitializeAsync()
     {
       IsPlaying = false;
 
       base.Initialize();
 
-      await HookToPlayerEvents();
+      HookToPlayerEvents();
 
       actualSearchSubject = new ReplaySubject<string>(1).DisposeWith(this);
 
@@ -711,20 +711,11 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region InitilizeMediaPlayer
-
-    protected async Task InitilizeMediaPlayer()
-    {
-      await MediaPlayer.Initilize();
-    }
-
-    #endregion
-
     #region HookToVlcEvents
 
-    protected virtual async Task HookToPlayerEvents()
+    protected virtual void HookToPlayerEvents()
     {
-      await Task.Run(() => InitilizeMediaPlayer());
+      MediaPlayer?.Initilize();
 
       if (MediaPlayer == null)
       {

@@ -188,9 +188,9 @@ namespace VPlayer.IPTV.ViewModels
 
     #region HookToVlcEvents
 
-    protected override async Task HookToPlayerEvents()
+    protected override async void HookToPlayerEvents()
     {
-      await base.HookToPlayerEvents();
+      base.HookToPlayerEvents();
 
       MediaPlayer.Buffering += MediaPlayer_Buffering;
 

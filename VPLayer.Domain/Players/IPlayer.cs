@@ -27,7 +27,7 @@ namespace VPlayer.WindowsPlayer.Players
 
     public IMedia Media { get; set; }
 
-    Task Initilize();
+    void Initilize();
     void Play();
     void Pause();
     void Stop();
