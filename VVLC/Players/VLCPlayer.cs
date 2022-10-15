@@ -47,6 +47,10 @@ namespace VVLC.Players
       get { return MediaPlayer.IsPlaying; }
     }
 
+    #endregion
+
+    #region IsMuted
+
     public bool IsMuted
     {
       get
@@ -89,6 +93,8 @@ namespace VVLC.Players
     public event EventHandler Paused;
     public event EventHandler Stopped;
     public event EventHandler Playing;
+    public event EventHandler Muted;
+    public event EventHandler Unmuted;
     public event EventHandler<PlayerBufferingEventArgs> Buffering;
     public event EventHandler<PlayerTimeChangedArgs> TimeChanged;
 
@@ -134,6 +140,12 @@ namespace VVLC.Players
       libVLC?.Dispose();
       MediaPlayer?.Dispose();
       Initilize();
+
+      RaisePropertyChanged(nameof(IsMuted));
+      RaisePropertyChanged(nameof(IsPlaying));
+      RaisePropertyChanged(nameof(Volume));
+      RaisePropertyChanged(nameof(Position));
+      RaisePropertyChanged(nameof(Length));
     }
 
     public void ToggleMute()
@@ -194,8 +206,16 @@ namespace VVLC.Players
         });
       };
 
-    }
+      MediaPlayer.Muted += (sender, e) =>
+      {
+        OnMuted();
+      };
 
+      MediaPlayer.Unmuted += (sender, e) =>
+      {
+        OnUnmuted();
+      };
+    }
 
     #endregion
 
@@ -280,6 +300,16 @@ namespace VVLC.Players
     public override void Dispose()
     {
       libVLC?.Dispose();
+    }
+
+    protected virtual void OnMuted()
+    {
+      Muted?.Invoke(this, EventArgs.Empty);
+    }
+
+    protected virtual void OnUnmuted()
+    {
+      Unmuted?.Invoke(this, EventArgs.Empty);
     }
   }
 }

@@ -23,6 +23,7 @@ using VCore.ItemsCollections;
 using VCore.Standard;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Modularity.Interfaces;
+using VCore.Standard.ViewModels.WindowsFile;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Managers;
 using VCore.WPF.Misc;
@@ -48,9 +49,7 @@ namespace VPlayer.Core.ViewModels
   where TPopupViewModel : FileItemSliderPopupDetailViewModel<TModel>
   {
     protected readonly IViewModelsFactory viewModelsFactory;
-    private readonly VLCPlayer vLcPlayer;
     private long lastTimeChangedMs;
-    private PlayItemsEventData<TItemViewModel> actualPlaylistData;
 
     protected FilePlayableRegionViewModel(
       IRegionProvider regionProvider,
@@ -64,7 +63,6 @@ namespace VPlayer.Core.ViewModels
       VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, statusManager, windowManager, vLCPlayer)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
-      vLcPlayer = vLCPlayer ?? throw new ArgumentNullException(nameof(vLCPlayer));
       BufferingSubject.Throttle(TimeSpan.FromSeconds(0.5)).Subscribe(x =>
       {
         IsBuffering = x;
@@ -189,7 +187,7 @@ namespace VPlayer.Core.ViewModels
       {
         reloadPosition = ActualItem.ActualPosition;
 
-        MediaPlayer.Reload();
+        ReloadMediaPlayer();
 
         await SetMedia(ActualItem.Model);
 
@@ -226,9 +224,9 @@ namespace VPlayer.Core.ViewModels
 
       if (ActualSavedPlaylist.WatchFolder)
       {
-        AddMissingFilesFromFolder(actualPlaylistData);
+        AddMissingFilesFromFolder();
       }
-       
+
       UpdateOrAddActualSavedPlaylist();
     }
 
@@ -646,26 +644,39 @@ namespace VPlayer.Core.ViewModels
 
     protected override void PlayPlaylist(PlayItemsEventData<TItemViewModel> data, int? lastSongIndex = null, bool onlySet = false)
     {
-      actualPlaylistData = data;
       base.PlayPlaylist(data, lastSongIndex, onlySet);
 
       if (ActualSavedPlaylist.WatchFolder)
       {
-        AddMissingFilesFromFolder(data);
+        AddMissingFilesFromFolder();
       }
     }
 
-    private void AddMissingFilesFromFolder(PlayItemsEventData<TItemViewModel> data)
+    private void AddMissingFilesFromFolder()
     {
-      var allFiles = data.Items?.Where(x => x.Model != null).Select(x => x.Model.Source).ToList();
+      var allFiles = PlayList.Where(x => x.Model != null).Select(x => x.Model.Source).ToList();
       var folders = allFiles.Select(x => Path.GetDirectoryName(x)).Distinct().ToList();
+      var parentFolder = folders.Select(x => new DirectoryInfo(x).Parent?.FullName).Distinct().ToList();
 
-      if (folders?.Count == 1)
+      if (parentFolder.Count == 1)
       {
-        var folder = folders.Single();
-        var files = Directory.GetFiles(folder);
+        if (parentFolder[0] != null)
+        {
+          folders.Clear();
+          folders.Add(parentFolder[0]);
+        }
+      }
 
-        var missingFilesInPlaylist = files.Where(x => !allFiles.Contains(x)).ToList();
+      foreach (var folder in folders)
+      {
+        var files = Directory.GetFiles(folder, "*", SearchOption.AllDirectories);
+
+        var missingFilesInPlaylist = files.Where(x =>
+        {
+          var fileType = Path.GetExtension(x).GetFileType();
+
+          return fileType == FileType.Sound || fileType == FileType.Video;
+        }).Where(x => !allFiles.Contains(x)).ToList();
 
         foreach (var file in missingFilesInPlaylist)
         {
@@ -682,7 +693,7 @@ namespace VPlayer.Core.ViewModels
           {
             storageManager.StoreEntity(newModel, out existing);
           }
-       
+
           PlayList.Add(viewModelsFactory.Create<TItemViewModel>(existing));
         }
 

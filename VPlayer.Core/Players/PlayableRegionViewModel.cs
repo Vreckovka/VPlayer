@@ -744,11 +744,8 @@ namespace VPlayer.Core.ViewModels
         OnMediaPlayerStopped();
       };
 
-      if(MediaPlayer is VLCPlayer vLCPlayer)
-      {
-        vLCPlayer.MediaPlayer.Muted += MediaPlayer_MutedChanged;
-        vLCPlayer.MediaPlayer.Unmuted += MediaPlayer_MutedChanged;
-      }
+      MediaPlayer.Muted += MediaPlayer_MutedChanged;
+      MediaPlayer.Unmuted += MediaPlayer_MutedChanged;
 
       MediaPlayer.Playing += OnVlcPlayingChanged;
       Volume = MediaPlayer.Volume;
@@ -949,7 +946,7 @@ namespace VPlayer.Core.ViewModels
 
       Application.Current?.Dispatcher?.Invoke(() =>
       {
-      
+
         ActualItem.IsPlaying = true;
       });
 
@@ -1657,7 +1654,7 @@ namespace VPlayer.Core.ViewModels
                     {
                       FileSystem.DeleteFile(item.Model.Source, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
                     }
-                
+
                   }
                   catch (Exception ex)
                   {
@@ -1799,6 +1796,19 @@ namespace VPlayer.Core.ViewModels
         Volume = pVolume;
         volumeSubject.OnNext(MediaPlayer.Volume);
       }
+    }
+
+    #endregion
+
+    #region ReloadMediaPlayer
+
+    protected void ReloadMediaPlayer()
+    {
+      MediaPlayer.Reload();
+
+      RaisePropertyChanged(nameof(IsMuted));
+      RaisePropertyChanged(nameof(IsPlaying));
+      RaisePropertyChanged(nameof(Volume));
     }
 
     #endregion

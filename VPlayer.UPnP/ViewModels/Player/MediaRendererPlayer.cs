@@ -99,6 +99,8 @@ namespace VPlayer.UPnP.ViewModels.Player
     public event EventHandler Paused;
     public event EventHandler Stopped;
     public event EventHandler Playing;
+    public event EventHandler Muted;
+    public event EventHandler Unmuted;
     public event EventHandler<PlayerBufferingEventArgs> Buffering;
     public event EventHandler<PlayerTimeChangedArgs> TimeChanged;
     public IMedia Media { get; set; }

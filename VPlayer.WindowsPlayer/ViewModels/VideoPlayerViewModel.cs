@@ -47,7 +47,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
   {
     private readonly IWindowManager windowManager;
     private readonly ICSFDWebsiteScrapper iCsfdWebsiteScrapper;
-    private readonly IViewModelsFactory viewModelsFactory;
     private TaskCompletionSource<bool> loadedTask = new TaskCompletionSource<bool>();
 
     #region Constructors
@@ -67,7 +66,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       this.iCsfdWebsiteScrapper = iCsfdWebsiteScrapper ?? throw new ArgumentNullException(nameof(iCsfdWebsiteScrapper));
-      this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
     }
 
     #endregion
