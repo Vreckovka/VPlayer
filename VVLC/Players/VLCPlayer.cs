@@ -138,14 +138,7 @@ namespace VVLC.Players
     public void Reload()
     {
       libVLC?.Dispose();
-      MediaPlayer?.Dispose();
-      Initilize();
-
-      RaisePropertyChanged(nameof(IsMuted));
-      RaisePropertyChanged(nameof(IsPlaying));
-      RaisePropertyChanged(nameof(Volume));
-      RaisePropertyChanged(nameof(Position));
-      RaisePropertyChanged(nameof(Length));
+      libVLC = vlcProvider.GetLibVLC();
     }
 
     public void ToggleMute()

@@ -251,7 +251,7 @@ namespace VPlayer.Core.FileBrowser
           foreach (var item in playableFiles)
           {
             var existing = storageManager.GetRepository<VideoItem>()
-              .SingleOrDefault(x => x.Source == item.Model.Source);
+              .FirstOrDefault(x => x.Source == item.Model.Source);
 
             if (existing == null)
             {

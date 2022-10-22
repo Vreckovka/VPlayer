@@ -32,7 +32,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     private readonly IStatusManager statusManager;
     public readonly IChromeDriverProvider chromeDriverProvider;
     private readonly IWindowManager windowManager;
-    private string baseUrl = "https://www.csfd.cz/";
+    private string baseUrl = "https://www.csfd.sk/";
 
     public CSFDWebsiteScrapper(ILogger logger, IStatusManager statusManager, IChromeDriverProvider chromeDriverProvider, IWindowManager windowManager)
     {
@@ -114,6 +114,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
             item.ImagePath = tvShow.ImagePath;
           }
 
+          tvShow.Rating = GetCsfdRating(tvShow);
 
           statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
 
@@ -278,18 +279,11 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       var seasons = new List<CSFDTVShowSeason>();
 
       cancellationToken.ThrowIfCancellationRequested();
-
-      var nodes = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/section[1]/div[2]/div/ul/li/h3/a");
+      
+      var nodes = TrySelectNodes(document.DocumentNode, "/div/div[1]/div/section[1]/div[2]/div/ul/li/h3/a");
 
       if (nodes == null)
-      {
-        nodes = document.DocumentNode.SelectNodes("/html/body/div[4]/div/div[1]/div/section[1]/div[2]/div/ul/li/h3/a");
-
-        if (nodes == null)
-        {
-          return seasons;
-        }
-      }
+        return null;
 
       var statusMessageViewModel = new StatusMessageViewModel(nodes.Count)
       {
@@ -322,12 +316,8 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       cancellationToken.ThrowIfCancellationRequested();
 
       bool isSingleSeasoned = false;
-      nodes = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/section[1]/div[1]/h3");
 
-      if (nodes == null)
-      {
-        nodes = document.DocumentNode.SelectNodes("/html/body/div[4]/div/div[1]/div/section[1]/div[1]/h3");
-      }
+      nodes = TrySelectNodes(document.DocumentNode, "/div/div[1]/div/section[1]/div[1]/h3");
 
       if (nodes.Any())
       {
@@ -486,16 +476,11 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         document.LoadHtml(html);
 
-        var nodes = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div[3]/div/ul/li/a");
+        var nodes = TrySelectNodes(document.DocumentNode,"/div/div[1]/div[3]/div/ul/li/a");
 
         if (nodes == null)
         {
-          nodes = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/section[1]/div[2]/div/ul/li/h3/a");
-        }
-
-        if (nodes == null)
-        {
-          nodes = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/section/div[2]/div/ul/li/h3/a");
+          nodes = TrySelectNodes(document.DocumentNode, "/div/div[1]/div/section[1]/div[2]/div/ul/li/h3/a");
         }
 
         if (nodes == null)
@@ -511,7 +496,6 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         statusMessageViewModel.CopyParentState(pStatusMessageViewModel);
         statusManager.UpdateMessage(statusMessageViewModel);
-
 
 
         if (episodeNumber == null)
@@ -571,40 +555,40 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         var document = new HtmlDocument();
 
         document.LoadHtml(html);
+        
+        var ratingNode = GetClearText(TrySelectNodes(document.DocumentNode,"/div/div[1]/aside/div/div[2]/div")?.FirstOrDefault()?.InnerText)?.Trim();
 
-
-        var ratingNode = GetClearText(document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/aside/div/div[2]/div")?.FirstOrDefault()?.InnerText);
-
-        if (ratingNode == null)
+        if (ratingNode != "?")
         {
-          ratingNode = GetClearText(document.DocumentNode.SelectNodes("/html/body/div[4]/div/div[1]/aside/div/div[2]/div")?.FirstOrDefault()?.InnerText);
-        }
+          int.TryParse(ratingNode, out var rating);
 
-        int.TryParse(ratingNode, out var rating);
+          cSFDTVShowSeasonEpisode.Rating = rating;
 
-        cSFDTVShowSeasonEpisode.Rating = rating;
-
-        if (rating >= 70)
-        {
-          cSFDTVShowSeasonEpisode.RatingColor = RatingColor.Red;
+          if (rating >= 70)
+          {
+            cSFDTVShowSeasonEpisode.RatingColor = RatingColor.Red;
+          }
+          else if (rating >= 30)
+          {
+            cSFDTVShowSeasonEpisode.RatingColor = RatingColor.Blue;
+          }
+          else if (rating > 0)
+          {
+            cSFDTVShowSeasonEpisode.RatingColor = RatingColor.Gray;
+          }
+          else
+          {
+            cSFDTVShowSeasonEpisode.RatingColor = RatingColor.LightGray;
+          }
         }
-        else if (rating >= 30)
-        {
-          cSFDTVShowSeasonEpisode.RatingColor = RatingColor.Blue;
-        }
-        else if (rating > 0)
-        {
-          cSFDTVShowSeasonEpisode.RatingColor = RatingColor.Gray;
-        }
-        else
+        else if(ratingNode == "?")
         {
           cSFDTVShowSeasonEpisode.RatingColor = RatingColor.LightGray;
         }
 
+        var originalName = GetClearText(TrySelectNodes(document.DocumentNode, "/div/div[1]/div/div[1]/div[2]/div/header/div/ul/li")?.FirstOrDefault()?.InnerText);
 
-        var originalName = GetClearText(document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div[2]/div/header/div/ul/li")?.FirstOrDefault()?.InnerText);
-
-        var seasonNode = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div[2]/div/header/h2")?.FirstOrDefault();
+        var seasonNode = TrySelectNodes(document.DocumentNode, "/div/div[1]/div/div[1]/div[2]/div/header/h2")?.FirstOrDefault();
 
         string tvShowUrl = null;
         if (seasonNode?.ChildNodes.Count > 1)
@@ -617,7 +601,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           }
         }
 
-        var nameNode = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div[2]/div/header/div")?.FirstOrDefault();
+        var nameNode = TrySelectNodes(document.DocumentNode, "/div/div[1]/div/div[1]/div[2]/div/header/div")?.FirstOrDefault();
 
         List<string> parameters = new List<string>();
 
@@ -643,7 +627,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         }
 
 
-        var infoNode = document.DocumentNode.SelectNodes("/html/body/div[3]/div/div[1]/div/div[1]/div[2]/div/div[2]")?.FirstOrDefault();
+        var infoNode = TrySelectNodes(document.DocumentNode, "/div/div[1]/div/div[1]/div[2]/div/div[2]")?.FirstOrDefault();
 
         string[] actors = null;
         string[] directors = null;
@@ -652,22 +636,22 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         if (infoNode != null && infoNode.ChildNodes.Count > 5)
         {
-          generes = infoNode.ChildNodes[1].InnerText.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("/");
+          generes = infoNode.ChildNodes[3].InnerText.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("/");
 
-          if (infoNode.ChildNodes[3].ChildNodes.Count > 1 && int.TryParse(infoNode.ChildNodes[3].ChildNodes[1].InnerText, out var year1))
+          if (infoNode.ChildNodes[5].ChildNodes.Count > 1 && int.TryParse(infoNode.ChildNodes[5].ChildNodes[1].InnerText.Replace(",",null).Trim(), out var year1))
           {
             year = year1;
           }
 
-          var creatorsNode = infoNode.ChildNodes[5];
+          var creatorsNode = infoNode.ChildNodes[7];
 
           if (creatorsNode.ChildNodes.Count > 3)
           {
             var textDirectors = creatorsNode.ChildNodes[3].InnerText;
 
-            if (textDirectors.Contains("Režie:"))
+            if (textDirectors.Contains("Réžia:"))
             {
-              directors = textDirectors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Režie:")[1].Split(",");
+              directors = textDirectors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Réžia:")[1].Split(",");
             }
 
 
@@ -675,9 +659,9 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
             {
               var textActors = creatorsNode.ChildNodes[11].InnerText;
 
-              if (textActors.Contains("Hrají:"))
+              if (textActors.Contains("Hrajú:"))
               {
-                actors = textActors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Hrají:")[1].Split(",");
+                actors = textActors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Hrajú:")[1].Split(",");
               }
             }
           }
@@ -1349,9 +1333,9 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region TrySelectNodes
 
-    private HtmlNodeCollection TrySelectNodes(HtmlNode htmlNode, string xPath, string baseXPath = "/html/body/div")
+    private HtmlNodeCollection TrySelectNodes(HtmlNode htmlNode, string xPath, string baseXPath = "/html/body/div[2]/div")
     {
-      int[] divIndexes = new int[] { 3, 4, 2 };
+      int[] divIndexes = new int[] { 2, 3, 4, 2 };
 
       foreach (var divIndex in divIndexes)
       {

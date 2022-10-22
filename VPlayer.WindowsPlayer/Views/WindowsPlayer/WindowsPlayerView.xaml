@@ -85,7 +85,8 @@
                    PlacementTarget="{Binding ElementName=slider_container}">
                 <Popup.Style>
                     <Style TargetType="Popup">
-                        <!--<Setter Property="VerticalOffset" Value="-35" />-->
+
+                        <Setter Property="Height" Value="25" />
 
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding ElementName=slider_container, Path=IsMouseOver}" Value="true">
