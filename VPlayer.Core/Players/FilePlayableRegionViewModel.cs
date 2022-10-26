@@ -873,7 +873,7 @@ namespace VPlayer.Core.ViewModels
     protected byte[] GetEmptyImage()
     {
       var stream = new MemoryStream();
-      var emptyImage = new Bitmap(10, 10, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+      var emptyImage = new Bitmap(10, 10, PixelFormat.Format24bppRgb);
       emptyImage.Save(stream, ImageFormat.Jpeg);
 
       return stream.ToArray();

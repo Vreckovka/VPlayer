@@ -297,23 +297,8 @@ namespace VPlayer.Core.FileBrowser
             tvshowNumber = DataLoader.GetTvShowSeriesNumber(x.Name)
           }).ToList();
 
-          //if (vmsWithSeries.Count > 1 && vmsWithSeries.All(x => x.tvshowNumber == null))
-          //{
-          //  for (int i = 1; i < vmsWithSeries.Count; i++)
-          //  {
-          //    var newName = GetSubcratedString(vmsWithSeries[i - 1].item.Name, vmsWithSeries[i].item.Name);
-          //  }
-          //}
+          vms = vmsWithSeries.OrderBy(x => x.tvshowNumber?.SeasonNumber).ThenBy(x => x.tvshowNumber?.EpisodeNumber).Select(x => x.item).ToList();
 
-          if (vmsWithSeries.All(x => x.tvshowNumber != null))
-          {
-            vms = vmsWithSeries.OrderBy(x => x.tvshowNumber?.SeasonNumber).ThenBy(x => x.tvshowNumber?.EpisodeNumber).Select(x => x.item).ToList();
-          }
-          else
-          {
-            vms = vmsWithSeries.Select(x => x.item).ToList();
-          }
-         
           var data = new PlayItemsEventData<VideoItemInPlaylistViewModel>(vms, EventAction.Play, this);
 
           eventAggregator.GetEvent<PlayItemsEvent<VideoItem, VideoItemInPlaylistViewModel>>().Publish(data);

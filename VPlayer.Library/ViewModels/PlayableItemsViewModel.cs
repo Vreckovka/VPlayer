@@ -140,21 +140,27 @@ namespace VPlayer.Home.ViewModels
 
     protected virtual void OnUpdateItemChange(TModel model)
     {
-      Application.Current?.Dispatcher?.Invoke(() =>
+      try
       {
-        LibraryCollection.Update(model);
-      });
+        Application.Current?.Dispatcher?.Invoke(() =>
+         {
+           LibraryCollection.Update(model);
+         });
 
-      var vm = LibraryCollection.Items?.SingleOrDefault(x => x.ModelId == model.Id);
+        var vm = LibraryCollection.Items?.SingleOrDefault(x => x.ModelId == model.Id);
 
-      if(vm != null)
-      {
-        var newItemUpdatedArgs = new ItemUpdatedEventArgs<TViewModel>()
+        if (vm != null)
         {
-          Model = vm
-        };
+          var newItemUpdatedArgs = new ItemUpdatedEventArgs<TViewModel>()
+          {
+            Model = vm
+          };
 
-        eventAggregator.GetEvent<ItemUpdatedEvent<TViewModel>>().Publish(newItemUpdatedArgs);
+          eventAggregator.GetEvent<ItemUpdatedEvent<TViewModel>>().Publish(newItemUpdatedArgs);
+        }
+      }
+      catch (Exception ex)
+      {
       }
     }
 
