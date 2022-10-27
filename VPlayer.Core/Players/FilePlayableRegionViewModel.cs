@@ -762,7 +762,7 @@ namespace VPlayer.Core.ViewModels
     public FileItemSliderPopupDetailViewModel(TModel model) : base(model)
     {
       TotalTime = TimeSpan.FromSeconds(model.Duration);
-      refreshSubject.Throttle(TimeSpan.FromMilliseconds(15)).Subscribe(x =>
+      refreshSubject.Throttle(TimeSpan.FromMilliseconds(5)).Subscribe(x =>
       {
         Refresh();
       });

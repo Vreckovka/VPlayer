@@ -808,6 +808,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         if (MediaPlayer.Media != null)
           MediaPlayer.Media.ParsedChanged -= MediaPlayer_ParsedChanged;
 
+        SelectAspectCropRatios();
       }
       finally
       {
@@ -999,7 +1000,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         var lastTime = GetLastItemElapsed(data.GetModel<VideoFilePlaylist>());
 
-        if (lastTime > 0.65)
+        if (lastTime > 0.05)
         {
           requestedLastPosition = lastTime;
         }
