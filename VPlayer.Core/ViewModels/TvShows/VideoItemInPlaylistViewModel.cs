@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Windows.Input;
 using Prism.Events;
 using VCore.Standard;
+using VCore.WPF.Misc;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -15,6 +18,32 @@ namespace VPlayer.Core.ViewModels.TvShows
     public CSFDItemViewModel(CSFDItem model) : base(model)
     {
     }
+
+    #region OpenCsfd
+
+    private ActionCommand openCsfd;
+    public ICommand OpenCsfd
+    {
+      get
+      {
+        return openCsfd ??= new ActionCommand(OnOpenCsfd);
+      }
+    }
+
+    private void OnOpenCsfd()
+    {
+      if (!string.IsNullOrEmpty(Model.Url))
+      {
+        Process.Start(new ProcessStartInfo()
+        {
+          FileName = Model.Url,
+          UseShellExecute = true,
+          Verb = "open"
+        });
+      }
+    }
+
+    #endregion
 
     #region Name
 

@@ -283,9 +283,6 @@ namespace VPlayer.Core.ViewModels
           return DownloadItemInfo(cTSOnActualItemChanged.Token);
         });
       }
-
-      DetailViewModel?.Dispose();
-      DetailViewModel = viewModelsFactory.Create<TPopupViewModel>(model);
     }
 
     #endregion
@@ -495,6 +492,9 @@ namespace VPlayer.Core.ViewModels
       Application.Current.Dispatcher.Invoke(async () =>
       {
         ChangeDuration(e.Duration);
+
+        DetailViewModel?.Dispose();
+        DetailViewModel = viewModelsFactory.Create<TPopupViewModel>(ActualItem.Model);
       });
     }
 
@@ -658,7 +658,7 @@ namespace VPlayer.Core.ViewModels
       var folders = allFiles.Select(x => Path.GetDirectoryName(x)).Distinct().ToList();
       var parentFolder = folders.Select(x => new DirectoryInfo(x).Parent?.FullName).Distinct().ToList();
 
-      if (parentFolder.Count == 1)
+      if (parentFolder.Count == 1 && folders.Count > 1)
       {
         if (parentFolder[0] != null)
         {
@@ -687,7 +687,7 @@ namespace VPlayer.Core.ViewModels
           newModel.Name = fileInfo.Name;
 
           var existing = storageManager.GetRepository<TModel>()
-            .SingleOrDefault(x => x.Source == newModel.Source);
+            .FirstOrDefault(x => x.Source == newModel.Source);
 
           if (existing == null)
           {

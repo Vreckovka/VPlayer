@@ -58,16 +58,17 @@
                                        Foreground="{StaticResource 120_WhiteTransparentBrush}"
                                        Text="{Binding ActualItem.ActualTime, StringFormat=hh\\:mm\\:ss}" />
 
-                            <Grid x:Name="slider_container"
-                                  Grid.Row="0"
-                                  Grid.Column="0"
-                                  Grid.ColumnSpan="3"
-                                  Background="Transparent"
-                                  Cursor="Hand"
-                                  DataContext="{Binding ActualViewModel}">
+                            <Border x:Name="slider_container"
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="3"
+                                    Margin="0,-5,0,0"
+                                    Padding="0,3"
+                                    Background="Transparent"
+                                    Cursor="Hand"
+                                    DataContext="{Binding ActualViewModel}">
                                 <Slider x:Name="Slider_Time"
-                                        Height="5"
-                                        Margin="0,0,0,0"
+                                        Height="4"
                                         Padding="0"
                                         IsMoveToPointEnabled="True"
                                         Maximum="1"
@@ -83,7 +84,7 @@
                                                                   Slider="{Binding ElementName=Slider_Time}"
                                                                   ViewModel="{Binding DetailViewModel}" />
                                 </b:Interaction.Behaviors>
-                            </Grid>
+                            </Border>
 
 
                             <Popup x:Name="VideoPreviewPopup"

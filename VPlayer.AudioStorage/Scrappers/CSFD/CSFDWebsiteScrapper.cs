@@ -17,6 +17,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
 using VCore;
+using VCore.Standard.Helpers;
 using VCore.WPF.Controls.StatusMessage;
 using VCore.WPF.Interfaces.Managers;
 using VPlayer.AudioStorage.DataLoader;
@@ -636,7 +637,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         if (infoNode != null && infoNode.ChildNodes.Count > 5)
         {
-          generes = infoNode.ChildNodes[3].InnerText.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("/");
+          generes = infoNode.ChildNodes[3].InnerText.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("/").Select(x => x.Trim()).ToArray();
 
           if (infoNode.ChildNodes[5].ChildNodes.Count > 1 && int.TryParse(infoNode.ChildNodes[5].ChildNodes[1].InnerText.Replace(",",null).Trim(), out var year1))
           {
@@ -651,7 +652,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
             if (textDirectors.Contains("Réžia:"))
             {
-              directors = textDirectors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Réžia:")[1].Split(",");
+              directors = textDirectors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Réžia:")[1].Split(",").Select(x => x.Trim()).ToArray();
             }
 
 
@@ -661,7 +662,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
               if (textActors.Contains("Hrajú:"))
               {
-                actors = textActors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Hrajú:")[1].Split(",");
+                actors = textActors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Hrajú:")[1].Split(",").Select(x => x.Trim()).ToArray();
               }
             }
           }
@@ -1235,7 +1236,6 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           originalName = infoNode.ChildNodes[1].ChildNodes[3].InnerText.Replace("(", null).Replace(")", null);
         }
 
-
         var regex = new Regex(@"\((.*?)\)");
         var ads = regex.Matches(tile);
 
@@ -1253,7 +1253,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
             parameters.Add(value);
         }
 
-        var generes = infoNode.ChildNodes[3].InnerText.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("/");
+        var generes = infoNode.ChildNodes[3].InnerText.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("/").Select(x => x.Trim()).ToArray();
 
         string[] actors = null;
         string[] directors = null;
@@ -1264,7 +1264,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
           if (textDirectors.Contains("Réžia:"))
           {
-            directors = textDirectors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Réžia:")[1].Split(",");
+            directors = textDirectors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Réžia:")[1].Split(",").Select(x => x.Trim()).ToArray();
           }
         }
 
@@ -1274,7 +1274,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
           if (textActors.Contains("Hrajú:"))
           {
-            actors = textActors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Hrajú:")[1].Split(",");
+            actors = textActors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Hrajú:")[1].Split(",").Select(x => x.Trim()).ToArray();
           }
         }
 
@@ -1312,14 +1312,14 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         var item = new CSFDItem()
         {
           ImagePath = posterUrl,
-          Name = name,
+          Name = name?.Replace("&amp;", "&").Trim(),
           Year = year,
           Url = url,
           Actors = actors,
           Directors = directors,
           Generes = generes,
           Parameters = parameters.ToArray(),
-          OriginalName = originalName,
+          OriginalName = originalName?.Replace("&amp;", "&").Trim(),
           RatingColor = ratingColor
         };
 
