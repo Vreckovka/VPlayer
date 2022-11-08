@@ -33,6 +33,7 @@ using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.TvShows;
 using VPlayer.Player.Views.WindowsPlayer;
+using VPlayer.WindowsPlayer.Players;
 using VPlayer.WindowsPlayer.ViewModels.VideoProperties;
 using VPlayer.WindowsPlayer.ViewModels.Windows;
 using VPlayer.WindowsPlayer.Views.Prompts;
@@ -243,8 +244,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
         {
           Name = "Stream file",
           Source = vm.StreamUrl,
-          Duration = (int)new TimeSpan(99, 99, 99).TotalSeconds
+          Duration = (int)new TimeSpan(99, 99, 99).TotalSeconds,
         }, eventAggregator, storageManager);
+
+        item.IsStream = true;
 
         try
         {
@@ -258,6 +261,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           RaisePropertyChanged(nameof(CanPlay));
 
           SetItemAndPlay(PlayList.IndexOf(item), true);
+
         }
         catch (Exception ex)
         {
@@ -593,18 +597,35 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
       }
 
-
+      if (DetailViewModel != null && ActualItem != null)
+      {
+        DetailViewModel.DisablePopup = ActualItem.IsStream;
+      } 
+       
     }
 
     #endregion
+
+    protected override void Media_DurationChanged(object sender, MediaDurationChangedArgs e)
+    {
+      base.Media_DurationChanged(sender, e);
+
+      if (DetailViewModel != null && ActualItem != null)
+      {
+        DetailViewModel.DisablePopup = ActualItem.IsStream;
+      }
+    }
 
     #region DownloadItemInfo
 
     protected override async Task DownloadItemInfo(CancellationToken cancellationToken)
     {
-      await base.DownloadItemInfo(cancellationToken);
+      if (ActualItem?.IsStream != true)
+      {
+        await base.DownloadItemInfo(cancellationToken);
 
-      await FindOnCsfd(ActualItem, cancellationToken);
+        await FindOnCsfd(ActualItem, cancellationToken);
+      }
     }
 
     #endregion
@@ -758,8 +779,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         await parseChangedSemaphore.WaitAsync();
 
-        await Application.Current.Dispatcher.Invoke(async () =>  {
-            AudioTracks.Clear();
+        await Application.Current.Dispatcher.Invoke(async () =>
+        {
+          AudioTracks.Clear();
         });
 
         if (MediaPlayer.AudioTrackDescription.Length > 0)
@@ -808,7 +830,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         if (MediaPlayer.Media != null)
           MediaPlayer.Media.ParsedChanged -= MediaPlayer_ParsedChanged;
 
-        SelectAspectCropRatios();
+        //SelectAspectCropRatios();
       }
       finally
       {

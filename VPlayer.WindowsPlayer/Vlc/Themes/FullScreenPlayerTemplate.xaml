@@ -99,9 +99,20 @@
                                                 <Setter Property="IsOpen" Value="True" />
                                             </DataTrigger>
 
-                                            <DataTrigger Binding="{Binding Converter={converters1:IsTypeConverter}, ConverterParameter={x:Type viewModels:VideoSliderPopupDetailViewModel}}" Value="true">
-                                                <Setter Property="Width" Value="260" />
-                                                <Setter Property="Height" Value="150" />
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding Converter={converters1:IsTypeConverter}, ConverterParameter={x:Type viewModels:VideoSliderPopupDetailViewModel}}" Value="true" />
+                                                    <Condition Binding="{Binding DisablePopup}" Value="false" />
+                                                </MultiDataTrigger.Conditions>
+                                                <MultiDataTrigger.Setters>
+                                                    <Setter Property="Width" Value="260" />
+                                                    <Setter Property="Height" Value="150" />
+                                                </MultiDataTrigger.Setters>
+                                            </MultiDataTrigger>
+
+                                            <DataTrigger Binding="{Binding DisablePopup}" Value="true">
+                                                <Setter Property="Width" Value="auto" />
+                                                <Setter Property="Height" Value="25" />
                                             </DataTrigger>
 
                                         </Style.Triggers>
@@ -114,7 +125,6 @@
                                             <Setter Property="Background" Value="#55000000" />
                                             <Setter Property="BorderBrush" Value="#55757575" />
 
-
                                         </Style>
                                     </Border.Style>
                                     <Grid>
@@ -122,8 +132,18 @@
 
                                         <Border Margin="0,0"
                                                 Padding="20,2"
-                                                VerticalAlignment="Bottom"
-                                                Background="#bf000000">
+                                                VerticalAlignment="Bottom">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="#bf000000" />
+
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding DisablePopup}" Value="true">
+                                                            <Setter Property="Background" Value="#151515" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
                                             <TextBlock HorizontalAlignment="Center"
                                                        FontSize="15"
                                                        FontWeight="SemiBold"

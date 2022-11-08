@@ -428,6 +428,16 @@
                                            Text="{Binding Name}"
                                            TextTrimming="CharacterEllipsis"
                                            ToolTip="{Binding Name}" />
+
+                                <StackPanel.Style>
+                                    <Style TargetType="StackPanel">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Name}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
                             </StackPanel>
 
                             <StackPanel Grid.Row="1">
@@ -437,12 +447,31 @@
                                            Text="{Binding OriginalName}"
                                            TextTrimming="CharacterEllipsis"
                                            ToolTip="{Binding OriginalName}" />
+
+                                <StackPanel.Style>
+                                    <Style TargetType="StackPanel">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding OriginalName}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
                             </StackPanel>
 
                             <StackPanel Grid.Row="2">
                                 <TextBlock Style="{StaticResource Header}" Text="Year" />
-
                                 <TextBlock Style="{StaticResource Content}" Text="{Binding Year}" />
+
+                                <StackPanel.Style>
+                                    <Style TargetType="StackPanel">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Year}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
                             </StackPanel>
 
 
@@ -477,6 +506,26 @@
                                     <RowDefinition Height="auto" />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
+
+                                <Grid.Style>
+                                    <Style TargetType="Grid">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding Model.Directors}" Value="{x:Null}" />
+                                                    <Condition Binding="{Binding Model.Generes}" Value="{x:Null}" />
+                                                </MultiDataTrigger.Conditions>
+
+                                                <MultiDataTrigger.Setters>
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </MultiDataTrigger.Setters>
+                                            </MultiDataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Grid.Style>
+
+
                                 <TextBlock Margin="0,5,0,0"
                                            Style="{StaticResource Header}"
                                            Text="Description" />
@@ -486,6 +535,7 @@
                                         <TextBlock FontSize="10"
                                                    Style="{StaticResource Header}"
                                                    Text="Directors" />
+
                                         <ItemsControl Foreground="#ccc" ItemsSource="{Binding Model.Directors}">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
@@ -503,6 +553,16 @@
                                                 </DataTemplate>
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
+
+                                        <StackPanel.Style>
+                                            <Style TargetType="StackPanel">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Model.Directors}" Value="{x:Null}">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </StackPanel.Style>
                                     </StackPanel>
 
                                     <StackPanel>
@@ -510,6 +570,15 @@
                                                    Style="{StaticResource Header}"
                                                    Text="Generes" />
                                         <ItemsControl Foreground="#ccc" ItemsSource="{Binding Model.Generes}">
+                                            <ItemsControl.Style>
+                                                <Style TargetType="ItemsControl">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Model.Generes}" Value="{x:Null}">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </ItemsControl.Style>
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
                                                     <StackPanel Orientation="Horizontal" />
@@ -526,6 +595,16 @@
                                                 </DataTemplate>
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
+
+                                        <StackPanel.Style>
+                                            <Style TargetType="StackPanel">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Model.Generes}" Value="{x:Null}">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </StackPanel.Style>
                                     </StackPanel>
                                 </StackPanel>
                             </Grid>

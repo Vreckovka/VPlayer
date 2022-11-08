@@ -540,7 +540,7 @@
                     </Grid.ColumnDefinitions>
 
                     <ContentControl Grid.Column="1"
-                                    Margin="-8,0,0,0"
+                                    Margin="0,0,0,0"
                                     Padding="2"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"

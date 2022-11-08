@@ -9,6 +9,7 @@ using Emgu.Util;
 using Logger;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.Core.ViewModels;
+using Size = System.Drawing.Size;
 
 namespace VPlayer.WindowsPlayer.ViewModels
 {
@@ -23,9 +24,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       this.model = model ?? throw new ArgumentNullException(nameof(model));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-      
+
       imageConverter = new ImageConverter();
     }
+
 
     #region GetImage
 
@@ -33,38 +35,41 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       try
       {
-        if (videoCapture == null)
+        if (!DisablePopup)
         {
-          videoCapture = new VideoCapture(model.Source, VideoCapture.API.Any, new Tuple<CapProp, int>(CapProp.HwAcceleration, 1));
+          if (videoCapture == null)
+          {
+            videoCapture = new VideoCapture(model.Source, VideoCapture.API.Any, new Tuple<CapProp, int>(CapProp.HwAcceleration, 1));
 
-          frameCount = videoCapture.Get(CapProp.FrameCount);
+            frameCount = videoCapture.Get(CapProp.FrameCount);
 
-          videoCapture.Set(CapProp.FrameWidth, 460);
-          videoCapture.Set(CapProp.FrameWidth, 320);
-        }
+            videoCapture.Set(CapProp.Buffersize, 1);
+            videoCapture.Set(CapProp.Fps, 20);
+            videoCapture.Set(CapProp.FourCC, VideoWriter.Fourcc('M', 'J', 'P', 'G'));
+          }
 
-        if (isDiposed)
-          return null;
-
-        if (MaxValue > 0)
-        {
-          var frame = (ActualSliderValue / MaxValue) * frameCount;
-
-          videoCapture.Set(CapProp.FourCC, VideoWriter.Fourcc('M', 'J', 'P', 'G'));
-          videoCapture.Set(CapProp.Buffersize, 1);
-          videoCapture.Set(CapProp.PosFrames, frame);
-
-          var img = videoCapture.QuerySmallFrame();
-
-          if (img == null)
+          if (isDiposed)
             return null;
 
-          var bitMap = img.ToBitmap();
-          img.Dispose();
-          return ImageToByte(bitMap);
+          if (MaxValue > 0)
+          {
+            var frame = ActualSliderValue / MaxValue * frameCount;
+
+            videoCapture.Set(CapProp.PosFrames, frame);
+
+            var img = videoCapture.QuerySmallFrame();
+
+
+            if (img == null)
+              return null;
+
+
+            var bitMap = img.ToBitmap();
+            img.Dispose();
+            return ImageToByte(bitMap);
+          }
         }
-
-
+        
         return null;
       }
       catch (Exception ex)
@@ -87,25 +92,31 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
 
 
+    private double lastActualSliderValue = 0;
     protected override async void Refresh()
     {
       try
       {
         await semaphoreSlim.WaitAsync();
 
-        base.Refresh();
-
-        var task = Task.Run(() =>
+        if (IsPopupOpened && ActualSliderValue != lastActualSliderValue)
         {
-          if (isDiposed)
+          lastActualSliderValue = ActualSliderValue;
+
+          base.Refresh();
+
+          var task = Task.Run(() =>
           {
-            return null;
-          }
+            if (isDiposed)
+            {
+              return null;
+            }
 
-          return GetImage();
-        });
+            return GetImage();
+          });
 
-        Image = await task; 
+          Image = await task;
+        }
       }
       finally
       {

@@ -26,10 +26,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Views/WindowsPlayer/WindowsPlayerViewResources.xaml" />
-
             </ResourceDictionary.MergedDictionaries>
-
-
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -95,11 +92,22 @@
                                 <Setter Property="IsOpen" Value="True" />
                             </DataTrigger>
 
-                            <DataTrigger Binding="{Binding Converter={converters:IsTypeConverter}, ConverterParameter={x:Type viewModels:VideoSliderPopupDetailViewModel}}" Value="true">
-                                <!--<Setter Property="VerticalOffset" Value="-180" />-->
-                                <Setter Property="Width" Value="260" />
-                                <Setter Property="Height" Value="150" />
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding Converter={converters:IsTypeConverter}, ConverterParameter={x:Type viewModels:VideoSliderPopupDetailViewModel}}" Value="true" />
+                                    <Condition Binding="{Binding DisablePopup}" Value="false" />
+                                </MultiDataTrigger.Conditions>
+                                <MultiDataTrigger.Setters>
+                                    <Setter Property="Width" Value="260" />
+                                    <Setter Property="Height" Value="150" />
+                                </MultiDataTrigger.Setters>
+                            </MultiDataTrigger>
+
+                            <DataTrigger Binding="{Binding DisablePopup}" Value="true">
+                                <Setter Property="Width" Value="auto" />
+                                <Setter Property="Height" Value="25" />
                             </DataTrigger>
+
 
                         </Style.Triggers>
                     </Style>

@@ -627,8 +627,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           }
         }
 
-
-        var infoNode = TrySelectNodes(document.DocumentNode, "/div/div[1]/div/div[1]/div[2]/div/div[2]")?.FirstOrDefault();
+        var infoNode = TrySelectNodes(document.DocumentNode, "/div/div[1]/div/div[1]/div[2]/div/div")?.FirstOrDefault();
 
         string[] actors = null;
         string[] directors = null;
@@ -675,7 +674,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         cSFDTVShowSeasonEpisode.Directors = directors;
         cSFDTVShowSeasonEpisode.OriginalName = originalName?.Replace("(viac" +
           "" +
-          "<)", null);
+          "<)", null)?.Replace("(viac)",null);
         cSFDTVShowSeasonEpisode.Generes = generes;
         cSFDTVShowSeasonEpisode.SeasonNumber = number?.SeasonNumber;
         cSFDTVShowSeasonEpisode.EpisodeNumber = number?.EpisodeNumber;
@@ -1253,7 +1252,17 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
             parameters.Add(value);
         }
 
-        var generes = infoNode.ChildNodes[3].InnerText.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("/").Select(x => x.Trim()).ToArray();
+        var infoText = infoNode.ChildNodes[3].InnerText.Replace("\t", null).Replace("\n", null).Replace("\r", null);
+        var infoSplit = infoText?.Split(",");
+
+        string[] generes = null;
+        string[] origin = null;
+
+        if (infoSplit.Length > 1)
+        {
+          origin = infoSplit[0].Split("/").Select(x => x.Trim()).ToArray();
+          generes = infoSplit[1].Split("/").Select(x => x.Trim()).ToArray();
+        }
 
         string[] actors = null;
         string[] directors = null;
@@ -1320,7 +1329,8 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           Generes = generes,
           Parameters = parameters.ToArray(),
           OriginalName = originalName?.Replace("&amp;", "&").Trim(),
-          RatingColor = ratingColor
+          RatingColor = ratingColor,
+          Origin = origin
         };
 
         list.Add(item);

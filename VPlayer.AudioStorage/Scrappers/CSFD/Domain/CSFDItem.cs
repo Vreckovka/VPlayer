@@ -24,6 +24,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD.Domain
     public string[] Actors { get; set; }
     public string[] Directors { get; set; }
     public string[] Parameters { get; set; }
+    public string[] Origin { get; set; }
 
   }
 

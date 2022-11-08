@@ -43,7 +43,7 @@ namespace VPlayer.WindowsPlayer.Behaviors
 
     #endregion
 
-    #region Popup
+    #region Slider
 
     public static readonly DependencyProperty SliderProperty =
       DependencyProperty.Register(
@@ -85,6 +85,18 @@ namespace VPlayer.WindowsPlayer.Behaviors
       AssociatedObject.MouseMove += AssociatedObject_MouseMove;
       AssociatedObject.MouseLeftButtonDown += AssociatedObject_MouseLeftButtonDown;
       AssociatedObject.MouseWheel += AssociatedObject_MouseWheel;
+      AssociatedObject.MouseEnter += AssociatedObject_MouseEnter;
+      AssociatedObject.MouseLeave += AssociatedObject_MouseLeave; ;
+    }
+
+    private void AssociatedObject_MouseLeave(object sender, MouseEventArgs e)
+    {
+      ViewModel.IsPopupOpened = false;
+    }
+
+    private void AssociatedObject_MouseEnter(object sender, MouseEventArgs e)
+    {
+      ViewModel.IsPopupOpened = true;
     }
 
     private void AssociatedObject_MouseWheel(object sender, MouseWheelEventArgs e)

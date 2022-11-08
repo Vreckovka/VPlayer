@@ -487,13 +487,12 @@ namespace VPlayer.Core.ViewModels
 
     #region Media_DurationChanged
 
-    protected void Media_DurationChanged(object sender, MediaDurationChangedArgs e)
+    protected virtual void Media_DurationChanged(object sender, MediaDurationChangedArgs e)
     {
       Application.Current.Dispatcher.Invoke(async () =>
       {
         ChangeDuration(e.Duration);
 
-        DetailViewModel?.Dispose();
         DetailViewModel = viewModelsFactory.Create<TPopupViewModel>(ActualItem.Model);
       });
     }
@@ -753,6 +752,8 @@ namespace VPlayer.Core.ViewModels
   {
     double ActualSliderValue { get; set; }
     double MaxValue { get; set; }
+    bool IsPopupOpened { get; set; }
+    bool DisablePopup { get; set; } 
   }
 
   public class FileItemSliderPopupDetailViewModel<TModel> : ViewModel<TModel>, ISliderPopupViewModel
@@ -862,6 +863,45 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region IsPopupOpened
+
+    private bool isPopupOpened;
+
+    public bool IsPopupOpened
+    {
+      get { return isPopupOpened; }
+      set
+      {
+        if (value != isPopupOpened)
+        {
+          isPopupOpened = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+
+
+    #region DisablePopup
+
+    private bool disablePopup;
+
+    public bool DisablePopup
+    {
+      get { return disablePopup; }
+      set
+      {
+        if (value != disablePopup)
+        {
+          disablePopup = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #endregion
 
     protected virtual void Refresh()
     {

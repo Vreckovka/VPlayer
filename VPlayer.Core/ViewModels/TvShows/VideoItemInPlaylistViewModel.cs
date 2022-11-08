@@ -202,6 +202,8 @@ namespace VPlayer.Core.ViewModels.TvShows
 
     #endregion
 
+    public bool IsStream { get; set; }
+
     public string ImagePath => CSFDItem?.Model?.ImagePath;
 
     protected override void PublishRemoveFromPlaylist()
