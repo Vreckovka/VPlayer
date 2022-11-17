@@ -77,7 +77,13 @@ namespace VPlayer.Home.ViewModels.TvShows
 
             foreach (var item in playlistItems)
             {
-              var tvShowEpisode = tvShowEpisodes.Single(x => x.VideoItem.Id == item.ReferencedItem.Id);
+              var tvShowEpisode = tvShowEpisodes.SingleOrDefault(x => x.VideoItem.Id == item.ReferencedItem.Id);
+
+              // Tv show's video item is not valid
+              if (tvShowEpisode == null)
+              {
+                return playlistItems.Select(x => viewModelsFactory.Create<VideoItemInPlaylistViewModel>(x.ReferencedItem));
+              }
 
               list.Add(viewModelsFactory.Create<TvShowEpisodeInPlaylistViewModel>(tvShowEpisode.VideoItem, tvShowEpisode));
             }

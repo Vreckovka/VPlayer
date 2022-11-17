@@ -704,6 +704,16 @@ namespace VPlayer.Core.ViewModels
       }
     }
 
+    protected override void BeforeDeleteFile(TItemViewModel itemViewModel)
+    {
+      base.BeforeDeleteFile(itemViewModel);
+
+      if (DetailViewModel.Model == itemViewModel.Model)
+      {
+        DetailViewModel.Dispose();
+      }
+    }
+
     #region MarkViewModelAsChecked
 
     protected void MarkViewModelAsChecked(TItemViewModel itemViewModel)

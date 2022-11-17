@@ -1172,7 +1172,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       var playlistName = string.Join(", ", nameKeys.ToArray());
 
-      if (nameKeys.Count > 2)
+      if (nameKeys.Count == 1)
+      {
+        playlistName += "\\" + PlayList[0].Name;
+      }
+      else if (nameKeys.Count > 2)
       {
         playlistName += " ...";
       }

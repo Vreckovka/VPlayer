@@ -771,8 +771,10 @@ namespace VPlayer.Core.ViewModels
         await UpdateActualSavedPlaylistPlaylist();
       }
 
+
       BeforeClearPlaylist();
 
+      PlayList.ForEach(x => x.IsInPlaylist = false);
       IsPlaying = false;
       VirtualizedPlayList = null;
       PlayList?.OfType<IDisposable>().ForEach(x => x.Dispose());
@@ -1585,7 +1587,7 @@ namespace VPlayer.Core.ViewModels
 
     #region RemoveItemsFromPlaylist
 
-    protected void RemoveItemsFromPlaylist(RemoveFromPlaylistEventArgs<TItemViewModel> obj)
+    protected async void RemoveItemsFromPlaylist(RemoveFromPlaylistEventArgs<TItemViewModel> obj)
     {
       var oldPlaylist = new List<KeyValuePair<TItemViewModel, int>>();
 
@@ -1601,14 +1603,17 @@ namespace VPlayer.Core.ViewModels
           {
             var songInPlaylist = PlayList.SingleOrDefault(x => x == songToDelete);
 
-            if (songInPlaylist != null)
+            if (ActualItem == songInPlaylist && PlayList.Count == 1)
+            {
+              await ClearPlaylist();
+            }
+            else if (songInPlaylist != null)
             {
               PlayList.Remove(songInPlaylist);
+
+              StorePlaylist(PlayList.ToList());
             }
           }
-
-          StorePlaylist(PlayList.ToList());
-
           break;
         case DeleteType.AlbumFromPlaylist:
           OnRemoveItemsFromPlaylist(DeleteType.AlbumFromPlaylist, obj);
@@ -1622,6 +1627,8 @@ namespace VPlayer.Core.ViewModels
 
               if (result == VCore.WPF.ViewModels.Prompt.PromptResult.Ok)
               {
+                BeforeDeleteFile(item);
+
                 if (ActualItem == item)
                 {
                   MediaPlayer.Stop();
@@ -1629,7 +1636,7 @@ namespace VPlayer.Core.ViewModels
                 }
 
                 var itemInPlayList = PlayList.SingleOrDefault(x => x.Model.Id == item.Model.Id);
-
+                
                 if (itemInPlayList != null)
                 {
                   PlayList.Remove(item);
@@ -1912,6 +1919,11 @@ namespace VPlayer.Core.ViewModels
     }
 
     protected virtual void OnRepeate(bool value)
+    {
+
+    }
+
+    protected virtual void BeforeDeleteFile(TItemViewModel itemViewModel)
     {
 
     }
