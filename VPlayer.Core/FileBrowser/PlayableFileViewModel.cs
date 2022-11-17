@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
+using FFMpegCore;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore;
@@ -35,6 +36,7 @@ using FileInfo = VCore.WPF.ViewModels.WindowsFiles.FileInfo;
 using VCore.Standard.Helpers;
 using VCore.WPF.Helpers;
 using VPlayer.Core.ViewModels.SoundItems;
+using Size = System.Drawing.Size;
 
 namespace VPlayer.Core.FileBrowser
 {
@@ -50,7 +52,6 @@ namespace VPlayer.Core.FileBrowser
     private readonly IEventAggregator eventAggregator;
     private readonly IStorageManager storageManager;
     private readonly IViewModelsFactory viewModelsFactory;
-    private readonly IVFfmpegProvider iVFfmpegProvider;
     ImageConverter converter = new ImageConverter();
 
     public PlayableFileViewModel(
@@ -58,13 +59,11 @@ namespace VPlayer.Core.FileBrowser
       IEventAggregator eventAggregator,
       IStorageManager storageManager,
       IWindowManager windowManager,
-      IViewModelsFactory viewModelsFactory,
-      IVFfmpegProvider iVFfmpegProvider) : base(model)
+      IViewModelsFactory viewModelsFactory) : base(model)
     {
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
-      this.iVFfmpegProvider = iVFfmpegProvider ?? throw new ArgumentNullException(nameof(iVFfmpegProvider));
 
       if (FileType == FileType.Video || FileType == FileType.Sound)
       {
@@ -348,41 +347,40 @@ namespace VPlayer.Core.FileBrowser
     {
       try
       {
-        var thmbs = new List<ThumbnailViewModel>();
-        Thumbnails.Clear();
-        ThumbnailsLoading = true;
-
-        await Task.Run(() =>
+        if (FileType == FileType.Video)
         {
-          using (var video = new VideoCapture(Model.FullName, VideoCapture.API.Any, new Tuple<CapProp, int>(CapProp.HwAcceleration, 1)))
+          var thmbs = new List<ThumbnailViewModel>();
+          Thumbnails.Clear();
+          ThumbnailsLoading = true;
+
+          await Task.Run(async () =>
           {
-            var framesC = video.Get(CapProp.FrameCount) * 0.9;
-            video.Set(CapProp.FrameWidth, 460);
-            video.Set(CapProp.FrameWidth, 320);
-
+            var mediaInfo = await FFProbe.AnalyseAsync(Model.Source);
+            double totalSeconds = mediaInfo.Duration.TotalSeconds * 0.9;
             int numberOfScreenshots = 5;
-            int screenInterval = (int)framesC / numberOfScreenshots;
+            int screenInterval = (int)totalSeconds / numberOfScreenshots;
 
-            for (int i = screenInterval; i < framesC + screenInterval; i += screenInterval)
+
+            var width = mediaInfo.VideoStreams[0].Width;
+            var height = mediaInfo.VideoStreams[0].Height;
+
+            double desiredWidth = 480.0;
+
+            var sizeCoef = Math.Floor(width / desiredWidth) > 0 ? Math.Floor(width / desiredWidth) : 1;
+
+            for (int i = screenInterval; i < (int)mediaInfo.Duration.TotalSeconds; i += screenInterval)
             {
-              video.Set(CapProp.PosFrames, i);
-              var img = video.QuerySmallFrame();
+              var img = FFMpeg.Snapshot(Model.Source, new Size((int)(width / sizeCoef), (int)(height / sizeCoef)), TimeSpan.FromSeconds(i));
 
-              if (img != null)
+              thmbs.Add(new ThumbnailViewModel()
               {
-                thmbs.Add(new ThumbnailViewModel()
-                {
-                  ImageData = ImageToByte(img.ToBitmap())
-                });
-
-                img.Dispose();
-              }
+                ImageData = ImageToByte(img)
+              });
             }
-          }
-        });
+          });
 
-        Thumbnails.AddRange(thmbs);
-
+          Thumbnails.AddRange(thmbs);
+        }
       }
       finally
       {

@@ -27,6 +27,7 @@ using VCore.WPF.Managers;
 using VCore.WPF.Misc;
 using VCore.WPF.Modularity.Events;
 using VCore.WPF.ViewModels.Prompt;
+using VFfmpeg;
 using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
@@ -90,7 +91,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
       ILogger logger,
       IWindowManager windowManager,
       IStatusManager statusManager,
-      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, statusManager, viewModelsFactory, vLCPlayer)
+      IVFfmpegProvider iVFfmpegProvider,
+      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, statusManager, viewModelsFactory, iVFfmpegProvider, vLCPlayer)
     {
       this.vPlayerRegionProvider = regionProvider ?? throw new ArgumentNullException(nameof(regionProvider));
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));

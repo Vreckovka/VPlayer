@@ -731,6 +731,50 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #endregion
 
+    #region UpdateEntities
+
+    public Task<bool> UpdateEntitiesAsync<TEntity>(IEnumerable<TEntity> newVersions) where TEntity : class, IEntity, IUpdateable<TEntity>
+    {
+      return Task.Run(() =>
+      {
+        try
+        {
+          bool result = false;
+          var newVersionsList = newVersions.ToList();
+
+          using (var context = new AudioDatabaseContext())
+          {
+            var foundEntities = GetRepository<TEntity>(context).Where(dbEntity => newVersionsList.Select(x => x.Id).Contains(dbEntity.Id));
+
+            foreach (var dbEntity in foundEntities)
+            {
+              dbEntity.Update(newVersionsList.Single(x => x.Id == dbEntity.Id));
+            }
+            var updateCount = context.SaveChanges();
+
+            result = updateCount > 0;
+
+            logger.Log(MessageType.Success, $"Entities was updated update count {updateCount}");
+
+            foreach (var dbEntity in foundEntities)
+            {
+              PublishItemChanged(dbEntity);
+            }
+
+            return result;
+          }
+        }
+        catch (Exception ex)
+        {
+          logger.Log(ex);
+
+          return false;
+        }
+      });
+    }
+
+    #endregion
+
     #region DeleteEntity
 
     public bool DeleteEntity<TEntity>(TEntity entity) where TEntity : class, IEntity

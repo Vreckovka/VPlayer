@@ -1243,6 +1243,7 @@ namespace VPlayer.Core.ViewModels
         if (!onlyItemSet)
           IsActive = true;
 
+        PlayList.ForEach(x => x.IsInPlaylist = false);
         PlayList.Clear();
         PlayList.AddRange(songs);
         RequestReloadVirtulizedPlaylist();

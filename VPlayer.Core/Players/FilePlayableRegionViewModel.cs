@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using FFMpegCore;
 using LibVLCSharp.Shared;
 using Logger;
 using Ninject;
@@ -28,6 +29,7 @@ using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Managers;
 using VCore.WPF.Misc;
 using VCore.WPF.Modularity.RegionProviders;
+using VFfmpeg;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
@@ -49,6 +51,7 @@ namespace VPlayer.Core.ViewModels
   where TPopupViewModel : FileItemSliderPopupDetailViewModel<TModel>
   {
     protected readonly IViewModelsFactory viewModelsFactory;
+    private readonly IVFfmpegProvider iVFfmpegProvider;
     private long lastTimeChangedMs;
 
     protected FilePlayableRegionViewModel(
@@ -60,9 +63,11 @@ namespace VPlayer.Core.ViewModels
       IWindowManager windowManager,
       IStatusManager statusManager,
       IViewModelsFactory viewModelsFactory,
+      IVFfmpegProvider iVFfmpegProvider,
       VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, statusManager, windowManager, vLCPlayer)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+      this.iVFfmpegProvider = iVFfmpegProvider ?? throw new ArgumentNullException(nameof(iVFfmpegProvider));
       BufferingSubject.Throttle(TimeSpan.FromSeconds(0.5)).Subscribe(x =>
       {
         IsBuffering = x;
@@ -613,9 +618,19 @@ namespace VPlayer.Core.ViewModels
 
     #region DownloadItemInfo
 
-    protected virtual Task DownloadItemInfo(CancellationToken cancellationToken)
+    protected virtual async Task DownloadItemInfo(CancellationToken cancellationToken)
     {
-      return Task.CompletedTask;
+      var itemsToUpdate = PlayList.Where(x => x.Duration == 0).ToList();
+
+      foreach (var item in itemsToUpdate)
+      {
+        var mediaInfo = await FFProbe.AnalyseAsync(item.Model.Source);
+
+        item.Duration = (int)mediaInfo.Duration.TotalSeconds;
+      }
+
+      if (itemsToUpdate.Count > 0)
+        await storageManager.UpdateEntitiesAsync(itemsToUpdate.Select(x => x.Model));
     }
 
     #endregion
@@ -763,7 +778,7 @@ namespace VPlayer.Core.ViewModels
     double ActualSliderValue { get; set; }
     double MaxValue { get; set; }
     bool IsPopupOpened { get; set; }
-    bool DisablePopup { get; set; } 
+    bool DisablePopup { get; set; }
   }
 
   public class FileItemSliderPopupDetailViewModel<TModel> : ViewModel<TModel>, ISliderPopupViewModel

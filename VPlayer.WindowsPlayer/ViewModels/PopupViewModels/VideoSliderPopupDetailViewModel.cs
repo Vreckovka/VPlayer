@@ -6,6 +6,7 @@ using System.Windows;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.Util;
+using FFMpegCore;
 using Logger;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.Core.ViewModels;
@@ -17,9 +18,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
   {
     private readonly VideoItem model;
     private readonly ILogger logger;
-    private VideoCapture videoCapture;
-    double frameCount;
     private ImageConverter imageConverter;
+    private IMediaAnalysis mediaAnalysis;
     public VideoSliderPopupDetailViewModel(VideoItem model, ILogger logger) : base(model)
     {
       this.model = model ?? throw new ArgumentNullException(nameof(model));
@@ -37,35 +37,25 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         if (!DisablePopup)
         {
-          if (videoCapture == null)
-          {
-            videoCapture = new VideoCapture(model.Source, VideoCapture.API.Any, new Tuple<CapProp, int>(CapProp.HwAcceleration, 1));
-
-            frameCount = videoCapture.Get(CapProp.FrameCount);
-
-            videoCapture.Set(CapProp.Buffersize, 1);
-            videoCapture.Set(CapProp.Fps, 20);
-            videoCapture.Set(CapProp.FourCC, VideoWriter.Fourcc('M', 'J', 'P', 'G'));
-          }
-
           if (isDiposed)
             return null;
 
+          if (mediaAnalysis == null)
+          {
+            mediaAnalysis = FFProbe.Analyse(Model.Source);
+          }
+
+          var width = mediaAnalysis.VideoStreams[0].Width;
+          var height = mediaAnalysis.VideoStreams[0].Height;
+
+          double desiredWidth = 480.0;
+
+          var sizeCoef = Math.Floor(width / desiredWidth) > 0 ? Math.Floor(width / desiredWidth) : 1;
+
           if (MaxValue > 0)
           {
-            var frame = ActualSliderValue / MaxValue * frameCount;
+            var bitMap = FFMpeg.Snapshot(model.Source, new Size((int)(width / sizeCoef), (int)(height / sizeCoef)), TimeSpan.FromSeconds(ActualSliderValue * model.Duration));
 
-            videoCapture.Set(CapProp.PosFrames, frame);
-
-            var img = videoCapture.QuerySmallFrame();
-
-
-            if (img == null)
-              return null;
-
-
-            var bitMap = img.ToBitmap();
-            img.Dispose();
             return ImageToByte(bitMap);
           }
         }
@@ -133,8 +123,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         await semaphoreSlim.WaitAsync();
 
         isDiposed = true;
-        videoCapture?.Stop();
-        videoCapture?.Dispose();
+
       }
       catch (Exception ex)
       {

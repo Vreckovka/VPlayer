@@ -22,6 +22,7 @@ using VCore.WPF.ItemsCollections.VirtualList;
 using VCore.WPF.ItemsCollections.VirtualList.VirtualLists;
 using VCore.WPF.Misc;
 using VCore.WPF.Modularity.RegionProviders;
+using VFfmpeg;
 using VPlayer.AudioStorage.DataLoader;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -62,8 +63,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
       IWindowManager windowManager,
       IStatusManager statusManager,
       ICSFDWebsiteScrapper iCsfdWebsiteScrapper,
-      IViewModelsFactory viewModelsFactory) :
-      base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, statusManager, viewModelsFactory, vLCPlayer)
+      IViewModelsFactory viewModelsFactory,
+      IVFfmpegProvider iVFfmpegProvider) :
+      base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, statusManager, viewModelsFactory, iVFfmpegProvider, vLCPlayer)
     {
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       this.iCsfdWebsiteScrapper = iCsfdWebsiteScrapper ?? throw new ArgumentNullException(nameof(iCsfdWebsiteScrapper));
