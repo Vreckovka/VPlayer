@@ -91,12 +91,14 @@ namespace VPlayer.WindowsPlayer.Behaviors
 
     private void AssociatedObject_MouseLeave(object sender, MouseEventArgs e)
     {
-      ViewModel.IsPopupOpened = false;
+      if (ViewModel != null)
+        ViewModel.IsPopupOpened = false;
     }
 
     private void AssociatedObject_MouseEnter(object sender, MouseEventArgs e)
     {
-      ViewModel.IsPopupOpened = true;
+      if (ViewModel != null)
+        ViewModel.IsPopupOpened = true;
     }
 
     private void AssociatedObject_MouseWheel(object sender, MouseWheelEventArgs e)

@@ -70,10 +70,6 @@ namespace VPlayer.Player.ViewModels
       {
         if (value != actualViewModel)
         {
-          if (value != null && actualViewModel != null)
-          {
-            value.Volume = actualViewModel.Volume;
-          }
           actualViewModel = value;
           RaisePropertyChanged(nameof(ActualVolume));
           RaisePropertyChanged();
@@ -396,9 +392,13 @@ namespace VPlayer.Player.ViewModels
       }
 
       ActualViewModel = newPlayer;
-      ActualViewModel.IsSelectedToPlay = true;
-      IsPlaying = ActualViewModel.IsPlaying;
-      CanPlay = ActualViewModel.CanPlay;
+
+      if (ActualViewModel != null)
+      {
+        ActualViewModel.IsSelectedToPlay = true;
+        IsPlaying = ActualViewModel.IsPlaying;
+        CanPlay = ActualViewModel.CanPlay;
+      }
     }
 
     #endregion

@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using FFMpegCore;
+using FFMpegCore.Exceptions;
 using LibVLCSharp.Shared;
 using Logger;
 using Ninject;
@@ -278,8 +279,9 @@ namespace VPlayer.Core.ViewModels
 
       if (MediaPlayer.Media != null)
       {
-        MediaPlayer.Media.DurationChanged += Media_DurationChanged;
+        DetailViewModel = viewModelsFactory.Create<TPopupViewModel>(ActualItem.Model);
 
+        MediaPlayer.Media.DurationChanged += Media_DurationChanged;
         cTSOnActualItemChanged?.Cancel();
         cTSOnActualItemChanged = new CancellationTokenSource();
 
@@ -620,17 +622,23 @@ namespace VPlayer.Core.ViewModels
 
     protected virtual async Task DownloadItemInfo(CancellationToken cancellationToken)
     {
-      var itemsToUpdate = PlayList.Where(x => x.Duration == 0).ToList();
-
-      foreach (var item in itemsToUpdate)
+      try
       {
-        var mediaInfo = await FFProbe.AnalyseAsync(item.Model.Source);
+        var itemsToUpdate = PlayList.Where(x => x.Duration == 0).ToList();
 
-        item.Duration = (int)mediaInfo.Duration.TotalSeconds;
+        foreach (var item in itemsToUpdate)
+        {
+          var mediaInfo = await FFProbe.AnalyseAsync(item.Model.Source);
+
+          item.Duration = (int)mediaInfo.Duration.TotalSeconds;
+        }
+
+        if (itemsToUpdate.Count > 0)
+          await storageManager.UpdateEntitiesAsync(itemsToUpdate.Select(x => x.Model));
       }
-
-      if (itemsToUpdate.Count > 0)
-        await storageManager.UpdateEntitiesAsync(itemsToUpdate.Select(x => x.Model));
+      catch (Exception ex)
+      {
+      }
     }
 
     #endregion

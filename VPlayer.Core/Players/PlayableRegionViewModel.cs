@@ -378,6 +378,8 @@ namespace VPlayer.Core.ViewModels
         if (value != isSelectedToPlay)
         {
           isSelectedToPlay = value;
+
+          RaisePropertyChanged(nameof(Volume));
           RaisePropertyChanged();
         }
       }
@@ -476,16 +478,16 @@ namespace VPlayer.Core.ViewModels
 
     #region Volume
 
-    private int volume;
-
     public int Volume
     {
-      get { return volume; }
+      get { return MediaPlayer.Volume; }
       set
       {
-        if (value != volume)
+        if (value != MediaPlayer.Volume)
         {
-          volume = value;
+          MediaPlayer.Volume = value;
+
+          volumeSubject.OnNext(MediaPlayer.Volume);
           RaisePropertyChanged();
         }
       }
@@ -748,7 +750,6 @@ namespace VPlayer.Core.ViewModels
       MediaPlayer.Unmuted += MediaPlayer_MutedChanged;
 
       MediaPlayer.Playing += OnVlcPlayingChanged;
-      Volume = MediaPlayer.Volume;
       volumeSubject.OnNext(Volume);
 
       OnVlcLoaded();
@@ -1800,9 +1801,7 @@ namespace VPlayer.Core.ViewModels
     {
       if (MediaPlayer != null)
       {
-        MediaPlayer.Volume = pVolume;
         Volume = pVolume;
-        volumeSubject.OnNext(MediaPlayer.Volume);
       }
     }
 

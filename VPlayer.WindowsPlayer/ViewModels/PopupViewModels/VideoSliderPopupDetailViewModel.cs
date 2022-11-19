@@ -7,6 +7,7 @@ using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.Util;
 using FFMpegCore;
+using FFMpegCore.Exceptions;
 using Logger;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.Core.ViewModels;
@@ -62,13 +63,15 @@ namespace VPlayer.WindowsPlayer.ViewModels
         
         return null;
       }
+      catch (FFMpegException ex)
+      {
+        return null;
+      }
       catch (Exception ex)
       {
         logger.Log(ex);
         return null;
       }
-
-
     }
 
     #endregion
