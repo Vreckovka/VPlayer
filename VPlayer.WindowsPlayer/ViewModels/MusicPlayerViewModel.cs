@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using FFMpegCore;
 using Logger;
 using Microsoft.EntityFrameworkCore;
 using Ninject;
@@ -888,13 +889,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     protected override Task DownloadItemInfo(CancellationToken cancellationToken)
     {
-      return Task.Run(() =>
+      return Task.Run(async () =>
       {
-        base.DownloadItemInfo(cancellationToken);
+        await base.DownloadItemInfo(cancellationToken);
 
-        DownloadPublicLinks(cancellationToken);
-        DownloadLyrics(cancellationToken);
-        DownloadHighQualityAlbumCover();
+        await DownloadPublicLinks(cancellationToken);
+        await DownloadLyrics(cancellationToken);
+        await DownloadHighQualityAlbumCover(ActualItem);
       });
     }
 
@@ -1023,11 +1024,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region DownloadHighQualityAlbumCover
 
-    private Task DownloadHighQualityAlbumCover()
+    private Task DownloadHighQualityAlbumCover(SoundItemInPlaylistViewModel item)
     {
       return Task.Run(async () =>
       {
-        if (ActualItem is SongInPlayListViewModel songInPlay)
+        if (item is SongInPlayListViewModel songInPlay)
         {
           var artistName = songInPlay?.ArtistViewModel?.Name;
           var albumName = songInPlay?.AlbumViewModel?.Name;
@@ -1105,6 +1106,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private Artist downloadingArtist;
     private Album downloadingAlbum;
 
+    private SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
+
     private Task DownloadSongInfo(SoundItemInPlaylistViewModel viewmodel, CancellationToken cancellationToken)
     {
       if (viewmodel == null)
@@ -1116,10 +1119,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         try
         {
+          await semaphoreSlim.WaitAsync();
+
           if (viewmodel is SongInPlayListViewModel songInPlayListViewModel &&
               songInPlayListViewModel.AlbumViewModel == null &&
-              songInPlayListViewModel.ArtistViewModel == null)
+              songInPlayListViewModel.ArtistViewModel == null) 
           {
+
             if (CheckedFiles.Contains(viewmodel))
             {
               await Application.Current?.Dispatcher?.InvokeAsync(async () => { CheckedFiles.Remove(viewmodel); });
@@ -1363,18 +1369,32 @@ namespace VPlayer.WindowsPlayer.ViewModels
                   songInPlayListViewModel.SongModel.Album = downloadingAlbum;
                   songInPlayListViewModel.Initialize();
 
-
-
                   if (songInPlayListViewModel.AlbumViewModel == null && songInPlayListViewModel.SongModel.Album != null)
                   {
-                    songInPlayListViewModel.AlbumViewModel = viewModelsFactory.Create<AlbumViewModel>(songInPlayListViewModel.SongModel.Album);
-                    songInPlayListViewModel.AlbumViewModel.Model = downloadingAlbum;
+                    var vm = PlayList.OfType<SongInPlayListViewModel>()
+                      .Where(x => x.AlbumViewModel != null)
+                      .FirstOrDefault(x => x.AlbumViewModel.Model == downloadingAlbum)?.AlbumViewModel;
+
+                    if (vm == null)
+                    {
+                      vm = viewModelsFactory.Create<AlbumViewModel>(downloadingAlbum);
+                    }
+
+                    songInPlayListViewModel.AlbumViewModel = vm;
                   }
 
                   if (songInPlayListViewModel.ArtistViewModel == null && songInPlayListViewModel.SongModel.Album?.Artist != null)
                   {
-                    songInPlayListViewModel.ArtistViewModel = viewModelsFactory.Create<ArtistViewModel>(songInPlayListViewModel.SongModel.Album.Artist);
-                    songInPlayListViewModel.ArtistViewModel.Model = downloadingArtist;
+                    var vm = PlayList.OfType<SongInPlayListViewModel>()
+                      .Where(x => x.ArtistViewModel != null)
+                      .FirstOrDefault(x => x.ArtistViewModel.Model == downloadingArtist)?.ArtistViewModel;
+
+                    if (vm == null)
+                    {
+                      vm = viewModelsFactory.Create<ArtistViewModel>(downloadingArtist);
+                    }
+
+                    songInPlayListViewModel.ArtistViewModel = vm;
                   }
 
                   cancellationToken.ThrowIfCancellationRequested();
@@ -1438,6 +1458,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
           {
             viewmodel.IsDownloading = false;
           });
+
+          semaphoreSlim.Release();
         }
       });
     }
@@ -1864,14 +1886,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         downloadingSongTask?.Cancel();
         downloadingSongTask = new CancellationTokenSource();
-        downloadingArtist = null;
-        downloadingAlbum = null;
+        ResetDownload();
 
         Application.Current?.Dispatcher?.Invoke(() =>
         {
           WasAllItemsProcessed = false;
         });
-
 
         try
         {
@@ -1887,6 +1907,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
             downloadingSongTask.Token.ThrowIfCancellationRequested();
 
             await DownloadSongInfo(item, downloadingSongTask.Token);
+            await GetMediaInfo(item.Model);
           }
 
           Application.Current?.Dispatcher?.Invoke(() =>
@@ -1895,6 +1916,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
           });
 
           TrySetNewPlaylistName();
+
+
         }
         catch (OperationCanceledException)
         {
@@ -1902,6 +1925,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
         catch (Exception ex)
         {
           logger.Log(ex);
+        }
+        finally
+        {
+          ResetDownload();
         }
       });
     }
@@ -2210,7 +2237,37 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    protected override async Task GetMediaInfo(SoundItem model)
+    {
+      try
+      {
+        var mediaAnalysis = await FFProbe.AnalyseAsync(model.Source);
+        var vm = PlayList.SingleOrDefault(x => x.Model == model);
+
+        if (vm != null)
+          vm.MediaInfo = mediaAnalysis;
+      }
+      catch (Exception ex)
+      {
+      }
+    }
+
+    protected override async void OnDownloadInfoEvent(SoundItemInPlaylistViewModel itemViewModel)
+    {
+      ResetDownload();
+
+      await DownloadSongInfo(itemViewModel, CancellationToken.None);
+    }
+
     #endregion
+
+    private void ResetDownload()
+    {
+      originalDownlaodedArtistName = null;
+      originalDownlaodedAlbumName = null;
+      downloadingAlbum = null;
+      downloadingArtist = null;
+    }
   }
 
   public class SoundSliderPopupDetailViewModel : FileItemSliderPopupDetailViewModel<SoundItem>

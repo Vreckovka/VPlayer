@@ -17,6 +17,11 @@ namespace VPlayer.Core.ViewModels.SoundItems
       eventAggregator.GetEvent<PlaySongsFromPlayListEvent<SoundItemInPlaylistViewModel>>().Publish(this);
     }
 
+    protected override void OnDownloadInfo()
+    {
+      eventAggregator.GetEvent<DownloadInfoEvent<SoundItemInPlaylistViewModel>>().Publish(this);
+    }
+
     protected override void PublishRemoveFromPlaylist()
     {
       var songs = new List<SoundItemInPlaylistViewModel>() { this };

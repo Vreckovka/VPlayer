@@ -10,6 +10,7 @@ using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.AudioStorage.Scrappers.CSFD.Domain;
 using VPlayer.Core.Events;
+using VPlayer.Core.ViewModels.SoundItems;
 
 namespace VPlayer.Core.ViewModels.TvShows
 {
@@ -230,6 +231,11 @@ namespace VPlayer.Core.ViewModels.TvShows
       };
 
       eventAggregator.GetEvent<RemoveFromPlaylistEvent<VideoItemInPlaylistViewModel>>().Publish(args);
+    }
+
+    protected override void OnDownloadInfo()
+    {
+      eventAggregator.GetEvent<DownloadInfoEvent<VideoItemInPlaylistViewModel>>().Publish(this);
     }
   }
 }

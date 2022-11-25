@@ -50,7 +50,6 @@ namespace VPlayer.Core.ViewModels.SoundItems
       PCloudLyricsProvider pCloudLyricsProvider,
       Song model,
       ILogger logger,
-      GoogleDriveLrcProvider googleDriveLrcProvider,
       IStorageManager storageManager) : base(model.ItemModel, eventAggregator, storageManager)
     {
       this.albumsViewModel = albumsViewModel ?? throw new ArgumentNullException(nameof(albumsViewModel));
@@ -696,6 +695,25 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     #endregion
 
+    public override async void OnClearInfo()
+    {
+      SongModel.Album = null;
+      SongModel.Chartlyrics_Lyric = null;
+      SongModel.Chartlyrics_LyricCheckSum = null;
+      SongModel.Chartlyrics_LyricId = null;
+      SongModel.LRCLyrics = null;
+      SongModel.MusicBrainzId = null;
+      AlbumViewModel = null;
+      ArtistViewModel = null;
+
+      await storageManager.UpdateEntityAsync(SongModel);
+
+      var tmp = SongModel;
+      SongModel = null;
+      RaisePropertyChanged(nameof(SongModel));
+      SongModel = tmp;
+      RaisePropertyChanged(nameof(SongModel));
+    }
 
     #endregion
   }

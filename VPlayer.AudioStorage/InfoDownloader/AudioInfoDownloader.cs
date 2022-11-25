@@ -454,7 +454,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
     {
       try
       {
-        var albumName = album.Name;
+        var albumName = album.NormalizedName;
 
         var statusMessage = new StatusMessageViewModel(4)
         {
@@ -549,7 +549,8 @@ namespace VPlayer.AudioStorage.InfoDownloader
         if (releases.Count != 0)
         {
           // Get the oldest release (remember to sort out items with no date set).
-          release = releases.Items.Where(r => r.Date != null && IsCompactDisc(r)).OrderBy(r => r.Date)
+          release = releases.Items.Where(r => !string.IsNullOrEmpty(r.Date) && IsCompactDisc(r))
+            .OrderBy(r => r.Date)
             .FirstOrDefault();
 
           if (release == null)

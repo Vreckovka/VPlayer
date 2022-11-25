@@ -496,27 +496,56 @@
 
 
     <DataTemplate x:Key="SoundItemInfoDataTemplate">
-        <controls1:ButtonWithIcon IconHeight="11"
-                                  IconPathStyle="{StaticResource Info}"
-                                  IconWidth="11">
+        <Grid>
+            <controls1:PathButton x:Name="AudioInfoIcon"
+                                  IconHeight="11"
+                                  IconWidth="11"
+                                  PathStyle="{StaticResource Info}">
 
-            <controls1:ButtonWithIcon.Style>
-                <Style BasedOn="{StaticResource {x:Type controls1:ButtonWithIcon}}" TargetType="{x:Type controls1:ButtonWithIcon}">
-                    <Setter Property="IconHoverColor" Value="#757575" />
-                    <Setter Property="IconDefaultColor" Value="#65656565" />
-                    <Setter Property="Opacity" Value="1" />
-                    <Setter Property="Margin" Value="0,-5,0,-5" />
-                </Style>
-            </controls1:ButtonWithIcon.Style>
+                <controls1:PathButton.Style>
+                    <Style BasedOn="{StaticResource {x:Type controls1:PathButton}}" TargetType="{x:Type controls1:PathButton}">
+                        <Setter Property="IconHoverColor" Value="#757575" />
+                        <Setter Property="IconDefaultColor" Value="#65656565" />
+                        <Setter Property="IconCheckedColor" Value="#4291db" />
+                        <Setter Property="Opacity" Value="1" />
+                        <Setter Property="Margin" Value="0,-5,0,-5" />
+                    </Style>
+                </controls1:PathButton.Style>
 
-            <controls1:ButtonWithIcon.ToolTip>
-                <Border>
+                <controls1:PathButton.ToolTip>
+                    <Border>
+                        <Grid>
+                            <ContentPresenter ContentTemplateSelector="{StaticResource WindowsPlayerItemsTooltipTemplateSelector}" />
+                        </Grid>
+                    </Border>
+                </controls1:PathButton.ToolTip>
+            </controls1:PathButton>
+
+            <controls1:NonTopmostPopup x:Name="AudioInfoPopup"
+                                       AllowsTransparency="False"
+                                       HorizontalOffset="5"
+                                       IsOpen="{Binding ElementName=AudioInfoIcon, Path=IsChecked}"
+                                       Placement="Bottom"
+                                       PlacementTarget="{Binding ElementName=AudioInfoIcon}"
+                                       VerticalOffset="10">
+                <Border Padding="5">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Background" Value="#151515" />
+                            <Setter Property="BorderBrush" Value="#303030" />
+                            <Setter Property="BorderThickness" Value="1.5" />
+                        </Style>
+                    </Border.Style>
                     <Grid>
                         <ContentPresenter ContentTemplateSelector="{StaticResource WindowsPlayerItemsTooltipTemplateSelector}" />
                     </Grid>
                 </Border>
-            </controls1:ButtonWithIcon.ToolTip>
-        </controls1:ButtonWithIcon>
+
+                <b:Interaction.Behaviors>
+                    <popups:MovePopupWithParentBehavior />
+                </b:Interaction.Behaviors>
+            </controls1:NonTopmostPopup>
+        </Grid>
     </DataTemplate>
 
     <templateSelectors1:PlaylistItemTypeTemplateSelector x:Key="PlaylistItemTypeTemplateSelector"

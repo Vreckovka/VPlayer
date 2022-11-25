@@ -814,7 +814,7 @@ namespace VPlayer.Core.ViewModels
       eventAggregator.GetEvent<RemoveFromPlaylistEvent<TItemViewModel>>().Subscribe(RemoveItemsFromPlaylist).DisposeWith(this);
       eventAggregator.GetEvent<PlaySongsFromPlayListEvent<TItemViewModel>>().Subscribe(PlayItemFromPlayList).DisposeWith(this);
       eventAggregator.GetEvent<PlayItemsEvent<TModel, TItemViewModel>>().Subscribe(PlayItemsFromEvent).DisposeWith(this);
-
+      eventAggregator.GetEvent<DownloadInfoEvent<TItemViewModel>>().Subscribe(OnDownloadInfoEvent).DisposeWith(this);
     }
 
     #endregion
@@ -1913,20 +1913,13 @@ namespace VPlayer.Core.ViewModels
 
     }
 
-    protected virtual void OnShuffle(bool value)
-    {
+    protected virtual void OnShuffle(bool value) { }
 
-    }
+    protected virtual void OnRepeate(bool value) { }
 
-    protected virtual void OnRepeate(bool value)
-    {
+    protected virtual void BeforeDeleteFile(TItemViewModel itemViewModel) { }
 
-    }
-
-    protected virtual void BeforeDeleteFile(TItemViewModel itemViewModel)
-    {
-
-    }
+    protected virtual void OnDownloadInfoEvent(TItemViewModel itemViewModel) { }
 
     #endregion
 

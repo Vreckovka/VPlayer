@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Linq;
+using System.Windows.Input;
+using FFMpegCore;
 using Prism.Events;
 using VCore.Standard.Modularity.Interfaces;
+using VCore.WPF.Misc;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPlayer.Core.Events;
+using VPlayer.Core.ViewModels.SoundItems;
 
 namespace VPlayer.Core.ViewModels
 {
@@ -16,14 +21,99 @@ namespace VPlayer.Core.ViewModels
       IStorageManager storageManager) : base(model, eventAggregator, storageManager)
     {
       Duration = model.Duration;
-
-
-      if (Duration == 0)
-      {
-        ;
-      }
-
     }
+
+    #region Commands
+
+    #region RefreshData
+
+    private ActionCommand refreshData;
+
+    public ICommand RefreshData
+    {
+      get
+      {
+        if (refreshData == null)
+        {
+          refreshData = new ActionCommand(OnRefreshData);
+        }
+
+        return refreshData;
+      }
+    }
+
+    public async void OnRefreshData()
+    {
+      try
+      {
+        var mediaAnalysis = await FFProbe.AnalyseAsync(Model.Source);
+
+        MediaInfo = mediaAnalysis;
+
+        if (Model is SoundItem soundItem)
+        {
+          soundItem.FileInfo.Album = mediaInfo.Format.Tags["album"];
+          soundItem.FileInfo.Artist = mediaInfo.Format.Tags["artist"];
+        }
+
+        var tmp = Model;
+        Model = null;
+        RaisePropertyChanged(nameof(Model));
+        Model = tmp;
+        RaisePropertyChanged(nameof(Model));
+      }
+      catch (Exception)
+      {
+      }
+    }
+
+    #endregion
+
+    #region ClearInfo
+
+    private ActionCommand clearInfo;
+
+    public ICommand ClearInfo
+    {
+      get
+      {
+        if (clearInfo == null)
+        {
+          clearInfo = new ActionCommand(OnClearInfo);
+        }
+
+        return clearInfo;
+      }
+    }
+
+    public virtual void OnClearInfo() { }
+
+
+    #endregion
+
+    #region DownloadInfo
+
+    private ActionCommand downloadInfo;
+
+    public ICommand DownloadInfo
+    {
+      get
+      {
+        if (downloadInfo == null)
+        {
+          downloadInfo = new ActionCommand(OnDownloadInfo);
+        }
+
+        return downloadInfo;
+      }
+    }
+
+    protected abstract void OnDownloadInfo();
+
+
+    #endregion
+
+    #endregion
 
     #region Duration
 
@@ -88,10 +178,26 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    protected virtual void OnActualPositionChanged(float value)
+    #region MediaInfo
+
+    private IMediaAnalysis mediaInfo;
+
+    public IMediaAnalysis MediaInfo
     {
+      get { return mediaInfo; }
+      set
+      {
+        if (value != mediaInfo)
+        {
+          mediaInfo = value;
+          RaisePropertyChanged();
+        }
+      }
     }
 
+    #endregion
+
+    #region ActualTime
 
     public TimeSpan ActualTime
     {
@@ -107,5 +213,9 @@ namespace VPlayer.Core.ViewModels
         return TimeSpan.FromSeconds(0);
       }
     }
+
+    #endregion
+
+    protected virtual void OnActualPositionChanged(float value) { }
   }
 }

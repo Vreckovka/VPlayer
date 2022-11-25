@@ -273,6 +273,7 @@ namespace VPlayer.Core.ViewModels
     #region OnNewItemPlay
 
     private CancellationTokenSource cTSOnActualItemChanged;
+
     public override void OnNewItemPlay(TModel model)
     {
       base.OnNewItemPlay(model);
@@ -285,9 +286,10 @@ namespace VPlayer.Core.ViewModels
         cTSOnActualItemChanged?.Cancel();
         cTSOnActualItemChanged = new CancellationTokenSource();
 
-        Task.Run(() =>
+        Task.Run(async () =>
         {
-          return DownloadItemInfo(cTSOnActualItemChanged.Token);
+          await GetMediaInfo(model);
+          await DownloadItemInfo(cTSOnActualItemChanged.Token);
         });
       }
     }
@@ -498,9 +500,12 @@ namespace VPlayer.Core.ViewModels
     {
       Application.Current.Dispatcher.Invoke(async () =>
       {
-        ChangeDuration(e.Duration);
+        await ChangeDuration(e.Duration);
 
-        DetailViewModel = viewModelsFactory.Create<TPopupViewModel>(ActualItem.Model);
+        if (DetailViewModel == null || DetailViewModel.TotalTime == new TimeSpan(0))
+        {
+          DetailViewModel = viewModelsFactory.Create<TPopupViewModel>(ActualItem.Model);
+        }
       });
     }
 
@@ -508,7 +513,7 @@ namespace VPlayer.Core.ViewModels
 
     #region ChangeDuration
 
-    private async void ChangeDuration(float duration)
+    private async Task ChangeDuration(float duration)
     {
       if (duration != 0 && ActualItem != null)
       {
@@ -762,6 +767,11 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
+
+    protected virtual Task GetMediaInfo(TModel model)
+    {
+      return Task.CompletedTask;
+    }
 
     #region Dispose
 

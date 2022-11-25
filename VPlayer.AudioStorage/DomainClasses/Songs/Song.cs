@@ -33,6 +33,11 @@ namespace VPlayer.AudioStorage.DomainClasses
       Artist = other.Artist;
       Album = other.Album;
     }
+
+    public override string ToString()
+    {
+      return $"{Id}{Artist}{Album}";
+    }
   }
 
   [Serializable]
