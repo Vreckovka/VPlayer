@@ -9,8 +9,10 @@ using System.Windows.Input;
 using VCore;
 using VCore.ItemsCollections;
 using VCore.Standard;
+using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
 using VCore.WPF.Helpers;
+using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.LRC;
 using VCore.WPF.LRC.Domain;
 using VCore.WPF.Misc;
@@ -24,12 +26,16 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
     private readonly SongInPlayListViewModel model;
     private readonly PCloudLyricsProvider pCloudLyricsProvider;
     private readonly IStorageManager storageManager;
+    private readonly IWindowManager windowManager;
+    private readonly IViewModelsFactory viewModelsFactory;
 
-    public LRCCreatorViewModel(SongInPlayListViewModel model, PCloudLyricsProvider pCloudLyricsProvider, IStorageManager storageManager) : base(model)
+    public LRCCreatorViewModel(SongInPlayListViewModel model, PCloudLyricsProvider pCloudLyricsProvider, IStorageManager storageManager, IWindowManager windowManager, IViewModelsFactory viewModelsFactory) : base(model)
     {
       this.model = model ?? throw new ArgumentNullException(nameof(model));
       this.pCloudLyricsProvider = pCloudLyricsProvider ?? throw new ArgumentNullException(nameof(pCloudLyricsProvider));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
+      this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
+      this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
 
       model.ObservePropertyChange(x => x.ActualPosition)
         .ObserveOn(Application.Current.Dispatcher)
@@ -38,7 +44,24 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
 
     #region Properties
 
-    public RxObservableCollection<LRCCreatorLyricsLine> Lines { get; set; }
+    #region Lines
+
+    private RxObservableCollection<LRCCreatorLyricsLine> lines;
+
+    public RxObservableCollection<LRCCreatorLyricsLine> Lines
+    {
+      get { return lines; }
+      set
+      {
+        if (value != lines)
+        {
+          lines = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     public IFilePlayableRegionViewModel FilePlayableRegionViewModel { get; set; }
 
@@ -161,7 +184,7 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
 
       if (Model != null)
       {
-        Model.LRCFile = new LRCFileViewModel(lrcFile, LRCProviders.PCloud, pCloudLyricsProvider);
+        Model.LRCFile = new LRCFileViewModel(lrcFile, LRCProviders.PCloud, pCloudLyricsProvider, windowManager);
         Model.LRCFile.OnApplyPernamently();
         Model.LRCCreatorViewModel = null;
 
@@ -336,7 +359,7 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
       var newLines = GetLines(newLyrics);
 
       var validOldLines = oldLInes.Where(x => x.Index != null).ToList();
-
+   
       List<int> checkedOldIndexes = new List<int>();
 
       if (newLines != null)
@@ -349,12 +372,14 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
           {
             checkedOldIndexes.Add(oldLine.Index);
 
+            if (string.IsNullOrEmpty(oldLine.Text) && string.IsNullOrEmpty(line.Text))
+              continue;
+
             if (oldLine.Text != line.Text)
             {
               Lines.Insert(oldLine.Index, line);
-
+             
               validOldLines.Where(x => x.Index >= oldLine.Index).ForEach(x => x.Index++);
-
             }
           }
           else
@@ -373,10 +398,41 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
 
         Lines.Sort((x, y) => x.Index.CompareTo(y.Index));
       }
+
+    }
+
+
+    public void LoadLines(LRCFileViewModel lRCFileViewModel)
+    {
+      var list = new List<LRCCreatorLyricsLine>();
+
+      for (int i = 0; i < lRCFileViewModel.AllLine.Count; i++)
+      {
+        var x = lRCFileViewModel.AllLine[i];
+        var vm = viewModelsFactory.Create<LRCCreatorLyricsLine>();
+
+        vm.Text = x.Text;
+        vm.Time = x.Model.Timestamp;
+        vm.Index = i;
+
+        list.Add(vm);
+      }
+
+      Lyrics = lRCFileViewModel.GetLyricsText();
+      Lines = new RxObservableCollection<LRCCreatorLyricsLine>(list);
+      ActualLine = Lines.FirstOrDefault();
+
+      if (ActualLine != null)
+      {
+        ActualLine.SetIsActual(true);
+      }
+
+      Lines.ItemUpdated.ObserveOn(Application.Current.Dispatcher)
+        .Where(x => x.EventArgs.PropertyName == nameof(LRCCreatorLyricsLine.IsActual))
+        .Subscribe(OnActualLineChanged).DisposeWith(this);
     }
 
     #endregion
+
   }
-
-
 }

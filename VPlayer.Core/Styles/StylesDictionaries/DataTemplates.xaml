@@ -472,6 +472,7 @@
                                        IsOpen="{Binding ElementName=VideoInfoIcon, Path=IsChecked}"
                                        Placement="Bottom"
                                        PlacementTarget="{Binding ElementName=VideoInfoIcon}"
+                                       StaysOpen="False"
                                        VerticalOffset="10">
                 <Border Padding="5">
                     <Border.Style>
@@ -498,6 +499,7 @@
     <DataTemplate x:Key="SoundItemInfoDataTemplate">
         <Grid>
             <controls1:PathButton x:Name="AudioInfoIcon"
+                                  ClickMode="Release"
                                   IconHeight="11"
                                   IconWidth="11"
                                   PathStyle="{StaticResource Info}">
@@ -521,13 +523,14 @@
                 </controls1:PathButton.ToolTip>
             </controls1:PathButton>
 
-            <controls1:NonTopmostPopup x:Name="AudioInfoPopup"
-                                       AllowsTransparency="False"
-                                       HorizontalOffset="5"
-                                       IsOpen="{Binding ElementName=AudioInfoIcon, Path=IsChecked}"
-                                       Placement="Bottom"
-                                       PlacementTarget="{Binding ElementName=AudioInfoIcon}"
-                                       VerticalOffset="10">
+            <Popup x:Name="AudioInfoPopup"
+                   AllowsTransparency="False"
+                   HorizontalOffset="5"
+                   IsOpen="{Binding ElementName=AudioInfoIcon, Path=IsChecked}"
+                   Placement="Bottom"
+                   PlacementTarget="{Binding ElementName=AudioInfoIcon}"
+                   StaysOpen="False"
+                   VerticalOffset="10">
                 <Border Padding="5">
                     <Border.Style>
                         <Style TargetType="Border">
@@ -544,7 +547,7 @@
                 <b:Interaction.Behaviors>
                     <popups:MovePopupWithParentBehavior />
                 </b:Interaction.Behaviors>
-            </controls1:NonTopmostPopup>
+            </Popup>
         </Grid>
     </DataTemplate>
 

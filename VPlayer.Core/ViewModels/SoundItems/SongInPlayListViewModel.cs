@@ -7,6 +7,7 @@ using System.Windows.Input;
 using Logger;
 using Prism.Events;
 using VCore;
+using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.LRC;
 using VCore.WPF.LRC.Domain;
 using VCore.WPF.Misc;
@@ -37,6 +38,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
     private readonly ILogger logger;
     //private readonly GoogleDriveLrcProvider googleDriveLrcProvider;
     private readonly IStorageManager storageManager;
+    private readonly IWindowManager windowManager;
 
     #endregion Fields
 
@@ -50,7 +52,8 @@ namespace VPlayer.Core.ViewModels.SoundItems
       PCloudLyricsProvider pCloudLyricsProvider,
       Song model,
       ILogger logger,
-      IStorageManager storageManager) : base(model.ItemModel, eventAggregator, storageManager)
+      IStorageManager storageManager,
+      IWindowManager windowManager) : base(model.ItemModel, eventAggregator, storageManager)
     {
       this.albumsViewModel = albumsViewModel ?? throw new ArgumentNullException(nameof(albumsViewModel));
       this.artistsViewModel = artistsViewModel ?? throw new ArgumentNullException(nameof(artistsViewModel));
@@ -59,6 +62,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       //this.googleDriveLrcProvider = googleDriveLrcProvider ?? throw new ArgumentNullException(nameof(googleDriveLrcProvider));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
+      this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       SongModel = model ?? throw new ArgumentNullException(nameof(model));
     }
 
@@ -211,6 +215,10 @@ namespace VPlayer.Core.ViewModels.SoundItems
         if (value != lRCFile)
         {
           lRCFile = value;
+
+          if (string.IsNullOrEmpty(Lyrics))
+            Lyrics = lRCFile?.GetLyricsText();
+
           RaisePropertyChanged(nameof(LyricsObject));
           RaisePropertyChanged();
         }
@@ -433,7 +441,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
           switch (provider)
           {
             case LRCProviders.NotIdentified:
-              LRCFile = new LRCFileViewModel(lrc, provider, pCloudLyricsProvider);
+              LRCFile = new LRCFileViewModel(lrc, provider, pCloudLyricsProvider, windowManager: windowManager);
               break;
             case LRCProviders.Google:
               //LRCFile = new LRCFileViewModel(lrc, provider, pCloudLyricsProvider, googleDriveLrcProvider);
@@ -450,12 +458,12 @@ namespace VPlayer.Core.ViewModels.SoundItems
               break;
             case LRCProviders.Local:
               var localProvider = new LocalLrcProvider("C:\\Lyrics");
-              LRCFile = new LRCFileViewModel(lrc, provider, pCloudLyricsProvider, localProvider);
+              LRCFile = new LRCFileViewModel(lrc, provider, pCloudLyricsProvider, windowManager, localProvider);
               break;
             case LRCProviders.MiniLyrics:
               break;
             case LRCProviders.PCloud:
-              LRCFile = new LRCFileViewModel(lrc, provider, pCloudLyricsProvider, pCloudLyricsProvider);
+              LRCFile = new LRCFileViewModel(lrc, provider, pCloudLyricsProvider, windowManager, pCloudLyricsProvider);
               break;
           }
         }
@@ -479,7 +487,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
         var lrc = await audioInfoDownloader.TryGetLRCLyricsAsync(provider, SongModel, ArtistViewModel?.Name, AlbumViewModel?.Name);
 
         if (lrc != null)
-          LRCFile = new LRCFileViewModel(lrc, provider.LRCProvider, pCloudLyricsProvider, provider);
+          LRCFile = new LRCFileViewModel(lrc, provider.LRCProvider, pCloudLyricsProvider, windowManager, provider);
 
       }
     }
@@ -508,7 +516,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
       if (lrc != null)
       {
         var asd = default(IGoogleDriveServiceProvider);
-        LRCFile = new LRCFileViewModel(lrc, pCloudLyricsProvider.LRCProvider, pCloudLyricsProvider, pCloudLyricsProvider);
+        LRCFile = new LRCFileViewModel(lrc, pCloudLyricsProvider.LRCProvider, pCloudLyricsProvider, windowManager, pCloudLyricsProvider);
       }
     }
 
@@ -549,7 +557,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
         SongModel.LRCLyrics = lrcString;
 
-        LRCFile = new LRCFileViewModel(lrc, LRCProviders.MiniLyrics, pCloudLyricsProvider, client);
+        LRCFile = new LRCFileViewModel(lrc, LRCProviders.MiniLyrics, pCloudLyricsProvider, windowManager, client);
       }
 
     }
@@ -703,6 +711,10 @@ namespace VPlayer.Core.ViewModels.SoundItems
       SongModel.Chartlyrics_LyricId = null;
       SongModel.LRCLyrics = null;
       SongModel.MusicBrainzId = null;
+      Lyrics = null;
+      LRCCreatorViewModel = null;
+      LRCFile = null;
+
       AlbumViewModel = null;
       ArtistViewModel = null;
 

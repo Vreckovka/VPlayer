@@ -29,6 +29,12 @@ namespace VPlayer.Player.Behaviors
 
       AssociatedObject.Loaded += AssociatedObject_Loaded;
       AssociatedObject.DataContextChanged += AssociatedObject_DataContextChanged;
+      AssociatedObject.Unloaded += AssociatedObject_Unloaded;
+    }
+
+    private void AssociatedObject_Unloaded(object sender, RoutedEventArgs e)
+    {
+      OnDetaching();
     }
 
     private void AssociatedObject_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -97,11 +103,8 @@ namespace VPlayer.Player.Behaviors
     {
       try
       {
-
-
         Application.Current?.Dispatcher?.Invoke(() =>
         {
-
           if (border == null)
           {
             border = VisualTreeHelper.GetChild(AssociatedObject, 0) as Decorator;

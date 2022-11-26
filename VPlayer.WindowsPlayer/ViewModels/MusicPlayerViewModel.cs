@@ -625,29 +625,52 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public void OnCreateLRCLyrics(SoundItemInPlaylistViewModel soundItem)
     {
-      if (soundItem is SongInPlayListViewModel song && !string.IsNullOrEmpty(song.Lyrics))
+      if (soundItem is SongInPlayListViewModel song)
       {
-        if (song.LRCCreatorViewModel == null)
+        if (song.LyricsObject is LRCFileViewModel lrCFileViewModel)
         {
           var vm = viewModelsFactory.Create<LRCCreatorViewModel>(song);
-
-          song.LRCCreatorViewModel = vm;
-
-          vm.Lyrics = song.Lyrics;
+          vm.LoadLines(lrCFileViewModel);
           vm.FilePlayableRegionViewModel = this;
 
-          vm.PrepareViewModel();
+          song.LRCCreatorViewModel = vm;
+          song.IsInEditMode = true;
+       
+          if (song.Lyrics != vm.Lyrics)
+          {
+            vm.ChangeLyrics(song.Lyrics);
+          }
+
+          song.Lyrics = vm.Lyrics;
+
+          SetMediaPosition(0);
+
+          song.RaiseLyricsChange();
         }
-        else
+        else if (!string.IsNullOrEmpty(song.Lyrics))
         {
-          song.LRCCreatorViewModel.ChangeLyrics(song.Lyrics);
+          if (song.LRCCreatorViewModel == null)
+          {
+            var vm = viewModelsFactory.Create<LRCCreatorViewModel>(song);
+
+            song.LRCCreatorViewModel = vm;
+
+            vm.Lyrics = song.Lyrics;
+            vm.FilePlayableRegionViewModel = this;
+
+            vm.PrepareViewModel();
+          }
+          else
+          {
+            song.LRCCreatorViewModel.ChangeLyrics(song.Lyrics);
+          }
+
+          song.IsInEditMode = true;
+
+          song.RaiseLyricsChange();
+
+          PlayNextItemOnEndReached = false;
         }
-
-        song.IsInEditMode = true;
-
-        song.RaiseLyricsChange();
-
-        PlayNextItemOnEndReached = false;
       }
     }
 
@@ -672,7 +695,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     public void OnExitLRCEditor(SoundItemInPlaylistViewModel soundItem)
     {
-      if (soundItem is SongInPlayListViewModel song && !string.IsNullOrEmpty(song.Lyrics))
+      if (soundItem is SongInPlayListViewModel song)
       {
         song.IsInEditMode = false;
 
@@ -1106,7 +1129,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private Artist downloadingArtist;
     private Album downloadingAlbum;
 
-    private SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
+    private SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
 
     private Task DownloadSongInfo(SoundItemInPlaylistViewModel viewmodel, CancellationToken cancellationToken)
     {
@@ -1123,7 +1146,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
           if (viewmodel is SongInPlayListViewModel songInPlayListViewModel &&
               songInPlayListViewModel.AlbumViewModel == null &&
-              songInPlayListViewModel.ArtistViewModel == null) 
+              songInPlayListViewModel.ArtistViewModel == null)
           {
 
             if (CheckedFiles.Contains(viewmodel))
@@ -1404,6 +1427,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
                   songInPlayListViewModel.RaiseNotifyPropertyChanged(nameof(SoundItemFilePlaylist.Name));
                   songInPlayListViewModel.RaiseNotifyPropertyChanged(nameof(SongInPlayListViewModel.AlbumViewModel));
                   songInPlayListViewModel.RaiseNotifyPropertyChanged(nameof(SongInPlayListViewModel.ArtistViewModel));
+
+                  var tmpSongModel = songInPlayListViewModel.SongModel;
+                  songInPlayListViewModel.SongModel = null;
+                  songInPlayListViewModel.RaiseNotifyPropertyChanged(nameof(SongInPlayListViewModel.SongModel));
+                  songInPlayListViewModel.SongModel = tmpSongModel;
+                  songInPlayListViewModel.RaiseNotifyPropertyChanged(nameof(SongInPlayListViewModel.SongModel));
                   albumDetail?.RaiseCanExecuteChanged();
 
                   if (songInPlayListViewModel == ActualItem)

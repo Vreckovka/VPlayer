@@ -159,6 +159,21 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
 
     #endregion
 
+    #region DeleteLyrics
+
+    public Task<bool> DeleteLyrics(string songName, string albumName, string artistName, string extension)
+    {
+      var folders = new string[] { artistName, albumName };
+      var fileName = GetFileName(artistName, songName);
+
+      if (fileName != null)
+        return pCloudProvider.DeleteFile(lyricsFolderId, folders, fileName, extension);
+
+      return Task.FromResult(false);
+    }
+
+    #endregion
+
     #endregion
 
   }

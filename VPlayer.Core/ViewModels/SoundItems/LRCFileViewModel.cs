@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using VCore;
 using VCore.Standard;
+using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.ItemsCollections.VirtualList.VirtualLists;
 using VCore.WPF.LRC;
 using VCore.WPF.LRC.Domain;
@@ -14,6 +15,7 @@ using VCore.WPF.Misc;
 using VPlayer.AudioStorage.InfoDownloader.Clients.PCloud;
 using VPlayer.AudioStorage.InfoDownloader.LRC;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google;
+using VPlayer.Core.ViewModels.SoundItems.LRCCreators;
 
 namespace VPlayer.Core.ViewModels.SoundItems
 {
@@ -23,20 +25,23 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     private readonly PCloudLyricsProvider pCloudLyricsProvider;
     private readonly ILrcProvider sourceProvider;
+    private readonly IWindowManager windowManager;
 
     #endregion
 
     #region Constructors
 
     public LRCFileViewModel(
-      ILRCFile model, 
+      ILRCFile model,
       LRCProviders lRcProvider,
-      PCloudLyricsProvider pCloudLyricsProvider, 
+      PCloudLyricsProvider pCloudLyricsProvider,
+      IWindowManager windowManager,
       ILrcProvider lrcProvider = null) : base(model)
     {
       this.pCloudLyricsProvider = pCloudLyricsProvider ?? throw new ArgumentNullException(nameof(pCloudLyricsProvider));
 
       sourceProvider = lrcProvider;
+      this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       Provider = lRcProvider;
 
       AllLine = model?.Lines.Select(x => new LRCLyricLineViewModel(x)).ToList();
@@ -329,6 +334,8 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     #endregion
 
+    #region Commands
+
     #region ApplyPernamently
 
     private ActionCommand applyPernamently;
@@ -373,6 +380,40 @@ namespace VPlayer.Core.ViewModels.SoundItems
         Application.Current.Dispatcher.Invoke(() => { IsLoading = false; });
       }
 
+    }
+
+    #endregion
+
+    #region DeleteLyrics
+
+    private ActionCommand deleteLyrics;
+
+    public ICommand DeleteLyrics
+    {
+      get
+      {
+        if (deleteLyrics == null)
+        {
+          deleteLyrics = new ActionCommand(OnDeleteLyrics);
+        }
+
+        return deleteLyrics;
+      }
+    }
+
+    public async void OnDeleteLyrics()
+    {
+      var result = windowManager.ShowDeletePrompt($"{Model.Title}.lrc");
+
+      if (result == VCore.WPF.ViewModels.Prompt.PromptResult.Ok)
+        await pCloudLyricsProvider.DeleteLyrics(Model.Title, Model.Album, Model.Artist, ".lrc");
+    }
+
+    #endregion
+
+    public string GetLyricsText()
+    {
+      return AllLine.Select(x => x.Text).Aggregate((x, y) => $"{x}\n{y}");
     }
 
     #endregion

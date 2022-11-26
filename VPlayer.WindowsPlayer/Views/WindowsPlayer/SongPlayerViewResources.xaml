@@ -11,6 +11,7 @@
                     xmlns:numericUpAndDown="clr-namespace:VCore.WPF.Controls.NumericUpAndDown;assembly=VCore.WPF"
                     xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
                     xmlns:windowsPlayer="clr-namespace:VPlayer.Player.Views.WindowsPlayer"
+                    xmlns:windowsPlayer1="clr-namespace:VPlayer.WindowsPlayer.Views.WindowsPlayer"
                     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit">
 
     <converters:CacheImageConverter x:Key="CacheImageConverter" />
@@ -224,6 +225,15 @@
                                         </numericUpAndDown:NumericUpAndDown>
                                     </StackPanel>
 
+                                    <controls:PathButton Margin="0,15,0,5"
+                                                         Command="{Binding DeleteLyrics}"
+                                                         Glyph="{StaticResource eraser}"
+                                                         IconDefaultColor="#555555"
+                                                         IconHoverColor="{StaticResource DefaultRedColor}"
+                                                         IsReadOnly="True"
+                                                         Style="{StaticResource FontAwesomeGlyphStyle}"
+                                                         ToolTip="Erase lyrics" />
+
                                     <controls:PathButton Margin="5,15,5,7"
                                                          Padding="55,9"
                                                          HorizontalAlignment="Center"
@@ -279,9 +289,12 @@
                     </Border>
                 </Popup>
 
+                <TextBlock Text="" />
                 <controls:PathButton Margin="0,15,0,0"
                                      HorizontalAlignment="Left"
-                                     Command="{Binding Edit}"
+                                     Command="{Binding CreateLRCLyrics}"
+                                     CommandParameter="{Binding ActualItem}"
+                                     DataContext="{Binding RelativeSource={RelativeSource AncestorType=windowsPlayer1:SongPlayerView}, Path=DataContext}"
                                      FontSize="13"
                                      FontWeight="Bold"
                                      ForegroundCheckedColor="White"

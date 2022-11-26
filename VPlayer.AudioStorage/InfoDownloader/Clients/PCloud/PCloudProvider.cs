@@ -150,9 +150,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
           }
           else if (existingFiles.Count > 0)
           {
-            var existingSong = existingFiles.SingleOrDefault();
-
-            return existingSong;
+            return existingFiles.SingleOrDefault();
           }
         }
       }
@@ -161,5 +159,52 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
     }
 
     #endregion
+
+    public async Task<bool> DeleteFile(long parentId, string[] folderNames, string pFileName, string extension)
+    {
+      var parentFolders = (await ipCloudService.GetFoldersAsync(parentId))?.ToList();
+
+      if (parentFolders != null && parentFolders.Count > 0)
+      {
+        FolderInfo acutalFolder = null;
+
+        for (int i = 0; i < folderNames.Length; i++)
+        {
+          var acutalFolderName = folderNames[i];
+
+          acutalFolder = parentFolders.SingleOrDefault(x => PathStringProvider.GetNormalizedName(x.name) == PathStringProvider.GetNormalizedName(acutalFolderName));
+
+          if (acutalFolder == null)
+          {
+            return false;
+          }
+
+          parentFolders = (await ipCloudService.GetFoldersAsync(acutalFolder.id)).ToList();
+        }
+
+        if (acutalFolder != null)
+        {
+          var files = (await ipCloudService.GetFilesAsync(acutalFolder.id)).ToList();
+
+          var fileName = pFileName + extension;
+
+          var existingFiles = files.Where(x => x.name.ToLower() == fileName.ToLower()).ToList();
+
+          if (existingFiles.Count > 1)
+          {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+              windowManager.ShowErrorPrompt($"Multiple ({existingFiles.Count}) LRC files with same name {acutalFolder.name}\\{fileName}");
+            });
+          }
+          else if (existingFiles.Count > 0)
+          {
+            await ipCloudService.DeleteFile(existingFiles[0].id);
+          }
+        }
+      }
+
+      return false;
+    }
   }
 }

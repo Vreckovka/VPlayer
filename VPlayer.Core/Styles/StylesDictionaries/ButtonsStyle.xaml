@@ -1026,17 +1026,21 @@
                 <controls:PathButton HorizontalAlignment="Center"
                                      Command="{Binding RefreshData}"
                                      Glyph="{StaticResource rotate-right}"
+                                     IsReadOnly="True"
                                      Style="{StaticResource FontAwesomeGlyphStyle}"
                                      ToolTip="Refresh info data" />
 
                 <controls:PathButton HorizontalAlignment="Center"
                                      Command="{Binding DownloadInfo}"
+                                     IsReadOnly="True"
                                      Style="{StaticResource download}"
                                      ToolTip="Download info" />
 
                 <controls:PathButton HorizontalAlignment="Center"
                                      Command="{Binding ClearInfo}"
                                      Glyph="{StaticResource eraser}"
+                                     IconHoverColor="{StaticResource DefaultRedColor}"
+                                     IsReadOnly="True"
                                      Style="{StaticResource FontAwesomeGlyphStyle}"
                                      ToolTip="Erase info" />
             </UniformGrid>
