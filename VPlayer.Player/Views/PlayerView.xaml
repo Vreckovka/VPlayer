@@ -64,23 +64,23 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
 
-                            <controls2:ButtonWithIcon Margin="-2,-0.5,0,1.5"
-                                                      Padding="2"
-                                                      HorizontalAlignment="Left"
-                                                      VerticalAlignment="Center"
-                                                      Panel.ZIndex="2"
-                                                      DataContext="{Binding ActualItem}"
-                                                      IconHeight="11"
-                                                      IconPathStyle="{StaticResource Info}"
-                                                      IconWidth="11">
-
-                                <controls2:ButtonWithIcon.Style>
-                                    <Style BasedOn="{StaticResource {x:Type controls2:ButtonWithIcon}}" TargetType="{x:Type controls2:ButtonWithIcon}">
-                                        <Setter Property="IconHoverColor" Value="#4291db" />
-                                        <Setter Property="IconDefaultColor" Value="#3b668f" />
+                            <controls2:PathButton x:Name="InfoIcon"
+                                                  Padding="2"
+                                                  HorizontalAlignment="Left"
+                                                  VerticalAlignment="Center"
+                                                  Panel.ZIndex="2"
+                                                  DataContext="{Binding ActualItem}"
+                                                  IconHeight="11"
+                                                  IconMargin="0"
+                                                  IconWidth="11"
+                                                  PathStyle="{StaticResource Info}">
+                                <controls2:PathButton.Style>
+                                    <Style BasedOn="{StaticResource {x:Type controls2:PathButton}}" TargetType="{x:Type controls2:PathButton}">
+                                        <Setter Property="IconHoverColor" Value="#80ffffff" />
+                                        <Setter Property="IconDefaultColor" Value="#50ffffff" />
+                                        <Setter Property="IconCheckedColor" Value="#4291db" />
                                         <Setter Property="Opacity" Value="1" />
-                                        <Setter Property="Margin" Value="0,-5,0,-5" />
-                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Setter Property="Margin" Value="-3,-5,2,-5" />
 
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding ExtraData}" Value="{x:Null}">
@@ -92,18 +92,43 @@
                                                 <Setter Property="Visibility" Value="Collapsed" />
                                             </DataTrigger>
                                         </Style.Triggers>
-
                                     </Style>
-                                </controls2:ButtonWithIcon.Style>
+                                </controls2:PathButton.Style>
 
-                                <controls2:ButtonWithIcon.ToolTip>
+                                <controls2:PathButton.ToolTip>
                                     <Border Background="Transparent">
                                         <Grid>
                                             <ContentPresenter Content="{Binding}" ContentTemplateSelector="{StaticResource WindowsPlayerItemsTooltipTemplateSelector}" />
                                         </Grid>
                                     </Border>
-                                </controls2:ButtonWithIcon.ToolTip>
-                            </controls2:ButtonWithIcon>
+                                </controls2:PathButton.ToolTip>
+                            </controls2:PathButton>
+
+                            <Popup AllowsTransparency="False"
+                                   DataContext="{Binding ActualItem}"
+                                   HorizontalOffset="5"
+                                   IsOpen="{Binding ElementName=InfoIcon, Path=IsChecked}"
+                                   Placement="Bottom"
+                                   PlacementTarget="{Binding ElementName=InfoIcon}"
+                                   StaysOpen="False"
+                                   VerticalOffset="10">
+                                <Border Padding="5">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="#151515" />
+                                            <Setter Property="BorderBrush" Value="#303030" />
+                                            <Setter Property="BorderThickness" Value="1.5" />
+                                        </Style>
+                                    </Border.Style>
+                                    <Grid>
+                                        <ContentPresenter Content="{Binding}" ContentTemplateSelector="{StaticResource WindowsPlayerItemsTooltipTemplateSelector}" />
+                                    </Grid>
+                                </Border>
+
+                                <b:Interaction.Behaviors>
+                                    <popups:MovePopupWithParentBehavior />
+                                </b:Interaction.Behaviors>
+                            </Popup>
 
                             <TextBlock Grid.Column="1"
                                        FontSize="14"

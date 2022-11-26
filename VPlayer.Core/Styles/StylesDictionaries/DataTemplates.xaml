@@ -441,16 +441,20 @@
                 <controls1:PathButton.Style>
                     <Style BasedOn="{StaticResource {x:Type controls1:PathButton}}" TargetType="{x:Type controls1:PathButton}">
                         <Setter Property="IconHoverColor" Value="#4291db" />
-                        <Setter Property="IconDefaultColor" Value="#903b668f" />
                         <Setter Property="IconCheckedColor" Value="#4291db" />
+                        <Setter Property="IconDefaultColor" Value="#3b668f" />
                         <Setter Property="Opacity" Value="1" />
                         <Setter Property="Margin" Value="0,-5,0,-5" />
+                        <Setter Property="Visibility" Value="Visible" />
 
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding CSFDItem}" Value="{x:Null}">
+                            <DataTrigger Binding="{Binding ExtraData}" Value="{x:Null}">
                                 <Setter Property="IconHoverColor" Value="#757575" />
-                                <Setter Property="IconDefaultColor" Value="#65656565" />
-                                <Setter Property="IsReadOnly" Value="True" />
+                                <Setter Property="IconDefaultColor" Value="#656565" />
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
@@ -465,15 +469,15 @@
                 </controls1:PathButton.ToolTip>
             </controls1:PathButton>
 
-            <controls1:NonTopmostPopup x:Name="CsfdPopup"
-                                       AllowsTransparency="False"
-                                       DataContext="{Binding DetailViewModel}"
-                                       HorizontalOffset="5"
-                                       IsOpen="{Binding ElementName=VideoInfoIcon, Path=IsChecked}"
-                                       Placement="Bottom"
-                                       PlacementTarget="{Binding ElementName=VideoInfoIcon}"
-                                       StaysOpen="False"
-                                       VerticalOffset="10">
+            <Popup x:Name="CsfdPopup"
+                   AllowsTransparency="False"
+                   DataContext="{Binding DetailViewModel}"
+                   HorizontalOffset="5"
+                   IsOpen="{Binding ElementName=VideoInfoIcon, Path=IsChecked}"
+                   Placement="Bottom"
+                   PlacementTarget="{Binding ElementName=VideoInfoIcon}"
+                   StaysOpen="False"
+                   VerticalOffset="10">
                 <Border Padding="5">
                     <Border.Style>
                         <Style TargetType="Border">
@@ -490,7 +494,7 @@
                 <b:Interaction.Behaviors>
                     <popups:MovePopupWithParentBehavior />
                 </b:Interaction.Behaviors>
-            </controls1:NonTopmostPopup>
+            </Popup>
         </Grid>
     </DataTemplate>
 

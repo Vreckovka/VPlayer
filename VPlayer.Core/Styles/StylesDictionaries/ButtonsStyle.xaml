@@ -845,36 +845,77 @@
                     <Style x:Key="value" TargetType="TextBlock">
                         <Setter Property="Foreground" Value="#95ffffff" />
                         <Setter Property="FontWeight" Value="Normal" />
+                        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+                        <Setter Property="Margin" Value="0,0,2,0" />
                     </Style>
 
                 </StackPanel.Resources>
 
                 <UniformGrid Columns="3">
-                    <StackPanel Orientation="Horizontal">
+                    <Grid HorizontalAlignment="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
                         <TextBlock Style="{StaticResource title}" Text="Name" />
-                        <TextBlock Style="{StaticResource value}" Text="{Binding Name}" />
-                    </StackPanel>
+                        <TextBlock Grid.Column="1"
+                                   Style="{StaticResource value}"
+                                   Text="{Binding Name}"
+                                   ToolTip="{Binding Name}" />
+                    </Grid>
 
-                    <StackPanel Orientation="Horizontal">
+                    <Grid HorizontalAlignment="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
                         <TextBlock Style="{StaticResource title}" Text="Lyrics download" />
-                        <TextBlock Text="{Binding IsAutomaticLyricsFindEnabled}" />
-                    </StackPanel>
+                        <TextBlock Grid.Column="1"
+                                   Style="{StaticResource value}"
+                                   Text="{Binding IsAutomaticLyricsFindEnabled}"
+                                   ToolTip="{Binding IsAutomaticLyricsFindEnabled}" />
+                    </Grid>
 
-                    <StackPanel Orientation="Horizontal">
+                    <Grid HorizontalAlignment="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
                         <TextBlock Style="{StaticResource title}" Text="Length" />
-                        <TextBlock Text="{Binding Length}" />
-                    </StackPanel>
+                        <TextBlock Grid.Column="1"
+                                   Style="{StaticResource value}"
+                                   Text="{Binding Length}"
+                                   ToolTip="{Binding Length}" />
+                    </Grid>
 
-                    <StackPanel Orientation="Horizontal">
+                    <Grid HorizontalAlignment="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
                         <TextBlock Style="{StaticResource title}" Text="Artist" />
-                        <TextBlock Text="{Binding FileInfo.Artist}" />
-                    </StackPanel>
+                        <TextBlock Grid.Column="1"
+                                   Style="{StaticResource value}"
+                                   Text="{Binding FileInfo.Artist}"
+                                   ToolTip="{Binding FileInfo.Artist}" />
+                    </Grid>
 
-                    <StackPanel Orientation="Horizontal">
+                    <Grid HorizontalAlignment="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
                         <TextBlock Style="{StaticResource title}" Text="Album" />
-                        <TextBlock Text="{Binding FileInfo.Album}" />
-                    </StackPanel>
-
+                        <TextBlock Grid.Column="1"
+                                   Style="{StaticResource value}"
+                                   Text="{Binding FileInfo.Album}"
+                                   ToolTip="{Binding FileInfo.Album}" />
+                    </Grid>
                 </UniformGrid>
 
                 <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
@@ -900,6 +941,8 @@
                 <Style x:Key="value" TargetType="TextBlock">
                     <Setter Property="Foreground" Value="#95ffffff" />
                     <Setter Property="FontWeight" Value="Normal" />
+                    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+                    <Setter Property="Margin" Value="0,0,2,0" />
                 </Style>
 
                 <Style x:Key="sepparator" TargetType="Grid">
@@ -917,22 +960,44 @@
                            Text="Song data" />
 
                 <UniformGrid>
-                    <StackPanel Orientation="Horizontal">
+                    <Grid HorizontalAlignment="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
                         <TextBlock Style="{StaticResource title}" Text="Name" />
-                        <TextBlock Style="{StaticResource value}" Text="{Binding Name}" />
-                    </StackPanel>
+                        <TextBlock Grid.Column="1"
+                                   Style="{StaticResource value}"
+                                   Text="{Binding Name}"
+                                   ToolTip="{Binding Name}" />
+                    </Grid>
 
+                    <Grid HorizontalAlignment="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
 
-                    <StackPanel Orientation="Horizontal">
                         <TextBlock Style="{StaticResource title}" Text="Album" />
-                        <TextBlock Style="{StaticResource value}" Text="{Binding Album.Name}" />
-                    </StackPanel>
+                        <TextBlock Grid.Column="1"
+                                   Style="{StaticResource value}"
+                                   Text="{Binding Album.Name}"
+                                   ToolTip="{Binding Album.Name}" />
+                    </Grid>
 
+                    <Grid HorizontalAlignment="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
 
-                    <StackPanel Orientation="Horizontal">
                         <TextBlock Style="{StaticResource title}" Text="Artist" />
-                        <TextBlock Style="{StaticResource value}" Text="{Binding Album.Artist.Name}" />
-                    </StackPanel>
+                        <TextBlock Grid.Column="1"
+                                   Style="{StaticResource value}"
+                                   Text="{Binding Album.Artist.Name}"
+                                   ToolTip="{Binding Album.Artist.Name}" />
+                    </Grid>
                 </UniformGrid>
             </StackPanel>
 
@@ -958,65 +1023,152 @@
 
                 <StackPanel DataContext="{Binding MediaInfo.Format}">
                     <StackPanel>
-                        <StackPanel Orientation="Horizontal">
+                        <Grid HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
                             <TextBlock Style="{StaticResource title}" Text="Format name" />
-                            <TextBlock Style="{StaticResource value}" Text="{Binding FormatName}" />
-                        </StackPanel>
+                            <TextBlock Grid.Column="1"
+                                       Style="{StaticResource value}"
+                                       Text="{Binding FormatName}"
+                                       ToolTip="{Binding FormatName}" />
+                        </Grid>
 
-                        <StackPanel Orientation="Horizontal">
+                        <Grid HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
                             <TextBlock Style="{StaticResource title}" Text="Format long name" />
-                            <TextBlock Style="{StaticResource value}" Text="{Binding FormatLongName}" />
-                        </StackPanel>
+                            <TextBlock Grid.Column="1"
+                                       Style="{StaticResource value}"
+                                       Text="{Binding FormatLongName}"
+                                       ToolTip="{Binding FormatLongName}" />
+                        </Grid>
 
-                        <StackPanel Orientation="Horizontal">
+                        <Grid HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
                             <TextBlock Style="{StaticResource title}" Text="Duration" />
-                            <TextBlock Style="{StaticResource value}" Text="{Binding Duration}" />
-                        </StackPanel>
-
+                            <TextBlock Grid.Column="1"
+                                       Style="{StaticResource value}"
+                                       Text="{Binding Duration}"
+                                       ToolTip="{Binding Duration}" />
+                        </Grid>
                     </StackPanel>
 
                     <UniformGrid Columns="3">
-                        <StackPanel Orientation="Horizontal">
+                        <Grid HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
                             <TextBlock Style="{StaticResource title}" Text="Publisher" />
-                            <TextBlock Style="{StaticResource value}" Text="{Binding Tags[publisher]}" />
-                        </StackPanel>
+                            <TextBlock Grid.Column="1"
+                                       Style="{StaticResource value}"
+                                       Text="{Binding Tags[publisher]}"
+                                       ToolTip="{Binding Tags[publisher]}" />
+                        </Grid>
 
-                        <StackPanel Orientation="Horizontal">
+                        <Grid HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
                             <TextBlock Style="{StaticResource title}" Text="Title" />
-                            <TextBlock Style="{StaticResource value}" Text="{Binding Tags[title]}" />
-                        </StackPanel>
+                            <TextBlock Grid.Column="1"
+                                       Style="{StaticResource value}"
+                                       Text="{Binding Tags[title]}"
+                                       ToolTip="{Binding Tags[title]}" />
+                        </Grid>
 
-                        <StackPanel Orientation="Horizontal">
+                        <Grid HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
                             <TextBlock Style="{StaticResource title}" Text="Artist" />
-                            <TextBlock Style="{StaticResource value}" Text="{Binding Tags[artist]}" />
-                        </StackPanel>
+                            <TextBlock Grid.Column="1"
+                                       Style="{StaticResource value}"
+                                       Text="{Binding Tags[artist]}"
+                                       ToolTip="{Binding Tags[artist]}" />
+                        </Grid>
 
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Style="{StaticResource title}" Text="Album_artist" />
-                            <TextBlock Style="{StaticResource value}" Text="{Binding Tags[album_artist]}" />
-                        </StackPanel>
 
-                        <StackPanel Orientation="Horizontal">
+                        <Grid HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Style="{StaticResource title}" Text="Album artist" />
+                            <TextBlock Grid.Column="1"
+                                       Style="{StaticResource value}"
+                                       Text="{Binding Tags[album_artist]}"
+                                       ToolTip="{Binding Tags[album_artist]}" />
+                        </Grid>
+
+                        <Grid HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
                             <TextBlock Style="{StaticResource title}" Text="Album" />
-                            <TextBlock Style="{StaticResource value}" Text="{Binding Tags[album]}" />
-                        </StackPanel>
+                            <TextBlock Grid.Column="1"
+                                       Style="{StaticResource value}"
+                                       Text="{Binding Tags[album]}"
+                                       ToolTip="{Binding Tags[album]}" />
+                        </Grid>
 
-                        <StackPanel Orientation="Horizontal">
+                        <Grid HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
                             <TextBlock Style="{StaticResource title}" Text="Track" />
-                            <TextBlock Style="{StaticResource value}" Text="{Binding Tags[track]}" />
-                        </StackPanel>
+                            <TextBlock Grid.Column="1"
+                                       Style="{StaticResource value}"
+                                       Text="{Binding Tags[track]}"
+                                       ToolTip="{Binding Tags[track]}" />
+                        </Grid>
 
-                        <StackPanel Orientation="Horizontal">
+                        <Grid HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
                             <TextBlock Style="{StaticResource title}" Text="Genre" />
-                            <TextBlock Style="{StaticResource value}" Text="{Binding Tags[genre]}" />
-                        </StackPanel>
+                            <TextBlock Grid.Column="1"
+                                       Style="{StaticResource value}"
+                                       Text="{Binding Tags[genre]}"
+                                       ToolTip="{Binding Tags[genre]}" />
+                        </Grid>
 
-                        <StackPanel Orientation="Horizontal">
+                        <Grid HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
                             <TextBlock Style="{StaticResource title}" Text="Date" />
-                            <TextBlock Text="{Binding Tags[date]}" />
-                        </StackPanel>
+                            <TextBlock Grid.Column="1"
+                                       Style="{StaticResource value}"
+                                       Text="{Binding Tags[date]}"
+                                       ToolTip="{Binding Tags[date]}" />
+                        </Grid>
                     </UniformGrid>
-
                 </StackPanel>
             </StackPanel>
 
