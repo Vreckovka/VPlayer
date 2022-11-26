@@ -255,7 +255,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
     {
       if (Items != null)
       {
-        var generator = new ItemsGenerator<TViewModel>(Items, 21);
+        var generator = new ItemsGenerator<TViewModel>(Items.OrderBy(x => x?.Name), 21);
 
         FilteredItems = new VirtualList<TViewModel>(generator);
       }

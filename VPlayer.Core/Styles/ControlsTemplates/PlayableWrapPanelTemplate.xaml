@@ -551,7 +551,8 @@
                     <Grid Background="{TemplateBinding Panel.Background}" SnapsToDevicePixels="True">
                         <ScrollViewer Padding="{TemplateBinding Control.Padding}"
                                       attachedProperties:AttachedProperty.ScrollSpeed="5"
-                                      Focusable="False">
+                                      Focusable="False"
+                                      VerticalScrollBarVisibility="Auto">
                             <ItemsPresenter SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
                         </ScrollViewer>
                     </Grid>

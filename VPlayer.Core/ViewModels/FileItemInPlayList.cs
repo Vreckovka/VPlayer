@@ -113,6 +113,33 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region ResetAllData
+
+    private ActionCommand resetAllData;
+
+    public ICommand ResetAllData
+    {
+      get
+      {
+        if (resetAllData == null)
+        {
+          resetAllData = new ActionCommand(OnResetAllData);
+        }
+
+        return resetAllData;
+      }
+    }
+
+    protected virtual void OnResetAllData()
+    {
+      OnRefreshData();
+      OnClearInfo();
+      OnDownloadInfo();
+    }
+
+
+    #endregion
+
     #endregion
 
     #region Duration

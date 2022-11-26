@@ -1272,7 +1272,10 @@ namespace VPlayer.Core.ViewModels
 
     protected virtual async Task BeforePlayEvent(PlayItemsEventData<TItemViewModel> data)
     {
-      await MediaPlayer.SetNewMedia(null);
+      if (data.EventAction != EventAction.Add)
+      {
+        await MediaPlayer.SetNewMedia(null);
+      }
     }
 
     #endregion
@@ -1286,7 +1289,7 @@ namespace VPlayer.Core.ViewModels
       if (!data.Items.Any())
         return;
 
-      if (ActualSavedPlaylist.Id > 0)
+      if (ActualSavedPlaylist != null && ActualSavedPlaylist.Id > 0)
       {
         await UpdateActualSavedPlaylistPlaylist();
         ActualSavedPlaylist = new TPlaylistModel() { Id = -1 };

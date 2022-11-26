@@ -442,7 +442,7 @@
                     <Style BasedOn="{StaticResource {x:Type controls1:PathButton}}" TargetType="{x:Type controls1:PathButton}">
                         <Setter Property="IconHoverColor" Value="#4291db" />
                         <Setter Property="IconCheckedColor" Value="#4291db" />
-                        <Setter Property="IconDefaultColor" Value="#3b668f" />
+                        <Setter Property="IconDefaultColor" Value="#c04291db" />
                         <Setter Property="Opacity" Value="1" />
                         <Setter Property="Margin" Value="0,-5,0,-5" />
                         <Setter Property="Visibility" Value="Visible" />

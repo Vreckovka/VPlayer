@@ -597,18 +597,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
             }
           }
         }
-
-
-        //if (LRCFile == null)
-        //{
-        //  await LoadLRCFromGoogleDrive();
-
-        //  if (LRCFile != null)
-        //  {
-        //    LRCFile.OnApplyPernamently();
-        //  }
-        //}
-
+        
         if (LRCFile == null)
         {
           await LoadLRCFromMiniLyrics();

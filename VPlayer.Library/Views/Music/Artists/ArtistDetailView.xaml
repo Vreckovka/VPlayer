@@ -10,175 +10,281 @@
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="auto" />
-      <RowDefinition Height="*" />
-    </Grid.RowDefinitions>
-
-    <StackPanel Margin="15,10" Orientation="Horizontal">
-      <controls1:PathButton Style="{StaticResource BackButton}" />
-
-    </StackPanel>
-
-    <Grid Grid.Row="1">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*" />
-        <ColumnDefinition Width="1.5*" />
-      </Grid.ColumnDefinitions>
-      <Grid Margin="5,0">
-
-        <Grid.Resources>
-          <Style BasedOn="{StaticResource {x:Type controls1:PlayableWrapPanelItem}}" TargetType="{x:Type controls1:PlayableWrapPanelItem}">
-            <Setter Property="Width" Value="185" />
-            <Setter Property="Height" Value="240" />
-          </Style>
-
-        </Grid.Resources>
+    <Grid>
         <Grid.RowDefinitions>
-          <RowDefinition Height="*" />
-          <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <controls1:PlayableWrapPanel Margin="5,0" ItemsSource="{Binding Albums}">
-          <controls1:PlayableWrapPanel.ItemTemplate>
-            <DataTemplate>
-              <controls1:PlayableWrapPanelItem BottomText="{Binding BottomText}"
-                                               HeaderText="{Binding Name}"
-                                               ImageThumbnail="{Binding Model.AlbumFrontCoverFilePath, Converter={converters:CacheImageConverter}, ConverterParameter=250, IsAsync=True}"
-                                               IsPlaying="{Binding IsPlaying}" />
-            </DataTemplate>
-          </controls1:PlayableWrapPanel.ItemTemplate>
-        </controls1:PlayableWrapPanel>
+        <StackPanel Margin="15,10" Orientation="Horizontal">
+            <controls1:PathButton Style="{StaticResource BackButton}" />
 
+        </StackPanel>
 
         <Grid Grid.Row="1">
-          <Border Margin="0,5,0,0"
-                  Padding="0,5,10,5"
-                  Background="#080808"
-                  BorderBrush="#85252525"
-                  BorderThickness="1,1,1,1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-            <Border.Resources>
-              <Style BasedOn="{StaticResource Base}" TargetType="TextBlock" />
-            </Border.Resources>
-
-            <Grid>
-              <Grid.RowDefinitions>
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="*" />
-              </Grid.RowDefinitions>
-
-              <TextBlock Margin="0,5,0,0"
-                         HorizontalAlignment="Center"
-                         FontSize="30"
-                         Text="{Binding ViewModel.Name}" />
-
-              <Border Grid.Row="1"
-                      Margin="0,5,0,0"
-                      Padding="0,5,10,5"
-                      Background="#121212"
-                      BorderBrush="#cc252525"
-                      BorderThickness="1,1,1,1">
-                <StackPanel Orientation="Horizontal">
-
-                  <StackPanel.Resources>
-                    <Style BasedOn="{StaticResource {x:Type controls1:PathButton}}" TargetType="controls1:PathButton">
-                      <Setter Property="Width" Value="35" />
-                      <Setter Property="IconHeight" Value="20" />
-                      <Setter Property="Margin" Value="0" />
-                      <Setter Property="IsReadOnly" Value="True" />
-                      <Setter Property="IconMargin" Value="0" />
-                      <Setter Property="Background" Value="Transparent" />
-                    </Style>
-                  </StackPanel.Resources>
-
-                  <controls1:PathButton Command="{Binding Update}"
-                                        IconDefaultColor="#aa9bf046"
-                                        IconHoverColor="#9bf046"
-                                        IconWidth="28"
-                                        PathStyle="{StaticResource cloud-arrow-down}"
-                                        ToolTip="Update/Download info" />
-
-                  <controls1:PathButton Command="{Binding Delete}"
-                                        IconDefaultColor="#aaf04d46"
-                                        IconHoverColor="#f04d46"
-                                        IconWidth="17"
-                                        PathStyle="{StaticResource Trash}"
-                                        ToolTip="Pernamently remove" />
-                </StackPanel>
-              </Border>
-
-              <Grid Grid.Row="2" Margin="5,15,0,0">
-                <Grid.ColumnDefinitions>
-                  <ColumnDefinition Width="*" />
-                  <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
+            <Grid Margin="5,0">
                 <Grid.Resources>
-                  <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
-                    <Setter Property="FontSize" Value="15" />
-                    <Setter Property="Margin" Value="2" />
-                  </Style>
+                    <Style BasedOn="{StaticResource {x:Type controls1:PlayableWrapPanelItem}}" TargetType="{x:Type controls1:PlayableWrapPanelItem}">
+                        <Setter Property="Width" Value="185" />
+                        <Setter Property="Height" Value="240" />
+                    </Style>
+
                 </Grid.Resources>
 
-                <StackPanel>
-                  <TextBlock Text="Number of albums" />
-                  <TextBlock Text="Number of song" />
-                  <TextBlock Text="Length" />
-                </StackPanel>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
 
-                <StackPanel Grid.Column="1">
-                  <TextBlock Text="{Binding Albums.Count, Mode=OneWay}" />
-                  <TextBlock Text="{Binding Songs.Count, Mode=OneWay}" />
-                  <TextBlock Text="{Binding TotalLength, Mode=OneWay}" />
-                </StackPanel>
-              </Grid>
+                <controls1:PlayableWrapPanel Margin="5,0" ItemsSource="{Binding Albums}">
+                    <controls1:PlayableWrapPanel.ItemTemplate>
+                        <DataTemplate>
+                            <controls1:PlayableWrapPanelItem BottomText="{Binding BottomText}"
+                                                             HeaderText="{Binding Name}"
+                                                             ImageThumbnail="{Binding Model.AlbumFrontCoverFilePath, Converter={converters:CacheImageConverter}, ConverterParameter=250, IsAsync=True}"
+                                                             IsPlaying="{Binding IsPlaying}" />
+                        </DataTemplate>
+                    </controls1:PlayableWrapPanel.ItemTemplate>
+                </controls1:PlayableWrapPanel>
+
+                <Grid Grid.Row="1">
+                    <Border Margin="0,5,0,0"
+                            Padding="0,5,10,5"
+                            Background="#080808"
+                            BorderBrush="#85252525"
+                            BorderThickness="1,1,1,1">
+
+                        <Border.Resources>
+                            <Style BasedOn="{StaticResource Base}" TargetType="TextBlock" />
+                        </Border.Resources>
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Margin="0,5,0,0"
+                                       HorizontalAlignment="Center"
+                                       FontSize="30"
+                                       Text="{Binding ViewModel.Name}" />
+
+                            <Border Grid.Row="1"
+                                    Margin="0,5,0,0"
+                                    Padding="0,5,10,5"
+                                    Background="#121212"
+                                    BorderBrush="#cc252525"
+                                    BorderThickness="1,1,1,1">
+                                <StackPanel Orientation="Horizontal">
+
+                                    <StackPanel.Resources>
+                                        <Style BasedOn="{StaticResource {x:Type controls1:PathButton}}" TargetType="controls1:PathButton">
+                                            <Setter Property="Width" Value="35" />
+                                            <Setter Property="IconHeight" Value="20" />
+                                            <Setter Property="Margin" Value="0" />
+                                            <Setter Property="IsReadOnly" Value="True" />
+                                            <Setter Property="IconMargin" Value="0" />
+                                            <Setter Property="Background" Value="Transparent" />
+                                        </Style>
+                                    </StackPanel.Resources>
+
+                                    <controls1:PathButton Command="{Binding Update}"
+                                                          IconDefaultColor="#aa9bf046"
+                                                          IconHoverColor="#9bf046"
+                                                          IconWidth="28"
+                                                          PathStyle="{StaticResource cloud-arrow-down}"
+                                                          ToolTip="Update/Download info" />
+
+                                    <controls1:PathButton Command="{Binding Delete}"
+                                                          IconDefaultColor="#aaf04d46"
+                                                          IconHoverColor="#f04d46"
+                                                          IconWidth="17"
+                                                          PathStyle="{StaticResource Trash}"
+                                                          ToolTip="Pernamently remove" />
+                                </StackPanel>
+                            </Border>
+
+                            <Grid Grid.Row="2" Margin="5,15,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Grid.Resources>
+                                    <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
+                                        <Setter Property="FontSize" Value="15" />
+                                        <Setter Property="Margin" Value="2" />
+                                    </Style>
+                                </Grid.Resources>
+
+                                <StackPanel>
+                                    <TextBlock Text="Number of albums" />
+                                    <TextBlock Text="Number of song" />
+                                    <TextBlock Text="Length" />
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="{Binding Albums.Count, Mode=OneWay}" />
+                                    <TextBlock Text="{Binding Songs.Count, Mode=OneWay}" />
+                                    <TextBlock Text="{Binding TotalLength, Mode=OneWay}" />
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+
+                    </Border>
+                </Grid>
             </Grid>
 
-          </Border>
-        </Grid>
-      </Grid>
 
-      <Border Grid.Column="1"
-              Margin="5,0"
-              BorderBrush="{StaticResource 3_WhiteTransparentBrush}"
-              BorderThickness="2,0,0,0">
-        <ListView Background="{StaticResource 3_WhiteTransparentBrush}"
-                  ItemsSource="{Binding Songs}"
-                  Style="{StaticResource AlbumsSongs}">
-          <ListView.ItemTemplate>
-            <DataTemplate>
-              <Grid>
-                <StackPanel Orientation="Horizontal">
-                  <Button Margin="5,0,5,0" Style="{StaticResource PlayMini}" />
-                  <TextBlock Margin="10,5,5,5"
-                             HorizontalAlignment="Left"
-                             FontSize="14"
-                             Text="{Binding Name}" />
-                  <TextBlock Margin="5"
-                             HorizontalAlignment="Left"
-                             Text="{Binding Album.Name}">
-                    <TextBlock.Style>
-                      <Style TargetType="TextBlock">
-                        <Setter Property="Foreground">
-                          <Setter.Value>
-                            <SolidColorBrush Opacity="0.20" Color="{StaticResource DefaultWhiteColor}" />
-                          </Setter.Value>
-                        </Setter>
-                      </Style>
-                    </TextBlock.Style>
-                  </TextBlock>
+            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel Width="350" DataContext="{Binding ArtistInfoViewModel}">
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+                    <StackPanel.Resources>
+                        <DataTemplate x:Key="ReleaseDetail">
+                            <Grid>
+                                <Grid.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsInLibrary}" Value="true">
+                                                <Setter Property="Foreground" Value="{StaticResource GreenBrush3}" />
+                                            </DataTrigger>
+
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding IsInLibrary}" Value="false" />
+                                                    <Condition Binding="{Binding IsOfficial}" Value="false" />
+                                                </MultiDataTrigger.Conditions>
+
+                                                <Setter Property="Foreground" Value="#35ffffff" />
+                                            </MultiDataTrigger>
+
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding IsInLibrary}" Value="false" />
+                                                    <Condition Binding="{Binding IsOfficial}" Value="true" />
+                                                </MultiDataTrigger.Conditions>
+
+                                                <Setter Property="Foreground" Value="{StaticResource DefaultRedBrush}" />
+                                                <Setter Property="Opacity" Value="0.60" />
+                                            </MultiDataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Grid.Resources>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="180" />
+                                    <ColumnDefinition Width="90" />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="{Binding Model.Title}"
+                                           TextTrimming="CharacterEllipsis"
+                                           ToolTip="{Binding Model.Title}" />
+
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding Model.FirstReleaseDate}"
+                                           TextTrimming="CharacterEllipsis"
+                                           ToolTip="{Binding Model.FirstReleaseDate}" />
+
+                                <TextBlock Grid.Column="2"
+                                           Text="{Binding Model.PrimaryType}"
+                                           TextTrimming="CharacterEllipsis"
+                                           ToolTip="{Binding Model.PrimaryType}" />
+
+                            </Grid>
+                        </DataTemplate>
+                    </StackPanel.Resources>
+                    <StackPanel>
+                        <TextBlock Text="{Binding ArtistInfo.SortName}" />
+
+                        <TextBlock>
+                            <Run Text="{Binding ArtistInfo.LifeSpan.Begin, Mode=OneWay}" />
+                            <Run Text="-" />
+                            <Run Text="{Binding ArtistInfo.LifeSpan.End, Mode=OneWay}" />
+                        </TextBlock>
+
+                        <TextBlock>
+                            <Run Text="{Binding ArtistInfo.BeginArea.SortName, Mode=OneWay}" />
+                            <Run Text="," />
+                            <Run Text="{Binding ArtistInfo.Area.SortName, Mode=OneWay}" />
+                        </TextBlock>
+
+                    </StackPanel>
+
+                    <StackPanel Margin="0,10,0,0">
+                        <TextBlock Margin="0,0,0,5"
+                                   HorizontalAlignment="Center"
+                                   FontSize="13"
+                                   Foreground="#45ffffff"
+                                   Text="Official albums" />
+
+                        <ItemsControl ItemTemplate="{StaticResource ReleaseDetail}" ItemsSource="{Binding OfficialReleasGroups}" />
+                    </StackPanel>
+
+                    <StackPanel Margin="0,10,0,0">
+                        <TextBlock Margin="0,0,0,5"
+                                   HorizontalAlignment="Center"
+                                   FontSize="13"
+                                   Foreground="#45ffffff"
+                                   Text="Other albums" />
+
+                        <ItemsControl ItemTemplate="{StaticResource ReleaseDetail}" ItemsSource="{Binding NotOfficialReleasGroups}" />
+                    </StackPanel>
                 </StackPanel>
-                <TextBlock Margin="5"
-                           HorizontalAlignment="Right"
-                           Text="00:05:37" />
-              </Grid>
-            </DataTemplate>
-          </ListView.ItemTemplate>
-        </ListView>
-      </Border>
+            </ScrollViewer>
+
+            <Border Grid.Column="2"
+                    Margin="5,0"
+                    BorderBrush="{StaticResource 3_WhiteTransparentBrush}"
+                    BorderThickness="2,0,0,0">
+                <ListView Background="{StaticResource 3_WhiteTransparentBrush}"
+                          ItemsSource="{Binding Songs}"
+                          Style="{StaticResource AlbumsSongs}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Margin="5,0,5,0" Style="{StaticResource PlayMini}" />
+                                    <TextBlock Margin="10,5,5,5"
+                                               HorizontalAlignment="Left"
+                                               FontSize="14"
+                                               Text="{Binding Name}" />
+                                    <TextBlock Margin="5"
+                                               HorizontalAlignment="Left"
+                                               Text="{Binding Album.Name}">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground">
+                                                    <Setter.Value>
+                                                        <SolidColorBrush Opacity="0.20" Color="{StaticResource DefaultWhiteColor}" />
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                                <TextBlock Margin="5"
+                                           HorizontalAlignment="Right"
+                                           Text="00:05:37" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Border>
+        </Grid>
     </Grid>
-  </Grid>
 </UserControl>

@@ -1195,6 +1195,14 @@
                                      IsReadOnly="True"
                                      Style="{StaticResource FontAwesomeGlyphStyle}"
                                      ToolTip="Erase info" />
+
+                <controls:PathButton HorizontalAlignment="Center"
+                                     Command="{Binding ResetAllData}"
+                                     Glyph="{StaticResource arrows-rotate-glyph}"
+                                     IconHoverColor="{StaticResource YellowColor}"
+                                     IsReadOnly="True"
+                                     Style="{StaticResource FontAwesomeGlyphStyle}"
+                                     ToolTip="Reset all data" />
             </UniformGrid>
         </StackPanel>
     </DataTemplate>

@@ -4,7 +4,10 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using MetaBrainz.MusicBrainz.Interfaces.Entities;
 using Microsoft.EntityFrameworkCore;
+using VCore;
+using VCore.Standard;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
 using VCore.WPF.Interfaces.Managers;
@@ -14,6 +17,7 @@ using VCore.WPF.Managers;
 using VCore.WPF.Modularity.Events;
 using VCore.WPF.Modularity.RegionProviders;
 using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Managers.Status;
@@ -29,6 +33,7 @@ namespace VPlayer.Home.ViewModels.Artists
     private readonly IViewModelsFactory viewModelsFactory;
     private readonly IAlbumsViewModel albumsViewModel;
     private readonly IStorageManager storageManager;
+    private readonly AudioInfoDownloader audioInfoDownloader;
 
     public ArtistDetailViewModel(
       IRegionProvider regionProvider,
@@ -37,11 +42,13 @@ namespace VPlayer.Home.ViewModels.Artists
       IStorageManager storageManager,
       IStatusManager statusManager,
       ArtistViewModel model,
-      IWindowManager windowManager) : base(regionProvider, storageManager, statusManager,model, windowManager)
+      IWindowManager windowManager,
+      AudioInfoDownloader audioInfoDownloader) : base(regionProvider, storageManager, statusManager, model, windowManager)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.albumsViewModel = albumsViewModel ?? throw new ArgumentNullException(nameof(albumsViewModel));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
+      this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
     }
 
     #region Properties
@@ -67,6 +74,28 @@ namespace VPlayer.Home.ViewModels.Artists
 
     public override bool ContainsNestedRegions => false;
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
+
+
+
+
+    #region ArtistInfoViewModel
+
+    private ArtistInfoViewModel artistInfoViewModel;
+
+    public ArtistInfoViewModel ArtistInfoViewModel
+    {
+      get { return artistInfoViewModel; }
+      set
+      {
+        if (value != artistInfoViewModel)
+        {
+          artistInfoViewModel = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
 
     #region Songs
@@ -122,7 +151,7 @@ namespace VPlayer.Home.ViewModels.Artists
 
     #region LoadEntity
 
-    protected override  Task LoadEntity()
+    protected override Task LoadEntity()
     {
       return Task.Run(async () =>
       {
@@ -136,7 +165,7 @@ namespace VPlayer.Home.ViewModels.Artists
         await Application.Current.Dispatcher.InvokeAsync(async () =>
         {
           allSong = new List<SongDetailViewModel>();
-          Albums = (await albumsViewModel.GetViewModelsAsync()).Where(x => albumsDb.Select(y => y.Id).Contains(x.ModelId)).ToList();
+          Albums = (await albumsViewModel.GetViewModelsAsync()).Where(x => albumsDb.Select(y => y.Id).Contains(x.ModelId)).OrderBy(x => x.Name).ToList();
 
           foreach (var album in Albums)
           {
@@ -167,7 +196,6 @@ namespace VPlayer.Home.ViewModels.Artists
 
     #endregion
 
-
     private void OnSongUpdated(ItemChanged<Song> song)
     {
       var existingSOng = allSong?.SingleOrDefault(x => x.Model.Id == song.Item.Id);
@@ -179,8 +207,158 @@ namespace VPlayer.Home.ViewModels.Artists
       }
     }
 
+    protected override async void OnUpdate()
+    {
+      var artistInfo = await audioInfoDownloader.GetArtistInfo(ViewModel.Name);
+
+      var vm = viewModelsFactory.Create<ArtistInfoViewModel>(ViewModel);
+      vm.ArtistInfo = artistInfo;
+
+      var albumNames = Albums.Select(x => x.Name).ToList();
+      var dates = Albums.Select(x => x.Model.ReleaseDate).ToList();
+
+      vm.releaseGroupViewModels?.Where(x => 
+        (albumNames.Count(y => x.Model.Title == y || x.Model.Title.Similarity(y) > 0.85) > 0) ||
+        (dates.Contains(x.Model.FirstReleaseDate?.ToString()) 
+         && x.Model.FirstReleaseDate != null 
+         && x.IsOfficial)
+      ).ForEach(x => x.IsInLibrary = true);
+
+      ArtistInfoViewModel = vm;
+
+      base.OnUpdate();
+    }
+
     #endregion
 
+
+  }
+
+  public class ArtistInfoViewModel : ViewModel<ArtistViewModel>
+  {
+    private readonly IViewModelsFactory viewModelsFactory;
+    public List<ReleaseGroupViewModel> releaseGroupViewModels;
+    public ArtistInfoViewModel(ArtistViewModel model, IViewModelsFactory viewModelsFactory) : base(model)
+    {
+      this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+    }
+
+    #region ArtistInfo
+
+    private IArtist artistInfo;
+
+    public IArtist ArtistInfo
+    {
+      get { return artistInfo; }
+      set
+      {
+        if (value != artistInfo)
+        {
+          artistInfo = value;
+          releaseGroupViewModels = ArtistInfo?.ReleaseGroups?.Select(x => new ReleaseGroupViewModel(x)).ToList();
+
+          releaseGroupViewModels?.Where(x => IsOffical(x.Model)).ForEach(x => x.IsOfficial = true);
+
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region OfficialReleasGroups
+
+    public IEnumerable<ReleaseGroupViewModel> OfficialReleasGroups
+    {
+      get
+      {
+        return releaseGroupViewModels.Where(x => x.IsOfficial);
+      }
+    }
+
+    #endregion
+
+    #region NotOfficialReleaseGroups
+
+    public IEnumerable<ReleaseGroupViewModel> NotOfficialReleasGroups
+    {
+      get
+      {
+        return releaseGroupViewModels.Where(x => !x.IsOfficial);
+      }
+    }
+
+    #endregion
+
+    #region IsOffical
+
+    public static bool IsOffical(IReleaseGroup g)
+    {
+      try
+      {
+        if (g.FirstReleaseDate == null)
+          return false;
+        if (g.PrimaryType != null)
+        {
+          return g.PrimaryType.Equals("album", StringComparison.OrdinalIgnoreCase)
+                 && g.SecondaryTypes.Count == 0
+                 && g.FirstReleaseDate != null;
+        }
+
+        return false;
+      }
+      catch (Exception ex)
+      {
+        return false;
+      }
+    }
+
+    #endregion
+  }
+
+  public class ReleaseGroupViewModel : ViewModel<IReleaseGroup>
+  {
+    public ReleaseGroupViewModel(IReleaseGroup model) : base(model)
+    {
+    }
+
+    #region IsInLibrary
+
+    private bool isInLibrary;
+
+    public bool IsInLibrary
+    {
+      get { return isInLibrary; }
+      set
+      {
+        if (value != isInLibrary)
+        {
+          isInLibrary = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region IsOfficial
+
+    private bool isOfficial;
+
+    public bool IsOfficial
+    {
+      get { return isOfficial; }
+      set
+      {
+        if (value != isOfficial)
+        {
+          isOfficial = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
   }
 }

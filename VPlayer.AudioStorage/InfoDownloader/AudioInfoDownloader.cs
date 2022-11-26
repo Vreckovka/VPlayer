@@ -24,6 +24,8 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using Logger;
+using MetaBrainz.MusicBrainz;
+using MetaBrainz.MusicBrainz.Interfaces.Entities;
 using VPlayer.AudioStorage.InfoDownloader.Clients.Chartlyrics;
 using VPlayer.AudioStorage.InfoDownloader.LRC;
 using VCore;
@@ -100,11 +102,14 @@ namespace VPlayer.AudioStorage.InfoDownloader
       {
         try
         {
-          var updateArtist = await UpdateArtist(artist.Name);
+          var updateArtist = await GetArtist(artist.Name);
 
           if (updateArtist != null)
           {
             updateArtist.Id = artist.Id;
+
+            ItemUpdated.OnNext(updateArtist);
+            return;
           }
 
           ItemUpdated.OnNext(artist);
@@ -241,12 +246,6 @@ namespace VPlayer.AudioStorage.InfoDownloader
     #region MusicBrainz Lookups
 
     private KeyValuePair<string, List<Album>> _actualArtist;
-
-    /// <summary>
-    /// Updates information about album
-    /// </summary>
-    /// <param name="album"></param>
-    /// <returns></returns>
     private bool apiExeed;
 
     #region GetAlbumFrontCoversUrls
@@ -349,7 +348,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
           if (album.Artist.MusicBrainzId == null)
           {
-            newArtist = await UpdateArtist(album.Artist.Name);
+            newArtist = await GetArtist(album.Artist.Name);
 
             if (newArtist == null)
             {
@@ -866,9 +865,9 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     #endregion
 
-    #region UpdateArtist
+    #region GetArtist
 
-    public async Task<DomainClasses.Artist> UpdateArtist(string artistName)
+    public async Task<DomainClasses.Artist> GetArtist(string artistName)
     {
       try
       {
@@ -924,8 +923,8 @@ namespace VPlayer.AudioStorage.InfoDownloader
           {
             Name = artist.Name,
             MusicBrainzId = artist.Id,
-            NormalizedName = VPlayerStorageManager.GetNormalizedName(artist.Name)
-          };
+            NormalizedName = VPlayerStorageManager.GetNormalizedName(artist.Name),
+          }; 
         }
         else
         {
@@ -1014,7 +1013,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     #endregion
 
-    #region MyRegion
+    #region GetAlbumFrontConverURL
 
     /// <summary>
     /// Returns URL for album front image
@@ -1079,9 +1078,9 @@ namespace VPlayer.AudioStorage.InfoDownloader
     }
 
     #endregion
-    /// <summary>
-    /// Returns MBID of album
-    /// </summary>
+
+    #region GetAlbumMBID
+
     private static string GetAlbumMBID(string artist, string album)
     {
       var m_strFilePath = "http://musicbrainz.org/ws/2/release/?query=artist:" +
@@ -1104,12 +1103,11 @@ namespace VPlayer.AudioStorage.InfoDownloader
       return "";
     }
 
-    /// <summary>
-    /// Define is release is Copact disc
-    /// </summary>
-    /// <param name="r"></param>
-    /// <returns></returns>
-    private static bool IsCompactDisc(Release r)
+    #endregion
+
+    #region IsCompactDisc
+
+    public static bool IsCompactDisc(Release r)
     {
       if (r.Media == null || r.Media.Count == 0)
       {
@@ -1119,12 +1117,11 @@ namespace VPlayer.AudioStorage.InfoDownloader
       return r.Media[0].Format == "CD" || r.Media[0].Format == "Digital Media";
     }
 
-    /// <summary>
-    /// Returns true if album is official
-    /// </summary>
-    /// <param name="g"></param>
-    /// <returns></returns>
-    private bool IsOffical(ReleaseGroup g)
+    #endregion
+
+    #region IsOffical
+
+    public static bool IsOffical(ReleaseGroup g)
     {
       try
       {
@@ -1141,12 +1138,40 @@ namespace VPlayer.AudioStorage.InfoDownloader
       }
       catch (Exception ex)
       {
-        logger.Log(Logger.MessageType.Error, ex.Message);
         return false;
       }
     }
 
-    #endregion 
+  
+
+    #endregion
+
+    public async Task<IArtist> GetArtistInfo(string artistName)
+    {
+      try
+      {
+        var q = new Query("VPlayer", "3", "pecho4@gmail.com");
+        
+        if (artistName != null)
+        {
+          var artist = (await q.FindArtistsAsync(artistName)).Results.FirstOrDefault();
+
+          if (artist != null)
+          {
+            return await q.LookupArtistAsync(artist.Item.Id, Include.ReleaseGroups, ReleaseType.Album);
+          }
+        }
+
+        return null;
+      }
+      catch (Exception ex)
+      {
+        logger.Log(Logger.MessageType.Error, ex.Message);
+        return null;
+      }
+    }
+
+    #endregion
 
     #region FingerPrint methods
 

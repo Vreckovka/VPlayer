@@ -158,7 +158,7 @@ namespace VPlayer.Core.FileBrowser
 
     #region PlayButton
 
-    private ActionCommand playButton;
+    private ActionCommand<EventAction> playButton;
 
     public ICommand PlayButton
     {
@@ -166,7 +166,7 @@ namespace VPlayer.Core.FileBrowser
       {
         if (playButton == null)
         {
-          playButton = new ActionCommand(Play);
+          playButton = new ActionCommand<EventAction>(Play);
         }
 
         return playButton;
@@ -225,15 +225,15 @@ namespace VPlayer.Core.FileBrowser
 
     #region Play
 
-    public void Play()
+    public void Play(EventAction eventAction)
     {
       if (FileType == FileType.Video)
       {
-        PlayVideo();
+        PlayVideo(eventAction);
       }
       else if (FileType == FileType.Sound)
       {
-        PlaySound();
+        PlaySound(eventAction);
       }
     }
 
@@ -241,7 +241,7 @@ namespace VPlayer.Core.FileBrowser
 
     #region PlayVideo
 
-    private void PlayVideo()
+    private void PlayVideo(EventAction eventAction)
     {
       VideoItem videoItem = storageManager.GetRepository<VideoItem>().SingleOrDefault(x => x.Source == Model.Indentificator);
 
@@ -266,7 +266,7 @@ namespace VPlayer.Core.FileBrowser
         IsInPlaylist = x;
       });
 
-      var data = new PlayItemsEventData<VideoItemInPlaylistViewModel>(vms.AsList(), EventAction.Play, this);
+      var data = new PlayItemsEventData<VideoItemInPlaylistViewModel>(vms.AsList(), eventAction, this);
 
       eventAggregator.GetEvent<PlayItemsEvent<VideoItem, VideoItemInPlaylistViewModel>>().Publish(data);
     }
@@ -275,7 +275,7 @@ namespace VPlayer.Core.FileBrowser
 
     #region PlaySound
 
-    private void PlaySound()
+    private void PlaySound(EventAction eventAction)
     {
       SoundItem soundItem = storageManager.GetRepository<SoundItem>().Include(x => x.FileInfo).SingleOrDefault(x => x.FileInfo.Source == Model.Indentificator);
 
@@ -307,7 +307,7 @@ namespace VPlayer.Core.FileBrowser
         IsInPlaylist = x;
       });
 
-      var data = new PlayItemsEventData<SoundItemInPlaylistViewModel>(vms.AsList(), EventAction.Play, this);
+      var data = new PlayItemsEventData<SoundItemInPlaylistViewModel>(vms.AsList(), eventAction, this);
 
       eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(data);
     }

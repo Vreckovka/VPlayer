@@ -88,6 +88,12 @@
                                                 <Setter Property="IconDefaultColor" Value="#656565" />
                                             </DataTrigger>
 
+                                            <DataTrigger Binding="{Binding ExtraData, Converter={converters:IsNullConverter}}" Value="false">
+                                                <Setter Property="IconHoverColor" Value="#5baefc" />
+                                                <Setter Property="IconCheckedColor" Value="#4291db" />
+                                                <Setter Property="IconDefaultColor" Value="#c04291db" />
+                                            </DataTrigger>
+
                                             <DataTrigger Binding="{Binding}" Value="{x:Null}">
                                                 <Setter Property="Visibility" Value="Collapsed" />
                                             </DataTrigger>

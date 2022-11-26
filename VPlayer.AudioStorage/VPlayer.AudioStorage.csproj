@@ -6,6 +6,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Google.Apis.Drive.v3" Version="1.49.0.2065" />
+		<PackageReference Include="MetaBrainz.MusicBrainz" Version="5.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.3" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.3" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.3" />

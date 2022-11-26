@@ -123,7 +123,7 @@ namespace VPlayer.Core.FileBrowser
 
     #region PlayButton
 
-    private ActionCommand playButton;
+    private ActionCommand<EventAction> playButton;
 
     public ICommand PlayButton
     {
@@ -131,7 +131,7 @@ namespace VPlayer.Core.FileBrowser
       {
         if (playButton == null)
         {
-          playButton = new ActionCommand(Play);
+          playButton = new ActionCommand<EventAction>(Play);
         }
 
         return playButton;
@@ -214,7 +214,7 @@ namespace VPlayer.Core.FileBrowser
     #region Play
 
     private static CancellationTokenSource cancellationTokenSource;
-    public async void Play()
+    public async void Play(EventAction eventAction)
     {
       try
       {
@@ -299,7 +299,7 @@ namespace VPlayer.Core.FileBrowser
 
           vms = vmsWithSeries.OrderBy(x => x.tvshowNumber?.SeasonNumber).ThenBy(x => x.tvshowNumber?.EpisodeNumber).Select(x => x.item).ToList();
 
-          var data = new PlayItemsEventData<VideoItemInPlaylistViewModel>(vms, EventAction.Play, this);
+          var data = new PlayItemsEventData<VideoItemInPlaylistViewModel>(vms, eventAction, this);
 
           eventAggregator.GetEvent<PlayItemsEvent<VideoItem, VideoItemInPlaylistViewModel>>().Publish(data);
         }
@@ -386,7 +386,7 @@ namespace VPlayer.Core.FileBrowser
 
           var data = new PlayItemsEventData<SoundItemInPlaylistViewModel>(
             soundItems1.Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x)),
-            EventAction.Play,
+            eventAction,
             this);
 
           eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(data);

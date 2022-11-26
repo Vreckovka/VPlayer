@@ -95,7 +95,7 @@
                 <controls1:PathButton Width="25"
                                       Margin="0,1,0,0"
                                       Command="{Binding PlayButton}"
-                                      CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}">
+                                      CommandParameter="{x:Static events1:EventAction.Play}">
                     <controls1:PathButton.Style>
                         <Style BasedOn="{StaticResource {x:Type controls1:PathButton}}" TargetType="controls1:PathButton">
                             <Setter Property="Visibility" Value="Hidden" />
@@ -116,6 +116,32 @@
 
                                 <DataTrigger Binding="{Binding IsInPlaylist}" Value="true">
                                     <Setter Property="IconDefaultColor" Value="{StaticResource DefaultRedColor}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </controls1:PathButton.Style>
+                </controls1:PathButton>
+
+                <controls1:PathButton Width="25"
+                                      Margin="0,1,0,0"
+                                      Command="{Binding PlayButton}"
+                                      CommandParameter="{x:Static events1:EventAction.Add}">
+                    <controls1:PathButton.Style>
+                        <Style BasedOn="{StaticResource FontAwesomeGlyphStyle}" TargetType="controls1:PathButton">
+                            <Setter Property="Visibility" Value="Hidden" />
+                            <Setter Property="Glyph" Value="{StaticResource layer-plus-glyph}" />
+                            <Setter Property="ToolTip" Value="Add to playlist" />
+                            <Setter Property="GlyphFontSize" Value="14" />
+                            <Setter Property="IconDefaultColor" Value="#15ffffff" />
+                            <Setter Property="IconHoverColor" Value="{StaticResource GreenColor3}" />
+
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CanPlay}" Value="true">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+
+                                <DataTrigger Binding="{Binding IsInPlaylist}" Value="true">
+                                    <Setter Property="IconDefaultColor" Value="{StaticResource GreenColor3}" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -397,7 +423,7 @@
 
                 <controls1:PathButton Margin="2,0,-2,0"
                                       Command="{Binding PlayButton}"
-                                      CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}"
+                                      CommandParameter="{x:Static events1:EventAction.Play}"
                                       IconHoverColor="{StaticResource DefaultRedColor}"
                                       PathStyle="{StaticResource play}"
                                       ToolTip="Play">
@@ -417,6 +443,33 @@
                         </Style>
                     </controls1:PathButton.Style>
                 </controls1:PathButton>
+
+                <controls1:PathButton Width="25"
+                                      Margin="0,1,0,0"
+                                      Command="{Binding PlayButton}"
+                                      CommandParameter="{x:Static events1:EventAction.Add}">
+                    <controls1:PathButton.Style>
+                        <Style BasedOn="{StaticResource FontAwesomeGlyphStyle}" TargetType="controls1:PathButton">
+                            <Setter Property="Visibility" Value="Hidden" />
+                            <Setter Property="Glyph" Value="{StaticResource layer-plus-glyph}" />
+                            <Setter Property="ToolTip" Value="Add to playlist" />
+                            <Setter Property="GlyphFontSize" Value="14" />
+                            <Setter Property="IconDefaultColor" Value="#15ffffff" />
+                            <Setter Property="IconHoverColor" Value="{StaticResource GreenColor3}" />
+
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CanPlay}" Value="true">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+
+                                <DataTrigger Binding="{Binding IsInPlaylist}" Value="true">
+                                    <Setter Property="IconDefaultColor" Value="{StaticResource GreenColor3}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </controls1:PathButton.Style>
+                </controls1:PathButton>
+
 
                 <controls1:PathButton Background="Transparent"
                                       Command="{Binding RelativeSource={RelativeSource AncestorType=TreeView, Mode=FindAncestor}, Path=DataContext.DeleteItemCommand}"

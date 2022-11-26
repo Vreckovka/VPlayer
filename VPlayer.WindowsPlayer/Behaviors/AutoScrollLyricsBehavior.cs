@@ -34,7 +34,7 @@ namespace VPlayer.Player.Behaviors
 
     private void AssociatedObject_Unloaded(object sender, RoutedEventArgs e)
     {
-      OnDetaching();
+      serialDisposable.Dispose();
     }
 
     private void AssociatedObject_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -78,6 +78,8 @@ namespace VPlayer.Player.Behaviors
     {
       if (AssociatedObject.DataContext != null)
       {
+        serialDisposable = new SerialDisposable();
+
         if (AssociatedObject.DataContext is LRCFileViewModel lRCFileViewModel)
         {
           serialDisposable.Disposable = lRCFileViewModel.ActualLineChanged.Subscribe(OnLineChanged);

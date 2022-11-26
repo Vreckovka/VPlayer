@@ -503,7 +503,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
             {
               var artist = album.Artist;
 
-              album.Songs.Where(x => x.ItemModel.Id != 0).ForEach(x =>
+              album.Songs.Where(x => x.ItemModel != null).Where(x => x.ItemModel.Id != 0).ForEach(x =>
               {
                 x.ItemModelId = x.ItemModel.Id;
                 x.ItemModel = null;
@@ -1505,7 +1505,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         cancellationToken.ThrowIfCancellationRequested();
 
-        artist = await audioInfoDownloader.UpdateArtist(artistName);
+        artist = await audioInfoDownloader.GetArtist(artistName);
       }
 
       return artist;
