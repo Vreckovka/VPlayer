@@ -123,24 +123,30 @@ namespace VPlayer.Core.ViewModels
       {
         if (resetAllData == null)
         {
-          resetAllData = new ActionCommand(OnResetAllData);
+          resetAllData = new ActionCommand(OnResetAllDataAndSave);
         }
 
         return resetAllData;
       }
     }
 
-    protected virtual void OnResetAllData()
+    public override void OnResetAllDataAndSave()
     {
       OnRefreshData();
       OnClearInfo();
       OnDownloadInfo();
+
+      SaveChanges();
     }
 
-
     #endregion
 
     #endregion
+
+    public virtual void SaveChanges()
+    {
+
+    }
 
     #region Duration
 
@@ -239,6 +245,18 @@ namespace VPlayer.Core.ViewModels
 
         return TimeSpan.FromSeconds(0);
       }
+    }
+
+    #endregion
+
+    #region OnResetAllData
+
+    public override void OnResetAllData()
+    {
+      OnRefreshData();
+      OnClearInfo();
+
+      base.OnResetAllData();
     }
 
     #endregion

@@ -18,6 +18,16 @@ namespace VPlayer.Core.ViewModels.TvShows
     public bool IsFavorite { get; set; }
     public bool IsPlaying { get; set; }
     public bool IsInPlaylist { get; set; }
+    public void OnResetAllDataAndSave()
+    {
+      
+    }
+
+    public void OnResetAllData()
+    {
+      
+    }
+
     public string FileLocation { get; set; }
 
     #region IsSelected

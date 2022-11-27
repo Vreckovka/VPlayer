@@ -28,5 +28,8 @@ namespace VPlayer.Core.ViewModels
     bool IsFavorite { get; set; }
     bool IsPlaying { get; set; }
     bool IsInPlaylist { get; set; }
+
+    void OnResetAllDataAndSave();
+    void OnResetAllData();
   }
 }

@@ -413,7 +413,12 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     public string GetLyricsText()
     {
-      return AllLine.Select(x => x.Text).Aggregate((x, y) => $"{x}\n{y}");
+      if (AllLine.Any())
+      {
+        return AllLine.Select(x => x.Text).Aggregate((x, y) => $"{x}\n{y}");
+      }
+
+      return null;
     }
 
     #endregion

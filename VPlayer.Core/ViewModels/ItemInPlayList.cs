@@ -283,5 +283,13 @@ namespace VPlayer.Core.ViewModels
     protected abstract void PublishRemoveFromPlaylist();
 
     protected abstract void PublishDeleteFile();
+
+    public virtual void OnResetAllDataAndSave()
+    {
+    }
+
+    public virtual void OnResetAllData()
+    {
+    }
   }
 }

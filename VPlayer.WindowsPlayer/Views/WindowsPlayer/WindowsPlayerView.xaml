@@ -287,6 +287,16 @@
                                 <Run Text="{Binding CheckedFiles.Count, Mode=OneWay}" />
                                 <Run Text="/" />
                                 <Run Text="{Binding PlayList.Count, Mode=OneWay}" />
+                                <TextBlock.ToolTip>
+                                    <TextBlock Margin="5,2,5,0"
+                                               VerticalAlignment="Center"
+                                               FontWeight="Bold"
+                                               Foreground="#50ffffff">
+                                        <Run Text="{Binding CheckedFiles.Count, Mode=OneWay}" />
+                                        <Run Text="/" />
+                                        <Run Text="{Binding PlayList.Count, Mode=OneWay}" />
+                                    </TextBlock>
+                                </TextBlock.ToolTip>
                             </TextBlock>
 
                         </StackPanel>
@@ -672,32 +682,31 @@
                                                                  IconMargin="0"
                                                                  IsChecked="{Binding ActualSavedPlaylist.WatchFolder}"
                                                                  Style="{StaticResource FontAwesomeGlyphStyle}"
-                                                                 ToolTip="Watch folder">
-                                                <controls:PathButton Margin="0,10,-8,0"
-                                                                     HorizontalAlignment="Right"
-                                                                     Glyph="{StaticResource folder-open-glyph}"
-                                                                     GlyphFontSize="10"
-                                                                     IconCheckedColor="{StaticResource YellowColor}"
-                                                                     IconMargin="0"
-                                                                     IsChecked="{Binding ActualSavedPlaylist.WatchFolder}"
-                                                                     IsHitTestVisible="False"
-                                                                     IsReadOnly="True">
-                                                    <controls:PathButton.Style>
-                                                        <Style BasedOn="{StaticResource FontAwesomeGlyphStyle}" TargetType="controls:PathButton">
-                                                            <Setter Property="IconDefaultColor" Value="#353535" />
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=controls:PathButton}, Path=IsMouseOver}" Value="true">
-                                                                    <Setter Property="IconDefaultColor" Value="{StaticResource YellowColor}" />
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </controls:PathButton.Style>
-                                                </controls:PathButton>
-                                            </controls:PathButton>
+                                                                 ToolTip="Watch folder" />
 
-
+                                            <controls:PathButton Margin="0,10,-11,0"
+                                                                 HorizontalAlignment="Right"
+                                                                 Glyph="{StaticResource folder-open-glyph}"
+                                                                 GlyphFontSize="10"
+                                                                 IconBrush="{Binding ElementName=binoculars, Path=IconBrush}"
+                                                                 IconMargin="0"
+                                                                 IsChecked="{Binding ActualSavedPlaylist.WatchFolder}"
+                                                                 IsHitTestVisible="False"
+                                                                 IsReadOnly="True"
+                                                                 Style="{StaticResource FontAwesomeGlyphStyle}" />
                                         </Grid>
                                     </Border>
+
+                                    <controls:PathButton Margin="10,0,0,0"
+                                                         Command="{Binding ResetAllData}"
+                                                         Glyph="{StaticResource rotate-exclamation}"
+                                                         GlyphFontSize="18"
+                                                         IconDefaultColor="#353535"
+                                                         IconHoverColor="{StaticResource DefaultRedColor}"
+                                                         IconWidth="25"
+                                                         IsReadOnly="True"
+                                                         Style="{StaticResource FontAwesomeGlyphStyle}"
+                                                         ToolTip="Scroll to acutal item" />
 
 
                                 </StackPanel>

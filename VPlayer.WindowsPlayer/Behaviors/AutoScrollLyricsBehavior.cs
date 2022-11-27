@@ -22,6 +22,8 @@ namespace VPlayer.Player.Behaviors
   {
     public double StepSize { get; set; } = 1;
     public TimeSpan AnimationTime { get; set; } = TimeSpan.FromSeconds(1);
+    private bool wasUnloaded;
+      
 
     protected override void OnAttached()
     {
@@ -35,6 +37,7 @@ namespace VPlayer.Player.Behaviors
     private void AssociatedObject_Unloaded(object sender, RoutedEventArgs e)
     {
       serialDisposable.Dispose();
+      wasUnloaded = true;
     }
 
     private void AssociatedObject_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -74,7 +77,7 @@ namespace VPlayer.Player.Behaviors
 
     private SerialDisposable serialDisposable = new SerialDisposable();
 
-    private void SubcsribeToSongChange()
+    private void SubcsribeToSongChange(bool afterUnload = false)
     {
       if (AssociatedObject.DataContext != null)
       {
@@ -123,9 +126,10 @@ namespace VPlayer.Player.Behaviors
           {
             var diff = Math.Abs(scrollViewer.VerticalOffset - scrollIndexOffset);
 
-            if (diff > StepSize * 10)
+            if (diff > StepSize * 10 || wasUnloaded)
             {
               scrollViewer.ScrollToVerticalOffset(scrollIndexOffset);
+              wasUnloaded = false;
             }
             else
             {

@@ -36,6 +36,7 @@ using VCore.WPF.Managers;
 using VCore.WPF.Misc;
 using VCore.WPF.Modularity.RegionProviders;
 using VCore.WPF.ViewModels;
+using VCore.WPF.ViewModels.Prompt;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -59,7 +60,7 @@ namespace VPlayer.Core.ViewModels
     protected readonly ILogger logger;
     protected readonly IStorageManager storageManager;
     private readonly IStatusManager statusManager;
-    private readonly IWindowManager windowManager;
+    protected readonly IWindowManager windowManager;
     protected int actualItemIndex;
     protected HashSet<TItemViewModel> shuffleList = new HashSet<TItemViewModel>();
     private bool wasVlcInitilized;
@@ -567,6 +568,40 @@ namespace VPlayer.Core.ViewModels
       ActualSavedPlaylist.IsUserCreated = !ActualSavedPlaylist.IsUserCreated;
 
       UpdateOrAddActualSavedPlaylist();
+    }
+
+    #endregion
+
+    #region ResetAllData
+
+    private ActionCommand resetAllData;
+
+    public ICommand ResetAllData
+    {
+      get
+      {
+        if (resetAllData == null)
+        {
+          resetAllData = new ActionCommand(async () => await OnResetAllData());
+        }
+
+        return resetAllData;
+      }
+    }
+
+    public virtual async Task<bool> OnResetAllData()
+    {
+      if (windowManager.OkCancel("Do you really want to refresh all data?", cancelVisibility: Visibility.Visible) == PromptResult.Ok)
+      {
+        PlayList.ForEach(x => x.OnResetAllData());
+
+        await SaveData(PlayList);
+        await DownloadInfos(PlayList);
+
+        return true;
+      }
+
+      return false;
     }
 
     #endregion
@@ -1641,7 +1676,7 @@ namespace VPlayer.Core.ViewModels
                 }
 
                 var itemInPlayList = PlayList.SingleOrDefault(x => x.Model.Id == item.Model.Id);
-                
+
                 if (itemInPlayList != null)
                 {
                   PlayList.Remove(item);
@@ -1923,6 +1958,10 @@ namespace VPlayer.Core.ViewModels
     protected virtual void BeforeDeleteFile(TItemViewModel itemViewModel) { }
 
     protected virtual void OnDownloadInfoEvent(TItemViewModel itemViewModel) { }
+
+    protected virtual Task DownloadInfos(IEnumerable<TItemViewModel> itemViewModels) { return Task.CompletedTask; }
+
+    protected virtual Task SaveData(IEnumerable<TItemViewModel> itemViewModels) { return Task.CompletedTask; }
 
     #endregion
 

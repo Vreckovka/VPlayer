@@ -30,6 +30,7 @@ using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Managers;
 using VCore.WPF.Misc;
 using VCore.WPF.Modularity.RegionProviders;
+using VCore.WPF.ViewModels.Prompt;
 using VFfmpeg;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -504,6 +505,11 @@ namespace VPlayer.Core.ViewModels
 
         if (DetailViewModel == null || DetailViewModel.TotalTime == new TimeSpan(0))
         {
+          if (ActualItem.Model.Duration == 0)
+          {
+            ActualItem.Model.Duration = ((int)e.Duration) / 1000;
+          }
+          
           DetailViewModel = viewModelsFactory.Create<TPopupViewModel>(ActualItem.Model);
         }
       });
@@ -648,6 +654,8 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region BeforePlayEvent
+
     protected override async Task BeforePlayEvent(PlayItemsEventData<TItemViewModel> data)
     {
       await base.BeforePlayEvent(data);
@@ -656,8 +664,11 @@ namespace VPlayer.Core.ViewModels
       {
         CheckedFiles.Clear();
       });
-
     }
+
+    #endregion
+
+    #region BeforeClearPlaylist
 
     protected override void BeforeClearPlaylist()
     {
@@ -669,6 +680,10 @@ namespace VPlayer.Core.ViewModels
       base.BeforeClearPlaylist();
     }
 
+    #endregion
+
+    #region PlayPlaylist
+
     protected override void PlayPlaylist(PlayItemsEventData<TItemViewModel> data, int? lastSongIndex = null, bool onlySet = false)
     {
       base.PlayPlaylist(data, lastSongIndex, onlySet);
@@ -678,6 +693,10 @@ namespace VPlayer.Core.ViewModels
         AddMissingFilesFromFolder();
       }
     }
+
+    #endregion
+
+    #region AddMissingFilesFromFolder
 
     private void AddMissingFilesFromFolder()
     {
@@ -732,6 +751,10 @@ namespace VPlayer.Core.ViewModels
       }
     }
 
+    #endregion
+
+    #region BeforeDeleteFile
+
     protected override void BeforeDeleteFile(TItemViewModel itemViewModel)
     {
       base.BeforeDeleteFile(itemViewModel);
@@ -741,6 +764,8 @@ namespace VPlayer.Core.ViewModels
         DetailViewModel.Dispose();
       }
     }
+
+    #endregion
 
     #region MarkViewModelAsChecked
 
@@ -768,10 +793,27 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region GetMediaInfo
+
     protected virtual Task GetMediaInfo(TModel model)
     {
       return Task.CompletedTask;
     }
+
+    #endregion
+
+    #region OnResetAllData
+
+    public override async Task<bool> OnResetAllData()
+    {
+      CheckedFiles.Clear();
+
+      var result = await base.OnResetAllData();
+
+      return result;
+    }
+
+    #endregion
 
     #region Dispose
 

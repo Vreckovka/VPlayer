@@ -99,7 +99,7 @@ namespace VPlayer.Home.ViewModels
 
         if (resultDelete)
         {
-          windowManager.ShowYesNoPrompt($"Item {ViewModel.Model.Name} was deleted", "Sucess");
+          windowManager.OkCancel($"Item {ViewModel.Model.Name} was deleted", "Sucess");
 
           OnBackCommand();
         }

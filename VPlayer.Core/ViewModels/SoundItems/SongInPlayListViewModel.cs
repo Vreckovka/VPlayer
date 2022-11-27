@@ -393,6 +393,8 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     #endregion
 
+    #region PublishDeleteFile
+
     protected override void PublishDeleteFile()
     {
       var songs = new List<SongInPlayListViewModel>() { this };
@@ -405,6 +407,8 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
       eventAggregator.GetEvent<RemoveFromPlaylistEvent<SongInPlayListViewModel>>().Publish(args);
     }
+
+    #endregion
 
     #region Update
 
@@ -494,23 +498,13 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     #endregion
 
-    //#region LoadLRCFromGoogleDrive
-
-    //private async Task LoadLRCFromGoogleDrive()
-    //{
-    //  var lrc = (GoogleLRCFile)await audioInfoDownloader.TryGetLRCLyricsAsync(googleDriveLrcProvider, SongModel, ArtistViewModel?.Name, AlbumViewModel?.Name);
-
-    //  if (lrc != null)
-    //    LRCFile = new LRCFileViewModel(lrc, googleDriveLrcProvider.LRCProvider, pCloudLyricsProvider, googleDriveLrcProvider);
-
-    //}
-
-    //#endregion
-
     #region LoadLRCFromPCloud
 
     private async Task LoadLRCFromPCloud()
     {
+      if (ArtistViewModel == null || AlbumViewModel == null)
+        return;
+
       var lrc = (PCloudLRCFile)await audioInfoDownloader.TryGetLRCLyricsAsync(pCloudLyricsProvider, SongModel, ArtistViewModel?.Name, AlbumViewModel?.Name);
 
       if (lrc != null)
@@ -542,6 +536,9 @@ namespace VPlayer.Core.ViewModels.SoundItems
     private async Task LoadLRCFromMiniLyrics()
     {
       var client = new MiniLyricsLRCProvider();
+
+      if (ArtistViewModel == null || AlbumViewModel == null)
+        return;
 
       var lrcString = (await client.FindLRC(ArtistViewModel.Name, Name))?.Replace("\r", "");
 
@@ -692,7 +689,9 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     #endregion
 
-    public override async void OnClearInfo()
+    #region OnClearInfo
+
+    public override void OnClearInfo()
     {
       SongModel.Album = null;
       SongModel.Chartlyrics_Lyric = null;
@@ -700,6 +699,13 @@ namespace VPlayer.Core.ViewModels.SoundItems
       SongModel.Chartlyrics_LyricId = null;
       SongModel.LRCLyrics = null;
       SongModel.MusicBrainzId = null;
+
+      if(SongModel.ItemModel.FileInfo != null)
+      {
+        SongModel.ItemModel.FileInfo.Album = "";
+        SongModel.ItemModel.FileInfo.Artist = "";
+      }
+
       Lyrics = null;
       LRCCreatorViewModel = null;
       LRCFile = null;
@@ -707,14 +713,24 @@ namespace VPlayer.Core.ViewModels.SoundItems
       AlbumViewModel = null;
       ArtistViewModel = null;
 
-      await storageManager.UpdateEntityAsync(SongModel);
-
       var tmp = SongModel;
       SongModel = null;
       RaisePropertyChanged(nameof(SongModel));
       SongModel = tmp;
       RaisePropertyChanged(nameof(SongModel));
     }
+
+    #endregion
+
+    #region SaveChanges
+
+    public override async void SaveChanges()
+    {
+      await storageManager.UpdateEntityAsync(SongModel.ItemModel.FileInfo);
+      await storageManager.UpdateSong(SongModel, true, null);
+    }
+
+    #endregion
 
     #endregion
   }

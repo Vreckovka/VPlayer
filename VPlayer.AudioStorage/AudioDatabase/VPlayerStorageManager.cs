@@ -585,6 +585,109 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #endregion
 
+    #region UpdateSong
+
+    public Task<bool> UpdateSong(Song newVersion, bool updateAlbum = false, Album album = null)
+    {
+      return Task.Run(() =>
+      {
+        try
+        {
+          bool result = false;
+
+          using (var context = new AudioDatabaseContext())
+          {
+            var foundEntity = GetRepository<Song>(context).Include(x => x.Album).SingleOrDefault(x => x.Id == newVersion.Id);
+
+            if (foundEntity != null)
+            {
+              if (updateAlbum)
+              {
+                foundEntity.Album = album;
+              }
+
+              foundEntity.Update(newVersion);
+
+              var updateCount = context.SaveChanges();
+              result = updateCount > 0;
+
+              logger.Log(Logger.MessageType.Success, $"Song was updated {newVersion} update count {updateCount}");
+
+              PublishItemChanged(foundEntity);
+
+              return result;
+            }
+
+            return result;
+          }
+        }
+        catch (Exception ex)
+        {
+          logger.Log(ex);
+
+          return false;
+        }
+      });
+    }
+
+    #endregion
+
+    #region UpdateSongs
+
+    public Task<bool> ResetSongs(IEnumerable<Song> newVersions)
+    {
+      return Task.Run(() =>
+      {
+        try
+        {
+          bool result = false;
+          var list = newVersions.ToList();
+
+          using (var context = new AudioDatabaseContext())
+          {
+            var ids = list.Select(x => x.Id);
+
+            var foundEntities = GetRepository<Song>(context).Include(x => x.Album).Where(x => ids.Contains(x.Id));
+
+            foreach (var foundEntity in foundEntities)
+            {
+              var newVersion = list.SingleOrDefault(x => x.Id == foundEntity.Id);
+
+              if (newVersion != null)
+              {
+                foundEntity.Album = null;
+                foundEntity.Update(newVersion);
+              }
+            }
+
+            var updateCount = context.SaveChanges();
+
+            result = updateCount > 0;
+            logger.Log(Logger.MessageType.Success, $"Songs was updated update count {updateCount}");
+
+            if (result)
+            {
+              foreach (var entity in list)
+              {
+                PublishItemChanged(entity);
+              }
+            }
+
+            return result;
+          }
+        }
+        catch (Exception ex)
+        {
+          logger.Log(ex);
+
+          return false;
+        }
+      });
+    }
+
+    #endregion
+
+
     #region CombineAlbums
 
     private Album CombineAlbums(Album originalAlbum, Album albumToCombine, AudioDatabaseContext context)
@@ -650,6 +753,54 @@ namespace VPlayer.AudioStorage.AudioDatabase
             PublishItemChanged(entity, Changed.Added);
 
           }
+
+          return result;
+        }
+
+        entityModel = null;
+        return false;
+      }
+    }
+
+    #endregion
+
+    #region StoreAlbum
+
+    public bool StoreAlbum(Album entity, out Album entityModel, bool log = true)
+    {
+      using (var context = new AudioDatabaseContext())
+      {
+        var foundEntity = GetRepository<Album>(context).SingleOrDefault(x => x.Id == entity.Id);
+
+        if (foundEntity == null)
+        {
+          var newSongs = entity.Songs.Where(x => x.Id == 0);
+          var existingSongs = entity.Songs.Where(x => x.Id != 0).ToList();
+
+          entity.Songs = new List<Song>(newSongs);
+
+          context.Add(entity);
+
+          var result = context.SaveChanges() > 0;
+
+          if (result)
+          {
+            if (existingSongs.Any())
+            {
+              entity.Songs.AddRange(existingSongs);
+              context.Update(entity);
+
+              var update = context.SaveChanges();
+            }
+
+            if (log)
+              logger.Log(Logger.MessageType.Success, $"Entity was stored {entity}");
+
+            PublishItemChanged(entity, Changed.Added);
+
+          }
+
+          entityModel = entity;
 
           return result;
         }
@@ -1321,7 +1472,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
     }
 
     #endregion
-
 
 
     #region StoreTvShow
