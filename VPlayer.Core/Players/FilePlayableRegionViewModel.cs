@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -271,9 +272,20 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    private CancellationTokenSource GetCTSAndCancel()
+    {
+      cTSOnActualItemChangeds.ForEach(x => x.Cancel());
+
+      var cTsOnActualItemChanged = new CancellationTokenSource();
+
+      cTSOnActualItemChangeds.Add(cTsOnActualItemChanged);
+
+      return cTsOnActualItemChanged;
+    }
+
     #region OnNewItemPlay
 
-    private CancellationTokenSource cTSOnActualItemChanged;
+    private List<CancellationTokenSource> cTSOnActualItemChangeds = new List<CancellationTokenSource>();
 
     public override void OnNewItemPlay(TModel model)
     {
@@ -284,13 +296,11 @@ namespace VPlayer.Core.ViewModels
         DetailViewModel = viewModelsFactory.Create<TPopupViewModel>(ActualItem.Model);
 
         MediaPlayer.Media.DurationChanged += Media_DurationChanged;
-        cTSOnActualItemChanged?.Cancel();
-        cTSOnActualItemChanged = new CancellationTokenSource();
-
+        
         Task.Run(async () =>
         {
           await GetMediaInfo(model);
-          await DownloadItemInfo(cTSOnActualItemChanged.Token);
+          await DownloadItemInfo(GetCTSAndCancel().Token);
         });
       }
     }
@@ -688,6 +698,11 @@ namespace VPlayer.Core.ViewModels
     {
       base.PlayPlaylist(data, lastSongIndex, onlySet);
 
+      Task.Run(async () =>
+      {
+        await DownloadItemInfo(GetCTSAndCancel().Token);
+      });
+
       if (ActualSavedPlaylist.WatchFolder)
       {
         AddMissingFilesFromFolder();
@@ -824,7 +839,7 @@ namespace VPlayer.Core.ViewModels
       MediaPlayer.TimeChanged -= OnVlcTimeChanged;
       PlayList.CollectionChanged -= PlayList_CollectionChanged;
 
-      cTSOnActualItemChanged?.Cancel();
+      cTSOnActualItemChangeds.ForEach(x => x.Cancel());
     }
 
     #endregion
