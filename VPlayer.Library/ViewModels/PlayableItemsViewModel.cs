@@ -157,6 +157,12 @@ namespace VPlayer.Home.ViewModels
       base.Initialize();
 
       LibraryCollection.LoadQuery = LoadQuery;
+      LibraryCollection.OnRecreate.ObserveOnDispatcher().Subscribe(x =>
+      {
+        RaisePropertyChanged(nameof(View));
+        RaisePropertyChanged(nameof(ViewModels));
+      }).DisposeWith(this);
+
       searchSubject.Throttle(TimeSpan.FromSeconds(0.25)).ObserveOnDispatcher().Subscribe(x => Filter(x)).DisposeWith(this);
     }
 
@@ -172,13 +178,6 @@ namespace VPlayer.Home.ViewModels
       {
         case Changed.Added:
           await LibraryCollection.Add(model);
-
-          Application.Current?.Dispatcher?.Invoke(() =>
-          {
-            RaisePropertyChanged(nameof(View));
-            RaisePropertyChanged(nameof(ViewModels));
-          });
-
           break;
         case Changed.Removed:
           OnDeleteItemChange(model);
@@ -270,7 +269,7 @@ namespace VPlayer.Home.ViewModels
         {
           Application.Current.Dispatcher.Invoke(() =>
           {
-            LibraryCollection.RequestReloadVirtulizedPlaylist(); 
+            LibraryCollection.RequestReloadVirtulizedPlaylist();
             RaisePropertyChanged(nameof(ViewModels));
             RaisePropertyChanged(nameof(View));
           });
@@ -331,7 +330,7 @@ namespace VPlayer.Home.ViewModels
       }
     }
 
-  #endregion
+    #endregion
 
     #region Filter
 

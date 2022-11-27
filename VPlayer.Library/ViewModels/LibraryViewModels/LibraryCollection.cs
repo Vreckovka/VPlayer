@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using System.Windows;
 using Logger;
@@ -30,6 +32,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
     private readonly ILogger logger;
     private string actualFilter = "";
     protected IViewModelsFactory ViewModelsFactory { get; }
+    private Subject<Unit> recreateSubject = new Subject<Unit>();
 
     private IEnumerable<TViewModel> SortedItems
     {
@@ -60,13 +63,75 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
 
     #region Properties
 
-    public IEnumerable<TViewModel> FilteredItems { get; set; }
-    public ObservableCollection<TViewModel> Items { get; set; }
-    public ObservableCollection<TViewModel> FilteredItemsCollection { get; set; }
+    #region FilteredItems
+
+    private IEnumerable<TViewModel> filteredItems;
+
+    public IEnumerable<TViewModel> FilteredItems
+    {
+      get { return filteredItems; }
+      set
+      {
+        if (value != filteredItems)
+        {
+          filteredItems = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+    
+    #region Items
+
+    private ObservableCollection<TViewModel> items;
+
+    public ObservableCollection<TViewModel> Items
+    {
+      get { return items; }
+      set
+      {
+        if (value != items)
+        {
+          items = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region FilteredItemsCollection
+
+    private ObservableCollection<TViewModel> filteredItemsCollection;
+
+    public ObservableCollection<TViewModel> FilteredItemsCollection
+    {
+      get { return filteredItemsCollection; }
+      set
+      {
+        if (value != filteredItemsCollection)
+        {
+          filteredItemsCollection = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     public IQueryable<TModel> LoadQuery { get; set; }
     public IObservable<bool> LoadData { get; }
     public bool WasLoaded { get; private set; }
     public Action DataLoadedCallback { get; set; }
+
+    public IObservable<Unit> OnRecreate
+    {
+      get
+      {
+        return recreateSubject.AsObservable();
+      }
+    }
 
     #endregion Properties
 
@@ -94,6 +159,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
             Items = new ObservableCollection<TViewModel>(vms);
             FilteredItemsCollection = new ObservableCollection<TViewModel>(vms);
 
+            Items.CollectionChanged += Items_CollectionChanged;
             Recreate();
 
             WasLoaded = true;
@@ -110,6 +176,10 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
           return false;
         }
       });
+    }
+
+    private void Items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
     }
 
     #endregion
@@ -258,6 +328,8 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
         var generator = new ItemsGenerator<TViewModel>(Items.OrderBy(x => x?.Name), 21);
 
         FilteredItems = new VirtualList<TViewModel>(generator);
+
+        recreateSubject.OnNext(Unit.Default);
       }
     }
 
@@ -310,12 +382,16 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
 
     #endregion
 
+    #region Clear
+
     public void Clear()
     {
       Items.Clear();
       FilteredItemsCollection.Clear();
       WasLoaded = false;
     }
+
+    #endregion
 
     #endregion
   }

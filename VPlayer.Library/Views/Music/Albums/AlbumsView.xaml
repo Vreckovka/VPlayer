@@ -42,7 +42,9 @@
                 </Border>
 
 
-                <controls1:PlayableWrapPanel Margin="5,0" ItemsSource="{Binding View}" />
+                <controls1:PlayableWrapPanel Grid.Row="1"
+                                             Margin="5,0"
+                                             ItemsSource="{Binding View}" />
             </Grid>
         </Grid>
     </loadingIndicator:LoadingIndicator>
