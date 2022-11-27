@@ -1,6 +1,7 @@
 ﻿using Prism.Events;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Threading.Tasks;
@@ -178,21 +179,72 @@ namespace VPlayer.Core.ViewModels.Artists
       }
       else if (Model.AlbumIdCover != null && albumCoverPath == null)
       {
-        var album = storage.GetRepository<Album>().SingleOrDefault(x => x.Id == Model.AlbumIdCover);
+        albumCoverPath = storage.GetRepository<Album>().SingleOrDefault(x => x.Id == Model.AlbumIdCover)?.AlbumFrontCoverFilePath;
 
-        if (album != null)
+        byte[] image = null;
+
+        if (!string.IsNullOrEmpty(albumCoverPath))
         {
-          albumCoverPath = album.AlbumFrontCoverFilePath;
+          image = File.ReadAllBytes(albumCoverPath);
+        }
 
-          return albumCoverPath;
+        if (string.IsNullOrEmpty(albumCoverPath))
+        {
+          albumCoverPath = Model.Albums?.FirstOrDefault(x => !string.IsNullOrEmpty(x.AlbumFrontCoverFilePath))?.AlbumFrontCoverFilePath;
+
+          if (!string.IsNullOrEmpty(albumCoverPath))
+          {
+            image = File.ReadAllBytes(albumCoverPath);
+          }
+          else
+          {
+            albumCoverPath = Model.Albums?.FirstOrDefault(x => !string.IsNullOrEmpty(x.AlbumFrontCoverURI))?.AlbumFrontCoverURI;
+          }
+        }
+
+        if (IsEmptyImage(image))
+        {
+          albumCoverPath = Model.Albums?.FirstOrDefault(x => !string.IsNullOrEmpty(x.AlbumFrontCoverURI))?.AlbumFrontCoverURI;
+        }
+      }
+      else
+      {
+        byte[] image = null;
+
+        albumCoverPath = Model.Albums?.FirstOrDefault(x => !string.IsNullOrEmpty(x.AlbumFrontCoverFilePath))?.AlbumFrontCoverFilePath;
+
+        if (!string.IsNullOrEmpty(albumCoverPath))
+        {
+          image = File.ReadAllBytes(albumCoverPath);
+        } 
+        else 
+        {
+          albumCoverPath = Model.Albums?.FirstOrDefault(x => !string.IsNullOrEmpty(x.AlbumFrontCoverURI))?.AlbumFrontCoverURI;
+        }
+
+        if (IsEmptyImage(image))
+        {
+          albumCoverPath = Model.Albums?.FirstOrDefault(x => !string.IsNullOrEmpty(x.AlbumFrontCoverURI))?.AlbumFrontCoverURI;
         }
       }
 
-      return Model.ArtistCover != null ? Model.ArtistCover : GetEmptyImage();
+      return Model.ArtistCover != null ? Model.ArtistCover : (!string.IsNullOrEmpty(albumCoverPath) ? albumCoverPath : GetEmptyImage());
     }
 
     #endregion
 
-    #endregion 
+    #region IsEmptyImage
+
+    private bool IsEmptyImage(byte[] cover)
+    {
+      if (cover != null)
+        return cover.Length == 631 && cover[0] == 255 && cover[1] == 216;
+
+      return true;
+    }
+
+    #endregion
+
+    #endregion
   }
 }

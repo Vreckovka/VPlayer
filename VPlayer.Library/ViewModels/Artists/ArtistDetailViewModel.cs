@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using MetaBrainz.MusicBrainz.Interfaces.Entities;
@@ -212,17 +213,26 @@ namespace VPlayer.Home.ViewModels.Artists
     protected override async void OnUpdate()
     {
       var artistInfo = await audioInfoDownloader.GetArtistInfo(ViewModel.Name);
-
       var vm = viewModelsFactory.Create<ArtistInfoViewModel>(ViewModel);
+
+
+      if (artistInfo == null && !string.IsNullOrEmpty(ViewModel.Name))
+      {
+        var name = Regex.Split(ViewModel.Name, @"(?<!^)(?=[A-Z])").Aggregate((x,y) => x +  y);
+
+        artistInfo = await audioInfoDownloader.GetArtistInfo(name);
+      }
+
+
       vm.ArtistInfo = artistInfo;
 
       var albumNames = Albums.Select(x => x.Name).ToList();
       var dates = Albums.Select(x => x.Model.ReleaseDate).ToList();
 
-      vm.releaseGroupViewModels?.Where(x => 
+      vm.releaseGroupViewModels?.Where(x =>
         (albumNames.Count(y => x.Model.Title == y || x.Model.Title.Similarity(y) > 0.85) > 0) ||
-        (dates.Contains(x.Model.FirstReleaseDate?.ToString()) 
-         && x.Model.FirstReleaseDate != null 
+        (dates.Contains(x.Model.FirstReleaseDate?.ToString())
+         && x.Model.FirstReleaseDate != null
          && x.IsOfficial)
       ).ForEach(x => x.IsInLibrary = true);
 
@@ -274,7 +284,7 @@ namespace VPlayer.Home.ViewModels.Artists
     {
       get
       {
-        return releaseGroupViewModels.Where(x => x.IsOfficial);
+        return releaseGroupViewModels?.Where(x => x.IsOfficial);
       }
     }
 
@@ -286,7 +296,7 @@ namespace VPlayer.Home.ViewModels.Artists
     {
       get
       {
-        return releaseGroupViewModels.Where(x => !x.IsOfficial);
+        return releaseGroupViewModels?.Where(x => !x.IsOfficial);
       }
     }
 

@@ -1153,6 +1153,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
       }
 
       i.Save(finalPath, ImageFormat.Jpeg);
+      ms?.Dispose();
+      i?.Dispose();
 
       return finalPath;
     }
@@ -1512,6 +1514,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
                   if (songInPlayListViewModel == ActualItem)
                   {
+                    await DownloadHighQualityAlbumCover(ActualItem);
+
                     RaisePropertyChanged(nameof(ActualItem));
                     songInPlayListViewModel.RaiseNotifyPropertyChanged(nameof(SongInPlayListViewModel.ImagePath));
                   }
