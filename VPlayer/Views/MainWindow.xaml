@@ -9,7 +9,7 @@
         xmlns:regions1="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPLayer.Domain"
         Title="{Binding Title}"
         Width="1488"
-        Height="830"
+        Height="837"
         MinWidth="560"
         MinHeight="400"
         Focusable="True"

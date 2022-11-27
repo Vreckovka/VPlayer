@@ -1222,20 +1222,15 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
                 if (downloadingArtist == null || string.IsNullOrEmpty(downloadingArtist.Name))
                 {
-                  downloadingArtist = storageManager.GetRepository<Artist>().SingleOrDefault(x => x.NormalizedName == normalizedArtistName);
+                  downloadingArtist = storageManager.GetRepository<Artist>().FirstOrDefault(x => x.NormalizedName == normalizedArtistName);
 
                   if (downloadingArtist == null && !string.IsNullOrEmpty(normalizedArtistName))
                   {
-                    var artistGroup = PlayList.OfType<SongInPlayListViewModel>()
-                      .Where(x => x.ArtistViewModel != null)
-                      .GroupBy(x => x.ArtistViewModel.Model)
-                      .ToList();
-
-                    var existingArtist = artistGroup.SingleOrDefault(x => x.Key.NormalizedName == normalizedArtistName);
+                    var existingArtist = GetExistingArtist(normalizedArtistName);
 
                     if (existingArtist != null)
                     {
-                      downloadingArtist = existingArtist.Key;
+                      downloadingArtist = existingArtist;
                     }
                   }
 
@@ -1249,7 +1244,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
                 if ((downloadingArtist == null || (!string.IsNullOrEmpty(normalizedArtistName) && normalizedArtistName?.Similarity(normalizedDownloadingAristName, true) < 0.9)) &&
                     originalDownlaodedArtistName != artistName && downloadArtist)
                 {
-                  downloadingArtist = storageManager.GetRepository<Artist>().SingleOrDefault(x => x.NormalizedName == VPlayerStorageManager.GetNormalizedName(artistName));
+                  downloadingArtist = storageManager.GetRepository<Artist>().FirstOrDefault(x => x.NormalizedName == VPlayerStorageManager.GetNormalizedName(artistName));
 
                   if (downloadingArtist == null)
                   {
@@ -1258,14 +1253,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
                     if (downloadingArtist != null && !string.IsNullOrEmpty(downloadingArtist.NormalizedName))
                     {
-                      var existingArtist = PlayList.OfType<SongInPlayListViewModel>()
-                        .Where(x => x.ArtistViewModel != null)
-                        .GroupBy(x => x.ArtistViewModel.Model)
-                        .SingleOrDefault(x => x.Key.NormalizedName == downloadingArtist.NormalizedName)?.Key;
+                      var existingArtist = GetExistingArtist(downloadingArtist.NormalizedName);
 
                       if (existingArtist == null)
                       {
-                        existingArtist = storageManager.GetRepository<Artist>().SingleOrDefault(x => x.NormalizedName == VPlayerStorageManager.GetNormalizedName(downloadingArtist.Name));
+                        existingArtist = storageManager.GetRepository<Artist>().FirstOrDefault(x => x.NormalizedName == VPlayerStorageManager.GetNormalizedName(downloadingArtist.Name));
                       }
 
                       if (existingArtist != null)
@@ -1299,14 +1291,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
                   if (downloadingAlbum == null && !string.IsNullOrEmpty(normalizedName))
                   {
-                    var existingAlbum = PlayList.OfType<SongInPlayListViewModel>()
-                      .Where(x => x.AlbumViewModel != null)
-                      .GroupBy(x => x.AlbumViewModel.Model)
-                      .SingleOrDefault(x => x.Key.NormalizedName == normalizedName);
+                    var existingAlbum = GetExistingAlbum(normalizedName);
 
                     if (existingAlbum != null)
                     {
-                      downloadingAlbum = existingAlbum.Key;
+                      downloadingAlbum = existingAlbum;
                     }
                   }
 
@@ -1331,11 +1320,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
                     if (downloadingAlbum != null && !string.IsNullOrEmpty(downloadingAlbum.NormalizedName))
                     {
-                      var existingAlbum = PlayList.OfType<SongInPlayListViewModel>()
-                        .Where(x => x.AlbumViewModel != null)
-                        .GroupBy(x => x.AlbumViewModel.Model)
-                        .SingleOrDefault(x => x.Key.NormalizedName == downloadingAlbum.NormalizedName)?.Key;
-
+                      var existingAlbum = GetExistingAlbum(downloadingAlbum.Name);
 
                       if (existingAlbum == null)
                       {
@@ -1362,30 +1347,45 @@ namespace VPlayer.WindowsPlayer.ViewModels
               {
                 if (downloadingAlbum == null)
                 {
-                  downloadingAlbum = new Album()
+                  downloadingAlbum = GetExistingAlbum(albumName);
+
+                  if (downloadingAlbum == null)
                   {
-                    Artist = downloadingArtist,
-                    Name = albumName,
-                    NormalizedName = VPlayerStorageManager.GetNormalizedName(albumName)
-                  };
+                    downloadingAlbum = new Album()
+                    {
+                      Artist = downloadingArtist,
+                      Name = albumName,
+                      NormalizedName = VPlayerStorageManager.GetNormalizedName(albumName)
+                    };
+                  }
                 }
               }
               else
               {
-                downloadingArtist = new Artist()
+                downloadingArtist = GetExistingArtist(artistName);
+
+                if(downloadingArtist == null)
                 {
-                  Name = artistName,
-                  NormalizedName = VPlayerStorageManager.GetNormalizedName(artistName)
-                };
+                  downloadingArtist = new Artist()
+                  {
+                    Name = artistName,
+                    NormalizedName = VPlayerStorageManager.GetNormalizedName(artistName)
+                  };
+                }
 
                 if (downloadingAlbum == null)
                 {
-                  downloadingAlbum = new Album()
+                  downloadingAlbum = GetExistingAlbum(albumName);
+
+                  if (downloadingAlbum == null)
                   {
-                    Artist = downloadingArtist,
-                    Name = albumName,
-                    NormalizedName = VPlayerStorageManager.GetNormalizedName(albumName)
-                  };
+                    downloadingAlbum = new Album()
+                    {
+                      Artist = downloadingArtist,
+                      Name = albumName,
+                      NormalizedName = VPlayerStorageManager.GetNormalizedName(albumName)
+                    };
+                  }
                 }
               }
 
@@ -1550,6 +1550,30 @@ namespace VPlayer.WindowsPlayer.ViewModels
         result = albums.FirstOrDefault();
 
       return result;
+    }
+
+    #endregion
+
+    #region GetExistingArtist
+
+    public Artist GetExistingArtist(string name)
+    {
+      return PlayList.OfType<SongInPlayListViewModel>()
+        .Where(x => x.ArtistViewModel != null)
+        .GroupBy(x => x.ArtistViewModel.Model)
+        .SingleOrDefault(x => x.Key.NormalizedName == VPlayerStorageManager.GetNormalizedName(name))?.Key;
+    }
+
+    #endregion
+
+    #region GetExistingAlbum
+
+    public Album GetExistingAlbum(string name)
+    {
+      return PlayList.OfType<SongInPlayListViewModel>()
+        .Where(x => x.AlbumViewModel != null)
+        .GroupBy(x => x.AlbumViewModel.Model)
+        .SingleOrDefault(x => x.Key.NormalizedName == VPlayerStorageManager.GetNormalizedName(name))?.Key;
     }
 
     #endregion
@@ -1853,8 +1877,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         foreach (var item in data.Items)
         {
-          var songItem = songs.SingleOrDefault(x => x.Model.Id == item.Model.Id);
-          var soundItem = soundItems.SingleOrDefault(x => x.Model.Id == item.Model.Id);
+          var songItem = songs.FirstOrDefault(x => x.Model.Id == item.Model.Id);
+          var soundItem = soundItems.FirstOrDefault(x => x.Model.Id == item.Model.Id);
 
           if (songItem != null)
           {

@@ -12,12 +12,43 @@
              d:DesignWidth="800"
              mc:Ignorable="d">
 
-  <loadingIndicator:LoadingIndicator MessageDataContext="{Binding LoadingStatus, Mode=OneWay}">
-    <Grid>
-      <controls:PlayableWrapPanel Margin="5,0"
-                                  ItemsSource="{Binding View}"
-                                  SnapsToDevicePixels="False" />
+    <loadingIndicator:LoadingIndicator MessageDataContext="{Binding LoadingStatus, Mode=OneWay}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
-    </Grid>
-  </loadingIndicator:LoadingIndicator>
+            <Border Padding="10,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <controls:Finder Text="{Binding SearchKeyWord, Mode=TwoWay}" />
+
+                    <StackPanel Grid.Column="1"
+                                Margin="10,0,0,0"
+                                Orientation="Horizontal">
+                        <controls:PathButton Command="{Binding RefreshData}"
+                                             Glyph="{StaticResource arrows-rotate-glyph}"
+                                             IconHoverColor="{StaticResource GreenColor3}"
+                                             Style="{StaticResource FontAwesomeGlyphStyle}"
+                                             ToolTip="Refresh data" />
+                    </StackPanel>
+
+
+
+                </Grid>
+            </Border>
+
+
+            <controls:PlayableWrapPanel Grid.Row="1"
+                                        Margin="5,0"
+                                        ItemsSource="{Binding View}"
+                                        SnapsToDevicePixels="False" />
+
+        </Grid>
+    </loadingIndicator:LoadingIndicator>
 </UserControl>

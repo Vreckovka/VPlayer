@@ -1,12 +1,12 @@
 ﻿<UserControl x:Class="VPlayer.Home.Views.Music.Albums.AlbumsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls1="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
              xmlns:loadingIndicator="clr-namespace:VCore.WPF.Controls.LoadingIndicator;assembly=VCore.WPF"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:VPlayer.Home.Desing.ViewModels"
-             xmlns:controls1="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
              d:DataContext="{d:DesignInstance Type={x:Type viewModels:AlbumsDesignViewModel}, IsDesignTimeCreatable=True}"
              d:DesignHeight="650"
              d:DesignWidth="800"
@@ -15,6 +15,33 @@
     <loadingIndicator:LoadingIndicator MessageDataContext="{Binding LoadingStatus, Mode=OneWay}">
         <Grid>
             <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <Border Padding="10,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <controls1:Finder />
+
+                        <StackPanel Grid.Column="1"
+                                    Margin="10,0,0,0"
+                                    Orientation="Horizontal">
+                            <controls1:PathButton Command="{Binding RefreshData}"
+                                                  Glyph="{StaticResource arrows-rotate-glyph}"
+                                                  IconHoverColor="{StaticResource GreenColor3}"
+                                                  Style="{StaticResource FontAwesomeGlyphStyle}"
+                                                  ToolTip="Refresh data" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+
                 <controls1:PlayableWrapPanel Margin="5,0" ItemsSource="{Binding View}" />
             </Grid>
         </Grid>

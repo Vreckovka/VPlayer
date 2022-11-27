@@ -147,6 +147,8 @@ namespace VPlayer.Home.ViewModels.Artists
         .ObserveOn(Application.Current.Dispatcher)
         .OfType<ItemChanged<Song>>()
         .Subscribe(OnSongUpdated).DisposeWith(this);
+
+      OnUpdate();
     }
 
     #region LoadEntity

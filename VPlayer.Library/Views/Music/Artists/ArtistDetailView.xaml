@@ -149,7 +149,7 @@
                         <Style TargetType="StackPanel">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding}" Value="{x:Null}">
-                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Setter Property="Visibility" Value="Hidden" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -215,12 +215,39 @@
                             <Run Text="{Binding ArtistInfo.LifeSpan.Begin, Mode=OneWay}" />
                             <Run Text="-" />
                             <Run Text="{Binding ArtistInfo.LifeSpan.End, Mode=OneWay}" />
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding ArtistInfo.LifeSpan.Begin}" Value="{x:Null}" />
+                                                <Condition Binding="{Binding ArtistInfo.LifeSpan.End}" Value="{x:Null}" />
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Hidden" />
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
                         </TextBlock>
 
                         <TextBlock>
                             <Run Text="{Binding ArtistInfo.BeginArea.SortName, Mode=OneWay}" />
                             <Run Text="," />
                             <Run Text="{Binding ArtistInfo.Area.SortName, Mode=OneWay}" />
+
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding ArtistInfo.BeginArea.SortName}" Value="{x:Null}" />
+                                                <Condition Binding="{Binding ArtistInfo.Area.SortName}" Value="{x:Null}" />
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Hidden" />
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
                         </TextBlock>
 
                     </StackPanel>

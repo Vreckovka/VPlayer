@@ -167,6 +167,9 @@
                 <RowDefinition Height="auto" />
 
             </Grid.RowDefinitions>
+
+
+
             <ListView Name="playlists"
                       Margin="5,0,0,0"
                       HorizontalContentAlignment="Center"
@@ -364,7 +367,15 @@
                 </ListView.GroupStyle>
             </ListView>
 
-
+            <controls:PathButton Grid.Row="0"
+                                 HorizontalAlignment="Right"
+                                 Margin="0 12 20 0"
+                                 VerticalAlignment="Top"
+                                 Command="{Binding RefreshData}"
+                                 Glyph="{StaticResource arrows-rotate-glyph}"
+                                 IconHoverColor="{StaticResource GreenColor3}"
+                                 Style="{StaticResource FontAwesomeGlyphStyle}"
+                                 ToolTip="Refresh data" />
         </Grid>
     </loadingIndicator:LoadingIndicator>
 

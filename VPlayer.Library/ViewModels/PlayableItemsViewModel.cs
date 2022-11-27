@@ -2,15 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using Prism.Events;
+using VCore.Standard;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
 using VCore.Standard.Modularity.Interfaces;
 using VCore.WPF;
 using VCore.WPF.Interfaces;
 using VCore.WPF.Interfaces.ViewModels;
+using VCore.WPF.Misc;
 using VCore.WPF.Modularity.Events;
 using VCore.WPF.Modularity.RegionProviders;
 using VCore.WPF.ViewModels;
@@ -33,6 +37,7 @@ namespace VPlayer.Home.ViewModels
     protected readonly IStorageManager storageManager;
     private readonly IEventAggregator eventAggregator;
     protected readonly IViewModelsFactory viewModelsFactory;
+    private Subject<string> searchSubject = new Subject<string>();
 
     #endregion Fields
 
@@ -70,6 +75,26 @@ namespace VPlayer.Home.ViewModels
 
     public abstract override string RegionName { get; }
 
+    #region SearchKeyWord
+
+    private string searchKeyWord;
+
+    public string SearchKeyWord
+    {
+      get { return searchKeyWord; }
+      set
+      {
+        if (value != searchKeyWord)
+        {
+          searchKeyWord = value;
+          searchSubject.OnNext(value);
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #region ViewModels
 
     public ICollection<TViewModel> ViewModels
@@ -88,8 +113,41 @@ namespace VPlayer.Home.ViewModels
 
     #endregion View
 
-    #endregion 
-    
+    #endregion
+
+    #region Commands
+
+    #region RefreshData
+
+    private ActionCommand refreshData;
+
+    public ICommand RefreshData
+    {
+      get
+      {
+        if (refreshData == null)
+        {
+          refreshData = new ActionCommand(OnRefreshData);
+        }
+
+        return refreshData;
+      }
+    }
+
+    protected virtual async void OnRefreshData()
+    {
+      LibraryCollection.Clear();
+      await LibraryCollection.LoadInitilizedDataAsync();
+
+      RaisePropertyChanged(nameof(View));
+      SearchKeyWord = null;
+    }
+
+
+    #endregion
+
+    #endregion
+
     #region Methods
 
     #region Initialize
@@ -99,6 +157,7 @@ namespace VPlayer.Home.ViewModels
       base.Initialize();
 
       LibraryCollection.LoadQuery = LoadQuery;
+      searchSubject.Throttle(TimeSpan.FromSeconds(0.25)).ObserveOnDispatcher().Subscribe(x => Filter(x)).DisposeWith(this);
     }
 
     #endregion Initialize

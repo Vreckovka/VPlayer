@@ -13,6 +13,7 @@ namespace VPlayer.Home.ViewModels
 {
   public class SongPlaylistsViewModel : PlaylistsViewModel<PlaylistsView, SongsPlaylistViewModel, SoundItemFilePlaylist>
   {
+    private bool wasSet = false;
     public SongPlaylistsViewModel(
       IRegionProvider regionProvider,
       IViewModelsFactory viewModelsFactory,
@@ -21,7 +22,7 @@ namespace VPlayer.Home.ViewModels
       IEventAggregator eventAggregator) :
       base(regionProvider, viewModelsFactory, storageManager, libraryCollection, eventAggregator)
     {
-     
+
     }
 
     public override bool ContainsNestedRegions => false;
@@ -32,7 +33,11 @@ namespace VPlayer.Home.ViewModels
     {
       base.OnDataLoaded();
 
-      LibraryCollection.Items.OrderByDescending(x => x.LastPlayed).FirstOrDefault()?.OnPlayButton(Core.Events.EventAction.SetPlaylist);
+      if (!wasSet)
+      {
+        LibraryCollection.Items.OrderByDescending(x => x.LastPlayed).FirstOrDefault()?.OnPlayButton(Core.Events.EventAction.SetPlaylist);
+        wasSet = true;
+      }
     }
   }
 }

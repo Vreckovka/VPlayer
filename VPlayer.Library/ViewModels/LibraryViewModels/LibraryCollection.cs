@@ -310,6 +310,13 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
 
     #endregion
 
+    public void Clear()
+    {
+      Items.Clear();
+      FilteredItemsCollection.Clear();
+      WasLoaded = false;
+    }
+
     #endregion
   }
 }
