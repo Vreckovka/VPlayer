@@ -540,7 +540,15 @@ namespace VPlayer.Core.ViewModels.SoundItems
       if (ArtistViewModel == null || AlbumViewModel == null)
         return;
 
-      var lrcString = (await client.FindLRC(ArtistViewModel.Name, Name))?.Replace("\r", "");
+      string lrcString = null;
+
+      try
+      {
+        lrcString  = (await client.FindLRC(ArtistViewModel.Name, Name))?.Replace("\r", "");
+      }
+      catch (Exception)
+      {
+      }
 
       var parser = new LRCParser();
 
@@ -700,7 +708,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
       SongModel.LRCLyrics = null;
       SongModel.MusicBrainzId = null;
 
-      if(SongModel.ItemModel.FileInfo != null)
+      if(SongModel.ItemModel?.FileInfo != null)
       {
         SongModel.ItemModel.FileInfo.Album = "";
         SongModel.ItemModel.FileInfo.Artist = "";

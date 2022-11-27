@@ -603,6 +603,11 @@ namespace VPlayer.AudioStorage.AudioDatabase
             {
               if (updateAlbum)
               {
+                if (foundEntity.Album?.Songs != null && (foundEntity.Album.Songs?.Count == 0 || foundEntity.Album.Songs[0].Id == foundEntity.Id) && album == null)
+                {
+                  context.Remove(foundEntity.Album);
+                }
+
                 foundEntity.Album = album;
               }
 
@@ -655,6 +660,28 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
               if (newVersion != null)
               {
+                if (foundEntity.Album?.Songs != null && (foundEntity.Album.Songs?.Count == 0 || foundEntity.Album.Songs[0].Id == foundEntity.Id))
+                {
+                  var album = foundEntity.Album;
+                  var dbArtist = GetRepository<Artist>(context).SingleOrDefault(x => x.Albums.Any(album => album.Id == foundEntity.Album.Id));
+
+                  if (dbArtist?.Albums != null && (dbArtist.Albums.Count == 0 || dbArtist.Albums.First().Id == foundEntity.Album.Id))
+                  {
+                    var artist = dbArtist;
+
+                    context.Remove(foundEntity.Album);
+                    context.Remove(dbArtist);
+
+                    PublishItemChanged(album, Changed.Removed);
+                    PublishItemChanged(artist, Changed.Removed);
+                  }
+                  else
+                  {
+                    context.Remove(foundEntity.Album);
+                    PublishItemChanged(album, Changed.Removed);
+                  }
+                }
+
                 foundEntity.Album = null;
                 foundEntity.Update(newVersion);
               }

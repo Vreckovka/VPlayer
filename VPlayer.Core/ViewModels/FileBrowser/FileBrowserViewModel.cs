@@ -365,7 +365,7 @@ namespace VPlayer.Core.ViewModels
     #region LoadBookmarks
 
     private bool wasBookamarksLaoded;
-    private SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
+    private SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
 
     private async Task LoadBookmarks()
     {
@@ -387,7 +387,8 @@ namespace VPlayer.Core.ViewModels
               var ids = allBookmarks.Select(x => x.Identificator).ToList();
               var list = AllLoadedFolders.ToList();
 
-              list.Add(RootFolder);
+              if (!list.Contains(RootFolder))
+                list.Add(RootFolder);
 
               var existings = list.Where(x => ids.Contains(x.Model.Indentificator));
               var nonExistings = ids.Where(x => !list.Select(y => y.Model.Indentificator).Contains(x));

@@ -197,18 +197,18 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0"
-                                Grid.ColumnSpan="3"
-                                Margin="15,2,5,2"
-                                Opacity="0.5"
-                                Orientation="Horizontal">
-                        <StackPanel.Resources>
+                    <UniformGrid Grid.Row="0"
+                                 Grid.ColumnSpan="3"
+                                 Margin="15,2,5,2"
+                                 Opacity="0.5"
+                                 Rows="1">
+                        <UniformGrid.Resources>
                             <Style x:Key="Container" TargetType="StackPanel">
                                 <Setter Property="HorizontalAlignment" Value="Center" />
                                 <Setter Property="Orientation" Value="Horizontal" />
-                                <Setter Property="Margin" Value="16,0" />
+                                <Setter Property="Margin" Value="0,0" />
                             </Style>
-                        </StackPanel.Resources>
+                        </UniformGrid.Resources>
 
                         <StackPanel Margin="0,0,24,0" Style="{StaticResource Container}">
 
@@ -256,7 +256,6 @@
                                        Text="{Binding TotalPlaylistDuration, Mode=OneWay, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}" />
                         </StackPanel>
 
-
                         <StackPanel Style="{StaticResource Container}">
 
                             <controls:PathButton Width="18"
@@ -300,7 +299,7 @@
                             </TextBlock>
 
                         </StackPanel>
-                    </StackPanel>
+                    </UniformGrid>
 
                     <Grid Grid.Row="1" Grid.Column="1">
                         <Grid.RowDefinitions>
@@ -774,6 +773,8 @@
                                                                  ToolTip="Shuffle" />
                                         </UniformGrid>
                                     </Border>
+
+
                                 </Grid>
 
 
@@ -810,7 +811,7 @@
                 <behaviors3:HideBehavior x:Name="HideBehavior"
                                          GridSplitterName="GridSplitter"
                                          InitialWidthValue="{Binding ActualSavedPlaylist.Name, Converter={converters:CountCharactersAndAddValue CharacterWidth=15}, ConverterParameter=260, Mode=OneWay}"
-                                         MaxInitialWidth="425"
+                                         MaxInitialWidth="420"
                                          MinValue="0"
                                          ResizeParameter="Width"
                                          Duration="0:0:0:.30" />

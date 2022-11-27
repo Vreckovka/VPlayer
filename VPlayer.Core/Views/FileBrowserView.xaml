@@ -5,6 +5,7 @@
              xmlns:controls1="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
              xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:events1="clr-namespace:VPlayer.Core.Events;assembly=VPLayer.Domain"
              xmlns:local="clr-namespace:VPlayer.Home.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:popups="clr-namespace:VCore.WPF.Behaviors.Popups;assembly=VCore.WPF"
@@ -95,12 +96,34 @@
 
                                                     <controls1:PathButton Width="22"
                                                                           Command="{Binding PlayButton}"
+                                                                          CommandParameter="{x:Static events1:EventAction.Play}"
                                                                           FontSize="13"
                                                                           ForegroundDefaultColor="#20ffffff"
                                                                           ForegroundHoverColor="#ddd"
                                                                           IsReadOnly="True"
                                                                           Style="{StaticResource play-regular}"
                                                                           ToolTip="Play" />
+
+                                                    <controls1:PathButton Width="25"
+                                                                          Margin="0,1,0,0"
+                                                                          Command="{Binding PlayButton}"
+                                                                          CommandParameter="{x:Static events1:EventAction.Add}">
+                                                        <controls1:PathButton.Style>
+                                                            <Style BasedOn="{StaticResource FontAwesomeGlyphStyle}" TargetType="controls1:PathButton">
+                                                                <Setter Property="Glyph" Value="{StaticResource layer-plus-glyph}" />
+                                                                <Setter Property="ToolTip" Value="Add to playlist" />
+                                                                <Setter Property="GlyphFontSize" Value="14" />
+                                                                <Setter Property="IconDefaultColor" Value="#15ffffff" />
+                                                                <Setter Property="IconHoverColor" Value="{StaticResource GreenColor3}" />
+
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsInPlaylist}" Value="true">
+                                                                        <Setter Property="IconDefaultColor" Value="{StaticResource GreenColor3}" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </controls1:PathButton.Style>
+                                                    </controls1:PathButton>
 
                                                     <controls1:PathButton Width="25"
                                                                           Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl, Mode=FindAncestor}, Path=DataContext.ChangeDirectory}"
