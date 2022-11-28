@@ -689,7 +689,6 @@
                                                                  GlyphFontSize="10"
                                                                  IconBrush="{Binding ElementName=binoculars, Path=IconBrush}"
                                                                  IconMargin="0"
-                                                                 IsChecked="{Binding ActualSavedPlaylist.WatchFolder}"
                                                                  IsHitTestVisible="False"
                                                                  IsReadOnly="True"
                                                                  Style="{StaticResource FontAwesomeGlyphStyle}" />

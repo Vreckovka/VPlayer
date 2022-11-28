@@ -1048,51 +1048,38 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region DownloadHighQualityAlbumCover
 
+    private SemaphoreSlim downloadHighQualityAlbumCoverSempahore = new SemaphoreSlim(1, 1);
     private Task DownloadHighQualityAlbumCover(SoundItemInPlaylistViewModel item)
     {
       return Task.Run(async () =>
       {
-        if (item is SongInPlayListViewModel songInPlay)
+        try
         {
-          var artistName = songInPlay?.ArtistViewModel?.Name;
-          var albumName = songInPlay?.AlbumViewModel?.Name;
-          var albumViewModel = songInPlay.AlbumViewModel;
-          var finalPath = albumViewModel?.Model.AlbumFrontCoverFilePath;
+          await downloadHighQualityAlbumCoverSempahore.WaitAsync();
 
-          if (!string.IsNullOrEmpty(artistName) && !string.IsNullOrEmpty(albumName) && songInPlay.AlbumViewModel.HighQualityCover == null)
+          if (item is SongInPlayListViewModel songInPlay)
           {
-            var cover = await iPCloudAlbumCoverProvider.GetAlbumCover(artistName, albumName);
+            var artistName = songInPlay?.ArtistViewModel?.Name;
+            var albumName = songInPlay?.AlbumViewModel?.Name;
+            var albumViewModel = songInPlay.AlbumViewModel;
+            var finalPath = albumViewModel?.Model.AlbumFrontCoverFilePath;
 
-            if (cover == null || IsEmptyImage(cover))
+            if (!string.IsNullOrEmpty(artistName) && !string.IsNullOrEmpty(albumName) && songInPlay.AlbumViewModel.HighQualityCover == null)
             {
-              var coverPath = songInPlay?.AlbumViewModel?.Image;
-              byte[] actualCover = null;
+              var cover = await iPCloudAlbumCoverProvider.GetAlbumCover(artistName, albumName);
 
-              if (File.Exists(coverPath))
+              if (cover == null || IsEmptyImage(cover))
               {
-                actualCover = File.ReadAllBytes(coverPath);
+                var coverPath = songInPlay?.AlbumViewModel?.Image;
+                byte[] actualCover = null;
 
-                if (IsEmptyImage(actualCover))
+                if (File.Exists(coverPath))
                 {
-                  File.Delete(coverPath);
-                  actualCover = null;
-                }
-                else
-                {
-                  cover = actualCover;
-                }
-              }
-              
-              if (!string.IsNullOrEmpty(albumViewModel?.Model?.AlbumFrontCoverURI) && actualCover == null)
-              {
-
-                using (var vc = new WebClient())
-                {
-                  actualCover = vc.DownloadData(albumViewModel.Model.AlbumFrontCoverURI);
-                  finalPath = await SaveAlbumCover(actualCover, finalPath, albumViewModel);
+                  actualCover = File.ReadAllBytes(coverPath);
 
                   if (IsEmptyImage(actualCover))
                   {
+                    File.Delete(coverPath);
                     actualCover = null;
                   }
                   else
@@ -1100,64 +1087,103 @@ namespace VPlayer.WindowsPlayer.ViewModels
                     cover = actualCover;
                   }
                 }
-              }
 
-              if (actualCover != null)
-              {
-                var result = await iPCloudAlbumCoverProvider.UpdateOrCreateAlbumCover(artistName, albumName, actualCover);
-
-                if (result)
+                if (!string.IsNullOrEmpty(albumViewModel?.Model?.AlbumFrontCoverURI) && actualCover == null)
                 {
-                  songInPlay.AlbumViewModel.HighQualityCover = actualCover;
+
+                  using (var vc = new WebClient())
+                  {
+                    actualCover = vc.DownloadData(albumViewModel.Model.AlbumFrontCoverURI);
+                    finalPath = await SaveAlbumCover(actualCover, albumViewModel);
+
+                    if (IsEmptyImage(actualCover))
+                    {
+                      actualCover = null;
+                    }
+                    else
+                    {
+                      cover = actualCover;
+                    }
+                  }
+                }
+
+                if (actualCover != null)
+                {
+                  var result = await iPCloudAlbumCoverProvider.UpdateOrCreateAlbumCover(artistName, albumName, actualCover);
+
+                  if (result)
+                  {
+                    songInPlay.AlbumViewModel.HighQualityCover = actualCover;
+                  }
                 }
               }
+              else
+              {
+                finalPath = await SaveAlbumCover(cover, albumViewModel);
+              }
+
+              CacheImageConverter.RefreshDictionary(finalPath);
+
+              songInPlay.AlbumViewModel.HighQualityCover = cover;
+
+              albumViewModel.RaisePropertyChange(nameof(AlbumViewModel.Image));
+              albumViewModel.RaisePropertyChange(nameof(AlbumViewModel.ImageThumbnail));
+              ActualItem.RaiseNotifyPropertyChanged(nameof(SongInPlayListViewModel.ImagePath));
             }
-            else
-            {
-              finalPath = await SaveAlbumCover(cover, finalPath, albumViewModel);
-            }
-
-            CacheImageConverter.RefreshDictionary(finalPath);
-
-            songInPlay.AlbumViewModel.HighQualityCover = cover;
-
-            albumViewModel.RaisePropertyChange(nameof(AlbumViewModel.Image));
-            albumViewModel.RaisePropertyChange(nameof(AlbumViewModel.ImageThumbnail));
-            ActualItem.RaiseNotifyPropertyChanged(nameof(SongInPlayListViewModel.ImagePath));
           }
+        }
+        catch (Exception ex)
+        {
+
+        }
+        finally
+        {
+          downloadHighQualityAlbumCoverSempahore.Release();
         }
       });
     }
 
     #endregion
 
-    private async Task<string> SaveAlbumCover(byte[] cover, string finalPath, AlbumViewModel albumViewModel)
+    #region SaveAlbumCover
+
+    private async Task<string> SaveAlbumCover(byte[] cover, AlbumViewModel albumViewModel)
     {
       MemoryStream ms = new MemoryStream(cover);
       Image i = Image.FromStream(ms);
 
-      if (string.IsNullOrEmpty(finalPath))
-      {
-        finalPath = Path.Combine(AudioInfoDownloader.GetAlbumCoverImagePath(albumViewModel.Model));
+      var filePath = Path.Combine(AudioInfoDownloader.GetAlbumCoverImagePath(albumViewModel.Model));
+      byte[] acutalFile = null;
 
-        albumViewModel.Model.AlbumFrontCoverFilePath = finalPath;
+      if (!string.IsNullOrEmpty(filePath))
+      {
+        if (File.Exists(filePath))
+          acutalFile = File.ReadAllBytes(filePath);
+    
+        albumViewModel.Model.AlbumFrontCoverFilePath = filePath;
 
         await storageManager.UpdateEntityAsync(albumViewModel.Model);
+
+        if (acutalFile != cover)
+        {
+          filePath.EnsureDirectoryExists();
+
+          if (File.Exists(filePath))
+          {
+            File.Delete(filePath);
+          }
+
+          i.Save(filePath, ImageFormat.Jpeg);
+
+          ms?.Dispose();
+          i?.Dispose();
+        }
       }
 
-      finalPath.EnsureDirectoryExists();
-
-      if (File.Exists(finalPath))
-      {
-        File.Delete(finalPath);
-      }
-
-      i.Save(finalPath, ImageFormat.Jpeg);
-      ms?.Dispose();
-      i?.Dispose();
-
-      return finalPath;
+      return filePath;
     }
+
+    #endregion
 
     #region IsEmptyImage
 

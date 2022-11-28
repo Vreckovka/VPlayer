@@ -13,6 +13,7 @@ using VCore.WPF.LRC.Domain;
 using VCore.WPF.Misc;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
+using VPlayer.AudioStorage.InfoDownloader.Clients.Genius;
 using VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics;
 using VPlayer.AudioStorage.InfoDownloader.Clients.PCloud;
 using VPlayer.AudioStorage.InfoDownloader.LRC;
@@ -621,7 +622,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
         if (LRCFile == null && Lyrics == null && !string.IsNullOrEmpty(ArtistViewModel?.Name))
         {
-          await audioInfoDownloader.UpdateSongLyricsAsync(ArtistViewModel.Name, Name, SongModel);
+          var result = await audioInfoDownloader.UpdateSongLyricsAsync(ArtistViewModel.Name, Name, SongModel);
         }
 
         RaiseLyricsChange();
