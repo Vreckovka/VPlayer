@@ -1164,7 +1164,15 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         await storageManager.UpdateEntityAsync(albumViewModel.Model);
 
-        if (acutalFile != cover)
+        bool isDifferent = true;
+
+        if (acutalFile != null)
+        {
+          var diff = (1.0 - (double)Math.Min(acutalFile.Length, cover.Length) / Math.Max(acutalFile.Length, cover.Length)) * 100.0;
+          isDifferent = diff > 2.5;
+        }
+
+        if (acutalFile != cover && isDifferent)
         {
           filePath.EnsureDirectoryExists();
 
