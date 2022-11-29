@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -9,6 +10,7 @@ using ChromeDriverScrapper;
 using HtmlAgilityPack;
 using Logger;
 using OpenQA.Selenium;
+using VCore;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google;
 
@@ -40,33 +42,30 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
+    private object batton = new object();
     public Song UpdateSongLyrics(string artist, string albumName, string songName, Song song)
     {
       try
       {
         HtmlDocument document = new HtmlDocument();
-        MusixMatchAlbum storedAlbum = null;
+        MusixMatchSong foundSong = null;
 
-        storedAlbum = loadedAlbums.FirstOrDefault(x => GetNormalizedName(x.Name) == GetNormalizedName(albumName) && GetNormalizedName(x.Artist) == GetNormalizedName(artist));
-
-        if (storedAlbum == null)
+        lock (batton)
         {
-          var songs = GetAlbumSongs(artist, albumName);
+          foundSong = loadedAlbums
+               .Where(x => GetNormalizedName(x.Name) == GetNormalizedName(albumName) && GetNormalizedName(x.Artist) == GetNormalizedName(artist))
+               .SelectMany(x => x.Songs)
+               .FirstOrDefault(x => GetNormalizedName(x.Title) == GetNormalizedName(songName));
 
-          if (songs != null)
+          if (foundSong == null)
           {
-            storedAlbum = new MusixMatchAlbum()
-            {
-              Artist = artist,
-              Name = albumName,
-              Songs = songs.ToList()
-            };
+            var albums = GetAlbums(artist, albumName).ToList();
 
-            loadedAlbums.Add(storedAlbum);
-          }
+            loadedAlbums.AddRange(albums);
+
+            foundSong = albums.SelectMany(x => x.Songs).FirstOrDefault(x => GetNormalizedName(x.Title) == GetNormalizedName(songName));
+          } 
         }
-
-        var foundSong = storedAlbum?.Songs.FirstOrDefault(x => GetNormalizedName(x.Title) == GetNormalizedName(songName));
 
         if (foundSong != null)
         {
@@ -103,44 +102,66 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch
       }
     }
 
-    private string GetNormalizedName(string input)
+    public static string GetNormalizedName(string input)
     {
       if (string.IsNullOrEmpty(input))
       {
         return null;
       }
 
-      input = input.ToLower();
       Regex rgx = new Regex("[^a-zA-Z0-9]");
 
-      return rgx.Replace(input.ToLower(), "");
+      input = rgx.Replace(input.RemoveDiacritics().ToLower(), "");
+
+      return input;
     }
 
     #region GetAlbumSongs
 
-    private IEnumerable<MusixMatchSong> GetAlbumSongs(string artist, string album)
+    private IEnumerable<MusixMatchAlbum> GetAlbums(string artist, string album)
     {
+      MusixMatchAlbum newAlbum = null;
       HtmlDocument document = new HtmlDocument();
-      var url = $"https://www.musixmatch.com/album/{GetAsUrlValue(artist)}/{GetAsUrlValue(album)}";
+      var albums = new List<MusixMatchAlbum>();
 
-      var html = chromeDriverProvider.SafeNavigate(url, extraMiliseconds: 500);
-
-      if (html != null)
+      for (int i = 0; i < 2; i++)
       {
-        document.LoadHtml(html);
+        string url = url = $"https://www.musixmatch.com/album/{GetAsUrlValue(artist)}/{GetAsUrlValue(album)}"; 
 
-        var nodes = document.DocumentNode.SelectNodes("/html/body/div[2]/div/div/div/main/div/div[2]/div/div[2]/div[3]/div/div/ul/li/a");
-
-        var lyrics = nodes?.Select(x => new MusixMatchSong()
+        if (i > 0)
         {
-          Title = x.SelectNodes("div[2]/h2")?.FirstOrDefault()?.InnerText,
-          Url = x.Attributes[0].Value
-        });
+          url += $"-{i}";
+        }
 
-        return lyrics;
+        var html = chromeDriverProvider.SafeNavigate(url, extraMiliseconds: 500);
+
+        if (html != null)
+        {
+          document.LoadHtml(html);
+
+          var nodes = document.DocumentNode.SelectNodes("/html/body/div[2]/div/div/div/main/div/div[2]/div/div[2]/div[3]/div/div/ul/li/a");
+
+          var lyrics = nodes?.Select(x => new MusixMatchSong()
+          {
+            Title = x.SelectNodes("div[2]/h2")?.FirstOrDefault()?.InnerText,
+            Url = x.Attributes[0].Value
+          });
+
+          if (lyrics != null)
+          {
+            newAlbum = new MusixMatchAlbum()
+            {
+              Artist = artist,
+              Name = album,
+              Songs = lyrics.ToList()
+            };
+
+            albums.Add(newAlbum);
+          }
+        }
       }
 
-      return null;
+      return albums;
     }
 
     #endregion

@@ -560,15 +560,18 @@ namespace VPlayer.Core.ViewModels.SoundItems
       {
         var lrc = parser.Parse(lrcString.Split('\n').ToList());
 
-        lrc.Artist = ArtistViewModel?.Name;
-        lrc.Album = AlbumViewModel?.Name;
-        lrc.Title = Name;
+        if (MusixMatchLyricsProvider.GetNormalizedName(lrc.Artist).Similarity(MusixMatchLyricsProvider.GetNormalizedName(ArtistViewModel?.Name)) > 0.8 || 
+            string.IsNullOrEmpty(lrc.Artist))
+        {
+          lrc.Artist = ArtistViewModel?.Name;
+          lrc.Album = AlbumViewModel?.Name;
+          lrc.Title = Name;
 
-        SongModel.LRCLyrics = lrcString;
+          SongModel.LRCLyrics = lrcString;
 
-        LRCFile = new LRCFileViewModel(lrc, LRCProviders.MiniLyrics, pCloudLyricsProvider, windowManager, client);
+          LRCFile = new LRCFileViewModel(lrc, LRCProviders.MiniLyrics, pCloudLyricsProvider, windowManager, client);
+        }
       }
-
     }
 
     #endregion
