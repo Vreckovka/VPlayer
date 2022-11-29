@@ -99,6 +99,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch
       catch (Exception ex)
       {
         logger.Log(ex, false);
+        return null;
       }
     }
 
