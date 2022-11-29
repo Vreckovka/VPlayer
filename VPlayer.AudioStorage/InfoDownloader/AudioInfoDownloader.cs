@@ -35,6 +35,7 @@ using VCore.WPF.Helpers;
 using VCore.WPF.LRC;
 using VCore.WPF.LRC.Domain;
 using VPlayer.AudioStorage.AudioDatabase;
+using VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch;
 using VPlayer.AudioStorage.InfoDownloader.Clients.PCloud.Images;
 using VPlayer.Core.Managers.Status;
 
@@ -48,6 +49,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
     private readonly ILogger logger;
     private readonly IStatusManager statusManager;
     private readonly IPCloudAlbumCoverProvider iPCloudAlbumCoverProvider;
+    private readonly MusixMatchLyricsProvider musixMatchLyricsProvider;
 
     #region Fields
 
@@ -66,11 +68,12 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     #region Constructors
 
-    public AudioInfoDownloader(ILogger logger, IStatusManager statusManager, IPCloudAlbumCoverProvider iPCloudAlbumCoverProvider)
+    public AudioInfoDownloader(ILogger logger, IStatusManager statusManager, IPCloudAlbumCoverProvider iPCloudAlbumCoverProvider, MusixMatchLyricsProvider musixMatchLyricsProvider)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
       this.iPCloudAlbumCoverProvider = iPCloudAlbumCoverProvider ?? throw new ArgumentNullException(nameof(iPCloudAlbumCoverProvider));
+      this.musixMatchLyricsProvider = musixMatchLyricsProvider ?? throw new ArgumentNullException(nameof(musixMatchLyricsProvider));
     }
 
     #endregion Constructors
@@ -924,7 +927,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
             Name = artist.Name,
             MusicBrainzId = artist.Id,
             NormalizedName = VPlayerStorageManager.GetNormalizedName(artist.Name),
-          }; 
+          };
         }
         else
         {
@@ -1142,7 +1145,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
       }
     }
 
-  
+
 
     #endregion
 
@@ -1151,7 +1154,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
       try
       {
         var q = new Query("VPlayer", "3", "pecho4@gmail.com");
-        
+
         if (artistName != null)
         {
           var artist = (await q.FindArtistsAsync(artistName)).Results.FirstOrDefault();
@@ -1624,11 +1627,16 @@ namespace VPlayer.AudioStorage.InfoDownloader
       SubdirectoryLoaded?.Invoke(this, e);
     }
 
-    public async Task<bool> UpdateSongLyricsAsync(string artistName, string songName, Song song)
+    public async Task<bool> UpdateSongLyricsAsync(string artistName, string albumName, string songName, Song song)
     {
       var chartClient = new ChartLyricsClient(logger);
 
       var updatedSong = await chartClient.UpdateSongLyrics(artistName, songName, song);
+
+      if (updatedSong == null)
+      {
+        updatedSong = musixMatchLyricsProvider.UpdateSongLyrics(artistName, albumName, songName, song);
+      }
 
       if (updatedSong != null)
         ItemUpdated.OnNext(updatedSong);
@@ -1636,6 +1644,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
       return updatedSong != null;
 
     }
+
 
     #region TryGetLRCLyricsAsync
 

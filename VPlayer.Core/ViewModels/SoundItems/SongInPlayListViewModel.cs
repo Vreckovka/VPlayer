@@ -14,6 +14,7 @@ using VCore.WPF.Misc;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics;
+using VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch;
 using VPlayer.AudioStorage.InfoDownloader.Clients.PCloud;
 using VPlayer.AudioStorage.InfoDownloader.LRC;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Clients;
@@ -39,6 +40,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
     //private readonly GoogleDriveLrcProvider googleDriveLrcProvider;
     private readonly IStorageManager storageManager;
     private readonly IWindowManager windowManager;
+    private readonly MusixMatchLyricsProvider musixMatchLyricsProvider;
 
     #endregion Fields
 
@@ -53,7 +55,8 @@ namespace VPlayer.Core.ViewModels.SoundItems
       Song model,
       ILogger logger,
       IStorageManager storageManager,
-      IWindowManager windowManager) : base(model.ItemModel, eventAggregator, storageManager)
+      IWindowManager windowManager,
+      MusixMatchLyricsProvider musixMatchLyricsProvider) : base(model.ItemModel, eventAggregator, storageManager)
     {
       this.albumsViewModel = albumsViewModel ?? throw new ArgumentNullException(nameof(albumsViewModel));
       this.artistsViewModel = artistsViewModel ?? throw new ArgumentNullException(nameof(artistsViewModel));
@@ -63,6 +66,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
       //this.googleDriveLrcProvider = googleDriveLrcProvider ?? throw new ArgumentNullException(nameof(googleDriveLrcProvider));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
+      this.musixMatchLyricsProvider = musixMatchLyricsProvider ?? throw new ArgumentNullException(nameof(musixMatchLyricsProvider));
       SongModel = model ?? throw new ArgumentNullException(nameof(model));
     }
 
@@ -544,7 +548,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
       try
       {
-        lrcString  = (await client.FindLRC(ArtistViewModel.Name, Name))?.Replace("\r", "");
+        lrcString = (await client.FindLRC(ArtistViewModel.Name, Name))?.Replace("\r", "");
       }
       catch (Exception)
       {
@@ -602,7 +606,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
             }
           }
         }
-        
+
         if (LRCFile == null)
         {
           await LoadLRCFromMiniLyrics();
@@ -621,7 +625,24 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
         if (LRCFile == null && Lyrics == null && !string.IsNullOrEmpty(ArtistViewModel?.Name))
         {
-          var result = await audioInfoDownloader.UpdateSongLyricsAsync(ArtistViewModel.Name, Name, SongModel);
+          // No await 
+#pragma warning disable 4014
+          Task.Run(async () =>
+          {
+            var result = await audioInfoDownloader.UpdateSongLyricsAsync(ArtistViewModel.Name, AlbumViewModel?.Name, Name, SongModel);
+
+            if (result)
+            {
+              Application.Current.Dispatcher.Invoke(() =>
+              {
+                Lyrics = SongModel.Chartlyrics_Lyric;
+
+                RaiseLyricsChange();
+              });
+            }
+          });
+
+#pragma warning restore 4014
         }
 
         RaiseLyricsChange();
@@ -708,7 +729,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
       SongModel.LRCLyrics = null;
       SongModel.MusicBrainzId = null;
 
-      if(SongModel.ItemModel?.FileInfo != null)
+      if (SongModel.ItemModel?.FileInfo != null)
       {
         SongModel.ItemModel.FileInfo.Album = "";
         SongModel.ItemModel.FileInfo.Artist = "";
