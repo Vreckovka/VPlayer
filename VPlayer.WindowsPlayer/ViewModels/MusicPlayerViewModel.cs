@@ -676,7 +676,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
 
     #endregion
-
+    
     #region ExitLRCEditor
 
     private ActionCommand<SoundItemInPlaylistViewModel> exitLRCEditor;

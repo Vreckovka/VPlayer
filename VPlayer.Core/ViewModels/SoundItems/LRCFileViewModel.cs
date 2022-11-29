@@ -384,32 +384,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     #endregion
 
-    #region DeleteLyrics
-
-    private ActionCommand deleteLyrics;
-
-    public ICommand DeleteLyrics
-    {
-      get
-      {
-        if (deleteLyrics == null)
-        {
-          deleteLyrics = new ActionCommand(OnDeleteLyrics);
-        }
-
-        return deleteLyrics;
-      }
-    }
-
-    public async void OnDeleteLyrics()
-    {
-      var result = windowManager.ShowDeletePrompt($"{Model.Title}.lrc");
-
-      if (result == VCore.WPF.ViewModels.Prompt.PromptResult.Ok)
-        await pCloudLyricsProvider.DeleteLyrics(Model.Title, Model.Album, Model.Artist, ".lrc");
-    }
-
-    #endregion
+    
 
     public string GetLyricsText()
     {

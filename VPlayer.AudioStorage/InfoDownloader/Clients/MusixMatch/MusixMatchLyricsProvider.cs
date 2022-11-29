@@ -43,7 +43,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch
     }
 
     private object batton = new object();
-    public Song UpdateSongLyrics(string artist, string albumName, string songName, Song song)
+    public string GetLyrics(string artist, string albumName, string songName)
     {
       try
       {
@@ -64,7 +64,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch
             loadedAlbums.AddRange(albums);
 
             foundSong = albums.SelectMany(x => x.Songs).FirstOrDefault(x => GetNormalizedName(x.Title) == GetNormalizedName(songName));
-          } 
+          }
         }
 
         if (foundSong != null)
@@ -86,9 +86,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch
 
             if (!string.IsNullOrEmpty(lyrics))
             {
-              song.Chartlyrics_Lyric = lyrics + "\nFrom MusixMatch";
-
-              return song;
+              return lyrics + "\nFrom MusixMatch";
             }
           }
         }
@@ -126,7 +124,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch
 
       for (int i = 0; i < 2; i++)
       {
-        string url = url = $"https://www.musixmatch.com/album/{GetAsUrlValue(artist)}/{GetAsUrlValue(album)}"; 
+        string url = url = $"https://www.musixmatch.com/album/{GetAsUrlValue(artist)}/{GetAsUrlValue(album)}";
 
         if (i > 0)
         {
@@ -177,7 +175,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch
 
     private string TrySelectLyrics(HtmlNode htmlNode)
     {
-      var node = htmlNode?.SelectNodes("//p[contains(@class, 'mxm-lyrics__content')]")?.Select(x => x.InnerText).Aggregate((x, y) => x + "" + y);
+      var node = htmlNode?.SelectNodes("//p[contains(@class, 'mxm-lyrics__content')]")?.Select(x => x.InnerText).Aggregate((x, y) => x + "\n" + y);
 
       return node;
     }

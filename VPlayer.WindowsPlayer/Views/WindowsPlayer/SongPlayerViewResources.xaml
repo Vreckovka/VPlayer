@@ -49,18 +49,34 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <controls:PathButton Margin="10,10,0,0"
-                                 HorizontalAlignment="Left"
-                                 VerticalAlignment="Top"
-                                 Command="{Binding CreateLRCLyrics}"
-                                 CommandParameter="{Binding ActualItem}"
-                                 DataContext="{Binding RelativeSource={RelativeSource AncestorType=Border, Mode=FindAncestor}, Mode=OneWay, Path=DataContext}"
-                                 FontSize="25"
-                                 Foreground="White"
-                                 ForegroundCheckedColor="Yellow"
-                                 ForegroundDefaultColor="#20ffffff"
-                                 Style="{StaticResource file-pen}"
-                                 ToolTip="Create LRC lyrics" />
+            <StackPanel>
+                <controls:PathButton Margin="10,10,0,0"
+                                     HorizontalAlignment="Left"
+                                     VerticalAlignment="Top"
+                                     Command="{Binding CreateLRCLyrics}"
+                                     CommandParameter="{Binding ActualItem}"
+                                     DataContext="{Binding RelativeSource={RelativeSource AncestorType=Border, Mode=FindAncestor}, Mode=OneWay, Path=DataContext}"
+                                     FontSize="25"
+                                     Foreground="White"
+                                     ForegroundCheckedColor="Yellow"
+                                     ForegroundDefaultColor="#20ffffff"
+                                     Style="{StaticResource file-pen}"
+                                     ToolTip="Create LRC lyrics" />
+
+                <controls:PathButton Margin="10,10,0,0"
+                                     HorizontalAlignment="Left"
+                                     VerticalAlignment="Top"
+                                     Command="{Binding DeleteLyrics}"
+                                     CommandParameter="txt"
+                                     DataContext="{Binding RelativeSource={RelativeSource AncestorType=Border, Mode=FindAncestor}, Mode=OneWay, Path=DataContext.ActualItem}"
+                                     Glyph="{StaticResource file-xmark}"
+                                     GlyphFontSize="25"
+                                     IconDefaultColor="#454545"
+                                     IconHoverColor="{StaticResource DefaultRedColor}"
+                                     IsReadOnly="True"
+                                     Style="{StaticResource FontAwesomeGlyphStyle}"
+                                     ToolTip="Erase lyrics" />
+            </StackPanel>
 
 
             <ScrollViewer Grid.Column="1"
@@ -227,7 +243,9 @@
 
                                     <controls:PathButton Margin="0,15,0,5"
                                                          Command="{Binding DeleteLyrics}"
-                                                         Glyph="{StaticResource eraser}"
+                                                         CommandParameter="lrc"
+                                                         DataContext="{Binding DataContext.ActualItem, RelativeSource={RelativeSource AncestorLevel=5, AncestorType=Grid}}"
+                                                         Glyph="{StaticResource file-xmark}"
                                                          IconDefaultColor="#555555"
                                                          IconHoverColor="{StaticResource DefaultRedColor}"
                                                          IsReadOnly="True"

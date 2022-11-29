@@ -336,6 +336,40 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     #endregion
 
+    #region DeleteLyrics
+
+    private ActionCommand<string> deleteLyrics;
+
+    public ICommand DeleteLyrics
+    {
+      get
+      {
+        if (deleteLyrics == null)
+        {
+          deleteLyrics = new ActionCommand<string>(OnDeleteLyrics);
+        }
+
+        return deleteLyrics;
+      }
+    }
+
+    public async void OnDeleteLyrics(string extension)
+    {
+      var result = windowManager.ShowDeletePrompt($"{songModel.Name}.{extension}");
+
+      if (result == VCore.WPF.ViewModels.Prompt.PromptResult.Ok)
+      {
+        await pCloudLyricsProvider.DeleteLyrics(Name, AlbumViewModel?.Name, ArtistViewModel.Name, $".{extension}");
+
+        ClearLyrics();
+        await storageManager.UpdateSong(SongModel);
+
+        await TryToRefreshUpdateLyrics();
+      }
+    }
+
+    #endregion
+
     #endregion
 
     #region Methods
@@ -560,7 +594,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
       {
         var lrc = parser.Parse(lrcString.Split('\n').ToList());
 
-        if (MusixMatchLyricsProvider.GetNormalizedName(lrc.Artist).Similarity(MusixMatchLyricsProvider.GetNormalizedName(ArtistViewModel?.Name)) > 0.8 || 
+        if (MusixMatchLyricsProvider.GetNormalizedName(lrc.Artist).Similarity(MusixMatchLyricsProvider.GetNormalizedName(ArtistViewModel?.Name)) > 0.8 ||
             string.IsNullOrEmpty(lrc.Artist))
         {
           lrc.Artist = ArtistViewModel?.Name;
@@ -632,14 +666,16 @@ namespace VPlayer.Core.ViewModels.SoundItems
 #pragma warning disable 4014
           Task.Run(async () =>
           {
-            var result = await audioInfoDownloader.UpdateSongLyricsAsync(ArtistViewModel.Name, AlbumViewModel?.Name, Name, SongModel);
+            var lyrics = await audioInfoDownloader.UpdateSongLyricsAsync(ArtistViewModel.Name, AlbumViewModel?.Name, Name);
 
-            if (result)
+            if (!string.IsNullOrEmpty(lyrics))
             {
               Application.Current.Dispatcher.Invoke(() =>
               {
-                Lyrics = SongModel.Chartlyrics_Lyric;
+                Lyrics = lyrics;
+                SongModel.Chartlyrics_Lyric = lyrics;
 
+                audioInfoDownloader.ItemUpdated.OnNext(SongModel);
                 RaiseLyricsChange();
               });
             }
@@ -725,22 +761,13 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     public override void OnClearInfo()
     {
-      SongModel.Album = null;
-      SongModel.Chartlyrics_Lyric = null;
-      SongModel.Chartlyrics_LyricCheckSum = null;
-      SongModel.Chartlyrics_LyricId = null;
-      SongModel.LRCLyrics = null;
-      SongModel.MusicBrainzId = null;
+      ClearLyrics();
 
       if (SongModel.ItemModel?.FileInfo != null)
       {
         SongModel.ItemModel.FileInfo.Album = "";
         SongModel.ItemModel.FileInfo.Artist = "";
       }
-
-      Lyrics = null;
-      LRCCreatorViewModel = null;
-      LRCFile = null;
 
       AlbumViewModel = null;
       ArtistViewModel = null;
@@ -753,6 +780,20 @@ namespace VPlayer.Core.ViewModels.SoundItems
     }
 
     #endregion
+
+    private void ClearLyrics()
+    {
+      SongModel.Album = null;
+      SongModel.Chartlyrics_Lyric = null;
+      SongModel.Chartlyrics_LyricCheckSum = null;
+      SongModel.Chartlyrics_LyricId = null;
+      SongModel.LRCLyrics = null;
+      SongModel.MusicBrainzId = null;
+
+      Lyrics = null;
+      LRCCreatorViewModel = null;
+      LRCFile = null;
+    }
 
     #region SaveChanges
 

@@ -21,7 +21,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.Chartlyrics
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public async Task<Song> UpdateSongLyrics(string artistName, string songName, Song song)
+    public async Task<string> GetLyrics(string artistName, string songName)
     {
       try
       {
@@ -78,15 +78,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.Chartlyrics
 
               var lyrics = await GetAttributes(lyricsUrl);
 
-              if (!string.IsNullOrEmpty(lyrics))
-              {
-                song.Chartlyrics_Lyric = lyrics;
-                song.Chartlyrics_LyricCheckSum = bestResult.LyricChecksum;
-                song.Chartlyrics_LyricId = bestResult.LyricId;
-
-                return song;
-
-              }
+              return lyrics;
             }
           }
         }

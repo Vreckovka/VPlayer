@@ -1627,21 +1627,18 @@ namespace VPlayer.AudioStorage.InfoDownloader
       SubdirectoryLoaded?.Invoke(this, e);
     }
 
-    public async Task<bool> UpdateSongLyricsAsync(string artistName, string albumName, string songName, Song song)
+    public async Task<string> UpdateSongLyricsAsync(string artistName, string albumName, string songName)
     {
       var chartClient = new ChartLyricsClient(logger);
 
-      var updatedSong = await chartClient.UpdateSongLyrics(artistName, songName, song);
+      var lyrics = await chartClient.GetLyrics(artistName, songName);
 
-      if (updatedSong == null)
+      if (lyrics == null)
       {
-        updatedSong = musixMatchLyricsProvider.UpdateSongLyrics(artistName, albumName, songName, song);
+        lyrics = musixMatchLyricsProvider.GetLyrics(artistName, albumName, songName);
       }
 
-      if (updatedSong != null)
-        ItemUpdated.OnNext(updatedSong);
-
-      return updatedSong != null;
+      return lyrics;
 
     }
 
