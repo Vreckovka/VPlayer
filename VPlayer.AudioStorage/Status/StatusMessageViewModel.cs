@@ -282,6 +282,17 @@ namespace VPlayer.Core.Managers.Status
       };
     }
 
+    public void RaisePropertyChanges()
+    {
+      RaisePropertyChanged(nameof(Process));
+      RaisePropertyChanged(nameof(ProcessedCount));
+      RaisePropertyChanged(nameof(NumberOfProcesses));
+      RaisePropertyChanged(nameof(Message));
+      RaisePropertyChanged(nameof(MessageState));
+      RaisePropertyChanged(nameof(Status));
+      RaisePropertyChanged(nameof(IsPinned));
+    }
+
     #region ToString
 
     public override string ToString()

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,6 +36,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     public readonly IChromeDriverProvider chromeDriverProvider;
     private readonly IWindowManager windowManager;
     private string baseUrl = "https://www.csfd.sk/";
+    private int extraMilisecondsForScrape = 0;
 
     public CSFDWebsiteScrapper(ILogger logger, IStatusManager statusManager, IChromeDriverProvider chromeDriverProvider, IWindowManager windowManager)
     {
@@ -78,7 +81,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         var tvShow = new CSFDTVShow()
         {
-          Url = url
+          Url = GetCorrectBaseUrl(url)
         };
 
         statusManager.UpdateMessage(statusMessage);
@@ -103,10 +106,13 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
           statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
 
-          tvShow.Seasons = LoadSeasons(document, statusMessage, seasonNumber, episodeNumber, cancellationToken, fileName: fileName);
+          tvShow.Seasons = LoadSeasons(document, tvShow.Url, statusMessage, seasonNumber, episodeNumber, cancellationToken, fileName: fileName);
 
           if (tvShow.Seasons == null)
           {
+            statusMessage.Status = StatusType.Failed;
+            statusManager.UpdateMessage(statusMessage);
+
             return tvShow;
           }
 
@@ -270,17 +276,19 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     private List<CSFDTVShowSeason> LoadSeasons(
       HtmlDocument document,
+      string url,
       StatusMessageViewModel pStatusMessageViewModel,
       int? seasonNumber,
       int? episodeNumber,
       CancellationToken cancellationToken,
       int? pageNumber = null,
-      string fileName = null)
+      string fileName = null,
+      int? episodesPerPage = null)
     {
       var seasons = new List<CSFDTVShowSeason>();
 
       cancellationToken.ThrowIfCancellationRequested();
-      
+
       var nodes = TrySelectNodes(document.DocumentNode, "/div/div[1]/div/section[1]/div[2]/div/ul/li/h3/a");
 
       if (nodes == null)
@@ -293,6 +301,13 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       };
 
       statusMessageViewModel.CopyParentState(pStatusMessageViewModel);
+
+      if (pageNumber > 0 && episodeNumber > 0)
+      {
+        statusMessageViewModel.NumberOfProcesses = pStatusMessageViewModel.NumberOfProcesses;
+        statusMessageViewModel.ProcessedCount = pStatusMessageViewModel.ProcessedCount;
+        statusMessageViewModel.Message = pStatusMessageViewModel.Message;
+      }
 
       statusManager.UpdateMessage(statusMessageViewModel);
 
@@ -325,7 +340,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         isSingleSeasoned = !nodes.FirstOrDefault()?.InnerText.Contains("Série") ?? false;
       }
 
-      if (isSingleSeasoned == true)
+      if (isSingleSeasoned)
       {
         var episodes = new List<CSFDTVShowSeasonEpisode>();
 
@@ -335,8 +350,11 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           SeasonNumber = 1
         };
 
-        statusMessageViewModel.Message = "Single seasoned: Downlading episodes";
-        statusManager.UpdateMessage(statusMessageViewModel);
+        if (episodesPerPage == null)
+        {
+          episodesPerPage = seasons.Count;
+          statusMessageViewModel.Message = $"Downlading episode {episodeNumber}";
+        }
 
         var episodeIndex = 0;
 
@@ -348,18 +366,9 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           }
         }
 
-        if (episodeNumber > (seasons.Count) * (pageNumber ?? 1))
+        if (episodeNumber > episodesPerPage.Value * (pageNumber ?? 1))
         {
-          if (pageNumber == null)
-          {
-            pageNumber = 2;
-          }
-          else
-          {
-            pageNumber++;
-          }
-
-          var url = chromeDriverProvider.ChromeDriver.Url;
+          pageNumber = (int)Math.Ceiling((double) episodeNumber / episodesPerPage.Value);
 
           if (url.Contains("seriePage"))
           {
@@ -370,9 +379,13 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
             url += $"?seriePage={pageNumber}";
           }
 
+          
           var newDocument = GetItemMainPage(url, cancellationToken);
 
-          return LoadSeasons(newDocument, pStatusMessageViewModel, seasonNumber, episodeNumber, cancellationToken, pageNumber);
+          statusMessageViewModel.ProcessedCount = 0;
+          statusMessageViewModel.NumberOfProcesses = 1;
+
+          return LoadSeasons(newDocument, url, statusMessageViewModel, seasonNumber, episodeNumber, cancellationToken, pageNumber, episodesPerPage: episodesPerPage);
         }
 
         if (episodeNumber == null || episodeNumber <= 0)
@@ -398,9 +411,9 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
             episodeIndex++;
           }
         }
-        else
+        else 
         {
-          var index = episodeNumber.Value - (((pageNumber ?? 1) - 1) * 50) - 1;
+          var index = episodeNumber.Value - (((pageNumber ?? 1) - 1) * episodesPerPage.Value) - 1;
 
           var season = seasons[index];
 
@@ -473,11 +486,11 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         List<CSFDTVShowSeasonEpisode> episodes = new List<CSFDTVShowSeasonEpisode>();
         HtmlDocument document = new HtmlDocument();
 
-        var html = chromeDriverProvider.SafeNavigate(url);
+        var html = chromeDriverProvider.SafeNavigate(url, out var redirectedUrl, extraMiliseconds: extraMilisecondsForScrape);
 
         document.LoadHtml(html);
 
-        var nodes = TrySelectNodes(document.DocumentNode,"/div/div[1]/div[3]/div/ul/li/a");
+        var nodes = TrySelectNodes(document.DocumentNode, "/div/div[1]/div[3]/div/ul/li/a");
 
         if (nodes == null)
         {
@@ -551,13 +564,13 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     {
       try
       {
-        var html = chromeDriverProvider.SafeNavigate(cSFDTVShowSeasonEpisode.Url);
+        var html = chromeDriverProvider.SafeNavigate(cSFDTVShowSeasonEpisode.Url, out var redirectedUrl, extraMiliseconds: extraMilisecondsForScrape);
 
         var document = new HtmlDocument();
 
         document.LoadHtml(html);
-        
-        var ratingNode = GetClearText(TrySelectNodes(document.DocumentNode,"/div/div[1]/aside/div/div[2]/div")?.FirstOrDefault()?.InnerText)?.Trim();
+
+        var ratingNode = GetClearText(TrySelectNodes(document.DocumentNode, "/div/div[1]/aside/div/div[2]/div")?.FirstOrDefault()?.InnerText)?.Trim();
 
         if (ratingNode != "?")
         {
@@ -582,7 +595,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
             cSFDTVShowSeasonEpisode.RatingColor = RatingColor.LightGray;
           }
         }
-        else if(ratingNode == "?")
+        else if (ratingNode == "?")
         {
           cSFDTVShowSeasonEpisode.RatingColor = RatingColor.LightGray;
         }
@@ -638,7 +651,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         {
           generes = infoNode.ChildNodes[3].InnerText.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("/").Select(x => x.Trim()).ToArray();
 
-          if (infoNode.ChildNodes[5].ChildNodes.Count > 1 && int.TryParse(infoNode.ChildNodes[5].ChildNodes[1].InnerText.Replace(",",null).Trim(), out var year1))
+          if (infoNode.ChildNodes[5].ChildNodes.Count > 1 && int.TryParse(infoNode.ChildNodes[5].ChildNodes[1].InnerText.Replace(",", null).Trim(), out var year1))
           {
             year = year1;
           }
@@ -674,7 +687,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         cSFDTVShowSeasonEpisode.Directors = directors;
         cSFDTVShowSeasonEpisode.OriginalName = originalName?.Replace("(viac" +
           "" +
-          "<)", null)?.Replace("(viac)",null);
+          "<)", null)?.Replace("(viac)", null);
         cSFDTVShowSeasonEpisode.Generes = generes;
         cSFDTVShowSeasonEpisode.SeasonNumber = number?.SeasonNumber;
         cSFDTVShowSeasonEpisode.EpisodeNumber = number?.EpisodeNumber;
@@ -688,20 +701,22 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #endregion
 
-    #region GetItemMainPage
-
-    public HtmlDocument GetItemMainPage(string url, CancellationToken cancellationToken)
+    private string GetCorrectBaseUrl(string url)
     {
-      url = url
+      return url
         .Replace("https://csfd.cz", baseUrl)
         .Replace("https://www.csfd.cz", baseUrl)
         .Replace("https://new.csfd.cz", baseUrl)
         .Replace("https://new.csfd.sk", baseUrl)
         .Replace("https://csfd.sk", baseUrl)
         .Replace("https://www.csfd.sk", baseUrl);
+    }
 
+    #region GetItemMainPage
 
-      var html = chromeDriverProvider.SafeNavigate(url);
+    public HtmlDocument GetItemMainPage(string url, CancellationToken cancellationToken)
+    {
+      var html = chromeDriverProvider.SafeNavigate(GetCorrectBaseUrl(url), out var redirectedUrl, extraMiliseconds: extraMilisecondsForScrape);
 
       var document = new HtmlDocument();
 
@@ -1008,10 +1023,13 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         .Where(x => x.OriginalName.RemoveDiacritics().Similarity(parsedName) > minSimilarity)
         .OrderByDescending(x => x.OriginalName.RemoveDiacritics().Similarity(parsedName)).AsEnumerable();
 
-
       query = query.Concat(allItems.Where(x => x.Name != null)
         .Where(x => x.Name.RemoveDiacritics().Similarity(parsedName) > minSimilarity)
         .OrderByDescending(x => x.Name.RemoveDiacritics().Similarity(parsedName)).AsEnumerable());
+
+      query = query.Concat(allItems.Where(x => x.OriginalName != null)
+        .Where(x => x.OriginalName.RemoveDiacritics().Similarity(GetWithoutBrackets(parsedName)) > minSimilarity)
+        .OrderByDescending(x => x.Name.RemoveDiacritics().Similarity(GetWithoutBrackets(parsedName))).AsEnumerable());
 
       if (year != null)
       {
@@ -1077,6 +1095,21 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       return int.MaxValue;
     }
 
+    #region RemoveDiacritics
+
+    public static string GetWithoutBrackets(string text)
+    {
+      if (string.IsNullOrEmpty(text))
+      {
+        return text;
+      }
+
+      var regex = new Regex(@"\[.*\]");
+      return regex.Replace(text, "");
+    }
+
+    #endregion
+
     #region GetItems
 
     private async Task<CSFDQueryResult> GetItems(string url, CancellationToken cancellationToken)
@@ -1086,7 +1119,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       var urlParsed = url.Replace("[", "").Replace("]", "").Replace("(", "").Replace(")", "");
 
-      var html = chromeDriverProvider.SafeNavigate(urlParsed);
+      var html = chromeDriverProvider.SafeNavigate(urlParsed, out var redirectedUrl, extraMiliseconds: extraMilisecondsForScrape);
 
       if (html == null)
         return result;
@@ -1128,7 +1161,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     private int? GetCsfdRating(CSFDItem cSFDItem)
     {
-      var html = chromeDriverProvider.SafeNavigate(cSFDItem.Url);
+      var html = chromeDriverProvider.SafeNavigate(cSFDItem.Url, out var redirectedUrl, extraMiliseconds: extraMilisecondsForScrape);
 
       var document = new HtmlDocument();
 
@@ -1150,7 +1183,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     private string GetCsfdImage(CSFDItem cSFDItem)
     {
-      var html = chromeDriverProvider.SafeNavigate(cSFDItem.Url);
+      var html = chromeDriverProvider.SafeNavigate(cSFDItem.Url, out var redirectedUrl, extraMiliseconds: extraMilisecondsForScrape);
 
       var document = new HtmlDocument();
 

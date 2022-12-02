@@ -1728,17 +1728,7 @@ namespace VPlayer.Core.ViewModels
       }
       else if (PlayList.Count > 0)
       {
-        var nextItem = oldPlaylist.Where(x => x.Value > actualItemIndex).FirstOrDefault(x => PlayList.Contains(x.Key));
-
-        if (nextItem.Key == null)
-        {
-          IsPlayFnished = true;
-          Play();
-        }
-        else
-        {
-          SetItemAndPlay(PlayList.IndexOf(nextItem.Key), true);
-        }
+        SetItemAndPlay();
       }
 
       RequestReloadVirtulizedPlaylist();

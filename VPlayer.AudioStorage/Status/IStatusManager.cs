@@ -64,6 +64,7 @@ namespace VPlayer.Core.Managers.Status
         if (value != actualMessageViewModel)
         {
           actualMessageViewModel = value;
+         
           RaisePropertyChanged();
         }
       }
@@ -127,6 +128,7 @@ namespace VPlayer.Core.Managers.Status
           CheckMessage(statusMessageViewModel);
 
         ActualMessageViewModel = statusMessageViewModel;
+        ActualMessageViewModel?.RaisePropertyChanges();
         onStatusMessageUpdatedSubject.OnNext(ActualMessageViewModel);
 
         if (statusMessageViewModel != null)

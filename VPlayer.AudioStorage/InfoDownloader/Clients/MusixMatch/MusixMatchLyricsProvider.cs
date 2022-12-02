@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Xml.XPath;
 using ChromeDriverScrapper;
 using HtmlAgilityPack;
+using HtmlAgilityPack.CssSelectors.NetCore;
 using Logger;
 using OpenQA.Selenium;
 using VCore;
@@ -18,8 +19,17 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch
 {
   public class MusixMatchSong
   {
+    public string WithoutBrackets
+    {
+      get
+      {
+        return Title?.Split(" (")[0];
+      }
+    }
+
     public string Title { get; set; }
     public string Url { get; set; }
+    public string Lyrics { get; set; }
   }
   public class MusixMatchAlbum
   {
@@ -52,12 +62,14 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch
 
         lock (batton)
         {
-          foundSong = loadedAlbums
-               .Where(x => GetNormalizedName(x.Name) == GetNormalizedName(albumName) && GetNormalizedName(x.Artist) == GetNormalizedName(artist))
-               .SelectMany(x => x.Songs)
+          var foundAlbums = loadedAlbums
+            .Where(x => GetNormalizedName(x.Name) == GetNormalizedName(albumName) && 
+                        GetNormalizedName(x.Artist) == GetNormalizedName(artist)).ToList();
+          
+          foundSong = foundAlbums.SelectMany(x => x.Songs)
                .FirstOrDefault(x => GetNormalizedName(x.Title) == GetNormalizedName(songName));
 
-          if (foundSong == null)
+          if (foundSong == null && !foundAlbums.Any())
           {
             var albums = GetAlbums(artist, albumName).ToList();
 
@@ -69,9 +81,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch
 
         if (foundSong != null)
         {
-          var url = $"https://www.musixmatch.com{foundSong.Url}";
-
-          var html = chromeDriverProvider.SafeNavigate(url);
+          var html = foundSong.Lyrics;
 
           if (html != null)
           {
@@ -131,30 +141,52 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch
           url += $"-{i}";
         }
 
-        var html = chromeDriverProvider.SafeNavigate(url, extraMiliseconds: 500);
+        var html = chromeDriverProvider.SafeNavigate(url, out var chromeUrl, extraMiliseconds: 500, useProxy: true);
 
         if (html != null)
         {
           document.LoadHtml(html);
+      
+          var nodes = document.DocumentNode.QuerySelectorAll(".mxm-album__tracks a.mui-cell");
 
-          var nodes = document.DocumentNode.SelectNodes("/html/body/div[2]/div/div/div/main/div/div[2]/div/div[2]/div[3]/div/div/ul/li/a");
-
-          var lyrics = nodes?.Select(x => new MusixMatchSong()
+          var songs = nodes.Select(x => new MusixMatchSong()
           {
             Title = x.SelectNodes("div[2]/h2")?.FirstOrDefault()?.InnerText,
             Url = x.Attributes[0].Value
-          });
+          }).ToList();
 
-          if (lyrics != null)
+
+          if (songs.Any())
           {
-            newAlbum = new MusixMatchAlbum()
-            {
-              Artist = artist,
-              Name = album,
-              Songs = lyrics.ToList()
-            };
+            var savedAlbum = albums.SingleOrDefault(x => x.Name == album);
+            List<MusixMatchSong> diff = songs;
 
-            albums.Add(newAlbum);
+            if (savedAlbum != null)
+            {
+              diff = songs.Where(p => savedAlbum.Songs.All(albumSong => p.WithoutBrackets != albumSong.Title)).ToList();
+            }
+
+            if (diff.Any())
+            {
+              newAlbum = new MusixMatchAlbum()
+              {
+                Artist = artist,
+                Name = album,
+                Songs = songs
+              };
+
+              albums.Add(newAlbum);
+             
+              var baseUrl = chromeUrl.Split("process.php?")[0];
+
+              foreach (var song in diff)
+              {
+                var lyricsUrl = $"{baseUrl}{song.Url.Remove(0, 1)}";
+                var lyrics = chromeDriverProvider.Navigate(lyricsUrl);
+
+                song.Lyrics = lyrics;
+              }
+            }
           }
         }
       }
@@ -185,7 +217,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch
       HtmlDocument document = new HtmlDocument();
       var url = $"https://www.musixmatch.com/lyrics/{GetAsUrlValue(artist)}/{GetAsUrlValue(songName)}";
 
-      var html = chromeDriverProvider.SafeNavigate(url);
+      var html = chromeDriverProvider.SafeNavigate(url, out var redirectedUrl, useProxy: true);
 
       if (html != null)
       {
