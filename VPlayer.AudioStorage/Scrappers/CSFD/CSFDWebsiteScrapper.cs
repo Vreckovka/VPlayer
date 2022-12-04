@@ -182,7 +182,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       logger.Log(MessageType.Success, $"Tv show season: {newSeason.Name}");
 
-      newSeason.SeasonEpisodes = LoadSeasonEpisodes(newSeason.SeasonNumber, newSeason.Url, statusMessage);
+      newSeason.SeasonEpisodes = LoadSeasonEpisodes(newSeason.SeasonNumber, newSeason.Url, statusMessage, cancellationToken);
 
       statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
 
@@ -444,7 +444,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         {
           cancellationToken.ThrowIfCancellationRequested();
 
-          season.SeasonEpisodes = LoadSeasonEpisodes(season.SeasonNumber, season.Url, statusMessageViewModel);
+          season.SeasonEpisodes = LoadSeasonEpisodes(season.SeasonNumber, season.Url, statusMessageViewModel, cancellationToken);
 
           statusManager.UpdateMessageAndIncreaseProcessCount(statusMessageViewModel);
         }
@@ -459,7 +459,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         if (season != null)
         {
           cancellationToken.ThrowIfCancellationRequested();
-          season.SeasonEpisodes = LoadSeasonEpisodes(seasonNumber.Value, season.Url, statusMessageViewModel, episodeNumber);
+          season.SeasonEpisodes = LoadSeasonEpisodes(seasonNumber.Value, season.Url, statusMessageViewModel,cancellationToken, episodeNumber);
         }
         else
         {
@@ -479,12 +479,14 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region LoadSeasonEpisodes
 
-    private List<CSFDTVShowSeasonEpisode> LoadSeasonEpisodes(int seasonNumber, string url, StatusMessageViewModel pStatusMessageViewModel, int? episodeNumber = null)
+    private List<CSFDTVShowSeasonEpisode> LoadSeasonEpisodes(int seasonNumber, string url, StatusMessageViewModel pStatusMessageViewModel, CancellationToken cancellationToken,int? episodeNumber = null)
     {
       try
       {
         List<CSFDTVShowSeasonEpisode> episodes = new List<CSFDTVShowSeasonEpisode>();
         HtmlDocument document = new HtmlDocument();
+
+        cancellationToken.ThrowIfCancellationRequested();
 
         var html = chromeDriverProvider.SafeNavigate(url, out var redirectedUrl, extraMiliseconds: extraMilisecondsForScrape);
 
@@ -521,6 +523,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
             newEpisode.Name = node.InnerText;
             newEpisode.Url = baseUrl + node.Attributes.FirstOrDefault(x => x.Name == "href")?.Value;
 
+            cancellationToken.ThrowIfCancellationRequested();
             LoadCsfdEpisode(newEpisode);
             episodes.Add(newEpisode);
 
@@ -539,6 +542,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           newEpisode.Name = node.InnerText;
           newEpisode.Url = baseUrl + node.Attributes.FirstOrDefault(x => x.Name == "href")?.Value;
 
+          cancellationToken.ThrowIfCancellationRequested();
           LoadCsfdEpisode(newEpisode);
           episodes.Add(newEpisode);
 

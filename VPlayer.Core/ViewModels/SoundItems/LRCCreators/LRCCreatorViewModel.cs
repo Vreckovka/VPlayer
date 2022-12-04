@@ -332,6 +332,7 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
             if (!FilePlayableRegionViewModel.IsPlaying)
             {
               ActualLine.Time = Model.ActualTime;
+              ActualLine.IsActual = true;
               return;
             }
 

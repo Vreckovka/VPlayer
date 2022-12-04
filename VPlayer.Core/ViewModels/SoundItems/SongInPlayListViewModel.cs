@@ -7,6 +7,7 @@ using System.Windows.Input;
 using Logger;
 using Prism.Events;
 using VCore;
+using VCore.Standard.Factories.ViewModels;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.LRC;
 using VCore.WPF.LRC.Domain;
@@ -40,6 +41,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
     //private readonly GoogleDriveLrcProvider googleDriveLrcProvider;
     private readonly IStorageManager storageManager;
     private readonly IWindowManager windowManager;
+    private readonly IViewModelsFactory viewModelsFactory;
     private readonly MusixMatchLyricsProvider musixMatchLyricsProvider;
 
     #endregion Fields
@@ -56,6 +58,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
       ILogger logger,
       IStorageManager storageManager,
       IWindowManager windowManager,
+      IViewModelsFactory viewModelsFactory,
       MusixMatchLyricsProvider musixMatchLyricsProvider) : base(model.ItemModel, eventAggregator, storageManager)
     {
       this.albumsViewModel = albumsViewModel ?? throw new ArgumentNullException(nameof(albumsViewModel));
@@ -66,6 +69,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
       //this.googleDriveLrcProvider = googleDriveLrcProvider ?? throw new ArgumentNullException(nameof(googleDriveLrcProvider));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
+      this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.musixMatchLyricsProvider = musixMatchLyricsProvider ?? throw new ArgumentNullException(nameof(musixMatchLyricsProvider));
       SongModel = model ?? throw new ArgumentNullException(nameof(model));
     }
@@ -175,6 +179,26 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     public bool IsInEditMode { get; set; }
     public LRCCreatorViewModel LRCCreatorViewModel { get; set; }
+
+    #region TagSongViewModel
+
+    private TagSongViewModel tagSongViewModel;
+
+    public TagSongViewModel TagSongViewModel
+    {
+      get { return tagSongViewModel; }
+      set
+      {
+        if (value != tagSongViewModel)
+        {
+          tagSongViewModel = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
 
     #region LyricsObject
 
@@ -365,6 +389,33 @@ namespace VPlayer.Core.ViewModels.SoundItems
         await storageManager.UpdateSong(SongModel);
 
         await TryToRefreshUpdateLyrics();
+      }
+    }
+
+    #endregion
+
+    #region Refresh
+
+    private ActionCommand changeMp3Properties;
+
+    public ICommand ChangeMp3Properties
+    {
+      get
+      {
+        if (changeMp3Properties == null)
+        {
+          changeMp3Properties = new ActionCommand(OnChangeMp3Properties);
+        }
+
+        return changeMp3Properties;
+      }
+    }
+
+    private void OnChangeMp3Properties()
+    {
+      if (TagSongViewModel == null)
+      {
+        TagSongViewModel = viewModelsFactory.Create<TagSongViewModel>();
       }
     }
 

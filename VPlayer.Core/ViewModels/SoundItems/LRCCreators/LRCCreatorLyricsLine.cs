@@ -29,6 +29,25 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
 
     #endregion
 
+    #region IsInEditMode
+
+    private bool isInEditMode;
+
+    public bool IsInEditMode
+    {
+      get { return isInEditMode; }
+      set
+      {
+        if (value != isInEditMode)
+        {
+          isInEditMode = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #region Time
 
     private TimeSpan? time;
@@ -41,6 +60,35 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
         if (value != time)
         {
           time = value;
+
+          if (time != TimeSpan.Zero)
+            StringTime = time.ToString();
+
+          RaisePropertyChanged();
+          RaisePropertyChanged(nameof(StringTime));
+        }
+      }
+    }
+
+    #endregion
+
+    #region StringTime
+
+    private string stringTime = "00:00:00.00";
+
+    public string StringTime
+    {
+      get { return stringTime; }
+      set
+      {
+        if (value != stringTime)
+        {
+          stringTime = value;
+
+          if (TimeSpan.TryParse(value, out var parsedTime))
+            Time = parsedTime;
+
+
           RaisePropertyChanged();
         }
       }

@@ -16,6 +16,7 @@
     <PackageReference Include="Prism.Core" Version="7.2.0.1422" />
     <PackageReference Include="Prism.Wpf" Version="7.2.0.1422" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
+    <PackageReference Include="taglib-sharp-netstandard2.0" Version="2.1.0" />
     <PackageReference Include="VirtualizingWrapPanel" Version="1.5.3" />
     <PackageReference Include="LibVLCSharp" Version="3.4.9" />
     <PackageReference Include="WindowsAPICodePack" Version="1.1.1" />

@@ -4,6 +4,7 @@
                     xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
                     xmlns:behaviors1="clr-namespace:VPlayer.WindowsPlayer.Behaviors"
                     xmlns:behaviors2="clr-namespace:VCore.WPF.Behaviors;assembly=VCore.WPF"
+                    xmlns:behaviors3="clr-namespace:VPlayer.Core.Behaviors;assembly=VPlayer.Core"
                     xmlns:buttons="clr-namespace:VCore.WPF.Behaviors.Buttons;assembly=VCore.WPF"
                     xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
                     xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
@@ -691,6 +692,7 @@
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="auto" />
                                                             <ColumnDefinition />
+                                                            <ColumnDefinition Width="40" />
                                                         </Grid.ColumnDefinitions>
 
                                                         <StackPanel Orientation="Horizontal">
@@ -698,57 +700,118 @@
                                                             <controls:PathButton Margin="5,0"
                                                                                  Command="{Binding RelativeSource={RelativeSource AncestorType=ListView, Mode=FindAncestor}, Path=DataContext.SetActualLine}"
                                                                                  CommandParameter="{Binding}"
+                                                                                 Glyph="{StaticResource location-dot}"
+                                                                                 GlyphFontFamily="{StaticResource FontAwesome6Pro_Solid}"
+                                                                                 IconCheckedColor="{StaticResource DefaultRedColor}"
+                                                                                 IconHoverColor="{StaticResource DefaultRedColor}"
+                                                                                 IconMargin="0"
                                                                                  IsChecked="{Binding IsActual, Mode=TwoWay}"
                                                                                  IsReadOnly="True"
-                                                                                 Style="{StaticResource check-glyph}" />
+                                                                                 Style="{StaticResource FontAwesomeGlyphStyle}"
+                                                                                 ToolTip="Go to" />
 
                                                             <controls:PathButton Margin="5,0"
                                                                                  Command="{Binding SetTime}"
-                                                                                 Style="{StaticResource pencil-glyph}" />
+                                                                                 Glyph="{StaticResource check-glyph}"
+                                                                                 GlyphFontSize="16"
+                                                                                 IconHoverColor="{StaticResource GreenColor2}"
+                                                                                 IconMargin="0"
+                                                                                 IsReadOnly="True"
+                                                                                 ToolTip="Set time" />
 
-                                                            <TextBox Width="115"
-                                                                     Margin="5,0"
-                                                                     HorizontalAlignment="Center"
-                                                                     VerticalAlignment="Center"
-                                                                     HorizontalContentAlignment="Center"
-                                                                     Background="Transparent"
-                                                                     BorderThickness="0"
-                                                                     FontWeight="Bold">
-                                                                <TextBox.Style>
-                                                                    <Style TargetType="TextBox">
-                                                                        <Setter Property="Text" Value="{Binding Time, StringFormat={}{0:hh\\:mm\\:ss\\.ff}}" />
-                                                                        <Setter Property="Foreground" Value="#aaffffff" />
-                                                                        <Setter Property="FontSize" Value="20" />
 
-                                                                        <Style.Triggers>
-                                                                            <DataTrigger Binding="{Binding Time}" Value="{x:Null}">
-                                                                                <Setter Property="Text" Value="--:--:--.--" />
-                                                                                <Setter Property="FontSize" Value="23" />
-                                                                                <Setter Property="Foreground" Value="#15ffffff" />
-                                                                            </DataTrigger>
-                                                                        </Style.Triggers>
-                                                                    </Style>
-                                                                </TextBox.Style>
-                                                            </TextBox>
+                                                            <Grid Width="115" Margin="5,0">
+                                                                <TextBlock HorizontalAlignment="Center"
+                                                                           VerticalAlignment="Center"
+                                                                           Background="Transparent"
+                                                                           FontWeight="Bold">
+                                                                    <TextBlock.Style>
+                                                                        <Style TargetType="TextBlock">
+                                                                            <Setter Property="Text" Value="{Binding Time, StringFormat={}{0:hh\\:mm\\:ss\\.ff}}" />
+                                                                            <Setter Property="Foreground" Value="#aaffffff" />
+                                                                            <Setter Property="FontSize" Value="20" />
+
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding Time}" Value="{x:Null}">
+                                                                                    <Setter Property="Text" Value="--:--:--.--" />
+                                                                                    <Setter Property="FontSize" Value="23" />
+                                                                                    <Setter Property="Foreground" Value="#15ffffff" />
+                                                                                </DataTrigger>
+                                                                                <DataTrigger Binding="{Binding IsInEditMode}" Value="true">
+                                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </TextBlock.Style>
+                                                                </TextBlock>
+
+                                                                <TextBox HorizontalAlignment="Center"
+                                                                         VerticalAlignment="Center"
+                                                                         HorizontalContentAlignment="Center"
+                                                                         Background="Transparent"
+                                                                         BorderThickness="0"
+                                                                         CaretBrush="White"
+                                                                         FontSize="20"
+                                                                         FontWeight="Bold"
+                                                                         Foreground="{StaticResource GreenBrush3}">
+                                                                    <TextBox.Style>
+                                                                        <Style TargetType="TextBox">
+                                                                            <Setter Property="Text" Value="{Binding StringTime, StringFormat={}{0:hh\\:mm\\:ss\\.ff}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding IsInEditMode}" Value="false">
+                                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </TextBox.Style>
+                                                                </TextBox>
+
+                                                                <b:Interaction.Behaviors>
+                                                                    <behaviors3:AddToFocusManager />
+                                                                </b:Interaction.Behaviors>
+                                                            </Grid>
                                                         </StackPanel>
 
-
                                                         <TextBox Grid.Column="1"
-                                                                 HorizontalAlignment="Left"
+                                                                 HorizontalAlignment="Stretch"
                                                                  HorizontalContentAlignment="Left"
-                                                                 Text="{Binding Text, Mode=OneWay}"
                                                                  TextWrapping="Wrap">
                                                             <TextBox.Style>
                                                                 <Style BasedOn="{StaticResource LyricsStyle}" TargetType="TextBox">
+                                                                    <Setter Property="Text" Value="{Binding Text, Mode=OneWay}" />
+                                                                    <Setter Property="CaretBrush" Value="Transparent" />
+
                                                                     <Style.Triggers>
                                                                         <DataTrigger Binding="{Binding IsActual}" Value="true">
                                                                             <Setter Property="FontSize" Value="32" />
                                                                             <Setter Property="TextWrapping" Value="Wrap" />
                                                                         </DataTrigger>
+
+                                                                        <DataTrigger Binding="{Binding IsInEditMode}" Value="true">
+                                                                            <Setter Property="Foreground" Value="{StaticResource GreenBrush3}" />
+                                                                            <Setter Property="TextWrapping" Value="Wrap" />
+                                                                            <Setter Property="IsReadOnly" Value="False" />
+                                                                            <Setter Property="CaretBrush" Value="White" />
+                                                                            <Setter Property="Text" Value="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                                        </DataTrigger>
                                                                     </Style.Triggers>
                                                                 </Style>
                                                             </TextBox.Style>
+
+                                                            <b:Interaction.Behaviors>
+                                                                <behaviors3:AddToFocusManager />
+                                                            </b:Interaction.Behaviors>
                                                         </TextBox>
+
+                                                        <controls:PathButton Grid.Column="2"
+                                                                             Margin="5,0"
+                                                                             Glyph="{StaticResource pencil-glyph}"
+                                                                             GlyphFontSize="16"
+                                                                             IconCheckedColor="{StaticResource YellowColor}"
+                                                                             IconHoverColor="{StaticResource YellowColor}"
+                                                                             IconMargin="0"
+                                                                             IsChecked="{Binding IsInEditMode, Mode=TwoWay}"
+                                                                             ToolTip="Edit line" />
                                                     </Grid>
 
                                                     <Border.Style>
@@ -1140,8 +1203,9 @@
 
     <DataTemplate x:Key="LRCEditorIconDataTemplate">
         <controls:PathButton FontSize="13"
-                             IsHitTestVisible="False"
-                             Style="{StaticResource pencil-glyph}" />
+                             Glyph="{StaticResource pencil-glyph}"
+                             IconDefaultColor="#858585"
+                             IsHitTestVisible="False" />
     </DataTemplate>
 
     <DataTemplate x:Key="DisabledLyricsIconDataTemplate">
