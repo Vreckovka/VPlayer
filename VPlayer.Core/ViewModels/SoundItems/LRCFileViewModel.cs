@@ -360,11 +360,11 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
         Model.Lines.ForEach(x => x.Timestamp += TimeSpan.FromMilliseconds(TimeAdjustment));
 
-        Application.Current.Dispatcher.Invoke(() => { IsLoading = true; UpdateStatus = null; });
+        Application.Current?.Dispatcher?.Invoke(() => { IsLoading = true; UpdateStatus = null; });
 
         var result = await pCloudLyricsProvider.Update(Model);
 
-        Application.Current.Dispatcher.Invoke(() =>
+        Application.Current?.Dispatcher?.Invoke(() =>
         {
           UpdateStatus = result;
 
@@ -377,7 +377,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
       }
       finally
       {
-        Application.Current.Dispatcher.Invoke(() => { IsLoading = false; });
+        Application.Current?.Dispatcher?.Invoke(() => { IsLoading = false; });
       }
 
     }

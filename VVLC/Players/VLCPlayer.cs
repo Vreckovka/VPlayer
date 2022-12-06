@@ -214,17 +214,26 @@ namespace VVLC.Players
 
     public void Play()
     {
-      MediaPlayer?.Play();
+      lock (this)
+      {
+        MediaPlayer?.Play(); 
+      }
     }
 
     public void Pause()
     {
-      MediaPlayer?.Pause();
+      lock (this)
+      {
+        MediaPlayer?.Pause(); 
+      }
     }
 
     public void Stop()
     {
-      MediaPlayer?.Stop();
+      lock (this)
+      {
+        MediaPlayer?.Stop(); 
+      }
     }
 
     #region SetNewMedia

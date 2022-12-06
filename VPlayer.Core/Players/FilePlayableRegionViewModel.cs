@@ -171,7 +171,7 @@ namespace VPlayer.Core.ViewModels
     {
       get
       {
-        return PlayList.Count > 1 ? ((double) (ActualItemIndex  + 1) / PlayList.Count) * 100.0 : 0;
+        return PlayList.Count > 0 ? ((double) (ActualItemIndex  + 1) / PlayList.Count) * 100.0 : 0;
       }
     }
 
@@ -297,8 +297,9 @@ namespace VPlayer.Core.ViewModels
 
     public override void OnNewItemPlay(TModel model)
     {
-      RaisePropertyChanged(nameof(ActualPercItemPlaylist));
-      base.OnNewItemPlay(model);
+     base.OnNewItemPlay(model);
+     RaisePropertyChanged(nameof(ActualPercItemPlaylist));
+     RaisePropertyChanged(nameof(TotalPlaylistDuration));
 
       if (MediaPlayer.Media != null)
       {
@@ -531,6 +532,8 @@ namespace VPlayer.Core.ViewModels
           
           DetailViewModel = viewModelsFactory.Create<TPopupViewModel>(ActualItem.Model);
         }
+
+        RaisePropertyChanged(nameof(TotalPlaylistDuration));
       });
     }
 
@@ -667,6 +670,8 @@ namespace VPlayer.Core.ViewModels
 
         if (itemsToUpdate.Count > 0)
           await storageManager.UpdateEntitiesAsync(itemsToUpdate.Select(x => x.Model));
+
+        RaisePropertyChanged(nameof(TotalPlaylistDuration));
       }
       catch (Exception ex)
       {

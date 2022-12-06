@@ -80,7 +80,7 @@
                                         <Setter Property="IconDefaultColor" Value="#50ffffff" />
                                         <Setter Property="IconCheckedColor" Value="#4291db" />
                                         <Setter Property="Opacity" Value="1" />
-                                        <Setter Property="Margin" Value="-3,-5,2,-5" />
+                                        <Setter Property="Margin" Value="-3,-5,4,-5" />
 
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding ExtraData}" Value="{x:Null}">
@@ -139,6 +139,7 @@
                             <TextBlock Grid.Column="1"
                                        FontSize="14"
                                        FontWeight="DemiBold"
+                                       HorizontalAlignment="Left"
                                        Foreground="#9ca379"
                                        Grid.IsSharedSizeScope="True"
                                        Text="{Binding ActualItem.Model.Name}"

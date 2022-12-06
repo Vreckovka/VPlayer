@@ -891,7 +891,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       addArtists?.RaiseCanExecuteChanged();
       addAlbums?.RaiseCanExecuteChanged();
 
-      Application.Current.Dispatcher.Invoke(() =>
+      Application.Current?.Dispatcher?.Invoke(() =>
       {
         albumDetail?.RaiseCanExecuteChanged();
       });

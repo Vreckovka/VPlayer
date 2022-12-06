@@ -8,6 +8,7 @@
              xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
              xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
              xmlns:converters1="clr-namespace:VPlayer.Home.Converters;assembly=VCore.WPF"
+             xmlns:converters2="clr-namespace:VPlayer.WindowsPlayer.Converters"
              xmlns:converters3="clr-namespace:VPlayer.Core.Converters;assembly=VPlayer.Core"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:library1="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
@@ -153,10 +154,20 @@
                            Text="{Binding ActualItem.ActualTime, StringFormat=hh\\:mm\\:ss}" />
 
                 <TextBlock Margin="5,0,0,0"
-                           FontSize="14"
+                           VerticalAlignment="Bottom"
+                           FontSize="12"
                            FontWeight="SemiBold"
-                           Foreground="#303030"
-                           Text="{Binding ActualItem.ActualPerc, StringFormat={}({0:N0}%), Mode=OneWay}" />
+                           Foreground="#303030">
+                    <TextBlock.ToolTip>
+                        <TextBlock Text="{Binding ActualItem.ActualPerc, StringFormat={}({0:N2}%), Mode=OneWay}" />
+                    </TextBlock.ToolTip>
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{converters2:StringFormatBasedOnTimeConverter}">
+                            <Binding Path="ActualItem.Duration" />
+                            <Binding Path="ActualItem.ActualPerc" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
             </StackPanel>
 
             <StackPanel Grid.Row="2"
@@ -165,10 +176,15 @@
                         Orientation="Horizontal">
 
                 <TextBlock Margin="0,0,5,0"
-                           FontSize="14"
+                           VerticalAlignment="Bottom"
+                           FontSize="12"
                            FontWeight="SemiBold"
                            Foreground="#303030"
-                           Text="{Binding ActualItem.LeftTime, StringFormat={}(-{0:hh\\:mm\\:ss}), Mode=OneWay}" />
+                           Text="{Binding ActualItem.LeftTime, StringFormat={}(-{0:hh\\:mm\\:ss}), Mode=OneWay}">
+                    <TextBlock.ToolTip>
+                        <TextBlock Text="{Binding ActualItem.LeftTime, StringFormat={}(-{0:hh\\:mm\\:ss}), Mode=OneWay}" />
+                    </TextBlock.ToolTip>
+                </TextBlock>
 
                 <TextBlock FontSize="14"
                            FontWeight="SemiBold"
@@ -329,7 +345,11 @@
                                        FontWeight="Bold"
                                        Foreground="{StaticResource YellowBrush}"
                                        Text="{Binding PlaylistTotalTimePlayed, Mode=OneWay, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}"
-                                       TextTrimming="CharacterEllipsis" />
+                                       TextTrimming="CharacterEllipsis">
+                                <TextBlock.ToolTip>
+                                    <TextBlock Text="{Binding PlaylistTotalTimePlayed, Mode=OneWay, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}" />
+                                </TextBlock.ToolTip>
+                            </TextBlock>
                         </Grid>
 
                         <Grid Style="{StaticResource Container}">

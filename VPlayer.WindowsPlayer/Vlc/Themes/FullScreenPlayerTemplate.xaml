@@ -14,7 +14,8 @@
                     xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors;assembly=VPlayer.Core"
                     xmlns:themes="clr-namespace:VPlayer.WindowsPlayer.Vlc.Themes"
                     xmlns:viewModels="clr-namespace:VPlayer.WindowsPlayer.ViewModels"
-                    xmlns:views="clr-namespace:VPlayer.Player.Views;assembly=VCore.WPF">
+                    xmlns:views="clr-namespace:VPlayer.Player.Views;assembly=VCore.WPF"
+                    xmlns:converters="clr-namespace:VPlayer.WindowsPlayer.Converters">
 
 
     <ResourceDictionary.MergedDictionaries>
@@ -60,10 +61,17 @@
                                            Text="{Binding ActualItem.ActualTime, StringFormat=hh\\:mm\\:ss}" />
 
                                 <TextBlock Margin="5,0,0,0"
-                                           FontSize="14"
+                                           VerticalAlignment="Bottom"
+                                           FontSize="12"
                                            FontWeight="SemiBold"
-                                           Foreground="#505050"
-                                           Text="{Binding ActualItem.ActualPerc, StringFormat={}({0:N0}%), Mode=OneWay}" />
+                                           Foreground="#505050">
+                                    <TextBlock.Text>
+                                        <MultiBinding Converter="{converters:StringFormatBasedOnTimeConverter}">
+                                            <Binding Path="ActualItem.Duration" />
+                                            <Binding Path="ActualItem.ActualPerc" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
                             </StackPanel>
 
                             <Border x:Name="slider_container"
@@ -176,7 +184,8 @@
                                         Orientation="Horizontal">
 
                                 <TextBlock Margin="0,0,5,0"
-                                           FontSize="14"
+                                           VerticalAlignment="Bottom"
+                                           FontSize="12"
                                            FontWeight="Bold"
                                            Foreground="#505050"
                                            Text="{Binding ActualItem.LeftTime, StringFormat={}(-{0:hh\\:mm\\:ss}), Mode=OneWay}" />
