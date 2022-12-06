@@ -161,6 +161,8 @@ namespace VPlayer.Core.ViewModels
 
           RaisePropertyChanged();
           RaisePropertyChanged(nameof(ActualTime));
+          RaisePropertyChanged(nameof(LeftTime));
+          RaisePropertyChanged(nameof(ActualPerc));
         }
       }
     }
@@ -184,6 +186,8 @@ namespace VPlayer.Core.ViewModels
 
           RaisePropertyChanged();
           RaisePropertyChanged(nameof(ActualTime));
+          RaisePropertyChanged(nameof(LeftTime));
+          RaisePropertyChanged(nameof(ActualPerc));
 
           OnActualPositionChanged(value);
         }
@@ -248,6 +252,27 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
+
+
+
+    #region LeftTime
+
+    public TimeSpan LeftTime
+    {
+      get { return TimeSpan.FromSeconds(Duration) - ActualTime; }
+    }
+
+    #endregion
+
+    #region ActualPerc
+
+    public double ActualPerc
+    {
+      get { return (ActualTime.TotalSeconds / Duration) * 100; }
+    }
+
+    #endregion
+
 
     #region OnResetAllData
 

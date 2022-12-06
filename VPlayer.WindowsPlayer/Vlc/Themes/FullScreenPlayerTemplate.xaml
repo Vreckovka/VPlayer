@@ -48,15 +48,23 @@
                                 <ColumnDefinition SharedSizeGroup="A" />
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Grid.Row="1"
-                                       Grid.Column="0"
-                                       Margin="0,0,0,0"
-                                       HorizontalAlignment="Left"
-                                       DataContext="{Binding ActualViewModel}"
-                                       FontSize="14"
-                                       FontWeight="Bold"
-                                       Foreground="{StaticResource 120_WhiteTransparentBrush}"
-                                       Text="{Binding ActualItem.ActualTime, StringFormat=hh\\:mm\\:ss}" />
+                            <StackPanel Grid.Row="1"
+                                        Grid.Column="0"
+                                        Margin="0,0,0,0"
+                                        HorizontalAlignment="Left"
+                                        DataContext="{Binding ActualViewModel}"
+                                        Orientation="Horizontal">
+                                <TextBlock FontSize="14"
+                                           FontWeight="Bold"
+                                           Foreground="{StaticResource 120_WhiteTransparentBrush}"
+                                           Text="{Binding ActualItem.ActualTime, StringFormat=hh\\:mm\\:ss}" />
+
+                                <TextBlock Margin="5,0,0,0"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Foreground="#505050"
+                                           Text="{Binding ActualItem.ActualPerc, StringFormat={}({0:N0}%), Mode=OneWay}" />
+                            </StackPanel>
 
                             <Border x:Name="slider_container"
                                     Grid.Row="0"
@@ -160,16 +168,24 @@
                             </Popup>
 
 
-                            <TextBlock Grid.Row="1"
-                                       Grid.Column="2"
-                                       Margin="0"
-                                       HorizontalAlignment="Right"
-                                       DataContext="{Binding ActualViewModel}"
-                                       FontSize="14"
-                                       FontWeight="Bold"
-                                       Foreground="{StaticResource 120_WhiteTransparentBrush}"
-                                       Text="{Binding ActualItem.Duration, Converter={converters1:TimeConverter TimeType=Second}}" />
+                            <StackPanel Grid.Row="1"
+                                        Grid.Column="2"
+                                        Margin="0"
+                                        HorizontalAlignment="Right"
+                                        DataContext="{Binding ActualViewModel}"
+                                        Orientation="Horizontal">
 
+                                <TextBlock Margin="0,0,5,0"
+                                           FontSize="14"
+                                           FontWeight="Bold"
+                                           Foreground="#505050"
+                                           Text="{Binding ActualItem.LeftTime, StringFormat={}(-{0:hh\\:mm\\:ss}), Mode=OneWay}" />
+
+                                <TextBlock FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Foreground="#aaa"
+                                           Text="{Binding ActualItem.Duration, Converter={converters1:TimeConverter TimeType=Second}}" />
+                            </StackPanel>
 
                             <Grid Grid.Row="2"
                                   Grid.Column="0"

@@ -167,6 +167,14 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    public double ActualPercItemPlaylist
+    {
+      get
+      {
+        return PlayList.Count > 1 ? ((double) (ActualItemIndex  + 1) / PlayList.Count) * 100.0 : 0;
+      }
+    }
+
     #endregion
 
     #region Commands
@@ -289,6 +297,7 @@ namespace VPlayer.Core.ViewModels
 
     public override void OnNewItemPlay(TModel model)
     {
+      RaisePropertyChanged(nameof(ActualPercItemPlaylist));
       base.OnNewItemPlay(model);
 
       if (MediaPlayer.Media != null)
@@ -563,6 +572,8 @@ namespace VPlayer.Core.ViewModels
 
     protected override void OnPlayPlaylist(PlayItemsEventData<TItemViewModel> data)
     {
+      RaisePropertyChanged(nameof(TotalPlaylistDuration));
+
       base.OnPlayPlaylist(data);
 
       HandleLastItemElapsed();
