@@ -24,6 +24,7 @@ namespace VPlayer.AudioStorage.DomainClasses
       ItemCount = other.ItemCount;
       TotalPlayedTime = other.TotalPlayedTime;
       IsUserCreated = other.IsUserCreated;
+      Modified = other.Modified;
     }
   }
 

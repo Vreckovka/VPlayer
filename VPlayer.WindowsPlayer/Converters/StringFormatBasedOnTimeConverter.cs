@@ -23,7 +23,7 @@ namespace VPlayer.WindowsPlayer.Converters
         {
           result = perc.ToString("N0");
         }
-        else if(length < TimeSpan.FromMinutes(90))
+        else if(length < TimeSpan.FromMinutes(105))
         {
           result = perc.ToString("N1");
         }

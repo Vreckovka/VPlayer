@@ -159,7 +159,7 @@
                            FontWeight="SemiBold"
                            Foreground="#303030">
                     <TextBlock.ToolTip>
-                        <TextBlock Text="{Binding ActualItem.ActualPerc, StringFormat={}({0:N2}%), Mode=OneWay}" />
+                        <TextBlock Text="{Binding ActualItem.ActualPerc, StringFormat={}{0:N2}%, Mode=OneWay}" />
                     </TextBlock.ToolTip>
                     <TextBlock.Text>
                         <MultiBinding Converter="{converters2:StringFormatBasedOnTimeConverter}">
@@ -182,7 +182,7 @@
                            Foreground="#303030"
                            Text="{Binding ActualItem.LeftTime, StringFormat={}(-{0:hh\\:mm\\:ss}), Mode=OneWay}">
                     <TextBlock.ToolTip>
-                        <TextBlock Text="{Binding ActualItem.LeftTime, StringFormat={}(-{0:hh\\:mm\\:ss}), Mode=OneWay}" />
+                        <TextBlock Text="{Binding ActualItem.LeftTime, StringFormat={}-{0:hh\\:mm\\:ss}, Mode=OneWay}" />
                     </TextBlock.ToolTip>
                 </TextBlock>
 

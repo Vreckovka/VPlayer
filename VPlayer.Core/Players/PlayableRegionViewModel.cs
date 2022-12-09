@@ -1437,7 +1437,7 @@ namespace VPlayer.Core.ViewModels
 
       bool success = false;
 
-      var storedPlaylist = storageManager.GetRepository<TPlaylistModel>().Where(x => !x.IsUserCreated).SingleOrDefault(x => x.HashCode == hashCode);
+      var storedPlaylist = storageManager.GetRepository<TPlaylistModel>().OrderByDescending(x => x.IsUserCreated).FirstOrDefault(x => x.HashCode == hashCode);
 
       if (storedPlaylist == null)
       {
@@ -1482,15 +1482,12 @@ namespace VPlayer.Core.ViewModels
       }
       else
       {
-        storedPlaylist.Update(entityPlayList);
-
-        if (storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(storedPlaylist, out var updated))
+        Application.Current.Dispatcher.Invoke(() =>
         {
-          Application.Current.Dispatcher.Invoke(() =>
-          {
-            ActualSavedPlaylist = updated;
-          });
-        }
+          ActualSavedPlaylist = storedPlaylist;
+
+          ActualSavedPlaylist.LastPlayed = DateTime.Now;
+        });
       }
 
       if (ActualSavedPlaylist != null)

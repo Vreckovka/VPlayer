@@ -5,6 +5,7 @@
                     xmlns:behaviors1="clr-namespace:VPlayer.WindowsPlayer.Behaviors"
                     xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
                     xmlns:controls2="clr-namespace:VVLC.Controls;assembly=VVLC"
+                    xmlns:converters="clr-namespace:VPlayer.WindowsPlayer.Converters"
                     xmlns:converters1="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
                     xmlns:domain="clr-namespace:VPlayer.AudioStorage.Scrappers.CSFD.Domain;assembly=VPlayer.AudioStorage"
                     xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.DarkTheme"
@@ -14,8 +15,7 @@
                     xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors;assembly=VPlayer.Core"
                     xmlns:themes="clr-namespace:VPlayer.WindowsPlayer.Vlc.Themes"
                     xmlns:viewModels="clr-namespace:VPlayer.WindowsPlayer.ViewModels"
-                    xmlns:views="clr-namespace:VPlayer.Player.Views;assembly=VCore.WPF"
-                    xmlns:converters="clr-namespace:VPlayer.WindowsPlayer.Converters">
+                    xmlns:views="clr-namespace:VPlayer.Player.Views;assembly=VCore.WPF">
 
 
     <ResourceDictionary.MergedDictionaries>
@@ -65,6 +65,9 @@
                                            FontSize="12"
                                            FontWeight="SemiBold"
                                            Foreground="#505050">
+                                    <TextBlock.ToolTip>
+                                        <TextBlock Text="{Binding ActualItem.ActualPerc, StringFormat={}{0:N2}%}" />
+                                    </TextBlock.ToolTip>
                                     <TextBlock.Text>
                                         <MultiBinding Converter="{converters:StringFormatBasedOnTimeConverter}">
                                             <Binding Path="ActualItem.Duration" />
@@ -188,7 +191,11 @@
                                            FontSize="12"
                                            FontWeight="Bold"
                                            Foreground="#505050"
-                                           Text="{Binding ActualItem.LeftTime, StringFormat={}(-{0:hh\\:mm\\:ss}), Mode=OneWay}" />
+                                           Text="{Binding ActualItem.LeftTime, StringFormat={}(-{0:hh\\:mm\\:ss}), Mode=OneWay}">
+                                    <TextBlock.ToolTip>
+                                        <TextBlock Text="{Binding ActualItem.LeftTime, StringFormat={}-{0:hh\\:mm\\:ss}, Mode=OneWay}" />
+                                    </TextBlock.ToolTip>
+                                </TextBlock>
 
                                 <TextBlock FontSize="14"
                                            FontWeight="SemiBold"
