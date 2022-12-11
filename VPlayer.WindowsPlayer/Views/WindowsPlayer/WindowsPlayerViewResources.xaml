@@ -202,7 +202,8 @@
                                        Panel.ZIndex="1"
                                        FontSize="13"
                                        FontWeight="Bold"
-                                       Text="{Binding Duration, Converter={converters:TimeConverter TimeType=Second}}">
+                                       Text="{Binding Duration, Converter={converters:TimeConverter TimeType=Second}}"
+                                       ToolTip="{Binding Duration, Converter={converters:TimeConverter TimeType=Second}}">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="Opacity" Value="0.35" />
@@ -228,6 +229,7 @@
                                         <Setter Property="TextTrimming" Value="CharacterEllipsis" />
                                         <Setter Property="Text" Value="{Binding Name}" />
                                         <Setter Property="Foreground" Value="#decfca" />
+                                        <Setter Property="ToolTip" Value="{Binding Name}" />
                                     </Style>
                                 </Grid.Resources>
 
@@ -259,6 +261,7 @@
                                 </TextBlock>
 
                                 <TextBlock Name="PlayingTextBlock"
+                                           Grid.Row="0"
                                            Grid.Column="1"
                                            Padding="0"
                                            FontWeight="Bold">
@@ -285,12 +288,13 @@
                             </Grid>
 
 
-                            <ContentPresenter Grid.Row="0"
-                                              Grid.Column="1"
-                                              Grid.ColumnSpan="3"
-                                              Panel.ZIndex="0"
-                                              ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}" />
-
+                            <Border Grid.Row="0"
+                                    Grid.Column="1"
+                                    Grid.ColumnSpan="3"
+                                    VerticalAlignment="Bottom"
+                                    Panel.ZIndex="0">
+                                <ContentPresenter ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}" />
+                            </Border>
                         </Grid>
 
                         <Border.InputBindings>

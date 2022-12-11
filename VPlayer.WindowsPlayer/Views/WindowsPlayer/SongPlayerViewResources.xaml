@@ -1377,7 +1377,9 @@
                         </TextBlock.Style>
                     </TextBlock>
 
-                    <TextBlock Margin="5,0,0,0" FontSize="12">
+                    <TextBlock Margin="5,0,0,0"
+                               FontSize="12"
+                               ToolTip="{Binding ArtistViewModel.Name, Mode=OneWay}">
                         <Run FontSize="13" Text="{Binding ArtistViewModel.Name, Mode=OneWay}">
                             <Run.Style>
                                 <Style TargetType="Run">
@@ -1393,7 +1395,7 @@
                             </Run.Style>
                         </Run>
 
-                        <Run Text="{Binding AlbumViewModel.Name, Mode=OneWay, StringFormat={}({0})}">
+                        <Run Text="{Binding AlbumViewModel.Name, Mode=OneWay, StringFormat={}({0})}" ToolTip="{Binding AlbumViewModel.Name, Mode=OneWay}">
                             <Run.Style>
                                 <Style TargetType="Run">
                                     <Setter Property="Foreground" Value="#edfffa" />

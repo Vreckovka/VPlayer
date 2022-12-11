@@ -367,7 +367,7 @@ namespace VPlayer.Core.ViewModels
 
           var deltaTimeChanged = eventArgs.Time - lastTimeChangedMs;
 
-          if (deltaTimeChanged < 0)
+          if (deltaTimeChanged < 0 || deltaTimeChanged > 10000)
           {
             deltaTimeChanged = 0;
           }
@@ -573,11 +573,19 @@ namespace VPlayer.Core.ViewModels
 
     #region OnPlayPlaylist
 
+    private bool setLastPosition = false;
     protected override void OnPlayPlaylist(PlayItemsEventData<TItemViewModel> data)
     {
+      setLastPosition = false;
+
       RaisePropertyChanged(nameof(TotalPlaylistDuration));
 
       base.OnPlayPlaylist(data);
+
+      if (data.EventAction == EventAction.PlayFromPlaylistLast)
+      {
+        setLastPosition = true;
+      }
 
       HandleLastItemElapsed();
     }
@@ -594,9 +602,30 @@ namespace VPlayer.Core.ViewModels
 
         var position = GetLastItemElapsed(ActualSavedPlaylist);
 
-        if (position != null && position > 0)
+        if (position != null && position > 0 && ActualItem != null)
           ItemLastTime = (int)(position.Value * ActualItem.Duration);
       });
+    }
+
+    #endregion
+
+    #region SetLastPosition
+
+    private void SetLastPosition(TPlaylistModel playlist)
+    {
+      var lastTime = GetLastItemElapsed(playlist);
+
+      if (lastTime > 0.05)
+      {
+        if (ActualItem != null)
+        {
+          Application.Current.Dispatcher.Invoke(() =>
+          {
+            MediaPlayer.Position = lastTime.Value;
+            ActualItem.ActualPosition = lastTime.Value;
+          });
+        }
+      }
     }
 
     #endregion
@@ -846,6 +875,17 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    protected override void OnPlay()
+    {
+      base.OnPlay();
+
+      if (setLastPosition)
+      {
+        SetLastPosition(ActualSavedPlaylist);
+        setLastPosition = false;
+      }
+    }
+
     #region Dispose
 
     public override void Dispose()
@@ -859,6 +899,25 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
+
+    protected override void PlayItems(IEnumerable<TItemViewModel> items, bool savePlaylist = true, int songIndex = 0, bool editSaved = false, bool onlyItemSet = false)
+    {
+      base.PlayItems(items, savePlaylist, songIndex, editSaved, onlyItemSet);
+
+      if (savePlaylist)
+      {
+        setLastPosition = true;
+        HandleLastItemElapsed();
+      }
+    }
+
+    protected override void OnStoredPlaylistLoaded()
+    {
+      base.OnStoredPlaylistLoaded();
+
+      IsRepeate = ActualSavedPlaylist.IsReapting;
+      IsShuffle = ActualSavedPlaylist.IsShuffle;
+    }
 
     #endregion
 
@@ -1036,5 +1095,6 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
+
   }
 }

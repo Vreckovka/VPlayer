@@ -13,6 +13,7 @@ using Logger;
 using Microsoft.EntityFrameworkCore;
 using Prism.Mvvm;
 using VCore;
+using VCore.ItemsCollections;
 using VCore.Standard.Factories.ViewModels;
 using VCore.WPF.ItemsCollections.VirtualList;
 using VCore.WPF.ItemsCollections.VirtualList.VirtualLists;
@@ -84,9 +85,9 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
     
     #region Items
 
-    private ObservableCollection<TViewModel> items;
+    private RxObservableCollection<TViewModel> items;
 
-    public ObservableCollection<TViewModel> Items
+    public RxObservableCollection<TViewModel> Items
     {
       get { return items; }
       set
@@ -156,7 +157,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
 
             var vms = data.Select(x => ViewModelsFactory.Create<TViewModel>(x)).ToList();
 
-            Items = new ObservableCollection<TViewModel>(vms);
+            Items = new RxObservableCollection<TViewModel>(vms);
             FilteredItemsCollection = new ObservableCollection<TViewModel>(vms);
 
             Items.CollectionChanged += Items_CollectionChanged;

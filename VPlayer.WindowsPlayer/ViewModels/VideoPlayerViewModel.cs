@@ -602,11 +602,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
       if (DetailViewModel != null && ActualItem != null)
       {
         DetailViewModel.DisablePopup = ActualItem.IsStream;
-      } 
-       
+      }
+
     }
 
     #endregion
+
+    #region Media_DurationChanged
 
     protected override void Media_DurationChanged(object sender, MediaDurationChangedArgs e)
     {
@@ -617,6 +619,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
         DetailViewModel.DisablePopup = ActualItem.IsStream;
       }
     }
+
+    #endregion
 
     #region DownloadItemInfo
 
@@ -993,46 +997,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-    #region OnPlay
-
-    protected override void OnPlay()
-    {
-      base.OnPlay();
-
-      if (requestedLastPosition != null)
-      {
-        Application.Current.Dispatcher.Invoke(async () =>
-        {
-          MediaPlayer.Position = requestedLastPosition.Value;
-          ActualItem.ActualPosition = requestedLastPosition.Value;
-        });
-      }
-
-      requestedLastPosition = null;
-    }
-
-    #endregion
-
-    #region OnPlayPlaylist
-
-    private float? requestedLastPosition = null;
-    protected override void OnPlayPlaylist(PlayItemsEventData<VideoItemInPlaylistViewModel> data)
-    {
-      base.OnPlayPlaylist(data);
-
-      if (data.EventAction == EventAction.PlayFromPlaylistLast)
-      {
-        var lastTime = GetLastItemElapsed(data.GetModel<VideoFilePlaylist>());
-
-        if (lastTime > 0.05)
-        {
-          requestedLastPosition = lastTime;
-        }
-      }
-    }
-
-    #endregion
-
     #region TryGetSettingOrGetPreffered
 
     private TSettingViewModel TryGetSettingOrGetPreffered<TSettingViewModel>(IEnumerable<TSettingViewModel> allItems, Language settingLanguage)
@@ -1234,7 +1198,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       return base.BeforePlayEvent(data);
     }
-
+    
     #endregion
   }
 }

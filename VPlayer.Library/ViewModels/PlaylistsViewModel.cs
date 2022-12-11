@@ -1,17 +1,21 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Prism.Events;
 using VCore.Standard.Factories.ViewModels;
+using VCore.Standard.Helpers;
 using VCore.Standard.Modularity.Interfaces;
 using VCore.WPF;
 using VCore.WPF.Misc;
 using VCore.WPF.Modularity.RegionProviders;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.Artists;
 using VPlayer.Home.ViewModels.LibraryViewModels;
 
@@ -19,7 +23,7 @@ namespace VPlayer.Home.ViewModels
 {
   public abstract class PlaylistsViewModel<TView, TViewModel, TModel> : PlayableItemsViewModel<TView, TViewModel, TModel>
     where TView : class, IView
-    where TViewModel : class, INamedEntityViewModel<TModel>
+    where TViewModel : class, INamedEntityViewModel<TModel>, IBusy
     where TModel : class, INamedEntity, IFilePlaylist
   {
     public PlaylistsViewModel(IRegionProvider regionProvider, IViewModelsFactory viewModelsFactory, IStorageManager storageManager,
@@ -30,6 +34,8 @@ namespace VPlayer.Home.ViewModels
       {
         ShowProcessCount = false
       };
+
+     
     }
 
     protected IEnumerable<TViewModel> AllItems { get; set; }
@@ -113,6 +119,14 @@ namespace VPlayer.Home.ViewModels
         RaisePropertyChanged(nameof(ViewCollection));
 
         CanLoadMoreItems = actualSkip < AllItems.Count();
+
+        LibraryCollection.Items.ItemUpdated
+          .Where(x => x.EventArgs.PropertyName == nameof(IBusy.IsBusy))
+          .ObserveOnDispatcher()
+          .Subscribe(x =>
+          {
+            LoadingStatus.IsLoading = ((IBusy)x.Sender).IsBusy;
+          }).DisposeWith(this);
       });
     }
 

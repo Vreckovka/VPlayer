@@ -6,7 +6,6 @@
              xmlns:converters="clr-namespace:VPlayer.Core.Converters;assembly=VPlayer.Core"
              xmlns:converters1="clr-namespace:VPlayer.Home.Converters;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:events="clr-namespace:VPlayer.Core.Events;assembly=VPlayer.Core"
              xmlns:events1="clr-namespace:VPlayer.Core.Events;assembly=VPLayer.Domain"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
@@ -165,10 +164,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition Height="auto" />
-
             </Grid.RowDefinitions>
-
-
 
             <ListView Name="playlists"
                       Margin="5,0,0,0"
@@ -368,8 +364,8 @@
             </ListView>
 
             <controls:PathButton Grid.Row="0"
+                                 Margin="0,12,20,0"
                                  HorizontalAlignment="Right"
-                                 Margin="0 12 20 0"
                                  VerticalAlignment="Top"
                                  Command="{Binding RefreshData}"
                                  Glyph="{StaticResource arrows-rotate-glyph}"

@@ -188,13 +188,14 @@
             </TextBlock>
 
             <Grid x:Name="CSFDInfo" DataContext="{Binding CSFDItem}">
-                <StackPanel Orientation="Horizontal">
+                <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal">
                     <TextBlock Margin="5,0,0,3"
                                HorizontalAlignment="Left"
                                VerticalAlignment="Bottom"
                                FontSize="13"
                                FontWeight="Bold"
-                               Text="{Binding OriginalName, Mode=OneWay}">
+                               Text="{Binding OriginalName, Mode=OneWay}"
+                               ToolTip="{Binding OriginalName}">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
                                 <Setter Property="Foreground" Value="#f2e0cb" />
@@ -215,7 +216,8 @@
                                HorizontalAlignment="Left"
                                VerticalAlignment="Bottom"
                                FontSize="12"
-                               Text="{Binding Year, StringFormat={}({0})}">
+                               Text="{Binding Year, StringFormat={}({0})}"
+                               ToolTip="{Binding Year}">
 
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">

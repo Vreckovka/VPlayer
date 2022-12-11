@@ -96,13 +96,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
           statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
 
-
-          var poster = DownloadPoster(posterUrl, cancellationToken);
-
-          if (poster != null)
-          {
-            tvShow.ImagePath = SaveImage(tvShow.Name, poster, cancellationToken);
-          }
+          tvShow.ImagePath = GetTvShowPoster(url, cancellationToken);
 
           statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
 
@@ -140,6 +134,31 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         return null;
       }
+    }
+
+    #endregion
+
+    #region GetTvShowPoster
+
+    public string GetTvShowPoster(string url, CancellationToken cancellationToken)
+    {
+      var document = GetItemMainPage(url, cancellationToken);
+
+      return GetTvShowPoster(document, cancellationToken);
+    }
+
+    public string GetTvShowPoster(HtmlDocument document, CancellationToken cancellationToken)
+    {
+      var name = GetItemName(document, out var posterUrl);
+
+      var poster = DownloadPoster(posterUrl, cancellationToken);
+
+      if (poster != null)
+      {
+        return SaveImage(name, poster, cancellationToken);
+      }
+
+      return null;
     }
 
     #endregion
@@ -368,7 +387,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         if (episodeNumber > episodesPerPage.Value * (pageNumber ?? 1))
         {
-          pageNumber = (int)Math.Ceiling((double) episodeNumber / episodesPerPage.Value);
+          pageNumber = (int)Math.Ceiling((double)episodeNumber / episodesPerPage.Value);
 
           if (url.Contains("seriePage"))
           {
@@ -379,7 +398,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
             url += $"?seriePage={pageNumber}";
           }
 
-          
+
           var newDocument = GetItemMainPage(url, cancellationToken);
 
           statusMessageViewModel.ProcessedCount = 0;
@@ -411,7 +430,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
             episodeIndex++;
           }
         }
-        else 
+        else
         {
           var index = episodeNumber.Value - (((pageNumber ?? 1) - 1) * episodesPerPage.Value) - 1;
 
@@ -459,7 +478,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         if (season != null)
         {
           cancellationToken.ThrowIfCancellationRequested();
-          season.SeasonEpisodes = LoadSeasonEpisodes(seasonNumber.Value, season.Url, statusMessageViewModel,cancellationToken, episodeNumber);
+          season.SeasonEpisodes = LoadSeasonEpisodes(seasonNumber.Value, season.Url, statusMessageViewModel, cancellationToken, episodeNumber);
         }
         else
         {
@@ -479,7 +498,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #region LoadSeasonEpisodes
 
-    private List<CSFDTVShowSeasonEpisode> LoadSeasonEpisodes(int seasonNumber, string url, StatusMessageViewModel pStatusMessageViewModel, CancellationToken cancellationToken,int? episodeNumber = null)
+    private List<CSFDTVShowSeasonEpisode> LoadSeasonEpisodes(int seasonNumber, string url, StatusMessageViewModel pStatusMessageViewModel, CancellationToken cancellationToken, int? episodeNumber = null)
     {
       try
       {
@@ -705,6 +724,8 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #endregion
 
+    #region GetCorrectBaseUrl
+
     private string GetCorrectBaseUrl(string url)
     {
       return url
@@ -715,6 +736,8 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         .Replace("https://csfd.sk", baseUrl)
         .Replace("https://www.csfd.sk", baseUrl);
     }
+
+    #endregion
 
     #region GetItemMainPage
 
@@ -798,7 +821,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         {
           if (parsedNameMatch.Groups.Count > 1)
           {
-            parsedName = parsedNameMatch.Groups[1].Value;
+            parsedName = parsedNameMatch.Groups[1].Value + " " + Regex.Replace(name, @"(.*?)(\d\d\d\d)", "");
 
             if (parsedNameMatch.Groups.Count >= 3 && int.TryParse(parsedNameMatch.Groups[2].Value, out var pYear))
             {
@@ -880,29 +903,35 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
             return item;
           }
 
-          tvShowUrl = tvShowFind.Url;
-
-          if (tvShowFind.Parameters.Contains("epizoda"))
+          if (tvShowFind.Parameters.Contains("epizóda"))
           {
             var episode = new CSFDTVShowSeasonEpisode()
             {
               Url = tvShowFind.Url
             };
 
-            await Task.Run(() => LoadCsfdEpisode(episode));
+            LoadCsfdEpisode(episode);
 
-            if (!string.IsNullOrEmpty(episode.TvShowUrl))
-              tvShow = LoadTvShow(episode.TvShowUrl, cancellationToken, seasonNumber, episodeNumber, parentMessage: statusMessage);
+            if(string.IsNullOrEmpty(episode.ImagePath))
+            {
+              episode.ImagePath = GetTvShowPoster(episode.TvShowUrl, cancellationToken);
+            }
+
+            return episode;
           }
           else if (episodeKeys != null)
           {
-            return LoadTvShow(tvShowFind.Url, cancellationToken, seasonNumber, episodeNumber, parentMessage: statusMessage);
+            return LoadTvShow(tvShowFind.Url, cancellationToken, seasonNumber, episodeNumber, statusMessage);
+          }
+          else
+          {
+            return tvShowFind;
           }
         }
 
-        if (tvShow == null)
+        if (seasonNumber != null && episodeNumber != null)
         {
-          tvShow = LoadTvShow(tvShowUrl, cancellationToken, seasonNumber, episodeNumber, parentMessage: statusMessage, parsedName);
+          tvShow = LoadTvShow(tvShowUrl, cancellationToken, seasonNumber, episodeNumber, statusMessage, parsedName);
         }
 
 
@@ -970,19 +999,38 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       bool parseYearFromName = true,
       bool isMovie = false)
     {
-      parsedName = parsedName.RemoveDiacritics().Replace(".", " ").Replace("avi", "").Replace("  ", " ");
+      parsedName = parsedName.RemoveDiacritics()
+        .Replace("avi", "")
+        .Replace("mkv", "")
+        .ToLower();
 
-      lastParsedName = parsedName;
+      Regex rgx = new Regex("[^a-zA-Z0-9]");
+
+      parsedName = rgx.Replace(parsedName, " ").Replace("  ", " ").Replace("   ", " ");
+
+      lastParsedName = parsedName.Trim();
 
       if (parseYearFromName)
       {
-        var match = Regex.Match(parsedName, @"\D*");
+        var matches = Regex.Matches(parsedName, @"\D*");
 
-        if (match.Success && !string.IsNullOrEmpty(match.Value) && !Regex.IsMatch(parsedName, @"\d+th"))
+        var anyMatch = matches.Any(match => match.Success && !string.IsNullOrEmpty(match.Value) && !Regex.IsMatch(parsedName, @"\d+th"));
+
+        if (anyMatch)
         {
-          parsedName = match.Value;
+          parsedName = "";
+        }
+
+        foreach (var match in matches.ToList())
+        {
+          if (match.Success && !string.IsNullOrEmpty(match.Value) && !Regex.IsMatch(parsedName, @"\d+th"))
+          {
+            parsedName += " " + match.Value;
+          }
         }
       }
+
+      parsedName = parsedName.Replace("  ", " ").Replace("   ", " ").Trim();
 
       var statusMessage = new StatusMessageViewModel(2)
       {
@@ -1035,19 +1083,47 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         .Where(x => x.OriginalName.RemoveDiacritics().Similarity(GetWithoutBrackets(parsedName)) > minSimilarity)
         .OrderByDescending(x => x.Name.RemoveDiacritics().Similarity(GetWithoutBrackets(parsedName))).AsEnumerable());
 
+
       if (year != null)
       {
-        var list = query.ToList();
+        IEnumerable<CSFDItem> yearQuery = null;
+        List<CSFDItem> list = null;
 
-        var yearQuery = list.Where(x => x.Year == year).ToList();
-
-        if (yearQuery.Count() != 0)
+        if (!query.Any())
         {
-          query = yearQuery;
+          var minSimilarity2 = 0.25;
+
+          yearQuery = allItems.Where(x => x.OriginalName != null)
+            .Where(x => x.OriginalName.RemoveDiacritics().Similarity(parsedName) > minSimilarity2)
+            .OrderByDescending(x => x.OriginalName.RemoveDiacritics().Similarity(parsedName)).AsEnumerable();
+
+          yearQuery = yearQuery.Concat(allItems.Where(x => x.Name != null)
+            .Where(x => x.Name.RemoveDiacritics().Similarity(parsedName) > minSimilarity2)
+            .OrderByDescending(x => x.Name.RemoveDiacritics().Similarity(parsedName)).AsEnumerable());
+
+          yearQuery = yearQuery.Concat(allItems.Where(x => x.OriginalName != null)
+            .Where(x => x.OriginalName.RemoveDiacritics().Similarity(GetWithoutBrackets(parsedName)) > minSimilarity2)
+            .OrderByDescending(x => x.Name.RemoveDiacritics().Similarity(GetWithoutBrackets(parsedName))).AsEnumerable());
+
+          list = yearQuery.ToList();
+        }
+        else
+        {
+          list = query.ToList();
+        }
+
+        var yearQueryList = list.Where(x => x.Year == year).ToList();
+
+        if (yearQueryList.Count() != 0)
+        {
+          query = yearQueryList;
         }
       }
 
-      query = query.OrderByDescending(x => x.RatingColor).ThenByDescending(x => x.Year);
+      query = query
+        .OrderByDescending(x => x.OriginalName.RemoveDiacritics().Similarity(GetWithoutBrackets(parsedName)))
+        .ThenByDescending(x => x.RatingColor)
+        .ThenByDescending(x => x.Year);
 
       if (isTvSHow)
       {
@@ -1078,11 +1154,19 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       {
         return await FindSingleCsfdItem(lastParsedName, year, isTvSHow, cancellationToken, showStatusMassage, parentMessage, false);
       }
-      else
-        return null;
+      else if (lastParsedName.Contains("movie"))
+      {
+        lastParsedName = lastParsedName.Replace("movie", "");
+
+        return await FindSingleCsfdItem(lastParsedName, year, false, cancellationToken, showStatusMassage, parentMessage, false);
+      }
+
+      return null;
     }
 
     #endregion
+
+    #region GetOrderNumber
 
     private int GetOrderNumber(string value)
     {
@@ -1098,6 +1182,8 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       return int.MaxValue;
     }
+
+    #endregion
 
     #region RemoveDiacritics
 

@@ -71,7 +71,7 @@ namespace VPlayer.Home.ViewModels
         .ThenInclude(x => x.FileInfo)
         .SingleOrDefault(x => x.Id == Model.Id);
 
-     
+
 
       if (playlist != null)
       {
@@ -136,33 +136,12 @@ namespace VPlayer.Home.ViewModels
     {
       Task.Run(async () =>
       {
-        try
-        {
-          if (action != EventAction.SetPlaylist)
-          {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-              songPlaylistsViewModel.LoadingStatus.IsLoading = true;
-            });
-          }
+        var data = (await GetItemsToPlay()).ToList();
 
-          var data = (await GetItemsToPlay()).ToList();
+        Model = storageManager.GetRepository<SoundItemFilePlaylist>().Include(x => x.PlaylistItems).AsNoTracking().Single(x => x.Id == Model.Id);
 
-          Model = storageManager.GetRepository<SoundItemFilePlaylist>().Include(x => x.PlaylistItems).AsNoTracking().Single(x => x.Id == Model.Id);
-
-          var e = new PlayItemsEventData<SoundItemInPlaylistViewModel>(data, action, IsShuffle, IsRepeating, Model.LastItemElapsedTime, Model);
-          eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(e);
-        }
-        finally
-        {
-          if (action != EventAction.SetPlaylist)
-          {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-              songPlaylistsViewModel.LoadingStatus.IsLoading = false;
-            });
-          }
-        }
+        var e = new PlayItemsEventData<SoundItemInPlaylistViewModel>(data, action, IsShuffle, IsRepeating, Model.LastItemElapsedTime, Model);
+        eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(e);
       });
     }
 

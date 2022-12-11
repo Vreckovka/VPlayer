@@ -133,7 +133,8 @@ namespace VPlayer.Core.ViewModels
 
   }
 
-  public abstract class PlayableViewModel<TViewModelInPlaylist, TModel> : NamedEntityViewModel<TModel> where TModel : INamedEntity
+  public abstract class PlayableViewModel<TViewModelInPlaylist, TModel> : NamedEntityViewModel<TModel>, IBusy
+    where TModel : INamedEntity
   {
     #region Fields
 
@@ -168,7 +169,26 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion IsPlaying
-    
+
+    #region IsBusy
+
+    private bool isBusy;
+
+    public bool IsBusy
+    {
+      get { return isBusy; }
+      set
+      {
+        if (value != isBusy)
+        {
+          isBusy = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #region Commands
 
     #region Play
@@ -190,10 +210,18 @@ namespace VPlayer.Core.ViewModels
 
     protected virtual async void OnPlay(EventAction o)
     {
-      var data = await GetItemsToPlay();
+      try
+      {
+        IsBusy = true;
+        var data = await GetItemsToPlay();
 
-      if (data != null)
-        PublishPlayEvent(data, o);
+        if (data != null)
+          PublishPlayEvent(data, o);
+      }
+      finally
+      {
+        IsBusy = false;
+      }
     }
 
     public virtual void OnPlayButton(EventAction o)
@@ -250,10 +278,19 @@ namespace VPlayer.Core.ViewModels
 
     public async void OnAddToPlaylist()
     {
-      var data = await GetItemsToPlay();
+      try
+      {
+        IsBusy = true;
 
-      if (data != null)
-        PublishAddToPlaylistEvent(data);
+        var data = await GetItemsToPlay();
+
+        if (data != null)
+          PublishAddToPlaylistEvent(data);
+      }
+      finally
+      {
+        IsBusy = false;
+      }
 
     }
 
@@ -268,5 +305,10 @@ namespace VPlayer.Core.ViewModels
     public abstract void PublishAddToPlaylistEvent(IEnumerable<TViewModelInPlaylist> viewModels);
 
     #endregion
+  }
+
+  public interface IBusy
+  {
+    public bool IsBusy { get; set; }
   }
 }

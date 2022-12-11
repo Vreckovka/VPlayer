@@ -1272,8 +1272,10 @@ namespace VPlayer.Core.ViewModels
 
     #region PlayItems
 
-    protected void PlayItems(IEnumerable<TItemViewModel> songs, bool savePlaylist = true, int songIndex = 0, bool editSaved = false, bool onlyItemSet = false)
+    protected virtual void PlayItems(IEnumerable<TItemViewModel> items, bool savePlaylist = true, int songIndex = 0, bool editSaved = false, bool onlyItemSet = false)
     {
+      var itemList = items.ToList();
+
       Application.Current.Dispatcher.Invoke(() =>
       {
         if (!onlyItemSet)
@@ -1281,24 +1283,20 @@ namespace VPlayer.Core.ViewModels
 
         PlayList.ForEach(x => x.IsInPlaylist = false);
         PlayList.Clear();
-        PlayList.AddRange(songs);
+        PlayList.AddRange(itemList);
         RequestReloadVirtulizedPlaylist();
 
         if (!onlyItemSet)
           IsPlaying = true;
-
-        SetItemAndPlay(songIndex, onlyItemSet: onlyItemSet);
-
-        var listPlaylist = PlayList.ToList();
-
-        Task.Run(() =>
-        {
-          if (savePlaylist)
-          {
-            StorePlaylist(listPlaylist, editSaved: editSaved);
-          }
-        });
       });
+
+      if (savePlaylist)
+      {
+        StorePlaylist(itemList, editSaved: editSaved);
+        songIndex = actualItemIndex;
+      }
+     
+      SetItemAndPlay(songIndex, onlyItemSet: onlyItemSet);
     }
 
     #endregion
@@ -1485,8 +1483,11 @@ namespace VPlayer.Core.ViewModels
         Application.Current.Dispatcher.Invoke(() =>
         {
           ActualSavedPlaylist = storedPlaylist;
+          actualItemIndex = storedPlaylist.LastItemIndex;
 
           ActualSavedPlaylist.LastPlayed = DateTime.Now;
+
+          OnStoredPlaylistLoaded();
         });
       }
 
@@ -1845,6 +1846,11 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    protected virtual void OnStoredPlaylistLoaded()
+    {
+
+    }
+
     //Virtual methods 
     #region Virtual methods
 
@@ -1921,7 +1927,7 @@ namespace VPlayer.Core.ViewModels
 
     protected virtual void OnPlay()
     {
-      Application.Current.Dispatcher.Invoke(async () =>
+      Application.Current.Dispatcher.Invoke(() =>
       {
         if (ActualItem != null)
           ActualItem.IsPlaying = true;
@@ -1949,6 +1955,7 @@ namespace VPlayer.Core.ViewModels
     protected virtual Task DownloadInfos(IEnumerable<TItemViewModel> itemViewModels) { return Task.CompletedTask; }
 
     protected virtual Task SaveData(IEnumerable<TItemViewModel> itemViewModels) { return Task.CompletedTask; }
+
 
     #endregion
 

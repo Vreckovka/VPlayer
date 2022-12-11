@@ -122,20 +122,28 @@ namespace VPlayer.Library.ViewModels
 
     public void OnDelete()
     {
-      bool delete = true;
-
-      if (Model.IsUserCreated)
+      try
       {
-        var result = windowManager.ShowDeletePrompt(Model.Name);
+        IsBusy = true;
+        bool delete = true;
 
-        if (result != VCore.WPF.ViewModels.Prompt.PromptResult.Ok)
+        if (Model.IsUserCreated)
         {
-          delete = false;
-        }
-      }
+          var result = windowManager.ShowDeletePrompt(Model.Name);
 
-      if (delete)
-        storageManager.DeletePlaylist<TPlaylistModel, TPlaylistItemModel>(Model);
+          if (result != VCore.WPF.ViewModels.Prompt.PromptResult.Ok)
+          {
+            delete = false;
+          }
+        }
+
+        if (delete)
+          storageManager.DeletePlaylist<TPlaylistModel, TPlaylistItemModel>(Model);
+      }
+      finally
+      {
+        IsBusy = false;
+      }
     }
 
     #endregion
