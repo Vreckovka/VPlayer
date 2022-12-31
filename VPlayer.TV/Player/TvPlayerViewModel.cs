@@ -131,10 +131,6 @@ namespace VPlayer.IPTV.ViewModels
     {
       if (ActualItem.Source != null)
       {
-        Debug.WriteLine("tv play tv item: " + ActualItem.Source);
-
-        MediaPlayer.Reload();
-
         refreshSourceDisposable?.Dispose();
 
         ActualItem.State = TVChannelState.Loading;

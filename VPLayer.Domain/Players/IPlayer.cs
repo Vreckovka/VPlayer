@@ -27,7 +27,6 @@ namespace VPlayer.WindowsPlayer.Players
     void Play();
     void Pause();
     void Stop();
-    void Reload();
     void ToggleMute();
     public Task SetNewMedia(Uri source);
 

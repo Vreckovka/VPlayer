@@ -124,29 +124,19 @@ namespace VVLC.Players
 
     public void Initilize()
     {
-      var result = vlcProvider.InitlizeVlc();
-      MediaPlayer = result.Key;
-      libVLC = result.Value;
+      libVLC = vlcProvider.InitlizeVlc();
+      MediaPlayer = new MediaPlayer(libVLC);
 
       HookToVlcEvents();
     }
 
     #endregion
 
-    #region Reload
-
-    public void Reload()
-    {
-      libVLC?.Dispose();
-      libVLC = vlcProvider.GetLibVLC();
-    }
-
     public void ToggleMute()
     {
       MediaPlayer?.ToggleMute();
     }
 
-    #endregion
 
     #region HookToVlcEvents
 

@@ -819,7 +819,6 @@ namespace VPlayer.Core.ViewModels
       ActualItem = null;
       MediaPlayer.Stop();
       await MediaPlayer.SetNewMedia(null);
-      MediaPlayer.Reload();
       MediaPlayer.Play();
       actualItemIndex = 0;
       PlaylistTotalTimePlayed = new TimeSpan(0);
@@ -1295,7 +1294,7 @@ namespace VPlayer.Core.ViewModels
         StorePlaylist(itemList, editSaved: editSaved);
         songIndex = actualItemIndex;
       }
-     
+
       SetItemAndPlay(songIndex, onlyItemSet: onlyItemSet);
     }
 
@@ -1450,7 +1449,6 @@ namespace VPlayer.Core.ViewModels
               ActualSavedPlaylist.PlaylistItems = playlistModels;
               ActualSavedPlaylist.ItemCount = playlistModels.Count;
             });
-
           }
         }
         else if (!ActualSavedPlaylist.IsUserCreated)
@@ -1461,7 +1459,10 @@ namespace VPlayer.Core.ViewModels
 
             UpdatePlaylist(entityPlayList, dbEntityPlalist);
 
-            Application.Current.Dispatcher.Invoke(() => { ActualSavedPlaylist = entityPlayList; });
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+              ActualSavedPlaylist = entityPlayList;
+            });
           }
           else
           {
@@ -1477,6 +1478,8 @@ namespace VPlayer.Core.ViewModels
             });
           }
         }
+
+        actualItemIndex = 0;
       }
       else
       {
@@ -1837,8 +1840,6 @@ namespace VPlayer.Core.ViewModels
 
     protected void ReloadMediaPlayer()
     {
-      MediaPlayer.Reload();
-
       RaisePropertyChanged(nameof(IsMuted));
       RaisePropertyChanged(nameof(IsPlaying));
       RaisePropertyChanged(nameof(Volume));

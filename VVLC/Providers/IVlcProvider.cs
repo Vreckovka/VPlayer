@@ -6,7 +6,7 @@ namespace VVLC.Providers
 {
   public interface IVlcProvider
   {
-    KeyValuePair<MediaPlayer, LibVLC> InitlizeVlc();
+    LibVLC InitlizeVlc();
     LibVLC GetLibVLC();
   }
 }

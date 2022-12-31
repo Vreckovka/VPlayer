@@ -13,7 +13,7 @@ namespace VVLC.Providers
 
     #region LoadVlc
 
-    public KeyValuePair<MediaPlayer,LibVLC> InitlizeVlc()
+    public LibVLC InitlizeVlc()
     {
       lock (lockObject)
       {
@@ -23,9 +23,7 @@ namespace VVLC.Providers
           initilized = true;
         }
 
-        var libVlc = GetLibVLC();
-
-        return new KeyValuePair<MediaPlayer, LibVLC>(new MediaPlayer(libVlc), libVlc); 
+        return GetLibVLC();
       }
     }
 

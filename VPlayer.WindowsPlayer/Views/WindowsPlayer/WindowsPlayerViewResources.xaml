@@ -175,7 +175,6 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="auto" />
                                 <ColumnDefinition Width="auto" />
-
                             </Grid.ColumnDefinitions>
 
                             <Button Grid.RowSpan="2"
@@ -191,8 +190,6 @@
                                             Panel.ZIndex="2"
                                             Content="{Binding}"
                                             ContentTemplateSelector="{StaticResource PlaylistItemTypeTemplateSelector}" />
-
-
 
                             <TextBlock Name="DurationTextBlock"
                                        Grid.Column="3"
@@ -218,9 +215,10 @@
                             </TextBlock>
 
                             <Grid Name="Container"
+                                  Grid.Row="0"
                                   Grid.Column="2"
                                   HorizontalAlignment="Stretch"
-                                  VerticalAlignment="Stretch"
+                                  VerticalAlignment="Top"
                                   ClipToBounds="True">
                                 <Grid.Resources>
                                     <Style x:Key="ListViewTextBlockStyle" TargetType="TextBlock">
@@ -287,12 +285,10 @@
                                 </TextBlock>
                             </Grid>
 
-
-                            <Border Grid.Row="0"
-                                    Grid.Column="1"
+                            <Border Grid.Column="1"
                                     Grid.ColumnSpan="3"
-                                    VerticalAlignment="Bottom"
-                                    Panel.ZIndex="0">
+                                    Panel.ZIndex="0"
+                                    ToolTip="{Binding Name}">
                                 <ContentPresenter ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}" />
                             </Border>
                         </Grid>
