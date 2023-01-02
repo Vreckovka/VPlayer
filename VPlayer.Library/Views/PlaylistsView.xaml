@@ -220,7 +220,7 @@
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
 
-                            <GridViewColumn Width="395" Header="Name">
+                            <GridViewColumn Width="420" Header="Name">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <TextBlock FontSize="16"
@@ -233,16 +233,16 @@
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
 
-                            <GridViewColumn Width="65">
+                            <GridViewColumn Width="200">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel DataContext="{Binding Model.ActualItem}" Orientation="Horizontal">
-                                            <TextBlock TextTrimming="CharacterEllipsis">
-                                                <Run FontWeight="Normal" Text="{Binding OrderInPlaylist, StringFormat={}{0}.}" />
-                                                <Run Text="{Binding ReferencedItem.Name}" />
+                                            <TextBlock FontWeight="Normal" TextTrimming="CharacterEllipsis">
+                                                <Run Foreground="{StaticResource YellowBrush3}" Text="{Binding OrderInPlaylist, StringFormat={}{0}.}" />
+                                                <Run Foreground="#555555" Text="{Binding ReferencedItem.Name}" />
                                                 <TextBlock.ToolTip>
                                                     <TextBlock TextTrimming="CharacterEllipsis">
-                                                        <Run Foreground="{StaticResource YellowBrush}"
+                                                        <Run Foreground="{StaticResource YellowBrush3}"
                                                              Text="{Binding OrderInPlaylist, StringFormat={}{0}.}"
                                                              ToolTip="{Binding OrderInPlaylist}" />
                                                         <Run Text="{Binding ReferencedItem.Name}" ToolTip="{Binding ReferencedItem.Name}" />
@@ -254,7 +254,7 @@
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
 
-                            <GridViewColumn Width="140" Header="Last time played">
+                            <GridViewColumn Width="130" Header="Last time played">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <TextBlock Margin="5,0,0,0" FontWeight="Normal">
@@ -279,11 +279,11 @@
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
 
-                            <GridViewColumn Width="90"
+                            <GridViewColumn Width="85"
                                             DisplayMemberBinding="{Binding TotalPlayedTime, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}"
                                             Header="Total played time" />
 
-                            <GridViewColumn Width="160" Header="Hash">
+                            <GridViewColumn Width="80" Header="Hash">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding HashCode, Converter={library:HashConverter}, ConverterParameter=18}"

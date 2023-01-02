@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -56,7 +57,6 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
       ViewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
 
       LoadQuery = storageManager.GetRepository<TModel>();
-
       LoadData = LoadInitilizedDataAsync();
     }
 
@@ -388,6 +388,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
     public void Clear()
     {
       Items.Clear();
+      LoadQuery = storageManager.GetRepository<TModel>();
       FilteredItemsCollection.Clear();
       WasLoaded = false;
     }

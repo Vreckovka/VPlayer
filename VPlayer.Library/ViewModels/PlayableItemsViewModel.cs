@@ -137,7 +137,7 @@ namespace VPlayer.Home.ViewModels
     protected virtual async void OnRefreshData()
     {
       LibraryCollection.Clear();
-      await LibraryCollection.LoadInitilizedDataAsync();
+      await LibraryCollection.LoadInitilizedDataAsync(LoadQuery);
 
       RaisePropertyChanged(nameof(View));
       SearchKeyWord = null;

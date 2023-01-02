@@ -22,6 +22,8 @@
     <Color x:Key="LightRedColor">#e83f62</Color>
     <Color x:Key="YellowColor">#fec827</Color>
     <Color x:Key="YellowColor2">#fad91b</Color>
+    <Color x:Key="YellowColor3">#b8a56e</Color>
+
     <Color x:Key="DefaultRedColorDim">#db515a</Color>
     <Color x:Key="BrownColor">#c47216</Color>
     <Color x:Key="BrownColor2">#e0923a</Color>
@@ -94,6 +96,9 @@
 
     <SolidColorBrush x:Key="OrangeBrush" Color="{StaticResource OrangeColor}" />
     <SolidColorBrush x:Key="YellowBrush" Color="{StaticResource YellowColor}" />
+    <SolidColorBrush x:Key="YellowBrush2" Color="{StaticResource YellowColor2}" />
+    <SolidColorBrush x:Key="YellowBrush3" Color="{StaticResource YellowColor3}" />
+
     <SolidColorBrush x:Key="DarkBrownBrush" Color="{StaticResource DarkBrownColor}" />
     <SolidColorBrush x:Key="BlueBrush" Color="{StaticResource BlueColor}" />
     <SolidColorBrush x:Key="DarkBlueBrush" Color="{StaticResource BlueColor}" />
