@@ -1152,6 +1152,11 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
             if (entityPlaylist != null)
             {
+              entityPlaylist.IdActualItem = 0;
+              entityPlaylist.ActualItem = null;
+
+              context.SaveChanges();
+
               foreach (var songInPlaylist in entityPlaylist.PlaylistItems)
               {
                 itemsRepo.Remove(songInPlaylist);

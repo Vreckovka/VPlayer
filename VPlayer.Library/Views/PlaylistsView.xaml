@@ -220,7 +220,7 @@
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
 
-                            <GridViewColumn Width="420" Header="Name">
+                            <GridViewColumn Width="380" Header="Name">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <TextBlock FontSize="16"
@@ -233,7 +233,7 @@
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
 
-                            <GridViewColumn Width="200">
+                            <GridViewColumn Width="240">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel DataContext="{Binding Model.ActualItem}" Orientation="Horizontal">

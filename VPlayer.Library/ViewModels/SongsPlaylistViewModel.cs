@@ -73,6 +73,8 @@ namespace VPlayer.Home.ViewModels
 
       if (playlist != null)
       {
+        Model = playlist;
+
         var playlistItems = playlist.PlaylistItems.OrderBy(x => x.OrderInPlaylist).ToList();
 
         var songsItems = storageManager.GetRepository<Song>()
@@ -85,8 +87,6 @@ namespace VPlayer.Home.ViewModels
 
         if (songsItems.Count > 0)
         {
-          Model = playlist;
-
           var grouppedSongs = songsItems.Select(x => new SoundItemWithPlaylistItem()
           {
             SoundItemInPlaylist = viewModelsFactory.Create<SongInPlayListViewModel>(x),
