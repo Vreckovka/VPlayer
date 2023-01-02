@@ -3,8 +3,10 @@
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:controls1="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
                     xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
+                    xmlns:converters1="clr-namespace:VPlayer.Home.Converters;assembly=VCore.WPF"
                     xmlns:events1="clr-namespace:VPlayer.Core.Events;assembly=VPLayer.Domain"
                     xmlns:fileBrowser1="clr-namespace:VPlayer.Home.ViewModels.FileBrowser"
+                    xmlns:system="clr-namespace:System;assembly=System.Runtime"
                     xmlns:templateSelectors="clr-namespace:VPlayer.Library.TemplateSelectors"
                     xmlns:windowsFile="clr-namespace:VCore.Standard.ViewModels.WindowsFile;assembly=VCore.Standard"
                     xmlns:windowsFiles="clr-namespace:VCore.WPF.ViewModels.WindowsFiles;assembly=VCore.WPF">
@@ -57,6 +59,7 @@
         <Setter Property="FontSize" Value="15" />
         <Setter Property="Foreground" Value="#ccc" />
         <Setter Property="FontWeight" Value="Bold" />
+
         <Style.Triggers>
             <DataTrigger Binding="{Binding FolderType}" Value="{x:Static windowsFiles:FolderType.Other}">
                 <Setter Property="Foreground" Value="#858585" />
@@ -328,9 +331,27 @@
                     </Grid>
                 </Grid.ToolTip>
 
-                <ContentControl Margin="1,0,0,0"
+                <ContentControl MinWidth="500"
+                                Margin="1,0,0,0"
+                                HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
-                                Content="{Binding HighlitedText, Converter={StaticResource FolderHighlightTextConverter}, Mode=OneTime}" />
+                                HorizontalContentAlignment="Left"
+                                Content="{Binding HighlitedText, Converter={StaticResource FolderHighlightTextConverter}, Mode=OneTime}">
+
+                    <ContentControl.Resources>
+                        <system:Int32 x:Key="one">515</system:Int32>
+                    </ContentControl.Resources>
+                    <ContentControl.MaxWidth>
+                        <MultiBinding Converter="{converters1:BasicMathOperationConverter}"
+                                      ConverterParameter="-"
+                                      StringFormat="{}{0:N0}">
+                            <Binding Mode="OneWay"
+                                     Path="ActualWidth"
+                                     RelativeSource="{RelativeSource AncestorType=Window}" />
+                            <Binding Mode="OneWay" Source="{StaticResource one}" />
+                        </MultiBinding>
+                    </ContentControl.MaxWidth>
+                </ContentControl>
 
             </Grid>
 

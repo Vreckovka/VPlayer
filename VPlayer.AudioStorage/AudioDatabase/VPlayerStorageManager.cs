@@ -1183,16 +1183,37 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #endregion
 
+
     #region UpdatePlaylist
 
-    public bool UpdatePlaylist<TPlaylist, TPlaylistItem>(TPlaylist playlist, out TPlaylist updatedPlaylist) where TPlaylist : class, IPlaylist<TPlaylistItem>
-    where TPlaylistItem : IEntity
+    public bool UpdatePlaylist<TPlaylist, TPlaylistItem, TModel>(TPlaylist playlist, out TPlaylist updatedPlaylist)
+      where TPlaylist : class, IPlaylist<TPlaylistItem>
+      where TPlaylistItem : IItemInPlaylist<TModel>
+      where TModel : IEntity
     {
       using (var context = new AudioDatabaseContext())
       {
         var result = false;
-        var foundPlaylist = GetRepository<TPlaylist>(context).Include(x => x.PlaylistItems).AsNoTracking().SingleOrDefault(x => x.Id == playlist.Id);
         updatedPlaylist = null;
+        IPlaylist<TPlaylistItem> foundPlaylist = null;
+
+        if (playlist is SoundItemFilePlaylist)
+        {
+          foundPlaylist = (IPlaylist<TPlaylistItem>)GetRepository<SoundItemFilePlaylist>(context)
+            .Include(x => x.PlaylistItems)
+            .ThenInclude(x => x.ReferencedItem.FileInfo)
+            .AsNoTracking()
+            .SingleOrDefault(x => x.Id == playlist.Id);
+        }
+        else
+        {
+          foundPlaylist = GetRepository<TPlaylist>(context)
+            .Include(x => x.PlaylistItems)
+            .ThenInclude(x => x.ReferencedItem)
+            .AsNoTracking()
+            .SingleOrDefault(x => x.Id == playlist.Id);
+        }
+
 
         if (foundPlaylist != null)
         {
@@ -1236,7 +1257,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
           if (result)
           {
             PublishItemChanged(playlist);
-
           }
 
           if (result)
@@ -1244,7 +1264,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
           else
             logger.Log(MessageType.Warning, $"Item was not updated {playlist} {playlist.Id} result count {resultCount}");
 
-          updatedPlaylist = foundPlaylist;
+          updatedPlaylist = (TPlaylist)foundPlaylist;
         }
 
         return result;

@@ -107,7 +107,7 @@ namespace VPlayer.IPTV.ViewModels
 
         RaisePropertyChanged(nameof(SubItems));
 
-        storageManager.UpdatePlaylist<TvPlaylist, TvPlaylistItem>(Model, out var updatedModel);
+        storageManager.UpdatePlaylist<TvPlaylist, TvPlaylistItem, TvItem>(Model, out var updatedModel);
 
         tvPlaylistItem.ReferencedItem = tvChannelViewModel.Model.TvItem;
         

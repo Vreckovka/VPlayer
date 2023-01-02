@@ -185,12 +185,11 @@
                 </ListView.ItemContainerStyle>
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
-
                         <GridView.Columns>
-                            <GridViewColumn Width="65" Header="Resume">
+                            <GridViewColumn Width="50" Header="Resume">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <controls:PathButton Width="65"
+                                        <controls:PathButton Width="45"
                                                              HorizontalContentAlignment="Center"
                                                              Command="{Binding Play}"
                                                              CommandParameter="{x:Static events1:EventAction.PlayFromPlaylistLast}"
@@ -228,11 +227,32 @@
                                                    FontWeight="Normal"
                                                    Foreground="#95ffffff"
                                                    Text="{Binding Model, Converter={converters:PlaylistNameConverter}}"
+                                                   TextTrimming="CharacterEllipsis"
                                                    ToolTip="{Binding Name}" />
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
 
+                            <GridViewColumn Width="65">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel DataContext="{Binding Model.ActualItem}" Orientation="Horizontal">
+                                            <TextBlock TextTrimming="CharacterEllipsis">
+                                                <Run FontWeight="Normal" Text="{Binding OrderInPlaylist, StringFormat={}{0}.}" />
+                                                <Run Text="{Binding ReferencedItem.Name}" />
+                                                <TextBlock.ToolTip>
+                                                    <TextBlock TextTrimming="CharacterEllipsis">
+                                                        <Run Foreground="{StaticResource YellowBrush}"
+                                                             Text="{Binding OrderInPlaylist, StringFormat={}{0}.}"
+                                                             ToolTip="{Binding OrderInPlaylist}" />
+                                                        <Run Text="{Binding ReferencedItem.Name}" ToolTip="{Binding ReferencedItem.Name}" />
+                                                    </TextBlock>
+                                                </TextBlock.ToolTip>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
 
                             <GridViewColumn Width="140" Header="Last time played">
                                 <GridViewColumn.CellTemplate>
@@ -244,37 +264,35 @@
                                                  Text="{Binding LastPlayed, StringFormat={}dd.MM.yy}" />
                                             <Run Text="" />
                                             <Run Foreground="#35ffffff" Text="{Binding LastPlayed, StringFormat={}HH:mm:ss}" />
-
+                                            <TextBlock.ToolTip>
+                                                <TextBlock Margin="5,0,0,0" FontWeight="Normal">
+                                                    <Run FontSize="14"
+                                                         FontWeight="Bold"
+                                                         Foreground="#65c8d1db"
+                                                         Text="{Binding LastPlayed, StringFormat={}dd.MM.yy}" />
+                                                    <Run Text="" />
+                                                    <Run Foreground="#35ffffff" Text="{Binding LastPlayed, StringFormat={}HH:mm:ss}" />
+                                                </TextBlock>
+                                            </TextBlock.ToolTip>
                                         </TextBlock>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn Width="120"
+
+                            <GridViewColumn Width="90"
                                             DisplayMemberBinding="{Binding TotalPlayedTime, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}"
                                             Header="Total played time" />
-                            <GridViewColumn Width="150"
-                                            DisplayMemberBinding="{Binding HashCode, Converter={library:HashConverter}, ConverterParameter=18}"
-                                            Header="Hash" />
 
-                            <GridViewColumn Width="75" Header="Last item">
+                            <GridViewColumn Width="160" Header="Hash">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Margin="5,0,0,0" FontWeight="Normal">
-                                            <TextBlock.Resources>
-                                                <system:Int32 x:Key="one">1</system:Int32>
-                                            </TextBlock.Resources>
-                                            <TextBlock.Text>
-                                                <MultiBinding Converter="{converters1:BasicMathOperationConverter}"
-                                                              ConverterParameter="+"
-                                                              StringFormat="{}{0:N0}">
-                                                    <Binding Path="Model.LastItemIndex" />
-                                                    <Binding Source="{StaticResource one}" />
-                                                </MultiBinding>
-                                            </TextBlock.Text>
-                                        </TextBlock>
+                                        <TextBlock Text="{Binding HashCode, Converter={library:HashConverter}, ConverterParameter=18}"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   ToolTip="{Binding HashCode, Converter={library:HashConverter}, ConverterParameter=18}" />
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
+
 
                             <GridViewColumn Width="70" Header="Count">
                                 <GridViewColumn.CellTemplate>
@@ -344,7 +362,7 @@
                                                 <Style TargetType="TextBlock">
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding Name}" Value="True">
-                                                            <Setter Property="Text" Value="User created" />
+                                                            <Setter Property="Text" Value="Favorites" />
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding Name}" Value="False">
                                                             <Setter Property="Text" Value="Generated" />

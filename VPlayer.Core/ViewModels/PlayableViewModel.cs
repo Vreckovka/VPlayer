@@ -212,7 +212,9 @@ namespace VPlayer.Core.ViewModels
     {
       try
       {
-        IsBusy = true;
+        if (o != EventAction.SetPlaylist)
+          IsBusy = true;
+
         var data = await GetItemsToPlay();
 
         if (data != null)
@@ -301,7 +303,7 @@ namespace VPlayer.Core.ViewModels
     #region Methods
 
     public abstract Task<IEnumerable<TViewModelInPlaylist>> GetItemsToPlay();
-    public abstract void PublishPlayEvent(IEnumerable<TViewModelInPlaylist> viewModels, EventAction eventAction );
+    public abstract void PublishPlayEvent(IEnumerable<TViewModelInPlaylist> viewModels, EventAction eventAction);
     public abstract void PublishAddToPlaylistEvent(IEnumerable<TViewModelInPlaylist> viewModels);
 
     #endregion

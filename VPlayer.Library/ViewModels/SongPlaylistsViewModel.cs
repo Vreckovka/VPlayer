@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore.Standard.Factories.ViewModels;
 using VCore.WPF;
@@ -11,7 +12,7 @@ using VPlayer.Home.Views;
 
 namespace VPlayer.Home.ViewModels
 {
-  public class SongPlaylistsViewModel : PlaylistsViewModel<PlaylistsView, SongsPlaylistViewModel, SoundItemFilePlaylist>
+  public class SongPlaylistsViewModel : PlaylistsViewModel<PlaylistsView, SongsPlaylistViewModel, SoundItemFilePlaylist, PlaylistSoundItem, SoundItem>
   {
     private bool wasSet = false;
     public SongPlaylistsViewModel(
@@ -28,6 +29,8 @@ namespace VPlayer.Home.ViewModels
     public override bool ContainsNestedRegions => false;
     public override string Header { get; } = "Music";
     public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
+
+    public override IQueryable<SoundItemFilePlaylist> LoadQuery => base.LoadQuery.Include(x => x.ActualItem.ReferencedItem.FileInfo);
 
     protected override void OnDataLoaded()
     {

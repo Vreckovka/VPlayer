@@ -132,7 +132,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch
       HtmlDocument document = new HtmlDocument();
       var albums = new List<MusixMatchAlbum>();
 
-      for (int i = 0; i < 2; i++)
+      for (int i = 0; i < 3; i++)
       {
         string url = url = $"https://www.musixmatch.com/album/{GetAsUrlValue(artist)}/{GetAsUrlValue(album)}";
 

@@ -71,8 +71,6 @@ namespace VPlayer.Home.ViewModels
         .ThenInclude(x => x.FileInfo)
         .SingleOrDefault(x => x.Id == Model.Id);
 
-
-
       if (playlist != null)
       {
         var playlistItems = playlist.PlaylistItems.OrderBy(x => x.OrderInPlaylist).ToList();
@@ -87,6 +85,8 @@ namespace VPlayer.Home.ViewModels
 
         if (songsItems.Count > 0)
         {
+          Model = playlist;
+
           var grouppedSongs = songsItems.Select(x => new SoundItemWithPlaylistItem()
           {
             SoundItemInPlaylist = viewModelsFactory.Create<SongInPlayListViewModel>(x),
@@ -117,7 +117,7 @@ namespace VPlayer.Home.ViewModels
 
     public override void PublishPlayEvent(IEnumerable<SoundItemInPlaylistViewModel> viewModels, EventAction eventAction)
     {
-      var e = new PlayItemsEventData<SoundItemInPlaylistViewModel>(viewModels, eventAction, this);
+      var e = new PlayItemsEventData<SoundItemInPlaylistViewModel>(viewModels, eventAction, IsShuffle, IsRepeating, Model.LastItemElapsedTime, Model);
 
       eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(e);
     }
@@ -128,26 +128,7 @@ namespace VPlayer.Home.ViewModels
 
       eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(e);
     }
-
-
-    #region OnPlay
-
-    protected override void OnPlay(EventAction action)
-    {
-      Task.Run(async () =>
-      {
-        var data = (await GetItemsToPlay()).ToList();
-
-        Model = storageManager.GetRepository<SoundItemFilePlaylist>().Include(x => x.PlaylistItems).AsNoTracking().Single(x => x.Id == Model.Id);
-
-        var e = new PlayItemsEventData<SoundItemInPlaylistViewModel>(data, action, IsShuffle, IsRepeating, Model.LastItemElapsedTime, Model);
-        eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(e);
-      });
-    }
-
-    #endregion
-
-
+    
     public override void Dispose()
     {
       base.Dispose();

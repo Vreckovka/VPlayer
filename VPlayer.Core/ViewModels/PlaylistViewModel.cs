@@ -163,6 +163,7 @@ namespace VPlayer.Library.ViewModels
       RaisePropertyChanged(nameof(HashCode));
 
       RaisePropertyChanged(nameof(TotalPlayedTime));
+      RaisePropertyChanged(nameof(Model));
     }
 
     #endregion

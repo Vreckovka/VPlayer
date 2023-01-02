@@ -1156,6 +1156,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         PlaylistItems = playlistModels,
         LastItemElapsedTime = ActualSavedPlaylist.LastItemElapsedTime,
         LastItemIndex = ActualSavedPlaylist.LastItemIndex,
+        ActualItem = playlistModels?.FirstOrDefault(),
         IsUserCreated = isUserCreated,
         LastPlayed = DateTime.Now
       };

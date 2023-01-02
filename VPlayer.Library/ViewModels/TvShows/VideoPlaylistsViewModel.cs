@@ -10,7 +10,7 @@ using VPlayer.Home.Views;
 
 namespace VPlayer.Home.ViewModels.TvShows
 {
-  public class VideoPlaylistsViewModel : PlaylistsViewModel<PlaylistsView, VideoPlaylistViewModel, VideoFilePlaylist>
+  public class VideoPlaylistsViewModel : PlaylistsViewModel<PlaylistsView, VideoPlaylistViewModel, VideoFilePlaylist, PlaylistVideoItem, VideoItem>
   {
     public VideoPlaylistsViewModel(
       IRegionProvider regionProvider, 

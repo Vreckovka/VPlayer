@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using VCore.Standard.Modularity.Interfaces;
 
@@ -20,6 +21,10 @@ namespace VPlayer.AudioStorage.DomainClasses
   public interface IPlaylist<TModel> : IPlaylist
   {
     List<TModel> PlaylistItems { get; set; }
+
+    [ForeignKey(nameof(ActualItem))]
+    public int IdActualItem { get; set; }
+    public TModel ActualItem { get; set; }
   }
 
   public interface IFilePlaylist<TModel> : IPlaylist<TModel>, IFilePlaylist

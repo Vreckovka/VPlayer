@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Input;
+using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
@@ -21,28 +22,27 @@ using VPlayer.Home.ViewModels.LibraryViewModels;
 
 namespace VPlayer.Home.ViewModels
 {
-  public abstract class PlaylistsViewModel<TView, TViewModel, TModel> : PlayableItemsViewModel<TView, TViewModel, TModel>
+  public abstract class PlaylistsViewModel<TView, TViewModel, TPlaylistModel, TPlaylistItemModel, TItemModel> : PlayableItemsViewModel<TView, TViewModel, TPlaylistModel>
     where TView : class, IView
-    where TViewModel : class, INamedEntityViewModel<TModel>, IBusy
-    where TModel : class, INamedEntity, IFilePlaylist
+    where TViewModel : class, INamedEntityViewModel<TPlaylistModel>, IBusy
+    where TPlaylistModel : class, INamedEntity, IFilePlaylist<TPlaylistItemModel>
+    where TPlaylistItemModel : IItemInPlaylist<TItemModel>
   {
     public PlaylistsViewModel(IRegionProvider regionProvider, IViewModelsFactory viewModelsFactory, IStorageManager storageManager,
-      LibraryCollection<TViewModel, TModel> libraryCollection,
+      LibraryCollection<TViewModel, TPlaylistModel> libraryCollection,
       IEventAggregator eventAggregator) : base(regionProvider, viewModelsFactory, storageManager, libraryCollection, eventAggregator)
     {
       LoadingStatus = new LoadingStatus()
       {
         ShowProcessCount = false
       };
-
-     
     }
 
     protected IEnumerable<TViewModel> AllItems { get; set; }
     protected IEnumerable<TViewModel> AllUserCreatedItems { get; set; }
     protected IEnumerable<TViewModel> AllGeneratedItems { get; set; }
 
-    public override IQueryable<TModel> LoadQuery => base.LoadQuery.OrderByDescending(x => x.LastPlayed);
+    public override IQueryable<TPlaylistModel> LoadQuery => base.LoadQuery.Include(x => x.ActualItem.ReferencedItem).OrderByDescending(x => x.LastPlayed);
 
     public ObservableCollection<TViewModel> ViewCollection
     {

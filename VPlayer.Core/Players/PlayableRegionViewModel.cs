@@ -878,6 +878,12 @@ namespace VPlayer.Core.ViewModels
           if (ActualSavedPlaylist != null)
           {
             ActualSavedPlaylist.LastItemIndex = PlayList.IndexOf(ActualItem);
+
+            var playlistItem = ActualSavedPlaylist.PlaylistItems.SingleOrDefault(x => x.IdReferencedItem == ActualItem.Model.Id);
+
+            ActualSavedPlaylist.ActualItem = playlistItem;
+            ActualSavedPlaylist.IdActualItem = playlistItem?.Id ?? 0;
+
             UpdateActualSavedPlaylistPlaylist();
           }
 
@@ -1479,7 +1485,11 @@ namespace VPlayer.Core.ViewModels
           }
         }
 
-        actualItemIndex = 0;
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+          actualItemIndex = 0;
+          MediaPlayer.Position = 0;
+        });
       }
       else
       {
@@ -1531,7 +1541,7 @@ namespace VPlayer.Core.ViewModels
       {
         lock (this)
         {
-          var result = storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel>(copy, out var updated);
+          var result = storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel, TModel>(copy, out var updated);
 
           var dispatcher = Application.Current?.Dispatcher;
 
