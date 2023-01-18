@@ -50,8 +50,8 @@ namespace VPlayer.Core.ViewModels
     where TItemViewModel : class, IFileItemInPlayList<TModel>, IDisposable
     where TModel : class, IFilePlayableModel, IUpdateable<TModel>
     where TPlaylistModel : class, IFilePlaylist<TPlaylistItemModel>, new()
-    where TPlaylistItemModel : IItemInPlaylist<TModel>
-  where TPopupViewModel : FileItemSliderPopupDetailViewModel<TModel>
+    where TPlaylistItemModel : class, IItemInPlaylist<TModel>
+    where TPopupViewModel : FileItemSliderPopupDetailViewModel<TModel>
   {
     protected readonly IViewModelsFactory viewModelsFactory;
     private readonly IVFfmpegProvider iVFfmpegProvider;

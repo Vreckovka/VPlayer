@@ -52,7 +52,7 @@ namespace VPlayer.Core.ViewModels
     where TItemViewModel : class, IItemInPlayList<TModel>, ISelectable, IDisposable
     where TModel : IPlayableModel
     where TPlaylistModel : class, IPlaylist<TPlaylistItemModel>, new()
-    where TPlaylistItemModel : IItemInPlaylist<TModel>
+    where TPlaylistItemModel : class, IItemInPlaylist<TModel>
   {
 
     #region Fields
@@ -451,7 +451,7 @@ namespace VPlayer.Core.ViewModels
     private bool isShuffle;
 
     private int shuffleRandomSeed;
-    protected Random shuffleRandom = new Random();
+    protected Random shuffleRandom;
 
     public bool IsShuffle
     {
@@ -911,9 +911,9 @@ namespace VPlayer.Core.ViewModels
 
     #region SetItemAndPlay
 
-    public virtual async void SetItemAndPlay(int? songIndex = null, bool forcePlay = false, bool onlyItemSet = false)
+    public virtual async void SetItemAndPlay(int? itemIndex = null, bool forcePlay = false, bool onlyItemSet = false)
     {
-      if (IsShuffle && songIndex == null)
+      if (IsShuffle && itemIndex == null)
       {
         var result = PlayList.Where(p => shuffleList.All(p2 => p2 != p)).ToList();
 
@@ -925,37 +925,30 @@ namespace VPlayer.Core.ViewModels
 
         var shuffleIndex = (int)Math.Floor(shuffleRandom.NextDouble() * result.Count);
 
-        songIndex = PlayList.IndexOf(result[shuffleIndex]);
+        itemIndex = PlayList.IndexOf(result[shuffleIndex]);
       }
 
-      if (songIndex != null)
+      if (itemIndex != null)
       {
-        actualItemIndex = songIndex.Value;
+        actualItemIndex = itemIndex.Value;
       }
 
       if (IsRepeate && actualItemIndex > PlayList.Count - 1)
       {
         actualItemIndex = 0;
-        songIndex = 0;
+        itemIndex = 0;
       }
 
-      //if (!string.IsNullOrEmpty(actualSearch))
-      //{
-      //  Application.Current?.Dispatcher?.Invoke(() =>
-      //  {
-      //    ActualSearch = null;
-      //  });
-      //}
 
       IsPlayFnished = false;
 
-      if (songIndex == null)
+      if (itemIndex == null)
       {
         actualItemIndex++;
       }
       else
       {
-        actualItemIndex = songIndex.Value;
+        actualItemIndex = itemIndex.Value;
       }
 
       if (actualItemIndex >= PlayList.Count)
@@ -973,7 +966,7 @@ namespace VPlayer.Core.ViewModels
         else if (actualItemIndex > PlayList.Count - 1)
         {
           actualItemIndex = 0;
-          songIndex = 0;
+          itemIndex = 0;
         }
       }
 
@@ -1000,7 +993,7 @@ namespace VPlayer.Core.ViewModels
         if (!onlyItemSet)
           Play();
       }
-      else if (!IsPlaying && songIndex != null)
+      else if (!IsPlaying && itemIndex != null)
       {
         if (!onlyItemSet)
           Play();
@@ -1450,10 +1443,18 @@ namespace VPlayer.Core.ViewModels
           {
             Application.Current.Dispatcher.Invoke(() =>
             {
-              ActualSavedPlaylist.HashCode = hashCode;
+              var oldItems = ActualSavedPlaylist.PlaylistItems.Where(x => playlistModels.Any(y => y.IdReferencedItem == x.IdReferencedItem));
+              var diff = playlistModels.Where(x => ActualSavedPlaylist.PlaylistItems.All(y => y.IdReferencedItem != x.IdReferencedItem));
+              var newPlaylistItems = new List<TPlaylistItemModel>();
 
-              ActualSavedPlaylist.PlaylistItems = playlistModels;
-              ActualSavedPlaylist.ItemCount = playlistModels.Count;
+              newPlaylistItems.AddRange(oldItems);
+              newPlaylistItems.AddRange(diff);
+
+              ActualSavedPlaylist.HashCode = hashCode;
+              ActualSavedPlaylist.PlaylistItems = newPlaylistItems;
+              ActualSavedPlaylist.ItemCount = newPlaylistItems.Count;
+              ActualSavedPlaylist.IdActualItem = 0;
+              ActualSavedPlaylist.ActualItem = newPlaylistItems.SingleOrDefault(x => x.IdReferencedItem == ActualItem.Model.Id);
             });
           }
         }
@@ -1535,13 +1536,13 @@ namespace VPlayer.Core.ViewModels
 
     protected Task<bool> UpdateActualSavedPlaylistPlaylist()
     {
-      var copy = ActualSavedPlaylist.DeepClone();
+      var clone = ActualSavedPlaylist.DeepClone();
 
       return Task.Run(() =>
       {
         lock (this)
         {
-          var result = storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel, TModel>(copy, out var updated);
+          var result = storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel, TModel>(clone, out var updated);
 
           var dispatcher = Application.Current?.Dispatcher;
 
@@ -1661,8 +1662,6 @@ namespace VPlayer.Core.ViewModels
             else if (songInPlaylist != null)
             {
               PlayList.Remove(songInPlaylist);
-
-              StorePlaylist(PlayList.ToList());
             }
           }
           break;
@@ -1687,6 +1686,12 @@ namespace VPlayer.Core.ViewModels
                 }
 
                 var itemInPlayList = PlayList.SingleOrDefault(x => x.Model.Id == item.Model.Id);
+                
+                if (ActualSavedPlaylist?.ActualItem?.IdReferencedItem == item.Model.Id)
+                {
+                  ActualSavedPlaylist.ActualItem = null;
+                  ActualSavedPlaylist.IdActualItem = 0;
+                }
 
                 if (itemInPlayList != null)
                 {
@@ -1733,17 +1738,16 @@ namespace VPlayer.Core.ViewModels
 
       if (ActualItem != null)
       {
-        var newIndex = PlayList.IndexOf(ActualItem);
-
-        actualItemIndex = newIndex;
+        actualItemIndex = PlayList.IndexOf(ActualItem);
       }
       else if (PlayList.Count > 0)
       {
+        actualItemIndex--;
         SetItemAndPlay();
       }
 
       RequestReloadVirtulizedPlaylist();
-      StorePlaylist(PlayList.ToList(), editSaved: obj.DeleteType == DeleteType.File);
+      StorePlaylist(PlayList.ToList());
     }
 
     #endregion

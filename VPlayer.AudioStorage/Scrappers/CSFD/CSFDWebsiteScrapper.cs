@@ -999,10 +999,10 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       bool parseYearFromName = true,
       bool isMovie = false)
     {
-      parsedName = parsedName.RemoveDiacritics()
+      parsedName = GetWithoutBrackets(parsedName.RemoveDiacritics()
         .Replace("avi", "")
         .Replace("mkv", "")
-        .ToLower();
+        .ToLower());
 
       Regex rgx = new Regex("[^a-zA-Z0-9]");
 
@@ -1079,11 +1079,6 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         .Where(x => x.Name.RemoveDiacritics().Similarity(parsedName) > minSimilarity)
         .OrderByDescending(x => x.Name.RemoveDiacritics().Similarity(parsedName)).AsEnumerable());
 
-      query = query.Concat(allItems.Where(x => x.OriginalName != null)
-        .Where(x => x.OriginalName.RemoveDiacritics().Similarity(GetWithoutBrackets(parsedName)) > minSimilarity)
-        .OrderByDescending(x => x.Name.RemoveDiacritics().Similarity(GetWithoutBrackets(parsedName))).AsEnumerable());
-
-
       if (year != null)
       {
         IEnumerable<CSFDItem> yearQuery = null;
@@ -1138,10 +1133,11 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
       var sortedItems = query.ToList();
 
-      bestItem = sortedItems.FirstOrDefault();
+      var newBestItem = sortedItems.FirstOrDefault();
 
-      if (bestItem != null)
+      if (newBestItem != null)
       {
+        bestItem = newBestItem;
         bestItem.Rating = GetCsfdRating(bestItem);
         bestItem.ImagePath = GetCsfdImage(bestItem);
 
@@ -1273,6 +1269,9 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     private string GetCsfdImage(CSFDItem cSFDItem)
     {
+      if (cSFDItem == null)
+        return null;
+
       var html = chromeDriverProvider.SafeNavigate(cSFDItem.Url, out var redirectedUrl, extraMiliseconds: extraMilisecondsForScrape);
 
       var document = new HtmlDocument();
