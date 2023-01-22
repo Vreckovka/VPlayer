@@ -39,8 +39,44 @@ namespace VPlayer.Home.ViewModels
     }
 
     protected IEnumerable<TViewModel> AllItems { get; set; }
-    protected IEnumerable<TViewModel> AllUserCreatedItems { get; set; }
-    protected IEnumerable<TViewModel> AllGeneratedItems { get; set; }
+
+    #region AllUserCreatedItems
+
+    private IEnumerable<TViewModel> allUserCreatedItems;
+
+    public IEnumerable<TViewModel> AllUserCreatedItems
+    {
+      get { return allUserCreatedItems; }
+      set
+      {
+        if (value != allUserCreatedItems)
+        {
+          allUserCreatedItems = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region AllGeneratedItems
+
+    private IEnumerable<TViewModel> allGeneratedItems;
+
+    public IEnumerable<TViewModel> AllGeneratedItems
+    {
+      get { return allGeneratedItems; }
+      set
+      {
+        if (value != allGeneratedItems)
+        {
+          allGeneratedItems = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     public override IQueryable<TPlaylistModel> LoadQuery => base.LoadQuery.Include(x => x.ActualItem.ReferencedItem).OrderByDescending(x => x.LastPlayed);
 

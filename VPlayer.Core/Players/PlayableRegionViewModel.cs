@@ -1388,7 +1388,7 @@ namespace VPlayer.Core.ViewModels
 
     #region StorePlaylist
 
-    public bool StorePlaylist(List<TItemViewModel> items, bool isUserCreated = false, bool editSaved = false)
+    public bool StorePlaylist(List<TItemViewModel> items, bool isUserCreated = false, bool editSaved = true)
     {
       var acutalPlaylist = items;
 

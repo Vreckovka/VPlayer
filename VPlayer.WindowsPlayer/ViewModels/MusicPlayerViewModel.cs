@@ -884,13 +884,14 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region OnActualItemChanged
 
-    protected override void OnActualItemChanged()
+    protected override async void OnActualItemChanged()
     {
       base.OnActualItemChanged();
 
       addArtists?.RaiseCanExecuteChanged();
       addAlbums?.RaiseCanExecuteChanged();
 
+      await SetPlaylistCover();
       Application.Current?.Dispatcher?.Invoke(() =>
       {
         albumDetail?.RaiseCanExecuteChanged();
@@ -898,6 +899,15 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
 
     #endregion
+
+    private async Task SetPlaylistCover()
+    {
+      if (ActualItem is SongInPlayListViewModel song && song.AlbumViewModel?.Image != null)
+      {
+        ActualSavedPlaylist.CoverPath = song.AlbumViewModel.Image;
+        await UpdateActualSavedPlaylistPlaylist();
+      }
+    }
 
     #region OnNewItemPlay
 
@@ -911,9 +921,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region DownloadItemInfo
 
-    protected override Task DownloadItemInfo(CancellationToken cancellationToken)
+    protected override async Task DownloadItemInfo(CancellationToken cancellationToken)
     {
-      return Task.Run(async () =>
+      await Task.Run(async () =>
       {
         await base.DownloadItemInfo(cancellationToken);
 
@@ -921,6 +931,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
         await DownloadLyrics(cancellationToken);
         await DownloadHighQualityAlbumCover(ActualItem);
       });
+
+
+      await  SetPlaylistCover();
     }
 
     #endregion
@@ -1558,6 +1571,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
                   addAlbums?.RaiseCanExecuteChanged();
 
                   MarkViewModelAsChecked(viewmodel);
+                  await SetPlaylistCover();
 
                   await Task.Run(async () =>
                   {

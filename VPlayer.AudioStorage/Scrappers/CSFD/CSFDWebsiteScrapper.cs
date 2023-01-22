@@ -999,10 +999,11 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       bool parseYearFromName = true,
       bool isMovie = false)
     {
-      parsedName = GetWithoutBrackets(parsedName.RemoveDiacritics()
+      var originalParsedName = parsedName;
+      parsedName = parsedName.RemoveDiacritics()
         .Replace("avi", "")
         .Replace("mkv", "")
-        .ToLower());
+        .ToLower();
 
       Regex rgx = new Regex("[^a-zA-Z0-9]");
 
@@ -1134,6 +1135,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       var sortedItems = query.ToList();
 
       var newBestItem = sortedItems.FirstOrDefault();
+      var originalNameWithoutBrackets = GetWithoutBrackets(originalParsedName);
 
       if (newBestItem != null)
       {
@@ -1146,6 +1148,10 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         return bestItem;
       }
+      else if (originalParsedName != originalNameWithoutBrackets)
+      {
+        return await FindSingleCsfdItem(originalNameWithoutBrackets, year, isTvSHow, cancellationToken, showStatusMassage, parentMessage, false);
+      }
       else if (lastParsedName != parsedName)
       {
         return await FindSingleCsfdItem(lastParsedName, year, isTvSHow, cancellationToken, showStatusMassage, parentMessage, false);
@@ -1156,7 +1162,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         return await FindSingleCsfdItem(lastParsedName, year, false, cancellationToken, showStatusMassage, parentMessage, false);
       }
-
+      
       return null;
     }
 

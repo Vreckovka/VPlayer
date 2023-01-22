@@ -8,6 +8,7 @@ namespace VPlayer.AudioStorage.DomainClasses
   public class Playlist<TPlaylistItem> : DomainEntity, IPlaylist<TPlaylistItem>
   {
     public string Name { get; set; }
+    public string CoverPath { get; set; }
     public long? HashCode { get; set; }
     public int? ItemCount { get; set; }
     public int LastItemIndex { get; set; }
@@ -23,7 +24,8 @@ namespace VPlayer.AudioStorage.DomainClasses
     {
       Name = other.Name;
       LastItemIndex = other.LastItemIndex;
-     
+      CoverPath = other.CoverPath;
+
       LastPlayed = other.LastPlayed;
       HashCode = other.HashCode;
       ItemCount = other.ItemCount;

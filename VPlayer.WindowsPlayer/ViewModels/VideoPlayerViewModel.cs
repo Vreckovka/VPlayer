@@ -631,10 +631,22 @@ namespace VPlayer.WindowsPlayer.ViewModels
         await base.DownloadItemInfo(cancellationToken);
 
         await FindOnCsfd(ActualItem, cancellationToken);
+
+        await SetPlalistCover();
       }
     }
 
     #endregion
+
+    private async Task SetPlalistCover()
+    {
+      if (ActualItem?.ExtraData is CSFDItemViewModel cSFDItem)
+      {
+        ActualSavedPlaylist.CoverPath = cSFDItem.ImagePath;
+
+        await UpdateActualSavedPlaylistPlaylist();
+      }
+    }
 
     #region FindOnCsfd
 
@@ -1087,6 +1099,16 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     protected override void ItemsRemoved(EventPattern<VideoItemInPlaylistViewModel> eventPattern)
     {
+    }
+
+    protected override void OnActualItemChanged()
+    {
+      base.OnActualItemChanged();
+
+      if (ActualItem?.ExtraData is CSFDItem cSFDItem)
+      {
+        ActualSavedPlaylist.CoverPath = cSFDItem.ImagePath;
+      }
     }
 
     #region FilterByActualSearch

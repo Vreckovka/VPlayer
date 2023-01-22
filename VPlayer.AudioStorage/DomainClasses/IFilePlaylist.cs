@@ -16,6 +16,8 @@ namespace VPlayer.AudioStorage.DomainClasses
     int LastItemIndex { get; set; }
     bool IsUserCreated { get; set; }
     DateTime LastPlayed { get; set; }
+
+    public string CoverPath { get; set; }
   }
 
   public interface IPlaylist<TModel> : IPlaylist

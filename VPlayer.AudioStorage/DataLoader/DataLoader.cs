@@ -228,7 +228,13 @@ namespace VPlayer.AudioStorage.DataLoader
 
           if (episodeNumber != null || seasonNumber != null)
           {
-            var parsedName = name.ToLower().Split(match.Groups[0].Value)[0];
+            var split = name.ToLower().Split(match.Groups[0].Value);
+            var parsedName = split[0];
+
+            if (string.IsNullOrEmpty(parsedName) && split.Length > 1)
+            {
+              parsedName = new Regex(@"(?<season>\d{1,2})x(?<episode>\d{1,2}) (?<tvshow>.*?) ")?.Match(name.ToLower())?.Groups["tvshow"].Value;
+            }
 
             CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
             TextInfo textInfo = cultureInfo.TextInfo;
