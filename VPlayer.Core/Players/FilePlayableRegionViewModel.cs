@@ -171,7 +171,7 @@ namespace VPlayer.Core.ViewModels
     {
       get
       {
-        return PlayList.Count > 0 ? ((double) (ActualItemIndex  + 1) / PlayList.Count) * 100.0 : 0;
+        return PlayList.Count > 0 ? ((double)(ActualItemIndex + 1) / PlayList.Count) * 100.0 : 0;
       }
     }
 
@@ -297,16 +297,16 @@ namespace VPlayer.Core.ViewModels
 
     public override void OnNewItemPlay(TModel model)
     {
-     base.OnNewItemPlay(model);
-     RaisePropertyChanged(nameof(ActualPercItemPlaylist));
-     RaisePropertyChanged(nameof(TotalPlaylistDuration));
+      base.OnNewItemPlay(model);
+      RaisePropertyChanged(nameof(ActualPercItemPlaylist));
+      RaisePropertyChanged(nameof(TotalPlaylistDuration));
 
       if (MediaPlayer.Media != null)
       {
         DetailViewModel = viewModelsFactory.Create<TPopupViewModel>(ActualItem.Model);
 
         MediaPlayer.Media.DurationChanged += Media_DurationChanged;
-        
+
         Task.Run(async () =>
         {
           await GetMediaInfo(model);
@@ -529,7 +529,7 @@ namespace VPlayer.Core.ViewModels
           {
             ActualItem.Model.Duration = ((int)e.Duration) / 1000;
           }
-          
+
           DetailViewModel = viewModelsFactory.Create<TPopupViewModel>(ActualItem.Model);
         }
 
@@ -690,7 +690,9 @@ namespace VPlayer.Core.ViewModels
       {
         var itemsToUpdate = PlayList.Where(x => x.Duration == 0).ToList();
 
-        foreach (var item in itemsToUpdate)
+        foreach (var item in itemsToUpdate.Where(x => !string.IsNullOrEmpty(x.Model?.Source)
+                                                 && !x.Model.Source.Contains("https://")
+                                                 && !x.Model.Source.Contains("http://")))
         {
           var mediaInfo = await FFProbe.AnalyseAsync(item.Model.Source);
 

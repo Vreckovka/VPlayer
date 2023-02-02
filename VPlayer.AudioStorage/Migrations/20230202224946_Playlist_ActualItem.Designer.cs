@@ -9,8 +9,8 @@ using VPlayer.AudioStorage.AudioDatabase;
 namespace VPlayer.AudioStorage.Migrations
 {
     [DbContext(typeof(AudioDatabaseContext))]
-    [Migration("20230122201536_PlaylistCoverPath")]
-    partial class PlaylistCoverPath
+    [Migration("20230202224946_Playlist_ActualItem")]
+    partial class Playlist_ActualItem
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -223,9 +223,6 @@ namespace VPlayer.AudioStorage.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<long?>("HashCode")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("IdActualItem")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsUserCreated")
@@ -481,9 +478,6 @@ namespace VPlayer.AudioStorage.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<long?>("HashCode")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("IdActualItem")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsReapting")
@@ -821,9 +815,6 @@ namespace VPlayer.AudioStorage.Migrations
                     b.Property<long?>("HashCode")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("IdActualItem")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsReapting")
                         .HasColumnType("INTEGER");
 
@@ -957,6 +948,9 @@ namespace VPlayer.AudioStorage.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("OrderInPlaylist")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int?>("TvPlaylistId")
                         .HasColumnType("INTEGER");

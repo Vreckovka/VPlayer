@@ -7,5 +7,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     [ForeignKey(nameof(ReferencedItem))]
     public int IdReferencedItem { get; set; }
     public TItem ReferencedItem { get; set; }
+
+    public int OrderInPlaylist { get; set; }
   }
 }

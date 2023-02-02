@@ -893,11 +893,17 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
             if (item == null)
             {
-              statusMessage.Message = "NOT FOUND";
-              statusMessage.ProcessedCount = statusMessage.NumberOfProcesses;
-              statusMessage.Status = StatusType.Failed;
+              if (parsedNameMatch.Groups.Count > 1)
+                item = await FindSingleCsfdItem(parsedNameMatch.Groups[1].Value, year, false, cancellationToken, true, statusMessage, isMovie: true);
 
-              statusManager.UpdateMessage(statusMessage);
+              if (item == null)
+              {
+                statusMessage.Message = "NOT FOUND";
+                statusMessage.ProcessedCount = statusMessage.NumberOfProcesses;
+                statusMessage.Status = StatusType.Failed;
+
+                statusManager.UpdateMessage(statusMessage);
+              }
             }
 
             return item;
@@ -912,7 +918,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
             LoadCsfdEpisode(episode);
 
-            if(string.IsNullOrEmpty(episode.ImagePath))
+            if (string.IsNullOrEmpty(episode.ImagePath))
             {
               episode.ImagePath = GetTvShowPoster(episode.TvShowUrl, cancellationToken);
             }
@@ -1061,6 +1067,12 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         {
           return await FindSingleCsfdItem(parsedName, year, isTvSHow, cancellationToken, showStatusMassage, parentMessage, false);
         }
+        else if (lastParsedName.Contains("movie"))
+        {
+          lastParsedName = lastParsedName.Replace("movie", "");
+
+          return await FindSingleCsfdItem(lastParsedName, year, false, cancellationToken, showStatusMassage, parentMessage, false);
+        }
         else
           return null;
       }
@@ -1162,7 +1174,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         return await FindSingleCsfdItem(lastParsedName, year, false, cancellationToken, showStatusMassage, parentMessage, false);
       }
-      
+
       return null;
     }
 

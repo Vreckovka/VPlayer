@@ -200,7 +200,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch
 
     private string GetAsUrlValue(string value)
     {
-      return value.ToLower().Replace(" ", "-").Replace(".", "");
+      return value?.ToLower().Replace(" ", "-").Replace(".", "");
     }
 
     #endregion

@@ -212,7 +212,7 @@ namespace VPlayer.Core.ViewModels
     {
       try
       {
-        if (o != EventAction.SetPlaylist)
+        if (o != EventAction.InitSetPlaylist)
           IsBusy = true;
 
         var data = await GetItemsToPlay();

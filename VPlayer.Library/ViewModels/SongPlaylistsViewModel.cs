@@ -38,7 +38,7 @@ namespace VPlayer.Home.ViewModels
 
       if (!wasSet)
       {
-        LibraryCollection.Items.OrderByDescending(x => x.LastPlayed).FirstOrDefault()?.OnPlayButton(Core.Events.EventAction.SetPlaylist);
+        LibraryCollection.Items.OrderByDescending(x => x.LastPlayed).FirstOrDefault()?.OnPlayButton(Core.Events.EventAction.InitSetPlaylist);
         wasSet = true;
       }
     }

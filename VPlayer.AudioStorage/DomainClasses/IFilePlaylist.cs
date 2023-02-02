@@ -8,8 +8,6 @@ namespace VPlayer.AudioStorage.DomainClasses
 {
   public interface IPlaylist : INamedEntity, ITrackable, IUpdateable<IPlaylist>
   {
-    int Id { get; set; }
-
     long? HashCode { get; set; }
     int? ItemCount { get; set; }
     TimeSpan TotalPlayedTime { get; set; }
@@ -20,16 +18,16 @@ namespace VPlayer.AudioStorage.DomainClasses
     public string CoverPath { get; set; }
   }
 
-  public interface IPlaylist<TModel> : IPlaylist
+  public interface IPlaylist<TModel> : IPlaylist where TModel : class
   {
     List<TModel> PlaylistItems { get; set; }
 
     [ForeignKey(nameof(ActualItem))]
-    public int IdActualItem { get; set; }
+    public int? ActualItemId { get; set; }
     public TModel ActualItem { get; set; }
   }
 
-  public interface IFilePlaylist<TModel> : IPlaylist<TModel>, IFilePlaylist
+  public interface IFilePlaylist<TModel> : IPlaylist<TModel>, IFilePlaylist where TModel : class
   {
   }
 

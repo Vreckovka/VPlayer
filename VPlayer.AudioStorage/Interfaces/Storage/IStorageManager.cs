@@ -49,7 +49,7 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
       where TPlaylistItem : class;
 
     bool UpdatePlaylist<TPlaylist, TPlaylistItem, TModel>(TPlaylist playlist, out TPlaylist updatedPlaylist) where TPlaylist : class, IPlaylist<TPlaylistItem> 
-      where TPlaylistItem : IItemInPlaylist<TModel> 
+      where TPlaylistItem : class, IItemInPlaylist<TModel> 
       where TModel : IEntity;
 
     #endregion

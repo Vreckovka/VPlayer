@@ -30,6 +30,7 @@ namespace VPlayer.IPTV.ViewModels
     [ForeignKey(nameof(ReferencedItem))]
     public int IdReferencedItem { get; set; }
     public TvItem ReferencedItem { get; set; }
+    public int OrderInPlaylist { get; set; }
     public string Name { get; set; }
 
 

@@ -6,7 +6,7 @@
     Add,
     PlayFromPlaylist,
     PlayFromPlaylistLast,
-    SetPlaylist,
+    InitSetPlaylist,
     None
   }
 }

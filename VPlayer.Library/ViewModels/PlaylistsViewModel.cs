@@ -26,7 +26,7 @@ namespace VPlayer.Home.ViewModels
     where TView : class, IView
     where TViewModel : class, INamedEntityViewModel<TPlaylistModel>, IBusy
     where TPlaylistModel : class, INamedEntity, IFilePlaylist<TPlaylistItemModel>
-    where TPlaylistItemModel : IItemInPlaylist<TItemModel>
+    where TPlaylistItemModel : class, IItemInPlaylist<TItemModel>
   {
     public PlaylistsViewModel(IRegionProvider regionProvider, IViewModelsFactory viewModelsFactory, IStorageManager storageManager,
       LibraryCollection<TViewModel, TPlaylistModel> libraryCollection,

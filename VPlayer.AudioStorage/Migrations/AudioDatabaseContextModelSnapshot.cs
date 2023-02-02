@@ -223,9 +223,6 @@ namespace VPlayer.AudioStorage.Migrations
                     b.Property<long?>("HashCode")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("IdActualItem")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsUserCreated")
                         .HasColumnType("INTEGER");
 
@@ -479,9 +476,6 @@ namespace VPlayer.AudioStorage.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<long?>("HashCode")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("IdActualItem")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsReapting")
@@ -819,9 +813,6 @@ namespace VPlayer.AudioStorage.Migrations
                     b.Property<long?>("HashCode")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("IdActualItem")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsReapting")
                         .HasColumnType("INTEGER");
 
@@ -955,6 +946,9 @@ namespace VPlayer.AudioStorage.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("OrderInPlaylist")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int?>("TvPlaylistId")
                         .HasColumnType("INTEGER");

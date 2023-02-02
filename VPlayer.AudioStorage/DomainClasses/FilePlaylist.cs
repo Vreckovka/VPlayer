@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace VPlayer.AudioStorage.DomainClasses
 {
   [Serializable]
-  public class Playlist<TPlaylistItem> : DomainEntity, IPlaylist<TPlaylistItem>
+  public class Playlist<TPlaylistItem> : DomainEntity, IPlaylist<TPlaylistItem> where TPlaylistItem : class
   {
     public string Name { get; set; }
     public string CoverPath { get; set; }
@@ -15,7 +15,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     public TimeSpan TotalPlayedTime { get; set; }
     public DateTime LastPlayed { get; set; }
     public List<TPlaylistItem> PlaylistItems { get; set; }
-    public int IdActualItem { get; set; }
+    public int? ActualItemId { get; set; }
     public TPlaylistItem ActualItem { get; set; }
     public bool IsUserCreated { get; set; }
     
@@ -33,17 +33,17 @@ namespace VPlayer.AudioStorage.DomainClasses
       IsUserCreated = other.IsUserCreated;
       Modified = other.Modified;
 
-      if (other is IPlaylist<TPlaylistItem> playlist)
+      if (other is IPlaylist<TPlaylistItem> otherPlaylist)
       {
-        ActualItem = playlist.ActualItem;
-        IdActualItem = playlist.IdActualItem;
+        ActualItem = otherPlaylist.ActualItem;
+        ActualItemId = otherPlaylist.ActualItemId;
       }
     }
   }
 
 
   [Serializable]
-  public class FilePlaylist<TPlaylistItems> : Playlist<TPlaylistItems>, IFilePlaylist<TPlaylistItems>
+  public class FilePlaylist<TPlaylistItems> : Playlist<TPlaylistItems>, IFilePlaylist<TPlaylistItems> where TPlaylistItems : class
   {
     public bool IsReapting { get; set; }
     public bool IsShuffle { get; set; }

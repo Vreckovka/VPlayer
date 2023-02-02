@@ -23,8 +23,10 @@ using VCore.ItemsCollections;
 using VCore.Standard.Helpers;
 using VCore.Standard.Modularity.Interfaces;
 using LibVLCSharp.Shared;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic.FileIO;
 using SoundManagement;
+using VCore.Standard;
 using VCore.Standard.ViewModels.TreeView;
 using VCore.Standard.ViewModels.WindowsFile;
 using VCore.WPF.Behaviors;
@@ -823,6 +825,7 @@ namespace VPlayer.Core.ViewModels
       actualItemIndex = 0;
       PlaylistTotalTimePlayed = new TimeSpan(0);
       ActualSavedPlaylist = new TPlaylistModel() { Id = -1 };
+      shuffleList.Clear();
     }
 
     #endregion
@@ -870,19 +873,24 @@ namespace VPlayer.Core.ViewModels
           }
 
           ActualItem = PlayList[index];
-          //actualItemIndex = index;
+          actualItemIndex = index;
           ActualItem.IsPlaying = true;
+
 
           OnSetActualItem(ActualItem, true);
 
-          if (ActualSavedPlaylist != null)
+          if (ActualSavedPlaylist?.PlaylistItems != null)
           {
             ActualSavedPlaylist.LastItemIndex = PlayList.IndexOf(ActualItem);
 
-            var playlistItem = ActualSavedPlaylist.PlaylistItems.SingleOrDefault(x => x.IdReferencedItem == ActualItem.Model.Id);
+            TPlaylistItemModel playlistItem = default(TPlaylistItemModel);
+            if (ActualSavedPlaylist.PlaylistItems.Count > actualItemIndex)
+            {
+              playlistItem = ActualSavedPlaylist.PlaylistItems.OrderBy(x => x.OrderInPlaylist).ToList()[actualItemIndex];
+            }
 
             ActualSavedPlaylist.ActualItem = playlistItem;
-            ActualSavedPlaylist.IdActualItem = playlistItem?.Id ?? 0;
+            ActualSavedPlaylist.ActualItemId = playlistItem?.Id ?? 0;
 
             UpdateActualSavedPlaylistPlaylist();
           }
@@ -979,14 +987,12 @@ namespace VPlayer.Core.ViewModels
         return;
 
       var oldPlaying = IsPlaying;
+      await SetMedia(ActualItem.Model);
 
       Application.Current?.Dispatcher?.Invoke(() =>
       {
-
         ActualItem.IsPlaying = true;
       });
-
-      await SetMedia(ActualItem.Model);
 
       if (oldPlaying || forcePlay)
       {
@@ -1320,6 +1326,11 @@ namespace VPlayer.Core.ViewModels
       if (!data.Items.Any())
         return;
 
+      if (PlayList.Any() && data.EventAction == EventAction.InitSetPlaylist)
+      {
+        return;
+      }
+
       if (ActualSavedPlaylist != null && ActualSavedPlaylist.Id > 0)
       {
         await UpdateActualSavedPlaylistPlaylist();
@@ -1340,6 +1351,9 @@ namespace VPlayer.Core.ViewModels
           if (ActualItem == null)
           {
             SetActualItem(0);
+
+            if (ActualItem != null)
+              await SetMedia(ActualItem.Model);
           }
 
           RequestReloadVirtulizedPlaylist();
@@ -1358,7 +1372,7 @@ namespace VPlayer.Core.ViewModels
           }
 
           break;
-        case EventAction.SetPlaylist:
+        case EventAction.InitSetPlaylist:
           {
             var model = data.GetModel<TPlaylistModel>();
             PlayPlaylist(data, model.LastItemIndex, true);
@@ -1433,7 +1447,10 @@ namespace VPlayer.Core.ViewModels
 
       bool success = false;
 
-      var storedPlaylist = storageManager.GetRepository<TPlaylistModel>().OrderByDescending(x => x.IsUserCreated).FirstOrDefault(x => x.HashCode == hashCode);
+      var storedPlaylist = storageManager.GetRepository<TPlaylistModel>()
+        .Include(x => x.PlaylistItems)
+        .OrderByDescending(x => x.IsUserCreated)
+        .FirstOrDefault(x => x.HashCode == hashCode);
 
       if (storedPlaylist == null)
       {
@@ -1441,21 +1458,50 @@ namespace VPlayer.Core.ViewModels
         {
           if (hashCode != ActualSavedPlaylist.HashCode)
           {
-            Application.Current.Dispatcher.Invoke(() =>
+            var newPlaylistItems = new List<TPlaylistItemModel>();
+
+            if (ActualSavedPlaylist.PlaylistItems != null)
             {
-              var oldItems = ActualSavedPlaylist.PlaylistItems.Where(x => playlistModels.Any(y => y.IdReferencedItem == x.IdReferencedItem));
-              var diff = playlistModels.Where(x => ActualSavedPlaylist.PlaylistItems.All(y => y.IdReferencedItem != x.IdReferencedItem));
-              var newPlaylistItems = new List<TPlaylistItemModel>();
+              Application.Current.Dispatcher.Invoke(() =>
+              {
+                var oldItems = ActualSavedPlaylist.PlaylistItems.Where(x => playlistModels.Any(y => y.IdReferencedItem == x.IdReferencedItem));
+                var diff = playlistModels.Where(x => ActualSavedPlaylist.PlaylistItems.All(y => y.IdReferencedItem != x.IdReferencedItem));
 
-              newPlaylistItems.AddRange(oldItems);
-              newPlaylistItems.AddRange(diff);
+                newPlaylistItems.AddRange(oldItems);
+                newPlaylistItems.AddRange(diff);
+              });
+            }
+            else
+            {
+              newPlaylistItems = playlistModels;
+            }
 
-              ActualSavedPlaylist.HashCode = hashCode;
-              ActualSavedPlaylist.PlaylistItems = newPlaylistItems;
-              ActualSavedPlaylist.ItemCount = newPlaylistItems.Count;
-              ActualSavedPlaylist.IdActualItem = 0;
-              ActualSavedPlaylist.ActualItem = newPlaylistItems.SingleOrDefault(x => x.IdReferencedItem == ActualItem.Model.Id);
-            });
+            ActualSavedPlaylist.HashCode = hashCode;
+            ActualSavedPlaylist.PlaylistItems = newPlaylistItems;
+            ActualSavedPlaylist.ItemCount = newPlaylistItems.Count;
+            ActualSavedPlaylist.ActualItemId = 0;
+
+            if (ActualSavedPlaylist.Id < 0)
+            {
+              success = storageManager.StoreEntity(entityPlayList, out var dbEntityPlalist);
+
+              UpdatePlaylist(entityPlayList, dbEntityPlalist);
+
+              Application.Current.Dispatcher.Invoke(() =>
+              {
+                ActualSavedPlaylist = entityPlayList;
+
+                ActualSavedPlaylist.LastPlayed = DateTime.Now;
+              });
+            }
+
+            if (ActualSavedPlaylist.PlaylistItems.Count > actualItemIndex)
+            {
+              ActualSavedPlaylist.ActualItem = ActualSavedPlaylist.PlaylistItems.OrderBy(x => x.OrderInPlaylist).ToList()[actualItemIndex];
+
+              ActualSavedPlaylist.ActualItemId = ActualSavedPlaylist?.ActualItem?.Id ?? 0;
+            }
+
           }
         }
         else if (!ActualSavedPlaylist.IsUserCreated)
@@ -1464,12 +1510,23 @@ namespace VPlayer.Core.ViewModels
           {
             success = storageManager.StoreEntity(entityPlayList, out var dbEntityPlalist);
 
-            UpdatePlaylist(entityPlayList, dbEntityPlalist);
-
-            Application.Current.Dispatcher.Invoke(() =>
+            if (success)
             {
-              ActualSavedPlaylist = entityPlayList;
-            });
+              UpdatePlaylist(entityPlayList, dbEntityPlalist);
+
+              Application.Current.Dispatcher.Invoke(() =>
+              {
+                ActualSavedPlaylist = entityPlayList;
+              });
+
+              if (ActualSavedPlaylist.PlaylistItems?.Count > actualItemIndex)
+              {
+                ActualSavedPlaylist.ActualItem = ActualSavedPlaylist.PlaylistItems.OrderBy(x => x.OrderInPlaylist).ToList()[actualItemIndex];
+                ActualSavedPlaylist.ActualItemId = ActualSavedPlaylist?.ActualItem?.Id ?? 0;
+
+                UpdateActualSavedPlaylistPlaylist();
+              }
+            }
           }
           else
           {
@@ -1486,18 +1543,19 @@ namespace VPlayer.Core.ViewModels
           }
         }
 
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-          actualItemIndex = 0;
-          MediaPlayer.Position = 0;
-        });
+        // Neviem co to je a mozno to ma byt v else if (!ActualSavedPlaylist.IsUserCreated)
+        //Application.Current.Dispatcher.Invoke(() =>
+        //{
+        //  actualItemIndex = 0;
+        //  MediaPlayer.Position = 0;
+        //});
       }
       else
       {
         Application.Current.Dispatcher.Invoke(() =>
         {
           ActualSavedPlaylist = storedPlaylist;
-          actualItemIndex = storedPlaylist.LastItemIndex;
+          SetActualItem(storedPlaylist.LastItemIndex);
 
           ActualSavedPlaylist.LastPlayed = DateTime.Now;
 
@@ -1598,30 +1656,11 @@ namespace VPlayer.Core.ViewModels
 
     #region RequestReloadVirtulizedPlaylist
 
-    private Stopwatch stopwatchReloadVirtulizedPlaylist;
-    private object batton = new object();
-    private SerialDisposable serialDisposable = new SerialDisposable();
+    private VTimer virtulizedPlaylistTimer = new VTimer();
 
     protected void RequestReloadVirtulizedPlaylist()
     {
-      int dueTime = 1500;
-      lock (batton)
-      {
-        serialDisposable.Disposable = Observable.Timer(TimeSpan.FromMilliseconds(dueTime)).Subscribe((x) =>
-        {
-          stopwatchReloadVirtulizedPlaylist = null;
-          ReloadVirtulizedPlaylist();
-        });
-
-        if (stopwatchReloadVirtulizedPlaylist == null || stopwatchReloadVirtulizedPlaylist.ElapsedMilliseconds > dueTime)
-        {
-          ReloadVirtulizedPlaylist();
-
-          serialDisposable.Disposable?.Dispose();
-          stopwatchReloadVirtulizedPlaylist = new Stopwatch();
-          stopwatchReloadVirtulizedPlaylist.Start();
-        }
-      }
+      virtulizedPlaylistTimer.RequestMethodCall(ReloadVirtulizedPlaylist);
     }
 
     #endregion
@@ -1686,11 +1725,11 @@ namespace VPlayer.Core.ViewModels
                 }
 
                 var itemInPlayList = PlayList.SingleOrDefault(x => x.Model.Id == item.Model.Id);
-                
+
                 if (ActualSavedPlaylist?.ActualItem?.IdReferencedItem == item.Model.Id)
                 {
                   ActualSavedPlaylist.ActualItem = null;
-                  ActualSavedPlaylist.IdActualItem = 0;
+                  ActualSavedPlaylist.ActualItemId = null;
                 }
 
                 if (itemInPlayList != null)
@@ -1779,6 +1818,9 @@ namespace VPlayer.Core.ViewModels
 
       if (!result)
       {
+        ActualSavedPlaylist.ActualItem = null;
+        ActualSavedPlaylist.PlaylistItems?.ForEach(x => x.Id = 0);
+
         var success = storageManager.StoreEntity(ActualSavedPlaylist, out var dbEntityPlalist);
 
         if (success)
@@ -1860,6 +1902,13 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
+
+    private VDispatcherTimer dispatcherTimer = new VDispatcherTimer(500);
+
+    protected void RequestUIDispatcher(Action action)
+    {
+      dispatcherTimer.RequestMethodCallOnDispatcher(action);
+    }
 
     protected virtual void OnStoredPlaylistLoaded()
     {
@@ -1999,6 +2048,9 @@ namespace VPlayer.Core.ViewModels
 
       MediaPlayer.Media = null;
       MediaPlayer.Stop();
+
+      dispatcherTimer.Dispose();
+      virtulizedPlaylistTimer.Dispose();
 
       volumeSubject?.Dispose();
 

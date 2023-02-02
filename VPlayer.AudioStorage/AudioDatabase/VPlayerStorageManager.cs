@@ -597,7 +597,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           using (var context = new AudioDatabaseContext())
           {
-            var foundEntity = GetRepository<Song>(context).Include(x => x.Album).SingleOrDefault(x => x.Id == newVersion.Id);
+            var foundEntity = GetRepository<Song>(context).Include(x => x.Album.Songs).SingleOrDefault(x => x.Id == newVersion.Id);
 
             if (foundEntity != null)
             {
@@ -762,7 +762,10 @@ namespace VPlayer.AudioStorage.AudioDatabase
     {
       using (var context = new AudioDatabaseContext())
       {
-        var foundEntity = GetRepository<TEntity>(context).SingleOrDefault(x => x.Id == entity.Id);
+        TEntity foundEntity = default(TEntity);
+
+        if (entity.Id > 0)
+          foundEntity = GetRepository<TEntity>(context).SingleOrDefault(x => x.Id == entity.Id);
 
         if (foundEntity == null)
         {
@@ -1152,7 +1155,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
             if (entityPlaylist != null)
             {
-              entityPlaylist.IdActualItem = 0;
+              entityPlaylist.ActualItemId = 0;
               entityPlaylist.ActualItem = null;
 
               context.SaveChanges();
@@ -1193,7 +1196,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     public bool UpdatePlaylist<TPlaylist, TPlaylistItem, TModel>(TPlaylist playlist, out TPlaylist updatedPlaylist)
       where TPlaylist : class, IPlaylist<TPlaylistItem>
-      where TPlaylistItem : IItemInPlaylist<TModel>
+      where TPlaylistItem : class, IItemInPlaylist<TModel>
       where TModel : IEntity
     {
       using (var context = new AudioDatabaseContext())
@@ -1230,11 +1233,21 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
               foreach (var removed in removedItems)
               {
-                context.Entry(removed).State = EntityState.Deleted;
+                if (foundPlaylist.ActualItemId == removed.Id)
+                {
+                  foundPlaylist.ActualItemId = null;
+                  foundPlaylist.ActualItem = null;
+                  context.Entry(foundPlaylist).State = EntityState.Modified;
+
+                  context.SaveChanges();
+                }
+                else
+                {
+                  context.Entry(removed).State = EntityState.Deleted;
+                }
               }
 
               foundPlaylist.PlaylistItems.Clear();
-
               foundPlaylist.Update(playlist);
 
               foreach (var playlistItem in playlist.PlaylistItems)
@@ -1254,6 +1267,14 @@ namespace VPlayer.AudioStorage.AudioDatabase
           context.Entry(foundPlaylist).State = EntityState.Modified;
 
           foundPlaylist.Update(playlist);
+
+          if (foundPlaylist.PlaylistItems != null)
+          {
+            for (int i = 0; i < foundPlaylist.PlaylistItems.Count; i++)
+            {
+              foundPlaylist.PlaylistItems[i].OrderInPlaylist = i + 1;
+            }
+          }
 
           var resultCount = context.SaveChanges();
 

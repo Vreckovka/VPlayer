@@ -2,7 +2,7 @@
 
 namespace VPlayer.AudioStorage.Migrations
 {
-    public partial class PlaylistLastItem : Migration
+    public partial class Playlist_ActualItem : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,12 +12,11 @@ namespace VPlayer.AudioStorage.Migrations
                 type: "INTEGER",
                 nullable: true);
 
-            migrationBuilder.AddColumn<int>(
-                name: "IdActualItem",
+            migrationBuilder.AddColumn<string>(
+                name: "CoverPath",
                 table: "TvShowPlaylists",
-                type: "INTEGER",
-                nullable: false,
-                defaultValue: 0);
+                type: "TEXT",
+                nullable: true);
 
             migrationBuilder.AddColumn<int>(
                 name: "ActualItemId",
@@ -25,9 +24,15 @@ namespace VPlayer.AudioStorage.Migrations
                 type: "INTEGER",
                 nullable: true);
 
-            migrationBuilder.AddColumn<int>(
-                name: "IdActualItem",
+            migrationBuilder.AddColumn<string>(
+                name: "CoverPath",
                 table: "TvPlaylists",
+                type: "TEXT",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "OrderInPlaylist",
+                table: "TvPlaylistItem",
                 type: "INTEGER",
                 nullable: false,
                 defaultValue: 0);
@@ -38,12 +43,11 @@ namespace VPlayer.AudioStorage.Migrations
                 type: "INTEGER",
                 nullable: true);
 
-            migrationBuilder.AddColumn<int>(
-                name: "IdActualItem",
+            migrationBuilder.AddColumn<string>(
+                name: "CoverPath",
                 table: "SongPlaylists",
-                type: "INTEGER",
-                nullable: false,
-                defaultValue: 0);
+                type: "TEXT",
+                nullable: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_TvShowPlaylists_ActualItemId",
@@ -116,7 +120,7 @@ namespace VPlayer.AudioStorage.Migrations
                 table: "TvShowPlaylists");
 
             migrationBuilder.DropColumn(
-                name: "IdActualItem",
+                name: "CoverPath",
                 table: "TvShowPlaylists");
 
             migrationBuilder.DropColumn(
@@ -124,15 +128,19 @@ namespace VPlayer.AudioStorage.Migrations
                 table: "TvPlaylists");
 
             migrationBuilder.DropColumn(
-                name: "IdActualItem",
+                name: "CoverPath",
                 table: "TvPlaylists");
+
+            migrationBuilder.DropColumn(
+                name: "OrderInPlaylist",
+                table: "TvPlaylistItem");
 
             migrationBuilder.DropColumn(
                 name: "ActualItemId",
                 table: "SongPlaylists");
 
             migrationBuilder.DropColumn(
-                name: "IdActualItem",
+                name: "CoverPath",
                 table: "SongPlaylists");
         }
     }

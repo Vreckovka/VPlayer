@@ -46,21 +46,25 @@ namespace VPlayer.Core.ViewModels
     {
       try
       {
-        var mediaAnalysis = await FFProbe.AnalyseAsync(Model.Source);
-
-        MediaInfo = mediaAnalysis;
-
-        if (Model is SoundItem soundItem)
+        if (!string.IsNullOrEmpty(Model?.Source)
+            && !Model.Source.Contains("https://")
+            && !Model.Source.Contains("http://"))
         {
-          soundItem.FileInfo.Album = mediaInfo.Format.Tags["album"];
-          soundItem.FileInfo.Artist = mediaInfo.Format.Tags["artist"];
-        }
+          var mediaAnalysis = await FFProbe.AnalyseAsync(Model.Source);
+          MediaInfo = mediaAnalysis;
 
-        var tmp = Model;
-        Model = null;
-        RaisePropertyChanged(nameof(Model));
-        Model = tmp;
-        RaisePropertyChanged(nameof(Model));
+          if (Model is SoundItem soundItem)
+          {
+            soundItem.FileInfo.Album = mediaInfo.Format.Tags["album"];
+            soundItem.FileInfo.Artist = mediaInfo.Format.Tags["artist"];
+          }
+
+          var tmp = Model;
+          Model = null;
+          RaisePropertyChanged(nameof(Model));
+          Model = tmp;
+          RaisePropertyChanged(nameof(Model));
+        }
       }
       catch (Exception)
       {
