@@ -215,7 +215,7 @@ namespace VPlayer.Core.ViewModels
         if (o != EventAction.InitSetPlaylist)
           IsBusy = true;
 
-        var data = await GetItemsToPlay();
+        var data = await Task.Run(() => GetItemsToPlay());
 
         if (data != null)
           PublishPlayEvent(data, o);

@@ -98,7 +98,7 @@ namespace VPlayer.Core.ViewModels.Artists
 
           var songsAll = songs
             .SelectMany(x => x.Albums.OrderBy(y => y.ReleaseDate)
-            .SelectMany(y => y.Songs.OrderBy(z => z.Source.Split("\\").Last(), myComparer))
+            .SelectMany(y => y.Songs.Where(v => v.Source != null).OrderBy(z => z.Source.Split("\\").Last(), myComparer))
             ).ToList();
 
 

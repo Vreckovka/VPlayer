@@ -1155,7 +1155,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
             if (entityPlaylist != null)
             {
-              entityPlaylist.ActualItemId = 0;
+              entityPlaylist.ActualItemId = null;
               entityPlaylist.ActualItem = null;
 
               context.SaveChanges();
@@ -1282,6 +1282,13 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           if (result)
           {
+            if (foundPlaylist.PlaylistItems != null &&
+                foundPlaylist.ActualItem != null &&
+                foundPlaylist.ActualItem.ReferencedItem == null)
+            {
+              playlist.ActualItem = foundPlaylist.PlaylistItems.SingleOrDefault(x => x.Id == playlist.ActualItem.Id);
+            }
+
             PublishItemChanged(playlist);
           }
 

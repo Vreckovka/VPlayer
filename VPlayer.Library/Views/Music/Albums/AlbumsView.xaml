@@ -19,7 +19,6 @@
                     <RowDefinition Height="auto" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-
                 <Border Padding="10,0">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -27,7 +26,7 @@
                             <ColumnDefinition Width="auto" />
                         </Grid.ColumnDefinitions>
 
-                        <controls1:Finder />
+                        <controls1:Finder Text="{Binding SearchKeyWord, Mode=TwoWay}" />
 
                         <StackPanel Grid.Column="1"
                                     Margin="10,0,0,0"
@@ -38,6 +37,9 @@
                                                   Style="{StaticResource FontAwesomeGlyphStyle}"
                                                   ToolTip="Refresh data" />
                         </StackPanel>
+
+
+
                     </Grid>
                 </Border>
 

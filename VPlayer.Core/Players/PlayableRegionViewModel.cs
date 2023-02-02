@@ -890,7 +890,7 @@ namespace VPlayer.Core.ViewModels
             }
 
             ActualSavedPlaylist.ActualItem = playlistItem;
-            ActualSavedPlaylist.ActualItemId = playlistItem?.Id ?? 0;
+            ActualSavedPlaylist.ActualItemId = playlistItem?.Id;
 
             UpdateActualSavedPlaylistPlaylist();
           }
@@ -1479,7 +1479,7 @@ namespace VPlayer.Core.ViewModels
             ActualSavedPlaylist.HashCode = hashCode;
             ActualSavedPlaylist.PlaylistItems = newPlaylistItems;
             ActualSavedPlaylist.ItemCount = newPlaylistItems.Count;
-            ActualSavedPlaylist.ActualItemId = 0;
+            ActualSavedPlaylist.ActualItemId = null;
 
             if (ActualSavedPlaylist.Id < 0)
             {
@@ -1499,7 +1499,7 @@ namespace VPlayer.Core.ViewModels
             {
               ActualSavedPlaylist.ActualItem = ActualSavedPlaylist.PlaylistItems.OrderBy(x => x.OrderInPlaylist).ToList()[actualItemIndex];
 
-              ActualSavedPlaylist.ActualItemId = ActualSavedPlaylist?.ActualItem?.Id ?? 0;
+              ActualSavedPlaylist.ActualItemId = ActualSavedPlaylist?.ActualItem?.Id;
             }
 
           }
@@ -1522,7 +1522,7 @@ namespace VPlayer.Core.ViewModels
               if (ActualSavedPlaylist.PlaylistItems?.Count > actualItemIndex)
               {
                 ActualSavedPlaylist.ActualItem = ActualSavedPlaylist.PlaylistItems.OrderBy(x => x.OrderInPlaylist).ToList()[actualItemIndex];
-                ActualSavedPlaylist.ActualItemId = ActualSavedPlaylist?.ActualItem?.Id ?? 0;
+                ActualSavedPlaylist.ActualItemId = ActualSavedPlaylist?.ActualItem?.Id;
 
                 UpdateActualSavedPlaylistPlaylist();
               }

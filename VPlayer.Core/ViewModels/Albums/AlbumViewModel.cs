@@ -99,7 +99,7 @@ namespace VPlayer.Core.ViewModels.Albums
 
           var myComparer = new NumberStringComparer();
 
-          var songsAll = songs.OrderBy(x => x.Source.Split("\\").Last(), myComparer).ToList();
+          var songsAll = songs.Where(x => x.Source != null).OrderBy(x => x.Source.Split("\\").Last(), myComparer).ToList();
 
           return songsAll.Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(x));
         }
