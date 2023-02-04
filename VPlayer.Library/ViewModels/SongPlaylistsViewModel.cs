@@ -30,7 +30,7 @@ namespace VPlayer.Home.ViewModels
     public override string Header { get; } = "Music";
     public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
 
-    public override IQueryable<SoundItemFilePlaylist> LoadQuery => base.LoadQuery.Include(x => x.ActualItem.ReferencedItem.FileInfo);
+    protected override IQueryable<PlaylistSoundItem> GetActualItemQuery => base.GetActualItemQuery.Include(x => x.ReferencedItem.FileInfo);
 
     protected override void OnDataLoaded()
     {
@@ -38,7 +38,7 @@ namespace VPlayer.Home.ViewModels
 
       if (!wasSet)
       {
-        LibraryCollection.Items.OrderByDescending(x => x.LastPlayed).FirstOrDefault()?.OnPlayButton(Core.Events.EventAction.InitSetPlaylist);
+        LibraryCollection.Items.Where(x => x.ItemsCount < 500).OrderByDescending(x => x.LastPlayed).FirstOrDefault()?.OnPlayButton(Core.Events.EventAction.InitSetPlaylist);
         wasSet = true;
       }
     }

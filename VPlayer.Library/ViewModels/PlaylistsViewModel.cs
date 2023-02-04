@@ -40,6 +40,14 @@ namespace VPlayer.Home.ViewModels
 
     protected IEnumerable<TViewModel> AllItems { get; set; }
 
+    protected virtual IQueryable<TPlaylistItemModel> GetActualItemQuery
+    {
+      get
+      {
+        return storageManager.GetRepository<TPlaylistItemModel>().Include(x => x.ReferencedItem);
+      }
+    }
+
     #region AllUserCreatedItems
 
     private IEnumerable<TViewModel> allUserCreatedItems;
@@ -78,7 +86,8 @@ namespace VPlayer.Home.ViewModels
 
     #endregion
 
-    public override IQueryable<TPlaylistModel> LoadQuery => base.LoadQuery.Include(x => x.ActualItem.ReferencedItem).OrderByDescending(x => x.LastPlayed);
+    public override IQueryable<TPlaylistModel> LoadQuery => base.LoadQuery.OrderByDescending(x => x.LastPlayed);
+
 
     public ObservableCollection<TViewModel> ViewCollection
     {
@@ -112,7 +121,7 @@ namespace VPlayer.Home.ViewModels
 
 
     #endregion
-    
+
     #region CanLoadMoreItems
 
     private bool canLoadMoreItems;
@@ -141,12 +150,14 @@ namespace VPlayer.Home.ViewModels
       AllUserCreatedItems = LibraryCollection.Items.Where(x => x.Model.IsUserCreated).ToList();
       AllGeneratedItems = LibraryCollection.Items.Where(x => !x.Model.IsUserCreated).ToList();
 
+      GetActualItems();
+
       var initTake = 23;
       var userCreated = AllUserCreatedItems;
       var notSavedPlaylists = AllGeneratedItems.Take(initTake);
 
       actualSkip += initTake;
-    
+
 
       Application.Current.Dispatcher.Invoke(() =>
       {
@@ -164,6 +175,22 @@ namespace VPlayer.Home.ViewModels
             LoadingStatus.IsLoading = ((IBusy)x.Sender).IsBusy;
           }).DisposeWith(this);
       });
+    }
+
+    protected void GetActualItems()
+    {
+      var allItemsWithActualItem = AllItems.Where(x => x.Model.ActualItemId != null).ToList();
+      var allIds = allItemsWithActualItem.Select(x => x.Model.ActualItemId.Value);
+
+      var allItems = GetActualItemQuery.Where(x => allIds.Contains(x.Id)).ToList();
+
+      foreach (var actualItem in allItems)
+      {
+        var playList = allItemsWithActualItem.SingleOrDefault(x => x.Model.ActualItemId == actualItem.Id);
+
+        if (playList != null)
+          playList.Model.ActualItem = actualItem;
+      }
     }
 
     private async void LoadPage()

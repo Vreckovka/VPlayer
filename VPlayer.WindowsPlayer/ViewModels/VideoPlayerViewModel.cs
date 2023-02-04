@@ -1206,9 +1206,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
       }
 
 
-      playlistVideoItem.OrderInPlaylist = (index + 1);
-
-
       return playlistVideoItem;
     }
 

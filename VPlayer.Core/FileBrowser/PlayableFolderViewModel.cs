@@ -244,30 +244,30 @@ namespace VPlayer.Core.FileBrowser
           var itemsInFolder = SubItems.ViewModels.OfType<PlayableFileViewModel>()
             .Where(x => x.FileType == FileType.Video);
 
-          playableFiles = playableFiles.Concat(itemsInFolder).Where(x => x.FileType == FileType.Video).ToList();
+          var playableFilesList = playableFiles.Concat(itemsInFolder).Where(x => x.FileType == FileType.Video).ToList();
 
-          var videoItems = new List<VideoItem>();
+          var videoItems = storageManager.GetRepository<VideoItem>()
+            .Where(x => playableFilesList.Select(y => y.Model.Indentificator)
+              .Contains(x.Source)).ToList();
 
-          foreach (var item in playableFiles)
+          var videoItemsIds = videoItems.Select(y => y.Source);
+
+          var notExisting = playableFilesList.Where(x => !videoItemsIds.Contains(x.Model.Indentificator)).ToList();
+
+          if (notExisting.Count > 0)
           {
-            var existing = storageManager.GetRepository<VideoItem>()
-              .FirstOrDefault(x => x.Source == item.Model.Source);
-
-            if (existing == null)
+            foreach (var item in notExisting.Select(x => x.Model))
             {
               var videoItem = new VideoItem()
               {
-                Name = item.Model.Name,
-                Source = item.Model.Source
+                Name = item.Name,
+                Source = item.Source
               };
 
               storageManager.StoreEntity(videoItem, out var stored);
 
               videoItems.Add(stored);
-            }
-            else
-            {
-              videoItems.Add(existing);
+
             }
           }
 
@@ -310,14 +310,9 @@ namespace VPlayer.Core.FileBrowser
 
           var playableFilesList = playableFiles.Concat(itemsInFolder).Where(x => x.FileType == FileType.Sound).ToList();
 
-          //isLoadedSubject.OnNext(true);
-          //LoadingMessage = $" getting source for {playableFilesList.Count}";
-
           var soundItems = storageManager.GetRepository<SoundItem>().Include(x => x.FileInfo)
                .Where(x => playableFilesList.Select(y => y.Model.Indentificator)
               .Contains(x.FileInfo.Indentificator)).ToList();
-
-          //await GetItemSources(soundItems.Select(x => x.FileInfo));
 
           var soundItemsIds = soundItems.Select(y => y.FileInfo.Indentificator);
 
@@ -325,8 +320,6 @@ namespace VPlayer.Core.FileBrowser
 
           if (notExisting.Count > 0)
           {
-            //var notInSources = await GetItemSources();
-
             foreach (var item in notExisting.Select(x => x.Model))
             {
               var fileInfo = new SoundFileInfo(item.FullName, item.Source)

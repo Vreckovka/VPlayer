@@ -1210,6 +1210,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
           foundPlaylist = (IPlaylist<TPlaylistItem>)GetRepository<SoundItemFilePlaylist>(context)
             .Include(x => x.PlaylistItems)
             .ThenInclude(x => x.ReferencedItem.FileInfo)
+            .Include(x => x.ActualItem.ReferencedItem)
             .AsNoTracking()
             .SingleOrDefault(x => x.Id == playlist.Id);
         }
@@ -1218,6 +1219,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
           foundPlaylist = GetRepository<TPlaylist>(context)
             .Include(x => x.PlaylistItems)
             .ThenInclude(x => x.ReferencedItem)
+            .Include(x => x.ActualItem.ReferencedItem)
             .AsNoTracking()
             .SingleOrDefault(x => x.Id == playlist.Id);
         }
@@ -1267,14 +1269,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
           context.Entry(foundPlaylist).State = EntityState.Modified;
 
           foundPlaylist.Update(playlist);
-
-          if (foundPlaylist.PlaylistItems != null)
-          {
-            for (int i = 0; i < foundPlaylist.PlaylistItems.Count; i++)
-            {
-              foundPlaylist.PlaylistItems[i].OrderInPlaylist = i + 1;
-            }
-          }
 
           var resultCount = context.SaveChanges();
 

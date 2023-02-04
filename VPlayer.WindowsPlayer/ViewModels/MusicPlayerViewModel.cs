@@ -1339,7 +1339,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
                 }
 
 
-                if ((downloadingArtist == null || (!string.IsNullOrEmpty(normalizedArtistName) && 
+                if ((downloadingArtist == null || (!string.IsNullOrEmpty(normalizedArtistName) &&
                     normalizedArtistName != normalizedDownloadingAristName)) &&
                     originalDownlaodedArtistName != artistName && downloadArtist)
                 {
@@ -1874,10 +1874,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         return null;
       }
-
-
-      playlistVideoItem.OrderInPlaylist = (index + 1);
-
 
       return playlistVideoItem;
     }

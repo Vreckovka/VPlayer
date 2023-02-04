@@ -1427,6 +1427,7 @@ namespace VPlayer.Core.ViewModels
             return false;
           }
 
+          newItem.OrderInPlaylist = i + 1;
           playlistModels.Add(newItem);
         }
       }
