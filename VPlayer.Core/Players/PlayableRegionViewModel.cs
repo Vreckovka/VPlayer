@@ -49,6 +49,15 @@ using VVLC.Players;
 
 namespace VPlayer.Core.ViewModels
 {
+  public enum PlaylistSortOrder
+  {
+    None,
+    Name,
+    Created,
+    Modified,
+    ItemProperties,
+  }
+
   public abstract class PlayableRegionViewModel<TView, TItemViewModel, TPlaylistModel, TPlaylistItemModel, TModel> : RegionViewModel<TView>, IPlayableRegionViewModel, IHideable
     where TView : class, IView
     where TItemViewModel : class, IItemInPlayList<TModel>, ISelectable, IDisposable
@@ -137,6 +146,8 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region ActualItemIndex
+
     public int ActualItemIndex
     {
       get
@@ -144,6 +155,27 @@ namespace VPlayer.Core.ViewModels
         return actualItemIndex;
       }
     }
+
+    #endregion
+
+    #region ActualPlaylistSortOrder
+
+    private PlaylistSortOrder actualPlaylistSortOrder;
+
+    public PlaylistSortOrder ActualPlaylistSortOrder
+    {
+      get { return actualPlaylistSortOrder; }
+      set
+      {
+        if (value != actualPlaylistSortOrder)
+        {
+          actualPlaylistSortOrder = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     #region ActualItem
 
@@ -519,6 +551,33 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region SortDescending
+
+    private bool isSortDescending;
+
+    public bool IsSortDescending
+    {
+      get { return isSortDescending; }
+      set
+      {
+        if (value != isSortDescending)
+        {
+          isSortDescending = value;
+
+          PlayList = new RxObservableCollection<TItemViewModel>(PlayList.OrderByDescending(d => PlayList.IndexOf(d)).ToList());
+
+          RequestReloadVirtulizedPlaylist();
+          StorePlaylist(PlayList.Select(x => x).ToList(), editSaved: true);
+
+          actualItemIndex = PlayList.IndexOf(ActualItem);
+          actualItemSubject.OnNext(actualItemIndex);
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #endregion
 
     #region Commands
@@ -698,6 +757,61 @@ namespace VPlayer.Core.ViewModels
     public void OnToggleMute()
     {
       MediaPlayer.ToggleMute();
+    }
+
+    #endregion
+
+    #region ChangePlaylistOrder
+
+    private ActionCommand<PlaylistSortOrder> changePlaylistOrder;
+    public ICommand ChangePlaylistOrder
+    {
+      get
+      {
+        if (changePlaylistOrder == null)
+        {
+          changePlaylistOrder = new ActionCommand<PlaylistSortOrder>(OnChangePlaylistOrder);
+        }
+
+        return changePlaylistOrder;
+      }
+    }
+
+    private List<int> defaultSortOrder;
+    protected virtual void SortPlaylist(PlaylistSortOrder playlistSort)
+    {
+      if (ActualPlaylistSortOrder == PlaylistSortOrder.None && defaultSortOrder == null)
+      {
+        defaultSortOrder = PlayList.Select(x => x.Model.Id).ToList();
+      }
+
+      ActualPlaylistSortOrder = playlistSort;
+
+      switch (playlistSort)
+      {
+        case PlaylistSortOrder.None:
+          PlayList = new RxObservableCollection<TItemViewModel>(PlayList.OrderBy(d => defaultSortOrder.IndexOf(d.Model.Id)).ToList());
+          break;
+        case PlaylistSortOrder.Name:
+          PlayList.Sort((x, y) => x.Name.CompareTo(y.Name));
+          break;
+      }
+    }
+
+    protected void OnChangePlaylistOrder(PlaylistSortOrder playlistSort)
+    {
+      SortPlaylist(playlistSort);
+
+      if (IsSortDescending)
+      {
+        PlayList = new RxObservableCollection<TItemViewModel>(PlayList.OrderByDescending(d => PlayList.IndexOf(d)).ToList());
+      }
+
+      RequestReloadVirtulizedPlaylist();
+      StorePlaylist(PlayList.Select(x => x).ToList(), editSaved: true);
+
+      actualItemIndex = PlayList.IndexOf(ActualItem);
+      actualItemSubject.OnNext(actualItemIndex);
     }
 
     #endregion
@@ -1450,6 +1564,7 @@ namespace VPlayer.Core.ViewModels
 
       var storedPlaylist = storageManager.GetRepository<TPlaylistModel>()
         .Include(x => x.PlaylistItems)
+        .ThenInclude(x => x.ReferencedItem)
         .OrderByDescending(x => x.IsUserCreated)
         .FirstOrDefault(x => x.HashCode == hashCode);
 
@@ -1465,7 +1580,18 @@ namespace VPlayer.Core.ViewModels
             {
               Application.Current.Dispatcher.Invoke(() =>
               {
-                var oldItems = ActualSavedPlaylist.PlaylistItems.Where(x => playlistModels.Any(y => y.IdReferencedItem == x.IdReferencedItem));
+                var oldItems = ActualSavedPlaylist.PlaylistItems.Where(x => playlistModels.Any(y =>
+                {
+                  var isSame = y.IdReferencedItem == x.IdReferencedItem;
+
+                  if (isSame)
+                  {
+                    x.Update(y);
+                  }
+
+                  return isSame;
+                }));
+
                 var diff = playlistModels.Where(x => ActualSavedPlaylist.PlaylistItems.All(y => y.IdReferencedItem != x.IdReferencedItem));
 
                 newPlaylistItems.AddRange(oldItems);

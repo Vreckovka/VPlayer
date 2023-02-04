@@ -219,6 +219,44 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region DateTime
+
+    private DateTime created;
+
+    public DateTime Created
+    {
+      get { return created; }
+      set
+      {
+        if (value != created)
+        {
+          created = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region Modified
+
+    private DateTime modified;
+
+    public DateTime Modified
+    {
+      get { return modified; }
+      set
+      {
+        if (value != modified)
+        {
+          modified = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #region MediaInfo
 
     private IMediaAnalysis mediaInfo;
@@ -256,9 +294,7 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
-
-
-
+    
     #region LeftTime
 
     public TimeSpan LeftTime
@@ -276,7 +312,6 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
-
 
     #region OnResetAllData
 

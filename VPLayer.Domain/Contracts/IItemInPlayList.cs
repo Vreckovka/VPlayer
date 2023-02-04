@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using FFMpegCore;
 using VCore.Standard.ViewModels.TreeView;
 
 namespace VPlayer.Core.ViewModels
@@ -9,6 +10,10 @@ namespace VPlayer.Core.ViewModels
     int Duration { get; set; }
     TimeSpan ActualTime { get; }
     float ActualPosition { get; set; }
+    IMediaAnalysis MediaInfo { get; set; }
+
+    DateTime Created { get; set; }
+    DateTime Modified { get; set; }
   }
 
   public interface IFileItemInPlayList<TModel> : IItemInPlayList<TModel>, IFileItemInPlayList where TModel : IPlayableModel

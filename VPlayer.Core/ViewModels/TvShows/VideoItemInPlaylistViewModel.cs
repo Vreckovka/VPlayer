@@ -7,6 +7,7 @@ using VCore.Standard;
 using VCore.WPF.Misc;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
+using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.AudioStorage.Scrappers.CSFD.Domain;
 using VPlayer.Core.Events;

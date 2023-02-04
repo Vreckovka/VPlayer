@@ -1260,6 +1260,10 @@ namespace VPlayer.AudioStorage.AudioDatabase
                 {
                   context.Entry(playlistItem).State = EntityState.Added;
                 }
+                else
+                {
+                  context.Entry(playlistItem).State = EntityState.Modified;
+                }
               }
 
               foundPlaylist.ItemCount = foundPlaylist.PlaylistItems.Count;

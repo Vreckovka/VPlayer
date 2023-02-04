@@ -334,7 +334,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     #region GetAlbumFrontCoversUrls
 
-    public Task<List<AlbumCover>> GetAlbumFrontCoversUrls(Album album, CancellationToken cancellationToken)
+    public Task<List<AlbumCover>> GetAlbumFrontCoversUrls(Album album, CancellationToken cancellationToken, int? take = null)
     {
       return Task.Run(async () =>
       {
@@ -375,8 +375,14 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
           // Search for a release by title.
           var releases = await Release.SearchAsync(query);
+          var items = releases.Items;
 
-          foreach (var realease in releases.Items)
+          if (take != null)
+          {
+            items = items.Take(take.Value).ToList();
+          }
+
+          foreach (var realease in items)
           {
             var newCovers = await GetAlbumFrontCoversUrls(realease.Id, cancellationToken);
             if (newCovers != null)
@@ -452,7 +458,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     #region UpdateAlbum
 
-    public async Task<Album> UpdateAlbum(Album album)
+    public async Task<Album> UpdateAlbum(Album album, CancellationToken cancellationToken = default)
     {
       try
       {
@@ -657,7 +663,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
         statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
 
-        string albumCoverUrl = await GetAlbumFrontConverURL(release.Id);
+        string albumCoverUrl = await GetAlbumFrontCoverURL(release.Id);
 
         if (albumCoverUrl == null)
         {
@@ -666,11 +672,18 @@ namespace VPlayer.AudioStorage.InfoDownloader
           while (albumCoverUrl == null)
           {
             if (releaseIndex < releases.Items.Count - 1)
-              albumCoverUrl = await GetAlbumFrontConverURL(releases.Items[releaseIndex].Id);
+              albumCoverUrl = await GetAlbumFrontCoverURL(releases.Items[releaseIndex].Id);
             else
               break;
 
             releaseIndex++;
+          }
+
+          if (albumCoverUrl == null)
+          {
+            albumCoverUrl = (await GetAlbumFrontCoversUrls(album, cancellationToken, 2))
+              .OrderByDescending(x => x.Size)
+              .FirstOrDefault()?.Url;
           }
 
           if (albumCoverUrl == null)
@@ -1023,7 +1036,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
     /// </summary>
     /// <param name="MBID"></param>
     /// <returns></returns>,
-    private async Task<string> GetAlbumFrontConverURL(string MBID)
+    private async Task<string> GetAlbumFrontCoverURL(string MBID)
     {
       return await Task.Run(async () =>
       {
@@ -1054,7 +1067,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
             {
               logger.Log(Logger.MessageType.Warning,
                 $"Album cover was not found {MBID} trying again, response code {response.Code}");
-              return await GetAlbumFrontConverURL(MBID);
+              return await GetAlbumFrontCoverURL(MBID);
             }
 
             logger.Log(Logger.MessageType.Warning,

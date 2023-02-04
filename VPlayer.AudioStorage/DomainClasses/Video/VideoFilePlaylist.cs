@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 
-namespace VPlayer.AudioStorage.DomainClasses
+namespace VPlayer.AudioStorage.DomainClasses.Video
 {
   [Serializable]
   public class VideoFilePlaylist : FilePlaylist<PlaylistVideoItem>

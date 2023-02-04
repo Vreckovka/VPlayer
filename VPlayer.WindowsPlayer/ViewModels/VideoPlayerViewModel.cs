@@ -25,6 +25,7 @@ using VCore.WPF.Modularity.RegionProviders;
 using VFfmpeg;
 using VPlayer.AudioStorage.DataLoader;
 using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.AudioStorage.Scrappers.CSFD;
 using VPlayer.AudioStorage.Scrappers.CSFD.Domain;
@@ -1217,7 +1218,98 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       return base.BeforePlayEvent(data);
     }
-    
+
+    protected override void SortPlaylist(PlaylistSortOrder playlistSort)
+    {
+      base.SortPlaylist(playlistSort);
+
+      switch (playlistSort)
+      {
+        case PlaylistSortOrder.ItemProperties:
+          var comp = Comparer<VideoItemInPlaylistViewModel>.Create((x, y) =>
+          {
+            int? seasonNumber1 = null;
+            int? episodeNumber1 = null;
+
+            int? seasonNumber2 = null;
+            int? episodeNumber2 = null;
+
+            if (x == null && y != null)
+              return 1;
+            if (y == null && x != null)
+              return 0;
+
+            var name = x.Name.CompareTo(y.Name);
+
+            if (x is TvShowEpisodeInPlaylistViewModel episode1)
+            {
+              seasonNumber1 = episode1.TvShowSeason.SeasonNumber;
+              episodeNumber1 = episode1.TvShowEpisode.EpisodeNumber;
+            }
+
+            if (y is TvShowEpisodeInPlaylistViewModel episode2)
+            {
+              seasonNumber2 = episode2.TvShowSeason.SeasonNumber;
+              episodeNumber2 = episode2.TvShowEpisode.EpisodeNumber;
+            }
+
+            if (seasonNumber1 == null)
+            {
+              var tvShowEpisodeNumbers = DataLoader.GetTvShowSeriesNumber(x.Name);
+
+              seasonNumber1 = tvShowEpisodeNumbers?.SeasonNumber;
+              episodeNumber1 = tvShowEpisodeNumbers?.SeasonNumber;
+            }
+
+            if (seasonNumber2 == null)
+            {
+              var tvShowEpisodeNumbers = DataLoader.GetTvShowSeriesNumber(y.Name);
+
+              seasonNumber2 = tvShowEpisodeNumbers?.SeasonNumber;
+              episodeNumber2 = tvShowEpisodeNumbers?.SeasonNumber;
+            }
+
+            if (seasonNumber1 == null && seasonNumber2 == null)
+            {
+              if (episodeNumber1 != null && episodeNumber2 == null)
+                return 1;
+              if (episodeNumber2 != null && episodeNumber1 == null)
+                return -1;
+
+              return name;
+            }
+
+            if (episodeNumber1 == null && episodeNumber2 == null)
+            {
+              if (seasonNumber1 != null && seasonNumber2 == null)
+                return 1;
+              if (seasonNumber1 == null)
+                return -1;
+
+              return name;
+            }
+
+            if (seasonNumber1 != null && seasonNumber2 == null)
+            {
+              return 1;
+            }
+
+            if (seasonNumber1 == null)
+            {
+              return -1;
+            }
+
+            var season = seasonNumber1.Value.CompareTo(seasonNumber2.Value);
+            var episode = episodeNumber1.Value.CompareTo(episodeNumber2.Value);
+
+            return season != 0 ? season : episode != 0 ? episode : name;
+          });
+
+          PlayList.Sort(comp);
+          break;
+      }
+    }
+
     #endregion
   }
 }

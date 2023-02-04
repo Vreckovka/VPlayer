@@ -10,6 +10,7 @@ using FFMpegCore;
 using FFMpegCore.Exceptions;
 using Logger;
 using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.Core.ViewModels;
 using Size = System.Drawing.Size;
 

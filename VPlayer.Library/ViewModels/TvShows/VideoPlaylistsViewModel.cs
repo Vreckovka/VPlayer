@@ -3,6 +3,7 @@ using VCore.Standard.Factories.ViewModels;
 using VCore.WPF;
 using VCore.WPF.Modularity.RegionProviders;
 using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Home.ViewModels.LibraryViewModels;

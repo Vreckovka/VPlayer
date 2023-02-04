@@ -21,6 +21,7 @@ using VCore.WPF.ViewModels.WindowsFiles;
 using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.DataLoader;
 using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.ViewModels.SoundItems;

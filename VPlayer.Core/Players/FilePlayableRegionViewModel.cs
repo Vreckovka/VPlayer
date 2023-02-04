@@ -25,6 +25,7 @@ using VCore;
 using VCore.ItemsCollections;
 using VCore.Standard;
 using VCore.Standard.Factories.ViewModels;
+using VCore.Standard.Helpers;
 using VCore.Standard.Modularity.Interfaces;
 using VCore.Standard.ViewModels.WindowsFile;
 using VCore.WPF.Interfaces.Managers;
@@ -703,6 +704,17 @@ namespace VPlayer.Core.ViewModels
           await storageManager.UpdateEntitiesAsync(itemsToUpdate.Select(x => x.Model));
 
         RaisePropertyChanged(nameof(TotalPlaylistDuration));
+
+        itemsToUpdate = PlayList.Where(x => x.Created == default).ToList();
+
+        foreach (var item in itemsToUpdate.Where(x => !string.IsNullOrEmpty(x.Model?.Source)
+                                                      && !x.Model.Source.Contains("https://")
+                                                      && !x.Model.Source.Contains("http://")))
+        {
+          item.Created = File.GetCreationTime(item.Model.Source);
+          item.Modified = File.GetLastWriteTime(item.Model.Source);
+        }
+
       }
       catch (Exception ex)
       {
@@ -885,6 +897,21 @@ namespace VPlayer.Core.ViewModels
       {
         SetLastPosition(ActualSavedPlaylist);
         setLastPosition = false;
+      }
+    }
+
+    protected override void SortPlaylist(PlaylistSortOrder playlistSort)
+    {
+      base.SortPlaylist(playlistSort);
+
+      switch(playlistSort)
+      {
+        case PlaylistSortOrder.Created:
+          PlayList.Sort((x, y) => x.Created.CompareTo(y.Created));
+          break;
+        case PlaylistSortOrder.Modified:
+          PlayList.Sort((x, y) => x.Modified.CompareTo(y.Modified));
+          break;
       }
     }
 

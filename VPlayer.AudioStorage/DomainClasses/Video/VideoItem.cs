@@ -2,7 +2,7 @@
 using VCore.Standard.Modularity.Interfaces;
 using VPlayer.Core.ViewModels;
 
-namespace VPlayer.AudioStorage.DomainClasses
+namespace VPlayer.AudioStorage.DomainClasses.Video
 {
   [Serializable]
   public class PlaybleItem : DomainEntity, IUpdateable<PlaybleItem>, IFilePlayableModel, INamedEntity

@@ -1,4 +1,5 @@
 ﻿using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses.Video;
 
 namespace VPlayer.Core.ViewModels.TvShows
 {

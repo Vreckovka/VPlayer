@@ -1,17 +1,10 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
-using VPlayer.AudioStorage.DomainClasses.Video;
+using VPlayer.AudioStorage.DomainClasses.Songs;
 
-namespace VPlayer.AudioStorage.DomainClasses
+namespace VPlayer.AudioStorage.DomainClasses.Video
 {
   [Serializable]
-  public class PlaylistVideoItem : DomainEntity, IItemInPlaylist<VideoItem>
+  public class PlaylistVideoItem : ItemInPlaylist<VideoItem>
   {
-    public int OrderInPlaylist { get; set; }
-
-    [ForeignKey(nameof(ReferencedItem))]
-    public int IdReferencedItem { get; set; }
-    public VideoItem ReferencedItem { get; set; }
-
   }
 }

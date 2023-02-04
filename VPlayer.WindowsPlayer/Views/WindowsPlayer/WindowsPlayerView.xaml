@@ -20,6 +20,7 @@
              xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
              xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
              xmlns:viewModels="clr-namespace:VPlayer.WindowsPlayer.ViewModels"
+             xmlns:viewModels1="clr-namespace:VPlayer.Core.ViewModels;assembly=VPlayer.Core"
              d:DesignHeight="450"
              d:DesignWidth="1900"
              mc:Ignorable="d">
@@ -35,7 +36,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="5" />
-            <ColumnDefinition Width="445" />
+            <ColumnDefinition Width="450" />
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Column="0"
@@ -504,7 +505,7 @@
                         <Border Grid.Row="1"
                                 Grid.Column="0"
                                 Grid.ColumnSpan="3"
-                                Margin="0,5,0,0"
+                                Margin="0,0,0,0"
                                 Padding="10,0">
                             <Grid Margin="0,0,0,0">
                                 <Grid.Resources>
@@ -649,7 +650,7 @@
                                     </DataTemplate>
 
                                     <DataTemplate x:Key="VideoPlayerTemplate">
-                                        <StackPanel Margin="15,0,0,0"
+                                        <StackPanel Margin="5,0,0,0"
                                                     HorizontalAlignment="Left"
                                                     Orientation="Horizontal">
 
@@ -724,85 +725,124 @@
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
 
-                                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                                    <controls:PathButton Command="{Binding ReloadFile}"
-                                                         IconWidth="20"
-                                                         PathStyle="{StaticResource arrows-rotate_path}"
-                                                         ToolTip="Reload file" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
 
-                                    <controls:PathButton Command="{Binding ClearPlaylistCommand}"
-                                                         IconWidth="25"
-                                                         PathStyle="{StaticResource TrashList}"
-                                                         ToolTip="Clear actual playlist" />
+                                    <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                        <controls:PathButton Command="{Binding ReloadFile}"
+                                                             IconWidth="20"
+                                                             PathStyle="{StaticResource arrows-rotate_path}"
+                                                             ToolTip="Reload file" />
 
-                                    <controls:PathButton Command="{Binding SavePlaylistCommand}"
-                                                         IconHoverColor="#ccc"
-                                                         IconWidth="25"
-                                                         PathStyle="{StaticResource floppy-disk-pen}"
-                                                         ToolTip="Save playlist" />
+                                        <controls:PathButton Command="{Binding ClearPlaylistCommand}"
+                                                             IconHoverColor="{StaticResource DefaultRedColor}"
+                                                             IconWidth="25"
+                                                             PathStyle="{StaticResource TrashList}"
+                                                             ToolTip="Clear actual playlist" />
 
-                                    <controls:PathButton Command="{Binding ChangePlaylistFavorite}"
-                                                         IconCheckedColor="{StaticResource BlueColor}"
-                                                         IconWidth="20"
-                                                         IsChecked="{Binding ActualSavedPlaylist.IsUserCreated, Mode=OneWay}"
-                                                         IsReadOnly="False"
-                                                         PathStyle="{StaticResource star-solid}"
-                                                         ToolTip="Is favorite" />
+                                        <controls:PathButton Command="{Binding ChangePlaylistFavorite}"
+                                                             IconCheckedColor="{StaticResource BlueColor}"
+                                                             IconWidth="20"
+                                                             IsChecked="{Binding ActualSavedPlaylist.IsUserCreated, Mode=OneWay}"
+                                                             IsReadOnly="False"
+                                                             PathStyle="{StaticResource star-solid}"
+                                                             ToolTip="Is favorite" />
 
-                                    <controls:PathButton Command="{Binding ElementName=AutoscrollBehavrior_Playlist, Path=AutoscrollCommand}"
-                                                         Glyph="{StaticResource ballot-check-glyph}"
-                                                         IconDefaultColor="#353535"
-                                                         IconHoverColor="#959595"
-                                                         IsReadOnly="True"
-                                                         Style="{StaticResource FontAwesomeGlyphStyle}"
-                                                         ToolTip="Scroll to acutal item" />
+                                        <controls:PathButton Command="{Binding ElementName=AutoscrollBehavrior_Playlist, Path=AutoscrollCommand}"
+                                                             Glyph="{StaticResource ballot-check-glyph}"
+                                                             IconDefaultColor="#353535"
+                                                             IconHoverColor="#959595"
+                                                             IsReadOnly="True"
+                                                             Style="{StaticResource FontAwesomeGlyphStyle}"
+                                                             ToolTip="Scroll to acutal item" />
 
-                                    <Border Padding="5,0">
-                                        <Grid>
-                                            <controls:PathButton x:Name="binoculars"
-                                                                 Margin="0,0,0,0"
-                                                                 Command="{Binding WatchFolderPlaylistCommand}"
-                                                                 Glyph="{StaticResource binoculars}"
-                                                                 IconDefaultColor="#353535"
-                                                                 IconHoverColor="{StaticResource YellowColor}"
-                                                                 IconMargin="0"
-                                                                 IsChecked="{Binding ActualSavedPlaylist.WatchFolder}"
-                                                                 Style="{StaticResource FontAwesomeGlyphStyle}"
-                                                                 ToolTip="Watch folder" />
+                                        <Border Padding="5,0">
+                                            <Grid>
+                                                <controls:PathButton x:Name="binoculars"
+                                                                     Margin="0,0,0,0"
+                                                                     Command="{Binding WatchFolderPlaylistCommand}"
+                                                                     Glyph="{StaticResource binoculars}"
+                                                                     IconDefaultColor="#353535"
+                                                                     IconHoverColor="{StaticResource YellowColor}"
+                                                                     IconMargin="0"
+                                                                     IsChecked="{Binding ActualSavedPlaylist.WatchFolder}"
+                                                                     Style="{StaticResource FontAwesomeGlyphStyle}"
+                                                                     ToolTip="Watch folder" />
 
-                                            <controls:PathButton Margin="0,10,-11,0"
-                                                                 HorizontalAlignment="Right"
-                                                                 Glyph="{StaticResource folder-open-glyph}"
-                                                                 GlyphFontSize="10"
-                                                                 IconBrush="{Binding ElementName=binoculars, Path=IconBrush}"
-                                                                 IconMargin="0"
-                                                                 IsHitTestVisible="False"
-                                                                 IsReadOnly="True"
-                                                                 Style="{StaticResource FontAwesomeGlyphStyle}" />
-                                        </Grid>
-                                    </Border>
+                                                <controls:PathButton Margin="0,10,-11,0"
+                                                                     HorizontalAlignment="Right"
+                                                                     Glyph="{StaticResource folder-open-glyph}"
+                                                                     GlyphFontSize="10"
+                                                                     IconBrush="{Binding ElementName=binoculars, Path=IconBrush}"
+                                                                     IconMargin="0"
+                                                                     IsHitTestVisible="False"
+                                                                     IsReadOnly="True"
+                                                                     Style="{StaticResource FontAwesomeGlyphStyle}" />
+                                            </Grid>
+                                        </Border>
 
-                                    <controls:PathButton Margin="10,0,0,0"
-                                                         Command="{Binding ResetAllData}"
-                                                         Glyph="{StaticResource rotate-exclamation}"
-                                                         GlyphFontSize="18"
-                                                         IconDefaultColor="#353535"
-                                                         IconHoverColor="{StaticResource DefaultRedColor}"
-                                                         IconWidth="25"
-                                                         IsReadOnly="True"
-                                                         Style="{StaticResource FontAwesomeGlyphStyle}"
-                                                         ToolTip="Scroll to acutal item" />
+                                        <controls:PathButton Margin="17,0,0,0"
+                                                             Command="{Binding SavePlaylistCommand}"
+                                                             ForegroundDefaultColor="#757575"
+                                                             Glyph="{StaticResource floppy-disk-pen_glyph}"
+                                                             GlyphFontSize="20"
+                                                             IconDefaultColor="#353535"
+                                                             IconHoverColor="#ccc"
+                                                             IconMargin="0"
+                                                             Style="{StaticResource FontAwesomeGlyphStyle}"
+                                                             ToolTip="Save playlist" />
 
 
-                                </StackPanel>
+                                    </StackPanel>
+
+                                    <Grid Grid.Column="1">
+                                        <controls:PathButton x:Name="more_actions"
+                                                             HorizontalAlignment="Right"
+                                                             Glyph="{StaticResource angles-right}"
+                                                             IconDefaultColor="#454545"
+                                                             IconMargin="0 0 2 0"
+                                                             IsReadOnly="False"
+                                                             Style="{StaticResource FontAwesomeGlyphStyle}" />
+
+                                        <Popup IsOpen="{Binding ElementName=more_actions, Path=IsChecked, Mode=TwoWay}"
+                                               Placement="Bottom"
+                                               PlacementTarget="{Binding ElementName=more_actions}"
+                                               StaysOpen="False">
+                                            <Border Background="#101010"
+                                                    BorderBrush="#252525"
+                                                    BorderThickness="1,1,2,1">
+                                                <StackPanel>
+                                                    <controls:PathButton Padding="10"
+                                                                         Command="{Binding ResetAllData}"
+                                                                         Content="Reset all data"
+                                                                         ForegroundDefaultColor="#757575"
+                                                                         Glyph="{StaticResource rotate-exclamation}"
+                                                                         GlyphFontSize="20"
+                                                                         IconDefaultColor="#353535"
+                                                                         IconHoverColor="{StaticResource DefaultRedColor}"
+                                                                         IsReadOnly="True"
+                                                                         Style="{StaticResource FontAwesomeGlyphStyle}" />
+                                                </StackPanel>
+                                            </Border>
+                                        </Popup>
+
+                                    </Grid>
+                                </Grid>
+
+
 
                                 <Grid Grid.Row="1"
                                       Grid.Column="0"
-                                      Grid.ColumnSpan="2">
+                                      Grid.ColumnSpan="2"
+                                      Margin="0,2,0,2">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition />
                                         <ColumnDefinition Width="auto" />
                                         <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="100" />
                                     </Grid.ColumnDefinitions>
 
                                     <controls:Finder Grid.Column="0"
@@ -860,6 +900,118 @@
                                         </UniformGrid>
                                     </Border>
 
+                                    <Grid Grid.Column="3"
+                                          Margin="5,5,0,5"
+                                          HorizontalAlignment="Center">
+                                        <Border Padding="10,0"
+                                                BorderBrush="#252525"
+                                                BorderThickness="1">
+                                            <controls:PathButton x:Name="sort_order"
+                                                                 HorizontalAlignment="Right"
+                                                                 ForegroundCheckedColor="White"
+                                                                 ForegroundDefaultColor="#454545"
+                                                                 IconDefaultColor="#454545"
+                                                                 IconMargin="0 0 5 0"
+                                                                 IconWidth="25"
+                                                                 IsReadOnly="False"
+                                                                 ToolTip="Sort order">
+                                                <controls:PathButton.Style>
+                                                    <Style BasedOn="{StaticResource FontAwesomeGlyphStyle}" TargetType="controls:PathButton">
+                                                        <Setter Property="Glyph" Value="{StaticResource arrow-down-wide-short}" />
+                                                        <Setter Property="IconHoverColor" Value="{StaticResource GreenColor3}" />
+                                                        <Setter Property="IconCheckedColor" Value="{StaticResource GreenColor3}" />
+
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsSortDescending}" Value="true">
+                                                                <Setter Property="Glyph" Value="{StaticResource arrow-up-wide-short}" />
+                                                                <Setter Property="IconHoverColor" Value="{StaticResource OrangeColor}" />
+                                                                <Setter Property="IconCheckedColor" Value="{StaticResource OrangeColor}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </controls:PathButton.Style>
+
+
+                                                <TextBlock Text="{Binding ActualPlaylistSortOrder}" TextTrimming="CharacterEllipsis" />
+
+                                            </controls:PathButton>
+                                        </Border>
+
+                                        <Popup IsOpen="{Binding ElementName=sort_order, Path=IsChecked, Mode=TwoWay}"
+                                               Placement="Bottom"
+                                               PlacementTarget="{Binding ElementName=sort_order}"
+                                               StaysOpen="False">
+                                            <Border Background="#101010"
+                                                    BorderBrush="#252525"
+                                                    BorderThickness="1,1,2,1">
+                                                <StackPanel>
+                                                    <CheckBox Margin="10"
+                                                              Padding="10,0,0,0"
+                                                              Content="Desceding"
+                                                              Foreground="White"
+                                                              IsChecked="{Binding IsSortDescending, Mode=TwoWay}" />
+
+                                                    <controls:PathButton Padding="10"
+                                                                         Command="{Binding ChangePlaylistOrder}"
+                                                                         CommandParameter="{x:Static viewModels1:PlaylistSortOrder.None}"
+                                                                         Content="None"
+                                                                         ForegroundDefaultColor="#757575"
+                                                                         Glyph="{StaticResource empty-set}"
+                                                                         GlyphFontSize="18"
+                                                                         IconDefaultColor="#353535"
+                                                                         IconHoverColor="{StaticResource DefaultRedColor}"
+                                                                         IsReadOnly="True"
+                                                                         Style="{StaticResource FontAwesomeGlyphStyle}" />
+
+                                                    <controls:PathButton Padding="10"
+                                                                         Command="{Binding ChangePlaylistOrder}"
+                                                                         CommandParameter="{x:Static viewModels1:PlaylistSortOrder.Name}"
+                                                                         Content="Name"
+                                                                         ForegroundDefaultColor="#757575"
+                                                                         Glyph="{StaticResource text}"
+                                                                         GlyphFontSize="18"
+                                                                         IconDefaultColor="#353535"
+                                                                         IconHoverColor="{StaticResource YellowColor}"
+                                                                         IsReadOnly="True"
+                                                                         Style="{StaticResource FontAwesomeGlyphStyle}" />
+
+                                                    <controls:PathButton Padding="10"
+                                                                         Command="{Binding ChangePlaylistOrder}"
+                                                                         CommandParameter="{x:Static viewModels1:PlaylistSortOrder.Created}"
+                                                                         Content="Created"
+                                                                         ForegroundDefaultColor="#757575"
+                                                                         Glyph="{StaticResource clock_glyph}"
+                                                                         GlyphFontSize="18"
+                                                                         IconDefaultColor="#353535"
+                                                                         IconHoverColor="{StaticResource BlueColor}"
+                                                                         Style="{StaticResource FontAwesomeGlyphStyle}" />
+
+                                                    <controls:PathButton Padding="10"
+                                                                         Command="{Binding ChangePlaylistOrder}"
+                                                                         CommandParameter="{x:Static viewModels1:PlaylistSortOrder.Modified}"
+                                                                         Content="Modified"
+                                                                         ForegroundDefaultColor="#757575"
+                                                                         Glyph="{StaticResource clock_glyph}"
+                                                                         GlyphFontSize="18"
+                                                                         IconDefaultColor="#353535"
+                                                                         IconHoverColor="{StaticResource GreenColor3}"
+                                                                         Style="{StaticResource FontAwesomeGlyphStyle}" />
+
+                                                    <controls:PathButton Padding="10"
+                                                                         Command="{Binding ChangePlaylistOrder}"
+                                                                         CommandParameter="{x:Static viewModels1:PlaylistSortOrder.ItemProperties}"
+                                                                         Content="Item properties"
+                                                                         ForegroundDefaultColor="#757575"
+                                                                         Glyph="{StaticResource gear_glyph}"
+                                                                         GlyphFontSize="18"
+                                                                         IconDefaultColor="#353535"
+                                                                         IconHoverColor="{StaticResource BrownColor}"
+                                                                         Style="{StaticResource FontAwesomeGlyphStyle}" />
+
+                                                </StackPanel>
+                                            </Border>
+                                        </Popup>
+                                    </Grid>
 
                                 </Grid>
 

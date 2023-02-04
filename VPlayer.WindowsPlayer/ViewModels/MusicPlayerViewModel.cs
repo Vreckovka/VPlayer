@@ -902,13 +902,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     private async Task SetPlaylistCover()
     {
-      if (ActualItem is SongInPlayListViewModel song && song.AlbumViewModel?.Image != null)
+      if (ActualItem is SongInPlayListViewModel song &&
+          song.AlbumViewModel?.Image != null &&
+          ActualSavedPlaylist.CoverPath != song.AlbumViewModel.Image &&
+          song.AlbumViewModel.Image != PlayableViewModelWithThumbnail<SongInPlayListViewModel, Album>.GetEmptyImage())
       {
-        var save = ActualSavedPlaylist.CoverPath != song.AlbumViewModel.Image;
         ActualSavedPlaylist.CoverPath = song.AlbumViewModel.Image;
-
-        if (save)
-          await UpdateActualSavedPlaylistPlaylist();
+        await UpdateActualSavedPlaylistPlaylist();
       }
     }
 
@@ -2501,6 +2501,50 @@ namespace VPlayer.WindowsPlayer.ViewModels
       originalDownlaodedAlbumName = null;
       downloadingAlbum = null;
       downloadingArtist = null;
+    }
+
+    #endregion
+
+    #region SortPlaylist
+
+    protected override void SortPlaylist(PlaylistSortOrder playlistSort)
+    {
+      base.SortPlaylist(playlistSort);
+
+      switch (playlistSort)
+      {
+        case PlaylistSortOrder.Created:
+          break;
+        case PlaylistSortOrder.ItemProperties:
+          var comp = Comparer<SoundItemInPlaylistViewModel>.Create((x, y) =>
+          {
+            string albumName1 = null;
+            string albumName2 = null;
+
+            if (x == null && y != null)
+              return 1;
+            if (y == null && x != null)
+              return 0;
+
+            if (x is SongInPlayListViewModel song1)
+            {
+              albumName1 = song1.AlbumViewModel?.Name;
+            }
+
+            if (y is SongInPlayListViewModel song2)
+            {
+              albumName2 = song2.AlbumViewModel?.Name;
+            }
+
+            var name = x.Name.CompareTo(y.Name);
+            var album = albumName1?.CompareTo(albumName2) ?? 0;
+
+            return album != 0 ? album : name;
+          });
+
+          PlayList.Sort(comp);
+          break;
+      }
     }
 
     #endregion
