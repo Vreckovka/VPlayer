@@ -687,38 +687,38 @@ namespace VPlayer.Core.ViewModels
 
     protected virtual async Task DownloadItemInfo(CancellationToken cancellationToken)
     {
-      try
-      {
-        var itemsToUpdate = PlayList.Where(x => x.Duration == 0).ToList();
+      RaisePropertyChanged(nameof(TotalPlaylistDuration));
 
-        foreach (var item in itemsToUpdate.Where(x => !string.IsNullOrEmpty(x.Model?.Source)
-                                                 && !x.Model.Source.Contains("https://")
-                                                 && !x.Model.Source.Contains("http://")))
+      var itemsToUpdate = PlayList.Where(x => x.Created == default).ToList();
+
+      foreach (var item in itemsToUpdate.Where(x => !string.IsNullOrEmpty(x.Model?.Source)
+                                                    && !x.Model.Source.Contains("https://")
+                                                    && !x.Model.Source.Contains("http://")))
+      {
+        item.Created = File.GetCreationTime(item.Model.Source);
+        item.Modified = File.GetLastWriteTime(item.Model.Source);
+      }
+
+
+      itemsToUpdate = PlayList.Where(x => x.Duration == 0).ToList();
+
+      foreach (var item in itemsToUpdate.Where(x => !string.IsNullOrEmpty(x.Model?.Source)
+                                               && !x.Model.Source.Contains("https://")
+                                               && !x.Model.Source.Contains("http://")))
+      {
+        try
         {
           var mediaInfo = await FFProbe.AnalyseAsync(item.Model.Source);
 
           item.Duration = (int)mediaInfo.Duration.TotalSeconds;
         }
-
-        if (itemsToUpdate.Count > 0)
-          await storageManager.UpdateEntitiesAsync(itemsToUpdate.Select(x => x.Model));
-
-        RaisePropertyChanged(nameof(TotalPlaylistDuration));
-
-        itemsToUpdate = PlayList.Where(x => x.Created == default).ToList();
-
-        foreach (var item in itemsToUpdate.Where(x => !string.IsNullOrEmpty(x.Model?.Source)
-                                                      && !x.Model.Source.Contains("https://")
-                                                      && !x.Model.Source.Contains("http://")))
+        catch (Exception ex)
         {
-          item.Created = File.GetCreationTime(item.Model.Source);
-          item.Modified = File.GetLastWriteTime(item.Model.Source);
         }
+      }
 
-      }
-      catch (Exception ex)
-      {
-      }
+      if (itemsToUpdate.Count > 0)
+        await storageManager.UpdateEntitiesAsync(itemsToUpdate.Select(x => x.Model));
     }
 
     #endregion
@@ -904,7 +904,7 @@ namespace VPlayer.Core.ViewModels
     {
       base.SortPlaylist(playlistSort);
 
-      switch(playlistSort)
+      switch (playlistSort)
       {
         case PlaylistSortOrder.Created:
           PlayList.Sort((x, y) => x.Created.CompareTo(y.Created));

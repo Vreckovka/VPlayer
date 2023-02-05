@@ -1080,7 +1080,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
             var albumViewModel = songInPlay.AlbumViewModel;
             var finalPath = albumViewModel?.Model.AlbumFrontCoverFilePath;
 
-            if (!string.IsNullOrEmpty(artistName) && !string.IsNullOrEmpty(albumName) && songInPlay.AlbumViewModel.HighQualityCover == null)
+            if (!string.IsNullOrEmpty(artistName) && !string.IsNullOrEmpty(albumName) && songInPlay.AlbumViewModel.ImageThumbnail == null)
             {
               var cover = await iPCloudAlbumCoverProvider.GetAlbumCover(artistName, albumName);
 
@@ -1165,30 +1165,20 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     private async Task<string> SaveAlbumCover(byte[] cover, AlbumViewModel albumViewModel)
     {
-      MemoryStream ms = new MemoryStream(cover);
-      Image i = Image.FromStream(ms);
-
       var filePath = Path.Combine(AudioInfoDownloader.GetAlbumCoverImagePath(albumViewModel.Model));
-      byte[] acutalFile = null;
 
-      if (!string.IsNullOrEmpty(filePath))
+      if (!string.IsNullOrEmpty(filePath) && !File.Exists(filePath))
       {
-        if (File.Exists(filePath))
-          acutalFile = File.ReadAllBytes(filePath);
+        MemoryStream ms = new MemoryStream(cover);
+        Image i = Image.FromStream(ms);
+
+        byte[]  acutalFile = File.ReadAllBytes(filePath);
 
         albumViewModel.Model.AlbumFrontCoverFilePath = filePath;
 
         await storageManager.UpdateEntityAsync(albumViewModel.Model);
 
-        bool isDifferent = true;
-
-        if (acutalFile != null)
-        {
-          var diff = (1.0 - (double)Math.Min(acutalFile.Length, cover.Length) / Math.Max(acutalFile.Length, cover.Length)) * 100.0;
-          isDifferent = diff > 2.5;
-        }
-
-        if (acutalFile != cover && isDifferent)
+        if (acutalFile != cover)
         {
           filePath.EnsureDirectoryExists();
 
@@ -1577,17 +1567,14 @@ namespace VPlayer.WindowsPlayer.ViewModels
                   MarkViewModelAsChecked(viewmodel);
                   await SetPlaylistCover();
 
-                  Task.Run(async () =>
+                  cancellationToken.ThrowIfCancellationRequested();
+                  var resultLyrics = await songInPlayListViewModel.TryToRefreshUpdateLyrics();
+
+                  if (resultLyrics && viewmodel.Model != null)
                   {
                     cancellationToken.ThrowIfCancellationRequested();
-                    var resultLyrics = await songInPlayListViewModel.TryToRefreshUpdateLyrics();
-
-                    if (resultLyrics && viewmodel.Model != null)
-                    {
-                      cancellationToken.ThrowIfCancellationRequested();
-                      await storageManager.UpdateEntityAsync(viewmodel.Model);
-                    }
-                  });
+                    await storageManager.UpdateEntityAsync(viewmodel.Model);
+                  }
                 }
 
                 catch (TaskCanceledException)

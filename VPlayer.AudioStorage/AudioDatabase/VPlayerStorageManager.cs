@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;
 using VCore;
 using VCore.Standard;
+using VCore.Standard.Helpers;
 using VCore.Standard.Modularity.Interfaces;
 using VCore.WPF.Modularity.Events;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
@@ -71,7 +72,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       disposable = audioInfoDownloader.ItemUpdated.Subscribe(ItemUpdated);
       audioInfoDownloader.SubdirectoryLoaded += AudioInfoDownloader_SubdirectoryLoaded;
 
-      DownloadAllNotYetDownloaded(false);
+      //DownloadAllNotYetDownloaded(false);
     }
 
     #endregion
@@ -714,7 +715,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #endregion
 
-
     #region CombineAlbums
 
     private Album CombineAlbums(Album originalAlbum, Album albumToCombine, AudioDatabaseContext context)
@@ -874,7 +874,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     public Task<bool> UpdateEntityAsync<TEntity>(TEntity newVersion) where TEntity : class, IEntity, IUpdateable<TEntity>
     {
-      return Task.Run(() =>
+      Task.Run(() =>
       {
         try
         {
@@ -884,7 +884,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
           {
             var foundEntity = GetRepository<TEntity>(context).SingleOrDefault(x => x.Id == newVersion.Id);
 
-            if (foundEntity != null)
+            if (foundEntity != null && !EqualityComparer<TEntity>.Default.Equals(foundEntity, newVersion))
             {
               foundEntity.Update(newVersion);
 
@@ -908,6 +908,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
           return false;
         }
       });
+
+      return Task.FromResult(true);
     }
 
     #endregion

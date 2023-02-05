@@ -784,18 +784,161 @@
                                             </Grid>
                                         </Border>
 
-                                        <controls:PathButton Margin="17,0,0,0"
-                                                             Command="{Binding SavePlaylistCommand}"
-                                                             ForegroundDefaultColor="#757575"
-                                                             Glyph="{StaticResource floppy-disk-pen_glyph}"
-                                                             GlyphFontSize="20"
-                                                             IconDefaultColor="#353535"
-                                                             IconHoverColor="#ccc"
-                                                             IconMargin="0"
-                                                             Style="{StaticResource FontAwesomeGlyphStyle}"
-                                                             ToolTip="Save playlist" />
 
 
+                                        <Grid Margin="15,0,0,0" HorizontalAlignment="Center">
+                                            <Border>
+                                                <controls:PathButton x:Name="sort_order"
+                                                                     HorizontalAlignment="Right"
+                                                                     ForegroundCheckedColor="White"
+                                                                     ForegroundDefaultColor="#454545"
+                                                                     IconDefaultColor="#454545"
+                                                                     IsReadOnly="False"
+                                                                     ToolTip="Sort order">
+                                                    <controls:PathButton.Style>
+                                                        <Style BasedOn="{StaticResource FontAwesomeGlyphStyle}" TargetType="controls:PathButton">
+                                                            <Setter Property="Glyph" Value="{StaticResource arrow-down-wide-short}" />
+                                                            <Setter Property="IconHoverColor" Value="{StaticResource GreenColor3}" />
+                                                            <Setter Property="IconCheckedColor" Value="{StaticResource GreenColor3}" />
+
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsSortDescending}" Value="true">
+                                                                    <Setter Property="Glyph" Value="{StaticResource arrow-up-wide-short}" />
+                                                                    <Setter Property="IconHoverColor" Value="{StaticResource OrangeColor}" />
+                                                                    <Setter Property="IconCheckedColor" Value="{StaticResource OrangeColor}" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </controls:PathButton.Style>
+                                                </controls:PathButton>
+                                            </Border>
+
+                                            <Popup IsOpen="{Binding ElementName=sort_order, Path=IsChecked, Mode=TwoWay}"
+                                                   Placement="Bottom"
+                                                   PlacementTarget="{Binding ElementName=sort_order}"
+                                                   StaysOpen="False">
+                                                <Border Background="#101010"
+                                                        BorderBrush="#252525"
+                                                        BorderThickness="1,1,2,1">
+                                                    <StackPanel>
+                                                        <CheckBox Margin="10,10,10,10"
+                                                                  Padding="10,0,0,0"
+                                                                  Content="Desceding"
+                                                                  IsChecked="{Binding IsSortDescending, Mode=TwoWay}" />
+
+                                                        <controls:PathButton Padding="10"
+                                                                             Command="{Binding ChangePlaylistOrder}"
+                                                                             CommandParameter="{x:Static viewModels1:PlaylistSortOrder.None}"
+                                                                             Content="None"
+                                                                             Glyph="{StaticResource empty-set}"
+                                                                             GlyphFontSize="17"
+                                                                             IconHoverColor="{StaticResource DefaultRedColor}"
+                                                                             IsReadOnly="True">
+                                                            <controls:PathButton.Style>
+                                                                <Style BasedOn="{StaticResource FontAwesomeGlyphStyle}" TargetType="controls:PathButton">
+                                                                    <Setter Property="IconDefaultColor" Value="#353535" />
+                                                                    <Setter Property="ForegroundDefaultColor" Value="#757575" />
+
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding ActualPlaylistSortOrder}" Value="{x:Static viewModels1:PlaylistSortOrder.None}">
+                                                                            <Setter Property="IconDefaultColor" Value="{StaticResource DefaultRedColor}" />
+                                                                            <Setter Property="ForegroundDefaultColor" Value="White" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </controls:PathButton.Style>
+                                                        </controls:PathButton>
+
+                                                        <controls:PathButton Padding="10"
+                                                                             Command="{Binding ChangePlaylistOrder}"
+                                                                             CommandParameter="{x:Static viewModels1:PlaylistSortOrder.Name}"
+                                                                             Content="Name"
+                                                                             Glyph="{StaticResource text}"
+                                                                             GlyphFontSize="18"
+                                                                             IconHoverColor="{StaticResource YellowColor}"
+                                                                             IsReadOnly="True">
+                                                            <controls:PathButton.Style>
+                                                                <Style BasedOn="{StaticResource FontAwesomeGlyphStyle}" TargetType="controls:PathButton">
+                                                                    <Setter Property="IconDefaultColor" Value="#353535" />
+                                                                    <Setter Property="ForegroundDefaultColor" Value="#757575" />
+
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding ActualPlaylistSortOrder}" Value="{x:Static viewModels1:PlaylistSortOrder.Name}">
+                                                                            <Setter Property="IconDefaultColor" Value="{StaticResource YellowColor}" />
+                                                                            <Setter Property="ForegroundDefaultColor" Value="White" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </controls:PathButton.Style>
+                                                        </controls:PathButton>
+
+                                                        <controls:PathButton Padding="10"
+                                                                             Command="{Binding ChangePlaylistOrder}"
+                                                                             CommandParameter="{x:Static viewModels1:PlaylistSortOrder.Created}"
+                                                                             Content="Created"
+                                                                             Glyph="{StaticResource clock_glyph}"
+                                                                             GlyphFontSize="18">
+                                                            <controls:PathButton.Style>
+                                                                <Style BasedOn="{StaticResource FontAwesomeGlyphStyle}" TargetType="controls:PathButton">
+                                                                    <Setter Property="IconDefaultColor" Value="#353535" />
+                                                                    <Setter Property="ForegroundDefaultColor" Value="#757575" />
+
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding ActualPlaylistSortOrder}" Value="{x:Static viewModels1:PlaylistSortOrder.Created}">
+                                                                            <Setter Property="IconDefaultColor" Value="{StaticResource BlueColor}" />
+                                                                            <Setter Property="ForegroundDefaultColor" Value="White" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </controls:PathButton.Style>
+                                                        </controls:PathButton>
+
+                                                        <controls:PathButton Padding="10"
+                                                                             Command="{Binding ChangePlaylistOrder}"
+                                                                             CommandParameter="{x:Static viewModels1:PlaylistSortOrder.Modified}"
+                                                                             Content="Modified"
+                                                                             Glyph="{StaticResource clock_glyph}"
+                                                                             GlyphFontSize="18">
+                                                            <controls:PathButton.Style>
+                                                                <Style BasedOn="{StaticResource FontAwesomeGlyphStyle}" TargetType="controls:PathButton">
+                                                                    <Setter Property="IconDefaultColor" Value="#353535" />
+                                                                    <Setter Property="ForegroundDefaultColor" Value="#757575" />
+
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding ActualPlaylistSortOrder}" Value="{x:Static viewModels1:PlaylistSortOrder.Modified}">
+                                                                            <Setter Property="IconDefaultColor" Value="{StaticResource GreenColor3}" />
+                                                                            <Setter Property="ForegroundDefaultColor" Value="White" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </controls:PathButton.Style>
+                                                        </controls:PathButton>
+
+                                                        <controls:PathButton Padding="10"
+                                                                             Command="{Binding ChangePlaylistOrder}"
+                                                                             CommandParameter="{x:Static viewModels1:PlaylistSortOrder.ItemProperties}"
+                                                                             Content="Item properties"
+                                                                             Glyph="{StaticResource gear_glyph}"
+                                                                             GlyphFontSize="18">
+                                                            <controls:PathButton.Style>
+                                                                <Style BasedOn="{StaticResource FontAwesomeGlyphStyle}" TargetType="controls:PathButton">
+                                                                    <Setter Property="IconDefaultColor" Value="#353535" />
+                                                                    <Setter Property="ForegroundDefaultColor" Value="#757575" />
+
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding ActualPlaylistSortOrder}" Value="{x:Static viewModels1:PlaylistSortOrder.ItemProperties}">
+                                                                            <Setter Property="IconDefaultColor" Value="{StaticResource BrownColor}" />
+                                                                            <Setter Property="ForegroundDefaultColor" Value="White" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </controls:PathButton.Style>
+                                                        </controls:PathButton>
+
+                                                    </StackPanel>
+                                                </Border>
+                                            </Popup>
+                                        </Grid>
                                     </StackPanel>
 
                                     <Grid Grid.Column="1">
@@ -803,7 +946,7 @@
                                                              HorizontalAlignment="Right"
                                                              Glyph="{StaticResource angles-right}"
                                                              IconDefaultColor="#454545"
-                                                             IconMargin="0 0 2 0"
+                                                             IconMargin="0 0 5 0"
                                                              IsReadOnly="False"
                                                              Style="{StaticResource FontAwesomeGlyphStyle}" />
 
@@ -825,6 +968,19 @@
                                                                          IconHoverColor="{StaticResource DefaultRedColor}"
                                                                          IsReadOnly="True"
                                                                          Style="{StaticResource FontAwesomeGlyphStyle}" />
+
+                                                    <controls:PathButton Padding="10"
+                                                                         Command="{Binding SavePlaylistCommand}"
+                                                                         Content="Save playlist"
+                                                                         ForegroundDefaultColor="#757575"
+                                                                         Glyph="{StaticResource floppy-disk-pen_glyph}"
+                                                                         GlyphFontSize="20"
+                                                                         IconDefaultColor="#353535"
+                                                                         IconHoverColor="#ccc"
+                                                                         Style="{StaticResource FontAwesomeGlyphStyle}" />
+
+
+
                                                 </StackPanel>
                                             </Border>
                                         </Popup>
@@ -842,7 +998,6 @@
                                         <ColumnDefinition />
                                         <ColumnDefinition Width="auto" />
                                         <ColumnDefinition Width="auto" />
-                                        <ColumnDefinition Width="100" />
                                     </Grid.ColumnDefinitions>
 
                                     <controls:Finder Grid.Column="0"
@@ -899,120 +1054,6 @@
                                                                  ToolTip="Shuffle" />
                                         </UniformGrid>
                                     </Border>
-
-                                    <Grid Grid.Column="3"
-                                          Margin="5,5,0,5"
-                                          HorizontalAlignment="Center">
-                                        <Border Padding="10,0"
-                                                BorderBrush="#252525"
-                                                BorderThickness="1">
-                                            <controls:PathButton x:Name="sort_order"
-                                                                 HorizontalAlignment="Right"
-                                                                 ForegroundCheckedColor="White"
-                                                                 ForegroundDefaultColor="#454545"
-                                                                 IconDefaultColor="#454545"
-                                                                 IconMargin="0 0 5 0"
-                                                                 IconWidth="25"
-                                                                 IsReadOnly="False"
-                                                                 ToolTip="Sort order">
-                                                <controls:PathButton.Style>
-                                                    <Style BasedOn="{StaticResource FontAwesomeGlyphStyle}" TargetType="controls:PathButton">
-                                                        <Setter Property="Glyph" Value="{StaticResource arrow-down-wide-short}" />
-                                                        <Setter Property="IconHoverColor" Value="{StaticResource GreenColor3}" />
-                                                        <Setter Property="IconCheckedColor" Value="{StaticResource GreenColor3}" />
-
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding IsSortDescending}" Value="true">
-                                                                <Setter Property="Glyph" Value="{StaticResource arrow-up-wide-short}" />
-                                                                <Setter Property="IconHoverColor" Value="{StaticResource OrangeColor}" />
-                                                                <Setter Property="IconCheckedColor" Value="{StaticResource OrangeColor}" />
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </controls:PathButton.Style>
-
-
-                                                <TextBlock Text="{Binding ActualPlaylistSortOrder}" TextTrimming="CharacterEllipsis" />
-
-                                            </controls:PathButton>
-                                        </Border>
-
-                                        <Popup IsOpen="{Binding ElementName=sort_order, Path=IsChecked, Mode=TwoWay}"
-                                               Placement="Bottom"
-                                               PlacementTarget="{Binding ElementName=sort_order}"
-                                               StaysOpen="False">
-                                            <Border Background="#101010"
-                                                    BorderBrush="#252525"
-                                                    BorderThickness="1,1,2,1">
-                                                <StackPanel>
-                                                    <CheckBox Margin="10"
-                                                              Padding="10,0,0,0"
-                                                              Content="Desceding"
-                                                              Foreground="White"
-                                                              IsChecked="{Binding IsSortDescending, Mode=TwoWay}" />
-
-                                                    <controls:PathButton Padding="10"
-                                                                         Command="{Binding ChangePlaylistOrder}"
-                                                                         CommandParameter="{x:Static viewModels1:PlaylistSortOrder.None}"
-                                                                         Content="None"
-                                                                         ForegroundDefaultColor="#757575"
-                                                                         Glyph="{StaticResource empty-set}"
-                                                                         GlyphFontSize="18"
-                                                                         IconDefaultColor="#353535"
-                                                                         IconHoverColor="{StaticResource DefaultRedColor}"
-                                                                         IsReadOnly="True"
-                                                                         Style="{StaticResource FontAwesomeGlyphStyle}" />
-
-                                                    <controls:PathButton Padding="10"
-                                                                         Command="{Binding ChangePlaylistOrder}"
-                                                                         CommandParameter="{x:Static viewModels1:PlaylistSortOrder.Name}"
-                                                                         Content="Name"
-                                                                         ForegroundDefaultColor="#757575"
-                                                                         Glyph="{StaticResource text}"
-                                                                         GlyphFontSize="18"
-                                                                         IconDefaultColor="#353535"
-                                                                         IconHoverColor="{StaticResource YellowColor}"
-                                                                         IsReadOnly="True"
-                                                                         Style="{StaticResource FontAwesomeGlyphStyle}" />
-
-                                                    <controls:PathButton Padding="10"
-                                                                         Command="{Binding ChangePlaylistOrder}"
-                                                                         CommandParameter="{x:Static viewModels1:PlaylistSortOrder.Created}"
-                                                                         Content="Created"
-                                                                         ForegroundDefaultColor="#757575"
-                                                                         Glyph="{StaticResource clock_glyph}"
-                                                                         GlyphFontSize="18"
-                                                                         IconDefaultColor="#353535"
-                                                                         IconHoverColor="{StaticResource BlueColor}"
-                                                                         Style="{StaticResource FontAwesomeGlyphStyle}" />
-
-                                                    <controls:PathButton Padding="10"
-                                                                         Command="{Binding ChangePlaylistOrder}"
-                                                                         CommandParameter="{x:Static viewModels1:PlaylistSortOrder.Modified}"
-                                                                         Content="Modified"
-                                                                         ForegroundDefaultColor="#757575"
-                                                                         Glyph="{StaticResource clock_glyph}"
-                                                                         GlyphFontSize="18"
-                                                                         IconDefaultColor="#353535"
-                                                                         IconHoverColor="{StaticResource GreenColor3}"
-                                                                         Style="{StaticResource FontAwesomeGlyphStyle}" />
-
-                                                    <controls:PathButton Padding="10"
-                                                                         Command="{Binding ChangePlaylistOrder}"
-                                                                         CommandParameter="{x:Static viewModels1:PlaylistSortOrder.ItemProperties}"
-                                                                         Content="Item properties"
-                                                                         ForegroundDefaultColor="#757575"
-                                                                         Glyph="{StaticResource gear_glyph}"
-                                                                         GlyphFontSize="18"
-                                                                         IconDefaultColor="#353535"
-                                                                         IconHoverColor="{StaticResource BrownColor}"
-                                                                         Style="{StaticResource FontAwesomeGlyphStyle}" />
-
-                                                </StackPanel>
-                                            </Border>
-                                        </Popup>
-                                    </Grid>
-
                                 </Grid>
 
 
