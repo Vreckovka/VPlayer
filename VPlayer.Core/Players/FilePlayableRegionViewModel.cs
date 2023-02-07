@@ -689,36 +689,43 @@ namespace VPlayer.Core.ViewModels
     {
       RaisePropertyChanged(nameof(TotalPlaylistDuration));
 
-      var itemsToUpdate = PlayList.Where(x => x.Created == default).ToList();
+      var validItems = PlayList.Where(x => !string.IsNullOrEmpty(x.Model?.Source)
+                                          && !x.Model.Source.Contains("https://")
+                                          && !x.Model.Source.Contains("http://")).ToList();
 
-      foreach (var item in itemsToUpdate.Where(x => !string.IsNullOrEmpty(x.Model?.Source)
-                                                    && !x.Model.Source.Contains("https://")
-                                                    && !x.Model.Source.Contains("http://")))
+
+      List<TItemViewModel> changedItems = new List<TItemViewModel>();
+
+      var itemsToUpdate = validItems.Where(x => x.Created == default);
+
+      foreach (var item in itemsToUpdate)
       {
         item.Created = File.GetCreationTime(item.Model.Source);
         item.Modified = File.GetLastWriteTime(item.Model.Source);
+
+        changedItems.Add(item);
       }
 
 
-      itemsToUpdate = PlayList.Where(x => x.Duration == 0).ToList();
+      itemsToUpdate = validItems.Where(x => x.Duration == 0);
 
-      foreach (var item in itemsToUpdate.Where(x => !string.IsNullOrEmpty(x.Model?.Source)
-                                               && !x.Model.Source.Contains("https://")
-                                               && !x.Model.Source.Contains("http://")))
+      foreach (var item in itemsToUpdate)
       {
         try
         {
           var mediaInfo = await FFProbe.AnalyseAsync(item.Model.Source);
 
           item.Duration = (int)mediaInfo.Duration.TotalSeconds;
+
+          changedItems.Add(item);
         }
         catch (Exception ex)
         {
         }
       }
 
-      if (itemsToUpdate.Count > 0)
-        await storageManager.UpdateEntitiesAsync(itemsToUpdate.Select(x => x.Model));
+      if (changedItems.Count > 0)
+        await storageManager.UpdateEntitiesAsync(changedItems.Select(x => x.Model));
     }
 
     #endregion
@@ -845,13 +852,10 @@ namespace VPlayer.Core.ViewModels
 
     protected void MarkViewModelAsChecked(TItemViewModel itemViewModel)
     {
-      Application.Current?.Dispatcher?.InvokeAsync(() =>
+      if (!CheckedFiles.Contains(itemViewModel))
       {
-        if (!CheckedFiles.Contains(itemViewModel))
-        {
-          CheckedFiles.Add(itemViewModel);
-        }
-      });
+        CheckedFiles.Add(itemViewModel);
+      }
     }
 
     #endregion
@@ -876,18 +880,6 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region OnResetAllData
-
-    public override async Task<bool> OnResetAllData()
-    {
-      CheckedFiles.Clear();
-
-      var result = await base.OnResetAllData();
-
-      return result;
-    }
-
-    #endregion
 
     protected override void OnPlay()
     {

@@ -26,185 +26,188 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
 
     #region UpdateOrCreateFile
 
-    public async Task<bool> UpdateOrCreateFile(
+    public Task<bool> UpdateOrCreateFile(
       long parentId,
       string[] folderNames,
       string pFileName,
       byte[] data,
       string fileExtension)
     {
-      FolderInfo acutalFolder = null;
-      long previousFolderId = parentId;
-      int startIndex = 0;
-
-      var parentFolders = (await ipCloudService.GetFoldersAsync(parentId))?.ToList();
-
-      if(parentFolders == null)
+      return Task.Run(async () =>
       {
-        return false;
-      }
+        FolderInfo acutalFolder = null;
+        long previousFolderId = parentId;
+        int startIndex = 0;
 
-      if (parentFolders.Count == 0)
-      {
-        if (string.IsNullOrEmpty(folderNames[0]))
+        var parentFolders = (await ipCloudService.GetFoldersAsync(parentId))?.ToList();
+
+        if (parentFolders == null)
         {
           return false;
         }
 
-        acutalFolder = await ipCloudService.CreateFolder(PathStringProvider.GetPathValidName(folderNames[0]), previousFolderId);
-
-        previousFolderId = acutalFolder.id;
-        startIndex++;
-      }
-
-      for (int i = startIndex; i < folderNames.Length; i++)
-      {
-        var acutalFolderName = folderNames[i];
-
-        if (!string.IsNullOrEmpty(acutalFolderName))
+        if (parentFolders.Count == 0)
         {
-          acutalFolder = parentFolders.SingleOrDefault(x => PathStringProvider.GetNormalizedName(x.name) == PathStringProvider.GetNormalizedName(acutalFolderName));
-
-          if (acutalFolder == null)
+          if (string.IsNullOrEmpty(folderNames[0]))
           {
-            acutalFolder = await ipCloudService.CreateFolder(PathStringProvider.GetPathValidName(acutalFolderName), previousFolderId);
+            return false;
           }
 
+          acutalFolder = await ipCloudService.CreateFolder(PathStringProvider.GetPathValidName(folderNames[0]), previousFolderId);
+
           previousFolderId = acutalFolder.id;
-
-          parentFolders = (await ipCloudService.GetFoldersAsync(previousFolderId)).ToList();
+          startIndex++;
         }
-      }
 
-      if (acutalFolder != null)
-      {
-        var files = (await ipCloudService.GetFilesAsync(acutalFolder.id)).ToList();
-
-        var fileName = pFileName + fileExtension;
-
-        var existingFiles = files.Where(x => x.name.ToLower() == fileName.ToLower()).ToList();
-
-        if (existingFiles.Count > 1)
+        for (int i = startIndex; i < folderNames.Length; i++)
         {
-          Application.Current.Dispatcher.Invoke(() => { windowManager.ShowErrorPrompt($"Multiple ({existingFiles.Count}) LRC files with same name {acutalFolder.name}\\{fileName}"); });
-        }
-        else
-        {
-          var existingFile = existingFiles.SingleOrDefault();
+          var acutalFolderName = folderNames[i];
 
-          if (existingFile != null)
+          if (!string.IsNullOrEmpty(acutalFolderName))
           {
-            return await ipCloudService.WriteToFile(data, existingFile.id);
+            acutalFolder = parentFolders.SingleOrDefault(x => PathStringProvider.GetNormalizedName(x.name) == PathStringProvider.GetNormalizedName(acutalFolderName));
+
+            if (acutalFolder == null)
+            {
+              acutalFolder = await ipCloudService.CreateFolder(PathStringProvider.GetPathValidName(acutalFolderName), previousFolderId);
+            }
+
+            previousFolderId = acutalFolder.id;
+
+            parentFolders = (await ipCloudService.GetFoldersAsync(previousFolderId)).ToList();
+          }
+        }
+
+        if (acutalFolder != null)
+        {
+          var files = (await ipCloudService.GetFilesAsync(acutalFolder.id)).ToList();
+
+          var fileName = pFileName + fileExtension;
+
+          var existingFiles = files.Where(x => x.name.ToLower() == fileName.ToLower()).ToList();
+
+          if (existingFiles.Count > 1)
+          {
+            Application.Current.Dispatcher.Invoke(() => { windowManager.ShowErrorPrompt($"Multiple ({existingFiles.Count}) LRC files with same name {acutalFolder.name}\\{fileName}"); });
           }
           else
           {
-            return await ipCloudService.CreateFileAndWrite(fileName, data, acutalFolder.id);
+            var existingFile = existingFiles.SingleOrDefault();
+
+            if (existingFile != null)
+            {
+              return await ipCloudService.WriteToFile(data, existingFile.id);
+            }
+            else
+            {
+              return await ipCloudService.CreateFileAndWrite(fileName, data, acutalFolder.id);
+            }
           }
         }
-      }
 
 
-      return false;
+        return false;
+      });
     }
 
     #endregion
 
     #region GetFile
 
-    public async Task<FileInfo> GetFile(long parentId, string[] folderNames, string pFileName, string extension)
+    public Task<FileInfo> GetFile(long parentId, string[] folderNames, string pFileName, string extension)
     {
-      var parentFolders = (await ipCloudService.GetFoldersAsync(parentId))?.ToList();
-
-      if (parentFolders != null && parentFolders.Count > 0)
+      return Task.Run(async () =>
       {
-        FolderInfo acutalFolder = null;
+        var parentFolders = (await ipCloudService.GetFoldersAsync(parentId))?.ToList();
 
-        for (int i = 0; i < folderNames.Length; i++)
+        if (parentFolders != null && parentFolders.Count > 0)
         {
-          var acutalFolderName = folderNames[i];
+          FolderInfo acutalFolder = null;
 
-          acutalFolder = parentFolders.SingleOrDefault(x => PathStringProvider.GetNormalizedName(x.name) == PathStringProvider.GetNormalizedName(acutalFolderName));
-
-          if (acutalFolder == null)
+          for (int i = 0; i < folderNames.Length; i++)
           {
-            return null;
-          }
+            var acutalFolderName = folderNames[i];
 
-          parentFolders = (await ipCloudService.GetFoldersAsync(acutalFolder.id)).ToList();
-        }
+            acutalFolder = parentFolders.SingleOrDefault(x => PathStringProvider.GetNormalizedName(x.name) == PathStringProvider.GetNormalizedName(acutalFolderName));
 
-        if (acutalFolder != null)
-        {
-          var files = (await ipCloudService.GetFilesAsync(acutalFolder.id)).ToList();
-
-          var fileName = pFileName + extension;
-
-          var existingFiles = files.Where(x => x.name.ToLower() == fileName.ToLower()).ToList();
-
-          if (existingFiles.Count > 1)
-          {
-            Application.Current.Dispatcher.Invoke(() =>
+            if (acutalFolder == null)
             {
-              windowManager.ShowErrorPrompt($"Multiple ({existingFiles.Count}) LRC files with same name {acutalFolder.name}\\{fileName}");
-            });
+              return null;
+            }
+
+            parentFolders = (await ipCloudService.GetFoldersAsync(acutalFolder.id)).ToList();
           }
-          else if (existingFiles.Count > 0)
+
+          if (acutalFolder != null)
           {
-            return existingFiles.SingleOrDefault();
+            var files = (await ipCloudService.GetFilesAsync(acutalFolder.id)).ToList();
+
+            var fileName = pFileName + extension;
+
+            var existingFiles = files.Where(x => x.name.ToLower() == fileName.ToLower()).ToList();
+
+            if (existingFiles.Count > 1)
+            {
+              Application.Current.Dispatcher.Invoke(() => { windowManager.ShowErrorPrompt($"Multiple ({existingFiles.Count}) LRC files with same name {acutalFolder.name}\\{fileName}"); });
+            }
+            else if (existingFiles.Count > 0)
+            {
+              return existingFiles.SingleOrDefault();
+            }
           }
         }
-      }
 
-      return null;
+        return null;
+      });
     }
 
     #endregion
 
-    public async Task<bool> DeleteFile(long parentId, string[] folderNames, string pFileName, string extension)
+    public Task<bool> DeleteFile(long parentId, string[] folderNames, string pFileName, string extension)
     {
-      var parentFolders = (await ipCloudService.GetFoldersAsync(parentId))?.ToList();
-
-      if (parentFolders != null && parentFolders.Count > 0)
+      return Task.Run(async () =>
       {
-        FolderInfo acutalFolder = null;
+        var parentFolders = (await ipCloudService.GetFoldersAsync(parentId))?.ToList();
 
-        for (int i = 0; i < folderNames.Length; i++)
+        if (parentFolders != null && parentFolders.Count > 0)
         {
-          var acutalFolderName = folderNames[i];
+          FolderInfo acutalFolder = null;
 
-          acutalFolder = parentFolders.SingleOrDefault(x => PathStringProvider.GetNormalizedName(x.name) == PathStringProvider.GetNormalizedName(acutalFolderName));
-
-          if (acutalFolder == null)
+          for (int i = 0; i < folderNames.Length; i++)
           {
-            return false;
-          }
+            var acutalFolderName = folderNames[i];
 
-          parentFolders = (await ipCloudService.GetFoldersAsync(acutalFolder.id)).ToList();
-        }
+            acutalFolder = parentFolders.SingleOrDefault(x => PathStringProvider.GetNormalizedName(x.name) == PathStringProvider.GetNormalizedName(acutalFolderName));
 
-        if (acutalFolder != null)
-        {
-          var files = (await ipCloudService.GetFilesAsync(acutalFolder.id)).ToList();
-
-          var fileName = pFileName + extension;
-
-          var existingFiles = files.Where(x => x.name.ToLower() == fileName.ToLower()).ToList();
-
-          if (existingFiles.Count > 1)
-          {
-            Application.Current.Dispatcher.Invoke(() =>
+            if (acutalFolder == null)
             {
-              windowManager.ShowErrorPrompt($"Multiple ({existingFiles.Count}) LRC files with same name {acutalFolder.name}\\{fileName}");
-            });
+              return false;
+            }
+
+            parentFolders = (await ipCloudService.GetFoldersAsync(acutalFolder.id)).ToList();
           }
-          else if (existingFiles.Count > 0)
+
+          if (acutalFolder != null)
           {
-            await ipCloudService.DeleteFile(existingFiles[0].id);
+            var files = (await ipCloudService.GetFilesAsync(acutalFolder.id)).ToList();
+
+            var fileName = pFileName + extension;
+
+            var existingFiles = files.Where(x => x.name.ToLower() == fileName.ToLower()).ToList();
+
+            if (existingFiles.Count > 1)
+            {
+              Application.Current.Dispatcher.Invoke(() => { windowManager.ShowErrorPrompt($"Multiple ({existingFiles.Count}) LRC files with same name {acutalFolder.name}\\{fileName}"); });
+            }
+            else if (existingFiles.Count > 0)
+            {
+              await ipCloudService.DeleteFile(existingFiles[0].id);
+            }
           }
         }
-      }
 
-      return false;
+        return false;
+      });
     }
   }
 }

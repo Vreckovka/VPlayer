@@ -653,7 +653,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
           {
             var ids = list.Select(x => x.Id);
 
-            var foundEntities = GetRepository<Song>(context).Include(x => x.Album).Where(x => ids.Contains(x.Id));
+            var foundEntities = GetRepository<Song>(context).Include(x => x.Album).ThenInclude(x => x.Songs).Where(x => ids.Contains(x.Id));
 
             foreach (var foundEntity in foundEntities)
             {
@@ -664,9 +664,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
                 if (foundEntity.Album?.Songs != null && (foundEntity.Album.Songs?.Count == 0 || foundEntity.Album.Songs[0].Id == foundEntity.Id))
                 {
                   var album = foundEntity.Album;
-                  var dbArtist = GetRepository<Artist>(context).SingleOrDefault(x => x.Albums.Any(album => album.Id == foundEntity.Album.Id));
+                  var dbArtist = GetRepository<Artist>(context).Include(x => x.Albums).SingleOrDefault(x => x.Albums.Any(album => album.Id == foundEntity.Album.Id));
 
-                  if (dbArtist?.Albums != null && (dbArtist.Albums.Count == 0 || dbArtist.Albums.First().Id == foundEntity.Album.Id))
+                  if (dbArtist?.Albums != null && (dbArtist.Albums.Count == 0 || (dbArtist.Albums.First().Id == foundEntity.Album.Id && dbArtist.Albums.Count == 1)))
                   {
                     var artist = dbArtist;
 
@@ -676,7 +676,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
                     PublishItemChanged(album, Changed.Removed);
                     PublishItemChanged(artist, Changed.Removed);
                   }
-                  else
+                  else if(foundEntity.Album?.Songs != null && foundEntity.Album.Songs.Count == 0 || foundEntity.Album.Songs.Count == 1)
                   {
                     context.Remove(foundEntity.Album);
                     PublishItemChanged(album, Changed.Removed);

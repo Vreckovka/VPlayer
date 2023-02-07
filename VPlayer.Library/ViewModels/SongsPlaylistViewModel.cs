@@ -77,37 +77,7 @@ namespace VPlayer.Home.ViewModels
 
         var playlistItems = playlist.PlaylistItems.OrderBy(x => x.OrderInPlaylist).ToList();
 
-        var songsItems = storageManager.GetRepository<Song>()
-          .Where(x => playlistItems.Select(y => y.IdReferencedItem).Contains(x.ItemModel.Id))
-          .Include(x => x.Album)
-          .ThenInclude(x => x.Artist)
-          .Include(x => x.ItemModel)
-          .ThenInclude(x => x.FileInfo)
-          .ToList();
-
-        if (songsItems.Count > 0)
-        {
-          var grouppedSongs = songsItems.Select(x => new SoundItemWithPlaylistItem()
-          {
-            SoundItemInPlaylist = viewModelsFactory.Create<SongInPlayListViewModel>(x),
-            PlaylistSoundItem = playlistItems.Single(y => y.IdReferencedItem == x.ItemModel.Id)
-          }).ToList();
-
-
-          var ids = grouppedSongs.Select(x => x.SoundItemInPlaylist.Model.Id);
-
-          var notSongs = playlistItems.Where(x => !ids.Contains(x.IdReferencedItem)).Select(x => new SoundItemWithPlaylistItem()
-          {
-            SoundItemInPlaylist = viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x.ReferencedItem),
-            PlaylistSoundItem = playlistItems.Single(y => y.IdReferencedItem == x.IdReferencedItem)
-          });
-
-          return grouppedSongs.Concat(notSongs).OrderBy(x => x.PlaylistSoundItem.OrderInPlaylist).Select(x => x.SoundItemInPlaylist);
-        }
-        else
-        {
-          return playlistItems.Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x.ReferencedItem));
-        }
+        return playlistItems.Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x.ReferencedItem));
       }
 
       return null;

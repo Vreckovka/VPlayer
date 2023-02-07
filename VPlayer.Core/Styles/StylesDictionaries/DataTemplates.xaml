@@ -396,10 +396,20 @@
 
     <templateSelectors:WindowsPlayerItemsTemplateSelector x:Key="WindowsPlayerItemsTemplateSelectorPlayer"
                                                           SongDataTemplate="{StaticResource SongDescriptionTemplate}"
+                                                          SoundDataTemplate="{StaticResource SoundItemDescriptionDataTemplate}"
                                                           TvShowEpisodeDataTemplate="{StaticResource TvShowEpisodeDescriptionDataTemplate}"
                                                           VideoItemDataTemplate="{StaticResource VideoItemDescriptionDataTemplate}" />
 
     <DataTemplate x:Key="VideoItemDescriptionDataTemplate">
+        <TextBlock Margin="0,0,0,0"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Bottom"
+                   Foreground="#70edfffa"
+                   Text="{Binding Description}"
+                   ToolTip="{Binding Description}" />
+    </DataTemplate>
+
+    <DataTemplate x:Key="SoundItemDescriptionDataTemplate">
         <TextBlock Margin="0,0,0,0"
                    HorizontalAlignment="Left"
                    VerticalAlignment="Bottom"

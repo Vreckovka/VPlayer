@@ -848,6 +848,8 @@ namespace VPlayer.Core.ViewModels
         x.EventArgs.IsInPlaylist = true;
       }).DisposeWith(this);
 
+      PlayList.Cleared.Subscribe(async (x) => { await ResetProperties(); });
+
       PlayList.ItemRemoved.ObserveOnDispatcher().Subscribe((x) =>
       {
         x.EventArgs.IsInPlaylist = false;
@@ -922,16 +924,25 @@ namespace VPlayer.Core.ViewModels
       {
         await UpdateActualSavedPlaylistPlaylist();
       }
+     
+      await ResetProperties();
 
+      PlayList.Clear();
+    }
 
+    #endregion
+
+    protected virtual async Task ResetProperties()
+    {
       BeforeClearPlaylist();
 
       PlayList.ForEach(x => x.IsInPlaylist = false);
+
       IsPlaying = false;
       VirtualizedPlayList = null;
+
       PlayList?.OfType<IDisposable>().ForEach(x => x.Dispose());
       ActualItem?.Dispose();
-      PlayList.Clear();
       ActualItem = null;
       MediaPlayer.Stop();
       await MediaPlayer.SetNewMedia(null);
@@ -941,8 +952,6 @@ namespace VPlayer.Core.ViewModels
       ActualSavedPlaylist = new TPlaylistModel() { Id = -1 };
       shuffleList.Clear();
     }
-
-    #endregion
 
     #region OnMediaPlayerStopped
 
@@ -1669,13 +1678,6 @@ namespace VPlayer.Core.ViewModels
             });
           }
         }
-
-        // Neviem co to je a mozno to ma byt v else if (!ActualSavedPlaylist.IsUserCreated)
-        //Application.Current.Dispatcher.Invoke(() =>
-        //{
-        //  actualItemIndex = 0;
-        //  MediaPlayer.Position = 0;
-        //});
       }
       else
       {
