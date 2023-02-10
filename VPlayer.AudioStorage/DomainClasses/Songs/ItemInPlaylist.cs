@@ -17,5 +17,10 @@ namespace VPlayer.AudioStorage.DomainClasses.Songs
       ReferencedItem = other.ReferencedItem;
       IdReferencedItem = other.IdReferencedItem;
     }
+
+    public virtual bool Compare(IItemInPlaylist<TItem> other)
+    {
+      return OrderInPlaylist != other.OrderInPlaylist || IdReferencedItem != other.IdReferencedItem;
+    }
   }
 }

@@ -513,16 +513,18 @@ namespace VPlayer.Core.ViewModels
 
     #region Volume
 
+    private int volume;
     public int Volume
     {
-      get { return MediaPlayer.Volume; }
+      get { return volume; }
       set
       {
-        if (value != MediaPlayer.Volume)
+        if (value != volume)
         {
           MediaPlayer.Volume = value;
+          volume = value;
 
-          volumeSubject.OnNext(MediaPlayer.Volume);
+          volumeSubject.OnNext(volume);
           RaisePropertyChanged();
         }
       }
@@ -831,6 +833,7 @@ namespace VPlayer.Core.ViewModels
 
     #region InitializeAsync
 
+    IDisposable clearPlaylistDisposable;
     protected virtual void InitializeAsync()
     {
       IsPlaying = false;
@@ -848,7 +851,7 @@ namespace VPlayer.Core.ViewModels
         x.EventArgs.IsInPlaylist = true;
       }).DisposeWith(this);
 
-      PlayList.Cleared.Subscribe(async (x) => { await ResetProperties(); });
+      clearPlaylistDisposable = PlayList.Cleared.Subscribe(async (x) => { await ResetProperties(); });
 
       PlayList.ItemRemoved.ObserveOnDispatcher().Subscribe((x) =>
       {
@@ -1294,6 +1297,8 @@ namespace VPlayer.Core.ViewModels
 
     protected virtual void PlayPlaylist(PlayItemsEventData<TItemViewModel> data, int? lastSongIndex = null, bool onlySet = false)
     {
+      clearPlaylistDisposable?.Dispose();
+
       ActualSavedPlaylist = data.GetModel<TPlaylistModel>();
       ActualSavedPlaylist.LastPlayed = DateTime.Now;
 
@@ -1318,6 +1323,8 @@ namespace VPlayer.Core.ViewModels
       }
 
       OnPlayPlaylist(data);
+
+      clearPlaylistDisposable = PlayList.Cleared.Subscribe(async (x) => { await ResetProperties(); });
     }
 
     #endregion
@@ -1576,7 +1583,7 @@ namespace VPlayer.Core.ViewModels
         .ThenInclude(x => x.ReferencedItem)
         .OrderByDescending(x => x.IsUserCreated)
         .FirstOrDefault(x => x.HashCode == hashCode);
-
+      
       if (storedPlaylist == null)
       {
         if (editSaved || ActualSavedPlaylist.IsUserCreated)
@@ -2182,6 +2189,7 @@ namespace VPlayer.Core.ViewModels
       virtulizedPlaylistTimer.Dispose();
 
       volumeSubject?.Dispose();
+      clearPlaylistDisposable?.Dispose();
 
       MediaPlayer.Playing -= OnVlcPlayingChanged;
       MediaPlayer.Dispose();

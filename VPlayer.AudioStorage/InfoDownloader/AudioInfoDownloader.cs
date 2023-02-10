@@ -464,6 +464,11 @@ namespace VPlayer.AudioStorage.InfoDownloader
       {
         var albumName = album.NormalizedName;
 
+        if(string.IsNullOrEmpty(albumName))
+        {
+          return null;
+        }
+
         var statusMessage = new StatusMessageViewModel(4)
         {
           Message = $"Getting album info ({album.Name})",
@@ -1670,9 +1675,13 @@ namespace VPlayer.AudioStorage.InfoDownloader
           lrcFile.Artist = artistName;
           lrcFile.Album = albumName;
 
-          song.LRCLyrics = (int)client.LRCProvider + ";" + lrcFile.GetString();
+          var lrcLyrics = (int)client.LRCProvider + ";" + lrcFile.GetString();
+          var wasChanged = lrcLyrics != song.LRCLyrics;
 
-          ItemUpdated.OnNext(song);
+          song.LRCLyrics = lrcLyrics;
+
+          if (wasChanged)
+            ItemUpdated.OnNext(song);
         }
 
         return lrcFile;

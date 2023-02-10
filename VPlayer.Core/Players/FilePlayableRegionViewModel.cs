@@ -546,12 +546,15 @@ namespace VPlayer.Core.ViewModels
     {
       if (duration != 0 && ActualItem != null)
       {
-        ActualItem.Duration = (int)duration / 1000;
+        var itemDuration = (int)duration / 1000;
+        var wasChanged = itemDuration != ActualItem.Duration;
+        ActualItem.Duration = itemDuration;
 
         if (MediaPlayer.Media != null)
           MediaPlayer.Media.DurationChanged -= Media_DurationChanged;
 
-        await storageManager.UpdateEntityAsync(ActualItem.Model);
+        if (wasChanged)
+          await storageManager.UpdateEntityAsync(ActualItem.Model);
 
         if (ActualItem != null && reloadPosition != null)
         {

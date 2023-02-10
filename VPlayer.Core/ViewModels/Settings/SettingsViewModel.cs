@@ -121,8 +121,6 @@ namespace VPlayer.Core.ViewModels.Settings
 
     #endregion
 
-
-
     #region DeleteAllData
 
     private ActionCommand deleteAllData;
@@ -143,6 +141,30 @@ namespace VPlayer.Core.ViewModels.Settings
     public async void OnDeleteAllData()
     {
       await storageManager.ClearStorage();
+    }
+
+    #endregion 
+
+    #region CleanData
+
+    private ActionCommand cleanData;
+
+    public ICommand CleanData
+    {
+      get
+      {
+        if (cleanData == null)
+        {
+          cleanData = new ActionCommand(OnCleanData);
+        }
+
+        return cleanData;
+      }
+    }
+
+    public async void OnCleanData()
+    {
+      await storageManager.CleanData();
     }
 
     #endregion 

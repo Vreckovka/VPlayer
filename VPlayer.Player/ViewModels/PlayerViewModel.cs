@@ -135,7 +135,7 @@ namespace VPlayer.Player.ViewModels
     {
       get
       {
-        if (ActualViewModel != null)
+        if (ActualViewModel != null && ActualViewModel.Volume > 0)
         {
           return ActualViewModel.Volume;
         }
@@ -156,6 +156,8 @@ namespace VPlayer.Player.ViewModels
           {
             ActualViewModel?.SetVolumeWihtoutNotification(value);
           }
+
+          RaisePropertyChanged(nameof(ActualVolume));
         }
       }
     }
@@ -385,10 +387,11 @@ namespace VPlayer.Player.ViewModels
 
       if (newPlayer != null)
       {
-        volumeDisposable.Disposable = newPlayer
-          .OnVolumeChanged
-          .ObserveOn(Application.Current.Dispatcher)
-          .Subscribe(x => RaisePropertyChanged(nameof(ActualVolume)));
+        //volumeDisposable.Disposable = newPlayer
+        //  .OnVolumeChanged
+        //  .ObserveOn(Application.Current.Dispatcher)
+        //  .Throttle(TimeSpan.FromSeconds(0.5))
+        //  .Subscribe(x => RaisePropertyChanged(nameof(ActualVolume)));
       }
 
       ActualViewModel = newPlayer;

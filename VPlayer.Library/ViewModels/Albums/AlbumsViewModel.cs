@@ -126,7 +126,6 @@ namespace VPlayer.Home.ViewModels.Albums
 
               break;
             case Changed.Removed:
-              throw new NotImplementedException();
               break;
 
             case Changed.Updated:

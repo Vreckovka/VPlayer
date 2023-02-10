@@ -30,6 +30,12 @@ namespace VPlayer.IPTV.ViewModels
   {
     public string Name { get; set; }
 
+    public override bool Compare(IItemInPlaylist<TvItem> other)
+    {
+      return base.Compare(other) || Name != ((TvPlaylistItem)other).Name;
+
+      
+    }
 
     public void Update(TvPlaylistItem other)
     {

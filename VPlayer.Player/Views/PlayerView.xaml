@@ -137,9 +137,9 @@
                             </Popup>
 
                             <TextBlock Grid.Column="1"
+                                       HorizontalAlignment="Left"
                                        FontSize="14"
                                        FontWeight="DemiBold"
-                                       HorizontalAlignment="Left"
                                        Foreground="#9ca379"
                                        Grid.IsSharedSizeScope="True"
                                        Text="{Binding ActualItem.Model.Name}"
@@ -706,9 +706,9 @@
                             </Style.Triggers>
                         </Style>
                     </Slider.Style>
-                    <!--<b:Interaction.Behaviors>
-                        <sliders:SliderHookBehavior />
-                    </b:Interaction.Behaviors>-->
+                    <b:Interaction.Behaviors>
+                        <sliders:SliderHookBehavior WheelOnly="True" />
+                    </b:Interaction.Behaviors>
                 </Slider>
 
                 <Grid Grid.Row="1" Margin="0,5,0,10">

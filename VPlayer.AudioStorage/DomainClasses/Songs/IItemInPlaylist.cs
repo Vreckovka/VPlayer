@@ -10,5 +10,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     public TItem ReferencedItem { get; set; }
 
     public int OrderInPlaylist { get; set; }
+
+    bool Compare(IItemInPlaylist<TItem> other);
   }
 }

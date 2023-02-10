@@ -29,6 +29,7 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
     #region Methods
 
     Task ClearStorage();
+    Task CleanData();
     Task DownloadAllNotYetDownloaded(bool tryDownloadBroken = false);
     DbSet<T> GetRepository<T>(DbContext dbContext = null) where T : class;
 

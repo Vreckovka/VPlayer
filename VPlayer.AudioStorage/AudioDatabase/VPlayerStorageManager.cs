@@ -342,6 +342,36 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #endregion StoreData
 
+    public Task CleanData()
+    {
+      return Task.Run(() =>
+      {
+        using (var context = new AudioDatabaseContext())
+        {
+          var albums = GetRepository<Album>(context).Where(x => x.Songs.Count == 0);
+
+          foreach (var album in albums)
+          {
+            context.Entry(album).State = EntityState.Deleted;
+
+            PublishItemChanged(album, Changed.Removed);
+          }
+
+          var result = context.SaveChanges();
+
+          var artists = GetRepository<Artist>(context).Where(x => x.Albums.Count == 0);
+
+          foreach (var artist in artists)
+          {
+            context.Entry(artist).State = EntityState.Deleted;
+            PublishItemChanged(artist, Changed.Removed);
+          }
+
+          result = context.SaveChanges();
+        }
+      });
+    }
+
     #region ClearStorage
 
     public Task ClearStorage()
@@ -657,34 +687,31 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
             foreach (var foundEntity in foundEntities)
             {
-              var newVersion = list.SingleOrDefault(x => x.Id == foundEntity.Id);
-
-              if (newVersion != null)
+              if (foundEntity.Album?.Songs != null && (foundEntity.Album.Songs?.Count == 0 || foundEntity.Album.Songs[0].Id == foundEntity.Id))
               {
-                if (foundEntity.Album?.Songs != null && (foundEntity.Album.Songs?.Count == 0 || foundEntity.Album.Songs[0].Id == foundEntity.Id))
+                var album = foundEntity.Album;
+                var dbArtist = GetRepository<Artist>(context).Include(x => x.Albums).SingleOrDefault(x => x.Albums.Any(album => album.Id == foundEntity.Album.Id));
+
+                if (dbArtist?.Albums != null && (dbArtist.Albums.Count == 0 || (dbArtist.Albums.First().Id == foundEntity.Album.Id && dbArtist.Albums.Count == 1)))
                 {
-                  var album = foundEntity.Album;
-                  var dbArtist = GetRepository<Artist>(context).Include(x => x.Albums).SingleOrDefault(x => x.Albums.Any(album => album.Id == foundEntity.Album.Id));
+                  var artist = dbArtist;
 
-                  if (dbArtist?.Albums != null && (dbArtist.Albums.Count == 0 || (dbArtist.Albums.First().Id == foundEntity.Album.Id && dbArtist.Albums.Count == 1)))
-                  {
-                    var artist = dbArtist;
+                  context.Entry(album).State = EntityState.Deleted;
+                  context.Entry(artist).State = EntityState.Deleted;
 
-                    context.Remove(foundEntity.Album);
-                    context.Remove(dbArtist);
-
-                    PublishItemChanged(album, Changed.Removed);
-                    PublishItemChanged(artist, Changed.Removed);
-                  }
-                  else if(foundEntity.Album?.Songs != null && foundEntity.Album.Songs.Count == 0 || foundEntity.Album.Songs.Count == 1)
-                  {
-                    context.Remove(foundEntity.Album);
-                    PublishItemChanged(album, Changed.Removed);
-                  }
+                  PublishItemChanged(album, Changed.Removed);
+                  PublishItemChanged(artist, Changed.Removed);
+                }
+                else if (album?.Songs != null && album.Songs.Count == 0 || album.Songs.Count == 1)
+                {
+                  album.Artist?.Albums?.Remove(album);
+                  context.Entry(album).State = EntityState.Deleted;
+                  PublishItemChanged(album, Changed.Removed);
                 }
 
-                foundEntity.Album = null;
-                foundEntity.Update(newVersion);
+                album.Songs.Remove(foundEntity);
+                context.Entry(foundEntity).State = EntityState.Deleted;
+                PublishItemChanged(foundEntity, Changed.Removed);
               }
             }
 
@@ -1251,6 +1278,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
                 }
               }
 
+              var items = foundPlaylist.PlaylistItems.ToList();
               foundPlaylist.PlaylistItems.Clear();
               foundPlaylist.Update(playlist);
 
@@ -1264,7 +1292,15 @@ namespace VPlayer.AudioStorage.AudioDatabase
                 }
                 else
                 {
-                  context.Entry(playlistItem).State = EntityState.Modified;
+                  var existing = items.SingleOrDefault(x => x.Id == playlistItem.Id);
+
+                  if (existing != null)
+                  {
+                    if (existing.Compare(playlistItem))
+                    {
+                      context.Entry(playlistItem).State = EntityState.Modified;
+                    }
+                  }
                 }
               }
 
@@ -1552,7 +1588,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
     }
 
     #endregion
-
 
     #region StoreTvShow
 
