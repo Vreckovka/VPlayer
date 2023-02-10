@@ -185,8 +185,6 @@
                                       Style="{StaticResource right-to-bracket}"
                                       ToolTip="Go inside" />
 
-
-
                 <controls1:PathButton Width="26"
                                       Height="20"
                                       Margin="0,0,0,0"

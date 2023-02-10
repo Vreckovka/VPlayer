@@ -42,24 +42,24 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics
 
     #region FindLRC
 
-    public async Task<string> FindLRC(string artist, string title)
+    public Task<string> FindLRC(string artist, string title)
     {
-
-      var results = await SearchLyrics(artist, title);
-
-      if (results != null)
+      return Task.Run(async  () =>
       {
-        SearchResult searchResult = results.Where(x => x.Title.Similarity(title) > 0.65).FirstOrDefault(x => x.Link.Contains(".lrc"));
+        var results = await SearchLyrics(artist, title);
 
-        if (searchResult != null)
+        if (results != null)
         {
-          return await DownloadLyrics(searchResult.Link);
+          SearchResult searchResult = results.Where(x => x.Title.Similarity(title) > 0.65).FirstOrDefault(x => x.Link.Contains(".lrc"));
+
+          if (searchResult != null)
+          {
+            return await DownloadLyrics(searchResult.Link);
+          }
         }
-      }
 
-
-
-      return null;
+        return null;
+      });
     }
 
     #endregion

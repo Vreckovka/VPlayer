@@ -1,19 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 using PCloudClient;
-using PCloudClient.Domain;
 using VCore.Standard.Factories.ViewModels;
-using VCore.Standard.ViewModels.WindowsFile;
 using VCore.WPF.ViewModels.WindowsFiles;
 using FileInfo = VCore.WPF.ViewModels.WindowsFiles.FileInfo;
 using FolderInfo = VCore.WPF.ViewModels.WindowsFiles.FolderInfo;
 
-namespace VPlayer.PCloud.ViewModels
+namespace VPlayer.Core.ViewModels.FileBrowser.PCloud
 {
   public class PCloudFolderViewModel : FolderViewModel<PCloudFileViewModel>
   {
@@ -31,9 +26,9 @@ namespace VPlayer.PCloud.ViewModels
 
     #region GetFiles
 
-    public override async Task<IEnumerable<FileInfo>> GetFiles()
+    public override async Task<IEnumerable<FileInfo>> GetFiles(bool recursive = false)
     {
-      var files = await cloudService.GetFilesAsync(long.Parse(Model.Indentificator));
+      var files = await cloudService.GetFilesAsync(long.Parse(Model.Indentificator), recursive);
 
       var list = new List<FileInfo>();
 
@@ -46,8 +41,6 @@ namespace VPlayer.PCloud.ViewModels
           Length = file.length,
         };
 
-
-
         list.Add(fileInfo);
       }
 
@@ -55,9 +48,6 @@ namespace VPlayer.PCloud.ViewModels
     }
 
     #endregion
-
-  
-
 
     #region GetFolders
 

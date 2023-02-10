@@ -326,5 +326,6 @@ namespace VPlayer.Core.ViewModels
     #endregion
 
     protected virtual void OnActualPositionChanged(float value) { }
+
   }
 }

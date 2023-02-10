@@ -6,10 +6,10 @@
              xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:events1="clr-namespace:VPlayer.Core.Events;assembly=VPLayer.Domain"
-             xmlns:local="clr-namespace:VPlayer.Home.Views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:popups="clr-namespace:VCore.WPF.Behaviors.Popups;assembly=VCore.WPF"
              xmlns:windowsFile="clr-namespace:VCore.Standard.ViewModels.WindowsFile;assembly=VCore.Standard"
+             xmlns:pCloud="clr-namespace:VPlayer.Core.ViewModels.FileBrowser.PCloud"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
@@ -236,15 +236,11 @@
                      Text="{Binding BaseDirectoryPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
 
-            <Grid Grid.Column="1" Margin="5,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="auto" />
-                    <ColumnDefinition Width="auto" />
-                    <ColumnDefinition Width="auto" />
-                </Grid.ColumnDefinitions>
-
-                <Grid.Resources>
+            <StackPanel Grid.Column="1"
+                        Margin="5,0"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal">
+                <StackPanel.Resources>
                     <Style BasedOn="{StaticResource {x:Type controls1:PathButton}}" TargetType="controls1:PathButton">
                         <Setter Property="IconWidth" Value="24" />
                         <Setter Property="IconHeight" Value="20" />
@@ -258,17 +254,39 @@
                         <Setter Property="IsReadOnly" Value="True" />
                         <!--<Setter Property="Background" Value="Yellow" />-->
                     </Style>
-                </Grid.Resources>
+                </StackPanel.Resources>
 
-                <controls1:PathButton Grid.Column="1"
-                                      Command="{Binding ChangeDirectory}"
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Converter={converters:IsTypeConverter}, ConverterParameter={x:Type pCloud:PCloudFileBrowserViewModel}}" Value="true">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+                    <TextBlock Margin="10,0"
+                               VerticalAlignment="Center"
+                               Text="{Binding PlayingFolders.Count}" />
+
+                    <controls1:PathButton Margin="0,0,0,0"
+                                          Command="{Binding LocatePlayingFiles}"
+                                          IconHoverColor="{StaticResource BrownColor2}"
+                                          PathStyle="{StaticResource MagnifyingGlass}"
+                                          ToolTip="Find playling folders" />
+
+
+                </StackPanel>
+
+                <controls1:PathButton Command="{Binding ChangeDirectory}"
                                       CommandParameter="{Binding BaseDirectoryPath}"
                                       IconHoverColor="{StaticResource DefaultRedColor}"
                                       PathStyle="{StaticResource FolderOpen}"
                                       ToolTip="Navigate" />
 
-                <controls1:PathButton Grid.Column="2"
-                                      Command="{Binding ChangeDirectory}"
+                <controls1:PathButton Command="{Binding ChangeDirectory}"
                                       CommandParameter="{Binding ParentDirectory.Model.Indentificator}"
                                       IconHoverColor="{StaticResource BlueColor}"
                                       PathStyle="{StaticResource FolderUp}">
@@ -289,14 +307,15 @@
                     </controls1:PathButton.Style>
                 </controls1:PathButton>
 
-                <controls1:PathButton Grid.Column="3"
-                                      Command="{Binding Refresh}"
+                <controls1:PathButton Command="{Binding Refresh}"
                                       IconHoverColor="{StaticResource GreenColor}"
                                       IconWidth="20"
                                       PathStyle="{StaticResource Refresh}"
                                       ToolTip="Refresh" />
 
-            </Grid>
+
+
+            </StackPanel>
 
 
         </Grid>

@@ -437,7 +437,8 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
         if (SongModel.Album.Artist != null)
         {
-          ArtistViewModel = (await artistsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == SongModel.Album.Artist.Id);
+          if (SongModel.Album.Artist.Id > 0)
+            ArtistViewModel = (await artistsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == SongModel.Album.Artist.Id);
         }
         else if (AlbumViewModel?.Model.Artist != null)
         {
@@ -813,6 +814,12 @@ namespace VPlayer.Core.ViewModels.SoundItems
     public override void OnClearInfo()
     {
       ClearLyrics();
+
+      if (Model?.FileInfo != null)
+      {
+        Model.FileInfo.Album = "";
+        Model.FileInfo.Artist = "";
+      }
 
       if (SongModel.ItemModel?.FileInfo != null)
       {

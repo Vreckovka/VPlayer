@@ -39,6 +39,7 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Managers.Status;
 using VPlayer.Core.Modularity.Regions;
+using VPlayer.Core.Players;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Core.ViewModels.Artists;
@@ -47,7 +48,6 @@ using VPlayer.Core.ViewModels.SoundItems.LRCCreators;
 using VPlayer.Core.ViewModels.TvShows;
 using VPLayer.Domain;
 using VPlayer.Home.ViewModels;
-using VPlayer.PCloud.ViewModels;
 using VPlayer.Player.Views.WindowsPlayer;
 using VPlayer.UPnP.ViewModels;
 using VPlayer.UPnP.ViewModels.Player;
@@ -62,7 +62,7 @@ using FileInfo = VCore.WPF.ViewModels.WindowsFiles;
 
 namespace VPlayer.WindowsPlayer.ViewModels
 {
-  public class MusicPlayerViewModel : FilePlayableRegionViewModel<WindowsPlayerView, SoundItemInPlaylistViewModel, SoundItemFilePlaylist, PlaylistSoundItem, SoundItem, SoundSliderPopupDetailViewModel>
+  public class MusicPlayerViewModel : FilePlayableRegionViewModel<WindowsPlayerView, SoundItemInPlaylistViewModel, SoundItemFilePlaylist, PlaylistSoundItem, SoundItem, SoundSliderPopupDetailViewModel>, IMusicPlayerViewModel
   {
     #region Fields
 
@@ -169,6 +169,24 @@ namespace VPlayer.WindowsPlayer.ViewModels
       }
     }
     #endregion
+
+    public IEnumerable<long> PCloudIds
+    {
+      get
+      {
+        var list = new List<long>();
+
+        foreach(var item in PlayList)
+        {
+          if (long.TryParse(item.Model.FileInfo.Indentificator, out var id))
+          {
+            list.Add(id);
+          }
+        }
+
+        return list;
+      }
+    }
 
     public override bool ContainsNestedRegions => true;
     public override string RegionName { get; protected set; } = RegionNames.WindowsPlayerContentRegion;
@@ -1527,11 +1545,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
             songInPlayListViewModel.SongModel.Album = downloadingAlbum;
 
-            if (downloadingArtist != null &&
-                songInPlayListViewModel.SongModel.Album != null &&
-                songInPlayListViewModel.SongModel.Album.ArtistId == downloadingArtist.Id)
+            if (downloadingArtist != null && songInPlayListViewModel.SongModel.Album != null)
             {
-              songInPlayListViewModel.SongModel.Album.Artist = downloadingArtist;
+              if (songInPlayListViewModel.SongModel.Album.ArtistId == downloadingArtist.Id || downloadingArtist.Id == 0)
+              {
+                songInPlayListViewModel.SongModel.Album.Artist = downloadingArtist;
+              }
             }
 
             songInPlayListViewModel.Initialize();
@@ -1539,7 +1558,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
             if (downloadingAlbum.Id > 0 && downloadingArtist.Id > 0)
             {
               var song = downloadingAlbum.Songs.SingleOrDefault(x => x.ItemModel.FileInfo.Name == songInPlayListViewModel.SongModel.ItemModel.FileInfo.Name);
-              
+
               if (song != null && songInPlayListViewModel.SongModel.Id != song.Id)
               {
                 songInPlayListViewModel.SongModel = song;
@@ -1674,26 +1693,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       var albums = storageManager.GetRepository<Album>()
         .Where(x => x.NormalizedName == VPlayerStorageManager.GetNormalizedName(albumName))
+        .Include(x => x.Artist)
         .Include(x => x.Songs)
         .ThenInclude(x => x.ItemModel.FileInfo);
 
-      Album result = null;
 
-      if (albums.Count() > 1)
-      {
-        var albumWithArtist = albums.Where(x => x.Artist.Name == artistName);
-
-        if (albumWithArtist.Any())
-        {
-          result = albumWithArtist.FirstOrDefault();
-        }
-        else
-        {
-          result = albums.FirstOrDefault();
-        }
-      }
-      else
-        result = albums.FirstOrDefault();
+      Album result = albums.FirstOrDefault(x => x.Artist.Name == artistName);
 
       return result;
     }
@@ -2089,6 +2094,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
         {
           Application.Current.Dispatcher.Invoke(() =>
           {
+            PlayList.DisableNotification();
+            UnHookToPlaylistCollectionChanged();
+
             foreach (var songItem in songsItems)
             {
               var index = PlayList.IndexOf(x => x.Model.Id == songItem.ItemModel.Id);
@@ -2114,6 +2122,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
                 changed = true;
               }
             }
+
+            HookToPlaylistCollectionChanged();
+            PlayList.EnableNotification();
           });
         }
       });
@@ -2241,8 +2252,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     protected override void ItemsRemoved(EventPattern<SoundItemInPlaylistViewModel> eventPattern)
     {
-      if (eventPattern.EventArgs is SongInPlayListViewModel songInPlayListViewModel && 
-          songInPlayListViewModel.AlbumViewModel != null && 
+      if (eventPattern.EventArgs is SongInPlayListViewModel songInPlayListViewModel &&
+          songInPlayListViewModel.AlbumViewModel != null &&
           songInPlayListViewModel.ArtistViewModel != null)
       {
         var anyAlbum = PlayList.OfType<SongInPlayListViewModel>()

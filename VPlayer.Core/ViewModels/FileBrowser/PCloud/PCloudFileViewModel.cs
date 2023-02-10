@@ -1,7 +1,7 @@
 ﻿using System;
 using VCore.WPF.ViewModels.WindowsFiles;
 
-namespace VPlayer.PCloud.ViewModels
+namespace VPlayer.Core.ViewModels.FileBrowser.PCloud
 {
   public class PCloudFileViewModel : FileViewModel
   {

@@ -94,8 +94,13 @@ namespace VPlayer.Core.FileBrowser
 
     #endregion
 
-
-
+    protected virtual bool IsRecursive
+    {
+      get
+      {
+        return false;
+      }
+    }
 
     public ObservableCollection<ThumbnailViewModel> Thumbnails { get; } = new ObservableCollection<ThumbnailViewModel>();
 
@@ -230,7 +235,18 @@ namespace VPlayer.Core.FileBrowser
 
         isLoadedSubject.OnNext(true);
 
-        await LoadSubFolders(this, cancellationTokenSource.Token);
+        List<PlayableFileViewModel> itemsInFolder = null;
+
+        if (!IsRecursive)
+        {
+          await LoadSubFolders(this, cancellationTokenSource.Token);
+
+          itemsInFolder = SubItems.ViewModels.OfType<PlayableFileViewModel>().ToList();
+        }
+        else
+        {
+          itemsInFolder = (await GetFiles(IsRecursive)).Select(CreateNewFileItem).ToList();
+        }
 
         var numberStringComparer = new NumberStringComparer();
 
@@ -239,11 +255,34 @@ namespace VPlayer.Core.FileBrowser
           .OfType<PlayableFileViewModel>()
           .ToList();
 
+        //Docasne kym nevymyslim ako spustat mixed foldre
+        if (FolderType == FolderType.Mixed && IsRecursive)
+        {
+          FolderType = FolderType.Sound;
+        }
+
+        if (FolderType == FolderType.Other)
+        {
+          var videos = itemsInFolder.Where(x => x.FileType == FileType.Video).ToList();
+          var music = itemsInFolder.Where(x => x.FileType == FileType.Sound).ToList();
+
+          if (videos.Any() && music.Any())
+          {
+            FolderType = FolderType.Mixed;
+          }
+          else if (!videos.Any() && music.Any())
+          {
+            FolderType = FolderType.Sound;
+          }
+          else if(videos.Any() && !music.Any())
+          {
+            FolderType = FolderType.Video;
+          }
+        }
 
         if (FolderType == FolderType.Video)
         {
-          var itemsInFolder = SubItems.ViewModels.OfType<PlayableFileViewModel>()
-            .Where(x => x.FileType == FileType.Video);
+          itemsInFolder = itemsInFolder.Where(x => x.FileType == FileType.Video).ToList();
 
           var playableFilesList = playableFiles.Concat(itemsInFolder).Where(x => x.FileType == FileType.Video).ToList();
 
@@ -306,8 +345,7 @@ namespace VPlayer.Core.FileBrowser
         }
         else if (FolderType == FolderType.Sound)
         {
-          var itemsInFolder = SubItems.ViewModels.OfType<PlayableFileViewModel>()
-            .Where(x => x.FileType == FileType.Sound);
+          itemsInFolder = itemsInFolder.Where(x => x.FileType == FileType.Sound).ToList();
 
           var playableFilesList = playableFiles.Concat(itemsInFolder).Where(x => x.FileType == FileType.Sound).ToList();
 
@@ -342,44 +380,50 @@ namespace VPlayer.Core.FileBrowser
             }
           }
 
-          var folders = SubItems.ViewModels
-            .SelectManyRecursive(x => x.SubItems.ViewModels)
-            .OfType<PlayableFolderViewModel<TFolderViewModel, TFileViewModel>>();
+          List<SoundItem> finalSoundItems = new List<SoundItem>();
 
-          folders = folders.Concat(SubItems.ViewModels.OfType<PlayableFolderViewModel<TFolderViewModel, TFileViewModel>>());
-
-
-          List<SoundItem> soundItems1 = new List<SoundItem>();
-
-          var acutalFolderfilesOrdered = SubItems.ViewModels.OfType<FileViewModel>().OrderBy(x => x.Name, numberStringComparer);
-
-          foreach (var file in acutalFolderfilesOrdered)
+          if (!IsRecursive)
           {
-            var soundItem = soundItems.SingleOrDefault(x => x.FileInfo.Indentificator == file.Path);
+            var acutalFolderfilesOrdered = itemsInFolder.OrderBy(x => x.Name, numberStringComparer);
 
-            if (soundItem != null)
-            {
-              soundItems1.Add(soundItem);
-            }
-          }
-
-          foreach (var folder in folders)
-          {
-            var filesOrdered = folder.SubItems.ViewModels.OfType<FileViewModel>().OrderBy(x => x.Name, numberStringComparer);
-
-            foreach (var file in filesOrdered)
+            foreach (var file in acutalFolderfilesOrdered)
             {
               var soundItem = soundItems.SingleOrDefault(x => x.FileInfo.Indentificator == file.Path);
 
               if (soundItem != null)
               {
-                soundItems1.Add(soundItem);
+                finalSoundItems.Add(soundItem);
+              }
+            }
+
+            var folders = SubItems.ViewModels
+              .SelectManyRecursive(x => x.SubItems.ViewModels)
+              .OfType<PlayableFolderViewModel<TFolderViewModel, TFileViewModel>>();
+
+            folders = folders.Concat(SubItems.ViewModels.OfType<PlayableFolderViewModel<TFolderViewModel, TFileViewModel>>());
+
+            foreach (var folder in folders)
+            {
+              var filesOrdered = folder.SubItems.ViewModels.OfType<FileViewModel>().OrderBy(x => x.Name, numberStringComparer);
+
+              foreach (var file in filesOrdered)
+              {
+                var soundItem = soundItems.SingleOrDefault(x => x.FileInfo.Indentificator == file.Path);
+
+                if (soundItem != null)
+                {
+                  finalSoundItems.Add(soundItem);
+                }
               }
             }
           }
+          else
+          {
+            finalSoundItems = soundItems;
+          }
 
           var data = new PlayItemsEventData<SoundItemInPlaylistViewModel>(
-            soundItems1.Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x)),
+            finalSoundItems.Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x)),
             eventAction,
             this);
 
@@ -486,9 +530,9 @@ namespace VPlayer.Core.FileBrowser
 
     #region GetFiles
 
-    public override Task<IEnumerable<FileInfo>> GetFiles()
+    public override Task<IEnumerable<FileInfo>> GetFiles(bool recursive = false)
     {
-      return folderViewModel.GetFiles();
+      return folderViewModel.GetFiles(recursive);
     }
 
     #endregion

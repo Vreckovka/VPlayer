@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Reactive;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
@@ -15,35 +13,27 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using FFMpegCore;
-using FFMpegCore.Exceptions;
-using LibVLCSharp.Shared;
 using Logger;
 using Ninject;
 using Prism.Events;
-using SoundManagement;
-using VCore;
-using VCore.ItemsCollections;
 using VCore.Standard;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
 using VCore.Standard.Modularity.Interfaces;
 using VCore.Standard.ViewModels.WindowsFile;
 using VCore.WPF.Interfaces.Managers;
-using VCore.WPF.Managers;
 using VCore.WPF.Misc;
 using VCore.WPF.Modularity.RegionProviders;
-using VCore.WPF.ViewModels.Prompt;
 using VFfmpeg;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Managers.Status;
-using VPlayer.Core.ViewModels.SoundItems;
-using VPlayer.IPTV.ViewModels;
+using VPlayer.Core.ViewModels;
 using VPlayer.WindowsPlayer.Players;
 using VVLC.Players;
 
-namespace VPlayer.Core.ViewModels
+namespace VPlayer.Core.Players
 {
   public abstract class FilePlayableRegionViewModel<TView, TItemViewModel, TPlaylistModel, TPlaylistItemModel, TModel, TPopupViewModel> :
     PlayableRegionViewModel<TView, TItemViewModel, TPlaylistModel, TPlaylistItemModel, TModel>, IFilePlayableRegionViewModel
@@ -257,7 +247,7 @@ namespace VPlayer.Core.ViewModels
 
     protected override void InitializeAsync()
     {
-      PlayList.CollectionChanged += PlayList_CollectionChanged;
+      HookToPlaylistCollectionChanged();
 
       positionChangedSubject.Throttle(TimeSpan.FromMilliseconds(1000)).Subscribe(position =>
       {
@@ -268,6 +258,16 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
+
+    protected void HookToPlaylistCollectionChanged()
+    {
+      PlayList.CollectionChanged += PlayList_CollectionChanged;
+    }
+
+    protected void UnHookToPlaylistCollectionChanged()
+    {
+      PlayList.CollectionChanged -= PlayList_CollectionChanged;
+    }
 
     #region HookToVlcEvents
 
@@ -917,7 +917,7 @@ namespace VPlayer.Core.ViewModels
       base.Dispose();
 
       MediaPlayer.TimeChanged -= OnVlcTimeChanged;
-      PlayList.CollectionChanged -= PlayList_CollectionChanged;
+      UnHookToPlaylistCollectionChanged();
 
       cTSOnActualItemChangeds.ForEach(x => x.Cancel());
     }

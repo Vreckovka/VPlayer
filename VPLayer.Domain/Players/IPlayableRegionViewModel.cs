@@ -9,6 +9,11 @@ using VPlayer.WindowsPlayer.Players;
 
 namespace VPlayer.Core.ViewModels
 {
+  public interface IMusicPlayerViewModel : IFilePlayableRegionViewModel
+  {
+    public IEnumerable<long> PCloudIds { get; }
+  }
+
   public interface IFilePlayableRegionViewModel : IPlayableRegionViewModel
   {
     void SeekForward(int seekSize = 50);

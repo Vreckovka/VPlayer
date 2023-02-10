@@ -4,12 +4,12 @@ using VCore.WPF.Modularity.RegionProviders;
 using VPlayer.AudioStorage.Modularity.NinjectModules;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
+using VPlayer.Core.ViewModels.FileBrowser.PCloud;
 using VPlayer.Home.ViewModels;
 using VPlayer.Home.ViewModels.Albums;
 using VPlayer.Home.ViewModels.Artists;
 using VPlayer.Home.ViewModels.FileBrowser;
 using VPlayer.Home.ViewModels.TvShows;
-using VPlayer.PCloud.ViewModels;
 
 namespace VPlayer.Home.Modularity.NinjectModule
 {

@@ -129,23 +129,26 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
 
     #region GetTextLyrics
 
-    public async Task<string> GetTextLyrics(string songName, string albumName, string artistName)
+    public Task<string> GetTextLyrics(string songName, string albumName, string artistName)
     {
-      var file = await GetFile(songName, artistName, albumName, ".txt");
-
-      if (file != null)
+      return Task.Run(async () =>
       {
-        var stream = await cloudService.ReadFile(file.Id);
+        var file = await GetFile(songName, artistName, albumName, ".txt");
 
-        if (stream != null)
+        if (file != null)
         {
-          var stringValue = Encoding.UTF8.GetString(stream.ToArray()).Replace("\r\n", "\n").Replace("\r", "");
+          var stream = await cloudService.ReadFile(file.Id);
 
-          return stringValue;
+          if (stream != null)
+          {
+            var stringValue = Encoding.UTF8.GetString(stream.ToArray()).Replace("\r\n", "\n").Replace("\r", "");
+
+            return stringValue;
+          }
         }
-      }
 
-      return null;
+        return null;
+      });
     }
 
     #endregion

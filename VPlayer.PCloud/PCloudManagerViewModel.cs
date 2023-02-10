@@ -13,7 +13,8 @@ using VCore.WPF.ViewModels;
 using VCore.WPF.ViewModels.Prompt;
 using VPlayer.Core;
 using VPlayer.Core.Modularity.Regions;
-using VPlayer.PCloud.ViewModels;
+using VPlayer.Core.ViewModels.FileBrowser;
+using VPlayer.Core.ViewModels.FileBrowser.PCloud;
 using VPlayer.PCloud.Views;
 
 namespace VPlayer.PCloud

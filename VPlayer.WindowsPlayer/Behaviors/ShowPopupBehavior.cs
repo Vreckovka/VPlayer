@@ -10,6 +10,7 @@ using System.Windows.Input;
 using Microsoft.Xaml.Behaviors;
 using Ninject;
 using VCore.Standard;
+using VPlayer.Core.Players;
 using VPlayer.Core.ViewModels;
 using VPlayer.Player.Behaviors;
 
