@@ -42,7 +42,7 @@ namespace VPlayer.AudioStorage.DomainClasses
   }
 
   [Serializable]
-  public class SoundItem : PlaybleItem, IUpdateable<SoundItem>
+  public class SoundItem : PlayableItem, IUpdateable<SoundItem>
   {
     public SoundFileInfo FileInfo { get; set; }
 

@@ -23,6 +23,7 @@ namespace VPlayer.Core.ViewModels
   public interface IItemInPlayList<TModel> : IItemInPlayList, ISelectable where TModel : IPlayableModel
   {
     TModel Model { get; set; }
+    public void OnSetPrivate(bool? isPrivate = null);
   }
  
 

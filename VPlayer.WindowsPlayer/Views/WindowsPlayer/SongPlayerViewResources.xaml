@@ -103,8 +103,38 @@
                         Margin="10,5,10,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top">
+
+                <controls:PathButton Margin="0,0,0,0"
+                                     HorizontalAlignment="Left"
+                                     Command="{Binding CreateLRCLyrics}"
+                                     CommandParameter="{Binding ActualItem}"
+                                     DataContext="{Binding RelativeSource={RelativeSource AncestorType=windowsPlayer1:SongPlayerView}, Path=DataContext}"
+                                     FontSize="13"
+                                     FontWeight="Bold"
+                                     ForegroundCheckedColor="White"
+                                     ForegroundDefaultColor="#15ffffff"
+                                     ForegroundHoverColor="#ccc"
+                                     IconDefaultColor="#555555"
+                                     IconHoverColor="#ccc"
+                                     IconMargin="0 0 11 0"
+                                     IsReadOnly="True"
+                                     PathStyle="{StaticResource Pencil}"
+                                     ToolTip="Edit">
+                    <controls:PathButton.Style>
+                        <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
+                            <Setter Property="Content" Value="Edit" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={converters:IsGreaterConverter}, ConverterParameter=711}" Value="false">
+                                    <Setter Property="Content" Value="" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </controls:PathButton.Style>
+                </controls:PathButton>
+
                 <controls:PathButton x:Name="SettingsButton"
                                      HorizontalAlignment="Left"
+                                     Margin="0 10 0 0"
                                      FontSize="13"
                                      FontWeight="Bold"
                                      ForegroundCheckedColor="White"
@@ -232,7 +262,9 @@
                                                    Foreground="#30ffffff"
                                                    Text="Adjust lyrics (ms)" />
 
-                                        <numericUpAndDown:NumericUpAndDown VerticalAlignment="Center"
+                                        <numericUpAndDown:NumericUpAndDown MinWidth="50"
+                                                                           VerticalAlignment="Center"
+                                                                           HorizontalContentAlignment="Center"
                                                                            FontWeight="Bold"
                                                                            StepSize="500"
                                                                            Value="{Binding TimeAdjustment, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
@@ -308,34 +340,7 @@
                     </Border>
                 </Popup>
 
-                <TextBlock Text="" />
-                <controls:PathButton Margin="0,15,0,0"
-                                     HorizontalAlignment="Left"
-                                     Command="{Binding CreateLRCLyrics}"
-                                     CommandParameter="{Binding ActualItem}"
-                                     DataContext="{Binding RelativeSource={RelativeSource AncestorType=windowsPlayer1:SongPlayerView}, Path=DataContext}"
-                                     FontSize="13"
-                                     FontWeight="Bold"
-                                     ForegroundCheckedColor="White"
-                                     ForegroundDefaultColor="#15ffffff"
-                                     ForegroundHoverColor="#ccc"
-                                     IconDefaultColor="#555555"
-                                     IconHoverColor="#ccc"
-                                     IconMargin="0 0 11 0"
-                                     IsReadOnly="True"
-                                     PathStyle="{StaticResource Pencil}"
-                                     ToolTip="Edit">
-                    <controls:PathButton.Style>
-                        <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
-                            <Setter Property="Content" Value="Edit" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={converters:IsGreaterConverter}, ConverterParameter=711}" Value="false">
-                                    <Setter Property="Content" Value="" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </controls:PathButton.Style>
-                </controls:PathButton>
+
             </StackPanel>
 
 

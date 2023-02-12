@@ -2,6 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:attachedProperties="clr-namespace:VCore.WPF.AttachedProperties;assembly=VCore.WPF"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:buttons="clr-namespace:VCore.WPF.Behaviors.Buttons;assembly=VCore.WPF"
              xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
              xmlns:converters="clr-namespace:VPlayer.Core.Converters;assembly=VPlayer.Core"
@@ -165,335 +167,781 @@
     </UserControl.Resources>
 
     <loadingIndicator:LoadingIndicator MessageDataContext="{Binding LoadingStatus, Mode=OneWay}">
-        <Grid Margin="0,0,0,0">
+        <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition />
                 <RowDefinition Height="auto" />
+                <RowDefinition />
             </Grid.RowDefinitions>
 
-            <ListView Name="playlists"
-                      Margin="1,1,0,0"
-                      HorizontalContentAlignment="Center"
-                      Background="Transparent"
-                      BorderThickness="0"
-                      DataContext="{StaticResource GrouppedItems}"
-                      FontSize="13"
-                      FontWeight="Bold"
-                      Foreground="#454545"
-                      ItemsSource="{Binding}"
-                      Style="{StaticResource ListView_LoadMore}">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListViewItem}">
-                        <Setter Property="Template" Value="{StaticResource ListViewItemTemplate}" />
+            <Grid Margin="1,1,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
 
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.View>
-                    <GridView AllowsColumnReorder="False">
-                        <GridView.Columns>
-                            <GridViewColumn Width="50" Header="Resume">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <controls:PathButton Width="45"
-                                                             HorizontalContentAlignment="Center"
-                                                             Command="{Binding Play}"
-                                                             CommandParameter="{x:Static events1:EventAction.PlayFromPlaylistLast}"
-                                                             FontFamily="{StaticResource FontAwesome6Pro_Solid}"
-                                                             FontSize="20"
-                                                             FontWeight="Normal"
-                                                             ForegroundDefaultColor="#4567a3db"
-                                                             ForegroundHoverColor="#67a3db"
-                                                             Style="{StaticResource play-pause}"
-                                                             ToolTip="Resume" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                <Border Margin="0"
+                        Padding="10"
+                        Background="#151515"
+                        BorderBrush="{StaticResource DarkBrownBrush}"
+                        BorderThickness="0,0,0,2">
+                    <StackPanel Orientation="Horizontal">
+                        <controls:PathButton VerticalAlignment="Center"
+                                             ClickMode="Release"
+                                             Cursor="Arrow"
+                                             Glyph="{StaticResource mask}"
+                                             GlyphFontFamily="{StaticResource FontAwesome6Pro_Solid}"
+                                             GlyphFontSize="13"
+                                             IconDefaultColor="#3e285c"
+                                             IconHoverColor="#3e285c"
+                                             IconMargin="0"
+                                             ToolTip="Private" />
 
-                            <GridViewColumn Width="35" Header="Fresh">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <controls:PathButton Padding="0"
-                                                             HorizontalContentAlignment="Center"
-                                                             Command="{Binding Play}"
-                                                             CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}"
-                                                             FontFamily="{StaticResource FontAwesome6Pro_Solid}"
-                                                             FontSize="20"
-                                                             FontWeight="Normal"
-                                                             ForegroundDefaultColor="#45fe2754"
-                                                             ForegroundHoverColor="{StaticResource DefaultRedColor}"
-                                                             IconMargin="0"
-                                                             Style="{StaticResource play-regular}"
-                                                             ToolTip="Fresh" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                        <TextBlock Margin="10,0,0,0"
+                                   VerticalAlignment="Center"
+                                   FontSize="17"
+                                   FontWeight="Normal"
+                                   Foreground="#ccc"
+                                   Text="Private" />
 
-                            <GridViewColumn Width="50">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Image Width="35"
-                                               Height="25"
-                                               Source="{Binding Model.CoverPath, Converter={library1:ImageLazyLoadingConverter}, IsAsync=True}"
-                                               Stretch="UniformToFill">
-                                            <Image.ToolTip>
-                                                <Image Width="185"
-                                                       Height="185"
-                                                       Source="{Binding Model.CoverPath, Converter={library1:ImageLazyLoadingConverter}, IsAsync=True}"
-                                                       Stretch="Uniform" />
-                                            </Image.ToolTip>
-                                        </Image>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
 
-                            <GridViewColumn Width="340" Header="Name">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock FontSize="16"
-                                                   FontWeight="Normal"
-                                                   Foreground="#95ffffff"
-                                                   Text="{Binding Model, Converter={converters:PlaylistNameConverter}}"
-                                                   TextTrimming="CharacterEllipsis"
-                                                   ToolTip="{Binding Name}" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                        <TextBlock Margin="10,0,0,0"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Center"
+                                   FontSize="17"
+                                   FontWeight="Normal"
+                                   Foreground="#454545"
+                                   Text="{Binding PrivateItems.Count, StringFormat={}({0} items)}" />
+                    </StackPanel>
 
-                            <GridViewColumn Width="240">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel DataContext="{Binding Model.ActualItem}" Orientation="Horizontal">
-                                            <TextBlock FontWeight="Normal" TextTrimming="CharacterEllipsis">
-                                                <Run Foreground="{StaticResource YellowBrush3}" Text="{Binding OrderInPlaylist, StringFormat={}{0}.}" />
-                                                <Run Foreground="#555555" Text="{Binding ReferencedItem.Name}" />
+                    <b:Interaction.Behaviors>
+                        <buttons:ClickCountBehavior ClickCount="4" Command="{Binding ShowPrivate}" />
+                    </b:Interaction.Behaviors>
+                </Border>
+
+                <ListView Grid.Row="1"
+                          HorizontalContentAlignment="Center"
+                          Background="Transparent"
+                          BorderThickness="0"
+                          FontSize="13"
+                          FontWeight="Bold"
+                          Foreground="#454545"
+                          ItemsSource="{Binding PrivateItems}">
+                    <ListView.Style>
+                        <Style TargetType="ListView">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListView">
+                                        <Border Name="Border"
+                                                Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}">
+                                            <ScrollViewer attachedProperties:ScrollViewerCorrector.FixScrolling="True"
+                                                          HorizontalScrollBarVisibility="Auto"
+                                                          VerticalScrollBarVisibility="Auto">
+                                                <Grid>
+                                                    <ItemsPresenter x:Name="groups_presenter" />
+                                                </Grid>
+                                            </ScrollViewer>
+                                        </Border>
+
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsGrouping" Value="true">
+                                                <Setter Property="ScrollViewer.CanContentScroll" Value="false" />
+                                            </Trigger>
+                                            <Trigger Property="IsEnabled" Value="false">
+                                                <Setter TargetName="Border" Property="Background">
+                                                    <Setter.Value>
+                                                        <SolidColorBrush Color="{DynamicResource DefaultRedTransparentColor}" />
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListView.Style>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListViewItem}">
+                            <Setter Property="Template" Value="{StaticResource ListViewItemTemplate}" />
+
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.View>
+                        <GridView AllowsColumnReorder="False">
+                            <GridView.Columns>
+                                <GridViewColumn Width="50" Header="Resume">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <controls:PathButton Width="45"
+                                                                 HorizontalContentAlignment="Center"
+                                                                 Command="{Binding Play}"
+                                                                 CommandParameter="{x:Static events1:EventAction.PlayFromPlaylistLast}"
+                                                                 FontFamily="{StaticResource FontAwesome6Pro_Solid}"
+                                                                 FontSize="20"
+                                                                 FontWeight="Normal"
+                                                                 ForegroundDefaultColor="#4567a3db"
+                                                                 ForegroundHoverColor="#67a3db"
+                                                                 Style="{StaticResource play-pause}"
+                                                                 ToolTip="Resume" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Width="35" Header="Fresh">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <controls:PathButton Padding="0"
+                                                                 HorizontalContentAlignment="Center"
+                                                                 Command="{Binding Play}"
+                                                                 CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}"
+                                                                 FontFamily="{StaticResource FontAwesome6Pro_Solid}"
+                                                                 FontSize="20"
+                                                                 FontWeight="Normal"
+                                                                 ForegroundDefaultColor="#45fe2754"
+                                                                 ForegroundHoverColor="{StaticResource DefaultRedColor}"
+                                                                 IconMargin="0"
+                                                                 Style="{StaticResource play-regular}"
+                                                                 ToolTip="Fresh" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Width="50">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Image Width="35"
+                                                   Height="25"
+                                                   Source="{Binding Model.CoverPath, Converter={library1:ImageLazyLoadingConverter}, IsAsync=True}"
+                                                   Stretch="UniformToFill">
+                                                <Image.ToolTip>
+                                                    <Image Width="185"
+                                                           Height="185"
+                                                           Source="{Binding Model.CoverPath, Converter={library1:ImageLazyLoadingConverter}, IsAsync=True}"
+                                                           Stretch="Uniform" />
+                                                </Image.ToolTip>
+                                            </Image>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Width="340" Header="Name">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock FontSize="16"
+                                                       FontWeight="Normal"
+                                                       Foreground="#95ffffff"
+                                                       Text="{Binding Model, Converter={converters:PlaylistNameConverter}}"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       ToolTip="{Binding Name}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Width="240">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel DataContext="{Binding Model.ActualItem}" Orientation="Horizontal">
+                                                <TextBlock FontWeight="Normal" TextTrimming="CharacterEllipsis">
+                                                    <Run Foreground="{StaticResource YellowBrush3}" Text="{Binding OrderInPlaylist, StringFormat={}{0}.}" />
+                                                    <Run Foreground="#555555" Text="{Binding ReferencedItem.Name}" />
+                                                    <TextBlock.ToolTip>
+                                                        <TextBlock TextTrimming="CharacterEllipsis">
+                                                            <Run Foreground="{StaticResource YellowBrush3}"
+                                                                 Text="{Binding OrderInPlaylist, StringFormat={}{0}.}"
+                                                                 ToolTip="{Binding OrderInPlaylist}" />
+                                                            <Run Text="{Binding ReferencedItem.Name}" ToolTip="{Binding ReferencedItem.Name}" />
+                                                        </TextBlock>
+                                                    </TextBlock.ToolTip>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Width="130" Header="Last time played">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Margin="5,0,0,0" FontWeight="Normal">
+                                                <Run FontSize="14"
+                                                     FontWeight="Bold"
+                                                     Foreground="#65c8d1db"
+                                                     Text="{Binding LastPlayed, StringFormat={}dd.MM.yy}" />
+                                                <Run Text="" />
+                                                <Run Foreground="#35ffffff" Text="{Binding LastPlayed, StringFormat={}HH:mm:ss}" />
                                                 <TextBlock.ToolTip>
-                                                    <TextBlock TextTrimming="CharacterEllipsis">
-                                                        <Run Foreground="{StaticResource YellowBrush3}"
-                                                             Text="{Binding OrderInPlaylist, StringFormat={}{0}.}"
-                                                             ToolTip="{Binding OrderInPlaylist}" />
-                                                        <Run Text="{Binding ReferencedItem.Name}" ToolTip="{Binding ReferencedItem.Name}" />
+                                                    <TextBlock Margin="5,0,0,0" FontWeight="Normal">
+                                                        <Run FontSize="14"
+                                                             FontWeight="Bold"
+                                                             Foreground="#65c8d1db"
+                                                             Text="{Binding LastPlayed, StringFormat={}dd.MM.yy}" />
+                                                        <Run Text="" />
+                                                        <Run Foreground="#35ffffff" Text="{Binding LastPlayed, StringFormat={}HH:mm:ss}" />
                                                     </TextBlock>
                                                 </TextBlock.ToolTip>
                                             </TextBlock>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
 
-                            <GridViewColumn Width="130" Header="Last time played">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Margin="5,0,0,0" FontWeight="Normal">
-                                            <Run FontSize="14"
-                                                 FontWeight="Bold"
-                                                 Foreground="#65c8d1db"
-                                                 Text="{Binding LastPlayed, StringFormat={}dd.MM.yy}" />
-                                            <Run Text="" />
-                                            <Run Foreground="#35ffffff" Text="{Binding LastPlayed, StringFormat={}HH:mm:ss}" />
-                                            <TextBlock.ToolTip>
-                                                <TextBlock Margin="5,0,0,0" FontWeight="Normal">
-                                                    <Run FontSize="14"
-                                                         FontWeight="Bold"
-                                                         Foreground="#65c8d1db"
-                                                         Text="{Binding LastPlayed, StringFormat={}dd.MM.yy}" />
-                                                    <Run Text="" />
-                                                    <Run Foreground="#35ffffff" Text="{Binding LastPlayed, StringFormat={}HH:mm:ss}" />
+                                <GridViewColumn Width="85"
+                                                DisplayMemberBinding="{Binding TotalPlayedTime, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}"
+                                                Header="Total played time" />
+
+                                <GridViewColumn Width="80" Header="Hash">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding HashCode, Converter={library:HashConverter}, ConverterParameter=18}"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       ToolTip="{Binding HashCode, Converter={library:HashConverter}, ConverterParameter=18}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+
+                                <GridViewColumn Width="70" Header="Count">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Width="100" Text="{Binding ItemsCount, Mode=OneWay}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Width="75" Header="Settings">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <controls:PathButton Margin="0,0,10,5"
+                                                                     HorizontalAlignment="Right"
+                                                                     VerticalAlignment="Bottom"
+                                                                     IconHeight="15"
+                                                                     IconWidth="15"
+                                                                     IsChecked="{Binding IsRepeating}"
+                                                                     PathStyle="{StaticResource Repeate}"
+                                                                     ToolTip="Repeate" />
+
+                                                <controls:PathButton Margin="0,0,35,5"
+                                                                     HorizontalAlignment="Right"
+                                                                     VerticalAlignment="Bottom"
+                                                                     IconHeight="15"
+                                                                     IconWidth="15"
+                                                                     IsChecked="{Binding IsShuffle}"
+                                                                     PathStyle="{StaticResource Shuffle}"
+                                                                     ToolTip="Shuffle" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Width="45" Header="Actions">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <controls:ButtonWithIcon Padding="0"
+                                                                         Command="{Binding Delete}"
+                                                                         IconDefaultColor="#783734"
+                                                                         IconHeight="12"
+                                                                         IconHoverColor="#f04d46"
+                                                                         IconPathStyle="{StaticResource Delete}"
+                                                                         ToolTip="Delete (Prenamently)" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView.Columns>
+                        </GridView>
+                    </ListView.View>
+
+                    <ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,2,0,0">
+                                        <Border Margin="0"
+                                                Padding="10"
+                                                Background="#151515"
+                                                BorderBrush="{StaticResource DarkBrownBrush}"
+                                                BorderThickness="0,0,0,2">
+                                            <TextBlock FontSize="17"
+                                                       FontWeight="Normal"
+                                                       Foreground="#ccc">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Name}" Value="True">
+                                                                <Setter Property="Text" Value="Favorites" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Name}" Value="False">
+                                                                <Setter Property="Text" Value="Generated" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Border>
+                                    </Grid>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                            <GroupStyle.ContainerStyle>
+                                <Style TargetType="GroupItem">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="GroupItem">
+                                                <Border Margin="0,0,0,0"
+                                                        Padding="0,0,0,2"
+                                                        Background="#090909"
+                                                        BorderBrush="#252525"
+                                                        BorderThickness="0,0,0,2">
+                                                    <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="auto" />
+                                                            <RowDefinition />
+                                                        </Grid.RowDefinitions>
+
+                                                        <Border Margin="0"
+                                                                Padding="10"
+                                                                Background="#151515"
+                                                                BorderBrush="{StaticResource DarkBrownBrush}"
+                                                                BorderThickness="0,0,0,2">
+                                                            <Grid Height="25">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="auto" />
+                                                                    <ColumnDefinition />
+                                                                </Grid.ColumnDefinitions>
+
+                                                                <TextBlock FontSize="17"
+                                                                           FontWeight="Normal"
+                                                                           Foreground="#ccc">
+                                                                    <TextBlock.Style>
+                                                                        <Style TargetType="TextBlock">
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding Name}" Value="True">
+                                                                                    <Setter Property="Text" Value="Favorites" />
+                                                                                </DataTrigger>
+                                                                                <DataTrigger Binding="{Binding Name}" Value="False">
+                                                                                    <Setter Property="Text" Value="Generated" />
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </TextBlock.Style>
+                                                                </TextBlock>
+
+
+                                                                <TextBlock Grid.Column="1"
+                                                                           Margin="10,0,0,0"
+                                                                           HorizontalAlignment="Left"
+                                                                           VerticalAlignment="Top"
+                                                                           FontSize="17"
+                                                                           FontWeight="Normal"
+                                                                           Foreground="#454545"
+                                                                           Text="{Binding ItemCount, StringFormat={}({0} items)}" />
+                                                            </Grid>
+                                                        </Border>
+
+                                                        <ScrollViewer Grid.Row="1"
+                                                                      HorizontalScrollBarVisibility="Auto"
+                                                                      VerticalScrollBarVisibility="Auto">
+                                                            <ItemsPresenter />
+                                                        </ScrollViewer>
+                                                    </Grid>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Name}" Value="True">
+                                            <Setter Property="MaxHeight" Value="517" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Name}" Value="False">
+                                            <Setter Property="Height" Value="auto" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </GroupStyle.ContainerStyle>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
+                </ListView>
+
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsShowPrivate}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+            </Grid>
+            <Grid Grid.Row="1" Margin="0,0,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+
+                <ListView Name="playlists"
+                          Margin="1,1,0,0"
+                          HorizontalContentAlignment="Center"
+                          Background="Transparent"
+                          BorderThickness="0"
+                          DataContext="{StaticResource GrouppedItems}"
+                          FontSize="13"
+                          FontWeight="Bold"
+                          Foreground="#454545"
+                          ItemsSource="{Binding}"
+                          Style="{StaticResource ListView_LoadMore}">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListViewItem}">
+                            <Setter Property="Template" Value="{StaticResource ListViewItemTemplate}" />
+
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.View>
+                        <GridView AllowsColumnReorder="False">
+                            <GridView.Columns>
+                                <GridViewColumn Width="50" Header="Resume">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <controls:PathButton Width="45"
+                                                                 HorizontalContentAlignment="Center"
+                                                                 Command="{Binding Play}"
+                                                                 CommandParameter="{x:Static events1:EventAction.PlayFromPlaylistLast}"
+                                                                 FontFamily="{StaticResource FontAwesome6Pro_Solid}"
+                                                                 FontSize="20"
+                                                                 FontWeight="Normal"
+                                                                 ForegroundDefaultColor="#4567a3db"
+                                                                 ForegroundHoverColor="#67a3db"
+                                                                 Style="{StaticResource play-pause}"
+                                                                 ToolTip="Resume" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Width="35" Header="Fresh">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <controls:PathButton Padding="0"
+                                                                 HorizontalContentAlignment="Center"
+                                                                 Command="{Binding Play}"
+                                                                 CommandParameter="{x:Static events1:EventAction.PlayFromPlaylist}"
+                                                                 FontFamily="{StaticResource FontAwesome6Pro_Solid}"
+                                                                 FontSize="20"
+                                                                 FontWeight="Normal"
+                                                                 ForegroundDefaultColor="#45fe2754"
+                                                                 ForegroundHoverColor="{StaticResource DefaultRedColor}"
+                                                                 IconMargin="0"
+                                                                 Style="{StaticResource play-regular}"
+                                                                 ToolTip="Fresh" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Width="50">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Image Width="35"
+                                                   Height="25"
+                                                   Source="{Binding Model.CoverPath, Converter={library1:ImageLazyLoadingConverter}, IsAsync=True}"
+                                                   Stretch="UniformToFill">
+                                                <Image.ToolTip>
+                                                    <Image Width="185"
+                                                           Height="185"
+                                                           Source="{Binding Model.CoverPath, Converter={library1:ImageLazyLoadingConverter}, IsAsync=True}"
+                                                           Stretch="Uniform" />
+                                                </Image.ToolTip>
+                                            </Image>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Width="340" Header="Name">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock FontSize="16"
+                                                       FontWeight="Normal"
+                                                       Foreground="#95ffffff"
+                                                       Text="{Binding Model, Converter={converters:PlaylistNameConverter}}"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       ToolTip="{Binding Name}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Width="240">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel DataContext="{Binding Model.ActualItem}" Orientation="Horizontal">
+                                                <TextBlock FontWeight="Normal" TextTrimming="CharacterEllipsis">
+                                                    <Run Foreground="{StaticResource YellowBrush3}" Text="{Binding OrderInPlaylist, StringFormat={}{0}.}" />
+                                                    <Run Foreground="#555555" Text="{Binding ReferencedItem.Name}" />
+                                                    <TextBlock.ToolTip>
+                                                        <TextBlock TextTrimming="CharacterEllipsis">
+                                                            <Run Foreground="{StaticResource YellowBrush3}"
+                                                                 Text="{Binding OrderInPlaylist, StringFormat={}{0}.}"
+                                                                 ToolTip="{Binding OrderInPlaylist}" />
+                                                            <Run Text="{Binding ReferencedItem.Name}" ToolTip="{Binding ReferencedItem.Name}" />
+                                                        </TextBlock>
+                                                    </TextBlock.ToolTip>
                                                 </TextBlock>
-                                            </TextBlock.ToolTip>
-                                        </TextBlock>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
 
-                            <GridViewColumn Width="85"
-                                            DisplayMemberBinding="{Binding TotalPlayedTime, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}"
-                                            Header="Total played time" />
+                                <GridViewColumn Width="130" Header="Last time played">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Margin="5,0,0,0" FontWeight="Normal">
+                                                <Run FontSize="14"
+                                                     FontWeight="Bold"
+                                                     Foreground="#65c8d1db"
+                                                     Text="{Binding LastPlayed, StringFormat={}dd.MM.yy}" />
+                                                <Run Text="" />
+                                                <Run Foreground="#35ffffff" Text="{Binding LastPlayed, StringFormat={}HH:mm:ss}" />
+                                                <TextBlock.ToolTip>
+                                                    <TextBlock Margin="5,0,0,0" FontWeight="Normal">
+                                                        <Run FontSize="14"
+                                                             FontWeight="Bold"
+                                                             Foreground="#65c8d1db"
+                                                             Text="{Binding LastPlayed, StringFormat={}dd.MM.yy}" />
+                                                        <Run Text="" />
+                                                        <Run Foreground="#35ffffff" Text="{Binding LastPlayed, StringFormat={}HH:mm:ss}" />
+                                                    </TextBlock>
+                                                </TextBlock.ToolTip>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
 
-                            <GridViewColumn Width="80" Header="Hash">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding HashCode, Converter={library:HashConverter}, ConverterParameter=18}"
-                                                   TextTrimming="CharacterEllipsis"
-                                                   ToolTip="{Binding HashCode, Converter={library:HashConverter}, ConverterParameter=18}" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                <GridViewColumn Width="85"
+                                                DisplayMemberBinding="{Binding TotalPlayedTime, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}"
+                                                Header="Total played time" />
 
-
-                            <GridViewColumn Width="70" Header="Count">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Width="100" Text="{Binding ItemsCount, Mode=OneWay}" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-
-                            <GridViewColumn Width="75" Header="Settings">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <controls:PathButton Margin="0,0,10,5"
-                                                                 HorizontalAlignment="Right"
-                                                                 VerticalAlignment="Bottom"
-                                                                 IconHeight="15"
-                                                                 IconWidth="15"
-                                                                 IsChecked="{Binding IsRepeating}"
-                                                                 PathStyle="{StaticResource Repeate}"
-                                                                 ToolTip="Repeate" />
-
-                                            <controls:PathButton Margin="0,0,35,5"
-                                                                 HorizontalAlignment="Right"
-                                                                 VerticalAlignment="Bottom"
-                                                                 IconHeight="15"
-                                                                 IconWidth="15"
-                                                                 IsChecked="{Binding IsShuffle}"
-                                                                 PathStyle="{StaticResource Shuffle}"
-                                                                 ToolTip="Shuffle" />
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-
-                            <GridViewColumn Width="45" Header="Actions">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <controls:ButtonWithIcon Padding="0"
-                                                                     Command="{Binding Delete}"
-                                                                     IconDefaultColor="#783734"
-                                                                     IconHeight="12"
-                                                                     IconHoverColor="#f04d46"
-                                                                     IconPathStyle="{StaticResource Delete}"
-                                                                     ToolTip="Delete (Prenamently)" />
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                        </GridView.Columns>
-                    </GridView>
-                </ListView.View>
-
-                <ListView.GroupStyle>
-                    <GroupStyle>
-                        <GroupStyle.HeaderTemplate>
-                            <DataTemplate>
-                                <Grid Margin="0,2,0,0">
-                                    <Border Margin="0"
-                                            Padding="10"
-                                            Background="#151515"
-                                            BorderBrush="{StaticResource DarkBrownBrush}"
-                                            BorderThickness="0,0,0,2">
-                                        <TextBlock FontSize="17"
-                                                   FontWeight="Normal"
-                                                   Foreground="#ccc">
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Name}" Value="True">
-                                                            <Setter Property="Text" Value="Favorites" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Name}" Value="False">
-                                                            <Setter Property="Text" Value="Generated" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
-                                    </Border>
-                                </Grid>
-                            </DataTemplate>
-                        </GroupStyle.HeaderTemplate>
-                        <GroupStyle.ContainerStyle>
-                            <Style TargetType="GroupItem">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="GroupItem">
-                                            <Border Margin="0,0,0,0"
-                                                    Padding="0 0 0 2"
-                                                    Background="#090909"
-                                                    BorderBrush="#252525"
-                                                    BorderThickness="0,0,0,2">
-                                                <Grid>
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="auto" />
-                                                        <RowDefinition />
-                                                    </Grid.RowDefinitions>
-
-                                                    <Border Margin="0"
-                                                            Padding="10"
-                                                            Background="#151515"
-                                                            BorderBrush="{StaticResource DarkBrownBrush}"
-                                                            BorderThickness="0,0,0,2">
-                                                        <Grid Height="25">
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="auto" />
-                                                                <ColumnDefinition />
-                                                            </Grid.ColumnDefinitions>
-
-                                                            <TextBlock FontSize="17"
-                                                                       FontWeight="Normal"
-                                                                       Foreground="#ccc">
-                                                                <TextBlock.Style>
-                                                                    <Style TargetType="TextBlock">
-                                                                        <Style.Triggers>
-                                                                            <DataTrigger Binding="{Binding Name}" Value="True">
-                                                                                <Setter Property="Text" Value="Favorites" />
-                                                                            </DataTrigger>
-                                                                            <DataTrigger Binding="{Binding Name}" Value="False">
-                                                                                <Setter Property="Text" Value="Generated" />
-                                                                            </DataTrigger>
-                                                                        </Style.Triggers>
-                                                                    </Style>
-                                                                </TextBlock.Style>
-                                                            </TextBlock>
+                                <GridViewColumn Width="80" Header="Hash">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding HashCode, Converter={library:HashConverter}, ConverterParameter=18}"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       ToolTip="{Binding HashCode, Converter={library:HashConverter}, ConverterParameter=18}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
 
 
-                                                            <TextBlock Grid.Column="1"
-                                                                       Margin="10,0,0,0"
-                                                                       HorizontalAlignment="Left"
-                                                                       VerticalAlignment="Top"
-                                                                       FontSize="17"
-                                                                       FontWeight="Normal"
-                                                                       Foreground="#454545"
-                                                                       Text="{Binding ItemCount, StringFormat={}({0} items)}" />
-                                                        </Grid>
-                                                    </Border>
+                                <GridViewColumn Width="70" Header="Count">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Width="100" Text="{Binding ItemsCount, Mode=OneWay}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
 
-                                                    <ScrollViewer Grid.Row="1"
-                                                                  HorizontalScrollBarVisibility="Auto"
-                                                                  VerticalScrollBarVisibility="Auto">
-                                                        <ItemsPresenter />
-                                                    </ScrollViewer>
-                                                </Grid>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
+                                <GridViewColumn Width="75" Header="Settings">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <controls:PathButton Margin="0,0,10,5"
+                                                                     HorizontalAlignment="Right"
+                                                                     VerticalAlignment="Bottom"
+                                                                     IconHeight="15"
+                                                                     IconWidth="15"
+                                                                     IsChecked="{Binding IsRepeating}"
+                                                                     PathStyle="{StaticResource Repeate}"
+                                                                     ToolTip="Repeate" />
 
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Name}" Value="True">
-                                        <Setter Property="MaxHeight" Value="517" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Name}" Value="False">
-                                        <Setter Property="Height" Value="auto" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </GroupStyle.ContainerStyle>
-                    </GroupStyle>
-                </ListView.GroupStyle>
-            </ListView>
+                                                <controls:PathButton Margin="0,0,35,5"
+                                                                     HorizontalAlignment="Right"
+                                                                     VerticalAlignment="Bottom"
+                                                                     IconHeight="15"
+                                                                     IconWidth="15"
+                                                                     IsChecked="{Binding IsShuffle}"
+                                                                     PathStyle="{StaticResource Shuffle}"
+                                                                     ToolTip="Shuffle" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
 
-            <controls:PathButton Grid.Row="0"
-                                 Margin="0,12,20,0"
-                                 HorizontalAlignment="Right"
-                                 VerticalAlignment="Top"
-                                 Command="{Binding RefreshData}"
-                                 Glyph="{StaticResource arrows-rotate-glyph}"
-                                 IconHoverColor="{StaticResource GreenColor3}"
-                                 Style="{StaticResource FontAwesomeGlyphStyle}"
-                                 ToolTip="Refresh data" />
+                                <GridViewColumn Width="45" Header="Actions">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <controls:ButtonWithIcon Padding="0"
+                                                                         Command="{Binding Delete}"
+                                                                         IconDefaultColor="#783734"
+                                                                         IconHeight="12"
+                                                                         IconHoverColor="#f04d46"
+                                                                         IconPathStyle="{StaticResource Delete}"
+                                                                         ToolTip="Delete (Prenamently)" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView.Columns>
+                        </GridView>
+                    </ListView.View>
+
+                    <ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,2,0,0">
+                                        <Border Margin="0"
+                                                Padding="10"
+                                                Background="#151515"
+                                                BorderBrush="{StaticResource DarkBrownBrush}"
+                                                BorderThickness="0,0,0,2">
+                                            <TextBlock FontSize="17"
+                                                       FontWeight="Normal"
+                                                       Foreground="#ccc">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Name}" Value="True">
+                                                                <Setter Property="Text" Value="Favorites" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Name}" Value="False">
+                                                                <Setter Property="Text" Value="Generated" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Border>
+                                    </Grid>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                            <GroupStyle.ContainerStyle>
+                                <Style TargetType="GroupItem">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="GroupItem">
+                                                <Border Margin="0,0,0,0"
+                                                        Padding="0,0,0,2"
+                                                        Background="#090909"
+                                                        BorderBrush="#252525"
+                                                        BorderThickness="0,0,0,2">
+                                                    <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="auto" />
+                                                            <RowDefinition />
+                                                        </Grid.RowDefinitions>
+
+                                                        <Border Margin="0"
+                                                                Padding="10"
+                                                                Background="#151515"
+                                                                BorderBrush="{StaticResource DarkBrownBrush}"
+                                                                BorderThickness="0,0,0,2">
+                                                            <Grid Height="25">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="auto" />
+                                                                    <ColumnDefinition />
+                                                                </Grid.ColumnDefinitions>
+
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <controls:PathButton VerticalAlignment="Center"
+                                                                                         ClickMode="Release"
+                                                                                         Cursor="Arrow"
+                                                                                         GlyphFontFamily="{StaticResource FontAwesome6Pro_Solid}"
+                                                                                         GlyphFontSize="13"
+                                                                                         IconMargin="0 0 10 0"
+                                                                                         IsReadOnly="True"
+                                                                                         ToolTip="Private">
+                                                                        <controls:PathButton.Style>
+                                                                            <Style BasedOn="{StaticResource FontAwesomeGlyphStyle}" TargetType="{x:Type controls:PathButton}">
+                                                                                <Style.Triggers>
+                                                                                    <DataTrigger Binding="{Binding Name}" Value="True">
+                                                                                        <Setter Property="Glyph" Value="{StaticResource star-glyph}" />
+                                                                                        <Setter Property="IconDefaultColor" Value="#39b2e6" />
+                                                                                        <Setter Property="IconHoverColor" Value="#39b2e6" />
+                                                                                        <Setter Property="ToolTip" Value="Favorite" />
+                                                                                    </DataTrigger>
+                                                                                    <DataTrigger Binding="{Binding Name}" Value="False">
+                                                                                        <Setter Property="ToolTip" Value="Generated" />
+                                                                                        <Setter Property="IconHoverColor" Value="{StaticResource OrangeColor}" />
+                                                                                        <Setter Property="Glyph" Value="{StaticResource gear_glyph}" />
+                                                                                        <Setter Property="IconDefaultColor" Value="{StaticResource OrangeColor}" />
+                                                                                    </DataTrigger>
+                                                                                </Style.Triggers>
+                                                                            </Style>
+                                                                        </controls:PathButton.Style>
+                                                                    </controls:PathButton>
+
+                                                                    <TextBlock VerticalAlignment="Center"
+                                                                               FontSize="17"
+                                                                               FontWeight="Normal"
+                                                                               Foreground="#ccc">
+                                                                        <TextBlock.Style>
+                                                                            <Style TargetType="TextBlock">
+                                                                                <Style.Triggers>
+                                                                                    <DataTrigger Binding="{Binding Name}" Value="True">
+                                                                                        <Setter Property="Text" Value="Favorites" />
+                                                                                    </DataTrigger>
+                                                                                    <DataTrigger Binding="{Binding Name}" Value="False">
+                                                                                        <Setter Property="Text" Value="Generated" />
+                                                                                    </DataTrigger>
+                                                                                </Style.Triggers>
+                                                                            </Style>
+                                                                        </TextBlock.Style>
+                                                                    </TextBlock>
+                                                                </StackPanel>
+
+
+
+                                                                <TextBlock Grid.Column="1"
+                                                                           Margin="10,0,0,0"
+                                                                           HorizontalAlignment="Left"
+                                                                           VerticalAlignment="Center"
+                                                                           FontSize="17"
+                                                                           FontWeight="Normal"
+                                                                           Foreground="#454545"
+                                                                           Text="{Binding ItemCount, StringFormat={}({0} items)}" />
+                                                            </Grid>
+
+                                                            <b:Interaction.Behaviors>
+                                                                <buttons:ClickCountBehavior ClickCount="4" Command="{Binding DataContext.ShowPrivate, RelativeSource={RelativeSource AncestorType=UserControl, Mode=FindAncestor}}" />
+                                                            </b:Interaction.Behaviors>
+                                                        </Border>
+
+                                                        <ScrollViewer Grid.Row="1"
+                                                                      HorizontalScrollBarVisibility="Auto"
+                                                                      VerticalScrollBarVisibility="Auto">
+                                                            <ItemsPresenter />
+                                                        </ScrollViewer>
+                                                    </Grid>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Name}" Value="True">
+                                            <Setter Property="MaxHeight" Value="517" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Name}" Value="False">
+                                            <Setter Property="Height" Value="auto" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </GroupStyle.ContainerStyle>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
+                </ListView>
+
+                <controls:PathButton Grid.Row="0"
+                                     Margin="0,12,20,0"
+                                     HorizontalAlignment="Right"
+                                     VerticalAlignment="Top"
+                                     Command="{Binding RefreshData}"
+                                     Glyph="{StaticResource arrows-rotate-glyph}"
+                                     IconHoverColor="{StaticResource GreenColor3}"
+                                     Style="{StaticResource FontAwesomeGlyphStyle}"
+                                     ToolTip="Refresh data" />
+            </Grid>
+
         </Grid>
+
     </loadingIndicator:LoadingIndicator>
 
 </UserControl>

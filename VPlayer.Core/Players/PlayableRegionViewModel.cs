@@ -818,6 +818,41 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region SetPlaylistPrivate
+
+    private ActionCommand setPlaylistPrivate;
+
+    public ICommand SetPlaylistPrivate
+    {
+      get
+      {
+        if (setPlaylistPrivate == null)
+        {
+          setPlaylistPrivate = new ActionCommand(OnSetPlaylistPrivate);
+        }
+
+        return setPlaylistPrivate;
+      }
+    }
+
+
+    private async void OnSetPlaylistPrivate()
+    {
+      ActualSavedPlaylist.IsPrivate = !ActualSavedPlaylist.IsPrivate;
+
+      foreach(var item in PlayList)
+      {
+        item.OnSetPrivate(ActualSavedPlaylist.IsPrivate);
+      }
+
+      RaisePropertyChanged(nameof(ActualSavedPlaylist));
+
+      await UpdateActualSavedPlaylistPlaylist();
+    }
+
+
+    #endregion
+
     #endregion
 
     #region Methods
@@ -935,6 +970,8 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    #region ResetProperties
+
     protected virtual async Task ResetProperties()
     {
       BeforeClearPlaylist();
@@ -955,6 +992,8 @@ namespace VPlayer.Core.ViewModels
       ActualSavedPlaylist = new TPlaylistModel() { Id = -1 };
       shuffleList.Clear();
     }
+
+    #endregion
 
     #region OnMediaPlayerStopped
 
@@ -1461,7 +1500,7 @@ namespace VPlayer.Core.ViewModels
         return;
       }
 
-      if (ActualSavedPlaylist != null && ActualSavedPlaylist.Id > 0)
+      if (ActualSavedPlaylist != null && ActualSavedPlaylist.Id > 0 && data.EventAction != EventAction.Add)
       {
         await UpdateActualSavedPlaylistPlaylist();
         ActualSavedPlaylist = new TPlaylistModel() { Id = -1 };
@@ -1489,7 +1528,7 @@ namespace VPlayer.Core.ViewModels
           RequestReloadVirtulizedPlaylist();
           RaisePropertyChanged(nameof(CanPlay));
 
-          StorePlaylist(PlayList.ToList());
+          StorePlaylist(PlayList.ToList(), ActualSavedPlaylist.IsUserCreated);
           break;
         case EventAction.PlayFromPlaylist:
           PlayPlaylist(data);

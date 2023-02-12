@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using VCore;
 using VCore.Standard;
+using VCore.Standard.Helpers;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.ItemsCollections.VirtualList.VirtualLists;
 using VCore.WPF.LRC;
@@ -370,6 +371,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
           if (UpdateStatus == true)
           {
+            LinesView.Where(x => x != null).ForEach(x => x.RaiseNotification());
             Provider = LRCProviders.PCloud;
             TimeAdjustment = 0;
           }

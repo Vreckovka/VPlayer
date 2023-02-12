@@ -63,6 +63,7 @@ namespace VPlayer.Core.ViewModels.FileBrowser.PCloud
     public async void OnLocatePlayingFiles()
     {
       ctk?.Cancel();
+      ctk?.Dispose();
       ctk = new CancellationTokenSource();
 
       foreach (var folder in Items.Generator.AllItems.OfType<PlayblePCloudFolderViewModel>())
@@ -75,8 +76,6 @@ namespace VPlayer.Core.ViewModels.FileBrowser.PCloud
         };
       }
 
-      PlayingFolders.Clear();
-
       await Task.Run(async () =>
       {
         var playlist = players.OfType<IMusicPlayerViewModel>().FirstOrDefault()?.PCloudIds.ToList();
@@ -84,6 +83,11 @@ namespace VPlayer.Core.ViewModels.FileBrowser.PCloud
         for (int i = 0; i < playlist.Count; i++)
         {
           var item = playlist[i];
+
+          if (ctk.IsCancellationRequested)
+          {
+            return;
+          }
 
           var file = await cloudService.GetFileStats(item);
 
@@ -130,6 +134,7 @@ namespace VPlayer.Core.ViewModels.FileBrowser.PCloud
 
       foreach (var folder in Items.Generator.AllItems.OfType<PlayblePCloudFolderViewModel>())
       {
+        folders.Add(folder);
         folders.AddRange(GetRecursiveFolders(folder));
       }
 

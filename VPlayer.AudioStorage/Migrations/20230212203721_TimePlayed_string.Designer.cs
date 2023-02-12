@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VPlayer.AudioStorage.AudioDatabase;
 
 namespace VPlayer.AudioStorage.Migrations
 {
     [DbContext(typeof(AudioDatabaseContext))]
-    partial class AudioDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20230212203721_TimePlayed_string")]
+    partial class TimePlayed_string
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -223,9 +225,6 @@ namespace VPlayer.AudioStorage.Migrations
                     b.Property<long?>("HashCode")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("IsPrivate")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsUserCreated")
                         .HasColumnType("INTEGER");
 
@@ -420,17 +419,14 @@ namespace VPlayer.AudioStorage.Migrations
                     b.Property<bool>("IsFavorite")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("IsPrivate")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime?>("Modified")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("NormalizedName")
                         .HasColumnType("TEXT");
 
-                    b.Property<TimeSpan>("TimePlayed")
-                        .HasColumnType("TEXT");
+                    b.Property<long>("TimePlayed")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -455,9 +451,6 @@ namespace VPlayer.AudioStorage.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<long?>("HashCode")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsPrivate")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsReapting")
@@ -738,9 +731,6 @@ namespace VPlayer.AudioStorage.Migrations
                     b.Property<bool>("IsFavorite")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("IsPrivate")
-                        .HasColumnType("INTEGER");
-
                     b.Property<long>("Length")
                         .HasColumnType("INTEGER");
 
@@ -751,9 +741,6 @@ namespace VPlayer.AudioStorage.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Source")
-                        .HasColumnType("TEXT");
-
-                    b.Property<TimeSpan>("TimePlayed")
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("TvShowId")
@@ -831,9 +818,6 @@ namespace VPlayer.AudioStorage.Migrations
                     b.Property<long?>("HashCode")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("IsPrivate")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsReapting")
                         .HasColumnType("INTEGER");
 
@@ -901,9 +885,6 @@ namespace VPlayer.AudioStorage.Migrations
                     b.Property<bool>("IsFavorite")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("IsPrivate")
-                        .HasColumnType("INTEGER");
-
                     b.Property<long>("Length")
                         .HasColumnType("INTEGER");
 
@@ -922,8 +903,8 @@ namespace VPlayer.AudioStorage.Migrations
                     b.Property<int?>("SubtitleTrack")
                         .HasColumnType("INTEGER");
 
-                    b.Property<TimeSpan>("TimePlayed")
-                        .HasColumnType("TEXT");
+                    b.Property<long>("TimePlayed")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -942,9 +923,6 @@ namespace VPlayer.AudioStorage.Migrations
                     b.Property<bool>("IsFavorite")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("IsPrivate")
-                        .HasColumnType("INTEGER");
-
                     b.Property<DateTime?>("Modified")
                         .HasColumnType("TEXT");
 
@@ -952,9 +930,6 @@ namespace VPlayer.AudioStorage.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Source")
-                        .HasColumnType("TEXT");
-
-                    b.Property<TimeSpan>("TimePlayed")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

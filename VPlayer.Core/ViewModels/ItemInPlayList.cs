@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Prism.Events;
 using VCore;
@@ -117,6 +118,14 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
+
+    public bool IsPrivate
+    {
+      get
+      {
+        return Model.IsPrivate;
+      }
+    }
 
     #endregion
 
@@ -238,6 +247,44 @@ namespace VPlayer.Core.ViewModels
           });
         }
       }
+    }
+
+
+    #endregion
+
+    #region SetPrivate
+
+    private ActionCommand setPrivate;
+
+    public ICommand SetPrivate
+    {
+      get
+      {
+        if (setPrivate == null)
+        {
+          setPrivate = new ActionCommand(() => OnSetPrivate(null));
+        }
+
+        return setPrivate;
+      }
+    }
+
+
+    public async void OnSetPrivate(bool? isPrivate = null)
+    {
+      if(isPrivate == null)
+      {
+        Model.IsPrivate = !Model.IsPrivate;
+        await storageManager.UpdateEntityAsync(Model);
+      }
+      else if(Model.IsPrivate != isPrivate.Value)
+      {
+        Model.IsPrivate = isPrivate.Value;
+        await storageManager.UpdateEntityAsync(Model);
+      }
+
+      
+      RaisePropertyChanged(nameof(IsPrivate));
     }
 
 

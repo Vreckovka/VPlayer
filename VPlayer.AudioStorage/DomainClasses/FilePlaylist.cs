@@ -18,7 +18,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     public int? ActualItemId { get; set; }
     public TPlaylistItem ActualItem { get; set; }
     public bool IsUserCreated { get; set; }
-    
+    public bool IsPrivate { get; set; }
 
     public virtual void Update(IPlaylist other)
     {
@@ -31,6 +31,7 @@ namespace VPlayer.AudioStorage.DomainClasses
       ItemCount = other.ItemCount;
       TotalPlayedTime = other.TotalPlayedTime;
       IsUserCreated = other.IsUserCreated;
+      IsPrivate = other.IsPrivate;
       Modified = other.Modified;
 
       if (other is IPlaylist<TPlaylistItem> otherPlaylist)

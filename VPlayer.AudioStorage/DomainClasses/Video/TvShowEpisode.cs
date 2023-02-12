@@ -23,6 +23,9 @@ namespace VPlayer.AudioStorage.DomainClasses.Video
     public TvShowSeason TvShowSeason { get; set; }
     public VideoItem VideoItem { get; set; }
     public int EpisodeNumber { get; set; }
+    public bool IsPrivate { get; set; }
+    public TimeSpan TimePlayed { get; set; }
+
 
     public string Source
     {
@@ -76,6 +79,7 @@ namespace VPlayer.AudioStorage.DomainClasses.Video
       }
       set { if (VideoItem != null) VideoItem.IsFavorite = IsFavorite; }
     }
+
 
 
     public void Update(TvShowEpisode other)

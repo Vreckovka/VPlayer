@@ -377,6 +377,7 @@ namespace VPlayer.Core.Players
 
           var totalPlayedTime = TimeSpan.FromMilliseconds(deltaTimeChanged);
 
+          ActualItem.Model.TimePlayed += totalPlayedTime;
           PlaylistTotalTimePlayed += totalPlayedTime;
 
           int totalSec = (int)PlaylistTotalTimePlayed.TotalSeconds;
@@ -386,6 +387,7 @@ namespace VPlayer.Core.Players
             lastTotalTimeSaved = totalSec;
 
             await UpdateActualSavedPlaylistPlaylist();
+            await storageManager.UpdateEntityAsync(ActualItem.Model);
           }
         }
       }

@@ -16,6 +16,8 @@ namespace VPlayer.IPTV.ViewModels
     public string Source { get; set; }
     public string Name { get; set; }
     public bool IsFavorite { get; set; }
+    public bool IsPrivate { get; set; }
+    public TimeSpan TimePlayed { get; set; }
 
     public void Update(TvItem other)
     {

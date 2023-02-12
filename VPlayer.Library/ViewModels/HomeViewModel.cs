@@ -19,6 +19,7 @@ using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels.Settings;
 using VPlayer.Home.ViewModels.FileBrowser;
 using VPlayer.Home.ViewModels.IPTV;
+using VPlayer.Home.ViewModels.Statistics;
 using VPlayer.Home.ViewModels.TvShows;
 using VPlayer.Home.Views;
 using VPlayer.IPTV;
@@ -133,6 +134,7 @@ namespace VPlayer.Home.ViewModels
       var tvShowsViewModel = viewModelsFactory.Create<TvShowsViewModel>();
       var fileBrowser = viewModelsFactory.Create<WindowsFileBrowserViewModel>();
       var upnp = viewModelsFactory.Create<UPnPManagerViewModel>();
+      var statisticsViewModel = viewModelsFactory.Create<StatisticsViewModel>();
       var iptvPlaylists = viewModelsFactory.Create<IPTVPlaylistsViewModel>();
       //var iptv = viewModelsFactory.Create<IPTVManagerViewModel>();
       var settings = viewModelsFactory.Create<SettingsViewModel>();
@@ -223,6 +225,13 @@ namespace VPlayer.Home.ViewModels
       };
 
       otherMenuItem.SubItems.Add(upnpMenuItem);
+
+      var statisticsMenuItem = new NavigationItem(statisticsViewModel)
+      {
+        IconPathData = "M144.1 304.1L208 241.9l79.05 79.03C291.7 325.6 297.9 328 304 328s12.28-2.344 16.95-7.047l152-151.1c9.375-9.375 9.371-24.58-.0078-33.95c-9.371-9.365-24.56-9.361-33.93 .0078L304 270L224.9 191C215.6 181.7 200.4 181.7 191 191l-80 80c-9.375 9.375-9.375 24.56 0 33.95C120.4 314.4 135.6 314.3 144.1 304.1zM488 432H48V56C48 42.75 37.25 32 24 32S0 42.75 0 56V448c0 17.59 14.41 32 32 32h456c13.25 0 24-10.75 24-24S501.3 432 488 432z"
+      };
+
+      otherMenuItem.SubItems.Add(statisticsMenuItem);
 
       //var iptvManagerMenuItem = new NavigationItem(iptv)
       //{

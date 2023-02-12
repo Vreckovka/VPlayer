@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+                    xmlns:buttons="clr-namespace:VCore.WPF.Behaviors.Buttons;assembly=VCore.WPF"
                     xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
                     xmlns:templateSelectors1="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors;assembly=VPlayer.Core"
                     xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF">
@@ -290,6 +291,10 @@
                                     Panel.ZIndex="0"
                                     ToolTip="{Binding Name}">
                                 <ContentPresenter ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}" />
+
+                                <b:Interaction.Behaviors>
+                                    <buttons:ClickCountBehavior ClickCount="4" Command="{Binding SetPrivate}" />
+                                </b:Interaction.Behaviors>
                             </Border>
                         </Grid>
 

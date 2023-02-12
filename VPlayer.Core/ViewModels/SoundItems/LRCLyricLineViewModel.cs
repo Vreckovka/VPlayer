@@ -29,5 +29,11 @@ namespace VPlayer.Core.ViewModels.SoundItems
     public LRCLyricLineViewModel(LRCLyricLine model) : base(model)
     {
     }
+
+    public void RaiseNotification()
+    {
+      RaisePropertyChanged(nameof(Text));
+      RaisePropertyChanged(nameof(Model));
+    }
   }
 }

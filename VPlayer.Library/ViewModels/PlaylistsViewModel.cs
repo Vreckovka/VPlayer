@@ -40,6 +40,30 @@ namespace VPlayer.Home.ViewModels
 
     protected IEnumerable<TViewModel> AllItems { get; set; }
 
+
+
+    #region PrivateItems
+
+    private IEnumerable<TViewModel> privateItems;
+
+    public IEnumerable<TViewModel> PrivateItems
+    {
+      get { return privateItems; }
+      set
+      {
+        if (value != privateItems)
+        {
+          privateItems = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+
+
+
     protected virtual IQueryable<TPlaylistItemModel> GetActualItemQuery
     {
       get
@@ -86,7 +110,27 @@ namespace VPlayer.Home.ViewModels
 
     #endregion
 
-    public override IQueryable<TPlaylistModel> LoadQuery => base.LoadQuery.OrderByDescending(x => x.LastPlayed);
+    #region IsShowPrivate
+
+    private bool isShowPrivate;
+
+    public bool IsShowPrivate
+    {
+      get { return isShowPrivate; }
+      set
+      {
+        if (value != isShowPrivate)
+        {
+          isShowPrivate = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+
+    public override IQueryable<TPlaylistModel> LoadQuery => base.LoadQuery.OrderByDescending(x => x.LastPlayed).Where(x => !x.IsPrivate);
 
 
     public ObservableCollection<TViewModel> ViewCollection
@@ -96,6 +140,31 @@ namespace VPlayer.Home.ViewModels
         return LibraryCollection.FilteredItemsCollection;
       }
     }
+
+    #region ShowPrivate
+
+    private ActionCommand showPrivate;
+
+    public ICommand ShowPrivate
+    {
+      get
+      {
+        if (showPrivate == null)
+        {
+          showPrivate = new ActionCommand(OnShowPrivate);
+        }
+
+        return showPrivate;
+      }
+    }
+
+    protected virtual void OnShowPrivate()
+    {
+      IsShowPrivate = !IsShowPrivate;
+    }
+
+
+    #endregion
 
     #region LoadMoreItems
 
@@ -158,6 +227,11 @@ namespace VPlayer.Home.ViewModels
 
       actualSkip += initTake;
 
+      var privateItemsL = storageManager.GetRepository<TPlaylistModel>().OrderByDescending(x => x.LastPlayed)
+        .Where(x => x.IsPrivate)
+        .Select(x => viewModelsFactory.Create<TViewModel>(x))
+        .ToList();
+
 
       Application.Current.Dispatcher.Invoke(() =>
       {
@@ -174,6 +248,8 @@ namespace VPlayer.Home.ViewModels
           {
             LoadingStatus.IsLoading = ((IBusy)x.Sender).IsBusy;
           }).DisposeWith(this);
+
+        PrivateItems = privateItemsL;
       });
     }
 

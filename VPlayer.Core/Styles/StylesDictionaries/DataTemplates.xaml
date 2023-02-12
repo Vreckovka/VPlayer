@@ -512,6 +512,11 @@
 
     <DataTemplate x:Key="SoundItemInfoDataTemplate">
         <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
             <controls1:PathButton x:Name="AudioInfoIcon"
                                   ClickMode="Release"
                                   IconHeight="11"
@@ -535,6 +540,30 @@
                         </Grid>
                     </Border>
                 </controls1:PathButton.ToolTip>
+            </controls1:PathButton>
+
+            <controls1:PathButton Grid.Column="1"
+                                  Margin="-3,0,7,0"
+                                  VerticalAlignment="Center"
+                                  ClickMode="Release"
+                                  Glyph="{StaticResource mask}"
+                                  GlyphFontFamily="{StaticResource FontAwesome6Pro_Solid}"
+                                  GlyphFontSize="13"
+                                  IconDefaultColor="#3e285c"
+                                  IconHoverColor="#6f00ff"
+                                  IconMargin="0"
+                                  ToolTip="Private">
+
+                <controls1:PathButton.Style>
+                    <Style BasedOn="{StaticResource FontAwesomeGlyphStyle}" TargetType="{x:Type controls1:PathButton}">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsPrivate}" Value="true">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </controls1:PathButton.Style>
             </controls1:PathButton>
 
             <Popup x:Name="AudioInfoPopup"

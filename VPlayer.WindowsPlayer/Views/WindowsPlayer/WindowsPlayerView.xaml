@@ -5,6 +5,7 @@
              xmlns:behaviors="clr-namespace:VPlayer.Player.Behaviors"
              xmlns:behaviors1="clr-namespace:VPlayer.WindowsPlayer.Behaviors"
              xmlns:behaviors3="clr-namespace:VCore.WPF.Behaviors;assembly=VCore.WPF"
+             xmlns:buttons="clr-namespace:VCore.WPF.Behaviors.Buttons;assembly=VCore.WPF"
              xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
              xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
              xmlns:converters1="clr-namespace:VPlayer.Home.Converters;assembly=VCore.WPF"
@@ -725,10 +726,11 @@
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
 
-                                <Grid>
+                                <Grid Background="Transparent">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="auto" />
+
                                     </Grid.ColumnDefinitions>
 
                                     <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
@@ -783,8 +785,6 @@
                                                                      Style="{StaticResource FontAwesomeGlyphStyle}" />
                                             </Grid>
                                         </Border>
-
-
 
                                         <Grid Margin="15,0,0,0" HorizontalAlignment="Center">
                                             <Border>
@@ -939,6 +939,29 @@
                                                 </Border>
                                             </Popup>
                                         </Grid>
+
+                                        <controls:PathButton Margin="-3,0,7,0"
+                                                             VerticalAlignment="Center"
+                                                             ClickMode="Release"
+                                                             Glyph="{StaticResource mask}"
+                                                             GlyphFontFamily="{StaticResource FontAwesome6Pro_Solid}"
+                                                             GlyphFontSize="13"
+                                                             IconDefaultColor="#3e285c"
+                                                             IconHoverColor="#6f00ff"
+                                                             IconMargin="0"
+                                                             ToolTip="Private">
+
+                                            <controls:PathButton.Style>
+                                                <Style BasedOn="{StaticResource FontAwesomeGlyphStyle}" TargetType="{x:Type controls:PathButton}">
+                                                    <Setter Property="Visibility" Value="Hidden" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ActualSavedPlaylist.IsPrivate}" Value="true">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </controls:PathButton.Style>
+                                        </controls:PathButton>
                                     </StackPanel>
 
                                     <Grid Grid.Column="1">
@@ -986,6 +1009,10 @@
                                         </Popup>
 
                                     </Grid>
+
+                                    <b:Interaction.Behaviors>
+                                        <buttons:ClickCountBehavior ClickCount="4" Command="{Binding SetPlaylistPrivate}" />
+                                    </b:Interaction.Behaviors>
                                 </Grid>
 
 

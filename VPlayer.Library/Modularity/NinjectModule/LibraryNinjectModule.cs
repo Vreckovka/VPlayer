@@ -9,6 +9,7 @@ using VPlayer.Home.ViewModels;
 using VPlayer.Home.ViewModels.Albums;
 using VPlayer.Home.ViewModels.Artists;
 using VPlayer.Home.ViewModels.FileBrowser;
+using VPlayer.Home.ViewModels.Statistics;
 using VPlayer.Home.ViewModels.TvShows;
 
 namespace VPlayer.Home.Modularity.NinjectModule
@@ -38,6 +39,7 @@ namespace VPlayer.Home.Modularity.NinjectModule
 
       Kernel.Bind<SongPlaylistsViewModel>().ToSelf().InSingletonScope();
       Kernel.Bind<VideoPlaylistsViewModel>().ToSelf().InSingletonScope();
+      Kernel.Bind<StatisticsViewModel>().ToSelf().InSingletonScope();
 
       Kernel.Bind<WindowsFileBrowserViewModel>().ToSelf().InSingletonScope();
       Kernel.Bind<PCloudFileBrowserViewModel>().ToSelf().InSingletonScope();

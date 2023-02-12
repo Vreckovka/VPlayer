@@ -5,7 +5,7 @@ using VPlayer.Core.ViewModels;
 namespace VPlayer.AudioStorage.DomainClasses.Video
 {
   [Serializable]
-  public class PlaybleItem : DomainEntity, IUpdateable<PlaybleItem>, IFilePlayableModel, INamedEntity
+  public class PlayableItem : DomainEntity, IUpdateable<PlayableItem>, IFilePlayableModel, INamedEntity
   {
     public virtual string Source { get; set; }
     public virtual long Length { get; set; }
@@ -15,7 +15,11 @@ namespace VPlayer.AudioStorage.DomainClasses.Video
     public string NormalizedName { get; set; }
     public bool IsFavorite { get; set; }
 
-    public void Update(PlaybleItem other)
+    public TimeSpan TimePlayed { get; set; }
+    public bool IsPrivate { get; set; }
+
+
+    public void Update(PlayableItem other)
     {
       Source = other.Source;
       Duration = other.Duration;
@@ -23,11 +27,13 @@ namespace VPlayer.AudioStorage.DomainClasses.Video
       Name = other.Name;
       NormalizedName = other.NormalizedName;
       IsFavorite = other.IsFavorite;
+      TimePlayed = other.TimePlayed;
+      IsPrivate = other.IsPrivate;
     }
   }
 
   [Serializable]
-  public class VideoItem : PlaybleItem, IUpdateable<VideoItem>
+  public class VideoItem : PlayableItem, IUpdateable<VideoItem>
   {
     public string AspectRatio { get; set; }
     public string CropRatio { get; set; }

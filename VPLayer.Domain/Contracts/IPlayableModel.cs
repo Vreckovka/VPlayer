@@ -1,4 +1,5 @@
-﻿using VPlayer.AudioStorage.DomainClasses;
+﻿using System;
+using VPlayer.AudioStorage.DomainClasses;
 
 namespace VPlayer.Core.ViewModels
 {
@@ -13,6 +14,8 @@ namespace VPlayer.Core.ViewModels
     public string Source { get; set; }
     public string Name { get; set; }
     public bool IsFavorite { get; set; }
+    public bool IsPrivate { get; set; }
+    public TimeSpan TimePlayed { get; set; }
   }
 
   public interface IFilePlayableModel : IPlayableModel

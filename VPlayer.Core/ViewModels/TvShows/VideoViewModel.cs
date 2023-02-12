@@ -1,13 +1,21 @@
 ﻿using System;
+using System.Windows.Input;
 using VCore.Standard;
+using VCore.Standard.Modularity.Interfaces;
+using VCore.WPF.Misc;
+using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.Interfaces.Storage;
 
 namespace VPlayer.Core.ViewModels.TvShows
 {
   public class VideoViewModel<TModel> : ViewModel<TModel>, IItemInPlayList<TModel> 
-    where TModel : IPlayableModel
+    where TModel : class, IPlayableModel, IUpdateable<TModel>
   {
-    public VideoViewModel(TModel model) : base(model)
+    private readonly IStorageManager storageManager;
+
+    public VideoViewModel(TModel model, IStorageManager storageManager) : base(model)
     {
+      this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
     }
 
     public float ActualPosition { get; set; }
@@ -30,6 +38,14 @@ namespace VPlayer.Core.ViewModels.TvShows
 
     public string FileLocation { get; set; }
 
+    public bool IsPrivate
+    {
+      get
+      {
+        return Model.IsPrivate;
+      }
+    }
+
     #region IsSelected
 
     private bool isSelected;
@@ -49,5 +65,41 @@ namespace VPlayer.Core.ViewModels.TvShows
 
     #endregion
 
+    #region SetPrivate
+
+    private ActionCommand setPrivate;
+
+    public ICommand SetPrivate
+    {
+      get
+      {
+        if (setPrivate == null)
+        {
+          setPrivate = new ActionCommand(() => OnSetPrivate(null));
+        }
+
+        return setPrivate;
+      }
+    }
+
+
+    public async void OnSetPrivate(bool? isPrivate = null)
+    {
+      if (isPrivate == null)
+      {
+        Model.IsPrivate = !Model.IsPrivate;
+      }
+      else if (Model.IsPrivate != isPrivate.Value)
+      {
+        Model.IsPrivate = isPrivate.Value;
+
+        await storageManager.UpdateEntityAsync(Model);
+      }
+
+      RaisePropertyChanged(nameof(IsPrivate));
+    }
+
+
+    #endregion
   }
 }
