@@ -176,6 +176,8 @@ namespace VPlayer.WindowsPlayer.Behaviors
       AssociatedObject.MouseMove -= AssociatedObject_MouseMove;
       AssociatedObject.MouseLeftButtonDown -= AssociatedObject_MouseLeftButtonDown;
       AssociatedObject.MouseWheel -= AssociatedObject_MouseWheel;
+      AssociatedObject.MouseEnter -= AssociatedObject_MouseEnter;
+      AssociatedObject.MouseLeave -= AssociatedObject_MouseLeave; ;
     }
   }
 }

@@ -27,6 +27,10 @@ namespace VPlayer.Player.Behaviors
   public class AutoScrollBehavior : Behavior<ListView>
   {
     private IPlayableRegionViewModel managablePlayableRegionViewModel;
+    private SerialDisposable actualItemChangedDisposable = new SerialDisposable();
+    private SerialDisposable searchChanged = new SerialDisposable();
+
+    private ILogger logger;
 
     #region Kernel
 
@@ -86,23 +90,6 @@ namespace VPlayer.Player.Behaviors
       last_songInPlayListIndex = 0;
     }
 
-    protected override void OnDetaching()
-    {
-      base.OnDetaching();
-
-      AssociatedObject.LayoutUpdated -= AssociatedObject_LayoutUpdated;
-      AssociatedObject.DataContextChanged -= AssociatedObject_DataContextChanged;
-
-      actualItemChangedDisposable.Dispose();
-      searchChanged.Dispose();
-    }
-
-
-
-    private SerialDisposable actualItemChangedDisposable = new SerialDisposable();
-    private SerialDisposable searchChanged = new SerialDisposable();
-
-    private ILogger logger;
 
     #region SubcsribeToSongChange
 
@@ -233,6 +220,17 @@ namespace VPlayer.Player.Behaviors
       {
         last_songInPlayListIndex = songInPlayListIndex;
       }
+    }
+
+    protected override void OnDetaching()
+    {
+      base.OnDetaching();
+
+      AssociatedObject.LayoutUpdated -= AssociatedObject_LayoutUpdated;
+      AssociatedObject.DataContextChanged -= AssociatedObject_DataContextChanged;
+
+      actualItemChangedDisposable.Dispose();
+      searchChanged.Dispose();
     }
   }
 }

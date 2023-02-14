@@ -12,6 +12,7 @@ using HtmlAgilityPack.CssSelectors.NetCore;
 using Logger;
 using OpenQA.Selenium;
 using VCore;
+using VCore.Standard.Helpers;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google;
 
@@ -37,7 +38,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch
 
     public string Artist { get; set; }
 
-    public IEnumerable<MusixMatchSong> Songs { get; set; }
+    public IEnumerable<MusixMatchSong> Songs { get; set; } = new List<MusixMatchSong>();
 
   }
   public class MusixMatchLyricsProvider
@@ -60,12 +61,22 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch
         HtmlDocument document = new HtmlDocument();
         MusixMatchSong foundSong = null;
 
+        if (string.IsNullOrEmpty(artist) ||
+            string.IsNullOrWhiteSpace(artist) ||
+            string.IsNullOrEmpty(albumName) ||
+            string.IsNullOrWhiteSpace(albumName) ||
+            string.IsNullOrWhiteSpace(songName) ||
+            string.IsNullOrEmpty(songName))
+        {
+          return null;
+        }
+
         lock (batton)
         {
           var foundAlbums = loadedAlbums
-            .Where(x => GetNormalizedName(x.Name) == GetNormalizedName(albumName) && 
+            .Where(x => GetNormalizedName(x.Name) == GetNormalizedName(albumName) &&
                         GetNormalizedName(x.Artist) == GetNormalizedName(artist)).ToList();
-          
+
           foundSong = foundAlbums.SelectMany(x => x.Songs)
                .FirstOrDefault(x => GetNormalizedName(x.Title) == GetNormalizedName(songName));
 
@@ -74,6 +85,11 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch
             var albums = GetAlbums(artist, albumName).ToList();
 
             loadedAlbums.AddRange(albums);
+
+            if (!albums.Any())
+            {
+              loadedAlbums.Add(new MusixMatchAlbum() { Name = albumName, Artist = artist });
+            }
 
             foundSong = albums.SelectMany(x => x.Songs).FirstOrDefault(x => GetNormalizedName(x.Title) == GetNormalizedName(songName));
           }
@@ -132,59 +148,65 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch
       HtmlDocument document = new HtmlDocument();
       var albums = new List<MusixMatchAlbum>();
 
-      for (int i = 0; i < 3; i++)
+      string url = $"https://www.musixmatch.com/artist/{GetAsUrlValue(artist)}/albums";
+
+      var html = chromeDriverProvider.SafeNavigate(url, out var artistChromeUrl, extraMiliseconds: 500, useProxy: true);
+
+      if (html != null)
       {
-        string url = url = $"https://www.musixmatch.com/album/{GetAsUrlValue(artist)}/{GetAsUrlValue(album)}";
+        document.LoadHtml(html);
 
-        if (i > 0)
+        var albumsNodes = document.DocumentNode.QuerySelectorAll(".album-card .media-card-title a");
+
+        foreach(var albumNode in albumsNodes.Where(x => x.InnerText == album))
         {
-          url += $"-{i}";
-        }
+          var albumUrl = $"{artistChromeUrl.Split("process.php?")[0]}{albumNode.Attributes[0].Value}";
+          html = chromeDriverProvider.Navigate(albumUrl);
 
-        var html = chromeDriverProvider.SafeNavigate(url, out var chromeUrl, extraMiliseconds: 500, useProxy: true);
-
-        if (html != null)
-        {
-          document.LoadHtml(html);
-      
-          var nodes = document.DocumentNode.QuerySelectorAll(".mxm-album__tracks a.mui-cell");
-
-          var songs = nodes.Select(x => new MusixMatchSong()
+          if (html != null)
           {
-            Title = x.SelectNodes("div[2]/h2")?.FirstOrDefault()?.InnerText,
-            Url = x.Attributes[0].Value
-          }).ToList();
+            document.LoadHtml(html);
 
+            var nodes = document.DocumentNode.QuerySelectorAll(".mxm-album__tracks a.mui-cell");
 
-          if (songs.Any())
-          {
-            var savedAlbum = albums.SingleOrDefault(x => x.Name == album);
-            List<MusixMatchSong> diff = songs;
-
-            if (savedAlbum != null)
+            var songs = nodes.Select(x => new MusixMatchSong()
             {
-              diff = songs.Where(p => savedAlbum.Songs.All(albumSong => p.WithoutBrackets != albumSong.Title)).ToList();
-            }
+              Title = x.SelectNodes("div[2]/h2")?.FirstOrDefault()?.InnerText,
+              Url = x.Attributes[0].Value
+            }).ToList();
 
-            if (diff.Any())
+
+            if (songs.Any())
             {
-              newAlbum = new MusixMatchAlbum()
+              var savedAlbum = albums.SingleOrDefault(x => x.Name == album);
+              List<MusixMatchSong> diff = songs;
+
+              if (savedAlbum != null)
               {
-                Artist = artist,
-                Name = album,
-                Songs = songs
-              };
+                diff = songs.Where(p => savedAlbum.Songs.All(albumSong => p.WithoutBrackets != albumSong.Title)).ToList();
+              }
 
-              albums.Add(newAlbum);
-             
-              var baseUrl = chromeUrl.Split("process.php?")[0];
-
-              foreach (var song in diff)
+              if (diff.Any())
               {
-                var lyricsUrl = $"{baseUrl}{song.Url.Remove(0, 1)}";
-                var lyrics = chromeDriverProvider.Navigate(lyricsUrl);
+                newAlbum = new MusixMatchAlbum()
+                {
+                  Artist = artist,
+                  Name = album,
+                  Songs = songs
+                };
 
-                song.Lyrics = lyrics;
+                albums.Add(newAlbum);
+
+                diff = diff.DistinctBy(x => x.Title).ToList();
+                var baseUrl = artistChromeUrl.Split("process.php?")[0];
+
+                foreach (var song in diff)
+                {
+                  var lyricsUrl = $"{baseUrl}{song.Url.Remove(0, 1)}";
+                  var lyrics = chromeDriverProvider.Navigate(lyricsUrl);
+
+                  song.Lyrics = lyrics;
+                }
               }
             }
           }

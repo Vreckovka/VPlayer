@@ -137,10 +137,13 @@ namespace VPlayer.Library
           {
             using (var stream = File.OpenRead(filename))
             {
+              image.DecodePixelHeight = 1;
+              image.DecodePixelWidth = 1;
               image.BeginInit();
               image.CacheOption = BitmapCacheOption.OnLoad;
               image.StreamSource = stream;
               image.EndInit();
+              image.Freeze();
             }
           }
           else 

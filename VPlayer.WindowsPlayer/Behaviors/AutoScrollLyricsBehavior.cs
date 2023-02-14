@@ -64,6 +64,7 @@ namespace VPlayer.Player.Behaviors
 
       AssociatedObject.Loaded -= AssociatedObject_Loaded;
       AssociatedObject.DataContextChanged -= AssociatedObject_DataContextChanged;
+      AssociatedObject.Unloaded -= AssociatedObject_Unloaded;
       serialDisposable.Dispose();
     }
 

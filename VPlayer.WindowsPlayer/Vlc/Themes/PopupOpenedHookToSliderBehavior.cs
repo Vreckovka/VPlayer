@@ -47,5 +47,12 @@ namespace VPlayer.WindowsPlayer.Vlc.Themes
       }
        
     }
+
+    protected override void OnDetaching()
+    {
+      base.OnDetaching();
+
+      AssociatedObject.Opened -= AssociatedObject_Opened;
+    }
   }
 }

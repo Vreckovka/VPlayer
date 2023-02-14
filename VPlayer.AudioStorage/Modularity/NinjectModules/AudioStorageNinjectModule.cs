@@ -9,6 +9,7 @@ using VPlayer.AudioStorage.Scrappers.CSFD;
 using VPlayer.Core.Managers.Status;
 using VPlayer.Library.ViewModels.TvShows;
 using ChromeDriverScrapper;
+using VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch;
 using VPlayer.AudioStorage.InfoDownloader.Clients.PCloud.Images;
 
 namespace VPlayer.AudioStorage.Modularity.NinjectModules
@@ -36,6 +37,7 @@ namespace VPlayer.AudioStorage.Modularity.NinjectModules
       Kernel.Bind<ICSFDWebsiteScrapper>().To<CSFDWebsiteScrapper>().InSingletonScope();
 
       Kernel.Bind<ITvShowScrapper>().To<TVShowScrapper>().InSingletonScope();
+      Kernel.Bind<MusixMatchLyricsProvider>().ToSelf().InSingletonScope();
 
     }
 
