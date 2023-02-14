@@ -1556,7 +1556,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
             if (downloadingArtist != null && songInPlayListViewModel.SongModel.Album != null)
             {
-              if (songInPlayListViewModel.SongModel.Album.ArtistId == downloadingArtist.Id || downloadingArtist.Id == 0)
+              if ((songInPlayListViewModel.SongModel.Album.ArtistId == downloadingArtist.Id || downloadingArtist.Id == 0) 
+                  && songInPlayListViewModel.SongModel.Album.Artist == null)
               {
                 songInPlayListViewModel.SongModel.Album.Artist = downloadingArtist;
               }
@@ -1566,7 +1567,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
             if (downloadingAlbum.Id > 0 && downloadingArtist.Id > 0)
             {
-              var song = downloadingAlbum.Songs.SingleOrDefault(x => x.ItemModel.FileInfo.Name == songInPlayListViewModel.SongModel.ItemModel.FileInfo.Name);
+              var song = downloadingAlbum.Songs
+                .FirstOrDefault(x => x.ItemModel.FileInfo.Name == songInPlayListViewModel.SongModel.ItemModel.FileInfo.Name);
 
               if (song != null && songInPlayListViewModel.SongModel.Id != song.Id)
               {

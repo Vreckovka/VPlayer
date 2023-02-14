@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.EntityFrameworkCore;
+using VCore.Standard.Helpers;
 using VCore.WPF.ItemsCollections.VirtualList.VirtualLists;
 using VCore.WPF.Misc;
 using VCore.WPF.Modularity.RegionProviders;
@@ -33,6 +34,26 @@ namespace VPlayer.Home.ViewModels.Statistics
     public override string Header => "Statistics";
 
 
+
+    #region TotalWatched
+
+    private TimeSpan totalWatched;
+
+    public TimeSpan TotalWatched
+    {
+      get { return totalWatched; }
+      set
+      {
+        if (value != totalWatched)
+        {
+          totalWatched = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+    
     #region View
 
     private VirtualList<IPlayableModel> view;
@@ -81,11 +102,10 @@ namespace VPlayer.Home.ViewModels.Statistics
         list.AddRange(videos);
         list.AddRange(episodes);
 
-        list = list.OrderByDescending(x => x.TimePlayed).Take(30).ToList();
-
         Application.Current.Dispatcher.Invoke(() =>
         {
-          View = new VirtualList<IPlayableModel>(list, 30);
+          TotalWatched = list.Sum(x => x.TimePlayed);
+          View = new VirtualList<IPlayableModel>(list.OrderByDescending(x => x.TimePlayed).Take(30), 30);
         });
       });
     }

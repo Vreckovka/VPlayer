@@ -665,11 +665,11 @@ namespace VPlayer.Player.UserControls
                {
                  newImage.MakeTransparent();
                });
-
+              
                var image = BitmapToImageSource(newImage);
 
-
                Image.Source = image;
+               newImage.Dispose();
              }
            }
          });

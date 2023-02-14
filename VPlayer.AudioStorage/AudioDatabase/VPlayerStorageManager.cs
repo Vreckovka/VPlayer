@@ -958,7 +958,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
             foreach (var dbEntity in foundEntities)
             {
-              dbEntity.Update(newVersionsList.Single(x => x.Id == dbEntity.Id));
+              dbEntity.Update(newVersionsList.First(x => x.Id == dbEntity.Id));
             }
             var updateCount = context.SaveChanges();
 

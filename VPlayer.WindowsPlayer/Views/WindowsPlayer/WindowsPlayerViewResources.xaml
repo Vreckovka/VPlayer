@@ -2,6 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                     xmlns:buttons="clr-namespace:VCore.WPF.Behaviors.Buttons;assembly=VCore.WPF"
+                    xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
                     xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
                     xmlns:templateSelectors1="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors;assembly=VPlayer.Core"
                     xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF">
@@ -183,14 +184,41 @@
                                     Command="{Binding Play}"
                                     Style="{StaticResource PlayMini}" />
 
-                            <ContentControl Grid.Column="1"
-                                            Margin="0,0,0,20"
-                                            Padding="2"
-                                            HorizontalAlignment="Left"
-                                            VerticalAlignment="Center"
-                                            Panel.ZIndex="2"
-                                            Content="{Binding}"
-                                            ContentTemplateSelector="{StaticResource PlaylistItemTypeTemplateSelector}" />
+                            <StackPanel Grid.Column="1"
+                                        Margin="0,0,0,20"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Panel.ZIndex="2"
+                                        Orientation="Horizontal">
+                                <ContentControl Padding="2"
+                                                Content="{Binding}"
+                                                ContentTemplateSelector="{StaticResource PlaylistItemTypeTemplateSelector}" />
+
+
+                                <controls:PathButton Margin="-3,-1,7,0"
+                                                     VerticalAlignment="Center"
+                                                     ClickMode="Release"
+                                                     Glyph="{StaticResource mask}"
+                                                     GlyphFontFamily="{StaticResource FontAwesome6Pro_Solid}"
+                                                     GlyphFontSize="13"
+                                                     IconDefaultColor="#3e285c"
+                                                     IconHoverColor="#6f00ff"
+                                                     IconMargin="0"
+                                                     ToolTip="Private">
+
+                                    <controls:PathButton.Style>
+                                        <Style BasedOn="{StaticResource FontAwesomeGlyphStyle}" TargetType="{x:Type controls:PathButton}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsPrivate}" Value="true">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </controls:PathButton.Style>
+                                </controls:PathButton>
+
+                            </StackPanel>
 
                             <TextBlock Name="DurationTextBlock"
                                        Grid.Column="3"

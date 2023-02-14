@@ -12,12 +12,28 @@
             <RowDefinition Height="auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Button Margin="5"
-                Padding="10,0"
-                HorizontalAlignment="Left"
-                Command="{Binding Load}">
-            Load
-        </Button>
+        <StackPanel Orientation="Horizontal">
+            <Button Margin="5"
+                    Padding="10,0"
+                    HorizontalAlignment="Left"
+                    Command="{Binding Load}">
+                Load
+            </Button>
+
+            <TextBlock VerticalAlignment="Center"
+                       FontSize="17"
+                       Foreground="#ccc"
+                       Text="Total watched: " />
+
+            <TextBlock VerticalAlignment="Center"
+                       FontSize="17"
+                       FontStyle="Italic"
+                       FontWeight="Bold"
+                       Foreground="#757575"
+                       Text="{Binding TotalWatched}}"
+                       ToolTip="{Binding TotalWatched, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}" />
+        </StackPanel>
+
         <ListView Grid.Row="1" ItemsSource="{Binding View}">
             <ListView.ItemTemplate>
                 <DataTemplate>

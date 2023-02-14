@@ -152,7 +152,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch
 
       var html = chromeDriverProvider.SafeNavigate(url, out var artistChromeUrl, extraMiliseconds: 500, useProxy: true);
 
-      if (html != null)
+      if (html != null && !string.IsNullOrEmpty(artistChromeUrl))
       {
         document.LoadHtml(html);
 
