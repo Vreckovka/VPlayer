@@ -27,7 +27,7 @@ namespace VPlayer.Home.ViewModels
     #region Fields
 
     private readonly IViewModelsFactory viewModelsFactory;
-    private readonly SongPlaylistsViewModel songPlaylistsViewModel;
+    private readonly SoundItemPlaylistsViewModel soundItemPlaylistsViewModel;
     private readonly IVPlayerCloudService vPlayerCloudService;
     private readonly IStorageManager storageManager;
     private readonly ILogger logger;
@@ -40,14 +40,14 @@ namespace VPlayer.Home.ViewModels
       SoundItemFilePlaylist model,
       IEventAggregator eventAggregator,
       IViewModelsFactory viewModelsFactory,
-      SongPlaylistsViewModel songPlaylistsViewModel,
+      SoundItemPlaylistsViewModel soundItemPlaylistsViewModel,
       IVPlayerCloudService vPlayerCloudService,
       IStorageManager storageManager,
       ILogger logger,
       IWindowManager windowManager) : base(model, eventAggregator, storageManager, windowManager)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
-      this.songPlaylistsViewModel = songPlaylistsViewModel ?? throw new ArgumentNullException(nameof(songPlaylistsViewModel));
+      this.soundItemPlaylistsViewModel = soundItemPlaylistsViewModel ?? throw new ArgumentNullException(nameof(soundItemPlaylistsViewModel));
       this.vPlayerCloudService = vPlayerCloudService ?? throw new ArgumentNullException(nameof(vPlayerCloudService));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));

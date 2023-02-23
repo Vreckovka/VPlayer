@@ -14,6 +14,7 @@ using System.Windows;
 using System.Windows.Input;
 using FFMpegCore;
 using Logger;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using Ninject;
 using Prism.Events;
 using VCore.Standard;
@@ -166,6 +167,14 @@ namespace VPlayer.Core.Players
       }
     }
 
+    public bool WatchFolder
+    {
+      get
+      {
+        return !string.IsNullOrEmpty(ActualSavedPlaylist?.WatchedFolder);
+      }
+    }
+
     #endregion
 
     #region Commands
@@ -210,7 +219,7 @@ namespace VPlayer.Core.Players
 
     #region WatchFolderPlaylistCommand
 
-    private ActionCommand watchFolderPlaylistCommand;
+    private ActionCommand<bool> watchFolderPlaylistCommand;
 
     public ICommand WatchFolderPlaylistCommand
     {
@@ -218,23 +227,47 @@ namespace VPlayer.Core.Players
       {
         if (watchFolderPlaylistCommand == null)
         {
-          watchFolderPlaylistCommand = new ActionCommand(OnWatchFolderPlaylistCommand);
+          watchFolderPlaylistCommand = new ActionCommand<bool>(OnWatchFolderPlaylistCommand);
         }
 
         return watchFolderPlaylistCommand;
       }
     }
 
-    public void OnWatchFolderPlaylistCommand()
+    public void OnWatchFolderPlaylistCommand(bool watchFolder)
     {
-      ActualSavedPlaylist.WatchFolder = !ActualSavedPlaylist.WatchFolder;
-
-      if (ActualSavedPlaylist.WatchFolder)
+      if (watchFolder)
       {
-        AddMissingFilesFromFolder();
+        var defaultFolder = ActualSavedPlaylist.WatchedFolder;
+
+        if (string.IsNullOrEmpty(defaultFolder))
+        {
+          defaultFolder = Path.GetDirectoryName(PlayList.Where(x => x.Model != null).Select(x => x.Model.Source).FirstOrDefault());
+        }
+       
+        CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+
+        dialog.IsFolderPicker = true;
+        dialog.Title = "Select folder to watch";
+        dialog.InitialDirectory = defaultFolder;
+
+        if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+        {
+          ActualSavedPlaylist.WatchedFolder = dialog.FileName;
+
+          if (!string.IsNullOrEmpty(ActualSavedPlaylist.WatchedFolder))
+          {
+            AddMissingFilesFromFolder();
+          }
+        }
+      }
+      else
+      {
+        ActualSavedPlaylist.WatchedFolder = null;
       }
 
       UpdateOrAddActualSavedPlaylist();
+      RaisePropertyChanged(nameof(WatchFolder));
     }
 
     #endregion
@@ -363,9 +396,11 @@ namespace VPlayer.Core.Players
 
         if (!double.IsNaN(position) && !double.IsInfinity(position))
         {
+
+#if !DEBUG
           ActualItem.ActualPosition = position;
           ActualSavedPlaylist.LastItemElapsedTime = position;
-
+#endif
           var deltaTimeChanged = eventArgs.Time - lastTimeChangedMs;
 
           if (deltaTimeChanged < 0 || deltaTimeChanged > 10000)
@@ -774,7 +809,7 @@ namespace VPlayer.Core.Players
         await DownloadItemInfo(GetCTSAndCancel().Token);
       });
 
-      if (ActualSavedPlaylist.WatchFolder)
+      if (!string.IsNullOrEmpty(ActualSavedPlaylist.WatchedFolder))
       {
         AddMissingFilesFromFolder();
       }
@@ -786,22 +821,11 @@ namespace VPlayer.Core.Players
 
     private void AddMissingFilesFromFolder()
     {
-      var allFiles = PlayList.Where(x => x.Model != null).Select(x => x.Model.Source).ToList();
-      var folders = allFiles.Select(x => Path.GetDirectoryName(x)).Distinct().ToList();
-      var parentFolder = folders.Select(x => new DirectoryInfo(x).Parent?.FullName).Distinct().ToList();
-
-      if (parentFolder.Count == 1 && folders.Count > 1)
+      if (!string.IsNullOrEmpty(ActualSavedPlaylist.WatchedFolder))
       {
-        if (parentFolder[0] != null)
-        {
-          folders.Clear();
-          folders.Add(parentFolder[0]);
-        }
-      }
+        var allFiles = PlayList.Where(x => x.Model != null).Select(x => x.Model.Source).ToList();
 
-      foreach (var folder in folders)
-      {
-        var files = Directory.GetFiles(folder, "*", SearchOption.AllDirectories);
+        var files = Directory.GetFiles(ActualSavedPlaylist.WatchedFolder, "*", SearchOption.AllDirectories);
 
         var missingFilesInPlaylist = files.Where(x =>
         {
@@ -835,6 +859,7 @@ namespace VPlayer.Core.Players
           StorePlaylist(PlayList.ToList());
         }
       }
+
     }
 
     #endregion

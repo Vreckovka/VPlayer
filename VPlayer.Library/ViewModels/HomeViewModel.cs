@@ -127,7 +127,7 @@ namespace VPlayer.Home.ViewModels
 
     public void InitilizeMenu()
     {
-      var songPlaylists = viewModelsFactory.Create<SongPlaylistsViewModel>();
+      var songPlaylists = viewModelsFactory.Create<SoundItemPlaylistsViewModel>();
       var artistsViewModel = viewModelsFactory.Create<IArtistsViewModel>();
       var albumsViewModel = viewModelsFactory.Create<IAlbumsViewModel>();
       var tvShowPlaylistsViewModel = viewModelsFactory.Create<VideoPlaylistsViewModel>();

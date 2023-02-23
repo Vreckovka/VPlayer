@@ -49,7 +49,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     public bool IsReapting { get; set; }
     public bool IsShuffle { get; set; }
     public float LastItemElapsedTime { get; set; }
-    public bool WatchFolder { get; set; }
+    public string WatchedFolder { get; set; }
 
 
     public override void Update(IPlaylist other)
@@ -61,7 +61,7 @@ namespace VPlayer.AudioStorage.DomainClasses
         IsReapting = filePlaylistOther.IsReapting;
         IsShuffle = filePlaylistOther.IsShuffle;
         LastItemElapsedTime = filePlaylistOther.LastItemElapsedTime;
-        WatchFolder = filePlaylistOther.WatchFolder;
+        WatchedFolder = filePlaylistOther.WatchedFolder;
       }
     }
   }

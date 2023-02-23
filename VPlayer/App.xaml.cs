@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -77,14 +79,22 @@ namespace VPlayer
     {
       var provider = Container.Resolve<ISettingsProvider>();
 
-      var wasLoaded = provider.Load();
-
-      if (!wasLoaded)
+      var settings = new Dictionary<string, SettingParameters>()
       {
-        provider.AddOrUpdateSetting(nameof(GlobalSettings.CloudBrowserInitialDirectory), new SettingParameters("0"));
-        provider.AddOrUpdateSetting(nameof(GlobalSettings.FileBrowserInitialDirectory), new SettingParameters(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), true));
-        provider.AddOrUpdateSetting(nameof(GlobalSettings.MusicInitialDirectory), new SettingParameters(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), true));
-        provider.AddOrUpdateSetting(nameof(GlobalSettings.TvShowInitialDirectory), new SettingParameters(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), true));
+        { nameof(GlobalSettings.CloudBrowserInitialDirectory), new SettingParameters("0") },
+        { nameof(GlobalSettings.MaxItemsForDefaultPlaylist), new SettingParameters("500") },
+        { nameof(GlobalSettings.FileBrowserInitialDirectory), new SettingParameters(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), true) },
+        { nameof(GlobalSettings.MusicInitialDirectory), new SettingParameters(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), true) },
+        { nameof(GlobalSettings.TvShowInitialDirectory), new SettingParameters(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), true) },
+      };
+
+
+      provider.Load();
+      var missingSettings = settings.Where(x => !provider.Settings.ContainsKey(x.Key));
+
+      foreach(var missingSetting in missingSettings)
+      {
+        provider.AddOrUpdateSetting(missingSetting.Key, missingSetting.Value);
       }
     }
 
@@ -141,7 +151,7 @@ namespace VPlayer
       {
         Kernel.TryGet<IChromeDriverProvider>()?.ChromeDriver?.Close();
       });
- 
+
 
       base.OnExit(e);
     }

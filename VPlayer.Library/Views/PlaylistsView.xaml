@@ -846,8 +846,7 @@
                                                                                          GlyphFontFamily="{StaticResource FontAwesome6Pro_Solid}"
                                                                                          GlyphFontSize="13"
                                                                                          IconMargin="0 0 10 0"
-                                                                                         IsReadOnly="True"
-                                                                                         ToolTip="Private">
+                                                                                         IsReadOnly="True">
                                                                         <controls:PathButton.Style>
                                                                             <Style BasedOn="{StaticResource FontAwesomeGlyphStyle}" TargetType="{x:Type controls:PathButton}">
                                                                                 <Style.Triggers>

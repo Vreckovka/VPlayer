@@ -11,9 +11,9 @@ namespace VPlayer.AudioStorage.Repositories
     }
   }
 
-  public class TvShowPlaylistRepository : GenericRepository<AudioDatabaseContext, VideoFilePlaylist>
+  public class VideoFilePlaylistRepository : GenericRepository<AudioDatabaseContext, VideoFilePlaylist>
   {
-    public TvShowPlaylistRepository(AudioDatabaseContext context) : base(context)
+    public VideoFilePlaylistRepository(AudioDatabaseContext context) : base(context)
     {
     }
   }

@@ -13,6 +13,7 @@ namespace VPlayer.Core
     public const string TvShowInitialDirectory =  nameof(TvShowInitialDirectory);
     public const string FileBrowserInitialDirectory = nameof(FileBrowserInitialDirectory);
     public const string CloudBrowserInitialDirectory =  nameof(CloudBrowserInitialDirectory);
+    public const string MaxItemsForDefaultPlaylist = nameof(MaxItemsForDefaultPlaylist);
   }
 
  

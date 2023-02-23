@@ -39,14 +39,14 @@ namespace VPlayer.AudioStorage.AudioDatabase
     public DbSet<Artist> Artists { get; set; }
     public DbSet<Song> Songs { get; set; }
     public DbSet<PlaylistSoundItem> PlaylistSongs { get; set; }
-    public DbSet<SoundItemFilePlaylist> SongPlaylists { get; set; }
+    public DbSet<SoundItemFilePlaylist> SoundItemPlaylists { get; set; }
 
 
     public DbSet<TvShow> TvShows { get; set; }
     public DbSet<TvShowSeason> TvShowsSeasons { get; set; }
     public DbSet<TvShowEpisode> TvShowEpisodes { get; set; }
     public DbSet<PlaylistVideoItem> PlaylistsTvShowEpisode { get; set; }
-    public DbSet<VideoFilePlaylist> TvShowPlaylists { get; set; }
+    public DbSet<VideoFilePlaylist> VideoFilePlaylists { get; set; }
 
 
 
