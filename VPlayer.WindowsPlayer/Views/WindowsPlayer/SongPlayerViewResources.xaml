@@ -133,8 +133,8 @@
                 </controls:PathButton>
 
                 <controls:PathButton x:Name="SettingsButton"
+                                     Margin="0,10,0,0"
                                      HorizontalAlignment="Left"
-                                     Margin="0 10 0 0"
                                      FontSize="13"
                                      FontWeight="Bold"
                                      ForegroundCheckedColor="White"

@@ -99,6 +99,43 @@ namespace VPlayer.Home.ViewModels.Statistics
     }
     #endregion
 
+    #region VideosItemsView
+
+    private VirtualList<DomainEntity> videosItemsView;
+
+    public VirtualList<DomainEntity> VideosItemsView
+    {
+      get { return videosItemsView; }
+      set
+      {
+        if (value != videosItemsView)
+        {
+          videosItemsView = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region SoundsItemsView
+
+    private VirtualList<DomainEntity> soundsItemsView;
+
+    public VirtualList<DomainEntity> SoundsItemsView
+    {
+      get { return soundsItemsView; }
+      set
+      {
+        if (value != soundsItemsView)
+        {
+          soundsItemsView = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+    #endregion
+
     #region PlaylistView
 
     private VirtualList<IPlaylist> playlistView;
@@ -167,21 +204,24 @@ namespace VPlayer.Home.ViewModels.Statistics
 
     private Task LoadItems()
     {
+      int subCategorySize = 15;
+      int allSize = 30;
+
       return Task.Run(() =>
       {
         var list = new List<IPlayableModel>();
-        var sounds = storageManager.GetRepository<SoundItem>().Include(x => x.FileInfo).Where(x => !x.IsPrivate);
-        var videos = storageManager.GetRepository<VideoItem>().Where(x => !x.IsPrivate);
-        var episodes = storageManager.GetRepository<TvShowEpisode>().Where(x => !x.IsPrivate);
+        var sounds = storageManager.GetRepository<SoundItem>().Include(x => x.FileInfo).Where(x => !x.IsPrivate).ToList();
+        var videos = storageManager.GetRepository<VideoItem>().Where(x => !x.IsPrivate).ToList();
+        var episodes = storageManager.GetRepository<TvShowEpisode>().Where(x => !x.IsPrivate).ToList();
 
         list.AddRange(sounds);
         list.AddRange(videos);
         list.AddRange(episodes);
 
-        var itemsToDisplay = list.OrderByDescending(x => x.TimePlayed).Take(30).OfType<DomainEntity>().ToList();
+        var itemsToDisplay = list.OrderByDescending(x => x.TimePlayed).Take(allSize).OfType<DomainEntity>().ToList();
 
         var songsItems = storageManager.GetRepository<Song>()
-          .Where(x => itemsToDisplay.Select(y => y.Id).Contains(x.ItemModel.Id))
+          .Where(x => itemsToDisplay.OfType<SoundItem>().Select(y => y.Id).Contains(x.ItemModel.Id))
           .Include(x => x.Album)
           .ThenInclude(x => x.Artist)
           .Include(x => x.ItemModel)
@@ -196,10 +236,35 @@ namespace VPlayer.Home.ViewModels.Statistics
             itemsToDisplay[index.Value] = song;
         }
 
+
+        var soundsToDisplay = sounds.OrderByDescending(x => x.TimePlayed).Take(subCategorySize).OfType<DomainEntity>().ToList();
+
+        songsItems = storageManager.GetRepository<Song>()
+          .Where(x => soundsToDisplay.OfType<SoundItem>().Select(y => y.Id).Contains(x.ItemModel.Id))
+          .Include(x => x.Album)
+          .ThenInclude(x => x.Artist)
+          .Include(x => x.ItemModel)
+          .ThenInclude(x => x.FileInfo)
+          .ToList();
+
+        foreach (var song in songsItems)
+        {
+          var index = soundsToDisplay.IndexOf(x => x.Id == song.ItemModelId);
+
+          if (index != null)
+            soundsToDisplay[index.Value] = song;
+        }
+
+
+        var videosToDisplay = videos.OrderByDescending(x => x.TimePlayed).Take(subCategorySize).OfType<DomainEntity>().ToList();
+
+
         Application.Current.Dispatcher.Invoke(() =>
         {
           TotalWatchedItems = list.Sum(x => x.TimePlayed);
-          ItemsView = new VirtualList<DomainEntity>(itemsToDisplay, 30);
+          ItemsView = new VirtualList<DomainEntity>(itemsToDisplay, allSize);
+          VideosItemsView = new VirtualList<DomainEntity>(soundsToDisplay, subCategorySize);
+          SoundsItemsView = new VirtualList<DomainEntity>(videosToDisplay, subCategorySize);
         });
       });
     }

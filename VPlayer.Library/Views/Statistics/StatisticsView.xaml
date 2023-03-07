@@ -50,6 +50,10 @@
             <Grid Grid.Row="1" Grid.Column="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto" />
+                    <RowDefinition Height="2*" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition />
+                    <RowDefinition Height="auto" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
@@ -75,9 +79,158 @@
                                Text="{Binding TotalWatchedItems}"
                                ToolTip="{Binding TotalWatchedItems, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}" />
                 </StackPanel>
+
                 <ListView Grid.Row="1"
                           Grid.Column="0"
                           ItemsSource="{Binding ItemsView}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="5" Orientation="Horizontal">
+                                <TextBlock MaxWidth="400"
+                                           Margin="5,0"
+                                           FontWeight="Bold"
+                                           Foreground="#ccc"
+                                           Text="{Binding Name}"
+                                           TextTrimming="CharacterEllipsis"
+                                           ToolTip="{Binding Name}" />
+                                <TextBlock Margin="5,0,0,0"
+                                           HorizontalAlignment="Left"
+                                           FontSize="12">
+                                    <Run FontSize="13" Text="{Binding Album.Artist.Name, Mode=OneWay}">
+                                        <Run.Style>
+                                            <Style TargetType="Run">
+                                                <Setter Property="Foreground" Value="#f2e0cb" />
+                                                <Setter Property="FontWeight" Value="Bold" />
+
+                                            </Style>
+                                        </Run.Style>
+                                    </Run>
+
+                                    <Run Text="{Binding Album.Name, Mode=OneWay, StringFormat={}({0})}" ToolTip="{Binding AlbumViewModel.Name, Mode=OneWay}">
+                                        <Run.Style>
+                                            <Style TargetType="Run">
+                                                <Setter Property="Foreground" Value="#edfffa" />
+                                                <Setter Property="FontWeight" Value="DemiBold" />
+
+                                            </Style>
+                                        </Run.Style>
+                                    </Run>
+
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="{StaticResource OrangeBrush}" />
+                                            <Setter Property="Opacity" Value="0.35" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Converter={converters:IsTypeConverter}, ConverterParameter={x:Type domainClasses:Song}}" Value="false">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+
+                                <TextBlock Margin="5,0"
+                                           FontStyle="Italic"
+                                           Foreground="#959595">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Text" Value="{Binding TimePlayed}" />
+                                            <Setter Property="ToolTip" Value="{Binding TimePlayed}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Converter={converters:IsTypeConverter}, ConverterParameter={x:Type domainClasses:Song}}" Value="true">
+                                                    <Setter Property="Text" Value="{Binding ItemModel.TimePlayed}" />
+                                                    <Setter Property="ToolTip" Value="{Binding ItemModel.TimePlayed}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <Border Grid.Row="2" Padding="5">
+                    <TextBlock HorizontalAlignment="Center" Text="Sounds" />
+                </Border>
+
+                <ListView Grid.Row="3"
+                          Grid.Column="0"
+                          ItemsSource="{Binding VideosItemsView}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="5" Orientation="Horizontal">
+                                <TextBlock MaxWidth="400"
+                                           Margin="5,0"
+                                           FontWeight="Bold"
+                                           Foreground="#ccc"
+                                           Text="{Binding Name}"
+                                           TextTrimming="CharacterEllipsis"
+                                           ToolTip="{Binding Name}" />
+                                <TextBlock Margin="5,0,0,0"
+                                           HorizontalAlignment="Left"
+                                           FontSize="12">
+                                    <Run FontSize="13" Text="{Binding Album.Artist.Name, Mode=OneWay}">
+                                        <Run.Style>
+                                            <Style TargetType="Run">
+                                                <Setter Property="Foreground" Value="#f2e0cb" />
+                                                <Setter Property="FontWeight" Value="Bold" />
+
+                                            </Style>
+                                        </Run.Style>
+                                    </Run>
+
+                                    <Run Text="{Binding Album.Name, Mode=OneWay, StringFormat={}({0})}" ToolTip="{Binding AlbumViewModel.Name, Mode=OneWay}">
+                                        <Run.Style>
+                                            <Style TargetType="Run">
+                                                <Setter Property="Foreground" Value="#edfffa" />
+                                                <Setter Property="FontWeight" Value="DemiBold" />
+
+                                            </Style>
+                                        </Run.Style>
+                                    </Run>
+
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="{StaticResource OrangeBrush}" />
+                                            <Setter Property="Opacity" Value="0.35" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Converter={converters:IsTypeConverter}, ConverterParameter={x:Type domainClasses:Song}}" Value="false">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+
+                                <TextBlock Margin="5,0"
+                                           FontStyle="Italic"
+                                           Foreground="#959595">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Text" Value="{Binding TimePlayed}" />
+                                            <Setter Property="ToolTip" Value="{Binding TimePlayed}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Converter={converters:IsTypeConverter}, ConverterParameter={x:Type domainClasses:Song}}" Value="true">
+                                                    <Setter Property="Text" Value="{Binding ItemModel.TimePlayed}" />
+                                                    <Setter Property="ToolTip" Value="{Binding ItemModel.TimePlayed}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <Border Grid.Row="4" Padding="5">
+                    <TextBlock HorizontalAlignment="Center" Text="Videos" />
+                </Border>
+
+                <ListView Grid.Row="5"
+                          Grid.Column="0"
+                          ItemsSource="{Binding SoundsItemsView}">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Margin="5" Orientation="Horizontal">

@@ -488,7 +488,7 @@ namespace VPlayer.Player.ViewModels
               mainWindow.WindowState != WindowState.Minimized &&
               !VFocusManager.IsAnyFocused())
           {
-            return filePlayable1;
+            return filePlayable1; 
           }
           else if (key == Key.MediaPlayPause ||
                    key == Key.MediaNextTrack ||

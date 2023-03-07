@@ -79,10 +79,20 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region GetRepository
 
+    private List<KeyValuePair<DateTime, DbContext>> contexts = new List<KeyValuePair<DateTime, DbContext>>();
     public DbSet<T> GetRepository<T>(DbContext dbContext = null) where T : class
     {
       if (dbContext == null)
+      {
         dbContext = new AudioDatabaseContext();
+        contexts.Add(new KeyValuePair<DateTime, DbContext>(DateTime.Now, dbContext));
+
+        var oldContexts = contexts.Where(x => x.Key < DateTime.Now.AddMinutes(-1)).ToList();
+
+        oldContexts.ForEach(x => x.Value.Dispose());
+        contexts.RemoveAll(x => oldContexts.Contains(x));
+      }
+
 
       return dbContext.Set<T>();
     }

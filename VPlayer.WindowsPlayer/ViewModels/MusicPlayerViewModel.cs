@@ -2121,6 +2121,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
               if (index != null)
               {
                 var itemInPlaylistViewModel = PlayList[index.Value];
+                songItem.ItemModel = itemInPlaylistViewModel.Model;
                 var vm = viewModelsFactory.Create<SongInPlayListViewModel>(songItem);
 
                 vm.ActualPosition = itemInPlaylistViewModel.ActualPosition;

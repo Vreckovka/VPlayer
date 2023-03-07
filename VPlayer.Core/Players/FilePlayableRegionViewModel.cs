@@ -428,14 +428,14 @@ namespace VPlayer.Core.Players
 
           var totalPlayedTime = TimeSpan.FromMilliseconds(deltaTimeChanged);
 
-#if !DEBUG
+//#if !DEBUG
           ActualItem.Model.TimePlayed += totalPlayedTime;
           PlaylistTotalTimePlayed += totalPlayedTime;
-#endif
+//#endif
 
           int totalSec = (int)PlaylistTotalTimePlayed.TotalSeconds;
 
-          if (totalSec % 10 == 0 && totalSec > lastTotalTimeSaved)
+          if (totalSec - lastTotalTimeSaved > 10 && totalSec > lastTotalTimeSaved)
           {
             lastTotalTimeSaved = totalSec;
 
