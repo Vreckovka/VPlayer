@@ -61,7 +61,7 @@ namespace VPlayer.Core.ViewModels
   public abstract class PlayableRegionViewModel<TView, TItemViewModel, TPlaylistModel, TPlaylistItemModel, TModel> : RegionViewModel<TView>, IPlayableRegionViewModel, IHideable
     where TView : class, IView
     where TItemViewModel : class, IItemInPlayList<TModel>, ISelectable, IDisposable
-    where TModel : IPlayableModel
+    where TModel : class, IPlayableModel, IEntity, IUpdateable<TModel>
     where TPlaylistModel : class, IPlaylist<TPlaylistItemModel>, new()
     where TPlaylistItemModel : class, IItemInPlaylist<TModel>
   {
@@ -1571,99 +1571,148 @@ namespace VPlayer.Core.ViewModels
 
     #region StorePlaylist
 
-    public bool StorePlaylist(List<TItemViewModel> items, bool isUserCreated = false, bool editSaved = true)
+    public Task<bool> StorePlaylist(List<TItemViewModel> items, bool isUserCreated = false, bool editSaved = true)
     {
-      var acutalPlaylist = items;
-
-      if (acutalPlaylist == null || acutalPlaylist.Count == 0)
+      return Task.Run(() =>
       {
-        return false;
-      }
+        var acutalPlaylist = items;
 
-      var playlistModels = new List<TPlaylistItemModel>();
-
-      for (int i = 0; i < acutalPlaylist.Count; i++)
-      {
-        var song = acutalPlaylist[i];
-
-        if (song != null)
+        if (acutalPlaylist == null || acutalPlaylist.Count == 0)
         {
-
-          var newItem = GetNewPlaylistItemViewModel(song, i);
-
-          if (newItem == null)
-          {
-            return false;
-          }
-
-          newItem.OrderInPlaylist = i + 1;
-          playlistModels.Add(newItem);
+          return false;
         }
-      }
 
-      var songIds = acutalPlaylist.Where(x => x.Model != null).Select(x => x.Model.Id).ToList();
+        var playlistModels = new List<TPlaylistItemModel>();
 
-      var hashCode = songIds.GetSequenceHashCode();
-
-      var entityPlayList = GetNewPlaylistModel(playlistModels, isUserCreated);
-
-      if (entityPlayList == null)
-      {
-        return false;
-      }
-
-      entityPlayList.LastPlayed = DateTime.Now;
-      entityPlayList.HashCode = hashCode;
-
-      bool success = false;
-
-      var storedPlaylist = storageManager.GetRepository<TPlaylistModel>()
-        .Include(x => x.PlaylistItems)
-        .ThenInclude(x => x.ReferencedItem)
-        .OrderByDescending(x => x.IsUserCreated)
-        .FirstOrDefault(x => x.HashCode == hashCode);
-      
-      if (storedPlaylist == null)
-      {
-        if (editSaved || ActualSavedPlaylist.IsUserCreated)
+        for (int i = 0; i < acutalPlaylist.Count; i++)
         {
-          if (hashCode != ActualSavedPlaylist.HashCode)
+          var song = acutalPlaylist[i];
+
+          if (song != null)
           {
-            var newPlaylistItems = new List<TPlaylistItemModel>();
+            var newItem = GetNewPlaylistItemViewModel(song, i);
 
-            if (ActualSavedPlaylist.PlaylistItems != null)
+            if (newItem == null)
             {
-              Application.Current.Dispatcher.Invoke(() =>
+              return false;
+            }
+
+            newItem.OrderInPlaylist = i + 1;
+
+            playlistModels.Add(newItem);
+          }
+        }
+
+        var songIds = acutalPlaylist.Where(x => x.Model != null).Select(x => x.Model.Id).ToList();
+
+        var hashCode = songIds.GetSequenceHashCode();
+
+        var entityPlayList = GetNewPlaylistModel(playlistModels, isUserCreated);
+
+        if (entityPlayList == null)
+        {
+          return false;
+        }
+
+        entityPlayList.LastPlayed = DateTime.Now;
+        entityPlayList.HashCode = hashCode;
+
+        bool success = false;
+
+        var storedPlaylist = storageManager.GetRepository<TPlaylistModel>()
+          .Include(x => x.PlaylistItems)
+          .ThenInclude(x => x.ReferencedItem)
+          .OrderByDescending(x => x.IsUserCreated)
+          .FirstOrDefault(x => x.HashCode == hashCode);
+
+        if (storedPlaylist == null)
+        {
+          if (editSaved || ActualSavedPlaylist.IsUserCreated)
+          {
+            if (hashCode != ActualSavedPlaylist.HashCode)
+            {
+              var newPlaylistItems = new List<TPlaylistItemModel>();
+
+              if (ActualSavedPlaylist.PlaylistItems != null)
               {
-                var oldItems = ActualSavedPlaylist.PlaylistItems.Where(x => playlistModels.Any(y =>
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                  var isSame = y.IdReferencedItem == x.IdReferencedItem;
-
-                  if (isSame)
+                  var oldItems = ActualSavedPlaylist.PlaylistItems.Where(x => playlistModels.Any(y =>
                   {
-                    x.Update(y);
-                  }
+                    var isSame = y.IdReferencedItem == x.IdReferencedItem;
 
-                  return isSame;
-                }));
+                    if (isSame)
+                    {
+                      x.Update(y);
+                    }
 
-                var diff = playlistModels.Where(x => ActualSavedPlaylist.PlaylistItems.All(y => y.IdReferencedItem != x.IdReferencedItem));
+                    return isSame;
+                  }));
 
-                newPlaylistItems.AddRange(oldItems);
-                newPlaylistItems.AddRange(diff);
-              });
+                  var diff = playlistModels.Where(x => ActualSavedPlaylist.PlaylistItems.All(y => y.IdReferencedItem != x.IdReferencedItem));
+
+                  newPlaylistItems.AddRange(oldItems);
+                  newPlaylistItems.AddRange(diff);
+                });
+              }
+              else
+              {
+                newPlaylistItems = playlistModels;
+              }
+
+              ActualSavedPlaylist.HashCode = hashCode;
+              ActualSavedPlaylist.PlaylistItems = newPlaylistItems;
+              ActualSavedPlaylist.ItemCount = newPlaylistItems.Count;
+              ActualSavedPlaylist.ActualItemId = null;
+
+              if (ActualSavedPlaylist.Id < 0)
+              {
+                success = storageManager.StoreEntity(entityPlayList, out var dbEntityPlalist);
+
+                UpdatePlaylist(entityPlayList, dbEntityPlalist);
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                  ActualSavedPlaylist = entityPlayList;
+
+                  ActualSavedPlaylist.LastPlayed = DateTime.Now;
+                });
+              }
+
+              if (ActualSavedPlaylist.PlaylistItems.Count > actualItemIndex)
+              {
+                ActualSavedPlaylist.ActualItem = ActualSavedPlaylist.PlaylistItems.OrderBy(x => x.OrderInPlaylist).ToList()[actualItemIndex];
+
+                ActualSavedPlaylist.ActualItemId = ActualSavedPlaylist?.ActualItem?.Id;
+              }
+
+            }
+          }
+          else if (!ActualSavedPlaylist.IsUserCreated)
+          {
+            if (ActualSavedPlaylist.Id <= 0)
+            {
+              success = storageManager.StoreEntity(entityPlayList, out var dbEntityPlalist);
+
+              if (success)
+              {
+                UpdatePlaylist(entityPlayList, dbEntityPlalist);
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                  ActualSavedPlaylist = entityPlayList;
+                });
+
+                if (ActualSavedPlaylist.PlaylistItems?.Count > actualItemIndex)
+                {
+                  ActualSavedPlaylist.ActualItem = ActualSavedPlaylist.PlaylistItems.OrderBy(x => x.OrderInPlaylist).ToList()[actualItemIndex];
+                  ActualSavedPlaylist.ActualItemId = ActualSavedPlaylist?.ActualItem?.Id;
+
+                  UpdateActualSavedPlaylistPlaylist();
+                }
+              }
             }
             else
-            {
-              newPlaylistItems = playlistModels;
-            }
-
-            ActualSavedPlaylist.HashCode = hashCode;
-            ActualSavedPlaylist.PlaylistItems = newPlaylistItems;
-            ActualSavedPlaylist.ItemCount = newPlaylistItems.Count;
-            ActualSavedPlaylist.ActualItemId = null;
-
-            if (ActualSavedPlaylist.Id < 0)
             {
               success = storageManager.StoreEntity(entityPlayList, out var dbEntityPlalist);
 
@@ -1676,79 +1725,33 @@ namespace VPlayer.Core.ViewModels
                 ActualSavedPlaylist.LastPlayed = DateTime.Now;
               });
             }
-
-            if (ActualSavedPlaylist.PlaylistItems.Count > actualItemIndex)
-            {
-              ActualSavedPlaylist.ActualItem = ActualSavedPlaylist.PlaylistItems.OrderBy(x => x.OrderInPlaylist).ToList()[actualItemIndex];
-
-              ActualSavedPlaylist.ActualItemId = ActualSavedPlaylist?.ActualItem?.Id;
-            }
-
           }
         }
-        else if (!ActualSavedPlaylist.IsUserCreated)
+        else
         {
-          if (ActualSavedPlaylist.Id <= 0)
+          Application.Current.Dispatcher.Invoke(() =>
           {
-            success = storageManager.StoreEntity(entityPlayList, out var dbEntityPlalist);
+            ActualSavedPlaylist = storedPlaylist;
+            SetActualItem(storedPlaylist.LastItemIndex);
 
-            if (success)
-            {
-              UpdatePlaylist(entityPlayList, dbEntityPlalist);
+            ActualSavedPlaylist.LastPlayed = DateTime.Now;
 
-              Application.Current.Dispatcher.Invoke(() =>
-              {
-                ActualSavedPlaylist = entityPlayList;
-              });
-
-              if (ActualSavedPlaylist.PlaylistItems?.Count > actualItemIndex)
-              {
-                ActualSavedPlaylist.ActualItem = ActualSavedPlaylist.PlaylistItems.OrderBy(x => x.OrderInPlaylist).ToList()[actualItemIndex];
-                ActualSavedPlaylist.ActualItemId = ActualSavedPlaylist?.ActualItem?.Id;
-
-                UpdateActualSavedPlaylistPlaylist();
-              }
-            }
-          }
-          else
-          {
-            success = storageManager.StoreEntity(entityPlayList, out var dbEntityPlalist);
-
-            UpdatePlaylist(entityPlayList, dbEntityPlalist);
-
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-              ActualSavedPlaylist = entityPlayList;
-
-              ActualSavedPlaylist.LastPlayed = DateTime.Now;
-            });
-          }
+            OnStoredPlaylistLoaded();
+          });
         }
-      }
-      else
-      {
-        Application.Current.Dispatcher.Invoke(() =>
+
+        if (ActualSavedPlaylist != null)
         {
-          ActualSavedPlaylist = storedPlaylist;
-          SetActualItem(storedPlaylist.LastItemIndex);
+          Application.Current.Dispatcher.Invoke(() =>
+          {
+            ActualSavedPlaylist.LastPlayed = DateTime.Now;
+          });
+        }
 
-          ActualSavedPlaylist.LastPlayed = DateTime.Now;
+        UpdateActualSavedPlaylistPlaylist();
 
-          OnStoredPlaylistLoaded();
-        });
-      }
-
-      if (ActualSavedPlaylist != null)
-      {
-        Application.Current.Dispatcher.Invoke(() =>
-        {
-          ActualSavedPlaylist.LastPlayed = DateTime.Now;
-        });
-      }
-
-      UpdateActualSavedPlaylistPlaylist();
-
-      return success;
+        return success;
+      });
     }
 
     #endregion
@@ -1767,23 +1770,49 @@ namespace VPlayer.Core.ViewModels
 
     #region UpdateActualSavedPlaylistPlaylist
 
+    private SemaphoreSlim playlistSemaphore = new SemaphoreSlim(1,1);
     protected Task<bool> UpdateActualSavedPlaylistPlaylist()
     {
       var clone = ActualSavedPlaylist.DeepClone();
 
-      return Task.Run(() =>
+      return Task.Run(async () =>
       {
-        lock (this)
+        try
         {
+          await playlistSemaphore.WaitAsync();
+
           var result = storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel, TModel>(clone, out var updated);
 
-          var dispatcher = Application.Current?.Dispatcher;
+          if (result && updated.IsPrivate)
+          {
+            var notPrivateItems = updated.PlaylistItems.Where(x => x.ReferencedItem != null).Where(x => !x.ReferencedItem.IsPrivate).ToList();
+            
+            //I was lazy to add items as prite when added to playlist, instead of forcing all items to by private in private playlist
+            foreach (var item in notPrivateItems)
+            {
+              item.ReferencedItem.IsPrivate = true;
+
+              var playlistItem =  PlayList.SingleOrDefault(x => x.Model.Id == item.IdReferencedItem);
+
+              if (playlistItem != null)
+              {
+                playlistItem.Model = item.ReferencedItem;
+                playlistItem.RaiseNotifyPropertyChanged(nameof(IItemInPlayList<TModel>.Model));
+                playlistItem.RaiseNotifyPropertyChanged(nameof(IItemInPlayList<TModel>.IsPrivate));
+              }
+            }
+
+            if (notPrivateItems.Any())
+            {
+              await storageManager.UpdateEntitiesAsync(notPrivateItems.Select(x => x.ReferencedItem));
+            }
+          }
 
           if (result && !isDisposing)
           {
             try
             {
-              dispatcher?.Invoke(() =>
+              Application.Current?.Dispatcher?.Invoke(() =>
               {
                 if (VFocusManager.FocusedItems.Count(x => x.Name == "NameTextBox") == 0)
                 {
@@ -1797,6 +1826,10 @@ namespace VPlayer.Core.ViewModels
           }
 
           return result;
+        }
+        finally
+        {
+          playlistSemaphore.Release();
         }
       });
     }

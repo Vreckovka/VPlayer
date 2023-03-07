@@ -125,7 +125,8 @@ namespace VPlayer.AudioStorage.DomainClasses
         Modified = Modified,
         Name = Name,
         NormalizedName = NormalizedName,
-        Source = Source
+        Source = Source,
+        TimePlayed = TimePlayed
       };
     }
 

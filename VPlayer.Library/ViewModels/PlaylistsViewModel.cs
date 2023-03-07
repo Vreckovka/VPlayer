@@ -40,8 +40,6 @@ namespace VPlayer.Home.ViewModels
 
     protected IEnumerable<TViewModel> AllItems { get; set; }
 
-
-
     #region PrivateItems
 
     private IEnumerable<TViewModel> privateItems;
@@ -60,9 +58,6 @@ namespace VPlayer.Home.ViewModels
     }
 
     #endregion
-
-
-
 
     protected virtual IQueryable<TPlaylistItemModel> GetActualItemQuery
     {
@@ -128,10 +123,8 @@ namespace VPlayer.Home.ViewModels
     }
 
     #endregion
-
-
+    
     public override IQueryable<TPlaylistModel> LoadQuery => base.LoadQuery.OrderByDescending(x => x.LastPlayed).Where(x => !x.IsPrivate);
-
 
     public ObservableCollection<TViewModel> ViewCollection
     {

@@ -99,6 +99,10 @@ namespace VPlayer.Core.ViewModels.TvShows
       RaisePropertyChanged(nameof(IsPrivate));
     }
 
+    public void RaiseNotifyPropertyChanged(string propertyName)
+    {
+      RaisePropertyChanged(propertyName);
+    }
 
     #endregion
   }

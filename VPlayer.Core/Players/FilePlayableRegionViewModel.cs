@@ -21,6 +21,7 @@ using VCore.Standard;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
 using VCore.Standard.Modularity.Interfaces;
+using VCore.Standard.Providers;
 using VCore.Standard.ViewModels.WindowsFile;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Misc;
@@ -47,6 +48,7 @@ namespace VPlayer.Core.Players
   {
     protected readonly IViewModelsFactory viewModelsFactory;
     private readonly IVFfmpegProvider iVFfmpegProvider;
+    private readonly ISettingsProvider settingsProvider;
     private long lastTimeChangedMs;
 
     protected FilePlayableRegionViewModel(
@@ -59,10 +61,12 @@ namespace VPlayer.Core.Players
       IStatusManager statusManager,
       IViewModelsFactory viewModelsFactory,
       IVFfmpegProvider iVFfmpegProvider,
+      ISettingsProvider settingsProvider,
       VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, statusManager, windowManager, vLCPlayer)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.iVFfmpegProvider = iVFfmpegProvider ?? throw new ArgumentNullException(nameof(iVFfmpegProvider));
+      this.settingsProvider = settingsProvider ?? throw new ArgumentNullException(nameof(settingsProvider));
       BufferingSubject.Throttle(TimeSpan.FromSeconds(0.5)).Subscribe(x =>
       {
         IsBuffering = x;
@@ -103,9 +107,9 @@ namespace VPlayer.Core.Players
 
     #region CheckedFiles
 
-    private ObservableCollection<TItemViewModel> checkedFiles = new ObservableCollection<TItemViewModel>();
+    private List<TItemViewModel> checkedFiles = new List<TItemViewModel>();
 
-    public ObservableCollection<TItemViewModel> CheckedFiles
+    public List<TItemViewModel> CheckedFiles
     {
       get { return checkedFiles; }
       set
@@ -219,7 +223,7 @@ namespace VPlayer.Core.Players
 
     #region WatchFolderPlaylistCommand
 
-    private ActionCommand<bool> watchFolderPlaylistCommand;
+    private ActionCommand<bool?> watchFolderPlaylistCommand;
 
     public ICommand WatchFolderPlaylistCommand
     {
@@ -227,44 +231,57 @@ namespace VPlayer.Core.Players
       {
         if (watchFolderPlaylistCommand == null)
         {
-          watchFolderPlaylistCommand = new ActionCommand<bool>(OnWatchFolderPlaylistCommand);
+          watchFolderPlaylistCommand = new ActionCommand<bool?>(OnWatchFolderPlaylistCommand);
         }
 
         return watchFolderPlaylistCommand;
       }
     }
 
-    public void OnWatchFolderPlaylistCommand(bool watchFolder)
+    public void OnWatchFolderPlaylistCommand(bool? watchFolder)
     {
-      if (watchFolder)
+      if (watchFolder != null)
       {
-        var defaultFolder = ActualSavedPlaylist.WatchedFolder;
-
-        if (string.IsNullOrEmpty(defaultFolder))
+        if (watchFolder.Value)
         {
-          defaultFolder = Path.GetDirectoryName(PlayList.Where(x => x.Model != null).Select(x => x.Model.Source).FirstOrDefault());
-        }
-       
-        CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+          var defaultFolder = ActualSavedPlaylist.WatchedFolder;
 
-        dialog.IsFolderPicker = true;
-        dialog.Title = "Select folder to watch";
-        dialog.InitialDirectory = defaultFolder;
-
-        if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
-        {
-          ActualSavedPlaylist.WatchedFolder = dialog.FileName;
-
-          if (!string.IsNullOrEmpty(ActualSavedPlaylist.WatchedFolder))
+          if (string.IsNullOrEmpty(defaultFolder))
           {
-            AddMissingFilesFromFolder();
+            defaultFolder = Path.GetDirectoryName(PlayList.Where(x => x.Model != null).Select(x => x.Model.Source).FirstOrDefault());
+
+            if (defaultFolder != null && defaultFolder.Contains("http"))
+            {
+              defaultFolder = settingsProvider.GetSetting(GlobalSettings.FileBrowserInitialDirectory)?.Value;
+            }
           }
+
+          CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+
+          dialog.IsFolderPicker = true;
+          dialog.Title = "Select folder to watch";
+          dialog.InitialDirectory = defaultFolder;
+
+          if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+          {
+            ActualSavedPlaylist.WatchedFolder = dialog.FileName;
+
+            if (!string.IsNullOrEmpty(ActualSavedPlaylist.WatchedFolder))
+            {
+              AddMissingFilesFromFolder();
+            }
+          }
+        }
+        else
+        {
+          ActualSavedPlaylist.WatchedFolder = null;
         }
       }
       else
       {
-        ActualSavedPlaylist.WatchedFolder = null;
+        AddMissingFilesFromFolder();
       }
+
 
       UpdateOrAddActualSavedPlaylist();
       RaisePropertyChanged(nameof(WatchFolder));
@@ -397,10 +414,9 @@ namespace VPlayer.Core.Players
         if (!double.IsNaN(position) && !double.IsInfinity(position))
         {
 
-#if !DEBUG
           ActualItem.ActualPosition = position;
           ActualSavedPlaylist.LastItemElapsedTime = position;
-#endif
+
           var deltaTimeChanged = eventArgs.Time - lastTimeChangedMs;
 
           if (deltaTimeChanged < 0 || deltaTimeChanged > 10000)
@@ -412,8 +428,10 @@ namespace VPlayer.Core.Players
 
           var totalPlayedTime = TimeSpan.FromMilliseconds(deltaTimeChanged);
 
+#if !DEBUG
           ActualItem.Model.TimePlayed += totalPlayedTime;
           PlaylistTotalTimePlayed += totalPlayedTime;
+#endif
 
           int totalSec = (int)PlaylistTotalTimePlayed.TotalSeconds;
 
@@ -423,6 +441,7 @@ namespace VPlayer.Core.Players
 
             await UpdateActualSavedPlaylistPlaylist();
             await storageManager.UpdateEntityAsync(ActualItem.Model);
+            ActualItem.RaiseNotifyPropertyChanged(nameof(ViewModel<TModel>.Model));
           }
         }
       }
@@ -885,6 +904,8 @@ namespace VPlayer.Core.Players
       if (!CheckedFiles.Contains(itemViewModel))
       {
         CheckedFiles.Add(itemViewModel);
+
+        RequestUIDispatcher(() => { RaisePropertyChanged(nameof(CheckedFiles)); });
       }
     }
 

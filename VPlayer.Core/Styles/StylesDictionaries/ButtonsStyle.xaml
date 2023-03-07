@@ -953,14 +953,14 @@
 
             </StackPanel.Resources>
 
-            <StackPanel DataContext="{Binding SongModel}">
+            <StackPanel>
                 <TextBlock Margin="0,0,0,5"
                            HorizontalAlignment="Left"
                            Foreground="#15ffffff"
                            Text="Song data" />
 
                 <UniformGrid>
-                    <Grid HorizontalAlignment="Left">
+                    <Grid HorizontalAlignment="Left" DataContext="{Binding SongModel}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
                             <ColumnDefinition />
@@ -979,6 +979,19 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
 
+                        <TextBlock Style="{StaticResource title}" Text="Played" />
+                        <TextBlock Grid.Column="1"
+                                   Style="{StaticResource value}"
+                                   Text="{Binding Model.TimePlayed, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}"
+                                   ToolTip="{Binding Model.TimePlayed, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}" />
+                    </Grid>
+
+                    <Grid HorizontalAlignment="Left" DataContext="{Binding SongModel}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
                         <TextBlock Style="{StaticResource title}" Text="Album" />
                         <TextBlock Grid.Column="1"
                                    Style="{StaticResource value}"
@@ -986,7 +999,7 @@
                                    ToolTip="{Binding Album.Name}" />
                     </Grid>
 
-                    <Grid HorizontalAlignment="Left">
+                    <Grid HorizontalAlignment="Left" DataContext="{Binding SongModel}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
                             <ColumnDefinition />

@@ -17,6 +17,7 @@ using VCore.ItemsCollections;
 using VCore.Standard;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
+using VCore.Standard.Providers;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.ItemsCollections.VirtualList;
 using VCore.WPF.ItemsCollections.VirtualList.VirtualLists;
@@ -66,8 +67,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
       IStatusManager statusManager,
       ICSFDWebsiteScrapper iCsfdWebsiteScrapper,
       IViewModelsFactory viewModelsFactory,
-      IVFfmpegProvider iVFfmpegProvider) :
-      base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, statusManager, viewModelsFactory, iVFfmpegProvider, vLCPlayer)
+      IVFfmpegProvider iVFfmpegProvider,
+      ISettingsProvider settingsProvider) :
+      base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, statusManager, viewModelsFactory, iVFfmpegProvider, settingsProvider, vLCPlayer)
     {
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       this.iCsfdWebsiteScrapper = iCsfdWebsiteScrapper ?? throw new ArgumentNullException(nameof(iCsfdWebsiteScrapper));

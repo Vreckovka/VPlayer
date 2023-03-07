@@ -8,6 +8,7 @@ using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Logger;
@@ -82,7 +83,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
     }
 
     #endregion
-    
+
     #region Items
 
     private RxObservableCollection<TViewModel> items;
@@ -140,42 +141,52 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
 
     #region LoadInitilizedData
 
+    private SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
     public IObservable<bool> LoadInitilizedDataAsync(IQueryable<TModel> optionalQuery = null)
     {
-      return Observable.FromAsync<bool>(async () =>
+      return Observable.FromAsync(async () =>
       {
-        try
-        {
-          if (!WasLoaded)
+        return await Task.Run(async () =>
           {
-            List<TModel> data;
-            if (optionalQuery == null)
-              //Need Enumerable for ViewModelsFactory.Create
-              data = await LoadQuery.ToListAsync();
-            else
-              data = await optionalQuery.ToListAsync();
+            try
+            {
+              await semaphoreSlim.WaitAsync();
 
-            var vms = data.Select(x => ViewModelsFactory.Create<TViewModel>(x)).ToList();
+              if (!WasLoaded)
+              {
+                List<TModel> data;
+                if (optionalQuery == null)
+                  //Need Enumerable for ViewModelsFactory.Create
+                  data = await LoadQuery.ToListAsync();
+                else
+                  data = await optionalQuery.ToListAsync();
 
-            Items = new RxObservableCollection<TViewModel>(vms);
-            FilteredItemsCollection = new ObservableCollection<TViewModel>(vms);
+                var vms = data.Select(x => ViewModelsFactory.Create<TViewModel>(x)).ToList();
 
-            Items.CollectionChanged += Items_CollectionChanged;
-            Recreate();
+                Items = new RxObservableCollection<TViewModel>(vms);
+                FilteredItemsCollection = new ObservableCollection<TViewModel>(vms);
 
-            WasLoaded = true;
+                Items.CollectionChanged += Items_CollectionChanged;
+                Recreate();
 
-            DataLoadedCallback?.Invoke();
-          }
+                WasLoaded = true;
 
-          return true;
+                DataLoadedCallback?.Invoke();
+              }
 
-        }
-        catch (Exception ex)
-        {
-          logger.Log(ex);
-          return false;
-        }
+              return true;
+
+            }
+            catch (Exception ex)
+            {
+              logger.Log(ex);
+              return false;
+            }
+            finally
+            {
+              semaphoreSlim.Release();
+            }
+          });
       });
     }
 
@@ -276,7 +287,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
         {
           bool wasChnaged = false;
 
-          foreach(var entity in entities)
+          foreach (var entity in entities)
           {
             var items = Items.Where(x => x.ModelId == entity.Id).ToList();
 

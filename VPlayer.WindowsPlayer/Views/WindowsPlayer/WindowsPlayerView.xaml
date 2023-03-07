@@ -325,7 +325,8 @@
                                        FontWeight="Bold"
                                        Foreground="#858585"
                                        Text="{Binding TotalPlaylistDuration, Mode=OneWay, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}"
-                                       TextTrimming="CharacterEllipsis" />
+                                       TextTrimming="CharacterEllipsis"
+                                       ToolTip="{Binding TotalPlaylistDuration, Mode=OneWay, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}" />
                         </Grid>
 
                         <Grid Style="{StaticResource Container}" ToolTip="{Binding PlaylistTotalTimePlayed, Mode=OneWay, StringFormat={}{0:dd\\:hh\\:mm\\:ss}}">
@@ -787,29 +788,45 @@
                                                         <StackPanel>
                                                             <StackPanel Orientation="Horizontal">
                                                                 <TextBlock MaxWidth="250"
-                                                                           Margin="0,0,15,0"
+                                                                           Margin="0,5,15,5"
                                                                            VerticalAlignment="Center"
                                                                            Text="{Binding ActualSavedPlaylist.WatchedFolder}"
                                                                            TextTrimming="CharacterEllipsis"
                                                                            ToolTip="{Binding ActualSavedPlaylist.WatchedFolder}" />
-                                                                <controls:PathButton Margin="5"
+                                                                <controls:PathButton Margin="-5,0,0,0"
                                                                                      Command="{Binding WatchFolderPlaylistCommand}"
                                                                                      CommandParameter="True"
                                                                                      Glyph="{StaticResource folder-open-glyph}"
                                                                                      IconHoverColor="{StaticResource YellowColor}"
+                                                                                     IconMargin="0"
                                                                                      Style="{StaticResource FontAwesomeGlyphStyle}" />
                                                             </StackPanel>
 
-                                                            <controls:PathButton Margin="0,10,0,0"
-                                                                                 Padding="15,2"
-                                                                                 HorizontalAlignment="Center"
-                                                                                 BorderThickness="1"
-                                                                                 Command="{Binding WatchFolderPlaylistCommand}"
-                                                                                 CommandParameter="false"
-                                                                                 Content="Clear"
-                                                                                 Glyph="{StaticResource xmark-glyph}"
-                                                                                 IconHoverColor="{StaticResource DefaultRedColor}"
-                                                                                 Style="{StaticResource FontAwesomeGlyphStyle}" />
+                                                            <StackPanel Margin="0,10,0,0"
+                                                                        HorizontalAlignment="Center"
+                                                                        Orientation="Horizontal">
+                                                                <controls:PathButton Margin="5,0"
+                                                                                     Padding="15,2"
+                                                                                     HorizontalAlignment="Center"
+                                                                                     BorderThickness="1"
+                                                                                     Command="{Binding WatchFolderPlaylistCommand}"
+                                                                                     CommandParameter="{x:Null}"
+                                                                                     Content="Refresh"
+                                                                                     Glyph="{StaticResource arrows-rotate-glyph}"
+                                                                                     IconHoverColor="{StaticResource GreenColor2}"
+                                                                                     Style="{StaticResource FontAwesomeGlyphStyle}" />
+
+                                                                <controls:PathButton Padding="15,2"
+                                                                                     HorizontalAlignment="Center"
+                                                                                     BorderThickness="1"
+                                                                                     Command="{Binding WatchFolderPlaylistCommand}"
+                                                                                     CommandParameter="false"
+                                                                                     Content="Clear"
+                                                                                     Glyph="{StaticResource xmark-glyph}"
+                                                                                     IconHoverColor="{StaticResource DefaultRedColor}"
+                                                                                     Style="{StaticResource FontAwesomeGlyphStyle}" />
+                                                            </StackPanel>
+
                                                         </StackPanel>
                                                     </Border>
 

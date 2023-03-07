@@ -21,6 +21,7 @@ using Prism.Events;
 using VCore;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
+using VCore.Standard.Providers;
 using VCore.WPF.Converters;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.ItemsCollections.VirtualList;
@@ -37,6 +38,7 @@ using VPlayer.AudioStorage.InfoDownloader.Clients.GIfs;
 using VPlayer.AudioStorage.InfoDownloader.Clients.PCloud.Images;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
+using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Managers.Status;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.Players;
@@ -72,6 +74,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private readonly IPCloudAlbumCoverProvider iPCloudAlbumCoverProvider;
     private readonly IWindowManager windowManager;
     private readonly IStatusManager statusManager;
+    private readonly IAlbumsViewModel albumsViewModel;
+    private readonly IArtistsViewModel artistsViewModel;
     private readonly VLCPlayer vLcPlayer;
     private Dictionary<SongInPlayListViewModel, bool> playBookInCycle = new Dictionary<SongInPlayListViewModel, bool>();
     private Dictionary<SoundItem, PublicLink> publicLinks = new Dictionary<SoundItem, PublicLink>();
@@ -94,7 +98,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
       IWindowManager windowManager,
       IStatusManager statusManager,
       IVFfmpegProvider iVFfmpegProvider,
-      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, statusManager, viewModelsFactory, iVFfmpegProvider, vLCPlayer)
+      IAlbumsViewModel albumsViewModel,
+      IArtistsViewModel artistsViewModel,
+      ISettingsProvider settingsProvider,
+      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, statusManager, viewModelsFactory, iVFfmpegProvider, settingsProvider, vLCPlayer)
     {
       this.vPlayerRegionProvider = regionProvider ?? throw new ArgumentNullException(nameof(regionProvider));
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
@@ -102,6 +109,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
       this.iPCloudAlbumCoverProvider = iPCloudAlbumCoverProvider ?? throw new ArgumentNullException(nameof(iPCloudAlbumCoverProvider));
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
+      this.albumsViewModel = albumsViewModel ?? throw new ArgumentNullException(nameof(albumsViewModel));
+      this.artistsViewModel = artistsViewModel ?? throw new ArgumentNullException(nameof(artistsViewModel));
       UPnPManagerViewModel = uPnPManagerViewModel ?? throw new ArgumentNullException(nameof(uPnPManagerViewModel));
 
       SelectedMediaRendererViewModel = uPnPManagerViewModel.Renderers.View.FirstOrDefault();
@@ -804,7 +813,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     #region Initialize
 
     private List<IDisposable> modelsDisposables = new List<IDisposable>();
-    public override void Initialize()
+    public override async void Initialize()
     {
       IsPlaying = false;
 
@@ -828,6 +837,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
         .ObserveOn(Application.Current.Dispatcher)
         .Subscribe((x) => SelectedMediaRendererViewModel = x)
         .DisposeWith(this);
+
+      await artistsViewModel.GetViewModelsAsync();
+      await albumsViewModel.GetViewModelsAsync();
     }
 
     #endregion
@@ -1556,7 +1568,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
             if (downloadingArtist != null && songInPlayListViewModel.SongModel.Album != null)
             {
-              if ((songInPlayListViewModel.SongModel.Album.ArtistId == downloadingArtist.Id || downloadingArtist.Id == 0) 
+              if ((songInPlayListViewModel.SongModel.Album.ArtistId == downloadingArtist.Id || downloadingArtist.Id == 0)
                   && songInPlayListViewModel.SongModel.Album.Artist == null)
               {
                 songInPlayListViewModel.SongModel.Album.Artist = downloadingArtist;
@@ -1685,7 +1697,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       }
       else
       {
-        RequestUIDispatcher(() => { MarkViewModelAsChecked(viewmodel); });
+        MarkViewModelAsChecked(viewmodel);
       }
     }
 
@@ -2215,8 +2227,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
         try
         {
           var items = soundItemInPlaylistViewModel.ToList();
+          var notNullItems = items.OfType<SongInPlayListViewModel>().Where(x => x.ArtistViewModel != null && x.AlbumViewModel != null).ToList();
+          var nullItems = items.OfType<SongInPlayListViewModel>().Where(x => x.ArtistViewModel == null && x.AlbumViewModel == null).ToList();
 
-          foreach (var song in items.OfType<SongInPlayListViewModel>().Where(x => x.ArtistViewModel != null && x.AlbumViewModel != null))
+          foreach (var song in notNullItems)
           {
             if (actualDownloadingSongTask.IsCancellationRequested)
             {
@@ -2226,10 +2240,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
             if (song.Model.Duration <= 0)
               await GetMediaInfo(song.Model);
 
-            RequestUIDispatcher(() => { MarkViewModelAsChecked(song); });
+            MarkViewModelAsChecked(song);
           }
 
-          foreach (var item in items.OfType<SongInPlayListViewModel>().Where(x => x.ArtistViewModel == null && x.AlbumViewModel == null))
+          foreach (var item in nullItems)
           {
             if (actualDownloadingSongTask.IsCancellationRequested)
             {
