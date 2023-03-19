@@ -838,8 +838,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
         .Subscribe((x) => SelectedMediaRendererViewModel = x)
         .DisposeWith(this);
 
-      await artistsViewModel.GetViewModelsAsync();
-      await albumsViewModel.GetViewModelsAsync();
+      //await artistsViewModel.GetViewModelsAsync();
+      //await albumsViewModel.GetViewModelsAsync();
     }
 
     #endregion
@@ -1368,7 +1368,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
               if (downloadingArtist == null || string.IsNullOrEmpty(downloadingArtist.Name))
               {
-                downloadingArtist = storageManager.GetRepository<Artist>().FirstOrDefault(x => x.NormalizedName == normalizedArtistName);
+                downloadingArtist = storageManager.GetTempRepository<Artist>().FirstOrDefault(x => x.NormalizedName == normalizedArtistName);
 
                 if (downloadingArtist == null && !string.IsNullOrEmpty(normalizedArtistName))
                 {
@@ -1391,7 +1391,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
                                                  normalizedArtistName != normalizedDownloadingAristName)) &&
                   originalDownlaodedArtistName != artistName && downloadArtist)
               {
-                downloadingArtist = storageManager.GetRepository<Artist>().FirstOrDefault(x => x.NormalizedName == VPlayerStorageManager.GetNormalizedName(artistName));
+                downloadingArtist = storageManager.GetTempRepository<Artist>().FirstOrDefault(x => x.NormalizedName == VPlayerStorageManager.GetNormalizedName(artistName));
 
                 if (downloadingArtist == null)
                 {
@@ -1404,7 +1404,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
                     if (existingArtist == null)
                     {
-                      existingArtist = storageManager.GetRepository<Artist>().FirstOrDefault(x => x.NormalizedName == VPlayerStorageManager.GetNormalizedName(downloadingArtist.Name));
+                      existingArtist = storageManager.GetTempRepository<Artist>().FirstOrDefault(x => x.NormalizedName == VPlayerStorageManager.GetNormalizedName(downloadingArtist.Name));
                     }
 
                     if (existingArtist != null)
@@ -1582,6 +1582,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
               var song = downloadingAlbum.Songs
                 .FirstOrDefault(x => x.ItemModel.FileInfo.Name == songInPlayListViewModel.SongModel.ItemModel.FileInfo.Name);
 
+              if(song == null)
+              {
+                song = downloadingAlbum.Songs
+                  .FirstOrDefault(x => x.Name == songInPlayListViewModel.SongModel.Name);
+              }
+
               if (song != null && songInPlayListViewModel.SongModel.Id != song.Id)
               {
                 songInPlayListViewModel.SongModel = song;
@@ -1707,7 +1713,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     private Album GetBestFittingAlbumFromDb(string albumName, string artistName)
     {
-      var albums = storageManager.GetRepository<Album>()
+      var albums = storageManager.GetTempRepository<Album>()
         .Where(x => x.NormalizedName == VPlayerStorageManager.GetNormalizedName(albumName))
         .Include(x => x.Artist)
         .Include(x => x.Songs)
@@ -2099,7 +2105,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       await Task.Run(() =>
       {
-        var songsItems = storageManager.GetRepository<Song>()
+        var songsItems = storageManager.GetTempRepository<Song>()
           .Where(x => playlistItems.Select(y => y.Model.Id).Contains(x.ItemModel.Id))
           .Include(x => x.Album)
           .ThenInclude(x => x.Artist)

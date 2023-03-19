@@ -219,7 +219,7 @@ namespace VPlayer.Home.ViewModels.Albums
       {
         if (ViewModel.Model.Songs.Count(x => x.ItemModel != null) == 0)
         {
-          var songsDb = storageManager.GetRepository<Song>()
+          var songsDb = storageManager.GetTempRepository<Song>()
             .Where(x => x.Album == ViewModel.Model)
             .Include(x => x.ItemModel)
             .ThenInclude(x => x.FileInfo)
@@ -259,7 +259,7 @@ namespace VPlayer.Home.ViewModels.Albums
     {
       using (var context = new AudioDatabaseContext())
       {
-        var soundItems = storageManager.GetRepository<SoundItem>(context)
+        var soundItems = storageManager.GetTempRepository<SoundItem>(context)
           .Where(x => allSong.Select(y => y.Model.ItemModel.Id).Contains(x.Id));
 
         foreach (var song in soundItems)

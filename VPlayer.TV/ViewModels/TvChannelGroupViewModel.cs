@@ -108,7 +108,7 @@ namespace VPlayer.IPTV
 
           if (dbChannel?.TvItem == null)
           {
-            dbChannel = storageManager.GetRepository<TvChannel>().Include(x => x.TvItem).Include(x => x.TvSource).Single(x => x.Id == tvChannelGroupItem.IdTvChannel);
+            dbChannel = storageManager.GetTempRepository<TvChannel>().Include(x => x.TvItem).Include(x => x.TvSource).Single(x => x.Id == tvChannelGroupItem.IdTvChannel);
             tvChannelGroupItem.TvChannel = dbChannel;
           }
 

@@ -377,7 +377,7 @@ namespace VPlayer.Core.ViewModels
         {
           if (!wasBookamarksLaoded)
           {
-            var allBookmarks = storageManager.GetRepository<ItemBookmark>()
+            var allBookmarks = storageManager.GetTempRepository<ItemBookmark>()
               .Where(x => x.FileBrowserType == FileBrowserType);
 
             Application.Current.Dispatcher.Invoke(async () =>
@@ -550,7 +550,7 @@ namespace VPlayer.Core.ViewModels
 
         using (var context = new AudioStorage.AudioDatabase.AudioDatabaseContext())
         {
-          var existing = storageManager.GetRepository<ItemBookmark>(context).FirstOrDefault(x => x.Identificator == bookmark.Identificator);
+          var existing = storageManager.GetTempRepository<ItemBookmark>(context).FirstOrDefault(x => x.Identificator == bookmark.Identificator);
 
           if (existing == null)
           {

@@ -40,7 +40,7 @@ namespace VPlayer.IPTV.ViewModels
       {
         foreach (var item in Model.PlaylistItems)
         {
-          var tvGroup = storageManager.GetRepository<TvChannelGroup>().Include(x => x.TvChannelGroupItems).ThenInclude(x => x.TvChannel).ThenInclude(x => x.TvItem).SingleOrDefault(x => x.Id == item.IdReferencedItem);
+          var tvGroup = storageManager.GetTempRepository<TvChannelGroup>().Include(x => x.TvChannelGroupItems).ThenInclude(x => x.TvChannel).ThenInclude(x => x.TvItem).SingleOrDefault(x => x.Id == item.IdReferencedItem);
 
           if (tvGroup != null)
             SubItems.Add(viewModelsFactory.Create<TvChannelGroupPlaylistItemViewModel>(item, tvGroup));

@@ -78,7 +78,7 @@ namespace VPlayer.Core.ViewModels.TvShows
       return Task.Run(() =>
       {
         var tvShow = storage
-          .GetRepository<TvShow>()
+          .GetTempRepository<TvShow>()
           .Include(x => x.Seasons).ThenInclude(x => x.Episodes).ThenInclude(x => x.VideoItem).SingleOrDefault(x => x.Id == ModelId);
 
         if (tvShow != null)

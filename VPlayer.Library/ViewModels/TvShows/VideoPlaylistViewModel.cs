@@ -50,7 +50,7 @@ namespace VPlayer.Home.ViewModels.TvShows
     {
       return Task.Run(() =>
       {
-        var playlist = storage.GetRepository<VideoFilePlaylist>()
+        var playlist = storage.GetTempRepository<VideoFilePlaylist>()
           .Include(x => x.PlaylistItems)
           .ThenInclude(x => x.ReferencedItem)
           .SingleOrDefault(x => x.Id == Model.Id);
@@ -63,12 +63,12 @@ namespace VPlayer.Home.ViewModels.TvShows
 
           var list = new List<TvShowEpisodeInPlaylistViewModel>();
 
-          var fristEpisode = storage.GetRepository<TvShowEpisode>().Where(x => x.VideoItem.Id == playlistItems[0].IdReferencedItem).Include(x => x.TvShow).SingleOrDefault();
+          var fristEpisode = storage.GetTempRepository<TvShowEpisode>().Where(x => x.VideoItem.Id == playlistItems[0].IdReferencedItem).Include(x => x.TvShow).SingleOrDefault();
 
           if (fristEpisode != null)
           {
 
-            var tvShows = storage.GetRepository<TvShow>()
+            var tvShows = storage.GetTempRepository<TvShow>()
               .Where(x => x.Id == fristEpisode.TvShow.Id)
               .Include(x => x.Seasons)
               .ThenInclude(x => x.Episodes)

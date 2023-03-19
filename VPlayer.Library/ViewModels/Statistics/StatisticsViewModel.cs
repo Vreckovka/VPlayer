@@ -210,9 +210,9 @@ namespace VPlayer.Home.ViewModels.Statistics
       return Task.Run(() =>
       {
         var list = new List<IPlayableModel>();
-        var sounds = storageManager.GetRepository<SoundItem>().Include(x => x.FileInfo).Where(x => !x.IsPrivate).ToList();
-        var videos = storageManager.GetRepository<VideoItem>().Where(x => !x.IsPrivate).ToList();
-        var episodes = storageManager.GetRepository<TvShowEpisode>().Where(x => !x.IsPrivate).ToList();
+        var sounds = storageManager.GetTempRepository<SoundItem>().Include(x => x.FileInfo).Where(x => !x.IsPrivate).ToList();
+        var videos = storageManager.GetTempRepository<VideoItem>().Where(x => !x.IsPrivate).ToList();
+        var episodes = storageManager.GetTempRepository<TvShowEpisode>().Where(x => !x.IsPrivate).ToList();
 
         list.AddRange(sounds);
         list.AddRange(videos);
@@ -220,7 +220,7 @@ namespace VPlayer.Home.ViewModels.Statistics
 
         var itemsToDisplay = list.OrderByDescending(x => x.TimePlayed).Take(allSize).OfType<DomainEntity>().ToList();
 
-        var songsItems = storageManager.GetRepository<Song>()
+        var songsItems = storageManager.GetTempRepository<Song>()
           .Where(x => itemsToDisplay.OfType<SoundItem>().Select(y => y.Id).Contains(x.ItemModel.Id))
           .Include(x => x.Album)
           .ThenInclude(x => x.Artist)
@@ -239,7 +239,7 @@ namespace VPlayer.Home.ViewModels.Statistics
 
         var soundsToDisplay = sounds.OrderByDescending(x => x.TimePlayed).Take(subCategorySize).OfType<DomainEntity>().ToList();
 
-        songsItems = storageManager.GetRepository<Song>()
+        songsItems = storageManager.GetTempRepository<Song>()
           .Where(x => soundsToDisplay.OfType<SoundItem>().Select(y => y.Id).Contains(x.ItemModel.Id))
           .Include(x => x.Album)
           .ThenInclude(x => x.Artist)
@@ -274,9 +274,9 @@ namespace VPlayer.Home.ViewModels.Statistics
       return Task.Run(() =>
       {
         var list = new List<IPlaylist>();
-        var videos = storageManager.GetRepository<VideoFilePlaylist>().Where(x => !x.IsPrivate);
-        var sounds = storageManager.GetRepository<SoundItemFilePlaylist>().Where(x => !x.IsPrivate);
-        var episodes = storageManager.GetRepository<TvPlaylist>().Where(x => !x.IsPrivate);
+        var videos = storageManager.GetTempRepository<VideoFilePlaylist>().Where(x => !x.IsPrivate);
+        var sounds = storageManager.GetTempRepository<SoundItemFilePlaylist>().Where(x => !x.IsPrivate);
+        var episodes = storageManager.GetTempRepository<TvPlaylist>().Where(x => !x.IsPrivate);
 
         list.AddRange(sounds);
         list.AddRange(videos);

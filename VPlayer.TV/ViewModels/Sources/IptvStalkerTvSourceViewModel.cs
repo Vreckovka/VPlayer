@@ -278,7 +278,7 @@ namespace VPlayer.IPTV.ViewModels
     {
       if (serviceStalker != null)
       {
-        var dbEntity = storageManager.GetRepository<TvSource>().Include(x => x.TvChannels).ThenInclude(x => x.TvItem).SingleOrDefault(x => x.Id == Model.Id);
+        var dbEntity = storageManager.GetTempRepository<TvSource>().Include(x => x.TvChannels).ThenInclude(x => x.TvItem).SingleOrDefault(x => x.Id == Model.Id);
 
         if (dbEntity != null)
         {

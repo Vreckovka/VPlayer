@@ -233,7 +233,7 @@ namespace VPlayer.Core.FileBrowser
 
     private void PlayVideo(EventAction eventAction)
     {
-      VideoItem videoItem = storageManager.GetRepository<VideoItem>().SingleOrDefault(x => x.Source == Model.Indentificator);
+      VideoItem videoItem = storageManager.GetTempRepository<VideoItem>().SingleOrDefault(x => x.Source == Model.Indentificator);
 
       if (videoItem == null)
       {
@@ -267,7 +267,7 @@ namespace VPlayer.Core.FileBrowser
 
     private void PlaySound(EventAction eventAction)
     {
-      SoundItem soundItem = storageManager.GetRepository<SoundItem>().Include(x => x.FileInfo).SingleOrDefault(x => x.FileInfo.Source == Model.Indentificator);
+      SoundItem soundItem = storageManager.GetTempRepository<SoundItem>().Include(x => x.FileInfo).SingleOrDefault(x => x.FileInfo.Source == Model.Indentificator);
 
       if (soundItem == null)
       {

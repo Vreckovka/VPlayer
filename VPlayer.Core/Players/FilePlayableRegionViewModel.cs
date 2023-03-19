@@ -428,10 +428,10 @@ namespace VPlayer.Core.Players
 
           var totalPlayedTime = TimeSpan.FromMilliseconds(deltaTimeChanged);
 
-//#if !DEBUG
+#if !DEBUG
           ActualItem.Model.TimePlayed += totalPlayedTime;
           PlaylistTotalTimePlayed += totalPlayedTime;
-//#endif
+#endif
 
           int totalSec = (int)PlaylistTotalTimePlayed.TotalSeconds;
 
@@ -861,7 +861,7 @@ namespace VPlayer.Core.Players
           newModel.Source = fileInfo.FullName;
           newModel.Name = fileInfo.Name;
 
-          var existing = storageManager.GetRepository<TModel>()
+          var existing = storageManager.GetTempRepository<TModel>()
             .FirstOrDefault(x => x.Source == newModel.Source);
 
           if (existing == null)

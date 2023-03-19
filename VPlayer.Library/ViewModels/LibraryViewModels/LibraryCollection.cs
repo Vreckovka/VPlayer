@@ -398,9 +398,9 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
 
     public void Clear()
     {
-      Items.Clear();
-      LoadQuery = storageManager.GetRepository<TModel>();
-      FilteredItemsCollection.Clear();
+      Items?.Clear();
+      LoadQuery = storageManager.GetTempRepository<TModel>();
+      FilteredItemsCollection?.Clear();
       WasLoaded = false;
     }
 

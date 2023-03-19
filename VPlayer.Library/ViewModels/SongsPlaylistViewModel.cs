@@ -65,7 +65,7 @@ namespace VPlayer.Home.ViewModels
     private SerialDisposable serialDisposable = new SerialDisposable();
     public override async Task<IEnumerable<SoundItemInPlaylistViewModel>> GetItemsToPlay()
     {
-      var playlist = storageManager.GetRepository<SoundItemFilePlaylist>()
+      var playlist = storageManager.GetTempRepository<SoundItemFilePlaylist>()
         .Include(x => x.PlaylistItems)
         .ThenInclude(x => x.ReferencedItem)
         .ThenInclude(x => x.FileInfo)

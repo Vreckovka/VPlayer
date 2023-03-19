@@ -291,14 +291,14 @@ namespace VPlayer.IPTV
 
       if (firstActivation)
       {
-        var sources = storageManager.GetRepository<TvSource>().OrderBy(x => x.Name).ToList().Select(CreateTvSourceViewModel);
+        var sources = storageManager.GetTempRepository<TvSource>().OrderBy(x => x.Name).ToList().Select(CreateTvSourceViewModel);
 
         foreach (var source in sources)
         {
           TVSources.Add(source);
         }
 
-        var groups = storageManager.GetRepository<TvChannelGroup>()
+        var groups = storageManager.GetTempRepository<TvChannelGroup>()
           .Include(x => x.TvChannelGroupItems).ThenInclude(x => x.TvChannel).Include(x => x.TvItem).ToList()
           .Select(x => viewModelsFactory.Create<TvChannelGroupViewModel>(x));
 
@@ -307,7 +307,7 @@ namespace VPlayer.IPTV
           TVGroups.Add(group);
         }
 
-        var playLists = storageManager.GetRepository<TvPlaylist>()
+        var playLists = storageManager.GetTempRepository<TvPlaylist>()
           .Include(x => x.PlaylistItems)
           .ThenInclude(x => x.ReferencedItem)
           .Select(x => viewModelsFactory.Create<IPTVTreeViewPlaylistViewModel>(x));

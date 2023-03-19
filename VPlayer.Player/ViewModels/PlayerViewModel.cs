@@ -143,7 +143,7 @@ namespace VPlayer.Player.ViewModels
         {
           return 100;
         }
-      } 
+      }
       set
       {
         if (value != ActualViewModel?.Volume)
@@ -158,6 +158,25 @@ namespace VPlayer.Player.ViewModels
           }
 
           RaisePropertyChanged(nameof(ActualVolume));
+        }
+      }
+    }
+
+    #endregion
+
+    #region IsDuoMode
+
+    private bool isDuoMode;
+
+    public bool IsDuoMode
+    {
+      get { return isDuoMode; }
+      set
+      {
+        if (value != isDuoMode)
+        {
+          isDuoMode = value;
+          RaisePropertyChanged();
         }
       }
     }
@@ -325,14 +344,17 @@ namespace VPlayer.Player.ViewModels
 
         player.ObservePropertyChange(x => x.IsPlaying).Subscribe((x) =>
           {
-            if (x)
+            if (!IsDuoMode)
             {
-              foreach (var player1 in players)
+              if (x)
               {
-                if (ActualViewModel != player1)
+                foreach (var player1 in players)
                 {
-                  player1.Pause();
-                  player1.IsSelectedToPlay = false;
+                  if (ActualViewModel != player1)
+                  {
+                    player1.Pause();
+                    player1.IsSelectedToPlay = false;
+                  }
                 }
               }
             }
@@ -377,21 +399,10 @@ namespace VPlayer.Player.ViewModels
         {
           originalActualViewModel = ActualViewModel;
         }
-        else
+        else if (!ActualViewModel.IsPlaying)
         {
           ActualViewModel.IsSelectedToPlay = false;
         }
-
-      
-      }
-
-      if (newPlayer != null)
-      {
-        //volumeDisposable.Disposable = newPlayer
-        //  .OnVolumeChanged
-        //  .ObserveOn(Application.Current.Dispatcher)
-        //  .Throttle(TimeSpan.FromSeconds(0.5))
-        //  .Subscribe(x => RaisePropertyChanged(nameof(ActualVolume)));
       }
 
       ActualViewModel = newPlayer;
@@ -488,7 +499,7 @@ namespace VPlayer.Player.ViewModels
               mainWindow.WindowState != WindowState.Minimized &&
               !VFocusManager.IsAnyFocused())
           {
-            return filePlayable1; 
+            return filePlayable1;
           }
           else if (key == Key.MediaPlayPause ||
                    key == Key.MediaNextTrack ||

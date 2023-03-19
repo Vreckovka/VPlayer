@@ -203,6 +203,25 @@ namespace VPlayer.ViewModels
 
     public ICommand SwitchBehaviorCommand { get; set; }
 
+    #region PlayerViewModel
+
+    private PlayerViewModel playerViewModel;
+
+    public PlayerViewModel PlayerViewModel
+    {
+      get { return playerViewModel; }
+      set
+      {
+        if (value != playerViewModel)
+        {
+          playerViewModel = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #endregion
 
     #region Commads
@@ -275,9 +294,9 @@ namespace VPlayer.ViewModels
 
       NavigationViewModel.Items.Add(new NavigationItem(windowsPlayer));
 
-      var player = viewModelsFactory.Create<PlayerViewModel>();
-
-      player.IsActive = true;
+      PlayerViewModel = viewModelsFactory.Create<PlayerViewModel>();
+      PlayerViewModel.IsActive = true;
+      
       windowsPlayer.IsActive = true;
 
     }

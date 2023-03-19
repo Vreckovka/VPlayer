@@ -51,7 +51,7 @@ namespace VPlayer.AudioStorage.Scrappers
 
           statusManager.UpdateMessage(statusMessage);
 
-          var dbTvShow = storageManager.GetRepository<TvShow>().Include(x => x.Seasons).ThenInclude(x => x.Episodes).ThenInclude(x => x.VideoItem).Single(x => x.Id == tvShowId);
+          var dbTvShow = storageManager.GetTempRepository<TvShow>().Include(x => x.Seasons).ThenInclude(x => x.Episodes).ThenInclude(x => x.VideoItem).Single(x => x.Id == tvShowId);
 
           dbTvShow.InfoDownloadStatus = InfoDownloadStatus.Downloading;
 
@@ -160,7 +160,7 @@ namespace VPlayer.AudioStorage.Scrappers
       {
         try
         {
-          var dbTvShowSeason = storageManager.GetRepository<TvShowSeason>().Include(x => x.Episodes).ThenInclude(x => x.VideoItem).Single(x => x.Id == tvShowSeasonId);
+          var dbTvShowSeason = storageManager.GetTempRepository<TvShowSeason>().Include(x => x.Episodes).ThenInclude(x => x.VideoItem).Single(x => x.Id == tvShowSeasonId);
 
           dbTvShowSeason.InfoDownloadStatus = InfoDownloadStatus.Downloading;
 
@@ -248,7 +248,7 @@ namespace VPlayer.AudioStorage.Scrappers
     {
       return Task.Run(() =>
       {
-        var dbTvShow = storageManager.GetRepository<TvShow>().Include(x => x.Seasons).ThenInclude(x => x.Episodes).Single(x => x.Id == tvShowId);
+        var dbTvShow = storageManager.GetTempRepository<TvShow>().Include(x => x.Seasons).ThenInclude(x => x.Episodes).Single(x => x.Id == tvShowId);
 
         dbTvShow.Name = name;
 
@@ -264,7 +264,7 @@ namespace VPlayer.AudioStorage.Scrappers
     {
       return Task.Run(async () =>
       {
-        var dbTvShow = storageManager.GetRepository<TvShow>().Include(x => x.Seasons).ThenInclude(x => x.Episodes).Single(x => x.Id == tvShowId);
+        var dbTvShow = storageManager.GetTempRepository<TvShow>().Include(x => x.Seasons).ThenInclude(x => x.Episodes).Single(x => x.Id == tvShowId);
 
         dbTvShow.CsfdUrl = url;
 

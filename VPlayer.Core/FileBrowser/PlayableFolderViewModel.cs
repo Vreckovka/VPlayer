@@ -286,7 +286,7 @@ namespace VPlayer.Core.FileBrowser
 
           var playableFilesList = playableFiles.Concat(itemsInFolder).Where(x => x.FileType == FileType.Video).ToList();
 
-          var videoItems = storageManager.GetRepository<VideoItem>()
+          var videoItems = storageManager.GetTempRepository<VideoItem>()
             .Where(x => playableFilesList.Select(y => y.Model.Indentificator)
               .Contains(x.Source)).ToList();
 
@@ -349,7 +349,7 @@ namespace VPlayer.Core.FileBrowser
 
           var playableFilesList = playableFiles.Concat(itemsInFolder).Where(x => x.FileType == FileType.Sound).ToList();
 
-          var soundItems = storageManager.GetRepository<SoundItem>().Include(x => x.FileInfo)
+          var soundItems = storageManager.GetTempRepository<SoundItem>().Include(x => x.FileInfo)
                .Where(x => playableFilesList.Select(y => y.Model.Indentificator)
               .Contains(x.FileInfo.Indentificator)).ToList();
 

@@ -41,77 +41,152 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="50" />
-                <RowDefinition Height="5" />
-                <RowDefinition Height="50" />
-                <RowDefinition Height="5" />
-                <RowDefinition Height="50" />
-                <RowDefinition Height="5" />
-                <RowDefinition Height="50" />
+                <RowDefinition Height="auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
+            <UniformGrid Columns="1">
+                <Grid Margin="0,5,0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="185" />
+                        <ColumnDefinition Width="2" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
 
-            <!--  Vertical divader  -->
-            <Grid Grid.RowSpan="5"
-                  Grid.Column="1"
-                  Background="{StaticResource 10_WhiteTransparentBrush}" />
+                    <TextBlock Text="Download not downloaded info" />
 
-            <!--  First row  -->
-            <TextBlock Text="Delete all data" />
+                    <Button Grid.Row="0"
+                            Grid.Column="2"
+                            Command="{Binding DownloadNotDownloaded}"
+                            Content="Download" />
+
+                    <Grid Grid.Row="0"
+                          Grid.RowSpan="2"
+                          Grid.Column="1"
+                          Background="{StaticResource 10_WhiteTransparentBrush}" />
+
+                    <Grid Grid.Row="1"
+                          Grid.Column="0"
+                          Grid.ColumnSpan="3"
+                          Height="2"
+                          Margin="0,5,0,0"
+                          VerticalAlignment="Top"
+                          Background="{StaticResource 10_WhiteTransparentBrush}" />
+                </Grid>
+
+                <Grid Margin="0,5,0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="185" />
+                        <ColumnDefinition Width="2" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Clean data" />
+
+                    <Button Grid.Row="0"
+                            Grid.Column="2"
+                            Command="{Binding CleanData}"
+                            Content="Clean data" />
+
+                    <Grid Grid.Row="0"
+                          Grid.RowSpan="2"
+                          Grid.Column="1"
+                          Background="{StaticResource 10_WhiteTransparentBrush}" />
+
+                    <Grid Grid.Row="1"
+                          Grid.Column="0"
+                          Grid.ColumnSpan="3"
+                          Height="2"
+                          Margin="0,5,0,0"
+                          VerticalAlignment="Top"
+                          Background="{StaticResource 10_WhiteTransparentBrush}" />
+                </Grid>
+
+                <Grid Margin="0,5,0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="185" />
+                        <ColumnDefinition Width="2" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Build version" />
+
+                    <TextBlock Grid.Row="0"
+                               Grid.Column="2"
+                               Margin="15,0,0,0"
+                               Foreground="{StaticResource 50_WhiteTransparentBrush}"
+                               Text="{Binding BuildVersion}" />
+
+                    <Grid Grid.Row="0"
+                          Grid.RowSpan="2"
+                          Grid.Column="1"
+                          Background="{StaticResource 10_WhiteTransparentBrush}" />
+
+                    <Grid Grid.Row="1"
+                          Grid.Column="0"
+                          Grid.ColumnSpan="3"
+                          Height="2"
+                          Margin="0,5,0,0"
+                          VerticalAlignment="Top"
+                          Background="{StaticResource 10_WhiteTransparentBrush}" />
+                </Grid>
+
+                <Grid Margin="0,5,0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="185" />
+                        <ColumnDefinition Width="2" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Duo mode" />
+
+                    <CheckBox Grid.Row="0"
+                              Grid.Column="2"
+                              Margin="15,0,0,0"
+                              Foreground="{StaticResource 50_WhiteTransparentBrush}"
+                              IsChecked="{Binding DataContext.PlayerViewModel.IsDuoMode, RelativeSource={RelativeSource AncestorType=Window}}" />
+
+                    <Grid Grid.Row="0"
+                          Grid.RowSpan="2"
+                          Grid.Column="1"
+                          Background="{StaticResource 10_WhiteTransparentBrush}" />
+
+                    <Grid Grid.Row="1"
+                          Grid.Column="0"
+                          Grid.ColumnSpan="3"
+                          Height="2"
+                          Margin="0,5,0,0"
+                          VerticalAlignment="Top"
+                          Background="{StaticResource 10_WhiteTransparentBrush}" />
+                </Grid>
+
+            </UniformGrid>
+
+            <!--<TextBlock Text="Delete all data" />
             <Button Grid.Column="2"
                     Command="{Binding DeleteAllData}"
-                    Content="Delete all data" />
-
-            <!--  Horizontal divader row 0 -> grid.row 1  -->
-            <Grid Grid.Row="1"
-                  Grid.ColumnSpan="3"
-                  Height="2"
-                  VerticalAlignment="Top"
-                  Background="{StaticResource 10_WhiteTransparentBrush}" />
-
-            <!--  Second row  -->
-            <TextBlock Grid.Row="2" Text="Download not downloaded info" />
-
-            <Button Grid.Row="2"
-                    Grid.Column="2"
-                    Command="{Binding DownloadNotDownloaded}"
-                    Content="Download" />
-
-            <Grid Grid.Row="3"
-                  Grid.ColumnSpan="3"
-                  Height="2"
-                  VerticalAlignment="Top"
-                  Background="{StaticResource 10_WhiteTransparentBrush}" />
-
-            <StackPanel Grid.Row="4"
-                        Grid.ColumnSpan="3"
-                        Orientation="Horizontal">
-                <TextBlock Width="170" Text="Clean data" />
-
-                <Button Command="{Binding CleanData}" Content="Clean data" />
-            </StackPanel>
-
-            <!--  Horizontal divader row 2 -> grid.row 3  -->
-            <Grid Grid.Row="5"
-                  Grid.ColumnSpan="3"
-                  Height="2"
-                  VerticalAlignment="Top"
-                  Background="{StaticResource 10_WhiteTransparentBrush}" />
+                    Content="Delete all data" />-->
 
 
-            <!--  Second row  -->
-            <TextBlock Grid.Row="6"
-                       VerticalAlignment="Center"
-                       Text="Build version" />
-
-            <TextBlock Grid.Row="6"
-                       Grid.Column="2"
-                       Margin="15,0,0,0"
-                       Foreground="{StaticResource 50_WhiteTransparentBrush}"
-                       Text="{Binding BuildVersion}" />
 
             <ItemsControl Grid.Row="7"
+                          Grid.Column="0"
                           Grid.ColumnSpan="3"
                           Background="#151515"
                           ItemsSource="{Binding Settings}">

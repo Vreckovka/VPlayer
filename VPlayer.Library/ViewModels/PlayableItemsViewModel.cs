@@ -136,11 +136,21 @@ namespace VPlayer.Home.ViewModels
 
     protected virtual async void OnRefreshData()
     {
-      LibraryCollection.Clear();
-      await LibraryCollection.LoadInitilizedDataAsync(LoadQuery);
+      try
+      {
+        LoadingStatus.IsLoading = true;
 
-      RaisePropertyChanged(nameof(View));
-      SearchKeyWord = null;
+        LibraryCollection.Clear();
+
+        await LibraryCollection.LoadInitilizedDataAsync(LoadQuery);
+
+        RaisePropertyChanged(nameof(View));
+        SearchKeyWord = null;
+      }
+      finally
+      {
+        LoadingStatus.IsLoading = false;
+      }
     }
 
 
@@ -248,7 +258,7 @@ namespace VPlayer.Home.ViewModels
 
       if (firstActivation)
       {
-        Task.Run(() => SubscribeToChanges());
+        SubscribeToChanges();
       }
     }
 
@@ -259,34 +269,38 @@ namespace VPlayer.Home.ViewModels
     private bool wasSubscribed;
     private void SubscribeToChanges()
     {
-      if (!wasSubscribed)
+      LoadingStatus.IsLoading = true;
+
+      Task.Run(() =>
       {
-        wasSubscribed = true;
-
-        this.storageManager.SubscribeToItemChange<TModel>(ItemsChanged).DisposeWith(this);
-
-        storageManager.ActionIsDone.Subscribe((x) =>
+        if (!wasSubscribed)
         {
-          Application.Current.Dispatcher.Invoke(() =>
+          wasSubscribed = true;
+
+          this.storageManager.SubscribeToItemChange<TModel>(ItemsChanged).DisposeWith(this);
+
+          storageManager.ActionIsDone.Subscribe((x) =>
           {
-            LibraryCollection.RequestReloadVirtulizedPlaylist();
-            RaisePropertyChanged(nameof(ViewModels));
-            RaisePropertyChanged(nameof(View));
-          });
-        }).DisposeWith(this);
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+              LibraryCollection.RequestReloadVirtulizedPlaylist();
+              RaisePropertyChanged(nameof(ViewModels));
+              RaisePropertyChanged(nameof(View));
+            });
+          }).DisposeWith(this);
 
-        LibraryCollection.LoadData.Subscribe(_ =>
-        {
-          Application.Current.Dispatcher.Invoke(() =>
+          LibraryCollection.LoadData.Subscribe(_ =>
           {
-            RaisePropertyChanged(nameof(ViewModels));
-            RaisePropertyChanged(nameof(View));
-          });
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+              LoadingStatus.IsLoading = false;
+              RaisePropertyChanged(nameof(ViewModels));
+              RaisePropertyChanged(nameof(View));
+            });
 
-        }).DisposeWith(this);
-
-
-      }
+          }).DisposeWith(this);
+        }
+      });
     }
 
     #endregion

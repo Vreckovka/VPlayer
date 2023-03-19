@@ -77,10 +77,10 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #endregion
 
-    #region GetRepository
+    #region GetTempRepository
 
     private List<KeyValuePair<DateTime, DbContext>> contexts = new List<KeyValuePair<DateTime, DbContext>>();
-    public DbSet<T> GetRepository<T>(DbContext dbContext = null) where T : class
+    public DbSet<T> GetTempRepository<T>(DbContext dbContext = null) where T : class
     {
       if (dbContext == null)
       {
@@ -91,6 +91,21 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
         oldContexts.ForEach(x => x.Value.Dispose());
         contexts.RemoveAll(x => oldContexts.Contains(x));
+      }
+
+
+      return dbContext.Set<T>();
+    }
+
+    #endregion
+
+    #region GetRepository
+
+    public DbSet<T> GetRepository<T>(DbContext dbContext = null) where T : class
+    {
+      if (dbContext == null)
+      {
+        dbContext = new AudioDatabaseContext();
       }
 
 
@@ -358,7 +373,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       {
         using (var context = new AudioDatabaseContext())
         {
-          var albums = GetRepository<Album>(context).Where(x => x.Songs.Count == 0);
+          var albums = GetTempRepository<Album>(context).Where(x => x.Songs.Count == 0);
 
           foreach (var album in albums)
           {
@@ -369,7 +384,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           var result = context.SaveChanges();
 
-          var artists = GetRepository<Artist>(context).Where(x => x.Albums.Count == 0);
+          var artists = GetTempRepository<Artist>(context).Where(x => x.Albums.Count == 0);
 
           foreach (var artist in artists)
           {
@@ -638,7 +653,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           using (var context = new AudioDatabaseContext())
           {
-            var foundEntity = GetRepository<Song>(context).Include(x => x.Album.Songs).SingleOrDefault(x => x.Id == newVersion.Id);
+            var foundEntity = GetTempRepository<Song>(context).Include(x => x.Album.Songs).SingleOrDefault(x => x.Id == newVersion.Id);
 
             if (foundEntity != null)
             {
@@ -693,14 +708,14 @@ namespace VPlayer.AudioStorage.AudioDatabase
           {
             var ids = list.Select(x => x.Id);
 
-            var foundEntities = GetRepository<Song>(context).Include(x => x.Album).ThenInclude(x => x.Songs).Where(x => ids.Contains(x.Id));
+            var foundEntities = GetTempRepository<Song>(context).Include(x => x.Album).ThenInclude(x => x.Songs).Where(x => ids.Contains(x.Id));
 
             foreach (var foundEntity in foundEntities)
             {
               if (foundEntity.Album?.Songs != null && (foundEntity.Album.Songs?.Count == 0 || foundEntity.Album.Songs[0].Id == foundEntity.Id))
               {
                 var album = foundEntity.Album;
-                var dbArtist = GetRepository<Artist>(context).Include(x => x.Albums).SingleOrDefault(x => x.Albums.Any(album => album.Id == foundEntity.Album.Id));
+                var dbArtist = GetTempRepository<Artist>(context).Include(x => x.Albums).SingleOrDefault(x => x.Albums.Any(album => album.Id == foundEntity.Album.Id));
 
                 if (dbArtist?.Albums != null && (dbArtist.Albums.Count == 0 || (dbArtist.Albums.First().Id == foundEntity.Album.Id && dbArtist.Albums.Count == 1)))
                 {
@@ -802,7 +817,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
         TEntity foundEntity = default(TEntity);
 
         if (entity.Id > 0)
-          foundEntity = GetRepository<TEntity>(context).SingleOrDefault(x => x.Id == entity.Id);
+          foundEntity = GetTempRepository<TEntity>(context).SingleOrDefault(x => x.Id == entity.Id);
 
         if (foundEntity == null)
         {
@@ -837,7 +852,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
     {
       using (var context = new AudioDatabaseContext())
       {
-        var foundEntity = GetRepository<Album>(context).SingleOrDefault(x => x.Id == entity.Id);
+        var foundEntity = GetTempRepository<Album>(context).SingleOrDefault(x => x.Id == entity.Id);
 
         if (foundEntity == null)
         {
@@ -919,7 +934,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           using (var context = new AudioDatabaseContext())
           {
-            var foundEntity = GetRepository<TEntity>(context).SingleOrDefault(x => x.Id == newVersion.Id);
+            var foundEntity = GetTempRepository<TEntity>(context).SingleOrDefault(x => x.Id == newVersion.Id);
 
             if (foundEntity != null && !EqualityComparer<TEntity>.Default.Equals(foundEntity, newVersion))
             {
@@ -964,7 +979,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           using (var context = new AudioDatabaseContext())
           {
-            var foundEntities = GetRepository<TEntity>(context).Where(dbEntity => newVersionsList.Select(x => x.Id).Contains(dbEntity.Id));
+            var foundEntities = GetTempRepository<TEntity>(context).Where(dbEntity => newVersionsList.Select(x => x.Id).Contains(dbEntity.Id));
 
             foreach (var dbEntity in foundEntities)
             {
@@ -1015,7 +1030,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       {
         using (var context = new AudioDatabaseContext())
         {
-          var foundEntity = GetRepository<TEntity>(context).SingleOrDefault(x => x.Id == entity.Id);
+          var foundEntity = GetTempRepository<TEntity>(context).SingleOrDefault(x => x.Id == entity.Id);
           bool result = false;
 
           if (foundEntity != null)
@@ -1046,7 +1061,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
     {
       using (var context = new AudioDatabaseContext())
       {
-        var foundEntity = GetRepository<T>(context).SingleOrDefault(x => x.Id == entity.Id);
+        var foundEntity = GetTempRepository<T>(context).SingleOrDefault(x => x.Id == entity.Id);
 
         if (foundEntity != null)
         {
@@ -1075,7 +1090,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
         context = new AudioDatabaseContext();
       }
 
-      var tvShowRepo = GetRepository<Album>(context);
+      var tvShowRepo = GetTempRepository<Album>(context);
 
       var foundEntity = tvShowRepo.Include(x => x.Songs)
         .ThenInclude(x => x.ItemModel)
@@ -1138,7 +1153,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
     {
       using (var context = new AudioDatabaseContext())
       {
-        var foundEntity = GetRepository<Artist>(context)
+        var foundEntity = GetTempRepository<Artist>(context)
           .Include(x => x.Albums)
           .SingleOrDefault(x => x.Id == artist.Id);
 
@@ -1187,8 +1202,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
         {
           using (var context = new AudioDatabaseContext())
           {
-            var playlistRepo = GetRepository<TPlaylist>(context);
-            var itemsRepo = GetRepository<TPlaylistItem>(context);
+            var playlistRepo = GetTempRepository<TPlaylist>(context);
+            var itemsRepo = GetTempRepository<TPlaylistItem>(context);
 
             var entityPlaylist = playlistRepo.Include(x => x.PlaylistItems).SingleOrDefault(x => x.Id == songsPlaylist.Id);
 
@@ -1246,7 +1261,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
         if (playlist is SoundItemFilePlaylist)
         {
-          foundPlaylist = (IPlaylist<TPlaylistItem>)GetRepository<SoundItemFilePlaylist>(context)
+          foundPlaylist = (IPlaylist<TPlaylistItem>)GetTempRepository<SoundItemFilePlaylist>(context)
             .Include(x => x.PlaylistItems)
             .ThenInclude(x => x.ReferencedItem.FileInfo)
             .Include(x => x.ActualItem.ReferencedItem)
@@ -1255,7 +1270,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
         }
         else
         {
-          foundPlaylist = GetRepository<TPlaylist>(context)
+          foundPlaylist = GetTempRepository<TPlaylist>(context)
             .Include(x => x.PlaylistItems)
             .ThenInclude(x => x.ReferencedItem)
             .Include(x => x.ActualItem.ReferencedItem)
@@ -1453,7 +1468,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
     {
       using (var context = new AudioDatabaseContext())
       {
-        var tvShowRepo = GetRepository<TvShow>(context);
+        var tvShowRepo = GetTempRepository<TvShow>(context);
 
         var foundEntity = tvShowRepo.Include(x => x.Seasons).ThenInclude(x => x.Episodes).SingleOrDefault(x => x.Id == tvShow.Id);
         bool result = false;
@@ -1552,7 +1567,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       {
         using (var context = new AudioDatabaseContext())
         {
-          var repository = GetRepository<Album>(context);
+          var repository = GetTempRepository<Album>(context);
 
           var notUpdatedAlbums = repository
             .Where(x => x.InfoDownloadStatus == InfoDownloadStatus.Waiting || x.InfoDownloadStatus == InfoDownloadStatus.Downloading)
@@ -1607,7 +1622,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
       {
         using (var context = new AudioDatabaseContext())
         {
-          var repository = GetRepository<TvShow>(context);
+          var repository = GetTempRepository<TvShow>(context);
 
           repository.Add(tvShow);
 

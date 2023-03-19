@@ -40,9 +40,9 @@ namespace VPlayer.Home.ViewModels.IPTV
     {
       return Task.Run(() =>
       {
-        var groups = storageManager.GetRepository<TvChannelGroup>().Include(x => x.TvChannelGroupItems).ThenInclude(x => x.TvChannel).ThenInclude(x => x.TvSource).Include(x => x.TvItem);
+        var groups = storageManager.GetTempRepository<TvChannelGroup>().Include(x => x.TvChannelGroupItems).ThenInclude(x => x.TvChannel).ThenInclude(x => x.TvSource).Include(x => x.TvItem);
 
-        var items = storageManager.GetRepository<TvPlaylist>()
+        var items = storageManager.GetTempRepository<TvPlaylist>()
           .Include(x => x.PlaylistItems)
           .ThenInclude(x => x.ReferencedItem)
           .SelectMany(x => x.PlaylistItems);

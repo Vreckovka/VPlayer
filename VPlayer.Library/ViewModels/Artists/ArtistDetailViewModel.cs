@@ -158,7 +158,7 @@ namespace VPlayer.Home.ViewModels.Artists
     {
       return Task.Run(async () =>
       {
-        var albumsDb = storageManager.GetRepository<Album>()
+        var albumsDb = storageManager.GetTempRepository<Album>()
           .Where(x => x.Artist == ViewModel.Model)
           .Include(x => x.Songs)
           .ThenInclude(x => x.ItemModel)

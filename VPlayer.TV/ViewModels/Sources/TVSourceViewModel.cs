@@ -234,7 +234,7 @@ namespace VPlayer.IPTV.ViewModels
 
     public virtual void LoadChannels()
     {
-      var dbEntity = storageManager.GetRepository<TvSource>().Include(x => x.TvChannels).ThenInclude(x => x.TvItem).SingleOrDefault(x => x.Id == Model.Id);
+      var dbEntity = storageManager.GetTempRepository<TvSource>().Include(x => x.TvChannels).ThenInclude(x => x.TvItem).SingleOrDefault(x => x.Id == Model.Id);
 
       if (dbEntity != null)
       {

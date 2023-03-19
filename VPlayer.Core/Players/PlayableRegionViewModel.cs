@@ -1619,7 +1619,7 @@ namespace VPlayer.Core.ViewModels
 
         bool success = false;
 
-        var storedPlaylist = storageManager.GetRepository<TPlaylistModel>()
+        var storedPlaylist = storageManager.GetTempRepository<TPlaylistModel>()
           .Include(x => x.PlaylistItems)
           .ThenInclude(x => x.ReferencedItem)
           .OrderByDescending(x => x.IsUserCreated)

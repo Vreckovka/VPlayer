@@ -33,6 +33,7 @@
     <Color x:Key="GreenColor">#36d66e</Color>
     <Color x:Key="GreenColor2">#4fd66c</Color>
     <Color x:Key="GreenColor3">#a0ed53</Color>
+
     <Color x:Key="CookieColor">#E6CEA0</Color>
 
     <Color x:Key="235_DefaultWhiteColor"

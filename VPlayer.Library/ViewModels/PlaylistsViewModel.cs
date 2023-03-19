@@ -63,7 +63,7 @@ namespace VPlayer.Home.ViewModels
     {
       get
       {
-        return storageManager.GetRepository<TPlaylistItemModel>().Include(x => x.ReferencedItem);
+        return storageManager.GetTempRepository<TPlaylistItemModel>().Include(x => x.ReferencedItem);
       }
     }
 
@@ -220,7 +220,7 @@ namespace VPlayer.Home.ViewModels
 
       actualSkip += initTake;
 
-      var privateItemsL = storageManager.GetRepository<TPlaylistModel>().OrderByDescending(x => x.LastPlayed)
+      var privateItemsL = storageManager.GetTempRepository<TPlaylistModel>().OrderByDescending(x => x.LastPlayed)
         .Where(x => x.IsPrivate)
         .Select(x => viewModelsFactory.Create<TViewModel>(x))
         .ToList();

@@ -31,11 +31,12 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
     Task ClearStorage();
     Task CleanData();
     Task DownloadAllNotYetDownloaded(bool tryDownloadBroken = false);
+    DbSet<T> GetTempRepository<T>(DbContext dbContext = null) where T : class;
     DbSet<T> GetRepository<T>(DbContext dbContext = null) where T : class;
 
     #region Generic methods
 
-    bool StoreEntity<TEntity>(TEntity model, out TEntity entityModel, bool log = true) where TEntity : class, IEntity;
+   bool StoreEntity<TEntity>(TEntity model, out TEntity entityModel, bool log = true) where TEntity : class, IEntity;
     bool StoreAlbum(Album model, out Album entityModel, bool log = true);
     bool StoreRangeEntity<TEntity>(List<TEntity> entities, bool log = true) where TEntity : class, IEntity;
 

@@ -87,7 +87,7 @@ namespace VPlayer.Core.ViewModels.Artists
       {
         try
         {
-          var songs = storage.GetRepository<Artist>()
+          var songs = storage.GetTempRepository<Artist>()
           .Include(x => x.Albums)
           .ThenInclude(x => x.Songs)
           .ThenInclude(x => x.ItemModel)
@@ -179,7 +179,7 @@ namespace VPlayer.Core.ViewModels.Artists
       }
       else if (Model.AlbumIdCover != null && albumCoverPath == null)
       {
-        albumCoverPath = storage.GetRepository<Album>().SingleOrDefault(x => x.Id == Model.AlbumIdCover)?.AlbumFrontCoverFilePath;
+        albumCoverPath = storage.GetTempRepository<Album>().SingleOrDefault(x => x.Id == Model.AlbumIdCover)?.AlbumFrontCoverFilePath;
 
         byte[] image = null;
 

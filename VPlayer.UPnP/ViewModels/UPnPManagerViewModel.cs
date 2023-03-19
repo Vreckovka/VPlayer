@@ -175,7 +175,7 @@ namespace VPlayer.UPnP.ViewModels
     {
       return Task.Run(async () =>
       {
-        var mediaServersDb = storageManager.GetRepository<UPnPMediaServer>().Include(x => x.UPnPDevice).ThenInclude(x => x.Services).ToList();
+        var mediaServersDb = storageManager.GetTempRepository<UPnPMediaServer>().Include(x => x.UPnPDevice).ThenInclude(x => x.Services).ToList();
 
         foreach (var dbMediaServer in mediaServersDb)
         {
@@ -219,7 +219,7 @@ namespace VPlayer.UPnP.ViewModels
     {
       return Task.Run(async () =>
       {
-        var renderersDb = storageManager.GetRepository<UPnPMediaRenderer>().Include(x => x.UPnPDevice).ThenInclude(x => x.Services).ToList();
+        var renderersDb = storageManager.GetTempRepository<UPnPMediaRenderer>().Include(x => x.UPnPDevice).ThenInclude(x => x.Services).ToList();
 
         foreach (var dbMediaRenderer in renderersDb)
         {
@@ -339,7 +339,7 @@ namespace VPlayer.UPnP.ViewModels
     public async void PairMediaServer(MediaServerViewModel mediaServerViewModel)
     {
       var context = new AudioDatabaseContext();
-      var songsRepo = storageManager.GetRepository<Song>(context).OrderBy(x => x.ItemModel.FileInfo.Source).ToList();
+      var songsRepo = storageManager.GetTempRepository<Song>(context).OrderBy(x => x.ItemModel.FileInfo.Source).ToList();
 
       await mediaServerViewModel.DiscoverMediaServer();
 
