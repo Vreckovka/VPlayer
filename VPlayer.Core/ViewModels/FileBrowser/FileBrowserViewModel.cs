@@ -26,6 +26,7 @@ using VCore.WPF.Modularity.Events;
 using VCore.WPF.Modularity.RegionProviders;
 using VCore.WPF.ViewModels;
 using VCore.WPF.ViewModels.WindowsFiles;
+using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.FolderStructure;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.FileBrowser;
@@ -217,6 +218,29 @@ namespace VPlayer.Core.ViewModels
         {
           var allFolders = RootFolder.SubItems.ViewModels.OfType<TFolderViewModel>().SelectManyRecursive(x => x.SubItems.ViewModels.OfType<TFolderViewModel>());
           allFoldersList = allFolders.Concat(RootFolder.SubItems.ViewModels.OfType<TFolderViewModel>()).ToList();
+
+          allFoldersList.Add(RootFolder);
+
+        }
+
+        return allFoldersList;
+      }
+    }
+
+    #endregion
+
+    #region AllLoadedItems
+
+    public IEnumerable<TreeViewItemViewModel> AllLoadedItems
+    {
+      get
+      {
+        List<TreeViewItemViewModel> allFoldersList = new List<TreeViewItemViewModel>();
+
+        if (RootFolder != null)
+        {
+          var allFolders = RootFolder.SubItems.ViewModels.SelectManyRecursive(x => x.SubItems.ViewModels);
+          allFoldersList = allFolders.Concat(RootFolder.SubItems.ViewModels).ToList();
 
           allFoldersList.Add(RootFolder);
 
@@ -504,6 +528,15 @@ namespace VPlayer.Core.ViewModels
           Items = new VirtualList<TreeViewItemViewModel>(generator);
 
           IsBookmarkMenuOpened = false;
+
+          //var pinnedItems = await Task.Run(() =>
+          //{
+          //  return storageManager.GetTempRepository<PinnedItem>().Where(x => x.PinnedType == PinnedType.SoundFile ||
+          //                                                                   x.PinnedType == PinnedType.SoundFolder ||
+          //                                                                   x.PinnedType == PinnedType.VideoFile ||
+          //                                                                   x.PinnedType == PinnedType.VideoFolder 
+          //                                                                   ).ToList();
+          //});
         }
       }
       catch (Exception ex)

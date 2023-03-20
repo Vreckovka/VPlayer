@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore.Standard.Factories.ViewModels;
 using VCore.WPF.Modularity.RegionProviders;
+using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Interfaces.ViewModels;
 using VPlayer.Core.Modularity.Regions;
@@ -43,6 +44,11 @@ namespace VPlayer.Home.ViewModels.TvShows
                                                                                                    .ThenInclude(x => x.Episodes.OrderBy(y => y.EpisodeNumber))
                                                                                                    .ThenInclude(x => x.VideoItem);
     public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
+    protected override void SetupNewPinnedItem(PinnedItem pinnedItem)
+    {
+   
+    }
+
     public IEventAggregator EventAggregator { get; }
 
     #endregion Properties

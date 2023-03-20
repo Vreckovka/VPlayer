@@ -5,6 +5,7 @@ using VCore.Standard.Factories.ViewModels;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Managers;
 using VCore.WPF.ViewModels.WindowsFiles;
+using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.FileBrowser;
 using VPlayer.WindowsPlayer.ViewModels.Windows;
@@ -29,6 +30,7 @@ namespace VPlayer.Home.ViewModels.FileBrowser
     }
 
     #region CreateNewFolderItem
+
 
     protected override FolderViewModel<PlayableFileViewModel> CreateNewFolderItem(FolderInfo directoryInfo)
     {

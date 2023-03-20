@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VPlayer.AudioStorage.AudioDatabase;
 
 namespace VPlayer.AudioStorage.Migrations
 {
     [DbContext(typeof(AudioDatabaseContext))]
-    partial class AudioDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20230319140239_PinnedItem")]
+    partial class PinnedItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

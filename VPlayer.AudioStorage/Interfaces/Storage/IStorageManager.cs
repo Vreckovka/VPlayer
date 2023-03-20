@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -70,7 +71,9 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
 
     Task<int> StoreTvShow(TvShow tvShow);
 
+    Task<PinnedItem> AddPinnedItem(PinnedItem pinnedItem);
+    Task<bool> RemovePinnedItem(PinnedItem pinnedItem);
 
-    #endregion 
+    #endregion
   }
 }

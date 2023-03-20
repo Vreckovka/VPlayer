@@ -1,4 +1,7 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Prism.Events;
 using VCore;
@@ -11,8 +14,13 @@ using VPlayer.Core.ViewModels.Artists;
 
 namespace VPlayer.Library.ViewModels
 {
+  public interface IPlaylistViewModel
+  {
+
+  }
+
   public abstract class PlaylistViewModel<TPlaylistItemViewModel, TPlaylistModel, TPlaylistItemModel> :
-    PlayableViewModel<TPlaylistItemViewModel, TPlaylistModel>
+    PlayableViewModel<TPlaylistItemViewModel, TPlaylistModel>, IPlaylistViewModel
     where TPlaylistModel : class, IPlaylist<TPlaylistItemModel>
     where TPlaylistItemModel : class, IEntity
   {
@@ -53,10 +61,7 @@ namespace VPlayer.Library.ViewModels
 
     public string Header
     {
-      get
-      {
-        return ToString();
-      }
+      get { return ToString(); }
     }
 
 
@@ -98,6 +103,30 @@ namespace VPlayer.Library.ViewModels
 
     public int? ItemsCount => Model.ItemCount;
     public long? HashCode => Model.HashCode;
+
+
+
+    #region DisplayName
+
+    public string DisplayName
+    {
+      get
+      {
+        if (Directory.Exists(Name))
+          return new DirectoryInfo(Name).Name;
+
+        if (File.Exists(Name))
+          return new System.IO.FileInfo(Name).Name;
+
+        return Name;
+      }
+    }
+
+    #endregion
+
+
+
+
 
     #endregion
 
@@ -148,9 +177,46 @@ namespace VPlayer.Library.ViewModels
 
     #endregion
 
+    #region PinItem
+
+    private ActionCommand pinItem;
+
+    public ICommand PinItem
+    {
+      get
+      {
+        if (pinItem == null)
+        {
+          pinItem = new ActionCommand(OnPinItem);
+        }
+
+        return pinItem;
+      }
+    }
+
+    public async void OnPinItem()
+    {
+      var foundItem = storageManager.GetTempRepository<PinnedItem>().SingleOrDefault(x => x.Description == Model.Id.ToString() &&
+                                                                                          x.PinnedType == GetPinnedType(Model));
+
+      if (foundItem == null)
+      {
+        var newPinnedItem = new PinnedItem();
+        newPinnedItem.Description = Model.Id.ToString();
+        newPinnedItem.PinnedType = GetPinnedType(Model);
+
+        var item = await Task.Run(() => storageManager.AddPinnedItem(newPinnedItem));
+
+        PinnedItem = item;
+      }
+    }
+
+    #endregion
+
     #endregion
 
     #region Methods
+
 
     #region RaisePropertyChanges
 
@@ -179,6 +245,8 @@ namespace VPlayer.Library.ViewModels
 
     #endregion
 
+
+    protected abstract PinnedType GetPinnedType(TPlaylistModel model);
 
     #endregion
 

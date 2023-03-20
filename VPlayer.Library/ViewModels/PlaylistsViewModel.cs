@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +25,7 @@ namespace VPlayer.Home.ViewModels
 {
   public abstract class PlaylistsViewModel<TView, TViewModel, TPlaylistModel, TPlaylistItemModel, TItemModel> : PlayableItemsViewModel<TView, TViewModel, TPlaylistModel>
     where TView : class, IView
-    where TViewModel : class, INamedEntityViewModel<TPlaylistModel>, IBusy
+    where TViewModel : class, INamedEntityViewModel<TPlaylistModel>, IBusy, IPinned
     where TPlaylistModel : class, INamedEntity, IFilePlaylist<TPlaylistItemModel>
     where TPlaylistItemModel : class, IItemInPlaylist<TItemModel>
   {
@@ -39,6 +40,8 @@ namespace VPlayer.Home.ViewModels
     }
 
     protected IEnumerable<TViewModel> AllItems { get; set; }
+
+    protected override bool SubscribeToPinned => true;
 
     #region PrivateItems
 
@@ -123,7 +126,7 @@ namespace VPlayer.Home.ViewModels
     }
 
     #endregion
-    
+
     public override IQueryable<TPlaylistModel> LoadQuery => base.LoadQuery.OrderByDescending(x => x.LastPlayed).Where(x => !x.IsPrivate);
 
     public ObservableCollection<TViewModel> ViewCollection
@@ -225,9 +228,10 @@ namespace VPlayer.Home.ViewModels
         .Select(x => viewModelsFactory.Create<TViewModel>(x))
         .ToList();
 
-
-      Application.Current.Dispatcher.Invoke(() =>
+      Application.Current.Dispatcher.Invoke(async () =>
       {
+        await LoadPinnedItems();
+
         LibraryCollection.FilteredItemsCollection = new ObservableCollection<TViewModel>(userCreated.Concat(notSavedPlaylists));
 
         RaisePropertyChanged(nameof(ViewCollection));
@@ -261,6 +265,60 @@ namespace VPlayer.Home.ViewModels
           playList.Model.ActualItem = actualItem;
       }
     }
+
+    private async Task LoadPinnedItems()
+    {
+      var items = await Task.Run(() =>
+      {
+        return storageManager.GetTempRepository<PinnedItem>().ToList();
+      });
+
+      var typedPinnedItems = GetPinnedTypedItems(items);
+
+      var vms = typedPinnedItems.Select(x => viewModelsFactory.Create<PinnedItemViewModel>(x)).ToList();
+
+      PinnedItems.AddRange(vms);
+
+      foreach (var pinnedItemViewModel in vms.Where(x => x.Model.PinnedType == PinnedType.VideoPlaylist || x.Model.PinnedType == PinnedType.SoundPlaylist))
+      {
+        var item = ViewModels.SingleOrDefault(x => x.ModelId == int.Parse(pinnedItemViewModel.Model.Description));
+
+        if (item != null)
+        {
+          pinnedItemViewModel.ItemObject = item;
+
+          item.PinnedItem = pinnedItemViewModel.Model;
+          item.IsPinned = true;
+        }
+      }
+    }
+
+    protected override void SetupNewPinnedItem(PinnedItem pinnedItem)
+    {
+      var vm = viewModelsFactory.Create<PinnedItemViewModel>(pinnedItem);
+      var items = GetPinnedTypedItems(new List<PinnedItem>() { pinnedItem });
+      var validItem = items.FirstOrDefault();
+
+      if (validItem != null)
+      {
+        if (validItem.PinnedType == PinnedType.SoundPlaylist || validItem.PinnedType == PinnedType.VideoPlaylist)
+        {
+          var item = ViewModels.SingleOrDefault(x => x.ModelId == int.Parse(vm.Model.Description));
+
+          if (item != null)
+          {
+            vm.ItemObject = item;
+
+            item.PinnedItem = vm.Model;
+            item.IsPinned = true;
+          }
+        }
+
+        PinnedItems.Add(vm);
+      }
+    }
+
+    protected abstract List<PinnedItem> GetPinnedTypedItems(List<PinnedItem> pinnedItems);
 
     private async void LoadPage()
     {

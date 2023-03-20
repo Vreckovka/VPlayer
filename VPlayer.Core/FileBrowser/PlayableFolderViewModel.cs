@@ -123,6 +123,52 @@ namespace VPlayer.Core.FileBrowser
 
     #endregion
 
+
+    #region PinnedItem
+
+    private PinnedItem pinnedItem;
+
+    public PinnedItem PinnedItem
+    {
+      get { return pinnedItem; }
+      set
+      {
+        if (value != pinnedItem)
+        {
+          pinnedItem = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region IsPinned
+
+    private bool isPinned;
+
+    public bool IsPinned
+    {
+      get { return isPinned; }
+      set
+      {
+        if (value != isPinned)
+        {
+          isPinned = value;
+          RaisePropertyChanged();
+          OnIsPinnedChanged(isPinned);
+        }
+      }
+    }
+
+    protected virtual void OnIsPinnedChanged(bool newValue)
+    {
+
+    }
+
+    #endregion
+
+
     #endregion
 
     #region Commands
@@ -210,6 +256,47 @@ namespace VPlayer.Core.FileBrowser
     }
 
     #endregion
+
+    #endregion
+
+    #region PinItem
+
+    private ActionCommand pinItem;
+
+    public ICommand PinItem
+    {
+      get
+      {
+        if (pinItem == null)
+        {
+          pinItem = new ActionCommand(OnPinItem);
+        }
+
+        return pinItem;
+      }
+    }
+
+    public async void OnPinItem()
+    {
+      var foundItem = storageManager.GetTempRepository<PinnedItem>().SingleOrDefault(x => x.Description == Model.Indentificator &&
+                                                                                          x.PinnedType == GetPinnedType());
+
+      if (foundItem == null)
+      {
+        var newPinnedItem = new PinnedItem();
+        newPinnedItem.Description = Model.Indentificator;
+        newPinnedItem.PinnedType = GetPinnedType();
+
+        var item = await Task.Run(() => storageManager.AddPinnedItem(newPinnedItem));
+
+        PinnedItem = item;
+      }
+    }
+
+    protected PinnedType GetPinnedType()
+    {
+      return FolderType == FolderType.Sound ? PinnedType.SoundFolder : FolderType == FolderType.Video ? PinnedType.VideoFolder : PinnedType.None;
+    }
 
     #endregion
 

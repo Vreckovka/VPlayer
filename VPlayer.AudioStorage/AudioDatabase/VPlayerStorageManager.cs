@@ -1637,6 +1637,46 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #endregion
 
+    public Task<PinnedItem> AddPinnedItem(PinnedItem pinnedItem)
+    {
+      return Task.Run(() =>
+      {
+        using (var context = new AudioDatabaseContext())
+        {
+          var repository = GetTempRepository<PinnedItem>(context);
+
+          repository.Add(pinnedItem);
+
+          context.SaveChanges();
+
+          PublishItemChanged(pinnedItem, Changed.Added);
+
+          return pinnedItem;
+        }
+      });
+    }
+
+    public Task<bool> RemovePinnedItem(PinnedItem pinnedItem)
+    {
+      return Task.Run(() =>
+      {
+        using (var context = new AudioDatabaseContext())
+        {
+          var repository = GetTempRepository<PinnedItem>(context);
+
+          repository.Remove(pinnedItem);
+
+          var result = context.SaveChanges() > 0;
+
+          PublishItemChanged(pinnedItem, Changed.Removed);
+
+          return result;
+        }
+      });
+    }
+
+ 
+
     #region Dispose
 
     public void Dispose()

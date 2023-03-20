@@ -105,6 +105,11 @@ namespace VPlayer.Home.ViewModels
 
       serialDisposable?.Dispose();
     }
+
+    protected override PinnedType GetPinnedType(SoundItemFilePlaylist model)
+    {
+      return PinnedType.SoundPlaylist;
+    }
   }
 
   public class SoundItemWithPlaylistItem

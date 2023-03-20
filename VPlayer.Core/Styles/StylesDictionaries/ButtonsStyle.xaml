@@ -367,7 +367,7 @@
     <DataTemplate x:Key="VideoItemToolTip">
         <Grid>
             <Border MaxWidth="400"
-                    MaxHeight="250"
+                    MaxHeight="450"
                     Margin="0"
                     Padding="0,5,5,0"
                     Background="Transparent"
@@ -407,8 +407,11 @@
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
                             </Grid.RowDefinitions>
-
                             <Grid.Resources>
                                 <Style x:Key="Header" TargetType="TextBlock">
                                     <Setter Property="FontSize" Value="13" />
@@ -480,7 +483,7 @@
                             </StackPanel>
 
 
-                            <TextBlock Grid.Row="3" Margin="0,5,0,0">
+                            <TextBlock Grid.Row="3" Margin="0,10,0,0">
                                 <Run FontSize="14"
                                      FontWeight="Medium"
                                      Foreground="#808080"
@@ -506,7 +509,7 @@
                                 </TextBlock.Style>
                             </TextBlock>
 
-                            <Grid Grid.Row="4">
+                            <Grid Grid.Row="4" Margin="0,5,0,0">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto" />
                                     <RowDefinition />
@@ -531,7 +534,7 @@
                                 </Grid.Style>
 
 
-                                <TextBlock Margin="0,5,0,0"
+                                <TextBlock Margin="0,5,0,5"
                                            Style="{StaticResource Header}"
                                            Text="Description" />
 
@@ -613,6 +616,103 @@
                                     </StackPanel>
                                 </StackPanel>
                             </Grid>
+
+                            <TextBlock Grid.Row="5"
+                                       Margin="0,5,0,0"
+                                       FontSize="12"
+                                       FontWeight="Normal"
+                                       Foreground="#aaa">
+                                <Run FontWeight="Medium"
+                                     Foreground="#808080"
+                                     Text="Premiere: " />
+
+                                <Run Text="{Binding Model.Premiere}" />
+
+                                <TextBlock.Style>
+                                    <Style BasedOn="{StaticResource Content}" TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Model.Premiere}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
+                            <TextBlock Grid.Row="6"
+                                       Margin="0,5,0,0"
+                                       FontSize="12"
+                                       FontWeight="Normal"
+                                       Foreground="#aaa">
+
+                                <Run FontWeight="Medium"
+                                     Foreground="#808080"
+                                     Text="Country: " />
+
+                                <Run Text="{Binding Model.Country}" />
+
+                                <TextBlock.Style>
+                                    <Style BasedOn="{StaticResource Content}" TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Model.Country}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
+                            <TextBlock Grid.Row="7"
+                                       Margin="0,5,0,0"
+                                       FontSize="12"
+                                       FontWeight="Normal"
+                                       Foreground="#aaa">
+
+                                <Run FontWeight="Medium"
+                                     Foreground="#808080"
+                                     Text="Length: " />
+
+                                <Run Text="{Binding Model.Length}" />
+
+                                <TextBlock.Style>
+                                    <Style BasedOn="{StaticResource Content}" TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Model.Length}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
+                            <TextBlock Grid.Row="8"
+                                       Margin="0,5,0,0"
+                                       FontSize="12"
+                                       FontWeight="Normal"
+                                       TextTrimming="CharacterEllipsis"
+                                       Foreground="#aaa"
+                                       ToolTip="{Binding Model.Description}">
+                                <Run FontWeight="Medium"
+                                     Foreground="#808080"
+                                     Text="Description: " />
+
+                                <LineBreak />
+                                <Run Text="{Binding Model.Description}" />
+
+                                <TextBlock.Style>
+                                    <Style BasedOn="{StaticResource Content}" TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Model.Description}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                         </Grid>
                     </Border>
 

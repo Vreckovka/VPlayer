@@ -822,12 +822,7 @@ namespace VPlayer.Core.Players
     protected override void PlayPlaylist(PlayItemsEventData<TItemViewModel> data, int? lastSongIndex = null, bool onlySet = false)
     {
       base.PlayPlaylist(data, lastSongIndex, onlySet);
-
-      Task.Run(async () =>
-      {
-        await DownloadItemInfo(GetCTSAndCancel().Token);
-      });
-
+      
       if (!string.IsNullOrEmpty(ActualSavedPlaylist.WatchedFolder))
       {
         AddMissingFilesFromFolder();

@@ -120,5 +120,10 @@ namespace VPlayer.Home.ViewModels.TvShows
     {
       throw new NotImplementedException();
     }
+
+    protected override PinnedType GetPinnedType(VideoFilePlaylist model)
+    {
+      return PinnedType.VideoPlaylist;
+    }
   }
 }

@@ -102,6 +102,10 @@ namespace VPlayer.Home.ViewModels.Albums
 
     }
 
+    protected override void SetupNewPinnedItem(PinnedItem pinnedItem)
+    {
+    }
+
     #region SongChange
 
     protected void SongChange(IItemChanged<Song> itemChanged)

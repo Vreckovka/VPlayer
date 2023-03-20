@@ -133,7 +133,7 @@ namespace VPlayer.Core.ViewModels
 
   }
 
-  public abstract class PlayableViewModel<TViewModelInPlaylist, TModel> : NamedEntityViewModel<TModel>, IBusy
+  public abstract class PlayableViewModel<TViewModelInPlaylist, TModel> : NamedEntityViewModel<TModel>, IBusy, IPinned
     where TModel : INamedEntity
   {
     #region Fields
@@ -169,6 +169,44 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion IsPlaying
+
+    #region PinnedItem
+
+    private PinnedItem pinnedItem;
+
+    public PinnedItem PinnedItem
+    {
+      get { return pinnedItem; }
+      set
+      {
+        if (value != pinnedItem)
+        {
+          pinnedItem = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region IsPinned
+
+    private bool isPinned;
+
+    public bool IsPinned
+    {
+      get { return isPinned; }
+      set
+      {
+        if (value != isPinned)
+        {
+          isPinned = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+    
+    #endregion
 
     #region IsBusy
 
@@ -282,10 +320,10 @@ namespace VPlayer.Core.ViewModels
     {
       try
       {
-       
+
         IsBusy = true;
 
-        var data = await Task.Run(async() => await GetItemsToPlay());
+        var data = await Task.Run(async () => await GetItemsToPlay());
 
         if (data != null)
           PublishAddToPlaylistEvent(data);
@@ -313,5 +351,11 @@ namespace VPlayer.Core.ViewModels
   public interface IBusy
   {
     public bool IsBusy { get; set; }
+  }
+
+  public interface IPinned
+  {
+    public bool IsPinned { get; set; }
+    public PinnedItem PinnedItem { get; set; }
   }
 }

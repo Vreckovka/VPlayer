@@ -26,6 +26,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD.Domain
     public string[] Parameters { get; set; }
     public string[] Origin { get; set; }
 
+    public string Description { get; set; }
   }
 
   public class CSFDItemEntity : DomainEntity

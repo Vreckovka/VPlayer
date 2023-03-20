@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -37,6 +39,7 @@ namespace VPlayer.Home.ViewModels
     protected readonly IStorageManager storageManager;
     private readonly IEventAggregator eventAggregator;
     protected readonly IViewModelsFactory viewModelsFactory;
+
     private Subject<string> searchSubject = new Subject<string>();
 
     #endregion Fields
@@ -64,6 +67,7 @@ namespace VPlayer.Home.ViewModels
     #region Properties
 
     public LoadingStatus LoadingStatus { get; protected set; }
+    protected virtual bool SubscribeToPinned { get; } = false;
 
     public abstract override bool ContainsNestedRegions { get; }
     public LibraryCollection<TViewModel, TModel> LibraryCollection { get; set; }
@@ -74,6 +78,10 @@ namespace VPlayer.Home.ViewModels
     }
 
     public abstract override string RegionName { get; }
+
+
+    private ObservableCollection<PinnedItemViewModel> pinnedItems = new ObservableCollection<PinnedItemViewModel>();
+    public ObservableCollection<PinnedItemViewModel> PinnedItems => pinnedItems;
 
     #region SearchKeyWord
 
@@ -140,6 +148,7 @@ namespace VPlayer.Home.ViewModels
       {
         LoadingStatus.IsLoading = true;
 
+        PinnedItems.Clear();
         LibraryCollection.Clear();
 
         await LibraryCollection.LoadInitilizedDataAsync(LoadQuery);
@@ -279,6 +288,9 @@ namespace VPlayer.Home.ViewModels
 
           this.storageManager.SubscribeToItemChange<TModel>(ItemsChanged).DisposeWith(this);
 
+          if (SubscribeToPinned)
+            this.storageManager.SubscribeToItemChange<PinnedItem>(OnPinnedItemChanged).DisposeWith(this);
+
           storageManager.ActionIsDone.Subscribe((x) =>
           {
             Application.Current.Dispatcher.Invoke(() =>
@@ -356,6 +368,34 @@ namespace VPlayer.Home.ViewModels
     }
 
     #endregion
+
+    private void OnPinnedItemChanged(IItemChanged<PinnedItem> itemChanged)
+    {
+      Application.Current.Dispatcher.Invoke(() =>
+      {
+        switch (itemChanged.Changed)
+        {
+          case Changed.Added:
+            SetupNewPinnedItem(itemChanged.Item);
+            break;
+          case Changed.Removed:
+            {
+              var existing = PinnedItems.SingleOrDefault(x => x.Model.Id == itemChanged.Item.Id);
+
+              if (existing != null)
+                PinnedItems.Remove(existing);
+            }
+            break;
+          case Changed.Updated:
+            break;
+          default:
+            throw new ArgumentOutOfRangeException();
+        }
+      });
+    }
+
+
+    protected abstract void SetupNewPinnedItem(PinnedItem pinnedItem);
 
     #endregion Methods
 

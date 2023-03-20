@@ -43,6 +43,11 @@ namespace VPlayer.Home.ViewModels.Artists
     public override bool ContainsNestedRegions => false;
     public override string Header => "Artists";
     public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
+    protected override void SetupNewPinnedItem(PinnedItem pinnedItem)
+    {
+
+    }
+
     public override IQueryable<Artist> LoadQuery => base.LoadQuery.Include(x => x.Albums).ThenInclude(x => x.Songs);
 
     #endregion 

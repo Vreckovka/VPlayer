@@ -67,7 +67,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     public DbSet<ItemBookmark> Bookmarks { get; set; }
 
-
+    public DbSet<PinnedItem> PinnedItems { get; set; }
 
     //public DbSet<CSFDItem> CSFDItems { get; set; }
     //public DbSet<CSFDTVShowSeasonEpisodeEntity> CSFDTVShowSeasonEpisodes { get; set; }

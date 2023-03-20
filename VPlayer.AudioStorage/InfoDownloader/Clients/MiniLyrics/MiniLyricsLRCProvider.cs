@@ -71,6 +71,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MiniLyrics
       return Task.Run(() =>
       {
         WebClient wc = new WebClient();
+
         using (MemoryStream stream = new MemoryStream(wc.DownloadData(path)))
         {
           using (StreamReader sr = new StreamReader(stream))

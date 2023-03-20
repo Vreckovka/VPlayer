@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
@@ -45,7 +47,7 @@ namespace VPlayer.Home.ViewModels
         max = 500;
       }
 
-
+#if !DEBUG
       if (!wasSet)
       {
         var playlist = LibraryCollection.Items
@@ -56,6 +58,16 @@ namespace VPlayer.Home.ViewModels
         playlist?.OnPlayButton(Core.Events.EventAction.InitSetPlaylist);
         wasSet = true;
       }
+#endif
+    }
+
+    protected override List<PinnedItem> GetPinnedTypedItems(List<PinnedItem> pinnedItems)
+    {
+      return pinnedItems.Where(x => 
+        x.PinnedType == PinnedType.SoundPlaylist ||
+        x.PinnedType == PinnedType.SoundFolder ||
+        x.PinnedType == PinnedType.SoundFile
+        ).ToList();
     }
   }
 }

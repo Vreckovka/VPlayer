@@ -201,6 +201,16 @@
                                       Style="{StaticResource bookmark}"
                                       ToolTip="Save as BOOKMARK" />
 
+                <controls1:PathButton Command="{Binding PinItem}"
+                                      FontWeight="Normal"
+                                      Foreground="#95ffffff"
+                                      Glyph="{StaticResource thumbtack-glyph}"
+                                      IconCheckedColor="{StaticResource OrangeColor}"
+                                      IconDefaultColor="#353535"
+                                      IconHoverColor="{StaticResource OrangeColor}"
+                                      IsChecked="{Binding IsPinned}"
+                                      ToolTip="{Binding Name}" />
+
                 <controls1:PathButton Width="25"
                                       Height="20"
                                       Margin="0,0,0,0"
@@ -497,6 +507,16 @@
                                       IconMargin="2 0 0 0"
                                       PathStyle="{StaticResource Trash}"
                                       ToolTip="Delete (to trash)" />
+
+                <controls1:PathButton Command="{Binding PinItem}"
+                                      FontWeight="Normal"
+                                      Foreground="#95ffffff"
+                                      Glyph="{StaticResource thumbtack-glyph}"
+                                      IconCheckedColor="{StaticResource OrangeColor}"
+                                      IconDefaultColor="#353535"
+                                      IconHoverColor="{StaticResource OrangeColor}"
+                                      IsChecked="{Binding IsPinned}"
+                                      ToolTip="{Binding Name}" />
 
                 <controls1:PathButton Margin="0,0,1,0"
                                       Background="Transparent"

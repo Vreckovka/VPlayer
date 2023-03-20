@@ -135,7 +135,7 @@ namespace VPlayer.Home.ViewModels
       var fileBrowser = viewModelsFactory.Create<WindowsFileBrowserViewModel>();
       var upnp = viewModelsFactory.Create<UPnPManagerViewModel>();
       var statisticsViewModel = viewModelsFactory.Create<StatisticsViewModel>();
-      var iptvPlaylists = viewModelsFactory.Create<IPTVPlaylistsViewModel>();
+      //var iptvPlaylists = viewModelsFactory.Create<IPTVPlaylistsViewModel>();
       //var iptv = viewModelsFactory.Create<IPTVManagerViewModel>();
       var settings = viewModelsFactory.Create<SettingsViewModel>();
       var cloudService = viewModelsFactory.Create<PCloudManagerViewModel>();
