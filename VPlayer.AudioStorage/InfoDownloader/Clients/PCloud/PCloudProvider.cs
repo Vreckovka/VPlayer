@@ -7,6 +7,7 @@ using Logger;
 using PCloudClient;
 using PCloudClient.Domain;
 using VCore.Standard;
+using VCore.WPF;
 using VCore.WPF.Interfaces.Managers;
 
 namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
@@ -88,7 +89,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
 
           if (existingFiles.Count > 1)
           {
-            Application.Current.Dispatcher.Invoke(() => { windowManager.ShowErrorPrompt($"Multiple ({existingFiles.Count}) LRC files with same name {acutalFolder.name}\\{fileName}"); });
+            VSynchronizationContext.PostOnUIThread(() => { windowManager.ShowErrorPrompt($"Multiple ({existingFiles.Count}) LRC files with same name {acutalFolder.name}\\{fileName}"); });
           }
           else
           {
@@ -148,7 +149,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
 
             if (existingFiles.Count > 1)
             {
-              Application.Current.Dispatcher.Invoke(() => { windowManager.ShowErrorPrompt($"Multiple ({existingFiles.Count}) LRC files with same name {acutalFolder.name}\\{fileName}"); });
+              VSynchronizationContext.PostOnUIThread(() => { windowManager.ShowErrorPrompt($"Multiple ({existingFiles.Count}) LRC files with same name {acutalFolder.name}\\{fileName}"); });
             }
             else if (existingFiles.Count > 0)
             {
@@ -197,7 +198,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
 
             if (existingFiles.Count > 1)
             {
-              Application.Current.Dispatcher.Invoke(() => { windowManager.ShowErrorPrompt($"Multiple ({existingFiles.Count}) LRC files with same name {acutalFolder.name}\\{fileName}"); });
+              VSynchronizationContext.PostOnUIThread(() => { windowManager.ShowErrorPrompt($"Multiple ({existingFiles.Count}) LRC files with same name {acutalFolder.name}\\{fileName}"); });
             }
             else if (existingFiles.Count > 0)
             {

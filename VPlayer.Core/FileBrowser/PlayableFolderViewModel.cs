@@ -16,6 +16,7 @@ using VCore.Standard.Comparers;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
 using VCore.Standard.ViewModels.WindowsFile;
+using VCore.WPF;
 using VCore.WPF.Misc;
 using VCore.WPF.ViewModels.WindowsFiles;
 using VPlayer.AudioStorage.AudioDatabase;
@@ -521,7 +522,7 @@ namespace VPlayer.Core.FileBrowser
       catch (OperationCanceledException) { }
       finally
       {
-        Application.Current.Dispatcher.Invoke(() =>
+        VSynchronizationContext.PostOnUIThread(() =>
         {
           LoadingMessage = null;
           isLoadedSubject.OnNext(false);

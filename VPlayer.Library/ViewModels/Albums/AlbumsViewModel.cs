@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
+using VCore.WPF;
 using VCore.WPF.Modularity.Events;
 using VCore.WPF.Modularity.RegionProviders;
 using VPlayer.AudioStorage.DomainClasses;

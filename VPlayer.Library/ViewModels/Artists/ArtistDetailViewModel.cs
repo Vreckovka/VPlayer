@@ -11,6 +11,7 @@ using VCore;
 using VCore.Standard;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
+using VCore.WPF;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.ItemsCollections.VirtualList;
 using VCore.WPF.ItemsCollections.VirtualList.VirtualLists;
@@ -165,7 +166,7 @@ namespace VPlayer.Home.ViewModels.Artists
           .ThenInclude(x => x.FileInfo)
           .ToList();
 
-        await Application.Current.Dispatcher.InvokeAsync(async () =>
+        await VSynchronizationContext.InvokeOnDispatcherAsync(async () =>
         {
           allSong = new List<SongDetailViewModel>();
           Albums = (await albumsViewModel.GetViewModelsAsync()).Where(x => albumsDb.Select(y => y.Id).Contains(x.ModelId)).OrderBy(x => x.Name).ToList();

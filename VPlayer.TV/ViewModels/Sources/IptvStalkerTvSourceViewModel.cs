@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore;
 using VCore.Standard.Factories.ViewModels;
+using VCore.WPF;
 using VCore.WPF.Controls.StatusMessage;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Managers;
@@ -212,7 +213,7 @@ namespace VPlayer.IPTV.ViewModels
         NumberOfProcesses = serviceStalker.Channels.data.Count
       };
 
-      await Application.Current.Dispatcher.InvokeAsync(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         statusManager.UpdateMessage(statusMessage1);
       });
@@ -246,7 +247,7 @@ namespace VPlayer.IPTV.ViewModels
           storageManager.StoreRangeEntity<TvChannel>(Model.TvChannels.Skip(i).Take(range).ToList());
 
 
-          await Application.Current.Dispatcher.InvokeAsync(() =>
+          VSynchronizationContext.PostOnUIThread(() =>
           {
             statusMessage1.ProcessedCount = i;
             statusManager.UpdateMessage(statusMessage1);
@@ -255,7 +256,7 @@ namespace VPlayer.IPTV.ViewModels
         }
       }
 
-      await Application.Current.Dispatcher.InvokeAsync(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         statusMessage1.ProcessedCount = statusMessage1.NumberOfProcesses;
 

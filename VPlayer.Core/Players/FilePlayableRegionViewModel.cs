@@ -23,6 +23,7 @@ using VCore.Standard.Helpers;
 using VCore.Standard.Modularity.Interfaces;
 using VCore.Standard.Providers;
 using VCore.Standard.ViewModels.WindowsFile;
+using VCore.WPF;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Misc;
 using VCore.WPF.Modularity.RegionProviders;
@@ -576,7 +577,7 @@ namespace VPlayer.Core.Players
 
     protected virtual void Media_DurationChanged(object sender, MediaDurationChangedArgs e)
     {
-      Application.Current.Dispatcher.Invoke(async () =>
+      VSynchronizationContext.PostOnUIThread(async () =>
       {
         await ChangeDuration(e.Duration);
 
@@ -656,7 +657,7 @@ namespace VPlayer.Core.Players
 
     private void HandleLastItemElapsed()
     {
-      Application.Current.Dispatcher.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         ItemLastTime = null;
 
@@ -679,7 +680,7 @@ namespace VPlayer.Core.Players
       {
         if (ActualItem != null)
         {
-          Application.Current.Dispatcher.Invoke(() =>
+          VSynchronizationContext.PostOnUIThread(() =>
           {
             MediaPlayer.Position = lastTime.Value;
             ActualItem.ActualPosition = lastTime.Value;

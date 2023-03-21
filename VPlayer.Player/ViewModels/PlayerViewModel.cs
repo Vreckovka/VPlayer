@@ -12,6 +12,7 @@ using Prism.Events;
 using SoundManagement;
 using VCore;
 using VCore.Standard.Helpers;
+using VCore.WPF;
 using VCore.WPF.Helpers;
 using VCore.WPF.Managers;
 using VCore.WPF.Misc;
@@ -289,7 +290,7 @@ namespace VPlayer.Player.ViewModels
 
       statusManager.OnStatusMessageUpdated.Subscribe(x =>
       {
-        Application.Current.Dispatcher.Invoke(() =>
+        VSynchronizationContext.PostOnUIThread(() =>
         {
           RaisePropertyChanged(nameof(StatusMessageViewModel));
         });
@@ -490,28 +491,25 @@ namespace VPlayer.Player.ViewModels
 
     private IFilePlayableRegionViewModel CanUseKey(Key key)
     {
-      return Application.Current.Dispatcher.Invoke(() =>
+      if (ActualViewModel != null && ActualViewModel is IFilePlayableRegionViewModel filePlayable1)
       {
-        if (ActualViewModel != null && ActualViewModel is IFilePlayableRegionViewModel filePlayable1)
+        if (ActualViewModel.IsActive &&
+            mainWindow.IsActive &&
+            mainWindow.WindowState != WindowState.Minimized &&
+            !VFocusManager.IsAnyFocused())
         {
-          if (ActualViewModel.IsActive &&
-              mainWindow.IsActive &&
-              mainWindow.WindowState != WindowState.Minimized &&
-              !VFocusManager.IsAnyFocused())
-          {
-            return filePlayable1;
-          }
-          else if (key == Key.MediaPlayPause ||
-                   key == Key.MediaNextTrack ||
-                   key == Key.MediaPreviousTrack)
-          {
-            return filePlayable1;
-          }
+          return filePlayable1;
         }
+        else if (key == Key.MediaPlayPause ||
+                 key == Key.MediaNextTrack ||
+                 key == Key.MediaPreviousTrack)
+        {
+          return filePlayable1;
+        }
+      }
 
 
-        return null;
-      });
+      return null;
     }
 
     #endregion

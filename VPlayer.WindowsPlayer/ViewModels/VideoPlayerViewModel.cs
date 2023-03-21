@@ -18,6 +18,7 @@ using VCore.Standard;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
 using VCore.Standard.Providers;
+using VCore.WPF;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.ItemsCollections.VirtualList;
 using VCore.WPF.ItemsCollections.VirtualList.VirtualLists;
@@ -574,7 +575,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       base.OnNewItemPlay(videoItem);
 
-      Application.Current.Dispatcher.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         AspectRatios.ForEach(x => x.IsSelected = false);
         CropRatios.ForEach(x => x.IsSelected = false);
@@ -690,7 +691,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         item = await iCsfdWebsiteScrapper.GetBestFind(viewModel.Name, cancellationToken, downloadSingleSeason: singleSeason);
       }
 
-      Application.Current.Dispatcher.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         if (item != null)
         {
@@ -801,14 +802,14 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         await parseChangedSemaphore.WaitAsync();
 
-        await Application.Current.Dispatcher.Invoke(async () =>
+        await VSynchronizationContext.InvokeOnDispatcherAsync(() =>
         {
           AudioTracks.Clear();
         });
 
         if (MediaPlayer.AudioTrackDescription.Length > 0)
         {
-          await Application.Current.Dispatcher.Invoke(async () =>
+          await VSynchronizationContext.InvokeOnDispatcherAsync(() =>
           {
             foreach (var spu in MediaPlayer.AudioTrackDescription)
             {
@@ -844,10 +845,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           actualAudioTrack.IsSelected = true;
         }
 
-        await Application.Current.Dispatcher.Invoke(async () =>
-        {
-          await ReloadSubtitles();
-        });
+        await VSynchronizationContext.InvokeOnDispatcherAsync(async () => { await ReloadSubtitles(); });
 
         if (MediaPlayer.Media != null)
           MediaPlayer.Media.ParsedChanged -= MediaPlayer_ParsedChanged;
@@ -890,7 +888,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private int? lastSPUValue = null;
     private async Task ReloadSubtitles()
     {
-      await Application.Current.Dispatcher.InvokeAsync(async () =>
+      await VSynchronizationContext.InvokeOnDispatcherAsync(async () =>
       {
         Subtitles.Clear();
         SubtitleViewModel subtitleSetting = null;

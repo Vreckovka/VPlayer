@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using VCore.Standard;
 using VCore.Standard.Comparers;
 using VCore.Standard.Factories.ViewModels;
+using VCore.WPF;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
@@ -58,7 +59,7 @@ namespace VPlayer.Core.ViewModels.Artists
       IVPlayerCloudService iVPlayerCloudService,
       IArtistsViewModel artistsViewModel,
       IViewModelsFactory viewModelsFactory,
-      IVPlayerRegionProvider ivPlayerRegionProvider) : base(artist, eventAggregator)
+      IVPlayerRegionProvider ivPlayerRegionProvider) : base(artist, eventAggregator, storage)
     {
       this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
       this.iVPlayerCloudService = iVPlayerCloudService ?? throw new ArgumentNullException(nameof(iVPlayerCloudService));
@@ -106,7 +107,7 @@ namespace VPlayer.Core.ViewModels.Artists
         }
         finally
         {
-          Application.Current.Dispatcher.Invoke(() =>
+          VSynchronizationContext.PostOnUIThread(() =>
           {
             artistsViewModel.LoadingStatus.IsLoading = false;
           });
@@ -134,6 +135,11 @@ namespace VPlayer.Core.ViewModels.Artists
       var e = new PlayItemsEventData<SongInPlayListViewModel>(viewModels, EventAction.Add, this);
 
       eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SongInPlayListViewModel>>().Publish(e);
+    }
+
+    protected override PinnedType GetPinnedType(Artist model)
+    {
+      return PinnedType.Artist;
     }
 
     #endregion

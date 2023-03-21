@@ -8,6 +8,7 @@ using System.Windows.Input;
 using PCloudClient;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Providers;
+using VCore.WPF;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Misc;
 using VCore.WPF.Modularity.RegionProviders;
@@ -123,7 +124,7 @@ namespace VPlayer.Core.ViewModels.FileBrowser.PCloud
           }
 
           if (i % 10 == 0)
-            Application.Current.Dispatcher.Invoke(() =>
+            VSynchronizationContext.PostOnUIThread(() =>
             {
               RaisePropertyChanged(nameof(PlayingFolders));
             });

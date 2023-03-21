@@ -4,6 +4,7 @@ using System.Windows;
 using UPnP.Common;
 using UPnP.Device;
 using VCore.Standard.Factories.ViewModels;
+using VCore.WPF;
 using VCore.WPF.ItemsCollections;
 using VPlayer.AudioStorage.DomainClasses.UPnP;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -76,7 +77,7 @@ namespace VPlayer.UPnP.ViewModels.UPnP
       return Task.Run(async () =>
       {
 
-        await Application.Current.Dispatcher.InvokeAsync(() =>
+        await VSynchronizationContext.InvokeOnDispatcherAsync(() =>
         {
           if (IsBusy)
           {
@@ -92,7 +93,7 @@ namespace VPlayer.UPnP.ViewModels.UPnP
 
         if (results != null)
         {
-          await Application.Current.Dispatcher.InvokeAsync(() =>
+          await VSynchronizationContext.InvokeOnDispatcherAsync(() =>
           {
             Items.Clear();
             CreateViewModelsFromDIDLite(results);

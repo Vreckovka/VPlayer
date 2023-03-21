@@ -22,6 +22,7 @@ using VCore;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
 using VCore.Standard.Providers;
+using VCore.WPF;
 using VCore.WPF.Converters;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.ItemsCollections.VirtualList;
@@ -453,7 +454,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
 
 
-        await Application.Current.Dispatcher.InvokeAsync(() =>
+        await VSynchronizationContext.InvokeOnDispatcherAsync(() =>
         {
           if (result)
           {
@@ -568,7 +569,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
             }
           }
 
-          await Application.Current.Dispatcher.InvokeAsync(() =>
+          await VSynchronizationContext.InvokeOnDispatcherAsync(() =>
           {
             if (result)
             {
@@ -578,8 +579,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
             {
               statusManager.ShowFailedMessage($"Albums FAILED to add");
             }
-
-            addAlbums?.RaiseCanExecuteChanged();
+            
+            addAlbums?.RaiseCanExecuteChanged(); 
             addArtists?.RaiseCanExecuteChanged();
           });
         }
@@ -1582,7 +1583,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
               var song = downloadingAlbum.Songs
                 .FirstOrDefault(x => x.ItemModel.FileInfo.Name == songInPlayListViewModel.SongModel.ItemModel.FileInfo.Name);
 
-              if(song == null)
+              if (song == null)
               {
                 song = downloadingAlbum.Songs
                   .FirstOrDefault(x => x.Name == songInPlayListViewModel.SongModel.Name);
@@ -2115,7 +2116,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         if (songsItems.Count > 0)
         {
-          Application.Current.Dispatcher.Invoke(() =>
+          VSynchronizationContext.PostOnUIThread(() =>
           {
             PlayList.DisableNotification();
             UnHookToPlaylistCollectionChanged();

@@ -8,6 +8,7 @@ using Logger;
 using Microsoft.EntityFrameworkCore;
 using VCore;
 using VCore.Standard.Factories.ViewModels;
+using VCore.WPF;
 using VCore.WPF.Controls.StatusMessage;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.ItemsCollections.VirtualList;
@@ -237,7 +238,7 @@ namespace VPlayer.Home.ViewModels.Albums
 
         if (allSong != null)
         {
-          Application.Current.Dispatcher.Invoke(() =>
+          VSynchronizationContext.PostOnUIThread(() =>
           {
             var generator = new ItemsGenerator<SongDetailViewModel>(allSong, 25);
             SongsView = new VirtualList<SongDetailViewModel>(generator);

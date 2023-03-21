@@ -66,7 +66,9 @@ namespace VPlayer.Home.ViewModels
       return pinnedItems.Where(x => 
         x.PinnedType == PinnedType.SoundPlaylist ||
         x.PinnedType == PinnedType.SoundFolder ||
-        x.PinnedType == PinnedType.SoundFile
+        x.PinnedType == PinnedType.SoundFile ||
+        x.PinnedType == PinnedType.Artist ||
+        x.PinnedType == PinnedType.Album
         ).ToList();
     }
   }

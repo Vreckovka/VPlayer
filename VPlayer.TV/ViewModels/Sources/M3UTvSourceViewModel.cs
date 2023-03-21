@@ -9,6 +9,7 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using Prism.Events;
 using VCore;
 using VCore.Standard.Factories.ViewModels;
+using VCore.WPF;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Managers;
 using VCore.WPF.Misc;
@@ -124,7 +125,7 @@ namespace VPlayer.IPTV.ViewModels
           });
         }
 
-         await Application.Current.Dispatcher.InvokeAsync(() =>
+         await VSynchronizationContext.InvokeOnDispatcherAsync(() =>
          {
            foreach (var channel in Model.TvChannels)
            {

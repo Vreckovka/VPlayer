@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Logger;
 using Microsoft.EntityFrameworkCore;
+using VCore.WPF;
 using VCore.WPF.Controls.StatusMessage;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.Video;
@@ -55,7 +56,7 @@ namespace VPlayer.AudioStorage.Scrappers
 
           dbTvShow.InfoDownloadStatus = InfoDownloadStatus.Downloading;
 
-          Application.Current.Dispatcher.Invoke(() =>
+          VSynchronizationContext.PostOnUIThread(() =>
           {
             storageManager.PublishItemChanged(dbTvShow);
           });
@@ -164,7 +165,7 @@ namespace VPlayer.AudioStorage.Scrappers
 
           dbTvShowSeason.InfoDownloadStatus = InfoDownloadStatus.Downloading;
 
-          Application.Current.Dispatcher.Invoke(() =>
+          VSynchronizationContext.PostOnUIThread(() =>
           {
             storageManager.PublishItemChanged(dbTvShowSeason);
           });

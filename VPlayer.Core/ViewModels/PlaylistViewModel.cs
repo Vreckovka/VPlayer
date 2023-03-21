@@ -32,7 +32,7 @@ namespace VPlayer.Library.ViewModels
       TPlaylistModel model,
       IEventAggregator eventAggregator,
       IStorageManager storageManager,
-      IWindowManager windowManager) : base(model, eventAggregator)
+      IWindowManager windowManager) : base(model, eventAggregator, storageManager)
     {
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
@@ -177,42 +177,7 @@ namespace VPlayer.Library.ViewModels
 
     #endregion
 
-    #region PinItem
-
-    private ActionCommand pinItem;
-
-    public ICommand PinItem
-    {
-      get
-      {
-        if (pinItem == null)
-        {
-          pinItem = new ActionCommand(OnPinItem);
-        }
-
-        return pinItem;
-      }
-    }
-
-    public async void OnPinItem()
-    {
-      var foundItem = storageManager.GetTempRepository<PinnedItem>().SingleOrDefault(x => x.Description == Model.Id.ToString() &&
-                                                                                          x.PinnedType == GetPinnedType(Model));
-
-      if (foundItem == null)
-      {
-        var newPinnedItem = new PinnedItem();
-        newPinnedItem.Description = Model.Id.ToString();
-        newPinnedItem.PinnedType = GetPinnedType(Model);
-
-        var item = await Task.Run(() => storageManager.AddPinnedItem(newPinnedItem));
-
-        PinnedItem = item;
-      }
-    }
-
-    #endregion
-
+   
     #endregion
 
     #region Methods
@@ -246,7 +211,7 @@ namespace VPlayer.Library.ViewModels
     #endregion
 
 
-    protected abstract PinnedType GetPinnedType(TPlaylistModel model);
+
 
     #endregion
 

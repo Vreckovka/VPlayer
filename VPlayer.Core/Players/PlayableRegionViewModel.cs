@@ -29,6 +29,7 @@ using SoundManagement;
 using VCore.Standard;
 using VCore.Standard.ViewModels.TreeView;
 using VCore.Standard.ViewModels.WindowsFile;
+using VCore.WPF;
 using VCore.WPF.Behaviors;
 using VCore.WPF.Helpers;
 using VCore.WPF.Interfaces.Managers;
@@ -840,7 +841,7 @@ namespace VPlayer.Core.ViewModels
     {
       ActualSavedPlaylist.IsPrivate = !ActualSavedPlaylist.IsPrivate;
 
-      foreach(var item in PlayList)
+      foreach (var item in PlayList)
       {
         item.OnSetPrivate(ActualSavedPlaylist.IsPrivate);
       }
@@ -962,7 +963,7 @@ namespace VPlayer.Core.ViewModels
       {
         await UpdateActualSavedPlaylistPlaylist();
       }
-     
+
       await ResetProperties();
 
       PlayList.Clear();
@@ -1128,7 +1129,7 @@ namespace VPlayer.Core.ViewModels
       {
         if (!IsRepeate)
         {
-          Application.Current?.Dispatcher?.Invoke(() =>
+          VSynchronizationContext.PostOnUIThread(() =>
           {
             IsPlayFnished = true;
           });
@@ -1143,7 +1144,7 @@ namespace VPlayer.Core.ViewModels
         }
       }
 
-      Application.Current?.Dispatcher?.Invoke(() =>
+      await VSynchronizationContext.InvokeOnDispatcherAsync(() =>
       {
         SetActualItem(actualItemIndex);
       });
@@ -1152,9 +1153,10 @@ namespace VPlayer.Core.ViewModels
         return;
 
       var oldPlaying = IsPlaying;
+
       await SetMedia(ActualItem.Model);
 
-      Application.Current?.Dispatcher?.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         ActualItem.IsPlaying = true;
       });
@@ -1171,7 +1173,7 @@ namespace VPlayer.Core.ViewModels
       }
       else if (ActualItem != null)
       {
-        Application.Current?.Dispatcher?.Invoke(() =>
+        VSynchronizationContext.PostOnUIThread(() =>
         {
           ActualItem.IsPaused = true;
         });
@@ -1184,7 +1186,7 @@ namespace VPlayer.Core.ViewModels
 
     protected virtual void OnVlcError()
     {
-      Application.Current.Dispatcher.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         windowManager.ShowErrorPrompt($"Unable to play item {ActualItem?.Name}\nSource: {ActualItem?.Model?.Source}");
       });
@@ -1262,7 +1264,7 @@ namespace VPlayer.Core.ViewModels
           }
           catch (UriFormatException ex)
           {
-            Application.Current.Dispatcher.Invoke(() =>
+            VSynchronizationContext.PostOnUIThread(() =>
             {
               statusManager.ShowFailedMessage($"Item source was not in correct format.\nURI: \"{model.Source}\"", true);
             });
@@ -1270,7 +1272,7 @@ namespace VPlayer.Core.ViewModels
         }
         else
         {
-          Application.Current.Dispatcher.Invoke(() =>
+          VSynchronizationContext.PostOnUIThread(() =>
           {
             statusManager.ShowFailedMessage($"Item source is NULL", true);
           });
@@ -1315,11 +1317,16 @@ namespace VPlayer.Core.ViewModels
         }
         else
         {
-          if (ActualItem != null && MediaPlayer.Media != null)
+          if (ActualItem != null)
           {
+            if (MediaPlayer.Media == null)
+            {
+              await SetMedia(ActualItem.Model);
+            }
+
             MediaPlayer.Play();
 
-            Application.Current.Dispatcher.Invoke(() =>
+            VSynchronizationContext.PostOnUIThread(() =>
             {
               IsPlaying = true;
             });
@@ -1357,7 +1364,7 @@ namespace VPlayer.Core.ViewModels
 
         if (data.SetPostion.HasValue)
         {
-          MediaPlayer.Position = data.SetPostion.Value;
+          //MediaPlayer.Position = data.SetPostion.Value;
         }
       }
 
@@ -1449,7 +1456,7 @@ namespace VPlayer.Core.ViewModels
     {
       var itemList = items.ToList();
 
-      Application.Current.Dispatcher.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         if (!onlyItemSet)
           IsActive = true;
@@ -1635,7 +1642,7 @@ namespace VPlayer.Core.ViewModels
 
               if (ActualSavedPlaylist.PlaylistItems != null)
               {
-                Application.Current.Dispatcher.Invoke(() =>
+                VSynchronizationContext.PostOnUIThread(() =>
                 {
                   var oldItems = ActualSavedPlaylist.PlaylistItems.Where(x => playlistModels.Any(y =>
                   {
@@ -1671,7 +1678,7 @@ namespace VPlayer.Core.ViewModels
 
                 UpdatePlaylist(entityPlayList, dbEntityPlalist);
 
-                Application.Current.Dispatcher.Invoke(() =>
+                VSynchronizationContext.PostOnUIThread(() =>
                 {
                   ActualSavedPlaylist = entityPlayList;
 
@@ -1698,7 +1705,7 @@ namespace VPlayer.Core.ViewModels
               {
                 UpdatePlaylist(entityPlayList, dbEntityPlalist);
 
-                Application.Current.Dispatcher.Invoke(() =>
+                VSynchronizationContext.PostOnUIThread(() =>
                 {
                   ActualSavedPlaylist = entityPlayList;
                 });
@@ -1718,7 +1725,7 @@ namespace VPlayer.Core.ViewModels
 
               UpdatePlaylist(entityPlayList, dbEntityPlalist);
 
-              Application.Current.Dispatcher.Invoke(() =>
+              VSynchronizationContext.PostOnUIThread(() =>
               {
                 ActualSavedPlaylist = entityPlayList;
 
@@ -1729,7 +1736,7 @@ namespace VPlayer.Core.ViewModels
         }
         else
         {
-          Application.Current.Dispatcher.Invoke(() =>
+          VSynchronizationContext.PostOnUIThread(() =>
           {
             ActualSavedPlaylist = storedPlaylist;
             SetActualItem(storedPlaylist.LastItemIndex);
@@ -1742,7 +1749,7 @@ namespace VPlayer.Core.ViewModels
 
         if (ActualSavedPlaylist != null)
         {
-          Application.Current.Dispatcher.Invoke(() =>
+          VSynchronizationContext.PostOnUIThread(() =>
           {
             ActualSavedPlaylist.LastPlayed = DateTime.Now;
           });
@@ -1770,7 +1777,7 @@ namespace VPlayer.Core.ViewModels
 
     #region UpdateActualSavedPlaylistPlaylist
 
-    private SemaphoreSlim playlistSemaphore = new SemaphoreSlim(1,1);
+    private SemaphoreSlim playlistSemaphore = new SemaphoreSlim(1, 1);
     protected Task<bool> UpdateActualSavedPlaylistPlaylist()
     {
       var clone = ActualSavedPlaylist.DeepClone();
@@ -1786,13 +1793,13 @@ namespace VPlayer.Core.ViewModels
           if (result && updated.IsPrivate)
           {
             var notPrivateItems = updated.PlaylistItems.Where(x => x.ReferencedItem != null).Where(x => !x.ReferencedItem.IsPrivate).ToList();
-            
+
             //I was lazy to add items as prite when added to playlist, instead of forcing all items to by private in private playlist
             foreach (var item in notPrivateItems)
             {
               item.ReferencedItem.IsPrivate = true;
 
-              var playlistItem =  PlayList.SingleOrDefault(x => x.Model.Id == item.IdReferencedItem);
+              var playlistItem = PlayList.SingleOrDefault(x => x.Model.Id == item.IdReferencedItem);
 
               if (playlistItem != null)
               {
@@ -2035,7 +2042,7 @@ namespace VPlayer.Core.ViewModels
         {
           UpdatePlaylist(ActualSavedPlaylist, dbEntityPlalist);
 
-          Application.Current.Dispatcher.Invoke(() =>
+          VSynchronizationContext.PostOnUIThread(() =>
           {
             ActualSavedPlaylist = ActualSavedPlaylist;
 
@@ -2199,7 +2206,7 @@ namespace VPlayer.Core.ViewModels
 
     protected virtual void OnPlay()
     {
-      Application.Current.Dispatcher.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         if (ActualItem != null)
           ActualItem.IsPlaying = true;

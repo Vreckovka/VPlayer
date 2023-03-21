@@ -12,6 +12,8 @@ namespace VPlayer.AudioStorage.DomainClasses
     VideoFolder,
     SoundFile,
     VideoFile,
+    Artist,
+    Album,
     None
   }
 

@@ -59,6 +59,8 @@ namespace VPlayer.Home.ViewModels
       LibraryCollection = libraryCollection ?? throw new ArgumentNullException(nameof(libraryCollection));
 
       LoadingStatus = new LoadingStatus();
+
+
       LibraryCollection.DataLoadedCallback = OnDataLoaded;
     }
 
@@ -68,6 +70,8 @@ namespace VPlayer.Home.ViewModels
 
     public LoadingStatus LoadingStatus { get; protected set; }
     protected virtual bool SubscribeToPinned { get; } = false;
+
+
 
     public abstract override bool ContainsNestedRegions { get; }
     public LibraryCollection<TViewModel, TModel> LibraryCollection { get; set; }
@@ -278,12 +282,13 @@ namespace VPlayer.Home.ViewModels
     private bool wasSubscribed;
     private void SubscribeToChanges()
     {
-      LoadingStatus.IsLoading = true;
-
-      Task.Run(() =>
+      if (!wasSubscribed)
       {
-        if (!wasSubscribed)
+        LoadingStatus.IsLoading = true;
+
+        Task.Run(() =>
         {
+
           wasSubscribed = true;
 
           this.storageManager.SubscribeToItemChange<TModel>(ItemsChanged).DisposeWith(this);
@@ -292,27 +297,32 @@ namespace VPlayer.Home.ViewModels
             this.storageManager.SubscribeToItemChange<PinnedItem>(OnPinnedItemChanged).DisposeWith(this);
 
           storageManager.ActionIsDone.Subscribe((x) =>
-          {
-            Application.Current.Dispatcher.Invoke(() =>
             {
-              LibraryCollection.RequestReloadVirtulizedPlaylist();
-              RaisePropertyChanged(nameof(ViewModels));
-              RaisePropertyChanged(nameof(View));
-            });
-          }).DisposeWith(this);
+              VSynchronizationContext.PostOnUIThread(() =>
+              {
+                LibraryCollection.RequestReloadVirtulizedPlaylist();
+                RaisePropertyChanged(nameof(ViewModels));
+                RaisePropertyChanged(nameof(View));
+              });
+            }).DisposeWith(this);
 
           LibraryCollection.LoadData.Subscribe(_ =>
-          {
-            Application.Current.Dispatcher.Invoke(() =>
             {
-              LoadingStatus.IsLoading = false;
-              RaisePropertyChanged(nameof(ViewModels));
-              RaisePropertyChanged(nameof(View));
-            });
+              VSynchronizationContext.PostOnUIThread(() =>
+              {
+                LoadingStatus.IsLoading = false;
+                RaisePropertyChanged(nameof(ViewModels));
+                RaisePropertyChanged(nameof(View));
+              });
 
-          }).DisposeWith(this);
-        }
-      });
+            }).DisposeWith(this);
+
+          if(LibraryCollection.WasLoaded)
+          {
+            LoadingStatus.IsLoading = false;
+          }
+        });
+      }
     }
 
     #endregion
@@ -369,9 +379,11 @@ namespace VPlayer.Home.ViewModels
 
     #endregion
 
+    #region OnPinnedItemChanged
+
     private void OnPinnedItemChanged(IItemChanged<PinnedItem> itemChanged)
     {
-      Application.Current.Dispatcher.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         switch (itemChanged.Changed)
         {
@@ -394,6 +406,7 @@ namespace VPlayer.Home.ViewModels
       });
     }
 
+    #endregion
 
     protected abstract void SetupNewPinnedItem(PinnedItem pinnedItem);
 

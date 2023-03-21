@@ -16,6 +16,7 @@ using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
 using VCore.Standard.Providers;
 using VCore.Standard.ViewModels.TreeView;
+using VCore.WPF;
 using VCore.WPF.Interfaces;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.ItemsCollections.VirtualList;
@@ -404,7 +405,7 @@ namespace VPlayer.Core.ViewModels
             var allBookmarks = storageManager.GetTempRepository<ItemBookmark>()
               .Where(x => x.FileBrowserType == FileBrowserType);
 
-            Application.Current.Dispatcher.Invoke(async () =>
+            VSynchronizationContext.PostOnUIThread(async () =>
             {
               List<TFolderViewModel> bookmarks = new List<TFolderViewModel>();
 

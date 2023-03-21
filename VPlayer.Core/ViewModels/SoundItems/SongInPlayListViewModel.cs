@@ -8,6 +8,7 @@ using Logger;
 using Prism.Events;
 using VCore;
 using VCore.Standard.Factories.ViewModels;
+using VCore.WPF;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.LRC;
 using VCore.WPF.LRC.Domain;
@@ -610,7 +611,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     private void UpdateSyncedLyrics()
     {
-      Application.Current.Dispatcher.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         if (LRCFile != null)
         {
@@ -722,7 +723,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
             if (!string.IsNullOrEmpty(lyrics))
             {
-              Application.Current.Dispatcher.Invoke(() =>
+              VSynchronizationContext.PostOnUIThread(() =>
               {
                 Lyrics = lyrics;
                 SongModel.Chartlyrics_Lyric = lyrics;
