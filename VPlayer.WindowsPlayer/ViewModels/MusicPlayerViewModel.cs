@@ -924,7 +924,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       addAlbums?.RaiseCanExecuteChanged();
 
       await SetPlaylistCover();
-      Application.Current?.Dispatcher?.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         albumDetail?.RaiseCanExecuteChanged();
       });
@@ -2038,7 +2038,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       await base.BeforePlayEvent(data);
 
-      Application.Current?.Dispatcher?.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         WasAllItemsProcessed = false;
         CheckedFiles.Clear();
@@ -2226,7 +2226,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         ResetDownload();
 
-        Application.Current?.Dispatcher?.Invoke(() =>
+        VSynchronizationContext.PostOnUIThread(() =>
         {
           WasAllItemsProcessed = false;
           CheckedFiles.Clear();
@@ -2268,7 +2268,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           modelsDisposables.Add(storageManager.ObserveOnItemChange<Album>().ObserveOn(Application.Current.Dispatcher).Subscribe(OnAlbumChange).DisposeWith(this));
           modelsDisposables.Add(storageManager.ObserveOnItemChange<SoundItem>().ObserveOn(Application.Current.Dispatcher).Subscribe(OnSoundItemUpdated).DisposeWith(this));
 
-          Application.Current?.Dispatcher?.Invoke(() =>
+          VSynchronizationContext.PostOnUIThread(() =>
           {
             WasAllItemsProcessed = true;
           });
@@ -2360,7 +2360,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         ActualSavedPlaylist.Name = GetNewPlaylistName();
 
-        Application.Current?.Dispatcher?.Invoke(() =>
+        VSynchronizationContext.PostOnUIThread(() =>
         {
           OnSavePlaylist();
         });

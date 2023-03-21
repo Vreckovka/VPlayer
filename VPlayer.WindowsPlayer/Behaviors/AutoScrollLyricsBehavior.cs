@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Microsoft.Xaml.Behaviors;
+using VCore.WPF;
 using VCore.WPF.Behaviors;
 using VCore.WPF.Helpers;
 using VCore.WPF.Views;
@@ -42,7 +43,7 @@ namespace VPlayer.Player.Behaviors
 
     private void AssociatedObject_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      Application.Current?.Dispatcher?.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         var childCount = VisualTreeHelper.GetChildrenCount(AssociatedObject);
 
@@ -109,7 +110,7 @@ namespace VPlayer.Player.Behaviors
     {
       try
       {
-        Application.Current?.Dispatcher?.Invoke(() =>
+        VSynchronizationContext.PostOnUIThread(() =>
         {
           if (border == null)
           {

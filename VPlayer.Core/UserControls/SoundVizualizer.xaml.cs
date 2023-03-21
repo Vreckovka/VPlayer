@@ -18,6 +18,7 @@ using CSCore.Streams;
 using CSCore.Streams.Effects;
 using CSCore.Win32;
 using SoundManagement;
+using VCore.WPF;
 using VCore.WPF.Helpers;
 using WinformsVisualization.Visualization;
 using Color = System.Windows.Media.Color;
@@ -646,7 +647,7 @@ namespace VPlayer.Player.UserControls
     {
       try
       {
-        Application.Current?.Dispatcher?.Invoke(async () =>
+        VSynchronizationContext.PostOnUIThread(async () =>
          {
            if (IsEnabled && lineSpectrum != null)
            {

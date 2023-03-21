@@ -17,6 +17,7 @@ using Prism.Mvvm;
 using VCore;
 using VCore.ItemsCollections;
 using VCore.Standard.Factories.ViewModels;
+using VCore.WPF;
 using VCore.WPF.ItemsCollections.VirtualList;
 using VCore.WPF.ItemsCollections.VirtualList.VirtualLists;
 using VPlayer.AudioStorage.DomainClasses;
@@ -233,7 +234,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
         await LoadInitilizedDataAsync();
       }
 
-      Application.Current?.Dispatcher?.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         Items.Add(viewModel);
         FilteredItemsCollection.Add(viewModel);
@@ -251,7 +252,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
         await LoadInitilizedDataAsync();
       }
 
-      Application.Current?.Dispatcher?.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         Items.AddRange(list);
         FilteredItemsCollection.AddRange(list);
@@ -266,7 +267,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
 
     public void Remove(TModel entity)
     {
-      Application.Current?.Dispatcher?.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         if (WasLoaded)
         {
@@ -292,7 +293,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
 
     public void Remove(IEnumerable<TModel> entities)
     {
-      Application.Current?.Dispatcher?.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         if (WasLoaded)
         {

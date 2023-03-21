@@ -20,6 +20,7 @@ using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
 using VCore;
 using VCore.Standard.Helpers;
+using VCore.WPF;
 using VCore.WPF.Controls.StatusMessage;
 using VCore.WPF.Interfaces.Managers;
 using VPlayer.AudioStorage.DataLoader;
@@ -812,7 +813,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         {
           chromeDriverInitError = true;
 
-          Application.Current?.Dispatcher?.Invoke(() =>
+          VSynchronizationContext.PostOnUIThread(() =>
           {
             windowManager.ShowErrorPrompt(initEx.Message);
           });

@@ -8,6 +8,7 @@ using System.Windows;
 using Prism.Events;
 using VCore.Standard;
 using VCore.Standard.Helpers;
+using VCore.WPF;
 using VCore.WPF.Controls.StatusMessage;
 
 namespace VPlayer.Core.Managers.Status
@@ -172,7 +173,7 @@ namespace VPlayer.Core.Managers.Status
 
     public void UpdateMessageAndIncreaseProcessCount(StatusMessageViewModel statusMessageViewModel, int count = 1)
     {
-      Application.Current?.Dispatcher?.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         statusMessageViewModel.ProcessedCount++;
 

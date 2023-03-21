@@ -10,6 +10,7 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using VCore;
 using VCore.Standard;
 using VCore.Standard.Providers;
+using VCore.WPF;
 using VCore.WPF.Controls.StatusMessage;
 using VCore.WPF.Misc;
 using VCore.WPF.ViewModels;
@@ -210,7 +211,7 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
         {
           logger.Log(ex);
 
-          Application.Current?.Dispatcher?.Invoke(() =>
+          VSynchronizationContext.PostOnUIThread(() =>
           {
             statusManager.UpdateMessage(new StatusMessageViewModel(1)
             {

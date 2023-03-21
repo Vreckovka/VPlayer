@@ -8,6 +8,7 @@ using System.Windows.Input;
 using VCore;
 using VCore.Standard;
 using VCore.Standard.Helpers;
+using VCore.WPF;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.ItemsCollections.VirtualList.VirtualLists;
 using VCore.WPF.LRC;
@@ -361,11 +362,11 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
         Model.Lines.ForEach(x => x.Timestamp += TimeSpan.FromMilliseconds(TimeAdjustment));
 
-        Application.Current?.Dispatcher?.Invoke(() => { IsLoading = true; UpdateStatus = null; });
+        VSynchronizationContext.PostOnUIThread(() => { IsLoading = true; UpdateStatus = null; });
 
         var result = await pCloudLyricsProvider.Update(Model);
 
-        Application.Current?.Dispatcher?.Invoke(() =>
+        VSynchronizationContext.PostOnUIThread(() =>
         {
           UpdateStatus = result;
 
@@ -379,7 +380,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
       }
       finally
       {
-        Application.Current?.Dispatcher?.Invoke(() => { IsLoading = false; });
+        VSynchronizationContext.PostOnUIThread(() => { IsLoading = false; });
       }
 
     }

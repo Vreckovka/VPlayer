@@ -122,7 +122,7 @@ namespace VPlayer
     {
       base.OnUnhandledExceptionCaught(exception);
 
-      Application.Current?.Dispatcher?.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         if (statusManager == null)
         {

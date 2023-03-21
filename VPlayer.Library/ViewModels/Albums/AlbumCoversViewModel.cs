@@ -16,6 +16,7 @@ using System.Windows.Input;
 using Logger;
 using VCore;
 using VCore.Standard.Helpers;
+using VCore.WPF;
 using VCore.WPF.Converters;
 using VCore.WPF.ItemsCollections.VirtualList;
 using VCore.WPF.ItemsCollections.VirtualList.VirtualLists;
@@ -498,7 +499,7 @@ namespace VPlayer.Home.ViewModels.Albums
 
     private void Instance_CoversDownloaded(object sender, List<AlbumCover> e)
     {
-      Application.Current?.Dispatcher?.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         FoundConvers += e.Count;
       });
@@ -517,7 +518,7 @@ namespace VPlayer.Home.ViewModels.Albums
 
               if (result)
               {
-                Application.Current?.Dispatcher?.Invoke(() =>
+                VSynchronizationContext.PostOnUIThread(() =>
                 {
                   DownloadedProcessValue = (double)(AlbumCovers.Count * 100) / FoundConvers;
                 });
@@ -559,7 +560,7 @@ namespace VPlayer.Home.ViewModels.Albums
         {
           var path = await SaveCover(downloadedCover);
 
-          Application.Current?.Dispatcher?.Invoke(() =>
+          VSynchronizationContext.PostOnUIThread(() =>
           {
             cover.Size = downloadedCover.Length;
             cover.DownloadedCoverPath = path;
@@ -644,7 +645,7 @@ namespace VPlayer.Home.ViewModels.Albums
     {
       var generator = new ItemsGenerator<AlbumCoverViewModel>(AlbumCovers.OrderByDescending(x => x.Model.Size), 15);
 
-      Application.Current?.Dispatcher?.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         View = new VirtualList<AlbumCoverViewModel>(generator);
       });

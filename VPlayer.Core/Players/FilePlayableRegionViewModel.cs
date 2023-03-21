@@ -796,7 +796,7 @@ namespace VPlayer.Core.Players
     {
       await base.BeforePlayEvent(data);
 
-      Application.Current?.Dispatcher?.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         CheckedFiles.Clear();
       });
@@ -808,7 +808,7 @@ namespace VPlayer.Core.Players
 
     protected override void BeforeClearPlaylist()
     {
-      Application.Current?.Dispatcher?.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         CheckedFiles.Clear();
       });
@@ -968,9 +968,9 @@ namespace VPlayer.Core.Players
 
     #endregion
 
-    protected override void PlayItems(IEnumerable<TItemViewModel> items, bool savePlaylist = true, int songIndex = 0, bool editSaved = false, bool onlyItemSet = false)
+    protected override async Task PlayItems(IEnumerable<TItemViewModel> items, bool savePlaylist = true, int songIndex = 0, bool editSaved = false, bool onlyItemSet = false)
     {
-      base.PlayItems(items, savePlaylist, songIndex, editSaved, onlyItemSet);
+      await base.PlayItems(items, savePlaylist, songIndex, editSaved, onlyItemSet);
 
       if (savePlaylist)
       {

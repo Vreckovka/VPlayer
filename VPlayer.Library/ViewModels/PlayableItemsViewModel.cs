@@ -223,7 +223,7 @@ namespace VPlayer.Home.ViewModels
     {
       try
       {
-        Application.Current?.Dispatcher?.Invoke(() =>
+        VSynchronizationContext.PostOnUIThread(() =>
          {
            LibraryCollection.Update(model);
          });
@@ -253,7 +253,7 @@ namespace VPlayer.Home.ViewModels
     {
       LibraryCollection.Remove(model);
 
-      Application.Current?.Dispatcher?.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         RaisePropertyChanged(nameof(View));
         RaisePropertyChanged(nameof(ViewModels));

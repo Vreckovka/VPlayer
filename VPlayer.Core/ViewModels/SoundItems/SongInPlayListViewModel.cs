@@ -753,7 +753,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     public void RaiseLyricsChange()
     {
-      Application.Current?.Dispatcher?.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         RaisePropertyChanged(nameof(LRCFile));
         RaisePropertyChanged(nameof(Lyrics));

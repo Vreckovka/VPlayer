@@ -440,7 +440,7 @@ namespace VPlayer.Player.ViewModels
 
     private void KeyListener_OnKeyPressed(object sender, KeyPressedArgs e)
     {
-      Application.Current?.Dispatcher?.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         var filePlayable = CanUseKey(e.KeyPressed);
 

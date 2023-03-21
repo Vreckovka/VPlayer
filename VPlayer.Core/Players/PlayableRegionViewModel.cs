@@ -1129,7 +1129,7 @@ namespace VPlayer.Core.ViewModels
       {
         if (!IsRepeate)
         {
-          VSynchronizationContext.PostOnUIThread(() =>
+          await VSynchronizationContext.InvokeOnDispatcherAsync(() =>
           {
             IsPlayFnished = true;
           });
@@ -1156,7 +1156,7 @@ namespace VPlayer.Core.ViewModels
 
       await SetMedia(ActualItem.Model);
 
-      VSynchronizationContext.PostOnUIThread(() =>
+      await VSynchronizationContext.InvokeOnDispatcherAsync(() =>
       {
         ActualItem.IsPlaying = true;
       });
@@ -1173,7 +1173,7 @@ namespace VPlayer.Core.ViewModels
       }
       else if (ActualItem != null)
       {
-        VSynchronizationContext.PostOnUIThread(() =>
+        await VSynchronizationContext.InvokeOnDispatcherAsync(() =>
         {
           ActualItem.IsPaused = true;
         });
@@ -1341,7 +1341,7 @@ namespace VPlayer.Core.ViewModels
 
     #region PlayPlaylist
 
-    protected virtual void PlayPlaylist(PlayItemsEventData<TItemViewModel> data, int? lastSongIndex = null, bool onlySet = false)
+    protected virtual async void PlayPlaylist(PlayItemsEventData<TItemViewModel> data, int? lastSongIndex = null, bool onlySet = false)
     {
       clearPlaylistDisposable?.Dispose();
 
@@ -1356,15 +1356,15 @@ namespace VPlayer.Core.ViewModels
 
       if (lastSongIndex == null)
       {
-        PlayItems(data.Items, false, onlyItemSet: onlySet);
+        await PlayItems(data.Items, false, onlyItemSet: onlySet);
       }
       else
       {
-        PlayItems(data.Items, false, lastSongIndex.Value, onlyItemSet: onlySet);
+        await PlayItems(data.Items, false, lastSongIndex.Value, onlyItemSet: onlySet);
 
         if (data.SetPostion.HasValue)
         {
-          //MediaPlayer.Position = data.SetPostion.Value;
+          MediaPlayer.Position = data.SetPostion.Value;
         }
       }
 
@@ -1452,11 +1452,11 @@ namespace VPlayer.Core.ViewModels
 
     #region PlayItems
 
-    protected virtual void PlayItems(IEnumerable<TItemViewModel> items, bool savePlaylist = true, int songIndex = 0, bool editSaved = false, bool onlyItemSet = false)
+    protected virtual async Task PlayItems(IEnumerable<TItemViewModel> items, bool savePlaylist = true, int songIndex = 0, bool editSaved = false, bool onlyItemSet = false)
     {
       var itemList = items.ToList();
 
-      VSynchronizationContext.PostOnUIThread(() =>
+      await VSynchronizationContext.InvokeOnDispatcherAsync(() =>
       {
         if (!onlyItemSet)
           IsActive = true;
@@ -1819,7 +1819,7 @@ namespace VPlayer.Core.ViewModels
           {
             try
             {
-              Application.Current?.Dispatcher?.Invoke(() =>
+              VSynchronizationContext.PostOnUIThread(() =>
               {
                 if (VFocusManager.FocusedItems.Count(x => x.Name == "NameTextBox") == 0)
                 {

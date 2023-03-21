@@ -157,7 +157,7 @@ namespace VPlayer.Home.ViewModels.Artists
 
     protected override Task LoadEntity()
     {
-      return Task.Run(() =>
+      return Task.Run(async () =>
       {
         var albumsDb = storageManager.GetTempRepository<Album>()
           .Where(x => x.Artist == ViewModel.Model)

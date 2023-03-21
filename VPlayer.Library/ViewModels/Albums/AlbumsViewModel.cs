@@ -140,7 +140,7 @@ namespace VPlayer.Home.ViewModels.Albums
               throw new ArgumentOutOfRangeException();
           }
 
-          Application.Current?.Dispatcher?.Invoke(() => { album.RaisePropertyChanges(); });
+          VSynchronizationContext.PostOnUIThread(() => { album.RaisePropertyChanges(); });
         }
       }
     }
