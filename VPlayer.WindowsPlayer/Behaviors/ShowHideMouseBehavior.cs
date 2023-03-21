@@ -6,6 +6,7 @@ using System.Reactive;
 using System.Text;
 using System.Windows;
 using Microsoft.Xaml.Behaviors;
+using VCore.WPF;
 using VCore.WPF.Helpers;
 using VCore.WPF.Managers;
 using VPlayer.WindowsPlayer.Behaviors;
@@ -27,7 +28,7 @@ namespace VPlayer.Player.Behaviors
 
       hideMouse = FullScreenManager.OnHideMouse.Subscribe((x) =>
       {
-        Application.Current.Dispatcher.Invoke(() =>
+        VSynchronizationContext.PostOnUIThread(() =>
         {
             AssociatedObject.Visibility = Visibility.Hidden;
         });
@@ -35,7 +36,7 @@ namespace VPlayer.Player.Behaviors
 
       showMouse = FullScreenManager.OnResetMouse.Subscribe((x) =>
       {
-        Application.Current.Dispatcher.Invoke(() =>
+        VSynchronizationContext.PostOnUIThread(() =>
         {
           AssociatedObject.Visibility = Visibility.Visible;
         });

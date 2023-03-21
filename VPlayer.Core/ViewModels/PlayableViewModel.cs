@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using VCore;
@@ -11,6 +12,7 @@ using VCore.Standard;
 using VCore.WPF.Misc;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
+using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.ViewModels.Artists;
 using VPlayer.IPTV.ViewModels;
@@ -35,7 +37,8 @@ namespace VPlayer.Core.ViewModels
 
   public abstract class PlayableViewModelWithThumbnail<TViewModel, TModel> : PlayableViewModel<TViewModel, TModel> where TModel : IDownloadableEntity, INamedEntity
   {
-    protected PlayableViewModelWithThumbnail(TModel model, IEventAggregator eventAggregator) : base(model, eventAggregator)
+    protected PlayableViewModelWithThumbnail(TModel model, IEventAggregator eventAggregator, IStorageManager storageManager) 
+      : base(model, eventAggregator, storageManager)
     {
     }
 
@@ -139,14 +142,16 @@ namespace VPlayer.Core.ViewModels
     #region Fields
 
     protected readonly IEventAggregator eventAggregator;
+    private readonly IStorageManager storageManager;
 
     #endregion
 
     #region Constructors
 
-    protected PlayableViewModel(TModel model, IEventAggregator eventAggregator) : base(model)
+    protected PlayableViewModel(TModel model, IEventAggregator eventAggregator, IStorageManager storageManager) : base(model)
     {
       this.eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
+      this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
     }
 
     #endregion
@@ -337,6 +342,43 @@ namespace VPlayer.Core.ViewModels
 
     #endregion AddToPlaylist
 
+    #region PinItem
+
+    private ActionCommand pinItem;
+
+    public ICommand PinItem
+    {
+      get
+      {
+        if (pinItem == null)
+        {
+          pinItem = new ActionCommand(OnPinItem);
+        }
+
+        return pinItem;
+      }
+    }
+
+    public async void OnPinItem()
+    {
+      var foundItem = storageManager.GetTempRepository<PinnedItem>().SingleOrDefault(x => x.Description == Model.Id.ToString() &&
+                                                                                          x.PinnedType == GetPinnedType(Model));
+
+      if (foundItem == null)
+      {
+        var newPinnedItem = new PinnedItem();
+        newPinnedItem.Description = Model.Id.ToString();
+        newPinnedItem.PinnedType = GetPinnedType(Model);
+
+        var item = await Task.Run(() => storageManager.AddPinnedItem(newPinnedItem));
+
+        PinnedItem = item;
+      }
+    }
+
+    #endregion
+
+
     #endregion
 
     #region Methods
@@ -344,6 +386,8 @@ namespace VPlayer.Core.ViewModels
     public abstract Task<IEnumerable<TViewModelInPlaylist>> GetItemsToPlay();
     public abstract void PublishPlayEvent(IEnumerable<TViewModelInPlaylist> viewModels, EventAction eventAction);
     public abstract void PublishAddToPlaylistEvent(IEnumerable<TViewModelInPlaylist> viewModels);
+
+    protected abstract PinnedType GetPinnedType(TModel model);
 
     #endregion
   }

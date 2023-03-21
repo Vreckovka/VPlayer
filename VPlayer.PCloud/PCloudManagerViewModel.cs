@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using PCloudClient;
+using VCore.WPF;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Managers;
 using VCore.WPF.Modularity.RegionProviders;
@@ -55,7 +56,7 @@ namespace VPlayer.PCloud
       Task.Run(async () =>
       {
         await Task.Delay(50);
-        await Application.Current.Dispatcher.InvokeAsync(async () =>
+        VSynchronizationContext.PostOnUIThread(async () =>
         {
           if (!cloudService.IsUserLoggedIn())
           {

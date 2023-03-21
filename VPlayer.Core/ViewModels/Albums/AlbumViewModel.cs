@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore.Standard.Comparers;
 using VCore.Standard.Factories.ViewModels;
+using VCore.WPF;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
@@ -40,7 +41,7 @@ namespace VPlayer.Core.ViewModels.Albums
       IAlbumsViewModel albumsViewModel,
       IViewModelsFactory viewModelsFactory,
       IVPlayerCloudService iVPlayerCloudService,
-      IVPlayerRegionProvider ivPlayerRegionProvider) : base(model, eventAggregator)
+      IVPlayerRegionProvider ivPlayerRegionProvider) : base(model, eventAggregator, storage)
     {
       this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
       this.albumsViewModel = albumsViewModel ?? throw new ArgumentNullException(nameof(albumsViewModel));
@@ -105,7 +106,7 @@ namespace VPlayer.Core.ViewModels.Albums
         }
         finally
         {
-          Application.Current.Dispatcher.Invoke(() =>
+          VSynchronizationContext.PostOnUIThread(() =>
           {
             albumsViewModel.LoadingStatus.IsLoading = false;
           });
@@ -133,6 +134,11 @@ namespace VPlayer.Core.ViewModels.Albums
       var e = new PlayItemsEventData<SongInPlayListViewModel>(viewModels, EventAction.Add, this);
 
       eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SongInPlayListViewModel>>().Publish(e);
+    }
+
+    protected override PinnedType GetPinnedType(Album model)
+    {
+      return PinnedType.Album;
     }
 
     #endregion

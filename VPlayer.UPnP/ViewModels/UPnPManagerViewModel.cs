@@ -16,7 +16,7 @@ using VCore;
 
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
-
+using VCore.WPF;
 using VCore.WPF.ItemsCollections;
 using VCore.WPF.Misc;
 using VCore.WPF.Modularity.RegionProviders;
@@ -197,13 +197,13 @@ namespace VPlayer.UPnP.ViewModels
           vm.DbModel = dbMediaServer;
           vm.IsStored = true;
 
-          await Application.Current.Dispatcher.InvokeAsync(() =>
+          VSynchronizationContext.PostOnUIThread(() =>
           {
             MediaServers.Add(vm);
           });
         }
 
-        await Application.Current.Dispatcher.InvokeAsync(() =>
+        VSynchronizationContext.PostOnUIThread(() =>
         {
           MediaServers.SelectedItem = MediaServers.View.FirstOrDefault();
         });
@@ -237,14 +237,14 @@ namespace VPlayer.UPnP.ViewModels
           vm.DbModel = dbMediaRenderer;
           vm.IsStored = true;
 
-          await Application.Current.Dispatcher.InvokeAsync(() =>
+          VSynchronizationContext.PostOnUIThread(() =>
           {
             Renderers.Add(vm);
           });
 
         }
 
-        await Application.Current.Dispatcher.InvokeAsync(() =>
+        VSynchronizationContext.PostOnUIThread(() =>
         {
           Renderers.SelectedItem = Renderers.View.FirstOrDefault();
         });
@@ -292,7 +292,7 @@ namespace VPlayer.UPnP.ViewModels
 
     private void UPnPService_OnMediaRendererFound(object sender, UPnPService.MediaRendererFoundEventArgs e)
     {
-      Application.Current.Dispatcher.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         var found = Renderers.ViewModels.Any(x => x.Model.PresentationURL == e.MediaRenderer.PresentationURL);
 
@@ -310,7 +310,7 @@ namespace VPlayer.UPnP.ViewModels
 
     private void Service_OnMediaServerFound(object sender, UPnPService.MediaServerFoundEventArgs e)
     {
-      Application.Current.Dispatcher.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         var found = MediaServers.ViewModels.Any(x => x.Model.PresentationURL == e.MediaServer.PresentationURL);
 

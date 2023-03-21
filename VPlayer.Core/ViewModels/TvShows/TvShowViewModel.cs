@@ -28,7 +28,7 @@ namespace VPlayer.Core.ViewModels.TvShows
        IStorageManager storage,
        IVPlayerViewModelsFactory viewModelsFactory,
        IVPlayerRegionProvider vPlayerRegionProvider
-      ) : base(model, eventAggregator)
+      ) : base(model, eventAggregator, storage)
     {
       this.storage = storage ?? throw new ArgumentNullException(nameof(storage));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
@@ -115,6 +115,9 @@ namespace VPlayer.Core.ViewModels.TvShows
       throw new NotImplementedException();
     }
 
-
+    protected override PinnedType GetPinnedType(TvShow model)
+    {
+      throw new NotImplementedException();
+    }
   }
 }

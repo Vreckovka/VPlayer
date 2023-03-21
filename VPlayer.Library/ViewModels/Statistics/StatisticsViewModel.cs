@@ -259,7 +259,7 @@ namespace VPlayer.Home.ViewModels.Statistics
         var videosToDisplay = videos.OrderByDescending(x => x.TimePlayed).Take(subCategorySize).OfType<DomainEntity>().ToList();
 
 
-        Application.Current.Dispatcher.Invoke(() =>
+        VSynchronizationContext.PostOnUIThread(() =>
         {
           TotalWatchedItems = list.Sum(x => x.TimePlayed);
           ItemsView = new VirtualList<DomainEntity>(itemsToDisplay, allSize);
@@ -283,7 +283,7 @@ namespace VPlayer.Home.ViewModels.Statistics
         list.AddRange(episodes);
 
 
-        Application.Current.Dispatcher.Invoke(() =>
+        VSynchronizationContext.PostOnUIThread(() =>
         {
           //Items data were collected later and we don't want to lose old
           //data so we combine Playlist.TotalPlayedTime - Items.Sum(x => x.TimePlayed)

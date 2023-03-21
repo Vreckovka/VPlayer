@@ -10,6 +10,7 @@ using UPnP.Device;
 using VCore;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.ViewModels.TreeView;
+using VCore.WPF;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 
@@ -67,7 +68,7 @@ namespace VPlayer.UPnP.ViewModels.UPnP.TreeViewItems
 
     private void CreateViewModelsFromDIDLite(DIDLLite dIDLLite)
     {
-      Application.Current.Dispatcher.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         SubItems.Clear();
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -29,6 +30,7 @@ namespace VPlayer.Home.ViewModels
     where TPlaylistModel : class, INamedEntity, IFilePlaylist<TPlaylistItemModel>
     where TPlaylistItemModel : class, IItemInPlaylist<TItemModel>
   {
+    private int initTake = 23;
     public PlaylistsViewModel(IRegionProvider regionProvider, IViewModelsFactory viewModelsFactory, IStorageManager storageManager,
       LibraryCollection<TViewModel, TPlaylistModel> libraryCollection,
       IEventAggregator eventAggregator) : base(regionProvider, viewModelsFactory, storageManager, libraryCollection, eventAggregator)
@@ -37,6 +39,8 @@ namespace VPlayer.Home.ViewModels
       {
         ShowProcessCount = false
       };
+
+      LibraryCollection.MaxTake = initTake;
     }
 
     protected IEnumerable<TViewModel> AllItems { get; set; }
@@ -217,7 +221,7 @@ namespace VPlayer.Home.ViewModels
 
       GetActualItems();
 
-      var initTake = 23;
+      
       var userCreated = AllUserCreatedItems;
       var notSavedPlaylists = AllGeneratedItems.Take(initTake);
 
@@ -228,7 +232,7 @@ namespace VPlayer.Home.ViewModels
         .Select(x => viewModelsFactory.Create<TViewModel>(x))
         .ToList();
 
-      Application.Current.Dispatcher.Invoke(async () =>
+      VSynchronizationContext.PostOnUIThread(async () =>
       {
         await LoadPinnedItems();
 
@@ -331,6 +335,5 @@ namespace VPlayer.Home.ViewModels
       CanLoadMoreItems = actualSkip < AllItems.Count();
       RaisePropertyChanged(nameof(View));
     }
-
   }
 }

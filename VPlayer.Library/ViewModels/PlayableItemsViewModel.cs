@@ -69,6 +69,8 @@ namespace VPlayer.Home.ViewModels
     public LoadingStatus LoadingStatus { get; protected set; }
     protected virtual bool SubscribeToPinned { get; } = false;
 
+
+
     public abstract override bool ContainsNestedRegions { get; }
     public LibraryCollection<TViewModel, TModel> LibraryCollection { get; set; }
 
@@ -293,7 +295,7 @@ namespace VPlayer.Home.ViewModels
 
           storageManager.ActionIsDone.Subscribe((x) =>
           {
-            Application.Current.Dispatcher.Invoke(() =>
+            VSynchronizationContext.PostOnUIThread(() =>
             {
               LibraryCollection.RequestReloadVirtulizedPlaylist();
               RaisePropertyChanged(nameof(ViewModels));
@@ -303,7 +305,7 @@ namespace VPlayer.Home.ViewModels
 
           LibraryCollection.LoadData.Subscribe(_ =>
           {
-            Application.Current.Dispatcher.Invoke(() =>
+            VSynchronizationContext.PostOnUIThread(() =>
             {
               LoadingStatus.IsLoading = false;
               RaisePropertyChanged(nameof(ViewModels));
@@ -369,9 +371,11 @@ namespace VPlayer.Home.ViewModels
 
     #endregion
 
+    #region OnPinnedItemChanged
+
     private void OnPinnedItemChanged(IItemChanged<PinnedItem> itemChanged)
     {
-      Application.Current.Dispatcher.Invoke(() =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
         switch (itemChanged.Changed)
         {
@@ -394,6 +398,7 @@ namespace VPlayer.Home.ViewModels
       });
     }
 
+    #endregion
 
     protected abstract void SetupNewPinnedItem(PinnedItem pinnedItem);
 

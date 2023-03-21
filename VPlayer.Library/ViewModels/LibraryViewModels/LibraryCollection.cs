@@ -42,6 +42,8 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
       get { return Items?.OrderBy(x => x.Name); }
     }
 
+    public int? MaxTake { get; set; }
+
     #endregion Fields
 
     #region Constructors
@@ -164,14 +166,23 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
                 var vms = data.Select(x => ViewModelsFactory.Create<TViewModel>(x)).ToList();
 
                 Items = new RxObservableCollection<TViewModel>(vms);
-                FilteredItemsCollection = new ObservableCollection<TViewModel>(vms);
+
+                if(MaxTake != null)
+                {
+                  FilteredItemsCollection = new ObservableCollection<TViewModel>(vms.Take(MaxTake.Value));
+                }
+                else
+                {
+                  FilteredItemsCollection = new ObservableCollection<TViewModel>(vms);
+                }
+             
 
                 Items.CollectionChanged += Items_CollectionChanged;
                 Recreate();
 
                 WasLoaded = true;
 
-                DataLoadedCallback?.Invoke();
+                Task.Run(() => DataLoadedCallback?.Invoke());
               }
 
               return true;
@@ -337,7 +348,16 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
     {
       if (Items != null)
       {
-        var generator = new ItemsGenerator<TViewModel>(Items.OrderBy(x => x?.Name), 21);
+        ItemsGenerator<TViewModel> generator = null;
+
+        if (MaxTake != null)
+        {
+          generator = new ItemsGenerator<TViewModel>(Items.OrderBy(x => x?.Name).Take(MaxTake.Value), 21);
+        }
+        else
+        {
+          generator = new ItemsGenerator<TViewModel>(Items.OrderBy(x => x?.Name), 21);
+        }
 
         FilteredItems = new VirtualList<TViewModel>(generator);
 
