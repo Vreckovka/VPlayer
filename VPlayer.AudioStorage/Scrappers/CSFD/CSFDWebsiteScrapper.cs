@@ -679,6 +679,11 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         var infoNode = TrySelectNodes(document.DocumentNode, "/div/div[1]/div/div[1]/div[2]/div/div[2]")?.FirstOrDefault();
 
+        if (infoNode == null)
+        {
+          infoNode = TrySelectNodes(document.DocumentNode, "/div/div[1]/div/div[1]/div[2]/div/div")?.FirstOrDefault();
+        }
+
         string[] actors = null;
         string[] directors = null;
         string[] generes = null;
@@ -695,11 +700,17 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
             var basicInfoNode = infoNode.ChildNodes[5];
 
             var stringYear = basicInfoNode.ChildNodes[0].InnerText.Replace(",", null).Trim();
+            var stringYearSecond = basicInfoNode.ChildNodes[1].InnerText.Replace(",", null).Trim();
+
             length = basicInfoNode.ChildNodes[2].InnerText.Replace(",", null).Trim();
 
             if (int.TryParse(stringYear, out var parsedYear))
             {
               year = parsedYear;
+            }
+            else if (int.TryParse(stringYearSecond, out var parsedYear1))
+            {
+              year = parsedYear1;
             }
           }
 
@@ -1037,172 +1048,68 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       bool parseYearFromName = true,
       bool isMovie = false)
     {
-      try
+
+      var originalParsedName = parsedName;
+      parsedName = parsedName.RemoveDiacritics()
+        .Replace("avi", "")
+        .Replace("mkv", "")
+        .ToLower();
+
+      Regex rgx = new Regex("[^a-zA-Z0-9]");
+
+      parsedName = rgx.Replace(parsedName, " ").Replace("  ", " ").Replace("   ", " ");
+
+      lastParsedName = parsedName.Trim();
+
+      if (parseYearFromName)
       {
-        await findSemaphore.WaitAsync();
+        var matches = Regex.Matches(parsedName, @"\D*");
 
-        var originalParsedName = parsedName;
-        parsedName = parsedName.RemoveDiacritics()
-          .Replace("avi", "")
-          .Replace("mkv", "")
-          .ToLower();
+        var anyMatch = matches.Any(match => match.Success && !string.IsNullOrEmpty(match.Value) && !Regex.IsMatch(parsedName, @"\d+th"));
 
-        Regex rgx = new Regex("[^a-zA-Z0-9]");
-
-        parsedName = rgx.Replace(parsedName, " ").Replace("  ", " ").Replace("   ", " ");
-
-        lastParsedName = parsedName.Trim();
-
-        if (parseYearFromName)
+        if (anyMatch)
         {
-          var matches = Regex.Matches(parsedName, @"\D*");
+          parsedName = "";
+        }
 
-          var anyMatch = matches.Any(match => match.Success && !string.IsNullOrEmpty(match.Value) && !Regex.IsMatch(parsedName, @"\d+th"));
-
-          if (anyMatch)
+        foreach (var match in matches.ToList())
+        {
+          if (match.Success && !string.IsNullOrEmpty(match.Value) && !Regex.IsMatch(parsedName, @"\d+th"))
           {
-            parsedName = "";
-          }
-
-          foreach (var match in matches.ToList())
-          {
-            if (match.Success && !string.IsNullOrEmpty(match.Value) && !Regex.IsMatch(parsedName, @"\d+th"))
-            {
-              parsedName += " " + match.Value;
-            }
+            parsedName += " " + match.Value;
           }
         }
+      }
 
-        parsedName = parsedName.Replace("  ", " ").Replace("   ", " ").Trim();
+      parsedName = parsedName.Replace("  ", " ").Replace("   ", " ").Trim();
 
-        var statusMessage = new StatusMessageViewModel(2)
+      var statusMessage = new StatusMessageViewModel(2)
+      {
+        Status = StatusType.Processing,
+        Message = $"Finding item"
+      };
+
+      statusMessage.CopyParentState(parentMessage);
+
+      if (showStatusMassage)
+      {
+        statusManager.UpdateMessage(statusMessage);
+      }
+
+      var items = await FindItems(parsedName, cancellationToken);
+
+      var allItems = items?.AllItems?.ToList();
+
+      if (allItems == null || allItems.Count == 0)
+      {
+        statusMessage.Status = StatusType.Failed;
+        statusMessage.Message = "Not found!";
+
+        statusManager.UpdateMessage(statusMessage);
+
+        if (lastParsedName != parsedName)
         {
-          Status = StatusType.Processing,
-          Message = $"Finding item"
-        };
-
-        statusMessage.CopyParentState(parentMessage);
-
-        if (showStatusMassage)
-        {
-          statusManager.UpdateMessage(statusMessage);
-        }
-
-        var items = await FindItems(parsedName, cancellationToken);
-
-        var allItems = items?.AllItems?.ToList();
-
-        if (allItems == null || allItems.Count == 0)
-        {
-          statusMessage.Status = StatusType.Failed;
-          statusMessage.Message = "Not found!";
-
-          statusManager.UpdateMessage(statusMessage);
-
-          if (lastParsedName != parsedName)
-          {
-            return await FindSingleCsfdItem(parsedName, year, isTvSHow, cancellationToken, showStatusMassage, parentMessage, false);
-          }
-          else if (lastParsedName.Contains("movie"))
-          {
-            lastParsedName = lastParsedName.Replace("movie", "");
-
-            return await FindSingleCsfdItem(lastParsedName, year, false, cancellationToken, showStatusMassage, parentMessage, false);
-          }
-          else
-            return null;
-        }
-
-        if (showStatusMassage)
-          statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
-
-
-        double minSimilarity = 0.55;
-
-
-        var query = allItems.Where(x => x.OriginalName != null)
-          .Where(x => x.OriginalName.RemoveDiacritics().Similarity(parsedName) > minSimilarity)
-          .OrderByDescending(x => x.OriginalName.RemoveDiacritics().Similarity(parsedName)).AsEnumerable();
-
-        query = query.Concat(allItems.Where(x => x.Name != null)
-          .Where(x => x.Name.RemoveDiacritics().Similarity(parsedName) > minSimilarity)
-          .OrderByDescending(x => x.Name.RemoveDiacritics().Similarity(parsedName)).AsEnumerable());
-
-        if (year != null)
-        {
-          IEnumerable<CSFDItem> yearQuery = null;
-          List<CSFDItem> list = null;
-
-          if (!query.Any())
-          {
-            var minSimilarity2 = 0.25;
-
-            yearQuery = allItems.Where(x => x.OriginalName != null)
-              .Where(x => x.OriginalName.RemoveDiacritics().Similarity(parsedName) > minSimilarity2)
-              .OrderByDescending(x => x.OriginalName.RemoveDiacritics().Similarity(parsedName)).AsEnumerable();
-
-            yearQuery = yearQuery.Concat(allItems.Where(x => x.Name != null)
-              .Where(x => x.Name.RemoveDiacritics().Similarity(parsedName) > minSimilarity2)
-              .OrderByDescending(x => x.Name.RemoveDiacritics().Similarity(parsedName)).AsEnumerable());
-
-            yearQuery = yearQuery.Concat(allItems.Where(x => x.OriginalName != null)
-              .Where(x => x.OriginalName.RemoveDiacritics().Similarity(GetWithoutBrackets(parsedName)) > minSimilarity2)
-              .OrderByDescending(x => x.Name.RemoveDiacritics().Similarity(GetWithoutBrackets(parsedName))).AsEnumerable());
-
-            list = yearQuery.ToList();
-          }
-          else
-          {
-            list = query.ToList();
-          }
-
-          var yearQueryList = list.Where(x => x.Year == year).ToList();
-
-          if (yearQueryList.Count() != 0)
-          {
-            query = yearQueryList;
-          }
-        }
-
-        query = query
-          .OrderByDescending(x => x.OriginalName.RemoveDiacritics().Similarity(GetWithoutBrackets(parsedName)))
-          .ThenByDescending(x => x.RatingColor)
-          .ThenByDescending(x => x.Year);
-
-        if (isTvSHow)
-        {
-          query = query.Where(x => x.Parameters.Contains("seriál") || x.Parameters.Contains("epizóda") || x.Parameters.Contains("séria"));
-          query = query.OrderBy(x => GetOrderNumber(x.Parameters[0]));
-        }
-        else if (isMovie)
-        {
-          query = query.Where(x => !x.Parameters.Contains("seriál") && !x.Parameters.Contains("epizóda"));
-        }
-
-
-        var sortedItems = query.ToList();
-
-        var newBestItem = sortedItems.FirstOrDefault();
-        var originalNameWithoutBrackets = GetWithoutBrackets(originalParsedName);
-
-        if (newBestItem != null)
-        {
-          bestItem = newBestItem;
-          bestItem.Rating = GetCsfdRating(bestItem);
-          bestItem.ImagePath = GetCsfdImage(bestItem);
-
-          if (showStatusMassage)
-            statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
-
-          return bestItem;
-        }
-        else if (originalParsedName != originalNameWithoutBrackets)
-        {
-          return await FindSingleCsfdItem(originalNameWithoutBrackets, year, isTvSHow, cancellationToken, showStatusMassage, parentMessage, false);
-        }
-        else if (lastParsedName != parsedName)
-        {
-          return await FindSingleCsfdItem(lastParsedName, year, isTvSHow, cancellationToken, showStatusMassage, parentMessage, false);
+          return await FindSingleCsfdItem(parsedName, year, isTvSHow, cancellationToken, showStatusMassage, parentMessage, false);
         }
         else if (lastParsedName.Contains("movie"))
         {
@@ -1210,13 +1117,109 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
           return await FindSingleCsfdItem(lastParsedName, year, false, cancellationToken, showStatusMassage, parentMessage, false);
         }
+        else
+          return null;
+      }
 
-        return null;
-      }
-      finally
+      if (showStatusMassage)
+        statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+
+
+      double minSimilarity = 0.55;
+
+
+      var query = allItems.Where(x => x.OriginalName != null)
+        .Where(x => x.OriginalName.RemoveDiacritics().Similarity(parsedName) > minSimilarity)
+        .OrderByDescending(x => x.OriginalName.RemoveDiacritics().Similarity(parsedName)).AsEnumerable();
+
+      query = query.Concat(allItems.Where(x => x.Name != null)
+        .Where(x => x.Name.RemoveDiacritics().Similarity(parsedName) > minSimilarity)
+        .OrderByDescending(x => x.Name.RemoveDiacritics().Similarity(parsedName)).AsEnumerable());
+
+      if (year != null)
       {
-        findSemaphore.Release();
+        IEnumerable<CSFDItem> yearQuery = null;
+        List<CSFDItem> list = null;
+
+        if (!query.Any())
+        {
+          var minSimilarity2 = 0.25;
+
+          yearQuery = allItems.Where(x => x.OriginalName != null)
+            .Where(x => x.OriginalName.RemoveDiacritics().Similarity(parsedName) > minSimilarity2)
+            .OrderByDescending(x => x.OriginalName.RemoveDiacritics().Similarity(parsedName)).AsEnumerable();
+
+          yearQuery = yearQuery.Concat(allItems.Where(x => x.Name != null)
+            .Where(x => x.Name.RemoveDiacritics().Similarity(parsedName) > minSimilarity2)
+            .OrderByDescending(x => x.Name.RemoveDiacritics().Similarity(parsedName)).AsEnumerable());
+
+          yearQuery = yearQuery.Concat(allItems.Where(x => x.OriginalName != null)
+            .Where(x => x.OriginalName.RemoveDiacritics().Similarity(GetWithoutBrackets(parsedName)) > minSimilarity2)
+            .OrderByDescending(x => x.Name.RemoveDiacritics().Similarity(GetWithoutBrackets(parsedName))).AsEnumerable());
+
+          list = yearQuery.ToList();
+        }
+        else
+        {
+          list = query.ToList();
+        }
+
+        var yearQueryList = list.Where(x => x.Year == year).ToList();
+
+        if (yearQueryList.Count() != 0)
+        {
+          query = yearQueryList;
+        }
       }
+
+      query = query
+        .OrderByDescending(x => x.OriginalName.RemoveDiacritics().Similarity(GetWithoutBrackets(parsedName)))
+        .ThenByDescending(x => x.RatingColor)
+        .ThenByDescending(x => x.Year);
+
+      if (isTvSHow)
+      {
+        query = query.Where(x => x.Parameters.Contains("seriál") || x.Parameters.Contains("epizóda") || x.Parameters.Contains("séria"));
+        query = query.OrderBy(x => GetOrderNumber(x.Parameters[0]));
+      }
+      else if (isMovie)
+      {
+        query = query.Where(x => !x.Parameters.Contains("seriál") && !x.Parameters.Contains("epizóda"));
+      }
+
+
+      var sortedItems = query.ToList();
+
+      var newBestItem = sortedItems.FirstOrDefault();
+      var originalNameWithoutBrackets = GetWithoutBrackets(originalParsedName);
+
+      if (newBestItem != null)
+      {
+        bestItem = newBestItem;
+        bestItem.Rating = GetCsfdRating(bestItem);
+        bestItem.ImagePath = GetCsfdImage(bestItem);
+
+        if (showStatusMassage)
+          statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
+
+        return bestItem;
+      }
+      else if (originalParsedName != originalNameWithoutBrackets)
+      {
+        return await FindSingleCsfdItem(originalNameWithoutBrackets, year, isTvSHow, cancellationToken, showStatusMassage, parentMessage, false);
+      }
+      else if (lastParsedName != parsedName)
+      {
+        return await FindSingleCsfdItem(lastParsedName, year, isTvSHow, cancellationToken, showStatusMassage, parentMessage, false);
+      }
+      else if (lastParsedName.Contains("movie"))
+      {
+        lastParsedName = lastParsedName.Replace("movie", "");
+
+        return await FindSingleCsfdItem(lastParsedName, year, false, cancellationToken, showStatusMassage, parentMessage, false);
+      }
+
+      return null;
     }
 
     #endregion
@@ -1294,7 +1297,21 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     {
       return Task.Run(() =>
       {
-        var nodes = TrySelectNodes(document.DocumentNode, "/div/div[2]/div/div[1]/div/div[1]/section[1]/div/div[1]/article");
+        var nodes = TrySelectNodes(document.DocumentNode, "/div/div[2]/div/div[1]/section[1]/div/div[1]/article");
+
+        return ParseFindNodes(nodes, cancellationToken);
+      });
+    }
+
+    #endregion
+
+    #region GetTvShowsFromFind
+
+    private Task<IEnumerable<CSFDItem>> GetTvShowsFromFind(HtmlDocument document, CancellationToken cancellationToken)
+    {
+      return Task.Run(() =>
+      {
+        var nodes = TrySelectNodes(document.DocumentNode, "/div/div[2]/div/div[1]/section[2]/div/div[1]/article");
 
         return ParseFindNodes(nodes, cancellationToken);
       });
@@ -1311,8 +1328,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       var document = new HtmlDocument();
 
       document.LoadHtml(html);
-      ///
-      ///                                                     /div/div[1]/aside/div[1]/div[2]/div
+
       var ratingNode = TrySelectNodes(document.DocumentNode, "/div/div[1]/aside/div/div[1]/div[1]")?.FirstOrDefault()?.InnerText.Replace("\t", null).Replace("\r", null).Replace("\n", null).Replace("%", null);
 
       if (int.TryParse(ratingNode, out var rating))
@@ -1361,21 +1377,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     }
 
     #endregion
-
-    #region GetTvShowsFromFind
-
-    private Task<IEnumerable<CSFDItem>> GetTvShowsFromFind(HtmlDocument document, CancellationToken cancellationToken)
-    {
-      return Task.Run(() =>
-      {
-        var nodes = TrySelectNodes(document.DocumentNode, "/div/div[2]/div/div[1]/div/div[1]/section[2]/div/div[1]/article");
-
-        return ParseFindNodes(nodes, cancellationToken);
-      });
-    }
-
-    #endregion
-
+  
     #region ParseFindNodes
 
     private IEnumerable<CSFDItem> ParseFindNodes(HtmlNodeCollection nodes, CancellationToken cancellationToken)

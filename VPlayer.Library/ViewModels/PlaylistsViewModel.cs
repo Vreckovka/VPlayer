@@ -18,6 +18,7 @@ using VCore.WPF.Misc;
 using VCore.WPF.Modularity.RegionProviders;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
+using VPlayer.Core.Events;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.Artists;
 using VPlayer.Home.ViewModels.LibraryViewModels;
@@ -49,7 +50,7 @@ namespace VPlayer.Home.ViewModels
 
     #region PrivateItems
 
-    private IEnumerable<TViewModel> privateItems;
+    private IEnumerable<TViewModel> privateItems = new List<TViewModel>();
 
     public IEnumerable<TViewModel> PrivateItems
     {
@@ -219,9 +220,6 @@ namespace VPlayer.Home.ViewModels
       AllUserCreatedItems = LibraryCollection.Items.Where(x => x.Model.IsUserCreated).ToList();
       AllGeneratedItems = LibraryCollection.Items.Where(x => !x.Model.IsUserCreated).ToList();
 
-      GetActualItems();
-
-      
       var userCreated = AllUserCreatedItems;
       var notSavedPlaylists = AllGeneratedItems.Take(initTake);
 
@@ -231,6 +229,13 @@ namespace VPlayer.Home.ViewModels
         .Where(x => x.IsPrivate)
         .Select(x => viewModelsFactory.Create<TViewModel>(x))
         .ToList();
+
+      VSynchronizationContext.InvokeOnDispatcher(async () =>
+      {
+        PrivateItems = privateItemsL;
+      });
+
+      GetActualItems();
 
       VSynchronizationContext.PostOnUIThread(async () =>
       {
@@ -249,14 +254,12 @@ namespace VPlayer.Home.ViewModels
           {
             LoadingStatus.IsLoading = ((IBusy)x.Sender).IsBusy;
           }).DisposeWith(this);
-
-        PrivateItems = privateItemsL;
       });
     }
 
     protected void GetActualItems()
     {
-      var allItemsWithActualItem = AllItems.Where(x => x.Model.ActualItemId != null).ToList();
+      var allItemsWithActualItem = AllItems.Concat(PrivateItems).Where(x => x.Model.ActualItemId != null).ToList();
       var allIds = allItemsWithActualItem.Select(x => x.Model.ActualItemId.Value);
 
       var allItems = GetActualItemQuery.Where(x => allIds.Contains(x.Id)).ToList();
@@ -334,6 +337,30 @@ namespace VPlayer.Home.ViewModels
 
       CanLoadMoreItems = actualSkip < AllItems.Count();
       RaisePropertyChanged(nameof(View));
+    }
+
+    protected override void OnUpdateItemChange(TPlaylistModel model)
+    {
+      base.OnUpdateItemChange(model);
+
+      var vm = LibraryCollection.Items?.SingleOrDefault(x => x.ModelId == model.Id);
+
+      if (vm == null)
+      {
+        vm = PrivateItems.SingleOrDefault(x => x.ModelId == model.Id);
+
+        if (vm != null)
+        {
+          vm.Update(model);
+
+          var newItemUpdatedArgs = new ItemUpdatedEventArgs<TViewModel>()
+          {
+            Model = vm
+          };
+
+          eventAggregator.GetEvent<ItemUpdatedEvent<TViewModel>>().Publish(newItemUpdatedArgs);
+        }
+      }
     }
   }
 }

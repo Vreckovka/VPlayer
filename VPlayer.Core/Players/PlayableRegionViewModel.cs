@@ -867,6 +867,11 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    public override void OnActivation(bool firstActivation)
+    {
+      base.OnActivation(firstActivation);
+    }
+
     #region InitializeAsync
 
     IDisposable clearPlaylistDisposable;
@@ -1129,7 +1134,7 @@ namespace VPlayer.Core.ViewModels
       {
         if (!IsRepeate)
         {
-          await VSynchronizationContext.InvokeOnDispatcherAsync(() =>
+          VSynchronizationContext.InvokeOnDispatcher(() =>
           {
             IsPlayFnished = true;
           });
@@ -1144,7 +1149,7 @@ namespace VPlayer.Core.ViewModels
         }
       }
 
-      await VSynchronizationContext.InvokeOnDispatcherAsync(() =>
+      VSynchronizationContext.InvokeOnDispatcher(() =>
       {
         SetActualItem(actualItemIndex);
       });
@@ -1156,7 +1161,7 @@ namespace VPlayer.Core.ViewModels
 
       await SetMedia(ActualItem.Model);
 
-      await VSynchronizationContext.InvokeOnDispatcherAsync(() =>
+      VSynchronizationContext.InvokeOnDispatcher(() =>
       {
         ActualItem.IsPlaying = true;
       });
@@ -1173,7 +1178,7 @@ namespace VPlayer.Core.ViewModels
       }
       else if (ActualItem != null)
       {
-        await VSynchronizationContext.InvokeOnDispatcherAsync(() =>
+        VSynchronizationContext.InvokeOnDispatcher(() =>
         {
           ActualItem.IsPaused = true;
         });
@@ -1326,7 +1331,7 @@ namespace VPlayer.Core.ViewModels
 
             MediaPlayer.Play();
 
-            VSynchronizationContext.PostOnUIThread(() =>
+            VSynchronizationContext.InvokeOnDispatcher(() =>
             {
               IsPlaying = true;
             });
@@ -1341,7 +1346,7 @@ namespace VPlayer.Core.ViewModels
 
     #region PlayPlaylist
 
-    protected virtual async void PlayPlaylist(PlayItemsEventData<TItemViewModel> data, int? lastSongIndex = null, bool onlySet = false)
+    protected virtual void PlayPlaylist(PlayItemsEventData<TItemViewModel> data, int? lastSongIndex = null, bool onlySet = false)
     {
       clearPlaylistDisposable?.Dispose();
 
@@ -1356,11 +1361,11 @@ namespace VPlayer.Core.ViewModels
 
       if (lastSongIndex == null)
       {
-        await PlayItems(data.Items, false, onlyItemSet: onlySet);
+        PlayItems(data.Items, false, onlyItemSet: onlySet);
       }
       else
       {
-        await PlayItems(data.Items, false, lastSongIndex.Value, onlyItemSet: onlySet);
+        PlayItems(data.Items, false, lastSongIndex.Value, onlyItemSet: onlySet);
 
         if (data.SetPostion.HasValue)
         {
@@ -1452,14 +1457,13 @@ namespace VPlayer.Core.ViewModels
 
     #region PlayItems
 
-    protected virtual async Task PlayItems(IEnumerable<TItemViewModel> items, bool savePlaylist = true, int songIndex = 0, bool editSaved = false, bool onlyItemSet = false)
+    protected virtual void PlayItems(IEnumerable<TItemViewModel> items, bool savePlaylist = true, int songIndex = 0, bool editSaved = false, bool onlyItemSet = false)
     {
       var itemList = items.ToList();
 
-      await VSynchronizationContext.InvokeOnDispatcherAsync(() =>
+      VSynchronizationContext.InvokeOnDispatcher(() =>
       {
-        if (!onlyItemSet)
-          IsActive = true;
+
 
         PlayList.ForEach(x => x.IsInPlaylist = false);
         PlayList.Clear();
@@ -1495,6 +1499,7 @@ namespace VPlayer.Core.ViewModels
 
     #region PlayItemsFromEvent
 
+    private bool firstInit = true;
     protected async void PlayItemsFromEvent(PlayItemsEventData<TItemViewModel> data)
     {
       ActualSearch = "";
@@ -1514,6 +1519,21 @@ namespace VPlayer.Core.ViewModels
       }
 
       await BeforePlayEvent(data);
+
+      {
+        if (data.EventAction != EventAction.InitSetPlaylist && data.EventAction != EventAction.Add)
+        {
+          VSynchronizationContext.InvokeOnDispatcher(() =>
+          {
+            IsActive = true;
+          });
+
+          if (firstInit)
+            await Task.Delay(50);
+        }
+      }
+
+      firstInit = false;
 
       switch (data.EventAction)
       {
@@ -1642,7 +1662,7 @@ namespace VPlayer.Core.ViewModels
 
               if (ActualSavedPlaylist.PlaylistItems != null)
               {
-                VSynchronizationContext.PostOnUIThread(() =>
+                VSynchronizationContext.InvokeOnDispatcher(() =>
                 {
                   var oldItems = ActualSavedPlaylist.PlaylistItems.Where(x => playlistModels.Any(y =>
                   {
@@ -1678,7 +1698,7 @@ namespace VPlayer.Core.ViewModels
 
                 UpdatePlaylist(entityPlayList, dbEntityPlalist);
 
-                VSynchronizationContext.PostOnUIThread(() =>
+                VSynchronizationContext.InvokeOnDispatcher(() =>
                 {
                   ActualSavedPlaylist = entityPlayList;
 
@@ -1705,7 +1725,7 @@ namespace VPlayer.Core.ViewModels
               {
                 UpdatePlaylist(entityPlayList, dbEntityPlalist);
 
-                VSynchronizationContext.PostOnUIThread(() =>
+                VSynchronizationContext.InvokeOnDispatcher(() =>
                 {
                   ActualSavedPlaylist = entityPlayList;
                 });
@@ -1725,7 +1745,7 @@ namespace VPlayer.Core.ViewModels
 
               UpdatePlaylist(entityPlayList, dbEntityPlalist);
 
-              VSynchronizationContext.PostOnUIThread(() =>
+              VSynchronizationContext.InvokeOnDispatcher(() =>
               {
                 ActualSavedPlaylist = entityPlayList;
 
@@ -1736,7 +1756,7 @@ namespace VPlayer.Core.ViewModels
         }
         else
         {
-          VSynchronizationContext.PostOnUIThread(() =>
+          VSynchronizationContext.InvokeOnDispatcher(() =>
           {
             ActualSavedPlaylist = storedPlaylist;
             SetActualItem(storedPlaylist.LastItemIndex);
@@ -1819,7 +1839,7 @@ namespace VPlayer.Core.ViewModels
           {
             try
             {
-              VSynchronizationContext.PostOnUIThread(() =>
+              VSynchronizationContext.InvokeOnDispatcher(() =>
               {
                 if (VFocusManager.FocusedItems.Count(x => x.Name == "NameTextBox") == 0)
                 {
@@ -2042,7 +2062,7 @@ namespace VPlayer.Core.ViewModels
         {
           UpdatePlaylist(ActualSavedPlaylist, dbEntityPlalist);
 
-          VSynchronizationContext.PostOnUIThread(() =>
+          VSynchronizationContext.InvokeOnDispatcher(() =>
           {
             ActualSavedPlaylist = ActualSavedPlaylist;
 
@@ -2206,7 +2226,7 @@ namespace VPlayer.Core.ViewModels
 
     protected virtual void OnPlay()
     {
-      VSynchronizationContext.PostOnUIThread(() =>
+      VSynchronizationContext.InvokeOnDispatcher(() =>
       {
         if (ActualItem != null)
           ActualItem.IsPlaying = true;

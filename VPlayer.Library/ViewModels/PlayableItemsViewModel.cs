@@ -37,7 +37,7 @@ namespace VPlayer.Home.ViewModels
     #region Fields
 
     protected readonly IStorageManager storageManager;
-    private readonly IEventAggregator eventAggregator;
+    protected readonly IEventAggregator eventAggregator;
     protected readonly IViewModelsFactory viewModelsFactory;
 
     private Subject<string> searchSubject = new Subject<string>();

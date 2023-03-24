@@ -309,6 +309,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       dialog.AllowNonFileSystemItems = true;
       dialog.IsFolderPicker = false;
       dialog.Title = "Add subtitiles";
+      dialog.InitialDirectory = GetDefaultFolder();
 
       if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
       {
@@ -547,9 +548,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region OnActivation
 
-    public override void OnActivation(bool firstActivation)
+    public override async void OnActivation(bool firstActivation)
     {
-
       base.OnActivation(firstActivation);
 
       if (firstActivation)
@@ -647,7 +647,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       if (ActualItem?.ExtraData is CSFDItemViewModel cSFDItem)
       {
-        ActualSavedPlaylist.CoverPath = cSFDItem.ImagePath;
+        ActualSavedPlaylist.CoverPath = cSFDItem.Model.ImagePath;
 
         await UpdateActualSavedPlaylistPlaylist();
       }
@@ -776,13 +776,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         tvShowItem.CSFDItem = new CSFDItemViewModel(csfdEpisode);
 
-        if (tvShowItem.CSFDItem.OriginalName == tvShowName)
+        if (tvShowItem.CSFDItem.Model.OriginalName == tvShowName)
         {
-          tvShowItem.CSFDItem.OriginalName = tvShowItem.CSFDItem.Name;
+          tvShowItem.CSFDItem.Model.OriginalName = tvShowItem.CSFDItem.Model.Name;
         }
         else
         {
-          tvShowItem.CSFDItem.OriginalName = string.IsNullOrEmpty(csfdEpisode.OriginalName) ? csfdEpisode.Name : csfdEpisode.OriginalName;
+          tvShowItem.CSFDItem.Model.OriginalName = string.IsNullOrEmpty(csfdEpisode.OriginalName) ? csfdEpisode.Name : csfdEpisode.OriginalName;
         }
 
         MarkViewModelAsChecked(tvShowItem);

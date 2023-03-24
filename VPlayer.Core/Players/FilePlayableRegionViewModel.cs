@@ -239,6 +239,18 @@ namespace VPlayer.Core.Players
       }
     }
 
+    protected string GetDefaultFolder()
+    {
+      var defaultFolder = Path.GetDirectoryName(PlayList.Where(x => x.Model != null).Select(x => x.Model.Source).FirstOrDefault());
+
+      if (defaultFolder != null && defaultFolder.Contains("http"))
+      {
+        defaultFolder = settingsProvider.GetSetting(GlobalSettings.FileBrowserInitialDirectory)?.Value;
+      }
+
+      return defaultFolder;
+    }
+
     public void OnWatchFolderPlaylistCommand(bool? watchFolder)
     {
       if (watchFolder != null)
@@ -249,12 +261,7 @@ namespace VPlayer.Core.Players
 
           if (string.IsNullOrEmpty(defaultFolder))
           {
-            defaultFolder = Path.GetDirectoryName(PlayList.Where(x => x.Model != null).Select(x => x.Model.Source).FirstOrDefault());
-
-            if (defaultFolder != null && defaultFolder.Contains("http"))
-            {
-              defaultFolder = settingsProvider.GetSetting(GlobalSettings.FileBrowserInitialDirectory)?.Value;
-            }
+            defaultFolder = GetDefaultFolder();
           }
 
           CommonOpenFileDialog dialog = new CommonOpenFileDialog();
@@ -577,7 +584,7 @@ namespace VPlayer.Core.Players
 
     protected virtual void Media_DurationChanged(object sender, MediaDurationChangedArgs e)
     {
-      VSynchronizationContext.PostOnUIThread(async () =>
+      VSynchronizationContext.InvokeOnDispatcher(async () =>
       {
         await ChangeDuration(e.Duration);
 
@@ -680,7 +687,7 @@ namespace VPlayer.Core.Players
       {
         if (ActualItem != null)
         {
-          VSynchronizationContext.PostOnUIThread(() =>
+          VSynchronizationContext.InvokeOnDispatcher(() =>
           {
             MediaPlayer.Position = lastTime.Value;
             ActualItem.ActualPosition = lastTime.Value;
@@ -796,7 +803,7 @@ namespace VPlayer.Core.Players
     {
       await base.BeforePlayEvent(data);
 
-      VSynchronizationContext.PostOnUIThread(() =>
+      VSynchronizationContext.InvokeOnDispatcher(() =>
       {
         CheckedFiles.Clear();
       });
@@ -808,7 +815,7 @@ namespace VPlayer.Core.Players
 
     protected override void BeforeClearPlaylist()
     {
-      VSynchronizationContext.PostOnUIThread(() =>
+      VSynchronizationContext.InvokeOnDispatcher(() =>
       {
         CheckedFiles.Clear();
       });
@@ -823,7 +830,7 @@ namespace VPlayer.Core.Players
     protected override void PlayPlaylist(PlayItemsEventData<TItemViewModel> data, int? lastSongIndex = null, bool onlySet = false)
     {
       base.PlayPlaylist(data, lastSongIndex, onlySet);
-      
+
       if (!string.IsNullOrEmpty(ActualSavedPlaylist.WatchedFolder))
       {
         AddMissingFilesFromFolder();
@@ -836,45 +843,54 @@ namespace VPlayer.Core.Players
 
     private void AddMissingFilesFromFolder()
     {
-      if (!string.IsNullOrEmpty(ActualSavedPlaylist.WatchedFolder))
+      Task.Run(() =>
       {
-        var allFiles = PlayList.Where(x => x.Model != null).Select(x => x.Model.Source).ToList();
-
-        var files = Directory.GetFiles(ActualSavedPlaylist.WatchedFolder, "*", SearchOption.AllDirectories);
-
-        var missingFilesInPlaylist = files.Where(x =>
+        if (!string.IsNullOrEmpty(ActualSavedPlaylist.WatchedFolder))
         {
-          var fileType = Path.GetExtension(x).GetFileType();
+          var allFiles = PlayList.Where(x => x.Model != null).Select(x => x.Model.Source).ToList();
 
-          return fileType == FileType.Sound || fileType == FileType.Video;
-        }).Where(x => !allFiles.Contains(x)).ToList();
+          var files = Directory.GetFiles(ActualSavedPlaylist.WatchedFolder, "*", SearchOption.AllDirectories);
 
-        foreach (var file in missingFilesInPlaylist)
-        {
-          var newModel = viewModelsFactory.Create<TModel>();
-          var fileInfo = new FileInfo(file);
-
-          newModel.Source = fileInfo.FullName;
-          newModel.Name = fileInfo.Name;
-
-          var existing = storageManager.GetTempRepository<TModel>()
-            .FirstOrDefault(x => x.Source == newModel.Source);
-
-          if (existing == null)
+          var missingFilesInPlaylist = files.Where(x =>
           {
-            storageManager.StoreEntity(newModel, out existing);
+            var fileType = Path.GetExtension(x).GetFileType();
+
+            return fileType == FileType.Sound || fileType == FileType.Video;
+          }).Where(x => !allFiles.Contains(x)).ToList();
+
+          foreach (var file in missingFilesInPlaylist)
+          {
+            var newModel = viewModelsFactory.Create<TModel>();
+            var fileInfo = new FileInfo(file);
+
+            newModel.Source = fileInfo.FullName;
+            newModel.Name = fileInfo.Name;
+
+            var existing = storageManager.GetTempRepository<TModel>()
+              .FirstOrDefault(x => x.Source == newModel.Source);
+
+            if (existing == null)
+            {
+              storageManager.StoreEntity(newModel, out existing);
+            }
+
+            VSynchronizationContext.PostOnUIThread(() =>
+            {
+              PlayList.Add(viewModelsFactory.Create<TItemViewModel>(existing));
+            });
           }
 
-          PlayList.Add(viewModelsFactory.Create<TItemViewModel>(existing));
-        }
+          if (missingFilesInPlaylist.Any())
+          {
+            VSynchronizationContext.PostOnUIThread(() =>
+            {
+              RequestReloadVirtulizedPlaylist();
+            });
 
-        if (missingFilesInPlaylist.Any())
-        {
-          RequestReloadVirtulizedPlaylist();
-          StorePlaylist(PlayList.ToList());
+            StorePlaylist(PlayList.ToList());
+          }
         }
-      }
-
+      });
     }
 
     #endregion
@@ -968,9 +984,9 @@ namespace VPlayer.Core.Players
 
     #endregion
 
-    protected override async Task PlayItems(IEnumerable<TItemViewModel> items, bool savePlaylist = true, int songIndex = 0, bool editSaved = false, bool onlyItemSet = false)
+    protected override void PlayItems(IEnumerable<TItemViewModel> items, bool savePlaylist = true, int songIndex = 0, bool editSaved = false, bool onlyItemSet = false)
     {
-      await base.PlayItems(items, savePlaylist, songIndex, editSaved, onlyItemSet);
+      base.PlayItems(items, savePlaylist, songIndex, editSaved, onlyItemSet);
 
       if (savePlaylist)
       {

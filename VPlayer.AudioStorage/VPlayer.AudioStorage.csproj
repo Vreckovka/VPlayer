@@ -5,6 +5,10 @@
 		<Platforms>AnyCPU;x86;x64</Platforms>
 	</PropertyGroup>
 	<ItemGroup>
+	  <None Remove="Misc.xaml" />
+	  <None Remove="Other\Misc.xaml" />
+	</ItemGroup>
+	<ItemGroup>
 		<PackageReference Include="Google.Apis.Drive.v3" Version="1.49.0.2065" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
 		<PackageReference Include="HtmlAgilityPack.CssSelectors.NetCore" Version="1.2.1" />
@@ -19,6 +23,18 @@
 		<PackageReference Include="Unirest-API" Version="1.0.7.6" />
 		<PackageReference Include="Unofficial.Microsoft.mshtml" Version="7.0.3300" />
 		<PackageReference Include="WatiN" Version="2.1.0" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Include="Misc.xaml">
+	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	    <SubType>Designer</SubType>
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	  <Page Include="Other\Misc.xaml">
+	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	    <SubType>Designer</SubType>
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\CustomLibraries\Custom\ChromeDriverScrapper\ChromeDriverScrapper.csproj" />

@@ -454,7 +454,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
 
 
-        await VSynchronizationContext.InvokeOnDispatcherAsync(() =>
+         VSynchronizationContext.PostOnUIThread(() =>
         {
           if (result)
           {
@@ -569,7 +569,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
             }
           }
 
-          await VSynchronizationContext.InvokeOnDispatcherAsync(() =>
+          VSynchronizationContext.PostOnUIThread(() =>
           {
             if (result)
             {
@@ -579,8 +579,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
             {
               statusManager.ShowFailedMessage($"Albums FAILED to add");
             }
-            
-            addAlbums?.RaiseCanExecuteChanged(); 
+
+            addAlbums?.RaiseCanExecuteChanged();
             addArtists?.RaiseCanExecuteChanged();
           });
         }
@@ -916,16 +916,17 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region OnActualItemChanged
 
-    protected override async void OnActualItemChanged()
+    protected override void OnActualItemChanged()
     {
-      base.OnActualItemChanged();
-
-      addArtists?.RaiseCanExecuteChanged();
-      addAlbums?.RaiseCanExecuteChanged();
-
-      await SetPlaylistCover();
-      VSynchronizationContext.PostOnUIThread(() =>
+      VSynchronizationContext.PostOnUIThread(async () =>
       {
+        base.OnActualItemChanged();
+
+        addArtists?.RaiseCanExecuteChanged();
+        addAlbums?.RaiseCanExecuteChanged();
+
+        await SetPlaylistCover();
+
         albumDetail?.RaiseCanExecuteChanged();
       });
     }
@@ -2038,7 +2039,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       await base.BeforePlayEvent(data);
 
-      VSynchronizationContext.PostOnUIThread(() =>
+      VSynchronizationContext.InvokeOnDispatcher(() =>
       {
         WasAllItemsProcessed = false;
         CheckedFiles.Clear();
@@ -2116,7 +2117,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         if (songsItems.Count > 0)
         {
-          VSynchronizationContext.PostOnUIThread(() =>
+          VSynchronizationContext.InvokeOnDispatcher(() =>
           {
             PlayList.DisableNotification();
             UnHookToPlaylistCollectionChanged();
@@ -2226,7 +2227,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         ResetDownload();
 
-        VSynchronizationContext.PostOnUIThread(() =>
+        VSynchronizationContext.InvokeOnDispatcher(() =>
         {
           WasAllItemsProcessed = false;
           CheckedFiles.Clear();

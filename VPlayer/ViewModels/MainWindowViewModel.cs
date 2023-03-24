@@ -280,15 +280,11 @@ namespace VPlayer.ViewModels
 
     #region Initilize
 
-    public override async void Initialize()
+    public override void Initialize()
     {
       base.Initialize();
 
       AudioDeviceManager.Instance.RefreshAudioDevices();
-
-#if DEBUG
-      //Task.Run(() => iCsfdWebsiteScrapper.LoadTvShow("https://www.csfd.cz/film/742448-loki/recenze/"));
-#endif
 
       var windowsPlayer = viewModelsFactory.Create<WindowsViewModel>();
 
@@ -307,12 +303,12 @@ namespace VPlayer.ViewModels
 
     public override void Dispose()
     {
-      //base.Dispose();
+      base.Dispose();
 
-      //foreach (var item in NavigationViewModel.Items)
-      //{
-      //  item?.Dispose();
-      //}
+      foreach (var item in NavigationViewModel.Items)
+      {
+        item?.Dispose();
+      }
     }
 
     #endregion
