@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Prism.Events;
+using VCore.ItemsCollections;
 using VCore.Standard;
 using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.Helpers;
@@ -84,8 +85,8 @@ namespace VPlayer.Home.ViewModels
     public abstract override string RegionName { get; }
 
 
-    private ObservableCollection<PinnedItemViewModel> pinnedItems = new ObservableCollection<PinnedItemViewModel>();
-    public ObservableCollection<PinnedItemViewModel> PinnedItems => pinnedItems;
+    private RxObservableCollection<PinnedItemViewModel> pinnedItems = new RxObservableCollection<PinnedItemViewModel>();
+    public RxObservableCollection<PinnedItemViewModel> PinnedItems => pinnedItems;
 
     #region SearchKeyWord
 
@@ -187,6 +188,9 @@ namespace VPlayer.Home.ViewModels
       }).DisposeWith(this);
 
       searchSubject.Throttle(TimeSpan.FromSeconds(0.25)).ObserveOnDispatcher().Subscribe(x => Filter(x)).DisposeWith(this);
+
+      PinnedItems.SortType = new Comparison<PinnedItemViewModel>((x, y) => x.OrderNumber > y.OrderNumber ? 1 : x.OrderNumber < y.OrderNumber ? -1 : 0);
+
     }
 
     #endregion Initialize
@@ -348,10 +352,6 @@ namespace VPlayer.Home.ViewModels
 
     #endregion
 
-    protected virtual void OnDataLoaded()
-    {
-    }
-
     #region RecreateCollection
 
     public void RecreateCollection()
@@ -409,6 +409,12 @@ namespace VPlayer.Home.ViewModels
     #endregion
 
     protected abstract void SetupNewPinnedItem(PinnedItem pinnedItem);
+
+    protected virtual void OnDataLoaded()
+    {
+    }
+
+
 
     #endregion Methods
 

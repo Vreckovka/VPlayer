@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Windows.Input;
+using VCore.ItemsCollections;
 using VCore.Standard;
 using VCore.Standard.Factories.ViewModels;
 using VCore.WPF.Misc;
@@ -18,6 +20,7 @@ namespace VPlayer.Home.ViewModels
   {
     private readonly IStorageManager storageManager;
     private readonly IViewModelsFactory viewModelsFactory;
+    public RxObservableCollection<PinnedItemViewModel> pinnedItemsCollection;
 
     public PinnedItemViewModel(PinnedItem model, IStorageManager storageManager, IViewModelsFactory viewModelsFactory) : base(model)
     {
@@ -25,6 +28,28 @@ namespace VPlayer.Home.ViewModels
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
     }
 
+
+
+    #region OrderNumber
+
+    public int OrderNumber
+    {
+      get { return Model.OrderNumber; }
+      set
+      {
+        if (value != Model.OrderNumber)
+        {
+          SetOrderNumber(value);
+          RaisePropertyChanged();
+        }
+      }
+    }
+    public void SetOrderNumber(int value)
+    {
+      Model.OrderNumber = value;
+    }
+
+    #endregion
 
     #region ItemObject
 
@@ -45,7 +70,6 @@ namespace VPlayer.Home.ViewModels
 
     #endregion
 
-
     #region DisplayText
 
     public string DisplayText
@@ -63,7 +87,6 @@ namespace VPlayer.Home.ViewModels
     }
 
     #endregion
-
 
     #region DeleteItem
 
@@ -163,6 +186,81 @@ namespace VPlayer.Home.ViewModels
       }
 
     }
+
+    #endregion
+
+    #region UpOrderNumber
+
+    private ActionCommand upOrderNumber;
+
+    public ICommand UpOrderNumber
+    {
+      get
+      {
+        if (upOrderNumber == null)
+        {
+          upOrderNumber = new ActionCommand(OnUpOrderNumber);
+        }
+
+        return upOrderNumber;
+      }
+    }
+
+    protected virtual async void OnUpOrderNumber()
+    {
+      var bigger = pinnedItemsCollection.SingleOrDefault(x => x.OrderNumber == OrderNumber + 1);
+
+      if (bigger != null)
+      {
+        bigger.OrderNumber--;
+        await storageManager.UpdateEntityAsync(bigger.Model);
+      }
+
+      if(pinnedItemsCollection.Count > OrderNumber)
+      {
+        OrderNumber++;
+        await storageManager.UpdateEntityAsync(Model);
+      }
+    }
+
+
+    #endregion
+
+    #region DownOrderNumber
+
+    private ActionCommand downOrderNumber;
+
+    public ICommand DownOrderNumber
+    {
+      get
+      {
+        if (downOrderNumber == null)
+        {
+          downOrderNumber = new ActionCommand(OnDownOrderNumber);
+        }
+
+        return downOrderNumber;
+      }
+    }
+
+    protected virtual async void OnDownOrderNumber()
+    {
+      if (OrderNumber > 0)
+      {
+        var lesser = pinnedItemsCollection.SingleOrDefault(x => x.OrderNumber == OrderNumber - 1);
+
+        if (lesser != null)
+        {
+          lesser.OrderNumber++;
+          await storageManager.UpdateEntityAsync(lesser.Model);
+        }
+
+
+        OrderNumber--;
+        await storageManager.UpdateEntityAsync(Model);
+      }
+    }
+
 
     #endregion
   }

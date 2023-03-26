@@ -50,7 +50,7 @@ namespace VPlayer.Home.ViewModels.Albums
       AudioInfoDownloader audioInfoDownloader,
       IStatusManager statusManager,
       ILogger logger
-      ) : base(regionProvider, storageManager, statusManager,album, windowManager)
+      ) : base(regionProvider, storageManager, statusManager, album, windowManager)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
@@ -260,19 +260,19 @@ namespace VPlayer.Home.ViewModels.Albums
     {
       using (var context = new AudioDatabaseContext())
       {
-        var soundItems = storageManager.GetTempRepository<SoundItem>(context)
+        var soundItems = storageManager.GetTempRepository<SoundItem>()
           .Where(x => allSong.Select(y => y.Model.ItemModel.Id).Contains(x.Id));
 
         foreach (var song in soundItems)
         {
           song.IsAutomaticLyricsFindEnabled = value;
+          context.Entry(song).State = EntityState.Modified;
 
           context.Update(song);
         }
 
         context.SaveChanges();
 
-     
         foreach (var item in allSong)
         {
           item.IsAutomaticDownload = !value;

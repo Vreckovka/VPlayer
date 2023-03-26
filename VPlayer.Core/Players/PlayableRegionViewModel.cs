@@ -1798,67 +1798,78 @@ namespace VPlayer.Core.ViewModels
     #region UpdateActualSavedPlaylistPlaylist
 
     private SemaphoreSlim playlistSemaphore = new SemaphoreSlim(1, 1);
-    protected Task<bool> UpdateActualSavedPlaylistPlaylist()
+    protected async Task<bool> UpdateActualSavedPlaylistPlaylist()
     {
-      var clone = ActualSavedPlaylist.DeepClone();
-
-      return Task.Run(async () =>
+      try
       {
-        try
+        if (ActualSavedPlaylist.PlaylistItems?.Any() == true)
+          ActualSavedPlaylist.ItemCount = ActualSavedPlaylist.PlaylistItems.Count;
+
+        var clone = ActualSavedPlaylist.DeepClone();
+
+        return await Task.Run(async () =>
         {
-          await playlistSemaphore.WaitAsync();
-
-          var result = storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel, TModel>(clone, out var updated);
-
-          if (result && updated.IsPrivate)
+          try
           {
-            var notPrivateItems = updated.PlaylistItems.Where(x => x.ReferencedItem != null).Where(x => !x.ReferencedItem.IsPrivate).ToList();
+            await playlistSemaphore.WaitAsync();
+
+            var result = storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel, TModel>(clone, out var updated);
+
+            if (result && updated.IsPrivate)
+            {
+              var notPrivateItems = updated.PlaylistItems.Where(x => x.ReferencedItem != null).Where(x => !x.ReferencedItem.IsPrivate).ToList();
 
             //I was lazy to add items as prite when added to playlist, instead of forcing all items to by private in private playlist
             foreach (var item in notPrivateItems)
-            {
-              item.ReferencedItem.IsPrivate = true;
-
-              var playlistItem = PlayList.SingleOrDefault(x => x.Model.Id == item.IdReferencedItem);
-
-              if (playlistItem != null)
               {
-                playlistItem.Model = item.ReferencedItem;
-                playlistItem.RaiseNotifyPropertyChanged(nameof(IItemInPlayList<TModel>.Model));
-                playlistItem.RaiseNotifyPropertyChanged(nameof(IItemInPlayList<TModel>.IsPrivate));
+                item.ReferencedItem.IsPrivate = true;
+
+                var playlistItem = PlayList.SingleOrDefault(x => x.Model.Id == item.IdReferencedItem);
+
+                if (playlistItem != null)
+                {
+                  playlistItem.Model = item.ReferencedItem;
+                  playlistItem.RaiseNotifyPropertyChanged(nameof(IItemInPlayList<TModel>.Model));
+                  playlistItem.RaiseNotifyPropertyChanged(nameof(IItemInPlayList<TModel>.IsPrivate));
+                }
+              }
+
+              if (notPrivateItems.Any())
+              {
+                await storageManager.UpdateEntitiesAsync(notPrivateItems.Select(x => x.ReferencedItem));
               }
             }
 
-            if (notPrivateItems.Any())
+            if (result && !isDisposing)
             {
-              await storageManager.UpdateEntitiesAsync(notPrivateItems.Select(x => x.ReferencedItem));
-            }
-          }
-
-          if (result && !isDisposing)
-          {
-            try
-            {
-              VSynchronizationContext.InvokeOnDispatcher(() =>
+              try
               {
-                if (VFocusManager.FocusedItems.Count(x => x.Name == "NameTextBox") == 0)
+                VSynchronizationContext.InvokeOnDispatcher(() =>
                 {
-                  ActualSavedPlaylist = updated;
-                }
-              });
+                  if (VFocusManager.FocusedItems.Count(x => x.Name == "NameTextBox") == 0)
+                  {
+                    ActualSavedPlaylist = updated;
+                  }
+                });
+              }
+              catch (Exception)
+              {
+              }
             }
-            catch (Exception)
-            {
-            }
-          }
 
-          return result;
-        }
-        finally
-        {
-          playlistSemaphore.Release();
-        }
-      });
+            return result;
+          }
+          finally
+          {
+            playlistSemaphore.Release();
+          }
+        });
+      }
+      catch (Exception ex)
+      {
+        logger.Log(ex);
+        return false;
+      }
     }
 
     #endregion

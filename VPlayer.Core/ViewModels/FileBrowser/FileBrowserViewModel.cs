@@ -584,7 +584,7 @@ namespace VPlayer.Core.ViewModels
 
         using (var context = new AudioStorage.AudioDatabase.AudioDatabaseContext())
         {
-          var existing = storageManager.GetTempRepository<ItemBookmark>(context).FirstOrDefault(x => x.Identificator == bookmark.Identificator);
+          var existing = storageManager.GetRepository<ItemBookmark>(context).FirstOrDefault(x => x.Identificator == bookmark.Identificator);
 
           if (existing == null)
           {

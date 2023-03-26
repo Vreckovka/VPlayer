@@ -187,7 +187,7 @@
                         <system:Double x:Key="ScrollHeight">5</system:Double>
                     </Border.Resources>
                     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                        <ItemsControl ItemsSource="{Binding PinnedItems}">
+                        <ItemsControl ItemsSource="{Binding PinnedItems.View}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <StackPanel Orientation="Horizontal" />
@@ -349,20 +349,53 @@
 
 
 
-                                            <controls:PathButton Grid.Column="1"
-                                                                 Padding="0"
-                                                                 HorizontalAlignment="Left"
-                                                                 VerticalAlignment="Center"
-                                                                 HorizontalContentAlignment="Center"
-                                                                 Command="{Binding DeleteItem}"
-                                                                 FontSize="20"
-                                                                 FontWeight="Normal"
-                                                                 ForegroundHoverColor="{StaticResource DefaultRedColor}"
-                                                                 Glyph="{StaticResource xmark-glyph}"
-                                                                 IconHoverColor="{StaticResource DefaultRedColor}"
-                                                                 IconMargin="0"
-                                                                 IsReadOnly="True"
-                                                                 ToolTip="Remove" />
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                <controls:PathButton Margin="7,0,-5,0"
+                                                                     Padding="0"
+                                                                     HorizontalAlignment="Left"
+                                                                     VerticalAlignment="Center"
+                                                                     HorizontalContentAlignment="Center"
+                                                                     Command="{Binding DownOrderNumber}"
+                                                                     FontSize="20"
+                                                                     FontWeight="Normal"
+                                                                     ForegroundHoverColor="{StaticResource DefaultRedColor}"
+                                                                     Glyph="{StaticResource arrow-left}"
+                                                                     IconHoverColor="{StaticResource DefaultRedColor}"
+                                                                     IconMargin="0"
+                                                                     IsReadOnly="True"
+                                                                     ToolTip="+ priority" />
+
+                                                <controls:PathButton Margin="0"
+                                                                     Padding="0"
+                                                                     HorizontalAlignment="Left"
+                                                                     VerticalAlignment="Center"
+                                                                     HorizontalContentAlignment="Center"
+                                                                     Command="{Binding UpOrderNumber}"
+                                                                     FontSize="20"
+                                                                     FontWeight="Normal"
+                                                                     ForegroundHoverColor="{StaticResource DefaultRedColor}"
+                                                                     Glyph="{StaticResource arrow-right}"
+                                                                     IconHoverColor="{StaticResource DefaultRedColor}"
+                                                                     IconMargin="0"
+                                                                     IsReadOnly="True"
+                                                                     ToolTip="- priority" />
+
+                                                <controls:PathButton Margin="0,0,-17,0"
+                                                                     Padding="0"
+                                                                     HorizontalAlignment="Left"
+                                                                     VerticalAlignment="Center"
+                                                                     HorizontalContentAlignment="Center"
+                                                                     Command="{Binding DeleteItem}"
+                                                                     FontSize="20"
+                                                                     FontWeight="Normal"
+                                                                     ForegroundHoverColor="{StaticResource DefaultRedColor}"
+                                                                     Glyph="{StaticResource xmark-glyph}"
+                                                                     IconHoverColor="{StaticResource DefaultRedColor}"
+                                                                     IconMargin="0"
+                                                                     IsReadOnly="True"
+                                                                     ToolTip="Remove" />
+                                            </StackPanel>
+
 
                                         </Grid>
 

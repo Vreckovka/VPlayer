@@ -436,10 +436,10 @@ namespace VPlayer.Core.Players
 
           var totalPlayedTime = TimeSpan.FromMilliseconds(deltaTimeChanged);
 
-#if !DEBUG
+          #if !DEBUG
           ActualItem.Model.TimePlayed += totalPlayedTime;
           PlaylistTotalTimePlayed += totalPlayedTime;
-#endif
+          #endif
 
           int totalSec = (int)PlaylistTotalTimePlayed.TotalSeconds;
 
@@ -803,6 +803,9 @@ namespace VPlayer.Core.Players
     {
       await base.BeforePlayEvent(data);
 
+      lastTotalTimeSaved = 0;
+      lastTimeChangedMs = 0;
+
       VSynchronizationContext.InvokeOnDispatcher(() =>
       {
         CheckedFiles.Clear();
@@ -874,7 +877,7 @@ namespace VPlayer.Core.Players
               storageManager.StoreEntity(newModel, out existing);
             }
 
-            VSynchronizationContext.PostOnUIThread(() =>
+            VSynchronizationContext.InvokeOnDispatcher(() =>
             {
               PlayList.Add(viewModelsFactory.Create<TItemViewModel>(existing));
             });
@@ -928,6 +931,8 @@ namespace VPlayer.Core.Players
     public override Task ClearPlaylist()
     {
       DetailViewModel?.Dispose();
+      lastTotalTimeSaved = 0;
+      lastTimeChangedMs = 0;
 
       return base.ClearPlaylist();
     }

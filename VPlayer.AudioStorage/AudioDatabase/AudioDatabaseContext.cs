@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.DirectoryServices.AccountManagement;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -72,6 +73,10 @@ namespace VPlayer.AudioStorage.AudioDatabase
     //public DbSet<CSFDItem> CSFDItems { get; set; }
     //public DbSet<CSFDTVShowSeasonEpisodeEntity> CSFDTVShowSeasonEpisodes { get; set; }
 
+    public AudioDatabaseContext()
+    {
+    }
+
     #endregion Properties
 
 
@@ -85,6 +90,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
       }
 
       optionsBuilder.UseSqlite($"Data Source={directory}\\VPlayerDatabase.db;");
+
+      optionsBuilder.EnableSensitiveDataLogging();
 
       base.OnConfiguring(optionsBuilder);
     }
@@ -140,6 +147,11 @@ namespace VPlayer.AudioStorage.AudioDatabase
           }
         }
       }
+    }
+
+    public override void Dispose()
+    {
+      base.Dispose();
     }
   }
 }

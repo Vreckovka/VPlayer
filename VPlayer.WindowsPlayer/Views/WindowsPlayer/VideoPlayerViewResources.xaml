@@ -187,7 +187,7 @@
                 </TextBlock.Style>
             </TextBlock>
 
-            <Grid x:Name="CSFDInfo" DataContext="{Binding CSFDItem}">
+            <Grid x:Name="CSFDInfo" DataContext="{Binding CSFDItem.Model}">
                 <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal">
                     <TextBlock Margin="5,0,0,3"
                                HorizontalAlignment="Left"

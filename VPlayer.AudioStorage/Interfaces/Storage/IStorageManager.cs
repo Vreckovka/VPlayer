@@ -32,8 +32,8 @@ namespace VPlayer.AudioStorage.Interfaces.Storage
     Task ClearStorage();
     Task CleanData();
     Task DownloadAllNotYetDownloaded(bool tryDownloadBroken = false);
-    DbSet<T> GetTempRepository<T>(DbContext dbContext = null) where T : class;
-    DbSet<T> GetRepository<T>(DbContext dbContext = null) where T : class;
+    IQueryable<T> GetTempRepository<T>() where T : class;
+    DbSet<T> GetRepository<T>(DbContext dbContext) where T : class;
 
     #region Generic methods
 

@@ -60,7 +60,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
 
       ViewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
 
-      LoadQuery = storageManager.GetRepository<TModel>();
+      LoadQuery = storageManager.GetTempRepository<TModel>();
       LoadData = LoadInitilizedDataAsync();
     }
 

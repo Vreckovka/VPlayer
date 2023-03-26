@@ -142,6 +142,8 @@ namespace VPlayer.Home.ViewModels
       }
     }
 
+    #region Commands
+
     #region ShowPrivate
 
     private ActionCommand showPrivate;
@@ -189,6 +191,8 @@ namespace VPlayer.Home.ViewModels
       LoadPage();
     }
 
+
+    #endregion
 
     #endregion
 
@@ -273,11 +277,13 @@ namespace VPlayer.Home.ViewModels
       }
     }
 
+    #region LoadPinnedItems
+
     private async Task LoadPinnedItems()
     {
       var items = await Task.Run(() =>
       {
-        return storageManager.GetTempRepository<PinnedItem>().ToList();
+        return storageManager.GetTempRepository<PinnedItem>().OrderBy(x => x.OrderNumber).ToList();
       });
 
       var typedPinnedItems = GetPinnedTypedItems(items);
@@ -285,6 +291,21 @@ namespace VPlayer.Home.ViewModels
       var vms = typedPinnedItems.Select(x => viewModelsFactory.Create<PinnedItemViewModel>(x)).ToList();
 
       PinnedItems.AddRange(vms);
+
+      if (PinnedItems.Count(x => x.OrderNumber == 0) > 1)
+      {
+        for (int i = 0; i < PinnedItems.Count; i++)
+        {
+          PinnedItems[i].OrderNumber = i;
+          await storageManager.UpdateEntityAsync(PinnedItems[i].Model);
+        }
+      }
+
+      for (int i = 0; i < PinnedItems.Count; i++)
+      {
+        PinnedItems[i].pinnedItemsCollection = PinnedItems;
+      }
+
 
       foreach (var pinnedItemViewModel in vms.Where(x => x.Model.PinnedType == PinnedType.VideoPlaylist || x.Model.PinnedType == PinnedType.SoundPlaylist))
       {
@@ -299,6 +320,10 @@ namespace VPlayer.Home.ViewModels
         }
       }
     }
+
+    #endregion
+    
+    #region SetupNewPinnedItem
 
     protected override void SetupNewPinnedItem(PinnedItem pinnedItem)
     {
@@ -321,9 +346,13 @@ namespace VPlayer.Home.ViewModels
           }
         }
 
+        vm.OrderNumber = PinnedItems.Count;
+        vm.pinnedItemsCollection = PinnedItems;
         PinnedItems.Add(vm);
       }
     }
+
+    #endregion
 
     protected abstract List<PinnedItem> GetPinnedTypedItems(List<PinnedItem> pinnedItems);
 
