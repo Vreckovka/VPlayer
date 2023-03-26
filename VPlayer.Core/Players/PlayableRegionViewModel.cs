@@ -1650,13 +1650,14 @@ namespace VPlayer.Core.ViewModels
           .Include(x => x.PlaylistItems)
           .ThenInclude(x => x.ReferencedItem)
           .OrderByDescending(x => x.IsUserCreated)
-          .FirstOrDefault(x => x.HashCode == hashCode);
+          .FirstOrDefault(x => x.HashCode == hashCode 
+                               && x.ItemCount == entityPlayList.ItemCount);
 
         if (storedPlaylist == null)
         {
           if (editSaved || ActualSavedPlaylist.IsUserCreated)
           {
-            if (hashCode != ActualSavedPlaylist.HashCode)
+            if (hashCode != ActualSavedPlaylist.HashCode || ActualSavedPlaylist.ItemCount != entityPlayList.ItemCount)
             {
               var newPlaylistItems = new List<TPlaylistItemModel>();
 

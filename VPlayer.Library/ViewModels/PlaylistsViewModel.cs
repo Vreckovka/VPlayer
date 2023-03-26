@@ -322,7 +322,7 @@ namespace VPlayer.Home.ViewModels
     }
 
     #endregion
-    
+
     #region SetupNewPinnedItem
 
     protected override void SetupNewPinnedItem(PinnedItem pinnedItem)
@@ -380,6 +380,11 @@ namespace VPlayer.Home.ViewModels
 
         if (vm != null)
         {
+          var actualItem = GetActualItemQuery.SingleOrDefault(x => x.Id == model.ActualItemId);
+
+          if (actualItem != null)
+            model.ActualItem = actualItem;
+
           vm.Update(model);
 
           var newItemUpdatedArgs = new ItemUpdatedEventArgs<TViewModel>()

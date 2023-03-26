@@ -1264,33 +1264,32 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
         if (foundPlaylist != null)
         {
-          if (playlist.HashCode != foundPlaylist.HashCode)
+          context.Entry(foundPlaylist).State = EntityState.Modified;
+          var oldHash = playlist.HashCode;
+          var oldItems = playlist.PlaylistItems;
+
+          foundPlaylist.Update(playlist);
+
+          if (foundPlaylist.PlaylistItems != null && (oldHash != foundPlaylist.HashCode || oldItems.Count != foundPlaylist.PlaylistItems.Count))
           {
-            if (playlist.PlaylistItems.Count > 0 && foundPlaylist.PlaylistItems != null)
+            if (oldItems.Count > 0)
             {
-              var removedItems = foundPlaylist.PlaylistItems.Where(p => playlist.PlaylistItems.All(p2 => p2.Id != p.Id)).ToList();
+              var removedItems = foundPlaylist.PlaylistItems.Where(p => oldItems.All(p2 => p2.Id != p.Id)).ToList();
 
               foreach (var removed in removedItems)
               {
                 if (foundPlaylist.ActualItemId == removed.Id)
                 {
                   foundPlaylist.ActualItemId = null;
-                  foundPlaylist.ActualItem = null;
-                  context.Entry(foundPlaylist).State = EntityState.Modified;
+                }
 
-                  context.SaveChanges();
-                }
-                else
-                {
-                  context.Entry(removed).State = EntityState.Deleted;
-                }
+                context.Entry(removed).State = EntityState.Deleted;
               }
 
               var items = foundPlaylist.PlaylistItems.ToList();
               foundPlaylist.PlaylistItems.Clear();
-              foundPlaylist.Update(playlist);
 
-              foreach (var playlistItem in playlist.PlaylistItems)
+              foreach (var playlistItem in oldItems)
               {
                 foundPlaylist.PlaylistItems.Add(playlistItem);
 
@@ -1315,13 +1314,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
               foundPlaylist.ItemCount = foundPlaylist.PlaylistItems.Count;
             }
           }
-
-          context.Entry(foundPlaylist).State = EntityState.Modified;
-
+     
           foundPlaylist.ActualItem = null;
-
-          foundPlaylist.Update(playlist);
-
           var resultCount = context.SaveChanges();
 
           result = resultCount > 0;
