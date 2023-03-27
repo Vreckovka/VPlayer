@@ -395,6 +395,22 @@ namespace VPlayer.Home.ViewModels
           eventAggregator.GetEvent<ItemUpdatedEvent<TViewModel>>().Publish(newItemUpdatedArgs);
         }
       }
+
+      if (vm != null)
+      {
+        var actualItem = GetActualItemQuery.SingleOrDefault(x => x.Id == model.ActualItemId);
+
+        if (actualItem != null)
+        {
+          var modelCopy = vm.Model.DeepClone();
+          modelCopy.ActualItem = actualItem;
+
+          VSynchronizationContext.PostOnUIThread(() =>
+          {
+            vm.Update(modelCopy);
+          });
+        }
+      }
     }
   }
 }

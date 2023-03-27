@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore.WPF.Interfaces.Managers;
+using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
@@ -68,7 +69,7 @@ namespace VPlayer.Home.ViewModels.TvShows
           if (fristEpisode != null)
           {
 
-            var tvShows = storage.GetTempRepository<TvShow>()
+            var tvShows = storage.GetRepository<TvShow>(new AudioDatabaseContext())
               .Where(x => x.Id == fristEpisode.TvShow.Id)
               .Include(x => x.Seasons)
               .ThenInclude(x => x.Episodes)

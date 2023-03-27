@@ -179,10 +179,259 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
 
-
-
             <Grid>
-                <Border>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.Resources>
+                    <DataTemplate x:Key="PinnedItemHorizontal">
+                        <Border Height="30"
+                                Margin="5,5"
+                                Padding="15,5"
+                                Background="#202020"
+                                CornerRadius="10">
+                            <Grid>
+                                <Grid.Resources>
+                                    <DataTemplate x:Key="Playlist">
+                                        <Grid DataContext="{Binding ItemObject}">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="auto" />
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+
+                                            <Border Margin="-10,0,5,0">
+                                                <Image Width="30"
+                                                       Source="{Binding Model.CoverPath, Converter={library1:ImageLazyLoadingConverter}, IsAsync=True}"
+                                                       Stretch="UniformToFill">
+                                                    <Image.ToolTip>
+                                                        <Image Width="185"
+                                                               Height="185"
+                                                               Source="{Binding Model.CoverPath, Converter={library1:ImageLazyLoadingConverter}, IsAsync=True}"
+                                                               Stretch="Uniform" />
+                                                    </Image.ToolTip>
+                                                </Image>
+                                            </Border>
+
+                                            <Grid Grid.Column="1">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="auto" />
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition Width="auto" />
+                                                </Grid.ColumnDefinitions>
+
+
+                                                <controls:PathButton Grid.Row="0"
+                                                                     Margin="0,0,10,0"
+                                                                     Padding="0"
+                                                                     HorizontalAlignment="Left"
+                                                                     VerticalAlignment="Center"
+                                                                     HorizontalContentAlignment="Center"
+                                                                     Command="{Binding Play}"
+                                                                     CommandParameter="{x:Static events1:EventAction.PlayFromPlaylistLast}"
+                                                                     FontFamily="{StaticResource FontAwesome6Pro_Solid}"
+                                                                     FontSize="20"
+                                                                     FontWeight="Normal"
+                                                                     ForegroundDefaultColor="#45fe2754"
+                                                                     ForegroundHoverColor="{StaticResource DefaultRedColor}"
+                                                                     IconMargin="0"
+                                                                     Style="{StaticResource play-regular}"
+                                                                     ToolTip="Play" />
+
+                                                <StackPanel Grid.Column="1"
+                                                            VerticalAlignment="Center"
+                                                            Orientation="Horizontal">
+                                                    <TextBlock MaxWidth="100"
+                                                               Margin="0,0,5,0"
+                                                               VerticalAlignment="Center"
+                                                               Text="{Binding DisplayName}"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               ToolTip="{Binding Name}" />
+
+                                                </StackPanel>
+                                            </Grid>
+                                        </Grid>
+                                    </DataTemplate>
+
+                                    <DataTemplate x:Key="Basic">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="auto" />
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+
+                                            <controls:PathButton Grid.Row="0"
+                                                                 Grid.Column="0"
+                                                                 Margin="0,0,10,0"
+                                                                 Padding="0"
+                                                                 HorizontalAlignment="Left"
+                                                                 VerticalAlignment="Center"
+                                                                 HorizontalContentAlignment="Center"
+                                                                 Command="{Binding Play}"
+                                                                 CommandParameter="{x:Static events1:EventAction.PlayFromPlaylistLast}"
+                                                                 FontFamily="{StaticResource FontAwesome6Pro_Solid}"
+                                                                 FontSize="20"
+                                                                 FontWeight="Normal"
+                                                                 ForegroundDefaultColor="#45fe2754"
+                                                                 ForegroundHoverColor="{StaticResource DefaultRedColor}"
+                                                                 IconMargin="0"
+                                                                 Style="{StaticResource play-regular}"
+                                                                 ToolTip="Play" />
+
+                                            <Grid Grid.Column="1">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <controls:PathButton Grid.Column="0"
+                                                                     DataContext="{Binding Model}"
+                                                                     IconMargin="0"
+                                                                     IsHitTestVisible="False">
+                                                    <controls:PathButton.Style>
+                                                        <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding PinnedType}" Value="{x:Static domainClasses:PinnedType.VideoFolder}">
+                                                                    <Setter Property="Glyph" Value="{StaticResource folder-open-glyph}" />
+                                                                    <Setter Property="IconDefaultColor" Value="{StaticResource VideoColorColor}" />
+                                                                </DataTrigger>
+
+                                                                <DataTrigger Binding="{Binding PinnedType}" Value="{x:Static domainClasses:PinnedType.SoundFolder}">
+                                                                    <Setter Property="Glyph" Value="{StaticResource folder-open-glyph}" />
+                                                                    <Setter Property="IconDefaultColor" Value="{StaticResource SoundColorColor}" />
+                                                                </DataTrigger>
+
+                                                                <DataTrigger Binding="{Binding PinnedType}" Value="{x:Static domainClasses:PinnedType.VideoFile}">
+                                                                    <Setter Property="Glyph" Value="{StaticResource file-xmark}" />
+                                                                    <Setter Property="IconDefaultColor" Value="{StaticResource VideoColorColor}" />
+                                                                </DataTrigger>
+
+                                                                <DataTrigger Binding="{Binding PinnedType}" Value="{x:Static domainClasses:PinnedType.SoundFile}">
+                                                                    <Setter Property="Glyph" Value="{StaticResource file-xmark}" />
+                                                                    <Setter Property="IconDefaultColor" Value="{StaticResource SoundColorColor}" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </controls:PathButton.Style>
+                                                </controls:PathButton>
+
+
+                                                <TextBlock Grid.Column="1"
+                                                           MaxWidth="100"
+                                                           Margin="0,0,5,0"
+                                                           VerticalAlignment="Center"
+                                                           Text="{Binding DisplayText}"
+                                                           TextTrimming="CharacterEllipsis"
+                                                           ToolTip="{Binding Model.Description}" />
+                                            </Grid>
+                                        </Grid>
+                                    </DataTemplate>
+
+                                    <templateSelectors:PinnedItemTemplateSelector x:Key="PinnedItemTemplateSelector"
+                                                                                  Other="{StaticResource Basic}"
+                                                                                  Playlist="{StaticResource Playlist}" />
+                                </Grid.Resources>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <ContentControl Content="{Binding}" ContentTemplateSelector="{StaticResource PinnedItemTemplateSelector}" />
+
+
+
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <controls:PathButton Margin="7,0,-5,0"
+                                                         Padding="0"
+                                                         HorizontalAlignment="Left"
+                                                         VerticalAlignment="Center"
+                                                         HorizontalContentAlignment="Center"
+                                                         Command="{Binding DownOrderNumber}"
+                                                         FontSize="20"
+                                                         FontWeight="Normal"
+                                                         ForegroundHoverColor="{StaticResource DefaultRedColor}"
+                                                         Glyph="{StaticResource arrow-up}"
+                                                         IconHoverColor="{StaticResource DefaultRedColor}"
+                                                         IconMargin="0"
+                                                         IsReadOnly="True"
+                                                         ToolTip="+ priority" />
+
+                                    <controls:PathButton Margin="0"
+                                                         Padding="0"
+                                                         HorizontalAlignment="Left"
+                                                         VerticalAlignment="Center"
+                                                         HorizontalContentAlignment="Center"
+                                                         Command="{Binding UpOrderNumber}"
+                                                         FontSize="20"
+                                                         FontWeight="Normal"
+                                                         ForegroundHoverColor="{StaticResource DefaultRedColor}"
+                                                         Glyph="{StaticResource arrow-down}"
+                                                         IconHoverColor="{StaticResource DefaultRedColor}"
+                                                         IconMargin="0"
+                                                         IsReadOnly="True"
+                                                         ToolTip="- priority" />
+
+                                    <controls:PathButton Margin="0,0,-17,0"
+                                                         Padding="0"
+                                                         HorizontalAlignment="Left"
+                                                         VerticalAlignment="Center"
+                                                         HorizontalContentAlignment="Center"
+                                                         Command="{Binding DeleteItem}"
+                                                         FontSize="20"
+                                                         FontWeight="Normal"
+                                                         ForegroundHoverColor="{StaticResource DefaultRedColor}"
+                                                         Glyph="{StaticResource xmark-glyph}"
+                                                         IconHoverColor="{StaticResource DefaultRedColor}"
+                                                         IconMargin="0"
+                                                         IsReadOnly="True"
+                                                         ToolTip="Remove" />
+                                </StackPanel>
+
+
+                            </Grid>
+
+                        </Border>
+                    </DataTemplate>
+                </Grid.Resources>
+                <controls:PathButton x:Name="pinnedItems"
+                                     Margin="10,1,0,0"
+                                     Glyph="{StaticResource scroll}"
+                                     GlyphFontSize="20"
+                                     IconHeight="150"
+                                     IconMargin="0"
+                                     IconWidth="25"
+                                     IsReadOnly="False">
+                    <controls:PathButton.ToolTip>
+                        <Border>
+                            <ItemsControl ItemTemplate="{StaticResource PinnedItemHorizontal}" ItemsSource="{Binding PinnedItems.View}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Vertical" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+
+                            </ItemsControl>
+                        </Border>
+                    </controls:PathButton.ToolTip>
+                </controls:PathButton>
+
+                <Popup HorizontalOffset="5"
+                       IsOpen="{Binding ElementName=pinnedItems, Path=IsChecked}"
+                       StaysOpen="False"
+                       VerticalOffset="5">
+                    <Border Padding="5" Background="#101010">
+                        <ItemsControl ItemTemplate="{StaticResource PinnedItemHorizontal}" ItemsSource="{Binding PinnedItems.View}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
+                        </ItemsControl>
+                    </Border>
+                </Popup>
+
+                <Border Grid.Column="1">
                     <Border.Resources>
                         <system:Double x:Key="ScrollHeight">5</system:Double>
                     </Border.Resources>

@@ -365,7 +365,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="CsfdTooltip">
-        <Border MaxWidth="450"
+        <Border Width="450"
                 MaxHeight="450"
                 Margin="0"
                 Padding="0,5,5,0"

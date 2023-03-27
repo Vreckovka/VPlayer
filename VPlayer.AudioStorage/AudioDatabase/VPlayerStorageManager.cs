@@ -1315,8 +1315,16 @@ namespace VPlayer.AudioStorage.AudioDatabase
             }
           }
      
+          var actualItem = foundPlaylist.ActualItem;
           foundPlaylist.ActualItem = null;
+
           var resultCount = context.SaveChanges();
+
+          if (actualItem != null)
+          {
+            foundPlaylist.ActualItem = actualItem;
+            resultCount = context.SaveChanges();
+          }
 
           result = resultCount > 0;
 

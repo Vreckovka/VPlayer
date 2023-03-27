@@ -424,8 +424,23 @@ namespace VPlayer.Core.FileBrowser
             item = x,
             tvshowNumber = DataLoader.GetTvShowSeriesNumber(x.Name)
           }).ToList();
+        
 
-          vms = vmsWithSeries.OrderBy(x => x.tvshowNumber?.SeasonNumber).ThenBy(x => x.tvshowNumber?.EpisodeNumber).Select(x => x.item).ToList();
+          if (vmsWithSeries.All(x => x.tvshowNumber == null))
+          {
+            var yearOrder = vms.Select(x => new
+            {
+              item = x,
+              tvshowNumber = DataLoader.GetYear(x.Name)
+            }).ToList();
+
+            vms = yearOrder.OrderBy(x => x.tvshowNumber?.YearNumber).Select(x => x.item).ToList();
+          }
+          else
+          {
+            vms = vmsWithSeries.OrderBy(x => x.tvshowNumber?.SeasonNumber).ThenBy(x => x.tvshowNumber?.EpisodeNumber).Select(x => x.item).ToList();
+          }
+
 
           var data = new PlayItemsEventData<VideoItemInPlaylistViewModel>(vms, eventAction, this);
 

@@ -23,6 +23,13 @@ namespace VPlayer.AudioStorage.DataLoader
     Video
   }
 
+  public class YearNumbers
+  {
+    public int? YearNumber { get; set; }
+    public string RegexExpression { get; set; }
+    public string ParsedName { get; set; }
+  }
+
   public class TvShowEpisodeNumbers
   {
     public int? SeasonNumber { get; set; }
@@ -243,6 +250,61 @@ namespace VPlayer.AudioStorage.DataLoader
             {
               EpisodeNumber = episodeNumber,
               SeasonNumber = seasonNumber,
+              RegexExpression = regexExpression,
+              ParsedName = textInfo.ToTitleCase(parsedName)
+            };
+
+            return numbers;
+          }
+        }
+      }
+
+      return null;
+    }
+
+    #endregion
+
+    #region GetYear
+
+    public static YearNumbers GetYear(string name)
+    {
+      List<string> regexExpressions = new List<string>()
+      {
+        //Movie (2001)
+        @"\((?<year>\d+)\)",
+        //Movie 2001
+        @"\s(?<year>\d+)\s",
+      };
+
+      foreach (var regexExpression in regexExpressions)
+      {
+        Regex regex = new Regex(regexExpression);
+
+        Match match = regex.Match(name.ToLower());
+
+        if (match.Success)
+        {
+          string year = match.Groups["year"].Value;
+
+          int? yearNumber = null;
+
+          if (int.TryParse(year, out var sYearNumber))
+          {
+            yearNumber = sYearNumber;
+          }
+
+
+          if (yearNumber != null)
+          {
+            var split = name.ToLower().Split(match.Groups[0].Value);
+            var parsedName = split[0];
+
+            CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
+            TextInfo textInfo = cultureInfo.TextInfo;
+
+            var numbers = new YearNumbers()
+            {
+              YearNumber = yearNumber,
               RegexExpression = regexExpression,
               ParsedName = textInfo.ToTitleCase(parsedName)
             };
