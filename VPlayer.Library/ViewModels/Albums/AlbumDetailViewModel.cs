@@ -187,7 +187,7 @@ namespace VPlayer.Home.ViewModels.Albums
 
             if (audioInfo != null)
             {
-              song.Model.ItemModel.FileInfo.Name = audioInfo.Title;
+              song.Model.ItemModel.FileInfoEntity.Name = audioInfo.Title;
             }
 
             storageManager.UpdateEntityAsync(song.Model);
@@ -223,7 +223,7 @@ namespace VPlayer.Home.ViewModels.Albums
           var songsDb = storageManager.GetTempRepository<Song>()
             .Where(x => x.Album == ViewModel.Model)
             .Include(x => x.ItemModel)
-            .ThenInclude(x => x.FileInfo)
+            .ThenInclude(x => x.FileInfoEntity)
             .ToList();
 
           if (songsDb.Count != 0)

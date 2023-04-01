@@ -163,7 +163,7 @@ namespace VPlayer.Home.ViewModels.Artists
           .Where(x => x.Artist == ViewModel.Model)
           .Include(x => x.Songs)
           .ThenInclude(x => x.ItemModel)
-          .ThenInclude(x => x.FileInfo)
+          .ThenInclude(x => x.FileInfoEntity)
           .ToList();
 
         await VSynchronizationContext.InvokeOnDispatcherAsync(async () =>

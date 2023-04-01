@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Prism.Events;
 using VCore;
+using VCore.WPF;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Misc;
 using VPlayer.AudioStorage.DomainClasses;
@@ -104,29 +105,26 @@ namespace VPlayer.Library.ViewModels
     public int? ItemsCount => Model.ItemCount;
     public long? HashCode => Model.HashCode;
 
-
-
     #region DisplayName
 
+    private string displayName;
     public string DisplayName
     {
       get
       {
-        if (Directory.Exists(Name))
-          return new DirectoryInfo(Name).Name;
-
-        if (File.Exists(Name))
-          return new System.IO.FileInfo(Name).Name;
-
-        return Name;
+        return displayName;
+      }
+      set
+      {
+        if (value != displayName)
+        {
+          displayName = value;
+          RaisePropertyChanged();
+        }
       }
     }
 
     #endregion
-
-
-
-
 
     #endregion
 
@@ -177,10 +175,21 @@ namespace VPlayer.Library.ViewModels
 
     #endregion
 
-   
+
     #endregion
 
     #region Methods
+
+    public override void Initialize()
+    {
+      base.Initialize();
+
+      VSynchronizationContext.PostOnUIThread(() =>
+      {
+        DisplayName = Name;
+        GetDisplayName();
+      });
+    }
 
 
     #region RaisePropertyChanges
@@ -198,6 +207,22 @@ namespace VPlayer.Library.ViewModels
     }
 
     #endregion
+
+    public async void GetDisplayName()
+    {
+      var result = await Task.Run(() =>
+      {
+        if (Directory.Exists(Name))
+          return new DirectoryInfo(Name).Name;
+
+        if (File.Exists(Name))
+          return new System.IO.FileInfo(Name).Name;
+
+        return Name;
+      });
+
+      DisplayName = result;
+    }
 
     #region Update
 

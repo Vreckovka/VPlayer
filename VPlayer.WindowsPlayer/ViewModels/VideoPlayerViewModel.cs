@@ -37,6 +37,7 @@ using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.Players;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.TvShows;
+using VPLayer.Domain;
 using VPlayer.Player.Views.WindowsPlayer;
 using VPlayer.WindowsPlayer.Players;
 using VPlayer.WindowsPlayer.ViewModels.VideoProperties;
@@ -69,8 +70,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
       ICSFDWebsiteScrapper iCsfdWebsiteScrapper,
       IViewModelsFactory viewModelsFactory,
       IVFfmpegProvider iVFfmpegProvider,
-      ISettingsProvider settingsProvider) :
-      base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, statusManager, viewModelsFactory, iVFfmpegProvider, settingsProvider, vLCPlayer)
+      ISettingsProvider settingsProvider,
+      IVPlayerCloudService cloudService) :
+      base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, 
+        statusManager, viewModelsFactory, iVFfmpegProvider, settingsProvider, cloudService, vLCPlayer)
     {
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       this.iCsfdWebsiteScrapper = iCsfdWebsiteScrapper ?? throw new ArgumentNullException(nameof(iCsfdWebsiteScrapper));
@@ -786,6 +789,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
 
         MarkViewModelAsChecked(tvShowItem);
+
+        if (!string.IsNullOrEmpty(tvShowItem.CSFDItem.Model.ImagePath))
+        {
+          ActualSavedPlaylist.CoverPath = tvShowItem.CSFDItem.Model.ImagePath;
+          UpdateActualSavedPlaylistPlaylist();
+        }
       }
     }
 
@@ -1095,6 +1104,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    protected override IEnumerable<VideoItemInPlaylistViewModel> GetValidItemsForCloud()
+    {
+      return PlayList.Where(x => long.TryParse(x.Model.Source, out var id )).ToList();
+    }
+
+
     protected override void OnRemoveItemsFromPlaylist(DeleteType deleteType, RemoveFromPlaylistEventArgs<VideoItemInPlaylistViewModel> args)
     {
     }
@@ -1160,16 +1175,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
         nameKeys.AddRange(videoNames);
       }
 
-      var playlistName = string.Join(", ", nameKeys.ToArray());
+      string playlistName = "Created: " + DateTime.Now.ToString("dd.MM.yyyy hh:mm");
 
-      if (nameKeys.Count == 1)
+      if (nameKeys.Any())
       {
-        playlistName += "\\" + PlayList[0].Name;
+        playlistName = nameKeys.First();
       }
-      else if (nameKeys.Count > 2)
-      {
-        playlistName += " ...";
-      }
+
 
       var entityPlayList = new VideoFilePlaylist()
       {

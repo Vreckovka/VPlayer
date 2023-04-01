@@ -8,14 +8,16 @@ using VPlayer.Core.ViewModels;
 
 namespace VPlayer.AudioStorage.DomainClasses
 {
+
+
   [Serializable]
-  public class SoundFileInfo : FileInfo, IEntity, IUpdateable<SoundFileInfo>
+  public class FileInfoEntity : FileInfo, IEntity, IUpdateable<FileInfoEntity>
   {
-    public SoundFileInfo()
+    public FileInfoEntity()
     {
     }
 
-    public SoundFileInfo(string fullName, string source) : base(fullName, source)
+    public FileInfoEntity(string fullName, string source) : base(fullName, source)
     {
     }
 
@@ -24,7 +26,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     public DateTime? Created { get; set; }
     public DateTime? Modified { get; set; }
 
-    public void Update(SoundFileInfo other)
+    public void Update(FileInfoEntity other)
     {
       ((FileInfo)this).Update(other);
 
@@ -44,18 +46,9 @@ namespace VPlayer.AudioStorage.DomainClasses
   [Serializable]
   public class SoundItem : PlayableItem, IUpdateable<SoundItem>
   {
-    public SoundFileInfo FileInfo { get; set; }
-
     public void Update(SoundItem other)
     {
       base.Update(other);
-
-      if (FileInfo == null)
-      {
-        FileInfo = other.FileInfo;
-      }
-      else
-        FileInfo.Update(other.FileInfo);
 
       IsAutomaticLyricsFindEnabled = other.IsAutomaticLyricsFindEnabled;
     }
@@ -67,10 +60,10 @@ namespace VPlayer.AudioStorage.DomainClasses
     {
       get
       {
-        if (string.IsNullOrEmpty(FileInfo?.Title))
-          return FileInfo?.Name;
+        if (string.IsNullOrEmpty(FileInfoEntity?.Title))
+          return FileInfoEntity?.Name;
         else
-          return FileInfo?.Title;
+          return FileInfoEntity?.Title;
       } 
 
     }
@@ -84,7 +77,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     {
       get
       {
-        return FileInfo?.Source;
+        return FileInfoEntity?.Source;
       }
     }
 
@@ -97,9 +90,9 @@ namespace VPlayer.AudioStorage.DomainClasses
     {
       get
       {
-        if (FileInfo != null)
+        if (FileInfoEntity != null)
         {
-          return FileInfo.Length;
+          return FileInfoEntity.Length;
         }
 
         return 0;
@@ -117,7 +110,7 @@ namespace VPlayer.AudioStorage.DomainClasses
       {
         Created = Created,
         Duration = Duration,
-        FileInfo = FileInfo,
+        FileInfoEntity = FileInfoEntity,
         Id = Id,
         IsAutomaticLyricsFindEnabled = IsAutomaticLyricsFindEnabled,
         IsFavorite = IsFavorite,

@@ -33,7 +33,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     public DbSet<VideoItem> VideoItems { get; set; }
     public DbSet<SoundItem> SoundItems { get; set; }
-    public DbSet<SoundFileInfo> SoundFileInfos { get; set; }
+    public DbSet<FileInfoEntity> SoundFileInfos { get; set; }
 
 
     public DbSet<Album> Albums { get; set; }

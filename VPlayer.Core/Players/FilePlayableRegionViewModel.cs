@@ -16,6 +16,7 @@ using FFMpegCore;
 using Logger;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Ninject;
+using PCloudClient.Domain;
 using Prism.Events;
 using VCore.Standard;
 using VCore.Standard.Factories.ViewModels;
@@ -29,12 +30,15 @@ using VCore.WPF.Misc;
 using VCore.WPF.Modularity.RegionProviders;
 using VFfmpeg;
 using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Managers.Status;
 using VPlayer.Core.ViewModels;
+using VPLayer.Domain;
 using VPlayer.WindowsPlayer.Players;
 using VVLC.Players;
+using FileInfo = System.IO.FileInfo;
 
 namespace VPlayer.Core.Players
 {
@@ -42,7 +46,7 @@ namespace VPlayer.Core.Players
     PlayableRegionViewModel<TView, TItemViewModel, TPlaylistModel, TPlaylistItemModel, TModel>, IFilePlayableRegionViewModel
     where TView : class, IView
     where TItemViewModel : class, IFileItemInPlayList<TModel>, IDisposable
-    where TModel : class, IFilePlayableModel, IUpdateable<TModel>
+    where TModel : PlayableItem, IFilePlayableModel, IUpdateable<TModel>
     where TPlaylistModel : class, IFilePlaylist<TPlaylistItemModel>, new()
     where TPlaylistItemModel : class, IItemInPlaylist<TModel>
     where TPopupViewModel : FileItemSliderPopupDetailViewModel<TModel>
@@ -50,7 +54,9 @@ namespace VPlayer.Core.Players
     protected readonly IViewModelsFactory viewModelsFactory;
     private readonly IVFfmpegProvider iVFfmpegProvider;
     private readonly ISettingsProvider settingsProvider;
+    private readonly IVPlayerCloudService cloudService;
     private long lastTimeChangedMs;
+    private Dictionary<TModel, PublicLink> publicLinks = new Dictionary<TModel, PublicLink>();
 
     protected FilePlayableRegionViewModel(
       IRegionProvider regionProvider,
@@ -63,11 +69,13 @@ namespace VPlayer.Core.Players
       IViewModelsFactory viewModelsFactory,
       IVFfmpegProvider iVFfmpegProvider,
       ISettingsProvider settingsProvider,
+      IVPlayerCloudService cloudService,
       VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, statusManager, windowManager, vLCPlayer)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.iVFfmpegProvider = iVFfmpegProvider ?? throw new ArgumentNullException(nameof(iVFfmpegProvider));
       this.settingsProvider = settingsProvider ?? throw new ArgumentNullException(nameof(settingsProvider));
+      this.cloudService = cloudService ?? throw new ArgumentNullException(nameof(cloudService));
       BufferingSubject.Throttle(TimeSpan.FromSeconds(0.5)).Subscribe(x =>
       {
         IsBuffering = x;
@@ -436,10 +444,10 @@ namespace VPlayer.Core.Players
 
           var totalPlayedTime = TimeSpan.FromMilliseconds(deltaTimeChanged);
 
-          #if !DEBUG
+#if !DEBUG
           ActualItem.Model.TimePlayed += totalPlayedTime;
           PlaylistTotalTimePlayed += totalPlayedTime;
-          #endif
+#endif
 
           int totalSec = (int)PlaylistTotalTimePlayed.TotalSeconds;
 
@@ -793,6 +801,8 @@ namespace VPlayer.Core.Players
 
       if (changedItems.Count > 0)
         await storageManager.UpdateEntitiesAsync(changedItems.Select(x => x.Model));
+
+      await DownloadPublicLinks(cancellationToken);
     }
 
     #endregion
@@ -974,6 +984,167 @@ namespace VPlayer.Core.Players
           break;
       }
     }
+
+    #region BeforeSetMedia
+
+    protected override async Task BeforeSetMedia(TModel model)
+    {
+      await base.BeforeSetMedia(model);
+
+      await DownloadUrlLink(model);
+    }
+
+    #endregion
+
+
+
+    #region DownloadUrlLinks
+
+    private async Task DownloadUrlLinks(IEnumerable<TModel> soundItems, CancellationToken cancellationToken)
+    {
+      var list = soundItems.ToList();
+      var onlyNeededList = new List<TModel>();
+
+      foreach (var soundItem in list)
+      {
+        if (publicLinks.TryGetValue(soundItem, out var storedPublicLink) &&
+            storedPublicLink.ExpiresDate > DateTime.Now)
+        {
+          continue;
+        }
+        else if (long.TryParse(soundItem.FileInfoEntity.Indentificator, out var parsed))
+        {
+          onlyNeededList.Add(soundItem);
+        }
+      }
+
+      if (onlyNeededList.Count == 0)
+      {
+        return;
+      }
+
+      var validIds = onlyNeededList.Select(x => long.Parse(x.FileInfoEntity.Indentificator));
+
+      var getLinksTask = cloudService.GetFileLinks(validIds, cancellationToken);
+
+      var result = await getLinksTask.Process;
+
+      if (result != null)
+      {
+        foreach (var keyPair in result)
+        {
+          var originalItem = onlyNeededList.SingleOrDefault(x => x.FileInfoEntity.Indentificator == keyPair.Key.ToString());
+          var publicLink = keyPair.Value;
+
+          if (originalItem != null)
+          {
+            if (publicLinks.TryGetValue(originalItem, out var storedPublicLink) &&
+                storedPublicLink.ExpiresDate > DateTime.Now)
+            {
+              continue;
+            }
+
+            if (publicLink != null)
+            {
+              var oldLink = originalItem.FileInfoEntity.Source;
+
+              if (publicLink.Link != oldLink)
+              {
+                originalItem.FileInfoEntity.Source = publicLink.Link;
+              }
+
+              if (storedPublicLink != null)
+              {
+                publicLinks[originalItem] = publicLink;
+              }
+              else
+              {
+                publicLinks.Add(originalItem, publicLink);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    #endregion
+
+    #region DownloadUrlLink
+
+    private async Task DownloadUrlLink(TModel soundItem)
+    {
+      if (soundItem != null &&
+          soundItem.FileInfoEntity != null)
+      {
+        //Asi docasny fix pre pokazene itemy
+        if(soundItem.FileInfoEntity.Indentificator == null)
+        {
+          soundItem.FileInfoEntity.Indentificator = soundItem.FileInfoEntity.Source;
+        }
+
+        if (long.TryParse(soundItem.FileInfoEntity.Indentificator, out var id))
+        {
+          if (publicLinks.TryGetValue(soundItem, out var storedPublicLink) &&
+              storedPublicLink.ExpiresDate > DateTime.Now)
+          {
+            return;
+          }
+
+          var publicLink = await cloudService.GetFileLink(id);
+
+          if (publicLink != null)
+          {
+            var oldLink = soundItem.FileInfoEntity.Source;
+
+            if (publicLink.Link != oldLink)
+            {
+              soundItem.FileInfoEntity.Source = publicLink.Link;
+            }
+
+            if (storedPublicLink != null)
+            {
+              publicLinks[soundItem] = publicLink;
+            }
+            else
+            {
+              publicLinks.Add(soundItem, publicLink);
+            }
+          }
+        }
+      }
+    }
+
+    #endregion
+
+    #region DownloadPublicLinks
+
+    private Task DownloadPublicLinks(CancellationToken cancellationToken)
+    {
+      return Task.Run(async () =>
+      {
+        try
+        {
+          var validItemsToUpdate = GetValidItemsForCloud().ToList();
+
+          var itemsAfter = validItemsToUpdate.Skip(actualItemIndex);
+          var itemsBefore = validItemsToUpdate.Take(actualItemIndex);
+
+          await DownloadUrlLinks(itemsAfter.Select(x => x.Model), cancellationToken);
+          await DownloadUrlLinks(itemsBefore.Select(x => x.Model), cancellationToken);
+
+          logger.Log(MessageType.Success, "Public links were downloaded");
+        }
+        catch (OperationCanceledException)
+        {
+        }
+
+      }, cancellationToken);
+    }
+
+    #endregion
+
+    protected abstract IEnumerable<TItemViewModel> GetValidItemsForCloud();
+
 
     #region Dispose
 

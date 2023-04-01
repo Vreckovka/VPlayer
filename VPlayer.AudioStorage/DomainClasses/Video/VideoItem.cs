@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using VCore.Standard.Modularity.Interfaces;
 using VPlayer.Core.ViewModels;
 
@@ -18,9 +19,18 @@ namespace VPlayer.AudioStorage.DomainClasses.Video
     public TimeSpan TimePlayed { get; set; }
     public bool IsPrivate { get; set; }
 
+    public FileInfoEntity FileInfoEntity { get; set; }
 
     public void Update(PlayableItem other)
     {
+      if (FileInfoEntity == null)
+      {
+        FileInfoEntity = other.FileInfoEntity;
+      }
+      else
+        FileInfoEntity.Update(other.FileInfoEntity);
+
+
       Source = other.Source;
       Duration = other.Duration;
       Length = other.Length;
@@ -40,6 +50,18 @@ namespace VPlayer.AudioStorage.DomainClasses.Video
     public int? AudioTrack { get; set; }
     public int? SubtitleTrack { get; set; }
 
+    #region Source
+
+    [NotMapped]
+    public override string Source
+    {
+      get
+      {
+        return FileInfoEntity?.Source;
+      }
+    }
+
+    #endregion
 
     public void Update(VideoItem other)
     {

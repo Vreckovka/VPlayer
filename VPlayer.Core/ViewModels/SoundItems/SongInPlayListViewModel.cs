@@ -816,16 +816,16 @@ namespace VPlayer.Core.ViewModels.SoundItems
     {
       ClearLyrics();
 
-      if (Model?.FileInfo != null)
+      if (Model?.FileInfoEntity != null)
       {
-        Model.FileInfo.Album = "";
-        Model.FileInfo.Artist = "";
+        Model.FileInfoEntity.Album = "";
+        Model.FileInfoEntity.Artist = "";
       }
 
-      if (SongModel.ItemModel?.FileInfo != null)
+      if (SongModel.ItemModel?.FileInfoEntity != null)
       {
-        SongModel.ItemModel.FileInfo.Album = "";
-        SongModel.ItemModel.FileInfo.Artist = "";
+        SongModel.ItemModel.FileInfoEntity.Album = "";
+        SongModel.ItemModel.FileInfoEntity.Artist = "";
       }
 
       AlbumViewModel = null;
@@ -858,7 +858,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     public override async void SaveChanges()
     {
-      await storageManager.UpdateEntityAsync(SongModel.ItemModel.FileInfo);
+      await storageManager.UpdateEntityAsync(SongModel.ItemModel.FileInfoEntity);
       await storageManager.UpdateSong(SongModel, true, null);
     }
 

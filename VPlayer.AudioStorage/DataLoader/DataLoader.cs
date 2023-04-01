@@ -272,8 +272,14 @@ namespace VPlayer.AudioStorage.DataLoader
       {
         //Movie (2001)
         @"\((?<year>\d+)\)",
-        //Movie 2001
+        //Movie 2001 asdasd
         @"\s(?<year>\d+)\s",
+        //Movie.2001.asd
+        @"\.(?<year>\d+)\.",
+        //Movie.2001
+        @"\.(?<year>\d+)",
+        //Movie 2001
+        @"\s(?<year>\d+)",
       };
 
       foreach (var regexExpression in regexExpressions)

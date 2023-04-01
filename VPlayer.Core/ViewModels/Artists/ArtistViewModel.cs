@@ -92,7 +92,7 @@ namespace VPlayer.Core.ViewModels.Artists
           .Include(x => x.Albums)
           .ThenInclude(x => x.Songs)
           .ThenInclude(x => x.ItemModel)
-          .ThenInclude(x => x.FileInfo)
+          .ThenInclude(x => x.FileInfoEntity)
           .Where(x => x.Id == Model.Id).ToList();
 
           var myComparer = new NumberStringComparer();

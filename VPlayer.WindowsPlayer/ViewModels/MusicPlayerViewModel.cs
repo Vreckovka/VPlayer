@@ -75,11 +75,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private readonly IPCloudAlbumCoverProvider iPCloudAlbumCoverProvider;
     private readonly IWindowManager windowManager;
     private readonly IStatusManager statusManager;
-    private readonly IAlbumsViewModel albumsViewModel;
-    private readonly IArtistsViewModel artistsViewModel;
     private readonly VLCPlayer vLcPlayer;
     private Dictionary<SongInPlayListViewModel, bool> playBookInCycle = new Dictionary<SongInPlayListViewModel, bool>();
-    private Dictionary<SoundItem, PublicLink> publicLinks = new Dictionary<SoundItem, PublicLink>();
+
 
     #endregion Fields
 
@@ -99,10 +97,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
       IWindowManager windowManager,
       IStatusManager statusManager,
       IVFfmpegProvider iVFfmpegProvider,
-      IAlbumsViewModel albumsViewModel,
-      IArtistsViewModel artistsViewModel,
       ISettingsProvider settingsProvider,
-      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, statusManager, viewModelsFactory, iVFfmpegProvider, settingsProvider, vLCPlayer)
+      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger,
+      storageManager, eventAggregator, windowManager, statusManager,
+      viewModelsFactory, iVFfmpegProvider, settingsProvider, cloudService, vLCPlayer)
     {
       this.vPlayerRegionProvider = regionProvider ?? throw new ArgumentNullException(nameof(regionProvider));
       this.audioInfoDownloader = audioInfoDownloader ?? throw new ArgumentNullException(nameof(audioInfoDownloader));
@@ -110,8 +108,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
       this.iPCloudAlbumCoverProvider = iPCloudAlbumCoverProvider ?? throw new ArgumentNullException(nameof(iPCloudAlbumCoverProvider));
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
-      this.albumsViewModel = albumsViewModel ?? throw new ArgumentNullException(nameof(albumsViewModel));
-      this.artistsViewModel = artistsViewModel ?? throw new ArgumentNullException(nameof(artistsViewModel));
       UPnPManagerViewModel = uPnPManagerViewModel ?? throw new ArgumentNullException(nameof(uPnPManagerViewModel));
 
       SelectedMediaRendererViewModel = uPnPManagerViewModel.Renderers.View.FirstOrDefault();
@@ -188,7 +184,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         foreach (var item in PlayList)
         {
-          if (long.TryParse(item.Model.FileInfo.Indentificator, out var id))
+          if (long.TryParse(item.Model.FileInfoEntity.Indentificator, out var id))
           {
             list.Add(id);
           }
@@ -959,6 +955,14 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    protected override IEnumerable<SoundItemInPlaylistViewModel> GetValidItemsForCloud()
+    {
+      return PlayList
+        .OfType<SongInPlayListViewModel>()
+        .Where(x => x.ArtistViewModel != null &&
+                    x.AlbumViewModel != null).ToList();
+    }
+
     #region DownloadItemInfo
 
     protected override async Task DownloadItemInfo(CancellationToken cancellationToken)
@@ -967,7 +971,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         await base.DownloadItemInfo(cancellationToken);
 
-        await DownloadPublicLinks(cancellationToken);
+
         await DownloadLyrics(cancellationToken);
         await DownloadHighQualityAlbumCover(ActualItem);
       });
@@ -978,127 +982,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-    #region BeforeSetMedia
-
-    protected override async Task BeforeSetMedia(SoundItem model)
-    {
-      await base.BeforeSetMedia(model);
-
-      await DownloadUrlLink(model);
-    }
-
-    #endregion
-
-    #region DownloadUrlLink
-
-    private async Task DownloadUrlLink(SoundItem soundItem)
-    {
-      if (soundItem != null &&
-          soundItem.FileInfo != null && long.TryParse(soundItem.FileInfo.Indentificator, out var id))
-      {
-        if (publicLinks.TryGetValue(soundItem, out var storedPublicLink) &&
-           storedPublicLink.ExpiresDate > DateTime.Now)
-        {
-          return;
-        }
-
-        var publicLink = await cloudService.GetFileLink(id);
-
-        if (publicLink != null)
-        {
-          var oldLink = soundItem.FileInfo.Source;
-
-          if (publicLink.Link != oldLink)
-          {
-            soundItem.FileInfo.Source = publicLink.Link;
-          }
-
-          if (storedPublicLink != null)
-          {
-            publicLinks[soundItem] = publicLink;
-          }
-          else
-          {
-            publicLinks.Add(soundItem, publicLink);
-          }
-        }
-
-      }
-    }
-
-    #endregion
-
-    #region DownloadUrlLinks
-
-    private async Task DownloadUrlLinks(IEnumerable<SoundItem> soundItems, CancellationToken cancellationToken)
-    {
-      var list = soundItems.ToList();
-      var onlyNeededList = new List<SoundItem>();
-
-      foreach (var soundItem in list)
-      {
-        if (publicLinks.TryGetValue(soundItem, out var storedPublicLink) &&
-            storedPublicLink.ExpiresDate > DateTime.Now)
-        {
-          continue;
-        }
-        else if (long.TryParse(soundItem.FileInfo.Indentificator, out var parsed))
-        {
-          onlyNeededList.Add(soundItem);
-        }
-      }
-
-      if (onlyNeededList.Count == 0)
-      {
-        return;
-      }
-
-      var validIds = onlyNeededList.Select(x => long.Parse(x.FileInfo.Indentificator));
-
-      var getLinksTask = cloudService.GetFileLinks(validIds, cancellationToken);
-
-      var result = await getLinksTask.Process;
-
-      if (result != null)
-      {
-        foreach (var keyPair in result)
-        {
-          var originalItem = onlyNeededList.SingleOrDefault(x => x.FileInfo.Indentificator == keyPair.Key.ToString());
-          var publicLink = keyPair.Value;
-
-          if (originalItem != null)
-          {
-            if (publicLinks.TryGetValue(originalItem, out var storedPublicLink) &&
-                storedPublicLink.ExpiresDate > DateTime.Now)
-            {
-              continue;
-            }
-
-            if (publicLink != null)
-            {
-              var oldLink = originalItem.FileInfo.Source;
-
-              if (publicLink.Link != oldLink)
-              {
-                originalItem.FileInfo.Source = publicLink.Link;
-              }
-
-              if (storedPublicLink != null)
-              {
-                publicLinks[originalItem] = publicLink;
-              }
-              else
-              {
-                publicLinks.Add(originalItem, publicLink);
-              }
-            }
-          }
-        }
-      }
-    }
-
-    #endregion
-
+   
     #region DownloadHighQualityAlbumCover
 
     private SemaphoreSlim downloadHighQualityAlbumCoverSempahore = new SemaphoreSlim(1, 1);
@@ -1277,15 +1161,15 @@ namespace VPlayer.WindowsPlayer.ViewModels
             RequestUIDispatcher(() => { CheckedFiles.Remove(viewmodel); });
           }
 
-          var fileInfo = viewmodel?.Model?.FileInfo;
+          var fileInfo = viewmodel?.Model?.FileInfoEntity;
           bool fileInfoWasChanged = false;
 
           RequestUIDispatcher(() => { viewmodel.IsDownloading = true; });
 
           if (fileInfo != null)
           {
-            string artistName = viewmodel?.Model?.FileInfo.Artist;
-            string albumName = viewmodel?.Model?.FileInfo.Album;
+            string artistName = viewmodel?.Model?.FileInfoEntity.Artist;
+            string albumName = viewmodel?.Model?.FileInfoEntity.Album;
 
             if (string.IsNullOrEmpty(artistName) || string.IsNullOrEmpty(albumName))
             {
@@ -1346,7 +1230,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
             artistName = fileInfo.Artist;
             albumName = fileInfo.Album;
-            viewmodel.Model.FileInfo.Name = fileInfo.Name;
+            viewmodel.Model.FileInfoEntity.Name = fileInfo.Name;
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -1582,7 +1466,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
             if (downloadingAlbum.Id > 0 && downloadingArtist.Id > 0)
             {
               var song = downloadingAlbum.Songs
-                .FirstOrDefault(x => x.ItemModel.FileInfo.Name == songInPlayListViewModel.SongModel.ItemModel.FileInfo.Name);
+                .FirstOrDefault(x => x.ItemModel.FileInfoEntity.Name == songInPlayListViewModel.SongModel.ItemModel.FileInfoEntity.Name);
 
               if (song == null)
               {
@@ -1719,7 +1603,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         .Where(x => x.NormalizedName == VPlayerStorageManager.GetNormalizedName(albumName))
         .Include(x => x.Artist)
         .Include(x => x.Songs)
-        .ThenInclude(x => x.ItemModel.FileInfo);
+        .ThenInclude(x => x.ItemModel.FileInfoEntity);
 
 
       Album result = albums.FirstOrDefault(x => x.Artist.Name == artistName);
@@ -1825,35 +1709,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-    #region DownloadPublicLinks
-
-    private Task DownloadPublicLinks(CancellationToken cancellationToken)
-    {
-      return Task.Run(async () =>
-      {
-        try
-        {
-          var validItemsToUpdate = PlayList
-            .OfType<SongInPlayListViewModel>()
-            .Where(x => x.ArtistViewModel != null &&
-                        x.AlbumViewModel != null).ToList();
-
-          var itemsAfter = validItemsToUpdate.Skip(actualItemIndex);
-          var itemsBefore = validItemsToUpdate.Take(actualItemIndex);
-
-          await DownloadUrlLinks(itemsAfter.Select(x => x.Model), cancellationToken);
-          await DownloadUrlLinks(itemsBefore.Select(x => x.Model), cancellationToken);
-
-          logger.Log(MessageType.Success, "Public links were downloaded");
-        }
-        catch (OperationCanceledException)
-        {
-        }
-
-      }, cancellationToken);
-    }
-
-    #endregion
+   
 
     #region DownloadLyrics
 
@@ -2112,7 +1968,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           .Include(x => x.Album)
           .ThenInclude(x => x.Artist)
           .Include(x => x.ItemModel)
-          .ThenInclude(x => x.FileInfo)
+          .ThenInclude(x => x.FileInfoEntity)
           .ToList();
 
         if (songsItems.Count > 0)
@@ -2637,7 +2493,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       var list = itemViewModels.ToList();
 
-      await storageManager.UpdateEntitiesAsync(list.Select(x => x.Model.FileInfo));
+      await storageManager.UpdateEntitiesAsync(list.Select(x => x.Model.FileInfoEntity));
 
       await storageManager.ResetSongs(list.OfType<SongInPlayListViewModel>().Select(x => x.SongModel));
     }

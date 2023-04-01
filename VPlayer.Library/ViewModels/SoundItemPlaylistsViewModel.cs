@@ -37,7 +37,7 @@ namespace VPlayer.Home.ViewModels
     public override string Header { get; } = "Music";
     public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
 
-    protected override IQueryable<PlaylistSoundItem> GetActualItemQuery => base.GetActualItemQuery.Include(x => x.ReferencedItem.FileInfo);
+    protected override IQueryable<PlaylistSoundItem> GetActualItemQuery => base.GetActualItemQuery.Include(x => x.ReferencedItem.FileInfoEntity);
 
     protected override void OnDataLoaded()
     {

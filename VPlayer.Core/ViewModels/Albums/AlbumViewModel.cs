@@ -93,7 +93,7 @@ namespace VPlayer.Core.ViewModels.Albums
 
           var songs = storage.GetTempRepository<Song>()
             .Include(x => x.ItemModel)
-            .ThenInclude(x => x.FileInfo)
+            .ThenInclude(x => x.FileInfoEntity)
             .Include(x => x.Album)
             .ThenInclude(x => x.Artist)
             .Where(x => x.Album.Id == Model.Id).ToList();

@@ -23,8 +23,10 @@ using VPlayer.Core.Events;
 using VPlayer.Core.ViewModels.TvShows;
 using FileInfo = VCore.WPF.ViewModels.WindowsFiles.FileInfo;
 using VCore.Standard.Helpers;
+using VCore.Standard.Modularity.Interfaces;
 using VCore.WPF.Helpers;
 using VPlayer.AudioStorage.DomainClasses.Video;
+using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.SoundItems;
 using Size = System.Drawing.Size;
 
@@ -305,92 +307,82 @@ namespace VPlayer.Core.FileBrowser
 
     public void Play(EventAction eventAction)
     {
-      Model.Extension =  System.IO.Path.GetExtension(Model.Indentificator.ToLower());
+      if(long.TryParse(Model.Indentificator, out var id))
+      {
+        Model.Extension = System.IO.Path.GetExtension(Model.FullName.ToLower());
+      }
+      else
+      {
+        Model.Extension = System.IO.Path.GetExtension(Model.Indentificator.ToLower());
+      }
+
       FileType = Model.Extension.GetFileType();
 
       if (FileType == FileType.Video)
       {
-        PlayVideo(eventAction);
+        PlayItem<VideoItem, VideoItemInPlaylistViewModel>(eventAction);
       }
       else if (FileType == FileType.Sound)
       {
-        PlaySound(eventAction);
+        PlayItem<SoundItem, SoundItemInPlaylistViewModel>(eventAction);
       }
     }
 
     #endregion
 
-    #region PlayVideo
+    #region PlayItems
 
-    private void PlayVideo(EventAction eventAction)
+    private void PlayItem<TModel, TViewModel>(EventAction eventAction)
+      where TModel : PlayableItem, IUpdateable<TModel>, new()
+      where TViewModel : FileItemInPlayList<TModel>
     {
-      VideoItem videoItem = storageManager.GetTempRepository<VideoItem>().SingleOrDefault(x => x.Source == Model.Indentificator);
+      TModel entityItem = storageManager.GetTempRepository<TModel>()
+        .Include(x => x.FileInfoEntity)
+        .SingleOrDefault(x => x.FileInfoEntity.Source == Model.Indentificator);
 
-      if (videoItem == null)
+      if (entityItem == null)
       {
-        var pVideoItem = new VideoItem()
+        var pVideoItem = new TModel()
         {
           Name = Model.Name,
-          Source = Model.Indentificator
         };
 
-        storageManager.StoreEntity<VideoItem>(pVideoItem, out videoItem);
+        FileInfoEntity fileInfoEntity = new FileInfoEntity()
+        {
+          Name = Model.Name,
+          Indentificator = Model.Indentificator,
+          Source = Model.Source
+        };
+
+        pVideoItem.FileInfoEntity = fileInfoEntity;
+        storageManager.StoreEntity(pVideoItem, out entityItem);
       }
 
-      if (videoItem == null)
+      if (entityItem == null)
         return;
 
-      var vms = viewModelsFactory.Create<VideoItemInPlaylistViewModel>(videoItem);
+      if (entityItem.FileInfoEntity == null)
+      {
+        FileInfoEntity fileInfoEntity = new FileInfoEntity()
+        {
+          Name = Model.Name,
+          Indentificator = Model.Indentificator,
+        };
+
+        entityItem.FileInfoEntity = fileInfoEntity;
+      }
+
+
+      var vms = viewModelsFactory.Create<TViewModel>(entityItem);
 
       vms.ObservePropertyChange(x => x.IsInPlaylist).ObserveOnDispatcher().Subscribe((x) =>
       {
         IsInPlaylist = x;
-      });
+      }).DisposeWith(this);
 
-      var data = new PlayItemsEventData<VideoItemInPlaylistViewModel>(vms.AsList(), eventAction, this);
+      var data = new PlayItemsEventData<TViewModel>(vms.AsList(), eventAction, this);
 
-      eventAggregator.GetEvent<PlayItemsEvent<VideoItem, VideoItemInPlaylistViewModel>>().Publish(data);
-    }
-
-    #endregion
-
-    #region PlaySound
-
-    private void PlaySound(EventAction eventAction)
-    {
-      SoundItem soundItem = storageManager.GetTempRepository<SoundItem>().Include(x => x.FileInfo).SingleOrDefault(x => x.FileInfo.Source == Model.Indentificator);
-
-      if (soundItem == null)
-      {
-        var pSoundItem = new SoundItem()
-        {
-          Name = Model.Name,
-        };
-
-        SoundFileInfo fileInfo = new SoundFileInfo()
-        {
-          Name = Model.Name,
-          Source = Model.Indentificator
-        };
-
-        pSoundItem.FileInfo = fileInfo;
-
-        storageManager.StoreEntity<SoundItem>(pSoundItem, out soundItem);
-      }
-
-      if (soundItem == null)
-        return;
-
-      var vms = viewModelsFactory.Create<SoundItemInPlaylistViewModel>(soundItem);
-
-      vms.ObservePropertyChange(x => x.IsInPlaylist).ObserveOnDispatcher().Subscribe((x) =>
-      {
-        IsInPlaylist = x;
-      });
-
-      var data = new PlayItemsEventData<SoundItemInPlaylistViewModel>(vms.AsList(), eventAction, this);
-
-      eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(data);
+      eventAggregator.GetEvent<PlayItemsEvent<TModel, TViewModel>>().Publish(data);
     }
 
     #endregion

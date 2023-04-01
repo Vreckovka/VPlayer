@@ -182,7 +182,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
             if (fileInfo == null)
             {
-              fileInfo = new SoundFileInfo(audioInfo.DiskLocation, audioInfo.DiskLocation)
+              fileInfo = new FileInfoEntity(audioInfo.DiskLocation, audioInfo.DiskLocation)
               {
                 Indentificator = audioInfo.DiskLocation,
                 Artist = audioInfo.Artist,
@@ -195,7 +195,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
             }
 
 
-            var soundItem = context.SoundItems.SingleOrDefault(x => x.FileInfo == fileInfo);
+            var soundItem = context.SoundItems.SingleOrDefault(x => x.FileInfoEntity == fileInfo);
 
             if (soundItem == null)
             {
@@ -206,7 +206,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
               };
             }
 
-            soundItem.FileInfo = fileInfo;
+            soundItem.FileInfoEntity = fileInfo;
 
             var song = context.Songs.SingleOrDefault(x => x.ItemModel == soundItem);
 
@@ -219,7 +219,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
               if (string.IsNullOrEmpty(song.ItemModel.Name))
               {
-                song.ItemModel.FileInfo.Name = song.ItemModel.FileInfo.Name;
+                song.ItemModel.FileInfoEntity.Name = song.ItemModel.FileInfoEntity.Name;
               }
 
               context.Songs.Add(song);
@@ -231,7 +231,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
             }
             else
             {
-              song.ItemModel.FileInfo.Source = audioInfo.DiskLocation;
+              song.ItemModel.FileInfoEntity.Source = audioInfo.DiskLocation;
 
               PublishItemChanged(song);
 
@@ -499,7 +499,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
                where x.MusicBrainzId == album.MusicBrainzId
                select x).Include(x => x.Songs)
               .ThenInclude(x => x.ItemModel)
-              .ThenInclude(x => x.FileInfo)
+              .ThenInclude(x => x.FileInfoEntity)
               .Include(x => x.Artist).SingleOrDefault();
 
             //Update is first time
@@ -562,7 +562,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
                    where string.IsNullOrEmpty(x.Artist.NormalizedName)
                    where x.NormalizedName == album.NormalizedName
                    where x.Artist.NormalizedName == album.Artist.NormalizedName
-                   select x).Include(x => x.Songs).ThenInclude(x => x.ItemModel).ThenInclude(x => x.FileInfo)
+                   select x).Include(x => x.Songs).ThenInclude(x => x.ItemModel).ThenInclude(x => x.FileInfoEntity)
                   .Include(x => x.Artist).SingleOrDefault();
 
                 if (originalAlbum != null)
@@ -594,7 +594,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
                 var dbAlbum = context.Albums.Where(x => x.Id == album.Id)
                   .Include(x => x.Songs)
                   .ThenInclude(x => x.ItemModel)
-                  .ThenInclude(x => x.FileInfo)
+                  .ThenInclude(x => x.FileInfoEntity)
                   .Include(x => x.Artist).SingleOrDefault();
 
 
@@ -1079,7 +1079,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
       var foundEntity = tvShowRepo.Include(x => x.Songs)
         .ThenInclude(x => x.ItemModel)
-        .ThenInclude(x => x.FileInfo)
+        .ThenInclude(x => x.FileInfoEntity)
         .SingleOrDefault(x => x.Id == album.Id);
 
       bool result = false;
@@ -1248,7 +1248,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
         {
           foundPlaylist = (IPlaylist<TPlaylistItem>)GetTempRepository<SoundItemFilePlaylist>()
             .Include(x => x.PlaylistItems)
-            .ThenInclude(x => x.ReferencedItem.FileInfo)
+            .ThenInclude(x => x.ReferencedItem.FileInfoEntity)
             .Include(x => x.ActualItem.ReferencedItem)
             .SingleOrDefault(x => x.Id == playlist.Id);
         }

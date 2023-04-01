@@ -210,7 +210,7 @@ namespace VPlayer.Home.ViewModels.Statistics
       return Task.Run(() =>
       {
         var list = new List<IPlayableModel>();
-        var sounds = storageManager.GetTempRepository<SoundItem>().Include(x => x.FileInfo).Where(x => !x.IsPrivate).ToList();
+        var sounds = storageManager.GetTempRepository<SoundItem>().Include(x => x.FileInfoEntity).Where(x => !x.IsPrivate).ToList();
         var videos = storageManager.GetTempRepository<VideoItem>().Where(x => !x.IsPrivate).ToList();
         var episodes = storageManager.GetTempRepository<TvShowEpisode>().Where(x => !x.IsPrivate).ToList();
 
@@ -225,7 +225,7 @@ namespace VPlayer.Home.ViewModels.Statistics
           .Include(x => x.Album)
           .ThenInclude(x => x.Artist)
           .Include(x => x.ItemModel)
-          .ThenInclude(x => x.FileInfo)
+          .ThenInclude(x => x.FileInfoEntity)
           .ToList();
 
         foreach (var song in songsItems)
@@ -244,7 +244,7 @@ namespace VPlayer.Home.ViewModels.Statistics
           .Include(x => x.Album)
           .ThenInclude(x => x.Artist)
           .Include(x => x.ItemModel)
-          .ThenInclude(x => x.FileInfo)
+          .ThenInclude(x => x.FileInfoEntity)
           .ToList();
 
         foreach (var song in songsItems)
