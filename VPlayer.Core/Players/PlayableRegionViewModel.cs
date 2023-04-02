@@ -1804,7 +1804,11 @@ namespace VPlayer.Core.ViewModels
       try
       {
         if (ActualSavedPlaylist.PlaylistItems?.Any() == true)
+        {
           ActualSavedPlaylist.ItemCount = ActualSavedPlaylist.PlaylistItems.Count;
+          ActualSavedPlaylist.ActualItem.ReferencedItem = ActualItem.Model;
+        }
+        
 
         var clone = ActualSavedPlaylist.DeepClone();
 

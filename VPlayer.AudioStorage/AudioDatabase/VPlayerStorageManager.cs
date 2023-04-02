@@ -18,6 +18,7 @@ using VCore;
 using VCore.Standard;
 using VCore.Standard.Helpers;
 using VCore.Standard.Modularity.Interfaces;
+using VCore.Standard.ViewModels.WindowsFile;
 using VCore.WPF.Modularity.Events;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.DomainClasses.Video;
@@ -178,7 +179,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
             }
 
 
-            var fileInfo = context.SoundFileInfos.SingleOrDefault(x => x.Indentificator == audioInfo.DiskLocation);
+            var fileInfo = context.FileInfos.SingleOrDefault(x => x.Indentificator == audioInfo.DiskLocation);
 
             if (fileInfo == null)
             {
@@ -348,9 +349,9 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region CleanData
 
-    public Task CleanData()
+    public async Task CleanData()
     {
-      return Task.Run(() =>
+      await Task.Run(() =>
       {
         using (var context = new AudioDatabaseContext())
         {
@@ -361,6 +362,65 @@ namespace VPlayer.AudioStorage.AudioDatabase
             context.Entry(album).State = EntityState.Deleted;
 
             PublishItemChanged(album, Changed.Removed);
+          }
+
+          var result = context.SaveChanges();
+
+          var artists = GetRepository<Artist>(context).Where(x => x.Albums.Count == 0);
+
+          foreach (var artist in artists)
+          {
+            context.Entry(artist).State = EntityState.Deleted;
+            PublishItemChanged(artist, Changed.Removed);
+          }
+
+          result = context.SaveChanges();
+        }
+      });
+
+      //select Indentificator, count(*) pocet from FileInfos where Indentificator is not null  GROUP by Indentificator  having count(*) > 1 
+
+      await Task.Run(() =>
+      {
+        using (var context = new AudioDatabaseContext())
+        {
+          var fileInfos = GetRepository<FileInfoEntity>(context)
+            .ToList()
+            .GroupBy(x => x.Indentificator).
+            Where(x => x.Count() > 1).ToList();
+
+
+          foreach (var fileInfo in fileInfos.SelectMany(x => x))
+          {
+            try
+            {
+              var fileType = ExtentionHelper.GetFileType(fileInfo.Extension);
+              PlayableItem playableItem = null;
+              List<DomainEntity> playlistItems = null;
+
+              if (fileType == FileType.Sound)
+              {
+                playableItem = GetRepository<SoundItem>(context)
+                  .SingleOrDefault(x => x.FileInfoEntity.Id == fileInfo.Id);
+
+              }
+              else if (fileType == FileType.Video)
+              {
+                playableItem = GetRepository<VideoItem>(context)
+                  .SingleOrDefault(x => x.FileInfoEntity.Id == fileInfo.Id);
+              }
+
+
+              if (playableItem != null)
+                context.Remove(playableItem);
+
+
+              context.Remove(fileInfo);
+              //context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+            }
           }
 
           var result = context.SaveChanges();
@@ -1314,7 +1374,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
               foundPlaylist.ItemCount = foundPlaylist.PlaylistItems.Count;
             }
           }
-     
+
           var actualItem = foundPlaylist.ActualItem;
           foundPlaylist.ActualItem = null;
 

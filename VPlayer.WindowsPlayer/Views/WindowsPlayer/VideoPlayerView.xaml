@@ -70,7 +70,7 @@
                             </MenuItem>
 
                             <MenuItem Command="{Binding AddSubtitles}" Header="Add subtitles" />
-
+                            <MenuItem Command="{Binding DownloadSubtitles}" Header="Find subtitles" />
                         </MenuItem>
 
                         <MenuItem Height="35"

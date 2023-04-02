@@ -7,11 +7,15 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using MovieCollection.OpenSubtitles;
+using MovieCollection.OpenSubtitles.Models;
 using VCore;
 using VCore.ItemsCollections;
 using VCore.Standard;
@@ -328,6 +332,41 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region DownloadSubtitles
+
+    private ActionCommand downloadSubtitles;
+
+    public ICommand DownloadSubtitles
+    {
+      get
+      {
+        if (downloadSubtitles == null)
+        {
+          downloadSubtitles = new ActionCommand(OnDownloadSubtitles);
+        }
+
+        return downloadSubtitles;
+      }
+    }
+
+    public void OnDownloadSubtitles()
+    {
+      var model = viewModelsFactory.Create<FindSubtitlesPromptViewModel>(ActualItem);
+
+      windowManager.ShowPrompt<FindSubtitlesView>(model);
+
+      if(model?.Download?.Link != null)
+      {
+        MediaPlayer.ESAdded += MediaPlayer_ESAdded;
+
+        var path = model.Download.Link;
+
+        MediaPlayer.AddSlave(MediaSlaveType.Subtitle, path.AbsoluteUri, true);
+      }
+    }
+
+    #endregion
+
     #endregion
 
     #region Methods
@@ -413,7 +452,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
           MakeSingleSelection(CropRatios, x);
           OnCropRatioSelected(x);
         }).DisposeWith(this);
-
     }
 
     #endregion
@@ -646,6 +684,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region SetPlalistCover
+
     private async Task SetPlalistCover()
     {
       if (ActualItem?.ExtraData is CSFDItemViewModel cSFDItem)
@@ -655,6 +695,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
         await UpdateActualSavedPlaylistPlaylist();
       }
     }
+
+    #endregion
 
     #region FindOnCsfd
 
@@ -1103,6 +1145,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
 
     #endregion
+
+   
 
     protected override IEnumerable<VideoItemInPlaylistViewModel> GetValidItemsForCloud()
     {

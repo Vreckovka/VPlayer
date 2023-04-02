@@ -54,6 +54,7 @@ namespace VPlayer.Home.ViewModels.TvShows
         var playlist = storage.GetTempRepository<VideoFilePlaylist>()
           .Include(x => x.PlaylistItems)
           .ThenInclude(x => x.ReferencedItem)
+          .ThenInclude(x => x.FileInfoEntity)
           .SingleOrDefault(x => x.Id == Model.Id);
 
         if (playlist != null)

@@ -429,7 +429,6 @@ namespace VPlayer.Core.Players
 
         if (!double.IsNaN(position) && !double.IsInfinity(position))
         {
-
           ActualItem.ActualPosition = position;
           ActualSavedPlaylist.LastItemElapsedTime = position;
 
@@ -444,10 +443,10 @@ namespace VPlayer.Core.Players
 
           var totalPlayedTime = TimeSpan.FromMilliseconds(deltaTimeChanged);
 
-#if !DEBUG
+//#if !DEBUG
           ActualItem.Model.TimePlayed += totalPlayedTime;
           PlaylistTotalTimePlayed += totalPlayedTime;
-#endif
+//#endif
 
           int totalSec = (int)PlaylistTotalTimePlayed.TotalSeconds;
 
@@ -455,9 +454,15 @@ namespace VPlayer.Core.Players
           {
             lastTotalTimeSaved = totalSec;
 
-            await UpdateActualSavedPlaylistPlaylist();
-            await storageManager.UpdateEntityAsync(ActualItem.Model);
-            ActualItem.RaiseNotifyPropertyChanged(nameof(ViewModel<TModel>.Model));
+            //Data race pri CLEAR
+            await Task.Delay(500);
+
+            if(ActualItem != null)
+            {
+              await UpdateActualSavedPlaylistPlaylist();
+              await storageManager.UpdateEntityAsync(ActualItem.Model);
+              ActualItem.RaiseNotifyPropertyChanged(nameof(ViewModel<TModel>.Model));
+            }
           }
         }
       }
@@ -995,8 +1000,6 @@ namespace VPlayer.Core.Players
     }
 
     #endregion
-
-
 
     #region DownloadUrlLinks
 

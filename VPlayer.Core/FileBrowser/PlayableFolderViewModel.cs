@@ -439,17 +439,40 @@ namespace VPlayer.Core.FileBrowser
 
       var playableFilesList = playableFiles.Concat(itemsInFolder).Where(x => x.FileType == fileType).ToList();
 
-      var entityItems = storageManager.GetTempRepository<TModel>().Include(x => x.FileInfoEntity)
+      var entityItems = storageManager.GetTempRepository<TModel>()
+        .Include(x => x.FileInfoEntity)
         .Where(x => playableFilesList.Select(y => y.Model.Indentificator)
           .Contains(x.FileInfoEntity.Indentificator)).ToList();
 
 
-      var videoItemsIds = entityItems.Select(y => y.Source);
+      var videoItemsIds = entityItems.Select(y => y.FileInfoEntity.Indentificator);
 
       var notExisting = playableFilesList.Where(x => !videoItemsIds.Contains(x.Model.Indentificator)).ToList();
 
       if (notExisting.Count > 0)
       {
+        //Asi treba iba docasne, lebo teoerticky by sa to stat nemalo (pripad ked je FileInfo vytvorene ale nie je k nemu item)
+        var fileInfos = storageManager.GetTempRepository<FileInfoEntity>()
+          .Where(x => notExisting.Select(y => y.Model.Indentificator).Contains(x.Indentificator))
+          .ToList();
+
+        foreach (var fileInfo in fileInfos)
+        {
+          var videoItem = new TModel()
+          {
+            Name = fileInfo.Name,
+          };
+
+          storageManager.StoreEntity(videoItem, out var stored);
+
+          videoItem.FileInfoEntity = fileInfo;
+
+          storageManager.UpdateEntityAsync(videoItem).Wait();
+
+          entityItems.Add(stored);
+          notExisting.Remove(notExisting.SingleOrDefault(x => x.Model.Indentificator == fileInfo.Indentificator));
+        }
+
         foreach (var item in notExisting.Select(x => x.Model))
         {
           var fileInfo = new FileInfoEntity(item.FullName, item.Source)
