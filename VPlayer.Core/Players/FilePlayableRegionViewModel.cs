@@ -14,6 +14,7 @@ using System.Windows;
 using System.Windows.Input;
 using FFMpegCore;
 using Logger;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Ninject;
 using PCloudClient.Domain;
@@ -35,6 +36,7 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Managers.Status;
 using VPlayer.Core.ViewModels;
+using VPlayer.Core.ViewModels.SoundItems;
 using VPLayer.Domain;
 using VPlayer.WindowsPlayer.Players;
 using VVLC.Players;
@@ -349,11 +351,11 @@ namespace VPlayer.Core.Players
 
     private CancellationTokenSource GetCTSAndCancel()
     {
-      cTSOnActualItemChangeds.ForEach(x => x.Cancel());
+      cTSOnActualItemChangeds.ToList().ForEach(x => x.Cancel());
 
       var cTsOnActualItemChanged = new CancellationTokenSource();
 
-      cTSOnActualItemChangeds.Add(cTsOnActualItemChanged);
+      cTSOnActualItemChangeds.ToList().Add(cTsOnActualItemChanged);
 
       return cTsOnActualItemChanged;
     }
@@ -769,9 +771,13 @@ namespace VPlayer.Core.Players
     {
       RaisePropertyChanged(nameof(TotalPlaylistDuration));
 
-      var validItems = PlayList.Where(x => !string.IsNullOrEmpty(x.Model?.Source)
-                                          && !x.Model.Source.Contains("https://")
-                                          && !x.Model.Source.Contains("http://")).ToList();
+      var list = PlayList.ToList();
+
+      var validItems = list.Where(x => !string.IsNullOrEmpty(x.Model?.Source)
+                                       && !x.Model.Source.Contains("https://")
+                                       && !x.Model.Source.Contains("http://")).ToList();
+
+      var cloudItems = list.Where(x => long.TryParse(x.Model.FileInfoEntity.Indentificator, out var id)).ToList();
 
 
       List<TItemViewModel> changedItems = new List<TItemViewModel>();
@@ -807,7 +813,7 @@ namespace VPlayer.Core.Players
       if (changedItems.Count > 0)
         await storageManager.UpdateEntitiesAsync(changedItems.Select(x => x.Model));
 
-      await DownloadPublicLinks(cancellationToken);
+      await DownloadPublicLinks(cloudItems, cancellationToken);
     }
 
     #endregion
@@ -880,12 +886,23 @@ namespace VPlayer.Core.Players
           {
             var newModel = viewModelsFactory.Create<TModel>();
             var fileInfo = new FileInfo(file);
+           
+            newModel.FileInfoEntity = new FileInfoEntity()
+            {
+              Indentificator = fileInfo.FullName,
+              FullName = fileInfo.FullName,
+              Name = fileInfo.Name,
+              Extension = fileInfo.Extension,
+              
+            };
 
             newModel.Source = fileInfo.FullName;
             newModel.Name = fileInfo.Name;
 
             var existing = storageManager.GetTempRepository<TModel>()
-              .FirstOrDefault(x => x.Source == newModel.Source);
+              .Include(x => x.FileInfoEntity)
+              .Where(x => x.FileInfoEntity != null)
+              .FirstOrDefault(x => x.FileInfoEntity.Indentificator == newModel.FileInfoEntity.Indentificator);
 
             if (existing == null)
             {
@@ -1121,13 +1138,13 @@ namespace VPlayer.Core.Players
 
     #region DownloadPublicLinks
 
-    private Task DownloadPublicLinks(CancellationToken cancellationToken)
+    private Task DownloadPublicLinks(IEnumerable<TItemViewModel> validItems, CancellationToken cancellationToken)
     {
       return Task.Run(async () =>
       {
         try
         {
-          var validItemsToUpdate = GetValidItemsForCloud().ToList();
+          var validItemsToUpdate = GetValidItemsForCloud(validItems).ToList();
 
           var itemsAfter = validItemsToUpdate.Skip(actualItemIndex);
           var itemsBefore = validItemsToUpdate.Take(actualItemIndex);
@@ -1146,7 +1163,7 @@ namespace VPlayer.Core.Players
 
     #endregion
 
-    protected abstract IEnumerable<TItemViewModel> GetValidItemsForCloud();
+    protected abstract IEnumerable<TItemViewModel> GetValidItemsForCloud(IEnumerable<TItemViewModel> validItems);
 
 
     #region Dispose

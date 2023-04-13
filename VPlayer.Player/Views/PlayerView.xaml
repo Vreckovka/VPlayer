@@ -192,7 +192,7 @@
                 </Grid>
             </Border>
 
-            <controls2:NonTopmostPopup Grid.Column="3"
+            <!--<controls2:NonTopmostPopup Grid.Column="3"
                                        Margin="0"
                                        HorizontalAlignment="Right"
                                        AllowsTransparency="True"
@@ -217,7 +217,8 @@
                             <Setter Property="Opacity" Value="0" />
                             <Setter Property="BorderThickness" Value="0" />
 
-                            <!--<Setter Property="Background">
+            -->
+            <!--<Setter Property="Background">
                                 <Setter.Value>
                                     <LinearGradientBrush StartPoint="0 1" EndPoint="0 0">
                                         <GradientStop Offset="1" Color="#101010" />
@@ -225,6 +226,7 @@
                                     </LinearGradientBrush>
                                 </Setter.Value>
                             </Setter>-->
+            <!--
 
                             <Setter Property="Template">
                                 <Setter.Value>
@@ -402,7 +404,7 @@
                 <b:Interaction.Behaviors>
                     <popups:MovePopupWithParentBehavior />
                 </b:Interaction.Behaviors>
-            </controls2:NonTopmostPopup>
+            </controls2:NonTopmostPopup>-->
 
             <Border Name="PlayerButtonsBorder"
                     Grid.Column="1"

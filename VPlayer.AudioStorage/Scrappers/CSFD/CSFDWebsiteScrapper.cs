@@ -887,6 +887,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       parsedName = parsedName.Replace(".", " ").Replace("-", null);
 
       var episodeKeys = DataLoader.DataLoader.GetTvShowSeriesNumber(name);
+      var yearNumbers = DataLoader.DataLoader.GetYear(name);
 
       if (!onlySingleItem)
       {
@@ -900,7 +901,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           seasonNumber = episodeKeys.SeasonNumber;
         }
 
-        if (episodeKeys != null && episodeNumber == null && !downloadOneSeason)
+        if (episodeKeys != null && episodeNumber == null && downloadOneSeason)
         {
           episodeNumber = episodeKeys.EpisodeNumber;
         }
@@ -918,10 +919,22 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
           }
 
-          var tvShowFind = await FindSingleCsfdItem(tvShowName, year, episodeKeys != null ||
-                                                                      seasonNumber != null ||
-                                                                      episodeNumber != null ||
-                                                                      !string.IsNullOrEmpty(tvShowName), cancellationToken, parentMessage: statusMessage);
+          CSFDItem tvShowFind = null;
+
+          if (episodeKeys == null && yearNumbers != null)
+          {
+            tvShowName = yearNumbers.ParsedName;
+            parsedName = tvShowName;
+            year = yearNumbers.YearNumber;
+          }
+
+
+
+          tvShowFind = await FindSingleCsfdItem(tvShowName, year, episodeKeys != null ||
+                                                                  seasonNumber != null ||
+                                                                  episodeNumber != null ||
+                                                                  !string.IsNullOrEmpty(tvShowName), cancellationToken, parentMessage: statusMessage);
+
 
           if (tvShowFind == null)
           {
@@ -1377,7 +1390,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     }
 
     #endregion
-  
+
     #region ParseFindNodes
 
     private IEnumerable<CSFDItem> ParseFindNodes(HtmlNodeCollection nodes, CancellationToken cancellationToken)

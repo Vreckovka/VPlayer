@@ -281,6 +281,8 @@ namespace VPlayer.Home.ViewModels
 
     private async Task LoadPinnedItems()
     {
+      PinnedItems.Clear();
+
       var items = await Task.Run(() =>
       {
         return storageManager.GetTempRepository<PinnedItem>().OrderBy(x => x.OrderNumber).ToList();

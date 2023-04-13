@@ -40,6 +40,7 @@ using VPlayer.Core.Managers.Status;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.Players;
 using VPlayer.Core.ViewModels;
+using VPlayer.Core.ViewModels.SoundItems;
 using VPlayer.Core.ViewModels.TvShows;
 using VPLayer.Domain;
 using VPlayer.Player.Views.WindowsPlayer;
@@ -254,11 +255,18 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       if (vm.PromptResult == VCore.WPF.ViewModels.Prompt.PromptResult.Ok)
       {
+        var fileInfo = new FileInfoEntity()
+        {
+          Source = vm.StreamUrl,
+          Indentificator = vm.StreamUrl,
+          
+        };
+
         var item = new VideoItemInPlaylistViewModel(new VideoItem()
         {
           Name = "Stream file",
-          Source = vm.StreamUrl,
-          Duration = (int)new TimeSpan(99, 99, 99).TotalSeconds,
+          FileInfoEntity = fileInfo,
+          Duration = 0,
         }, eventAggregator, storageManager);
 
         item.IsStream = true;
@@ -1148,9 +1156,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
    
 
-    protected override IEnumerable<VideoItemInPlaylistViewModel> GetValidItemsForCloud()
+    protected override IEnumerable<VideoItemInPlaylistViewModel> GetValidItemsForCloud(IEnumerable<VideoItemInPlaylistViewModel> validItems)
     {
-      return PlayList.Where(x => long.TryParse(x.Model.Source, out var id )).ToList();
+      return validItems.ToList();
     }
 
 

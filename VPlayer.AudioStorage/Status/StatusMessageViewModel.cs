@@ -159,6 +159,7 @@ namespace VPlayer.Core.Managers.Status
         if (value != messageState)
         {
           messageState = value;
+          
           RaisePropertyChanged();
         }
       }

@@ -70,19 +70,6 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     #endregion
 
-    #region Source
-
-    [NotMapped]
-    public override string Source
-    {
-      get
-      {
-        return FileInfoEntity?.Source;
-      }
-    }
-
-    #endregion
-
     #region Length
 
     [NotMapped]

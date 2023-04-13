@@ -47,7 +47,7 @@ namespace VPlayer.Home.ViewModels
         max = 500;
       }
 
-#if !DEBUG
+
       if (!wasSet)
       {
         var playlist = LibraryCollection.Items
@@ -58,7 +58,7 @@ namespace VPlayer.Home.ViewModels
         playlist?.OnPlayButton(Core.Events.EventAction.InitSetPlaylist);
         wasSet = true;
       }
-#endif
+
     }
 
     protected override List<PinnedItem> GetPinnedTypedItems(List<PinnedItem> pinnedItems)

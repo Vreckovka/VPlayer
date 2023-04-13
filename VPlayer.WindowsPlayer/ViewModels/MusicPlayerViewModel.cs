@@ -955,9 +955,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-    protected override IEnumerable<SoundItemInPlaylistViewModel> GetValidItemsForCloud()
+    protected override IEnumerable<SoundItemInPlaylistViewModel> GetValidItemsForCloud(IEnumerable<SoundItemInPlaylistViewModel>  validItems)
     {
-      return PlayList
+      return validItems
         .OfType<SongInPlayListViewModel>()
         .Where(x => x.ArtistViewModel != null &&
                     x.AlbumViewModel != null).ToList();
@@ -981,7 +981,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
 
     #endregion
-
    
     #region DownloadHighQualityAlbumCover
 
@@ -1709,8 +1708,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-   
-
     #region DownloadLyrics
 
     private Task DownloadLyrics(CancellationToken cancellationToken)
@@ -1722,6 +1719,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
            if (ActualItem is SongInPlayListViewModel songInPlay)
            {
              bool wasLyricsNull = songInPlay.LRCLyrics == null && songInPlay.Lyrics == null;
+
+             var validItemsToUpdate = PlayList.OfType<SongInPlayListViewModel>()
+               .Where(x => x.ArtistViewModel != null && x.AlbumViewModel != null).ToList();
 
              if (string.IsNullOrEmpty(songInPlay.LRCLyrics) && string.IsNullOrEmpty(songInPlay.Lyrics))
              {
@@ -1737,11 +1737,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
                await storageManager.UpdateEntityAsync(ActualItem.Model);
              }
 
-             var validItemsToUpdate = PlayList.OfType<SongInPlayListViewModel>()
-               .Where(x => x.ArtistViewModel != null && x.AlbumViewModel != null).ToList();
-
-             var itemsAfter = validItemsToUpdate.Skip(actualItemIndex).Where(x => x.LyricsObject == null);
-             var itemsBefore = validItemsToUpdate.Take(actualItemIndex).Where(x => x.LyricsObject == null);
+             var itemsAfter = validItemsToUpdate.Skip(actualItemIndex).Where(x => x.LyricsObject == null).ToList();
+             var itemsBefore = validItemsToUpdate.Take(actualItemIndex).Where(x => x.LyricsObject == null).ToList();
 
              await DownloadLyrics(itemsAfter, cancellationToken);
              await DownloadLyrics(itemsBefore, cancellationToken);
@@ -1756,7 +1753,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     private async Task DownloadLyrics(IEnumerable<SongInPlayListViewModel> songInPlayListViewModels, CancellationToken cancellationToken)
     {
-      foreach (var item in songInPlayListViewModels)
+      var list = songInPlayListViewModels.ToList();
+
+      foreach (var item in list)
       {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -2036,7 +2035,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
       }
 
-      DownloadInfos(PlayList);
+      DownloadInfos(PlayList.ToList());
     }
 
     #endregion

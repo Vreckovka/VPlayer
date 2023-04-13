@@ -659,8 +659,8 @@ namespace VPlayer.Core.ViewModels
       {
         PlayList.ForEach(x => x.OnResetAllData());
 
-        await SaveData(PlayList);
-        await DownloadInfos(PlayList);
+        await SaveData(PlayList.ToList());
+        await DownloadInfos(PlayList.ToList());
 
         return true;
       }

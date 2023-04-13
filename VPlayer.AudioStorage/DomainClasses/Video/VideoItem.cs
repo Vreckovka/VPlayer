@@ -8,7 +8,23 @@ namespace VPlayer.AudioStorage.DomainClasses.Video
   [Serializable]
   public class PlayableItem : DomainEntity, IUpdateable<PlayableItem>, IFilePlayableModel, INamedEntity
   {
-    public virtual string Source { get; set; }
+    #region Source
+
+    [NotMapped]
+    public string Source
+    {
+      get
+      {
+        return FileInfoEntity?.Source;
+      }
+      set
+      {
+        if (FileInfoEntity != null)
+          FileInfoEntity.Source = value;
+      }
+    }
+
+    #endregion
     public virtual long Length { get; set; }
     public virtual string Name { get; set; }
 
@@ -50,18 +66,7 @@ namespace VPlayer.AudioStorage.DomainClasses.Video
     public int? AudioTrack { get; set; }
     public int? SubtitleTrack { get; set; }
 
-    #region Source
-
-    [NotMapped]
-    public override string Source
-    {
-      get
-      {
-        return FileInfoEntity?.Source;
-      }
-    }
-
-    #endregion
+   
 
     public void Update(VideoItem other)
     {

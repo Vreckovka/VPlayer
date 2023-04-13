@@ -65,7 +65,13 @@ namespace VPlayer.Core.Managers.Status
         if (value != actualMessageViewModel)
         {
           actualMessageViewModel = value;
-         
+
+          if (actualMessageViewModel != null)
+            Observable.Timer(TimeSpan.FromSeconds(5)).Subscribe((x) =>
+            {
+              actualMessageViewModel.MessageState = MessageStatusState.Closed;
+            }).DisposeWith(this);
+
           RaisePropertyChanged();
         }
       }
