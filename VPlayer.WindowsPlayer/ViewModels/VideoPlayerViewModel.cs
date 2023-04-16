@@ -1232,6 +1232,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
       if (nameKeys.Any())
       {
         playlistName = nameKeys.First();
+
+        if(playlistModels.Count == 1)
+        {
+          playlistName = PlayList.OfType<VideoItemInPlaylistViewModel>().First().Name;
+        }
       }
 
 

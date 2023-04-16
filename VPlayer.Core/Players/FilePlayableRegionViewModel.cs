@@ -952,7 +952,7 @@ namespace VPlayer.Core.Players
       {
         CheckedFiles.Add(itemViewModel);
 
-        RequestUIDispatcher(() => { RaisePropertyChanged(nameof(CheckedFiles)); });
+       RaisePropertyChanged(nameof(CheckedFiles)); 
       }
     }
 
@@ -1053,7 +1053,7 @@ namespace VPlayer.Core.Players
       {
         foreach (var keyPair in result)
         {
-          var originalItem = onlyNeededList.SingleOrDefault(x => x.FileInfoEntity.Indentificator == keyPair.Key.ToString());
+          var originalItem = onlyNeededList.FirstOrDefault(x => x.FileInfoEntity.Indentificator == keyPair.Key.ToString());
           var publicLink = keyPair.Value;
 
           if (originalItem != null)

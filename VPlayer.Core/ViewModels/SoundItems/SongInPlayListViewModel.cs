@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -428,32 +429,36 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     #region Initialize
 
-    public override async void Initialize()
+    public override  void Initialize()
     {
       base.Initialize();
 
-      if (SongModel.Album != null)
+
+      AsyncHelper.RunSync(async () =>
       {
-        AlbumViewModel = (await albumsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == SongModel.Album.Id);
-
-        if (SongModel.Album.Artist != null)
+        if (SongModel.Album != null)
         {
-          if (SongModel.Album.Artist.Id > 0)
-            ArtistViewModel = (await artistsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == SongModel.Album.Artist.Id);
+          AlbumViewModel = (await albumsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == SongModel.Album.Id);
+
+          if (SongModel.Album.Artist != null)
+          {
+            if (SongModel.Album.Artist.Id > 0)
+              ArtistViewModel = (await artistsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == SongModel.Album.Artist.Id);
+          }
+          else if (AlbumViewModel?.Model.Artist != null)
+          {
+            ArtistViewModel = (await artistsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == AlbumViewModel.Model.Artist.Id);
+          }
         }
-        else if (AlbumViewModel?.Model.Artist != null)
-        {
-          ArtistViewModel = (await artistsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == AlbumViewModel.Model.Artist.Id);
-        }
-      }
 
-      if (AlbumViewModel != null)
-        AlbumViewModel.IsInPlaylist = true;
+        if (AlbumViewModel != null)
+          AlbumViewModel.IsInPlaylist = true;
 
-      if (ArtistViewModel != null)
-        ArtistViewModel.IsInPlaylist = true;
+        if (ArtistViewModel != null)
+          ArtistViewModel.IsInPlaylist = true;
 
-      LoadLRCFromEnitityLyrics();
+        LoadLRCFromEnitityLyrics();
+      });
     }
 
     #endregion
@@ -865,5 +870,32 @@ namespace VPlayer.Core.ViewModels.SoundItems
     #endregion
 
     #endregion
+  }
+
+  internal static class AsyncHelper
+  {
+    private static readonly TaskFactory _myTaskFactory = new
+      TaskFactory(CancellationToken.None,
+        TaskCreationOptions.None,
+        TaskContinuationOptions.None,
+        TaskScheduler.Default);
+
+    public static TResult RunSync<TResult>(Func<Task<TResult>> func)
+    {
+      return AsyncHelper._myTaskFactory
+        .StartNew<Task<TResult>>(func)
+        .Unwrap<TResult>()
+        .GetAwaiter()
+        .GetResult();
+    }
+
+    public static void RunSync(Func<Task> func)
+    {
+      AsyncHelper._myTaskFactory
+        .StartNew<Task>(func)
+        .Unwrap()
+        .GetAwaiter()
+        .GetResult();
+    }
   }
 }

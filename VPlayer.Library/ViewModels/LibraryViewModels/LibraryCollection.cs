@@ -153,7 +153,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
           {
             try
             {
-              await semaphoreSlim.WaitAsync();
+              await semaphoreSlim.WaitAsync().ConfigureAwait(false);
 
               if (!WasLoaded)
               {
@@ -198,7 +198,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
             {
               semaphoreSlim.Release();
             }
-          });
+          }).ConfigureAwait(false);
       });
     }
 

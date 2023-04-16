@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Prism.Events;
 using VCore.Standard.Factories.ViewModels;
@@ -39,7 +40,7 @@ namespace VPlayer.Home.ViewModels
 
     protected override IQueryable<PlaylistSoundItem> GetActualItemQuery => base.GetActualItemQuery.Include(x => x.ReferencedItem.FileInfoEntity);
 
-    protected override void OnDataLoaded()
+    protected async override void OnDataLoaded()
     {
       base.OnDataLoaded();
       if (!int.TryParse(settingsProvider.Settings[GlobalSettings.MaxItemsForDefaultPlaylist]?.Value, out var max))
@@ -50,15 +51,19 @@ namespace VPlayer.Home.ViewModels
 
       if (!wasSet)
       {
-        var playlist = LibraryCollection.Items
-          .Where(x => x.ItemsCount < max)
-          .OrderByDescending(x => x.LastPlayed)
-          .FirstOrDefault();
+        await Task.Run(async () =>
+        {
+          //await Task.Delay(2000);
 
-        playlist?.OnPlayButton(Core.Events.EventAction.InitSetPlaylist);
-        wasSet = true;
+          var playlist = LibraryCollection.Items
+            .Where(x => x.ItemsCount < max)
+            .OrderByDescending(x => x.LastPlayed)
+            .FirstOrDefault();
+
+          playlist?.OnPlayButton(Core.Events.EventAction.InitSetPlaylist);
+          wasSet = true;
+        });
       }
-
     }
 
     protected override List<PinnedItem> GetPinnedTypedItems(List<PinnedItem> pinnedItems)

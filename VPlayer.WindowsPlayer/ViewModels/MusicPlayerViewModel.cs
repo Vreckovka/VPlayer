@@ -450,20 +450,20 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
 
 
-         VSynchronizationContext.PostOnUIThread(() =>
-        {
-          if (result)
-          {
-            statusManager.ShowDoneMessage($"Artists added");
-          }
-          else
-          {
-            statusManager.ShowFailedMessage($"Artists FAILED to add");
-          }
+        VSynchronizationContext.PostOnUIThread(() =>
+       {
+         if (result)
+         {
+           statusManager.ShowDoneMessage($"Artists added");
+         }
+         else
+         {
+           statusManager.ShowFailedMessage($"Artists FAILED to add");
+         }
 
 
-          addArtists?.RaiseCanExecuteChanged();
-        });
+         addArtists?.RaiseCanExecuteChanged();
+       });
       });
     }
 
@@ -955,7 +955,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-    protected override IEnumerable<SoundItemInPlaylistViewModel> GetValidItemsForCloud(IEnumerable<SoundItemInPlaylistViewModel>  validItems)
+    protected override IEnumerable<SoundItemInPlaylistViewModel> GetValidItemsForCloud(IEnumerable<SoundItemInPlaylistViewModel> validItems)
     {
       return validItems
         .OfType<SongInPlayListViewModel>()
@@ -967,12 +967,14 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     protected override async Task DownloadItemInfo(CancellationToken cancellationToken)
     {
+      var list = PlayList.OfType<SongInPlayListViewModel>().ToList();
+
       await Task.Run(async () =>
       {
         await base.DownloadItemInfo(cancellationToken);
 
 
-        await DownloadLyrics(cancellationToken);
+        await DownloadAllLyrics(list, cancellationToken);
         await DownloadHighQualityAlbumCover(ActualItem);
       });
 
@@ -981,7 +983,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
 
     #endregion
-   
+
     #region DownloadHighQualityAlbumCover
 
     private SemaphoreSlim downloadHighQualityAlbumCoverSempahore = new SemaphoreSlim(1, 1);
@@ -1710,7 +1712,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region DownloadLyrics
 
-    private Task DownloadLyrics(CancellationToken cancellationToken)
+    private Task DownloadAllLyrics(IEnumerable<SongInPlayListViewModel> items, CancellationToken cancellationToken)
     {
       return Task.Run(async () =>
        {
@@ -1720,8 +1722,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
            {
              bool wasLyricsNull = songInPlay.LRCLyrics == null && songInPlay.Lyrics == null;
 
-             var validItemsToUpdate = PlayList.OfType<SongInPlayListViewModel>()
-               .Where(x => x.ArtistViewModel != null && x.AlbumViewModel != null).ToList();
+             var validItemsToUpdate = items.ToList();
 
              if (string.IsNullOrEmpty(songInPlay.LRCLyrics) && string.IsNullOrEmpty(songInPlay.Lyrics))
              {
@@ -1898,39 +1899,40 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         WasAllItemsProcessed = false;
         CheckedFiles.Clear();
-
-        modelsDisposables.ForEach(x => x.Dispose());
-        modelsDisposables.Clear();
-
-        downloadingSongTasks.Where(x => !x.IsCancellationRequested).ForEach(x => x.Cancel());
-        var actualDownloadingSongTask = new CancellationTokenSource();
-
-        downloadingSongTasks.Add(actualDownloadingSongTask);
-
-        var songs = new List<SongInPlayListViewModel>();
-
-        foreach (var item in data.Items)
-        {
-          var song = new Song()
-          {
-            ItemModel = item.Model
-          };
-
-          var vm = viewModelsFactory.Create<SongInPlayListViewModel>(song);
-
-          vm.ActualPosition = item.ActualPosition;
-          vm.IsFavorite = item.IsFavorite;
-          vm.IsPlaying = item.IsPlaying;
-          vm.IsSelected = item.IsSelected;
-          vm.Duration = item.Duration;
-
-          songs.Add(vm);
-        }
-
-        data.Items = songs;
-
-        ResetDownload();
       });
+
+      modelsDisposables.ForEach(x => x.Dispose());
+      modelsDisposables.Clear();
+
+      downloadingSongTasks.Where(x => !x.IsCancellationRequested).ForEach(x => x.Cancel());
+      var actualDownloadingSongTask = new CancellationTokenSource();
+
+      downloadingSongTasks.Add(actualDownloadingSongTask);
+
+      var songs = new List<SongInPlayListViewModel>();
+
+      foreach (var item in data.Items)
+      {
+        var song = new Song()
+        {
+          ItemModel = item.Model
+        };
+
+        var vm = viewModelsFactory.Create<SongInPlayListViewModel>(song);
+
+        vm.ActualPosition = item.ActualPosition;
+        vm.IsFavorite = item.IsFavorite;
+        vm.IsPlaying = item.IsPlaying;
+        vm.IsSelected = item.IsSelected;
+        vm.Duration = item.Duration;
+
+        songs.Add(vm);
+      }
+
+      data.Items = songs;
+
+      ResetDownload();
+
     }
 
     #endregion
@@ -1972,46 +1974,45 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         if (songsItems.Count > 0)
         {
-          VSynchronizationContext.InvokeOnDispatcher(() =>
+
+          PlayList.DisableNotification();
+          UnHookToPlaylistCollectionChanged();
+
+          foreach (var songItem in songsItems)
           {
-            PlayList.DisableNotification();
-            UnHookToPlaylistCollectionChanged();
+            var index = PlayList.IndexOf(x => x.Model.Id == songItem.ItemModel.Id);
 
-            foreach (var songItem in songsItems)
+            if (index != null)
             {
-              var index = PlayList.IndexOf(x => x.Model.Id == songItem.ItemModel.Id);
+              var itemInPlaylistViewModel = PlayList[index.Value];
+              songItem.ItemModel = itemInPlaylistViewModel.Model;
+              var vm = viewModelsFactory.Create<SongInPlayListViewModel>(songItem);
 
-              if (index != null)
+              vm.ActualPosition = itemInPlaylistViewModel.ActualPosition;
+              vm.IsFavorite = itemInPlaylistViewModel.IsFavorite;
+              vm.IsPlaying = itemInPlaylistViewModel.IsPlaying;
+              vm.IsSelected = itemInPlaylistViewModel.IsSelected;
+              vm.Duration = itemInPlaylistViewModel.Duration;
+
+              if (songItem.Source != itemInPlaylistViewModel.Model.Source)
               {
-                var itemInPlaylistViewModel = PlayList[index.Value];
-                songItem.ItemModel = itemInPlaylistViewModel.Model;
-                var vm = viewModelsFactory.Create<SongInPlayListViewModel>(songItem);
-
-                vm.ActualPosition = itemInPlaylistViewModel.ActualPosition;
-                vm.IsFavorite = itemInPlaylistViewModel.IsFavorite;
-                vm.IsPlaying = itemInPlaylistViewModel.IsPlaying;
-                vm.IsSelected = itemInPlaylistViewModel.IsSelected;
-                vm.Duration = itemInPlaylistViewModel.Duration;
-
-                if (songItem.Source != itemInPlaylistViewModel.Model.Source)
-                {
-                  songItem.ItemModel.Source = itemInPlaylistViewModel.Model.Source;
-                }
-
-
-                PlayList[index.Value] = vm;
-
-                if (itemInPlaylistViewModel == ActualItem)
-                {
-                  ActualItem = vm;
-                }
-                changed = true;
+                songItem.ItemModel.Source = itemInPlaylistViewModel.Model.Source;
               }
-            }
 
-            HookToPlaylistCollectionChanged();
-            PlayList.EnableNotification();
-          });
+
+              PlayList[index.Value] = vm;
+
+              if (itemInPlaylistViewModel == ActualItem)
+              {
+                ActualItem = vm;
+              }
+              changed = true;
+            }
+          }
+
+          HookToPlaylistCollectionChanged();
+          PlayList.EnableNotification();
+
         }
       });
 
@@ -2092,7 +2093,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         {
           var items = soundItemInPlaylistViewModel.ToList();
           var notNullItems = items.OfType<SongInPlayListViewModel>().Where(x => x.ArtistViewModel != null && x.AlbumViewModel != null).ToList();
-          var nullItems = items.OfType<SongInPlayListViewModel>().Where(x => x.ArtistViewModel == null && x.AlbumViewModel == null).ToList();
+          var nullItems = items.OfType<SongInPlayListViewModel>().Where(x => x.ArtistViewModel == null || x.AlbumViewModel == null).ToList();
 
           foreach (var song in notNullItems)
           {
