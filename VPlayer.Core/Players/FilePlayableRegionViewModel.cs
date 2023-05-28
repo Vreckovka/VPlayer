@@ -777,7 +777,9 @@ namespace VPlayer.Core.Players
                                        && !x.Model.Source.Contains("https://")
                                        && !x.Model.Source.Contains("http://")).ToList();
 
-      var cloudItems = list.Where(x => long.TryParse(x.Model.FileInfoEntity.Indentificator, out var id)).ToList();
+      var cloudItems = list
+        .Where(x => x.Model.FileInfoEntity != null)
+        .Where(x => long.TryParse(x.Model.FileInfoEntity.Indentificator, out var id)).ToList();
 
 
       List<TItemViewModel> changedItems = new List<TItemViewModel>();
@@ -1110,7 +1112,16 @@ namespace VPlayer.Core.Players
             return;
           }
 
-          var publicLink = await cloudService.GetFileLink(id);
+          PublicLink publicLink = null;
+
+          try
+          {
+             publicLink = await cloudService.GetFileLink(id);
+          }
+          catch (Exception)
+          {
+            publicLink = await cloudService.GetFileLink(id);
+          }
 
           if (publicLink != null)
           {

@@ -25,6 +25,10 @@
         <ResourceDictionary Source="pack://application:,,,/VCore.WPF;component/StylesDictionaries/FontAwesome6Glyphs.xaml" />
         <ResourceDictionary Source="pack://application:,,,/VCore.WPF;component/StylesDictionaries/Paths.xaml" />
         <ResourceDictionary Source="pack://application:,,,/VCore.WPF;component/StylesDictionaries/Fonts.xaml" />
+
     </ResourceDictionary.MergedDictionaries>
 
+    <!--<Style TargetType="TextBlock">
+        <Setter Property="Foreground" Value="White" />
+    </Style>-->
 </ResourceDictionary>

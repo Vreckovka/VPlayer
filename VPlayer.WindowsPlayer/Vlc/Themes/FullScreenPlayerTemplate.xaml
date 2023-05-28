@@ -14,8 +14,7 @@
                     xmlns:soundManagement="clr-namespace:SoundManagement;assembly=SoundManagement"
                     xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors;assembly=VPlayer.Core"
                     xmlns:themes="clr-namespace:VPlayer.WindowsPlayer.Vlc.Themes"
-                    xmlns:viewModels="clr-namespace:VPlayer.WindowsPlayer.ViewModels"
-                    xmlns:views="clr-namespace:VPlayer.Player.Views;assembly=VCore.WPF">
+                    xmlns:viewModels="clr-namespace:VPlayer.WindowsPlayer.ViewModels">
 
 
     <ResourceDictionary.MergedDictionaries>

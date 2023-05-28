@@ -19,7 +19,7 @@ namespace VPlayer.Home.Modularity
 
     public VPlayerLibraryRegionProvider(
       IRegionManager regionManager,
-      IViewFactory viewFactory,
+      IBaseFactory viewFactory,
       IViewModelsFactory viewModelsFactory,
       INavigationProvider navigationProvider) : base(regionManager, viewFactory, viewModelsFactory, navigationProvider)
     {

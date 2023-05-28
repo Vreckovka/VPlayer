@@ -114,25 +114,43 @@ namespace VPlayer.UPnP.ViewModels.Player
 
     #endregion
 
+    private bool dlnDevicePlayStatus = false;
+    private void PlayStopDlnaDevice(bool value)
+    {
+      if (dlnDevicePlayStatus != value)
+      {
+        dlnDevicePlayStatus = value;
+
+        if (value)
+          dLNADevice?.StartPlay(0);
+        else
+          dLNADevice?.StopPlay(0);
+      }
+    
+    }
+
     #region Play
 
     public void Play()
     {
       positionDisposable.Disposable?.Dispose();
 
-      dLNADevice.StopPlay(0);
-
-      var response = dLNADevice.StartPlay(0);
+      PlayStopDlnaDevice(true);
       IsPlaying = true;
       OnPlaying();
 
-      positionDisposable.Disposable = Observable.Timer(TimeSpan.FromSeconds(0), TimeSpan.FromMilliseconds(500)).Subscribe(x =>
+      ObservePosition();
+    }
+
+    #endregion
+
+    private void ObservePosition()
+    {
+      positionDisposable.Disposable = Observable.Timer(TimeSpan.FromSeconds(0), TimeSpan.FromMilliseconds(1000)).Subscribe(x =>
       {
         ObserveTimeChanged();
       });
     }
-
-    #endregion
 
 
     public void Pause()
@@ -141,13 +159,14 @@ namespace VPlayer.UPnP.ViewModels.Player
       OnPaused();
       IsPlaying = false;
       OnPaused();
+      dlnDevicePlayStatus = false;
     }
 
     public void Stop()
     {
-      dLNADevice.StopPlay(0);
       positionDisposable.Disposable?.Dispose();
       IsPlaying = false;
+      PlayStopDlnaDevice(false);
       OnStopped();
     }
 
@@ -185,12 +204,9 @@ namespace VPlayer.UPnP.ViewModels.Player
 
             dLNADevice.Seek(0, newPosition.ToString(@"hh\:mm\:ss"));
 
-            positionDisposable.Disposable = Observable.Timer(TimeSpan.FromSeconds(0), TimeSpan.FromMilliseconds(500)).Subscribe(x =>
-            {
-              ObserveTimeChanged();
-            });
+            ObservePosition();
 
-            isSeeking = false;
+             isSeeking = false;
           }
         }
 
@@ -231,14 +247,17 @@ namespace VPlayer.UPnP.ViewModels.Player
         var actualPosition = TimeSpan.Parse(trackPositionString);
         acutalMediaDuration = TimeSpan.Parse(trackDurationString);
 
-        var newPosition = (float)((float)actualPosition.TotalMilliseconds * 100 / actualPosition.TotalMilliseconds) / 100;
-
-        SetPosition(newPosition, false);
-
-        OnTimeChanged(new PlayerTimeChangedArgs()
+        if (acutalMediaDuration != null)
         {
-          Time = (long)actualPosition.TotalMilliseconds
-        });
+          var newPosition = (float)((float)actualPosition.TotalMilliseconds * 100 / acutalMediaDuration.Value.TotalMilliseconds) / 100;
+
+          SetPosition(newPosition, false);
+
+          OnTimeChanged(new PlayerTimeChangedArgs()
+          {
+            Time = (long)actualPosition.TotalMilliseconds
+          });
+        }
 
         if (!string.IsNullOrEmpty(trackPositionString)
             && trackPositionString == trackDurationString &&
@@ -285,7 +304,8 @@ namespace VPlayer.UPnP.ViewModels.Player
 
           positionDisposable.Disposable?.Dispose();
 
-          dLNADevice?.StopPlay(0);
+          PlayStopDlnaDevice(false);
+          IsPlaying = false;
           acutalMediaDuration = null;
           wasEndReached = false;
 
@@ -325,6 +345,10 @@ namespace VPlayer.UPnP.ViewModels.Player
               Play();
             }
           }
+          else
+          {
+            OnBuffering(new PlayerBufferingEventArgs() { Cache = 100 });
+          }
         }
         finally
         {
@@ -363,7 +387,8 @@ namespace VPlayer.UPnP.ViewModels.Player
       base.Dispose();
       streamingMediaServer.Running = false;
       positionDisposable?.Dispose();
-      dLNADevice?.StopPlay(0);
+      IsPlaying = false;
+      PlayStopDlnaDevice(false);
     }
 
     #endregion

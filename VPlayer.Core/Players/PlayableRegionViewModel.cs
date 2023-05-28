@@ -1359,13 +1359,15 @@ namespace VPlayer.Core.ViewModels
       if (data.IsRepeat.HasValue)
         IsRepeate = data.IsRepeat.Value;
 
+      var items = data.Items.DistinctBy(x => x.Model.Source);
+
       if (lastSongIndex == null)
       {
-        PlayItems(data.Items, false, onlyItemSet: onlySet);
+        PlayItems(items, false, onlyItemSet: onlySet);
       }
       else
       {
-        PlayItems(data.Items, false, lastSongIndex.Value, onlyItemSet: onlySet);
+        PlayItems(items, false, lastSongIndex.Value, onlyItemSet: onlySet);
 
         if (data.SetPostion.HasValue)
         {
@@ -1461,18 +1463,14 @@ namespace VPlayer.Core.ViewModels
     {
       var itemList = items.ToList();
 
-      VSynchronizationContext.InvokeOnDispatcher(() =>
-      {
+      PlayList.ForEach(x => x.IsInPlaylist = false);
+      PlayList.Clear();
+      PlayList.AddRange(itemList);
 
+      RequestReloadVirtulizedPlaylist();
 
-        PlayList.ForEach(x => x.IsInPlaylist = false);
-        PlayList.Clear();
-        PlayList.AddRange(itemList);
-        RequestReloadVirtulizedPlaylist();
-
-        if (!onlyItemSet)
-          IsPlaying = true;
-      });
+      if (!onlyItemSet)
+        IsPlaying = true;
 
       if (savePlaylist)
       {
@@ -1650,7 +1648,7 @@ namespace VPlayer.Core.ViewModels
           .Include(x => x.PlaylistItems)
           .ThenInclude(x => x.ReferencedItem)
           .OrderByDescending(x => x.IsUserCreated)
-          .FirstOrDefault(x => x.HashCode == hashCode 
+          .FirstOrDefault(x => x.HashCode == hashCode
                                && x.ItemCount == entityPlayList.ItemCount);
 
         if (storedPlaylist == null)
@@ -1808,7 +1806,7 @@ namespace VPlayer.Core.ViewModels
           ActualSavedPlaylist.ItemCount = ActualSavedPlaylist.PlaylistItems.Count;
           ActualSavedPlaylist.ActualItem.ReferencedItem = ActualItem.Model;
         }
-        
+
 
         var clone = ActualSavedPlaylist.DeepClone();
 
@@ -1824,8 +1822,8 @@ namespace VPlayer.Core.ViewModels
             {
               var notPrivateItems = updated.PlaylistItems.Where(x => x.ReferencedItem != null).Where(x => !x.ReferencedItem.IsPrivate).ToList();
 
-            //I was lazy to add items as prite when added to playlist, instead of forcing all items to by private in private playlist
-            foreach (var item in notPrivateItems)
+              //I was lazy to add items as prite when added to playlist, instead of forcing all items to by private in private playlist
+              foreach (var item in notPrivateItems)
               {
                 item.ReferencedItem.IsPrivate = true;
 

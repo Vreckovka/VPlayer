@@ -84,7 +84,7 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
     {
       var acutalEpisode = DataLoader.GetTvShowSeriesNumber(SearchText);
 
-      if(acutalEpisode.EpisodeNumber != null)
+      if(acutalEpisode?.EpisodeNumber != null)
       {
         await SearchSubtitles(acutalEpisode.ParsedName, acutalEpisode.SeasonNumber, acutalEpisode.EpisodeNumber);
       }
