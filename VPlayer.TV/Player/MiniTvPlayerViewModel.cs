@@ -30,7 +30,8 @@ namespace VPlayer.IPTV.ViewModels
       IIptvStalkerServiceProvider iptvStalkerServiceProvider,
       IWindowManager windowManager,
       IStatusManager statusManager,
-      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, iptvStalkerServiceProvider,windowManager,statusManager, vLCPlayer)
+      IViewModelsFactory viewModels,
+      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, iptvStalkerServiceProvider,windowManager,  statusManager, viewModels, vLCPlayer)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
     }

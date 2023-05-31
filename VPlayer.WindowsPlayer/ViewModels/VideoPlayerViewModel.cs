@@ -77,8 +77,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
       IVFfmpegProvider iVFfmpegProvider,
       ISettingsProvider settingsProvider,
       IVPlayerCloudService cloudService) :
-      base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, 
-        statusManager, viewModelsFactory, iVFfmpegProvider, settingsProvider, cloudService, vLCPlayer)
+      base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, statusManager, viewModelsFactory, 
+        iVFfmpegProvider, settingsProvider, cloudService, vLCPlayer)
     {
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       this.iCsfdWebsiteScrapper = iCsfdWebsiteScrapper ?? throw new ArgumentNullException(nameof(iCsfdWebsiteScrapper));

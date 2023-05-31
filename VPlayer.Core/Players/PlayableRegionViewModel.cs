@@ -27,6 +27,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic.FileIO;
 using SoundManagement;
 using VCore.Standard;
+using VCore.Standard.Factories.ViewModels;
 using VCore.Standard.ViewModels.TreeView;
 using VCore.Standard.ViewModels.WindowsFile;
 using VCore.WPF;
@@ -45,6 +46,7 @@ using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Events;
 using VPlayer.Core.Managers.Status;
+using VPlayer.Core.ViewModels.TvShows;
 using VPlayer.WindowsPlayer.Players;
 using VVLC.Players;
 
@@ -72,6 +74,7 @@ namespace VPlayer.Core.ViewModels
     protected readonly ILogger logger;
     protected readonly IStorageManager storageManager;
     private readonly IStatusManager statusManager;
+    protected readonly IViewModelsFactory viewModelsFactory;
     protected readonly IWindowManager windowManager;
     protected int actualItemIndex;
     protected HashSet<TItemViewModel> shuffleList = new HashSet<TItemViewModel>();
@@ -89,12 +92,14 @@ namespace VPlayer.Core.ViewModels
       IStorageManager storageManager,
       IEventAggregator eventAggregator,
       IStatusManager statusManager,
+      IViewModelsFactory viewModelsFactory,
       IWindowManager windowManager,
       VLCPlayer vLCPlayer) : base(regionProvider)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
+      this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       EventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
 
@@ -1359,15 +1364,32 @@ namespace VPlayer.Core.ViewModels
       if (data.IsRepeat.HasValue)
         IsRepeate = data.IsRepeat.Value;
 
-      var items = data.Items.DistinctBy(x => x.Model.Source);
+
+
+      var playlistItems = ActualSavedPlaylist.PlaylistItems
+        .DistinctBy(x => x.ReferencedItem.Source)
+        .OrderBy(x => x.OrderInPlaylist)
+        .ToList();
+        
+
+      var savePlaylist = playlistItems.Count != ActualSavedPlaylist.ItemCount;
+
+      if (savePlaylist)
+      {
+        ActualSavedPlaylist.PlaylistItems = playlistItems;
+      }
+
+      var items = playlistItems
+        .Select(x => viewModelsFactory.Create<TItemViewModel>(x.ReferencedItem))
+        .ToList();
 
       if (lastSongIndex == null)
       {
-        PlayItems(items, false, onlyItemSet: onlySet);
+        PlayItems(items, savePlaylist, onlyItemSet: onlySet);
       }
       else
       {
-        PlayItems(items, false, lastSongIndex.Value, onlyItemSet: onlySet);
+        PlayItems(items, savePlaylist, lastSongIndex.Value, onlyItemSet: onlySet);
 
         if (data.SetPostion.HasValue)
         {

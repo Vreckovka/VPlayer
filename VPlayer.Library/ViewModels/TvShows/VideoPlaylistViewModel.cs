@@ -63,45 +63,11 @@ namespace VPlayer.Home.ViewModels.TvShows
 
           var playlistItems = playlist.PlaylistItems.OrderBy(x => x.OrderInPlaylist).ToList();
 
-          var list = new List<TvShowEpisodeInPlaylistViewModel>();
-
-          var fristEpisode = storage.GetTempRepository<TvShowEpisode>().Where(x => x.VideoItem.Id == playlistItems[0].IdReferencedItem).Include(x => x.TvShow).SingleOrDefault();
-
-          if (fristEpisode != null)
-          {
-
-            var tvShows = storage.GetRepository<TvShow>(new AudioDatabaseContext())
-              .Where(x => x.Id == fristEpisode.TvShow.Id)
-              .Include(x => x.Seasons)
-              .ThenInclude(x => x.Episodes)
-              .ThenInclude(x => x.VideoItem).Single();
-
-            var tvShowEpisodes = tvShows.Seasons.SelectMany(x => x.Episodes).ToList();
-
-            foreach (var item in playlistItems)
-            {
-              var tvShowEpisode = tvShowEpisodes.SingleOrDefault(x => x.VideoItem.Id == item.ReferencedItem.Id);
-
-              // Tv show's video item is not valid
-              if (tvShowEpisode == null)
-              {
-                return playlistItems.Select(x => viewModelsFactory.Create<VideoItemInPlaylistViewModel>(x.ReferencedItem));
-              }
-
-              list.Add(viewModelsFactory.Create<TvShowEpisodeInPlaylistViewModel>(tvShowEpisode.VideoItem, tvShowEpisode));
-            }
-
-            return list;
-          }
-          else
-          {
-            return playlistItems.Select(x => viewModelsFactory.Create<VideoItemInPlaylistViewModel>(x.ReferencedItem));
-          }
+          return playlistItems.Select(x => viewModelsFactory.Create<VideoItemInPlaylistViewModel>(x.ReferencedItem));
         }
 
         return null;
       });
-
     }
 
     #endregion

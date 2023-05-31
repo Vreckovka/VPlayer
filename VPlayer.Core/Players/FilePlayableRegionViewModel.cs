@@ -72,7 +72,7 @@ namespace VPlayer.Core.Players
       IVFfmpegProvider iVFfmpegProvider,
       ISettingsProvider settingsProvider,
       IVPlayerCloudService cloudService,
-      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, statusManager, windowManager, vLCPlayer)
+      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, statusManager, viewModelsFactory, windowManager, vLCPlayer)
     {
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
       this.iVFfmpegProvider = iVFfmpegProvider ?? throw new ArgumentNullException(nameof(iVFfmpegProvider));

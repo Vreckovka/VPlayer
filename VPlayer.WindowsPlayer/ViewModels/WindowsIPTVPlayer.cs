@@ -7,6 +7,7 @@ using Logger;
 using Ninject;
 using Prism.Events;
 using VCore;
+using VCore.Standard.Factories.ViewModels;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Managers;
 using VCore.WPF.Modularity.RegionProviders;
@@ -31,7 +32,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
       IIptvStalkerServiceProvider iptvStalkerServiceProvider,
       IWindowManager windowManager,
       IStatusManager statusManager,
-      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, iptvStalkerServiceProvider, windowManager, statusManager, vLCPlayer)
+      IViewModelsFactory viewModelsFactory,
+      VLCPlayer vLCPlayer) : base(regionProvider, kernel, logger, storageManager, eventAggregator, iptvStalkerServiceProvider, windowManager, statusManager, viewModelsFactory, vLCPlayer)
     {
     }
 
