@@ -1112,10 +1112,6 @@ namespace VPlayer.Core.ViewModels
         itemIndex = PlayList.IndexOf(result[shuffleIndex]);
       }
 
-      if (itemIndex != null)
-      {
-        actualItemIndex = itemIndex.Value;
-      }
 
       if (IsRepeate && actualItemIndex > PlayList.Count - 1)
       {
@@ -1351,6 +1347,7 @@ namespace VPlayer.Core.ViewModels
 
     #region PlayPlaylist
 
+    private int? playlistItemIndex = null;
     protected virtual void PlayPlaylist(PlayItemsEventData<TItemViewModel> data, int? lastSongIndex = null, bool onlySet = false)
     {
       clearPlaylistDisposable?.Dispose();
@@ -1365,12 +1362,11 @@ namespace VPlayer.Core.ViewModels
         IsRepeate = data.IsRepeat.Value;
 
 
-
       var playlistItems = ActualSavedPlaylist.PlaylistItems
         .DistinctBy(x => x.ReferencedItem.Source)
         .OrderBy(x => x.OrderInPlaylist)
         .ToList();
-        
+
 
       var savePlaylist = playlistItems.Count != ActualSavedPlaylist.ItemCount;
 
@@ -1385,11 +1381,11 @@ namespace VPlayer.Core.ViewModels
 
       if (lastSongIndex == null)
       {
-        PlayItems(items, savePlaylist, onlyItemSet: onlySet);
+        PlayItems(items, 0, savePlaylist, onlyItemSet: onlySet);
       }
       else
       {
-        PlayItems(items, savePlaylist, lastSongIndex.Value, onlyItemSet: onlySet);
+        PlayItems(items, lastSongIndex.Value, savePlaylist, onlyItemSet: onlySet);
 
         if (data.SetPostion.HasValue)
         {
@@ -1481,13 +1477,14 @@ namespace VPlayer.Core.ViewModels
 
     #region PlayItems
 
-    protected virtual void PlayItems(IEnumerable<TItemViewModel> items, bool savePlaylist = true, int songIndex = 0, bool editSaved = false, bool onlyItemSet = false)
+    protected virtual void PlayItems(IEnumerable<TItemViewModel> items, int songIndex, bool savePlaylist = true, bool editSaved = false, bool onlyItemSet = false)
     {
       var itemList = items.ToList();
 
       PlayList.ForEach(x => x.IsInPlaylist = false);
       PlayList.Clear();
       PlayList.AddRange(itemList);
+      actualItemIndex = songIndex;
 
       RequestReloadVirtulizedPlaylist();
 
@@ -1497,7 +1494,7 @@ namespace VPlayer.Core.ViewModels
       if (savePlaylist)
       {
         StorePlaylist(itemList, editSaved: editSaved);
-        songIndex = actualItemIndex;
+
       }
 
       SetItemAndPlay(songIndex, onlyItemSet: onlyItemSet);
@@ -1558,7 +1555,7 @@ namespace VPlayer.Core.ViewModels
       switch (data.EventAction)
       {
         case EventAction.Play:
-          PlayItems(data.Items, data.StorePlaylist, onlyItemSet: data.SetItemOnly);
+          PlayItems(data.Items, 0, data.StorePlaylist, onlyItemSet: data.SetItemOnly);
 
           break;
         case EventAction.Add:

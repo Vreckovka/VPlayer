@@ -1191,9 +1191,9 @@ namespace VPlayer.Core.Players
 
     #endregion
 
-    protected override void PlayItems(IEnumerable<TItemViewModel> items, bool savePlaylist = true, int songIndex = 0, bool editSaved = false, bool onlyItemSet = false)
+    protected override void PlayItems(IEnumerable<TItemViewModel> items, int songIndex, bool savePlaylist = true, bool editSaved = false, bool onlyItemSet = false)
     {
-      base.PlayItems(items, savePlaylist, songIndex, editSaved, onlyItemSet);
+      base.PlayItems(items, songIndex, savePlaylist,  editSaved, onlyItemSet);
 
       if (savePlaylist)
       {

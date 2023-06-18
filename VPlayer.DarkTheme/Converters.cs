@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
@@ -108,6 +109,7 @@ namespace VPlayer.Library
 
   public class ImageLazyLoadingConverter : MarkupExtension, IValueConverter
   {
+    public static List<Tuple<string, BitmapImage>> CachedImages = new List<Tuple<string, BitmapImage>>();
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
       var image = new BitmapImage();
@@ -135,16 +137,28 @@ namespace VPlayer.Library
 
           if (File.Exists(filename))
           {
-            using (var stream = File.OpenRead(filename))
+            var foundImage = CachedImages.SingleOrDefault(x => x.Item1 == filename);
+
+            if (foundImage == null)
             {
-              image.DecodePixelHeight = 1;
-              image.DecodePixelWidth = 1;
-              image.BeginInit();
-              image.CacheOption = BitmapCacheOption.OnLoad;
-              image.StreamSource = stream;
-              image.EndInit();
-              image.Freeze();
+              using (var stream = File.OpenRead(filename))
+              {
+                image.DecodePixelHeight = 1;
+                image.DecodePixelWidth = 1;
+                image.BeginInit();
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.StreamSource = stream;
+                image.EndInit();
+                image.Freeze();
+              }
+
+              CachedImages.Add(new Tuple<string, BitmapImage>(filename, image));
             }
+            else
+            {
+              image = foundImage.Item2;
+            }
+           
           }
           else 
           {

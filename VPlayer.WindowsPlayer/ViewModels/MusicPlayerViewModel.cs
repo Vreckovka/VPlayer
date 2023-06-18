@@ -936,7 +936,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
       if (ActualItem is SongInPlayListViewModel song &&
           song.AlbumViewModel?.Image != null &&
           ActualSavedPlaylist.CoverPath != song.AlbumViewModel.Image &&
-          song.AlbumViewModel.Image != PlayableViewModelWithThumbnail<SongInPlayListViewModel, Album>.GetEmptyImage())
+          song.AlbumViewModel.Image != PlayableViewModelWithThumbnail<SongInPlayListViewModel, Album>.GetEmptyImage()
+          && File.Exists(song.AlbumViewModel.Image))
       {
         ActualSavedPlaylist.CoverPath = song.AlbumViewModel.Image;
         await UpdateActualSavedPlaylistPlaylist();

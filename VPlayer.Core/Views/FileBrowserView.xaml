@@ -7,9 +7,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:events1="clr-namespace:VPlayer.Core.Events;assembly=VPLayer.Domain"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:pCloud="clr-namespace:VPlayer.Core.ViewModels.FileBrowser.PCloud"
              xmlns:popups="clr-namespace:VCore.WPF.Behaviors.Popups;assembly=VCore.WPF"
              xmlns:windowsFile="clr-namespace:VCore.Standard.ViewModels.WindowsFile;assembly=VCore.Standard"
-             xmlns:pCloud="clr-namespace:VPlayer.Core.ViewModels.FileBrowser.PCloud"
+             xmlns:migrations="clr-namespace:VPlayer.AudioStorage.Migrations;assembly=VPlayer.AudioStorage"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
@@ -57,169 +58,172 @@
                                        PopupAnimation="Fade"
                                        StaysOpen="true"
                                        VerticalOffset="5">
-                <Border MinWidth="300"
-                        MinHeight="150"
-                        MaxWidth="500"
-                        MaxHeight="300"
-                        Margin="0,10,0,0"
-                        Background="#131313"
-                        BorderBrush="#252525"
-                        BorderThickness="1">
-                    <ScrollViewer Padding="5"
-                                  HorizontalScrollBarVisibility="Disabled"
-                                  VerticalScrollBarVisibility="Auto">
-                        <ItemsControl ItemsSource="{Binding Bookmarks.OrderedCollection}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Margin="5,5,15,5"
-                                            BorderBrush="#252525"
-                                            BorderThickness="0,0,0,1">
-                                        <Grid>
+                <Grid>
+                    <Border MinWidth="300"
+                            MinHeight="150"
+                            MaxWidth="500"
+                            MaxHeight="300"
+                            Margin="0,10,0,0"
+                            Background="#131313"
+                            BorderBrush="#252525"
+                            BorderThickness="1">
+                        <ScrollViewer Padding="5"
+                                      HorizontalScrollBarVisibility="Disabled"
+                                      VerticalScrollBarVisibility="Auto">
+                            <ItemsControl ItemsSource="{Binding Bookmarks.OrderedCollection}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="5,5,15,5"
+                                                BorderBrush="#252525"
+                                                BorderThickness="0,0,0,1">
+                                            <Grid>
 
 
-                                            <Grid ToolTip="{Binding Model.Indentificator}">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="auto" />
-                                                    <ColumnDefinition />
-                                                </Grid.ColumnDefinitions>
+                                                <Grid ToolTip="{Binding Model.Indentificator}">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="auto" />
+                                                        <ColumnDefinition />
+                                                    </Grid.ColumnDefinitions>
 
-                                                <StackPanel Margin="2,2" Orientation="Horizontal">
-                                                    <controls1:PathButton Width="22"
-                                                                          Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl, Mode=FindAncestor}, Path=DataContext.AddBookmark}"
-                                                                          CommandParameter="{Binding}"
-                                                                          FontSize="12.5"
-                                                                          ForegroundDefaultColor="#20ffffff"
-                                                                          ForegroundHoverColor="{StaticResource DefaultRedColor}"
-                                                                          IsReadOnly="True"
-                                                                          Style="{StaticResource bookmark-slash}"
-                                                                          ToolTip="Remove BOOKMARK" />
+                                                    <StackPanel Margin="2,2" Orientation="Horizontal">
+                                                        <controls1:PathButton Width="22"
+                                                                              Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl, Mode=FindAncestor}, Path=DataContext.AddBookmark}"
+                                                                              CommandParameter="{Binding}"
+                                                                              FontSize="12.5"
+                                                                              ForegroundDefaultColor="#20ffffff"
+                                                                              ForegroundHoverColor="{StaticResource DefaultRedColor}"
+                                                                              IsReadOnly="True"
+                                                                              Style="{StaticResource bookmark-slash}"
+                                                                              ToolTip="Remove BOOKMARK" />
 
-                                                    <controls1:PathButton Width="22"
-                                                                          Command="{Binding PlayButton}"
-                                                                          CommandParameter="{x:Static events1:EventAction.Play}"
-                                                                          FontSize="13"
-                                                                          ForegroundDefaultColor="#20ffffff"
-                                                                          ForegroundHoverColor="#ddd"
-                                                                          IsReadOnly="True"
-                                                                          Style="{StaticResource play-regular}"
-                                                                          ToolTip="Play" />
+                                                        <controls1:PathButton Width="22"
+                                                                              Command="{Binding PlayButton}"
+                                                                              CommandParameter="{x:Static events1:EventAction.Play}"
+                                                                              FontSize="13"
+                                                                              ForegroundDefaultColor="#20ffffff"
+                                                                              ForegroundHoverColor="#ddd"
+                                                                              IsReadOnly="True"
+                                                                              Style="{StaticResource play-regular}"
+                                                                              ToolTip="Play" />
 
-                                                    <controls1:PathButton Width="25"
-                                                                          Margin="0,1,0,0"
-                                                                          Command="{Binding PlayButton}"
-                                                                          CommandParameter="{x:Static events1:EventAction.Add}">
-                                                        <controls1:PathButton.Style>
-                                                            <Style BasedOn="{StaticResource FontAwesomeGlyphStyle}" TargetType="controls1:PathButton">
-                                                                <Setter Property="Glyph" Value="{StaticResource layer-plus-glyph}" />
-                                                                <Setter Property="ToolTip" Value="Add to playlist" />
-                                                                <Setter Property="GlyphFontSize" Value="14" />
-                                                                <Setter Property="IconDefaultColor" Value="#15ffffff" />
-                                                                <Setter Property="IconHoverColor" Value="{StaticResource GreenColor3}" />
+                                                        <controls1:PathButton Width="25"
+                                                                              Margin="0,1,0,0"
+                                                                              Command="{Binding PlayButton}"
+                                                                              CommandParameter="{x:Static events1:EventAction.Add}">
+                                                            <controls1:PathButton.Style>
+                                                                <Style BasedOn="{StaticResource FontAwesomeGlyphStyle}" TargetType="controls1:PathButton">
+                                                                    <Setter Property="Glyph" Value="{StaticResource layer-plus-glyph}" />
+                                                                    <Setter Property="ToolTip" Value="Add to playlist" />
+                                                                    <Setter Property="GlyphFontSize" Value="14" />
+                                                                    <Setter Property="IconDefaultColor" Value="#15ffffff" />
+                                                                    <Setter Property="IconHoverColor" Value="{StaticResource GreenColor3}" />
 
-                                                                <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding IsInPlaylist}" Value="true">
-                                                                        <Setter Property="IconDefaultColor" Value="{StaticResource GreenColor3}" />
-                                                                    </DataTrigger>
-                                                                </Style.Triggers>
-                                                            </Style>
-                                                        </controls1:PathButton.Style>
-                                                    </controls1:PathButton>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsInPlaylist}" Value="true">
+                                                                            <Setter Property="IconDefaultColor" Value="{StaticResource GreenColor3}" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </controls1:PathButton.Style>
+                                                        </controls1:PathButton>
 
-                                                    <controls1:PathButton Width="25"
-                                                                          Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl, Mode=FindAncestor}, Path=DataContext.ChangeDirectory}"
-                                                                          CommandParameter="{Binding Model.Indentificator}"
-                                                                          FontSize="13"
-                                                                          ForegroundDefaultColor="#20ffffff"
-                                                                          ForegroundHoverColor="#ddd"
-                                                                          IsReadOnly="True"
-                                                                          Style="{StaticResource arrow-right-to-bracket}"
-                                                                          ToolTip="Go inside" />
+                                                        <controls1:PathButton Width="25"
+                                                                              Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl, Mode=FindAncestor}, Path=DataContext.ChangeDirectory}"
+                                                                              CommandParameter="{Binding Model.Indentificator}"
+                                                                              FontSize="13"
+                                                                              ForegroundDefaultColor="#20ffffff"
+                                                                              ForegroundHoverColor="#ddd"
+                                                                              IsReadOnly="True"
+                                                                              Style="{StaticResource arrow-right-to-bracket}"
+                                                                              ToolTip="Go inside" />
 
-                                                    <controls1:PathButton Width="25"
-                                                                          Command="{Binding OpenContainingFolder}"
-                                                                          FontSize="13"
-                                                                          ForegroundDefaultColor="#20ffffff"
-                                                                          ForegroundHoverColor="#ddd"
-                                                                          IsReadOnly="True"
-                                                                          Style="{StaticResource arrow-up-right-from-square}"
-                                                                          ToolTip="Open in filebrowser" />
+                                                        <controls1:PathButton Width="25"
+                                                                              Command="{Binding OpenContainingFolder}"
+                                                                              FontSize="13"
+                                                                              ForegroundDefaultColor="#20ffffff"
+                                                                              ForegroundHoverColor="#ddd"
+                                                                              IsReadOnly="True"
+                                                                              Style="{StaticResource arrow-up-right-from-square}"
+                                                                              ToolTip="Open in filebrowser" />
 
-                                                    <controls1:PathButton Width="25"
-                                                                          FontSize="13"
-                                                                          ForegroundDefaultColor="#20ffffff"
-                                                                          ForegroundHoverColor="#ddd"
-                                                                          IsReadOnly="True"
-                                                                          Style="{StaticResource circle-question}"
-                                                                          ToolTip="{Binding Model.Indentificator}" />
-                                                </StackPanel>
+                                                        <controls1:PathButton Width="25"
+                                                                              FontSize="13"
+                                                                              ForegroundDefaultColor="#20ffffff"
+                                                                              ForegroundHoverColor="#ddd"
+                                                                              IsReadOnly="True"
+                                                                              Style="{StaticResource circle-question}"
+                                                                              ToolTip="{Binding Model.Indentificator}" />
+                                                    </StackPanel>
 
 
-                                                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                                    <TextBlock VerticalAlignment="Center"
-                                                               FontSize="14"
-                                                               FontWeight="SemiBold"
-                                                               Foreground="#aaa"
-                                                               Text="{Binding Model.Name, Mode=OneWay}" />
+                                                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                        <TextBlock VerticalAlignment="Center"
+                                                                   FontSize="14"
+                                                                   FontWeight="SemiBold"
+                                                                   Foreground="#aaa"
+                                                                   Text="{Binding Model.Name, Mode=OneWay}" />
 
-                                                    <TextBlock Margin="5,0,0,0"
+                                                        <TextBlock Margin="5,0,0,0"
+                                                                   VerticalAlignment="Center"
+                                                                   FontSize="14"
+                                                                   FontWeight="SemiBold"
+                                                                   Foreground="#555555"
+                                                                   Text="(" />
+
+                                                        <TextBlock MaxWidth="150"
+                                                                   VerticalAlignment="Center"
+                                                                   FontSize="14"
+                                                                   FontWeight="SemiBold"
+                                                                   Foreground="#555555"
+                                                                   Text="{Binding Model.Indentificator, Mode=OneWay}"
+                                                                   TextTrimming="CharacterEllipsis" />
+
+                                                        <TextBlock VerticalAlignment="Center"
+                                                                   FontSize="14"
+                                                                   FontWeight="SemiBold"
+                                                                   Foreground="#555555"
+                                                                   Text=")" />
+                                                    </StackPanel>
+
+
+
+                                                </Grid>
+
+                                                <Grid Margin="0,-10,0,0" Background="#cc050505">
+                                                    <TextBlock Margin="10,0,0,0"
+                                                               HorizontalAlignment="Left"
                                                                VerticalAlignment="Center"
                                                                FontSize="14"
-                                                               FontWeight="SemiBold"
-                                                               Foreground="#555555"
-                                                               Text="(" />
+                                                               FontWeight="Bold"
+                                                               Foreground="#ccc">
+                                                        <Run Text="Loading..." />
+                                                        <Run Text="{Binding LoadingMessage}" />
+                                                    </TextBlock>
 
-                                                    <TextBlock MaxWidth="150"
-                                                               VerticalAlignment="Center"
-                                                               FontSize="14"
-                                                               FontWeight="SemiBold"
-                                                               Foreground="#555555"
-                                                               Text="{Binding Model.Indentificator, Mode=OneWay}"
-                                                               TextTrimming="CharacterEllipsis" />
+                                                    <Grid.Style>
+                                                        <Style TargetType="Grid">
+                                                            <Setter Property="Background" Value="#cc141414" />
+                                                            <Setter Property="Visibility" Value="Hidden" />
 
-                                                    <TextBlock VerticalAlignment="Center"
-                                                               FontSize="14"
-                                                               FontWeight="SemiBold"
-                                                               Foreground="#555555"
-                                                               Text=")" />
-                                                </StackPanel>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsLoading}" Value="true">
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
 
 
-
+                                                        </Style>
+                                                    </Grid.Style>
+                                                </Grid>
                                             </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
 
-                                            <Grid Margin="0,-10,0,0" Background="#cc050505">
-                                                <TextBlock Margin="10,0,0,0"
-                                                           HorizontalAlignment="Left"
-                                                           VerticalAlignment="Center"
-                                                           FontSize="14"
-                                                           FontWeight="Bold"
-                                                           Foreground="#ccc">
-                                                    <Run Text="Loading..." />
-                                                    <Run Text="{Binding LoadingMessage}" />
-                                                </TextBlock>
-
-                                                <Grid.Style>
-                                                    <Style TargetType="Grid">
-                                                        <Setter Property="Background" Value="#cc141414" />
-                                                        <Setter Property="Visibility" Value="Hidden" />
-
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding IsLoading}" Value="true">
-                                                                <Setter Property="Visibility" Value="Visible" />
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-
-
-                                                    </Style>
-                                                </Grid.Style>
-                                            </Grid>
-                                        </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
-                </Border>
 
                 <b:Interaction.Behaviors>
                     <popups:MovePopupWithParentBehavior />
