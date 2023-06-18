@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -65,6 +66,7 @@ using FileInfo = VCore.WPF.ViewModels.WindowsFiles;
 
 namespace VPlayer.WindowsPlayer.ViewModels
 {
+  //Mp3Tag
   public class MusicPlayerViewModel : FilePlayableRegionViewModel<WindowsPlayerView, SoundItemInPlaylistViewModel, SoundItemFilePlaylist, PlaylistSoundItem, SoundItem, SoundSliderPopupDetailViewModel>, IMusicPlayerViewModel
   {
     #region Fields
@@ -975,7 +977,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
         await base.DownloadItemInfo(cancellationToken);
 
 
-        await DownloadAllLyrics(list, cancellationToken);
         await DownloadHighQualityAlbumCover(ActualItem);
       });
 
@@ -1003,7 +1004,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
             var albumViewModel = songInPlay.AlbumViewModel;
             var finalPath = albumViewModel?.Model.AlbumFrontCoverFilePath;
 
-            if (!string.IsNullOrEmpty(artistName) && !string.IsNullOrEmpty(albumName) && songInPlay.AlbumViewModel.ImageThumbnail == null)
+            if (!string.IsNullOrEmpty(artistName) &&
+                !string.IsNullOrEmpty(albumName) && 
+                (!File.Exists(songInPlay.AlbumViewModel.ImageThumbnail)
+                 || PlayableViewModelWithThumbnail<SongInPlayListViewModel, Album>.GetEmptyImage() == songInPlay.AlbumViewModel.ImageThumbnail))
             {
               var cover = await iPCloudAlbumCoverProvider.GetAlbumCover(artistName, albumName);
 
@@ -1027,9 +1031,31 @@ namespace VPlayer.WindowsPlayer.ViewModels
                   }
                 }
 
+
+
+                if (actualCover == null)
+                {
+                  var directory = Path.GetDirectoryName(songInPlay.Model.Source);
+
+                  var files = Directory.GetFiles(directory, "*.*", SearchOption.TopDirectoryOnly);
+
+                  List<System.IO.FileInfo> imageFiles = new List<System.IO.FileInfo>();
+
+                  foreach (string filename in files)
+                  {
+                    if (Regex.IsMatch(filename, @"\.jpg$|\.png$|\.gif$"))
+                      imageFiles.Add(new System.IO.FileInfo(filename));
+                  }
+
+                  if (imageFiles.Count > 0)
+                  {
+                    actualCover = File.ReadAllBytes(imageFiles.OrderByDescending(x => x.Length).First().FullName);
+                  }
+
+                }
+
                 if (!string.IsNullOrEmpty(albumViewModel?.Model?.AlbumFrontCoverURI) && actualCover == null)
                 {
-
                   using (var vc = new WebClient())
                   {
                     actualCover = vc.DownloadData(albumViewModel.Model.AlbumFrontCoverURI);
@@ -1094,8 +1120,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         MemoryStream ms = new MemoryStream(cover);
         Image i = Image.FromStream(ms);
+        byte[] acutalFile = null;
 
-        byte[] acutalFile = File.ReadAllBytes(filePath);
+        if (File.Exists(filePath))
+          acutalFile = File.ReadAllBytes(filePath);
 
         albumViewModel.Model.AlbumFrontCoverFilePath = filePath;
 
@@ -2038,6 +2066,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
       }
 
       DownloadInfos(PlayList.ToList());
+
+      var actualDownloadingSongTask = new CancellationTokenSource();
+      downloadingSongTasks.Add(actualDownloadingSongTask);
+
+      await DownloadAllLyrics(PlayList.OfType<SongInPlayListViewModel>().ToList(), actualDownloadingSongTask.Token);
     }
 
     #endregion

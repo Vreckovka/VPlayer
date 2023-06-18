@@ -136,7 +136,7 @@ namespace VPlayer.Player.ViewModels
     {
       get
       {
-        if (ActualViewModel != null && ActualViewModel.Volume > 0)
+        if (ActualViewModel != null)
         {
           return ActualViewModel.Volume;
         }

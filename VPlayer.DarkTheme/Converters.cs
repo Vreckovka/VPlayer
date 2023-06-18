@@ -109,7 +109,6 @@ namespace VPlayer.Library
 
   public class ImageLazyLoadingConverter : MarkupExtension, IValueConverter
   {
-    public static List<Tuple<string, BitmapImage>> CachedImages = new List<Tuple<string, BitmapImage>>();
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
       var image = new BitmapImage();
@@ -120,7 +119,7 @@ namespace VPlayer.Library
         {
           using (var ms = new System.IO.MemoryStream((byte[])value))
           {
-           
+
             image.DecodePixelHeight = 1;
             image.DecodePixelWidth = 1;
             image.BeginInit();
@@ -133,34 +132,20 @@ namespace VPlayer.Library
         }
         else if (value is string filename)
         {
-          Uri uriResult;
-
           if (File.Exists(filename))
           {
-            var foundImage = CachedImages.SingleOrDefault(x => x.Item1 == filename);
-
-            if (foundImage == null)
+            using (var stream = File.OpenRead(filename))
             {
-              using (var stream = File.OpenRead(filename))
-              {
-                image.DecodePixelHeight = 1;
-                image.DecodePixelWidth = 1;
-                image.BeginInit();
-                image.CacheOption = BitmapCacheOption.OnLoad;
-                image.StreamSource = stream;
-                image.EndInit();
-                image.Freeze();
-              }
-
-              CachedImages.Add(new Tuple<string, BitmapImage>(filename, image));
+              image.DecodePixelHeight = 1;
+              image.DecodePixelWidth = 1;
+              image.BeginInit();
+              image.CacheOption = BitmapCacheOption.OnLoad;
+              image.StreamSource = stream;
+              image.EndInit();
+              image.Freeze();
             }
-            else
-            {
-              image = foundImage.Item2;
-            }
-           
           }
-          else 
+          else
           {
             return value;
           }

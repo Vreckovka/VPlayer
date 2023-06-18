@@ -377,6 +377,22 @@ namespace VPlayer.AudioStorage.InfoDownloader
           var releases = await Release.SearchAsync(query);
           var items = releases.Items;
 
+          if (items.Count == 0)
+          {
+            query = new QueryParameters<Release>()
+            {
+              {"arid", newArtist.MusicBrainzId},
+              {"type", "album"},
+              {"status", "official"}
+            };
+
+            releases = await Release.SearchAsync(query);
+      
+            var release = releases.Items.Where(x => GetClearName(x.Title.RemoveDiacritics()).Similarity(GetClearName(album.Name.RemoveDiacritics())) > 0.9);
+
+            items = release.ToList();
+          }
+
           if (take != null)
           {
             items = items.Take(take.Value).ToList();
