@@ -394,6 +394,8 @@ namespace VPlayer.Player.ViewModels
     {
       volumeDisposable.Disposable?.Dispose();
 
+      volumeDisposable.Disposable = newPlayer.OnVolumeChanged.Subscribe((x) => RaisePropertyChanged(nameof(ActualVolume)));
+
       if (ActualViewModel != null)
       {
         if (ActualViewModel.IsPlaying && !newPlayer.IsPlaying)
