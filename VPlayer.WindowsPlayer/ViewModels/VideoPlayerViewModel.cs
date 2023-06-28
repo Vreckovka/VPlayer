@@ -77,7 +77,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       IVFfmpegProvider iVFfmpegProvider,
       ISettingsProvider settingsProvider,
       IVPlayerCloudService cloudService) :
-      base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, statusManager, viewModelsFactory, 
+      base(regionProvider, kernel, logger, storageManager, eventAggregator, windowManager, statusManager, viewModelsFactory,
         iVFfmpegProvider, settingsProvider, cloudService, vLCPlayer)
     {
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
@@ -259,7 +259,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         {
           Source = vm.StreamUrl,
           Indentificator = vm.StreamUrl,
-          
+
         };
 
         var item = new VideoItemInPlaylistViewModel(new VideoItem()
@@ -363,7 +363,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       windowManager.ShowPrompt<FindSubtitlesView>(model);
 
-      if(model?.Download?.Link != null)
+      if (model?.Download?.Link != null)
       {
         MediaPlayer.ESAdded += MediaPlayer_ESAdded;
 
@@ -429,6 +429,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
         {
           MakeSingleSelection(Subtitles, x);
           OnSubtitleSelected(x);
+
+
+
         }).DisposeWith(this);
 
       AudioTracks.ItemUpdated
@@ -508,12 +511,14 @@ namespace VPlayer.WindowsPlayer.ViewModels
       if (selectedItem == null)
       {
         MediaPlayer.SetSpu(-1);
+        lastSPUValue = -1;
         return;
       }
 
       if (MediaPlayer.Spu != selectedItem.Model.Id)
       {
         MediaPlayer.SetSpu(selectedItem.Model.Id);
+        lastSPUValue = selectedItem.Model.Id;
 
         if (ActualItem != null)
         {
@@ -524,6 +529,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
           await storageManager.UpdateEntityAsync(model);
         }
       }
+
+      
     }
 
     #endregion
@@ -990,11 +997,21 @@ namespace VPlayer.WindowsPlayer.ViewModels
             }
           }
 
-          var actualSub = Subtitles.Single(x => MediaPlayer.Spu == x.Model.Id);
+          SubtitleViewModel actualSub = null;
 
-          actualSub.IsSelected = true;
-
-          lastSPUValue = MediaPlayer.Spu;
+          if (lastSPUValue == null)
+          {
+            actualSub = Subtitles.Single(x => MediaPlayer.Spu == x.Model.Id);
+          }
+          else
+          {
+            actualSub = Subtitles.Single(x => lastSPUValue.Value == x.Model.Id);
+          }
+         
+          if(actualSub != null)
+          {
+            actualSub.IsSelected = true;
+          }
         }
       });
     }
@@ -1154,7 +1171,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-   
+
 
     protected override IEnumerable<VideoItemInPlaylistViewModel> GetValidItemsForCloud(IEnumerable<VideoItemInPlaylistViewModel> validItems)
     {
@@ -1233,7 +1250,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         playlistName = nameKeys.First();
 
-        if(playlistModels.Count == 1)
+        if (playlistModels.Count == 1)
         {
           playlistName = PlayList.OfType<VideoItemInPlaylistViewModel>().First().Name;
         }

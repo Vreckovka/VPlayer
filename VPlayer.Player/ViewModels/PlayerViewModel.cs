@@ -142,7 +142,7 @@ namespace VPlayer.Player.ViewModels
         }
         else
         {
-          return 100;
+          return -1;
         }
       }
       set

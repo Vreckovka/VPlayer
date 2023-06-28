@@ -911,6 +911,8 @@ namespace VPlayer.Core.ViewModels
       actualSearchSubject.Throttle(TimeSpan.FromMilliseconds(250)).Subscribe(FilterByActualSearch).DisposeWith(this);
 
       HookToPubSubEvents();
+
+      Volume = MediaPlayer.Volume;
     }
 
     #endregion
