@@ -691,7 +691,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         await base.DownloadItemInfo(cancellationToken);
 
-        await FindOnCsfd(ActualItem, cancellationToken);
+        try
+        {
+          await FindOnCsfd(ActualItem, cancellationToken);
+        }
+        catch (Exception)
+        {
+        }
 
         await SetPlalistCover();
       }
