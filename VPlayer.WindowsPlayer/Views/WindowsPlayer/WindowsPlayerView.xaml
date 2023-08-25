@@ -1052,6 +1052,17 @@
                                                                          Style="{StaticResource FontAwesomeGlyphStyle}" />
 
                                                     <controls:PathButton Padding="10"
+                                                                         Command="{Binding RemoveMissingFiles}"
+                                                                         Content="Remove missing files"
+                                                                         ForegroundDefaultColor="#757575"
+                                                                         Glyph="{StaticResource truck-plow}"
+                                                                         GlyphFontSize="20"
+                                                                         IconDefaultColor="#353535"
+                                                                         IconHoverColor="{StaticResource YellowColor}"
+                                                                         IsReadOnly="True"
+                                                                         Style="{StaticResource FontAwesomeGlyphStyle}" />
+
+                                                    <controls:PathButton Padding="10"
                                                                          Command="{Binding SavePlaylistCommand}"
                                                                          Content="Save playlist"
                                                                          ForegroundDefaultColor="#757575"

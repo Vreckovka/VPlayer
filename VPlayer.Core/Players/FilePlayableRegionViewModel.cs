@@ -307,6 +307,68 @@ namespace VPlayer.Core.Players
 
     #endregion
 
+    #region RemoveMissingFiles
+
+    private ActionCommand removeMissingFiles;
+
+    public ICommand RemoveMissingFiles
+    {
+      get
+      {
+        if (removeMissingFiles == null)
+        {
+          removeMissingFiles = new ActionCommand(OnRemoveMissingFiles);
+        }
+
+        return removeMissingFiles;
+      }
+    }
+
+
+    private void OnRemoveMissingFiles()
+    {
+      Task.Run(async () =>
+      {
+        var missingFiles = PlayList.Where(x => !string.IsNullOrEmpty(x.Model?.Source)
+                                               && !x.Model.Source.Contains("https://")
+                                               && !x.Model.Source.Contains("http://"))
+          .Where(x => !File.Exists(x.Model.Source)).ToList();
+
+        var result = await VSynchronizationContext.UIDispatcher.InvokeAsync(() => { return windowManager.ShowQuestionPrompt($"Do you really want to remove {missingFiles.Count} items?", "Remove missing files"); });
+  
+        if (result == VCore.WPF.ViewModels.Prompt.PromptResult.Ok)
+        {
+          foreach (var file in missingFiles)
+          {
+            PlayList.Remove(file);
+          }
+
+          if (WatchFolder)
+          {
+            removeEmptyDirectories(ActualSavedPlaylist?.WatchedFolder);
+          }
+
+          await StorePlaylist(PlayList.ToList());
+        }
+      });
+    }
+
+
+    #endregion
+
+    private static void removeEmptyDirectories(string startLocation)
+    {
+      foreach (var directory in Directory.GetDirectories(startLocation))
+      {
+        removeEmptyDirectories(directory);
+        if (Directory.GetFiles(directory).Length == 0 &&
+            Directory.GetDirectories(directory).Length == 0)
+        {
+          Directory.Delete(directory, false);
+        }
+      }
+    }
+
     #endregion
 
     #region Methods
@@ -857,7 +919,9 @@ namespace VPlayer.Core.Players
     {
       base.PlayPlaylist(data, lastSongIndex, onlySet);
 
-      if (!string.IsNullOrEmpty(ActualSavedPlaylist.WatchedFolder))
+      RaisePropertyChanged(nameof(WatchFolder));
+
+      if (WatchFolder)
       {
         AddMissingFilesFromFolder();
       }

@@ -694,6 +694,11 @@
                                    FontWeight="Normal"
                                    Foreground="#454545"
                                    Text="{Binding PrivateItems.Count, StringFormat={}({0} items)}" />
+
+                        <CheckBox Margin="15,0,0,0"
+                                  Content="Duo mode"
+                                  Foreground="{StaticResource 50_WhiteTransparentBrush}"
+                                  IsChecked="{Binding DataContext.PlayerViewModel.IsDuoMode, RelativeSource={RelativeSource AncestorType=Window}}" />
                     </StackPanel>
 
                     <b:Interaction.Behaviors>

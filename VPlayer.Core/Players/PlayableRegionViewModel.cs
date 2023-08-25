@@ -859,6 +859,7 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+
     #endregion
 
     #region Methods

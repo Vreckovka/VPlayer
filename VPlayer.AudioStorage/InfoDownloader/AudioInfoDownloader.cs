@@ -785,7 +785,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
           ReleaseDate = release.Date,
           AlbumFrontCoverURI = albumCoverUrl,
           AlbumFrontCoverFilePath = coverPath,
-          NormalizedName = VPlayerStorageManager.GetNormalizedName(albumName)
+          NormalizedName = StringHelper.GetNormalizedName(albumName)
         };
 
         statusMessage.Message = $"Album successfuly updated";
@@ -960,7 +960,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
           {
             Name = artist.Name,
             MusicBrainzId = artist.Id,
-            NormalizedName = VPlayerStorageManager.GetNormalizedName(artist.Name),
+            NormalizedName = StringHelper.GetNormalizedName(artist.Name),
           };
         }
         else

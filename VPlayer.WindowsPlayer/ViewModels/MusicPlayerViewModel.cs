@@ -1274,12 +1274,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
             if (!string.IsNullOrEmpty(artistName))
             {
-              var normalizedArtistName = VPlayerStorageManager.GetNormalizedName(artistName);
+              var normalizedArtistName = StringHelper.GetNormalizedName(artistName);
               string normalizedDownloadingAristName = null;
 
               if (downloadingArtist != null)
               {
-                normalizedDownloadingAristName = VPlayerStorageManager.GetNormalizedName(downloadingArtist.Name);
+                normalizedDownloadingAristName = StringHelper.GetNormalizedName(downloadingArtist.Name);
               }
 
               if (downloadingArtist == null || string.IsNullOrEmpty(downloadingArtist.Name))
@@ -1307,7 +1307,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
                                                  normalizedArtistName != normalizedDownloadingAristName)) &&
                   originalDownlaodedArtistName != artistName && downloadArtist)
               {
-                downloadingArtist = storageManager.GetTempRepository<Artist>().FirstOrDefault(x => x.NormalizedName == VPlayerStorageManager.GetNormalizedName(artistName));
+                downloadingArtist = storageManager.GetTempRepository<Artist>().FirstOrDefault(x => x.NormalizedName == StringHelper.GetNormalizedName(artistName));
 
                 if (downloadingArtist == null)
                 {
@@ -1320,7 +1320,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
                     if (existingArtist == null)
                     {
-                      existingArtist = storageManager.GetTempRepository<Artist>().FirstOrDefault(x => x.NormalizedName == VPlayerStorageManager.GetNormalizedName(downloadingArtist.Name));
+                      existingArtist = storageManager.GetTempRepository<Artist>().FirstOrDefault(x => x.NormalizedName == StringHelper.GetNormalizedName(downloadingArtist.Name));
                     }
 
                     if (existingArtist != null)
@@ -1341,16 +1341,16 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
             if (!string.IsNullOrEmpty(albumName))
             {
-              var normalizedName = VPlayerStorageManager.GetNormalizedName(albumName);
+              var normalizedName = StringHelper.GetNormalizedName(albumName);
 
               string normalizedDownloadingAlbumName = null;
 
               if (downloadingAlbum != null)
-                normalizedDownloadingAlbumName = VPlayerStorageManager.GetNormalizedName(downloadingAlbum.Name);
+                normalizedDownloadingAlbumName = StringHelper.GetNormalizedName(downloadingAlbum.Name);
 
               if (downloadingAlbum == null || string.IsNullOrEmpty(downloadingAlbum.Name))
               {
-                downloadingAlbum = GetBestFittingAlbumFromDb(VPlayerStorageManager.GetNormalizedName(normalizedName), downloadingArtist?.Name);
+                downloadingAlbum = GetBestFittingAlbumFromDb(StringHelper.GetNormalizedName(normalizedName), downloadingArtist?.Name);
 
                 if (downloadingAlbum?.Name?.Similarity(albumName) < 0.8)
                 {
@@ -1380,7 +1380,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
                   originalDownlaodedAlbumName != albumName && downloadAlbum)
               {
 
-                downloadingAlbum = GetBestFittingAlbumFromDb(VPlayerStorageManager.GetNormalizedName(albumName), downloadingArtist?.Name);
+                downloadingAlbum = GetBestFittingAlbumFromDb(StringHelper.GetNormalizedName(albumName), downloadingArtist?.Name);
 
                 if (downloadingAlbum == null)
                 {
@@ -1397,7 +1397,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
                     if (existingAlbum == null)
                     {
-                      existingAlbum = GetBestFittingAlbumFromDb(VPlayerStorageManager.GetNormalizedName(downloadingAlbum.Name), downloadingArtist?.Name);
+                      existingAlbum = GetBestFittingAlbumFromDb(StringHelper.GetNormalizedName(downloadingAlbum.Name), downloadingArtist?.Name);
                     }
 
                     if (existingAlbum != null)
@@ -1428,7 +1428,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
                   {
                     Artist = downloadingArtist,
                     Name = albumName,
-                    NormalizedName = VPlayerStorageManager.GetNormalizedName(albumName)
+                    NormalizedName = StringHelper.GetNormalizedName(albumName)
                   };
                 }
               }
@@ -1442,7 +1442,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
                 downloadingArtist = new Artist()
                 {
                   Name = artistName,
-                  NormalizedName = VPlayerStorageManager.GetNormalizedName(artistName)
+                  NormalizedName = StringHelper.GetNormalizedName(artistName)
                 };
               }
 
@@ -1456,7 +1456,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
                   {
                     Artist = downloadingArtist,
                     Name = albumName,
-                    NormalizedName = VPlayerStorageManager.GetNormalizedName(albumName)
+                    NormalizedName = StringHelper.GetNormalizedName(albumName)
                   };
                 }
               }
@@ -1630,7 +1630,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private Album GetBestFittingAlbumFromDb(string albumName, string artistName)
     {
       var albums = storageManager.GetTempRepository<Album>()
-        .Where(x => x.NormalizedName == VPlayerStorageManager.GetNormalizedName(albumName))
+        .Where(x => x.NormalizedName == StringHelper.GetNormalizedName(albumName))
         .Include(x => x.Artist)
         .Include(x => x.Songs)
         .ThenInclude(x => x.ItemModel.FileInfoEntity);
@@ -1650,7 +1650,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       return PlayList.OfType<SongInPlayListViewModel>()
         .Where(x => x.ArtistViewModel != null)
         .GroupBy(x => x.ArtistViewModel.Model)
-        .SingleOrDefault(x => x.Key.NormalizedName == VPlayerStorageManager.GetNormalizedName(name))?.Key;
+        .SingleOrDefault(x => x.Key.NormalizedName == StringHelper.GetNormalizedName(name))?.Key;
     }
 
     #endregion
@@ -1666,7 +1666,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           .Where(x => x.ArtistViewModel != null)
           .Where(x => x.ArtistViewModel.Name == artistName)
           .GroupBy(x => x.AlbumViewModel.Model)
-          .SingleOrDefault(x => x.Key.NormalizedName == VPlayerStorageManager.GetNormalizedName(name))?.Key;
+          .SingleOrDefault(x => x.Key.NormalizedName == StringHelper.GetNormalizedName(name))?.Key;
       }
 
       return null;
@@ -1701,7 +1701,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       if (artist != null)
       {
         {
-          var normalizedName = VPlayerStorageManager.GetNormalizedName(albumName);
+          var normalizedName = StringHelper.GetNormalizedName(albumName);
 
           cancellationToken.ThrowIfCancellationRequested();
 
@@ -1713,7 +1713,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
             {
               Artist = artist,
               Name = albumName,
-              NormalizedName = VPlayerStorageManager.GetNormalizedName(albumName)
+              NormalizedName = StringHelper.GetNormalizedName(albumName)
             };
 
             cancellationToken.ThrowIfCancellationRequested();

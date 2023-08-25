@@ -95,21 +95,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
     }
 
     #endregion
-
-    #region GetNormalizedName
-
-    public static string GetNormalizedName(string name)
-    {
-      if (string.IsNullOrEmpty(name))
-      {
-        return name;
-      }
-
-      return new String(name.RemoveDiacritics().ToLower().Where(x => Char.IsLetterOrDigit(x)).ToArray());
-    }
-
-    #endregion
-
+    
     #region StoreData
 
     private object storeBatton = new object();
@@ -126,7 +112,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
             Artist newArtist = new Artist(audioInfo.Artist)
             {
               MusicBrainzId = audioInfo.ArtistMbid,
-              NormalizedName = GetNormalizedName(audioInfo.Artist)
+              NormalizedName = StringHelper.GetNormalizedName(audioInfo.Artist)
             };
 
             Artist artist = newArtist;
@@ -151,7 +137,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
             {
               Name = audioInfo.Album,
               Artist = artist,
-              NormalizedName = GetNormalizedName(audioInfo.Album)
+              NormalizedName = StringHelper.GetNormalizedName(audioInfo.Album)
             };
 
             album = (from x in context.Albums
@@ -165,7 +151,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
               {
                 Name = audioInfo.Album,
                 Artist = artist,
-                NormalizedName = GetNormalizedName(audioInfo.Album)
+                NormalizedName = StringHelper.GetNormalizedName(audioInfo.Album)
               };
 
               context.Albums.Add(album);
@@ -203,7 +189,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
               soundItem = new SoundItem()
               {
                 Duration = audioInfo.Duration,
-                NormalizedName = GetNormalizedName(audioInfo.Title),
+                NormalizedName = StringHelper.GetNormalizedName(audioInfo.Title),
               };
             }
 
