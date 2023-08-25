@@ -1,4 +1,5 @@
-﻿using VPlayer.AudioStorage.DomainClasses;
+﻿using System.Linq;
+using VPlayer.AudioStorage.DomainClasses;
 
 namespace VPlayer.AudioStorage.Scrappers.CSFD.Domain
 {
@@ -21,9 +22,88 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD.Domain
 
     public string Description { get; set; }
     public string Country { get; set; }
-    public string CountryImg { get; set; }
     public string Length { get; set; }
     public string Premiere { get; set; }
+
+    public string GeneresList
+    {
+      get
+      {
+        return Generes?.Aggregate((x, y) =>
+        {
+          if (!string.IsNullOrEmpty(y))
+          {
+            return $"{x}, {y}";
+          }
+
+          return x;
+        });
+      }
+    }
+
+    public string ActorsList
+    {
+      get
+      {
+        return Actors?.Aggregate((x, y) =>
+        {
+          if (!string.IsNullOrEmpty(y))
+          {
+            return $"{x}, {y}";
+          }
+
+          return x;
+        });
+      }
+    }
+
+    public string DirectorsList
+    {
+      get
+      {
+        return Directors?.Aggregate((x, y) =>
+        {
+          if (!string.IsNullOrEmpty(y))
+          {
+            return $"{x}, {y}";
+          }
+
+          return x;
+        });
+      }
+    }
+
+    public string ParametersList
+    {
+      get
+      {
+        return Parameters?.Aggregate((x, y) =>
+        {
+          if (!string.IsNullOrEmpty(y))
+          {
+            return $"{x}, {y}";
+          }
+
+          return x;
+        });
+      }
+    }
+
+    public string OriginList
+    {
+      get
+      {
+        return Origin?.Aggregate((x, y) =>
+        {
+          if (!string.IsNullOrEmpty(y))
+          {
+            return $"{x}, {y}";
+          }
+
+          return x;
+        });
+      }
+    }
   }
 
   public class CSFDItemEntity : DomainEntity

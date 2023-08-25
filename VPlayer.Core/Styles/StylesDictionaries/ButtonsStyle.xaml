@@ -434,7 +434,6 @@
 
                             <TextBlock Style="{StaticResource Content}"
                                        Text="{Binding Name}"
-                                       TextTrimming="CharacterEllipsis"
                                        ToolTip="{Binding Name}" />
 
                             <StackPanel.Style>
@@ -453,7 +452,6 @@
 
                             <TextBlock Style="{StaticResource Content}"
                                        Text="{Binding OriginalName}"
-                                       TextTrimming="CharacterEllipsis"
                                        ToolTip="{Binding OriginalName}" />
 
                             <StackPanel.Style>
@@ -515,101 +513,71 @@
                                    Text="Description" />
 
                         <UniformGrid Grid.Row="5" Columns="2">
-                            <StackPanel Margin="0,0,5,0">
-                                <TextBlock FontSize="10"
-                                           Style="{StaticResource Header}"
-                                           Text="Directors" />
+                            <UniformGrid.Resources>
+                                <Style x:Key="InfoColumn"
+                                       BasedOn="{StaticResource Content}"
+                                       TargetType="TextBlock">
+                                    <Setter Property="Margin" Value="0,5,20,0" />
+                                    <Setter Property="FontSize" Value="12" />
+                                    <Setter Property="FontWeight" Value="Normal" />
+                                    <Setter Property="Foreground" Value="#ccc" />
+                                    <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+                                </Style>
+                            </UniformGrid.Resources>
 
-                                <ItemsControl Foreground="#ccc" ItemsSource="{Binding Directors}">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <StackPanel Orientation="Horizontal" />
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Padding="0"
-                                                           Text="{Binding Mode=OneWay}"
-                                                           TextTrimming="CharacterEllipsis" />
-                                                <TextBlock Margin="0,0,5,0"
-                                                           Padding="0"
-                                                           Text=","
-                                                           TextTrimming="CharacterEllipsis" />
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
+                            <TextBlock>
+                                <Run FontSize="10"
+                                     FontWeight="Medium"
+                                     Foreground="#808080"
+                                     Text="Directors: " />
 
-                                <StackPanel.Style>
-                                    <Style TargetType="StackPanel">
+                                <LineBreak />
+                                <Run Text="{Binding DirectorsList, Mode=OneWay}" />
+
+                                <TextBlock.Style>
+                                    <Style BasedOn="{StaticResource InfoColumn}" TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Visible" />
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Directors}" Value="{x:Null}">
+                                            <DataTrigger Binding="{Binding DirectorsList}" Value="{x:Null}">
                                                 <Setter Property="Visibility" Value="Collapsed" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
-                                </StackPanel.Style>
-                            </StackPanel>
+                                </TextBlock.Style>
+                            </TextBlock>
 
-                            <StackPanel>
-                                <TextBlock FontSize="10"
-                                           Style="{StaticResource Header}"
-                                           Text="Generes" />
-                                <ItemsControl Foreground="#ccc" ItemsSource="{Binding Generes}">
-                                    <ItemsControl.Style>
-                                        <Style TargetType="ItemsControl">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Generes}" Value="{x:Null}">
-                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </ItemsControl.Style>
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <StackPanel Orientation="Horizontal" />
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Padding="0"
-                                                           Text="{Binding Mode=OneWay}"
-                                                           TextTrimming="CharacterEllipsis" />
-                                                <TextBlock Margin="0,0,5,0"
-                                                           Padding="0"
-                                                           Text=","
-                                                           TextTrimming="CharacterEllipsis" />
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
+                            <TextBlock>
+                                <Run FontSize="10"
+                                     FontWeight="Medium"
+                                     Foreground="#808080"
+                                     Text="Generes: " />
 
-                                <StackPanel.Style>
-                                    <Style TargetType="StackPanel">
+                                <LineBreak />
+                                <Run Text="{Binding GeneresList, Mode=OneWay}" />
+
+                                <TextBlock.Style>
+                                    <Style BasedOn="{StaticResource InfoColumn}" TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Visible" />
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Generes}" Value="{x:Null}">
+                                            <DataTrigger Binding="{Binding GeneresList}" Value="{x:Null}">
                                                 <Setter Property="Visibility" Value="Collapsed" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
-                                </StackPanel.Style>
-                            </StackPanel>
+                                </TextBlock.Style>
+                            </TextBlock>
 
-                            <TextBlock Margin="0,5,5,0"
-                                       FontSize="12"
-                                       FontWeight="Normal"
-                                       Foreground="#aaa"
-                                       TextTrimming="CharacterEllipsis">
-                                <Run FontWeight="Medium"
+                            <TextBlock>
+                                <Run FontSize="10"
+                                     FontWeight="Medium"
                                      Foreground="#808080"
                                      Text="Premiere: " />
 
+                                <LineBreak />
                                 <Run Text="{Binding Premiere}" />
 
                                 <TextBlock.Style>
-                                    <Style BasedOn="{StaticResource Content}" TargetType="TextBlock">
+                                    <Style BasedOn="{StaticResource InfoColumn}" TargetType="TextBlock">
                                         <Setter Property="Visibility" Value="Visible" />
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding Premiere}" Value="{x:Null}">
@@ -620,20 +588,17 @@
                                 </TextBlock.Style>
                             </TextBlock>
 
-                            <TextBlock Margin="0,5,5,0"
-                                       FontSize="12"
-                                       FontWeight="Normal"
-                                       Foreground="#aaa"
-                                       TextTrimming="CharacterEllipsis">
-
-                                <Run FontWeight="Medium"
+                            <TextBlock>
+                                <Run FontSize="10"
+                                     FontWeight="Medium"
                                      Foreground="#808080"
                                      Text="Country: " />
 
+                                <LineBreak />
                                 <Run Text="{Binding Country}" />
 
                                 <TextBlock.Style>
-                                    <Style BasedOn="{StaticResource Content}" TargetType="TextBlock">
+                                    <Style BasedOn="{StaticResource InfoColumn}" TargetType="TextBlock">
                                         <Setter Property="Visibility" Value="Visible" />
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding Country}" Value="{x:Null}">
@@ -644,20 +609,17 @@
                                 </TextBlock.Style>
                             </TextBlock>
 
-                            <TextBlock Margin="0,5,5,0"
-                                       FontSize="12"
-                                       FontWeight="Normal"
-                                       Foreground="#aaa"
-                                       TextTrimming="CharacterEllipsis">
-
-                                <Run FontWeight="Medium"
+                            <TextBlock>
+                                <Run FontSize="10"
+                                     FontWeight="Medium"
                                      Foreground="#808080"
                                      Text="Length: " />
 
+                                <LineBreak />
                                 <Run Text="{Binding Length}" />
 
                                 <TextBlock.Style>
-                                    <Style BasedOn="{StaticResource Content}" TargetType="TextBlock">
+                                    <Style BasedOn="{StaticResource InfoColumn}" TargetType="TextBlock">
                                         <Setter Property="Visibility" Value="Visible" />
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding Length}" Value="{x:Null}">
@@ -674,10 +636,11 @@
                                    Margin="0,5,0,0"
                                    FontSize="12"
                                    FontWeight="Normal"
-                                   Foreground="#aaa"
+                                   Foreground="#ccc"
                                    TextTrimming="CharacterEllipsis"
                                    ToolTip="{Binding Description}">
-                            <Run FontWeight="Medium"
+                            <Run FontSize="10"
+                                 FontWeight="Medium"
                                  Foreground="#808080"
                                  Text="Description: " />
 

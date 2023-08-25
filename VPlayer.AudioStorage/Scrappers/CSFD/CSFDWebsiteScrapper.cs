@@ -690,17 +690,8 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
     private void GetCsfdInfo(CSFDItem item , HtmlDocument document)
     {
       string country = null;
-      string countryImg = null;
 
       var originalName = GetClearText(TrySelectNodes(document.DocumentNode, "/div/div[1]/div/div[1]/div[2]/div/header/div/ul/li")?.FirstOrDefault()?.InnerText);
-      var countryNode = TrySelectNodes(document.DocumentNode, "/div/div[1]/div/div[1]/div[2]/div/header/div/ul/li/img")?.FirstOrDefault();
-
-      if (countryNode != null && countryNode.Attributes.Count > 2)
-      {
-        country = countryNode.Attributes[2].Value;
-        countryImg = countryNode.Attributes[0].Value;
-      }
-
 
       var infoNode = TrySelectNodes(document.DocumentNode, "/div/div[1]/div/div[1]/div[2]/div/div[2]")?.FirstOrDefault();
 
@@ -736,6 +727,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
           else if (int.TryParse(stringYearSecond, out var parsedYear1))
           {
             year = parsedYear1;
+            country = stringYear;
           }
         }
 
@@ -776,7 +768,6 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
       item.Premiere = premiere;
       item.Generes = generes;
       item.Country = country;
-      item.CountryImg = countryImg;
       item.OriginalName = originalName?.Replace("(viac" + "" + "<)", null)?.Replace("(viac)", null);
     }
 
