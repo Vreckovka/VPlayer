@@ -41,10 +41,19 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
+    }
 
-      model.ObservePropertyChange(x => x.ActualPosition)
-        .ObserveOn(Application.Current.Dispatcher)
-        .Subscribe(OnActualPositionChanged).DisposeWith(this);
+    public LRCCreatorViewModel(
+      SongInPlayListViewModel model,
+      PCloudLyricsProvider pCloudLyricsProvider,
+      IStorageManager storageManager, 
+      IWindowManager windowManager, 
+      IViewModelsFactory viewModelsFactory) : base(model)
+    {
+      this.pCloudLyricsProvider = pCloudLyricsProvider ?? throw new ArgumentNullException(nameof(pCloudLyricsProvider));
+      this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
+      this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
+      this.viewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
     }
 
     #region Properties
@@ -295,22 +304,6 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
 
     #endregion
 
-    #region OnActualPositionChanged
-
-    private void OnActualPositionChanged(float actualItem)
-    {
-      //if (ActualLine != null)
-      //{
-      //  var seconds = actualItem * Model.Duration;
-
-      //  if (TimeSpan.MaxValue.TotalSeconds > seconds)
-      //  {
-      //    ActualLine.Time = TimeSpan.FromSeconds(seconds);
-      //  }
-      //}
-    }
-
-    #endregion
 
     #region OnActualLineChanged
 
@@ -335,10 +328,11 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
           if (ActualLine == line)
           {
             var index = Lines.IndexOf(ActualLine);
+            var time = Model.ActualTime - TimeSpan.FromSeconds(0.25);
 
             if (!FilePlayableRegionViewModel.IsPlaying)
             {
-              ActualLine.Time = Model.ActualTime;
+              ActualLine.Time = time;
               ActualLine.IsActual = true;
               return;
             }
@@ -347,7 +341,7 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
             {
               ActualLine = Lines[index + 1];
               ActualLine.IsActual = true;
-              ActualLine.Time = Model.ActualTime;
+              ActualLine.Time = time;
             }
             else
             {

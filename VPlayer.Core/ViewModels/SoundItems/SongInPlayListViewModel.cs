@@ -144,16 +144,6 @@ namespace VPlayer.Core.ViewModels.SoundItems
     public string LRCLyrics => SongModel.LRCLyrics;
 
 
-
-    #region OnActualPositionChanged
-
-    protected override void OnActualPositionChanged(float value)
-    {
-      UpdateSyncedLyrics();
-    }
-
-    #endregion
-
     #region Lyrics
 
     public string Lyrics
@@ -429,7 +419,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     #region Initialize
 
-    public override  void Initialize()
+    public override void Initialize()
     {
       base.Initialize();
 
@@ -614,15 +604,12 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     #region UpdateSyncedLyrics
 
-    private void UpdateSyncedLyrics()
+    public void UpdateSyncedLyrics()
     {
-      VSynchronizationContext.PostOnUIThread(() =>
+      if (LRCFile != null)
       {
-        if (LRCFile != null)
-        {
-          LRCFile.SetActualLine(ActualTime);
-        }
-      });
+        LRCFile.SetActualLine(ActualTime);
+      }
     }
 
     #endregion

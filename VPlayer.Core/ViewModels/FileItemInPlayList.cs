@@ -192,8 +192,6 @@ namespace VPlayer.Core.ViewModels
           RaisePropertyChanged(nameof(ActualTime));
           RaisePropertyChanged(nameof(LeftTime));
           RaisePropertyChanged(nameof(ActualPerc));
-
-          OnActualPositionChanged(value);
         }
       }
     }
@@ -324,8 +322,6 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
-
-    protected virtual void OnActualPositionChanged(float value) { }
 
   }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -345,7 +346,7 @@ namespace VPlayer.Core.Players
           .Where(x => !File.Exists(x.Model.Source)).ToList();
 
         var result = await VSynchronizationContext.UIDispatcher.InvokeAsync(() => { return windowManager.ShowQuestionPrompt($"Do you really want to remove {missingFiles.Count} items?", "Remove missing files"); });
-  
+
         if (result == VCore.WPF.ViewModels.Prompt.PromptResult.Ok)
         {
           foreach (var file in missingFiles)
@@ -492,6 +493,7 @@ namespace VPlayer.Core.Players
 
     private async void OnVlcTimeChanged(object sender, PlayerTimeChangedArgs eventArgs)
     {
+
       if (ActualItem != null)
       {
         if (ActualItem.Duration <= 0)
@@ -499,12 +501,18 @@ namespace VPlayer.Core.Players
           ChangeDuration(MediaPlayer.Media.Duration);
         }
 
-        var position = ((eventArgs.Time * 100) / (ActualItem.Duration * (float)1000.0)) / 100;
+        var position = MediaPlayer.Position;
 
         if (!double.IsNaN(position) && !double.IsInfinity(position))
         {
+
           ActualItem.ActualPosition = position;
           ActualSavedPlaylist.LastItemElapsedTime = position;
+
+          if (ActualItem is SongInPlayListViewModel song)
+          {
+            song.UpdateSyncedLyrics();
+          }
 
           var deltaTimeChanged = eventArgs.Time - lastTimeChangedMs;
 
@@ -517,10 +525,10 @@ namespace VPlayer.Core.Players
 
           var totalPlayedTime = TimeSpan.FromMilliseconds(deltaTimeChanged);
 
-//#if !DEBUG
+          //#if !DEBUG
           ActualItem.Model.TimePlayed += totalPlayedTime;
           PlaylistTotalTimePlayed += totalPlayedTime;
-//#endif
+          //#endif
 
           int totalSec = (int)PlaylistTotalTimePlayed.TotalSeconds;
 
@@ -531,7 +539,7 @@ namespace VPlayer.Core.Players
             //Data race pri CLEAR
             await Task.Delay(500);
 
-            if(ActualItem != null)
+            if (ActualItem != null)
             {
               await UpdateActualSavedPlaylistPlaylist();
               await storageManager.UpdateEntityAsync(ActualItem.Model);
@@ -962,14 +970,14 @@ namespace VPlayer.Core.Players
           {
             var newModel = viewModelsFactory.Create<TModel>();
             var fileInfo = new FileInfo(file);
-           
+
             newModel.FileInfoEntity = new FileInfoEntity()
             {
               Indentificator = fileInfo.FullName,
               FullName = fileInfo.FullName,
               Name = fileInfo.Name,
               Extension = fileInfo.Extension,
-              
+
             };
 
             newModel.Source = fileInfo.FullName;
@@ -1028,7 +1036,7 @@ namespace VPlayer.Core.Players
       {
         CheckedFiles.Add(itemViewModel);
 
-       RaisePropertyChanged(nameof(CheckedFiles)); 
+        RaisePropertyChanged(nameof(CheckedFiles));
       }
     }
 
@@ -1173,7 +1181,7 @@ namespace VPlayer.Core.Players
           soundItem.FileInfoEntity != null)
       {
         //Asi docasny fix pre pokazene itemy
-        if(soundItem.FileInfoEntity.Indentificator == null)
+        if (soundItem.FileInfoEntity.Indentificator == null)
         {
           soundItem.FileInfoEntity.Indentificator = soundItem.FileInfoEntity.Source;
         }
@@ -1190,7 +1198,7 @@ namespace VPlayer.Core.Players
 
           try
           {
-             publicLink = await cloudService.GetFileLink(id);
+            publicLink = await cloudService.GetFileLink(id);
           }
           catch (Exception)
           {
@@ -1267,7 +1275,7 @@ namespace VPlayer.Core.Players
 
     protected override void PlayItems(IEnumerable<TItemViewModel> items, int songIndex, bool savePlaylist = true, bool editSaved = false, bool onlyItemSet = false)
     {
-      base.PlayItems(items, songIndex, savePlaylist,  editSaved, onlyItemSet);
+      base.PlayItems(items, songIndex, savePlaylist, editSaved, onlyItemSet);
 
       if (savePlaylist)
       {

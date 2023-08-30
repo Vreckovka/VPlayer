@@ -552,6 +552,9 @@
                             <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={converters:IsGreaterConverter}, ConverterParameter=711}" Value="false">
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
+                            <DataTrigger Binding="{Binding DataContext.IsCinemaMode, RelativeSource={RelativeSource AncestorType=windowsPlayer:WindowsPlayerView}}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </TextBlock.Style>

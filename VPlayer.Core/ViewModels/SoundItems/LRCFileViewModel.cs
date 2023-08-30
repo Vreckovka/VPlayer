@@ -223,81 +223,6 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     #endregion
 
-    #region SetActualLine
-
-    private TimeSpan? lastTimestamp;
-    private TimeSpan? nextTimestamp;
-    private object batton = new object();
-
-    public void SetActualLine(TimeSpan timeSpan)
-    {
-      lock (batton)
-      {
-        if (lastTimestamp == null ||
-            (lastTimestamp <= timeSpan && nextTimestamp <= timeSpan) ||
-            (lastTimestamp > timeSpan))
-        {
-          if (ActualLine != null)
-          {
-            ActualLine.IsActual = false;
-          }
-
-          var newLine = AllLine.Where(x => x.Model.Timestamp != null &&
-                                           x.Model.Timestamp.Value.TotalMilliseconds + TimeAdjustment <= timeSpan.TotalMilliseconds).OrderByDescending(x => x.Model.Timestamp).FirstOrDefault();
-
-          if (newLine != null && ActualLine != newLine)
-          {
-            newLine.IsActual = true;
-            var oldIndex = AllLine.IndexOf(newLine);
-
-            if (oldIndex + 1 < AllLine.Count)
-            {
-              var oldTimestamp = AllLine[oldIndex].Model.Timestamp;
-
-              var nextTimestampIndex = oldIndex;
-
-              do
-              {
-                nextTimestampIndex++;
-
-                var nextLineTimestamp = AllLine[nextTimestampIndex].Model.Timestamp;
-
-                if (nextTimestampIndex < AllLine.Count && nextLineTimestamp.HasValue)
-                {
-                  nextTimestamp = TimeSpan.FromMilliseconds(nextLineTimestamp.Value.TotalMilliseconds + TimeAdjustment);
-                }
-                else
-                {
-                  nextTimestamp = null;
-                  break;
-                }
-
-
-              } while (nextTimestamp == oldTimestamp && nextTimestampIndex + 1 < AllLine.Count);
-
-
-            }
-            else
-            {
-              nextTimestamp = null;
-            }
-
-            lastTimestamp = timeSpan;
-
-          }
-
-          ActualLine = newLine;
-
-          if (ActualLine != null)
-          {
-            actualLineSubject.OnNext(AllLine.IndexOf(ActualLine));
-          }
-        }
-      }
-    }
-
-    #endregion
-
     #region IsLoading
 
     private bool isLoading;
@@ -387,7 +312,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     #endregion
 
-    
+
 
     public string GetLyricsText()
     {
@@ -397,6 +322,77 @@ namespace VPlayer.Core.ViewModels.SoundItems
       }
 
       return null;
+    }
+
+    #endregion
+
+    #region SetActualLine
+
+    private TimeSpan? lastTimestamp;
+    private TimeSpan? nextTimestamp;
+
+    public void SetActualLine(TimeSpan timeSpan)
+    {
+      if (lastTimestamp == null ||
+          (lastTimestamp <= timeSpan && nextTimestamp <= timeSpan) ||
+          (lastTimestamp > timeSpan))
+      {
+        if (ActualLine != null)
+        {
+          ActualLine.IsActual = false;
+        }
+
+        var newLine = AllLine.Where(x => x.Model.Timestamp != null &&
+                                         x.Model.Timestamp.Value.TotalMilliseconds + TimeAdjustment <= timeSpan.TotalMilliseconds).OrderByDescending(x => x.Model.Timestamp).FirstOrDefault();
+
+        if (newLine != null && ActualLine != newLine)
+        {
+          newLine.IsActual = true;
+          var oldIndex = AllLine.IndexOf(newLine);
+
+          if (oldIndex + 1 < AllLine.Count)
+          {
+            var oldTimestamp = AllLine[oldIndex].Model.Timestamp;
+
+            var nextTimestampIndex = oldIndex;
+
+            do
+            {
+              nextTimestampIndex++;
+
+              var nextLineTimestamp = AllLine[nextTimestampIndex].Model.Timestamp;
+
+              if (nextTimestampIndex < AllLine.Count && nextLineTimestamp.HasValue)
+              {
+                nextTimestamp = TimeSpan.FromMilliseconds(nextLineTimestamp.Value.TotalMilliseconds + TimeAdjustment);
+              }
+              else
+              {
+                nextTimestamp = null;
+                break;
+              }
+
+
+            } while (nextTimestamp == oldTimestamp && nextTimestampIndex + 1 < AllLine.Count);
+
+
+          }
+          else
+          {
+            nextTimestamp = null;
+          }
+
+          lastTimestamp = timeSpan;
+
+        }
+
+        ActualLine = newLine;
+
+        if (ActualLine != null)
+        {
+          actualLineSubject.OnNext(AllLine.IndexOf(ActualLine));
+        }
+      }
     }
 
     #endregion

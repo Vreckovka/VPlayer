@@ -24,7 +24,7 @@ namespace VPlayer.Player.Behaviors
     public double StepSize { get; set; } = 1;
     public TimeSpan AnimationTime { get; set; } = TimeSpan.FromSeconds(1);
     private bool wasUnloaded;
-      
+
 
     protected override void OnAttached()
     {
@@ -72,8 +72,6 @@ namespace VPlayer.Player.Behaviors
     private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
     {
       SubcsribeToSongChange();
-
-      RenderOptions.SetBitmapScalingMode(AssociatedObject, BitmapScalingMode.LowQuality);
     }
 
 
@@ -87,11 +85,13 @@ namespace VPlayer.Player.Behaviors
 
         if (AssociatedObject.DataContext is LRCFileViewModel lRCFileViewModel)
         {
-          serialDisposable.Disposable = lRCFileViewModel.ActualLineChanged.Subscribe(OnLineChanged);
+          serialDisposable.Disposable = lRCFileViewModel.ActualLineChanged.ObserveOnDispatcher().Subscribe(OnLineChanged);
         }
         else if (AssociatedObject.DataContext is LRCCreatorViewModel creatorViewModel)
         {
-          serialDisposable.Disposable = creatorViewModel.ObservePropertyChange(x => x.ActualLine)
+          serialDisposable.Disposable = creatorViewModel
+            .ObservePropertyChange(x => x.ActualLine)
+            .ObserveOnDispatcher()
             .Subscribe((x) =>
             {
               if (x != null)
@@ -105,55 +105,55 @@ namespace VPlayer.Player.Behaviors
 
     private Decorator border;
     private ScrollViewer scrollViewer;
+
     private void OnLineChanged(int lineIndex)
     {
       try
       {
-        VSynchronizationContext.PostOnUIThread(() =>
+
+        if (border == null)
         {
-          if (border == null)
+          border = VisualTreeHelper.GetChild(AssociatedObject, 0) as Decorator;
+        }
+
+        if (scrollViewer == null)
+        {
+          scrollViewer = border?.Child as ScrollViewer;
+        }
+
+        var scrollIndexOffset = (lineIndex - 1 < 0 ? 0 : lineIndex - 1) * StepSize;
+
+        if (scrollViewer != null)
+        {
+          var diff = Math.Abs(scrollViewer.VerticalOffset - scrollIndexOffset);
+
+          if (diff > StepSize * 10 || wasUnloaded)
           {
-            border = VisualTreeHelper.GetChild(AssociatedObject, 0) as Decorator;
+            scrollViewer.ScrollToVerticalOffset(scrollIndexOffset);
+            wasUnloaded = false;
           }
-
-          if (scrollViewer == null)
+          else
           {
-            scrollViewer = border?.Child as ScrollViewer;
+            DoubleAnimation verticalAnimation = new DoubleAnimation();
+
+            var storyboard = new Storyboard();
+
+            //verticalAnimation.EasingFunction = new SineEase() { EasingMode = EasingMode.EaseOut };
+            storyboard.SpeedRatio = 0.95;
+            storyboard.AccelerationRatio = 0.2;
+            storyboard.DecelerationRatio = 0.8;
+
+            verticalAnimation.From = scrollViewer.VerticalOffset;
+            verticalAnimation.To = scrollIndexOffset;
+            verticalAnimation.Duration = new Duration(AnimationTime);
+
+            storyboard.Children.Add(verticalAnimation);
+
+            Storyboard.SetTarget(verticalAnimation, scrollViewer);
+            Storyboard.SetTargetProperty(verticalAnimation, new PropertyPath(ScrollAnimationBehavior.VerticalOffsetProperty));
+            storyboard.Begin();
           }
-
-          var scrollIndexOffset = (lineIndex - 1 < 0 ? 0 : lineIndex - 1) * StepSize;
-
-          if (scrollViewer != null)
-          {
-            var diff = Math.Abs(scrollViewer.VerticalOffset - scrollIndexOffset);
-
-            if (diff > StepSize * 10 || wasUnloaded)
-            {
-              scrollViewer.ScrollToVerticalOffset(scrollIndexOffset);
-              wasUnloaded = false;
-            }
-            else
-            {
-              DoubleAnimation verticalAnimation = new DoubleAnimation();
-              Storyboard storyboard = new Storyboard();
-
-              //verticalAnimation.EasingFunction = new SineEase() { EasingMode = EasingMode.EaseOut };
-              storyboard.SpeedRatio = 0.95;
-              storyboard.AccelerationRatio = 0.2;
-              storyboard.DecelerationRatio = 0.8;
-
-              verticalAnimation.From = scrollViewer.VerticalOffset;
-              verticalAnimation.To = scrollIndexOffset;
-              verticalAnimation.Duration = new Duration(AnimationTime);
-
-              storyboard.Children.Add(verticalAnimation);
-
-              Storyboard.SetTarget(verticalAnimation, scrollViewer);
-              Storyboard.SetTargetProperty(verticalAnimation, new PropertyPath(ScrollAnimationBehavior.VerticalOffsetProperty));
-              storyboard.Begin();
-            }
-          }
-        });
+        }
       }
       catch (Exception ex)
       {
