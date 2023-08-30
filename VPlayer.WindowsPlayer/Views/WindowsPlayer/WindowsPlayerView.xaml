@@ -1041,6 +1041,19 @@
                                                     BorderThickness="1,1,2,1">
                                                 <StackPanel>
                                                     <controls:PathButton Padding="10"
+                                                                         Content="Cinema mode"
+                                                                         ForegroundCheckedColor="#fff"
+                                                                         ForegroundDefaultColor="#757575"
+                                                                         Glyph="{StaticResource film}"
+                                                                         GlyphFontSize="20"
+                                                                         IconCheckedColor="{StaticResource DefaultRedColor}"
+                                                                         IconDefaultColor="#353535"
+                                                                         IconHoverColor="{StaticResource DefaultRedColor}"
+                                                                         IsChecked="{Binding IsCinemaMode, Mode=TwoWay}"
+                                                                         IsReadOnly="False"
+                                                                         Style="{StaticResource FontAwesomeGlyphStyle}" />
+
+                                                    <controls:PathButton Padding="10"
                                                                          Command="{Binding ResetAllData}"
                                                                          Content="Reset all data"
                                                                          ForegroundDefaultColor="#757575"
@@ -1071,6 +1084,8 @@
                                                                          IconDefaultColor="#353535"
                                                                          IconHoverColor="#ccc"
                                                                          Style="{StaticResource FontAwesomeGlyphStyle}" />
+
+
 
 
 
@@ -1194,6 +1209,7 @@
             </b:Interaction.Behaviors>
         </Grid>
 
+
         <controls:PathButton x:Name="HideButton"
                              Grid.Row="0"
                              Grid.Column="0"
@@ -1213,6 +1229,15 @@
             <controls:PathButton.RenderTransform>
                 <RotateTransform Angle="90" />
             </controls:PathButton.RenderTransform>
+            <controls:PathButton.Style>
+                <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsCinemaMode}" Value="True">
+                            <Setter Property="Visibility" Value="Hidden" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </controls:PathButton.Style>
         </controls:PathButton>
 
     </Grid>

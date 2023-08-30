@@ -656,7 +656,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         if (song.LyricsObject is LRCFileViewModel lrCFileViewModel)
         {
-          var vm = viewModelsFactory.Create<LRCCreatorViewModel>(song);
+          var vm = viewModelsFactory.Create<LRCCreatorViewModel>(song, lrCFileViewModel);
           vm.LoadLines(lrCFileViewModel);
           vm.FilePlayableRegionViewModel = this;
 
@@ -958,6 +958,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region GetValidItemsForCloud
+
     protected override IEnumerable<SoundItemInPlaylistViewModel> GetValidItemsForCloud(IEnumerable<SoundItemInPlaylistViewModel> validItems)
     {
       return validItems
@@ -965,6 +967,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
         .Where(x => x.ArtistViewModel != null &&
                     x.AlbumViewModel != null).ToList();
     }
+
+    #endregion
 
     #region DownloadItemInfo
 
@@ -1774,9 +1778,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
              await DownloadLyrics(itemsBefore, cancellationToken);
            }
          }
+         catch (TaskCanceledException)
+         {
+         }
          catch (OperationCanceledException)
          {
          }
+       
 
        }, cancellationToken);
     }
@@ -2070,7 +2078,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
       var actualDownloadingSongTask = new CancellationTokenSource();
       downloadingSongTasks.Add(actualDownloadingSongTask);
 
-      await DownloadAllLyrics(PlayList.OfType<SongInPlayListViewModel>().ToList(), actualDownloadingSongTask.Token);
+      try
+      {
+        await DownloadAllLyrics(PlayList.OfType<SongInPlayListViewModel>().ToList(), actualDownloadingSongTask.Token);
+      }
+      catch (Exception)
+      {
+      }
     }
 
     #endregion

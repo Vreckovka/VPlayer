@@ -92,7 +92,6 @@ namespace VPlayer.Player.Behaviors
         else if (AssociatedObject.DataContext is LRCCreatorViewModel creatorViewModel)
         {
           serialDisposable.Disposable = creatorViewModel.ObservePropertyChange(x => x.ActualLine)
-            .ObserveOn(Application.Current.Dispatcher)
             .Subscribe((x) =>
             {
               if (x != null)

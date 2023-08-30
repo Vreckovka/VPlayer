@@ -300,7 +300,7 @@ namespace VPlayer.Player.ViewModels
 
       eventAggregator.GetEvent<PlayPauseEvent>().Subscribe(PlayPause).DisposeWith(this);
 
-      AudioDeviceManager.Instance.ObservePropertyChange(x => x.SelectedSoundDevice).Subscribe(async x =>
+      AudioDeviceManager.Instance.ObservePropertyChange(x => x.SelectedSoundDevice).ObserveOnDispatcher().Subscribe(async x =>
       {
         await Task.Delay(500);
 

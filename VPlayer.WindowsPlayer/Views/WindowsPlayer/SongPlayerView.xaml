@@ -267,6 +267,16 @@
                                      ForegroundDefaultColor="#55cccccc"
                                      Style="{StaticResource message-plus}"
                                      ToolTip="Add LYRICS" />
+
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsCinemaMode}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
             </StackPanel>
 
             <StackPanel Name="Container"
@@ -407,6 +417,9 @@
                 <Style TargetType="Border">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding UPnPManagerViewModel.Renderers.View.Count}" Value="0">
+                            <Setter Property="Visibility" Value="Hidden" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsCinemaMode}" Value="True">
                             <Setter Property="Visibility" Value="Hidden" />
                         </DataTrigger>
                     </Style.Triggers>

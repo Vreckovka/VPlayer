@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using VCore;
 using VCore.Standard.Modularity.Interfaces;
 
 namespace VPlayer.AudioStorage.DomainClasses
@@ -23,7 +24,22 @@ namespace VPlayer.AudioStorage.DomainClasses
     public virtual ICollection<Album> Albums { get; set; } = new List<Album>();
     public string ArtistCover { get; set; }
     public string MusicBrainzId { get; set; }
-    public string Name { get; set; }
+
+    private string name;
+    public string Name
+    {
+      get
+      {
+        return StringHelper.ToTitleCase(name);
+      }
+      set
+      {
+        if(value != name)
+        {
+          name = StringHelper.ToTitleCase(value);
+        }
+      }
+    }
 
     public string NormalizedName { get; set; }
 

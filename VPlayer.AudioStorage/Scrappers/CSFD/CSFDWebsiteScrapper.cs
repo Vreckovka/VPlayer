@@ -117,7 +117,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
             item.ImagePath = tvShow.ImagePath;
           }
 
-          
+
 
           statusManager.UpdateMessageAndIncreaseProcessCount(statusMessage);
 
@@ -677,7 +677,7 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
         cSFDTVShowSeasonEpisode.EpisodeNumber = number?.EpisodeNumber;
         cSFDTVShowSeasonEpisode.Parameters = parameters.ToArray();
 
-       
+
       }
       catch (Exception ex)
       {
@@ -687,11 +687,31 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
     #endregion
 
-    private void GetCsfdInfo(CSFDItem item , HtmlDocument document)
+    private void GetCsfdInfo(CSFDItem item, HtmlDocument document)
     {
       string country = null;
+      string originalName = null;
 
-      var originalName = GetClearText(TrySelectNodes(document.DocumentNode, "/div/div[1]/div/div[1]/div[2]/div/header/div/ul/li")?.FirstOrDefault()?.InnerText);
+      var names = TrySelectNodes(document.DocumentNode, "/div/div[1]/div/div[1]/div[2]/div/header/div/ul/li");
+
+      originalName = names
+        .SingleOrDefault(x => x.ChildNodes.Where(y => y.Name == "img")
+        .SingleOrDefault()?.Attributes
+        .SingleOrDefault(xy => xy.Name == "alt" && xy.Value == "USA") != null)?.InnerText;
+
+      if (string.IsNullOrEmpty(originalName))
+      {
+        originalName = names
+          .SingleOrDefault(x => x.ChildNodes.Where(y => y.Name == "img")
+            .SingleOrDefault()?.Attributes
+            .SingleOrDefault(xy => xy.Name == "alt" && xy.Value == "Veľká Británia") != null)?.InnerText;
+      }
+      else if (string.IsNullOrEmpty(originalName))
+      {
+        originalName = names.FirstOrDefault()?.InnerText;
+      }
+
+      originalName = GetClearText(originalName);
 
       var infoNode = TrySelectNodes(document.DocumentNode, "/div/div[1]/div/div[1]/div[2]/div/div[2]")?.FirstOrDefault();
 
@@ -735,27 +755,25 @@ namespace VPlayer.AudioStorage.Scrappers.CSFD
 
         if (creatorsNode.ChildNodes.Count > 3)
         {
-          var textDirectors = creatorsNode.ChildNodes[3].InnerText;
+          var textDirectors = creatorsNode.ChildNodes.FirstOrDefault(x => x.InnerText.Contains("Réžia:"))?.InnerText;
 
-          if (textDirectors.Contains("Réžia:"))
+          if (!string.IsNullOrEmpty(textDirectors))
           {
             directors = textDirectors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Réžia:")[1].Split(",").Select(x => x.Trim()).ToArray();
           }
 
 
-          if (creatorsNode.ChildNodes.Count > 11)
-          {
-            var textActors = creatorsNode.ChildNodes[11].InnerText;
+          var textActors = creatorsNode.ChildNodes.FirstOrDefault(x => x.InnerText.Contains("Hrajú:"))?.InnerText;
 
-            if (textActors.Contains("Hrajú:"))
-            {
-              actors = textActors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Hrajú:")[1].Split(",").Select(x => x.Trim()).ToArray();
-            }
+          if (!string.IsNullOrEmpty(textActors))
+          {
+            actors = textActors.Replace("\t", null).Replace("\n", null).Replace("\r", null).Split("Hrajú:")[1].Split(",").Select(x => x.Trim()).ToArray();
           }
+
         }
       }
 
-      var description = GetClearText(TrySelectNodes(document.DocumentNode, "/div/div[1]/div/section/div[2]/div/div[1]/p")?.FirstOrDefault()?.InnerText);
+      var description = GetClearText(TrySelectNodes(document.DocumentNode, "/div/div[1]/div/section/div[2]/div/div[1]/p")?.FirstOrDefault()?.InnerText)?.Replace(" ",null);
       var premiere = TrySelectNodes(document.DocumentNode, "/div/div[1]/aside/section[1]/div[2]/ul/li/span[2]")?.FirstOrDefault()?.Attributes[0].Value;
 
       item.Rating = GetCsfdRating(item, document);

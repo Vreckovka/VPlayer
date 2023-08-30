@@ -341,12 +341,22 @@
                 </Popup>
 
 
+
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding DataContext.IsCinemaMode, RelativeSource={RelativeSource AncestorType=windowsPlayer:WindowsPlayerView}}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+
             </StackPanel>
 
 
 
             <ListView Grid.Column="1"
-                      Margin="0,0,10,0"
                       Background="#05ffffff"
                       BorderThickness="0"
                       ItemsSource="{Binding LinesView}">
@@ -354,12 +364,12 @@
 
                 <ListView.Style>
                     <Style TargetType="ListView">
-
+                        <Setter Property="Margin" Value="0,0,10,0" />
                         <Setter Property="Padding" Value="0" />
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="ItemsControl">
-                                    <Border Background="{TemplateBinding Background}">
+                                    <Border Padding="{Binding Padding, RelativeSource={RelativeSource Mode=TemplatedParent}}" Background="{TemplateBinding Background}">
                                         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Hidden">
                                             <ItemsPresenter />
                                         </ScrollViewer>
@@ -485,6 +495,14 @@
                                 </Style>
                             </Setter.Value>
                         </Setter>
+
+                        <Style.Triggers>
+
+                            <DataTrigger Binding="{Binding DataContext.IsCinemaMode, RelativeSource={RelativeSource AncestorType=windowsPlayer:WindowsPlayerView}}" Value="True">
+
+                                <Setter Property="Padding" Value="50,0,0,0" />
+                            </DataTrigger>
+                        </Style.Triggers>
                     </Style>
                 </ListView.Style>
 
@@ -506,22 +524,28 @@
                             <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={converters:IsGreaterConverter}, ConverterParameter=711}" Value="false">
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
+
+                            <DataTrigger Binding="{Binding DataContext.IsCinemaMode, RelativeSource={RelativeSource AncestorType=windowsPlayer:WindowsPlayerView}}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
 
             <TextBlock Grid.Column="1"
-                       MaxWidth="120"
+                       MaxWidth="180"
                        Margin="0,0,17,8"
                        HorizontalAlignment="Right"
                        VerticalAlignment="Bottom"
                        FontSize="13"
                        FontWeight="Normal"
                        Foreground="#20ffffff"
-                       Text="{Binding Model.By, StringFormat={}by {0}}"
                        TextTrimming="CharacterEllipsis"
                        ToolTip="{Binding Model.By}">
+
+                <Run Text="Synced" />
+                <Run Text="{Binding Model.By, StringFormat={}by {0}}" />
                 <TextBlock.Style>
                     <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
                         <Style.Triggers>

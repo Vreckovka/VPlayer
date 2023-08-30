@@ -90,7 +90,17 @@ namespace VPlayer.Core.Players
 
     public TimeSpan TotalPlaylistDuration
     {
-      get { return TimeSpan.FromSeconds(PlayList.Sum(x => x.Duration)); }
+      get
+      {
+        try
+        {
+          return TimeSpan.FromSeconds(PlayList.Sum(x => x.Duration));
+        }
+        catch (Exception)
+        {
+          return TimeSpan.Zero;
+        }
+      }
     }
 
     #endregion

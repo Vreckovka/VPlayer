@@ -23,15 +23,20 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
 {
   public class LRCCreatorViewModel : ViewModel<SongInPlayListViewModel>
   {
-    private readonly SongInPlayListViewModel model;
+
     private readonly PCloudLyricsProvider pCloudLyricsProvider;
     private readonly IStorageManager storageManager;
     private readonly IWindowManager windowManager;
     private readonly IViewModelsFactory viewModelsFactory;
 
-    public LRCCreatorViewModel(SongInPlayListViewModel model, PCloudLyricsProvider pCloudLyricsProvider, IStorageManager storageManager, IWindowManager windowManager, IViewModelsFactory viewModelsFactory) : base(model)
+    public LRCCreatorViewModel(SongInPlayListViewModel model,
+      LRCFileViewModel lRCFileViewModel,
+      PCloudLyricsProvider pCloudLyricsProvider,
+      IStorageManager storageManager, IWindowManager
+        windowManager, IViewModelsFactory viewModelsFactory) : base(model)
     {
-      this.model = model ?? throw new ArgumentNullException(nameof(model));
+
+      ViewModel = lRCFileViewModel ?? throw new ArgumentNullException(nameof(lRCFileViewModel));
       this.pCloudLyricsProvider = pCloudLyricsProvider ?? throw new ArgumentNullException(nameof(pCloudLyricsProvider));
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
@@ -43,6 +48,8 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
     }
 
     #region Properties
+
+    public LRCFileViewModel ViewModel { get; set; }
 
     #region Lines
 
@@ -360,7 +367,7 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
       var newLines = GetLines(newLyrics);
 
       var validOldLines = oldLInes.Where(x => x.Index != null).ToList();
-   
+
       List<int> checkedOldIndexes = new List<int>();
 
       if (newLines != null)
@@ -379,7 +386,7 @@ namespace VPlayer.Core.ViewModels.SoundItems.LRCCreators
             if (oldLine.Text != line.Text)
             {
               Lines.Insert(oldLine.Index, line);
-             
+
               validOldLines.Where(x => x.Index >= oldLine.Index).ForEach(x => x.Index++);
             }
           }

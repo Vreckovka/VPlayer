@@ -586,6 +586,26 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+
+    #region IsCinemaMode
+
+    private bool isCinemaMode;
+
+    public bool IsCinemaMode
+    {
+      get { return isCinemaMode; }
+      set
+      {
+        if (value != isCinemaMode)
+        {
+          isCinemaMode = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #endregion
 
     #region Commands
@@ -873,10 +893,6 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    public override void OnActivation(bool firstActivation)
-    {
-      base.OnActivation(firstActivation);
-    }
 
     #region InitializeAsync
 
@@ -914,6 +930,14 @@ namespace VPlayer.Core.ViewModels
       HookToPubSubEvents();
 
       Volume = MediaPlayer.Volume;
+
+      AudioDeviceManager.Instance.ObservePropertyChange(x => x.SelectedSoundDevice).ObserveOnDispatcher().Subscribe(async x =>
+      {
+        await Task.Delay(500);
+
+        volumeSubject.OnNext(Volume);
+        RaisePropertyChanged(nameof(Volume));
+      });
     }
 
     #endregion
