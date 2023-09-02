@@ -11,6 +11,7 @@
                     xmlns:multistyle="clr-namespace:VCore.WPF.AttachedProperties.Multistyle;assembly=VCore.WPF"
                     xmlns:numericUpAndDown="clr-namespace:VCore.WPF.Controls.NumericUpAndDown;assembly=VCore.WPF"
                     xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
+                    xmlns:views="clr-namespace:VPlayer.WindowsPlayer.Views"
                     xmlns:windowsPlayer="clr-namespace:VPlayer.Player.Views.WindowsPlayer"
                     xmlns:windowsPlayer1="clr-namespace:VPlayer.WindowsPlayer.Views.WindowsPlayer"
                     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit">
@@ -21,16 +22,15 @@
                                     DecodeHeight="350"
                                     DecodeWidth="350" />
 
-    <Style x:Key="LyricsStyle" TargetType="TextBox">
+    <views:LyricsConstants x:Key="LyricsConstants" />
+
+    <Style x:Key="LyricsStyle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="24" />
-        <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="Foreground" Value="{StaticResource YellowBrush}" />
 
         <Setter Property="FontWeight" Value="DemiBold" />
-        <Setter Property="IsReadOnly" Value="True" />
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="Effect">
             <Setter.Value>
@@ -341,11 +341,10 @@
                 </Popup>
 
 
-
                 <StackPanel.Style>
                     <Style TargetType="StackPanel">
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding DataContext.IsCinemaMode, RelativeSource={RelativeSource AncestorType=windowsPlayer:WindowsPlayerView}}" Value="True">
+                            <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.IsCinemaMode}" Value="True">
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -400,7 +399,7 @@
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                                <Border Margin="5">
+                                                <Border Margin="{Binding Source={StaticResource LyricsConstants}, Path=Instance.Margin}">
                                                     <Grid>
                                                         <Grid.ColumnDefinitions>
                                                             <ColumnDefinition Width="auto" />
@@ -457,32 +456,33 @@
                                                             </TextBlock>
                                                         </StackPanel>
 
-
-
-                                                        <TextBox Grid.Column="1"
-                                                                 HorizontalAlignment="Left"
-                                                                 HorizontalContentAlignment="Left"
-                                                                 Text="{Binding Text, Mode=OneWay}">
-                                                            <TextBox.Style>
-                                                                <Style BasedOn="{StaticResource LyricsStyle}" TargetType="TextBox">
+                                                        <TextBlock Grid.Column="1"
+                                                                   HorizontalAlignment="Left"
+                                                                   VerticalAlignment="Center"
+                                                                   Text="{Binding Text, Mode=OneWay}"
+                                                                   TextTrimming="CharacterEllipsis">
+                                                            <TextBlock.Style>
+                                                                <Style BasedOn="{StaticResource LyricsStyle}" TargetType="TextBlock">
+                                                                    <Setter Property="FontSize" Value="{Binding Source={StaticResource LyricsConstants}, Path=Instance.FontSize}" />
                                                                     <Setter Property="Foreground" Value="{Binding Path=DataContext.LyricsColor, RelativeSource={RelativeSource AncestorType=ListView, Mode=FindAncestor}, FallbackValue=#fec827}" />
                                                                     <Style.Triggers>
                                                                         <DataTrigger Binding="{Binding IsActual}" Value="true">
-                                                                            <Setter Property="FontSize" Value="32" />
+                                                                            <Setter Property="FontSize" Value="{Binding Source={StaticResource LyricsConstants}, Path=Instance.ActualLineFontSize}" />
                                                                             <Setter Property="TextWrapping" Value="Wrap" />
                                                                         </DataTrigger>
                                                                     </Style.Triggers>
                                                                 </Style>
-                                                            </TextBox.Style>
-                                                        </TextBox>
+                                                            </TextBlock.Style>
+                                                        </TextBlock>
                                                     </Grid>
 
                                                     <Border.Style>
                                                         <Style TargetType="Border">
+                                                            <Setter Property="Height" Value="{Binding Source={StaticResource LyricsConstants}, Path=Instance.LineHeight}" />
+
                                                             <Style.Triggers>
                                                                 <DataTrigger Binding="{Binding IsActual}" Value="true">
-                                                                    <Setter Property="Margin" Value="25" />
-                                                                    <Setter Property="Padding" Value="0,5,0,5" />
+                                                                    <Setter Property="Height" Value="auto" />
                                                                     <Setter Property="Background" Value="#95000000" />
                                                                 </DataTrigger>
                                                             </Style.Triggers>
@@ -498,7 +498,7 @@
 
                         <Style.Triggers>
 
-                            <DataTrigger Binding="{Binding DataContext.IsCinemaMode, RelativeSource={RelativeSource AncestorType=windowsPlayer:WindowsPlayerView}}" Value="True">
+                            <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.IsCinemaMode}" Value="True">
 
                                 <Setter Property="Padding" Value="50,0,0,0" />
                             </DataTrigger>
@@ -506,8 +506,9 @@
                     </Style>
                 </ListView.Style>
 
+
                 <b:Interaction.Behaviors>
-                    <behaviors:AutoScrollLyricsBehavior AnimationTime="0:0:0:0.6" StepSize="39" />
+                    <behaviors:AutoScrollLyricsBehavior AnimationTime="0:0:0:0.6" StepSize="{Binding Source={StaticResource LyricsConstants}, Path=Instance.AutoScrollStep}" />
                 </b:Interaction.Behaviors>
             </ListView>
 
@@ -525,7 +526,7 @@
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
 
-                            <DataTrigger Binding="{Binding DataContext.IsCinemaMode, RelativeSource={RelativeSource AncestorType=windowsPlayer:WindowsPlayerView}}" Value="True">
+                            <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.IsCinemaMode}" Value="True">
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -552,7 +553,7 @@
                             <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=Window, Mode=FindAncestor}, Converter={converters:IsGreaterConverter}, ConverterParameter=711}" Value="false">
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding DataContext.IsCinemaMode, RelativeSource={RelativeSource AncestorType=windowsPlayer:WindowsPlayerView}}" Value="True">
+                            <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.IsCinemaMode}" Value="True">
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -804,14 +805,13 @@
                                                             </Grid>
                                                         </StackPanel>
 
-                                                        <TextBox Grid.Column="1"
-                                                                 HorizontalAlignment="Stretch"
-                                                                 HorizontalContentAlignment="Left"
-                                                                 TextWrapping="Wrap">
-                                                            <TextBox.Style>
-                                                                <Style BasedOn="{StaticResource LyricsStyle}" TargetType="TextBox">
+                                                        <TextBlock Grid.Column="1"
+                                                                   HorizontalAlignment="Stretch"
+                                                                   TextWrapping="Wrap">
+                                                            <TextBlock.Style>
+                                                                <Style BasedOn="{StaticResource LyricsStyle}" TargetType="TextBlock">
                                                                     <Setter Property="Text" Value="{Binding Text, Mode=OneWay}" />
-                                                                    <Setter Property="CaretBrush" Value="Transparent" />
+
 
                                                                     <Style.Triggers>
                                                                         <DataTrigger Binding="{Binding IsActual}" Value="true">
@@ -822,18 +822,18 @@
                                                                         <DataTrigger Binding="{Binding IsInEditMode}" Value="true">
                                                                             <Setter Property="Foreground" Value="{StaticResource GreenBrush3}" />
                                                                             <Setter Property="TextWrapping" Value="Wrap" />
-                                                                            <Setter Property="IsReadOnly" Value="False" />
-                                                                            <Setter Property="CaretBrush" Value="White" />
+
+
                                                                             <Setter Property="Text" Value="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                                         </DataTrigger>
                                                                     </Style.Triggers>
                                                                 </Style>
-                                                            </TextBox.Style>
+                                                            </TextBlock.Style>
 
                                                             <b:Interaction.Behaviors>
                                                                 <behaviors3:AddToFocusManager />
                                                             </b:Interaction.Behaviors>
-                                                        </TextBox>
+                                                        </TextBlock>
 
                                                         <controls:PathButton Grid.Column="2"
                                                                              Margin="5,0"

@@ -586,26 +586,6 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-
-    #region IsCinemaMode
-
-    private bool isCinemaMode;
-
-    public bool IsCinemaMode
-    {
-      get { return isCinemaMode; }
-      set
-      {
-        if (value != isCinemaMode)
-        {
-          isCinemaMode = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
-
     #endregion
 
     #region Commands
@@ -960,7 +940,7 @@ namespace VPlayer.Core.ViewModels
       };
 
 
-      MediaPlayer.EndReached += (sender, e) => { OnEndReached(); };
+
 
       MediaPlayer.Paused += (sender, e) =>
       {
@@ -1402,9 +1382,7 @@ namespace VPlayer.Core.ViewModels
         ActualSavedPlaylist.PlaylistItems = playlistItems;
       }
 
-      var items = playlistItems
-        .Select(x => viewModelsFactory.Create<TItemViewModel>(x.ReferencedItem))
-        .ToList();
+      var items = GetVmToPlayFromPlaylist(playlistItems);
 
       if (lastSongIndex == null)
       {
@@ -1426,6 +1404,11 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
+
+    protected virtual IEnumerable<TItemViewModel> GetVmToPlayFromPlaylist(IEnumerable<TPlaylistItemModel> playlistItems)
+    {
+      return playlistItems.Select(x => viewModelsFactory.Create<TItemViewModel>(x.ReferencedItem));
+    }
 
     #region PlayPuse
 
@@ -1850,7 +1833,9 @@ namespace VPlayer.Core.ViewModels
         if (ActualSavedPlaylist.PlaylistItems?.Any() == true)
         {
           ActualSavedPlaylist.ItemCount = ActualSavedPlaylist.PlaylistItems.Count;
-          ActualSavedPlaylist.ActualItem.ReferencedItem = ActualItem.Model;
+
+          if (ActualSavedPlaylist.ActualItem != null)
+            ActualSavedPlaylist.ActualItem.ReferencedItem = ActualItem.Model;
         }
 
 

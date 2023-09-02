@@ -71,9 +71,9 @@ namespace VPlayer.Player.Behaviors
 
     private void AssociatedObject_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
     {
-      if (Mouse.LeftButton == MouseButtonState.Pressed && AssociatedObject.IsMouseOver)
+      if (Mouse.LeftButton == MouseButtonState.Pressed )
       {
-        if (AssociatedObject.DataContext is IFilePlayableRegionViewModel playableRegionViewModel)
+        if(AssociatedObject.DataContext is IFilePlayableRegionViewModel playableRegionViewModel && (AssociatedObject.IsMouseOver || !playableRegionViewModel.IsPlaying))
         {
           playableRegionViewModel.SetMediaPosition((float) e.NewValue);
          

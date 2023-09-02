@@ -280,6 +280,11 @@ namespace VPlayer.Core.ViewModels
     {
       get
       {
+        if (ActualPosition <= -1)
+        {
+          return TimeSpan.Zero;
+        }
+
         var seconds = ActualPosition * Duration;
 
         if (TimeSpan.MaxValue.TotalSeconds > seconds)
@@ -292,7 +297,7 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
-    
+
     #region LeftTime
 
     public TimeSpan LeftTime

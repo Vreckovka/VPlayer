@@ -12,6 +12,7 @@
              xmlns:popups="clr-namespace:VCore.WPF.Behaviors.Popups;assembly=VCore.WPF"
              xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF"
              xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
+             xmlns:views="clr-namespace:VPlayer.WindowsPlayer.Views"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
@@ -21,17 +22,17 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Views/WindowsPlayer/SongPlayerViewResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <views:LyricsConstants x:Key="LyricsConstants" />
         </ResourceDictionary>
     </UserControl.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="2*" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-
-
 
         <Grid Grid.RowSpan="3">
             <ContentControl BorderThickness="0"
@@ -101,7 +102,6 @@
                 </Grid.Style>
             </Grid>
         </Grid>
-
 
         <Border Grid.Row="1" Margin="0,0,0,-2">
             <Grid x:Name="lyrics_grid">
@@ -271,7 +271,7 @@
                 <StackPanel.Style>
                     <Style TargetType="StackPanel">
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsCinemaMode}" Value="True">
+                            <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.IsCinemaMode}" Value="True">
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -419,7 +419,7 @@
                         <DataTrigger Binding="{Binding UPnPManagerViewModel.Renderers.View.Count}" Value="0">
                             <Setter Property="Visibility" Value="Hidden" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding IsCinemaMode}" Value="True">
+                        <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.IsCinemaMode}" Value="True">
                             <Setter Property="Visibility" Value="Hidden" />
                         </DataTrigger>
                     </Style.Triggers>

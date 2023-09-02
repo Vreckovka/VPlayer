@@ -74,6 +74,8 @@ namespace VPlayer.Core.ViewModels.SoundItems
       }
 
       LinesView = new VirtualList<LRCLyricLineViewModel>(AllLine, 5);
+
+      
     }
 
     #endregion

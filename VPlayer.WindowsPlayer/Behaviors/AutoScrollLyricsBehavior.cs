@@ -16,12 +16,29 @@ using VCore.WPF.Views;
 using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.SoundItems;
 using VPlayer.Core.ViewModels.SoundItems.LRCCreators;
+using VPlayer.WindowsPlayer.Behaviors;
 
 namespace VPlayer.Player.Behaviors
 {
   public class AutoScrollLyricsBehavior : Behavior<ListView>
   {
-    public double StepSize { get; set; } = 1;
+    #region StepSize
+
+    public static readonly DependencyProperty StepSizeProperty =
+      DependencyProperty.Register(
+        nameof(StepSize),
+        typeof(double),
+        typeof(AutoScrollLyricsBehavior),
+        new PropertyMetadata(-1.0));
+
+    public double StepSize
+    {
+      get { return (double)GetValue(StepSizeProperty); }
+      set { SetValue(StepSizeProperty, value); }
+    }
+
+    #endregion
+
     public TimeSpan AnimationTime { get; set; } = TimeSpan.FromSeconds(1);
     private bool wasUnloaded;
 

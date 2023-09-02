@@ -1009,7 +1009,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
             var finalPath = albumViewModel?.Model.AlbumFrontCoverFilePath;
 
             if (!string.IsNullOrEmpty(artistName) &&
-                !string.IsNullOrEmpty(albumName) && 
+                !string.IsNullOrEmpty(albumName) &&
                 (!File.Exists(songInPlay.AlbumViewModel.ImageThumbnail)
                  || PlayableViewModelWithThumbnail<SongInPlayListViewModel, Album>.GetEmptyImage() == songInPlay.AlbumViewModel.ImageThumbnail))
             {
@@ -1784,7 +1784,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
          catch (OperationCanceledException)
          {
          }
-       
+
 
        }, cancellationToken);
     }
@@ -1942,6 +1942,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
       modelsDisposables.Clear();
 
       downloadingSongTasks.Where(x => !x.IsCancellationRequested).ForEach(x => x.Cancel());
+      downloadingSongTasks.Clear();
+
       var actualDownloadingSongTask = new CancellationTokenSource();
 
       downloadingSongTasks.Add(actualDownloadingSongTask);
@@ -1973,6 +1975,14 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
 
     #endregion
+
+    protected override IEnumerable<SoundItemInPlaylistViewModel> GetVmToPlayFromPlaylist(IEnumerable<PlaylistSoundItem> playlistItems)
+    {
+      return playlistItems.Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(new Song()
+      {
+        ItemModel = x.ReferencedItem
+      }));
+    }
 
     #region OnPlayPlaylist
 
@@ -2141,7 +2151,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         {
           var items = soundItemInPlaylistViewModel.ToList();
           var notNullItems = items.OfType<SongInPlayListViewModel>().Where(x => x.ArtistViewModel != null && x.AlbumViewModel != null).ToList();
-          var nullItems = items.OfType<SongInPlayListViewModel>().Where(x => x.ArtistViewModel == null || x.AlbumViewModel == null).ToList();
+          var nullItems = items.OfType<SongInPlayListViewModel>().Where(x => x.ArtistViewModel == null || x.AlbumViewModel == null).Select(x => (SoundItemInPlaylistViewModel)x).ToList();
 
           foreach (var song in notNullItems)
           {

@@ -6,6 +6,7 @@ using System.Windows;
 using Logger;
 using PCloudClient;
 using PCloudClient.Domain;
+using VCore;
 using VCore.Standard;
 using VCore.WPF;
 using VCore.WPF.Interfaces.Managers;
@@ -145,7 +146,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
 
             var fileName = pFileName + extension;
 
-            var existingFiles = files.Where(x => x.name.ToLower() == fileName.ToLower()).ToList();
+            var existingFiles = files.Where(x => StringHelper.GetNormalizedName(x.name) == StringHelper.GetNormalizedName(fileName)).ToList();
 
             if (existingFiles.Count > 1)
             {

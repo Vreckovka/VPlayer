@@ -22,6 +22,7 @@
              xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
              xmlns:viewModels="clr-namespace:VPlayer.WindowsPlayer.ViewModels"
              xmlns:viewModels1="clr-namespace:VPlayer.Core.ViewModels;assembly=VPlayer.Core"
+             xmlns:views="clr-namespace:VPlayer.WindowsPlayer.Views"
              d:DesignHeight="450"
              d:DesignWidth="1900"
              mc:Ignorable="d">
@@ -30,6 +31,8 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/VPlayer.WindowsPlayer;component/Views/WindowsPlayer/WindowsPlayerViewResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <views:LyricsConstants x:Key="LyricsConstants" />
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -1049,7 +1052,7 @@
                                                                          IconCheckedColor="{StaticResource DefaultRedColor}"
                                                                          IconDefaultColor="#353535"
                                                                          IconHoverColor="{StaticResource DefaultRedColor}"
-                                                                         IsChecked="{Binding IsCinemaMode, Mode=TwoWay}"
+                                                                         IsChecked="{Binding Source={StaticResource LyricsConstants}, Path=Instance.IsCinemaMode, Mode=TwoWay}"
                                                                          IsReadOnly="False"
                                                                          Style="{StaticResource FontAwesomeGlyphStyle}" />
 
@@ -1232,7 +1235,7 @@
             <controls:PathButton.Style>
                 <Style BasedOn="{StaticResource {x:Type controls:PathButton}}" TargetType="controls:PathButton">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsCinemaMode}" Value="True">
+                        <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.IsCinemaMode}" Value="True">
                             <Setter Property="Visibility" Value="Hidden" />
                         </DataTrigger>
                     </Style.Triggers>
