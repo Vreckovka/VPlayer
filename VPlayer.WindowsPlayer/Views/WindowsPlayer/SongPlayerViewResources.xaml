@@ -24,12 +24,14 @@
 
     <views:LyricsConstants x:Key="LyricsConstants" />
 
-    <Style x:Key="LyricsStyle" TargetType="TextBlock">
+    <Style x:Key="LyricsStyle" TargetType="TextBox">
         <Setter Property="FontSize" Value="24" />
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="Foreground" Value="{StaticResource YellowBrush}" />
-
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="IsReadOnly" Value="True" />
         <Setter Property="FontWeight" Value="DemiBold" />
+        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="Effect">
@@ -456,13 +458,13 @@
                                                             </TextBlock>
                                                         </StackPanel>
 
-                                                        <TextBlock Grid.Column="1"
-                                                                   HorizontalAlignment="Left"
-                                                                   VerticalAlignment="Center"
-                                                                   Text="{Binding Text, Mode=OneWay}"
-                                                                   TextTrimming="CharacterEllipsis">
-                                                            <TextBlock.Style>
-                                                                <Style BasedOn="{StaticResource LyricsStyle}" TargetType="TextBlock">
+                                                        <TextBox Grid.Column="1"
+                                                                 HorizontalAlignment="Left"
+                                                                 VerticalAlignment="Center"
+                                                                 HorizontalContentAlignment="Left"
+                                                                 Text="{Binding Text, Mode=OneWay}">
+                                                            <TextBox.Style>
+                                                                <Style BasedOn="{StaticResource LyricsStyle}" TargetType="TextBox">
                                                                     <Setter Property="FontSize" Value="{Binding Source={StaticResource LyricsConstants}, Path=Instance.FontSize}" />
                                                                     <Setter Property="Foreground" Value="{Binding Path=DataContext.LyricsColor, RelativeSource={RelativeSource AncestorType=ListView, Mode=FindAncestor}, FallbackValue=#fec827}" />
                                                                     <Style.Triggers>
@@ -472,8 +474,8 @@
                                                                         </DataTrigger>
                                                                     </Style.Triggers>
                                                                 </Style>
-                                                            </TextBlock.Style>
-                                                        </TextBlock>
+                                                            </TextBox.Style>
+                                                        </TextBox>
                                                     </Grid>
 
                                                     <Border.Style>
@@ -673,7 +675,7 @@
 
             <ListView Grid.Column="1"
                       Margin="0,0,0,0"
-                      HorizontalAlignment="Left"
+                      HorizontalAlignment="Stretch"
                       Background="Transparent"
                       BorderThickness="0"
                       ItemsSource="{Binding Lines}"
@@ -805,13 +807,14 @@
                                                             </Grid>
                                                         </StackPanel>
 
-                                                        <TextBlock Grid.Column="1"
-                                                                   HorizontalAlignment="Stretch"
-                                                                   TextWrapping="Wrap">
-                                                            <TextBlock.Style>
-                                                                <Style BasedOn="{StaticResource LyricsStyle}" TargetType="TextBlock">
+                                                        <TextBox Grid.Column="1"
+                                                                 HorizontalAlignment="Stretch"
+                                                                 HorizontalContentAlignment="Left"
+                                                                 TextWrapping="Wrap">
+                                                            <TextBox.Style>
+                                                                <Style BasedOn="{StaticResource LyricsStyle}" TargetType="TextBox">
                                                                     <Setter Property="Text" Value="{Binding Text, Mode=OneWay}" />
-
+                                                                    <Setter Property="CaretBrush" Value="Transparent" />
 
                                                                     <Style.Triggers>
                                                                         <DataTrigger Binding="{Binding IsActual}" Value="true">
@@ -822,18 +825,19 @@
                                                                         <DataTrigger Binding="{Binding IsInEditMode}" Value="true">
                                                                             <Setter Property="Foreground" Value="{StaticResource GreenBrush3}" />
                                                                             <Setter Property="TextWrapping" Value="Wrap" />
-
+                                                                            <Setter Property="IsReadOnly" Value="False" />
+                                                                            <Setter Property="CaretBrush" Value="White" />
 
                                                                             <Setter Property="Text" Value="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                                                         </DataTrigger>
                                                                     </Style.Triggers>
                                                                 </Style>
-                                                            </TextBlock.Style>
+                                                            </TextBox.Style>
 
                                                             <b:Interaction.Behaviors>
                                                                 <behaviors3:AddToFocusManager />
                                                             </b:Interaction.Behaviors>
-                                                        </TextBlock>
+                                                        </TextBox>
 
                                                         <controls:PathButton Grid.Column="2"
                                                                              Margin="5,0"

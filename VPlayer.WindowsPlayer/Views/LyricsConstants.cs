@@ -58,17 +58,17 @@ namespace VPlayer.WindowsPlayer.Views
 
     public double FontSize
     {
-      get { return IsCinemaMode ? 30.0 : 25.0; }
+      get { return IsCinemaMode ? 35.0 : 25.0; }
     }
 
     public double ActualLineFontSize
     {
-      get { return IsCinemaMode ? 52.0 : 32.0; }
+      get { return IsCinemaMode ? 60.0 : 32.0; }
     }
 
     public double LineHeight
     {
-      get { return IsCinemaMode ? 44.5 : 31.0; }
+      get { return IsCinemaMode ? 42 : 31.0; }
     }
 
 

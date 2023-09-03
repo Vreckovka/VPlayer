@@ -1354,7 +1354,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
               if (downloadingAlbum == null || string.IsNullOrEmpty(downloadingAlbum.Name))
               {
-                downloadingAlbum = GetBestFittingAlbumFromDb(StringHelper.GetNormalizedName(normalizedName), downloadingArtist?.Name);
+                downloadingAlbum = GetBestFittingAlbumFromDb(StringHelper.GetNormalizedName(normalizedName), downloadingArtist?.Name, downloadingArtist?.Id);
 
                 if (downloadingAlbum?.Name?.Similarity(albumName) < 0.8)
                 {
@@ -1631,16 +1631,32 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region GetBestFittingAlbumFromDb
 
-    private Album GetBestFittingAlbumFromDb(string albumName, string artistName)
+    private Album GetBestFittingAlbumFromDb(string albumName, string artistName, int? artistId = null)
     {
-      var albums = storageManager.GetTempRepository<Album>()
-        .Where(x => x.NormalizedName == StringHelper.GetNormalizedName(albumName))
-        .Include(x => x.Artist)
-        .Include(x => x.Songs)
-        .ThenInclude(x => x.ItemModel.FileInfoEntity);
+      IEnumerable<Album> albums = new List<Album>();
 
+      if (artistId != null)
+      {
+        albums = storageManager.GetTempRepository<Album>()
+          .Where(x => x.NormalizedName == StringHelper.GetNormalizedName(albumName))
+          .Where(x => x.ArtistId == artistId)
+          .Include(x => x.Artist)
+          .Include(x => x.Songs)
+          .ThenInclude(x => x.ItemModel.FileInfoEntity)
+          .ToList();
+      }
+      else
+      {
+        albums = storageManager.GetTempRepository<Album>()
+          .Where(x => x.NormalizedName == StringHelper.GetNormalizedName(albumName))
+          .Include(x => x.Artist)
+          .Include(x => x.Songs)
+          .ThenInclude(x => x.ItemModel.FileInfoEntity)
+          .ToList();
+      }
+      
 
-      Album result = albums.FirstOrDefault(x => x.Artist.Name == artistName);
+      Album result = albums.FirstOrDefault(x => StringHelper.GetNormalizedName(x.Artist.Name) == StringHelper.GetNormalizedName(artistName));
 
       return result;
     }
