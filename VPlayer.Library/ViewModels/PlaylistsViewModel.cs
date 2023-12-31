@@ -374,7 +374,7 @@ namespace VPlayer.Home.ViewModels
     {
       base.OnUpdateItemChange(model);
 
-      var vm = LibraryCollection.Items?.SingleOrDefault(x => x.ModelId == model.Id);
+      var vm = LibraryCollection.Items?.FirstOrDefault(x => x.ModelId == model.Id);
 
       if (vm == null)
       {

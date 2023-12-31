@@ -1007,11 +1007,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
           if (lastSPUValue == null)
           {
-            actualSub = Subtitles.Single(x => MediaPlayer.Spu == x.Model.Id);
+            actualSub = Subtitles.SingleOrDefault(x => MediaPlayer.Spu == x.Model.Id);
           }
           else
           {
-            actualSub = Subtitles.Single(x => lastSPUValue.Value == x.Model.Id);
+            actualSub = Subtitles.SingleOrDefault(x => lastSPUValue.Value == x.Model.Id);
           }
          
           if(actualSub != null)

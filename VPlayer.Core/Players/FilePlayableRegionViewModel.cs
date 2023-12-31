@@ -425,17 +425,8 @@ namespace VPlayer.Core.Players
     {
       base.HookToPlayerEvents();
 
-      if (MediaPlayer is VLCPlayer vLC)
-      {
-        vLC.TimeChanged += OnVlcTimeChanged;
-      }
-      else
-      {
-        MediaPlayer.TimeChanged += OnVlcTimeChanged;
-
-        MediaPlayer.EndReached += (sender, e) => { OnEndReached(); };
-      }
-
+      MediaPlayer.TimeChanged += OnVlcTimeChanged;
+      MediaPlayer.EndReached += (sender, e) => { OnEndReached(); };
       MediaPlayer.Buffering += MediaPlayer_Buffering;
 
       Observable.Interval(TimeSpan.FromSeconds(0.1)).Subscribe(x =>
@@ -732,12 +723,12 @@ namespace VPlayer.Core.Players
         {
           if (ActualItem.Model.Duration == 0)
           {
-            ActualItem.Model.Duration = ((int) e.Duration) / 1000;
+            ActualItem.Model.Duration = ((int)e.Duration) / 1000;
           }
 
           DetailViewModel = viewModelsFactory.Create<TPopupViewModel>(ActualItem.Model);
 
-        
+
         }
 
         RaisePropertyChanged(nameof(TotalPlaylistDuration));
@@ -801,7 +792,7 @@ namespace VPlayer.Core.Players
     }
 
     #endregion
-    
+
     #region HandleLastItemElapsed
 
     private void HandleLastItemElapsed()
