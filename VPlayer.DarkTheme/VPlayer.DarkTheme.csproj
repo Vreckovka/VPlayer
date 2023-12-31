@@ -33,6 +33,9 @@
     <Page Update="Styles\StylesDictionaries\Colors.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Styles\StylesDictionaries\TabControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
     <Page Update="Styles\StylesDictionaries\DataTemplates.xaml">
       <SubType>Designer</SubType>
     </Page>

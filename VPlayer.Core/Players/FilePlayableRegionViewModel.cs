@@ -360,6 +360,8 @@ namespace VPlayer.Core.Players
           }
 
           await StorePlaylist(PlayList.ToList());
+
+          RequestReloadVirtulizedPlaylist();
         }
       });
     }
@@ -445,17 +447,17 @@ namespace VPlayer.Core.Players
             ActualItem.ActualPosition = MediaPlayer.Position;
             ActualSavedPlaylist.LastItemElapsedTime = MediaPlayer.Position;
 
-            if (MediaPlayer is VLCPlayer vLC && vLC.MediaPlayer.State == LibVLCSharp.Shared.VLCState.Ended)
-            {
-              OnEndReached();
-            }
+            //if (MediaPlayer is VLCPlayer vLC && vLC.MediaPlayer.State == LibVLCSharp.Shared.VLCState.Ended)
+            //{
+            //  OnEndReached();
+            //}
           }
 
 
-          if (ActualItem is SongInPlayListViewModel song)
-          {
-            song.UpdateSyncedLyrics();
-          }
+          //if (ActualItem is SongInPlayListViewModel song)
+          //{
+          //  song.UpdateSyncedLyrics();
+          //}
         }
       });
     }

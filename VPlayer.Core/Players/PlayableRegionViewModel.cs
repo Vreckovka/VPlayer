@@ -940,8 +940,6 @@ namespace VPlayer.Core.ViewModels
       };
 
 
-
-
       MediaPlayer.Paused += (sender, e) =>
       {
         if (ActualItem != null)

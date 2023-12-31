@@ -6,12 +6,14 @@
         <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Colors.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <Brush x:Key="AlternateBackgroundBrush">#282828</Brush>
+    <Brush x:Key="AlternateBackgroundBrush">#85282828</Brush>
+    <Brush x:Key="DefaultControlBrush">#85212121</Brush>
+
 
     <Brush x:Key="MouseOverBrush">#353535</Brush>
 
     <Brush x:Key="RowPinBrush">#151515</Brush>
-    <Brush x:Key="DefaultControlBrush">#212121</Brush>
+
     <Brush x:Key="GridLineBrush">#555555</Brush>
 
     <Brush x:Key="PressedBrush">#454545</Brush>
@@ -38,11 +40,11 @@
     <!--  Style and template for the DataGridColumnHeader.  -->
     <Style TargetType="{x:Type DataGridColumnHeader}">
         <Setter Property="Background" Value="{StaticResource BackgroudBrush}" />
-        <Setter Property="Foreground" Value="{StaticResource DefaultWhiteBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource 120_WhiteTransparentBrush}" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Height" Value="30" />
         <Setter Property="SeparatorBrush" Value="#FFC9CACA" />
-        <Setter Property="FontSize" Value="14" />
+
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Padding" Value="4,0,0,0" />
         <Setter Property="Template">
@@ -96,7 +98,8 @@
                               HorizontalAlignment="Left"
                               VerticalAlignment="Center"
                               Data="F1 M -5.215,6.099L 5.215,6.099L 0,0L -5.215,6.099 Z "
-                              Fill="#FF000000"
+                              Fill="#85ffffff"
+                              Margin="5 0 0 0"
                               Opacity="0"
                               RenderTransformOrigin=".5,.5"
                               Stretch="Uniform">
@@ -193,13 +196,13 @@
     </Style>
 
     <Style TargetType="{x:Type DataGrid}">
-        <Setter Property="Background" Value="{StaticResource RowPinBrush}" />
-        <Setter Property="Foreground" Value="#959595" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="#ccc" />
         <Setter Property="RowDetailsVisibilityMode" Value="VisibleWhenSelected" />
         <Setter Property="ScrollViewer.CanContentScroll" Value="true" />
         <Setter Property="ScrollViewer.PanningMode" Value="Both" />
         <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
-        <Setter Property="Margin" Value="5" />
+        <Setter Property="Margin" Value="0" />
         <Setter Property="BorderBrush" Value="White" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="RowBackground" Value="{StaticResource DefaultControlBrush}" />
@@ -447,7 +450,7 @@
                                        RadiusY="1"
                                        Stroke="{DynamicResource PressedBorderBrush}"
                                        StrokeThickness="1" />
-                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>

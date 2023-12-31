@@ -67,7 +67,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
 
           if (!string.IsNullOrEmpty(acutalFolderName))
           {
-            acutalFolder = parentFolders.SingleOrDefault(x => PathStringProvider.GetNormalizedName(x.name) == PathStringProvider.GetNormalizedName(acutalFolderName));
+            acutalFolder = parentFolders.SingleOrDefault(x => StringHelper.GetNormalizedName(x.name) == StringHelper.GetNormalizedName(acutalFolderName));
 
             if (acutalFolder == null)
             {
@@ -130,7 +130,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
           {
             var acutalFolderName = folderNames[i];
 
-            acutalFolder = parentFolders.SingleOrDefault(x => PathStringProvider.GetNormalizedName(x.name) == PathStringProvider.GetNormalizedName(acutalFolderName));
+            acutalFolder = parentFolders.SingleOrDefault(x => StringHelper.GetNormalizedName(x.name) == StringHelper.GetNormalizedName(acutalFolderName));
 
             if (acutalFolder == null)
             {
@@ -179,7 +179,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
           {
             var acutalFolderName = folderNames[i];
 
-            acutalFolder = parentFolders.SingleOrDefault(x => PathStringProvider.GetNormalizedName(x.name) == PathStringProvider.GetNormalizedName(acutalFolderName));
+            acutalFolder = parentFolders.SingleOrDefault(x => StringHelper.GetNormalizedName(x.name) == StringHelper.GetNormalizedName(acutalFolderName));
 
             if (acutalFolder == null)
             {

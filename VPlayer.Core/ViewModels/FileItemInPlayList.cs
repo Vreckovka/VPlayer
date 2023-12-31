@@ -55,8 +55,11 @@ namespace VPlayer.Core.ViewModels
 
           if (Model is SoundItem soundItem)
           {
-            soundItem.FileInfoEntity.Album = mediaInfo.Format.Tags["album"];
-            soundItem.FileInfoEntity.Artist = mediaInfo.Format.Tags["artist"];
+            if (mediaInfo.Format.Tags?.ContainsKey("album") == true)
+              soundItem.FileInfoEntity.Album = mediaInfo.Format.Tags["album"];
+
+            if (mediaInfo.Format.Tags?.ContainsKey("artist") == true)
+              soundItem.FileInfoEntity.Artist = mediaInfo.Format.Tags["artist"];
           }
 
           var tmp = Model;

@@ -16,7 +16,9 @@
         <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/ScrollViewer.xaml" />
         <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/DataGrid.xaml" />
         <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/Checkbox.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/TabControl.xaml" />
         <!--<ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/Styles/StylesDictionaries/ProgressBar.xaml" />-->
+
 
         <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/ControlsTemplates/ButtonWithIconTemplate.xaml" />
         <ResourceDictionary Source="pack://application:,,,/VPlayer.DarkTheme;component/ControlsTemplates/FinderTemplate.xaml" />
