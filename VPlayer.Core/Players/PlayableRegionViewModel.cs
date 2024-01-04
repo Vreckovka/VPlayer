@@ -195,7 +195,8 @@ namespace VPlayer.Core.ViewModels
         {
           if (actualItem != null)
           {
-            ItemLastTime = null;
+            LastTime = null;
+            LastTimeMs = null;
             actualItem.IsPlaying = false;
           }
 
@@ -447,17 +448,35 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region ItemLastTime
+    #region LastTime
 
-    private int? itemLastTime;
-    public int? ItemLastTime
+    private float? lastTime;
+    public float? LastTime
     {
-      get { return itemLastTime; }
+      get { return lastTime; }
       set
       {
-        if (value != itemLastTime)
+        if (value != lastTime)
         {
-          itemLastTime = value;
+          lastTime = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region LastTimeMs
+
+    private float? lastTimeMs;
+    public float? LastTimeMs
+    {
+      get { return lastTimeMs; }
+      set
+      {
+        if (value != lastTimeMs)
+        {
+          lastTimeMs = value;
           RaisePropertyChanged();
         }
       }
