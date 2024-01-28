@@ -129,7 +129,7 @@
                                                            VerticalAlignment="Center"
                                                            FontWeight="Bold"
                                                            Foreground="#99ffffff"
-                                                           Text="{Binding DataContext.ItemLastTime, RelativeSource={RelativeSource AncestorType=MenuItem}, Converter={converters2:TimeConverter TimeType=Second}}" />
+                                                           Text="{Binding DataContext.LastTimeMs, RelativeSource={RelativeSource AncestorType=MenuItem}, Converter={converters2:TimeConverter TimeType=Second}}" />
                                             </StackPanel>
                                         </Grid>
                                     </DataTemplate>
@@ -168,7 +168,7 @@
                                            Text="Do you want to play from last position? " />
                                 <TextBlock VerticalAlignment="Center"
                                            Foreground="{StaticResource DefaultWhiteBrush}"
-                                           Text="{Binding ItemLastTime, Converter={converters2:TimeConverter TimeType=Second}}" />
+                                           Text="{Binding LastTimeMs, Converter={converters2:TimeConverter TimeType=Second}}" />
                                 <controls2:ButtonWithIcon Margin="5,0,0,0"
                                                           Padding="0"
                                                           VerticalAlignment="Center"
@@ -190,10 +190,11 @@
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Opacity" Value="0" />
+
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ItemLastTime, Converter={converters2:IsNullConverter}}" Value="False">
+                                    <DataTrigger Binding="{Binding LastTimeMs, Converter={converters2:IsNullConverter}}" Value="False">
                                         <DataTrigger.EnterActions>
-                                            <BeginStoryboard x:Name="Show">
+                                            <BeginStoryboard x:Name="ShowLastTime">
                                                 <Storyboard>
                                                     <DoubleAnimation Storyboard.TargetProperty="Opacity"
                                                                      From="0"
@@ -209,7 +210,7 @@
                                             </BeginStoryboard>
                                         </DataTrigger.EnterActions>
                                         <DataTrigger.ExitActions>
-                                            <RemoveStoryboard BeginStoryboardName="Show" />
+                                            <RemoveStoryboard BeginStoryboardName="ShowLastTime" />
                                         </DataTrigger.ExitActions>
                                     </DataTrigger>
                                 </Style.Triggers>

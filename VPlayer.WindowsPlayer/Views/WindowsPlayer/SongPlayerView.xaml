@@ -53,7 +53,7 @@
                                    Text="Do you want to play from last position? " />
                         <TextBlock VerticalAlignment="Center"
                                    Foreground="{StaticResource DefaultWhiteBrush}"
-                                   Text="{Binding ItemLastTime, Converter={converters:TimeConverter TimeType=Second}}" />
+                                   Text="{Binding LastTimeMs, Converter={converters:TimeConverter TimeType=Second}}" />
                         <controls:ButtonWithIcon Margin="5,0,0,0"
                                                  Padding="0"
                                                  VerticalAlignment="Center"
@@ -76,7 +76,7 @@
                     <Style TargetType="Grid">
                         <Setter Property="Opacity" Value="0" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding ItemLastTime, Converter={converters:IsNullConverter}}" Value="False">
+                            <DataTrigger Binding="{Binding LastTimeMs, Converter={converters:IsNullConverter}}" Value="False">
                                 <DataTrigger.EnterActions>
                                     <BeginStoryboard x:Name="Show">
                                         <Storyboard>

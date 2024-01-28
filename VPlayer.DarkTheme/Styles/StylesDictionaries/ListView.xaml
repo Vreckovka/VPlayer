@@ -68,7 +68,7 @@
                                             </Image.Style>
                                         </Image>
 
-                                        <Rectangle x:Name="ImageOpacityMask"
+                                        <!--<Rectangle x:Name="ImageOpacityMask"
                                                    Width="{StaticResource ListView_MenuStyle_IconSize}"
                                                    Height="{StaticResource ListView_MenuStyle_IconSize}">
                                             <Rectangle.Fill>
@@ -78,7 +78,9 @@
                                                 <Style TargetType="Rectangle">
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding ImagePath, Converter={converters:IsStringNullOrEmptyConverter}}" Value="false">
-                                                            <!--  > TOTO AK JE OBRAZOK TREBA POZRIET - BIDING ERROR TO DAVA  -->
+                                        -->
+                                        <!--  > TOTO AK JE OBRAZOK TREBA POZRIET - BIDING ERROR TO DAVA  -->
+                                        <!--
                                                             <Setter Property="OpacityMask">
                                                                 <Setter.Value>
                                                                     <ImageBrush ImageSource="{Binding ImagePath}" />
@@ -88,7 +90,7 @@
                                                     </Style.Triggers>
                                                 </Style>
                                             </Rectangle.Style>
-                                        </Rectangle>
+                                        </Rectangle>-->
 
                                         <Grid.Style>
                                             <Style TargetType="Grid">
@@ -187,10 +189,10 @@
                                                         To="#ccc"
                                                         Duration="{StaticResource MenuHoverAnimationDuration}" />
 
-                                        <ColorAnimation Storyboard.TargetName="ImageOpacityMask"
+                                        <!--<ColorAnimation Storyboard.TargetName="ImageOpacityMask"
                                                         Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
                                                         To="#ccc"
-                                                        Duration="{StaticResource MenuHoverAnimationDuration}" />
+                                                        Duration="{StaticResource MenuHoverAnimationDuration}" />-->
                                     </Storyboard>
                                 </BeginStoryboard>
                             </MultiDataTrigger.EnterActions>
@@ -210,10 +212,10 @@
                                                         To="{StaticResource SecondaryForegroundColor}"
                                                         Duration="{StaticResource MenuHoverAnimationDuration}" />
 
-                                        <ColorAnimation Storyboard.TargetName="ImageOpacityMask"
+                                        <!--<ColorAnimation Storyboard.TargetName="ImageOpacityMask"
                                                         Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
                                                         To="{StaticResource SecondaryForegroundColor}"
-                                                        Duration="{StaticResource MenuHoverAnimationDuration}" />
+                                                        Duration="{StaticResource MenuHoverAnimationDuration}" />-->
                                     </Storyboard>
                                 </BeginStoryboard>
                             </MultiDataTrigger.ExitActions>
@@ -238,10 +240,10 @@
                                                         To="{StaticResource DefaultRedColor}"
                                                         Duration="{StaticResource MenuHoverAnimationDuration}" />
 
-                                        <ColorAnimation Storyboard.TargetName="ImageOpacityMask"
+                                        <!--<ColorAnimation Storyboard.TargetName="ImageOpacityMask"
                                                         Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
                                                         To="{StaticResource DefaultRedColor}"
-                                                        Duration="{StaticResource MenuHoverAnimationDuration}" />
+                                                        Duration="{StaticResource MenuHoverAnimationDuration}" />-->
                                     </Storyboard>
                                 </BeginStoryboard>
                             </MultiDataTrigger.EnterActions>
@@ -253,10 +255,10 @@
                                                         To="{StaticResource SecondaryForegroundColor}"
                                                         Duration="{StaticResource MenuHoverAnimationDuration}" />
 
-                                        <ColorAnimation Storyboard.TargetName="ImageOpacityMask"
+                                        <!--<ColorAnimation Storyboard.TargetName="ImageOpacityMask"
                                                         Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
                                                         To="{StaticResource SecondaryForegroundColor}"
-                                                        Duration="{StaticResource MenuHoverAnimationDuration}" />
+                                                        Duration="{StaticResource MenuHoverAnimationDuration}" />-->
 
                                     </Storyboard>
                                 </BeginStoryboard>
@@ -292,10 +294,10 @@
                                                         Duration="{StaticResource MenuHoverAnimationDuration}" />
 
 
-                                        <ColorAnimation Storyboard.TargetName="ImageOpacityMask"
+                                        <!--<ColorAnimation Storyboard.TargetName="ImageOpacityMask"
                                                         Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
                                                         To="{StaticResource DefaultRedColor}"
-                                                        Duration="{StaticResource MenuHoverAnimationDuration}" />
+                                                        Duration="{StaticResource MenuHoverAnimationDuration}" />-->
 
                                     </Storyboard>
                                 </BeginStoryboard>
@@ -341,10 +343,10 @@
                                                         To="{StaticResource DefaultRedColor}"
                                                         Duration="{StaticResource MenuHoverAnimationDuration}" />
 
-                                        <ColorAnimation Storyboard.TargetName="ImageOpacityMask"
+                                        <!--<ColorAnimation Storyboard.TargetName="ImageOpacityMask"
                                                         Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
                                                         To="{StaticResource DefaultRedColor}"
-                                                        Duration="{StaticResource MenuHoverAnimationDuration}" />
+                                                        Duration="{StaticResource MenuHoverAnimationDuration}" />-->
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.EnterActions>
@@ -365,10 +367,10 @@
                                                         To="{StaticResource SecondaryForegroundColor}"
                                                         Duration="{StaticResource MenuHoverAnimationDuration}" />
 
-                                        <ColorAnimation Storyboard.TargetName="ImageOpacityMask"
+                                        <!--<ColorAnimation Storyboard.TargetName="ImageOpacityMask"
                                                         Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
                                                         To="{StaticResource SecondaryForegroundColor}"
-                                                        Duration="{StaticResource MenuHoverAnimationDuration}" />
+                                                        Duration="{StaticResource MenuHoverAnimationDuration}" />-->
 
                                     </Storyboard>
                                 </BeginStoryboard>

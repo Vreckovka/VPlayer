@@ -1308,7 +1308,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
         }
 
 
-        if (foundPlaylist != null)
+        if (foundPlaylist != null && playlist.PlaylistItems != null)
         {
           context.Entry(foundPlaylist).State = EntityState.Modified;
           var oldHash = playlist.HashCode;

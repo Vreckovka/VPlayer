@@ -4,6 +4,9 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWPF>true</UseWPF>
     <Platforms>AnyCPU;x86;x64</Platforms>
+    <LangVersion>latest</LangVersion>
+    <DontImportPostSharp>True</DontImportPostSharp>
+<PostSharpTargetFrameworkVersion>4.0</PostSharpTargetFrameworkVersion>
 	</PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CSCore" Version="1.2.1.2" />

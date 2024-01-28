@@ -36,6 +36,8 @@
 
     <Color x:Key="CookieColor">#E6CEA0</Color>
 
+    <Color x:Key="MagentaColor">#fe278b</Color>
+    <Color x:Key="CyanColor">#fe278b</Color>
     <Color x:Key="235_DefaultWhiteColor"
            A="235"
            B="255"
@@ -107,6 +109,7 @@
     <SolidColorBrush x:Key="GreenBrush2" Color="{StaticResource GreenColor2}" />
     <SolidColorBrush x:Key="GreenBrush3" Color="{StaticResource GreenColor3}" />
     <SolidColorBrush x:Key="LightRedBrush" Color="{StaticResource LightRedColor}" />
+    <SolidColorBrush x:Key="MagentaBrush" Color="{StaticResource MagentaColor}" />
 
     <SolidColorBrush x:Key="BackgroudBrush" Color="{StaticResource BackgroudColor}" />
 

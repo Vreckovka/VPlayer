@@ -3,13 +3,14 @@
 		<TargetFramework>netcoreapp3.1</TargetFramework>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<Platforms>AnyCPU;x86;x64</Platforms>
+    <LangVersion>latest</LangVersion>
 	</PropertyGroup>
 	<ItemGroup>
 	  <None Remove="Misc.xaml" />
 	  <None Remove="Other\Misc.xaml" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Google.Apis.Drive.v3" Version="1.49.0.2065" />
+		<PackageReference Include="Google.Apis.Drive.v3" Version="1.49.0.2223" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
 		<PackageReference Include="HtmlAgilityPack.CssSelectors.NetCore" Version="1.2.1" />
 		<PackageReference Include="MetaBrainz.MusicBrainz" Version="5.0.0" />

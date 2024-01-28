@@ -429,9 +429,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
         {
           MakeSingleSelection(Subtitles, x);
           OnSubtitleSelected(x);
-
-
-
         }).DisposeWith(this);
 
       AudioTracks.ItemUpdated
@@ -518,7 +515,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
       if (MediaPlayer.Spu != selectedItem.Model.Id)
       {
         MediaPlayer.SetSpu(selectedItem.Model.Id);
-        lastSPUValue = selectedItem.Model.Id;
 
         if (ActualItem != null)
         {
@@ -530,7 +526,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
       }
 
-      
+      lastSPUValue = selectedItem.Model.Id;
     }
 
     #endregion

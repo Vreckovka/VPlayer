@@ -156,7 +156,13 @@ namespace VVLC.Players
       };
 
 
-      MediaPlayer.EndReached += (sender, e) => { OnEndReached(); };
+      MediaPlayer.EndReached += (sender, e) =>
+      {
+        //VLC is firing end reached lot sooner than it should
+        Thread.Sleep(1500);
+
+        OnEndReached();
+      };
 
       MediaPlayer.Paused += (sender, e) =>
       {
@@ -206,7 +212,7 @@ namespace VVLC.Players
     {
       lock (this)
       {
-        MediaPlayer?.Play(); 
+        MediaPlayer?.Play();
       }
     }
 
@@ -214,7 +220,7 @@ namespace VVLC.Players
     {
       lock (this)
       {
-        MediaPlayer?.Pause(); 
+        MediaPlayer?.Pause();
       }
     }
 
@@ -222,7 +228,7 @@ namespace VVLC.Players
     {
       lock (this)
       {
-        MediaPlayer?.Stop(); 
+        MediaPlayer?.Stop();
       }
     }
 
