@@ -1129,8 +1129,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         if (File.Exists(filePath))
           acutalFile = File.ReadAllBytes(filePath);
 
-        albumViewModel.Model.AlbumFrontCoverFilePath = filePath;
-
+      
         await storageManager.UpdateEntityAsync(albumViewModel.Model);
 
         if (acutalFile != cover)
@@ -1148,6 +1147,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
           i?.Dispose();
         }
       }
+
+      albumViewModel.Model.AlbumFrontCoverFilePath = filePath;
 
       return filePath;
     }

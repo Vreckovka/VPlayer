@@ -189,7 +189,7 @@ namespace VPlayer.Core.ViewModels.Artists
 
         byte[] image = null;
 
-        if (!string.IsNullOrEmpty(albumCoverPath))
+        if (!string.IsNullOrEmpty(albumCoverPath) && File.Exists(albumCoverPath))
         {
           image = File.ReadAllBytes(albumCoverPath);
         }
@@ -198,7 +198,7 @@ namespace VPlayer.Core.ViewModels.Artists
         {
           albumCoverPath = Model.Albums?.FirstOrDefault(x => !string.IsNullOrEmpty(x.AlbumFrontCoverFilePath))?.AlbumFrontCoverFilePath;
 
-          if (!string.IsNullOrEmpty(albumCoverPath))
+          if (!string.IsNullOrEmpty(albumCoverPath) && File.Exists(albumCoverPath))
           {
             image = File.ReadAllBytes(albumCoverPath);
           }
@@ -219,7 +219,7 @@ namespace VPlayer.Core.ViewModels.Artists
 
         albumCoverPath = Model.Albums?.FirstOrDefault(x => !string.IsNullOrEmpty(x.AlbumFrontCoverFilePath))?.AlbumFrontCoverFilePath;
 
-        if (!string.IsNullOrEmpty(albumCoverPath))
+        if (!string.IsNullOrEmpty(albumCoverPath) && File.Exists(albumCoverPath))
         {
           image = File.ReadAllBytes(albumCoverPath);
         } 
