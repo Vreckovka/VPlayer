@@ -1289,6 +1289,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       if (itemViewModel.Model.Id != 0)
       {
         playlistVideoItem.IdReferencedItem = itemViewModel.Model.Id;
+ 
       }
       else
       {
@@ -1347,7 +1348,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
               var tvShowEpisodeNumbers = DataLoader.GetTvShowSeriesNumber(x.Name);
 
               seasonNumber1 = tvShowEpisodeNumbers?.SeasonNumber;
-              episodeNumber1 = tvShowEpisodeNumbers?.SeasonNumber;
+              episodeNumber1 = tvShowEpisodeNumbers?.EpisodeNumber;
             }
 
             if (seasonNumber2 == null)
@@ -1355,41 +1356,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
               var tvShowEpisodeNumbers = DataLoader.GetTvShowSeriesNumber(y.Name);
 
               seasonNumber2 = tvShowEpisodeNumbers?.SeasonNumber;
-              episodeNumber2 = tvShowEpisodeNumbers?.SeasonNumber;
+              episodeNumber2 = tvShowEpisodeNumbers?.EpisodeNumber;
             }
 
-            if (seasonNumber1 == null && seasonNumber2 == null)
-            {
-              if (episodeNumber1 != null && episodeNumber2 == null)
-                return 1;
-              if (episodeNumber2 != null && episodeNumber1 == null)
-                return -1;
 
-              return name;
-            }
-
-            if (episodeNumber1 == null && episodeNumber2 == null)
-            {
-              if (seasonNumber1 != null && seasonNumber2 == null)
-                return 1;
-              if (seasonNumber1 == null)
-                return -1;
-
-              return name;
-            }
-
-            if (seasonNumber1 != null && seasonNumber2 == null)
-            {
-              return 1;
-            }
-
-            if (seasonNumber1 == null)
-            {
-              return -1;
-            }
-
-            var season = seasonNumber1.Value.CompareTo(seasonNumber2.Value);
-            var episode = episodeNumber1.Value.CompareTo(episodeNumber2.Value);
+            var season = seasonNumber1?.CompareTo(seasonNumber2) ?? 0;
+            var episode = episodeNumber1?.CompareTo(episodeNumber2) ?? 0;
 
             return season != 0 ? season : episode != 0 ? episode : name;
           });

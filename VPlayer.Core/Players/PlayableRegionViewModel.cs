@@ -590,14 +590,9 @@ namespace VPlayer.Core.ViewModels
         if (value != isSortDescending)
         {
           isSortDescending = value;
+          UpdatePlaylist();
 
-          PlayList = new RxObservableCollection<TItemViewModel>(PlayList.OrderByDescending(d => PlayList.IndexOf(d)).ToList());
 
-          RequestReloadVirtulizedPlaylist();
-          StorePlaylist(PlayList.Select(x => x).ToList(), editSaved: true);
-
-          actualItemIndex = PlayList.IndexOf(ActualItem);
-          actualItemSubject.OnNext(actualItemIndex);
           RaisePropertyChanged();
         }
       }
@@ -713,7 +708,7 @@ namespace VPlayer.Core.ViewModels
 
     public void OnSavePlaylist()
     {
-      UpdateOrAddActualSavedPlaylist();
+      UpdatePlaylist();
     }
 
     #endregion
@@ -891,7 +886,6 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
-
 
     #region InitializeAsync
 
@@ -1450,7 +1444,7 @@ namespace VPlayer.Core.ViewModels
 
       if (actualItemIndex < 0)
       {
-        actualItemIndex = 0;
+        actualItemIndex = PlayList.Count;
       }
 
       if (IsShuffle)
@@ -2199,6 +2193,18 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
+
+    private void UpdatePlaylist()
+    {
+     
+      RequestReloadVirtulizedPlaylist();
+      StorePlaylist(PlayList.Select(x => x).ToList(), editSaved: true);
+
+      actualItemIndex = PlayList.IndexOf(ActualItem);
+      actualItemSubject.OnNext(actualItemIndex);
+
+      RaisePropertyChanged(nameof(ActualItemIndex));
+    }
 
     private VDispatcherTimer dispatcherTimer = new VDispatcherTimer(500);
 

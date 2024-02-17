@@ -1317,13 +1317,18 @@ namespace VPlayer.WindowsPlayer.ViewModels
                 if (downloadingArtist == null)
                 {
                   downloadingArtist = await GetArtist(artistName, cancellationToken);
-                  originalDownlaodedArtistName = artistName;
-                  var similiarity = StringHelper.GetNormalizedName(artistName).Similarity(StringHelper.GetNormalizedName(downloadingArtist.Name));
 
-                  if (similiarity < 0.8)
+                  if(downloadingArtist != null)
                   {
-                    downloadingArtist = null;
+                    originalDownlaodedArtistName = artistName;
+                    var similiarity = StringHelper.GetNormalizedName(artistName).Similarity(StringHelper.GetNormalizedName(downloadingArtist.Name));
+
+                    if (similiarity < 0.8)
+                    {
+                      downloadingArtist = null;
+                    }
                   }
+                 
 
                   if (downloadingArtist != null && !string.IsNullOrEmpty(downloadingArtist.NormalizedName))
                   {
