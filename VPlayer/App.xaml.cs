@@ -62,6 +62,10 @@ namespace VPlayer
       Kernel.Rebind<IWindowManager>().To<VPlayerWindowManager>();
 
       Kernel.BindToSelfInSingletonScope<KeyListener>();
+
+#if DEBUG
+      IsConsoleVisible = true;
+#endif
     }
 
     #endregion

@@ -541,7 +541,11 @@ namespace VPlayer.Core.Players
             {
               await UpdateActualSavedPlaylistPlaylist();
               await storageManager.UpdateEntityAsync(ActualItem.Model);
-              ActualItem.RaiseNotifyPropertyChanged(nameof(ViewModel<TModel>.Model));
+
+              VSynchronizationContext.PostOnUIThread(() =>
+              {
+                ActualItem.RaiseNotifyPropertyChanged(nameof(ViewModel<TModel>.Model));
+              });
             }
           }
         }

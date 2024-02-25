@@ -1889,7 +1889,7 @@ namespace VPlayer.Core.ViewModels
             {
               try
               {
-                VSynchronizationContext.InvokeOnDispatcher(() =>
+                VSynchronizationContext.PostOnUIThread(() =>
                 {
                   if (VFocusManager.FocusedItems.Count(x => x.Name == "NameTextBox") == 0)
                   {
