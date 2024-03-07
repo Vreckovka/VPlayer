@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Emgu.CV.DepthAI;
 using FFMpegCore;
 using Logger;
 using Microsoft.EntityFrameworkCore;
@@ -416,8 +417,6 @@ namespace VPlayer.Core.Players
       MediaPlayer.TimeChanged += OnVlcTimeChanged;
       MediaPlayer.EndReached += (sender, e) => { OnEndReached(); };
       MediaPlayer.Buffering += MediaPlayer_Buffering;
-     
-       
     }
 
     #endregion
@@ -491,49 +490,54 @@ namespace VPlayer.Core.Players
 
     private int lastTotalTimeSaved = 0;
 
-    private async void OnVlcTimeChanged(object sender, PlayerTimeChangedArgs eventArgs)
+    private void UpdateVlcTime(PlayerTimeChangedArgs eventArgs)
     {
-      if (ActualItem != null)
+      if (ActualItem == null)
       {
-        if (ActualItem.Duration <= 0)
+        return;
+      }
+
+      if (ActualItem.Duration <= 0)
+      {
+        ChangeDuration(MediaPlayer.Media.Duration);
+      }
+
+      var position = MediaPlayer.Position;
+
+      if (!double.IsNaN(position) && !double.IsInfinity(position))
+      {
+        ActualItem.ActualPosition = position;
+        ActualSavedPlaylist.LastItemElapsedTime = position;
+
+        if (ActualItem is SongInPlayListViewModel song)
         {
-          ChangeDuration(MediaPlayer.Media.Duration);
+          song.UpdateSyncedLyrics();
         }
 
-        var position = MediaPlayer.Position;
+        var deltaTimeChanged = eventArgs.Time - lastTimeChangedMs;
 
-        if (!double.IsNaN(position) && !double.IsInfinity(position))
+        if (deltaTimeChanged < 0 || deltaTimeChanged > 10000)
         {
-          ActualItem.ActualPosition = position;
-          ActualSavedPlaylist.LastItemElapsedTime = position;
+          deltaTimeChanged = 0;
+        }
 
-          if (ActualItem is SongInPlayListViewModel song)
+        lastTimeChangedMs = eventArgs.Time;
+
+        var totalPlayedTime = TimeSpan.FromMilliseconds(deltaTimeChanged);
+
+        //#if !DEBUG
+        ActualItem.Model.TimePlayed += totalPlayedTime;
+        PlaylistTotalTimePlayed += totalPlayedTime;
+        //#endif
+
+        int totalSec = (int)PlaylistTotalTimePlayed.TotalSeconds;
+
+        if (totalSec - lastTotalTimeSaved > 10 && totalSec > lastTotalTimeSaved)
+        {
+          lastTotalTimeSaved = totalSec;
+
+          Task.Run(async () =>
           {
-            song.UpdateSyncedLyrics();
-          }
-
-          var deltaTimeChanged = eventArgs.Time - lastTimeChangedMs;
-
-          if (deltaTimeChanged < 0 || deltaTimeChanged > 10000)
-          {
-            deltaTimeChanged = 0;
-          }
-
-          lastTimeChangedMs = eventArgs.Time;
-
-          var totalPlayedTime = TimeSpan.FromMilliseconds(deltaTimeChanged);
-
-          //#if !DEBUG
-          ActualItem.Model.TimePlayed += totalPlayedTime;
-          PlaylistTotalTimePlayed += totalPlayedTime;
-          //#endif
-
-          int totalSec = (int)PlaylistTotalTimePlayed.TotalSeconds;
-
-          if (totalSec - lastTotalTimeSaved > 10 && totalSec > lastTotalTimeSaved)
-          {
-            lastTotalTimeSaved = totalSec;
-
             //Data race pri CLEAR
             await Task.Delay(500);
 
@@ -547,9 +551,14 @@ namespace VPlayer.Core.Players
                 ActualItem.RaiseNotifyPropertyChanged(nameof(ViewModel<TModel>.Model));
               });
             }
-          }
+          });
         }
       }
+    }
+
+    private void OnVlcTimeChanged(object sender, PlayerTimeChangedArgs eventArgs)
+    {
+      UpdateVlcTime(eventArgs);
     }
 
     #endregion
@@ -558,43 +567,57 @@ namespace VPlayer.Core.Players
 
     #region SetMediaPosition
 
-    private object positionBatton = new object();
-    private Subject<bool> positionChangedSubject = new Subject<bool>();
-
     public void SetMediaPosition(float position)
     {
-      lock (positionBatton)
+      MediaPlayer.TimeChanged -= OnVlcTimeChanged;
+
+      if (ActualItem == null)
       {
-        MediaPlayer.TimeChanged -= OnVlcTimeChanged;
-
-        positionChangedSubject.OnNext(true);
-
-        if (ActualItem == null)
-        {
-          return;
-        }
-
-        if (position < 0)
-        {
-          position = 0;
-        }
-
-        MediaPlayer.Position = position;
-        ActualItem.ActualPosition = position;
-
-        lastTimeChangedMs = (long)(ActualItem.ActualPosition * (double)ActualItem.Duration) * 1000;
-        positionChangedSubject.OnNext(false);
-
-        if (ActualItem is SongInPlayListViewModel song)
-        {
-          song.UpdateSyncedLyrics();
-        }
-
-        MediaPlayer.TimeChanged += OnVlcTimeChanged;
+        return;
       }
+
+      if (position < 0)
+      {
+        position = 0;
+      }
+
+      MediaPlayer.Position = position;
+      ActualItem.ActualPosition = position;
+
+      lastTimeChangedMs = (long)(ActualItem.ActualPosition * (double)ActualItem.Duration) * 1000;
+
+
+      if (ActualItem is SongInPlayListViewModel song)
+      {
+        song.UpdateSyncedLyrics();
+      }
+
+      if (!Keyboard.IsKeyDown(Key.Right) && !Keyboard.IsKeyDown(Key.Left))
+        MediaPlayer.TimeChanged += OnVlcTimeChanged;
+      else if (Keyboard.IsKeyDown(Key.Right) || Keyboard.IsKeyDown(Key.Left))
+        HandleKeyUp();
     }
 
     #endregion
+
+    KeyEventHandler keyEventHandler;
+    private void HandleKeyUp()
+    {
+      if(keyEventHandler == null)
+      {
+        keyEventHandler = new KeyEventHandler((x, y) =>
+        {
+          if(keyEventHandler != null && (y.Key == Key.Right || y.Key == Key.Left))
+          {
+            Keyboard.RemoveKeyDownHandler(Application.Current.MainWindow, keyEventHandler);
+            keyEventHandler = null;
+            MediaPlayer.TimeChanged += OnVlcTimeChanged;
+          }
+        });
+
+        Keyboard.AddKeyUpHandler(Application.Current.MainWindow, keyEventHandler);
+      }
+    }
 
     #region SeekForward
 
