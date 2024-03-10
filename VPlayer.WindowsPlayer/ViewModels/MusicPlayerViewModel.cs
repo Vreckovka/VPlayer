@@ -1522,8 +1522,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
               if (song != null && songInPlayListViewModel.SongModel.Id != song.Id)
               {
+                var source = songInPlayListViewModel.SongModel.Source;
+
                 songInPlayListViewModel.SongModel = song;
                 songInPlayListViewModel.Model = song.ItemModel;
+
+                song.ItemModel.Source = source;
               }
             }
 

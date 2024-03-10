@@ -908,9 +908,10 @@ namespace VPlayer.WindowsPlayer.ViewModels
             }
           }
 
-          var actualAudioTrack = AudioTracks.Single(x => MediaPlayer.AudioTrack == x.Model.Id);
+          var actualAudioTrack = AudioTracks.SingleOrDefault(x => MediaPlayer.AudioTrack == x.Model.Id);
 
-          actualAudioTrack.IsSelected = true;
+          if (actualAudioTrack != null)
+            actualAudioTrack.IsSelected = true;
         }
 
         await VSynchronizationContext.InvokeOnDispatcherAsync(async () => { await ReloadSubtitles(); });
@@ -1009,8 +1010,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
           {
             actualSub = Subtitles.SingleOrDefault(x => lastSPUValue.Value == x.Model.Id);
           }
-         
-          if(actualSub != null)
+
+          if (actualSub != null)
           {
             actualSub.IsSelected = true;
           }
@@ -1289,7 +1290,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       if (itemViewModel.Model.Id != 0)
       {
         playlistVideoItem.IdReferencedItem = itemViewModel.Model.Id;
- 
+
       }
       else
       {
