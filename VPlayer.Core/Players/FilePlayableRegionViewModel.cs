@@ -887,6 +887,8 @@ namespace VPlayer.Core.Players
                                        && !x.Model.Source.Contains("https://")
                                        && !x.Model.Source.Contains("http://")).ToList();
 
+      //Cloud items has FileInfoEntity Indentificator as ID in Pcloud.
+      //Wihtout that it is not possilbe to download public link
       var cloudItems = list
         .Where(x => x.Model.FileInfoEntity != null)
         .Where(x => long.TryParse(x.Model.FileInfoEntity.Indentificator, out var id)).ToList();

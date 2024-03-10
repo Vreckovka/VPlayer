@@ -1522,12 +1522,16 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
               if (song != null && songInPlayListViewModel.SongModel.Id != song.Id)
               {
-                var source = songInPlayListViewModel.SongModel.Source;
+                //This was replacing song model with old one in the db.
+                //as consequence Source was not updated and FileInfoEntity was wrong
 
-                songInPlayListViewModel.SongModel = song;
-                songInPlayListViewModel.Model = song.ItemModel;
 
-                song.ItemModel.Source = source;
+                //var source = songInPlayListViewModel.SongModel.Source;
+
+                //songInPlayListViewModel.SongModel = song;
+                //songInPlayListViewModel.Model = song.ItemModel;
+
+                // song.ItemModel.Source = source;
               }
             }
 
