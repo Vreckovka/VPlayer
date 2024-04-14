@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -292,7 +293,7 @@ namespace VPlayer.UPnP.ViewModels.Player
 
     private string lastUri;
     private bool wasNewMediaRequest;
-    public Task SetNewMedia(Uri source)
+    public Task SetNewMedia(Uri source, CancellationToken cancellationToken)
     {
       return Task.Run(async () =>
       {
@@ -354,7 +355,7 @@ namespace VPlayer.UPnP.ViewModels.Player
         {
           wasNewMediaRequest = false;
         }
-      });
+      }, cancellationToken);
     }
 
     #endregion

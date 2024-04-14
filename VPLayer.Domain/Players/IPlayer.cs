@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace VPlayer.WindowsPlayer.Players
@@ -28,7 +29,7 @@ namespace VPlayer.WindowsPlayer.Players
     void Pause();
     void Stop();
     void ToggleMute();
-    public Task SetNewMedia(Uri source);
+    public Task SetNewMedia(Uri source, CancellationToken cancelationToken);
 
    
   }

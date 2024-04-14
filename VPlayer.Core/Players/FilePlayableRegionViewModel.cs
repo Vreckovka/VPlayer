@@ -592,6 +592,7 @@ namespace VPlayer.Core.Players
         song.UpdateSyncedLyrics();
       }
 
+
       if (!Keyboard.IsKeyDown(Key.Right) && !Keyboard.IsKeyDown(Key.Left))
         MediaPlayer.TimeChanged += OnVlcTimeChanged;
       else if (Keyboard.IsKeyDown(Key.Right) || Keyboard.IsKeyDown(Key.Left))

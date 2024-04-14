@@ -234,9 +234,9 @@ namespace VVLC.Players
 
     #region SetNewMedia
 
-    public Task SetNewMedia(Uri source)
+    public Task SetNewMedia(Uri source, CancellationToken cancellationToken)
     {
-      return Task.Run(async () =>
+      return Task.Run(() =>
       {
         if (source != null)
         {
@@ -250,7 +250,7 @@ namespace VVLC.Players
         {
           MediaPlayer.Media = null;
         }
-      });
+      }, cancellationToken);
     }
 
     #endregion

@@ -850,6 +850,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
         if (entity.Id > 0)
           foundEntity = GetRepository<TEntity>(context).SingleOrDefault(x => x.Id == entity.Id);
 
+
         if (foundEntity == null)
         {
           context.Add(entity);

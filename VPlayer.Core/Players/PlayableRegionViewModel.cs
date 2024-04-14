@@ -1014,7 +1014,7 @@ namespace VPlayer.Core.ViewModels
       ActualItem?.Dispose();
       ActualItem = null;
       MediaPlayer.Stop();
-      await MediaPlayer.SetNewMedia(null);
+      await SetMedia(null);
       MediaPlayer.Play();
       actualItemIndex = 0;
       PlaylistTotalTimePlayed = new TimeSpan(0);
@@ -1115,6 +1115,8 @@ namespace VPlayer.Core.ViewModels
 
     public virtual async void SetItemAndPlay(int? itemIndex = null, bool forcePlay = false, bool onlyItemSet = false)
     {
+
+
       if (IsShuffle && itemIndex == null)
       {
         var result = PlayList.Where(p => shuffleList.All(p2 => p2 != p)).ToList();
@@ -1153,10 +1155,9 @@ namespace VPlayer.Core.ViewModels
       {
         if (!IsRepeate)
         {
-          VSynchronizationContext.InvokeOnDispatcher(() =>
-          {
-            IsPlayFnished = true;
-          });
+
+          IsPlayFnished = true;
+
 
           Pause();
           return;
@@ -1168,10 +1169,9 @@ namespace VPlayer.Core.ViewModels
         }
       }
 
-      VSynchronizationContext.InvokeOnDispatcher(() =>
-      {
-        SetActualItem(actualItemIndex);
-      });
+
+      SetActualItem(actualItemIndex);
+
 
       if (ActualItem == null)
         return;
@@ -1180,27 +1180,23 @@ namespace VPlayer.Core.ViewModels
 
       await SetMedia(ActualItem.Model);
 
-      VSynchronizationContext.InvokeOnDispatcher(() =>
-      {
-        ActualItem.IsPlaying = true;
-      });
+
+      ActualItem.IsPlaying = true;
+
 
       if (oldPlaying || forcePlay)
       {
         if (!onlyItemSet)
-          Play();
+          await Play();
       }
       else if (!IsPlaying && itemIndex != null)
       {
         if (!onlyItemSet)
-          Play();
+          await Play();
       }
       else if (ActualItem != null)
       {
-        VSynchronizationContext.InvokeOnDispatcher(() =>
-        {
-          ActualItem.IsPaused = true;
-        });
+        ActualItem.IsPaused = true;
       }
     }
 
@@ -1268,40 +1264,49 @@ namespace VPlayer.Core.ViewModels
 
     #region SetMedia
 
-    protected virtual Task SetMedia(TModel model)
+
+    CancellationTokenSource mediaToken;
+
+    protected virtual async Task SetMedia(TModel model)
     {
-      return Task.Run(async () =>
+
+      mediaToken?.Cancel();
+      mediaToken = new CancellationTokenSource();
+
+
+
+      await MediaPlayer.SetNewMedia(null, mediaToken.Token);
+
+      if (model == null)
+        return;
+
+      await BeforeSetMedia(model);
+
+      if (model.Source != null)
       {
-        await MediaPlayer.SetNewMedia(null);
-
-        await BeforeSetMedia(model);
-
-        if (model.Source != null)
+        try
         {
-          try
-          {
-            var fileUri = new Uri(model.Source);
+          var fileUri = new Uri(model.Source);
 
-            await MediaPlayer.SetNewMedia(fileUri);
+          await MediaPlayer.SetNewMedia(fileUri, mediaToken.Token);
 
-            OnNewItemPlay(model);
-          }
-          catch (UriFormatException ex)
-          {
-            VSynchronizationContext.PostOnUIThread(() =>
-            {
-              statusManager.ShowFailedMessage($"Item source was not in correct format.\nURI: \"{model.Source}\"", true);
-            });
-          }
+          OnNewItemPlay(model);
         }
-        else
+        catch (UriFormatException ex)
         {
           VSynchronizationContext.PostOnUIThread(() =>
           {
-            statusManager.ShowFailedMessage($"Item source is NULL", true);
+            statusManager.ShowFailedMessage($"Item source was not in correct format.\nURI: \"{model.Source}\"", true);
           });
         }
-      });
+      }
+      else
+      {
+        VSynchronizationContext.PostOnUIThread(() =>
+        {
+          statusManager.ShowFailedMessage($"Item source is NULL", true);
+        });
+      }
     }
 
     #endregion
@@ -1529,7 +1534,7 @@ namespace VPlayer.Core.ViewModels
     {
       if (data.EventAction != EventAction.Add)
       {
-        await MediaPlayer.SetNewMedia(null);
+        await SetMedia(null);
       }
     }
 
@@ -2012,7 +2017,7 @@ namespace VPlayer.Core.ViewModels
                 if (ActualItem == item)
                 {
                   MediaPlayer.Stop();
-                  MediaPlayer.SetNewMedia(null);
+                  await SetMedia(null);
                 }
 
                 var itemInPlayList = PlayList.SingleOrDefault(x => x.Model.Id == item.Model.Id);
@@ -2196,7 +2201,7 @@ namespace VPlayer.Core.ViewModels
 
     private void UpdatePlaylist()
     {
-     
+
       RequestReloadVirtulizedPlaylist();
       StorePlaylist(PlayList.Select(x => x).ToList(), editSaved: true);
 

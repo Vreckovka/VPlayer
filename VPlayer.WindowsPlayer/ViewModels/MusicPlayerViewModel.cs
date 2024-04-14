@@ -1525,6 +1525,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
                 //This was replacing song model with old one in the db.
                 //as consequence Source was not updated and FileInfoEntity was wrong
 
+                //Consider migrate timeplayed to count as one song not 2 different files
+                //songInPlayListViewModel.Model.TimePlayed =
+
+
+
 
                 //var source = songInPlayListViewModel.SongModel.Source;
 
