@@ -29,7 +29,7 @@ namespace VPlayer.WindowsPlayer.Players
     void Pause();
     void Stop();
     void ToggleMute();
-    public Task SetNewMedia(Uri source, CancellationToken cancelationToken);
+    public void SetNewMedia(Uri source, CancellationToken cancelationToken);
 
    
   }

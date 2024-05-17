@@ -1,51 +1,21 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Windows.Input;
 using Prism.Events;
-using VCore.Standard;
-using VCore.WPF.Misc;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
-using VPlayer.AudioStorage.Scrappers.CSFD.Domain;
 using VPlayer.Core.Events;
 using VPlayer.Core.ViewModels.SoundItems;
 
 namespace VPlayer.Core.ViewModels.TvShows
 {
-  public class CSFDItemViewModel : ViewModel<CSFDItem>
+
+  public class FillerData
   {
-    public CSFDItemViewModel(CSFDItem model) : base(model)
-    {
-    }
-
-    #region OpenCsfd
-
-    private ActionCommand openCsfd;
-    public ICommand OpenCsfd
-    {
-      get
-      {
-        return openCsfd ??= new ActionCommand(OnOpenCsfd);
-      }
-    }
-
-    private void OnOpenCsfd()
-    {
-      if (!string.IsNullOrEmpty(Model.Url))
-      {
-        Process.Start(new ProcessStartInfo()
-        {
-          FileName = Model.Url,
-          UseShellExecute = true,
-          Verb = "open"
-        });
-      }
-    }
-
-    #endregion
+    public int EpisodeNumber { get; set; }
+    public string StartTime { get; set; }
+    public string Name { get; set; }
   }
 
   public class VideoItemInPlaylistViewModel : FileItemInPlayList<VideoItem>
@@ -59,6 +29,8 @@ namespace VPlayer.Core.ViewModels.TvShows
     {
       eventAggregator.GetEvent<PlaySongsFromPlayListEvent<VideoItemInPlaylistViewModel>>().Publish(this);
     }
+
+    public FillerData FillerData { get; set; }
 
     #region Description
 

@@ -293,9 +293,9 @@ namespace VPlayer.UPnP.ViewModels.Player
 
     private string lastUri;
     private bool wasNewMediaRequest;
-    public Task SetNewMedia(Uri source, CancellationToken cancellationToken)
+    public void SetNewMedia(Uri source, CancellationToken cancellationToken)
     {
-      return Task.Run(async () =>
+      Task.Run(async () =>
       {
         try
         {

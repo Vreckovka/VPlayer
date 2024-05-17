@@ -1272,7 +1272,7 @@ namespace VPlayer.Core.Players
         {
           var validItemsToUpdate = GetValidItemsForCloud(validItems).ToList();
 
-          var itemsAfter = validItemsToUpdate.Skip(actualItemIndex);
+          var itemsAfter = validItemsToUpdate.Skip(actualItemIndex - 1);
           var itemsBefore = validItemsToUpdate.Take(actualItemIndex);
 
           await DownloadUrlLinks(itemsAfter.Select(x => x.Model), cancellationToken);

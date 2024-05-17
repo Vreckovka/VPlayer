@@ -52,6 +52,9 @@ using VPlayer.WindowsPlayer.Views.WindowsPlayer;
 using VVLC.Players;
 using Application = System.Windows.Application;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
+using System.Net;
+using HtmlAgilityPack;
+using System.Globalization;
 
 namespace VPlayer.WindowsPlayer.ViewModels
 {
@@ -661,6 +664,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         DetailViewModel.DisablePopup = ActualItem.IsStream;
       }
 
+
     }
 
     #endregion
@@ -938,7 +942,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         MediaPlayer.ESAdded -= MediaPlayer_ESAdded;
 
-        ActualItem.Model.SubtitleTrack = MediaPlayer.SpuCount;
+        ActualItem.Model.SubtitleTrack = MediaPlayer.SpuDescription.Max(x => x.Id);
 
         Task.Run(async () =>
         {
@@ -951,6 +955,21 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
 
     #endregion
+
+    protected override void OnPlayPlaylist(PlayItemsEventData<VideoItemInPlaylistViewModel> data)
+    {
+      FillerData.Clear();
+      base.OnPlayPlaylist(data);
+
+      lastSPUValue = PlayList.Take(actualItemIndex + 1).LastOrDefault(x => x.Model.SubtitleTrack != null)?.Model.SubtitleTrack;
+
+      //One piece
+      if (ActualSavedPlaylist.Id == 1301)
+      {
+        GetFillerList();
+      }
+
+    }
 
     #region ReloadSubtitles
 
@@ -969,9 +988,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
             Subtitles.Add(new SubtitleViewModel(spu));
           }
 
-          if (ActualItem?.Model.SubtitleTrack != null && MediaPlayer.Spu != ActualItem.Model.SubtitleTrack.Value)
+          if (ActualItem?.Model.SubtitleTrack != null &&
+          Subtitles.SingleOrDefault(x => x.Model.Id == ActualItem?.Model.SubtitleTrack) != null)
           {
             MediaPlayer.SetSpu(ActualItem.Model.SubtitleTrack.Value);
+            lastSPUValue = ActualItem.Model.SubtitleTrack.Value;
           }
           else if (Subtitles.Count >= 2 && MediaPlayer.Spu == -1)
           {
@@ -1174,7 +1195,37 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    public override void PlayNext()
+    {
+      base.PlayNext();
 
+      if (!FillerData.Any())
+        return;
+
+      var tvShowEpisodeNumbers = DataLoader.GetTvShowSeriesNumber(ActualItem.Name);
+
+      if (tvShowEpisodeNumbers.EpisodeNumber != null)
+      {
+        var data = FillerData.FirstOrDefault(x => x.EpisodeNumber == tvShowEpisodeNumbers.EpisodeNumber);
+
+        if (data != null)
+        {
+          var split = data.StartTime.Split(":");
+          var miliseconds = new TimeSpan(0, int.Parse(split[0]), int.Parse(split[1]));
+
+          if(MediaPlayer.Length == 0)
+          {
+            MediaPlayer.Media.ParsedChanged += (sender, args) => { MediaPlayer.Position = (float)miliseconds.TotalMilliseconds / MediaPlayer.Length; };
+          }
+          else
+          {
+            var startPosition = miliseconds.TotalMilliseconds / MediaPlayer.Length;
+            MediaPlayer.Position = (float)startPosition;
+          }
+         
+        }
+      }
+    }
 
     protected override IEnumerable<VideoItemInPlaylistViewModel> GetValidItemsForCloud(IEnumerable<VideoItemInPlaylistViewModel> validItems)
     {
@@ -1370,6 +1421,31 @@ namespace VPlayer.WindowsPlayer.ViewModels
           PlayList.Sort(comp);
           break;
       }
+    }
+
+   
+
+    private List<FillerData> FillerData = new List<FillerData>();
+    private void GetFillerList()
+    {
+      var html = new WebClient().DownloadString("https://www.animefillerguide.com/2019/06/one-piece-filler-list.html");
+
+      var document = new HtmlDocument();
+      document.LoadHtml(html);
+
+      var episodes = document.DocumentNode.SelectNodes("/html/body/div[1]/div[2]/div[1]/main/div[1]/div/div[2]/div/div/article/div[2]/ul/li");
+
+      FillerData = episodes.Where(x => x.ChildNodes.Count > 1).Select(x =>
+      {
+        var split = x.ChildNodes[0].InnerText.Split(".");
+
+        return new FillerData()
+        {
+          EpisodeNumber = int.Parse(split[0].TrimStart('0')),
+          Name = x.ChildNodes[1].InnerText.Trim(),
+          StartTime = split[1].Replace("(", null).Replace(")", null)
+        };
+      }).ToList();
     }
 
     #endregion

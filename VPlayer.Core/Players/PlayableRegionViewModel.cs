@@ -1275,7 +1275,7 @@ namespace VPlayer.Core.ViewModels
 
 
 
-      await MediaPlayer.SetNewMedia(null, mediaToken.Token);
+      MediaPlayer.SetNewMedia(null, mediaToken.Token);
 
       if (model == null)
         return;
@@ -1288,7 +1288,7 @@ namespace VPlayer.Core.ViewModels
         {
           var fileUri = new Uri(model.Source);
 
-          await MediaPlayer.SetNewMedia(fileUri, mediaToken.Token);
+          MediaPlayer.SetNewMedia(fileUri, mediaToken.Token);
 
           OnNewItemPlay(model);
         }
@@ -1386,10 +1386,15 @@ namespace VPlayer.Core.ViewModels
 
 
       var playlistItems = ActualSavedPlaylist.PlaylistItems
-        .DistinctBy(x => x.ReferencedItem.Source)
-        .OrderBy(x => x.OrderInPlaylist)
-        .ToList();
+        .Where(x => x.ReferencedItem.Source != null)
+        .DistinctBy(x => x.ReferencedItem.Source).ToList();
 
+
+      playlistItems.AddRange(ActualSavedPlaylist.PlaylistItems
+        .Where(x => x.ReferencedItem.Source == null));
+
+      playlistItems = playlistItems.OrderBy(x => x.OrderInPlaylist)
+        .ToList();
 
       var savePlaylist = playlistItems.Count != ActualSavedPlaylist.ItemCount;
 
@@ -1693,8 +1698,24 @@ namespace VPlayer.Core.ViewModels
           .Include(x => x.PlaylistItems)
           .ThenInclude(x => x.ReferencedItem)
           .OrderByDescending(x => x.IsUserCreated)
-          .FirstOrDefault(x => x.HashCode == hashCode
-                               && x.ItemCount == entityPlayList.ItemCount);
+          .FirstOrDefault(x => x.HashCode == hashCode);
+
+        if (storedPlaylist != null && storedPlaylist.ItemCount != entityPlayList.ItemCount)
+        {
+          var songIds1 = storedPlaylist.PlaylistItems.Select(x => x.Id).ToList();
+
+          var hashCode1 = songIds1.GetSequenceHashCode();
+
+          storedPlaylist.HashCode = hashCode1;
+
+          storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel, TModel>(storedPlaylist,out var ns);
+          
+          if(storedPlaylist.HashCode != hashCode)
+          {
+            storedPlaylist = null;
+          }
+        }
+
 
         if (storedPlaylist == null)
         {
@@ -1800,6 +1821,7 @@ namespace VPlayer.Core.ViewModels
         }
         else
         {
+         
           VSynchronizationContext.InvokeOnDispatcher(() =>
           {
             ActualSavedPlaylist = storedPlaylist;
@@ -2199,11 +2221,22 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    private void UpdatePlaylist()
+    private async void UpdatePlaylist()
     {
+      var songIds = PlayList.Where(x => x.Model != null).Select(x => x.Model.Id).ToList();
 
-      RequestReloadVirtulizedPlaylist();
-      StorePlaylist(PlayList.Select(x => x).ToList(), editSaved: true);
+      var hashCode = songIds.GetSequenceHashCode();
+
+      if(hashCode != ActualSavedPlaylist.HashCode)
+      {
+        RequestReloadVirtulizedPlaylist();
+        await StorePlaylist(PlayList.Select(x => x).ToList(), editSaved: true);
+      }
+      else
+      {
+        await UpdateActualSavedPlaylistPlaylist();
+      }
+
 
       actualItemIndex = PlayList.IndexOf(ActualItem);
       actualItemSubject.OnNext(actualItemIndex);

@@ -234,23 +234,20 @@ namespace VVLC.Players
 
     #region SetNewMedia
 
-    public Task SetNewMedia(Uri source, CancellationToken cancellationToken)
+    public void SetNewMedia(Uri source, CancellationToken cancellationToken)
     {
-      return Task.Run(() =>
+      if (source != null)
       {
-        if (source != null)
-        {
-          var media = new Media(libVLC, source);
+        var media = new Media(libVLC, source);
 
-          Media = new VLCMedia(media);
+        Media = new VLCMedia(media);
 
-          MediaPlayer.Media = media;
-        }
-        else
-        {
-          MediaPlayer.Media = null;
-        }
-      }, cancellationToken);
+        MediaPlayer.Media = media;
+      }
+      else
+      {
+        MediaPlayer.Media = null;
+      }
     }
 
     #endregion
