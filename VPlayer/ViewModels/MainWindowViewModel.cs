@@ -161,7 +161,6 @@ namespace VPlayer.ViewModels
 
     #region Properties
 
-    public NavigationViewModel NavigationViewModel { get; set; } = new NavigationViewModel();
     public override string Title => "VPlayer";
 
     #region IsFullScreenContentVisible

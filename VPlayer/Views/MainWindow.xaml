@@ -8,7 +8,7 @@
         xmlns:prism="http://prismlibrary.com/"
         xmlns:regions1="clr-namespace:VPlayer.Core.Modularity.Regions;assembly=VPLayer.Domain"
         Title="{Binding Title}"
-        Width="1488"
+        Width="1280"
         Height="837"
         MinWidth="560"
         MinHeight="400"

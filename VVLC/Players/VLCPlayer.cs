@@ -150,6 +150,21 @@ namespace VVLC.Players
         return;
       }
 
+      MediaPlayer.NothingSpecial += (s, e) =>
+      {
+        OnEncounteredError();
+      };
+
+      MediaPlayer.Corked += (s, e) =>
+      {
+        OnEncounteredError();
+      };
+
+      MediaPlayer.Uncorked += (s, e) =>
+      {
+        OnEncounteredError();
+      };
+
       MediaPlayer.EncounteredError += (sender, e) =>
       {
         OnEncounteredError();

@@ -29,7 +29,7 @@ using VPlayer.WindowsPlayer.Windows.TvShow;
 
 namespace VPlayer.WindowsPlayer.ViewModels
 {
-  public class WindowsViewModel : RegionViewModel<WindowsView>, INavigationItem
+  public class WindowsViewModel : RegionViewModel<WindowsView>
   {
     #region Fields
 
