@@ -29,7 +29,17 @@ namespace VVLC.Providers
 
     public LibVLC GetLibVLC()
     {
-      return new LibVLC("--freetype-background-opacity=150", "--freetype-background-color=0", "--freetype-rel-fontsize=22");
+      bool enableLogs = false;
+#if DEBUG
+      enableLogs = true;
+#endif
+      return new LibVLC(
+       // enableLogs,
+        "--freetype-background-opacity=150", 
+        "--freetype-background-color=0",
+        "--freetype-rel-fontsize=22"
+        //"--verbose=2"
+        );
     }
 
     #endregion

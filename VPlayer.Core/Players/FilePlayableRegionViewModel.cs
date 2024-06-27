@@ -43,6 +43,7 @@ using VPLayer.Domain;
 using VPlayer.WindowsPlayer.Players;
 using VVLC.Players;
 using FileInfo = System.IO.FileInfo;
+using System.Reactive.Disposables;
 
 namespace VPlayer.Core.Players
 {
@@ -604,11 +605,11 @@ namespace VPlayer.Core.Players
     KeyEventHandler keyEventHandler;
     private void HandleKeyUp()
     {
-      if(keyEventHandler == null)
+      if (keyEventHandler == null)
       {
         keyEventHandler = new KeyEventHandler((x, y) =>
         {
-          if(keyEventHandler != null && (y.Key == Key.Right || y.Key == Key.Left))
+          if (keyEventHandler != null && (y.Key == Key.Right || y.Key == Key.Left))
           {
             Keyboard.RemoveKeyDownHandler(Application.Current.MainWindow, keyEventHandler);
             keyEventHandler = null;
@@ -1126,14 +1127,30 @@ namespace VPlayer.Core.Players
 
     #region BeforeSetMedia
 
+    SerialDisposable serialDisposable = new SerialDisposable();
     protected override async Task BeforeSetMedia(TModel model)
     {
+      serialDisposable.Disposable?.Dispose();
+
       await base.BeforeSetMedia(model);
 
       await DownloadUrlLink(model);
+
+      serialDisposable.Disposable = Observable.Interval(TimeSpan.FromMinutes(1)).Subscribe(x =>
+      {
+        RefreshLink(model);
+      });
     }
 
     #endregion
+
+    private async void RefreshLink(TModel fileItem)
+    {
+      if (long.TryParse(fileItem.FileInfoEntity.Indentificator, out var id))
+      {
+        await SetFileLink(fileItem);
+      }
+    }
 
     #region DownloadUrlLinks
 
@@ -1208,26 +1225,45 @@ namespace VPlayer.Core.Players
 
     #region DownloadUrlLink
 
-    private async Task DownloadUrlLink(TModel soundItem)
+    private Task DownloadUrlLink(TModel fileItem)
     {
-      if (soundItem != null &&
-          soundItem.FileInfoEntity != null)
+      if (fileItem != null &&
+          fileItem.FileInfoEntity != null)
       {
         //Asi docasny fix pre pokazene itemy
-        if (soundItem.FileInfoEntity.Indentificator == null)
+        if (fileItem.FileInfoEntity.Indentificator == null)
         {
-          soundItem.FileInfoEntity.Indentificator = soundItem.FileInfoEntity.Source;
+          fileItem.FileInfoEntity.Indentificator = fileItem.FileInfoEntity.Source;
         }
 
-        if (long.TryParse(soundItem.FileInfoEntity.Indentificator, out var id))
+        if (long.TryParse(fileItem.FileInfoEntity.Indentificator, out var id))
         {
-          if (publicLinks.TryGetValue(soundItem, out var storedPublicLink) &&
+          if (publicLinks.TryGetValue(fileItem, out var storedPublicLink) &&
               storedPublicLink.ExpiresDate > DateTime.Now)
           {
-            return;
+            return Task.CompletedTask;
           }
 
+          return SetFileLink(fileItem);
+        }
+      }
+
+      return Task.CompletedTask;
+    }
+
+    #endregion
+
+    #region SetFileLink
+
+    private Task SetFileLink(TModel fileItem)
+    {
+      return Task.Run(async () =>
+      {
+        if (long.TryParse(fileItem.FileInfoEntity.Indentificator, out var id))
+        {
           PublicLink publicLink = null;
+
+          publicLinks.TryGetValue(fileItem, out var storedPublicLink);
 
           try
           {
@@ -1240,24 +1276,24 @@ namespace VPlayer.Core.Players
 
           if (publicLink != null)
           {
-            var oldLink = soundItem.FileInfoEntity.Source;
+            var oldLink = fileItem.FileInfoEntity.Source;
 
             if (publicLink.Link != oldLink)
             {
-              soundItem.FileInfoEntity.Source = publicLink.Link;
+              fileItem.FileInfoEntity.Source = publicLink.Link;
             }
 
             if (storedPublicLink != null)
             {
-              publicLinks[soundItem] = publicLink;
+              publicLinks[fileItem] = publicLink;
             }
             else
             {
-              publicLinks.Add(soundItem, publicLink);
+              publicLinks.Add(fileItem, publicLink);
             }
           }
         }
-      }
+      });
     }
 
     #endregion

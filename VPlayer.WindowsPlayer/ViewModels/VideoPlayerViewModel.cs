@@ -989,18 +989,19 @@ namespace VPlayer.WindowsPlayer.ViewModels
           }
 
           if (ActualItem?.Model.SubtitleTrack != null &&
-          Subtitles.SingleOrDefault(x => x.Model.Id == ActualItem?.Model.SubtitleTrack) != null)
+           Subtitles.SingleOrDefault(x => x.Model.Id == ActualItem?.Model.SubtitleTrack) != null)
           {
             MediaPlayer.SetSpu(ActualItem.Model.SubtitleTrack.Value);
             lastSPUValue = ActualItem.Model.SubtitleTrack.Value;
           }
-          else if (Subtitles.Count >= 2 && MediaPlayer.Spu == -1)
+          if (Subtitles.Count >= 2)
           {
             if (lastSPUValue != null)
             {
               subtitleSetting = Subtitles.FirstOrDefault(x => x.Model.Id == lastSPUValue);
             }
-            else
+
+            if (subtitleSetting == null)
             {
               var selectedAudio = AudioTracks.FirstOrDefault(x => x.IsSelected);
 
@@ -1035,6 +1036,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           if (actualSub != null)
           {
             actualSub.IsSelected = true;
+            lastSPUValue = actualSub.Model.Id;
           }
         }
       });
@@ -1145,30 +1147,43 @@ namespace VPlayer.WindowsPlayer.ViewModels
       where TSettingViewModel : class, IViewModel, IDescriptedEntity
     {
       var list = allItems.ToList();
+      IEnumerable<TSettingViewModel> items = null;
 
       switch (settingLanguage)
       {
         case Language.Czech:
           {
-            return list.FirstOrDefault(x =>
+            items = list.Where(x =>
             {
               var desc = x.Description.RemoveDiacritics().ToLower();
 
               return desc.Contains("czech") || desc.Contains("cesky");
             });
+            break;
           }
         case Language.Enghlish:
           {
-            return list.FirstOrDefault(x =>
+            items = list.Where(x =>
             {
               var desc = x.Description.RemoveDiacritics().ToLower();
 
               return (desc.Contains("anglicky") || desc.Contains("english"));
             });
+            break;
           }
         default:
           throw new ArgumentOutOfRangeException(nameof(settingLanguage), settingLanguage, null);
       }
+
+      if (items.Count() > 1)
+      {
+        return items.FirstOrDefault(x => 
+        !x.Description.RemoveDiacritics().ToLower().Contains("sing") && 
+        !x.Description.RemoveDiacritics().ToLower().Contains("song")
+        );
+      }
+      else
+        return items.FirstOrDefault();
     }
 
     #endregion
@@ -1213,7 +1228,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           var split = data.StartTime.Split(":");
           var miliseconds = new TimeSpan(0, int.Parse(split[0]), int.Parse(split[1]));
 
-          if(MediaPlayer.Length == 0)
+          if (MediaPlayer.Length == 0)
           {
             MediaPlayer.Media.ParsedChanged += (sender, args) => { MediaPlayer.Position = (float)miliseconds.TotalMilliseconds / MediaPlayer.Length; };
           }
@@ -1222,7 +1237,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
             var startPosition = miliseconds.TotalMilliseconds / MediaPlayer.Length;
             MediaPlayer.Position = (float)startPosition;
           }
-         
+
         }
       }
     }
@@ -1423,7 +1438,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       }
     }
 
-   
+
 
     private List<FillerData> FillerData = new List<FillerData>();
     private void GetFillerList()

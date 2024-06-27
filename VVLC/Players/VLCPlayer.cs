@@ -126,8 +126,15 @@ namespace VVLC.Players
     {
       libVLC = vlcProvider.InitlizeVlc();
       MediaPlayer = new MediaPlayer(libVLC);
-
+#if DEBUG
+     // libVLC.Log += LibVLC_Log;
+#endif
       HookToVlcEvents();
+    }
+
+    private void LibVLC_Log(object sender, LogEventArgs e)
+    {
+      logger.Log(MessageType.Inform, e.FormattedLog);
     }
 
     #endregion
@@ -152,17 +159,17 @@ namespace VVLC.Players
 
       MediaPlayer.NothingSpecial += (s, e) =>
       {
-        OnEncounteredError();
+        logger.Log(Logger.MessageType.Warning, e.ToString(), true);
       };
 
       MediaPlayer.Corked += (s, e) =>
       {
-        OnEncounteredError();
+        logger.Log(Logger.MessageType.Warning, e.ToString(), true);
       };
 
       MediaPlayer.Uncorked += (s, e) =>
       {
-        OnEncounteredError();
+        logger.Log(Logger.MessageType.Warning, e.ToString(), true);
       };
 
       MediaPlayer.EncounteredError += (sender, e) =>

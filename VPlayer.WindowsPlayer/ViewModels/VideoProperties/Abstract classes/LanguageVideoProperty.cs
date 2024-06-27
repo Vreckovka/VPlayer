@@ -4,10 +4,11 @@ namespace VPlayer.WindowsPlayer.ViewModels.VideoProperties
 {
   public enum Language
   {
+    Other,
     Czech,
     Enghlish,
     Japanese,
-    Other
+    
   }
 
   public abstract class LanguageVideoProperty : VideoProperty
