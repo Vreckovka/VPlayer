@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using LibVLCSharp.Shared;
@@ -127,7 +128,7 @@ namespace VVLC.Players
       libVLC = vlcProvider.InitlizeVlc();
       MediaPlayer = new MediaPlayer(libVLC);
 #if DEBUG
-     // libVLC.Log += LibVLC_Log;
+      // libVLC.Log += LibVLC_Log;
 #endif
       HookToVlcEvents();
     }
@@ -260,7 +261,14 @@ namespace VVLC.Players
     {
       if (source != null)
       {
-        var media = new Media(libVLC, source);
+        var mediaOptions = new string[0];
+
+        if (source.AbsoluteUri.Contains("http"))
+        {
+          mediaOptions = new string[] {":sout-keep"};
+        }
+
+        var media = new Media(libVLC, source, mediaOptions);
 
         Media = new VLCMedia(media);
 

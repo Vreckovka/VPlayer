@@ -231,15 +231,33 @@ namespace VPlayer.Core.Players
       {
         reloadPosition = ActualItem.ActualPosition;
 
-        ReloadMediaPlayer();
+        RaiseMediaPlayerProperties();
 
-        await SetMedia(ActualItem.Model);
+        var model = ActualItem.Model;
+
+        MediaPlayer.SetNewMedia(null, CancellationToken.None);
+
+        if (model == null)
+          return;
+
+        await BeforeSetMedia(model);
+
+        if (model.Source != null)
+        {
+          var fileUri = new Uri(model.Source);
+
+          MediaPlayer.SetNewMedia(fileUri, CancellationToken.None);
+
+          OnNewItemPlay(model);
+        }
 
         if (IsPlaying)
         {
           IsPlayFnished = false;
           await Play();
         }
+
+        RaiseMediaPlayerProperties();
       }
     }
 
@@ -983,65 +1001,76 @@ namespace VPlayer.Core.Players
 
     #region AddMissingFilesFromFolder
 
+    private SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
     private void AddMissingFilesFromFolder()
     {
-      Task.Run(() =>
+      Task.Run(async () =>
       {
-        if (!string.IsNullOrEmpty(ActualSavedPlaylist.WatchedFolder))
+        try
         {
-          var allFiles = PlayList.Where(x => x.Model != null).Select(x => x.Model.Source).ToList();
 
-          var files = Directory.GetFiles(ActualSavedPlaylist.WatchedFolder, "*", SearchOption.AllDirectories);
+          await semaphoreSlim.WaitAsync();
 
-          var missingFilesInPlaylist = files.Where(x =>
+          if (!string.IsNullOrEmpty(ActualSavedPlaylist.WatchedFolder))
           {
-            var fileType = Path.GetExtension(x).GetFileType();
+            var allFiles = PlayList.Where(x => x.Model != null).Select(x => x.Model.Source).ToList();
 
-            return fileType == FileType.Sound || fileType == FileType.Video;
-          }).Where(x => !allFiles.Contains(x)).ToList();
+            var files = Directory.GetFiles(ActualSavedPlaylist.WatchedFolder, "*", SearchOption.AllDirectories);
 
-          foreach (var file in missingFilesInPlaylist)
-          {
-            var newModel = viewModelsFactory.Create<TModel>();
-            var fileInfo = new FileInfo(file);
-
-            newModel.FileInfoEntity = new FileInfoEntity()
+            var missingFilesInPlaylist = files.Where(x =>
             {
-              Indentificator = fileInfo.FullName,
-              FullName = fileInfo.FullName,
-              Name = fileInfo.Name,
-              Extension = fileInfo.Extension,
+              var fileType = Path.GetExtension(x).GetFileType();
 
-            };
+              return fileType == FileType.Sound || fileType == FileType.Video;
+            }).Where(x => !allFiles.Contains(x)).ToList();
 
-            newModel.Source = fileInfo.FullName;
-            newModel.Name = fileInfo.Name;
-
-            var existing = storageManager.GetTempRepository<TModel>()
-              .Include(x => x.FileInfoEntity)
-              .Where(x => x.FileInfoEntity != null)
-              .FirstOrDefault(x => x.FileInfoEntity.Indentificator == newModel.FileInfoEntity.Indentificator);
-
-            if (existing == null)
+            foreach (var file in missingFilesInPlaylist)
             {
-              storageManager.StoreEntity(newModel, out existing);
+              var newModel = viewModelsFactory.Create<TModel>();
+              var fileInfo = new FileInfo(file);
+
+              newModel.FileInfoEntity = new FileInfoEntity()
+              {
+                Indentificator = fileInfo.FullName,
+                FullName = fileInfo.FullName,
+                Name = fileInfo.Name,
+                Extension = fileInfo.Extension,
+
+              };
+
+              newModel.Source = fileInfo.FullName;
+              newModel.Name = fileInfo.Name;
+
+              var existing = storageManager.GetTempRepository<TModel>()
+                .Include(x => x.FileInfoEntity)
+                .Where(x => x.FileInfoEntity != null)
+                .FirstOrDefault(x => x.FileInfoEntity.Indentificator == newModel.FileInfoEntity.Indentificator);
+
+              if (existing == null)
+              {
+                storageManager.StoreEntity(newModel, out existing);
+              }
+
+              VSynchronizationContext.InvokeOnDispatcher(() =>
+              {
+                PlayList.Add(viewModelsFactory.Create<TItemViewModel>(existing));
+              });
             }
 
-            VSynchronizationContext.InvokeOnDispatcher(() =>
+            if (missingFilesInPlaylist.Any())
             {
-              PlayList.Add(viewModelsFactory.Create<TItemViewModel>(existing));
-            });
-          }
+              VSynchronizationContext.PostOnUIThread(() =>
+              {
+                RequestReloadVirtulizedPlaylist();
+              });
 
-          if (missingFilesInPlaylist.Any())
-          {
-            VSynchronizationContext.PostOnUIThread(() =>
-            {
-              RequestReloadVirtulizedPlaylist();
-            });
-
-            StorePlaylist(PlayList.ToList());
+              StorePlaylist(PlayList.ToList());
+            }
           }
+        }
+        finally
+        {
+          semaphoreSlim.Release();
         }
       });
     }
@@ -1136,9 +1165,13 @@ namespace VPlayer.Core.Players
 
       await DownloadUrlLink(model);
 
-      serialDisposable.Disposable = Observable.Interval(TimeSpan.FromMinutes(1)).Subscribe(x =>
+      serialDisposable.Disposable = Observable.Interval(TimeSpan.FromMinutes(8)).Subscribe(x =>
       {
-        RefreshLink(model);
+        if (long.TryParse(model.FileInfoEntity?.Indentificator, out var id) && ActualItem.IsPlaying && ActualItem.Model == model)
+        {
+          RefreshLink(model);
+          OnReloadFile();
+        }
       });
     }
 
@@ -1146,10 +1179,7 @@ namespace VPlayer.Core.Players
 
     private async void RefreshLink(TModel fileItem)
     {
-      if (long.TryParse(fileItem.FileInfoEntity.Indentificator, out var id))
-      {
-        await SetFileLink(fileItem);
-      }
+      await SetFileLink(fileItem);
     }
 
     #region DownloadUrlLinks

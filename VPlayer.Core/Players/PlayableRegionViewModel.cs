@@ -1269,11 +1269,8 @@ namespace VPlayer.Core.ViewModels
 
     protected virtual async Task SetMedia(TModel model)
     {
-
       mediaToken?.Cancel();
       mediaToken = new CancellationTokenSource();
-
-
 
       MediaPlayer.SetNewMedia(null, mediaToken.Token);
 
@@ -2210,9 +2207,9 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region ReloadMediaPlayer
+    #region RaiseMediaPlayerProperties
 
-    protected void ReloadMediaPlayer()
+    protected void RaiseMediaPlayerProperties()
     {
       RaisePropertyChanged(nameof(IsMuted));
       RaisePropertyChanged(nameof(IsPlaying));
