@@ -538,6 +538,7 @@ namespace VPlayer.Core.ViewModels
 
     #region Volume
 
+    //get MediaPlayer.Volume is freezing UI thread
     private int volume;
     public int Volume
     {
@@ -961,6 +962,7 @@ namespace VPlayer.Core.ViewModels
         }
       };
 
+
       MediaPlayer.Stopped += (sender, e) =>
       {
         OnMediaPlayerStopped();
@@ -970,6 +972,8 @@ namespace VPlayer.Core.ViewModels
       MediaPlayer.Unmuted += MediaPlayer_MutedChanged;
 
       MediaPlayer.Playing += OnVlcPlayingChanged;
+
+      Volume = MediaPlayer.Volume;
       volumeSubject.OnNext(Volume);
 
       OnVlcLoaded();

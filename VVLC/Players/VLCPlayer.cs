@@ -128,14 +128,14 @@ namespace VVLC.Players
       libVLC = vlcProvider.InitlizeVlc();
       MediaPlayer = new MediaPlayer(libVLC);
 #if DEBUG
-      // libVLC.Log += LibVLC_Log;
+      //libVLC.Log += LibVLC_Log;
 #endif
       HookToVlcEvents();
     }
 
     private void LibVLC_Log(object sender, LogEventArgs e)
     {
-      logger.Log(MessageType.Inform, e.FormattedLog);
+      logger.Log(MessageType.Inform,$"{MediaPlayer.GetHashCode()} {e.FormattedLog}");
     }
 
     #endregion
@@ -265,8 +265,13 @@ namespace VVLC.Players
 
         if (source.AbsoluteUri.Contains("http"))
         {
-          mediaOptions = new string[] {":sout-keep"};
+          mediaOptions = new string[]
+            {
+                ":sout-keep",
+                ":http-caching"
+            };
         }
+      
 
         var media = new Media(libVLC, source, mediaOptions);
 

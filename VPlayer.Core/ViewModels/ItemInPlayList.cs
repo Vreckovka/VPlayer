@@ -78,18 +78,18 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
-    #region IsPlaying
+    #region IsInOrderToPlay
 
-    private bool isPlaying;
+    private bool isInOrderToPlay;
 
     public bool IsPlaying
     {
-      get { return isPlaying; }
+      get { return isInOrderToPlay; }
       set
       {
-        if (value != isPlaying)
+        if (value != isInOrderToPlay)
         {
-          isPlaying = value;
+          isInOrderToPlay = value;
 
           RaisePropertyChanged();
 

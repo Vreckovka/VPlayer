@@ -11,6 +11,11 @@ namespace VVLC.Providers
     private object lockObject = new object();
     private bool initilized;
 
+    public VlcProvider()
+    {
+
+    }
+
     #region LoadVlc
 
     public LibVLC InitlizeVlc()
@@ -37,8 +42,9 @@ namespace VVLC.Providers
        // enableLogs,
         "--freetype-background-opacity=150", 
         "--freetype-background-color=0",
-        "--freetype-rel-fontsize=22"
-        //"--verbose=2"
+        "--freetype-rel-fontsize=22",
+        //Multiple Mediaplayers are sharing volume, this allows each volume for each player
+        "--aout=directsound"
         );
     }
 

@@ -1165,9 +1165,9 @@ namespace VPlayer.Core.Players
 
       await DownloadUrlLink(model);
 
-      serialDisposable.Disposable = Observable.Interval(TimeSpan.FromMinutes(8)).Subscribe(x =>
+      serialDisposable.Disposable = Observable.Interval(TimeSpan.FromMinutes(12)).Subscribe(x =>
       {
-        if (long.TryParse(model.FileInfoEntity?.Indentificator, out var id) && ActualItem.IsPlaying && ActualItem.Model == model)
+        if (long.TryParse(model.FileInfoEntity?.Indentificator, out var id) && IsPlaying && ActualItem.Model == model)
         {
           RefreshLink(model);
           OnReloadFile();

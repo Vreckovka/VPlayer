@@ -34,6 +34,9 @@ namespace VPlayer.Core.ViewModels
     bool IsPaused { get; set; }
     string Name { get; }
     bool IsFavorite { get; set; }
+    /// <summary>
+    /// Is in order to play not actual play state, wrong naming
+    /// </summary>
     bool IsPlaying { get; set; }
     bool IsInPlaylist { get; set; }
 
