@@ -221,6 +221,13 @@ namespace VPlayer.Library.ViewModels
         return Name;
       });
 
+      if (string.IsNullOrEmpty(result))
+      {
+        var stringC = Model.Created?.ToString("dddd,dd MMMM yyyy HH:mm");
+
+        result = $"GENERATED: {stringC}";
+      }
+
       DisplayName = result;
     }
 
