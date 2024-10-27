@@ -19,6 +19,7 @@ namespace VPlayer.WindowsPlayer.Players
     public event EventHandler Playing;
     public event EventHandler Muted;
     public event EventHandler Unmuted;
+    public event EventHandler RefreshMedia;
     public event EventHandler<PlayerBufferingEventArgs> Buffering;
     public event EventHandler<PlayerTimeChangedArgs> TimeChanged;
   

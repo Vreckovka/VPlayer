@@ -436,6 +436,19 @@ namespace VPlayer.Core.Players
       MediaPlayer.TimeChanged += OnVlcTimeChanged;
       MediaPlayer.EndReached += (sender, e) => { OnEndReached(); };
       MediaPlayer.Buffering += MediaPlayer_Buffering;
+      MediaPlayer.RefreshMedia += (sender, e) =>
+      {
+        VSynchronizationContext.InvokeOnDispatcher(async () =>
+        {
+          var model = ActualItem.Model;
+          if (long.TryParse(model.FileInfoEntity?.Indentificator, out var id) && IsPlaying && ActualItem.Model == model)
+          {
+            await SetFileLink(model);
+            OnReloadFile();
+          }
+
+        });
+      };
     }
 
     #endregion
@@ -1164,23 +1177,9 @@ namespace VPlayer.Core.Players
       await base.BeforeSetMedia(model);
 
       await DownloadUrlLink(model);
-
-      serialDisposable.Disposable = Observable.Interval(TimeSpan.FromMinutes(12)).Subscribe(x =>
-      {
-        if (long.TryParse(model.FileInfoEntity?.Indentificator, out var id) && IsPlaying && ActualItem.Model == model)
-        {
-          RefreshLink(model);
-          OnReloadFile();
-        }
-      });
     }
 
     #endregion
-
-    private async void RefreshLink(TModel fileItem)
-    {
-      await SetFileLink(fileItem);
-    }
 
     #region DownloadUrlLinks
 
@@ -1299,19 +1298,15 @@ namespace VPlayer.Core.Players
           {
             publicLink = await cloudService.GetFileLink(id);
           }
-          catch (Exception)
+          catch (Exception ex)
           {
-            publicLink = await cloudService.GetFileLink(id);
+            logger.Log(ex);
+            return;
           }
 
           if (publicLink != null)
           {
-            var oldLink = fileItem.FileInfoEntity.Source;
-
-            if (publicLink.Link != oldLink)
-            {
-              fileItem.FileInfoEntity.Source = publicLink.Link;
-            }
+            fileItem.FileInfoEntity.Source = publicLink.Link;
 
             if (storedPublicLink != null)
             {

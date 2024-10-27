@@ -39,12 +39,17 @@ namespace VVLC.Providers
       enableLogs = true;
 #endif
       return new LibVLC(
-       // enableLogs,
+        enableLogs,
+        "--verbose=2",
         "--freetype-background-opacity=150", 
         "--freetype-background-color=0",
         "--freetype-rel-fontsize=22",
-        //Multiple Mediaplayers are sharing volume, this allows each volume for each player
-        "--aout=directsound"
+        "--codec=freetype",
+        "--sub-filter=freetype",
+
+        "--aout=directsound",   //Multiple Mediaplayers are sharing volume, this allows each volume for each player
+
+        "--http-reconnect"   
         );
     }
 

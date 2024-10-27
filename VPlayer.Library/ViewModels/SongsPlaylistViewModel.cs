@@ -22,7 +22,7 @@ using VPlayer.Library.ViewModels;
 
 namespace VPlayer.Home.ViewModels
 {
-  public class SongsPlaylistViewModel : FilePlaylistViewModel<SoundItemInPlaylistViewModel, SoundItemFilePlaylist, PlaylistSoundItem>
+  public class SongsPlaylistViewModel : FilePlaylistViewModel<SoundItemInPlaylistViewModel, SoundItemFilePlaylist, PlaylistSoundItem, SoundItem>
   {
     #region Fields
 

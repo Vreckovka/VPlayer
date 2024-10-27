@@ -20,10 +20,11 @@ namespace VPlayer.Library.ViewModels
 
   }
 
-  public abstract class PlaylistViewModel<TPlaylistItemViewModel, TPlaylistModel, TPlaylistItemModel> :
+  public abstract class PlaylistViewModel<TPlaylistItemViewModel, TPlaylistModel, TPlaylistItemModel, TModel> :
     PlayableViewModel<TPlaylistItemViewModel, TPlaylistModel>, IPlaylistViewModel
-    where TPlaylistModel : class, IPlaylist<TPlaylistItemModel>
-    where TPlaylistItemModel : class, IEntity
+    where TPlaylistModel : class, IPlaylist<TPlaylistItemModel>, IPlaylist
+    where TPlaylistItemModel : class, IItemInPlaylist<TModel>
+    where TModel : class, IEntity
   {
     protected readonly IStorageManager storageManager;
     private readonly IWindowManager windowManager;
@@ -175,6 +176,31 @@ namespace VPlayer.Library.ViewModels
 
     #endregion
 
+    #region ChangePlaylistFavorite
+
+    private ActionCommand<PlaylistViewModel<TPlaylistItemViewModel, TPlaylistModel, TPlaylistItemModel, TModel>> changePlaylistFavorite;
+
+    public ICommand ChangePlaylistFavorite
+    {
+      get
+      {
+        if (changePlaylistFavorite == null)
+        {
+          changePlaylistFavorite = new ActionCommand<PlaylistViewModel<TPlaylistItemViewModel, TPlaylistModel, TPlaylistItemModel, TModel>>(OnChangePlaylistFavorite);
+        }
+
+        return changePlaylistFavorite;
+      }
+    }
+
+    public void OnChangePlaylistFavorite(PlaylistViewModel<TPlaylistItemViewModel, TPlaylistModel, TPlaylistItemModel, TModel> playlist)
+    {
+      playlist.Model.IsUserCreated = !playlist.Model.IsUserCreated;
+
+      storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel, TModel>(playlist.Model, out var _);
+    }
+
+    #endregion
 
     #endregion
 

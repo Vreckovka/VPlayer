@@ -1290,7 +1290,7 @@
                   </GridViewColumn.CellTemplate>
                 </GridViewColumn>
 
-                <GridViewColumn Width="85" Header="Settings">
+                <GridViewColumn Width="105" Header="Settings">
                   <GridViewColumn.CellTemplate>
                     <DataTemplate>
                       <StackPanel Orientation="Horizontal">
@@ -1328,6 +1328,15 @@
                           IsChecked="False"
                           IsReadOnly="True"
                           ToolTip="Pin" />
+
+                        <controls:PathButton Command="{Binding ChangePlaylistFavorite}"
+                                             CommandParameter="{Binding}"
+                      IconCheckedColor="{StaticResource BlueColor}"
+                      IconWidth="20"
+                      IsChecked="{Binding IsUserCreated, Mode=OneWay}"
+                      IsReadOnly="False"
+                      PathStyle="{StaticResource star-solid}"
+                      ToolTip="Is favorite" />
                       </StackPanel>
                     </DataTemplate>
                   </GridViewColumn.CellTemplate>

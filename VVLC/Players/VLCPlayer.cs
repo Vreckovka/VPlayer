@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using LibVLCSharp.Shared;
@@ -96,6 +98,7 @@ namespace VVLC.Players
     public event EventHandler Playing;
     public event EventHandler Muted;
     public event EventHandler Unmuted;
+    public event EventHandler RefreshMedia;
     public event EventHandler<PlayerBufferingEventArgs> Buffering;
     public event EventHandler<PlayerTimeChangedArgs> TimeChanged;
 
@@ -128,14 +131,14 @@ namespace VVLC.Players
       libVLC = vlcProvider.InitlizeVlc();
       MediaPlayer = new MediaPlayer(libVLC);
 #if DEBUG
-      //libVLC.Log += LibVLC_Log;
+      libVLC.Log += LibVLC_Log;
 #endif
       HookToVlcEvents();
     }
 
     private void LibVLC_Log(object sender, LogEventArgs e)
     {
-      logger.Log(MessageType.Inform,$"{MediaPlayer.GetHashCode()} {e.FormattedLog}");
+      logger.Log(MessageType.Inform, $"{MediaPlayer.GetHashCode()} {e.FormattedLog}");
     }
 
     #endregion
@@ -147,6 +150,7 @@ namespace VVLC.Players
 
 
     #region HookToVlcEvents
+
 
     protected void HookToVlcEvents()
     {
@@ -208,6 +212,8 @@ namespace VVLC.Players
         {
           Time = e.Time
         });
+
+        logger.Log(MessageType.Inform, e.Time.ToString());
       };
 
       MediaPlayer.Buffering += (sender, e) =>
@@ -231,12 +237,60 @@ namespace VVLC.Players
 
     #endregion
 
+    SerialDisposable serialDisposable = new SerialDisposable();
+
+    float lastPosition = 0;
+
     public void Play()
     {
       lock (this)
       {
+        lastPosition = 0;
+        serialDisposable.Disposable?.Dispose();
+        serialDisposable.Disposable = Observable.Interval(TimeSpan.FromSeconds(2)).Subscribe((x) =>
+        {
+          if (MediaPlayer.Position != lastPosition)
+          {
+            lastPosition = MediaPlayer.Position;
+          }
+          else if (MediaPlayer.IsPlaying && lastPosition > 0)
+          {
+            //MediaPlayer.Position = GetNextPosition(MediaPlayer, 1000f);
+
+            RefreshMedia?.Invoke(this, EventArgs.Empty);
+          }
+        });
+
+
         MediaPlayer?.Play();
       }
+    }
+
+    public float GetNextPosition(MediaPlayer mediaPlayer, float miliseconds)
+    {
+      // Get media duration in milliseconds
+      long mediaDuration = mediaPlayer.Length; // Duration in milliseconds
+
+      // If duration is valid and greater than 0
+      if (mediaDuration > 0)
+      {
+        // One second in terms of fraction (1 second / total duration)
+        float oneSecondFraction = miliseconds / mediaDuration;
+
+        // Get the current position (float between 0.0f and 1.0f)
+        float currentPosition = mediaPlayer.Position;
+
+        // Add one second (as a fraction)
+        float newPosition = currentPosition + oneSecondFraction;
+
+        // Ensure the new position is within bounds (0.0f to 1.0f)
+        newPosition = Math.Min(newPosition, 1.0f);
+
+        // Set the new position
+        return newPosition;
+      }
+
+      return mediaPlayer.Position;
     }
 
     public void Pause()
@@ -262,16 +316,6 @@ namespace VVLC.Players
       if (source != null)
       {
         var mediaOptions = new string[0];
-
-        if (source.AbsoluteUri.Contains("http"))
-        {
-          mediaOptions = new string[]
-            {
-                ":sout-keep",
-                ":http-caching"
-            };
-        }
-      
 
         var media = new Media(libVLC, source, mediaOptions);
 
@@ -329,7 +373,15 @@ namespace VVLC.Players
 
     public override void Dispose()
     {
-      libVLC?.Dispose();
+
+      lock (this)
+      {
+        if(libVLC != null)
+        {
+          libVLC?.Dispose();
+          libVLC = null;
+        }
+      }
     }
 
     protected virtual void OnMuted()

@@ -1,283 +1,304 @@
-﻿<ResourceDictionary x:Class="VPlayer.StylesDictionaries.DataTemplates"
-                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
-                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-                    xmlns:library="clr-namespace:VPlayer.Library"
-                    xmlns:library1="clr-namespace:VPlayer.Library;assembly=VCore.WPF"
-                    xmlns:local="clr-namespace:VPlayer.StylesDictionaries">
+﻿<ResourceDictionary
+  x:Class="VPlayer.StylesDictionaries.DataTemplates"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
+  xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+  xmlns:library="clr-namespace:VPlayer.Library"
+  xmlns:library1="clr-namespace:VPlayer.Library;assembly=VCore.WPF"
+  xmlns:local="clr-namespace:VPlayer.StylesDictionaries">
 
-    <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="OverlayStyles.xaml" />
-        <ResourceDictionary Source="TextBlock.xaml" />
-        <ResourceDictionary Source="Button.xaml" />
-        <ResourceDictionary Source="Colors.xaml" />
-    </ResourceDictionary.MergedDictionaries>
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary Source="OverlayStyles.xaml" />
+    <ResourceDictionary Source="TextBlock.xaml" />
+    <ResourceDictionary Source="Button.xaml" />
+    <ResourceDictionary Source="Colors.xaml" />
+  </ResourceDictionary.MergedDictionaries>
 
-    <DataTemplate x:Key="SoundTrackTemplate">
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" MaxWidth="150" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <TextBlock HorizontalAlignment="Left" Text="{Binding Name}" />
-            <TextBlock Grid.Column="1"
-                       HorizontalAlignment="Right"
-                       Text="{Binding Duration, StringFormat=hh\\:mm\\:ss}" />
+  <DataTemplate x:Key="SoundTrackTemplate">
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" MaxWidth="150" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+      <TextBlock HorizontalAlignment="Left" Text="{Binding Name}" />
+      <TextBlock
+        Grid.Column="1"
+        HorizontalAlignment="Right"
+        Text="{Binding Duration, StringFormat=hh\\:mm\\:ss}" />
+    </Grid>
+  </DataTemplate>
+
+  <DataTemplate x:Key="InternetPlayerTemplate">
+    <StackPanel Width="180">
+      <TextBlock HorizontalAlignment="Center" Text="{Binding Title}" />
+      <TextBlock
+        HorizontalAlignment="Center"
+        FontSize="5"
+        Foreground="{StaticResource 3_WhiteTransparentBrush}"
+        Text="{Binding Uri}" />
+    </StackPanel>
+  </DataTemplate>
+
+  <DataTemplate x:Key="AlbumPlayView">
+    <Border
+      Width="200"
+      Height="235"
+      Margin="5"
+      BorderBrush="{StaticResource 10_WhiteTransparentBrush}"
+      BorderThickness="2.5"
+      CornerRadius="5">
+      <Border.Effect>
+        <DropShadowEffect BlurRadius="10" ShadowDepth="5" />
+      </Border.Effect>
+
+      <Grid Background="{StaticResource BackgroudBrush}">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="*" />
+          <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <Image
+          Grid.Row="0"
+          HorizontalAlignment="Center"
+          VerticalAlignment="Top"
+          Source="{Binding AlbumFrontCoverBLOB, Converter={library:ImageLazyLoadingConverter}, IsAsync=True}" />
+
+        <Grid Grid.Row="0" Background="{StaticResource GlassGradient}" />
+
+        <Grid
+          Name="ParentContainer"
+          Grid.Row="0"
+          Width="200"
+          Height="200"
+          VerticalAlignment="Top"
+          Style="{DynamicResource PlayGridOverlay}">
+
+          <Button Style="{StaticResource Play}" Tag="{Binding}" />
         </Grid>
-    </DataTemplate>
 
-    <DataTemplate x:Key="InternetPlayerTemplate">
-        <StackPanel Width="180">
-            <TextBlock HorizontalAlignment="Center" Text="{Binding Title}" />
-            <TextBlock HorizontalAlignment="Center"
-                       FontSize="5"
-                       Foreground="{StaticResource 3_WhiteTransparentBrush}"
-                       Text="{Binding Uri}" />
-        </StackPanel>
-    </DataTemplate>
+        <Border
+          Grid.Row="0"
+          BorderBrush="{StaticResource BackgroudBrush}"
+          BorderThickness="1">
+          <Grid
+            Name="GridParent"
+            VerticalAlignment="Bottom"
+            Background="{StaticResource BackgroudBrush}"
+            ClipToBounds="True">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="*" />
+              <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-    <DataTemplate x:Key="AlbumPlayView">
-        <Border Width="200"
-                Height="235"
-                Margin="5"
-                BorderBrush="{StaticResource 10_WhiteTransparentBrush}"
-                BorderThickness="2.5"
-                CornerRadius="5">
-            <Border.Effect>
-                <DropShadowEffect BlurRadius="10" ShadowDepth="5" />
-            </Border.Effect>
+            <TextBlock
+              Name="NameTxt"
+              Grid.Row="0"
+              FontSize="20"
+              Text="{Binding Name}">
+              <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                  <Setter Property="Background" Value="Transparent" />
+                  <Setter Property="VerticalAlignment" Value="Top" />
+                  <Setter Property="HorizontalAlignment" Value="Center" />
 
-            <Grid Background="{StaticResource BackgroudBrush}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="auto" />
-                </Grid.RowDefinitions>
+                  <Setter Property="Foreground" Value="{StaticResource 200_WhiteTransparentBrush}" />
 
-                <Image Grid.Row="0"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Top"
-                       Source="{Binding AlbumFrontCoverBLOB, Converter={library:ImageLazyLoadingConverter}, IsAsync=True}" />
+                  <Style.Triggers>
+                    <DataTrigger Value="True">
+                      <DataTrigger.Binding>
+                        <MultiBinding Converter="{converters:IsBiggerConverter}">
+                          <Binding ElementName="NameTxt" Path="ActualWidth" />
+                          <Binding ElementName="ParentContainer" Path="Width" />
+                        </MultiBinding>
+                      </DataTrigger.Binding>
+                      <Setter Property="HorizontalAlignment" Value="Left" />
+                    </DataTrigger>
 
-                <Grid Grid.Row="0" Background="{StaticResource GlassGradient}" />
+                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}, Mode=FindAncestor, AncestorLevel=2}, Path=IsMouseOver}" Value="true">
+                      <DataTrigger.EnterActions>
+                        <RemoveStoryboard BeginStoryboardName="SizeDownStoryBoard" />
+                        <BeginStoryboard Name="SizeUpStoryBoard">
+                          <Storyboard>
+                            <DoubleAnimation
+                              Storyboard.TargetProperty="(TextBlock.FontSize)"
+                              From="20"
+                              To="25"
+                              Duration="0:0:0.25" />
 
-                <Grid Name="ParentContainer"
-                      Grid.Row="0"
-                      Width="200"
-                      Height="200"
-                      VerticalAlignment="Top"
-                      Style="{DynamicResource PlayGridOverlay}">
+                            <ColorAnimation
+                              Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)"
+                              From="{StaticResource 200_DefaultWhiteColor}"
+                              To="{StaticResource DefaultWhiteColor}"
+                              Duration="0:0:0.1" />
+                          </Storyboard>
+                        </BeginStoryboard>
+                      </DataTrigger.EnterActions>
 
-                    <Button Style="{StaticResource Play}" Tag="{Binding}" />
-                </Grid>
-
-                <Border Grid.Row="0"
-                        BorderBrush="{StaticResource BackgroudBrush}"
-                        BorderThickness="1">
-                    <Grid Name="GridParent"
-                          VerticalAlignment="Bottom"
-                          Background="{StaticResource BackgroudBrush}"
-                          ClipToBounds="True">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-
-                        <TextBlock Name="NameTxt"
-                                   Grid.Row="0"
-                                   FontSize="20"
-                                   Text="{Binding Name}">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="VerticalAlignment" Value="Top" />
-                                    <Setter Property="HorizontalAlignment" Value="Center" />
-
-                                    <Setter Property="Foreground" Value="{StaticResource 200_WhiteTransparentBrush}" />
-
-                                    <Style.Triggers>
-                                        <DataTrigger Value="True">
-                                            <DataTrigger.Binding>
-                                                <MultiBinding Converter="{converters:IsBiggerConverter}">
-                                                    <Binding ElementName="NameTxt" Path="ActualWidth" />
-                                                    <Binding ElementName="ParentContainer" Path="Width" />
-                                                </MultiBinding>
-                                            </DataTrigger.Binding>
-                                            <Setter Property="HorizontalAlignment" Value="Left" />
-                                        </DataTrigger>
-
-                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Grid}, Mode=FindAncestor, AncestorLevel=2}, Path=IsMouseOver}" Value="true">
-                                            <DataTrigger.EnterActions>
-                                                <RemoveStoryboard BeginStoryboardName="SizeDownStoryBoard" />
-                                                <BeginStoryboard Name="SizeUpStoryBoard">
-                                                    <Storyboard>
-                                                        <DoubleAnimation Storyboard.TargetProperty="(TextBlock.FontSize)"
-                                                                         From="20"
-                                                                         To="25"
-                                                                         Duration="0:0:0.25" />
-
-                                                        <ColorAnimation Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)"
-                                                                        From="{StaticResource 200_DefaultWhiteColor}"
-                                                                        To="{StaticResource DefaultWhiteColor}"
-                                                                        Duration="0:0:0.1" />
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </DataTrigger.EnterActions>
-
-                                            <DataTrigger.ExitActions>
-                                                <RemoveStoryboard BeginStoryboardName="SizeUpStoryBoard" />
-                                                <BeginStoryboard Name="SizeDownStoryBoard">
-                                                    <Storyboard>
-                                                        <DoubleAnimation Storyboard.TargetProperty="(TextBlock.FontSize)"
-                                                                         From="25"
-                                                                         To="20"
-                                                                         Duration="0:0:0.25" />
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </DataTrigger.ExitActions>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-
-                        <TextBlock Grid.Row="1"
-                                   HorizontalAlignment="Stretch"
-                                   FontSize="15"
-                                   Text="{Binding Artist.Name}"
-                                   TextAlignment="Center">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Foreground">
-                                        <Setter.Value>
-                                            <SolidColorBrush Opacity="0.5" Color="{StaticResource DefaultWhiteColor}" />
-                                        </Setter.Value>
-                                    </Setter>
-
-                                    <Setter Property="Background">
-                                        <Setter.Value>
-                                            <SolidColorBrush Opacity="0.02" Color="{StaticResource DefaultWhiteColor}" />
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                    </Grid>
-                </Border>
-
-                <Grid.Triggers>
-                    <EventTrigger RoutedEvent="Grid.MouseEnter">
-                        <EventTrigger.Actions>
-                            <BeginStoryboard Name="SlideToLeft">
-                                <Storyboard AutoReverse="True" RepeatBehavior="Forever">
-                                    <ThicknessAnimation AccelerationRatio="0.5"
-                                                        DecelerationRatio="0.5"
-                                                        Storyboard.TargetName="NameTxt"
-                                                        Storyboard.TargetProperty="Margin"
-                                                        From="5 0 0 0">
-                                        <ThicknessAnimation.Duration>
-                                            <MultiBinding Converter="{library:ScrollingTextDurationConverter}">
-                                                <Binding ElementName="ParentContainer" Path="ActualWidth" />
-                                                <Binding ElementName="NameTxt" Path="ActualWidth" />
-                                            </MultiBinding>
-                                        </ThicknessAnimation.Duration>
-
-                                        <ThicknessAnimation.To>
-                                            <MultiBinding Converter="{library:ScrollingTextMarginConverter}">
-                                                <Binding ElementName="ParentContainer" Path="ActualWidth" />
-                                                <Binding ElementName="NameTxt" Path="ActualWidth" />
-                                            </MultiBinding>
-                                        </ThicknessAnimation.To>
-                                    </ThicknessAnimation>
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </EventTrigger.Actions>
-                    </EventTrigger>
-
-                    <EventTrigger RoutedEvent="Grid.MouseLeave">
-                        <RemoveStoryboard BeginStoryboardName="SlideToLeft" />
-                    </EventTrigger>
-                </Grid.Triggers>
-            </Grid>
-        </Border>
-    </DataTemplate>
-
-
-    <DataTemplate x:Key="CoverView">
-        <Border Margin="5"
-                BorderBrush="{StaticResource 10_WhiteTransparentBrush}"
-                BorderThickness="2.5"
-                CornerRadius="5">
-            <Border.Effect>
-                <DropShadowEffect BlurRadius="10" ShadowDepth="5" />
-            </Border.Effect>
-
-            <Grid Width="200"
-                  Height="235"
-                  Background="{StaticResource BackgroudBrush}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="auto" />
-                </Grid.RowDefinitions>
-
-                <Image Name="Image"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Top"
-                       Source="{Binding DownloadedCover}" />
-
-                <Grid Grid.Row="0" Background="{StaticResource GlassGradient}" />
-
-                <Grid Name="ParentContainer"
-                      Grid.Row="0"
-                      Width="200"
-                      Height="200"
-                      VerticalAlignment="Top"
-                      Style="{DynamicResource PlayGridOverlay}" />
-
-                <Border Grid.Row="0"
-                        BorderBrush="{StaticResource BackgroudBrush}"
-                        BorderThickness="1">
-                    <Grid Name="GridParent"
-                          VerticalAlignment="Bottom"
-                          Background="{StaticResource BackgroudBrush}"
-                          ClipToBounds="True">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-
-                        <TextBlock Grid.Row="1"
-                                   HorizontalAlignment="Stretch"
-                                   FontSize="15"
-                                   Text="{Binding SizeString}"
-                                   TextAlignment="Center">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Foreground">
-                                        <Setter.Value>
-                                            <SolidColorBrush Opacity="0.5" Color="{StaticResource DefaultWhiteColor}" />
-                                        </Setter.Value>
-                                    </Setter>
-
-                                    <Setter Property="Background">
-                                        <Setter.Value>
-                                            <SolidColorBrush Opacity="0.02" Color="{StaticResource DefaultWhiteColor}" />
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                    </Grid>
-                </Border>
-            </Grid>
-        </Border>
-    </DataTemplate>
-
-    <DataTemplate x:Key="AlbumDetail">
-        <Grid>
-            <TextBlock Text="Release date">
-                <Run Text="5-8-1995" />
+                      <DataTrigger.ExitActions>
+                        <RemoveStoryboard BeginStoryboardName="SizeUpStoryBoard" />
+                        <BeginStoryboard Name="SizeDownStoryBoard">
+                          <Storyboard>
+                            <DoubleAnimation
+                              Storyboard.TargetProperty="(TextBlock.FontSize)"
+                              From="25"
+                              To="20"
+                              Duration="0:0:0.25" />
+                          </Storyboard>
+                        </BeginStoryboard>
+                      </DataTrigger.ExitActions>
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </TextBlock.Style>
             </TextBlock>
-        </Grid>
-    </DataTemplate>
+
+            <TextBlock
+              Grid.Row="1"
+              HorizontalAlignment="Stretch"
+              FontSize="15"
+              Text="{Binding Artist.Name}"
+              TextAlignment="Center">
+              <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                  <Setter Property="Foreground">
+                    <Setter.Value>
+                      <SolidColorBrush Opacity="0.5" Color="{StaticResource DefaultWhiteColor}" />
+                    </Setter.Value>
+                  </Setter>
+
+                  <Setter Property="Background">
+                    <Setter.Value>
+                      <SolidColorBrush Opacity="0.02" Color="{StaticResource DefaultWhiteColor}" />
+                    </Setter.Value>
+                  </Setter>
+                </Style>
+              </TextBlock.Style>
+            </TextBlock>
+          </Grid>
+        </Border>
+
+        <Grid.Triggers>
+          <EventTrigger RoutedEvent="Grid.MouseEnter">
+            <EventTrigger.Actions>
+              <BeginStoryboard Name="SlideToLeft">
+                <Storyboard AutoReverse="True" RepeatBehavior="Forever">
+                  <ThicknessAnimation
+                    AccelerationRatio="0.5"
+                    DecelerationRatio="0.5"
+                    Storyboard.TargetName="NameTxt"
+                    Storyboard.TargetProperty="Margin"
+                    From="5 0 0 0">
+                    <ThicknessAnimation.Duration>
+                      <MultiBinding Converter="{library:ScrollingTextDurationConverter}">
+                        <Binding ElementName="ParentContainer" Path="ActualWidth" />
+                        <Binding ElementName="NameTxt" Path="ActualWidth" />
+                      </MultiBinding>
+                    </ThicknessAnimation.Duration>
+
+                    <ThicknessAnimation.To>
+                      <MultiBinding Converter="{library:ScrollingTextMarginConverter}">
+                        <Binding ElementName="ParentContainer" Path="ActualWidth" />
+                        <Binding ElementName="NameTxt" Path="ActualWidth" />
+                      </MultiBinding>
+                    </ThicknessAnimation.To>
+                  </ThicknessAnimation>
+                </Storyboard>
+              </BeginStoryboard>
+            </EventTrigger.Actions>
+          </EventTrigger>
+
+          <EventTrigger RoutedEvent="Grid.MouseLeave">
+            <RemoveStoryboard BeginStoryboardName="SlideToLeft" />
+          </EventTrigger>
+        </Grid.Triggers>
+      </Grid>
+    </Border>
+  </DataTemplate>
+
+
+  <DataTemplate x:Key="CoverView">
+    <Border
+      Margin="5"
+      BorderBrush="{StaticResource 10_WhiteTransparentBrush}"
+      BorderThickness="2.5"
+      CornerRadius="5">
+      <Border.Effect>
+        <DropShadowEffect BlurRadius="10" ShadowDepth="5" />
+      </Border.Effect>
+
+      <Grid
+        Width="200"
+        Height="235"
+        Background="{StaticResource BackgroudBrush}">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="*" />
+          <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <Image
+          Name="Image"
+          HorizontalAlignment="Center"
+          VerticalAlignment="Top"
+          Source="{Binding DownloadedCover}" />
+
+        <Grid Grid.Row="0" Background="{StaticResource GlassGradient}" />
+
+        <Grid
+          Name="ParentContainer"
+          Grid.Row="0"
+          Width="200"
+          Height="200"
+          VerticalAlignment="Top"
+          Style="{DynamicResource PlayGridOverlay}" />
+
+        <Border
+          Grid.Row="0"
+          BorderBrush="{StaticResource BackgroudBrush}"
+          BorderThickness="1">
+          <Grid
+            Name="GridParent"
+            VerticalAlignment="Bottom"
+            Background="{StaticResource BackgroudBrush}"
+            ClipToBounds="True">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="*" />
+              <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock
+              Grid.Row="1"
+              HorizontalAlignment="Stretch"
+              FontSize="15"
+              Text="{Binding SizeString}"
+              TextAlignment="Center">
+              <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                  <Setter Property="Foreground">
+                    <Setter.Value>
+                      <SolidColorBrush Opacity="0.5" Color="{StaticResource DefaultWhiteColor}" />
+                    </Setter.Value>
+                  </Setter>
+
+                  <Setter Property="Background">
+                    <Setter.Value>
+                      <SolidColorBrush Opacity="0.02" Color="{StaticResource DefaultWhiteColor}" />
+                    </Setter.Value>
+                  </Setter>
+                </Style>
+              </TextBlock.Style>
+            </TextBlock>
+          </Grid>
+        </Border>
+      </Grid>
+    </Border>
+  </DataTemplate>
+
+  <DataTemplate x:Key="AlbumDetail">
+    <Grid>
+      <TextBlock Text="Release date">
+        <Run Text="5-8-1995" />
+      </TextBlock>
+    </Grid>
+  </DataTemplate>
 </ResourceDictionary>

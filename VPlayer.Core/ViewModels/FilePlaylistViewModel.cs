@@ -5,9 +5,10 @@ using VPlayer.AudioStorage.Interfaces.Storage;
 
 namespace VPlayer.Library.ViewModels
 {
-  public abstract class FilePlaylistViewModel<TPlaylistItemViewModel, TPlaylistModel, TPlaylistItemModel> : PlaylistViewModel<TPlaylistItemViewModel, TPlaylistModel, TPlaylistItemModel>
+  public abstract class FilePlaylistViewModel<TPlaylistItemViewModel, TPlaylistModel, TPlaylistItemModel,TModel> : PlaylistViewModel<TPlaylistItemViewModel, TPlaylistModel, TPlaylistItemModel, TModel>
     where TPlaylistModel : class, IFilePlaylist<TPlaylistItemModel>
-    where TPlaylistItemModel : class, IEntity
+    where TPlaylistItemModel : class, IItemInPlaylist<TModel>
+    where TModel : class, IEntity
   {
     protected FilePlaylistViewModel(TPlaylistModel model, IEventAggregator eventAggregator, IStorageManager storageManager, IWindowManager windowManager) : base(model, eventAggregator, storageManager, windowManager)
     {

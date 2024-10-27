@@ -104,6 +104,8 @@ namespace VPlayer.UPnP.ViewModels.Player
     public event EventHandler Unmuted;
     public event EventHandler<PlayerBufferingEventArgs> Buffering;
     public event EventHandler<PlayerTimeChangedArgs> TimeChanged;
+    public event EventHandler RefreshMedia;
+
     public IMedia Media { get; set; }
 
     #region Initilize

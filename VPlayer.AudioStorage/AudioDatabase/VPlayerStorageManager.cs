@@ -95,7 +95,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
     }
 
     #endregion
-    
+
     #region StoreData
 
     private object storeBatton = new object();
@@ -1309,61 +1309,66 @@ namespace VPlayer.AudioStorage.AudioDatabase
         }
 
 
-        if (foundPlaylist != null && playlist.PlaylistItems != null)
+        if (foundPlaylist != null)
         {
           context.Entry(foundPlaylist).State = EntityState.Modified;
+          TPlaylistItem actualItem = null;
+
           var oldHash = playlist.HashCode;
           var oldItems = playlist.PlaylistItems;
 
           foundPlaylist.Update(playlist);
 
-          if (foundPlaylist.PlaylistItems != null && (oldHash != foundPlaylist.HashCode || oldItems.Count != foundPlaylist.PlaylistItems.Count))
+          if (playlist.PlaylistItems != null)
           {
-            if (oldItems.Count > 0)
+            if (foundPlaylist.PlaylistItems != null && (oldHash != foundPlaylist.HashCode || oldItems.Count != foundPlaylist.PlaylistItems.Count))
             {
-              var removedItems = foundPlaylist.PlaylistItems.Where(p => oldItems.All(p2 => p2.Id != p.Id)).ToList();
-
-              foreach (var removed in removedItems)
+              if (oldItems.Count > 0)
               {
-                if (foundPlaylist.ActualItemId == removed.Id)
+                var removedItems = foundPlaylist.PlaylistItems.Where(p => oldItems.All(p2 => p2.Id != p.Id)).ToList();
+
+                foreach (var removed in removedItems)
                 {
-                  foundPlaylist.ActualItemId = null;
-                }
-
-                context.Entry(removed).State = EntityState.Deleted;
-              }
-
-              var items = foundPlaylist.PlaylistItems.ToList();
-              foundPlaylist.PlaylistItems.Clear();
-
-              foreach (var playlistItem in oldItems)
-              {
-                foundPlaylist.PlaylistItems.Add(playlistItem);
-
-                if (playlistItem.Id == 0)
-                {
-                  context.Entry(playlistItem).State = EntityState.Added;
-                }
-                else
-                {
-                  var existing = items.SingleOrDefault(x => x.Id == playlistItem.Id);
-
-                  if (existing != null)
+                  if (foundPlaylist.ActualItemId == removed.Id)
                   {
-                    if (existing.Compare(playlistItem))
+                    foundPlaylist.ActualItemId = null;
+                  }
+
+                  context.Entry(removed).State = EntityState.Deleted;
+                }
+
+                var items = foundPlaylist.PlaylistItems.ToList();
+                foundPlaylist.PlaylistItems.Clear();
+
+                foreach (var playlistItem in oldItems)
+                {
+                  foundPlaylist.PlaylistItems.Add(playlistItem);
+
+                  if (playlistItem.Id == 0)
+                  {
+                    context.Entry(playlistItem).State = EntityState.Added;
+                  }
+                  else
+                  {
+                    var existing = items.SingleOrDefault(x => x.Id == playlistItem.Id);
+
+                    if (existing != null)
                     {
-                      context.Entry(playlistItem).State = EntityState.Modified;
+                      if (existing.Compare(playlistItem))
+                      {
+                        context.Entry(playlistItem).State = EntityState.Modified;
+                      }
                     }
                   }
                 }
+
+                foundPlaylist.ItemCount = foundPlaylist.PlaylistItems.Count;
               }
-
-              foundPlaylist.ItemCount = foundPlaylist.PlaylistItems.Count;
             }
-          }
 
-          var actualItem = foundPlaylist.ActualItem;
-          foundPlaylist.ActualItem = null;
+            actualItem = foundPlaylist.ActualItem;
+            foundPlaylist.ActualItem = null;
+          }
 
           var resultCount = context.SaveChanges();
 
@@ -1394,6 +1399,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
           updatedPlaylist = (TPlaylist)foundPlaylist;
         }
+
 
         return result;
       }

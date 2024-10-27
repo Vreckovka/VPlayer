@@ -217,7 +217,7 @@
                             </Style>
                         </Grid.Style>
                     </Grid>
-                    <Grid Grid.Row="1" Background="#cc101010">
+                    <Grid Grid.Row="1">
                         <Border Padding="15,5"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"

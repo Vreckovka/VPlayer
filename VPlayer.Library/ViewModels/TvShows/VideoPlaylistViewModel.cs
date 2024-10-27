@@ -16,7 +16,7 @@ using VPlayer.Library.ViewModels;
 
 namespace VPlayer.Home.ViewModels.TvShows
 {
-  public class VideoPlaylistViewModel : FilePlaylistViewModel<VideoItemInPlaylistViewModel, VideoFilePlaylist, PlaylistVideoItem>
+  public class VideoPlaylistViewModel : FilePlaylistViewModel<VideoItemInPlaylistViewModel, VideoFilePlaylist, PlaylistVideoItem, VideoItem>
   {
     #region Fields
 

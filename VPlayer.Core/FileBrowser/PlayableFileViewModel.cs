@@ -444,7 +444,7 @@ namespace VPlayer.Core.FileBrowser
             for (int i = screenInterval; i < (int)mediaInfo.Duration.TotalSeconds; i += screenInterval)
             {
               var img = FFMpeg.Snapshot(Model.Source, new Size((int)(width / sizeCoef), (int)(height / sizeCoef)), TimeSpan.FromSeconds(i));
-
+    
               thmbs.Add(new ThumbnailViewModel()
               {
                 ImageData = ImageToByte(img)

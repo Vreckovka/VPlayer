@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Timers;
@@ -8,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using FFMpegCore;
 using HtmlAgilityPack;
 using Logger;
 using Microsoft.EntityFrameworkCore;
@@ -41,7 +45,6 @@ namespace VPlayer.ViewModels
   //TODO: Playlist hore pri menu, quick ze prides a uvidis napriklad 5 poslednych hore v rade , ako carusel (5/5)
   //TODO: Playlist nech sa automaticky nevytvara ak je niekolko pesniciek (nastavenie pre uzivatela aky pocet sa ma ukladat!) (3/5)
   //TODO: Reorder na playliste
-  //TODO: Moznost editovat LRC
   //TODO: Mozno vyhladat titulky cez search a vybrat si
   //TODO: Hviezdicky pocet 
   //TODO: TV Channels editor dotiahnut
@@ -89,7 +92,7 @@ namespace VPlayer.ViewModels
   //
   //
   //  *****PCloud******
-  //       	TODO: Album cover ulozit do PCloudu
+  //       
   //
   //
   //  	*****Webova db******
@@ -105,7 +108,6 @@ namespace VPlayer.ViewModels
   //        TODO: Umoznit simultalne spustit video a hudbu
   //        TODO: Umoznit zmenit cislo epizody a seriu
   //        TODO: Premenovat epizodu
-  //        TODO: Ked pojdes hover nad playlist itemom tak sa zobrazi taka karta, kde budu detailne info + velka fotka
   //        TODO: Vytvorit HOME TAB (HOME -> ANALYTICS)  - Horizontal listview poslednych 5 - 10 playlistov a moznost ich hned spustit a potom rozne statistiky... (grafy, tabulky...) 
   //        TODO: Paging na dotahovanie playlistov (aj ostatnych veci) (aby sa neloadovala tak dlho appka a aj tak tie dole ma nezaujimaju)
   //        TODO: Zmena suborov (Napriklad ked nema Artista a ja to najdem tak ho nastavit) ---> Mozno cim skor a potom dat do PCloudu
@@ -116,8 +118,6 @@ namespace VPlayer.ViewModels
   //TODO: Ked je buffering v prehravaci a das vypnut appku tak spadne a nevypne sa poriadne (zostane aj niekedy bezat potom na pozadi, nejaky thread niekde asi)
   //TODO: Nespojilo playlisty s rovnakym hash po spusteni (neviem ci TV show alebo hudba) (mozno tv show ze pustis z detailu a das save a potom znovu z detailu)
   //TODO: Nespaja niektorych aristov pri load
-  //TODO: Sem tam ostanie vysiet appka
-  //TODO: Po roztiahnuti okna spadlo
   //TODO: Rap mixy maju nejaky problem pri loading artistov
   //
   //  *****IMPORTANT!*****
