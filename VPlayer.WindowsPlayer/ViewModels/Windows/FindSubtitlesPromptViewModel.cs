@@ -29,7 +29,8 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
 
       var openSubtitlesOptions = new OpenSubtitlesOptions
       {
-        ApiKey = "eTQWO74msW2zmCQwoYPQcd4BlGdVy39J",
+        //ApiKey = "eTQWO74msW2zmCQwoYPQcd4BlGdVy39J",
+        ApiKey = "DFzdsN2GOu72amROgUD4Q1pkNHgmJvCy",
         ProductInformation = new ProductHeaderValue("VPlayer", "0.1.0"),
       };
 
@@ -140,6 +141,7 @@ namespace VPlayer.WindowsPlayer.ViewModels.Windows
           "cs"
         }
       };
+
 
       var result = (await openSubtitlesService.SearchSubtitlesAsync(search))?.Data?.Select(x => x.Attributes)?.ToList();
 
