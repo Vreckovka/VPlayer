@@ -136,18 +136,22 @@ namespace VPlayer.Library
                 }
                 else if (value is string filename)
                 {
-                    var creationDate = File.GetCreationTime(filename);
-
-                    if (lastFileName == filename)
+                    if (!filename.Contains("http"))
                     {
-                        if (creationDate == lastCreationDate)
+                        var creationDate = File.GetCreationTime(filename);
+
+                        if (lastFileName == filename)
                         {
-                            return lastImage;
+                            if (creationDate == lastCreationDate)
+                            {
+                                return lastImage;
+                            }
                         }
+
+                        lastCreationDate = creationDate;
                     }
 
                     lastFileName = filename;
-                    lastCreationDate = creationDate;
 
                     if (File.Exists(filename))
                     {
