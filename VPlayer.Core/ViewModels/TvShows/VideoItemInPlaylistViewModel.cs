@@ -11,11 +11,13 @@ using VPlayer.Core.ViewModels.SoundItems;
 namespace VPlayer.Core.ViewModels.TvShows
 {
 
-  public class FillerData
+  public class OnePieceEpisodeData
   {
     public int EpisodeNumber { get; set; }
     public string StartTime { get; set; }
     public string Name { get; set; }
+    public string Chapters { get; set; }
+    public bool IsFiller { get; set; }
   }
 
   public class VideoItemInPlaylistViewModel : FileItemInPlayList<VideoItem>
@@ -30,7 +32,26 @@ namespace VPlayer.Core.ViewModels.TvShows
       eventAggregator.GetEvent<PlaySongsFromPlayListEvent<VideoItemInPlaylistViewModel>>().Publish(this);
     }
 
-    public FillerData FillerData { get; set; }
+    #region FillerData
+
+    private OnePieceEpisodeData fillerData;
+
+    public OnePieceEpisodeData FillerData
+    {
+      get { return fillerData; }
+      set
+      {
+        if (value != fillerData)
+        {
+          fillerData = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+    #endregion
+
+
+
 
     #region Description
 

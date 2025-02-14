@@ -1098,6 +1098,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
               albumViewModel.RaisePropertyChange(nameof(AlbumViewModel.Image));
               albumViewModel.RaisePropertyChange(nameof(AlbumViewModel.ImageThumbnail));
               ActualItem?.RaiseNotifyPropertyChanged(nameof(SongInPlayListViewModel.ImagePath));
+
+              await storageManager.UpdateEntityAsync(songInPlay.AlbumViewModel.Model);
             }
           }
         }

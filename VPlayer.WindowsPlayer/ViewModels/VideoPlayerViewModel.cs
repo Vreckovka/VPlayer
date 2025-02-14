@@ -1177,8 +1177,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       if (items.Count() > 1)
       {
-        return items.FirstOrDefault(x => 
-        !x.Description.RemoveDiacritics().ToLower().Contains("sing") && 
+        return items.FirstOrDefault(x =>
+        !x.Description.RemoveDiacritics().ToLower().Contains("sing") &&
         !x.Description.RemoveDiacritics().ToLower().Contains("song")
         );
       }
@@ -1210,34 +1210,36 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-    public override void PlayNext()
+    public async override void PlayNext()
     {
       base.PlayNext();
 
-      if (!FillerData.Any())
-        return;
+      await Task.Delay(200);
+      SetOnePieceEpisode();
+    }
 
-      var tvShowEpisodeNumbers = DataLoader.GetTvShowSeriesNumber(ActualItem.Name);
 
-      if (tvShowEpisodeNumbers.EpisodeNumber != null)
+    private void SetOnePieceEpisode()
+    {
+      var data = ActualItem.FillerData;
+
+      if (data != null)
       {
-        var data = FillerData.FirstOrDefault(x => x.EpisodeNumber == tvShowEpisodeNumbers.EpisodeNumber);
+        var split = data.StartTime.Split(":");
+        var miliseconds = new TimeSpan(0, int.Parse(split[0]), int.Parse(split[1]));
 
-        if (data != null)
+        if (MediaPlayer.Length == 0)
         {
-          var split = data.StartTime.Split(":");
-          var miliseconds = new TimeSpan(0, int.Parse(split[0]), int.Parse(split[1]));
-
-          if (MediaPlayer.Length == 0)
+          MediaPlayer.Media.ParsedChanged += async (sender, args) => 
           {
-            MediaPlayer.Media.ParsedChanged += (sender, args) => { MediaPlayer.Position = (float)miliseconds.TotalMilliseconds / MediaPlayer.Length; };
-          }
-          else
-          {
-            var startPosition = miliseconds.TotalMilliseconds / MediaPlayer.Length;
-            MediaPlayer.Position = (float)startPosition;
-          }
-
+          
+            MediaPlayer.Position = (float)miliseconds.TotalMilliseconds / MediaPlayer.Length;
+          };
+        }
+        else
+        {
+          var startPosition = miliseconds.TotalMilliseconds / MediaPlayer.Length;
+          MediaPlayer.Position = (float)startPosition;
         }
       }
     }
@@ -1440,29 +1442,49 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
 
 
-    private List<FillerData> FillerData = new List<FillerData>();
+    private List<OnePieceEpisodeData> FillerData = new List<OnePieceEpisodeData>();
     private void GetFillerList()
     {
       var html = new WebClient().DownloadString("https://www.animefillerguide.com/2019/06/one-piece-filler-list.html");
 
       var document = new HtmlDocument();
       document.LoadHtml(html);
+      var xpath = "/html/body/div/div[2]/div[1]/main/div[1]/div/div[1]/div/div[2]/div/article/div[2]/table/tbody/tr";
 
-      var episodes = document.DocumentNode.SelectNodes("/html/body/div[1]/div[2]/div[1]/main/div[1]/div/div[2]/div/div/article/div[2]/ul/li");
+      var episodes = document.DocumentNode.SelectNodes(xpath);
 
       FillerData = episodes.Where(x => x.ChildNodes.Count > 1).Select(x =>
       {
-        var split = x.ChildNodes[0].InnerText.Split(".");
-
-        return new FillerData()
+        try
         {
-          EpisodeNumber = int.Parse(split[0].TrimStart('0')),
-          Name = x.ChildNodes[1].InnerText.Trim(),
-          StartTime = split[1].Replace("(", null).Replace(")", null)
-        };
-      }).ToList();
-    }
+          var chapters = x.ChildNodes[3].InnerText.Trim();
 
+          return new OnePieceEpisodeData()
+          {
+            EpisodeNumber = int.Parse(x.ChildNodes[0].InnerText.TrimStart('0').Replace(".", null)),
+            StartTime = x.ChildNodes[1].InnerText.Replace("(", null).Replace(")", null),
+            Name = x.ChildNodes[2].InnerText.Trim(),
+            Chapters = chapters,
+            IsFiller = chapters == "N/A"
+          };
+        }
+        catch (Exception ex)
+        {
+          return null;
+        }
+      }).Where(x => x != null).ToList();
+
+      foreach (var item in PlayList)
+      {
+        var tvShowEpisodeNumbers = DataLoader.GetTvShowSeriesNumber(item.Name);
+
+        if (tvShowEpisodeNumbers?.EpisodeNumber != null)
+        {
+          var data = FillerData.FirstOrDefault(x => x.EpisodeNumber == tvShowEpisodeNumbers.EpisodeNumber);
+          item.FillerData = data;
+        }
+      }
+    }
     #endregion
   }
 }
