@@ -65,7 +65,7 @@ namespace VVLC
     {
       if (e.OldValue is MediaPlayer oldMediaPlayer)
       {
-        oldMediaPlayer.Hwnd = IntPtr.Zero;
+        //oldMediaPlayer.Hwnd = IntPtr.Zero; // Causing crash 
       }
       if (e.NewValue is MediaPlayer newMediaPlayer)
       {
