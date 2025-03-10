@@ -116,7 +116,7 @@
                       Orientation="Horizontal">
                       <!--  Icon  -->
                       <Image
-                        Margin="0,0,7,0"
+                        Margin="7,7,7,7"
                         Opacity="1"
                         Source="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Icon}" />
 
