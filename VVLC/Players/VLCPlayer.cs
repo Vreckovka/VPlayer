@@ -247,7 +247,7 @@ namespace VVLC.Players
       {
         lastPosition = 0;
         serialDisposable.Disposable?.Dispose();
-        serialDisposable.Disposable = Observable.Interval(TimeSpan.FromSeconds(2)).Subscribe((x) =>
+        serialDisposable.Disposable = Observable.Interval(TimeSpan.FromSeconds(5)).Subscribe((x) =>
         {
           if (MediaPlayer.Position != lastPosition)
           {
