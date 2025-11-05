@@ -56,7 +56,8 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients
 
           if (fileName != null)
           {
-            var filesInDir = directory.GetFiles($"*{fileName}*.{extension}").ToList();
+            var filesInDird = directory.GetFiles();
+            var filesInDir = filesInDird.Where(x => x.Name.Contains($"{fileName}")).ToList();
 
             if (filesInDir.Count == 1)
             {
@@ -100,7 +101,14 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients
 
     public override Task<bool> Update(ILRCFile lRCFile)
     {
-      throw new NotImplementedException();
+      var path = Path.Combine(this.basePath, lRCFile.Artist, lRCFile.Album);
+     
+      var name = GetFileName(lRCFile.Artist, lRCFile.Title);
+
+      Directory.CreateDirectory(path);
+      File.WriteAllText(Path.Combine(path, $"{name}.lrc"), lRCFile.GetString());
+
+      return Task.FromResult(true);
     }
   }
 }

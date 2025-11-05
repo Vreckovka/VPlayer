@@ -62,6 +62,7 @@ using VPlayer.WindowsPlayer.Views.Prompts;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer;
 using VVLC.Players;
 using FileInfo = VCore.WPF.ViewModels.WindowsFiles;
+using VPlayer.AudioStorage.InfoDownloader.LRC.Clients;
 
 
 namespace VPlayer.WindowsPlayer.ViewModels
@@ -1054,6 +1055,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
                   if (imageFiles.Count > 0)
                   {
                     actualCover = File.ReadAllBytes(imageFiles.OrderByDescending(x => x.Length).First().FullName);
+
+                    if(songInPlay?.AlbumViewModel?.Model != null && string.IsNullOrEmpty(songInPlay?.AlbumViewModel?.Model.AlbumFrontCoverFilePath))
+                    {
+                      songInPlay.AlbumViewModel.Model.AlbumFrontCoverFilePath = imageFiles.OrderByDescending(x => x.Length).First().FullName;
+                    }
                   }
 
                 }
@@ -1097,6 +1103,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
               albumViewModel.RaisePropertyChange(nameof(AlbumViewModel.Image));
               albumViewModel.RaisePropertyChange(nameof(AlbumViewModel.ImageThumbnail));
+              albumViewModel.RaisePropertyChange(nameof(AlbumViewModel.HighQualityCover));
               ActualItem?.RaiseNotifyPropertyChanged(nameof(SongInPlayListViewModel.ImagePath));
 
               await storageManager.UpdateEntityAsync(songInPlay.AlbumViewModel.Model);

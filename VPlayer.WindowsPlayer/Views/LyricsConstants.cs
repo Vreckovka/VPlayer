@@ -44,11 +44,10 @@ namespace VPlayer.WindowsPlayer.Views
           RaisePropertyChanged();
           RaisePropertyChanged(nameof(FontSize));
           RaisePropertyChanged(nameof(ActualLineFontSize));
-
           RaisePropertyChanged(nameof(LineHeight));
-
-
           RaisePropertyChanged(nameof(AutoScrollStep));
+          RaisePropertyChanged(nameof(VizualizerBottomColor));
+          RaisePropertyChanged(nameof(VizualizerTopColor));
         }
       }
     }
@@ -71,6 +70,139 @@ namespace VPlayer.WindowsPlayer.Views
       get { return IsCinemaMode ? 42 : 31.0; }
     }
 
+    #region ShowHUD
+
+    private bool showHUD = true;
+
+    public bool ShowHUD
+    {
+      get { return showHUD; }
+      set
+      {
+        if (value != showHUD)
+        {
+          showHUD = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region ShowLyrics
+
+    private bool showLyrics = true;
+
+    public bool ShowLyrics
+    {
+      get { return showLyrics; }
+      set
+      {
+        if (value != showLyrics)
+        {
+          showLyrics = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region VizualizerTopColor
+
+    private string vizualizerTopColor = "#FFFF0000";
+
+    public string VizualizerTopColor
+    {
+      get { return vizualizerTopColor; }
+      set
+      {
+        if (value != vizualizerTopColor)
+        {
+          vizualizerTopColor = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region VizualizerMiddleColor
+
+    private string vizualizerMiddleColor = "#FFFF0000";
+
+    public string VizualizerMiddleColor
+    {
+      get { return vizualizerMiddleColor; }
+      set
+      {
+        if (value != vizualizerMiddleColor)
+        {
+          vizualizerMiddleColor = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+
+    #region BarNumber
+
+    private int barNumber = 250;
+
+    public int BarNumber
+    {
+      get { return barNumber; }
+      set
+      {
+        if (value != barNumber)
+        {
+          barNumber = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region BarWidth
+
+    private int barWidth = 5;
+
+    public int BarWidth
+    {
+      get { return barWidth; }
+      set
+      {
+        if (value != barWidth)
+        {
+          barWidth = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region VizualizerBottomColor
+
+    private string vizualizerBottomColor = "#FF45FF00";
+
+    public string VizualizerBottomColor
+    {
+      get { return vizualizerBottomColor; }
+      set
+      {
+        if (value != vizualizerBottomColor)
+        {
+          vizualizerBottomColor = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     public double AutoScrollStep
     {

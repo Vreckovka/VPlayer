@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Windows;
 using System.Windows.Input;
+using TagLib.Tiff.Pef;
 using VCore;
 using VCore.Standard;
 using VCore.Standard.Helpers;
@@ -16,6 +18,7 @@ using VCore.WPF.LRC.Domain;
 using VCore.WPF.Misc;
 using VPlayer.AudioStorage.InfoDownloader.Clients.PCloud;
 using VPlayer.AudioStorage.InfoDownloader.LRC;
+using VPlayer.AudioStorage.InfoDownloader.LRC.Clients;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Clients.Google;
 using VPlayer.Core.ViewModels.SoundItems.LRCCreators;
 
@@ -292,6 +295,13 @@ namespace VPlayer.Core.ViewModels.SoundItems
         VSynchronizationContext.PostOnUIThread(() => { IsLoading = true; UpdateStatus = null; });
 
         var result = await pCloudLyricsProvider.Update(Model);
+        if(!result)
+        {
+          //SaveLocally(Model);
+
+          var provider = new LocalLrcProvider("C:\\Lyrics");
+          await provider.Update(Model);
+        }
 
         VSynchronizationContext.PostOnUIThread(() =>
         {
@@ -313,7 +323,6 @@ namespace VPlayer.Core.ViewModels.SoundItems
     }
 
     #endregion
-
 
 
     public string GetLyricsText()
