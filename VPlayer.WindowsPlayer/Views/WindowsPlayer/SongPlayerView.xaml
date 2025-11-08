@@ -4,7 +4,9 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
   xmlns:behaviors="clr-namespace:VCore.WPF.Behaviors;assembly=VCore.WPF"
+  xmlns:behaviors4="clr-namespace:VPlayer.Core.Behaviors;assembly=VPlayer.Core"
   xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
+  xmlns:controls1="clr-namespace:VVLC.Controls;assembly=VVLC"
   xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:library="clr-namespace:VPlayer.Library;assembly=VPlayer.Core"
@@ -14,8 +16,10 @@
   xmlns:text="clr-namespace:VCore.WPF.Behaviors.Text;assembly=VCore.WPF"
   xmlns:userControls="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
   xmlns:views="clr-namespace:VPlayer.WindowsPlayer.Views"
+  xmlns:vvlc="clr-namespace:VVLC;assembly=VVLC"
   d:DesignHeight="450"
   d:DesignWidth="800"
+  Background="Transparent"
   mc:Ignorable="d">
 
   <UserControl.Resources>
@@ -35,11 +39,110 @@
       <RowDefinition Height="auto" />
     </Grid.RowDefinitions>
 
+
+
     <Grid Grid.RowSpan="3">
       <ContentControl
         BorderThickness="0"
         Content="{Binding UseGif}"
-        ContentTemplateSelector="{StaticResource SongImageTemplateSelector}" />
+        ContentTemplateSelector="{StaticResource SongImageTemplateSelector}">
+        <ContentControl.Style>
+          <Style TargetType="ContentControl">
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.PlainImage}" Value="true">
+                <Setter Property="Visibility" Value="Collapsed" />
+              </DataTrigger>
+
+              <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.IsVideo}" Value="true">
+                <Setter Property="Visibility" Value="Collapsed" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </ContentControl.Style>
+      </ContentControl>
+
+      <vvlc:VideoView x:Name="VideoView" MediaPlayer="{Binding VideoVLCPlayer}">
+        <Grid
+          Grid.Row="1"
+          Height="350"
+          Margin="0,0,0,0"
+          VerticalAlignment="Bottom">
+
+          <Grid.Style>
+            <Style TargetType="Grid">
+              <Setter Property="Background" Value="#50000000" />
+
+              <Setter Property="Visibility" Value="Hidden" />
+
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.IsVideo}" Value="true">
+                  <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </Grid.Style>
+
+
+          <Border Height="260" VerticalAlignment="Top">
+            <Grid x:Name="lyrics_grid">
+              <ContentControl
+                BorderThickness="0"
+                Content="{Binding ActualItem.LyricsObject}"
+                ContentTemplateSelector="{StaticResource LyricsTemplateSelector}" />
+
+            </Grid>
+
+            <Border.Style>
+              <Style TargetType="Border">
+                <!--<Setter Property="Background" Value="#70000000" />-->
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding ActualItem.LyricsObject}" Value="{x:Null}">
+                    <Setter Property="Visibility" Value="Hidden" />
+                  </DataTrigger>
+
+                  <DataTrigger Binding="{Binding ActualItem.LyricsObject}" Value="false">
+                    <Setter Property="Visibility" Value="Hidden" />
+                  </DataTrigger>
+
+                  <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.ShowLyrics}" Value="false">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </Border.Style>
+          </Border>
+
+
+          <controls1:FullscreenPlayer
+            x:Name="FullscreenPlayer"
+            Grid.Row="1"
+            DataContext="{Binding}"
+            Visibility="Hidden" />
+
+          <b:Interaction.Behaviors>
+            <behaviors4:FullScreenBehavior x:Name="FullScreenBehavior" PlayerDataContext="{Binding}" />
+          </b:Interaction.Behaviors>
+
+        </Grid>
+
+        <vvlc:VideoView.Style>
+          <Style BasedOn="{StaticResource {x:Type vvlc:VideoView}}" TargetType="vvlc:VideoView">
+            <Setter Property="Visibility" Value="Hidden" />
+
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.IsVideo}" Value="true">
+                <Setter Property="Visibility" Value="Visible" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </vvlc:VideoView.Style>
+
+        <b:Interaction.Triggers>
+          <b:EventTrigger EventName="Loaded">
+            <b:InvokeCommandAction Command="{Binding VideoViewInitlized}" />
+          </b:EventTrigger>
+        </b:Interaction.Triggers>
+      </vvlc:VideoView>
 
       <Grid
         Margin="5"
@@ -47,7 +150,7 @@
         VerticalAlignment="Top">
         <Border
           Padding="10"
-          Background="White"
+          Background="#aa151515"
           BorderBrush="#252525"
           BorderThickness="1"
           CornerRadius="5">
@@ -110,6 +213,16 @@
           </Style>
         </Grid.Style>
       </Grid>
+
+      <Grid.Style>
+        <Style TargetType="Grid">
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.PlainImage}" Value="true">
+              <Setter Property="Visibility" Value="Hidden" />
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </Grid.Style>
     </Grid>
 
     <Grid Grid.Row="1" Height="390">
@@ -123,7 +236,7 @@
         Grid.RowSpan="2"
         Height="240"
         VerticalAlignment="Top">
-        <Grid x:Name="lyrics_grid">
+        <Grid x:Name="lyrics_grid_01">
           <ContentControl
             BorderThickness="0"
             Content="{Binding ActualItem.LyricsObject}"
@@ -415,6 +528,11 @@
               <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.ShowLyrics}" Value="False">
                 <Setter Property="Height" Value="290" />
               </DataTrigger>
+
+              <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.HideEQ}" Value="true">
+                <Setter Property="Visibility" Value="Collapsed" />
+              </DataTrigger>
+
             </Style.Triggers>
           </Style>
         </Grid.Style>
@@ -523,8 +641,6 @@
         </Style>
       </Border.Style>
     </Border>
-
-
 
     <Grid
       Grid.Row="0"

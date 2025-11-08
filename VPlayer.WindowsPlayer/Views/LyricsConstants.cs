@@ -4,7 +4,9 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
+using System.Windows.Input;
 using VCore.Standard;
+using VCore.WPF.Misc;
 
 namespace VPlayer.WindowsPlayer.Views
 {
@@ -108,6 +110,83 @@ namespace VPlayer.WindowsPlayer.Views
 
     #endregion
 
+    #region IsVideo
+
+    private bool isVideo = false;
+
+    public bool IsVideo
+    {
+      get { return isVideo; }
+      set
+      {
+        if (value != isVideo)
+        {
+          isVideo = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region VideoPath
+
+    private string videoPath;
+
+    public string VideoPath
+    {
+      get { return videoPath; }
+      set
+      {
+        if (value != videoPath)
+        {
+          videoPath = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+
+    #region PlainImage
+
+    private bool plainImage = false;
+
+    public bool PlainImage
+    {
+      get { return plainImage; }
+      set
+      {
+        if (value != plainImage)
+        {
+          plainImage = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region HideEQ
+
+    private bool hideEQ = false;
+
+    public bool HideEQ
+    {
+      get { return hideEQ; }
+      set
+      {
+        if (value != hideEQ)
+        {
+          hideEQ = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #region VizualizerTopColor
 
     private string vizualizerTopColor = "#FFFF0000";
@@ -145,7 +224,6 @@ namespace VPlayer.WindowsPlayer.Views
     }
 
     #endregion
-
 
     #region BarNumber
 
@@ -219,5 +297,25 @@ namespace VPlayer.WindowsPlayer.Views
         return new Thickness(5, 5, 5, 5);
       }
     }
+
+    #region SetToFullHD
+
+    protected ActionCommand setToFullHD;
+
+    public ICommand SetToFullHD
+    {
+      get
+      {
+        return setToFullHD ??= new ActionCommand(OnSetToFullHD);
+      }
+    }
+
+    protected virtual void OnSetToFullHD()
+    {
+      Application.Current.MainWindow.Width = 1980;
+      Application.Current.MainWindow.Height = 1037;
+    }
+
+    #endregion
   }
 }

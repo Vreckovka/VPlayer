@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -75,7 +76,8 @@ namespace VVLC
         Height = 0;
         Width = 0;
       }
-    } 
+
+    }
 
     #endregion
 
@@ -157,6 +159,7 @@ namespace VVLC
       }
 
       Owner = _wndhost;
+
       SetWindowInPlace();
 
       _wndhost.Closing += Wndhost_Closing;
@@ -193,7 +196,7 @@ namespace VVLC
 
     private void Wndhost_StateChanged(object sender, EventArgs e)
     {
-     // if (_wndhost.WindowState != WindowState.Minimized)
+      // if (_wndhost.WindowState != WindowState.Minimized)
       {
         SetWindowInPlace();
       }
@@ -203,8 +206,9 @@ namespace VVLC
 
     #region SetWindowInPlace
 
-    private void SetWindowInPlace()
+    private async Task SetWindowInPlace()
     {
+     
       var locationFromScreen = _bckgnd.PointToScreen(_zeroPoint);
       var source = PresentationSource.FromVisual(_wndhost);
       var targetPoints = source.CompositionTarget.TransformFromDevice.Transform(locationFromScreen);
@@ -213,18 +217,24 @@ namespace VVLC
       var size = new Point(_bckgnd.ActualWidth, _bckgnd.ActualHeight);
       Height = size.Y;
       Width = size.X;
-      Show();
+
+      if (!overlayWindow.IsLoaded || Visibility == Visibility.Visible)
+        Show();
 
       overlayWindow.Left = Left;
       overlayWindow.Top = Top;
       overlayWindow.Height = Height;
       overlayWindow.Width = Width;
 
-      overlayWindow.Show();
+      if (!overlayWindow.IsLoaded || Visibility == Visibility.Visible)
+        overlayWindow.Show();
+
       overlayWindow.Owner = this;
 
       _wndhost.Focus();
 
+      await Task.Delay(10);
+      Wndhost_SizeChanged(null, null);
     }
 
     #endregion
@@ -295,6 +305,6 @@ namespace VVLC
 
     #endregion
 
-  
+
   }
 }

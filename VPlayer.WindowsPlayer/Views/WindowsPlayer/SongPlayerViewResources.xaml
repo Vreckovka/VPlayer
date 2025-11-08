@@ -491,6 +491,7 @@
                               HorizontalAlignment="Left"
                               VerticalAlignment="Center"
                               HorizontalContentAlignment="Left"
+                              VerticalContentAlignment="Center"
                               Text="{Binding Text, Mode=OneWay}">
                               <TextBox.Style>
                                 <Style BasedOn="{StaticResource LyricsStyle}" TargetType="TextBox">

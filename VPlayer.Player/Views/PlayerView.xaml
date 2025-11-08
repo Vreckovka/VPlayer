@@ -8,7 +8,6 @@
   xmlns:controls2="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
   xmlns:converters="clr-namespace:VCore.WPF.Converters;assembly=VCore.WPF"
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-  xmlns:global="clr-namespace:;assembly=VCore.WPF"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
   xmlns:numericUpAndDown="clr-namespace:VCore.WPF.Controls.NumericUpAndDown;assembly=VCore.WPF"
   xmlns:popups="clr-namespace:VCore.WPF.Behaviors.Popups;assembly=VCore.WPF"
@@ -404,6 +403,85 @@
                             IsChecked="{Binding ShowLyrics}" />
 
                         </Grid>
+
+                        <Grid>
+                          <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="auto" />
+                          </Grid.ColumnDefinitions>
+                          <TextBlock
+                            VerticalAlignment="Center"
+                            FontWeight="Bold"
+                            Foreground="#30ffffff"
+                            Text="Plain Image" />
+
+                          <CheckBox
+                            Grid.Column="1"
+                            Foreground="White"
+                            IsChecked="{Binding PlainImage}" />
+
+                        </Grid>
+
+                        <Grid>
+                          <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="auto" />
+                          </Grid.ColumnDefinitions>
+                          <TextBlock
+                            VerticalAlignment="Center"
+                            FontWeight="Bold"
+                            Foreground="#30ffffff"
+                            Text="Hide EQ" />
+
+                          <CheckBox
+                            Grid.Column="1"
+                            Foreground="White"
+                            IsChecked="{Binding HideEQ}" />
+
+                        </Grid>
+
+                        <Grid>
+                          <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="auto" />
+                          </Grid.ColumnDefinitions>
+                          <TextBlock
+                            VerticalAlignment="Center"
+                            FontWeight="Bold"
+                            Foreground="#30ffffff"
+                            Text="IsVideo" />
+
+                          <CheckBox
+                            Grid.Column="1"
+                            Foreground="White"
+                            IsChecked="{Binding IsVideo}" />
+
+                        </Grid>
+
+
+                        <Grid>
+                          <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="auto" />
+                          </Grid.ColumnDefinitions>
+                          <TextBlock
+                            VerticalAlignment="Center"
+                            FontWeight="Bold"
+                            Foreground="#30ffffff"
+                            Text="Video Path" />
+
+                          <TextBox
+                            Grid.Column="1"
+                            Foreground="White"
+                            Text="{Binding VideoPath}" />
+
+                        </Grid>
+
+                        <Button Command="{Binding SetToFullHD}" Content="Set FULL HD" />
 
                       </StackPanel>
                     </Border>

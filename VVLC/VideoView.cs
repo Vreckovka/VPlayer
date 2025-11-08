@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
@@ -26,13 +27,26 @@ namespace VVLC
       DefaultStyleKey = typeof(VideoView);
 
       DataContextChanged += VideoView_DataContextChanged;
+      this.IsVisibleChanged += VideoView_IsVisibleChanged;
 
       Application.Current.Exit += Current_Exit;
 
     }
 
+    private void VideoView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      if(ForegroundWindow != null) 
+      {
+        if (Visibility != Visibility.Visible)
+          ForegroundWindow.Hide();
+        else
+          ForegroundWindow.Show();
+      }
+     
+    }
+
     #region Properties
-    
+
     public static readonly DependencyProperty MediaPlayerProperty = DependencyProperty.Register(nameof(MediaPlayer),
             typeof(MediaPlayer),
             typeof(VideoView),
@@ -91,8 +105,6 @@ namespace VVLC
         };
 
         ForegroundWindow.Loaded += ForegroundWindow_Loaded;
-
-        ForegroundWindow.Show();
       }
     }
 
@@ -100,7 +112,7 @@ namespace VVLC
 
     #region ForegroundWindow_Loaded
 
-    private void ForegroundWindow_Loaded(object sender, RoutedEventArgs e)
+    private async void ForegroundWindow_Loaded(object sender, RoutedEventArgs e)
     {
       Hwnd = (new WindowInteropHelper(ForegroundWindow)).Handle;
 
@@ -111,6 +123,10 @@ namespace VVLC
       }
 
       MediaPlayer.Hwnd = Hwnd;
+      await Task.Delay(1000);
+
+      if (Visibility != Visibility.Visible)
+        ForegroundWindow.Hide();
     }
 
     #endregion

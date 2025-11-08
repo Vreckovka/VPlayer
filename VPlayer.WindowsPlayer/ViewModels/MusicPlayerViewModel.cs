@@ -63,6 +63,9 @@ using VPlayer.WindowsPlayer.Views.WindowsPlayer;
 using VVLC.Players;
 using FileInfo = VCore.WPF.ViewModels.WindowsFiles;
 using VPlayer.AudioStorage.InfoDownloader.LRC.Clients;
+using LibVLCSharp.Shared;
+using VVLC;
+using VPlayer.WindowsPlayer.Views;
 
 
 namespace VPlayer.WindowsPlayer.ViewModels
@@ -123,6 +126,30 @@ namespace VPlayer.WindowsPlayer.ViewModels
     #endregion Constructors
 
     #region Properties
+
+
+
+    #region VideoVLCPlayer
+
+    private MediaPlayer myVar;
+
+    public MediaPlayer VideoVLCPlayer
+    {
+      get { return myVar; }
+      set
+      {
+        if (value != myVar)
+        {
+          myVar = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+
+
 
     #region RandomGifUrl
 
@@ -806,12 +833,38 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region VideoViewInitlized
+    private TaskCompletionSource<bool> loadedTask = new TaskCompletionSource<bool>();
+    private ActionCommand videoViewInitlized;
+
+    public ICommand VideoViewInitlized
+    {
+      get
+      {
+        if (videoViewInitlized == null)
+        {
+          videoViewInitlized = new ActionCommand(OnVideoViewInitlized);
+        }
+
+        return videoViewInitlized;
+      }
+    }
+
+    public void OnVideoViewInitlized()
+    {
+      if (!loadedTask.Task.IsCompleted)
+        loadedTask.SetResult(true);
+    }
+
+    #endregion
+
     #endregion
 
     #region Methods
 
     #region Initialize
 
+    private LibVLC videolibVlc;
     private List<IDisposable> modelsDisposables = new List<IDisposable>();
     public override async void Initialize()
     {
@@ -840,6 +893,29 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       //await artistsViewModel.GetViewModelsAsync();
       //await albumsViewModel.GetViewModelsAsync();
+
+      videolibVlc = new LibVLC();
+      VideoVLCPlayer = new MediaPlayer(videolibVlc);
+      VideoVLCPlayer.Mute = true;
+
+
+      MediaPlayer.Playing += MediaPlayer_Playing;
+    }
+
+    private void MediaPlayer_Playing(object sender, EventArgs e)
+    {
+      Task.Run(async () =>
+      {
+        if (!loadedTask.Task.IsCompleted)
+          await loadedTask.Task;
+
+        if (LyricsConstants.Instance.IsVideo && !string.IsNullOrEmpty(LyricsConstants.Instance.VideoPath))
+          VideoVLCPlayer.Play(new Media(videolibVlc, LyricsConstants.Instance.VideoPath, FromType.FromPath));
+      });
+      
+
+
+
     }
 
     #endregion
@@ -901,7 +977,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region OnActivation
 
-    public override void OnActivation(bool firstActivation)
+    public override async void OnActivation(bool firstActivation)
     {
       base.OnActivation(firstActivation);
 
@@ -909,6 +985,17 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         regionProvider.RegisterView<SongPlayerView, MusicPlayerViewModel>(RegionNames.PlayerContentRegion, this, false, out var guid, RegionManager);
       }
+
+      await Task.Delay(10000);
+    }
+
+    #endregion
+
+    #region WaitForInitilization
+
+    protected override Task WaitForVlcInitilization()
+    {
+      return loadedTask.Task;
     }
 
     #endregion
@@ -950,7 +1037,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
     #endregion
 
     #region OnNewItemPlay
-
 
     public override void OnNewItemPlay(SoundItem soundItem)
     {
@@ -1056,7 +1142,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
                   {
                     actualCover = File.ReadAllBytes(imageFiles.OrderByDescending(x => x.Length).First().FullName);
 
-                    if(songInPlay?.AlbumViewModel?.Model != null && string.IsNullOrEmpty(songInPlay?.AlbumViewModel?.Model.AlbumFrontCoverFilePath))
+                    if (songInPlay?.AlbumViewModel?.Model != null && string.IsNullOrEmpty(songInPlay?.AlbumViewModel?.Model.AlbumFrontCoverFilePath))
                     {
                       songInPlay.AlbumViewModel.Model.AlbumFrontCoverFilePath = imageFiles.OrderByDescending(x => x.Length).First().FullName;
                     }
@@ -1138,7 +1224,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         if (File.Exists(filePath))
           acutalFile = File.ReadAllBytes(filePath);
 
-      
+
         await storageManager.UpdateEntityAsync(albumViewModel.Model);
 
         if (acutalFile != cover)
@@ -1327,7 +1413,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
                 {
                   downloadingArtist = await GetArtist(artistName, cancellationToken);
 
-                  if(downloadingArtist != null)
+                  if (downloadingArtist != null)
                   {
                     originalDownlaodedArtistName = artistName;
                     var similiarity = StringHelper.GetNormalizedName(artistName).Similarity(StringHelper.GetNormalizedName(downloadingArtist.Name));
@@ -1337,7 +1423,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
                       downloadingArtist = null;
                     }
                   }
-                 
+
 
                   if (downloadingArtist != null && !string.IsNullOrEmpty(downloadingArtist.NormalizedName))
                   {
@@ -1688,7 +1774,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
           .ThenInclude(x => x.ItemModel.FileInfoEntity)
           .ToList();
       }
-      
+
 
       Album result = albums.FirstOrDefault(x => StringHelper.GetNormalizedName(x.Artist.Name) == StringHelper.GetNormalizedName(artistName));
 
@@ -2054,6 +2140,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     protected override async void OnPlayEvent(PlayItemsEventData<SoundItemInPlaylistViewModel> data)
     {
+  
       base.OnPlayEvent(data);
 
       var playlistItems = data.Items.ToList();
