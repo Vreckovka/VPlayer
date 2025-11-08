@@ -960,6 +960,8 @@ namespace VPlayer.Core.ViewModels
         {
           ActualItem.IsPaused = true;
         }
+
+        OnPaused();
       };
 
 
@@ -977,6 +979,11 @@ namespace VPlayer.Core.ViewModels
       volumeSubject.OnNext(Volume);
 
       OnVlcLoaded();
+    }
+
+    protected virtual void OnPaused()
+    {
+
     }
 
     private void MediaPlayer_MutedChanged(object sender, EventArgs e)
@@ -1324,6 +1331,8 @@ namespace VPlayer.Core.ViewModels
         ActualItem.IsPaused = false;
         IsPlaying = true;
       }
+
+
     }
 
     #endregion

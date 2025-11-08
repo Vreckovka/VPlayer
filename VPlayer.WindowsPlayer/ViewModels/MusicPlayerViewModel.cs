@@ -834,6 +834,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     #endregion
 
     #region VideoViewInitlized
+
     private TaskCompletionSource<bool> loadedTask = new TaskCompletionSource<bool>();
     private ActionCommand videoViewInitlized;
 
@@ -858,6 +859,26 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region SaveVideo
+
+    protected ActionCommand saveVideo;
+
+    public ICommand SaveVideo
+    {
+      get
+      {
+        return saveVideo ??= new ActionCommand(OnSaveVideo);
+      }
+    }
+
+    protected virtual void OnSaveVideo()
+    {
+      ActualItem.Model.VideoPath = LyricsConstants.Instance.VideoPath;
+      UpdateActualSavedPlaylistPlaylist(); 
+    }
+
+    #endregion
+
     #endregion
 
     #region Methods
@@ -871,6 +892,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
       IsPlaying = false;
 
       InitializeAsync();
+
+      ViewInitializedTask = new TaskCompletionSource<bool>();
 
       modelsDisposables.Add(storageManager.ObserveOnItemChange<Song>().ObserveOn(Application.Current.Dispatcher).Subscribe(OnSongChange).DisposeWith(this));
       modelsDisposables.Add(storageManager.ObserveOnItemChange<Album>().ObserveOn(Application.Current.Dispatcher).Subscribe(OnAlbumChange).DisposeWith(this));
@@ -897,7 +920,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       videolibVlc = new LibVLC();
       VideoVLCPlayer = new MediaPlayer(videolibVlc);
       VideoVLCPlayer.Mute = true;
-
+      VideoVLCPlayer.Volume = 0;
 
       MediaPlayer.Playing += MediaPlayer_Playing;
     }
@@ -909,16 +932,19 @@ namespace VPlayer.WindowsPlayer.ViewModels
         if (!loadedTask.Task.IsCompleted)
           await loadedTask.Task;
 
-        if (LyricsConstants.Instance.IsVideo && !string.IsNullOrEmpty(LyricsConstants.Instance.VideoPath))
-          VideoVLCPlayer.Play(new Media(videolibVlc, LyricsConstants.Instance.VideoPath, FromType.FromPath));
-      });
       
-
-
+      });
 
     }
 
     #endregion
+
+    protected override void OnIsPlayingChanged()
+    {
+      base.OnIsPlayingChanged();
+
+      VideoVLCPlayer.Pause();
+    }
 
     #region OnSoundItemUpdated
 
@@ -977,6 +1003,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region OnActivation
 
+    TaskCompletionSource<bool> ViewInitializedTask = new TaskCompletionSource<bool>();
     public override async void OnActivation(bool firstActivation)
     {
       base.OnActivation(firstActivation);
@@ -986,7 +1013,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
         regionProvider.RegisterView<SongPlayerView, MusicPlayerViewModel>(RegionNames.PlayerContentRegion, this, false, out var guid, RegionManager);
       }
 
-      await Task.Delay(10000);
+      await Task.Delay(2000);
+      ViewInitializedTask.SetResult(true);
     }
 
     #endregion
@@ -1014,10 +1042,51 @@ namespace VPlayer.WindowsPlayer.ViewModels
         await SetPlaylistCover();
 
         albumDetail?.RaiseCanExecuteChanged();
+
+        await PlayVideo();
       });
     }
 
     #endregion
+
+
+    private SemaphoreSlim semaphoreVideoSlim = new SemaphoreSlim(1, 1);
+    private async Task PlayVideo()
+    {
+      if (!await semaphoreVideoSlim.WaitAsync(0))
+        return;
+
+      try
+      {
+        await ViewInitializedTask.Task;
+
+        var videoPath = LyricsConstants.Instance.VideoPath ?? ActualItem.Model.VideoPath;
+        var shouldPlay = LyricsConstants.Instance.IsVideo || !string.IsNullOrEmpty(ActualItem.Model.VideoPath);
+
+        if (shouldPlay && !string.IsNullOrEmpty(videoPath))
+        {
+          VideoVLCPlayer.Play(new Media(videolibVlc, videoPath, FromType.FromPath, "--loop"));
+          LyricsConstants.Instance.IsVideo = true;
+
+          if (!IsPlaying)
+          {
+            await Task.Delay(1000);
+            VideoVLCPlayer.Pause();
+          }
+          
+        }
+        else
+        {
+          VideoVLCPlayer.Stop();
+          VideoVLCPlayer.Media = null;
+          LyricsConstants.Instance.IsVideo = false;
+        }
+      }
+      finally 
+      {
+        semaphoreVideoSlim.Release();
+      }
+    }
 
     #region SetPlaylistCover
 

@@ -69,7 +69,14 @@ namespace VPlayer.WindowsPlayer.Views
 
     public double LineHeight
     {
-      get { return IsCinemaMode ? 42 : 31.0; }
+      get {  var originalHeight = IsCinemaMode ? 42 : 31.0;
+
+        var final = originalHeight;
+        if (IsVideo)
+          final *= 1.15;
+
+        return final;
+      }
     }
 
     #region ShowHUD
@@ -317,5 +324,7 @@ namespace VPlayer.WindowsPlayer.Views
     }
 
     #endregion
+
+  
   }
 }

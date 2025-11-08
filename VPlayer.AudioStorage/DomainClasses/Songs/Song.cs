@@ -53,6 +53,8 @@ namespace VPlayer.AudioStorage.DomainClasses
       IsAutomaticLyricsFindEnabled = other.IsAutomaticLyricsFindEnabled;
     }
 
+    public string VideoPath { get; set; }
+
     #region Name
 
     [NotMapped]
@@ -143,6 +145,7 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     public string LRCLyrics { get; set; }
     public string UPnPPath { get; set; }
+
     
 
     [NotMapped]

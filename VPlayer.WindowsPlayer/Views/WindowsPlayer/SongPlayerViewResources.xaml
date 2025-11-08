@@ -497,12 +497,14 @@
                                 <Style BasedOn="{StaticResource LyricsStyle}" TargetType="TextBox">
                                   <Setter Property="FontSize" Value="{Binding Source={StaticResource LyricsConstants}, Path=Instance.FontSize}" />
                                   <Setter Property="Foreground" Value="{Binding Path=DataContext.LyricsColor, RelativeSource={RelativeSource AncestorType=ListView, Mode=FindAncestor}, FallbackValue=#fec827}" />
+
                                   <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsActual}" Value="true">
                                       <Setter Property="FontSize" Value="{Binding Source={StaticResource LyricsConstants}, Path=Instance.ActualLineFontSize}" />
                                       <Setter Property="TextWrapping" Value="Wrap" />
                                     </DataTrigger>
                                   </Style.Triggers>
+
                                 </Style>
                               </TextBox.Style>
                             </TextBox>

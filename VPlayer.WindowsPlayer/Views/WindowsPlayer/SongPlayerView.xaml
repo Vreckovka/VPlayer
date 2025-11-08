@@ -62,28 +62,28 @@
       </ContentControl>
 
       <vvlc:VideoView x:Name="VideoView" MediaPlayer="{Binding VideoVLCPlayer}">
-        <Grid
-          Grid.Row="1"
-          Height="350"
-          Margin="0,0,0,0"
-          VerticalAlignment="Bottom">
+        <Grid Grid.Row="1" VerticalAlignment="Bottom">
 
           <Grid.Style>
             <Style TargetType="Grid">
               <Setter Property="Background" Value="#50000000" />
-
+              <Setter Property="Height" Value="350" />
               <Setter Property="Visibility" Value="Hidden" />
 
               <Style.Triggers>
                 <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.IsVideo}" Value="true">
                   <Setter Property="Visibility" Value="Visible" />
                 </DataTrigger>
+
+                <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.IsVideo}" Value="true">
+                  <Setter Property="Height" Value="375" />
+                </DataTrigger>
               </Style.Triggers>
             </Style>
           </Grid.Style>
 
 
-          <Border Height="260" VerticalAlignment="Top">
+          <Border VerticalAlignment="Top">
             <Grid x:Name="lyrics_grid">
               <ContentControl
                 BorderThickness="0"
@@ -95,6 +95,8 @@
             <Border.Style>
               <Style TargetType="Border">
                 <!--<Setter Property="Background" Value="#70000000" />-->
+                <Setter Property="Height" Value="260" />
+
                 <Style.Triggers>
                   <DataTrigger Binding="{Binding ActualItem.LyricsObject}" Value="{x:Null}">
                     <Setter Property="Visibility" Value="Hidden" />
@@ -106,6 +108,10 @@
 
                   <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.ShowLyrics}" Value="false">
                     <Setter Property="Visibility" Value="Collapsed" />
+                  </DataTrigger>
+
+                  <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.IsVideo}" Value="true">
+                    <Setter Property="Height" Value="280" />
                   </DataTrigger>
                 </Style.Triggers>
               </Style>
@@ -549,6 +555,10 @@
 
             <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.ShowLyrics}" Value="false">
               <Setter Property="Background" Value="Transparent" />
+            </DataTrigger>
+
+            <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.IsVideo}" Value="true">
+              <Setter Property="Visibility" Value="Collapsed" />
             </DataTrigger>
           </Style.Triggers>
         </Style>
