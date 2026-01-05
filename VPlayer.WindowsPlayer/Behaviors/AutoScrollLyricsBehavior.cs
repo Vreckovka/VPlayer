@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading;
@@ -17,6 +18,7 @@ using VPlayer.Core.ViewModels;
 using VPlayer.Core.ViewModels.SoundItems;
 using VPlayer.Core.ViewModels.SoundItems.LRCCreators;
 using VPlayer.WindowsPlayer.Behaviors;
+using VPlayer.WindowsPlayer.Views;
 
 namespace VPlayer.Player.Behaviors
 {

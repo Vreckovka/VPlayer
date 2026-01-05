@@ -78,7 +78,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
       LinesView = new VirtualList<LRCLyricLineViewModel>(AllLine, 5);
 
-      
+
     }
 
     #endregion
@@ -295,7 +295,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
         VSynchronizationContext.PostOnUIThread(() => { IsLoading = true; UpdateStatus = null; });
 
         var result = await pCloudLyricsProvider.Update(Model);
-        if(!result)
+        if (!result)
         {
           //SaveLocally(Model);
 
@@ -350,7 +350,10 @@ namespace VPlayer.Core.ViewModels.SoundItems
       {
         if (ActualLine != null)
         {
-          ActualLine.IsActual = false;
+          if (ActualLine.Model.Timestamp == TimeSpan.Zero)
+          {
+            ActualLine.IsActual = true;
+          }
         }
 
         var newLine = AllLine.Where(x => x.Model.Timestamp != null &&
@@ -359,6 +362,10 @@ namespace VPlayer.Core.ViewModels.SoundItems
         if (newLine != null && ActualLine != newLine)
         {
           newLine.IsActual = true;
+
+          if (ActualLine != null)
+            ActualLine.IsActual = false;
+
           var oldIndex = AllLine.IndexOf(newLine);
 
           if (oldIndex + 1 < AllLine.Count)
@@ -394,7 +401,6 @@ namespace VPlayer.Core.ViewModels.SoundItems
           }
 
           lastTimestamp = timeSpan;
-
         }
 
         ActualLine = newLine;

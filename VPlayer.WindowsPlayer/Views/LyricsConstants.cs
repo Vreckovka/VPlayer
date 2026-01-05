@@ -44,18 +44,23 @@ namespace VPlayer.WindowsPlayer.Views
         {
           isCinemaMode = value;
           RaisePropertyChanged();
-          RaisePropertyChanged(nameof(FontSize));
-          RaisePropertyChanged(nameof(ActualLineFontSize));
-          RaisePropertyChanged(nameof(LineHeight));
-          RaisePropertyChanged(nameof(AutoScrollStep));
-          RaisePropertyChanged(nameof(VizualizerBottomColor));
-          RaisePropertyChanged(nameof(VizualizerTopColor));
+          RaiseConstants();
         }
       }
     }
 
     #endregion
 
+    public void RaiseConstants()
+    {
+      RaisePropertyChanged(nameof(FontSize));
+      RaisePropertyChanged(nameof(ActualLineFontSize));
+      RaisePropertyChanged(nameof(LineHeight));
+      RaisePropertyChanged(nameof(AutoScrollStep));
+      RaisePropertyChanged(nameof(VizualizerBottomColor));
+      RaisePropertyChanged(nameof(VizualizerTopColor));
+      RaisePropertyChanged(nameof(Margin));
+    }
 
     public double FontSize
     {
@@ -272,7 +277,7 @@ namespace VPlayer.WindowsPlayer.Views
 
     #region VizualizerBottomColor
 
-    private string vizualizerBottomColor = "#FF45FF00";
+    private string vizualizerBottomColor = "#FFFFE900";
 
     public string VizualizerBottomColor
     {

@@ -874,7 +874,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
     protected virtual void OnSaveVideo()
     {
       ActualItem.Model.VideoPath = LyricsConstants.Instance.VideoPath;
-      UpdateActualSavedPlaylistPlaylist(); 
+      UpdateActualSavedPlaylistPlaylist();
     }
 
     #endregion
@@ -932,7 +932,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         if (!loadedTask.Task.IsCompleted)
           await loadedTask.Task;
 
-      
+
       });
 
     }
@@ -942,7 +942,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
     protected override void OnIsPlayingChanged()
     {
       base.OnIsPlayingChanged();
-
+      LyricsConstants.Instance.RaiseConstants();
+      if (ActualItem is SongInPlayListViewModel song)
+      {
+        song.UpdateSyncedLyrics();
+      }
       VideoVLCPlayer.Pause();
     }
 
@@ -1013,8 +1017,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
         regionProvider.RegisterView<SongPlayerView, MusicPlayerViewModel>(RegionNames.PlayerContentRegion, this, false, out var guid, RegionManager);
       }
 
-      await Task.Delay(2000);
-      ViewInitializedTask.SetResult(true);
+      if (!ViewInitializedTask.Task.IsCompleted)
+      {
+        await Task.Delay(1000);
+        ViewInitializedTask.SetResult(true);
+      }
+       
     }
 
     #endregion
@@ -1044,6 +1052,8 @@ namespace VPlayer.WindowsPlayer.ViewModels
         albumDetail?.RaiseCanExecuteChanged();
 
         await PlayVideo();
+
+        LyricsConstants.Instance.RaiseConstants();
       });
     }
 
@@ -1073,16 +1083,20 @@ namespace VPlayer.WindowsPlayer.ViewModels
             await Task.Delay(1000);
             VideoVLCPlayer.Pause();
           }
-          
+
         }
         else
         {
-          VideoVLCPlayer.Stop();
-          VideoVLCPlayer.Media = null;
-          LyricsConstants.Instance.IsVideo = false;
+          Task.Run(() =>
+          {
+            VideoVLCPlayer.Stop();
+            VideoVLCPlayer.Media = null;
+            LyricsConstants.Instance.IsVideo = false;
+          });
+       
         }
       }
-      finally 
+      finally
       {
         semaphoreVideoSlim.Release();
       }
@@ -2209,7 +2223,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     protected override async void OnPlayEvent(PlayItemsEventData<SoundItemInPlaylistViewModel> data)
     {
-  
+
       base.OnPlayEvent(data);
 
       var playlistItems = data.Items.ToList();

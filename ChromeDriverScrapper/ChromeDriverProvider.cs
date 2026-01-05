@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Logger;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
 using VPlayer.AudioStorage.Scrappers.CSFD;
 
 namespace ChromeDriverScrapper
@@ -23,7 +24,7 @@ namespace ChromeDriverScrapper
 
     public ChromeDriverProvider(ILogger logger)
     {
-      this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+      //this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     #region Initialize

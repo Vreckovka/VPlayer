@@ -66,8 +66,8 @@
 
           <Grid.Style>
             <Style TargetType="Grid">
-              <Setter Property="Background" Value="#50000000" />
-              <Setter Property="Height" Value="350" />
+              <Setter Property="Background" Value="#80000000" />
+              <Setter Property="Height" Value="345" />
               <Setter Property="Visibility" Value="Hidden" />
 
               <Style.Triggers>
@@ -76,7 +76,7 @@
                 </DataTrigger>
 
                 <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.IsVideo}" Value="true">
-                  <Setter Property="Height" Value="375" />
+                  <Setter Property="Height" Value="370" />
                 </DataTrigger>
               </Style.Triggers>
             </Style>
@@ -95,7 +95,7 @@
             <Border.Style>
               <Style TargetType="Border">
                 <!--<Setter Property="Background" Value="#70000000" />-->
-                <Setter Property="Height" Value="260" />
+                <Setter Property="Height" Value="255" />
 
                 <Style.Triggers>
                   <DataTrigger Binding="{Binding ActualItem.LyricsObject}" Value="{x:Null}">
@@ -111,7 +111,7 @@
                   </DataTrigger>
 
                   <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.IsVideo}" Value="true">
-                    <Setter Property="Height" Value="280" />
+                    <Setter Property="Height" Value="270" />
                   </DataTrigger>
                 </Style.Triggers>
               </Style>
@@ -551,6 +551,10 @@
           <Style.Triggers>
             <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.ShowHUD}" Value="false">
               <Setter Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
+
+            <DataTrigger Binding="{Binding ActualItem.LyricsObject, Converter={converters:IsNullConverter}}" Value="true">
+              <Setter Property="Background" Value="Transparent" />
             </DataTrigger>
 
             <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.ShowLyrics}" Value="false">
