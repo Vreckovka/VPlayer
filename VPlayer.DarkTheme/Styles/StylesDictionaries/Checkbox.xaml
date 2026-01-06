@@ -55,6 +55,7 @@
                 RecognizesAccessKey="True" />
             </Grid>
           </Border>
+          
           <ControlTemplate.Triggers>
             <Trigger Property="IsChecked" Value="true">
               <Setter TargetName="CheckMark" Property="Visibility" Value="Visible" />
