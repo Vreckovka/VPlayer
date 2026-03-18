@@ -37,10 +37,16 @@ namespace VVLC
     {
       if(ForegroundWindow != null) 
       {
-        if (Visibility != Visibility.Visible)
-          ForegroundWindow.Hide();
-        else
-          ForegroundWindow.Show();
+        try
+        {
+          if (Visibility != Visibility.Visible)
+            ForegroundWindow.Hide();
+          else
+            ForegroundWindow.Show();
+        }
+        catch (Exception ex)
+        {
+        }
       }
      
     }

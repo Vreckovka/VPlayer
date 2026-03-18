@@ -56,10 +56,24 @@ namespace VPlayer.Core.Behaviors
 
     #region AssociatedObject_MouseMove
 
+    private Point _lastMousePos;
+    private const double MouseDeadZone = 10.0; // pixels
+
     private void AssociatedObject_MouseMove(object sender, MouseEventArgs e)
     {
-      if(FullScreenManager.IsFullscreen)
+      if (!FullScreenManager.IsFullscreen)
+        return;
+
+      Point current = e.GetPosition((IInputElement)sender);
+
+      double dx = current.X - _lastMousePos.X;
+      double dy = current.Y - _lastMousePos.Y;
+
+      if ((dx * dx + dy * dy) >= MouseDeadZone * MouseDeadZone)
+      {
         FullScreenManager.ResetMouse();
+        _lastMousePos = current;
+      }
     }
 
     #endregion
