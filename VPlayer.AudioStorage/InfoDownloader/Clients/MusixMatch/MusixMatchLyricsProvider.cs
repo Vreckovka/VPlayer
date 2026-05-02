@@ -58,6 +58,8 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch
     {
       try
       {
+        return null;
+
         HtmlDocument document = new HtmlDocument();
         MusixMatchSong foundSong = null;
 

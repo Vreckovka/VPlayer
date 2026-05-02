@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using Prism.Events;
 using VPlayer.AudioStorage.DomainClasses;
@@ -50,7 +51,7 @@ namespace VPlayer.Core.ViewModels.TvShows
     }
     #endregion
 
-
+    public ObservableCollection<DetectedSegment> DetectedSegments { get; } = new ObservableCollection<DetectedSegment>();
 
 
     #region Description

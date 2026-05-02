@@ -541,6 +541,8 @@ namespace VPlayer.Core.Players
         ActualItem.ActualPosition = position;
         ActualSavedPlaylist.LastItemElapsedTime = position;
 
+        OnTimeChanged(ActualItem, ActualItem.ActualPosition);
+
         if (ActualItem is SongInPlayListViewModel song)
         {
           song.UpdateSyncedLyrics();
@@ -591,6 +593,11 @@ namespace VPlayer.Core.Players
     private void OnVlcTimeChanged(object sender, PlayerTimeChangedArgs eventArgs)
     {
       UpdateVlcTime(eventArgs);
+    }
+
+    protected virtual void OnTimeChanged(TItemViewModel itemViewModel, float actualPosition)
+    {
+
     }
 
     #endregion

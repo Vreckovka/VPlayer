@@ -60,6 +60,8 @@
 
       <ContentControl x:Name="ContentControl" regions:RegionManager.RegionName="{x:Static regions11:RegionNames.PlayerContentRegion}" />
 
+
+
       <Border
         x:Name="slider_container"
         Grid.Row="1"
@@ -67,19 +69,61 @@
         Padding="0,3"
         Background="Transparent"
         Cursor="Hand">
-        <Slider
-          x:Name="Slider_Time"
-          Height="3"
-          Margin="5,0,5,0"
-          Padding="0"
-          IsMoveToPointEnabled="True"
-          Maximum="1"
-          Value="{Binding ActualItem.ActualPosition}">
 
-          <b:Interaction.Behaviors>
-            <behaviors:SliderValueChangedManualy Duration="{Binding ActualItem.Duration}" />
-          </b:Interaction.Behaviors>
-        </Slider>
+        <Grid>
+          <ItemsControl
+            Height="3"
+            VerticalAlignment="Center"
+            IsHitTestVisible="False"
+            ItemsSource="{Binding ActualItem.DetectedSegments}">
+
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <Grid />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Grid Height="3" VerticalAlignment="Center">
+
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="{Binding StartGridWidth}" />
+                    <ColumnDefinition Width="{Binding DurationGridWidth}" />
+                    <ColumnDefinition Width="{Binding RemainingGridWidth}" />
+                  </Grid.ColumnDefinitions>
+
+                  <Border
+                    Grid.Column="1"
+                    Background="#75e83f62"
+                    CornerRadius="1.5" />
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+
+          <Slider
+            x:Name="Slider_Time"
+            Height="3"
+            Margin="5,0,5,0"
+            Padding="0"
+            IsMoveToPointEnabled="True"
+            Maximum="1"
+            Value="{Binding ActualItem.ActualPosition}">
+
+            <b:Interaction.Behaviors>
+              <behaviors:SliderValueChangedManualy Duration="{Binding ActualItem.Duration}" />
+            </b:Interaction.Behaviors>
+          </Slider>
+
+          <!--<StackPanel>
+            <TextBlock Text="{Binding ActualItem.DetectedSegments[0].StartGridWidth}" />
+            <TextBlock Text="{Binding ActualItem.DetectedSegments[0].DurationGridWidth}" />
+            <TextBlock Text="{Binding ActualItem.DetectedSegments[0].RemainingGridWidth}" />
+          </StackPanel>-->
+
+        </Grid>
+
 
         <b:Interaction.Behaviors>
           <behaviors1:ShowPopupBehavior
@@ -212,7 +256,6 @@
           Foreground="#aaa"
           Text="{Binding ActualItem.Duration, Converter={converters:TimeConverter TimeType=Second}}" />
       </StackPanel>
-
 
 
     </Grid>

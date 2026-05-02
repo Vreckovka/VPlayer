@@ -55,6 +55,7 @@ using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 using System.Net;
 using HtmlAgilityPack;
 using System.Globalization;
+using OpenQA.Selenium.Remote;
 
 namespace VPlayer.WindowsPlayer.ViewModels
 {
@@ -659,15 +660,162 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
       }
 
+      DetectIntros(videoItem);
+
       if (DetailViewModel != null && ActualItem != null)
       {
         DetailViewModel.DisablePopup = ActualItem.IsStream;
       }
-
-
     }
 
     #endregion
+
+    private SemaphoreSlim detectionSempahor = new SemaphoreSlim(1,1);
+    private CancellationTokenSource detectionTokenSource;
+    public void DetectIntros(VideoItem videoItem)
+    {
+      if (PlayList.Count >= 5)
+      {
+        Task.Run(async () =>
+        {
+          try
+          {
+            detectionTokenSource?.Cancel();
+            detectionTokenSource = new CancellationTokenSource();
+
+            await detectionSempahor.WaitAsync();
+
+            var vm = PlayList.SingleOrDefault(x => x.Model == videoItem);
+            var vmIndex = PlayList.IndexOf(vm);
+
+            int before = 3;
+            int after = 3;
+
+            int start = Math.Max(0, vmIndex - before);
+            int end = Math.Min(PlayList.Count - 1, vmIndex + after);
+
+            int missingBefore = before - (vmIndex - start);
+            if (missingBefore > 0)
+              end = Math.Min(PlayList.Count - 1, end + missingBefore);
+
+            int missingAfter = after - (end - vmIndex);
+            if (missingAfter > 0)
+              start = Math.Max(0, start - missingAfter);
+
+            var selectedItems = PlayList
+                .Skip(start)
+                .Take(end - start + 1)
+                .ToList();
+
+            var existingVideos = selectedItems
+                .Where(x => x.DetectedSegments != null && x.DetectedSegments.Any())
+                .Select(x => x.DetectedSegments.First().VideoFile)
+                .Where(x => x != null)
+                .ToList();
+
+            var videoPathsToParse = selectedItems
+                .Where(x => x.DetectedSegments == null || !x.DetectedSegments.Any())
+                .Select(x => x.Model.FileInfoEntity.Source)
+                .ToList();
+
+            var sections = SectionsIndentifier.Detect(
+                videoPathsToParse,
+                existingVideos,
+                detectionTokenSource.Token
+            );
+
+            logger.Log(MessageType.Success, $"Intros Detected Sections:{sections.Count} for {selectedItems.Count} videos");
+
+            foreach (var section in sections)
+            {
+              var video = selectedItems.SingleOrDefault(x => x.Model.Source == section.VideoFile.Path);
+
+              if (video == null)
+                continue;
+
+              VSynchronizationContext.PostOnUIThread(() =>
+              {
+                var existing = video.DetectedSegments.FirstOrDefault(x =>
+                    x.Type == section.Type);
+
+                if (existing == null)
+                {
+                  video.DetectedSegments.Add(section);
+                }
+                else if (section.ConfidencePercent > existing.ConfidencePercent)
+                {
+                  int index = video.DetectedSegments.IndexOf(existing);
+                  video.DetectedSegments[index] = section;
+                }
+
+                section.RaisePropertyChanges();
+              });
+            }
+
+            VSynchronizationContext.PostOnUIThread(() =>
+            {
+              selectedItems.ForEach(x => x.DetectedSegments.ForEach(y => y.RaisePropertyChanges()));
+            });
+          }
+          finally
+          {
+            detectionSempahor.Release();
+          }
+        });
+      }
+     
+    }
+
+    private DetectedSegment activeDetectedSegment;
+
+    public DetectedSegment ActiveDetectedSegment
+    {
+      get { return activeDetectedSegment; }
+      set
+      {
+        activeDetectedSegment = value;
+        RaisePropertyChanged();
+      }
+    }
+
+
+    public bool IsSkipPopupOpen
+    {
+      get { return ActiveDetectedSegment != null; }
+    }
+
+    public ICommand SkipDetectedSegmentCommand => new ActionCommand(SkipDetectedSegment);
+
+    private void SkipDetectedSegment()
+    {
+      if (ActiveDetectedSegment == null)
+        return;
+
+      SetMediaPosition((float)ActiveDetectedSegment.EndSeconds / ActualItem.Duration);
+
+      ActiveDetectedSegment = null;
+    }
+
+    protected override void OnTimeChanged(VideoItemInPlaylistViewModel itemViewModel, float actualPosition)
+    {
+      if (ActualItem == null || ActualItem.DetectedSegments == null)
+      {
+        ActiveDetectedSegment = null;
+        return;
+      }
+
+      double currentSeconds = ActualItem.ActualPosition * ActualItem.Duration;
+
+      ActiveDetectedSegment = ActualItem.DetectedSegments.FirstOrDefault(x =>
+          currentSeconds >= x.StartSeconds &&
+          currentSeconds < x.EndSeconds);
+
+      VSynchronizationContext.PostOnUIThread(() =>
+      {
+        RaisePropertyChanged(nameof(ActiveDetectedSegment));
+        RaisePropertyChanged(nameof(IsSkipPopupOpen));
+      });
+    }
 
     #region Media_DurationChanged
 
