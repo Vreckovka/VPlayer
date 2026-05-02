@@ -200,6 +200,49 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
+    #region AutoskipSections
+
+    private bool autoskipSections;
+
+    public bool AutoskipSections
+    {
+      get { return autoskipSections; }
+      set
+      {
+        if (value != autoskipSections)
+        {
+          autoskipSections = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region ActiveDetectedSegment
+
+    private DetectedSegment activeDetectedSegment;
+
+    public DetectedSegment ActiveDetectedSegment
+    {
+      get { return activeDetectedSegment; }
+      set
+      {
+        activeDetectedSegment = value;
+        RaisePropertyChanged();
+      }
+    }
+
+    #endregion
+
+    #region IsSkipPopupOpen
+
+    public bool IsSkipPopupOpen
+    {
+      get { return ActiveDetectedSegment != null; }
+    }
+
+    #endregion
 
     #endregion
 
@@ -375,6 +418,22 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         MediaPlayer.AddSlave(MediaSlaveType.Subtitle, path.AbsoluteUri, true);
       }
+    }
+
+    #endregion
+
+    #region SkipDetectedSegmentCommand
+
+    public ICommand SkipDetectedSegmentCommand => new ActionCommand(SkipDetectedSegment);
+
+    private void SkipDetectedSegment()
+    {
+      if (ActiveDetectedSegment == null)
+        return;
+
+      SetMediaPosition((float)ActiveDetectedSegment.EndSeconds / ActualItem.Duration);
+
+      ActiveDetectedSegment = null;
     }
 
     #endregion
@@ -670,7 +729,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #endregion
 
-    private SemaphoreSlim detectionSempahor = new SemaphoreSlim(1,1);
+    #region DetectIntros
+
+    private SemaphoreSlim detectionSempahor = new SemaphoreSlim(1, 1);
     private CancellationTokenSource detectionTokenSource;
     public void DetectIntros(VideoItem videoItem)
     {
@@ -763,38 +824,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
           }
         });
       }
-     
+
     }
 
-    private DetectedSegment activeDetectedSegment;
+    #endregion
 
-    public DetectedSegment ActiveDetectedSegment
-    {
-      get { return activeDetectedSegment; }
-      set
-      {
-        activeDetectedSegment = value;
-        RaisePropertyChanged();
-      }
-    }
-
-
-    public bool IsSkipPopupOpen
-    {
-      get { return ActiveDetectedSegment != null; }
-    }
-
-    public ICommand SkipDetectedSegmentCommand => new ActionCommand(SkipDetectedSegment);
-
-    private void SkipDetectedSegment()
-    {
-      if (ActiveDetectedSegment == null)
-        return;
-
-      SetMediaPosition((float)ActiveDetectedSegment.EndSeconds / ActualItem.Duration);
-
-      ActiveDetectedSegment = null;
-    }
+    #region OnTimeChanged
 
     protected override void OnTimeChanged(VideoItemInPlaylistViewModel itemViewModel, float actualPosition)
     {
@@ -815,7 +850,14 @@ namespace VPlayer.WindowsPlayer.ViewModels
         RaisePropertyChanged(nameof(ActiveDetectedSegment));
         RaisePropertyChanged(nameof(IsSkipPopupOpen));
       });
+
+      if (AutoskipSections)
+      {
+        SkipDetectedSegment();
+      }
     }
+
+    #endregion
 
     #region Media_DurationChanged
 

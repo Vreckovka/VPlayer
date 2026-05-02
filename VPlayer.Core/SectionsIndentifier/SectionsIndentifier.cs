@@ -8,6 +8,7 @@ using System.Numerics;
 using System.Windows;
 using VCore.Standard;
 using System.Threading;
+using System.Threading.Tasks;
 
 public sealed class VideoFile
 {
@@ -135,7 +136,6 @@ public static class SectionsIndentifier
         400, 500, 630, 800, 1000, 1250, 1600, 1900
     };
 
-
   //private const double MinRmsToFingerprint = 0.015; 
   //private const double MinPeakToFingerprint = 0.04;
 
@@ -145,11 +145,11 @@ public static class SectionsIndentifier
   private const double WindowSeconds = 2.0;
   private const double HopSeconds = 2.0;
 
-  private const double MinSegmentSeconds = 60.0;
+  private const double MinSegmentSeconds = 25;
   private const double MaxSegmentSeconds = 140.0;
-  private const double MergeGapSeconds = 14.0;
+  private const double MergeGapSeconds = 6.0;
 
-  private const double MinMatchedSeconds = 48.0;
+  private const double MinMatchedSeconds = 25;
   private const double MinHashSimilarity = 0.88;
 
   private const double IntroSearchMaxRatio = 0.45;
@@ -193,6 +193,13 @@ public static class SectionsIndentifier
       }
     }
 
+
+
+    var tasks = new List<Task<(VideoFile Video, List<Fingerprint> Fingerprints, double Duration)>>();
+
+    int baseVideoIndex = videos.Count;
+    int parseIndex = 0;
+
     foreach (string path in videoPathsToParse)
     {
       if (string.IsNullOrWhiteSpace(path))
@@ -201,26 +208,43 @@ public static class SectionsIndentifier
       if (videos.Any(v => string.Equals(v.Path, path, StringComparison.OrdinalIgnoreCase)))
         continue;
 
-      var video = new VideoFile(path, Path.GetFileName(path));
-
       if (token != null && token.Value.IsCancellationRequested)
       {
         Console.WriteLine("Sections detections cancelled");
         return new List<DetectedSegment>();
       }
 
-      Console.WriteLine($"Extracting audio {path}");
-      float[] samples = ExtractAudioToMemory(path, out double duration);
+      int videoIndex = baseVideoIndex + parseIndex;
+      parseIndex++;
 
-      Console.WriteLine($"Creating fingerprints {path}");
-      var fingerprints = CreateFingerprints(samples, videos.Count);
+      string localPath = path;
 
-      video.DurationSeconds = duration;
-      video.Fingerprints = fingerprints;
+      tasks.Add(Task.Run(() =>
+      {
+        var video = new VideoFile(localPath, Path.GetFileName(localPath));
 
-      videos.Add(video);
-      allFingerprints.Add(fingerprints);
-      durations.Add(duration);
+        Console.WriteLine($"Extracting audio {localPath}");
+        float[] samples = ExtractAudioToMemory(localPath, out double duration);
+
+        Console.WriteLine($"Creating fingerprints {localPath}");
+        var fingerprints = CreateFingerprints(samples, videoIndex);
+
+        video.DurationSeconds = duration;
+        video.Fingerprints = fingerprints;
+
+        return (video, fingerprints, duration);
+      }));
+    }
+
+    Task.WaitAll(tasks.ToArray());
+
+    foreach (var task in tasks)
+    {
+      var result = task.Result;
+
+      videos.Add(result.Video);
+      allFingerprints.Add(result.Fingerprints);
+      durations.Add(result.Duration);
     }
 
     var rawSegments = FindRepeatedSegments(allFingerprints, videos);
@@ -253,8 +277,8 @@ public static class SectionsIndentifier
 
   private static float[] ExtractAudioToMemory(string videoPath, out double durationSeconds)
   {
-    double ScanRatio = 0.33;
-    double MaxScanSeconds = 10 * 60; // 10 minutes
+    double ScanRatio = 0.25;
+    double MaxScanSeconds = 8 * 60;
 
     durationSeconds = GetVideoDurationSeconds(videoPath);
 
@@ -298,12 +322,14 @@ public static class SectionsIndentifier
       FileName = "ffmpeg",
       Arguments =
             $"-nostdin -hide_banner -loglevel error " +
+            $"-threads 1 " +
             $"-ss {startSeconds.ToString(System.Globalization.CultureInfo.InvariantCulture)} " +
             $"-t {durationSeconds.ToString(System.Globalization.CultureInfo.InvariantCulture)} " +
             $"-i \"{videoPath}\" " +
+            $"-map 0:a:0 " +
             $"-vn -sn -dn " +
             $"-ac 1 -ar {SampleRate} " +
-            $"-f f32le pipe:1",
+            $"-f s16le pipe:1",
       RedirectStandardOutput = true,
       RedirectStandardError = true,
       UseShellExecute = false,
@@ -325,17 +351,20 @@ public static class SectionsIndentifier
     process.BeginErrorReadLine();
 
     var samples = new List<float>();
-    byte[] buffer = new byte[SampleRate * 4];
+    byte[] buffer = new byte[SampleRate * 2];
 
     using var output = process.StandardOutput.BaseStream;
 
     int bytesRead;
     while ((bytesRead = output.Read(buffer, 0, buffer.Length)) > 0)
     {
-      int floatCount = bytesRead / 4;
+      int sampleCount = bytesRead / 2;
 
-      for (int i = 0; i < floatCount; i++)
-        samples.Add(BitConverter.ToSingle(buffer, i * 4));
+      for (int i = 0; i < sampleCount; i++)
+      {
+        short value = BitConverter.ToInt16(buffer, i * 2);
+        samples.Add(value / 32768f);
+      }
     }
 
     process.WaitForExit();
@@ -669,12 +698,12 @@ public static class SectionsIndentifier
         .Where(s => s.Type == "Outro / Ending")
         .ToList();
 
-    var validIntros = KeepValidClusters(
+    var validIntros = KeepValidClustersAndNormalizeDuration(
         intros,
         MinVideosPerIntroCluster,
         MaxIntroClustersToKeep);
 
-    var validOutros = KeepValidClusters(
+    var validOutros = KeepValidClustersAndNormalizeDuration(
         outros,
         MinVideosPerOutroCluster,
         MaxOutroClustersToKeep);
@@ -684,10 +713,10 @@ public static class SectionsIndentifier
         .ToList();
   }
 
-  private static List<DetectedSegment> KeepValidClusters(
-      List<DetectedSegment> candidates,
-      int minVideosPerCluster,
-      int maxClustersToKeep)
+  private static List<DetectedSegment> KeepValidClustersAndNormalizeDuration(
+    List<DetectedSegment> candidates,
+    int minVideosPerCluster,
+    int maxClustersToKeep)
   {
     var clusters = BuildSegmentClusters(candidates);
 
@@ -708,6 +737,8 @@ public static class SectionsIndentifier
 
     foreach (var cluster in validClusters)
     {
+      NormalizeClusterDurations(cluster);
+
       var bestPerVideo = cluster
           .GroupBy(s => s.VideoFile.Path, StringComparer.OrdinalIgnoreCase)
           .Select(g => g
@@ -719,6 +750,101 @@ public static class SectionsIndentifier
     }
 
     return result;
+  }
+
+  private static void NormalizeClusterDurations(List<DetectedSegment> cluster)
+  {
+    if (cluster == null || cluster.Count == 0)
+      return;
+
+    var validSegments = cluster
+        .Where(s =>
+            s.EndSeconds > s.StartSeconds &&
+            s.EndSeconds - s.StartSeconds >= MinSegmentSeconds &&
+            s.EndSeconds - s.StartSeconds <= MaxSegmentSeconds)
+        .ToList();
+
+    if (validSegments.Count == 0)
+      return;
+
+    double targetDuration = validSegments
+        .Select(s => s.EndSeconds - s.StartSeconds)
+        .OrderByDescending(d => d)
+        .First();
+
+    const double toleranceSeconds = 2.0;
+
+    foreach (var segment in cluster)
+    {
+      double currentDuration = segment.EndSeconds - segment.StartSeconds;
+
+      if (currentDuration >= targetDuration - toleranceSeconds)
+        continue;
+
+      double missing = targetDuration - currentDuration;
+
+      double currentStartSupport = GetBoundarySupport(
+          segment,
+          segment.StartSeconds,
+          searchBackward: true);
+
+      double currentEndSupport = GetBoundarySupport(
+          segment,
+          segment.EndSeconds,
+          searchBackward: false);
+
+      bool startLooksCut = currentStartSupport > currentEndSupport;
+      bool endLooksCut = currentEndSupport > currentStartSupport;
+
+      if (startLooksCut && segment.Type != "Outro / Ending")
+      {
+        segment.StartSeconds = Math.Max(0, segment.StartSeconds - missing);
+      }
+      else if (endLooksCut)
+      {
+        segment.EndSeconds = Math.Min(segment.VideoFile.DurationSeconds, segment.EndSeconds + missing);
+      }
+      else
+      {
+        if (segment.Type == "Intro / Opening")
+        {
+          segment.StartSeconds = Math.Max(0, segment.StartSeconds - missing);
+        }
+        else if (segment.Type == "Outro / Ending")
+        {
+          segment.EndSeconds = Math.Min(segment.VideoFile.DurationSeconds, segment.EndSeconds + missing);
+        }
+      }
+
+      segment.RaisePropertyChanges();
+    }
+  }
+
+  private static double GetBoundarySupport(
+      DetectedSegment segment,
+      double boundarySeconds,
+      bool searchBackward)
+  {
+    if (segment.VideoFile == null || segment.VideoFile.Fingerprints == null)
+      return 0;
+
+    double from;
+    double to;
+
+    if (searchBackward)
+    {
+      from = Math.Max(0, boundarySeconds - 12);
+      to = boundarySeconds;
+    }
+    else
+    {
+      from = boundarySeconds;
+      to = Math.Min(segment.VideoFile.DurationSeconds, boundarySeconds + 12);
+    }
+
+    return segment.VideoFile.Fingerprints
+        .Where(f => f.TimeSeconds >= from && f.TimeSeconds <= to)
+        .Count();
   }
 
   private static List<List<DetectedSegment>> BuildSegmentClusters(List<DetectedSegment> segments)
@@ -970,9 +1096,34 @@ public static class SectionsIndentifier
     }
 
     var bestGroup = offsetVotes.Values
-        .Where(g =>
-            g.Select(x => x.B.TimeSeconds).Distinct().Count() * HopSeconds >= MinMatchedSeconds)
-        .OrderByDescending(g => g.Average(x => x.Similarity))
+        .Select(g =>
+        {
+          var distinctTimes = g
+          .Select(x => x.B.TimeSeconds)
+          .Distinct()
+          .OrderBy(x => x)
+          .ToList();
+
+          double matchedSeconds = distinctTimes.Count * HopSeconds;
+          double avgSimilarity = g.Average(x => x.Similarity);
+
+          double score =
+          matchedSeconds * 0.70 +
+          (avgSimilarity * 100.0) * 0.30;
+
+          return new
+          {
+            Group = g,
+            MatchedSeconds = matchedSeconds,
+            AvgSimilarity = avgSimilarity,
+            Score = score
+          };
+        })
+        .Where(x => x.MatchedSeconds >= MinMatchedSeconds * 0.6)
+        .OrderByDescending(x => x.Score)
+        .ThenByDescending(x => x.MatchedSeconds)
+        .ThenByDescending(x => x.AvgSimilarity)
+        .Select(x => x.Group)
         .FirstOrDefault();
 
     if (bestGroup == null)
