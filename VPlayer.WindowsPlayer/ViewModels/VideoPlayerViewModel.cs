@@ -779,7 +779,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
                 .Select(x => x.Model.FileInfoEntity.Source)
                 .ToList();
 
-            var sections = SectionsIndentifier.Detect(
+            var sections = await SectionsIndentifier.Detect(
                 videoPathsToParse,
                 existingVideos,
                 detectionTokenSource.Token

@@ -145,11 +145,11 @@ public static class SectionsIndentifier
   private const double WindowSeconds = 2.0;
   private const double HopSeconds = 2.0;
 
-  private const double MinSegmentSeconds = 25;
+  private const double MinSegmentSeconds = 45;
   private const double MaxSegmentSeconds = 140.0;
   private const double MergeGapSeconds = 6.0;
 
-  private const double MinMatchedSeconds = 25;
+  private const double MinMatchedSeconds = 45;
   private const double MinHashSimilarity = 0.88;
 
   private const double IntroSearchMaxRatio = 0.45;
@@ -165,7 +165,7 @@ public static class SectionsIndentifier
   private const int MaxIntroClustersToKeep = 3;
   private const int MaxOutroClustersToKeep = 3;
 
-  public static List<DetectedSegment> Detect(
+  public static async Task<List<DetectedSegment>> Detect(
       List<string> videoPathsToParse,
       List<VideoFile> existingVideos = null,
       CancellationToken? token = null)
@@ -200,8 +200,13 @@ public static class SectionsIndentifier
     int baseVideoIndex = videos.Count;
     int parseIndex = 0;
 
+    SemaphoreSlim slim = new SemaphoreSlim(2, 3);
+
     foreach (string path in videoPathsToParse)
     {
+
+      await slim.WaitAsync();
+
       if (string.IsNullOrWhiteSpace(path))
         continue;
 
@@ -221,18 +226,25 @@ public static class SectionsIndentifier
 
       tasks.Add(Task.Run(() =>
       {
-        var video = new VideoFile(localPath, Path.GetFileName(localPath));
+        try
+        {
+          var video = new VideoFile(localPath, Path.GetFileName(localPath));
 
-        Console.WriteLine($"Extracting audio {localPath}");
-        float[] samples = ExtractAudioToMemory(localPath, out double duration);
+          Console.WriteLine($"Extracting audio {localPath}");
+          float[] samples = ExtractAudioToMemory(localPath, out double duration);
 
-        Console.WriteLine($"Creating fingerprints {localPath}");
-        var fingerprints = CreateFingerprints(samples, videoIndex);
+          Console.WriteLine($"Creating fingerprints {localPath}");
+          var fingerprints = CreateFingerprints(samples, videoIndex);
 
-        video.DurationSeconds = duration;
-        video.Fingerprints = fingerprints;
+          video.DurationSeconds = duration;
+          video.Fingerprints = fingerprints;
 
-        return (video, fingerprints, duration);
+          return (video, fingerprints, duration);
+        }
+        finally
+        {
+          slim.Release();
+        }
       }));
     }
 
@@ -275,39 +287,36 @@ public static class SectionsIndentifier
         .ToList();
   }
 
-  private static float[] ExtractAudioToMemory(string videoPath, out double durationSeconds)
+  private static float[] ExtractAudioToMemory(string videoPath,
+    out double durationSeconds,
+    double scanRatio = 0.20)
   {
-    double ScanRatio = 0.25;
-    double MaxScanSeconds = 8 * 60;
+    double MaxScanSeconds = 6 * 60;
 
     durationSeconds = GetVideoDurationSeconds(videoPath);
 
     if (durationSeconds <= 0)
       throw new Exception("Could not read video duration: " + videoPath);
 
-    // bounded segment duration
-    double segmentDuration = Math.Min(durationSeconds * ScanRatio, MaxScanSeconds);
-
-    // intro
-    double introStart = 0;
-
-    // outro
+    double segmentDuration = Math.Min(durationSeconds * scanRatio, MaxScanSeconds);
     double outroStart = Math.Max(0, durationSeconds - segmentDuration);
 
-    var samples = new List<float>(SampleRate * 60 * 25);
+    // Run both ffmpeg calls in parallel
+    float[] introSamples = null;
+    float[] outroSamples = null;
 
-    // first segment
-    samples.AddRange(ExtractAudioRangeToMemory(videoPath, introStart, segmentDuration));
+    Parallel.Invoke(
+        () => introSamples = ExtractAudioRangeToMemory(videoPath, 0, segmentDuration),
+        () => outroSamples = ExtractAudioRangeToMemory(videoPath, outroStart, segmentDuration)
+    );
 
-    // silent middle (preserve timeline)
     double middleDuration = outroStart - segmentDuration;
     int middleSamples = (int)(middleDuration * SampleRate);
 
-    if (middleSamples > 0)
-      samples.AddRange(new float[middleSamples]);
-
-    // last segment
-    samples.AddRange(ExtractAudioRangeToMemory(videoPath, outroStart, segmentDuration));
+    var samples = new List<float>(introSamples.Length + middleSamples + outroSamples.Length);
+    samples.AddRange(introSamples);
+    if (middleSamples > 0) samples.AddRange(new float[middleSamples]);
+    samples.AddRange(outroSamples);
 
     return samples.ToArray();
   }
@@ -351,7 +360,7 @@ public static class SectionsIndentifier
     process.BeginErrorReadLine();
 
     var samples = new List<float>();
-    byte[] buffer = new byte[SampleRate * 2];
+    byte[] buffer = new byte[SampleRate * 2 * 128];
 
     using var output = process.StandardOutput.BaseStream;
 
@@ -754,70 +763,102 @@ public static class SectionsIndentifier
 
   private static void NormalizeClusterDurations(List<DetectedSegment> cluster)
   {
-    if (cluster == null || cluster.Count == 0)
-      return;
+    //if (cluster == null || cluster.Count == 0)
+    //  return;
 
-    var validSegments = cluster
-        .Where(s =>
-            s.EndSeconds > s.StartSeconds &&
-            s.EndSeconds - s.StartSeconds >= MinSegmentSeconds &&
-            s.EndSeconds - s.StartSeconds <= MaxSegmentSeconds)
-        .ToList();
+    //var validSegments = cluster
+    //    .Where(s => s.EndSeconds > s.StartSeconds &&
+    //                s.EndSeconds - s.StartSeconds >= MinSegmentSeconds &&
+    //                s.EndSeconds - s.StartSeconds <= MaxSegmentSeconds)
+    //    .ToList();
 
-    if (validSegments.Count == 0)
-      return;
+    //if (validSegments.Count == 0)
+    //  return;
 
-    double targetDuration = validSegments
-        .Select(s => s.EndSeconds - s.StartSeconds)
-        .OrderByDescending(d => d)
-        .First();
+    //// Longest = most complete detection = best reference
+    //var reference = validSegments
+    //    .OrderByDescending(s => s.EndSeconds - s.StartSeconds)
+    //    .ThenByDescending(s => s.ConfidencePercent)
+    //    .First();
 
-    const double toleranceSeconds = 2.0;
+    //double targetDuration = reference.EndSeconds - reference.StartSeconds;
+    //const double toleranceSeconds = 2.0;
 
-    foreach (var segment in cluster)
-    {
-      double currentDuration = segment.EndSeconds - segment.StartSeconds;
+    //var refFingerprints = reference.VideoFile.Fingerprints
+    //    .Where(f => f.TimeSeconds >= reference.StartSeconds && f.TimeSeconds <= reference.EndSeconds)
+    //    .ToList();
 
-      if (currentDuration >= targetDuration - toleranceSeconds)
-        continue;
+    //foreach (var segment in cluster)
+    //{
+    //  if (segment == reference)
+    //    continue;
 
-      double missing = targetDuration - currentDuration;
+    //  double currentDuration = segment.EndSeconds - segment.StartSeconds;
 
-      double currentStartSupport = GetBoundarySupport(
-          segment,
-          segment.StartSeconds,
-          searchBackward: true);
+    //  if (Math.Abs(currentDuration - targetDuration) <= toleranceSeconds)
+    //    continue;
 
-      double currentEndSupport = GetBoundarySupport(
-          segment,
-          segment.EndSeconds,
-          searchBackward: false);
+    //  var segFingerprints = segment.VideoFile.Fingerprints
+    //      .Where(f => f.TimeSeconds >= segment.StartSeconds && f.TimeSeconds <= segment.EndSeconds)
+    //      .ToList();
 
-      bool startLooksCut = currentStartSupport > currentEndSupport;
-      bool endLooksCut = currentEndSupport > currentStartSupport;
+    //  if (segFingerprints.Count == 0 || refFingerprints.Count == 0)
+    //  {
+    //    double mid = (segment.StartSeconds + segment.EndSeconds) / 2.0;
+    //    segment.StartSeconds = Math.Max(0, mid - targetDuration / 2.0);
+    //    segment.EndSeconds = Math.Min(segment.VideoFile.DurationSeconds, segment.StartSeconds + targetDuration);
+    //    segment.RaisePropertyChanges();
+    //    continue;
+    //  }
 
-      if (startLooksCut && segment.Type != "Outro / Ending")
-      {
-        segment.StartSeconds = Math.Max(0, segment.StartSeconds - missing);
-      }
-      else if (endLooksCut)
-      {
-        segment.EndSeconds = Math.Min(segment.VideoFile.DurationSeconds, segment.EndSeconds + missing);
-      }
-      else
-      {
-        if (segment.Type == "Intro / Opening")
-        {
-          segment.StartSeconds = Math.Max(0, segment.StartSeconds - missing);
-        }
-        else if (segment.Type == "Outro / Ending")
-        {
-          segment.EndSeconds = Math.Min(segment.VideoFile.DurationSeconds, segment.EndSeconds + missing);
-        }
-      }
+    //  // Build offset votes
+    //  var offsetVotes = new Dictionary<int, List<MatchPoint>>();
 
-      segment.RaisePropertyChanges();
-    }
+    //  foreach (var refFp in refFingerprints)
+    //  {
+    //    foreach (var segFp in segFingerprints)
+    //    {
+    //      double sim = GetHashSimilarity(refFp.Hash, segFp.Hash);
+    //      if (sim < MinHashSimilarity)
+    //        continue;
+
+    //      int bucket = (int)Math.Round((segFp.TimeSeconds - refFp.TimeSeconds) / HopSeconds);
+
+    //      if (!offsetVotes.TryGetValue(bucket, out var list))
+    //        offsetVotes[bucket] = list = new List<MatchPoint>();
+
+    //      list.Add(new MatchPoint(refFp, segFp, sim));
+    //    }
+    //  }
+
+    //  if (offsetVotes.Count == 0)
+    //  {
+    //    double mid = (segment.StartSeconds + segment.EndSeconds) / 2.0;
+    //    segment.StartSeconds = Math.Max(0, mid - targetDuration / 2.0);
+    //    segment.EndSeconds = Math.Min(segment.VideoFile.DurationSeconds, segment.StartSeconds + targetDuration);
+    //    segment.RaisePropertyChanges();
+    //    continue;
+    //  }
+
+    //  var bestGroup = offsetVotes.Values
+    //      .OrderByDescending(g => g.Count)
+    //      .ThenByDescending(g => g.Average(x => x.Similarity))
+    //      .First();
+
+    //  // offset = segFp.Time - refFp.Time
+    //  // meaning: segment's timeline = reference's timeline + offset
+    //  // so: segment should start at reference.Start + offset
+    //  //     segment should end   at reference.End   + offset
+    //  double offset = bestGroup.Average(x => x.B.TimeSeconds - x.A.TimeSeconds);
+
+    //  double idealStart = reference.StartSeconds + offset;
+    //  double idealEnd = reference.EndSeconds + offset;
+
+    //  segment.StartSeconds = Math.Max(0, idealStart);
+    //  segment.EndSeconds = Math.Min(segment.VideoFile.DurationSeconds, idealEnd);
+
+    //  segment.RaisePropertyChanges();
+    //}
   }
 
   private static double GetBoundarySupport(
@@ -961,6 +1002,8 @@ public static class SectionsIndentifier
   {
     var result = detected.ToList();
 
+    bool anyKnownIntro = result.Any(s => s.Type == "Intro / Opening");
+
     foreach (var video in videos)
     {
       bool hasIntro = result.Any(s =>
@@ -977,6 +1020,17 @@ public static class SectionsIndentifier
             video,
             result,
             "Intro / Opening");
+
+        if (recoveredIntro == null && anyKnownIntro)
+        {
+          RebuildVideoFingerprintsWithLargerScan(video, videos, 0.70);
+
+          recoveredIntro = TryRecoverSegment(
+              video,
+              result,
+              "Intro / Opening",
+              true);
+        }
 
         if (recoveredIntro != null)
           result.Add(recoveredIntro);
@@ -997,10 +1051,58 @@ public static class SectionsIndentifier
     return result;
   }
 
+  private static void RebuildVideoFingerprintsWithLargerScan(
+    VideoFile video,
+    List<VideoFile> videos,
+    double scanRatio)
+  {
+    if (video == null || string.IsNullOrWhiteSpace(video.Path))
+      return;
+
+    int videoIndex = videos.FindIndex(v =>
+        string.Equals(v.Path, video.Path, StringComparison.OrdinalIgnoreCase));
+
+    if (videoIndex < 0)
+      return;
+
+    Console.WriteLine($"Rebuilding intro fingerprints with scan ratio {scanRatio:F2}: {video.Path}");
+
+    float[] samples = ExtractIntroAudioToMemory(video.Path, out double duration, scanRatio);
+
+    video.DurationSeconds = duration;
+    video.Fingerprints = CreateFingerprints(samples, videoIndex);
+  }
+
+  private static float[] ExtractIntroAudioToMemory(
+    string videoPath,
+    out double durationSeconds,
+    double scanRatio)
+  {
+    durationSeconds = GetVideoDurationSeconds(videoPath);
+
+    if (durationSeconds <= 0)
+      throw new Exception("Could not read video duration: " + videoPath);
+
+    double maxScanSeconds = 10 * 60;
+    double segmentDuration = Math.Min(durationSeconds * scanRatio, maxScanSeconds);
+
+    float[] introSamples = ExtractAudioRangeToMemory(videoPath, 0, segmentDuration);
+
+    int totalSamples = (int)(durationSeconds * SampleRate);
+    int remainingSamples = Math.Max(0, totalSamples - introSamples.Length);
+
+    var samples = new List<float>(introSamples.Length + remainingSamples);
+    samples.AddRange(introSamples);
+    samples.AddRange(new float[remainingSamples]);
+
+    return samples.ToArray();
+  }
+
   private static DetectedSegment TryRecoverSegment(
       VideoFile targetVideo,
       List<DetectedSegment> knownSegments,
-      string type)
+      string type,
+       bool wideIntroSearch = false)
   {
     if (targetVideo.Fingerprints == null || targetVideo.Fingerprints.Count == 0)
       return null;
@@ -1014,9 +1116,10 @@ public static class SectionsIndentifier
     foreach (var candidate in candidates)
     {
       var recovered = TryFindSimilarSegmentInVideo(
-          targetVideo,
-          candidate,
-          type);
+                     targetVideo,
+                     candidate,
+                     type,
+                     wideIntroSearch);
 
       if (recovered != null)
         return recovered;
@@ -1028,7 +1131,8 @@ public static class SectionsIndentifier
   private static DetectedSegment TryFindSimilarSegmentInVideo(
       VideoFile targetVideo,
       DetectedSegment referenceSegment,
-      string type)
+      string type,
+      bool wideIntroSearch = false)
   {
     var referenceFingerprints = referenceSegment.VideoFile.Fingerprints
         .Where(f =>
@@ -1047,11 +1151,19 @@ public static class SectionsIndentifier
 
     if (type == "Intro / Opening")
     {
-      searchStart = Math.Max(0, expectedStart - RecoveryTimeToleranceSeconds);
+      if (wideIntroSearch)
+      {
+        searchStart = 0;
+        searchEnd = targetVideo.DurationSeconds * IntroSearchMaxRatio;
+      }
+      else
+      {
+        searchStart = Math.Max(0, expectedStart - RecoveryTimeToleranceSeconds);
 
-      searchEnd = Math.Min(
-          targetVideo.DurationSeconds * IntroSearchMaxRatio,
-          expectedEnd + RecoveryTimeToleranceSeconds);
+        searchEnd = Math.Min(
+            targetVideo.DurationSeconds * IntroSearchMaxRatio,
+            expectedEnd + RecoveryTimeToleranceSeconds);
+      }
     }
     else
     {
