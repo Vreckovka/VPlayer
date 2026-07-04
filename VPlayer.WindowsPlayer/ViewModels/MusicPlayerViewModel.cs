@@ -66,6 +66,7 @@ using VPlayer.AudioStorage.InfoDownloader.LRC.Clients;
 using LibVLCSharp.Shared;
 using VVLC;
 using VPlayer.WindowsPlayer.Views;
+using System.Globalization;
 
 
 namespace VPlayer.WindowsPlayer.ViewModels
@@ -1022,7 +1023,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         await Task.Delay(1000);
         ViewInitializedTask.SetResult(true);
       }
-       
+
     }
 
     #endregion
@@ -1093,7 +1094,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
             VideoVLCPlayer.Media = null;
             LyricsConstants.Instance.IsVideo = false;
           });
-       
+
         }
       }
       finally
@@ -2826,11 +2827,32 @@ namespace VPlayer.WindowsPlayer.ViewModels
               artistName2 = song2.ArtistViewModel?.Name;
             }
 
-            var name = x.Name.CompareTo(y.Name);
-            var album = albumName1?.CompareTo(albumName2) ?? albumName2?.CompareTo(albumName1) * -1 ?? 0;
+            var trackOrder = x.Name.CompareTo(y.Name);
+            var albumOrder = albumName1?.CompareTo(albumName2) ?? albumName2?.CompareTo(albumName1) * -1 ?? 0;
+
+            if (x.MediaInfo != null && y.MediaInfo != null)
+            {
+              if (x.MediaInfo.Format.Tags.TryGetValue("Track", out var track0) &&
+                 y.MediaInfo.Format.Tags.TryGetValue("Track", out var track1))
+              {
+                trackOrder = track0.CompareTo(track1);
+              }
+
+              if (x.MediaInfo.Format.Tags.TryGetValue("Date", out var dateText0) &&
+                 y.MediaInfo.Format.Tags.TryGetValue("Date", out var dateText1))
+              {
+                if (TryParseDate(dateText0, out var date0) && TryParseDate(dateText1, out var date1))
+                {
+                  albumOrder = date0.CompareTo(date1);
+                }
+                else
+                  albumOrder = dateText0.CompareTo(dateText1);
+              }
+            }
+
             var artist = artistName1?.CompareTo(artistName2) ?? artistName2?.CompareTo(artistName1) * -1 ?? 0;
 
-            return artist != 0 ? artist : album != 0 ? album : name;
+            return artist != 0 ? artist : albumOrder != 0 ? albumOrder : trackOrder;
           });
 
           PlayList.Sort(comp);
@@ -2839,6 +2861,30 @@ namespace VPlayer.WindowsPlayer.ViewModels
     }
 
     #endregion
+
+    private static bool TryParseDate(string value, out DateTime date)
+    {
+      CultureInfo[] cultures =
+      {
+        CultureInfo.GetCultureInfo("sk-SK"), // dd.MM.yyyy, etc.
+        CultureInfo.InvariantCulture         // ISO and other neutral forms
+    };
+
+      foreach (var culture in cultures)
+      {
+        if (DateTime.TryParse(
+                value,
+                culture,
+                DateTimeStyles.AllowWhiteSpaces,
+                out date))
+        {
+          return true;
+        }
+      }
+
+      date = default;
+      return false;
+    }
 
     #endregion
   }

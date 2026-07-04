@@ -225,4 +225,6 @@ namespace WinformsVisualization.Visualization
             public double Value;
         }
     }
+
+
 }

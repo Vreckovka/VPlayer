@@ -1,12 +1,13 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore.WPF"
-                    xmlns:converters="clr-namespace:VPlayer.Player.Converters"
-                    xmlns:local="clr-namespace:VPlayer.Player.Views"
-                    xmlns:status1="clr-namespace:VPlayer.Core.Managers.Status;assembly=VPlayer.AudioStorage"
-                    xmlns:statusMessage="clr-namespace:VCore.WPF.Controls.StatusMessage;assembly=VCore.WPF">
+﻿<ResourceDictionary
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:controls="clr-namespace:VCore.Controls;assembly=VCore.WPF"
+  xmlns:converters="clr-namespace:VPlayer.Player.Converters"
+  xmlns:local="clr-namespace:VPlayer.Player.Views"
+  xmlns:status1="clr-namespace:VPlayer.Core.Managers.Status;assembly=VPlayer.AudioStorage"
+  xmlns:statusMessage="clr-namespace:VCore.WPF.Controls.StatusMessage;assembly=VCore.WPF">
 
-    <converters:DataContextChangedConverter x:Key="DataContextChangedConverter" />
+  <converters:DataContextChangedConverter x:Key="DataContextChangedConverter" />
 
 
 </ResourceDictionary>

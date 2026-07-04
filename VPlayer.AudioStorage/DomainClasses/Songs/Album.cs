@@ -36,6 +36,8 @@ namespace VPlayer.AudioStorage.DomainClasses
 
     public virtual List<Song> Songs { get; set; } = new List<Song>();
 
+    public string VizualizationLayerPath { get; set; }
+    public string StableVizualizationLayerPath { get; set; }
 
     #endregion Properties
 
@@ -51,7 +53,9 @@ namespace VPlayer.AudioStorage.DomainClasses
       MusicBrainzId = album.MusicBrainzId;
       ReleaseDate = album.ReleaseDate;
       InfoDownloadStatus = album.InfoDownloadStatus;
-      
+      VizualizationLayerPath = album.VizualizationLayerPath;
+      StableVizualizationLayerPath = album.StableVizualizationLayerPath;
+
       if (album.ArtistId != 0)
         ArtistId = album.ArtistId;
       

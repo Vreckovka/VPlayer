@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Emgu.CV.Dnn;
 using Logger;
 using Microsoft.EntityFrameworkCore;
 using VCore;
@@ -129,6 +130,40 @@ namespace VPlayer.Home.ViewModels.Albums
     #endregion
 
     #endregion Properties
+
+    #region VizualizationLayerPath
+
+    public string VizualizationLayerPath
+    {
+      get { return ViewModel.Model.VizualizationLayerPath; }
+      set
+      {
+        if (value != ViewModel.Model.VizualizationLayerPath)
+        {
+          ViewModel.Model.VizualizationLayerPath = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region StableVizualizationLayerPath
+
+    public string StableVizualizationLayerPath
+    {
+      get { return ViewModel.Model.StableVizualizationLayerPath; }
+      set
+      {
+        if (value != ViewModel.Model.StableVizualizationLayerPath)
+        {
+          ViewModel.Model.StableVizualizationLayerPath = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     #region GetCovers
 

@@ -12,6 +12,7 @@
   xmlns:multistyle="clr-namespace:VCore.WPF.AttachedProperties.Multistyle;assembly=VCore.WPF"
   xmlns:numericUpAndDown="clr-namespace:VCore.WPF.Controls.NumericUpAndDown;assembly=VCore.WPF"
   xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
+  xmlns:usercontrols="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
   xmlns:views="clr-namespace:VPlayer.WindowsPlayer.Views"
   xmlns:windowsPlayer="clr-namespace:VPlayer.Player.Views.WindowsPlayer"
   xmlns:windowsPlayer1="clr-namespace:VPlayer.WindowsPlayer.Views.WindowsPlayer"
@@ -1067,21 +1068,39 @@
     <Grid>
 
       <Grid VerticalAlignment="Stretch">
-        <Grid>
+        <Grid DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext}">
           <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
           </Grid.ColumnDefinitions>
 
-          <Image
+          <!--<Image
             Grid.Column="0"
-            Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualItem.ImagePath, Converter={StaticResource CacheImageConverterLowerQuality}, IsAsync=True}"
+            Source="{Binding ImagePath, Converter={StaticResource CacheImageConverterLowerQuality}, IsAsync=True}"
             Stretch="UniformToFill" />
 
           <Image
             Grid.Column="1"
-            Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualItem.ImagePath, Converter={StaticResource CacheImageConverterLowerQuality}, IsAsync=True}"
-            Stretch="UniformToFill" />
+            Source="{Binding ImagePath, Converter={StaticResource CacheImageConverterLowerQuality}, IsAsync=True}"
+            Stretch="UniformToFill" />-->
+
+          <usercontrols:BassImageVizualizer
+            Grid.Column="0"
+            BassSensitivity="1"
+            ImagePath="{Binding ActualItem.ImagePath}"
+            IsEnabled="{Binding IsPlaying}"
+            ShakeStrength="0"
+            Stretch="UniformToFill"
+            ZoomStrength="0" />
+
+          <usercontrols:BassImageVizualizer
+            Grid.Column="1"
+            BassSensitivity="1"
+            ImagePath="{Binding ActualItem.ImagePath}"
+            IsEnabled="{Binding IsPlaying}"
+            ShakeStrength="0"
+            Stretch="UniformToFill"
+            ZoomStrength="0" />
         </Grid>
 
         <Grid Opacity="1">
@@ -1113,8 +1132,20 @@
         VerticalAlignment="Center"
         Panel.ZIndex="0"
         BorderBrush="#FF080808"
-        BorderThickness="5">
-        <Image Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext.ActualItem.ImagePath, Converter={StaticResource CacheImageConverter}, IsAsync=True}" />
+        BorderThickness="5"
+        DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext}"
+        Opacity="1">
+        <Grid>
+          <Image Source="{Binding ActualItem.ImagePath, Converter={StaticResource CacheImageConverter}, IsAsync=True}" />
+
+
+          <usercontrols:BassImageVizualizer
+            IsEnabled="{Binding IsPlaying}"
+            StableVizualizerLayerPath="{Binding ActualItem.AlbumViewModel.Model.StableVizualizationLayerPath}"
+            VizualizerLayerPath="{Binding ActualItem.AlbumViewModel.Model.VizualizationLayerPath}" />
+
+        </Grid>
+
 
         <Border.Effect>
           <DropShadowEffect
@@ -1122,6 +1153,8 @@
             Direction="0"
             ShadowDepth="15" />
         </Border.Effect>
+
+
       </Border>
 
       <Grid Grid.Row="0">
