@@ -20,6 +20,7 @@ using CSCore.Win32;
 using SoundManagement;
 using VCore.WPF;
 using VCore.WPF.Helpers;
+using VPlayer.Core.SoundVizualization;
 using WinformsVisualization.Visualization;
 using Color = System.Windows.Media.Color;
 using Timer = System.Timers.Timer;
@@ -71,7 +72,7 @@ namespace VPlayer.Player.UserControls
         {
           var newImage = await Task.Run(() =>
           {
-            return lineSpectrum.CreateSpectrumLine(new System.Drawing.Size(width, height),
+            return lineSpectrum.CreateSpectrumLine(e, new System.Drawing.Size(width, height),
               bottomColor,
               topColor,
               middleColor, true);
@@ -413,9 +414,8 @@ namespace VPlayer.Player.UserControls
 
     private void AssignSpectrum()
     {
-      lineSpectrum = new LineSpectrum(SpektrumAnalyzer.fftSize)
+      lineSpectrum = new LineSpectrum()
       {
-        SpectrumProvider = SpektrumAnalyzer.spectrumProvider,
         UseAverage = true,
         BarCount = NumberOfColumns,
         BarSpacing = 2,

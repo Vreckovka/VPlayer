@@ -6,6 +6,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Linq;
 using CSCore.DSP;
+using VPlayer.Core.SoundVizualization;
 
 namespace WinformsVisualization.Visualization
 {
@@ -16,9 +17,8 @@ namespace WinformsVisualization.Visualization
 
     private Size _currentSize;
 
-    public LineSpectrum(FftSize fftSize)
+    public LineSpectrum()
     {
-      FftSize = fftSize;
     }
 
     public double NormlizedDataMaxValue { get; set; } = 30;
@@ -149,50 +149,38 @@ namespace WinformsVisualization.Visualization
 
     #region CreateSpectrumLine
 
-    public Bitmap CreateSpectrumLine(Size size, Brush brush, Color background, bool highQuality)
+    public Bitmap CreateSpectrumLine(float[] fftData, Size size, Brush brush, Color background, bool highQuality)
     {
       if (!UpdateFrequencyMappingIfNessesary(size))
         return null;
 
-      var fftBuffer = new float[(int)FftSize];
-
-      //get the fft result from the spectrum provider
-      if (SpectrumProvider.GetFftData(fftBuffer, this))
+      using (var pen = new Pen(brush, (float)BarWidth))
       {
-        using (var pen = new Pen(brush, (float)BarWidth))
+        var bitmap = new Bitmap(size.Width, size.Height);
+        using (Graphics graphics = Graphics.FromImage(bitmap))
         {
-          var bitmap = new Bitmap(size.Width, size.Height);
-          using (Graphics graphics = Graphics.FromImage(bitmap))
-          {
-            PrepareGraphics(graphics, highQuality);
-            graphics.Clear(background);
+          PrepareGraphics(graphics, highQuality);
+          graphics.Clear(background);
 
-            CreateSpectrumLineInternal(graphics, pen, fftBuffer, size);
-          }
-
-          return bitmap;
+          CreateSpectrumLineInternal(graphics, pen, fftData, size);
         }
-      }
-      else
-      {
 
+        return bitmap;
       }
-
-      return null;
     }
 
     #endregion
 
     #region CreateSpectrumLine
 
-    public Bitmap CreateSpectrumLine(Size size, Color color1, Color color2, Color background, bool highQuality)
+    public Bitmap CreateSpectrumLine(float[] fftData, Size size, Color color1, Color color2, Color background, bool highQuality)
     {
       if (!UpdateFrequencyMappingIfNessesary(size))
         return null;
 
       using (Brush brush = new LinearGradientBrush(new RectangleF(0, 0, (float)BarWidth, size.Height), color2, color1, LinearGradientMode.Vertical))
       {
-        return CreateSpectrumLine(size, brush, background, highQuality);
+        return CreateSpectrumLine(fftData, size, brush, background, highQuality);
       }
     }
 

@@ -2,7 +2,7 @@
 {
     public interface ISpectrumProvider
     {
-        bool GetFftData(float[] fftBuffer, object context);
+        bool GetFftData(float[] fftBuffer);
         int GetFftBandIndex(float frequency);
     }
 }
