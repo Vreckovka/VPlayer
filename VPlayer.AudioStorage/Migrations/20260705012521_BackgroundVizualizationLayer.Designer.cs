@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VPlayer.AudioStorage.AudioDatabase;
 
 namespace VPlayer.AudioStorage.Migrations
 {
     [DbContext(typeof(AudioDatabaseContext))]
-    partial class AudioDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20260705012521_BackgroundVizualizationLayer")]
+    partial class BackgroundVizualizationLayer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,17 +36,8 @@ namespace VPlayer.AudioStorage.Migrations
                     b.Property<string>("BackgroundVizualizationLayerPath")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("HighVizualizationColor")
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("InfoDownloadStatus")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("LowVizualizationColor")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("MidVizualizationColor")
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("MusicBrainzId")
                         .HasColumnType("TEXT");

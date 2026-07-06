@@ -1278,43 +1278,46 @@ namespace VPlayer.Core.ViewModels
 
     CancellationTokenSource mediaToken;
 
-    protected virtual async Task SetMedia(TModel model)
+    protected virtual Task SetMedia(TModel model)
     {
-      mediaToken?.Cancel();
-      mediaToken = new CancellationTokenSource();
-
-      MediaPlayer.SetNewMedia(null, mediaToken.Token);
-
-      if (model == null)
-        return;
-
-      await BeforeSetMedia(model);
-
-      if (model.Source != null)
+      return Task.Run(async () =>
       {
-        try
+        mediaToken?.Cancel();
+        mediaToken = new CancellationTokenSource();
+
+        MediaPlayer.SetNewMedia(null, mediaToken.Token);
+
+        if (model == null)
+          return;
+
+        await BeforeSetMedia(model);
+
+        if (model.Source != null)
         {
-          var fileUri = new Uri(model.Source);
+          try
+          {
+            var fileUri = new Uri(model.Source);
 
-          MediaPlayer.SetNewMedia(fileUri, mediaToken.Token);
+            MediaPlayer.SetNewMedia(fileUri, mediaToken.Token);
 
-          OnNewItemPlay(model);
+            OnNewItemPlay(model);
+          }
+          catch (UriFormatException ex)
+          {
+            VSynchronizationContext.PostOnUIThread(() =>
+            {
+              statusManager.ShowFailedMessage($"Item source was not in correct format.\nURI: \"{model.Source}\"", true);
+            });
+          }
         }
-        catch (UriFormatException ex)
+        else
         {
           VSynchronizationContext.PostOnUIThread(() =>
           {
-            statusManager.ShowFailedMessage($"Item source was not in correct format.\nURI: \"{model.Source}\"", true);
+            statusManager.ShowFailedMessage($"Item source is NULL", true);
           });
         }
-      }
-      else
-      {
-        VSynchronizationContext.PostOnUIThread(() =>
-        {
-          statusManager.ShowFailedMessage($"Item source is NULL", true);
-        });
-      }
+      });
     }
 
     #endregion
@@ -1364,11 +1367,7 @@ namespace VPlayer.Core.ViewModels
             }
 
             MediaPlayer.Play();
-
-            VSynchronizationContext.InvokeOnDispatcher(() =>
-            {
-              IsPlaying = true;
-            });
+            IsPlaying = true;
           }
         }
 
@@ -1451,6 +1450,11 @@ namespace VPlayer.Core.ViewModels
           Pause();
         else
           Play();
+      });
+
+      VSynchronizationContext.InvokeOnDispatcher(() =>
+      {
+        RaisePropertyChanged(nameof(IsPlaying));
       });
     }
 

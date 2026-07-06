@@ -74,7 +74,9 @@ namespace VPlayer.WindowsPlayer.Views
 
     public double LineHeight
     {
-      get {  var originalHeight = IsCinemaMode ? 42 : 31.0;
+      get
+      {
+        var originalHeight = IsCinemaMode ? 42 : 31.0;
 
         var final = originalHeight;
         if (IsVideo)
@@ -83,6 +85,121 @@ namespace VPlayer.WindowsPlayer.Views
         return final;
       }
     }
+
+    #region LyricsBackground
+
+    private string lyricsBackground = "#50000000";
+
+    public string LyricsBackground
+    {
+      get { return lyricsBackground; }
+      set
+      {
+        if (value != lyricsBackground)
+        {
+          lyricsBackground = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region LyricsHeight
+
+    private double lyricsHeight = 390;
+
+    public double LyricsHeight
+    {
+      get { return lyricsHeight; }
+      set
+      {
+        if (value != lyricsHeight)
+        {
+          lyricsHeight = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region ShowFrontVizualizer
+
+    private bool showFrontVizualizer = true;
+
+    public bool ShowFrontVizualizer
+    {
+      get { return showFrontVizualizer; }
+      set
+      {
+        if (value != showFrontVizualizer)
+        {
+          showFrontVizualizer = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region ShowBackgroundVizualizer
+
+    private bool showBackgroundVizualizer = false;
+
+    public bool ShowBackgroundVizualizer
+    {
+      get { return showBackgroundVizualizer; }
+      set
+      {
+        if (value != showBackgroundVizualizer)
+        {
+          showBackgroundVizualizer = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region BackgroundVizualizerMargin
+
+    private string backgroundVizualizerMargin = "-450,0,0,-100";
+
+    public string BackgroundVizualizerMargin
+    {
+      get { return backgroundVizualizerMargin; }
+      set
+      {
+        if (value != backgroundVizualizerMargin)
+        {
+          backgroundVizualizerMargin = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region BackgroundShadowOpacity
+
+    private double backgroundShadowOpacity = 1;
+
+    public double BackgroundShadowOpacity
+    {
+      get { return backgroundShadowOpacity; }
+      set
+      {
+        if (value != backgroundShadowOpacity)
+        {
+          backgroundShadowOpacity = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
 
     #region ShowHUD
 

@@ -1069,41 +1069,69 @@
 
       <Grid VerticalAlignment="Stretch">
         <Grid DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext}">
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-          </Grid.ColumnDefinitions>
 
-          <!--<Image
-            Grid.Column="0"
-            Source="{Binding ImagePath, Converter={StaticResource CacheImageConverterLowerQuality}, IsAsync=True}"
-            Stretch="UniformToFill" />
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-          <Image
-            Grid.Column="1"
-            Source="{Binding ImagePath, Converter={StaticResource CacheImageConverterLowerQuality}, IsAsync=True}"
-            Stretch="UniformToFill" />-->
+            <Image
+              Grid.Column="1"
+              Source="{Binding ActualItem.ImagePath, Converter={StaticResource CacheImageConverterLowerQuality}, IsAsync=True}"
+              Stretch="UniformToFill" />
 
-          <usercontrols:BassImageVizualizer
-            Grid.Column="0"
-            BassSensitivity="1"
-            ImagePath="{Binding ActualItem.ImagePath}"
-            IsEnabled="{Binding IsPlaying}"
-            ShakeStrength="0"
-            Stretch="UniformToFill"
-            ZoomStrength="0" />
+            <Image
+              Grid.Column="0"
+              Source="{Binding ActualItem.ImagePath, Converter={StaticResource CacheImageConverterLowerQuality}, IsAsync=True}"
+              Stretch="UniformToFill" />
 
-          <usercontrols:BassImageVizualizer
-            Grid.Column="1"
-            BassSensitivity="1"
-            ImagePath="{Binding ActualItem.ImagePath}"
-            IsEnabled="{Binding IsPlaying}"
-            ShakeStrength="0"
-            Stretch="UniformToFill"
-            ZoomStrength="0" />
+            <Grid.Style>
+              <Style TargetType="Grid">
+                <Setter Property="Visibility" Value="Hidden" />
+
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding ActualItem.AlbumViewModel.Model.BackgroundVizualizationLayerPath}" Value="{x:Null}">
+                    <Setter Property="Visibility" Value="Visible" />
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </Grid.Style>
+          </Grid>
+
+          <Grid>
+            <usercontrols:BassImageVizualizer
+              Grid.Column="1"
+              BassSensitivity="1"
+              HighBassImageColor="{Binding ActualItem.AlbumViewModel.Model.HighVizualizationColor}"
+              ImagePath="{Binding ActualItem.ImagePath}"
+              IsEnabled="{Binding IsPlaying}"
+              LowBassImageColor="{Binding ActualItem.AlbumViewModel.Model.LowVizualizationColor}"
+              MidBassImageColor="{Binding ActualItem.AlbumViewModel.Model.MidVizualizationColor}"
+              ShakeStrength="0"
+              Stablized="True"
+              Stretch="UniformToFill"
+              VizualizerLayerPath="{Binding ActualItem.AlbumViewModel.Model.BackgroundVizualizationLayerPath}"
+              ZoomStrength="0">
+              <usercontrols:BassImageVizualizer.Style>
+                <Style TargetType="usercontrols:BassImageVizualizer">
+                  <Setter Property="Visibility" Value="Visible" />
+
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding ActualItem.AlbumViewModel.Model.BackgroundVizualizationLayerPath}" Value="{x:Null}">
+                      <Setter Property="Visibility" Value="Hidden" />
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </usercontrols:BassImageVizualizer.Style>
+            </usercontrols:BassImageVizualizer>
+
+
+          </Grid>
         </Grid>
 
-        <Grid Opacity="1">
+        <Grid Opacity="{Binding Source={StaticResource LyricsConstants}, Path=Instance.BackgroundShadowOpacity}">
+
           <Grid.Background>
             <LinearGradientBrush StartPoint="1,0" EndPoint="0 0">
               <GradientStop Offset="1" Color="#FF000000" />
@@ -1114,7 +1142,8 @@
           </Grid.Background>
         </Grid>
 
-        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+        <!--<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
           <Grid.Background>
             <LinearGradientBrush StartPoint="0,1" EndPoint="0 0">
               <GradientStop Offset="1" Color="#5A000000" />
@@ -1122,7 +1151,67 @@
               <GradientStop Offset="0.05" Color="#5A000000" />
             </LinearGradientBrush>
           </Grid.Background>
+        </Grid>-->
+      </Grid>
+
+      <Grid ClipToBounds="True" DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext}">
+        <usercontrols:SoundVizualizer
+          Height="500"
+          HorizontalAlignment="Stretch"
+          VerticalAlignment="Bottom"
+          Background="Transparent"
+          DataContext="{Binding ActualItem}"
+          IsEnabled="{Binding DataContext.IsPlaying, RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}}"
+          MaxFrequency="10000"
+          NormlizedDataMaxSilentValue="7"
+          Opacity="0.8"
+          UseSkew="True">
+
+          <usercontrols:SoundVizualizer.Style>
+            <Style TargetType="usercontrols:SoundVizualizer">
+              <Setter Property="Visibility" Value="Collapsed" />
+
+              <Setter Property="BottomColor" Value="{Binding Source={StaticResource LyricsConstants}, Path=Instance.VizualizerBottomColor}" />
+              <Setter Property="TopColor" Value="{Binding Source={StaticResource LyricsConstants}, Path=Instance.VizualizerTopColor}" />
+              <Setter Property="MiddleColor" Value="{Binding Source={StaticResource LyricsConstants}, Path=Instance.VizualizerMiddleColor}" />
+
+              <Setter Property="NumberOfColumns" Value="{Binding Source={StaticResource LyricsConstants}, Path=Instance.BarNumber}" />
+              <Setter Property="MinimumBarWidth" Value="{Binding Source={StaticResource LyricsConstants}, Path=Instance.BarWidth}" />
+
+              <Setter Property="Margin" Value="{Binding Source={StaticResource LyricsConstants}, Path=Instance.BackgroundVizualizerMargin}" />
+
+              <Setter Property="NormlizedDataMaxValue" Value="180" />
+              <Setter Property="NormlizedDataMinValue" Value="85" />
+
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.IsPlaying, RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}}" Value="true">
+                  <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.IsCinemaMode}" Value="True">
+                  <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+
+                <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.ShowBackgroundVizualizer}" Value="false">
+                  <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+
+              </Style.Triggers>
+            </Style>
+          </usercontrols:SoundVizualizer.Style>
+
+        </usercontrols:SoundVizualizer>
+
+        <Grid Opacity="0.5">
+          <Grid.Background>
+            <LinearGradientBrush StartPoint="1,0" EndPoint="0 0">
+              <GradientStop Offset="1" Color="#FF000000" />
+              <GradientStop Offset="0.5" Color="#00000000" />
+              <GradientStop Offset="0.0" Color="#00000000" />
+              <GradientStop Offset="0.0" Color="#FF000000" />
+            </LinearGradientBrush>
+          </Grid.Background>
         </Grid>
+
       </Grid>
 
 
@@ -1132,18 +1221,49 @@
         VerticalAlignment="Center"
         Panel.ZIndex="0"
         BorderBrush="#FF080808"
-        BorderThickness="5"
+        BorderThickness="0"
         DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext}"
         Opacity="1">
         <Grid>
-          <Image Source="{Binding ActualItem.ImagePath, Converter={StaticResource CacheImageConverter}, IsAsync=True}" />
+          <Grid>
+            <Image Source="{Binding ActualItem.ImagePath, Converter={StaticResource CacheImageConverter}, IsAsync=True}" />
+
+            <Grid.Style>
+              <Style TargetType="Grid">
+                <Setter Property="Visibility" Value="Hidden" />
+
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding ActualItem.AlbumViewModel.Model.VizualizationLayerPath}" Value="{x:Null}">
+                    <Setter Property="Visibility" Value="Visible" />
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </Grid.Style>
+          </Grid>
 
 
-          <usercontrols:BassImageVizualizer
-            IsEnabled="{Binding IsPlaying}"
-            StableVizualizerLayerPath="{Binding ActualItem.AlbumViewModel.Model.StableVizualizationLayerPath}"
-            VizualizerLayerPath="{Binding ActualItem.AlbumViewModel.Model.VizualizationLayerPath}" />
+          <Grid>
+            <usercontrols:BassImageVizualizer
+              HighBassImageColor="{Binding ActualItem.AlbumViewModel.Model.HighVizualizationColor}"
+              IsEnabled="{Binding IsPlaying}"
+              LowBassImageColor="{Binding ActualItem.AlbumViewModel.Model.LowVizualizationColor}"
+              MidBassImageColor="{Binding ActualItem.AlbumViewModel.Model.MidVizualizationColor}"
+              OpacityModifier="1.25"
+              StableVizualizerLayerPath="{Binding ActualItem.AlbumViewModel.Model.StableVizualizationLayerPath}"
+              VizualizerLayerPath="{Binding ActualItem.AlbumViewModel.Model.VizualizationLayerPath}" />
 
+            <Grid.Style>
+              <Style TargetType="Grid">
+                <Setter Property="Visibility" Value="Visible" />
+
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding ActualItem.AlbumViewModel.Model.VizualizationLayerPath}" Value="{x:Null}">
+                    <Setter Property="Visibility" Value="Hidden" />
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </Grid.Style>
+          </Grid>
         </Grid>
 
 

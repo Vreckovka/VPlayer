@@ -131,6 +131,8 @@ namespace VPlayer.Home.ViewModels.Albums
 
     #endregion Properties
 
+    #region Vizualiazation
+
     #region VizualizationLayerPath
 
     public string VizualizationLayerPath
@@ -162,6 +164,76 @@ namespace VPlayer.Home.ViewModels.Albums
         }
       }
     }
+
+    #endregion
+
+    #region BackgroundVizualizationLayerPath
+
+    public string BackgroundVizualizationLayerPath
+    {
+      get { return ViewModel.Model.BackgroundVizualizationLayerPath; }
+      set
+      {
+        if (value != ViewModel.Model.BackgroundVizualizationLayerPath)
+        {
+          ViewModel.Model.BackgroundVizualizationLayerPath = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region LowVizualizationColor
+
+    public string LowVizualizationColor
+    {
+      get { return ViewModel.Model.LowVizualizationColor; }
+      set
+      {
+        if (value != ViewModel.Model.LowVizualizationColor)
+        {
+          ViewModel.Model.LowVizualizationColor = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region MidVizualizationColor
+
+    public string MidVizualizationColor
+    {
+      get { return ViewModel.Model.MidVizualizationColor; }
+      set
+      {
+        if (value != ViewModel.Model.MidVizualizationColor)
+        {
+          ViewModel.Model.MidVizualizationColor = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region HighVizualizationColor
+
+    public string HighVizualizationColor
+    {
+      get { return ViewModel.Model.HighVizualizationColor; }
+      set
+      {
+        if (value != ViewModel.Model.HighVizualizationColor)
+        {
+          ViewModel.Model.HighVizualizationColor = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
 
     #endregion
 

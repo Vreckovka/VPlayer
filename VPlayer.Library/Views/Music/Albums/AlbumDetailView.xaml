@@ -154,9 +154,22 @@
 
             <Grid Margin="5,15,0,0">
               <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="150" />
                 <ColumnDefinition Width="*" />
               </Grid.ColumnDefinitions>
+
+              <Grid.RowDefinitions>
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="55" />
+              </Grid.RowDefinitions>
 
               <Grid.Resources>
                 <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
@@ -165,25 +178,106 @@
                 </Style>
               </Grid.Resources>
 
-              <StackPanel>
-                <TextBlock Text="Release date" />
-                <TextBlock Text="Number of song" />
-                <TextBlock Text="Length" />
-                <TextBlock Text="Vizualizer Layer Path" />
-              </StackPanel>
 
-              <StackPanel Grid.Column="1">
-                <TextBox Text="{Binding ViewModel.Model.ReleaseDate, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBlock Text="{Binding AlbumSongs.Count}" />
-                <TextBlock Text="{Binding TotalDuration}" />
-                <TextBox Text="{Binding VizualizationLayerPath, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBox Text="{Binding StableVizualizationLayerPath, UpdateSourceTrigger=PropertyChanged}" />
+              <TextBlock
+                Grid.Row="0"
+                Grid.Column="0"
+                VerticalAlignment="Bottom"
+                Text="Release date" />
+              <TextBlock
+                Grid.Row="1"
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Text="Number of song" />
 
-                <Button
-                  Margin="0,10,0,0"
-                  Command="{Binding Save}"
-                  Content="Save" />
-              </StackPanel>
+              <TextBlock
+                Grid.Row="2"
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Text="Length" />
+
+              <TextBlock
+                Grid.Row="3"
+                Grid.Column="0"
+                VerticalAlignment="Bottom"
+                Text="Vizualizer Layer" />
+              <TextBlock
+                Grid.Row="4"
+                Grid.Column="0"
+                VerticalAlignment="Bottom"
+                Text="Stable Layer" />
+              <TextBlock
+                Grid.Row="5"
+                Grid.Column="0"
+                VerticalAlignment="Bottom"
+                Text="Background Layer " />
+
+              <TextBlock
+                Grid.Row="6"
+                Grid.Column="0"
+                VerticalAlignment="Bottom"
+                Text="Low Color" />
+              <TextBlock
+                Grid.Row="7"
+                Grid.Column="0"
+                VerticalAlignment="Bottom"
+                Text="Mid Color" />
+              <TextBlock
+                Grid.Row="8"
+                Grid.Column="0"
+                VerticalAlignment="Bottom"
+                Text="High Color" />
+
+
+
+              <TextBox
+                Grid.Row="0"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Text="{Binding ViewModel.Model.ReleaseDate, UpdateSourceTrigger=PropertyChanged}" />
+              <TextBlock
+                Grid.Row="1"
+                Grid.Column="1"
+                Text="{Binding AlbumSongs.Count}" />
+              <TextBlock
+                Grid.Row="2"
+                Grid.Column="1"
+                Text="{Binding TotalDuration}" />
+
+              <TextBox
+                Grid.Row="3"
+                Grid.Column="1"
+                Text="{Binding VizualizationLayerPath, UpdateSourceTrigger=PropertyChanged}" />
+              <TextBox
+                Grid.Row="4"
+                Grid.Column="1"
+                Text="{Binding StableVizualizationLayerPath, UpdateSourceTrigger=PropertyChanged}" />
+              <TextBox
+                Grid.Row="5"
+                Grid.Column="1"
+                Text="{Binding BackgroundVizualizationLayerPath, UpdateSourceTrigger=PropertyChanged}" />
+
+              <TextBox
+                Grid.Row="6"
+                Grid.Column="1"
+                Text="{Binding LowVizualizationColor, UpdateSourceTrigger=PropertyChanged}" />
+              <TextBox
+                Grid.Row="7"
+                Grid.Column="1"
+                Text="{Binding MidVizualizationColor, UpdateSourceTrigger=PropertyChanged}" />
+              <TextBox
+                Grid.Row="8"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Text="{Binding HighVizualizationColor, UpdateSourceTrigger=PropertyChanged}" />
+
+              <Button
+                Grid.Row="9"
+                Grid.Column="1"
+                Margin="0,10,0,0"
+                Command="{Binding Save}"
+                Content="Save" />
+
 
 
             </Grid>

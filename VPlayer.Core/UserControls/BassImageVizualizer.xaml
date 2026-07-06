@@ -26,7 +26,7 @@
 
         <Image
           x:Name="OriginalImage"
-          Opacity="1"
+          Opacity="0"
           RenderOptions.BitmapScalingMode="NearestNeighbor" />
 
         <Image

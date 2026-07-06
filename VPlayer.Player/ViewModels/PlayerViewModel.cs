@@ -22,6 +22,7 @@ using VPlayer.Core.Events;
 using VPlayer.Core.Managers.Status;
 using VPlayer.Core.Modularity.Regions;
 using VPlayer.Core.ViewModels;
+using VPlayer.Player.UserControls;
 using VPlayer.Player.Views;
 using VPlayer.WindowsPlayer.Behaviors;
 using VPlayer.WindowsPlayer.ViewModels;
@@ -245,7 +246,18 @@ namespace VPlayer.Player.ViewModels
 
     public void PlayPause()
     {
+      var oldIsPlaying = ActualViewModel.IsPlaying;
+
       ActualViewModel?.PlayPause();
+
+      if (ActualViewModel is IMusicPlayerViewModel && !oldIsPlaying)
+      {
+        SpektrumAnalyzer.Start();
+      }
+      else
+      {
+        SpektrumAnalyzer.Stop();
+      } 
     }
 
     #endregion

@@ -231,7 +231,7 @@
       </Grid.Style>
     </Grid>
 
-    <Grid Grid.Row="1" Height="390">
+    <Grid Grid.Row="1" Height="{Binding Source={StaticResource LyricsConstants}, Path=Instance.LyricsHeight}">
       <Grid.RowDefinitions>
         <RowDefinition Height="auto" />
         <RowDefinition Height="*" />
@@ -328,6 +328,10 @@
 
                   <Setter Property="NormlizedDataMaxValue" Value="150" />
                   <Setter Property="NormlizedDataMinValue" Value="30" />
+                </DataTrigger>
+
+                <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.ShowFrontVizualizer}" Value="False">
+                  <Setter Property="Visibility" Value="Collapsed" />
                 </DataTrigger>
 
               </Style.Triggers>
@@ -546,7 +550,7 @@
 
       <Grid.Style>
         <Style TargetType="Grid">
-          <Setter Property="Background" Value="#50000000" />
+          <Setter Property="Background" Value="{Binding Source={StaticResource LyricsConstants}, Path=Instance.LyricsBackground}" />
 
           <Style.Triggers>
             <DataTrigger Binding="{Binding Source={StaticResource LyricsConstants}, Path=Instance.ShowHUD}" Value="false">
