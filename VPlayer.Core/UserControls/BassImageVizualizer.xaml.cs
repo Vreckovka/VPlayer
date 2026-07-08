@@ -186,7 +186,7 @@ namespace VPlayer.Player.UserControls
       SpektrumAnalyzer.OnFFtTick += SpektrumAnalyzer_OnFFtTick;
     }
 
-    private void SpektrumAnalyzer_OnFFtTick(object sender, float[] e)
+    private void SpektrumAnalyzer_OnFFtTick(object sender, float[] fftData)
     {
      
       VSynchronizationContext.PostOnUIThread(async () =>
@@ -194,7 +194,7 @@ namespace VPlayer.Player.UserControls
         if (!IsEnabled) return;
         if (Visibility != Visibility.Visible) return;
 
-        float bass = SpektrumAnalyzer.AnalyzeBass(e, BassSensitivity, BassOutputGate, BassPeakDecay, BassCurve);
+        float bass = SpektrumAnalyzer.AnalyzeBass(fftData, BassSensitivity, BassOutputGate, BassPeakDecay, BassCurve);
 
         float smoothing = bass > visualBass ? 0.50f : 0.14f;
 

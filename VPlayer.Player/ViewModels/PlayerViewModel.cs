@@ -94,6 +94,15 @@ namespace VPlayer.Player.ViewModels
         {
           isPlaying = value;
           RaisePropertyChanged();
+
+          if (ActualViewModel is IMusicPlayerViewModel)
+          {
+            SpektrumAnalyzer.Start();
+          }
+          else
+          {
+            SpektrumAnalyzer.Stop();
+          }
         }
       }
     }
@@ -246,18 +255,7 @@ namespace VPlayer.Player.ViewModels
 
     public void PlayPause()
     {
-      var oldIsPlaying = ActualViewModel.IsPlaying;
-
-      ActualViewModel?.PlayPause();
-
-      if (ActualViewModel is IMusicPlayerViewModel && !oldIsPlaying)
-      {
-        SpektrumAnalyzer.Start();
-      }
-      else
-      {
-        SpektrumAnalyzer.Stop();
-      } 
+      ActualViewModel?.PlayPause();    
     }
 
     #endregion

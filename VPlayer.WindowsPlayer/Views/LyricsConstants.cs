@@ -88,7 +88,7 @@ namespace VPlayer.WindowsPlayer.Views
 
     #region LyricsBackground
 
-    private string lyricsBackground = "#50000000";
+    private string lyricsBackground = "#00000000";
 
     public string LyricsBackground
     {
@@ -164,7 +164,7 @@ namespace VPlayer.WindowsPlayer.Views
 
     #region BackgroundVizualizerMargin
 
-    private string backgroundVizualizerMargin = "-450,0,0,-100";
+    private string backgroundVizualizerMargin = "-450,0,0,-135";
 
     public string BackgroundVizualizerMargin
     {
@@ -356,7 +356,7 @@ namespace VPlayer.WindowsPlayer.Views
 
     #region BarNumber
 
-    private int barNumber = 250;
+    private int barNumber = 300;
 
     public int BarNumber
     {
