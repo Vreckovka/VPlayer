@@ -22,13 +22,6 @@ namespace VPlayer.Core.UserControls
   /// </summary>
   public partial class BackgroundStageLights : UserControl
   {
-    private readonly AdaptiveSignalNormalizer psychedelicFluxNormalizer =
-     new AdaptiveSignalNormalizer
-     {
-       AverageAdaptation = 0.08,
-       PeakDecay = 0.985
-     };
-
     private readonly Stopwatch lightClock = Stopwatch.StartNew();
 
     private const int LightLookCount = 4;
@@ -59,52 +52,24 @@ namespace VPlayer.Core.UserControls
     public double LightMaxSpeed { get; set; } = 0.65;
     public double LightSpeedSmoothing { get; set; } = 1.5;
 
-    public float BassSensitivity { get; set; } = 1.35f;
-    public float BassCurve { get; set; } = 0.20f;
-    public float BassOutputGate { get; set; } = 0.06f;
-    public float BassPeakDecay { get; set; } = 0.997f;
-
-    private float visualBass;
-
-
-    public double FluxAttack { get; set; } = 0.65;
-    public double FluxRelease { get; set; } = 0.10;
-
 
     public BackgroundStageLights()
     {
       InitializeComponent();
 
-      SpektrumAnalyzer.OnFFtTick += SpektrumAnalyzer_OnFFtTick;
+      LightingDirector.RegisterBackgroundLights(this);
+      LightingDirector.OnFftTick += LightingDirector_OnFftTick;
     }
 
-    private double visualFlux = 0.0;
-    private void SpektrumAnalyzer_OnFFtTick(object sender, float[] fftData)
+    private void LightingDirector_OnFftTick(object sender, (double bass, double flux) e)
     {
-
-      VSynchronizationContext.PostOnUIThread(async () =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
-        if (!IsEnabled) return;
-        if (Visibility != Visibility.Visible) return;
-
-        float bass = SpektrumAnalyzer.AnalyzeBass(fftData, BassSensitivity, BassOutputGate, BassPeakDecay, BassCurve);
-
-        float smoothing = bass > visualBass ? 0.50f : 0.14f;
-
-        visualBass += (bass - visualBass) * smoothing;
-
-
-        double rawFlux = SpektrumAnalyzer.GetPositiveSpectralFlux(fftData);
-        double normalizedFlux = psychedelicFluxNormalizer.Update(rawFlux);
-        double fluxSmoothing = normalizedFlux > visualFlux ? FluxAttack : FluxRelease;
-
-        visualFlux += (normalizedFlux - visualFlux) * fluxSmoothing;
-
-        UpdateConcertLight(bass, visualFlux);
-      }
-       );
+        UpdateConcertLight(e.bass, e.flux);
+      });
     }
 
+    public double BeamWidthMultiplier { get; set; } = 1.0;
 
     private void UpdateConcertLight(double bass, double flux)
     {
@@ -231,7 +196,7 @@ namespace VPlayer.Core.UserControls
       double scaleX = 0.92 + depth * 0.16;
       double scaleY = 0.78 + depth * 0.28;
 
-      scale.ScaleX = scaleX;
+      scale.ScaleX = scaleX * BeamWidthMultiplier;
       scale.ScaleY = scaleY;
 
       imageBeam.Opacity = (0.55 + depth * 0.45) * intensity;

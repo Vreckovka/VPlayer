@@ -1104,7 +1104,6 @@
           <Grid>
             <usercontrols:BassImageVizualizer
               Grid.Column="1"
-              BassSensitivity="1"
               HighBassImageColor="{Binding ActualItem.AlbumViewModel.Model.HighVizualizationColor}"
               ImagePath="{Binding ActualItem.ImagePath}"
               IsEnabled="{Binding IsPlaying}"
@@ -1255,7 +1254,7 @@
               StableVizualizerLayerPath="{Binding ActualItem.AlbumViewModel.Model.StableVizualizationLayerPath}"
               VizualizerLayerPath="{Binding ActualItem.AlbumViewModel.Model.VizualizationLayerPath}" />
 
-            <usercontrols1:FrontStageLights CutoutSource="{Binding ActualItem.AlbumViewModel.Model.VizualizationLayerPath}" />
+            <usercontrols1:FrontStageLights HighColor="#24ff5e"/>
 
             <Grid.Style>
               <Style TargetType="Grid">

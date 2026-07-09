@@ -138,10 +138,6 @@
       IsHitTestVisible="False"
       Opacity="1">
 
-      <Grid.OpacityMask>
-        <ImageBrush ImageSource="{Binding Source, ElementName=StableImage}" Stretch="UniformToFill" />
-      </Grid.OpacityMask>
-
       <Rectangle x:Name="Light1Beam" Style="{StaticResource ImageBeamStyle}">
         <Rectangle.Fill>
           <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">

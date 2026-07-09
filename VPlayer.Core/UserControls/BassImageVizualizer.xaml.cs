@@ -20,8 +20,6 @@ namespace VPlayer.Player.UserControls
   {
     private BitmapSource originalImage;
 
-    private float visualBass;
-
     #region ImagePath
 
     public string ImagePath
@@ -173,10 +171,7 @@ namespace VPlayer.Player.UserControls
     }
 
     public bool Stablized { get; set; } = false;
-    public float BassSensitivity { get; set; } = 1.35f;
-    public float BassCurve { get; set; } = 0.20f;
-    public float BassOutputGate { get; set; } = 0.06f;
-    public float BassPeakDecay { get; set; } = 0.997f;
+
     public float ZoomStrength { get; set; } = 0.05f;
     public float ShakeStrength { get; set; } = 8f;
 
@@ -186,29 +181,23 @@ namespace VPlayer.Player.UserControls
     {
       InitializeComponent();
 
+      LightingDirector.OnFftTick += LightingDirector_OnFftTick1;
 
-      SpektrumAnalyzer.OnFFtTick += SpektrumAnalyzer_OnFFtTick;
+
+      if (Stablized)
+        LightingDirector.RegisterBackgroundRGB(this);
+      else
+        LightingDirector.RegisterMainRGB(this);
     }
 
-    private void SpektrumAnalyzer_OnFFtTick(object sender, float[] fftData)
+    private void LightingDirector_OnFftTick1(object sender, (double bass, double flux) e)
     {
-
-      VSynchronizationContext.PostOnUIThread(async () =>
-      {
-        if (!IsEnabled) return;
-        if (Visibility != Visibility.Visible) return;
-
-        float bass = SpektrumAnalyzer.AnalyzeBass(fftData, BassSensitivity, BassOutputGate, BassPeakDecay, BassCurve);
-
-        float smoothing = bass > visualBass ? 0.50f : 0.14f;
-
-        visualBass += (bass - visualBass) * smoothing;
-
-
-        ApplyPsychedelicImageEffect(visualBass, fftData);
-      }
-       );
+      VSynchronizationContext.PostOnUIThread(() =>
+       {
+         ApplyPsychedelicImageEffect(e.bass, e.flux);
+       });
     }
+
 
     #region LoadStableImage
 
@@ -330,7 +319,6 @@ namespace VPlayer.Player.UserControls
 
     #endregion
 
-
     #region PsychedelicEffectSettings
 
     public double FluxSeparationStrength { get; set; } = 2.0;
@@ -352,14 +340,13 @@ namespace VPlayer.Player.UserControls
     public double ShadowDistanceMultiplier { get; set; } = 1.8;
     public double MovementMultiplier { get; set; } = 1.0;
 
-    private double visualFlux = 0.0;
+    //private double visualFlux = 0.0;
 
     #endregion
 
-
     #region ApplyPsychedelicImageEffect
 
-    private void ApplyPsychedelicImageEffect(float bass, float[] fftData)
+    private void ApplyPsychedelicImageEffect(double bass, double flux)
     {
       bass = SpektrumAnalyzer.Clamp01(bass);
 
@@ -416,16 +403,16 @@ namespace VPlayer.Player.UserControls
       BlueShadow.Opacity = blueOpacity * ShadowOpacity;
 
 
-      double rawFlux = SpektrumAnalyzer.GetPositiveSpectralFlux(fftData);
-      double normalizedFlux = psychedelicFluxNormalizer.Update(rawFlux);
-      double fluxSmoothing = normalizedFlux > visualFlux ? FluxAttack : FluxRelease;
+      //double rawFlux = SpektrumAnalyzer.GetPositiveSpectralFlux(fftData);
+      //double normalizedFlux = psychedelicFluxNormalizer.Update(rawFlux);
+     // double fluxSmoothing = normalizedFlux > visualFlux ? FluxAttack : FluxRelease;
 
-      visualFlux += (normalizedFlux - visualFlux) * fluxSmoothing;
+      //visualFlux += (normalizedFlux - visualFlux) * fluxSmoothing;
 
 
       if (!Stablized)
       {
-        StableImage.Opacity = StableBaseOpacity - visualFlux * StableFluxRevealStrength;
+        StableImage.Opacity = StableBaseOpacity - flux * StableFluxRevealStrength;
       }
       else
       {
@@ -440,7 +427,7 @@ namespace VPlayer.Player.UserControls
 
 
       double bassOffset = bass * ShakeStrength;
-      double fluxOffset = visualFlux * FluxSeparationStrength;
+      double fluxOffset = flux * FluxSeparationStrength;
       double offset = (4.0 + bassOffset + fluxOffset) * MovementMultiplier;
 
       RedImageTranslate.X = offset;
@@ -467,6 +454,8 @@ namespace VPlayer.Player.UserControls
 
     #endregion
 
+    #region BoostOpacityPair
+
     private static void BoostOpacityPair(ref double a, ref double b, double targetOpacity = 0.9)
     {
       double combined = 1.0 - (1.0 - a) * (1.0 - b);
@@ -485,6 +474,8 @@ namespace VPlayer.Player.UserControls
       a = Math.Min(1.0, a * scale);
       b = Math.Min(1.0, b * scale);
     }
+
+    #endregion
   }
 }
 

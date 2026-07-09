@@ -184,6 +184,3 @@ namespace VPlayer.Player.UserControls
     }
   }
 }
-
-
-

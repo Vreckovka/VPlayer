@@ -22,8 +22,6 @@ namespace VPlayer.Core.UserControls
   /// </summary>
   public partial class FrontStageLights : UserControl
   {
-    public static readonly DependencyProperty CutoutSourceProperty = DependencyProperty.Register(nameof(CutoutSource), typeof(ImageSource), typeof(FrontStageLights), new PropertyMetadata(null));
-
     private readonly Stopwatch lightClock = Stopwatch.StartNew();
 
     private const int LookCount = 4;
@@ -39,8 +37,8 @@ namespace VPlayer.Core.UserControls
     private double light2Intensity = 1.0;
 
     private static readonly double[] MountX = { 0.12, 0.88 };
-    private static readonly Color LowColor = Color.FromRgb(0xB7, 0xD9, 0xFF);
-    private static readonly Color HighColor = Color.FromRgb(0xFF, 0x5E, 0xA8);
+    public Color LowColor { get; set; } = Color.FromRgb(0xB7, 0xD9, 0xFF);
+    public Color HighColor { get; set; } = Color.FromRgb(0xFF, 0x5E, 0xA8);
 
     public double ActivityDecay { get; set; } = 1.5;
     public double ActivityGain { get; set; } = 2.8;
@@ -48,60 +46,22 @@ namespace VPlayer.Core.UserControls
     public double MaxSpeed { get; set; } = 0.18;
     public double SpeedSmoothing { get; set; } = 1.2;
 
-    public float BassSensitivity { get; set; } = 1.35f;
-    public float BassCurve { get; set; } = 0.20f;
-    public float BassOutputGate { get; set; } = 0.06f;
-    public float BassPeakDecay { get; set; } = 0.997f;
-    public double FluxAttack { get; set; } = 0.65;
-    public double FluxRelease { get; set; } = 0.10;
-
-    private readonly AdaptiveSignalNormalizer psychedelicFluxNormalizer =
-   new AdaptiveSignalNormalizer
-   {
-     AverageAdaptation = 0.08,
-     PeakDecay = 0.985
-   };
-
-    public ImageSource CutoutSource
-    {
-      get => (ImageSource)GetValue(CutoutSourceProperty);
-      set => SetValue(CutoutSourceProperty, value);
-    }
-
     public FrontStageLights()
     {
       InitializeComponent();
 
-      SpektrumAnalyzer.OnFFtTick += SpektrumAnalyzer_OnFFtTick;
+      LightingDirector.RegisterFrontLights(this);
+      LightingDirector.OnFftTick += LightingDirector_OnFftTick;
     }
 
-    private float visualBass;
-    private double visualFlux;
+    public double BeamWidthMultiplier { get; set; } = 1.0;
 
-    private void SpektrumAnalyzer_OnFFtTick(object sender, float[] fftData)
+    private void LightingDirector_OnFftTick(object sender, (double bass, double flux) e)
     {
-
-      VSynchronizationContext.PostOnUIThread(async () =>
+      VSynchronizationContext.PostOnUIThread(() =>
       {
-        if (!IsEnabled) return;
-        if (Visibility != Visibility.Visible) return;
-
-        float bass = SpektrumAnalyzer.AnalyzeBass(fftData, BassSensitivity, BassOutputGate, BassPeakDecay, BassCurve);
-
-        float smoothing = bass > visualBass ? 0.50f : 0.14f;
-
-        visualBass += (bass - visualBass) * smoothing;
-
-
-        double rawFlux = SpektrumAnalyzer.GetPositiveSpectralFlux(fftData);
-        double normalizedFlux = psychedelicFluxNormalizer.Update(rawFlux);
-        double fluxSmoothing = normalizedFlux > visualFlux ? FluxAttack : FluxRelease;
-
-        visualFlux += (normalizedFlux - visualFlux) * fluxSmoothing;
-
-        UpdateLighting(bass, visualFlux);
-      }
-       );
+        UpdateLighting(e.bass, e.flux);
+      });   
     }
 
     public void UpdateLighting(double bass, double flux)
@@ -245,10 +205,10 @@ namespace VPlayer.Core.UserControls
       }
     }
 
-    private static void UpdateFrontLight(RotateTransform rotate, ScaleTransform scale, FrameworkElement imageBeam, FrameworkElement weakGate, double angle, double depth, double intensity)
+    private void UpdateFrontLight(RotateTransform rotate, ScaleTransform scale, FrameworkElement imageBeam, FrameworkElement weakGate, double angle, double depth, double intensity)
     {
       rotate.Angle = angle;
-      scale.ScaleX = 0.86 + depth * 0.22;
+      scale.ScaleX = (0.86 + depth * 0.22) * BeamWidthMultiplier;
       scale.ScaleY = 0.82 + depth * 0.22;
       imageBeam.Opacity = (0.60 + depth * 0.40) * intensity;
       weakGate.Opacity = (0.55 + depth * 0.45) * intensity;
