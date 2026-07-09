@@ -24,7 +24,7 @@ namespace VPlayer.Core.SoundVizualization
     private static WasapiLoopbackCapture soundIn;
     private static SoundInSource soundInSource;
     private static IWaveSource waveSource;
-   
+
 
     private static byte[] readBuffer;
     private static bool soundSourceInitialized;
@@ -42,7 +42,7 @@ namespace VPlayer.Core.SoundVizualization
     private static bool detectorInitialized;
     private static float bassEnergyAverage;
     private static float bassFluxAverage;
-    private static float bassEnergyPeak = 0.000001f;
+    private static float bassEnergyPeak = InitialBassEnergyPeak;
 
     public static event EventHandler<float[]> OnFFtTick;
 
@@ -248,6 +248,7 @@ namespace VPlayer.Core.SoundVizualization
 
     #region AnalyzeBass
 
+    private const float InitialBassEnergyPeak = 0.01f;
     public static float AnalyzeBass(
       float[] spectrum,
       float bassSensitivity = 1,
@@ -291,7 +292,7 @@ namespace VPlayer.Core.SoundVizualization
       {
         bassEnergyAverage = Math.Max(bassEnergy, 0.000001f);
         bassFluxAverage = Math.Max(bassFlux, 0.000001f);
-        bassEnergyPeak = Math.Max(bassEnergy, 0.000001f);
+        bassEnergyPeak = Math.Max(bassEnergy, InitialBassEnergyPeak);
         detectorInitialized = true;
         return 0f;
       }
@@ -330,6 +331,13 @@ namespace VPlayer.Core.SoundVizualization
     #region Clamp
 
     public static float Clamp(float value)
+    {
+      if (value < 0f) return 0f;
+      if (value > 1f) return 1f;
+      return value;
+    }
+
+    public static double Clamp(double value)
     {
       if (value < 0f) return 0f;
       if (value > 1f) return 1f;

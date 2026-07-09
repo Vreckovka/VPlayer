@@ -519,6 +519,7 @@
                                 <DataTrigger Binding="{Binding IsActual}" Value="true">
                                   <Setter Property="Height" Value="auto" />
                                   <Setter Property="Background" Value="#95000000" />
+                                  <!--<Setter Property="HorizontalAlignment" Value="Left"/>-->
                                 </DataTrigger>
                               </Style.Triggers>
                             </Style>
@@ -1244,8 +1245,11 @@
 
           <Grid>
             <usercontrols:BassImageVizualizer
+              FluxSeparationStrength="5"
               HighBassImageColor="{Binding ActualItem.AlbumViewModel.Model.HighVizualizationColor}"
               IsEnabled="{Binding IsPlaying}"
+              LightMaxSpeed="0.25"
+              LightMinSpeed="0.008"
               LowBassImageColor="{Binding ActualItem.AlbumViewModel.Model.LowVizualizationColor}"
               MidBassImageColor="{Binding ActualItem.AlbumViewModel.Model.MidVizualizationColor}"
               OpacityModifier="1.25"
@@ -1267,12 +1271,12 @@
         </Grid>
 
 
-        <Border.Effect>
+        <!--<Border.Effect>
           <DropShadowEffect
             BlurRadius="20"
             Direction="0"
             ShadowDepth="15" />
-        </Border.Effect>
+        </Border.Effect>-->
 
 
       </Border>
