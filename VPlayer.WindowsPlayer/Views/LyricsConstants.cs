@@ -316,6 +316,45 @@ namespace VPlayer.WindowsPlayer.Views
 
     #endregion
 
+
+    #region VizualizerBottomColor
+
+    private string vizualizerBottomColor = "#FFFFE900";
+
+    public string VizualizerBottomColor
+    {
+      get { return vizualizerBottomColor; }
+      set
+      {
+        if (value != vizualizerBottomColor)
+        {
+          vizualizerBottomColor = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region VizualizerMiddleColor
+
+    private string vizualizerMiddleColor = "#FFFF8700";
+
+    public string VizualizerMiddleColor
+    {
+      get { return vizualizerMiddleColor; }
+      set
+      {
+        if (value != vizualizerMiddleColor)
+        {
+          vizualizerMiddleColor = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #region VizualizerTopColor
 
     private string vizualizerTopColor = "#FFFF0000";
@@ -328,25 +367,6 @@ namespace VPlayer.WindowsPlayer.Views
         if (value != vizualizerTopColor)
         {
           vizualizerTopColor = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
-
-    #region VizualizerMiddleColor
-
-    private string vizualizerMiddleColor = "#FFFF0000";
-
-    public string VizualizerMiddleColor
-    {
-      get { return vizualizerMiddleColor; }
-      set
-      {
-        if (value != vizualizerMiddleColor)
-        {
-          vizualizerMiddleColor = value;
           RaisePropertyChanged();
         }
       }
@@ -392,24 +412,6 @@ namespace VPlayer.WindowsPlayer.Views
 
     #endregion
 
-    #region VizualizerBottomColor
-
-    private string vizualizerBottomColor = "#FFFFE900";
-
-    public string VizualizerBottomColor
-    {
-      get { return vizualizerBottomColor; }
-      set
-      {
-        if (value != vizualizerBottomColor)
-        {
-          vizualizerBottomColor = value;
-          RaisePropertyChanged();
-        }
-      }
-    }
-
-    #endregion
 
     public double AutoScrollStep
     {

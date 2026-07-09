@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Security.Permissions;
 using System.Threading;
@@ -58,45 +60,56 @@ namespace VPlayer.Player.UserControls
 
       SpektrumAnalyzer.OnFFtTick += SpektrumAnalyzer_OnFFtTick;
     }
-
+    #endregion
     private void SoundVizualizer_Loaded(object sender, RoutedEventArgs e)
     {
       AssignSpectrum();
     }
 
+    private int _spectrumRenderInProgress;
+
     private void SpektrumAnalyzer_OnFFtTick(object sender, float[] e)
     {
+      if (Interlocked.CompareExchange(ref spectrumRenderInProgress, 1, 0) != 0)
+        return;
+
+      float[] fftData = (float[])e.Clone();
+
       VSynchronizationContext.PostOnUIThread(async () =>
       {
-        if (IsEnabled && lineSpectrum != null && Visibility == Visibility.Visible)
+        try
         {
-          var newImage = await Task.Run(() =>
+          if (!IsEnabled || lineSpectrum == null || Visibility != Visibility.Visible)
+            return;
+
+          EnsureSpectrumBitmap();
+
+          var spectrumPoints = await Task.Run(() =>
           {
-            return lineSpectrum.CreateSpectrumLine(e, new System.Drawing.Size(width, height),
-              bottomColor,
-              topColor,
-              middleColor, true);
+            return lineSpectrum.CalculateSpectrumLineData(fftData, new System.Drawing.Size(width, height));
           });
 
-
-          if (newImage != null)
-          {
-            await Task.Run(() =>
-            {
-              newImage.MakeTransparent();
-            });
-
-            var image = BitmapToImageSource(newImage);
-
-            Image.Source = image;
-            newImage.Dispose();
-          }
+          if (spectrumPoints != null)
+            lineSpectrum.UpdateSpectrumBitmap(spectrumBitmap, spectrumPoints, bottomColor, topColor);
+        }
+        finally
+        {
+          Volatile.Write(ref spectrumRenderInProgress, 0);
         }
       });
     }
 
+    private WriteableBitmap spectrumBitmap;
+    private int spectrumRenderInProgress;
 
-    #endregion
+    private void EnsureSpectrumBitmap()
+    {
+      if (spectrumBitmap != null && spectrumBitmap.PixelWidth == width && spectrumBitmap.PixelHeight == height)
+        return;
+
+      spectrumBitmap = new WriteableBitmap(width, height, 96, 96, PixelFormats.Pbgra32, null);
+      Image.Source = spectrumBitmap;
+    }
 
     #region Properties
 

@@ -6,6 +6,7 @@
     <Platforms>AnyCPU;x86;x64</Platforms>
     <LangVersion>latest</LangVersion>
     <DontImportPostSharp>True</DontImportPostSharp>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 <PostSharpTargetFrameworkVersion>4.0</PostSharpTargetFrameworkVersion>
 	</PropertyGroup>
   <ItemGroup>
@@ -30,6 +31,7 @@
     <PackageReference Include="OpenQA.Selenium.Winium" Version="1.0.0.4" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
+    <PackageReference Include="WriteableBitmapEx" Version="1.6.11" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CustomLibraries\Custom\VFfmpeg\VFfmpeg\VFfmpeg.csproj" />

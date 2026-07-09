@@ -5,8 +5,11 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Linq;
+using System.Windows;
+using System.Windows.Media.Imaging;
 using CSCore.DSP;
 using VPlayer.Core.SoundVizualization;
+using Size = System.Drawing.Size;
 
 namespace WinformsVisualization.Visualization
 {
@@ -154,6 +157,9 @@ namespace WinformsVisualization.Visualization
       if (!UpdateFrequencyMappingIfNessesary(size))
         return null;
 
+
+
+
       using (var pen = new Pen(brush, (float)BarWidth))
       {
         var bitmap = new Bitmap(size.Width, size.Height);
@@ -170,21 +176,151 @@ namespace WinformsVisualization.Visualization
     }
 
     #endregion
-
-    #region CreateSpectrumLine
-
-    public Bitmap CreateSpectrumLine(float[] fftData, Size size, Color color1, Color color2, Color background, bool highQuality)
+    private uint[] spectrumGradient;
+    private int spectrumGradientHeight;
+    private Color spectrumGradientBottomColor;
+    private Color spectrumGradientTopColor;
+    public SpectrumPointData[] CalculateSpectrumLineData(float[] fftBuffer, Size size)
     {
       if (!UpdateFrequencyMappingIfNessesary(size))
         return null;
 
-      using (Brush brush = new LinearGradientBrush(new RectangleF(0, 0, (float)BarWidth, size.Height), color2, color1, LinearGradientMode.Vertical))
+      var spectrumPoints = CalculateSpectrumPoints(size.Height, fftBuffer);
+
+      if (UseSkew)
       {
-        return CreateSpectrumLine(fftData, size, brush, background, highQuality);
+        int count = spectrumPoints.Length;
+        int p05 = (int)(count * 0.05);
+        int p10 = (int)(count * 0.10);
+        int p15 = (int)(count * 0.15);
+        int p20 = (int)(count * 0.20);
+
+        for (int i = 0; i < count; i++)
+        {
+          double value = spectrumPoints[i].Value;
+
+          if (i < p05)
+          {
+          }
+          else if (i < p10)
+            value = Math.Pow(value, 1.2);
+          else if (i < p15)
+            value = Math.Pow(value, 1.4);
+          else if (i < p20)
+            value = Math.Pow(value, 1.6);
+          else
+            value *= value;
+
+          spectrumPoints[i].Value = value;
+        }
+      }
+
+      return NormalizeData(spectrumPoints, NormlizedDataMinValue, NormlizedDataMaxValue);
+    }
+
+    public unsafe void UpdateSpectrumBitmap(WriteableBitmap bitmap, SpectrumPointData[] spectrumPoints, Color bottomColor, Color topColor)
+    {
+      int width = bitmap.PixelWidth;
+      int height = bitmap.PixelHeight;
+
+      UpdateSpectrumGradient(height, bottomColor, topColor);
+
+      bitmap.Lock();
+
+      try
+      {
+        byte* buffer = (byte*)bitmap.BackBuffer.ToPointer();
+        int stride = bitmap.BackBufferStride;
+
+        for (int i = 0; i < spectrumPoints.Length; i++)
+        {
+          SpectrumPointData p = spectrumPoints[i];
+
+          int barIndex = p.SpectrumPointIndex;
+          int xStart = (int)(BarSpacing * (barIndex + 1) + BarWidth * barIndex);
+          int xEnd = Math.Min(width, xStart + (int)Math.Ceiling(BarWidth));
+
+          if (xStart < 0 || xStart >= width || xEnd <= xStart)
+            continue;
+
+          for (int y = 0; y < height; y++)
+          {
+            uint* row = (uint*)(buffer + y * stride);
+
+            for (int x = xStart; x < xEnd; x++)
+              row[x] = 0;
+          }
+
+          int barHeight = Math.Clamp((int)(p.Value * 2 - 1), 0, height);
+          int yStart = height - barHeight;
+
+          for (int y = yStart; y < height; y++)
+          {
+            uint* row = (uint*)(buffer + y * stride);
+            uint color = spectrumGradient[y];
+
+            for (int x = xStart; x < xEnd; x++)
+              row[x] = color;
+          }
+        }
+
+        bitmap.AddDirtyRect(new Int32Rect(0, 0, width, height));
+      }
+      finally
+      {
+        bitmap.Unlock();
       }
     }
 
-    #endregion
+    private void UpdateSpectrumGradient(int height, Color bottomColor, Color topColor)
+    {
+      if (spectrumGradient != null &&
+          spectrumGradientHeight == height &&
+          spectrumGradientBottomColor == bottomColor &&
+          spectrumGradientTopColor == topColor)
+        return;
+
+      spectrumGradientHeight = height;
+      spectrumGradientBottomColor = bottomColor;
+      spectrumGradientTopColor = topColor;
+      spectrumGradient = new uint[height];
+
+      for (int y = 0; y < height; y++)
+      {
+        double t = height <= 1 ? 0 : (double)y / (height - 1);
+
+        byte a = (byte)(topColor.A + (bottomColor.A - topColor.A) * t);
+        byte r = (byte)(topColor.R + (bottomColor.R - topColor.R) * t);
+        byte g = (byte)(topColor.G + (bottomColor.G - topColor.G) * t);
+        byte b = (byte)(topColor.B + (bottomColor.B - topColor.B) * t);
+
+        r = (byte)(r * a / 255);
+        g = (byte)(g * a / 255);
+        b = (byte)(b * a / 255);
+
+        spectrumGradient[y] = (uint)(a << 24 | r << 16 | g << 8 | b);
+      }
+    }
+
+    public Bitmap CreateSpectrumLine(float[] fftData, Size size, Brush brush, bool highQuality)
+    {
+      if (!UpdateFrequencyMappingIfNessesary(size))
+        return null;
+
+      using (var pen = new Pen(brush, (float)BarWidth))
+      {
+        var bitmap = new Bitmap(size.Width, size.Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+
+        using (Graphics graphics = Graphics.FromImage(bitmap))
+        {
+          PrepareGraphics(graphics, highQuality);
+          graphics.Clear(Color.Transparent);
+          CreateSpectrumLineInternal(graphics, pen, fftData, size);
+        }
+
+        return bitmap;
+      }
+    }
 
     #region CreateSpectrumLineInternal
 
@@ -196,18 +332,39 @@ namespace WinformsVisualization.Visualization
 
       if (UseSkew)
       {
-        for (int i = 0; i < spectrumPoints.Length; i++)
+        int count = spectrumPoints.Length;
+
+        int p05 = (int)(count * 0.05);
+        int p10 = (int)(count * 0.10);
+        int p15 = (int)(count * 0.15);
+        int p20 = (int)(count * 0.20);
+
+        for (int i = 0; i < count; i++)
         {
-          if (i < spectrumPoints.Length * 0.05)
-            spectrumPoints[i].Value = Math.Pow(spectrumPoints[i].Value, 1);
-          if (i < spectrumPoints.Length * 0.1)
-            spectrumPoints[i].Value = Math.Pow(spectrumPoints[i].Value, 1.2);
-          else if (i < spectrumPoints.Length * 0.15)
-            spectrumPoints[i].Value = Math.Pow(spectrumPoints[i].Value, 1.4);
-          else if (i < spectrumPoints.Length * 0.20)
-            spectrumPoints[i].Value = Math.Pow(spectrumPoints[i].Value, 1.6);
+          double value = spectrumPoints[i].Value;
+
+          if (i < p05)
+          {
+            // Power 1.0: no operation required.
+          }
+          else if (i < p10)
+          {
+            value = Math.Pow(value, 1.2);
+          }
+          else if (i < p15)
+          {
+            value = Math.Pow(value, 1.4);
+          }
+          else if (i < p20)
+          {
+            value = Math.Pow(value, 1.6);
+          }
           else
-            spectrumPoints[i].Value = Math.Pow(spectrumPoints[i].Value, 2.0);
+          {
+            value *= value;
+          }
+
+          spectrumPoints[i].Value = value;
         }
       }
 
@@ -329,5 +486,7 @@ namespace WinformsVisualization.Visualization
     }
 
     #endregion
+
+
   }
 }

@@ -1169,7 +1169,7 @@
 
       <Grid ClipToBounds="True" DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=windowsPlayer:WindowsPlayerView}, Path=DataContext}">
         <usercontrols:SoundVizualizer
-          Height="500"
+          Height="395"
           HorizontalAlignment="Stretch"
           VerticalAlignment="Bottom"
           Background="Transparent"

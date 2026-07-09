@@ -194,7 +194,7 @@ namespace WinformsVisualization.Visualization
     }
 
     [DebuggerDisplay("{Value}")]
-    protected struct SpectrumPointData
+    public struct SpectrumPointData
     {
       public int SpectrumPointIndex;
       public double Value;
