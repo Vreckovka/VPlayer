@@ -10,9 +10,8 @@
   mc:Ignorable="d">
 
   <UserControl.Resources>
-
     <Style x:Key="WeakBeamStyle" TargetType="Rectangle">
-      <Setter Property="Opacity" Value="0.1" />
+      <Setter Property="Opacity" Value="0.85" />
       <Setter Property="IsHitTestVisible" Value="False" />
     </Style>
 
@@ -26,250 +25,115 @@
 
     <Color x:Key="ImageBeamPeakColor">#70FF00</Color>
     <Color x:Key="ImageBeamEdgeColor">#00000000</Color>
-
   </UserControl.Resources>
 
 
   <Grid>
-
     <Grid ClipToBounds="True">
-
-
-      <!-- ================================================== -->
-      <!-- WEAK VISIBLE BEAMS                                 -->
-      <!-- BEHIND RGB IMAGES                                  -->
-      <!-- ================================================== -->
-
       <Grid
         x:Name="VisibleBeamOverlay"
         Panel.ZIndex="0"
         IsHitTestVisible="False"
         Opacity="1">
 
-
-        <!-- LIGHT 1 -->
-
-        <Rectangle Style="{StaticResource WeakBeamStyle}">
-
-          <Rectangle.Fill>
-
-            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-
-              <LinearGradientBrush.RelativeTransform>
-
-                <TransformGroup>
-
-                  <ScaleTransform
-                    CenterX="0.15"
-                    CenterY="0"
-                    ScaleX="{Binding ScaleX, ElementName=Light1Scale}"
-                    ScaleY="{Binding ScaleY, ElementName=Light1Scale}" />
-
-                  <RotateTransform
-                    Angle="{Binding Angle, ElementName=Light1Rotate}"
-                    CenterX="0.15"
-                    CenterY="0" />
-
-                </TransformGroup>
-
-              </LinearGradientBrush.RelativeTransform>
-
-              <GradientStop
-                Offset="0.00"
-                Color="{StaticResource WeakBeamEdgeColor}" />
-
-              <GradientStop
-                Offset="0.00"
-                Color="{StaticResource WeakBeamEdgeColor}" />
-
-              <GradientStop
-                Offset="0.15"
-                Color="{DynamicResource WeakBeamPeakColor}" />
-
-              <GradientStop
-                Offset="0.30"
-                Color="{StaticResource WeakBeamEdgeColor}" />
-
-              <GradientStop
-                Offset="1.00"
-                Color="{StaticResource WeakBeamEdgeColor}" />
-
-            </LinearGradientBrush>
-
-          </Rectangle.Fill>
-
-        </Rectangle>
-
-
-        <!-- LIGHT 2 -->
-
-        <Rectangle Style="{StaticResource WeakBeamStyle}">
-
-          <Rectangle.Fill>
-
-            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-
-              <LinearGradientBrush.RelativeTransform>
-
-                <TransformGroup>
-
-                  <ScaleTransform
-                    CenterX="0.30"
-                    CenterY="0"
-                    ScaleX="{Binding ScaleX, ElementName=Light2Scale}"
-                    ScaleY="{Binding ScaleY, ElementName=Light2Scale}" />
-
-                  <RotateTransform
-                    Angle="{Binding Angle, ElementName=Light2Rotate}"
-                    CenterX="0.30"
-                    CenterY="0" />
-
-                </TransformGroup>
-
-              </LinearGradientBrush.RelativeTransform>
-
-              <GradientStop
-                Offset="0.00"
-                Color="{StaticResource WeakBeamEdgeColor}" />
-
-              <GradientStop
-                Offset="0.15"
-                Color="{StaticResource WeakBeamEdgeColor}" />
-
-              <GradientStop
-                Offset="0.30"
-                Color="{DynamicResource WeakBeamPeakColor}" />
-
-              <GradientStop
-                Offset="0.45"
-                Color="{StaticResource WeakBeamEdgeColor}" />
-
-              <GradientStop
-                Offset="1.00"
-                Color="{StaticResource WeakBeamEdgeColor}" />
-
-            </LinearGradientBrush>
-
-          </Rectangle.Fill>
-
-        </Rectangle>
-
-
-        <!-- LIGHT 3 -->
-
-        <Rectangle Style="{StaticResource WeakBeamStyle}">
-
-          <Rectangle.Fill>
-
-            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-
-              <LinearGradientBrush.RelativeTransform>
-
-                <TransformGroup>
-
-                  <ScaleTransform
-                    CenterX="0.70"
-                    CenterY="0"
-                    ScaleX="{Binding ScaleX, ElementName=Light3Scale}"
-                    ScaleY="{Binding ScaleY, ElementName=Light3Scale}" />
-
-                  <RotateTransform
-                    Angle="{Binding Angle, ElementName=Light3Rotate}"
-                    CenterX="0.70"
-                    CenterY="0" />
-
-                </TransformGroup>
-
-              </LinearGradientBrush.RelativeTransform>
-
-              <GradientStop
-                Offset="0.00"
-                Color="{StaticResource WeakBeamEdgeColor}" />
-
-              <GradientStop
-                Offset="0.55"
-                Color="{StaticResource WeakBeamEdgeColor}" />
-
-              <GradientStop
-                Offset="0.70"
-                Color="{DynamicResource WeakBeamPeakColor}" />
-
-              <GradientStop
-                Offset="0.85"
-                Color="{StaticResource WeakBeamEdgeColor}" />
-
-              <GradientStop
-                Offset="1.00"
-                Color="{StaticResource WeakBeamEdgeColor}" />
-
-            </LinearGradientBrush>
-
-          </Rectangle.Fill>
-
-        </Rectangle>
-
-
-        <!-- LIGHT 4 -->
-
-        <Rectangle Style="{StaticResource WeakBeamStyle}">
-
-          <Rectangle.Fill>
-
-            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-
-              <LinearGradientBrush.RelativeTransform>
-
-                <TransformGroup>
-
-                  <ScaleTransform
-                    CenterX="0.85"
-                    CenterY="0"
-                    ScaleX="{Binding ScaleX, ElementName=Light4Scale}"
-                    ScaleY="{Binding ScaleY, ElementName=Light4Scale}" />
-
-                  <RotateTransform
-                    Angle="{Binding Angle, ElementName=Light4Rotate}"
-                    CenterX="0.85"
-                    CenterY="0" />
-
-                </TransformGroup>
-
-              </LinearGradientBrush.RelativeTransform>
-
-              <GradientStop
-                Offset="0.00"
-                Color="{StaticResource WeakBeamEdgeColor}" />
-
-              <GradientStop
-                Offset="0.70"
-                Color="{StaticResource WeakBeamEdgeColor}" />
-
-              <GradientStop
-                Offset="0.85"
-                Color="{DynamicResource WeakBeamPeakColor}" />
-
-              <GradientStop
-                Offset="1.00"
-                Color="{StaticResource WeakBeamEdgeColor}" />
-
-              <GradientStop
-                Offset="1.00"
-                Color="{StaticResource WeakBeamEdgeColor}" />
-
-            </LinearGradientBrush>
-
-          </Rectangle.Fill>
-
-        </Rectangle>
-
+        <Grid x:Name="WeakLight1Gate">
+          <Rectangle Style="{StaticResource WeakBeamStyle}">
+            <Rectangle.Fill>
+
+              <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+
+                <LinearGradientBrush.RelativeTransform>
+
+                  <TransformGroup>
+
+                    <ScaleTransform CenterX="0.15" CenterY="0" ScaleX="{Binding ScaleX, ElementName=Light1Scale}" ScaleY="{Binding ScaleY, ElementName=Light1Scale}" />
+
+                    <RotateTransform Angle="{Binding Angle, ElementName=Light1Rotate}" CenterX="0.15" CenterY="0" />
+
+                  </TransformGroup>
+
+                </LinearGradientBrush.RelativeTransform>
+
+                <GradientStop Offset="0.00" Color="{StaticResource WeakBeamEdgeColor}" />
+
+                <GradientStop Offset="0.00" Color="{StaticResource WeakBeamEdgeColor}" />
+
+                <GradientStop Offset="0.15" Color="{DynamicResource WeakBeamPeakColor}" />
+
+                <GradientStop Offset="0.30" Color="{StaticResource WeakBeamEdgeColor}" />
+
+                <GradientStop Offset="1.00" Color="{StaticResource WeakBeamEdgeColor}" />
+
+              </LinearGradientBrush>
+
+            </Rectangle.Fill>
+          </Rectangle>
+        </Grid>
+
+        <Grid x:Name="WeakLight2Gate">
+          <Rectangle Style="{StaticResource WeakBeamStyle}">
+            <Rectangle.Fill>
+              <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                <LinearGradientBrush.RelativeTransform>
+                  <TransformGroup>
+                    <ScaleTransform CenterX="0.30" CenterY="0" ScaleX="{Binding ScaleX, ElementName=Light2Scale}" ScaleY="{Binding ScaleY, ElementName=Light2Scale}" />
+                    <RotateTransform Angle="{Binding Angle, ElementName=Light2Rotate}" CenterX="0.30" CenterY="0" />
+                  </TransformGroup>
+                </LinearGradientBrush.RelativeTransform>
+
+                <GradientStop Offset="0.00" Color="{StaticResource WeakBeamEdgeColor}" />
+                <GradientStop Offset="0.15" Color="{StaticResource WeakBeamEdgeColor}" />
+                <GradientStop Offset="0.30" Color="{DynamicResource WeakBeamPeakColor}" />
+                <GradientStop Offset="0.45" Color="{StaticResource WeakBeamEdgeColor}" />
+                <GradientStop Offset="1.00" Color="{StaticResource WeakBeamEdgeColor}" />
+              </LinearGradientBrush>
+            </Rectangle.Fill>
+          </Rectangle>
+        </Grid>
+
+        <Grid x:Name="WeakLight3Gate">
+          <Rectangle Style="{StaticResource WeakBeamStyle}">
+            <Rectangle.Fill>
+              <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                <LinearGradientBrush.RelativeTransform>
+                  <TransformGroup>
+                    <ScaleTransform CenterX="0.70" CenterY="0" ScaleX="{Binding ScaleX, ElementName=Light3Scale}" ScaleY="{Binding ScaleY, ElementName=Light3Scale}" />
+                    <RotateTransform Angle="{Binding Angle, ElementName=Light3Rotate}" CenterX="0.70" CenterY="0" />
+                  </TransformGroup>
+                </LinearGradientBrush.RelativeTransform>
+
+                <GradientStop Offset="0.00" Color="{StaticResource WeakBeamEdgeColor}" />
+                <GradientStop Offset="0.55" Color="{StaticResource WeakBeamEdgeColor}" />
+                <GradientStop Offset="0.70" Color="{DynamicResource WeakBeamPeakColor}" />
+                <GradientStop Offset="0.85" Color="{StaticResource WeakBeamEdgeColor}" />
+                <GradientStop Offset="1.00" Color="{StaticResource WeakBeamEdgeColor}" />
+              </LinearGradientBrush>
+            </Rectangle.Fill>
+          </Rectangle>
+        </Grid>
+
+        <Grid x:Name="WeakLight4Gate">
+          <Rectangle Style="{StaticResource WeakBeamStyle}">
+            <Rectangle.Fill>
+              <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                <LinearGradientBrush.RelativeTransform>
+                  <TransformGroup>
+                    <ScaleTransform CenterX="0.85" CenterY="0" ScaleX="{Binding ScaleX, ElementName=Light4Scale}" ScaleY="{Binding ScaleY, ElementName=Light4Scale}" />
+                    <RotateTransform Angle="{Binding Angle, ElementName=Light4Rotate}" CenterX="0.85" CenterY="0" />
+                  </TransformGroup>
+                </LinearGradientBrush.RelativeTransform>
+
+                <GradientStop Offset="0.00" Color="{StaticResource WeakBeamEdgeColor}" />
+                <GradientStop Offset="0.70" Color="{StaticResource WeakBeamEdgeColor}" />
+                <GradientStop Offset="0.85" Color="{DynamicResource WeakBeamPeakColor}" />
+                <GradientStop Offset="1.00" Color="{StaticResource WeakBeamEdgeColor}" />
+                <GradientStop Offset="1.00" Color="{StaticResource WeakBeamEdgeColor}" />
+              </LinearGradientBrush>
+            </Rectangle.Fill>
+          </Rectangle>
+        </Grid>
       </Grid>
 
-
-
-      <!-- ================================================== -->
-      <!-- RGB IMAGE SYSTEM                                   -->
-      <!-- ABOVE WEAK BEAMS                                   -->
-      <!-- ================================================== -->
 
       <Grid
         x:Name="BassImageContainer"
@@ -281,14 +145,9 @@
 
           <TransformGroup>
 
-            <ScaleTransform
-              x:Name="BassImageScale"
-              ScaleX="1"
-              ScaleY="1" />
+            <ScaleTransform x:Name="BassImageScale" ScaleX="1" ScaleY="1" />
 
-            <RotateTransform
-              x:Name="BassImageRotate"
-              Angle="0" />
+            <RotateTransform x:Name="BassImageRotate" Angle="0" />
 
           </TransformGroup>
 
@@ -301,7 +160,7 @@
           RenderOptions.BitmapScalingMode="NearestNeighbor" />
 
 
-        <!-- RED SHADOW -->
+        <!--  RED SHADOW  -->
 
         <Image
           x:Name="RedShadow"
@@ -321,12 +180,9 @@
 
             <TransformGroup>
 
-              <ScaleTransform
-                ScaleX="1.012"
-                ScaleY="1.012" />
+              <ScaleTransform ScaleX="1.012" ScaleY="1.012" />
 
-              <TranslateTransform
-                x:Name="RedShadowTranslate" />
+              <TranslateTransform x:Name="RedShadowTranslate" />
 
             </TransformGroup>
 
@@ -335,7 +191,7 @@
         </Image>
 
 
-        <!-- GREEN SHADOW -->
+        <!--  GREEN SHADOW  -->
 
         <Image
           x:Name="GreenShadow"
@@ -355,12 +211,9 @@
 
             <TransformGroup>
 
-              <ScaleTransform
-                ScaleX="1.009"
-                ScaleY="1.009" />
+              <ScaleTransform ScaleX="1.009" ScaleY="1.009" />
 
-              <TranslateTransform
-                x:Name="GreenShadowTranslate" />
+              <TranslateTransform x:Name="GreenShadowTranslate" />
 
             </TransformGroup>
 
@@ -369,7 +222,7 @@
         </Image>
 
 
-        <!-- BLUE SHADOW -->
+        <!--  BLUE SHADOW  -->
 
         <Image
           x:Name="BlueShadow"
@@ -389,12 +242,9 @@
 
             <TransformGroup>
 
-              <ScaleTransform
-                ScaleX="1.006"
-                ScaleY="1.006" />
+              <ScaleTransform ScaleX="1.006" ScaleY="1.006" />
 
-              <TranslateTransform
-                x:Name="BlueShadowTranslate" />
+              <TranslateTransform x:Name="BlueShadowTranslate" />
 
             </TransformGroup>
 
@@ -403,7 +253,7 @@
         </Image>
 
 
-        <!-- RED IMAGE -->
+        <!--  RED IMAGE  -->
 
         <Image
           x:Name="RedImage"
@@ -415,12 +265,9 @@
 
             <TransformGroup>
 
-              <ScaleTransform
-                ScaleX="1.006"
-                ScaleY="1.006" />
+              <ScaleTransform ScaleX="1.006" ScaleY="1.006" />
 
-              <TranslateTransform
-                x:Name="RedImageTranslate" />
+              <TranslateTransform x:Name="RedImageTranslate" />
 
             </TransformGroup>
 
@@ -435,7 +282,7 @@
         </Image>
 
 
-        <!-- GREEN IMAGE -->
+        <!--  GREEN IMAGE  -->
 
         <Image
           x:Name="GreenImage"
@@ -445,8 +292,7 @@
 
           <Image.RenderTransform>
 
-            <TranslateTransform
-              x:Name="GreenImageTranslate" />
+            <TranslateTransform x:Name="GreenImageTranslate" />
 
           </Image.RenderTransform>
 
@@ -459,7 +305,7 @@
         </Image>
 
 
-        <!-- BLUE IMAGE -->
+        <!--  BLUE IMAGE  -->
 
         <Image
           x:Name="BlueImage"
@@ -471,12 +317,9 @@
 
             <TransformGroup>
 
-              <ScaleTransform
-                ScaleX="1.00"
-                ScaleY="1.000" />
+              <ScaleTransform ScaleX="1.00" ScaleY="1.000" />
 
-              <TranslateTransform
-                x:Name="BlueImageTranslate" />
+              <TranslateTransform x:Name="BlueImageTranslate" />
 
             </TransformGroup>
 
@@ -494,14 +337,12 @@
 
 
 
-      <!-- ================================================== -->
-      <!-- STABLE IMAGE                                       -->
-      <!-- ABOVE RGB IMAGES                                   -->
-      <!-- ================================================== -->
+      <!--  ==================================================  -->
+      <!--  STABLE IMAGE  -->
+      <!--  ABOVE RGB IMAGES  -->
+      <!--  ==================================================  -->
 
-      <Grid
-        Panel.ZIndex="2"
-        RenderTransformOrigin="0.5,0.5">
+      <Grid Panel.ZIndex="2" RenderTransformOrigin="0.5,0.5">
 
 
         <Image
@@ -523,10 +364,10 @@
 
 
 
-        <!-- ================================================ -->
-        <!-- MASKED IMAGE LIGHTS                              -->
-        <!-- ABOVE STABLE IMAGE                               -->
-        <!-- ================================================ -->
+        <!--  ================================================  -->
+        <!--  MASKED IMAGE LIGHTS  -->
+        <!--  ABOVE STABLE IMAGE  -->
+        <!--  ================================================  -->
 
         <Grid
           x:Name="LightSweepOverlay"
@@ -535,64 +376,40 @@
 
           <Grid.OpacityMask>
 
-            <ImageBrush
-              ImageSource="{Binding Source, ElementName=StableImage}"
-              Stretch="UniformToFill" />
+            <ImageBrush ImageSource="{Binding Source, ElementName=StableImage}" Stretch="UniformToFill" />
 
           </Grid.OpacityMask>
 
 
-          <!-- LIGHT 1 -->
+          <!--  LIGHT 1  -->
 
-          <Rectangle
-            x:Name="Light1Beam"
-            Style="{StaticResource ImageBeamStyle}">
+          <Rectangle x:Name="Light1Beam" Style="{StaticResource ImageBeamStyle}">
 
             <Rectangle.Fill>
 
-              <LinearGradientBrush
-                StartPoint="0,0"
-                EndPoint="1,0">
+              <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
 
                 <LinearGradientBrush.RelativeTransform>
 
                   <TransformGroup>
 
-                    <ScaleTransform
-                      x:Name="Light1Scale"
-                      CenterX="0.15"
-                      CenterY="0"
-                      ScaleX="1"
-                      ScaleY="1" />
+                    <ScaleTransform x:Name="Light1Scale" CenterX="0.15" CenterY="0" ScaleX="1" ScaleY="1" />
 
-                    <RotateTransform
-                      x:Name="Light1Rotate"
-                      CenterX="0.15"
-                      CenterY="0" />
+                    <RotateTransform x:Name="Light1Rotate" CenterX="0.15" CenterY="0" />
 
                   </TransformGroup>
 
                 </LinearGradientBrush.RelativeTransform>
 
-                <GradientStop
-                  Offset="0.00"
-                  Color="#00FFFFFF" />
+                <GradientStop Offset="0.00" Color="#00FFFFFF" />
 
-                <GradientStop
-                  Offset="0.09"
-                  Color="#00FFFFFF" />
+                <GradientStop Offset="0.09" Color="#00FFFFFF" />
 
-                <GradientStop
-                  Offset="0.15"
-                  Color="{DynamicResource ImageBeamPeakColor}" />
+                <GradientStop Offset="0.15" Color="{DynamicResource ImageBeamPeakColor}" />
 
-                <GradientStop
-                  Offset="0.21"
-                  Color="#00FFFFFF" />
+                <GradientStop Offset="0.21" Color="#00FFFFFF" />
 
-                <GradientStop
-                  Offset="1.00"
-                  Color="#00FFFFFF" />
+                <GradientStop Offset="1.00" Color="#00FFFFFF" />
 
               </LinearGradientBrush>
 
@@ -601,57 +418,35 @@
           </Rectangle>
 
 
-          <!-- LIGHT 2 -->
+          <!--  LIGHT 2  -->
 
-          <Rectangle
-            x:Name="Light2Beam"
-            Style="{StaticResource ImageBeamStyle}">
+          <Rectangle x:Name="Light2Beam" Style="{StaticResource ImageBeamStyle}">
 
             <Rectangle.Fill>
 
-              <LinearGradientBrush
-                StartPoint="0,0"
-                EndPoint="1,0">
+              <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
 
                 <LinearGradientBrush.RelativeTransform>
 
                   <TransformGroup>
 
-                    <ScaleTransform
-                      x:Name="Light2Scale"
-                      CenterX="0.30"
-                      CenterY="0"
-                      ScaleX="1"
-                      ScaleY="1" />
+                    <ScaleTransform x:Name="Light2Scale" CenterX="0.30" CenterY="0" ScaleX="1" ScaleY="1" />
 
-                    <RotateTransform
-                      x:Name="Light2Rotate"
-                      CenterX="0.30"
-                      CenterY="0" />
+                    <RotateTransform x:Name="Light2Rotate" CenterX="0.30" CenterY="0" />
 
                   </TransformGroup>
 
                 </LinearGradientBrush.RelativeTransform>
 
-                <GradientStop
-                  Offset="0.00"
-                  Color="{StaticResource ImageBeamEdgeColor}" />
+                <GradientStop Offset="0.00" Color="{StaticResource ImageBeamEdgeColor}" />
 
-                <GradientStop
-                  Offset="0.24"
-                  Color="{StaticResource ImageBeamEdgeColor}" />
+                <GradientStop Offset="0.24" Color="{StaticResource ImageBeamEdgeColor}" />
 
-                <GradientStop
-                  Offset="0.30"
-                  Color="{DynamicResource ImageBeamPeakColor}" />
+                <GradientStop Offset="0.30" Color="{DynamicResource ImageBeamPeakColor}" />
 
-                <GradientStop
-                  Offset="0.36"
-                  Color="{StaticResource ImageBeamEdgeColor}" />
+                <GradientStop Offset="0.36" Color="{StaticResource ImageBeamEdgeColor}" />
 
-                <GradientStop
-                  Offset="1.00"
-                  Color="{StaticResource ImageBeamEdgeColor}" />
+                <GradientStop Offset="1.00" Color="{StaticResource ImageBeamEdgeColor}" />
 
               </LinearGradientBrush>
 
@@ -660,57 +455,35 @@
           </Rectangle>
 
 
-          <!-- LIGHT 3 -->
+          <!--  LIGHT 3  -->
 
-          <Rectangle
-            x:Name="Light3Beam"
-            Style="{StaticResource ImageBeamStyle}">
+          <Rectangle x:Name="Light3Beam" Style="{StaticResource ImageBeamStyle}">
 
             <Rectangle.Fill>
 
-              <LinearGradientBrush
-                StartPoint="0,0"
-                EndPoint="1,0">
+              <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
 
                 <LinearGradientBrush.RelativeTransform>
 
                   <TransformGroup>
 
-                    <ScaleTransform
-                      x:Name="Light3Scale"
-                      CenterX="0.70"
-                      CenterY="0"
-                      ScaleX="1"
-                      ScaleY="1" />
+                    <ScaleTransform x:Name="Light3Scale" CenterX="0.70" CenterY="0" ScaleX="1" ScaleY="1" />
 
-                    <RotateTransform
-                      x:Name="Light3Rotate"
-                      CenterX="0.70"
-                      CenterY="0" />
+                    <RotateTransform x:Name="Light3Rotate" CenterX="0.70" CenterY="0" />
 
                   </TransformGroup>
 
                 </LinearGradientBrush.RelativeTransform>
 
-                <GradientStop
-                  Offset="0.00"
-                  Color="{StaticResource ImageBeamEdgeColor}" />
+                <GradientStop Offset="0.00" Color="{StaticResource ImageBeamEdgeColor}" />
 
-                <GradientStop
-                  Offset="0.64"
-                  Color="{StaticResource ImageBeamEdgeColor}" />
+                <GradientStop Offset="0.64" Color="{StaticResource ImageBeamEdgeColor}" />
 
-                <GradientStop
-                  Offset="0.70"
-                  Color="{DynamicResource ImageBeamPeakColor}" />
+                <GradientStop Offset="0.70" Color="{DynamicResource ImageBeamPeakColor}" />
 
-                <GradientStop
-                  Offset="0.76"
-                  Color="{StaticResource ImageBeamEdgeColor}" />
+                <GradientStop Offset="0.76" Color="{StaticResource ImageBeamEdgeColor}" />
 
-                <GradientStop
-                  Offset="1.00"
-                  Color="{StaticResource ImageBeamEdgeColor}" />
+                <GradientStop Offset="1.00" Color="{StaticResource ImageBeamEdgeColor}" />
 
               </LinearGradientBrush>
 
@@ -719,57 +492,35 @@
           </Rectangle>
 
 
-          <!-- LIGHT 4 -->
+          <!--  LIGHT 4  -->
 
-          <Rectangle
-            x:Name="Light4Beam"
-            Style="{StaticResource ImageBeamStyle}">
+          <Rectangle x:Name="Light4Beam" Style="{StaticResource ImageBeamStyle}">
 
             <Rectangle.Fill>
 
-              <LinearGradientBrush
-                StartPoint="0,0"
-                EndPoint="1,0">
+              <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
 
                 <LinearGradientBrush.RelativeTransform>
 
                   <TransformGroup>
 
-                    <ScaleTransform
-                      x:Name="Light4Scale"
-                      CenterX="0.85"
-                      CenterY="0"
-                      ScaleX="1"
-                      ScaleY="1" />
+                    <ScaleTransform x:Name="Light4Scale" CenterX="0.85" CenterY="0" ScaleX="1" ScaleY="1" />
 
-                    <RotateTransform
-                      x:Name="Light4Rotate"
-                      CenterX="0.85"
-                      CenterY="0" />
+                    <RotateTransform x:Name="Light4Rotate" CenterX="0.85" CenterY="0" />
 
                   </TransformGroup>
 
                 </LinearGradientBrush.RelativeTransform>
 
-                <GradientStop
-                  Offset="0.00"
-                  Color="{StaticResource ImageBeamEdgeColor}" />
+                <GradientStop Offset="0.00" Color="{StaticResource ImageBeamEdgeColor}" />
 
-                <GradientStop
-                  Offset="0.79"
-                  Color="{StaticResource ImageBeamEdgeColor}" />
+                <GradientStop Offset="0.79" Color="{StaticResource ImageBeamEdgeColor}" />
 
-                <GradientStop
-                  Offset="0.85"
-                  Color="{DynamicResource ImageBeamPeakColor}" />
+                <GradientStop Offset="0.85" Color="{DynamicResource ImageBeamPeakColor}" />
 
-                <GradientStop
-                  Offset="0.91"
-                  Color="{StaticResource ImageBeamEdgeColor}" />
+                <GradientStop Offset="0.91" Color="{StaticResource ImageBeamEdgeColor}" />
 
-                <GradientStop
-                  Offset="1.00"
-                  Color="{StaticResource ImageBeamEdgeColor}" />
+                <GradientStop Offset="1.00" Color="{StaticResource ImageBeamEdgeColor}" />
 
               </LinearGradientBrush>
 
