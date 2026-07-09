@@ -13,6 +13,7 @@
   xmlns:numericUpAndDown="clr-namespace:VCore.WPF.Controls.NumericUpAndDown;assembly=VCore.WPF"
   xmlns:templateSelectors="clr-namespace:VPlayer.WindowsPlayer.TemplateSelectors"
   xmlns:usercontrols="clr-namespace:VPlayer.Player.UserControls;assembly=VPlayer.Core"
+  xmlns:usercontrols1="clr-namespace:VPlayer.Core.UserControls;assembly=VPlayer.Core"
   xmlns:views="clr-namespace:VPlayer.WindowsPlayer.Views"
   xmlns:windowsPlayer="clr-namespace:VPlayer.Player.Views.WindowsPlayer"
   xmlns:windowsPlayer1="clr-namespace:VPlayer.WindowsPlayer.Views.WindowsPlayer"
@@ -1127,6 +1128,7 @@
               </usercontrols:BassImageVizualizer.Style>
             </usercontrols:BassImageVizualizer>
 
+            <usercontrols1:BackgroundStageLights LightMaxSpeed="0.25" LightMinSpeed="0.008" />
 
           </Grid>
         </Grid>
@@ -1242,19 +1244,18 @@
             </Grid.Style>
           </Grid>
 
-
           <Grid>
             <usercontrols:BassImageVizualizer
               FluxSeparationStrength="5"
               HighBassImageColor="{Binding ActualItem.AlbumViewModel.Model.HighVizualizationColor}"
               IsEnabled="{Binding IsPlaying}"
-              LightMaxSpeed="0.25"
-              LightMinSpeed="0.008"
               LowBassImageColor="{Binding ActualItem.AlbumViewModel.Model.LowVizualizationColor}"
               MidBassImageColor="{Binding ActualItem.AlbumViewModel.Model.MidVizualizationColor}"
               OpacityModifier="1.25"
               StableVizualizerLayerPath="{Binding ActualItem.AlbumViewModel.Model.StableVizualizationLayerPath}"
               VizualizerLayerPath="{Binding ActualItem.AlbumViewModel.Model.VizualizationLayerPath}" />
+
+            <usercontrols1:FrontStageLights CutoutSource="{Binding ActualItem.AlbumViewModel.Model.VizualizationLayerPath}" />
 
             <Grid.Style>
               <Style TargetType="Grid">

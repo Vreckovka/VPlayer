@@ -249,6 +249,7 @@ namespace VPlayer.Core.SoundVizualization
     #region AnalyzeBass
 
     private const float InitialBassEnergyPeak = 0.01f;
+
     public static float AnalyzeBass(
       float[] spectrum,
       float bassSensitivity = 1,
@@ -301,12 +302,12 @@ namespace VPlayer.Core.SoundVizualization
       float averageFlux = Math.Max(bassFluxAverage, 0.000001f);
       bassEnergyPeak = Math.Max(bassEnergy, bassEnergyPeak * bassPeakDecay);
       float level = bassEnergy / Math.Max(bassEnergyPeak, 0.000001f);
-      level = Clamp((level - 0.10f) / 0.90f);
+      level = Clamp01((level - 0.10f) / 0.90f);
 
       float energyRatio = bassEnergy / averageEnergy;
-      float energyRise = Clamp((energyRatio - 0.95f) / 0.85f);
+      float energyRise = Clamp01((energyRatio - 0.95f) / 0.85f);
       float fluxRatio = bassFlux / averageFlux;
-      float fluxRise = Clamp((fluxRatio - 1.00f) / 2.50f);
+      float fluxRise = Clamp01((fluxRatio - 1.00f) / 2.50f);
       float transient = energyRise * 0.45f + fluxRise * 0.55f;
       float bass = level * 0.40f + level * transient * 0.60f;
 
@@ -314,30 +315,97 @@ namespace VPlayer.Core.SoundVizualization
       bassFluxAverage = bassFluxAverage * 0.90f + bassFlux * 0.10f;
 
       bass *= bassSensitivity;
-      bass = Clamp(bass);
+      bass = Clamp01(bass);
 
       if (bass <= bassOutputGate)
         return 0f;
 
       bass = (bass - bassOutputGate) / (1.0f - bassOutputGate);
-      bass = Clamp(bass);
+      bass = Clamp01(bass);
       bass = MathF.Pow(bass, bassCurve);
 
-      return Clamp(bass);
+      return Clamp01(bass);
     }
 
     #endregion
 
-    #region Clamp
+    #region GetPositiveSpectralFlux
 
-    public static float Clamp(float value)
+    private static float[] psychedelicPreviousSpectrum;
+
+    public static double GetPositiveSpectralFlux(float[] fftData)
+    {
+      if (fftData == null || fftData.Length < 4)
+      {
+        return 0.0;
+      }
+
+      int maxBin = fftData.Length / 2;
+
+      if (psychedelicPreviousSpectrum == null ||
+          psychedelicPreviousSpectrum.Length != fftData.Length)
+      {
+        psychedelicPreviousSpectrum = new float[fftData.Length];
+
+        Array.Copy(
+          fftData,
+          psychedelicPreviousSpectrum,
+          fftData.Length
+        );
+
+        return 0.0;
+      }
+
+      double positiveFlux = 0.0;
+      double currentEnergy = 0.0;
+
+      for (int i = 1; i < maxBin; i++)
+      {
+        float currentMagnitude = fftData[i];
+
+        if (float.IsNaN(currentMagnitude) || float.IsInfinity(currentMagnitude))
+        {
+          continue;
+        }
+
+        currentMagnitude = Math.Max(0f, currentMagnitude);
+
+        var previousMagnitude = Math.Max(0f, psychedelicPreviousSpectrum[i]);
+
+        double current = Math.Sqrt(currentMagnitude);
+        double previous = Math.Sqrt(previousMagnitude);
+        double difference = current - previous;
+
+        if (difference > 0.0)
+        {
+          positiveFlux += difference;
+        }
+
+        currentEnergy += current;
+
+        psychedelicPreviousSpectrum[i] = currentMagnitude;
+      }
+
+      if (currentEnergy <= 0.0000001)
+      {
+        return 0.0;
+      }
+
+      return positiveFlux / currentEnergy;
+    }
+
+    #endregion
+
+    #region Clamp01
+
+    public static float Clamp01(float value)
     {
       if (value < 0f) return 0f;
       if (value > 1f) return 1f;
       return value;
     }
 
-    public static double Clamp(double value)
+    public static double Clamp01(double value)
     {
       if (value < 0f) return 0f;
       if (value > 1f) return 1f;
