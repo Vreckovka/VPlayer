@@ -68,7 +68,7 @@ namespace VPlayer.Player.UserControls
     {
       VSynchronizationContext.PostOnUIThread(async () =>
       {
-        if (IsEnabled && lineSpectrum != null)
+        if (IsEnabled && lineSpectrum != null && Visibility == Visibility.Visible)
         {
           var newImage = await Task.Run(() =>
           {

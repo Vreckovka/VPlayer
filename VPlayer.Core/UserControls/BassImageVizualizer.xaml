@@ -92,7 +92,7 @@
         RenderOptions.BitmapScalingMode="Linear">
         <Image.RenderTransform>
           <TransformGroup>
-            <ScaleTransform ScaleX="1.006" ScaleY="1.006" />
+            <!--<ScaleTransform ScaleX="1.006" ScaleY="1.006" />-->
             <TranslateTransform x:Name="RedImageTranslate" />
           </TransformGroup>
         </Image.RenderTransform>

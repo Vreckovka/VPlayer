@@ -1127,8 +1127,19 @@
               </usercontrols:BassImageVizualizer.Style>
             </usercontrols:BassImageVizualizer>
 
-            <usercontrols1:BackgroundStageLights LightMaxSpeed="0.25" LightMinSpeed="0.008" />
+            <usercontrols1:BackgroundStageLights LightMaxSpeed="0.25" LightMinSpeed="0.008">
+              <usercontrols1:BackgroundStageLights.LayoutTransform>
+                <ScaleTransform ScaleX="1" ScaleY="1" />
+              </usercontrols1:BackgroundStageLights.LayoutTransform>
+            </usercontrols1:BackgroundStageLights>
 
+            <usercontrols1:FrontStageLights HighColor="#24ff5e" />
+
+            <usercontrols1:BackgroundStageLights LightMaxSpeed="0.25" LightMinSpeed="0.008">
+              <usercontrols1:BackgroundStageLights.LayoutTransform>
+                <ScaleTransform ScaleX="1" ScaleY="-1" />
+              </usercontrols1:BackgroundStageLights.LayoutTransform>
+            </usercontrols1:BackgroundStageLights>
           </Grid>
         </Grid>
 
@@ -1254,7 +1265,7 @@
               StableVizualizerLayerPath="{Binding ActualItem.AlbumViewModel.Model.StableVizualizationLayerPath}"
               VizualizerLayerPath="{Binding ActualItem.AlbumViewModel.Model.VizualizationLayerPath}" />
 
-            <usercontrols1:FrontStageLights HighColor="#24ff5e"/>
+
 
             <Grid.Style>
               <Style TargetType="Grid">

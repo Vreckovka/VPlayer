@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
 using VPlayer.Core.SoundVizualization;
@@ -17,7 +19,11 @@ namespace VPlayer.Player.UserControls
       PeakDecay = 0.985
     };
 
+    private static readonly Queue<double> recentBeatIntervals = new Queue<double>();
+
     private static StageMacroState state = StageMacroState.Calm;
+    private static StageMacroState? pendingState;
+    private static TransitionQuantization pendingQuantization;
 
     private static BassImageVizualizer backgroundRgb;
     private static BassImageVizualizer mainRgb;
@@ -26,10 +32,35 @@ namespace VPlayer.Player.UserControls
 
     private static double lastUpdateTime;
     private static double stateTime;
+    private static double pendingStateTime;
+
     private static double fastEnergy;
     private static double slowEnergy;
+    private static double previousEnergy;
+
     private static double visualFlux;
     private static float visualBass;
+
+    private static double pulseFast;
+    private static double pulseSlow;
+    private static double onsetAverage = 0.02;
+    private static double previousOnset;
+
+    private static double lastBeatTime = -10.0;
+    private static double beatInterval = 0.5;
+    private static double beatConfidence;
+    private static int beatIndex;
+    private static int barIndex;
+
+    private static double beatPulse;
+    private static double accentPulse;
+    private static double breakEnvelope;
+
+    private static double lastAccentTime = -10.0;
+    private static double lastBreakTime = -10.0;
+
+    private static int liveVariation;
+    private static int lastVariationBar = -1;
 
     private static double currentBackgroundMovement = 1.0;
     private static double currentMainMovement = 1.0;
@@ -47,7 +78,6 @@ namespace VPlayer.Player.UserControls
     private static double baseBackgroundLightOpacity = 1.0;
     private static double baseFrontLightOpacity = 1.0;
 
-
     private static double baseFrontMinSpeed;
     private static double baseFrontMaxSpeed;
 
@@ -63,6 +93,10 @@ namespace VPlayer.Player.UserControls
     public static double FluxAttack { get; set; } = 0.65;
     public static double FluxRelease { get; set; } = 0.10;
 
+    public static double EstimatedBpm => beatInterval > 0.0 ? 60.0 / beatInterval : 0.0;
+    public static double BeatConfidence => beatConfidence;
+    public static string CurrentState => state.ToString();
+
     public static event EventHandler<(double bass, double flux)> OnFftTick;
 
     public static bool IsEnabled
@@ -74,15 +108,7 @@ namespace VPlayer.Player.UserControls
           return;
 
         isEnabled = value;
-
-        if (!isEnabled)
-        {
-          ResetDirectorState();
-        }
-        else
-        {
-          ResetDirectorState();
-        }
+        ResetDirectorState();
       }
     }
 
@@ -154,7 +180,6 @@ namespace VPlayer.Player.UserControls
       }
     }
 
-
     private static void SpektrumAnalyzer_OnFFtTick(object sender, float[] fftData)
     {
       if (!IsEnabled || !HasRegisteredControls())
@@ -171,7 +196,7 @@ namespace VPlayer.Player.UserControls
 
       visualFlux += (normalizedFlux - visualFlux) * fluxSmoothing;
 
-      UpdateDirector(visualBass, visualFlux);
+      //UpdateDirector(visualBass, visualFlux);
 
       OnFftTick?.Invoke(sender, (visualBass, visualFlux));
     }
@@ -180,13 +205,16 @@ namespace VPlayer.Player.UserControls
     {
       double now = clock.Elapsed.TotalSeconds;
 
-      if (lastUpdateTime <= 0)
+      if (lastUpdateTime <= 0.0)
         lastUpdateTime = now;
 
       double deltaTime = Math.Min(now - lastUpdateTime, 0.1);
 
       lastUpdateTime = now;
       stateTime += deltaTime;
+
+      if (pendingState.HasValue)
+        pendingStateTime += deltaTime;
 
       double energy = Clamp01(bass * 0.75 + flux * 0.25);
       double fastResponse = energy > fastEnergy ? 4.5 : 2.2;
@@ -198,8 +226,125 @@ namespace VPlayer.Player.UserControls
 
       double trend = fastEnergy - slowEnergy;
 
+      UpdateBeatTracking(now, deltaTime, bass, flux);
+      UpdateLiveEvents(now, deltaTime, energy, flux, trend);
       UpdateState(flux, trend);
+      UpdatePendingState();
       ScheduleApply(deltaTime);
+
+      previousEnergy = energy;
+    }
+
+    private static void UpdateBeatTracking(double now, double deltaTime, double bass, double flux)
+    {
+      double pulseSignal = Clamp01(bass * 0.80 + flux * 0.20);
+      double fastSmoothing = 1.0 - Math.Exp(-14.0 * deltaTime);
+      double slowSmoothing = 1.0 - Math.Exp(-2.2 * deltaTime);
+
+      pulseFast += (pulseSignal - pulseFast) * fastSmoothing;
+      pulseSlow += (pulseSignal - pulseSlow) * slowSmoothing;
+
+      double onset = Math.Max(0.0, pulseFast - pulseSlow);
+      double onsetSmoothing = 1.0 - Math.Exp(-1.1 * deltaTime);
+
+      onsetAverage += (onset - onsetAverage) * onsetSmoothing;
+
+      double threshold = Math.Max(0.018, onsetAverage * 2.2);
+      double minimumBeatDistance = Math.Max(0.22, beatInterval * 0.42);
+      bool risingEdge = onset > threshold && previousOnset <= threshold;
+      bool refractoryPassed = now - lastBeatTime > minimumBeatDistance;
+
+      if (risingEdge && refractoryPassed)
+        RegisterBeat(now, onset, threshold);
+
+      if (now - lastBeatTime > beatInterval * 2.5)
+        beatConfidence = Math.Max(0.0, beatConfidence - deltaTime * 0.20);
+
+      beatPulse *= Math.Exp(-9.0 * deltaTime);
+      accentPulse *= Math.Exp(-11.0 * deltaTime);
+      breakEnvelope *= Math.Exp(-3.0 * deltaTime);
+
+      previousOnset = onset;
+    }
+
+    private static void RegisterBeat(double now, double onset, double threshold)
+    {
+      double detectedInterval = now - lastBeatTime;
+
+      if (lastBeatTime > 0.0 && detectedInterval >= 0.24 && detectedInterval <= 1.20)
+      {
+        detectedInterval = NormalizeBeatInterval(detectedInterval);
+
+        recentBeatIntervals.Enqueue(detectedInterval);
+
+        while (recentBeatIntervals.Count > 8)
+          recentBeatIntervals.Dequeue();
+
+        double medianInterval = GetMedian(recentBeatIntervals);
+
+        beatInterval += (medianInterval - beatInterval) * 0.28;
+        beatConfidence = Math.Min(1.0, beatConfidence + 0.12);
+      }
+
+      lastBeatTime = now;
+      beatPulse = 1.0;
+      beatIndex++;
+
+      bool barBoundary = beatIndex % 4 == 0;
+
+      if (barBoundary)
+      {
+        barIndex++;
+
+        if (barIndex != lastVariationBar && barIndex % 2 == 0)
+        {
+          liveVariation = (liveVariation + 1) % 3;
+          lastVariationBar = barIndex;
+        }
+      }
+
+      CommitPendingState(barBoundary);
+
+      if (onset > threshold * 1.8 && now - lastAccentTime > 0.30)
+      {
+        accentPulse = 1.0;
+        lastAccentTime = now;
+      }
+    }
+
+    private static double NormalizeBeatInterval(double interval)
+    {
+      if (beatConfidence < 0.20)
+        return interval;
+
+      while (interval < beatInterval * 0.62)
+        interval *= 2.0;
+
+      while (interval > beatInterval * 1.65)
+        interval *= 0.5;
+
+      return Math.Max(0.24, Math.Min(1.20, interval));
+    }
+
+    private static void UpdateLiveEvents(double now, double deltaTime, double energy, double flux, double trend)
+    {
+      bool strongAccent = flux > 0.86 && energy > 0.45;
+
+      if (strongAccent && now - lastAccentTime > 0.28)
+      {
+        accentPulse = 1.0;
+        lastAccentTime = now;
+      }
+
+      bool activeSection = state == StageMacroState.Drive || state == StageMacroState.Build || state == StageMacroState.Peak;
+      bool sharpDrop = previousEnergy - energy > 0.20;
+      bool fallingHard = trend < -0.14 && slowEnergy > 0.42;
+
+      if (activeSection && (sharpDrop || fallingHard) && now - lastBreakTime > 3.0)
+      {
+        breakEnvelope = 1.0;
+        lastBreakTime = now;
+      }
     }
 
     private static void UpdateState(double flux, double trend)
@@ -208,37 +353,80 @@ namespace VPlayer.Player.UserControls
       {
         case StageMacroState.Calm:
           if (stateTime > 0.8 && fastEnergy > 0.30)
-            SetState(StageMacroState.Drive);
+            RequestState(StageMacroState.Drive, TransitionQuantization.Beat, false);
           break;
 
         case StageMacroState.Drive:
           if (stateTime > 2.0 && ((fastEnergy > 0.58 && trend > 0.03) || (slowEnergy > 0.62 && stateTime > 6.0)))
-            SetState(StageMacroState.Build);
+            RequestState(StageMacroState.Build, TransitionQuantization.Bar, false);
           else if (stateTime > 4.0 && slowEnergy < 0.22)
-            SetState(StageMacroState.Calm);
+            RequestState(StageMacroState.Calm, TransitionQuantization.Bar, false);
           break;
 
         case StageMacroState.Build:
           if (stateTime > 1.5 && (fastEnergy > 0.78 || slowEnergy > 0.72 || flux > 0.88))
-            SetState(StageMacroState.Peak);
+            RequestState(StageMacroState.Peak, TransitionQuantization.Beat, flux > 0.94);
           else if (stateTime > 3.0 && trend < -0.06 && fastEnergy < 0.55)
-            SetState(StageMacroState.Drive);
+            RequestState(StageMacroState.Drive, TransitionQuantization.Beat, false);
           break;
 
         case StageMacroState.Peak:
           if (stateTime > 2.5 && fastEnergy < 0.58)
-            SetState(StageMacroState.Release);
+            RequestState(StageMacroState.Release, TransitionQuantization.Bar, false);
           break;
 
         case StageMacroState.Release:
           if (fastEnergy > 0.82 || flux > 0.92)
-            SetState(StageMacroState.Peak);
+            RequestState(StageMacroState.Peak, TransitionQuantization.Beat, flux > 0.96);
           else if (stateTime > 2.5 && fastEnergy > 0.40 && trend > 0.03)
-            SetState(StageMacroState.Drive);
+            RequestState(StageMacroState.Drive, TransitionQuantization.Beat, false);
           else if (stateTime > 3.0 && slowEnergy < 0.25)
-            SetState(StageMacroState.Calm);
+            RequestState(StageMacroState.Calm, TransitionQuantization.Bar, false);
           break;
       }
+    }
+
+    private static void RequestState(StageMacroState newState, TransitionQuantization quantization, bool immediate)
+    {
+      if (state == newState)
+      {
+        pendingState = null;
+        pendingStateTime = 0.0;
+        return;
+      }
+
+      if (immediate || beatConfidence < 0.25)
+      {
+        SetState(newState);
+        return;
+      }
+
+      if (pendingState == newState)
+        return;
+
+      pendingState = newState;
+      pendingQuantization = quantization;
+      pendingStateTime = 0.0;
+    }
+
+    private static void CommitPendingState(bool barBoundary)
+    {
+      if (!pendingState.HasValue)
+        return;
+
+      if (pendingQuantization == TransitionQuantization.Beat || barBoundary)
+        SetState(pendingState.Value);
+    }
+
+    private static void UpdatePendingState()
+    {
+      if (!pendingState.HasValue)
+        return;
+
+      double maximumWait = pendingQuantization == TransitionQuantization.Beat ? 0.85 : 2.20;
+
+      if (pendingStateTime >= maximumWait)
+        SetState(pendingState.Value);
     }
 
     private static void ScheduleApply(double deltaTime)
@@ -255,7 +443,7 @@ namespace VPlayer.Player.UserControls
 
       applyPending = true;
 
-      dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+      dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() =>
       {
         double accumulatedDeltaTime = pendingDeltaTime;
 
@@ -271,14 +459,42 @@ namespace VPlayer.Player.UserControls
     {
       StageLook look = GetStageLook(state);
 
-      SmoothValue(ref currentBackgroundMovement, look.BackgroundMovement, deltaTime, 2.0);
-      SmoothValue(ref currentMainMovement, look.MainMovement, deltaTime, 2.0);
-      SmoothValue(ref currentBackgroundLightOpacity, look.BackgroundLightOpacity, deltaTime, 3.0);
-      SmoothValue(ref currentFrontLightOpacity, look.FrontLightOpacity, deltaTime, 3.0);
-      SmoothValue(ref currentBackgroundBeamWidth, look.BackgroundBeamWidth, deltaTime, 2.5);
-      SmoothValue(ref currentFrontBeamWidth, look.FrontBeamWidth, deltaTime, 2.5);
+      double backgroundMovementTarget = look.BackgroundMovement;
+      double mainMovementTarget = look.MainMovement;
+      double backgroundLightTarget = look.BackgroundLightOpacity;
+      double frontLightTarget = look.FrontLightOpacity;
+      double backgroundBeamTarget = look.BackgroundBeamWidth;
+      double frontBeamTarget = look.FrontBeamWidth;
+
+      ApplyLiveVariation(ref backgroundLightTarget, ref frontLightTarget);
+
+      if (breakEnvelope > 0.001)
+      {
+        backgroundMovementTarget *= Lerp(1.0, 0.60, breakEnvelope);
+        mainMovementTarget *= Lerp(1.0, 0.70, breakEnvelope);
+        backgroundLightTarget *= Lerp(1.0, 0.05, breakEnvelope);
+        frontLightTarget = Lerp(frontLightTarget, Math.Max(frontLightTarget, 0.85), breakEnvelope);
+        backgroundBeamTarget = Lerp(backgroundBeamTarget, 1.40, breakEnvelope);
+        frontBeamTarget = Lerp(frontBeamTarget, 1.20, breakEnvelope);
+      }
+
+      SmoothValue(ref currentBackgroundMovement, backgroundMovementTarget, deltaTime, 2.0);
+      SmoothValue(ref currentMainMovement, mainMovementTarget, deltaTime, 2.0);
+      SmoothValue(ref currentBackgroundLightOpacity, backgroundLightTarget, deltaTime, 3.0);
+      SmoothValue(ref currentFrontLightOpacity, frontLightTarget, deltaTime, 3.0);
+      SmoothValue(ref currentBackgroundBeamWidth, backgroundBeamTarget, deltaTime, 2.5);
+      SmoothValue(ref currentFrontBeamWidth, frontBeamTarget, deltaTime, 2.5);
       SmoothValue(ref currentFrontMinSpeedMultiplier, look.FrontMinSpeedMultiplier, deltaTime, 2.0);
       SmoothValue(ref currentFrontMaxSpeedMultiplier, look.FrontMaxSpeedMultiplier, deltaTime, 2.0);
+
+      double backgroundBeatStrength = GetBackgroundBeatStrength(state);
+      double frontBeatStrength = GetFrontBeatStrength(state);
+
+      double backgroundPulse = Clamp01(beatPulse * backgroundBeatStrength + accentPulse * 0.35);
+      double frontPulse = Clamp01(beatPulse * frontBeatStrength + accentPulse * 0.45);
+
+      double finalBackgroundLightOpacity = Lerp(currentBackgroundLightOpacity, 1.0, backgroundPulse);
+      double finalFrontLightOpacity = Lerp(currentFrontLightOpacity, 1.0, frontPulse);
 
       if (backgroundRgb != null)
         backgroundRgb.MovementMultiplier = baseBackgroundMovement * currentBackgroundMovement;
@@ -288,16 +504,75 @@ namespace VPlayer.Player.UserControls
 
       if (backgroundLights != null)
       {
-        backgroundLights.Opacity = baseBackgroundLightOpacity * currentBackgroundLightOpacity;
+        backgroundLights.Opacity = baseBackgroundLightOpacity * finalBackgroundLightOpacity;
         backgroundLights.BeamWidthMultiplier = currentBackgroundBeamWidth;
       }
 
       if (frontLights != null)
       {
-        frontLights.Opacity = baseFrontLightOpacity * currentFrontLightOpacity;
+        frontLights.Opacity = baseFrontLightOpacity * finalFrontLightOpacity;
         frontLights.MinSpeed = baseFrontMinSpeed * currentFrontMinSpeedMultiplier;
         frontLights.MaxSpeed = baseFrontMaxSpeed * currentFrontMaxSpeedMultiplier;
         frontLights.BeamWidthMultiplier = currentFrontBeamWidth;
+      }
+    }
+
+    private static void ApplyLiveVariation(ref double backgroundLightTarget, ref double frontLightTarget)
+    {
+      if (state != StageMacroState.Drive && state != StageMacroState.Build)
+        return;
+
+      switch (liveVariation)
+      {
+        case 1:
+          frontLightTarget *= 0.78;
+          break;
+
+        case 2:
+          backgroundLightTarget *= 0.82;
+          break;
+      }
+    }
+
+    private static double GetBackgroundBeatStrength(StageMacroState currentState)
+    {
+      switch (currentState)
+      {
+        case StageMacroState.Calm:
+          return 0.03;
+
+        case StageMacroState.Drive:
+          return 0.10;
+
+        case StageMacroState.Build:
+          return 0.14;
+
+        case StageMacroState.Peak:
+          return 0.18;
+
+        default:
+          return 0.04;
+      }
+    }
+
+    private static double GetFrontBeatStrength(StageMacroState currentState)
+    {
+      switch (currentState)
+      {
+        case StageMacroState.Calm:
+          return 0.08;
+
+        case StageMacroState.Drive:
+          return 0.04;
+
+        case StageMacroState.Build:
+          return 0.09;
+
+        case StageMacroState.Peak:
+          return 0.15;
+
+        default:
+          return 0.10;
       }
     }
 
@@ -351,14 +626,45 @@ namespace VPlayer.Player.UserControls
 
       state = newState;
       stateTime = 0.0;
+      pendingState = null;
+      pendingStateTime = 0.0;
     }
 
     private static void ResetDirectorState()
     {
       state = StageMacroState.Calm;
+      pendingState = null;
+
       stateTime = 0.0;
+      pendingStateTime = 0.0;
+
       fastEnergy = 0.0;
       slowEnergy = 0.0;
+      previousEnergy = 0.0;
+
+      pulseFast = 0.0;
+      pulseSlow = 0.0;
+      onsetAverage = 0.02;
+      previousOnset = 0.0;
+
+      lastBeatTime = -10.0;
+      beatInterval = 0.5;
+      beatConfidence = 0.0;
+      beatIndex = 0;
+      barIndex = 0;
+
+      beatPulse = 0.0;
+      accentPulse = 0.0;
+      breakEnvelope = 0.0;
+
+      lastAccentTime = -10.0;
+      lastBreakTime = -10.0;
+
+      liveVariation = 0;
+      lastVariationBar = -1;
+
+      recentBeatIntervals.Clear();
+
       lastUpdateTime = 0.0;
       pendingDeltaTime = 0.0;
 
@@ -373,11 +679,31 @@ namespace VPlayer.Player.UserControls
       currentFrontMaxSpeedMultiplier = 1.0;
     }
 
+    private static double GetMedian(IEnumerable<double> values)
+    {
+      double[] sorted = values.OrderBy(x => x).ToArray();
+
+      if (sorted.Length == 0)
+        return beatInterval;
+
+      int middle = sorted.Length / 2;
+
+      if (sorted.Length % 2 == 0)
+        return (sorted[middle - 1] + sorted[middle]) * 0.5;
+
+      return sorted[middle];
+    }
+
     private static void SmoothValue(ref double current, double target, double deltaTime, double response)
     {
       double smoothing = 1.0 - Math.Exp(-response * deltaTime);
 
       current += (target - current) * smoothing;
+    }
+
+    private static double Lerp(double from, double to, double t)
+    {
+      return from + (to - from) * Clamp01(t);
     }
 
     private static double Clamp01(double value)
@@ -392,6 +718,12 @@ namespace VPlayer.Player.UserControls
       Build,
       Peak,
       Release
+    }
+
+    private enum TransitionQuantization
+    {
+      Beat,
+      Bar
     }
 
     private struct StageLook
