@@ -14,6 +14,9 @@ using VCore.WPF.Converters;
 
 namespace VPlayer.Library
 {
+
+
+
     #region ScrollingTextDurationConverter
 
     public class ScrollingTextDurationConverter : MarkupExtension, IMultiValueConverter

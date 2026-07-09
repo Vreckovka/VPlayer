@@ -27,6 +27,7 @@
     DecodeWidth="350" />
 
   <views:LyricsConstants x:Key="LyricsConstants" />
+  <views:LightsConstants x:Key="LightsConstants" />
 
   <Style x:Key="LyricsStyle" TargetType="TextBox">
     <Setter Property="FontSize" Value="24" />
@@ -1112,8 +1113,16 @@
               ShakeStrength="0"
               Stablized="True"
               Stretch="UniformToFill"
+              Visibility="{Binding Instance.EnableBackgroundLighting, Source={StaticResource LightsConstants}, Converter={converters:VisibilityConverter}}"
               VizualizerLayerPath="{Binding ActualItem.AlbumViewModel.Model.BackgroundVizualizationLayerPath}"
               ZoomStrength="0">
+              <!--<usercontrols:BassImageVizualizer.IsEnabled>
+                <MultiBinding Converter="{converters:BooleanAndConverter}">
+                  <Binding Path="IsPlaying" />
+                  <Binding Path="Instance.EnableBackgroundLighting" Source="{StaticResource LightsConstants}" />
+                </MultiBinding>
+              </usercontrols:BassImageVizualizer.IsEnabled>-->
+
               <usercontrols:BassImageVizualizer.Style>
                 <Style TargetType="usercontrols:BassImageVizualizer">
                   <Setter Property="Visibility" Value="Visible" />
@@ -1127,15 +1136,22 @@
               </usercontrols:BassImageVizualizer.Style>
             </usercontrols:BassImageVizualizer>
 
-            <usercontrols1:BackgroundStageLights LightMaxSpeed="0.25" LightMinSpeed="0.008">
+            <usercontrols1:BackgroundStageLights
+              IsEnabled="{Binding Source={StaticResource LightsConstants}, Path=Instance.ShowBackgroundTopLights}"
+              LightMaxSpeed="0.25"
+              LightMinSpeed="0.008">
               <usercontrols1:BackgroundStageLights.LayoutTransform>
                 <ScaleTransform ScaleX="1" ScaleY="1" />
               </usercontrols1:BackgroundStageLights.LayoutTransform>
             </usercontrols1:BackgroundStageLights>
 
-            <usercontrols1:FrontStageLights HighColor="#24ff5e" />
+            <usercontrols1:FrontStageLights HighColor="#24ff5e" IsEnabled="{Binding Source={StaticResource LightsConstants}, Path=Instance.ShowBackgroundSupportLights}" />
 
-            <usercontrols1:BackgroundStageLights LightMaxSpeed="0.25" LightMinSpeed="0.008">
+            <usercontrols1:BackgroundStageLights
+              IsEnabled="{Binding Source={StaticResource LightsConstants}, Path=Instance.ShowBackgroundBottomLights}"
+              LightMaxSpeed="0.15"
+              Opacity="0.5"
+              LightMinSpeed="0.003">
               <usercontrols1:BackgroundStageLights.LayoutTransform>
                 <ScaleTransform ScaleX="1" ScaleY="-1" />
               </usercontrols1:BackgroundStageLights.LayoutTransform>
@@ -1174,11 +1190,17 @@
           VerticalAlignment="Bottom"
           Background="Transparent"
           DataContext="{Binding ActualItem}"
-          IsEnabled="{Binding DataContext.IsPlaying, RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}}"
           MaxFrequency="10000"
           NormlizedDataMaxSilentValue="7"
           Opacity="0.8"
           UseSkew="True">
+
+          <usercontrols:SoundVizualizer.IsEnabled>
+            <MultiBinding Converter="{converters:BooleanAndConverter}">
+              <Binding Path="DataContext.IsPlaying" RelativeSource="{RelativeSource AncestorType=Grid, Mode=FindAncestor}" />
+              <Binding Path="Instance.EnableLighting" Source="{StaticResource LightsConstants}" />
+            </MultiBinding>
+          </usercontrols:SoundVizualizer.IsEnabled>
 
           <usercontrols:SoundVizualizer.Style>
             <Style TargetType="usercontrols:SoundVizualizer">
@@ -1263,7 +1285,16 @@
               MidBassImageColor="{Binding ActualItem.AlbumViewModel.Model.MidVizualizationColor}"
               OpacityModifier="1.25"
               StableVizualizerLayerPath="{Binding ActualItem.AlbumViewModel.Model.StableVizualizationLayerPath}"
-              VizualizerLayerPath="{Binding ActualItem.AlbumViewModel.Model.VizualizationLayerPath}" />
+              Visibility="{Binding Instance.EnableLighting, Source={StaticResource LightsConstants}, Converter={converters:VisibilityConverter}}"
+              VizualizerLayerPath="{Binding ActualItem.AlbumViewModel.Model.VizualizationLayerPath}">
+              <!--<usercontrols:BassImageVizualizer.IsEnabled>
+                <MultiBinding Converter="{converters:BooleanAndConverter}">
+                  <Binding Path="IsPlaying" />
+                  <Binding Path="Instance.EnableLighting" Source="{StaticResource LightsConstants}" />
+                </MultiBinding>
+              </usercontrols:BassImageVizualizer.IsEnabled>-->
+
+            </usercontrols:BassImageVizualizer>
 
 
 

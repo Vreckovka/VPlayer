@@ -176,7 +176,7 @@ namespace WinformsVisualization.Visualization
     }
 
     #endregion
-    private uint[] spectrumGradient;
+    private int[] spectrumGradient;
     private int spectrumGradientHeight;
     private Color spectrumGradientBottomColor;
     private Color spectrumGradientTopColor;
@@ -218,19 +218,21 @@ namespace WinformsVisualization.Visualization
       return NormalizeData(spectrumPoints, NormlizedDataMinValue, NormlizedDataMaxValue);
     }
 
-    public unsafe void UpdateSpectrumBitmap(WriteableBitmap bitmap, SpectrumPointData[] spectrumPoints, Color bottomColor, Color topColor)
+    private int[] previousBarHeights;
+
+    public unsafe void UpdateSpectrumBitmap(WriteableBitmap bitmap, SpectrumPointData[] spectrumPoints, System.Drawing.Color bottomColor, System.Drawing.Color topColor)
     {
       int width = bitmap.PixelWidth;
       int height = bitmap.PixelHeight;
 
       UpdateSpectrumGradient(height, bottomColor, topColor);
 
-      bitmap.Lock();
+      if (previousBarHeights == null || previousBarHeights.Length != spectrumPoints.Length)
+        previousBarHeights = new int[spectrumPoints.Length];
 
-      try
+      using (var context = bitmap.GetBitmapContext())
       {
-        byte* buffer = (byte*)bitmap.BackBuffer.ToPointer();
-        int stride = bitmap.BackBufferStride;
+        int* pixels = context.Pixels;
 
         for (int i = 0; i < spectrumPoints.Length; i++)
         {
@@ -243,64 +245,65 @@ namespace WinformsVisualization.Visualization
           if (xStart < 0 || xStart >= width || xEnd <= xStart)
             continue;
 
-          for (int y = 0; y < height; y++)
-          {
-            uint* row = (uint*)(buffer + y * stride);
+          int newHeight = Math.Clamp((int)(p.Value * 2 - 1), 0, height);
+          int oldHeight = previousBarHeights[i];
 
-            for (int x = xStart; x < xEnd; x++)
-              row[x] = 0;
+          if (oldHeight > newHeight)
+          {
+            int clearStart = height - oldHeight;
+            int clearEnd = height - newHeight;
+
+            for (int y = clearStart; y < clearEnd; y++)
+              for (int x = xStart; x < xEnd; x++)
+                pixels[y * width + x] = 0;
           }
 
-          int barHeight = Math.Clamp((int)(p.Value * 2 - 1), 0, height);
-          int yStart = height - barHeight;
+          int drawStart = height - newHeight;
 
-          for (int y = yStart; y < height; y++)
+          for (int y = drawStart; y < height; y++)
           {
-            uint* row = (uint*)(buffer + y * stride);
-            uint color = spectrumGradient[y];
+            int offset = y * width + xStart;
+            int color = spectrumGradient[y];
 
             for (int x = xStart; x < xEnd; x++)
-              row[x] = color;
+              pixels[offset++] = color;
           }
+
+          previousBarHeights[i] = newHeight;
         }
-
-        bitmap.AddDirtyRect(new Int32Rect(0, 0, width, height));
-      }
-      finally
-      {
-        bitmap.Unlock();
       }
     }
 
-    private void UpdateSpectrumGradient(int height, Color bottomColor, Color topColor)
-    {
-      if (spectrumGradient != null &&
-          spectrumGradientHeight == height &&
-          spectrumGradientBottomColor == bottomColor &&
-          spectrumGradientTopColor == topColor)
-        return;
+    private void UpdateSpectrumGradient(int height, System.Drawing.Color bottomColor, System.Drawing.Color topColor)
+{
+	if (spectrumGradient != null &&
+		spectrumGradientHeight == height &&
+		spectrumGradientBottomColor == bottomColor &&
+		spectrumGradientTopColor == topColor)
+		return;
 
-      spectrumGradientHeight = height;
-      spectrumGradientBottomColor = bottomColor;
-      spectrumGradientTopColor = topColor;
-      spectrumGradient = new uint[height];
+	spectrumGradientHeight = height;
+	spectrumGradientBottomColor = bottomColor;
+	spectrumGradientTopColor = topColor;
 
-      for (int y = 0; y < height; y++)
-      {
-        double t = height <= 1 ? 0 : (double)y / (height - 1);
+	spectrumGradient = new int[height];
 
-        byte a = (byte)(topColor.A + (bottomColor.A - topColor.A) * t);
-        byte r = (byte)(topColor.R + (bottomColor.R - topColor.R) * t);
-        byte g = (byte)(topColor.G + (bottomColor.G - topColor.G) * t);
-        byte b = (byte)(topColor.B + (bottomColor.B - topColor.B) * t);
+	for (int y = 0; y < height; y++)
+	{
+		double t = height <= 1 ? 0 : (double)y / (height - 1);
 
-        r = (byte)(r * a / 255);
-        g = (byte)(g * a / 255);
-        b = (byte)(b * a / 255);
+		byte a = (byte)(topColor.A + (bottomColor.A - topColor.A) * t);
+		byte r = (byte)(topColor.R + (bottomColor.R - topColor.R) * t);
+		byte g = (byte)(topColor.G + (bottomColor.G - topColor.G) * t);
+		byte b = (byte)(topColor.B + (bottomColor.B - topColor.B) * t);
 
-        spectrumGradient[y] = (uint)(a << 24 | r << 16 | g << 8 | b);
-      }
-    }
+		r = (byte)(r * a / 255);
+		g = (byte)(g * a / 255);
+		b = (byte)(b * a / 255);
+
+		spectrumGradient[y] = (a << 24 | r << 16 | g << 8 | b);
+	}
+}
 
     public Bitmap CreateSpectrumLine(float[] fftData, Size size, Brush brush, bool highQuality)
     {

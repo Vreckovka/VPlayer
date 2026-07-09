@@ -188,12 +188,31 @@ namespace VPlayer.Player.UserControls
         LightingDirector.RegisterBackgroundRGB(this);
       else
         LightingDirector.RegisterMainRGB(this);
+
+
+      //IsEnabledChanged += OnIsEnabledChanged;
     }
+
+    private void OnIsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      if (IsEnabled)
+      {
+        Visibility = Visibility.Visible;
+      }
+      else
+      {
+        Visibility = Visibility.Collapsed;
+      }
+    }
+
 
     private void LightingDirector_OnFftTick1(object sender, (double bass, double flux) e)
     {
       VSynchronizationContext.PostOnUIThread(() =>
        {
+         if (!IsEnabled || Visibility != Visibility.Visible)
+           return;
+
          ApplyPsychedelicImageEffect(e.bass, e.flux);
        });
     }
@@ -405,7 +424,7 @@ namespace VPlayer.Player.UserControls
 
       //double rawFlux = SpektrumAnalyzer.GetPositiveSpectralFlux(fftData);
       //double normalizedFlux = psychedelicFluxNormalizer.Update(rawFlux);
-     // double fluxSmoothing = normalizedFlux > visualFlux ? FluxAttack : FluxRelease;
+      // double fluxSmoothing = normalizedFlux > visualFlux ? FluxAttack : FluxRelease;
 
       //visualFlux += (normalizedFlux - visualFlux) * fluxSmoothing;
 

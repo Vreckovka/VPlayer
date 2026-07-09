@@ -10,6 +10,124 @@ using VCore.WPF.Misc;
 
 namespace VPlayer.WindowsPlayer.Views
 {
+  public class LightsConstants : ViewModel
+  {
+    #region Instance
+
+    private static LightsConstants instance;
+
+    public static LightsConstants Instance
+    {
+      get
+      {
+        if (instance == null)
+        {
+          instance = new LightsConstants();
+        }
+
+        return instance;
+      }
+    }
+
+    #endregion
+
+
+    #region ShowBackgroundTopLights
+
+    private bool showBackgroundTopLights = true;
+
+    public bool ShowBackgroundTopLights
+    {
+      get { return showBackgroundTopLights; }
+      set
+      {
+        if (value != showBackgroundTopLights)
+        {
+          showBackgroundTopLights = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region ShowBackgroundBottomLights
+
+    private bool showBackgroundBottomLights = true;
+
+    public bool ShowBackgroundBottomLights
+    {
+      get { return showBackgroundBottomLights; }
+      set
+      {
+        if (value != showBackgroundBottomLights)
+        {
+          showBackgroundBottomLights = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region ShowBackgroundSupportLights
+
+    private bool showBackgroundSupportLights = true;
+
+    public bool ShowBackgroundSupportLights
+    {
+      get { return showBackgroundSupportLights; }
+      set
+      {
+        if (value != showBackgroundSupportLights)
+        {
+          showBackgroundSupportLights = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region EnableBackgroundLighting
+
+    private bool enableBackgroundLighting = true;
+
+    public bool EnableBackgroundLighting
+    {
+      get { return enableBackgroundLighting; }
+      set
+      {
+        if (value != enableBackgroundLighting)
+        {
+          enableBackgroundLighting = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
+    #region EnableLighting
+
+    private bool enableLighting = true;
+
+    public bool EnableLighting
+    {
+      get { return enableLighting; }
+      set
+      {
+        if (value != enableLighting)
+        {
+          enableLighting = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+  }
+
   public class LyricsConstants : ViewModel
   {
     #region Instance

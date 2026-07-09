@@ -45,6 +45,7 @@ namespace VPlayer.Core.UserControls
     public double MinSpeed { get; set; } = 0.003;
     public double MaxSpeed { get; set; } = 0.18;
     public double SpeedSmoothing { get; set; } = 1.2;
+    public double BeamWidthMultiplier { get; set; } = 1.0;
 
     public FrontStageLights()
     {
@@ -52,16 +53,31 @@ namespace VPlayer.Core.UserControls
 
       LightingDirector.RegisterFrontLights(this);
       LightingDirector.OnFftTick += LightingDirector_OnFftTick;
+
+      IsEnabledChanged += OnIsEnabledChanged;
     }
 
-    public double BeamWidthMultiplier { get; set; } = 1.0;
+    private void OnIsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      if (IsEnabled)
+      {
+        Visibility = Visibility.Visible;
+      }
+      else
+      {
+        Visibility = Visibility.Collapsed;
+      }
+    }
 
     private void LightingDirector_OnFftTick(object sender, (double bass, double flux) e)
     {
       VSynchronizationContext.PostOnUIThread(() =>
       {
+        if (!IsEnabled || Visibility != Visibility.Visible)
+          return;
+        
         UpdateLighting(e.bass, e.flux);
-      });   
+      });
     }
 
     public void UpdateLighting(double bass, double flux)
@@ -139,48 +155,64 @@ namespace VPlayer.Core.UserControls
           return GetSidePose(lightIndex, p, aspect);
       }
     }
-
+    private const double MaxBeamAngle = 72.0;
     private static FrontPose GetCrossPose(int lightIndex, double p, double aspect)
     {
-      double sway = Math.Sin(p * 0.34) * 0.08;
-      double targetX = lightIndex == 0 ? 0.68 + sway : 0.32 + sway;
-      double targetY = 0.43 + Math.Sin(p * 0.22 + 0.6) * 0.07;
+      double center = 0.50 + Math.Sin(p * 0.62) * 0.15;
+      double spread = 0.10 + (0.5 + Math.Sin(p * 0.41 + 0.7) * 0.5) * 0.05;
+
+      double targetX = lightIndex == 0 ? center + spread : center - spread;
+      targetX = Clamp(targetX, 0.25, 0.75);
+
+      double targetY = 0.44 + Math.Sin(p * 0.18 + 0.6) * 0.04;
+
       double angle = GetBottomBeamAngle(MountX[lightIndex], targetX, targetY, aspect);
       double depth = 0.56 + Math.Cos(p * 0.38 + lightIndex * 0.65) * 0.22;
 
-      return new FrontPose(Clamp(angle, -55.0, 55.0), Clamp01(depth));
+      return new FrontPose(Clamp(angle, -MaxBeamAngle, MaxBeamAngle), Clamp01(depth));
     }
 
     private static FrontPose GetConvergencePose(int lightIndex, double p, double aspect)
     {
-      double targetX = 0.50 + Math.Sin(p * 0.29) * 0.12 + Math.Sin(p * 0.11 + 1.0) * 0.04;
-      double targetY = 0.50 + Math.Cos(p * 0.21) * 0.08;
+      double targetX = 0.50 + Math.Sin(p * 0.55) * 0.18 + Math.Sin(p * 0.19 + 1.0) * 0.05;
+      targetX = Clamp(targetX, 0.25, 0.75);
+
+      double targetY = 0.49 + Math.Cos(p * 0.17) * 0.04;
+
       double angle = GetBottomBeamAngle(MountX[lightIndex], targetX, targetY, aspect);
       double depth = 0.68 + Math.Sin(p * 0.31 + lightIndex * 0.35) * 0.12;
 
-      return new FrontPose(Clamp(angle, -55.0, 55.0), Clamp01(depth));
+      return new FrontPose(Clamp(angle, -MaxBeamAngle, MaxBeamAngle), Clamp01(depth));
     }
 
     private static FrontPose GetOpenPose(int lightIndex, double p, double aspect)
     {
-      double movement = Math.Sin(p * 0.27 + lightIndex * Math.PI) * 0.06;
-      double targetX = lightIndex == 0 ? 0.28 + movement : 0.72 + movement;
-      double targetY = 0.42 + Math.Sin(p * 0.19 + 0.8) * 0.06;
+      double movement = Math.Sin(p * 0.68 + lightIndex * Math.PI) * 0.13;
+
+      double targetX = lightIndex == 0 ? 0.36 + movement : 0.64 + movement;
+      targetX = Clamp(targetX, 0.25, 0.75);
+
+      double targetY = 0.43 + Math.Sin(p * 0.17 + lightIndex * 0.7) * 0.035;
+
       double angle = GetBottomBeamAngle(MountX[lightIndex], targetX, targetY, aspect);
       double depth = 0.52 + Math.Cos(p * 0.29 + lightIndex * 0.8) * 0.20;
 
-      return new FrontPose(Clamp(angle, -55.0, 55.0), Clamp01(depth));
+      return new FrontPose(Clamp(angle, -MaxBeamAngle, MaxBeamAngle), Clamp01(depth));
     }
 
     private static FrontPose GetSidePose(int lightIndex, double p, double aspect)
     {
-      double centerMovement = Math.Sin(p * 0.25) * 0.10;
-      double targetX = 0.50 + centerMovement + (lightIndex == 0 ? 0.06 : -0.06);
-      double targetY = 0.46 + Math.Cos(p * 0.18 + lightIndex * 0.5) * 0.07;
+      double sweep = Math.Sin(p * 0.58) * 0.12;
+
+      double targetX = lightIndex == 0 ? 0.38 + sweep : 0.62 + sweep;
+      targetX = Clamp(targetX, 0.25, 0.75);
+
+      double targetY = 0.46 + Math.Cos(p * 0.17 + lightIndex * 0.5) * 0.04;
+
       double angle = GetBottomBeamAngle(MountX[lightIndex], targetX, targetY, aspect);
       double depth = 0.58 + Math.Sin(p * 0.24 + lightIndex * Math.PI) * 0.24;
 
-      return new FrontPose(Clamp(angle, -55.0, 55.0), Clamp01(depth));
+      return new FrontPose(Clamp(angle, -MaxBeamAngle, MaxBeamAngle), Clamp01(depth));
     }
 
     private static double GetIntensity(int look, int lightIndex, double p)

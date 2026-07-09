@@ -101,13 +101,14 @@ namespace VPlayer.Player.UserControls
 
     private WriteableBitmap spectrumBitmap;
     private int spectrumRenderInProgress;
-
     private void EnsureSpectrumBitmap()
     {
       if (spectrumBitmap != null && spectrumBitmap.PixelWidth == width && spectrumBitmap.PixelHeight == height)
         return;
 
-      spectrumBitmap = new WriteableBitmap(width, height, 96, 96, PixelFormats.Pbgra32, null);
+      spectrumBitmap = BitmapFactory.New(width, height);
+      spectrumBitmap.Clear(System.Windows.Media.Colors.Transparent);
+
       Image.Source = spectrumBitmap;
     }
 

@@ -35,6 +35,7 @@
       </ResourceDictionary.MergedDictionaries>
 
       <views:LyricsConstants x:Key="LyricsConstants" />
+      <views:LightsConstants x:Key="LightsConstants" />
     </ResourceDictionary>
   </UserControl.Resources>
 
@@ -1545,6 +1546,105 @@
                                         Text="{Binding BackgroundShadowOpacity}" />
 
                                     </Grid>
+
+                                    <StackPanel DataContext="{Binding Source={StaticResource LightsConstants}, Path=Instance}">
+                                      <Grid>
+                                        <Grid.ColumnDefinitions>
+                                          <ColumnDefinition Width="auto" />
+                                          <ColumnDefinition />
+                                          <ColumnDefinition Width="auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock
+                                          VerticalAlignment="Center"
+                                          FontWeight="Bold"
+                                          Foreground="#30ffffff"
+                                          Text="Background Top Lights" />
+
+                                        <CheckBox
+                                          Grid.Column="1"
+                                          Foreground="White"
+                                          IsChecked="{Binding ShowBackgroundTopLights}" />
+
+                                      </Grid>
+
+                                      <Grid>
+                                        <Grid.ColumnDefinitions>
+                                          <ColumnDefinition Width="auto" />
+                                          <ColumnDefinition />
+                                          <ColumnDefinition Width="auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock
+                                          VerticalAlignment="Center"
+                                          FontWeight="Bold"
+                                          Foreground="#30ffffff"
+                                          Text="Background Bottom Lights" />
+
+                                        <CheckBox
+                                          Grid.Column="1"
+                                          Foreground="White"
+                                          IsChecked="{Binding ShowBackgroundBottomLights}" />
+
+                                      </Grid>
+
+                                      <Grid>
+                                        <Grid.ColumnDefinitions>
+                                          <ColumnDefinition Width="auto" />
+                                          <ColumnDefinition />
+                                          <ColumnDefinition Width="auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock
+                                          VerticalAlignment="Center"
+                                          FontWeight="Bold"
+                                          Foreground="#30ffffff"
+                                          Text="Support Lights" />
+
+                                        <CheckBox
+                                          Grid.Column="1"
+                                          Foreground="White"
+                                          IsChecked="{Binding ShowBackgroundSupportLights}" />
+
+                                      </Grid>
+
+                                      <Grid>
+                                        <Grid.ColumnDefinitions>
+                                          <ColumnDefinition Width="auto" />
+                                          <ColumnDefinition />
+                                          <ColumnDefinition Width="auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock
+                                          VerticalAlignment="Center"
+                                          FontWeight="Bold"
+                                          Foreground="#30ffffff"
+                                          Text="Background Lighting" />
+
+                                        <CheckBox
+                                          Grid.Column="1"
+                                          Foreground="White"
+                                          IsChecked="{Binding EnableBackgroundLighting}" />
+
+                                      </Grid>
+
+                                      <Grid>
+                                        <Grid.ColumnDefinitions>
+                                          <ColumnDefinition Width="auto" />
+                                          <ColumnDefinition />
+                                          <ColumnDefinition Width="auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock
+                                          VerticalAlignment="Center"
+                                          FontWeight="Bold"
+                                          Foreground="#30ffffff"
+                                          Text="Light" />
+
+                                        <CheckBox
+                                          Grid.Column="1"
+                                          Foreground="White"
+                                          IsChecked="{Binding EnableLighting}" />
+
+                                      </Grid>
+                                    </StackPanel>
+
+
 
                                     <Grid>
                                       <Grid.ColumnDefinitions>
