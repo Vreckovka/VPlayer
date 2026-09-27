@@ -184,6 +184,23 @@ namespace VPlayer.Home.ViewModels.Albums
 
     #endregion
 
+    #region BackgroundStableVizualizationLayerPath
+
+    public string BackgroundStableVizualizationLayerPath
+    {
+      get { return ViewModel.Model.BackgroundStableVizualizationLayerPath; }
+      set
+      {
+        if (value != ViewModel.Model.BackgroundStableVizualizationLayerPath)
+        {
+          ViewModel.Model.BackgroundStableVizualizationLayerPath = value;
+          RaisePropertyChanged();
+        }
+      }
+    }
+
+    #endregion
+
     #region LowVizualizationColor
 
     public string LowVizualizationColor

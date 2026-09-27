@@ -39,7 +39,7 @@ namespace VPlayer.AudioStorage.DomainClasses
     public string VizualizationLayerPath { get; set; }
     public string StableVizualizationLayerPath { get; set; }
     public string BackgroundVizualizationLayerPath { get; set; }
-
+    public string BackgroundStableVizualizationLayerPath { get; set; }
     public string LowVizualizationColor { get; set; } = "#315eb0";
     public string MidVizualizationColor { get; set; } = "#48f542";
     public string HighVizualizationColor { get; set; } = "#f54242";
@@ -63,6 +63,7 @@ namespace VPlayer.AudioStorage.DomainClasses
       VizualizationLayerPath = album.VizualizationLayerPath;
       StableVizualizationLayerPath = album.StableVizualizationLayerPath;
       BackgroundVizualizationLayerPath = album.BackgroundVizualizationLayerPath;
+      BackgroundStableVizualizationLayerPath = album.BackgroundStableVizualizationLayerPath;
 
       LowVizualizationColor = album.LowVizualizationColor;
       MidVizualizationColor = album.MidVizualizationColor;

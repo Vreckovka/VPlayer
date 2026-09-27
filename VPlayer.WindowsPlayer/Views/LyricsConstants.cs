@@ -301,7 +301,7 @@ namespace VPlayer.WindowsPlayer.Views
 
     #region BackgroundShadowOpacity
 
-    private double backgroundShadowOpacity = 1;
+    private double backgroundShadowOpacity = 0;
 
     public double BackgroundShadowOpacity
     {

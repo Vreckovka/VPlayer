@@ -23,10 +23,10 @@
         </TransformGroup>
       </Grid.RenderTransform>
 
-      <Image
+      <!--<Image
         x:Name="OriginalImage"
         Opacity="0"
-        RenderOptions.BitmapScalingMode="NearestNeighbor" />
+        RenderOptions.BitmapScalingMode="NearestNeighbor" />-->
 
       <Image
         x:Name="RedShadow"

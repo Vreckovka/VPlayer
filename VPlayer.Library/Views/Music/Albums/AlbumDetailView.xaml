@@ -168,6 +168,7 @@
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
                 <RowDefinition Height="55" />
               </Grid.RowDefinitions>
 
@@ -216,14 +217,20 @@
                 Grid.Row="6"
                 Grid.Column="0"
                 VerticalAlignment="Bottom"
-                Text="Low Color" />
+                Text="Background Stable Layer " />
+
               <TextBlock
                 Grid.Row="7"
                 Grid.Column="0"
                 VerticalAlignment="Bottom"
-                Text="Mid Color" />
+                Text="Low Color" />
               <TextBlock
                 Grid.Row="8"
+                Grid.Column="0"
+                VerticalAlignment="Bottom"
+                Text="Mid Color" />
+              <TextBlock
+                Grid.Row="9"
                 Grid.Column="0"
                 VerticalAlignment="Bottom"
                 Text="High Color" />
@@ -260,19 +267,24 @@
               <TextBox
                 Grid.Row="6"
                 Grid.Column="1"
-                Text="{Binding LowVizualizationColor, UpdateSourceTrigger=PropertyChanged}" />
+                Text="{Binding BackgroundStableVizualizationLayerPath, UpdateSourceTrigger=PropertyChanged}" />
+
               <TextBox
                 Grid.Row="7"
                 Grid.Column="1"
-                Text="{Binding MidVizualizationColor, UpdateSourceTrigger=PropertyChanged}" />
+                Text="{Binding LowVizualizationColor, UpdateSourceTrigger=PropertyChanged}" />
               <TextBox
                 Grid.Row="8"
+                Grid.Column="1"
+                Text="{Binding MidVizualizationColor, UpdateSourceTrigger=PropertyChanged}" />
+              <TextBox
+                Grid.Row="9"
                 Grid.Column="1"
                 VerticalAlignment="Center"
                 Text="{Binding HighVizualizationColor, UpdateSourceTrigger=PropertyChanged}" />
 
               <Button
-                Grid.Row="9"
+                Grid.Row="10"
                 Grid.Column="1"
                 Margin="0,10,0,0"
                 Command="{Binding Save}"

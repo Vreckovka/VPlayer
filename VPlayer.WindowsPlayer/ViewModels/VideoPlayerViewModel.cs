@@ -883,7 +883,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         try
         {
-          await FindOnCsfd(ActualItem, cancellationToken);
+          //await FindOnCsfd(ActualItem, cancellationToken);
         }
         catch (Exception)
         {

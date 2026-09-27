@@ -222,22 +222,28 @@ namespace VPlayer.Player.UserControls
 
     private void LoadStableImage()
     {
-      if (string.IsNullOrWhiteSpace(StableVizualizerLayerPath))
+      try
       {
-        StableImage.Source = null;
-        return;
+        if (string.IsNullOrWhiteSpace(StableVizualizerLayerPath))
+        {
+          StableImage.Source = null;
+          return;
+        }
+
+        var bitmap = new BitmapImage();
+
+        bitmap.BeginInit();
+        bitmap.UriSource = new Uri(StableVizualizerLayerPath, UriKind.RelativeOrAbsolute);
+        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+        bitmap.EndInit();
+        bitmap.Freeze();
+
+        StableImage.Source = bitmap;
+        StableImage.Stretch = Stretch;
       }
-
-      var bitmap = new BitmapImage();
-
-      bitmap.BeginInit();
-      bitmap.UriSource = new Uri(StableVizualizerLayerPath, UriKind.RelativeOrAbsolute);
-      bitmap.CacheOption = BitmapCacheOption.OnLoad;
-      bitmap.EndInit();
-      bitmap.Freeze();
-
-      StableImage.Source = bitmap;
-      StableImage.Stretch = Stretch;
+      catch (Exception)
+      {
+      }
     }
 
     #endregion
@@ -258,7 +264,6 @@ namespace VPlayer.Player.UserControls
         RedImage.Source = null;
         GreenImage.Source = null;
         BlueImage.Source = null;
-        OriginalImage.Source = null;
 
         return;
       }
@@ -275,14 +280,10 @@ namespace VPlayer.Player.UserControls
 
         originalImage = bitmap;
 
-        OriginalImage.Source = originalImage;
-
         RedImage.Source = CreateTintedBitmap(originalImage, HighBassImageColor);
         GreenImage.Source = CreateTintedBitmap(originalImage, MidBassImageColor);
         BlueImage.Source = CreateTintedBitmap(originalImage, LowBassImageColor);
 
-
-        OriginalImage.Stretch = Stretch;
         GreenImage.Stretch = Stretch;
         BlueImage.Stretch = Stretch;
         RedImage.Stretch = Stretch;
@@ -297,7 +298,6 @@ namespace VPlayer.Player.UserControls
         RedImage.Source = null;
         GreenImage.Source = null;
         BlueImage.Source = null;
-        OriginalImage.Source = null;
       }
     }
 
