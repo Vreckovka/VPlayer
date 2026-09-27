@@ -57,6 +57,7 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
 
           acutalFolder = await ipCloudService.CreateFolder(PathStringProvider.GetPathValidName(folderNames[0]), previousFolderId);
 
+          if (acutalFolder == null) return false;
           previousFolderId = acutalFolder.id;
           startIndex++;
         }
@@ -74,15 +75,18 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
               acutalFolder = await ipCloudService.CreateFolder(PathStringProvider.GetPathValidName(acutalFolderName), previousFolderId);
             }
 
+            if (acutalFolder == null) return false;
             previousFolderId = acutalFolder.id;
 
-            parentFolders = (await ipCloudService.GetFoldersAsync(previousFolderId)).ToList();
+            parentFolders = (await ipCloudService.GetFoldersAsync(previousFolderId))?.ToList();
+            if (parentFolders == null) return false;
           }
         }
 
         if (acutalFolder != null)
         {
-          var files = (await ipCloudService.GetFilesAsync(acutalFolder.id)).ToList();
+          var files = (await ipCloudService.GetFilesAsync(acutalFolder.id))?.ToList();
+          if (files == null) return false;
 
           var fileName = pFileName + fileExtension;
 
@@ -137,12 +141,14 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
               return null;
             }
 
-            parentFolders = (await ipCloudService.GetFoldersAsync(acutalFolder.id)).ToList();
+            parentFolders = (await ipCloudService.GetFoldersAsync(acutalFolder.id))?.ToList();
+            if (parentFolders == null) return null;
           }
 
           if (acutalFolder != null)
           {
-            var files = (await ipCloudService.GetFilesAsync(acutalFolder.id)).ToList();
+            var files = (await ipCloudService.GetFilesAsync(acutalFolder.id))?.ToList();
+            if (files == null) return null;
 
             var fileName = pFileName + extension;
 
@@ -186,12 +192,14 @@ namespace VPlayer.AudioStorage.InfoDownloader.Clients.PCloud
               return false;
             }
 
-            parentFolders = (await ipCloudService.GetFoldersAsync(acutalFolder.id)).ToList();
+            parentFolders = (await ipCloudService.GetFoldersAsync(acutalFolder.id))?.ToList();
+            if (parentFolders == null) return false;
           }
 
           if (acutalFolder != null)
           {
-            var files = (await ipCloudService.GetFilesAsync(acutalFolder.id)).ToList();
+            var files = (await ipCloudService.GetFilesAsync(acutalFolder.id))?.ToList();
+            if (files == null) return false;
 
             var fileName = pFileName + extension;
 
