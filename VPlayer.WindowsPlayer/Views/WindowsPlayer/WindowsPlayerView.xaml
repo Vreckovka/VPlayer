@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
   x:Class="VPlayer.Player.Views.WindowsPlayer.WindowsPlayerView"
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -1887,9 +1887,15 @@
       </Border>
 
 
+      <AdornerDecorator Grid.Row="1">
       <ListView
         x:Name="ListView_Tracks"
-        Grid.Row="1"
+        PreviewMouseLeftButtonDown="TrackMouseDown"
+        PreviewMouseMove="TrackMouseMove"
+        PreviewDragOver="TrackDragOver"
+        PreviewDrop="TrackDrop"
+        PreviewDragLeave="TrackDragLeave"
+        PreviewGiveFeedback="TrackGiveFeedback"
         Margin="1,0,0,0"
         HorizontalAlignment="Stretch"
         Panel.ZIndex="0"
@@ -1905,6 +1911,7 @@
           <behaviors1:FixListViewItemResizeBehavior ValueDecrease="25" />
         </b:Interaction.Behaviors>
       </ListView>
+      </AdornerDecorator>
 
       <b:Interaction.Behaviors>
         <behaviors3:HideBehavior

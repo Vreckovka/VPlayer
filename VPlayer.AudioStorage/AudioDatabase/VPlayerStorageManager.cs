@@ -1314,14 +1314,14 @@ namespace VPlayer.AudioStorage.AudioDatabase
           context.Entry(foundPlaylist).State = EntityState.Modified;
           TPlaylistItem actualItem = null;
 
-          var oldHash = playlist.HashCode;
+          var oldHash = foundPlaylist.HashCode;
           var oldItems = playlist.PlaylistItems;
 
           foundPlaylist.Update(playlist);
 
           if (playlist.PlaylistItems != null)
           {
-            if (foundPlaylist.PlaylistItems != null && (oldHash != foundPlaylist.HashCode || oldItems.Count != foundPlaylist.PlaylistItems.Count))
+            if (foundPlaylist.PlaylistItems != null && (oldHash != playlist.HashCode || PlaylistOrder.HasChanges(foundPlaylist.PlaylistItems, oldItems, x => x.Id, x => x.IdReferencedItem, x => x.OrderInPlaylist)))
             {
               if (oldItems.Count > 0)
               {
