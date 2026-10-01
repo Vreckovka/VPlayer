@@ -97,26 +97,54 @@ namespace VPlayer
       if (StartupMeasurements.Enabled)
       {
         EventHandler rendered = null;
-        rendered = (sender, args) =>
+        rendered = async (sender, args) =>
         {
           window.ContentRendered -= rendered;
-          StartupMeasurements.Complete();
-          var dpi = System.Windows.Media.VisualTreeHelper.GetDpi(window);
-          var bitmap = new System.Windows.Media.Imaging.RenderTargetBitmap(
-            (int)Math.Ceiling(window.ActualWidth * dpi.DpiScaleX),
-            (int)Math.Ceiling(window.ActualHeight * dpi.DpiScaleY),
-            96 * dpi.DpiScaleX, 96 * dpi.DpiScaleY, System.Windows.Media.PixelFormats.Pbgra32);
-          bitmap.Render(window);
-          var encoder = new System.Windows.Media.Imaging.PngBitmapEncoder();
-          encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(bitmap));
-          using (var stream = File.Create(Path.GetFullPath(Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_RUN_FILE")) + ".png"))
-            encoder.Save(stream);
-          if (Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_EXIT_AFTER_RENDER") == "1")
-            Dispatcher.BeginInvoke(new Action(() => Shutdown()));
+          try
+          {
+            StartupMeasurements.Complete();
+            CaptureBenchmarkWindow(window, ".png");
+            if (Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_WAIT_FOR_LIBRARY") == "1")
+            {
+              var playlists = Kernel.Get<VPlayer.Home.ViewModels.SoundItemPlaylistsViewModel>();
+              var deadline = Stopwatch.StartNew();
+              while (!playlists.LibraryCollection.WasLoaded || playlists.LoadingStatus.IsLoading)
+              {
+                if (deadline.Elapsed > TimeSpan.FromSeconds(45))
+                  throw new TimeoutException("Initial playlist view did not finish loading.");
+                await Task.Delay(25);
+              }
+              await Dispatcher.InvokeAsync(() => window.UpdateLayout(), System.Windows.Threading.DispatcherPriority.ContextIdle);
+              StartupMeasurements.RecordProcessMilestone("Application / initial playlist view ready");
+              CaptureBenchmarkWindow(window, ".ready.png");
+            }
+          }
+          catch (Exception exception)
+          {
+            StartupMeasurements.Fail(exception);
+          }
+          finally
+          {
+            if (Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_EXIT_AFTER_RENDER") == "1")
+              Dispatcher.BeginInvoke(new Action(() => Shutdown()));
+          }
         };
         window.ContentRendered += rendered;
       }
       return window;
+    }
+    private static void CaptureBenchmarkWindow(Window window, string suffix)
+    {
+      var dpi = System.Windows.Media.VisualTreeHelper.GetDpi(window);
+      var bitmap = new System.Windows.Media.Imaging.RenderTargetBitmap(
+        (int)Math.Ceiling(window.ActualWidth * dpi.DpiScaleX),
+        (int)Math.Ceiling(window.ActualHeight * dpi.DpiScaleY),
+        96 * dpi.DpiScaleX, 96 * dpi.DpiScaleY, System.Windows.Media.PixelFormats.Pbgra32);
+      bitmap.Render(window);
+      var encoder = new System.Windows.Media.Imaging.PngBitmapEncoder();
+      encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(bitmap));
+      using (var stream = File.Create(Path.GetFullPath(Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_RUN_FILE")) + suffix))
+        encoder.Save(stream);
     }
     #region LoadSettings
 

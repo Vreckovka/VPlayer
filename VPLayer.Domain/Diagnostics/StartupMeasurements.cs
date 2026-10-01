@@ -31,6 +31,15 @@ namespace VPLayer.Domain.Diagnostics
         Write(status,failure);
       }
     }
+    public static void RecordProcessMilestone(string name)
+    {
+      if(!Enabled) return;
+      lock(phases)
+      {
+        phases.Add(new {Name=name,Milliseconds=(DateTime.UtcNow-Process.GetCurrentProcess().StartTime.ToUniversalTime()).TotalMilliseconds});
+        Write(status,failure);
+      }
+    }
     public static void Fail(Exception exception)
     {
       if(!Enabled) return;
