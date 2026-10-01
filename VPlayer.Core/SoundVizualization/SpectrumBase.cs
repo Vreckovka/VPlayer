@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -28,6 +28,17 @@ namespace WinformsVisualization.Visualization
     private ISpectrumProvider _spectrumProvider;
 
     protected int SpectrumResolution;
+
+    public ISpectrumProvider SpectrumProvider
+    {
+      get => _spectrumProvider;
+      set
+      {
+        if (ReferenceEquals(_spectrumProvider, value)) return;
+        _spectrumProvider = value;
+        UpdateFrequencyMapping();
+      }
+    }
     private bool _useAverage;
 
     public SpectrumBase()
@@ -101,8 +112,13 @@ namespace WinformsVisualization.Visualization
 
     protected virtual void UpdateFrequencyMapping()
     {
-      _maximumFrequencyIndex = Math.Min(SpektrumAnalyzer.spectrumProvider.GetFftBandIndex(MaximumFrequency) + 1, _maxFftIndex);
-      _minimumFrequencyIndex = Math.Min(SpektrumAnalyzer.spectrumProvider.GetFftBandIndex(MinimumFrequency), _maxFftIndex);
+      if (_spectrumProvider == null || SpectrumResolution <= 0)
+      {
+        _spectrumIndexMax = _spectrumLogScaleIndexMax = Array.Empty<int>();
+        return;
+      }
+      _maximumFrequencyIndex = Math.Max(0, (int)Math.Min((long)_spectrumProvider.GetFftBandIndex(MaximumFrequency) + 1, _maxFftIndex));
+      _minimumFrequencyIndex = Math.Max(0, Math.Min(_spectrumProvider.GetFftBandIndex(MinimumFrequency), _maxFftIndex));
 
       int actualResolution = SpectrumResolution;
 
@@ -132,6 +148,9 @@ namespace WinformsVisualization.Visualization
 
     protected virtual SpectrumPointData[] CalculateSpectrumPoints(double maxValue, float[] fftBuffer)
     {
+      if (fftBuffer == null) throw new ArgumentNullException(nameof(fftBuffer));
+      if (_spectrumProvider == null || fftBuffer.Length == 0 || _spectrumIndexMax == null || _spectrumIndexMax.Length == 0)
+        return Array.Empty<SpectrumPointData>();
       var dataPoints = new List<SpectrumPointData>();
 
       double value0 = 0, value = 0;
@@ -139,7 +158,7 @@ namespace WinformsVisualization.Visualization
       double actualMaxValue = maxValue;
       int spectrumPointIndex = 0;
 
-      for (int i = _minimumFrequencyIndex; i <= _maximumFrequencyIndex; i++)
+      for (int i = _minimumFrequencyIndex; i <= _maximumFrequencyIndex && i < fftBuffer.Length; i++)
       {
         switch (ScalingStrategy)
         {

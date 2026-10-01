@@ -108,6 +108,9 @@ namespace VPlayer.Player.UserControls
             if (!acceptsSpectrumFrames || lineSpectrum == null)
               return;
 
+            lineSpectrum.SpectrumProvider = SpektrumAnalyzer.spectrumProvider;
+            if (lineSpectrum.SpectrumProvider == null)
+              return;
             EnsureSpectrumBitmap();
             // Serialize calculation with WPF property changes and bitmap resizing.
             var points = lineSpectrum.CalculateSpectrumLineData(spectrumFftBuffer, new System.Drawing.Size(width, height));
