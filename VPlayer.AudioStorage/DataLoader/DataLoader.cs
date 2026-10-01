@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -188,6 +188,7 @@ namespace VPlayer.AudioStorage.DataLoader
 
     public static TvShowEpisodeNumbers GetTvShowSeriesNumber(string name)
     {
+      if (string.IsNullOrWhiteSpace(name)) return null;
       List<string> regexExpressions = new List<string>()
       {
         //S01E01
@@ -195,17 +196,17 @@ namespace VPlayer.AudioStorage.DataLoader
         //S01xE01
         @"s(?<season>\d{1,2})xe(?<episode>\d{1,2})",
         //01x01
-        @"(?<season>\d{1,2})x(?<episode>\d{1,2})",
+        @"(?<!\d)(?<season>\d{1,2})x(?<episode>\d{1,2})(?!\d)",
         //[1.01]
-        @"\[(?<season>\d{1,2}).(?<episode>\d{1,2})\]",
+        @"\[(?<season>\d{1,2})\.(?<episode>\d{1,2})\]",
         //[1.01-02]
-        @"\[(?<season>\d{1,2}).(?<episode>\d{1,2})-(?<concatEpisode>\d{1,2})\]",
+        @"\[(?<season>\d{1,2})\.(?<episode>\d{1,2})-(?<concatEpisode>\d{1,2})\]",
         //1-1
         @"(?<season>\D\d{1,2})-(?<episode>\d{1,2}(?:\D|)$)",
         //Only episode
         @"- (?<episode>\b\d+\b)",
         //Only episode
-        @"\(E((?<episode>)\d+)\)",
+        @"\(e(?<episode>\d+)\)",
       };
 
       foreach (var regexExpression in regexExpressions)
@@ -275,6 +276,7 @@ namespace VPlayer.AudioStorage.DataLoader
 
     public static YearNumbers GetYear(string name)
     {
+      if (string.IsNullOrWhiteSpace(name)) return null;
       List<string> regexExpressions = new List<string>()
       {
         //Movie (2001)

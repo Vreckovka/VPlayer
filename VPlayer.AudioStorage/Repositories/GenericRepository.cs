@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +8,7 @@ namespace VPlayer.AudioStorage.Repositories
   {
     #region Fields
 
-    private TContext context = new TContext();
+    private TContext context;
 
     #endregion Fields
 
@@ -16,7 +16,7 @@ namespace VPlayer.AudioStorage.Repositories
 
     public GenericRepository(TContext context)
     {
-      if (context != null) this.context = context;
+      this.context = context ?? new TContext();
     }
 
     #endregion
@@ -39,7 +39,6 @@ namespace VPlayer.AudioStorage.Repositories
     {
       get
       {
-        context = new TContext();
         return context.Set<TEntity>(); 
 
       }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -56,19 +56,8 @@ namespace VPlayer.AudioStorage.InfoDownloader.LRC.Clients
 
           if (fileName != null)
           {
-            var filesInDird = directory.GetFiles();
-            var filesInDir = filesInDird.Where(x => x.Name.Contains($"{fileName}")).ToList();
-
-            if (filesInDir.Count == 1)
-            {
-              return filesInDir?.FirstOrDefault();
-            }
-            else if (filesInDir.Count == 0)
-            {
-              return null;
-            }
-            else
-              throw new Exception("More files were found '" + songName + "' in '" + directory.FullName + "'");
+            var file = new FileInfo(Path.Combine(directory.FullName, fileName + extension));
+            return file.Exists ? file : null;
           }
         }
 

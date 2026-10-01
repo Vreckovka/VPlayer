@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -49,7 +49,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       Provider = lRcProvider;
 
-      AllLine = model?.Lines.Select(x => new LRCLyricLineViewModel(x)).ToList();
+      AllLine = model?.Lines?.Select(x => new LRCLyricLineViewModel(x)).ToList() ?? new List<LRCLyricLineViewModel>();
 
       if (AllLine != null)
       {
@@ -329,7 +329,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
     {
       if (AllLine.Any())
       {
-        return AllLine.Select(x => x.Text).Aggregate((x, y) => $"{x}\n{y}");
+        return string.Join("\n", AllLine.Select(x => x.Text));
       }
 
       return null;
@@ -339,77 +339,24 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     #region SetActualLine
 
-    private TimeSpan? lastTimestamp;
-    private TimeSpan? nextTimestamp;
 
     public void SetActualLine(TimeSpan timeSpan)
     {
-      if (lastTimestamp == null ||
-          (lastTimestamp <= timeSpan && nextTimestamp <= timeSpan) ||
-          (lastTimestamp > timeSpan))
-      {
-        if (ActualLine != null)
-        {
-          if (ActualLine.Model.Timestamp == TimeSpan.Zero)
-          {
-            ActualLine.IsActual = true;
-          }
-        }
+      var newLine = AllLine
+        .Where(x => x.Model.Timestamp.HasValue &&
+          x.Model.Timestamp.Value.TotalMilliseconds + TimeAdjustment <= timeSpan.TotalMilliseconds)
+        .OrderByDescending(x => x.Model.Timestamp).FirstOrDefault();
 
-        var newLine = AllLine.Where(x => x.Model.Timestamp != null &&
-                                         x.Model.Timestamp.Value.TotalMilliseconds + TimeAdjustment <= timeSpan.TotalMilliseconds).OrderByDescending(x => x.Model.Timestamp).FirstOrDefault();
+      if (ActualLine == newLine)
+        return;
 
-        if (newLine != null && ActualLine != newLine)
-        {
-          newLine.IsActual = true;
+      if (ActualLine != null)
+        ActualLine.IsActual = false;
+      ActualLine = newLine;
+      if (ActualLine != null)
+        ActualLine.IsActual = true;
 
-          if (ActualLine != null)
-            ActualLine.IsActual = false;
-
-          var oldIndex = AllLine.IndexOf(newLine);
-
-          if (oldIndex + 1 < AllLine.Count)
-          {
-            var oldTimestamp = AllLine[oldIndex].Model.Timestamp;
-
-            var nextTimestampIndex = oldIndex;
-
-            do
-            {
-              nextTimestampIndex++;
-
-              var nextLineTimestamp = AllLine[nextTimestampIndex].Model.Timestamp;
-
-              if (nextTimestampIndex < AllLine.Count && nextLineTimestamp.HasValue)
-              {
-                nextTimestamp = TimeSpan.FromMilliseconds(nextLineTimestamp.Value.TotalMilliseconds + TimeAdjustment);
-              }
-              else
-              {
-                nextTimestamp = null;
-                break;
-              }
-
-
-            } while (nextTimestamp == oldTimestamp && nextTimestampIndex + 1 < AllLine.Count);
-
-
-          }
-          else
-          {
-            nextTimestamp = null;
-          }
-
-          lastTimestamp = timeSpan;
-        }
-
-        ActualLine = newLine;
-
-        if (ActualLine != null)
-        {
-          actualLineSubject.OnNext(AllLine.IndexOf(ActualLine));
-        }
-      }
+      actualLineSubject.OnNext(ActualLine == null ? -1 : AllLine.IndexOf(ActualLine));
     }
 
     #endregion

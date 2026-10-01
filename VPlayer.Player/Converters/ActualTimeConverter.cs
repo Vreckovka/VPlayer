@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
@@ -11,14 +11,16 @@ namespace VPlayer.WindowsPlayer
         TimeSpan actualTrackDuration;
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (values[0] != DependencyProperty.UnsetValue &&
+            if (values != null && values.Length >= 2 && values[1] is TimeSpan && values[0] != DependencyProperty.UnsetValue &&
                 values[1] != DependencyProperty.UnsetValue)
             {
                 //If value changed based on Time
                 if (values[0] is TimeSpan)
                 {
                     actualTrackDuration = (TimeSpan) values[1];
-                    return (100 * ((TimeSpan)values[0]).TotalMilliseconds) / ((TimeSpan)values[1]).TotalMilliseconds;
+                    return actualTrackDuration > TimeSpan.Zero
+                      ? Math.Clamp(100 * ((TimeSpan)values[0]).TotalMilliseconds / actualTrackDuration.TotalMilliseconds, 0, 100)
+                      : 0.0;
 
                 }
                 else
