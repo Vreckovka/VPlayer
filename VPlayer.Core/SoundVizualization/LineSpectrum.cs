@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -219,61 +219,82 @@ namespace WinformsVisualization.Visualization
     }
 
     private int[] previousBarHeights;
+    private WriteableBitmap previousBitmap;
+    private int[] previousBarIndices;
+    private double previousBarWidth;
+    private double previousBarSpacing;
 
     public unsafe void UpdateSpectrumBitmap(WriteableBitmap bitmap, SpectrumPointData[] spectrumPoints, System.Drawing.Color bottomColor, System.Drawing.Color topColor)
     {
+      if (bitmap == null) throw new ArgumentNullException(nameof(bitmap));
+      if (spectrumPoints == null) throw new ArgumentNullException(nameof(spectrumPoints));
+
       int width = bitmap.PixelWidth;
       int height = bitmap.PixelHeight;
+      bool gradientChanged = spectrumGradient == null || spectrumGradientHeight != height ||
+        spectrumGradientBottomColor != bottomColor || spectrumGradientTopColor != topColor;
+
+      bool layoutChanged = previousBitmap != bitmap || previousBarHeights == null ||
+        previousBarHeights.Length != spectrumPoints.Length ||
+        previousBarWidth != BarWidth || previousBarSpacing != BarSpacing ||
+        (BarSpacing < 1 && BarWidth != Math.Floor(BarWidth));
+      if (!layoutChanged)
+        for (int i = 0; i < spectrumPoints.Length; i++)
+          if (previousBarIndices[i] != spectrumPoints[i].SpectrumPointIndex)
+          {
+            layoutChanged = true;
+            break;
+          }
 
       UpdateSpectrumGradient(height, bottomColor, topColor);
-
-      if (previousBarHeights == null || previousBarHeights.Length != spectrumPoints.Length)
+      if (layoutChanged)
+      {
         previousBarHeights = new int[spectrumPoints.Length];
+        previousBarIndices = new int[spectrumPoints.Length];
+        previousBitmap = bitmap;
+        previousBarWidth = BarWidth;
+        previousBarSpacing = BarSpacing;
+      }
 
       using (var context = bitmap.GetBitmapContext())
       {
         int* pixels = context.Pixels;
+        if (layoutChanged)
+          for (int i = 0; i < width * height; i++)
+            pixels[i] = 0;
 
         for (int i = 0; i < spectrumPoints.Length; i++)
         {
-          SpectrumPointData p = spectrumPoints[i];
-
-          int barIndex = p.SpectrumPointIndex;
-          int xStart = (int)(BarSpacing * (barIndex + 1) + BarWidth * barIndex);
+          SpectrumPointData point = spectrumPoints[i];
+          previousBarIndices[i] = point.SpectrumPointIndex;
+          int xStart = (int)(BarSpacing * (point.SpectrumPointIndex + 1) + BarWidth * point.SpectrumPointIndex);
           int xEnd = Math.Min(width, xStart + (int)Math.Ceiling(BarWidth));
-
           if (xStart < 0 || xStart >= width || xEnd <= xStart)
             continue;
 
-          int newHeight = Math.Clamp((int)(p.Value * 2 - 1), 0, height);
+          double value = point.Value * 2 - 1;
+          int newHeight = double.IsNaN(value) ? 0 : (int)Math.Clamp(value, 0, height);
           int oldHeight = previousBarHeights[i];
+          if (!gradientChanged && oldHeight == newHeight)
+            continue;
 
-          if (oldHeight > newHeight)
-          {
-            int clearStart = height - oldHeight;
-            int clearEnd = height - newHeight;
+          for (int y = height - oldHeight; y < height - newHeight; y++)
+            for (int x = xStart; x < xEnd; x++)
+              pixels[y * width + x] = 0;
 
-            for (int y = clearStart; y < clearEnd; y++)
-              for (int x = xStart; x < xEnd; x++)
-                pixels[y * width + x] = 0;
-          }
-
-          int drawStart = height - newHeight;
-
-          for (int y = drawStart; y < height; y++)
+          // Existing pixels already have the right gradient; write only newly exposed rows.
+          int drawEnd = gradientChanged ? height : height - oldHeight;
+          for (int y = height - newHeight; y < drawEnd; y++)
           {
             int offset = y * width + xStart;
             int color = spectrumGradient[y];
-
             for (int x = xStart; x < xEnd; x++)
               pixels[offset++] = color;
           }
-
           previousBarHeights[i] = newHeight;
         }
       }
     }
-
     private void UpdateSpectrumGradient(int height, System.Drawing.Color bottomColor, System.Drawing.Color topColor)
 {
 	if (spectrumGradient != null &&
@@ -393,53 +414,31 @@ namespace WinformsVisualization.Visualization
 
     private SpectrumPointData[] NormalizeData(SpectrumPointData[] data, double min, double max)
     {
-      double dataMax = data.Max(x => x.Value);
-      double dataMin = data.Min(x => x.Value);
-      double range = dataMax - dataMin;
+      if (data.Length == 0)
+        return data;
 
-      if (range != 0)
+      double dataMax = double.MinValue, dataMin = double.MaxValue;
+      for (int i = 0; i < data.Length; i++)
       {
-        if (range < 0.2)
-        {
-          for (int i = 0; i < data.Length; i++)
-          {
-            data[i].Value = data[i].Value * 500000;
-
-            while (data[i].Value < 0.1)
-            {
-              data[i].Value *= 10;
-            }
-          }
-
-          max = NormlizedDataMaxSilentValue;
-          dataMax = data.Max(x => x.Value);
-          dataMin = data.Min(x => x.Value);
-          range = dataMax - dataMin;
-        }
-
-        var normalized =
-          data.Select(d => (d.Value - dataMin) / range)
-            .Select(n => (double)((1 - n) * min + n * max))
-            .ToArray();
-
-        var normalizeSpectrum = new SpectrumPointData[data.Length];
-
-        for (int i = 0; i < data.Length; i++)
-        {
-          normalizeSpectrum[i] = new SpectrumPointData()
-          {
-            SpectrumPointIndex = data[i].SpectrumPointIndex,
-            Value = normalized[i]
-          };
-        }
-
-        return normalizeSpectrum;
-
+        if (double.IsNaN(data[i].Value) || double.IsInfinity(data[i].Value) || data[i].Value < 0)
+          data[i].Value = 0;
+        dataMax = Math.Max(dataMax, data[i].Value);
+        dataMin = Math.Min(dataMin, data[i].Value);
       }
+      double range = dataMax - dataMin;
+      if (range == 0)
+        return data;
 
+      // Uniform normalization preserves relative heights, including zero-valued bins.
+      if (range < 0.2)
+        max = NormlizedDataMaxSilentValue;
+      for (int i = 0; i < data.Length; i++)
+      {
+        double normalized = (data[i].Value - dataMin) / range;
+        data[i].Value = (1 - normalized) * min + normalized * max;
+      }
       return data;
     }
-
     #endregion
 
     #region UpdateFrequencyMapping

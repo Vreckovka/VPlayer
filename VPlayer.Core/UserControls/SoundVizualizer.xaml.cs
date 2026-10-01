@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -58,47 +58,74 @@ namespace VPlayer.Player.UserControls
 
       this.Loaded += SoundVizualizer_Loaded;
 
-      SpektrumAnalyzer.OnFFtTick += SpektrumAnalyzer_OnFFtTick;
+      this.Unloaded += SoundVizualizer_Unloaded;
+      this.IsVisibleChanged += (sender, args) => UpdateRenderingState();
+      this.IsEnabledChanged += (sender, args) => UpdateRenderingState();
     }
     #endregion
+    private bool isControlLoaded;
+    private volatile bool acceptsSpectrumFrames;
+    private float[] spectrumFftBuffer;
+
     private void SoundVizualizer_Loaded(object sender, RoutedEventArgs e)
     {
+      if (isControlLoaded) return;
       AssignSpectrum();
+      isControlLoaded = true;
+      UpdateRenderingState();
+      SpektrumAnalyzer.OnFFtTick += SpektrumAnalyzer_OnFFtTick;
     }
 
-    private int _spectrumRenderInProgress;
-
-    private void SpektrumAnalyzer_OnFFtTick(object sender, float[] e)
+    private void SoundVizualizer_Unloaded(object sender, RoutedEventArgs e)
     {
-      if (Interlocked.CompareExchange(ref spectrumRenderInProgress, 1, 0) != 0)
+      acceptsSpectrumFrames = false;
+      if (!isControlLoaded) return;
+      isControlLoaded = false;
+      SpektrumAnalyzer.OnFFtTick -= SpektrumAnalyzer_OnFFtTick;
+    }
+
+    private void UpdateRenderingState()
+    {
+      acceptsSpectrumFrames = isControlLoaded && IsVisible && IsEnabled && width > 0 && height > 0;
+    }
+
+    private void SpektrumAnalyzer_OnFFtTick(object sender, float[] data)
+    {
+      if (!acceptsSpectrumFrames || data == null ||
+          Interlocked.CompareExchange(ref spectrumRenderInProgress, 1, 0) != 0)
         return;
 
-      float[] fftData = (float[])e.Clone();
-
-      VSynchronizationContext.PostOnUIThread(async () =>
+      try
       {
-        try
+        if (spectrumFftBuffer == null || spectrumFftBuffer.Length != data.Length)
+          spectrumFftBuffer = new float[data.Length];
+        Array.Copy(data, spectrumFftBuffer, data.Length);
+
+        Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() =>
         {
-          if (!IsEnabled || lineSpectrum == null || Visibility != Visibility.Visible)
-            return;
-
-          EnsureSpectrumBitmap();
-
-          var spectrumPoints = await Task.Run(() =>
+          try
           {
-            return lineSpectrum.CalculateSpectrumLineData(fftData, new System.Drawing.Size(width, height));
-          });
+            if (!acceptsSpectrumFrames || lineSpectrum == null)
+              return;
 
-          if (spectrumPoints != null)
-            lineSpectrum.UpdateSpectrumBitmap(spectrumBitmap, spectrumPoints, bottomColor, topColor);
-        }
-        finally
-        {
-          Volatile.Write(ref spectrumRenderInProgress, 0);
-        }
-      });
+            EnsureSpectrumBitmap();
+            // Serialize calculation with WPF property changes and bitmap resizing.
+            var points = lineSpectrum.CalculateSpectrumLineData(spectrumFftBuffer, new System.Drawing.Size(width, height));
+            if (points != null)
+              lineSpectrum.UpdateSpectrumBitmap(spectrumBitmap, points, bottomColor, topColor);
+          }
+          finally
+          {
+            Volatile.Write(ref spectrumRenderInProgress, 0);
+          }
+        }));
+      }
+      catch
+      {
+        Volatile.Write(ref spectrumRenderInProgress, 0);
+        throw;
+      }
     }
-
     private WriteableBitmap spectrumBitmap;
     private int spectrumRenderInProgress;
     private void EnsureSpectrumBitmap()
@@ -236,7 +263,7 @@ namespace VPlayer.Player.UserControls
         {
           if (x is SoundVizualizer soundVizualizer)
           {
-            var barWidth = (double)y.NewValue;
+            var barWidth = (double?)y.NewValue;
 
             if (soundVizualizer?.lineSpectrum != null)
               soundVizualizer.lineSpectrum.MinimumBarWidth = barWidth;
@@ -263,7 +290,8 @@ namespace VPlayer.Player.UserControls
           if (x is SoundVizualizer soundVizualizer)
           {
             var use = (bool)y.NewValue;
-            soundVizualizer.lineSpectrum.AutomaticBarCountCalculation = use;
+            if (soundVizualizer.lineSpectrum != null)
+              soundVizualizer.lineSpectrum.AutomaticBarCountCalculation = use;
           }
         }));
 
@@ -280,7 +308,7 @@ namespace VPlayer.Player.UserControls
 
     public static readonly DependencyProperty MaxFrequencyProperty =
       DependencyProperty.Register(
-        nameof(MaxFrequencyProperty),
+        nameof(MaxFrequency),
         typeof(int),
         typeof(SoundVizualizer),
         new PropertyMetadata(20000, (x, y) =>
@@ -420,6 +448,7 @@ namespace VPlayer.Player.UserControls
     {
       width = (int)e.NewSize.Width;
       height = (int)e.NewSize.Height;
+      UpdateRenderingState();
     }
 
     #endregion
@@ -431,6 +460,7 @@ namespace VPlayer.Player.UserControls
       lineSpectrum = new LineSpectrum()
       {
         UseAverage = true,
+        AutomaticBarCountCalculation = UseAutomaticBarCountCalculation,
         BarCount = NumberOfColumns,
         BarSpacing = 2,
         IsXLogScale = true,
