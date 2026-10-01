@@ -40,6 +40,7 @@ namespace VPLayer.Domain.Diagnostics
         var types=new List<string>();
         for(var current=exception;current!=null;current=current.InnerException) types.Add(current.GetType().FullName);
         failure=string.Join(" -> ",types);
+        File.WriteAllText(Path.GetFullPath(output)+".failure.log",exception.ToString());
         Write(status,failure);
       }
     }

@@ -11,17 +11,18 @@ Prepare once:
 
 Measure before changing an implementation:
 
-    pwsh -File performance/run.ps1 -Mode baseline
+    pwsh -File performance/run.ps1 -Mode baseline -Visible
 
 Measure the same fixture after a verified change:
 
-    pwsh -File performance/run.ps1 -Mode optimized
+    pwsh -File performance/run.ps1 -Mode optimized -Visible
 
 Use Release x64, the same machine/runtime/power settings, and no concurrent builds or tests.
 Do not compare runs with different fixture checksums, workloads, build configurations, or runtimes.
 The first sample is recorded separately; later samples report median and p95.
 Fresh application processes are measured through the first main-window ContentRendered event.
 OS disk caches are not cleared: these are fresh-process measurements, not cold-disk measurements.
+Use the same window mode for both runs. Visible launches are authorized for this project; other users should explicitly authorize them before an agent opens windows.
 First render does not mean all asynchronous libraries or services are ready.
 
 Startup uses a separate writable copy per launch through VPLAYER_BENCHMARK_DIRECTORY,
