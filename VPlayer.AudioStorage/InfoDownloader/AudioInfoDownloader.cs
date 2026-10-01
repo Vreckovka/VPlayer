@@ -1,4 +1,4 @@
-﻿using Hqub.MusicBrainz.API;
+using Hqub.MusicBrainz.API;
 using Hqub.MusicBrainz.API.Entities;
 using Newtonsoft.Json.Linq;
 using Ninject;
@@ -62,7 +62,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
                                "for more information.";
 
     private string meta = "recordings+releases+tracks";
-    private string[] supportedItems = new string[] { "*.mp3", "*.flac", ".mp4a", "*.ogg", "*.wav" };
+    private string[] supportedItems = new string[] { "*.mp3", "*.flac", "*.m4a", "*.mp4a", "*.ogg", "*.wav" };
 
     #endregion Fields
 
@@ -203,7 +203,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
         DirectoryInfo d = new DirectoryInfo(directoryPath);
 
-        FileInfo[] files = supportedItems.SelectMany(ext => d.GetFiles(ext)).ToArray();
+        FileInfo[] files = VPlayer.AudioStorage.DataLoader.MediaFileDiscovery.EnumerateFiles(directoryPath, supportedItems, false).ToArray();
 
         if (getSubDirectories)
         {
@@ -1224,7 +1224,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
       if (!subDirectories)
       {
         DirectoryInfo d = new DirectoryInfo(path); //Assuming Test is your Folder
-        FileInfo[] Files = supportedItems.SelectMany(ext => d.GetFiles(ext)).ToArray(); //Getting Text files
+        FileInfo[] Files = VPlayer.AudioStorage.DataLoader.MediaFileDiscovery.EnumerateFiles(path, supportedItems, false).ToArray(); //Getting Text files
 
         foreach (FileInfo file in Files)
         {

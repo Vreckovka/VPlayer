@@ -40,6 +40,27 @@ namespace VPlayer.AudioStorage.DataLoader
 
   public class DataLoader
   {
+    private static readonly Regex[] episodePatterns = new[]
+    {
+      new Regex(@"s(?<season>\d{1,2})e(?<episode>\d{1,2})", RegexOptions.Compiled | RegexOptions.CultureInvariant),
+      new Regex(@"s(?<season>\d{1,2})xe(?<episode>\d{1,2})", RegexOptions.Compiled | RegexOptions.CultureInvariant),
+      new Regex(@"(?<!\d)(?<season>\d{1,2})x(?<episode>\d{1,2})(?!\d)", RegexOptions.Compiled | RegexOptions.CultureInvariant),
+      new Regex(@"\[(?<season>\d{1,2})\.(?<episode>\d{1,2})\]", RegexOptions.Compiled | RegexOptions.CultureInvariant),
+      new Regex(@"\[(?<season>\d{1,2})\.(?<episode>\d{1,2})-(?<concatEpisode>\d{1,2})\]", RegexOptions.Compiled | RegexOptions.CultureInvariant),
+      new Regex(@"(?<season>\D\d{1,2})-(?<episode>\d{1,2}(?:\D|)$)", RegexOptions.Compiled | RegexOptions.CultureInvariant),
+      new Regex(@"- (?<episode>\b\d+\b)", RegexOptions.Compiled | RegexOptions.CultureInvariant),
+      new Regex(@"\(e(?<episode>\d+)\)", RegexOptions.Compiled | RegexOptions.CultureInvariant),
+    };
+
+    private static readonly Regex[] yearPatterns = new[]
+    {
+      new Regex(@"\((?<year>\d+)\)", RegexOptions.Compiled | RegexOptions.CultureInvariant),
+      new Regex(@"\s(?<year>\d+)\s", RegexOptions.Compiled | RegexOptions.CultureInvariant),
+      new Regex(@"\.(?<year>\d+)\.", RegexOptions.Compiled | RegexOptions.CultureInvariant),
+      new Regex(@"\.(?<year>\d+)", RegexOptions.Compiled | RegexOptions.CultureInvariant),
+      new Regex(@"\s(?<year>\d+)", RegexOptions.Compiled | RegexOptions.CultureInvariant),
+    };
+
     private readonly IStatusManager statusManager;
     private Dictionary<DataType, List<string>> supportedItems = new Dictionary<DataType, List<string>>();
 
@@ -47,6 +68,7 @@ namespace VPlayer.AudioStorage.DataLoader
     {
       this.statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
 
+      supportedItems.Add(DataType.Audio, new List<string> { "*.mp3", "*.flac", "*.m4a", "*.mp4a", "*.ogg", "*.wav" });
       supportedItems.Add(DataType.Video, new List<string>()
       {
         "*.avi", "*.mkv", "*.mp4"
@@ -71,32 +93,10 @@ namespace VPlayer.AudioStorage.DataLoader
 
     #region LoadData
 
-    private List<FileInfo> LoadData(List<string> fileTypes, string directoryPath, bool getSubDirectories, List<FileInfo> aggregatedFileInfos = null)
+    private List<FileInfo> LoadData(List<string> fileTypes, string directoryPath, bool getSubDirectories)
     {
-      if (aggregatedFileInfos == null)
-      {
-        aggregatedFileInfos = new List<FileInfo>();
-      }
-
-      DirectoryInfo d = new DirectoryInfo(directoryPath);
-
-      FileInfo[] files = fileTypes.SelectMany(ext => d.GetFiles(ext)).ToArray();
-
-      if (getSubDirectories)
-      {
-        var subDirectories = Directory.GetDirectories(directoryPath);
-
-        foreach (var directory in subDirectories)
-        {
-          aggregatedFileInfos.AddRange(LoadData(fileTypes, directory, true));
-        }
-      }
-
-      aggregatedFileInfos.AddRange(files);
-
-      return aggregatedFileInfos;
+      return MediaFileDiscovery.EnumerateFiles(directoryPath, fileTypes, getSubDirectories).ToList();
     }
-
     #endregion
 
     #region LoadTvShow
@@ -189,31 +189,13 @@ namespace VPlayer.AudioStorage.DataLoader
     public static TvShowEpisodeNumbers GetTvShowSeriesNumber(string name)
     {
       if (string.IsNullOrWhiteSpace(name)) return null;
-      List<string> regexExpressions = new List<string>()
-      {
-        //S01E01
-        @"s(?<season>\d{1,2})e(?<episode>\d{1,2})",
-        //S01xE01
-        @"s(?<season>\d{1,2})xe(?<episode>\d{1,2})",
-        //01x01
-        @"(?<!\d)(?<season>\d{1,2})x(?<episode>\d{1,2})(?!\d)",
-        //[1.01]
-        @"\[(?<season>\d{1,2})\.(?<episode>\d{1,2})\]",
-        //[1.01-02]
-        @"\[(?<season>\d{1,2})\.(?<episode>\d{1,2})-(?<concatEpisode>\d{1,2})\]",
-        //1-1
-        @"(?<season>\D\d{1,2})-(?<episode>\d{1,2}(?:\D|)$)",
-        //Only episode
-        @"- (?<episode>\b\d+\b)",
-        //Only episode
-        @"\(e(?<episode>\d+)\)",
-      };
+      var loweredName = name.ToLowerInvariant();
 
-      foreach (var regexExpression in regexExpressions)
+      foreach (var regex in episodePatterns)
       {
-        Regex regex = new Regex(regexExpression);
+        var regexExpression = regex.ToString();
 
-        Match match = regex.Match(name.ToLower());
+        Match match = regex.Match(loweredName);
 
         if (match.Success)
         {
@@ -236,7 +218,7 @@ namespace VPlayer.AudioStorage.DataLoader
 
           if (episodeNumber != null || seasonNumber != null)
           {
-            var split = name.ToLower().Split(match.Groups[0].Value);
+            var split = loweredName.Split(match.Groups[0].Value);
             var parsedName = split[0];
 
             if (string.IsNullOrEmpty(parsedName) && split.Length > 1)
@@ -247,7 +229,7 @@ namespace VPlayer.AudioStorage.DataLoader
               }
               else
               {
-                parsedName = new Regex(@"(?<season>\d{1,2})x(?<episode>\d{1,2}) (?<tvshow>.*?) ")?.Match(name.ToLower())?.Groups["tvshow"].Value;;
+                parsedName = new Regex(@"(?<season>\d{1,2})x(?<episode>\d{1,2}) (?<tvshow>.*?) ")?.Match(loweredName)?.Groups["tvshow"].Value;;
               }
             }
 
@@ -277,25 +259,13 @@ namespace VPlayer.AudioStorage.DataLoader
     public static YearNumbers GetYear(string name)
     {
       if (string.IsNullOrWhiteSpace(name)) return null;
-      List<string> regexExpressions = new List<string>()
-      {
-        //Movie (2001)
-        @"\((?<year>\d+)\)",
-        //Movie 2001 asdasd
-        @"\s(?<year>\d+)\s",
-        //Movie.2001.asd
-        @"\.(?<year>\d+)\.",
-        //Movie.2001
-        @"\.(?<year>\d+)",
-        //Movie 2001
-        @"\s(?<year>\d+)",
-      };
+      var loweredName = name.ToLowerInvariant();
 
-      foreach (var regexExpression in regexExpressions)
+      foreach (var regex in yearPatterns)
       {
-        Regex regex = new Regex(regexExpression);
+        var regexExpression = regex.ToString();
 
-        Match match = regex.Match(name.ToLower());
+        Match match = regex.Match(loweredName);
 
         if (match.Success)
         {
@@ -311,7 +281,7 @@ namespace VPlayer.AudioStorage.DataLoader
 
           if (yearNumber != null)
           {
-            var split = name.ToLower().Split(match.Groups[0].Value);
+            var split = loweredName.Split(match.Groups[0].Value);
             var parsedName = split[0];
 
             CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
