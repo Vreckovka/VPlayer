@@ -113,7 +113,20 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     #endregion
 
-    public List<LRCLyricLineViewModel> AllLine { get; set; }
+    private List<LRCLyricLineViewModel> allLine;
+    private LyricsTimeline timeline;
+    private int timelineLineCount;
+    public List<LRCLyricLineViewModel> AllLine
+    {
+      get => allLine;
+      set
+      {
+        allLine = value ?? new List<LRCLyricLineViewModel>();
+        timeline = null;
+      }
+    }
+
+    public void InvalidateTimeline() => timeline = null;
     public VirtualList<LRCLyricLineViewModel> LinesView { get; }
 
     #region LyricsColor
@@ -291,6 +304,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
       {
 
         Model.Lines.ForEach(x => x.Timestamp += TimeSpan.FromMilliseconds(TimeAdjustment));
+        InvalidateTimeline();
 
         VSynchronizationContext.PostOnUIThread(() => { IsLoading = true; UpdateStatus = null; });
 
@@ -342,11 +356,13 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     public void SetActualLine(TimeSpan timeSpan)
     {
-      var newLine = AllLine
-        .Where(x => x.Model.Timestamp.HasValue &&
-          x.Model.Timestamp.Value.TotalMilliseconds + TimeAdjustment <= timeSpan.TotalMilliseconds)
-        .OrderByDescending(x => x.Model.Timestamp).FirstOrDefault();
-
+      if (timeline == null || timelineLineCount != AllLine.Count)
+      {
+        timeline = new LyricsTimeline(AllLine.Select(x => x.Model.Timestamp));
+        timelineLineCount = AllLine.Count;
+      }
+      var index = timeline.FindIndex(timeSpan.TotalMilliseconds - TimeAdjustment);
+      var newLine = index < 0 ? null : AllLine[index];
       if (ActualLine == newLine)
         return;
 
@@ -356,7 +372,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
       if (ActualLine != null)
         ActualLine.IsActual = true;
 
-      actualLineSubject.OnNext(ActualLine == null ? -1 : AllLine.IndexOf(ActualLine));
+      actualLineSubject.OnNext(index);
     }
 
     #endregion
