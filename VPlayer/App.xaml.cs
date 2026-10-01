@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics;
@@ -38,6 +38,7 @@ using VPlayer.Providers;
 using VPlayer.UPnP.Modularity;
 using VPlayer.ViewModels;
 using VPlayer.Views;
+using VPLayer.Domain.Diagnostics;
 
 
 namespace VPlayer
@@ -55,9 +56,15 @@ namespace VPlayer
 
     protected override void LoadModules()
     {
+      using var measurement = StartupMeasurements.Measure("Application / module registration");
       base.LoadModules();
 
       Kernel.Load<VPlayerNinjectModule>();
+
+      var benchmarkDirectory = Environment.GetEnvironmentVariable("VPLAYER_BENCHMARK_DIRECTORY");
+      if (!string.IsNullOrWhiteSpace(benchmarkDirectory))
+        Kernel.Rebind<ISettingsProvider>().To<SettingsProvider>().InSingletonScope()
+          .WithConstructorArgument("settingsPath", Path.Combine(Path.GetFullPath(benchmarkDirectory), "settings", "settings.txt"));
 
       Kernel.Rebind<IWindowManager>().To<VPlayerWindowManager>();
 
@@ -72,15 +79,40 @@ namespace VPlayer
 
     public override void Initialize()
     {
+      using var measurement = StartupMeasurements.Measure("Application / initialization");
       base.Initialize();
 
-      CvInvoke.Init();
+      using (StartupMeasurements.Measure("Application / OpenCV native initialization")) CvInvoke.Init();
     }
 
+    protected override void OnInitialized()
+    {
+      using var measurement = StartupMeasurements.Measure("Application / show shell");
+      base.OnInitialized();
+    }
+    protected override Window CreateShell()
+    {
+      using var measurement = StartupMeasurements.Measure("Application / shell construction");
+      var window = base.CreateShell();
+      if (StartupMeasurements.Enabled)
+      {
+        EventHandler rendered = null;
+        rendered = (sender, args) =>
+        {
+          window.ContentRendered -= rendered;
+          StartupMeasurements.Complete();
+          if (Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_EXIT_AFTER_RENDER") == "1")
+            Dispatcher.BeginInvoke(new Action(() => Shutdown()));
+        };
+        window.ContentRendered += rendered;
+      }
+      return window;
+    }
     #region LoadSettings
 
     private void LoadSettings()
     {
+      using var measurement = StartupMeasurements.Measure("Application / settings");
       var provider = Container.Resolve<ISettingsProvider>();
 
       var settings = new Dictionary<string, SettingParameters>()
@@ -108,6 +140,7 @@ namespace VPlayer
 
     protected override void OnContainerCreated()
     {
+      using var measurement = StartupMeasurements.Measure("Application / container activation");
       base.OnContainerCreated();
 
       var keyListener = Container.Resolve<KeyListener>();
@@ -124,6 +157,12 @@ namespace VPlayer
     private IStatusManager statusManager;
     protected override void OnUnhandledExceptionCaught(Exception exception)
     {
+      StartupMeasurements.Fail(exception);
+      if (StartupMeasurements.Enabled)
+      {
+        Dispatcher.BeginInvoke(new Action(() => Shutdown(1)));
+        return;
+      }
       base.OnUnhandledExceptionCaught(exception);
 
       VSynchronizationContext.PostOnUIThread(() =>
@@ -163,6 +202,23 @@ namespace VPlayer
 
   public partial class App : VPlayerApplication
   {
+    public App()
+    {
+      if (StartupMeasurements.Enabled)
+      {
+        StartupMeasurements.Start();
+        DispatcherUnhandledException += (sender, args) =>
+        {
+          StartupMeasurements.Fail(args.Exception);
+          args.Handled = true;
+          Dispatcher.BeginInvoke(new Action(() => Shutdown(1)));
+        };
+        AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+        {
+          if (args.ExceptionObject is Exception exception) StartupMeasurements.Fail(exception);
+        };
+      }
+    }
 
   }
 }

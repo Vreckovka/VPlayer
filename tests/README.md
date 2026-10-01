@@ -16,3 +16,6 @@ and silently discovers zero tests when its fallback .NET Framework adapter is se
 Tests use isolated temporary directories and SQLite contexts. They do not use the user's
 media library, database, audio device, or live cloud services. Test results must show an
 executed, nonzero test count; a successful build or a zero-test run is insufficient.
+
+The repeatable worst-case performance runner and baseline/optimized comparison protocol are
+documented in ../performance/README.md. Feature performance results are separate from unit tests.

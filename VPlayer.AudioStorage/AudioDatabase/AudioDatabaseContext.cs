@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.DirectoryServices.AccountManagement;
 using System.IO;
@@ -82,7 +82,11 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-      var directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VPlayer");
+      var directory = Environment.GetEnvironmentVariable("VPLAYER_BENCHMARK_DIRECTORY");
+      if (string.IsNullOrWhiteSpace(directory))
+        directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VPlayer");
+      else
+        directory = Path.GetFullPath(directory);
 
       if (!Directory.Exists(directory))
       {

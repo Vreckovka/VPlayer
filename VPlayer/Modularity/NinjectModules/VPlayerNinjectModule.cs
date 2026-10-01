@@ -1,4 +1,4 @@
-﻿using System.Configuration;
+using System.Configuration;
 using System.Data.Common;
 using System.Reflection;
 using Ninject;
@@ -48,12 +48,12 @@ namespace VPlayer.Modularity.NinjectModules
           .WithConstructorArgument(ConfigurationManager.AppSettings["PCloudPath"])
           .OnActivation(x => x.Initilize());
 
-        Kernel.Load<VPlayerCoreModule>();
+        using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Application / VPlayerCoreModule")) Kernel.Load<VPlayerCoreModule>();
 
-        Kernel.Load<IPTVModule>();
-        Kernel.Load<UPnPNinjectModule>();
+        using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Application / IPTVModule")) Kernel.Load<IPTVModule>();
+        using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Application / UPnPNinjectModule")) Kernel.Load<UPnPNinjectModule>();
 
-        Kernel.Load<WindowsPlayerNinjectModule>();
+        using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Application / WindowsPlayerNinjectModule")) Kernel.Load<WindowsPlayerNinjectModule>();
 
         Kernel.BindToSelfInSingletonScope<PlayerViewModel>();
         

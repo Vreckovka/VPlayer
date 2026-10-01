@@ -1,4 +1,4 @@
-﻿using Ninject;
+using Ninject;
 using Ninject.Activation;
 using Ninject.Activation.Strategies;
 using VCore.Standard.Modularity.NinjectModules;
@@ -15,7 +15,7 @@ namespace VPlayer.WindowsPlayer.Modularity.NinjectModule
 
     public override void Load()
     {
-      Kernel.Load<LibraryNinjectModule>();
+      using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Application / library module")) Kernel.Load<LibraryNinjectModule>();
 
       base.Load();
     }
@@ -28,8 +28,12 @@ namespace VPlayer.WindowsPlayer.Modularity.NinjectModule
       Kernel.Bind<MusicPlayerViewModel>().ToSelf().InSingletonScope();
       Kernel.Bind<WindowsIPTVPlayer>().ToSelf().InSingletonScope();
 
-      var videoPlayerViewModel = Kernel.Get<VideoPlayerViewModel>();
-      var musicPlayerViewModel = Kernel.Get<MusicPlayerViewModel>();
+      VideoPlayerViewModel videoPlayerViewModel;
+      using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Application / video player activation"))
+        videoPlayerViewModel = Kernel.Get<VideoPlayerViewModel>();
+      MusicPlayerViewModel musicPlayerViewModel;
+      using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Application / music player activation"))
+        musicPlayerViewModel = Kernel.Get<MusicPlayerViewModel>();
       //var tvPlayerViewModel = Kernel.Get<WindowsIPTVPlayer>();
 
       Kernel.Bind<IPlayableRegionViewModel>().ToConstant(videoPlayerViewModel);
