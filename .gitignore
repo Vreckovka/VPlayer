@@ -259,3 +259,6 @@ paket-files/
 __pycache__/
 *.pyc
 /VCore
+
+# Local CodeGraph index
+.codegraph/

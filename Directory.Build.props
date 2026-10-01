@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <!-- All application projects target .NET Core, which does not use .NET Framework binding redirects.
+         The legacy Microsoft.Bcl.Build task cannot run inside dotnet MSBuild. -->
+    <SkipEnsureBindingRedirects>true</SkipEnsureBindingRedirects>
+  </PropertyGroup>
+</Project>
