@@ -96,7 +96,17 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
     public Task UpdateItem(dynamic item)
     {
-      return UpdateItem(item);
+      switch ((object)item)
+      {
+        case Artist artist:
+          return UpdateItem(artist);
+        case Album album:
+          return UpdateItem(album);
+        case null:
+          throw new ArgumentNullException(nameof(item));
+        default:
+          throw new ArgumentException("Only artists and albums can be updated.", nameof(item));
+      }
     }
 
     private Task UpdateItem(DomainClasses.Artist artist)
@@ -169,10 +179,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
       audioInfo = GetAudioInfoByWindowsAsync(path);
 
       if (audioInfo == null ||
-          (audioInfo.Artist == null &&
-           audioInfo.Album == null &&
-           audioInfo.Artist == "" &&
-           audioInfo.Album == ""))
+          (string.IsNullOrWhiteSpace(audioInfo.Artist) && string.IsNullOrWhiteSpace(audioInfo.Album)))
       {
         var fingerPrintAudioInfo = GetAudioInfoByFingerPrint(path);
 
@@ -1380,7 +1387,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
     /// Return audio info by fingerPrint
     /// <param name="path"></param>
     /// </summary>
-    public AudioInfo GetAudioInfoByFingerPrint(string path, AudioInfo pAudioInfo = null)
+    public virtual AudioInfo GetAudioInfoByFingerPrint(string path, AudioInfo pAudioInfo = null)
     {
       try
       {
@@ -1514,7 +1521,7 @@ namespace VPlayer.AudioStorage.InfoDownloader
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
-    public AudioInfo GetAudioInfoByWindowsAsync(string path)
+    public virtual AudioInfo GetAudioInfoByWindowsAsync(string path)
     {
       var musicProp = GetAudioWindowsPropertiesAsync(path);
 
@@ -1712,3 +1719,4 @@ namespace VPlayer.AudioStorage.InfoDownloader
 
   }
 }
+
