@@ -12,7 +12,6 @@ using VCore.Standard;
 using VCore.Standard.Helpers;
 using VCore.WPF;
 using VCore.WPF.Interfaces.Managers;
-using VCore.WPF.ItemsCollections.VirtualList.VirtualLists;
 using VCore.WPF.LRC;
 using VCore.WPF.LRC.Domain;
 using VCore.WPF.Misc;
@@ -76,7 +75,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
         }
       }
 
-      LinesView = new VirtualList<LRCLyricLineViewModel>(AllLine, 5);
+
 
 
     }
@@ -127,7 +126,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
     }
 
     public void InvalidateTimeline() => timeline = null;
-    public VirtualList<LRCLyricLineViewModel> LinesView { get; }
+    public IReadOnlyList<LRCLyricLineViewModel> LinesView => AllLine;
 
     #region LyricsColor
 

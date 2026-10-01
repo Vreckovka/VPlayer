@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -18,8 +18,6 @@ using VCore;
 using VCore.ItemsCollections;
 using VCore.Standard.Factories.ViewModels;
 using VCore.WPF;
-using VCore.WPF.ItemsCollections.VirtualList;
-using VCore.WPF.ItemsCollections.VirtualList.VirtualLists;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.ViewModels.Artists;
@@ -149,59 +147,42 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
     {
       return Observable.FromAsync(async () =>
       {
-        return await Task.Run(async () =>
+        await semaphoreSlim.WaitAsync().ConfigureAwait(false);
+        try
+        {
+          if (WasLoaded) return true;
+
+          var vms = await Task.Run(async () =>
           {
-            try
-            {
-              await semaphoreSlim.WaitAsync().ConfigureAwait(false);
-
-              if (!WasLoaded)
-              {
-                List<TModel> data;
-                if (optionalQuery == null)
-                  //Need Enumerable for ViewModelsFactory.Create
-                  data = await LoadQuery.ToListAsync();
-                else
-                  data = await optionalQuery.ToListAsync();
-
-                var vms = data.Select(x => ViewModelsFactory.Create<TViewModel>(x)).ToList();
-
-                Items = new RxObservableCollection<TViewModel>(vms);
-
-                if(MaxTake != null)
-                {
-                  FilteredItemsCollection = new ObservableCollection<TViewModel>(vms.Take(MaxTake.Value));
-                }
-                else
-                {
-                  FilteredItemsCollection = new ObservableCollection<TViewModel>(vms);
-                }
-             
-
-                Items.CollectionChanged += Items_CollectionChanged;
-                Recreate();
-
-                WasLoaded = true;
-
-                Task.Run(() => DataLoadedCallback?.Invoke());
-              }
-
-              return true;
-
-            }
-            catch (Exception ex)
-            {
-              logger.Log(ex);
-              return false;
-            }
-            finally
-            {
-              semaphoreSlim.Release();
-            }
+            var data = await (optionalQuery ?? LoadQuery).ToListAsync().ConfigureAwait(false);
+            return data.Select(x => ViewModelsFactory.Create<TViewModel>(x)).ToList();
           }).ConfigureAwait(false);
+
+          await VSynchronizationContext.InvokeOnDispatcherAsync(() =>
+          {
+            Items = new RxObservableCollection<TViewModel>(vms);
+            FilteredItemsCollection = new ObservableCollection<TViewModel>(
+              MaxTake.HasValue ? vms.Take(MaxTake.Value) : vms);
+            Items.CollectionChanged += Items_CollectionChanged;
+            Recreate();
+            WasLoaded = true;
+          }).ConfigureAwait(false);
+
+          // Existing callbacks may perform database queries; keep those off the UI thread.
+          await Task.Run(() => DataLoadedCallback?.Invoke()).ConfigureAwait(false);
+          return true;
+        }
+        catch (Exception ex)
+        {
+          logger.Log(ex);
+          return false;
+        }
+        finally
+        {
+          semaphoreSlim.Release();
+        }
       });
     }
-
     private void Items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
     }
@@ -349,19 +330,9 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
     {
       if (Items != null)
       {
-        ItemsGenerator<TViewModel> generator = null;
-
-        if (MaxTake != null)
-        {
-          generator = new ItemsGenerator<TViewModel>(Items.OrderBy(x => x?.Name).Take(MaxTake.Value), 21);
-        }
-        else
-        {
-          generator = new ItemsGenerator<TViewModel>(Items.OrderBy(x => x?.Name), 21);
-        }
-
-        FilteredItems = new VirtualList<TViewModel>(generator);
-
+        var sorted = Items.OrderBy(x => x?.Name);
+        var snapshot = MaxTake.HasValue ? sorted.Take(MaxTake.Value).ToArray() : sorted.ToArray();
+        FilteredItems = snapshot;
         recreateSubject.OnNext(Unit.Default);
       }
     }
@@ -374,7 +345,13 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
     {
       if (!string.IsNullOrEmpty(predicated))
       {
-        FilteredItems = Items.Where(x => x.Name.ToLower().Contains(predicated) || x.Name.Similarity(predicated) > 0.8);
+        var normalized = predicated.ToLowerInvariant();
+        FilteredItems = ((IEnumerable<TViewModel>)Items ?? Enumerable.Empty<TViewModel>()).Where(x =>
+        {
+          var name = x?.Name;
+          return name != null && (name.IndexOf(predicated, StringComparison.OrdinalIgnoreCase) >= 0 ||
+            name.ToLowerInvariant().Similarity(normalized) > 0.8);
+        }).ToList();
         FilteredItemsCollection = new ObservableCollection<TViewModel>(FilteredItems);
       }
       else
@@ -398,8 +375,11 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
       {
         serialDisposable.Disposable = Observable.Timer(TimeSpan.FromMilliseconds(dueTime)).Subscribe((x) =>
         {
-          stopwatchReloadVirtulizedPlaylist = null;
-          Recreate();
+          VSynchronizationContext.PostOnUIThread(() =>
+          {
+            stopwatchReloadVirtulizedPlaylist = null;
+            Recreate();
+          });
         });
 
         if (stopwatchReloadVirtulizedPlaylist == null || stopwatchReloadVirtulizedPlaylist.ElapsedMilliseconds > dueTime)

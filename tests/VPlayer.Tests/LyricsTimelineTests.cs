@@ -10,6 +10,13 @@ namespace VPlayer.Tests
   public class LyricsTimelineTests
   {
     [Fact]
+    public void DisplayEnumerationContainsEveryLineIncludingFirst()
+    {
+      var lyrics=LyricsTests.Create(0,10,20);
+      Assert.Equal(lyrics.AllLine,lyrics.LinesView.ToArray());
+      Assert.Same(lyrics.AllLine[0],lyrics.LinesView.First());
+    }
+    [Fact]
     public void DuplicateTimestampsUseFirstDisplayOccurrence()
     {
       var lyrics = LyricsTests.Create(0,10,10,20);
