@@ -117,7 +117,12 @@ namespace VPlayer
               }
               await Dispatcher.InvokeAsync(() => window.UpdateLayout(), System.Windows.Threading.DispatcherPriority.ContextIdle);
               StartupMeasurements.RecordProcessMilestone("Application / initial playlist view ready");
+              var playlistList = FindPlaylistList(window);
+              StartupMeasurements.RecordObservation("UI / grouped playlist items", playlistList.Items.Count);
+              StartupMeasurements.RecordObservation("UI / realized playlist rows", CountPlaylistRows(playlistList));
               CaptureBenchmarkWindow(window, ".ready.png");
+              if (Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_SCROLL_PLAYLISTS") == "1")
+                await BenchmarkPlaylistScroll(window, playlistList);
             }
           }
           catch (Exception exception)
@@ -133,6 +138,52 @@ namespace VPlayer
         window.ContentRendered += rendered;
       }
       return window;
+    }
+    private static async Task BenchmarkPlaylistScroll(Window window, ListView list)
+    {
+      var target = list.Items.Cast<VPlayer.Home.ViewModels.SongsPlaylistViewModel>().Last(item => item.IsUserCreated);
+      using (StartupMeasurements.Measure("UI / grouped playlists / scroll to last favorite"))
+      {
+        list.ScrollIntoView(target);
+        var deadline = Stopwatch.StartNew();
+        ListViewItem row;
+        do
+        {
+          await window.Dispatcher.InvokeAsync(() => window.UpdateLayout(), System.Windows.Threading.DispatcherPriority.ContextIdle);
+          row = list.ItemContainerGenerator.ContainerFromItem(target) as ListViewItem;
+          row?.BringIntoView();
+          if (deadline.Elapsed > TimeSpan.FromSeconds(10)) throw new TimeoutException("Last favorite row did not enter the viewport.");
+          await Task.Delay(16);
+        } while (row == null || !IsRowInViewport(row));
+      }
+      StartupMeasurements.RecordObservation("UI / realized playlist rows after scroll", CountPlaylistRows(list));
+      StartupMeasurements.RecordObservation("UI / last favorite visible", 1);
+      CaptureBenchmarkWindow(window, ".scrolled.png");
+    }
+    private static bool IsRowInViewport(FrameworkElement row)
+    {
+      var parent = System.Windows.Media.VisualTreeHelper.GetParent(row);
+      while (parent != null && !(parent is ScrollViewer)) parent = System.Windows.Media.VisualTreeHelper.GetParent(parent);
+      if (!(parent is ScrollViewer viewer) || row.ActualHeight <= 0) return false;
+      var bounds = row.TransformToAncestor(viewer).TransformBounds(new Rect(row.RenderSize));
+      return bounds.Top >= 0 && bounds.Bottom <= viewer.ActualHeight && bounds.Right > 0 && bounds.Left < viewer.ActualWidth;
+    }
+    private static ListView FindPlaylistList(System.Windows.DependencyObject root)
+    {
+      if (root is ListView list && list.Name == "playlists" && list.IsVisible) return list;
+      for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(root); i++)
+      {
+        var found = FindPlaylistList(System.Windows.Media.VisualTreeHelper.GetChild(root, i));
+        if (found != null) return found;
+      }
+      return null;
+    }
+    private static int CountPlaylistRows(System.Windows.DependencyObject root)
+    {
+      int count = root is ListViewItem ? 1 : 0;
+      for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(root); i++)
+        count += CountPlaylistRows(System.Windows.Media.VisualTreeHelper.GetChild(root, i));
+      return count;
     }
     private static bool IsPlaylistViewRendered(System.Windows.DependencyObject root)
     {

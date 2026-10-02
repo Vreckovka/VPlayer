@@ -12,6 +12,7 @@ namespace VPLayer.Domain.Diagnostics
     private static readonly string output=Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_RUN_FILE");
     private static readonly DateTime processStart=Enabled?Process.GetCurrentProcess().StartTime.ToUniversalTime():default;
     private static readonly List<object> phases=new List<object>();
+    private static readonly Dictionary<string,long> observations=new Dictionary<string,long>();
     private static readonly List<string> active=new List<string>();
     private static string status="Starting";
     private static string failure;
@@ -42,6 +43,11 @@ namespace VPLayer.Domain.Diagnostics
         Write(status,failure);
       }
     }
+    public static void RecordObservation(string name,long value)
+    {
+      if(!Enabled) return;
+      lock(phases) {observations[name]=value;Write(status,failure);}
+    }
     public static void Fail(Exception exception)
     {
       if(!Enabled) return;
@@ -62,7 +68,7 @@ namespace VPLayer.Domain.Diagnostics
       File.WriteAllText(path,JsonSerializer.Serialize(new
       {
         Status=status,FailureType=failure,ActivePhases=active.ToArray(),Commit=Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_COMMIT"),
-        Runtime=Environment.Version.ToString(),CreatedUtc=DateTime.UtcNow,Phases=phases
+        Runtime=Environment.Version.ToString(),CreatedUtc=DateTime.UtcNow,Phases=phases,Observations=observations
       },new JsonSerializerOptions {WriteIndented=true}));
     }
     private sealed class Scope : IDisposable

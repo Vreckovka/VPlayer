@@ -69,6 +69,8 @@ namespace VPlayer.Performance
         if(args.Length<3) throw new ArgumentException("prepare <source.db> <fixture-directory> [factor] OR run <fixture-directory> <output.json> <commit>");
         if(args[0]=="prepare")
           Prepare(args[1],args[2],args.Length>3?int.Parse(args[3]):5);
+        else if(args[0]=="prepare-ui")
+          PrepareUi(args[1],args[2],args.Length>3?int.Parse(args[3]):5000);
         else if(args[0]=="graphics")
         {
           using var context=new FixtureContext(Path.Combine(Path.GetFullPath(args[1]),"VPlayerDatabase.db"));
@@ -160,6 +162,54 @@ namespace VPlayer.Performance
         PlaylistSizes=new[] {1000,10000,100000}
       },json));
       Console.WriteLine("Prepared "+directory+"; "+countContext.SoundItems.Count()+" sound items.");
+    }
+    private static void PrepareUi(string parent,string directory,int count)
+    {
+      if(count<1000 || count>10000) throw new ArgumentOutOfRangeException(nameof(count));
+      parent=Path.GetFullPath(parent);
+      directory=Path.GetFullPath(directory);
+      Directory.CreateDirectory(directory);
+      var database=Path.Combine(directory,"VPlayerDatabase.db");
+      if(File.Exists(database)) throw new IOException("Fixture exists; choose a new directory.");
+      var parentMetadata=JsonSerializer.Deserialize<JsonElement>(File.ReadAllText(Path.Combine(parent,"fixture.json")));
+      var parentDatabase=Path.Combine(parent,"VPlayerDatabase.db");
+      using(var input=File.OpenRead(parentDatabase))
+      {
+        var actual=BitConverter.ToString(SHA256.Create().ComputeHash(input)).Replace("-","");
+        if(actual!=parentMetadata.GetProperty("DatabaseSha256").GetString())
+          throw new InvalidOperationException("Parent fixture changed.");
+      }
+      using(var input=new SqliteConnection(new SqliteConnectionStringBuilder {DataSource=parentDatabase,Mode=SqliteOpenMode.ReadOnly}.ToString()))
+      using(var copy=new SqliteConnection(new SqliteConnectionStringBuilder {DataSource=database}.ToString()))
+      {
+        input.Open();
+        copy.Open();
+        input.BackupDatabase(copy);
+      }
+      using(var context=new WritableFixtureContext(database))
+      {
+        var ids=context.SoundItems.OrderBy(x=>x.Id).Select(x=>x.Id).Take(count).ToArray();
+        for(int i=0;i<count;i++)
+          context.SoundItemPlaylists.Add(new SoundItemFilePlaylist
+          {
+            Name="Grouped UI stress "+i.ToString("D5")+" "+new string('W',180),
+            IsUserCreated=true,HashCode=-200000-i,ItemCount=1,
+            PlaylistItems=new List<PlaylistSoundItem>
+            {new PlaylistSoundItem {IdReferencedItem=ids[i%ids.Length],OrderInPlaylist=0}}
+          });
+        context.SaveChanges();
+      }
+      using var stream=File.OpenRead(database);
+      var checksum=BitConverter.ToString(SHA256.Create().ComputeHash(stream)).Replace("-","");
+      using var counts=new FixtureContext(database);
+      File.WriteAllText(Path.Combine(directory,"fixture.json"),JsonSerializer.Serialize(new
+      {
+        CreatedUtc=DateTime.UtcNow,DatabaseSha256=checksum,
+        ParentSha256=parentMetadata.GetProperty("DatabaseSha256").GetString(),
+        SoundItems=counts.SoundItems.Count(),Playlists=counts.SoundItemPlaylists.Count(),
+        AdditionalUserPlaylists=count,PlaylistSizes=new[] {1000,10000,100000}
+      },json));
+      Console.WriteLine("Prepared grouped UI fixture: "+counts.SoundItemPlaylists.Count()+" playlists.");
     }
     private sealed class WritableFixtureContext : AudioDatabaseContext
     {

@@ -4,14 +4,22 @@ param(
   [Parameter(Mandatory=$true)][string]$Application,
   [Parameter(Mandatory=$true)][string]$Commit,
   [int]$Runs=7,
-  [switch]$Visible
+  [switch]$Visible,
+  [switch]$ScrollPlaylists
 )
 $ErrorActionPreference='Stop'
 $fixture=(Resolve-Path -LiteralPath $FixtureDirectory).Path
 $destination=(Resolve-Path -LiteralPath $RunDirectory).Path
 $app=(Resolve-Path -LiteralPath $Application).Path
+$metadata=Get-Content -LiteralPath (Join-Path $fixture 'fixture.json') -Raw | ConvertFrom-Json
+$checksum=(Get-FileHash -LiteralPath (Join-Path $fixture 'VPlayerDatabase.db') -Algorithm SHA256).Hash
+if($checksum -ne $metadata.DatabaseSha256) {throw 'Performance fixture changed.'}
+$environmentMetadata=@{
+  FixtureSha256=$checksum;SoundItems=$metadata.SoundItems;Playlists=$metadata.Playlists
+  Configuration='Release';ProcessorCount=[Environment]::ProcessorCount;OS=[Environment]::OSVersion.VersionString
+}
 $originalValues=@{}
-foreach($name in @('VPLAYER_BENCHMARK_DIRECTORY','VPLAYER_PERFORMANCE_RUN_FILE','VPLAYER_PERFORMANCE_COMMIT','VPLAYER_PERFORMANCE_EXIT_AFTER_RENDER','VPLAYER_PERFORMANCE_WAIT_FOR_LIBRARY')) {
+foreach($name in @('VPLAYER_BENCHMARK_DIRECTORY','VPLAYER_PERFORMANCE_RUN_FILE','VPLAYER_PERFORMANCE_COMMIT','VPLAYER_PERFORMANCE_EXIT_AFTER_RENDER','VPLAYER_PERFORMANCE_WAIT_FOR_LIBRARY','VPLAYER_PERFORMANCE_SCROLL_PLAYLISTS')) {
   $originalValues[$name]=[Environment]::GetEnvironmentVariable($name,'Process')
 }
 try {
@@ -26,6 +34,7 @@ try {
     $env:VPLAYER_PERFORMANCE_COMMIT=$Commit
     $env:VPLAYER_PERFORMANCE_EXIT_AFTER_RENDER='1'
     $env:VPLAYER_PERFORMANCE_WAIT_FOR_LIBRARY='1'
+    $env:VPLAYER_PERFORMANCE_SCROLL_PLAYLISTS=$(if($ScrollPlaylists){'1'}else{'0'})
     $launch=@{
       FilePath=$app;WorkingDirectory=(Split-Path -Parent $app);PassThru=$true
       WindowStyle=$(if($Visible){'Normal'}else{'Hidden'})
@@ -48,6 +57,10 @@ try {
     }
     if($record -is [Collections.IDictionary]) {$record['WindowMode']=$(if($Visible){'Visible'}else{'Hidden'})}
     else {$record | Add-Member -NotePropertyName WindowMode -NotePropertyValue $(if($Visible){'Visible'}else{'Hidden'}) -Force}
+    foreach($name in $environmentMetadata.Keys) {
+      if($record -is [Collections.IDictionary]) {$record[$name]=$environmentMetadata[$name]}
+      else {$record | Add-Member -NotePropertyName $name -NotePropertyValue $environmentMetadata[$name] -Force}
+    }
     $record | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath $result
     Write-Output ('Startup '+$i+': '+$record.Status)
   }
