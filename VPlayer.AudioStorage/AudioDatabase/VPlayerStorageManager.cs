@@ -956,15 +956,17 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region UpdateEntity
 
+    protected virtual AudioDatabaseContext CreateEntityUpdateContext() => new AudioDatabaseContext();
+
     public Task<bool> UpdateEntityAsync<TEntity>(TEntity newVersion) where TEntity : class, IEntity, IUpdateable<TEntity>
     {
-      Task.Run(() =>
+      return Task.Run(() =>
       {
         try
         {
           bool result = false;
 
-          using (var context = new AudioDatabaseContext())
+          using (var context = CreateEntityUpdateContext())
           {
             var foundEntity = GetRepository<TEntity>(context).SingleOrDefault(x => x.Id == newVersion.Id);
 
@@ -977,9 +979,11 @@ namespace VPlayer.AudioStorage.AudioDatabase
                 var updateCount = context.SaveChanges();
                 result = updateCount > 0;
 
-                logger.Log(Logger.MessageType.Success, $"Entity was updated {newVersion} update count {updateCount}");
-
-                PublishItemChanged(foundEntity);
+                if (result)
+                {
+                  logger.Log(Logger.MessageType.Success, $"Entity was updated {newVersion} update count {updateCount}");
+                  PublishItemChanged(foundEntity);
+                }
               }
 
             }
@@ -994,8 +998,6 @@ namespace VPlayer.AudioStorage.AudioDatabase
           return false;
         }
       });
-
-      return Task.FromResult(true);
     }
 
     #endregion

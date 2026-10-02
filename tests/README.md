@@ -19,3 +19,10 @@ executed, nonzero test count; a successful build or a zero-test run is insuffici
 
 The repeatable worst-case performance runner and baseline/optimized comparison protocol are
 documented in ../performance/README.md. Feature performance results are separate from unit tests.
+
+Storage update regressions seed 10k long-name artists in an isolated SQLite
+database. They gate a save to verify that awaiting an update includes persistence
+and notification, check missing and unchanged records, and simulate a failed
+write followed by a successful retry. All four failed before the fix.
+UpdateEntityAsync now returns its worker task and actual save result; unchanged
+writes no longer publish change events. The full suite executes 127 passing tests.
