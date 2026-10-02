@@ -144,13 +144,14 @@ namespace VPlayer
       var target = list.Items.Cast<VPlayer.Home.ViewModels.SongsPlaylistViewModel>().Last(item => item.IsUserCreated);
       using (StartupMeasurements.Measure("UI / grouped playlists / scroll to last favorite"))
       {
-        list.ScrollIntoView(target);
+        var rows = FindPlaylistRowsList(list, target) ?? list;
+        rows.ScrollIntoView(target);
         var deadline = Stopwatch.StartNew();
         ListViewItem row;
         do
         {
           await window.Dispatcher.InvokeAsync(() => window.UpdateLayout(), System.Windows.Threading.DispatcherPriority.ContextIdle);
-          row = list.ItemContainerGenerator.ContainerFromItem(target) as ListViewItem;
+          row = rows.ItemContainerGenerator.ContainerFromItem(target) as ListViewItem;
           row?.BringIntoView();
           if (deadline.Elapsed > TimeSpan.FromSeconds(10)) throw new TimeoutException("Last favorite row did not enter the viewport.");
           await Task.Delay(16);
@@ -159,6 +160,24 @@ namespace VPlayer
       StartupMeasurements.RecordObservation("UI / realized playlist rows after scroll", CountPlaylistRows(list));
       StartupMeasurements.RecordObservation("UI / last favorite visible", 1);
       CaptureBenchmarkWindow(window, ".scrolled.png");
+    }
+    private static ListView FindPlaylistRowsList(System.Windows.DependencyObject root, object target)
+    {
+      if (root is VPlayer.Home.Views.GroupedPlaylistListView list && list.Items.Contains(target)) return list;
+      for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(root); i++)
+      {
+        var found = FindPlaylistRowsList(System.Windows.Media.VisualTreeHelper.GetChild(root, i), target);
+        if (found != null) return found;
+      }
+      return null;
+    }
+    private static bool HasRenderedPlaylistRow(System.Windows.DependencyObject root)
+    {
+      if (root is ListView list && list.Items.Count > 0 &&
+          list.ItemContainerGenerator.ContainerFromIndex(0) is FrameworkElement item && item.ActualHeight > 0) return true;
+      for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(root); i++)
+        if (HasRenderedPlaylistRow(System.Windows.Media.VisualTreeHelper.GetChild(root, i))) return true;
+      return false;
     }
     private static bool IsRowInViewport(FrameworkElement row)
     {
@@ -188,7 +207,7 @@ namespace VPlayer
     private static bool IsPlaylistViewRendered(System.Windows.DependencyObject root)
     {
       if (root is System.Windows.Controls.ListView list && list.Name == "playlists" && list.IsVisible)
-        return list.Items.Count > 0 && list.ItemContainerGenerator.ContainerFromIndex(0) is System.Windows.FrameworkElement item && item.ActualHeight > 0;
+        return list.Items.Count > 0 && HasRenderedPlaylistRow(list);
       for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(root); i++)
         if (IsPlaylistViewRendered(System.Windows.Media.VisualTreeHelper.GetChild(root, i))) return true;
       return false;
