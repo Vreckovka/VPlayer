@@ -2,14 +2,16 @@
 
 | Baseline | Optimized |
 | --- | --- |
-| Recursive directory load: 44.6k ms | Pending |
-| First recursive search: 34.0k ms | Pending |
-| Search matching all tracks: 19.5k ms | Pending |
-| Rapid query changes: 14.9k ms; wrong results | Pending |
-| Search in loaded folders: 5.2k ms | Pending |
-| Deep folder search: 3.2k ms | Pending |
-| Recursive load UI allocation: 1.5 GiB | Pending |
+| Recursive directory load: 44.6k ms | 35.1k ms (-21.4%) |
+| First recursive search: 34.0k ms | 28.4k ms (-16.5%) |
+| Search matching all tracks: 19.5k ms | 20.4k ms (+5.1%) |
+| Rapid query changes: 14.9k ms; wrong results | 16.3k ms (+9.5%); still wrong |
+| Search in loaded folders: 5.2k ms | 4.4k ms (-14.3%) |
+| Deep folder search: 3.2k ms | 3.2k ms (+0.7%) |
+| Uppercase folder search: 2.7k ms | 2.9k ms (+6.2%) |
+| Root directory load: 377 ms | 262 ms (-30.5%) |
+| Recursive load UI allocation: 1.5 GiB | 0.47 GiB (-69.4%) |
 
-101k files named from the copied library, 133 folders and 33 levels. The baseline uses the app's default factory metadata and transient window-manager lifetime. All three browser regressions reproduced; rapid queries and clearing an in-flight query also left incorrect results. The top-level tree retained unfiltered items.
+101k files named from the copied library, 133 folders and 33 levels. This first optimization reduces repeated dependency resolution when creating file rows. It preserves custom bindings and default service lifetimes; 51 focused tests pass. Search correctness is the next task: rapid queries, clearing, null input and the top-level tree remain broken.
 
-This component benchmark exercises the actual browser/folder/file view models. It does not measure rendered full-player UI or audio playback. The separate load measurement retains the first browser and creates a second one, exposing memory pressure. The earlier protocol lacked an all-track query and used a shared mock window manager; its immutable preliminary results remain in `iterations/file-browser-preliminary-be60ac1a.json`.
+Actual browser/folder/file view models; rendered full-player UI and audio are not measured. The separate load test retains one browser and loads a second, exposing memory pressure. These are single before/after samples; timings include scheduling and cache effects. Raw results and payload hashes are retained in `iterations/file-browser-*`. The earlier preliminary protocol is excluded from this comparison.
