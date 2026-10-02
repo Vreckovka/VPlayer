@@ -67,3 +67,17 @@ Startup phase baselines are retained in startup-detail-baseline.json and startup
 Query deferral is evaluated against the frozen startup-shell-baseline.json as well as the earlier recovered-startup milestone. Constructor work and repository setup are reported separately; moving work to a background thread is not treated as eliminating its cost. Cold-first launches and maxima remain visible.
 
 Measured query-deferral result (94ed1e61 to cc489285): music-playlist view-model construction median 534.46 to 11.70 ms; main-window view-model initialization 998.39 to 538.28 ms; first window render 3528.59 to 3302.87 ms. Populated-view median remained effectively unchanged at 5108.71 versus 5108.83 ms. This reduces foreground construction work; it does not establish a populated-view speedup. Seven successful visible launches per version; maxima are retained in the report.
+
+The actual grouped playlist UI has its own isolated fixture and report, grouped-ui-results.md.
+Create it with the Release performance executable:
+prepare-ui <expanded-library-fixture> <new-fixture-directory> 5000.
+This retains the 207,110 sound items and 1k/10k/100k stress playlists, then adds 5,000
+favorites with long titles. The original fixture is checksum verified and never modified.
+Run startup.ps1 with -Visible -ScrollPlaylists against this fixture for seven fresh-profile
+launches per version. The ready milestone still requires a rendered row; scrolling must
+bring the last favorite fully into its scroll viewport. Local screenshots and realized-row
+counts validate the real GridView template, rather than the simpler component ListBox.
+Use grouped-ui-report.ps1 -Baseline <baseline-directory-or-json> -Optimized <optimized-directory-or-json>.
+This report rejects mismatched fixtures, runtime, configuration, machine or window mode.
+Timeouts remain failed workloads. Baselines for the smaller initial view are retained separately.
+Generated-playlist load-more expansion, filtering and group changes still need their own scenarios.
