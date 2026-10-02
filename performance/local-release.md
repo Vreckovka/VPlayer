@@ -2,7 +2,7 @@
 
 **7.6.9771.34514** installed in `D:\VPlayer`, increased from `7.6.9771.31678`. Source: `3a69c4e8` on `codex/tests-and-performance`.
 
-The later [VLC startup optimization](vlc-startup-results.md) is on the branch and awaiting deployment.
+The later [VLC startup optimization](vlc-startup-results.md) and [incoming playlist changes](incoming-playlist-results.md) are on the branch and awaiting deployment. They were tested in separate workspace builds; the running installation was left untouched.
 
 Includes the latest [playlist collection optimization and subscription fixes](iterations/music-collection-tracking-results-b65ef9ce.md), earlier playlist loading and rapid-skip fixes, and the [startup window-order fix](window-startup-results.md).
 

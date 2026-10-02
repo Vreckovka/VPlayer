@@ -22,3 +22,5 @@ Local test release uses VPlayer/Properties/PublishProfiles/FolderProfile.pubxml 
 Keep the user's running VPlayer and installed files untouched. Benchmarks use an agent-owned build and copied data. Deploy only on a new explicit user request, after the user closes the app themselves.
 
 Startup evidence: [prepared VLC plugins](vlc-startup-results.md) cuts the first observed initial-library-view delay from 42k ms to 20.9k ms (-50.3%) in the expanded-library published-build benchmark. Restart-based cold measurement remains pending. The branch packaging optimization awaits deployment.
+
+Playlist evidence: [incoming views](incoming-playlist-results.md) reduce default view construction and allocation for unique/duplicate 100k playlists while preserving custom creation and stored metadata. Original full-load regressions and later alternating controls are retained separately. Database reading and later loading/publication remain the larger stages. Production source 987dd930 passed 241 tests and awaits deployment.
