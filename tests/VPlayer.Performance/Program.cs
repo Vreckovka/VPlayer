@@ -101,6 +101,8 @@ namespace VPlayer.Performance
           SearchBenchmarks.Run(args[1],args[2],args.Length>3?args[3]:"unknown");
         else if(args[0]=="vlc-startup")
           VlcStartupBenchmarks.Run(args[1],args[2],args.Length>3?args[3]:"unknown");
+        else if(args[0]=="incoming-playlist")
+          IncomingPlaylistBenchmarks.Run(args[1],args[2],args.Length>3?args[3]:"unknown");
         else if(args[0]=="playlist-collection")
           PlaylistCollectionBenchmarks.Run(args[1],args[2],args.Length>3?args[3]:"unknown",args.Length>4 && args[4]=="repeated-tracks");
         else if(args[0]=="saved-playlist-views")
