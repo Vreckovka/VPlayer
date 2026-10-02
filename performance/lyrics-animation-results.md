@@ -16,3 +16,5 @@ Old lyrics previously remained observed and could scroll the new track. The fix 
 The first frozen comparison uses the final v3 harness. Earlier v1/v2 drafts remain diagnostic timing evidence only; their frame/row setup differs, and v1 screenshot paths were reused by v2. They are excluded from this table and visual validation.
 
 Raw [baseline](iterations/lyrics-animation-baseline-5cdf6243.json), [optimized](iterations/lyrics-animation-optimized-24d31ad1.json), and [validation](iterations/lyrics-animation-validation-24d31ad1.json). Source: `24d31ad1`. Running user app and installed files untouched; no deployment. Full-player/audio playback and file-browser search measurements remain next.
+
+Automatic playback refresh now keeps the loaded timeline, active line and adjustments, and can load stored synchronized lyrics before album/artist metadata is available. Cached plain text remains visible while optional synchronized lyrics load. The manual refresh command still requests a provider update. Seven stored-lyrics regressions and all 32 lyrics checks passed. This is correctness evidence; full-player audio playback remains unmeasured for this change.
