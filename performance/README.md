@@ -565,3 +565,11 @@ original duplicate-ID selection and occurrence order are retained. Regression
 checks cover duplicate/non-positive IDs, empty input and 100k rows with 50k
 repeated IDs, including one ID read per row. All 168 tests and the application
 Release build pass; native gains are measured against the frozen control.
+
+The aa75995d native lookup pilot also timed out inside stored-song enrichment.
+Its full record is retained as
+iterations/music-enrichment-lookup-timeout-aa75995d.json. After the large stored
+song read, completed artist lookups consumed 11.1k ms and album lookups 3k ms;
+relationship lookups are the next measured target. The occurrence index has no
+validated end-to-end timing gain yet. The results table keeps optimized music
+endpoints pending and uses the frozen enrichment control for the new subphases.

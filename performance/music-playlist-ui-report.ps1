@@ -1,6 +1,7 @@
 param(
   [string]$Baseline=(Join-Path $PSScriptRoot 'music-playlist-ui-baseline.json'),
   [string]$Optimized,
+  [string]$EnrichmentBaseline=(Join-Path $PSScriptRoot 'iterations/music-enrichment-baseline-0fcece16.json'),
   [string]$Output=(Join-Path $PSScriptRoot 'music-playlist-ui-results.md')
 )
 $ErrorActionPreference='Stop'
@@ -58,7 +59,7 @@ function Timing($runs,$name) {
        $run.Observations.'UI / music playlist / painted Initial music view' -ne 1){continue}
     $read=$run.Phases|Where-Object Name -eq 'UI / music playlist / read and create incoming views'
     $phases=@($run.Phases|Where-Object {$_.Name -eq $name -and
-      ($name -notin @('UI / music playlist / convert incoming views','UI / player playlist / create saved playlist views','UI / player playlist / collection publication') -or
+      ($name -notin @('UI / music playlist / convert incoming views','UI / player playlist / create saved playlist views','UI / player playlist / collection publication','UI / music playlist / stored song database read','UI / music playlist / stored song enrichment publication','UI / player playlist / replace collection','UI / player playlist / dispatch active item') -or
        $_.StartedMilliseconds -ge $read.CompletedMilliseconds)})
     if($phases.Count -gt 1){throw ('Ambiguous music phase: '+$name)}
     if($phases.Count -eq 1 -and $phases[0].Milliseconds -gt 0){$phases[0].Milliseconds}
@@ -72,12 +73,25 @@ function Timing($runs,$name) {
 $a=Read-Series $Baseline
 $b=Read-Series $Optimized
 if($b.Count){Same $a[0] $b[0]}
+$c=@(Get-Content -LiteralPath $EnrichmentBaseline -Raw|ConvertFrom-Json)
+if(!$c.Count){throw 'Empty enrichment control'}
+foreach($run in $c){
+  Same $a[0] $run
+  if($run.Commit -notmatch '^[0-9a-fA-F]{40}$' -or $run.Commit -ne $c[0].Commit -or
+     $run.Status -ne 'Timeout' -or $run.TimeoutSeconds -ne 60 -or $run.FailureType -or
+     $run.DiagnosticMode -ne 'buffered-v1' -or $run.DiagnosticProfile -ne 'none' -or
+     'UI / music playlist / stored song enrichment publication' -notin $run.ActivePhases){throw 'Invalid enrichment control'}
+}
 $scenarios=@(
   @{Name='load and render';Phase='UI / music playlist / load and render';Missing='Timeout (60k ms limit)'},
+  @{Name='stored song enrichment';Phase='UI / music playlist / stored song enrichment publication';Missing='Unfinished';Control=$true},
   @{Name='collection publication';Phase='UI / player playlist / collection publication';Missing='Unfinished'},
+  @{Name='collection replacement';Phase='UI / player playlist / replace collection';Missing='Not reached';Control=$true},
   @{Name='incoming song view conversion';Phase='UI / music playlist / convert incoming views';Missing='Not reached'},
   @{Name='saved playlist view creation';Phase='UI / player playlist / create saved playlist views';Missing='Not reached'},
+  @{Name='active item dispatch';Phase='UI / player playlist / dispatch active item';Missing='Not reached';Control=$true},
   @{Name='database and incoming views';Phase='UI / music playlist / read and create incoming views';Missing='Not reached'},
+  @{Name='stored song read';Phase='UI / music playlist / stored song database read';Missing='Not reached';Control=$true},
   @{Name='activation and render';Phase='UI / music playlist / activation and render';Missing='Not measured (painted)'},
   @{Name='scroll to last track';Phase='UI / music playlist / scroll to last track';Missing='Not reached'},
   @{Name='long no-match search and render';Phase='UI / music playlist / long no-match search and render';Missing='Not reached'},
@@ -85,12 +99,12 @@ $scenarios=@(
 )
 $lines=@('# 100k-entry music playlist','','Real WPF window; copied 207k-item library. Buffered diagnostics. - % = less time; + % = more time.','','| Baseline now | New optimized version |','| --- | --- |')
 foreach($scenario in $scenarios) {
-  $old=Timing $a $scenario.Phase
+  $old=Timing $(if($scenario.Control){$c}else{$a}) $scenario.Phase
   $new=if($b.Count){Timing $b $scenario.Phase}else{$null}
   $left=if($null -ne $old){Format-Time $old}else{$scenario.Missing}
   $right=if($null -ne $new){(Format-Time $new)+(Format-Change $old $new)}elseif($b.Count){$scenario.Missing}else{'Pending'}
   $lines+='| **'+$scenario.Name+'** — '+$left+' | '+$right+' |'
 }
-$lines+=@('','The timeout is the overall process limit. Unfinished endpoints have no percentage; completed phase medians exclude the small startup playlist. Painted activation has no prior baseline. Raw phases, failures and provenance stay in JSON.')
+$lines+=@('','The timeout is the overall process limit. Unfinished endpoints have no percentage; completed phase medians exclude the small startup playlist. Stored-song/replacement/dispatch rows use the separate pre-lookup control. Painted activation has no prior baseline. Raw phases, failures and provenance stay in JSON.')
 $lines|Set-Content -LiteralPath $Output
 Write-Output ('Wrote '+$Output)
