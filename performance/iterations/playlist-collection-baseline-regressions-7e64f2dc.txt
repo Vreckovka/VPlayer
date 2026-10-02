@@ -1,0 +1,75 @@
+Draft regressions against production source 7e64f2dc. Five failures reproduced; the separate 100k repeated-reference run was stopped and retained in the interruption record.
+
+Test run for D:\Aplikacie\VPlayer\tests\VPlayer.Tests\bin\x64\Release\netcoreapp3.1\VPlayer.Tests.dll (.NETCoreApp,Version=v3.1)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.4.1 (64-bit .NET Core 3.1.32)
+[xUnit.net 00:00:01.90]   Discovering: VPlayer.Tests
+[xUnit.net 00:00:01.99]   Discovered:  VPlayer.Tests
+[xUnit.net 00:00:02.00]   Starting:    VPlayer.Tests
+[xUnit.net 00:00:02.10]     VPlayer.Tests.PlaylistCollectionLifetimeTests.ValueEqualRowsStillHaveIndependentPropertyTracking [FAIL]
+[xUnit.net 00:00:02.10]       Assert.Empty() Failure: Collection was not empty
+[xUnit.net 00:00:02.10]       Collection: [EqualItem { }]
+[xUnit.net 00:00:02.10]       Stack Trace:
+[xUnit.net 00:00:02.10]         D:\Aplikacie\VPlayer\tests\VPlayer.Tests\PlaylistCollectionLifetimeTests.cs(148,0): at VPlayer.Tests.PlaylistCollectionLifetimeTests.ValueEqualRowsStillHaveIndependentPropertyTracking()
+  Failed VPlayer.Tests.PlaylistCollectionLifetimeTests.ValueEqualRowsStillHaveIndependentPropertyTracking [33 ms]
+  Error Message:
+   Assert.Empty() Failure: Collection was not empty
+Collection: [EqualItem { }]
+  Stack Trace:
+     at VPlayer.Tests.PlaylistCollectionLifetimeTests.ValueEqualRowsStillHaveIndependentPropertyTracking() in D:\Aplikacie\VPlayer\tests\VPlayer.Tests\PlaylistCollectionLifetimeTests.cs:line 148
+[xUnit.net 00:00:05.48]     VPlayer.Tests.PlaylistCollectionLifetimeTests.RemovedRowsStopReportingUpdatesWhileRemainingRowsStillReport [FAIL]
+[xUnit.net 00:00:05.48]       Assert.Empty() Failure: Collection was not empty
+[xUnit.net 00:00:05.48]       Collection: [Item { }]
+[xUnit.net 00:00:05.48]       Stack Trace:
+[xUnit.net 00:00:05.48]         D:\Aplikacie\VPlayer\tests\VPlayer.Tests\PlaylistCollectionLifetimeTests.cs(39,0): at VPlayer.Tests.PlaylistCollectionLifetimeTests.RemovedRowsStopReportingUpdatesWhileRemainingRowsStillReport()
+  Failed VPlayer.Tests.PlaylistCollectionLifetimeTests.RemovedRowsStopReportingUpdatesWhileRemainingRowsStillReport [3 s]
+  Error Message:
+   Assert.Empty() Failure: Collection was not empty
+Collection: [Item { }]
+  Stack Trace:
+     at VPlayer.Tests.PlaylistCollectionLifetimeTests.RemovedRowsStopReportingUpdatesWhileRemainingRowsStillReport() in D:\Aplikacie\VPlayer\tests\VPlayer.Tests\PlaylistCollectionLifetimeTests.cs:line 39
+[xUnit.net 00:00:11.51]     VPlayer.Tests.PlaylistCollectionLifetimeTests.ReplacementsWhileReactiveNotificationsAreDisabledKeepViewsAndTrackingCurrent [FAIL]
+[xUnit.net 00:00:11.51]       Assert.Same() Failure: Values are not the same instance
+[xUnit.net 00:00:11.51]       Expected: Item { }
+[xUnit.net 00:00:11.51]       Actual:   Item { }
+[xUnit.net 00:00:11.51]       Stack Trace:
+[xUnit.net 00:00:11.51]         D:\Aplikacie\VPlayer\tests\VPlayer.Tests\PlaylistCollectionLifetimeTests.cs(78,0): at VPlayer.Tests.PlaylistCollectionLifetimeTests.ReplacementsWhileReactiveNotificationsAreDisabledKeepViewsAndTrackingCurrent()
+  Failed VPlayer.Tests.PlaylistCollectionLifetimeTests.ReplacementsWhileReactiveNotificationsAreDisabledKeepViewsAndTrackingCurrent [6 s]
+  Error Message:
+   Assert.Same() Failure: Values are not the same instance
+Expected: Item { }
+Actual:   Item { }
+  Stack Trace:
+     at VPlayer.Tests.PlaylistCollectionLifetimeTests.ReplacementsWhileReactiveNotificationsAreDisabledKeepViewsAndTrackingCurrent() in D:\Aplikacie\VPlayer\tests\VPlayer.Tests\PlaylistCollectionLifetimeTests.cs:line 78
+[xUnit.net 00:00:17.06]     VPlayer.Tests.PlaylistCollectionLifetimeTests.MovingHugePlaylistRowsPreservesMembershipTrackingAndBothViewOrders [FAIL]
+[xUnit.net 00:00:17.06]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:17.06]       Expected: 0
+[xUnit.net 00:00:17.06]       Actual:   1
+[xUnit.net 00:00:17.06]       Stack Trace:
+[xUnit.net 00:00:17.06]         D:\Aplikacie\VPlayer\tests\VPlayer.Tests\PlaylistCollectionLifetimeTests.cs(118,0): at VPlayer.Tests.PlaylistCollectionLifetimeTests.MovingHugePlaylistRowsPreservesMembershipTrackingAndBothViewOrders()
+  Failed VPlayer.Tests.PlaylistCollectionLifetimeTests.MovingHugePlaylistRowsPreservesMembershipTrackingAndBothViewOrders [5 s]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 0
+Actual:   1
+  Stack Trace:
+     at VPlayer.Tests.PlaylistCollectionLifetimeTests.MovingHugePlaylistRowsPreservesMembershipTrackingAndBothViewOrders() in D:\Aplikacie\VPlayer\tests\VPlayer.Tests\PlaylistCollectionLifetimeTests.cs:line 118
+[xUnit.net 00:00:25.14]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:25.14]     VPlayer.Tests.PlaylistCollectionLifetimeTests.ClearDetachesEveryRowAcrossRepeatedHugeLoads [FAIL]
+[xUnit.net 00:00:25.14]       Expected: 0
+[xUnit.net 00:00:25.14]       Actual:   100000
+[xUnit.net 00:00:25.14]       Stack Trace:
+[xUnit.net 00:00:25.14]         D:\Aplikacie\VPlayer\tests\VPlayer.Tests\PlaylistCollectionLifetimeTests.cs(56,0): at VPlayer.Tests.PlaylistCollectionLifetimeTests.ClearDetachesEveryRowAcrossRepeatedHugeLoads()
+[xUnit.net 00:00:25.15]   Finished:    VPlayer.Tests
+  Failed VPlayer.Tests.PlaylistCollectionLifetimeTests.ClearDetachesEveryRowAcrossRepeatedHugeLoads [8 s]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 0
+Actual:   100000
+  Stack Trace:
+     at VPlayer.Tests.PlaylistCollectionLifetimeTests.ClearDetachesEveryRowAcrossRepeatedHugeLoads() in D:\Aplikacie\VPlayer\tests\VPlayer.Tests\PlaylistCollectionLifetimeTests.cs:line 56
+
+Test Run Failed.
+Total tests: 5
+     Failed: 5
+ Total time: 27,3760 Seconds

@@ -1,74 +1,232 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using VCore.ItemsCollections;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace VPlayer.Core.ViewModels
 {
-  // The Rx collection still tracks and publishes each item. Only the collection
-  // notifications consumed by WPF are deferred while a playlist is appended.
-  public sealed class PlaylistCollection<T> : RxObservableCollection<T> where T : class, INotifyPropertyChanged
+  // Playlist occurrences keep their order while sharing one property handler per object.
+  public sealed class PlaylistCollection<T> : ObservableCollection<T>, IDisposable where T : class, INotifyPropertyChanged
   {
-    private bool publishingBatch;
-    private bool collectionChanged;
-    private bool countChanged;
-    private bool indexerChanged;
+    private sealed class ReferenceComparer : IEqualityComparer<T>
+    {
+      public bool Equals(T first,T second)=>ReferenceEquals(first,second);
+      public int GetHashCode(T value)=>RuntimeHelpers.GetHashCode(value);
+    }
+    private static readonly PropertyChangedEventArgs countChanged=new PropertyChangedEventArgs("Count");
+    private static readonly PropertyChangedEventArgs indexerChanged=new PropertyChangedEventArgs("Item[]");
+    private readonly Dictionary<T,int> occurrences=new Dictionary<T,int>(new ReferenceComparer());
+    private readonly object trackingGate=new object();
+    private readonly PropertyChangedEventHandler itemChanged;
+    private readonly ReplaySubject<EventPattern<T>> added=new ReplaySubject<EventPattern<T>>(1);
+    private readonly ReplaySubject<EventPattern<T>> removed=new ReplaySubject<EventPattern<T>>(1);
+    private readonly ReplaySubject<EventPattern<PropertyChangedEventArgs>> updated=new ReplaySubject<EventPattern<PropertyChangedEventArgs>>(1);
+    private readonly Subject<NotifyCollectionChangedEventArgs> cleared=new Subject<NotifyCollectionChangedEventArgs>();
+    private int publicationDepth;
+    private bool notificationsEnabled=true;
+    private int disposeState;
 
-    public PlaylistCollection() { }
-    public PlaylistCollection(IEnumerable<T> items) : base(items) { }
+    public PlaylistCollection()=>itemChanged=ItemChanged;
+    public PlaylistCollection(IEnumerable<T> items):this()=>AddPlaylistRange(items);
+    public ObservableCollection<T> View {get;}=new ObservableCollection<T>();
+    public IObservable<EventPattern<T>> ItemAdded=>added.AsObservable();
+    public IObservable<EventPattern<T>> ItemRemoved=>removed.AsObservable();
+    public IObservable<EventPattern<PropertyChangedEventArgs>> ItemUpdated=>updated.AsObservable();
+    public IObservable<NotifyCollectionChangedEventArgs> Cleared=>cleared.AsObservable();
 
+    public void DisableNotification()=>notificationsEnabled=false;
+    public void EnableNotification()=>notificationsEnabled=true;
+    public void ForEach(Action<T> action)
+    {
+      if(action==null)throw new ArgumentNullException(nameof(action));
+      foreach(var item in this)action(item);
+    }
+    public void AddRange(IEnumerable<T> items)=>AddPlaylistRange(items);
     public void AddPlaylistRange(IEnumerable<T> items)
     {
-      if (publishingBatch) throw new InvalidOperationException("A playlist batch is already being published.");
-      // Enumerate before mutation, including when appending this collection itself.
-      var snapshot = items.ToArray();
-      if (snapshot.Length == 0) return;
-      publishingBatch = true;
+      EnsureAvailable();
+      if(items==null)throw new ArgumentNullException(nameof(items));
+      var snapshot=items.ToArray();
+      foreach(var item in snapshot)ValidateItem(item);
+      if(snapshot.Length==0)return;
+      CheckReentrancy();
+      publicationDepth++;
       try
       {
-        base.AddRange(snapshot);
+        foreach(var item in snapshot)
+        {
+          Items.Add(item);
+          Track(item);
+          View.Add(item);
+          if(notificationsEnabled)added.OnNext(new EventPattern<T>(this,item));
+        }
       }
       finally
       {
-        publishingBatch = false;
-        // AddRange disables the Rx handler while manually tracking its items, and
-        // leaves it disabled. A final WPF reset must not emit Rx.Cleared.
-        DisableNotification();
-        try
+        publicationDepth--;
+        if(publicationDepth==0)
         {
-          if (countChanged) base.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
-          if (indexerChanged) base.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
-          if (collectionChanged) base.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-        }
-        finally
-        {
-          collectionChanged = countChanged = indexerChanged = false;
-          EnableNotification();
+          OnPropertyChanged(countChanged);
+          OnPropertyChanged(indexerChanged);
+          OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
       }
     }
 
+    protected override void InsertItem(int index,T item)
+    {
+      EnsureAvailable();
+      ValidateItem(item);
+      CheckReentrancy();
+      if(index<0 || index>Count)throw new ArgumentOutOfRangeException(nameof(index));
+      Items.Insert(index,item);
+      Track(item);
+      View.Insert(index,item);
+      OnPropertyChanged(countChanged);
+      OnPropertyChanged(indexerChanged);
+      if(notificationsEnabled)added.OnNext(new EventPattern<T>(this,item));
+      OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add,item,index));
+    }
+    protected override void RemoveItem(int index)
+    {
+      EnsureAvailable();
+      CheckReentrancy();
+      var item=Items[index];
+      Items.RemoveAt(index);
+      Untrack(item);
+      View.RemoveAt(index);
+      OnPropertyChanged(countChanged);
+      OnPropertyChanged(indexerChanged);
+      if(notificationsEnabled)removed.OnNext(new EventPattern<T>(this,item));
+      OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove,item,index));
+    }
+    protected override void SetItem(int index,T item)
+    {
+      EnsureAvailable();
+      ValidateItem(item);
+      CheckReentrancy();
+      var previous=Items[index];
+      Items[index]=item;
+      Untrack(previous);
+      Track(item);
+      View[index]=item;
+      OnPropertyChanged(indexerChanged);
+      if(notificationsEnabled)
+      {
+        removed.OnNext(new EventPattern<T>(this,previous));
+        added.OnNext(new EventPattern<T>(this,item));
+      }
+      OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace,item,previous,index));
+    }
+    protected override void MoveItem(int oldIndex,int newIndex)
+    {
+      EnsureAvailable();
+      CheckReentrancy();
+      var item=Items[oldIndex];
+      if(newIndex<0 || newIndex>=Count)throw new ArgumentOutOfRangeException(nameof(newIndex));
+      Items.RemoveAt(oldIndex);
+      Items.Insert(newIndex,item);
+      View.Move(oldIndex,newIndex);
+      OnPropertyChanged(indexerChanged);
+      OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move,item,newIndex,oldIndex));
+    }
     protected override void ClearItems()
     {
-      // RxObservableCollection does not remove its secondary view on Reset.
-      // Keep that view consistent when the player clears/replaces a playlist.
+      EnsureAvailable();
+      CheckReentrancy();
+      DetachAll();
+      Items.Clear();
       View.Clear();
-      base.ClearItems();
+      OnPropertyChanged(countChanged);
+      OnPropertyChanged(indexerChanged);
+      var change=new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
+      if(notificationsEnabled)cleared.OnNext(change);
+      OnCollectionChanged(change);
     }
-
     protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs args)
     {
-      if (publishingBatch) collectionChanged = true;
-      else base.OnCollectionChanged(args);
+      if(publicationDepth==0)base.OnCollectionChanged(args);
     }
-
     protected override void OnPropertyChanged(PropertyChangedEventArgs args)
     {
-      if (publishingBatch && args.PropertyName == "Count") countChanged = true;
-      else if (publishingBatch && args.PropertyName == "Item[]") indexerChanged = true;
-      else base.OnPropertyChanged(args);
+      if(publicationDepth==0)base.OnPropertyChanged(args);
+    }
+
+    private void Track(T item)
+    {
+      lock(trackingGate)
+      {
+        if(occurrences.TryGetValue(item,out var count))occurrences[item]=count+1;
+        else
+        {
+          occurrences.Add(item,1);
+          item.PropertyChanged+=itemChanged;
+        }
+      }
+    }
+    private void Untrack(T item)
+    {
+      lock(trackingGate)
+      {
+        if(!occurrences.TryGetValue(item,out var count))return;
+        if(count>1)occurrences[item]=count-1;
+        else
+        {
+          occurrences.Remove(item);
+          item.PropertyChanged-=itemChanged;
+        }
+      }
+    }
+    private void ItemChanged(object sender,PropertyChangedEventArgs args)
+    {
+      int count;
+      lock(trackingGate)
+      {
+        if(Volatile.Read(ref disposeState)!=0 || !(sender is T item) || !occurrences.TryGetValue(item,out count))return;
+      }
+      // Do not hold the tracking lock while invoking observers; they may dispatch to UI.
+      var change=new EventPattern<PropertyChangedEventArgs>(sender,args);
+      try
+      {
+        for(int i=0;i<count;i++)
+        {
+          if(Volatile.Read(ref disposeState)!=0)return;
+          updated.OnNext(change);
+        }
+      }
+      catch(ObjectDisposedException) when(Volatile.Read(ref disposeState)!=0) { }
+    }
+    private void DetachAll()
+    {
+      lock(trackingGate)
+      {
+        foreach(var item in occurrences.Keys)item.PropertyChanged-=itemChanged;
+        occurrences.Clear();
+      }
+    }
+    private static void ValidateItem(T item)
+    {
+      if(item==null)throw new ArgumentNullException(nameof(item));
+    }
+    private void EnsureAvailable()
+    {
+      if(Volatile.Read(ref disposeState)!=0)throw new ObjectDisposedException(nameof(PlaylistCollection<T>));
+    }
+    public void Dispose()
+    {
+      if(Interlocked.Exchange(ref disposeState,1)!=0)return;
+      DetachAll();
+      added.Dispose();
+      removed.Dispose();
+      updated.Dispose();
+      cleared.Dispose();
     }
   }
 }

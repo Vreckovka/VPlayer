@@ -288,7 +288,7 @@ namespace VPlayer.Core.ViewModels
       }
     }
 
-    private RxObservableCollection<TItemViewModel> playlistCopy;
+    private PlaylistCollection<TItemViewModel> playlistCopy;
     private int savedActualItemIndex;
     private void OnPlaylistFromSearch(bool value)
     {
@@ -324,9 +324,9 @@ namespace VPlayer.Core.ViewModels
 
     #region PlayList
 
-    private RxObservableCollection<TItemViewModel> playList = new PlaylistCollection<TItemViewModel>();
+    private PlaylistCollection<TItemViewModel> playList = new PlaylistCollection<TItemViewModel>();
 
-    public RxObservableCollection<TItemViewModel> PlayList
+    public PlaylistCollection<TItemViewModel> PlayList
     {
       get { return playList; }
       set
@@ -838,7 +838,7 @@ namespace VPlayer.Core.ViewModels
         for (int i = 0; i < ordered.Count; i++) ordered[i].OrderInPlaylist = i + 1;
         ActualSavedPlaylist.PlaylistItems = ordered;
         ActualSavedPlaylist.HashCode = ordered.Select(x => x.IdReferencedItem).ToList().GetSequenceHashCode();
-        // RxObservableCollection treats Move as remove/add; keep track identities without those side effects.
+        // Keep the original collection available while persistence can still roll back.
         PlayList = new PlaylistCollection<TItemViewModel>(desired);
         actualItemIndex = PlayList.IndexOf(ActualItem);
         UpdateSavedPlaybackPosition();
@@ -1635,10 +1635,7 @@ namespace VPlayer.Core.ViewModels
 
     protected virtual void AddPlaylistItems(IEnumerable<TItemViewModel> items)
     {
-      if (PlayList is PlaylistCollection<TItemViewModel> playlist)
-        playlist.AddPlaylistRange(items);
-      else
-        PlayList.AddRange(items);
+      PlayList.AddPlaylistRange(items);
     }
 
     #region PlayItems
