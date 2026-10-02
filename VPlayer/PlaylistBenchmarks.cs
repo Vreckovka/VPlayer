@@ -44,7 +44,18 @@ namespace VPlayer
       using(StartupMeasurements.Measure("UI / music playlist / load and render"))
       {
         using(StartupMeasurements.Measure("UI / music playlist / read and create incoming views"))
-          incoming=await Task.Run(async ()=>(await saved.GetItemsToPlay()).ToArray());
+        {
+          var queued=Stopwatch.StartNew();
+          incoming=await Task.Run(async ()=>
+          {
+            StartupMeasurements.RecordObservation("UI / music playlist / incoming task queue wait ms",queued.ElapsedMilliseconds);
+            System.Collections.Generic.IEnumerable<SoundItemInPlaylistViewModel> loaded;
+            using(StartupMeasurements.Measure("UI / music playlist / incoming database read"))
+              loaded=await saved.GetItemsToPlay();
+            using(StartupMeasurements.Measure("UI / music playlist / incoming view construction"))
+              return loaded.ToArray();
+          });
+        }
         if(incoming.Length!=100000) throw new InvalidOperationException("Large playlist did not load every occurrence.");
         saved.PublishPlayEvent(incoming,EventAction.InitSetPlaylist);
         await WaitForMusic(window,()=>player.ActualSavedPlaylist.Id==saved.Model.Id && player.PlayList.Count==100000 &&
