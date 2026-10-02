@@ -262,3 +262,15 @@ Two regressions verify native CPU accounting during actual work and rejection
 of a CPU delta across threads. All 123 tests and the production Release build
 pass. These new profiles investigate the long score-reader delays and do not
 replace the existing baseline/optimized comparisons.
+
+The opt-in profiles at 63dba53c are retained in
+[iterations/statistics-cpu-63dba53c.json](iterations/statistics-cpu-63dba53c.json).
+Several long score reads used little thread CPU: a video score phase took
+3.0k ms wall time with about 78 ms CPU; an episode score phase took 1.0k ms
+with about 16 ms CPU and two generation-0 collections. Sound score CPU was
+roughly 500–719 ms across the series. These observations separate computation
+from waiting, but do not identify the wait's cause. Thread-pool queue counts
+were zero at the sampled boundaries; intermediate queueing remains unmeasured.
+CPU counter granularity also limits interpretation of short phases.
+All launches rendered successfully. Profiling remains separate from the
+baseline/optimized timing tables because its diagnostic profile differs.
