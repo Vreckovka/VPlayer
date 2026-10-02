@@ -66,12 +66,22 @@ namespace VPlayer.Home.ViewModels.Statistics
       }
       Ranking sounds,videos,episodes;
       using(StartupMeasurements.Measure("Statistics / sound scores"))
-        // Zero-time rows contribute nothing to totals. Only their first 30 IDs
-        // can enter a leaderboard, including when negative legacy times exist.
-        sounds=new Ranking(soundQuery.Where(x=>x.TimePlayed!=TimeSpan.Zero)
-          .Select(x=>new Score {Id=x.Id,Time=x.TimePlayed}).AsEnumerable()
-          .Concat(soundQuery.Where(x=>x.TimePlayed==TimeSpan.Zero).OrderBy(x=>x.Id).Take(AllSize)
-            .Select(x=>new Score {Id=x.Id,Time=x.TimePlayed})));
+      {
+        var leading=soundQuery.OrderBy(x=>x.Id).Take(AllSize)
+          .Select(x=>new Score {Id=x.Id,Time=x.TimePlayed}).ToArray();
+        IEnumerable<Score> scores=soundQuery.Select(x=>new Score {Id=x.Id,Time=x.TimePlayed});
+        if(leading.Length==AllSize && leading.All(x=>x.Time==TimeSpan.Zero))
+        {
+          // These are the 30 smallest public IDs, so they cover every zero-time
+          // leaderboard slot. Avoid a second full scan when all tracks are played.
+          scores=soundQuery.Where(x=>x.TimePlayed!=TimeSpan.Zero)
+            .Select(x=>new Score {Id=x.Id,Time=x.TimePlayed}).AsEnumerable()
+            // Legacy zero strings can parse as zero without matching SQLite's
+            // canonical value. Do not duplicate those IDs from the prefix.
+            .Where(x=>x.Time!=TimeSpan.Zero).Concat(leading);
+        }
+        sounds=new Ranking(scores);
+      }
       using(StartupMeasurements.Measure("Statistics / video scores"))
         videos=new Ranking(videoQuery.Select(x=>new Score {Id=x.Id,Time=x.TimePlayed}));
       using(StartupMeasurements.Measure("Statistics / episode scores"))

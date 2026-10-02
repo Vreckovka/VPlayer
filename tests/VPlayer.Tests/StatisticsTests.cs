@@ -200,6 +200,21 @@ namespace VPlayer.Tests
         Assert.Equal(TimeSpan.Zero,fixture.View.TotalWatched);
       });
     }
+    [Fact]
+    public void LegacyZeroTimeStringsDoNotDuplicateSampledLeaderboardIds()
+    {
+      WithDispatcher(async () =>
+      {
+        using var fixture=new Fixture();
+        fixture.Database.AddRange(Enumerable.Range(1,10000).Select(i=>new SoundItem {Id=i}));
+        fixture.Database.SaveChanges();
+        fixture.Database.Database.ExecuteSqlRaw("UPDATE SoundItems SET TimePlayed='00:00:00.0000000'");
+        await fixture.Load();
+        Assert.Equal(Enumerable.Range(1,30),fixture.View.ItemsView.Select(x=>x.Id));
+        Assert.Equal(Enumerable.Range(1,15),fixture.View.SoundsItemsView.Select(x=>x.Id));
+        Assert.Equal(TimeSpan.Zero,fixture.View.TotalWatchedItems);
+      });
+    }
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -211,7 +226,7 @@ namespace VPlayer.Tests
         var sounds=Enumerable.Range(1,10000).Select(i=>new SoundItem
         {
           Id=i,IsPrivate=i==101,
-          TimePlayed=!mixed || i%101==0 ? TimeSpan.Zero : TimeSpan.FromTicks(i>9995 ? i : -i)
+          TimePlayed=!mixed || i<=40 || i%101==0 ? TimeSpan.Zero : TimeSpan.FromTicks(i>9995 ? i : -i)
         }).ToArray();
         fixture.Database.AddRange(sounds);
         fixture.Database.SaveChanges();
