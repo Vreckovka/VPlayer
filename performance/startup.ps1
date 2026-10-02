@@ -26,11 +26,13 @@ $traceExecutable=if($TraceTool){(Resolve-Path -LiteralPath $TraceTool).Path}else
 $metadata=Get-Content -LiteralPath (Join-Path $fixture 'fixture.json') -Raw | ConvertFrom-Json
 $checksum=(Get-FileHash -LiteralPath (Join-Path $fixture 'VPlayerDatabase.db') -Algorithm SHA256).Hash
 if($checksum -ne $metadata.DatabaseSha256) {throw 'Performance fixture changed.'}
+$timeoutSeconds=if($MusicPlaylistSave -or $MusicPlaylistClear){180}else{60}
 $environmentMetadata=@{
   FixtureSha256=$checksum;SoundItems=$metadata.SoundItems;Playlists=$metadata.Playlists
   PlaylistQueryPreparation=[bool]$PreparePlaylistQuery
   MusicPlaylistEntries=$(if($MusicPlaylist){100000}else{0})
   MusicPlaylistSave=[bool]$MusicPlaylistSave;MusicPlaylistClear=[bool]$MusicPlaylistClear
+  ProcessTimeoutSeconds=$timeoutSeconds
   Configuration='Release';ProcessorCount=[Environment]::ProcessorCount;OS=[Environment]::OSVersion.VersionString
 }
 $originalValues=@{}
@@ -80,14 +82,20 @@ try {
       }
       $traceProcess=Start-Process @traceLaunch
     }
-    if(!$process.WaitForExit(60000)) {
+    $deadline=[Diagnostics.Stopwatch]::StartNew()
+    $exited=$false
+    while($deadline.Elapsed.TotalSeconds -lt $timeoutSeconds) {
+      $remaining=[Math]::Max(1,[Math]::Min(60000,$timeoutSeconds*1000-$deadline.ElapsedMilliseconds))
+      if($process.WaitForExit([int]$remaining)){$exited=$true;break}
+    }
+    if(!$exited) {
       Stop-Process -Id $process.Id -Force
       if(!$process.WaitForExit(10000)){throw 'Benchmark process did not exit after termination.'}
-      $record=@{Status='Timeout';Commit=$Commit;Phases=@();TimeoutSeconds=60}
+      $record=@{Status='Timeout';Commit=$Commit;Phases=@();TimeoutSeconds=$timeoutSeconds}
       if(Test-Path -LiteralPath $result) {
         $record=Get-Content -LiteralPath $result -Raw | ConvertFrom-Json
         $record.Status='Timeout'
-        $record | Add-Member -NotePropertyName TimeoutSeconds -NotePropertyValue 60 -Force
+        $record | Add-Member -NotePropertyName TimeoutSeconds -NotePropertyValue $timeoutSeconds -Force
       }
     } elseif(Test-Path -LiteralPath $result) {
       $record=Get-Content -LiteralPath $result -Raw | ConvertFrom-Json
