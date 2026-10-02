@@ -278,6 +278,6 @@ baseline/optimized timing tables because its diagnostic profile differs.
 The [covering-index experiment](iterations/statistics-index-probe-6a2089b5.md)
 uses disposable copies of the fully played library. Production Statistics warm
 loading improved by 3.2%, while first loading increased by 1.1%; indexes were
-not adopted. Raw queries used covering scans, but this modest gain does not
-explain the much larger UI reader waits. All samples remain in the experiment
-JSON, separate from application baseline/optimized results.
+not adopted. Raw queries used covering scans. These data-load measurements
+do not establish a fix for the longer UI waits. Valid paired samples remain in
+the JSON, separate from application baseline/optimized results.
