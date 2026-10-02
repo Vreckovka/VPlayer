@@ -1,0 +1,39 @@
+{
+  "ProductionCommit": "9467632d367744c7511a5aebad3d2b12d62c4d69",
+  "BenchmarkDraftSha256": "57A98F9AA806991C49E828B05EF398B96A008A44E17125B40F823D793B33C079",
+  "Note": "Results came from the draft benchmark variants against unchanged production source; the variant source is frozen with this record.",
+  "Experiments": [
+    {
+      "Variant": "projection",
+      "Workload": "unique",
+      "BaselineFirstReadMs": 3324.3686,
+      "ExperimentFirstReadMs": 11066.1391,
+      "Accepted": false,
+      "Reason": "First read slower; preserve the current production query."
+    },
+    {
+      "Variant": "projection",
+      "Workload": "repeated",
+      "BaselineFirstReadMs": 2947.4804,
+      "ExperimentFirstReadMs": 6505.389,
+      "Accepted": false,
+      "Reason": "First read slower; preserve the current production query."
+    },
+    {
+      "Variant": "identity",
+      "Workload": "unique",
+      "BaselineFirstReadMs": 3324.3686,
+      "ExperimentFirstReadMs": 6271.3465,
+      "Accepted": false,
+      "Reason": "First read slower; preserve the current production query."
+    },
+    {
+      "Variant": "identity",
+      "Workload": "repeated",
+      "BaselineFirstReadMs": 2947.4804,
+      "ExperimentFirstReadMs": 4644.651,
+      "Accepted": false,
+      "Reason": "First read slower; preserve the current production query."
+    }
+  ]
+}

@@ -15,17 +15,19 @@ using VPlayer.AudioStorage.InfoDownloader.Clients.PCloud;
 using VPlayer.Home.ViewModels;
 using VPlayer.Home.ViewModels.LibraryViewModels;
 using VPlayer.TestSupport;
+using VPlayer.Core.ViewModels.SoundItems;
 using VPLayer.Domain;
 
 namespace VPlayer.Performance
 {
   internal static class IncomingPlaylistBenchmarks
   {
-    public static void Run(string directory,string output,string commit)
+    public static void Run(string directory,string output,string commit,string variant="production")
     {
       output=Path.GetFullPath(output);
       if(File.Exists(output)) throw new IOException("Use a new benchmark output.");
       if(commit.Length!=40 || commit.Any(c=>!Uri.IsHexDigit(c))) throw new ArgumentException("Exact source commit required.");
+      if(variant!="production" && variant!="projection" && variant!="identity") throw new ArgumentException("Unknown read experiment.");
       var database=Path.Combine(Path.GetFullPath(directory),"VPlayerDatabase.db");
       var samples=new List<object>();
       string orderHash=null,metadataHash=null;
@@ -36,14 +38,14 @@ namespace VPlayer.Performance
         using var fixture=new SavedSongViewFixture();
         // Delay repository construction until production requests it, preserving first-use EF cost.
         Mock.Get(fixture.Storage).Setup(x=>x.GetTempRepository<SoundItemFilePlaylist>())
-          .Returns(()=>context.SoundItemPlaylists.AsNoTracking());
+          .Returns(()=>variant=="identity"?context.SoundItemPlaylists.AsNoTrackingWithIdentityResolution():context.SoundItemPlaylists.AsNoTracking());
         var collection=new LibraryCollection<SongsPlaylistViewModel,SoundItemFilePlaylist>(fixture.Factory,fixture.Storage,fixture.Logger);
         var owner=new SoundItemPlaylistsViewModel(new Mock<IRegionProvider>().Object,fixture.Factory,fixture.Storage,
           new Mock<ISettingsProvider>().Object,collection,fixture.Events);
         using var playlist=new SongsPlaylistViewModel(new SoundItemFilePlaylist {Id=658},fixture.Events,fixture.Factory,owner,
           new Mock<IVPlayerCloudService>().Object,fixture.Storage,fixture.Logger,fixture.Windows);
         var total=Stopwatch.StartNew();
-        var incoming=playlist.GetItemsToPlay().GetAwaiter().GetResult();
+        var incoming=variant=="projection"?ReadProjection(playlist,context,fixture):playlist.GetItemsToPlay().GetAwaiter().GetResult();
         var read=total.Elapsed.TotalMilliseconds;
         if(incoming==null) throw new InvalidOperationException("Missing stress playlist.");
         var allocated=GC.GetAllocatedBytesForCurrentThread();
@@ -73,7 +75,7 @@ namespace VPlayer.Performance
       using var stream=File.OpenRead(database);
       using var hash=SHA256.Create();
       File.WriteAllText(output,JsonSerializer.Serialize(new {
-        Schema="incoming-playlist-v1",Commit=commit,CreatedUtc=DateTime.UtcNow,Runtime=Environment.Version.ToString(),
+        Schema="incoming-playlist-v1",Commit=commit,Variant=variant,CreatedUtc=DateTime.UtcNow,Runtime=Environment.Version.ToString(),
         Configuration="Release",Architecture="x64",Environment.ProcessorCount,OS=Environment.OSVersion.VersionString,
         FixtureSha256=BitConverter.ToString(hash.ComputeHash(stream)).Replace("-",""),PlaylistId=658,Entries=100000,DuplicateTracks=duplicates,MissingFileInfo=missingInfo,
         OrderedRowsSha256=orderHash,MetadataSha256=metadataHash,
@@ -81,6 +83,23 @@ namespace VPlayer.Performance
         Samples=samples
       },new JsonSerializerOptions{WriteIndented=true}));
       Console.WriteLine("Verified 100k incoming rows, stored metadata and independent occurrences: "+output);
+    }
+    private static IEnumerable<SoundItemInPlaylistViewModel> ReadProjection(SongsPlaylistViewModel playlist,FixtureContext context,SavedSongViewFixture fixture)
+    {
+      var query=context.SoundItemPlaylists.AsNoTracking();
+      var parent=query.SingleOrDefault(x=>x.Id==playlist.Model.Id);
+      if(parent==null) return null;
+      playlist.Model=parent;
+      var rows=query.Where(x=>x.Id==parent.Id).SelectMany(x=>x.PlaylistItems)
+        .OrderBy(x=>x.OrderInPlaylist).ThenBy(x=>x.Id)
+        .Select(x=>new {Occurrence=x,Sound=x.ReferencedItem,Info=x.ReferencedItem.FileInfoEntity}).ToList();
+      foreach(var row in rows)
+      {
+        row.Occurrence.ReferencedItem=row.Sound;
+        if(row.Sound!=null) row.Sound.FileInfoEntity=row.Info;
+      }
+      parent.PlaylistItems=rows.Select(x=>x.Occurrence).ToList();
+      return parent.PlaylistItems.Select(x=>fixture.Factory.Create<SoundItemInPlaylistViewModel>(x.ReferencedItem));
     }
     private static string HashText(string value)
     {
