@@ -875,8 +875,8 @@ activation parent contexts. The failed intermediate parent-context regression is
 explicitly labeled as an uncommitted draft in iterations/. Test/build evidence is
 in iterations/saved-views-tests-171b2af1.txt. The main music report keeps its first
 complete 5be3a2c4 baseline. Enrichment and collection publication, each about 4.7k ms,
-are now the largest completed load stages. Other areas in focus.md remain pending;
-the locally installed test version remains 7.6.9771.25313.
+are now the largest completed load stages. Other areas in focus.md remain pending.
+The latest installed build is recorded in [local-release.md](local-release.md).
 
 [Startup window ordering](window-startup-results.md) covers the startup focus bug
 at 9cfd8889. The application creates the same shell/regions/view model and optional
@@ -898,5 +898,5 @@ The complete application then rendered the copied 207k library and 100k playlist
 ordered occurrences, stored metadata, first/final rows and search endpoints passed.
 Home and first/final playlist images were reviewed. This single smoke launch has no
 performance percentage or cold-disk claim. Raw launch/screenshot data remains local
-under artifacts/performance/runs/window-startup-smoke-20261002-172018. The deployed
-local test release is still 7.6.9771.25313; this fix is currently on the branch.
+under artifacts/performance/runs/window-startup-smoke-20261002-172018. The startup
+fix is included in the [local test release](local-release.md).
