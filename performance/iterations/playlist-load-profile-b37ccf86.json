@@ -1,0 +1,5076 @@
+{
+  "Status": "Rendered",
+  "FailureType": null,
+  "ActivePhases": [
+    "UI / player playlist / save snapshot",
+    "UI / player playlist / clear save",
+    "UI / player playlist / clear save",
+    "UI / player playlist / save snapshot"
+  ],
+  "Commit": "b37ccf86af4e937a11bf345542b86dd87407a9ec",
+  "Runtime": "3.1.32",
+  "CreatedUtc": "2026-10-02T12:15:57.9207023Z",
+  "Phases": [
+    {
+      "Name": "Application / VPlayerCoreModule",
+      "Milliseconds": 5.4339,
+      "StartedMilliseconds": 756.8754,
+      "CompletedMilliseconds": 762.3093,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32767,
+        "AvailableWorkersEnd": 32767,
+        "WorkerCountStart": 1,
+        "WorkerCountEnd": 1,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 2.3817,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / IPTVModule",
+      "Milliseconds": 7.1102,
+      "StartedMilliseconds": 776.1795,
+      "CompletedMilliseconds": 783.2896999999999,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32767,
+        "AvailableWorkersEnd": 32767,
+        "WorkerCountStart": 1,
+        "WorkerCountEnd": 1,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 6.227,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / UPnPNinjectModule",
+      "Milliseconds": 6.5525,
+      "StartedMilliseconds": 791.3801,
+      "CompletedMilliseconds": 797.9326,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32767,
+        "AvailableWorkersEnd": 32767,
+        "WorkerCountStart": 1,
+        "WorkerCountEnd": 1,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 4.6248,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / library module",
+      "Milliseconds": 78.2415,
+      "StartedMilliseconds": 812.428,
+      "CompletedMilliseconds": 890.6695,
+      "Execution": {
+        "ThreadCpuMilliseconds": 78.125,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32767,
+        "AvailableWorkersEnd": 32767,
+        "WorkerCountStart": 1,
+        "WorkerCountEnd": 1,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.9154,
+      "ThreadId": 1
+    },
+    {
+      "Name": "VLC / core initialization",
+      "Milliseconds": 16.6539,
+      "StartedMilliseconds": 1029.392,
+      "CompletedMilliseconds": 1046.0459,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32767,
+        "AvailableWorkersEnd": 32767,
+        "WorkerCountStart": 2,
+        "WorkerCountEnd": 2,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 3.4816,
+      "ThreadId": 1
+    },
+    {
+      "Name": "VLC / instance construction",
+      "Milliseconds": 375.3711,
+      "StartedMilliseconds": 1049.9823,
+      "CompletedMilliseconds": 1425.3534,
+      "Execution": {
+        "ThreadCpuMilliseconds": 359.375,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32767,
+        "AvailableWorkersEnd": 32767,
+        "WorkerCountStart": 2,
+        "WorkerCountEnd": 2,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.1249,
+      "ThreadId": 1
+    },
+    {
+      "Name": "VLC / media player construction",
+      "Milliseconds": 152.6151,
+      "StartedMilliseconds": 1432.656,
+      "CompletedMilliseconds": 1585.2711,
+      "Execution": {
+        "ThreadCpuMilliseconds": 78.125,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32767,
+        "AvailableWorkersEnd": 32767,
+        "WorkerCountStart": 2,
+        "WorkerCountEnd": 2,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 4.6444,
+      "ThreadId": 1
+    },
+    {
+      "Name": "VLC / event setup",
+      "Milliseconds": 18.3249,
+      "StartedMilliseconds": 1593.7962,
+      "CompletedMilliseconds": 1612.1211,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32767,
+        "AvailableWorkersEnd": 32767,
+        "WorkerCountStart": 2,
+        "WorkerCountEnd": 2,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 8.8171,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / video player activation",
+      "Milliseconds": 755.7127,
+      "StartedMilliseconds": 899.9702,
+      "CompletedMilliseconds": 1655.6829,
+      "Execution": {
+        "ThreadCpuMilliseconds": 609.375,
+        "Gen0Collections": 1,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32767,
+        "AvailableWorkersEnd": 32766,
+        "WorkerCountStart": 1,
+        "WorkerCountEnd": 2,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 12.0901,
+      "ThreadId": 1
+    },
+    {
+      "Name": "VLC / instance construction",
+      "Milliseconds": 7.1447,
+      "StartedMilliseconds": 1678.1282,
+      "CompletedMilliseconds": 1685.2729000000002,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 5,
+        "WorkerCountEnd": 5,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 3.9547,
+      "ThreadId": 1
+    },
+    {
+      "Name": "VLC / media player construction",
+      "Milliseconds": 6.7476,
+      "StartedMilliseconds": 1692.3817,
+      "CompletedMilliseconds": 1699.1292999999998,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 5,
+        "WorkerCountEnd": 5,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.356,
+      "ThreadId": 1
+    },
+    {
+      "Name": "VLC / event setup",
+      "Milliseconds": 4.5838,
+      "StartedMilliseconds": 1704.7624,
+      "CompletedMilliseconds": 1709.3462000000002,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 5,
+        "WorkerCountEnd": 5,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 4.5518,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / music player activation",
+      "Milliseconds": 82.0057,
+      "StartedMilliseconds": 1660.401,
+      "CompletedMilliseconds": 1742.4067,
+      "Execution": {
+        "ThreadCpuMilliseconds": 62.5,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32766,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 2,
+        "WorkerCountEnd": 5,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 3.4018,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / WindowsPlayerNinjectModule",
+      "Milliseconds": 944.0136,
+      "StartedMilliseconds": 805.6664,
+      "CompletedMilliseconds": 1749.6799999999998,
+      "Execution": {
+        "ThreadCpuMilliseconds": 765.625,
+        "Gen0Collections": 1,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32767,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 1,
+        "WorkerCountEnd": 5,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.3183,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / module registration",
+      "Milliseconds": 1011.3726,
+      "StartedMilliseconds": 746.7662,
+      "CompletedMilliseconds": 1758.1388000000002,
+      "Execution": {
+        "ThreadCpuMilliseconds": 812.5,
+        "Gen0Collections": 1,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32767,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 1,
+        "WorkerCountEnd": 5,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 3.1246,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / settings",
+      "Milliseconds": 24.0539,
+      "StartedMilliseconds": 1778.0279,
+      "CompletedMilliseconds": 1802.0818,
+      "Execution": {
+        "ThreadCpuMilliseconds": 31.25,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 5,
+        "WorkerCountEnd": 5,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.1208,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / container activation",
+      "Milliseconds": 58.3505,
+      "StartedMilliseconds": 1763.1799,
+      "CompletedMilliseconds": 1821.5304,
+      "Execution": {
+        "ThreadCpuMilliseconds": 62.5,
+        "Gen0Collections": 1,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 5,
+        "WorkerCountEnd": 5,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.2322,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / main window XAML",
+      "Milliseconds": 68.1512,
+      "StartedMilliseconds": 1856.4966,
+      "CompletedMilliseconds": 1924.6478,
+      "Execution": {
+        "ThreadCpuMilliseconds": 62.5,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 7,
+        "WorkerCountEnd": 8,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.8241,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / base main window initialization",
+      "Milliseconds": 5.5629,
+      "StartedMilliseconds": 1960.0313,
+      "CompletedMilliseconds": 1965.5942,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 8,
+        "WorkerCountEnd": 8,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.5189,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / audio device enumeration",
+      "Milliseconds": 20.8386,
+      "StartedMilliseconds": 1971.1849,
+      "CompletedMilliseconds": 1992.0235,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 8,
+        "WorkerCountEnd": 8,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 3.5255,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / library SoundItemPlaylistsViewModel / navigation construction",
+      "Milliseconds": 32.5684,
+      "StartedMilliseconds": 2022.4701,
+      "CompletedMilliseconds": 2055.0385,
+      "Execution": {
+        "ThreadCpuMilliseconds": 31.25,
+        "Gen0Collections": 1,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 8,
+        "WorkerCountEnd": 8,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.5725,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / library IArtistsViewModel / navigation construction",
+      "Milliseconds": 12.2869,
+      "StartedMilliseconds": 2061.6236,
+      "CompletedMilliseconds": 2073.9105,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 8,
+        "WorkerCountEnd": 8,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.2615,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / library IAlbumsViewModel / navigation construction",
+      "Milliseconds": 12.7449,
+      "StartedMilliseconds": 2080.6474,
+      "CompletedMilliseconds": 2093.3923,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 8,
+        "WorkerCountEnd": 8,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.3894,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / library VideoPlaylistsViewModel / navigation construction",
+      "Milliseconds": 7.1956,
+      "StartedMilliseconds": 2098.4772,
+      "CompletedMilliseconds": 2105.6728,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 8,
+        "WorkerCountEnd": 8,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 4.3049,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / library TvShowsViewModel / navigation construction",
+      "Milliseconds": 9.5964,
+      "StartedMilliseconds": 2111.2366,
+      "CompletedMilliseconds": 2120.833,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 8,
+        "WorkerCountEnd": 8,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.0257,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / library WindowsFileBrowserViewModel / navigation construction",
+      "Milliseconds": 15.1257,
+      "StartedMilliseconds": 2126.3928,
+      "CompletedMilliseconds": 2141.5185,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 8,
+        "WorkerCountEnd": 8,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.5218,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / library UPnPManagerViewModel / navigation construction",
+      "Milliseconds": 7.2862,
+      "StartedMilliseconds": 2147.7316,
+      "CompletedMilliseconds": 2155.0178,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 8,
+        "WorkerCountEnd": 8,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 6.8874,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / library StatisticsViewModel / navigation construction",
+      "Milliseconds": 7.7531,
+      "StartedMilliseconds": 2161.4376,
+      "CompletedMilliseconds": 2169.1907,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 8,
+        "WorkerCountEnd": 8,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.5887,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / library SettingsViewModel / navigation construction",
+      "Milliseconds": 9.9257,
+      "StartedMilliseconds": 2178.3063,
+      "CompletedMilliseconds": 2188.232,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 8,
+        "WorkerCountEnd": 8,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.8538,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / library PCloudManagerViewModel / navigation construction",
+      "Milliseconds": 11.7407,
+      "StartedMilliseconds": 2194.4169,
+      "CompletedMilliseconds": 2206.1576,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 8,
+        "WorkerCountEnd": 8,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 6.1823,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / navigation view model construction",
+      "Milliseconds": 225.7385,
+      "StartedMilliseconds": 1997.9704,
+      "CompletedMilliseconds": 2223.7089,
+      "Execution": {
+        "ThreadCpuMilliseconds": 234.375,
+        "Gen0Collections": 1,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 8,
+        "WorkerCountEnd": 8,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 11.3486,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / player controls construction",
+      "Milliseconds": 71.3108,
+      "StartedMilliseconds": 2229.4053,
+      "CompletedMilliseconds": 2300.7161,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 1,
+        "Gen1Collections": 1,
+        "Gen2Collections": 1,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 8,
+        "WorkerCountEnd": 8,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.7889,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / player controls activation",
+      "Milliseconds": 167.9203,
+      "StartedMilliseconds": 2313.473,
+      "CompletedMilliseconds": 2481.3932999999997,
+      "Execution": {
+        "ThreadCpuMilliseconds": 171.875,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 8,
+        "WorkerCountEnd": 8,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 10.4907,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / navigation activation",
+      "Milliseconds": 127.7391,
+      "StartedMilliseconds": 2509.6417,
+      "CompletedMilliseconds": 2637.3808,
+      "Execution": {
+        "ThreadCpuMilliseconds": 93.75,
+        "Gen0Collections": 1,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 8,
+        "WorkerCountEnd": 8,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 7.2592,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / main window view model initialization",
+      "Milliseconds": 690.2147,
+      "StartedMilliseconds": 1954.2859,
+      "CompletedMilliseconds": 2644.5006000000003,
+      "Execution": {
+        "ThreadCpuMilliseconds": 593.75,
+        "Gen0Collections": 4,
+        "Gen1Collections": 1,
+        "Gen2Collections": 1,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 8,
+        "WorkerCountEnd": 8,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.7259,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / shell construction",
+      "Milliseconds": 817.023,
+      "StartedMilliseconds": 1834.2395,
+      "CompletedMilliseconds": 2651.2625,
+      "Execution": {
+        "ThreadCpuMilliseconds": 687.5,
+        "Gen0Collections": 4,
+        "Gen1Collections": 1,
+        "Gen2Collections": 1,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 5,
+        "WorkerCountEnd": 8,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 6.4696,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / OpenCV native initialization",
+      "Milliseconds": 27.7179,
+      "StartedMilliseconds": 2670.3634,
+      "CompletedMilliseconds": 2698.0813000000003,
+      "Execution": {
+        "ThreadCpuMilliseconds": 31.25,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 8,
+        "WorkerCountEnd": 8,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.8276,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / initialization",
+      "Milliseconds": 2017.874,
+      "StartedMilliseconds": 686.1964,
+      "CompletedMilliseconds": 2704.0704,
+      "Execution": {
+        "ThreadCpuMilliseconds": 1687.5,
+        "Gen0Collections": 6,
+        "Gen1Collections": 1,
+        "Gen2Collections": 1,
+        "AvailableWorkersStart": 32767,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 1,
+        "WorkerCountEnd": 8,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 3.4323,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / repository setup",
+      "Milliseconds": 348.8572,
+      "StartedMilliseconds": 2604.2345,
+      "CompletedMilliseconds": 2953.0917,
+      "Execution": {
+        "ThreadCpuMilliseconds": 31.25,
+        "Gen0Collections": 2,
+        "Gen1Collections": 1,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 8,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 7.6717,
+      "ThreadId": 13
+    },
+    {
+      "Name": "Application / show shell",
+      "Milliseconds": 531.6053,
+      "StartedMilliseconds": 2709.1045,
+      "CompletedMilliseconds": 3240.7098,
+      "Execution": {
+        "ThreadCpuMilliseconds": 343.75,
+        "Gen0Collections": 3,
+        "Gen1Collections": 1,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 8,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 4.7228,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 15.3224,
+      "StartedMilliseconds": 3542.9354,
+      "CompletedMilliseconds": 3558.2578,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0015,
+      "ThreadId": 13
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 15.3224,
+      "StartedMilliseconds": 3542.9354,
+      "CompletedMilliseconds": 3558.2578,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.002,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 15.3224,
+      "StartedMilliseconds": 3542.9365,
+      "CompletedMilliseconds": 3558.2589,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0018,
+      "ThreadId": 10
+    },
+    {
+      "Name": "Application / first window render",
+      "Milliseconds": 3572.7851
+    },
+    {
+      "Name": "Database / execute / UPnPMediaServers",
+      "Milliseconds": 11.5039,
+      "StartedMilliseconds": 3563.5309,
+      "CompletedMilliseconds": 3575.0348000000004,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0008,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Database / execute / UPnPMediaRenderers",
+      "Milliseconds": 11.5145,
+      "StartedMilliseconds": 3563.5309,
+      "CompletedMilliseconds": 3575.0454000000004,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0012,
+      "ThreadId": 10
+    },
+    {
+      "Name": "Database / execute / SoundItemPlaylists",
+      "Milliseconds": 19.3944,
+      "StartedMilliseconds": 3564.6853,
+      "CompletedMilliseconds": 3584.0797000000002,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0005,
+      "ThreadId": 13
+    },
+    {
+      "Name": "Application / benchmark first-frame screenshot",
+      "Milliseconds": 82.4849,
+      "StartedMilliseconds": 3579.9276,
+      "CompletedMilliseconds": 3662.4125,
+      "Execution": {
+        "ThreadCpuMilliseconds": 93.75,
+        "Gen0Collections": 1,
+        "Gen1Collections": 1,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32766,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.3245,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / query",
+      "Milliseconds": 1113.4457,
+      "StartedMilliseconds": 2592.0988,
+      "CompletedMilliseconds": 3705.5445,
+      "Execution": {
+        "ThreadCpuMilliseconds": 500,
+        "Gen0Collections": 6,
+        "Gen1Collections": 2,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32765,
+        "WorkerCountStart": 8,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 11.6428,
+      "ThreadId": 13
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / view model construction",
+      "Milliseconds": 662.0055,
+      "StartedMilliseconds": 3715.0962,
+      "CompletedMilliseconds": 4377.1017,
+      "Execution": {
+        "ThreadCpuMilliseconds": 609.375,
+        "Gen0Collections": 20,
+        "Gen1Collections": 6,
+        "Gen2Collections": 1,
+        "AvailableWorkersStart": 32765,
+        "AvailableWorkersEnd": 32765,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 9.1756,
+      "ThreadId": 13
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / UI publication",
+      "Milliseconds": 52.119,
+      "StartedMilliseconds": 4397.7477,
+      "CompletedMilliseconds": 4449.8667,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 2,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32766,
+        "AvailableWorkersEnd": 32766,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.9359,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / UI dispatch and publication",
+      "Milliseconds": 71.003,
+      "StartedMilliseconds": 4387.0193,
+      "CompletedMilliseconds": 4458.0223,
+      "Execution": {
+        "ThreadCpuMilliseconds": null,
+        "Gen0Collections": 2,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32765,
+        "AvailableWorkersEnd": 32765,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 8.3295,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.2506,
+      "StartedMilliseconds": 4537.0115,
+      "CompletedMilliseconds": 4537.2621,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32765,
+        "AvailableWorkersEnd": 32765,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0005,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Database / execute / SoundItemPlaylists",
+      "Milliseconds": 5.7344,
+      "StartedMilliseconds": 4537.33,
+      "CompletedMilliseconds": 4543.0644,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32765,
+        "AvailableWorkersEnd": 32765,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.3194,
+      "StartedMilliseconds": 4612.7147,
+      "CompletedMilliseconds": 4613.034100000001,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32765,
+        "AvailableWorkersEnd": 32765,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0009,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Database / execute / PlaylistSongs",
+      "Milliseconds": 2.2535,
+      "StartedMilliseconds": 4613.0831,
+      "CompletedMilliseconds": 4615.3366,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32765,
+        "AvailableWorkersEnd": 32765,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0004,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / current track metadata",
+      "Milliseconds": 85.3791,
+      "StartedMilliseconds": 4549.4824,
+      "CompletedMilliseconds": 4634.8615,
+      "Execution": {
+        "ThreadCpuMilliseconds": 62.5,
+        "Gen0Collections": 1,
+        "Gen1Collections": 1,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32765,
+        "AvailableWorkersEnd": 32765,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 7.5477,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / playlist preparation",
+      "Milliseconds": 166.8111,
+      "StartedMilliseconds": 4475.5324,
+      "CompletedMilliseconds": 4642.3435,
+      "Execution": {
+        "ThreadCpuMilliseconds": 140.625,
+        "Gen0Collections": 1,
+        "Gen1Collections": 1,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32765,
+        "AvailableWorkersEnd": 32765,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.4809,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / post-load callback",
+      "Milliseconds": 183.9231,
+      "StartedMilliseconds": 4465.4776,
+      "CompletedMilliseconds": 4649.4007,
+      "Execution": {
+        "ThreadCpuMilliseconds": 171.875,
+        "Gen0Collections": 1,
+        "Gen1Collections": 1,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32765,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 6.5777,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 2.3529,
+      "StartedMilliseconds": 4672.4206,
+      "CompletedMilliseconds": 4674.7735,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32765,
+        "AvailableWorkersEnd": 32765,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 2.0657,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Database / execute / SoundItemPlaylists",
+      "Milliseconds": 11.307,
+      "StartedMilliseconds": 4674.8743,
+      "CompletedMilliseconds": 4686.1813,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32765,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0009,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.3869,
+      "StartedMilliseconds": 4688.8975,
+      "CompletedMilliseconds": 4689.2844000000005,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0011,
+      "ThreadId": 13
+    },
+    {
+      "Name": "Database / execute / PinnedItems",
+      "Milliseconds": 2.6167,
+      "StartedMilliseconds": 4689.3725,
+      "CompletedMilliseconds": 4691.9892,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0005,
+      "ThreadId": 13
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / pinned items",
+      "Milliseconds": 55.9781,
+      "StartedMilliseconds": 4649.9241,
+      "CompletedMilliseconds": 4705.9022,
+      "Execution": {
+        "ThreadCpuMilliseconds": 31.25,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32765,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 24.4904,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 2.0578,
+      "StartedMilliseconds": 4713.4692,
+      "CompletedMilliseconds": 4715.526999999999,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32765,
+        "AvailableWorkersEnd": 32765,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 1.7736,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Database / execute / SoundItemPlaylists",
+      "Milliseconds": 2.169,
+      "StartedMilliseconds": 4715.5661,
+      "CompletedMilliseconds": 4717.7351,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32765,
+        "AvailableWorkersEnd": 32765,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0004,
+      "ThreadId": 19
+    },
+    {
+      "Name": "UI / music playlist / convert incoming views",
+      "Milliseconds": 17.6592,
+      "StartedMilliseconds": 5118.9614,
+      "CompletedMilliseconds": 5136.6206,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32765,
+        "AvailableWorkersEnd": 32765,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 16.304,
+      "ThreadId": 13
+    },
+    {
+      "Name": "UI / player playlist / create saved playlist views",
+      "Milliseconds": 19.7619,
+      "StartedMilliseconds": 5163.6071,
+      "CompletedMilliseconds": 5183.369000000001,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32765,
+        "AvailableWorkersEnd": 32765,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 6.2175,
+      "ThreadId": 13
+    },
+    {
+      "Name": "UI / player playlist / replace collection",
+      "Milliseconds": 11.9751,
+      "StartedMilliseconds": 5203.519,
+      "CompletedMilliseconds": 5215.4941,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32765,
+        "AvailableWorkersEnd": 32765,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 7.7136,
+      "ThreadId": 13
+    },
+    {
+      "Name": "UI / player playlist / save snapshot",
+      "Milliseconds": 17.9229,
+      "StartedMilliseconds": 5268.634,
+      "CompletedMilliseconds": 5286.5569,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32765,
+        "AvailableWorkersEnd": 32765,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 7.4697,
+      "ThreadId": 13
+    },
+    {
+      "Name": "UI / player playlist / save queue wait",
+      "Milliseconds": 36.9512,
+      "StartedMilliseconds": 5293.7733,
+      "CompletedMilliseconds": 5330.7245,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 1,
+        "Gen1Collections": 1,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32765,
+        "AvailableWorkersEnd": 32765,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 36.9352,
+      "ThreadId": 13
+    },
+    {
+      "Name": "UI / player playlist / dispatch active item",
+      "Milliseconds": 92.914,
+      "StartedMilliseconds": 5246.6184,
+      "CompletedMilliseconds": 5339.5324,
+      "Execution": {
+        "ThreadCpuMilliseconds": 62.5,
+        "Gen0Collections": 1,
+        "Gen1Collections": 1,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32765,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 7.2561,
+      "ThreadId": 13
+    },
+    {
+      "Name": "UI / player playlist / collection publication",
+      "Milliseconds": 153.9795,
+      "StartedMilliseconds": 5195.131,
+      "CompletedMilliseconds": 5349.110500000001,
+      "Execution": {
+        "ThreadCpuMilliseconds": 125,
+        "Gen0Collections": 2,
+        "Gen1Collections": 1,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32765,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 8.3581,
+      "ThreadId": 13
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 4.1717,
+      "StartedMilliseconds": 5414.18,
+      "CompletedMilliseconds": 5418.3517,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32761,
+        "AvailableWorkersEnd": 32759,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 3.626,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Database / execute / SoundItemPlaylists",
+      "Milliseconds": 1.2925,
+      "StartedMilliseconds": 5449.01,
+      "CompletedMilliseconds": 5450.3025,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32761,
+        "AvailableWorkersEnd": 32761,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0007,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.5101,
+      "StartedMilliseconds": 5451.6646,
+      "CompletedMilliseconds": 5452.1747000000005,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32761,
+        "AvailableWorkersEnd": 32761,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0007,
+      "ThreadId": 11
+    },
+    {
+      "Name": "Database / execute / Songs",
+      "Milliseconds": 1.1421,
+      "StartedMilliseconds": 5452.2184,
+      "CompletedMilliseconds": 5453.3605,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32761,
+        "AvailableWorkersEnd": 32761,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0005,
+      "ThreadId": 11
+    },
+    {
+      "Name": "UI / music playlist / stored song database read",
+      "Milliseconds": 55.0849,
+      "StartedMilliseconds": 5399.5705,
+      "CompletedMilliseconds": 5454.6554,
+      "Execution": {
+        "ThreadCpuMilliseconds": null,
+        "Gen0Collections": 1,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32761,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 18.2421,
+      "ThreadId": 11
+    },
+    {
+      "Name": "Database / execute / SoundItemPlaylists",
+      "Milliseconds": 3.463,
+      "StartedMilliseconds": 5469.8457,
+      "CompletedMilliseconds": 5473.3087,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 2.9146,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Data / playlist save / stored read",
+      "Milliseconds": 50.2199,
+      "StartedMilliseconds": 5424.3658,
+      "CompletedMilliseconds": 5474.5857,
+      "Execution": {
+        "ThreadCpuMilliseconds": 31.25,
+        "Gen0Collections": 1,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32761,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 8.4569,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.2062,
+      "StartedMilliseconds": 5634.9088,
+      "CompletedMilliseconds": 5635.115,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0005,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / SoundItems",
+      "Milliseconds": 0.5824,
+      "StartedMilliseconds": 5635.1373,
+      "CompletedMilliseconds": 5635.719700000001,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Data / playlist save / reconciliation",
+      "Milliseconds": 167.9682,
+      "StartedMilliseconds": 5487.7806,
+      "CompletedMilliseconds": 5655.7488,
+      "Execution": {
+        "ThreadCpuMilliseconds": 140.625,
+        "Gen0Collections": 2,
+        "Gen1Collections": 1,
+        "Gen2Collections": 1,
+        "AvailableWorkersStart": 32761,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 18.545,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.2104,
+      "StartedMilliseconds": 5739.4699,
+      "CompletedMilliseconds": 5739.6803,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0006,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 1.5446,
+      "StartedMilliseconds": 5749.9313,
+      "CompletedMilliseconds": 5751.4759,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0006,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Data / playlist save / playlist write",
+      "Milliseconds": 98.9236,
+      "StartedMilliseconds": 5663.7937,
+      "CompletedMilliseconds": 5762.7173,
+      "Execution": {
+        "ThreadCpuMilliseconds": 78.125,
+        "Gen0Collections": 1,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.7189,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0824,
+      "StartedMilliseconds": 5825.9907,
+      "CompletedMilliseconds": 5826.0731000000005,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0006,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Data / playlist save / actual item write",
+      "Milliseconds": 16.5573,
+      "StartedMilliseconds": 5809.6283,
+      "CompletedMilliseconds": 5826.185600000001,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 6.0896,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.2312,
+      "StartedMilliseconds": 5964.962,
+      "CompletedMilliseconds": 5965.193200000001,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0013,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Database / execute / PlaylistSongs",
+      "Milliseconds": 0.6656,
+      "StartedMilliseconds": 5965.219,
+      "CompletedMilliseconds": 5965.8846,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Data / playlist save / change notification",
+      "Milliseconds": 30.0238,
+      "StartedMilliseconds": 5944.1486,
+      "CompletedMilliseconds": 5974.1724,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 1,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.8716,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Data / playlist save / log",
+      "Milliseconds": 8.8247,
+      "StartedMilliseconds": 5980.3467,
+      "CompletedMilliseconds": 5989.1714,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 7.073,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Data / playlist save / total",
+      "Milliseconds": 612.747,
+      "StartedMilliseconds": 5387.2045,
+      "CompletedMilliseconds": 5999.9515,
+      "Execution": {
+        "ThreadCpuMilliseconds": 390.625,
+        "Gen0Collections": 8,
+        "Gen1Collections": 2,
+        "Gen2Collections": 1,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 22.5378,
+      "ThreadId": 4
+    },
+    {
+      "Name": "UI / player playlist / save database",
+      "Milliseconds": 661.1123,
+      "StartedMilliseconds": 5344.5781,
+      "CompletedMilliseconds": 6005.6903999999995,
+      "Execution": {
+        "ThreadCpuMilliseconds": 421.875,
+        "Gen0Collections": 8,
+        "Gen1Collections": 2,
+        "Gen2Collections": 1,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 16.1434,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.6647,
+      "StartedMilliseconds": 6067.4176,
+      "CompletedMilliseconds": 6068.0823,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0006,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0382,
+      "StartedMilliseconds": 6068.2623,
+      "CompletedMilliseconds": 6068.3005,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0003,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0358,
+      "StartedMilliseconds": 6068.3547,
+      "CompletedMilliseconds": 6068.3904999999995,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0458,
+      "StartedMilliseconds": 6068.8164,
+      "CompletedMilliseconds": 6068.8622,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0003,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.05,
+      "StartedMilliseconds": 6068.9282,
+      "CompletedMilliseconds": 6068.9782000000005,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0001,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0334,
+      "StartedMilliseconds": 6069.034,
+      "CompletedMilliseconds": 6069.0674,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0324,
+      "StartedMilliseconds": 6069.119,
+      "CompletedMilliseconds": 6069.1514,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0327,
+      "StartedMilliseconds": 6069.2018,
+      "CompletedMilliseconds": 6069.2345,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0313,
+      "StartedMilliseconds": 6069.2857,
+      "CompletedMilliseconds": 6069.317,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0401,
+      "StartedMilliseconds": 6069.3667,
+      "CompletedMilliseconds": 6069.4068,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0301,
+      "StartedMilliseconds": 6069.4641,
+      "CompletedMilliseconds": 6069.4942,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0383,
+      "StartedMilliseconds": 6069.5433,
+      "CompletedMilliseconds": 6069.5816,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0001,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0299,
+      "StartedMilliseconds": 6069.6311,
+      "CompletedMilliseconds": 6069.661,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0003,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0414,
+      "StartedMilliseconds": 6069.7088,
+      "CompletedMilliseconds": 6069.7502,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0284,
+      "StartedMilliseconds": 6069.8,
+      "CompletedMilliseconds": 6069.8284,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0001,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0282,
+      "StartedMilliseconds": 6069.8773,
+      "CompletedMilliseconds": 6069.9055,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0371,
+      "StartedMilliseconds": 6069.9532,
+      "CompletedMilliseconds": 6069.9902999999995,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0001,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0283,
+      "StartedMilliseconds": 6070.0391,
+      "CompletedMilliseconds": 6070.0674,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0003,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0284,
+      "StartedMilliseconds": 6070.1182,
+      "CompletedMilliseconds": 6070.1466,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.028,
+      "StartedMilliseconds": 6070.1947,
+      "CompletedMilliseconds": 6070.2227,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0281,
+      "StartedMilliseconds": 6070.2694,
+      "CompletedMilliseconds": 6070.297500000001,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0287,
+      "StartedMilliseconds": 6070.3443,
+      "CompletedMilliseconds": 6070.373,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0001,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0289,
+      "StartedMilliseconds": 6070.4255,
+      "CompletedMilliseconds": 6070.4544000000005,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0361,
+      "StartedMilliseconds": 6070.8337,
+      "CompletedMilliseconds": 6070.8698,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.029,
+      "StartedMilliseconds": 6070.9207,
+      "CompletedMilliseconds": 6070.9497,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0001,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0287,
+      "StartedMilliseconds": 6070.9978,
+      "CompletedMilliseconds": 6071.0265,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0286,
+      "StartedMilliseconds": 6071.0735,
+      "CompletedMilliseconds": 6071.1021,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.0407,
+      "StartedMilliseconds": 6071.1402,
+      "CompletedMilliseconds": 6071.180899999999,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0001,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Application / initial playlist view ready",
+      "Milliseconds": 6496.4101
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 509.5357,
+      "StartedMilliseconds": 6254.4437,
+      "CompletedMilliseconds": 6763.9794,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 2,
+        "Gen1Collections": 1,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0014,
+      "ThreadId": 13
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.4033,
+      "StartedMilliseconds": 6899.4662,
+      "CompletedMilliseconds": 6899.8695,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0007,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / SoundItems",
+      "Milliseconds": 1.4609,
+      "StartedMilliseconds": 6899.8954,
+      "CompletedMilliseconds": 6901.3563,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0003,
+      "ThreadId": 15
+    },
+    {
+      "Name": "Database / execute / Artists",
+      "Milliseconds": 155.4292,
+      "StartedMilliseconds": 6764.3791,
+      "CompletedMilliseconds": 6919.8083,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 1,
+        "Gen1Collections": 1,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 13
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.17,
+      "StartedMilliseconds": 6950.926,
+      "CompletedMilliseconds": 6951.0960000000005,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0006,
+      "ThreadId": 13
+    },
+    {
+      "Name": "Database / execute / Albums",
+      "Milliseconds": 316.6234,
+      "StartedMilliseconds": 6951.1166,
+      "CompletedMilliseconds": 7267.740000000001,
+      "Execution": {
+        "ThreadCpuMilliseconds": 312.5,
+        "Gen0Collections": 2,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32765,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 13
+    },
+    {
+      "Name": "Application / library Album / repository setup",
+      "Milliseconds": 7.43,
+      "StartedMilliseconds": 7294.6637,
+      "CompletedMilliseconds": 7302.0937,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 6.6013,
+      "ThreadId": 14
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.2169,
+      "StartedMilliseconds": 7322.8425,
+      "CompletedMilliseconds": 7323.0594,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0006,
+      "ThreadId": 14
+    },
+    {
+      "Name": "Database / execute / Albums",
+      "Milliseconds": 1.9236,
+      "StartedMilliseconds": 7323.1068,
+      "CompletedMilliseconds": 7325.0304,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0003,
+      "ThreadId": 14
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 50.353,
+      "StartedMilliseconds": 7279.8351,
+      "CompletedMilliseconds": 7330.1881,
+      "Execution": {
+        "ThreadCpuMilliseconds": null,
+        "Gen0Collections": 1,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 13.5115,
+      "ThreadId": 14
+    },
+    {
+      "Name": "Application / library Artist / repository setup",
+      "Milliseconds": 6.739,
+      "StartedMilliseconds": 7365.5192,
+      "CompletedMilliseconds": 7372.258199999999,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.7463,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.74,
+      "StartedMilliseconds": 7404.7673,
+      "CompletedMilliseconds": 7405.5073,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0019,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Database / execute / Artists",
+      "Milliseconds": 114.9446,
+      "StartedMilliseconds": 7405.5725,
+      "CompletedMilliseconds": 7520.5171,
+      "Execution": {
+        "ThreadCpuMilliseconds": 125,
+        "Gen0Collections": 2,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0004,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 175.6909,
+      "StartedMilliseconds": 7357.1684,
+      "CompletedMilliseconds": 7532.859299999999,
+      "Execution": {
+        "ThreadCpuMilliseconds": null,
+        "Gen0Collections": 2,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 8.2505,
+      "ThreadId": 19
+    },
+    {
+      "Name": "UI / music playlist / activation and render",
+      "Milliseconds": 1597.0726,
+      "StartedMilliseconds": 6616.4343,
+      "CompletedMilliseconds": 8213.5069,
+      "Execution": {
+        "ThreadCpuMilliseconds": 1296.875,
+        "Gen0Collections": 14,
+        "Gen1Collections": 4,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 14,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 6.4953,
+      "ThreadId": 1
+    },
+    {
+      "Name": "UI / player playlist / save snapshot",
+      "Milliseconds": 6.896,
+      "StartedMilliseconds": 8246.9855,
+      "CompletedMilliseconds": 8253.881500000001,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 14,
+        "WorkerCountEnd": 14,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.8537,
+      "ThreadId": 1
+    },
+    {
+      "Name": "UI / player playlist / save queue wait",
+      "Milliseconds": 7.9164,
+      "StartedMilliseconds": 8262.7478,
+      "CompletedMilliseconds": 8270.6642,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 14,
+        "WorkerCountEnd": 14,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 7.9134,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.6715,
+      "StartedMilliseconds": 8300.0154,
+      "CompletedMilliseconds": 8300.6869,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32758,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 14,
+        "WorkerCountEnd": 14,
+        "PendingWorkStart": 2,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0007,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Database / execute / SoundItemPlaylists",
+      "Milliseconds": 1.1517,
+      "StartedMilliseconds": 8313.8954,
+      "CompletedMilliseconds": 8315.0471,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32754,
+        "WorkerCountStart": 14,
+        "WorkerCountEnd": 16,
+        "PendingWorkStart": 1,
+        "PendingWorkEnd": 3
+      },
+      "DiagnosticEntryMilliseconds": 0.0007,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Database / execute / SoundItemPlaylists",
+      "Milliseconds": 0.5284,
+      "StartedMilliseconds": 8316.2822,
+      "CompletedMilliseconds": 8316.810599999999,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32754,
+        "AvailableWorkersEnd": 32754,
+        "WorkerCountStart": 16,
+        "WorkerCountEnd": 16,
+        "PendingWorkStart": 3,
+        "PendingWorkEnd": 3
+      },
+      "DiagnosticEntryMilliseconds": 0.0009,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Data / playlist save / stored read",
+      "Milliseconds": 17.7538,
+      "StartedMilliseconds": 8301.5503,
+      "CompletedMilliseconds": 8319.304100000001,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32758,
+        "WorkerCountStart": 14,
+        "WorkerCountEnd": 18,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 11.1942,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Data / playlist save / reconciliation",
+      "Milliseconds": 10.0802,
+      "StartedMilliseconds": 8339.1867,
+      "CompletedMilliseconds": 8349.2669,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 9.8847,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.9607,
+      "StartedMilliseconds": 8367.2198,
+      "CompletedMilliseconds": 8368.1805,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0008,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Data / playlist save / playlist write",
+      "Milliseconds": 10.4346,
+      "StartedMilliseconds": 8358.2404,
+      "CompletedMilliseconds": 8368.675000000001,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 8.5046,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.1439,
+      "StartedMilliseconds": 8393.8047,
+      "CompletedMilliseconds": 8393.9486,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0007,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Data / playlist save / actual item write",
+      "Milliseconds": 13.8318,
+      "StartedMilliseconds": 8380.3094,
+      "CompletedMilliseconds": 8394.1412,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 12.775,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.1613,
+      "StartedMilliseconds": 8665.0143,
+      "CompletedMilliseconds": 8665.1756,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0005,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Database / execute / PlaylistSongs",
+      "Milliseconds": 2.1936,
+      "StartedMilliseconds": 8665.1955,
+      "CompletedMilliseconds": 8667.3891,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Data / playlist save / change notification",
+      "Milliseconds": 16.7772,
+      "StartedMilliseconds": 8653.1267,
+      "CompletedMilliseconds": 8669.903900000001,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 1,
+        "Gen1Collections": 1,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 10.3767,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Data / playlist save / log",
+      "Milliseconds": 11.5231,
+      "StartedMilliseconds": 8677.2728,
+      "CompletedMilliseconds": 8688.795900000001,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32765,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 1
+      },
+      "DiagnosticEntryMilliseconds": 11.4666,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Data / playlist save / total",
+      "Milliseconds": 411.5791,
+      "StartedMilliseconds": 8288.7418,
+      "CompletedMilliseconds": 8700.3209,
+      "Execution": {
+        "ThreadCpuMilliseconds": 140.625,
+        "Gen0Collections": 3,
+        "Gen1Collections": 1,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 14,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 10.6223,
+      "ThreadId": 19
+    },
+    {
+      "Name": "UI / player playlist / save database",
+      "Milliseconds": 433.7235,
+      "StartedMilliseconds": 8280.4065,
+      "CompletedMilliseconds": 8714.13,
+      "Execution": {
+        "ThreadCpuMilliseconds": 156.25,
+        "Gen0Collections": 4,
+        "Gen1Collections": 1,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32761,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 14,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 8.3179,
+      "ThreadId": 19
+    },
+    {
+      "Name": "UI / player playlist / clear save",
+      "Milliseconds": 486.3292,
+      "StartedMilliseconds": 8239.0012,
+      "CompletedMilliseconds": 8725.3304,
+      "Execution": {
+        "ThreadCpuMilliseconds": 406.25,
+        "Gen0Collections": 4,
+        "Gen1Collections": 1,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 14,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 7.9395,
+      "ThreadId": 1
+    },
+    {
+      "Name": "UI / player playlist / clear reset",
+      "Milliseconds": 126.9177,
+      "StartedMilliseconds": 8733.7513,
+      "CompletedMilliseconds": 8860.669,
+      "Execution": {
+        "ThreadCpuMilliseconds": 93.75,
+        "Gen0Collections": 1,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 1
+      },
+      "DiagnosticEntryMilliseconds": 8.3186,
+      "ThreadId": 1
+    },
+    {
+      "Name": "UI / player playlist / clear collection",
+      "Milliseconds": 14.2301,
+      "StartedMilliseconds": 8874.8244,
+      "CompletedMilliseconds": 8889.0545,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 10.3956,
+      "ThreadId": 1
+    },
+    {
+      "Name": "UI / music playlist / clear before load",
+      "Milliseconds": 689.5687,
+      "StartedMilliseconds": 8223.7962,
+      "CompletedMilliseconds": 8913.3649,
+      "Execution": {
+        "ThreadCpuMilliseconds": 578.125,
+        "Gen0Collections": 5,
+        "Gen1Collections": 1,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 14,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 10.1503,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.4221,
+      "StartedMilliseconds": 8940.0671,
+      "CompletedMilliseconds": 8940.4892,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32761,
+        "AvailableWorkersEnd": 32761,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0008,
+      "ThreadId": 32
+    },
+    {
+      "Name": "Database / execute / SoundItemPlaylists",
+      "Milliseconds": 2.4003,
+      "StartedMilliseconds": 8940.5229,
+      "CompletedMilliseconds": 8942.9232,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32761,
+        "AvailableWorkersEnd": 32761,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0003,
+      "ThreadId": 32
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.5407,
+      "StartedMilliseconds": 8947.3259,
+      "CompletedMilliseconds": 8947.8666,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32761,
+        "AvailableWorkersEnd": 32761,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.001,
+      "ThreadId": 35
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 1.0491,
+      "StartedMilliseconds": 8947.1002,
+      "CompletedMilliseconds": 8948.149300000001,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32761,
+        "AvailableWorkersEnd": 32761,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0013,
+      "ThreadId": 32
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.2863,
+      "StartedMilliseconds": 8949.5087,
+      "CompletedMilliseconds": 8949.795,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32761,
+        "AvailableWorkersEnd": 32761,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0009,
+      "ThreadId": 29
+    },
+    {
+      "Name": "Database / execute / Songs",
+      "Milliseconds": 1.9081,
+      "StartedMilliseconds": 8947.9303,
+      "CompletedMilliseconds": 8949.8384,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32761,
+        "AvailableWorkersEnd": 32761,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 35
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 1.7881,
+      "StartedMilliseconds": 8948.1615,
+      "CompletedMilliseconds": 8949.9496,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32761,
+        "AvailableWorkersEnd": 32761,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0005,
+      "ThreadId": 11
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.2973,
+      "StartedMilliseconds": 8949.7568,
+      "CompletedMilliseconds": 8950.0541,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32761,
+        "AvailableWorkersEnd": 32761,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0009,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Database / execute / Songs",
+      "Milliseconds": 1.2852,
+      "StartedMilliseconds": 8949.8282,
+      "CompletedMilliseconds": 8951.1134,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32761,
+        "AvailableWorkersEnd": 32761,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0004,
+      "ThreadId": 29
+    },
+    {
+      "Name": "Database / execute / Songs",
+      "Milliseconds": 1.1428,
+      "StartedMilliseconds": 8950.0707,
+      "CompletedMilliseconds": 8951.2135,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32761,
+        "AvailableWorkersEnd": 32761,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 4
+    },
+    {
+      "Name": "Database / execute / Songs",
+      "Milliseconds": 1.7809,
+      "StartedMilliseconds": 8949.9647,
+      "CompletedMilliseconds": 8951.7456,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32761,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 11
+    },
+    {
+      "Name": "Database / execute / SoundItemPlaylists",
+      "Milliseconds": 304.8211,
+      "StartedMilliseconds": 8948.1733,
+      "CompletedMilliseconds": 9252.9944,
+      "Execution": {
+        "ThreadCpuMilliseconds": 296.875,
+        "Gen0Collections": 1,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32761,
+        "AvailableWorkersEnd": 32765,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0004,
+      "ThreadId": 32
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.2318,
+      "StartedMilliseconds": 9351.6764,
+      "CompletedMilliseconds": 9351.9082,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0006,
+      "ThreadId": 35
+    },
+    {
+      "Name": "Database / execute / Songs",
+      "Milliseconds": 0.627,
+      "StartedMilliseconds": 9351.9374,
+      "CompletedMilliseconds": 9352.564400000001,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 35
+    },
+    {
+      "Name": "UI / music playlist / read and create incoming views",
+      "Milliseconds": 3822.9485,
+      "StartedMilliseconds": 8928.7959,
+      "CompletedMilliseconds": 12751.7444,
+      "Execution": {
+        "ThreadCpuMilliseconds": 359.375,
+        "Gen0Collections": 162,
+        "Gen1Collections": 41,
+        "Gen2Collections": 1,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32766,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 8.1644,
+      "ThreadId": 1
+    },
+    {
+      "Name": "UI / music playlist / convert incoming views",
+      "Milliseconds": 20.924,
+      "StartedMilliseconds": 12778.907,
+      "CompletedMilliseconds": 12799.831,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32766,
+        "AvailableWorkersEnd": 32766,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 20.9111,
+      "ThreadId": 1
+    },
+    {
+      "Name": "UI / player playlist / create saved playlist views",
+      "Milliseconds": 6906.4185,
+      "StartedMilliseconds": 12850.0828,
+      "CompletedMilliseconds": 19756.5013,
+      "Execution": {
+        "ThreadCpuMilliseconds": 5984.375,
+        "Gen0Collections": 412,
+        "Gen1Collections": 126,
+        "Gen2Collections": 1,
+        "AvailableWorkersStart": 32766,
+        "AvailableWorkersEnd": 32766,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 8.4894,
+      "ThreadId": 1
+    },
+    {
+      "Name": "UI / player playlist / replace collection",
+      "Milliseconds": 5082.6931,
+      "StartedMilliseconds": 19782.2454,
+      "CompletedMilliseconds": 24864.9385,
+      "Execution": {
+        "ThreadCpuMilliseconds": 4828.125,
+        "Gen0Collections": 39,
+        "Gen1Collections": 14,
+        "Gen2Collections": 1,
+        "AvailableWorkersStart": 32766,
+        "AvailableWorkersEnd": 32766,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.6622,
+      "ThreadId": 1
+    },
+    {
+      "Name": "UI / player playlist / save snapshot",
+      "Milliseconds": 4582.9799,
+      "StartedMilliseconds": 24907.8242,
+      "CompletedMilliseconds": 29490.8041,
+      "Execution": {
+        "ThreadCpuMilliseconds": 4125,
+        "Gen0Collections": 125,
+        "Gen1Collections": 49,
+        "Gen2Collections": 1,
+        "AvailableWorkersStart": 32766,
+        "AvailableWorkersEnd": 32766,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 17.8613,
+      "ThreadId": 1
+    },
+    {
+      "Name": "UI / player playlist / save queue wait",
+      "Milliseconds": 6.2907,
+      "StartedMilliseconds": 29501.9902,
+      "CompletedMilliseconds": 29508.2809,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32766,
+        "AvailableWorkersEnd": 32766,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 6.279,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.2966,
+      "StartedMilliseconds": 29538.806,
+      "CompletedMilliseconds": 29539.102600000002,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0009,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Database / execute / SoundItemPlaylists",
+      "Milliseconds": 0.6798,
+      "StartedMilliseconds": 29551.5948,
+      "CompletedMilliseconds": 29552.2746,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0006,
+      "ThreadId": 19
+    },
+    {
+      "Name": "UI / player playlist / dispatch active item",
+      "Milliseconds": 4640.0743,
+      "StartedMilliseconds": 24873.9434,
+      "CompletedMilliseconds": 29514.0177,
+      "Execution": {
+        "ThreadCpuMilliseconds": 4171.875,
+        "Gen0Collections": 125,
+        "Gen1Collections": 49,
+        "Gen2Collections": 1,
+        "AvailableWorkersStart": 32766,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 9.7936,
+      "ThreadId": 1
+    },
+    {
+      "Name": "UI / player playlist / collection publication",
+      "Milliseconds": 10068.7912,
+      "StartedMilliseconds": 19776.1567,
+      "CompletedMilliseconds": 29844.9479,
+      "Execution": {
+        "ThreadCpuMilliseconds": 9265.625,
+        "Gen0Collections": 168,
+        "Gen1Collections": 64,
+        "Gen2Collections": 2,
+        "AvailableWorkersStart": 32766,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.9943,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Database / execute / SoundItemPlaylists",
+      "Milliseconds": 294.8928,
+      "StartedMilliseconds": 29552.9451,
+      "CompletedMilliseconds": 29847.837900000002,
+      "Execution": {
+        "ThreadCpuMilliseconds": 281.25,
+        "Gen0Collections": 4,
+        "Gen1Collections": 1,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0006,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.1816,
+      "StartedMilliseconds": 29978.3254,
+      "CompletedMilliseconds": 29978.507,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0006,
+      "ThreadId": 33
+    },
+    {
+      "Name": "Database / execute / Songs",
+      "Milliseconds": 110.4176,
+      "StartedMilliseconds": 29978.5333,
+      "CompletedMilliseconds": 30088.9509,
+      "Execution": {
+        "ThreadCpuMilliseconds": 78.125,
+        "Gen0Collections": 2,
+        "Gen1Collections": 1,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 9,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0002,
+      "ThreadId": 33
+    },
+    {
+      "Name": "UI / music playlist / stored song database read",
+      "Milliseconds": 2478.6471,
+      "StartedMilliseconds": 29853.9537,
+      "CompletedMilliseconds": 32332.6008,
+      "Execution": {
+        "ThreadCpuMilliseconds": 1531.25,
+        "Gen0Collections": 63,
+        "Gen1Collections": 22,
+        "Gen2Collections": 1,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 18,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 7.3822,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.8358,
+      "StartedMilliseconds": 32417.2649,
+      "CompletedMilliseconds": 32418.1007,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0006,
+      "ThreadId": 10
+    },
+    {
+      "Name": "Data / playlist save / stored read",
+      "Milliseconds": 3113.1193,
+      "StartedMilliseconds": 29539.9235,
+      "CompletedMilliseconds": 32653.0428,
+      "Execution": {
+        "ThreadCpuMilliseconds": 2531.25,
+        "Gen0Collections": 73,
+        "Gen1Collections": 24,
+        "Gen2Collections": 1,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 9.0539,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Data / playlist save / reconciliation",
+      "Milliseconds": 116.0276,
+      "StartedMilliseconds": 32661.216,
+      "CompletedMilliseconds": 32777.2436,
+      "Execution": {
+        "ThreadCpuMilliseconds": 109.375,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 10.5073,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 22.6921,
+      "StartedMilliseconds": 32793.1526,
+      "CompletedMilliseconds": 32815.8447,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0008,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Data / playlist save / playlist write",
+      "Milliseconds": 32.5643,
+      "StartedMilliseconds": 32783.5001,
+      "CompletedMilliseconds": 32816.064399999996,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 8.6942,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Database / execute / other",
+      "Milliseconds": 0.1324,
+      "StartedMilliseconds": 32831.2304,
+      "CompletedMilliseconds": 32831.3628,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.001,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Data / playlist save / actual item write",
+      "Milliseconds": 7.2091,
+      "StartedMilliseconds": 32824.293,
+      "CompletedMilliseconds": 32831.5021,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 6.2021,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Database / execute / Artists",
+      "Milliseconds": 435.1705,
+      "StartedMilliseconds": 32418.4038,
+      "CompletedMilliseconds": 32853.5743,
+      "Execution": {
+        "ThreadCpuMilliseconds": 359.375,
+        "Gen0Collections": 4,
+        "Gen1Collections": 1,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0007,
+      "ThreadId": 10
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.3196,
+      "StartedMilliseconds": 32954.3067,
+      "CompletedMilliseconds": 32954.6263,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0128,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Database / execute / PlaylistSongs",
+      "Milliseconds": 1.3934,
+      "StartedMilliseconds": 32954.6645,
+      "CompletedMilliseconds": 32956.0579,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 10,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0003,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Application / library Artist / batch item lookup",
+      "Milliseconds": 730.2921,
+      "StartedMilliseconds": 32376.2349,
+      "CompletedMilliseconds": 33106.527,
+      "Execution": {
+        "ThreadCpuMilliseconds": null,
+        "Gen0Collections": 15,
+        "Gen1Collections": 4,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 14,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 5.976,
+      "ThreadId": 10
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.2096,
+      "StartedMilliseconds": 33144.862,
+      "CompletedMilliseconds": 33145.0716,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 14,
+        "WorkerCountEnd": 14,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0004,
+      "ThreadId": 38
+    },
+    {
+      "Name": "Database / execute / Albums",
+      "Milliseconds": 1.5884,
+      "StartedMilliseconds": 33145.1016,
+      "CompletedMilliseconds": 33146.69,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 14,
+        "WorkerCountEnd": 14,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0003,
+      "ThreadId": 38
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.4031,
+      "StartedMilliseconds": 33291.3424,
+      "CompletedMilliseconds": 33291.745500000005,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 14,
+        "WorkerCountEnd": 14,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.001,
+      "ThreadId": 38
+    },
+    {
+      "Name": "Database / execute / Albums",
+      "Milliseconds": 2.0303,
+      "StartedMilliseconds": 33291.7981,
+      "CompletedMilliseconds": 33293.8284,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 14,
+        "WorkerCountEnd": 14,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0004,
+      "ThreadId": 38
+    },
+    {
+      "Name": "Database / connection open",
+      "Milliseconds": 0.3691,
+      "StartedMilliseconds": 33405.5437,
+      "CompletedMilliseconds": 33405.912800000006,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 14,
+        "WorkerCountEnd": 14,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.001,
+      "ThreadId": 38
+    },
+    {
+      "Name": "Database / execute / Albums",
+      "Milliseconds": 2.0188,
+      "StartedMilliseconds": 33405.956,
+      "CompletedMilliseconds": 33407.974799999996,
+      "Execution": {
+        "ThreadCpuMilliseconds": 0,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 14,
+        "WorkerCountEnd": 14,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 0.0004,
+      "ThreadId": 38
+    },
+    {
+      "Name": "Application / library Album / batch item lookup",
+      "Milliseconds": 309.6304,
+      "StartedMilliseconds": 33117.4333,
+      "CompletedMilliseconds": 33427.0637,
+      "Execution": {
+        "ThreadCpuMilliseconds": null,
+        "Gen0Collections": 18,
+        "Gen1Collections": 5,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 14,
+        "WorkerCountEnd": 14,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 9.5227,
+      "ThreadId": 38
+    },
+    {
+      "Name": "UI / music playlist / related view lookup",
+      "Milliseconds": 1076.9202,
+      "StartedMilliseconds": 32359.6321,
+      "CompletedMilliseconds": 33436.552299999996,
+      "Execution": {
+        "ThreadCpuMilliseconds": 218.75,
+        "Gen0Collections": 33,
+        "Gen1Collections": 9,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 14,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 6.4378,
+      "ThreadId": 1
+    },
+    {
+      "Name": "UI / music playlist / stored song enrichment publication",
+      "Milliseconds": 4344.7473,
+      "StartedMilliseconds": 32342.0007,
+      "CompletedMilliseconds": 36686.748,
+      "Execution": {
+        "ThreadCpuMilliseconds": 1406.25,
+        "Gen0Collections": 199,
+        "Gen1Collections": 59,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32764,
+        "WorkerCountStart": 18,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 17.6103,
+      "ThreadId": 1
+    },
+    {
+      "Name": "UI / music playlist / load and render",
+      "Milliseconds": 28644.5204,
+      "StartedMilliseconds": 8921.3916,
+      "CompletedMilliseconds": 37565.912000000004,
+      "Execution": {
+        "ThreadCpuMilliseconds": 19046.875,
+        "Gen0Collections": 1021,
+        "Gen1Collections": 317,
+        "Gen2Collections": 5,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32757,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 7.387,
+      "ThreadId": 1
+    },
+    {
+      "Name": "Data / playlist save / change notification",
+      "Milliseconds": 7365.8625,
+      "StartedMilliseconds": 32939.9002,
+      "CompletedMilliseconds": 40305.7627,
+      "Execution": {
+        "ThreadCpuMilliseconds": 5703.125,
+        "Gen0Collections": 261,
+        "Gen1Collections": 82,
+        "Gen2Collections": 1,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32761,
+        "WorkerCountStart": 10,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 9.0674,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Data / playlist save / log",
+      "Milliseconds": 11.4873,
+      "StartedMilliseconds": 40704.4283,
+      "CompletedMilliseconds": 40715.9156,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32760,
+        "WorkerCountStart": 19,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 11.3371,
+      "ThreadId": 19
+    },
+    {
+      "Name": "Data / playlist save / total",
+      "Milliseconds": 11201.4374,
+      "StartedMilliseconds": 29522.8351,
+      "CompletedMilliseconds": 40724.2725,
+      "Execution": {
+        "ThreadCpuMilliseconds": 8468.75,
+        "Gen0Collections": 339,
+        "Gen1Collections": 107,
+        "Gen2Collections": 2,
+        "AvailableWorkersStart": 32764,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 7.5231,
+      "ThreadId": 19
+    },
+    {
+      "Name": "UI / player playlist / save database",
+      "Milliseconds": 11221.0617,
+      "StartedMilliseconds": 29513.8134,
+      "CompletedMilliseconds": 40734.8751,
+      "Execution": {
+        "ThreadCpuMilliseconds": 8484.375,
+        "Gen0Collections": 339,
+        "Gen1Collections": 107,
+        "Gen2Collections": 2,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 9,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 1,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 9.0051,
+      "ThreadId": 19
+    },
+    {
+      "Name": "UI / music playlist / scroll to last track",
+      "Milliseconds": 2624.8635,
+      "StartedMilliseconds": 38264.7165,
+      "CompletedMilliseconds": 40889.58,
+      "Execution": {
+        "ThreadCpuMilliseconds": 468.75,
+        "Gen0Collections": 42,
+        "Gen1Collections": 16,
+        "Gen2Collections": 1,
+        "AvailableWorkersStart": 32759,
+        "AvailableWorkersEnd": 32763,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 19,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 86.3511,
+      "ThreadId": 1
+    },
+    {
+      "Name": "UI / music playlist / long no-match search and render",
+      "Milliseconds": 711.0845,
+      "StartedMilliseconds": 41224.237,
+      "CompletedMilliseconds": 41935.3215,
+      "Execution": {
+        "ThreadCpuMilliseconds": 281.25,
+        "Gen0Collections": 11,
+        "Gen1Collections": 2,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32763,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 40.8747,
+      "ThreadId": 1
+    },
+    {
+      "Name": "UI / music playlist / long near-match search and render",
+      "Milliseconds": 665.8087,
+      "StartedMilliseconds": 42168.1968,
+      "CompletedMilliseconds": 42834.0055,
+      "Execution": {
+        "ThreadCpuMilliseconds": 375,
+        "Gen0Collections": 12,
+        "Gen1Collections": 1,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32761,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 17,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 9.314,
+      "ThreadId": 1
+    },
+    {
+      "Name": "UI / player playlist / clear save",
+      "Milliseconds": 12.1461,
+      "StartedMilliseconds": 43105.8152,
+      "CompletedMilliseconds": 43117.961299999995,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32760,
+        "AvailableWorkersEnd": 32758,
+        "WorkerCountStart": 18,
+        "WorkerCountEnd": 18,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 11.8351,
+      "ThreadId": 4
+    },
+    {
+      "Name": "UI / player playlist / clear save",
+      "Milliseconds": 13.8357,
+      "StartedMilliseconds": 43567.245,
+      "CompletedMilliseconds": 43581.080700000006,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 0,
+        "Gen1Collections": 0,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32759,
+        "AvailableWorkersEnd": 32760,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 13.7257,
+      "ThreadId": 18
+    },
+    {
+      "Name": "UI / player playlist / clear reset",
+      "Milliseconds": 141.1435,
+      "StartedMilliseconds": 43619.54,
+      "CompletedMilliseconds": 43760.6835,
+      "Execution": {
+        "ThreadCpuMilliseconds": null,
+        "Gen0Collections": 5,
+        "Gen1Collections": 1,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32761,
+        "AvailableWorkersEnd": 32760,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 17.5024,
+      "ThreadId": 19
+    },
+    {
+      "Name": "UI / player playlist / clear reset",
+      "Milliseconds": 612.1734,
+      "StartedMilliseconds": 43148.5252,
+      "CompletedMilliseconds": 43760.698599999996,
+      "Execution": {
+        "ThreadCpuMilliseconds": null,
+        "Gen0Collections": 21,
+        "Gen1Collections": 7,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32759,
+        "AvailableWorkersEnd": 32760,
+        "WorkerCountStart": 18,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 45.0459,
+      "ThreadId": 25
+    },
+    {
+      "Name": "UI / player playlist / clear collection",
+      "Milliseconds": 65.4019,
+      "StartedMilliseconds": 43776.1689,
+      "CompletedMilliseconds": 43841.570799999994,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 3,
+        "Gen1Collections": 1,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 65.2542,
+      "ThreadId": 19
+    },
+    {
+      "Name": "UI / player playlist / clear collection",
+      "Milliseconds": 56.7198,
+      "StartedMilliseconds": 43792.2546,
+      "CompletedMilliseconds": 43848.9744,
+      "Execution": {
+        "ThreadCpuMilliseconds": 15.625,
+        "Gen0Collections": 2,
+        "Gen1Collections": 1,
+        "Gen2Collections": 0,
+        "AvailableWorkersStart": 32762,
+        "AvailableWorkersEnd": 32762,
+        "WorkerCountStart": 11,
+        "WorkerCountEnd": 11,
+        "PendingWorkStart": 0,
+        "PendingWorkEnd": 0
+      },
+      "DiagnosticEntryMilliseconds": 56.7075,
+      "ThreadId": 25
+    }
+  ],
+  "Observations": {
+    "UI / music playlist / stored metadata ready playlist": 658,
+    "UI / grouped playlist items": 5073,
+    "UI / realized playlist rows": 41,
+    "UI / music playlist / painted Initial music view": 1,
+    "UI / music playlist / painted 100k music playlist": 1,
+    "UI / music playlist / ordered occurrence check": 1,
+    "UI / music playlist / items": 100000,
+    "UI / music playlist / realized rows": 13,
+    "UI / music playlist / painted Last music track": 1,
+    "UI / music playlist / last track visible": 1,
+    "UI / music playlist / realized rows after scroll": 26,
+    "UI / music playlist / painted long no-match music search": 1,
+    "UI / music playlist / long no-match matches": 0,
+    "UI / music playlist / long no-match ordered ids hash": 1449310910991872227,
+    "UI / music playlist / long no-match query length": 114,
+    "UI / music playlist / painted long near-match music search": 1,
+    "UI / music playlist / long near-match matches": 5,
+    "UI / music playlist / long near-match ordered ids hash": -6146058680502812926,
+    "UI / music playlist / long near-match query length": 114
+  },
+  "DatabaseReads": [
+    {
+      "Table": "UPnPMediaServers",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 2.705,
+      "StartedMilliseconds": 3580.1604,
+      "ThreadId": 4,
+      "DiagnosticWaitMilliseconds": 1.1105
+    },
+    {
+      "Table": "UPnPMediaRenderers",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 6,
+      "Milliseconds": 11.9073,
+      "StartedMilliseconds": 3585.273,
+      "ThreadId": 10,
+      "DiagnosticWaitMilliseconds": 0.001
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 5311,
+      "Milliseconds": 113.3063,
+      "StartedMilliseconds": 3585.3194,
+      "ThreadId": 13,
+      "DiagnosticWaitMilliseconds": 0.002
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0726,
+      "StartedMilliseconds": 4543.0938,
+      "ThreadId": 4,
+      "DiagnosticWaitMilliseconds": 0.0034
+    },
+    {
+      "Table": "PlaylistSongs",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 194,
+      "Milliseconds": 15.4988,
+      "StartedMilliseconds": 4615.3528,
+      "ThreadId": 4,
+      "DiagnosticWaitMilliseconds": 0.0019
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.2143,
+      "StartedMilliseconds": 4686.1996,
+      "ThreadId": 19,
+      "DiagnosticWaitMilliseconds": 0.0005
+    },
+    {
+      "Table": "PinnedItems",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 10,
+      "Milliseconds": 0.3056,
+      "StartedMilliseconds": 4692.0243,
+      "ThreadId": 13,
+      "DiagnosticWaitMilliseconds": 0.0008
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 29,
+      "Milliseconds": 0.9724,
+      "StartedMilliseconds": 4717.7575,
+      "ThreadId": 19,
+      "DiagnosticWaitMilliseconds": 0.0006
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 2,
+      "Milliseconds": 0.2618,
+      "StartedMilliseconds": 5450.3192,
+      "ThreadId": 4,
+      "DiagnosticWaitMilliseconds": 0.0017
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0496,
+      "StartedMilliseconds": 5453.3789,
+      "ThreadId": 11,
+      "DiagnosticWaitMilliseconds": 0.0005
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 29,
+      "Milliseconds": 1.1336,
+      "StartedMilliseconds": 5473.3251,
+      "ThreadId": 4,
+      "DiagnosticWaitMilliseconds": 0.0009
+    },
+    {
+      "Table": "SoundItems",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 29,
+      "Milliseconds": 44.1072,
+      "StartedMilliseconds": 5635.7251,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0005
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 1.3692,
+      "StartedMilliseconds": 5751.4908,
+      "ThreadId": 4,
+      "DiagnosticWaitMilliseconds": 0.001
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0169,
+      "StartedMilliseconds": 5826.0788,
+      "ThreadId": 4,
+      "DiagnosticWaitMilliseconds": 0.0002
+    },
+    {
+      "Table": "PlaylistSongs",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0835,
+      "StartedMilliseconds": 5965.8905,
+      "ThreadId": 4,
+      "DiagnosticWaitMilliseconds": 0.0002
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0061,
+      "StartedMilliseconds": 6068.091,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0001
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0028,
+      "StartedMilliseconds": 6068.3035,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0001
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0024,
+      "StartedMilliseconds": 6068.3934,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0002
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0033,
+      "StartedMilliseconds": 6068.8658,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0001
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0027,
+      "StartedMilliseconds": 6068.9812,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0001
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0024,
+      "StartedMilliseconds": 6069.0702,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0002
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0025,
+      "StartedMilliseconds": 6069.1542,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0001
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0024,
+      "StartedMilliseconds": 6069.2373,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0002
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0024,
+      "StartedMilliseconds": 6069.3202,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0002
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.007,
+      "StartedMilliseconds": 6069.4098,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0002
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0024,
+      "StartedMilliseconds": 6069.497,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0002
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0024,
+      "StartedMilliseconds": 6069.5845,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0001
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0022,
+      "StartedMilliseconds": 6069.6638,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0001
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0024,
+      "StartedMilliseconds": 6069.753,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0001
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0024,
+      "StartedMilliseconds": 6069.8312,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0002
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0024,
+      "StartedMilliseconds": 6069.9083,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0002
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0025,
+      "StartedMilliseconds": 6069.9932,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0001
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0022,
+      "StartedMilliseconds": 6070.0703,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0001
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0022,
+      "StartedMilliseconds": 6070.1492,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0001
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0021,
+      "StartedMilliseconds": 6070.2254,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0001
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0022,
+      "StartedMilliseconds": 6070.3,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0001
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0022,
+      "StartedMilliseconds": 6070.3757,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0002
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.3143,
+      "StartedMilliseconds": 6070.4572,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0004
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0027,
+      "StartedMilliseconds": 6070.8731,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0002
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0024,
+      "StartedMilliseconds": 6070.9524,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0001
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0023,
+      "StartedMilliseconds": 6071.0292,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0002
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0022,
+      "StartedMilliseconds": 6071.1048,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0001
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0023,
+      "StartedMilliseconds": 6071.1837,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0002
+    },
+    {
+      "Table": "SoundItems",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 29,
+      "Milliseconds": 0.57,
+      "StartedMilliseconds": 6901.3691,
+      "ThreadId": 15,
+      "DiagnosticWaitMilliseconds": 0.0006
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.1206,
+      "StartedMilliseconds": 6919.8217,
+      "ThreadId": 13,
+      "DiagnosticWaitMilliseconds": 0.0004
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 2,
+      "Milliseconds": 5.3049,
+      "StartedMilliseconds": 7267.7514,
+      "ThreadId": 13,
+      "DiagnosticWaitMilliseconds": 0.0007
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.6482,
+      "StartedMilliseconds": 7325.0568,
+      "ThreadId": 14,
+      "DiagnosticWaitMilliseconds": 0.0015
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 142,
+      "Milliseconds": 9.1748,
+      "StartedMilliseconds": 7520.5306,
+      "ThreadId": 19,
+      "DiagnosticWaitMilliseconds": 0.0009
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 2,
+      "Milliseconds": 0.1653,
+      "StartedMilliseconds": 8315.0657,
+      "ThreadId": 19,
+      "DiagnosticWaitMilliseconds": 0.0008
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 29,
+      "Milliseconds": 2.3823,
+      "StartedMilliseconds": 8316.8257,
+      "ThreadId": 19,
+      "DiagnosticWaitMilliseconds": 0.0008
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0166,
+      "StartedMilliseconds": 8368.2035,
+      "ThreadId": 19,
+      "DiagnosticWaitMilliseconds": 0.0009
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0104,
+      "StartedMilliseconds": 8393.9641,
+      "ThreadId": 19,
+      "DiagnosticWaitMilliseconds": 0.0003
+    },
+    {
+      "Table": "PlaylistSongs",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 2,
+      "Milliseconds": 0.3397,
+      "StartedMilliseconds": 8667.41,
+      "ThreadId": 19,
+      "DiagnosticWaitMilliseconds": 0.0008
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0743,
+      "StartedMilliseconds": 8942.943,
+      "ThreadId": 32,
+      "DiagnosticWaitMilliseconds": 0.0009
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0055,
+      "StartedMilliseconds": 8949.8454,
+      "ThreadId": 35,
+      "DiagnosticWaitMilliseconds": 0.0002
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0064,
+      "StartedMilliseconds": 8951.1234,
+      "ThreadId": 29,
+      "DiagnosticWaitMilliseconds": 0.0003
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0037,
+      "StartedMilliseconds": 8951.2205,
+      "ThreadId": 4,
+      "DiagnosticWaitMilliseconds": 0.0003
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0047,
+      "StartedMilliseconds": 8951.7535,
+      "ThreadId": 11,
+      "DiagnosticWaitMilliseconds": 0.0002
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0034,
+      "StartedMilliseconds": 9352.5697,
+      "ThreadId": 35,
+      "DiagnosticWaitMilliseconds": 0.0001
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 100001,
+      "Milliseconds": 1789.3948,
+      "StartedMilliseconds": 9253.0114,
+      "ThreadId": 32,
+      "DiagnosticWaitMilliseconds": 0.0045
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 2,
+      "Milliseconds": 0.1037,
+      "StartedMilliseconds": 29552.2895,
+      "ThreadId": 19,
+      "DiagnosticWaitMilliseconds": 0.003
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 6068,
+      "Milliseconds": 572.5093,
+      "StartedMilliseconds": 30088.9763,
+      "ThreadId": 33,
+      "DiagnosticWaitMilliseconds": 0.0038
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 100001,
+      "Milliseconds": 2799.9482,
+      "StartedMilliseconds": 29852.9959,
+      "ThreadId": 19,
+      "DiagnosticWaitMilliseconds": 0.0047
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0141,
+      "StartedMilliseconds": 32815.8623,
+      "ThreadId": 19,
+      "DiagnosticWaitMilliseconds": 0.0004
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0071,
+      "StartedMilliseconds": 32831.3746,
+      "ThreadId": 19,
+      "DiagnosticWaitMilliseconds": 0.0005
+    },
+    {
+      "Table": "PlaylistSongs",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0602,
+      "StartedMilliseconds": 32956.0719,
+      "ThreadId": 19,
+      "DiagnosticWaitMilliseconds": 0.0005
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 5466,
+      "Milliseconds": 172.7095,
+      "StartedMilliseconds": 32853.5968,
+      "ThreadId": 10,
+      "DiagnosticWaitMilliseconds": 0.0008
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2816,
+      "Milliseconds": 125.6382,
+      "StartedMilliseconds": 33146.7028,
+      "ThreadId": 38,
+      "DiagnosticWaitMilliseconds": 0.0008
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2598,
+      "Milliseconds": 94.3723,
+      "StartedMilliseconds": 33293.8541,
+      "ThreadId": 38,
+      "DiagnosticWaitMilliseconds": 0.0005
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 191,
+      "Milliseconds": 15.0153,
+      "StartedMilliseconds": 33407.9938,
+      "ThreadId": 38,
+      "DiagnosticWaitMilliseconds": 0.0006
+    }
+  ],
+  "DiagnosticWrites": {
+    "Count": 61,
+    "Milliseconds": 1248.0828,
+    "LongestMilliseconds": 109.362
+  },
+  "DiagnosticMode": "buffered-v1",
+  "WindowMode": "Visible",
+  "ProcessorCount": 8,
+  "MusicPlaylistSave": false,
+  "Playlists": 5310,
+  "FixtureSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+  "ProcessTimeoutSeconds": 60,
+  "MusicPlaylistEntries": 100000,
+  "SoundItems": 207110,
+  "PlaylistQueryPreparation": false,
+  "Configuration": "Release",
+  "OS": "Microsoft Windows NT 10.0.19045.0",
+  "MusicPlaylistClear": false,
+  "DiagnosticProfile": "cpu-v2-eventpipe",
+  "ExternalTrace": "dotnet-sampled-thread-time; CLR GC/contention/threading/stacks"
+}

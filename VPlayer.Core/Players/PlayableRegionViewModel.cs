@@ -2007,7 +2007,7 @@ namespace VPlayer.Core.ViewModels
         var version = Interlocked.Increment(ref playlistSaveVersion);
         TPlaylistModel clone;
         using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("UI / player playlist / save snapshot"))
-          clone = sourcePlaylist.DeepClone();
+          clone = PlaylistSaveSnapshot.Create(sourcePlaylist);
         using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("UI / player playlist / save queue wait"))
           await playlistSemaphore.WaitAsync();
 
