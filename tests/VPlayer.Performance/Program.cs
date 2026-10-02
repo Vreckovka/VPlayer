@@ -6,6 +6,10 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text.Json;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Reflection;
+using System.Windows.Threading;
+using VPlayer.Home.ViewModels.Statistics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -28,6 +32,8 @@ using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.LRC.Domain;
 using VPlayer.AudioStorage.AudioDatabase;
 using VPlayer.AudioStorage.DomainClasses;
+using VPlayer.AudioStorage.DomainClasses.Video;
+using VPlayer.AudioStorage.DomainClasses.IPTV;
 using VPlayer.AudioStorage.InfoDownloader.Clients.PCloud;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.ViewModels.SoundItems;
@@ -71,6 +77,10 @@ namespace VPlayer.Performance
           Prepare(args[1],args[2],args.Length>3?int.Parse(args[3]):5);
         else if(args[0]=="prepare-ui")
           PrepareUi(args[1],args[2],args.Length>3?int.Parse(args[3]):5000);
+        else if(args[0]=="prepare-statistics")
+          PrepareStatistics(args[1],args[2]);
+        else if(args[0]=="statistics")
+          RunStatistics(args[1],args[2],args.Length>3?args[3]:"unknown");
         else if(args[0]=="graphics")
         {
           using var context=new FixtureContext(Path.Combine(Path.GetFullPath(args[1]),"VPlayerDatabase.db"));
@@ -210,6 +220,124 @@ namespace VPlayer.Performance
         AdditionalUserPlaylists=count,PlaylistSizes=new[] {1000,10000,100000}
       },json));
       Console.WriteLine("Prepared grouped UI fixture: "+counts.SoundItemPlaylists.Count()+" playlists.");
+    }
+    private static void PrepareStatistics(string parent,string directory)
+    {
+      parent=Path.GetFullPath(parent);directory=Path.GetFullPath(directory);
+      var metadata=JsonSerializer.Deserialize<JsonElement>(File.ReadAllText(Path.Combine(parent,"fixture.json")));
+      var parentDatabase=Path.Combine(parent,"VPlayerDatabase.db");
+      using(var input=File.OpenRead(parentDatabase))
+        if(BitConverter.ToString(SHA256.Create().ComputeHash(input)).Replace("-","")!=metadata.GetProperty("DatabaseSha256").GetString())
+          throw new InvalidOperationException("Parent fixture changed.");
+      Directory.CreateDirectory(directory);
+      var database=Path.Combine(directory,"VPlayerDatabase.db");
+      if(File.Exists(database)) throw new IOException("Fixture exists; choose a new directory.");
+      using(var input=new SqliteConnection(new SqliteConnectionStringBuilder {DataSource=parentDatabase,Mode=SqliteOpenMode.ReadOnly}.ToString()))
+      using(var copy=new SqliteConnection(new SqliteConnectionStringBuilder {DataSource=database}.ToString()))
+      {
+        input.Open();copy.Open();input.BackupDatabase(copy);
+      }
+      using(var context=new WritableFixtureContext(database))
+      {
+        var foreignKey=context.Model.FindEntityType(typeof(SoundItem)).FindNavigation(nameof(SoundItem.FileInfoEntity)).ForeignKey.Properties.Single().Name;
+        using var connection=new SqliteConnection(new SqliteConnectionStringBuilder {DataSource=database}.ToString());
+        connection.Open();
+        var columns=new List<string>();
+        using(var command=connection.CreateCommand())
+        {
+          command.CommandText="PRAGMA table_info(FileInfos)";
+          using var reader=command.ExecuteReader();
+          while(reader.Read()) columns.Add(reader.GetString(1));
+        }
+        long offset;
+        using(var command=connection.CreateCommand())
+        {
+          command.CommandText="SELECT COALESCE(MAX(Id),0) FROM FileInfos";
+          offset=Convert.ToInt64(command.ExecuteScalar());
+        }
+        var selected=string.Join(",",columns.Select(column=>column=="Id"?"s.Id+"+offset:"f."+Quote(column)));
+        Execute(connection,"INSERT INTO FileInfos ("+string.Join(",",columns.Select(Quote))+") SELECT "+selected+
+          " FROM SoundItems s JOIN FileInfos f ON f.Id=s."+Quote(foreignKey));
+        Execute(connection,"UPDATE SoundItems SET "+Quote(foreignKey)+"=Id+"+offset+" WHERE "+Quote(foreignKey)+" IS NOT NULL");
+      }
+      using var file=File.OpenRead(database);
+      var checksum=BitConverter.ToString(SHA256.Create().ComputeHash(file)).Replace("-","");
+      using var counts=new FixtureContext(database);
+      File.WriteAllText(Path.Combine(directory,"fixture.json"),JsonSerializer.Serialize(new
+      {
+        CreatedUtc=DateTime.UtcNow,DatabaseSha256=checksum,
+        ParentSha256=metadata.GetProperty("DatabaseSha256").GetString(),
+        SoundItems=counts.SoundItems.Count(),Playlists=counts.SoundItemPlaylists.Count(),
+        FileInfos=counts.FileInfos.Count(),UniqueSoundFileMetadata=true,AdditionalUserPlaylists=5000,
+        PlaylistSizes=new[] {1000,10000,100000}
+      },json));
+      Console.WriteLine("Prepared statistics fixture with unique sound-file metadata.");
+    }
+    private static void RunStatistics(string directory,string output,string commit)
+    {
+      directory=Path.GetFullPath(directory);
+      var database=Path.Combine(directory,"VPlayerDatabase.db");
+      var fixture=File.ReadAllText(Path.Combine(directory,"fixture.json"));
+      using var file=File.OpenRead(database);
+      var checksum=BitConverter.ToString(SHA256.Create().ComputeHash(file)).Replace("-","");
+      var metadata=JsonSerializer.Deserialize<JsonElement>(fixture);
+      if(checksum!=metadata.GetProperty("DatabaseSha256").GetString()) throw new InvalidOperationException("Fixture changed.");
+      var dispatcher=Dispatcher.CurrentDispatcher;
+      var prior=VSynchronizationContext.UISynchronizationContext;
+      var priorDispatcher=VSynchronizationContext.UIDispatcher;
+      var priorThread=SynchronizationContext.Current;
+      var synchronization=new DispatcherSynchronizationContext(dispatcher);
+      VSynchronizationContext.UISynchronizationContext=synchronization;
+      VSynchronizationContext.UIDispatcher=dispatcher;
+      SynchronizationContext.SetSynchronizationContext(synchronization);
+      var contexts=new List<FixtureContext>();
+      IQueryable<T> Repository<T>() where T:class
+      {
+        var context=new FixtureContext(database);
+        contexts.Add(context);
+        return context.Set<T>().AsNoTracking();
+      }
+      var storage=new Mock<IStorageManager>();
+      storage.Setup(x=>x.GetTempRepository<SoundItem>()).Returns(()=>Repository<SoundItem>());
+      storage.Setup(x=>x.GetTempRepository<VideoItem>()).Returns(()=>Repository<VideoItem>());
+      storage.Setup(x=>x.GetTempRepository<TvShowEpisode>()).Returns(()=>Repository<TvShowEpisode>());
+      storage.Setup(x=>x.GetTempRepository<Song>()).Returns(()=>Repository<Song>());
+      storage.Setup(x=>x.GetTempRepository<SoundItemFilePlaylist>()).Returns(()=>Repository<SoundItemFilePlaylist>());
+      storage.Setup(x=>x.GetTempRepository<VideoFilePlaylist>()).Returns(()=>Repository<VideoFilePlaylist>());
+      storage.Setup(x=>x.GetTempRepository<TvPlaylist>()).Returns(()=>Repository<TvPlaylist>());
+      try
+      {
+        Measure("Data / statistics","Data","Production StatisticsViewModel.LoadData and UI publication; no view rendering",
+          metadata.GetProperty("SoundItems").GetInt32()+" sound items, "+metadata.GetProperty("Playlists").GetInt32()+" playlists; unique file metadata",()=>
+        {
+          using var view=new StatisticsViewModel(new Mock<IRegionProvider>().Object,storage.Object);
+          try
+          {
+            var task=(Task)typeof(StatisticsViewModel).GetMethod("LoadData",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(view,null);
+            var frame=new DispatcherFrame();
+            task.ContinueWith(_=>dispatcher.BeginInvoke(new Action(()=>frame.Continue=false),DispatcherPriority.ContextIdle),TaskScheduler.Default);
+            Dispatcher.PushFrame(frame);
+            task.GetAwaiter().GetResult();
+            GC.KeepAlive(view.ItemsView.ToArray());GC.KeepAlive(view.SoundsItemsView.ToArray());
+            GC.KeepAlive(view.VideosItemsView.ToArray());GC.KeepAlive(view.PlaylistView.ToArray());
+          }
+          finally {foreach(var context in contexts) context.Dispose();contexts.Clear();}
+        });
+      }
+      finally
+      {
+        VSynchronizationContext.UISynchronizationContext=prior;
+        VSynchronizationContext.UIDispatcher=priorDispatcher;
+        SynchronizationContext.SetSynchronizationContext(priorThread);
+      }
+      Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(output)));
+      if(File.Exists(output)) throw new IOException("Output exists; measurements are immutable.");
+      File.WriteAllText(output,JsonSerializer.Serialize(new
+      {
+        SchemaVersion=1,Commit=commit,CreatedUtc=DateTime.UtcNow,Runtime=Environment.Version.ToString(),
+        OS=Environment.OSVersion.ToString(),ProcessorCount=Environment.ProcessorCount,Configuration="Release",
+        FixtureSha256=checksum,Fixture=metadata,Metrics=metrics
+      },json));
     }
     private sealed class WritableFixtureContext : AudioDatabaseContext
     {
