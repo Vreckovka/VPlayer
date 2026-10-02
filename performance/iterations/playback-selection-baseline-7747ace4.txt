@@ -1,0 +1,41 @@
+Test run for D:\Aplikacie\VPlayer\tests\VPlayer.Tests\bin\x64\Release\netcoreapp3.1\VPlayer.Tests.dll (.NETCoreApp,Version=v3.1)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:06.64]     VPlayer.Tests.PlaybackSelectionRaceTests.EarlierOccurrenceOfTheSameTrackCannotReplayTheNewSelection [FAIL]
+  Failed VPlayer.Tests.PlaybackSelectionRaceTests.EarlierOccurrenceOfTheSameTrackCannotReplayTheNewSelection [4 s]
+  Error Message:
+   Assert.Single() Failure: The collection contained 2 items
+Collection: [99999, 99999]
+  Stack Trace:
+     at VPlayer.Tests.PlaybackSelectionRaceTests.EarlierOccurrenceOfTheSameTrackCannotReplayTheNewSelection() in D:\Aplikacie\VPlayer\tests\VPlayer.Tests\PlaybackSelectionRaceTests.cs:line 190
+--- End of stack trace from previous location where exception was thrown ---
+[xUnit.net 00:00:13.73]     VPlayer.Tests.PlaybackSelectionRaceTests.ClearingDuringPreparationNeverAutoplaysOrThrows [FAIL]
+  Failed VPlayer.Tests.PlaybackSelectionRaceTests.ClearingDuringPreparationNeverAutoplaysOrThrows [7 s]
+  Error Message:
+   Assert.Empty() Failure: Collection was not empty
+Collection: [System.NullReferenceException: Object reference not set to an instance of an object.
+   at VPlayer.Core.ViewModels.PlayableRegionViewModel`5.SetItemAndPlay(Nullable`1 itemIndex, Boolean forcePlay, Boolean onlyItemSet) in D:\Aplikacie\VPlayer\VPlayer.Core\Players\PlayableRegionViewModel.cs:line 1287
+   at System.Threading.Tasks.Task.<>c.<ThrowAsync>b__139_0(Object state)
+   at VPlayer.Tests.PlaybackSelectionRaceTests.UiContext.<>c__DisplayClass5_0.<Post>b__0() in D:\Aplikacie\VPlayer\tests\VPlayer.Tests\PlaybackSelectionRaceTests.cs:line 33
+   at VPlayer.Tests.PlaybackSelectionRaceTests.UiContext.Drain() in D:\Aplikacie\VPlayer\tests\VPlayer.Tests\PlaybackSelectionRaceTests.cs:line 38]
+  Stack Trace:
+     at VPlayer.Tests.PlaybackSelectionRaceTests.ClearingDuringPreparationNeverAutoplaysOrThrows() in D:\Aplikacie\VPlayer\tests\VPlayer.Tests\PlaybackSelectionRaceTests.cs:line 172
+--- End of stack trace from previous location where exception was thrown ---
+[xUnit.net 00:00:20.31]     VPlayer.Tests.PlaybackSelectionRaceTests.HundredOutOfOrderSelectionsCommitOnlyTheFinalTrack [FAIL]
+  Failed VPlayer.Tests.PlaybackSelectionRaceTests.HundredOutOfOrderSelectionsCommitOnlyTheFinalTrack [6 s]
+  Error Message:
+   Assert.Single() Failure: The collection contained 100 items
+Collection: ["file:///D:/benchmark/100000.mp3", "file:///D:/benchmark/99999.mp3", "file:///D:/benchmark/99998.mp3", "file:///D:/benchmark/99997.mp3", "file:///D:/benchmark/99996.mp3", ···]
+  Stack Trace:
+     at VPlayer.Tests.PlaybackSelectionRaceTests.HundredOutOfOrderSelectionsCommitOnlyTheFinalTrack() in D:\Aplikacie\VPlayer\tests\VPlayer.Tests\PlaybackSelectionRaceTests.cs:line 154
+--- End of stack trace from previous location where exception was thrown ---
+[xUnit.net 00:00:27.99]     VPlayer.Tests.PlaybackSelectionRaceTests.PreviousFromFirstSelectsTheLastOccurrence [FAIL]
+  Failed VPlayer.Tests.PlaybackSelectionRaceTests.PreviousFromFirstSelectsTheLastOccurrence [7 s]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 99999
+Actual:   100000
+  Stack Trace:
+     at VPlayer.Tests.PlaybackSelectionRaceTests.PreviousFromFirstSelectsTheLastOccurrence() in D:\Aplikacie\VPlayer\tests\VPlayer.Tests\PlaybackSelectionRaceTests.cs:line 207
+--- End of stack trace from previous location where exception was thrown ---
+
+Failed!  - Failed:     4, Passed:     0, Skipped:     0, Total:     4, Duration: 25 s - VPlayer.Tests.dll (netcoreapp3.1)
