@@ -11,4 +11,4 @@
 
 Twelve checks also cover repeated requests, end of queue, device replacement, disposal, delayed initialization, media clearing with the same selection, and normal playback. Device timing, database-save cost and remote-media cancellation remain to measure.
 
-[Baseline evidence](playback-selection-baseline.json); [original failures](iterations/playback-selection-baseline-7747ace4.txt).
+[Baseline](playback-selection-baseline.json); [optimized ebff741c](playback-selection-optimized.json); [test/build evidence](iterations/playback-selection-tests-ebff741c.txt).

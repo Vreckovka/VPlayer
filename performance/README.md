@@ -836,3 +836,17 @@ and compact comparison are retained in [selection results](playback-selection-re
 All 213 tests passed, and the Release app built with no errors (374 warnings).
 The media device is mocked in these checks: native skip timing, background
 playlist saves and remote-media cancellation still need their own baselines.
+
+Native rendering checks at ebff741c retained a 60-second timeout during saved
+playlist view creation. Two launches completed all ordered rows, stored metadata,
+painted first/final viewport and unchanged fuzzy-search fingerprints; the four
+playlist viewport screenshots were reviewed. Completed load/render endpoints
+were 16.6k ms versus 19.8k ms at 2abd4a10 (-16%); scrolling (+2.7%) and near-match
+search (+22.6%) were slower. These observations do not prove a consistent speed
+improvement or native rapid-skip correctness. [Task comparison](iterations/music-playlist-selection-load-results-ebff741c.md)
+retains the timeout and all slower stages; the main table still uses the first
+complete 5be3a2c4 baseline. Report validation now recognizes an unfinished saved
+view-creation stage and checks search fingerprints even when the first run fails.
+Malformed timeout evidence and changed fingerprints were rejected in guard checks.
+The largest unfinished load stage is saved playlist view creation; native skip
+persistence, albums, cold startup, lyrics and explorer work remain within focus.

@@ -1,0 +1,14 @@
+D:\Aplikacie\VPlayer\tests\VPlayer.Tests\LibraryLoadingTests.cs(397,38): warning xUnit1031: Test methods should not use blocking task operations, as they can cause deadlocks. Use an async test method and await instead. (https://xunit.net/xunit.analyzers/rules/xUnit1031) [D:\Aplikacie\VPlayer\tests\VPlayer.Tests\VPlayer.Tests.csproj]
+  VPlayer.Tests -> D:\Aplikacie\VPlayer\tests\VPlayer.Tests\bin\x64\Release\netcoreapp3.1\VPlayer.Tests.dll
+Test run for D:\Aplikacie\VPlayer\tests\VPlayer.Tests\bin\x64\Release\netcoreapp3.1\VPlayer.Tests.dll (.NETCoreApp,Version=v3.1)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    12, Skipped:     0, Total:    12, Duration: 1 m 25 s - VPlayer.Tests.dll (netcoreapp3.1)
+Test run for D:\Aplikacie\VPlayer\tests\VPlayer.Tests\bin\x64\Release\netcoreapp3.1\VPlayer.Tests.dll (.NETCoreApp,Version=v3.1)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   213, Skipped:     0, Total:   213, Duration: 4 m 20 s - VPlayer.Tests.dll (netcoreapp3.1)
+    374 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:23.58

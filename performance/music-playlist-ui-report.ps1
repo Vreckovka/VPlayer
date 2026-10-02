@@ -25,7 +25,8 @@ function Read-Series($path) {
     if($run.Status -notin @('Rendered','Timeout') -or $run.FailureType){throw 'Music run failed before a valid timing endpoint'}
     if($run.Status -eq 'Timeout' -and ($run.TimeoutSeconds -ne 60 -or
        'UI / music playlist / load and render' -notin $run.ActivePhases -or
-       'UI / player playlist / collection publication' -notin $run.ActivePhases)){
+       ('UI / player playlist / collection publication' -notin $run.ActivePhases -and
+        'UI / player playlist / create saved playlist views' -notin $run.ActivePhases))){
       throw 'Timeout does not establish the expected unfinished large playlist load'
     }
     if(@($run.Phases|Where-Object Name -eq 'UI / music playlist / read and create incoming views').Count -ne 1){throw 'Missing or ambiguous large playlist read phase'}
@@ -82,11 +83,13 @@ $a=Read-Series $Baseline
 $b=Read-Series $Optimized
 if($b.Count){
   Same $a[0] $b[0]
-  if($a[0].Status -eq 'Rendered' -and $b[0].Status -eq 'Rendered') {
+  $paintedBaseline=@($a|Where-Object Status -eq 'Rendered')
+  $paintedOptimized=@($b|Where-Object Status -eq 'Rendered')
+  if($paintedBaseline.Count -and $paintedOptimized.Count) {
     foreach($kind in @('long no-match','long near-match')) {
       foreach($metric in @('matches','ordered ids hash','query length')) {
         $key='UI / music playlist / '+$kind+' '+$metric
-        if($a[0].Observations.$key -ne $b[0].Observations.$key){throw ('Changed search result or input: '+$key)}
+        if($paintedBaseline[0].Observations.$key -ne $paintedOptimized[0].Observations.$key){throw ('Changed search result or input: '+$key)}
       }
     }
   }
@@ -148,9 +151,12 @@ foreach($scenario in $scenarios) {
   $lines+='| **'+$scenario.Name+'** — '+$left+' | '+$right+' |'
 }
 if($completeBaseline) {
-  $lines+=@('','Compared complete painted runs against the frozen baseline. - % = less time; + % = more time. Raw phases and provenance stay in JSON.')
+  $lines+=@('','Completed endpoint timings compare against the frozen baseline. - % = less time; + % = more time. Raw phases and provenance stay in JSON.')
 } else {
 $lines+=@('','The timeout is the overall process limit. Unfinished endpoints have no percentage; completed phase medians exclude the small startup playlist. Clear uses the separate save-wait control; stored-song/replacement/dispatch rows use the pre-lookup control. Painted activation has no prior baseline. Raw phases, failures and provenance stay in JSON.')
+}
+if(@($b|Where-Object Status -eq 'Timeout').Count){
+  $lines+=@('','Load timeout retained (60k ms limit); medians use completed endpoints, and consistent loading remains unproven.')
 }
 if($incomplete.Count){$lines+=@('','Read timeout retained in raw evidence; medians use completed runs.')}
 $lines|Set-Content -LiteralPath $Output
