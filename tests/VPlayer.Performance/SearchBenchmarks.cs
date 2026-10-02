@@ -40,11 +40,12 @@ namespace VPlayer.Performance
       var fixture=JsonSerializer.Deserialize<JsonElement>(File.ReadAllText(Path.Combine(directory,"fixture.json")));
       if(checksum!=fixture.GetProperty("DatabaseSha256").GetString()) throw new InvalidOperationException("Fixture changed.");
       using var context=new FixtureContext(database);
-      var models=context.SoundItems.AsNoTracking().OrderBy(x=>x.Id).Select(x=>new SoundItem {Id=x.Id,Name=x.Name}).ToList();
+      var models=context.SoundItems.AsNoTracking().Include(x=>x.FileInfoEntity).OrderBy(x=>x.Id).ToList();
       if(models.Count!=fixture.GetProperty("SoundItems").GetInt32()) throw new InvalidOperationException("Incomplete search workload.");
       var longest=models.Where(x=>!string.IsNullOrEmpty(x.Name)).OrderByDescending(x=>x.Name.Length).First().Name;
       var near=longest.Substring(0,longest.Length/2)+"¤"+longest.Substring(longest.Length/2+1);
       var queries=new[] {new {Name="long no-match",Text=new string('¤',longest.Length)},new {Name="long near-match",Text=near}};
+      Console.WriteLine("Search workload: "+models.Count+" titles; longest query "+longest.Length+" characters.");
       var dispatcher=Dispatcher.CurrentDispatcher;
       var prior=VSynchronizationContext.UISynchronizationContext;
       var priorDispatcher=VSynchronizationContext.UIDispatcher;
