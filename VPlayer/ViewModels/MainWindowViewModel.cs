@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using VPLayer.Domain.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -281,18 +282,26 @@ namespace VPlayer.ViewModels
 
     public override void Initialize()
     {
-      base.Initialize();
+      using var measurement = StartupMeasurements.Measure("Application / main window view model initialization");
+      using (StartupMeasurements.Measure("Application / base main window initialization"))
+        base.Initialize();
 
-      AudioDeviceManager.Instance.RefreshAudioDevices();
+      using (StartupMeasurements.Measure("Application / audio device enumeration"))
+        AudioDeviceManager.Instance.RefreshAudioDevices();
 
-      var windowsPlayer = viewModelsFactory.Create<WindowsViewModel>();
+      WindowsViewModel windowsPlayer;
+      using (StartupMeasurements.Measure("Application / navigation view model construction"))
+        windowsPlayer = viewModelsFactory.Create<WindowsViewModel>();
 
       NavigationViewModel.Items.Add(new NavigationItem(windowsPlayer));
 
-      PlayerViewModel = viewModelsFactory.Create<PlayerViewModel>();
-      PlayerViewModel.IsActive = true;
+      using (StartupMeasurements.Measure("Application / player controls construction"))
+        PlayerViewModel = viewModelsFactory.Create<PlayerViewModel>();
+      using (StartupMeasurements.Measure("Application / player controls activation"))
+        PlayerViewModel.IsActive = true;
       
-      windowsPlayer.IsActive = true;
+      using (StartupMeasurements.Measure("Application / navigation activation"))
+        windowsPlayer.IsActive = true;
 
     }
 

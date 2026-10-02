@@ -10,6 +10,7 @@ namespace VPLayer.Domain.Diagnostics
   public static class StartupMeasurements
   {
     private static readonly string output=Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_RUN_FILE");
+    private static readonly DateTime processStart=Enabled?Process.GetCurrentProcess().StartTime.ToUniversalTime():default;
     private static readonly List<object> phases=new List<object>();
     private static readonly List<string> active=new List<string>();
     private static string status="Starting";
@@ -27,7 +28,7 @@ namespace VPLayer.Domain.Diagnostics
       lock(phases)
       {
         phases.Add(new {Name="Application / first window render",
-          Milliseconds=(DateTime.UtcNow-Process.GetCurrentProcess().StartTime.ToUniversalTime()).TotalMilliseconds});
+          Milliseconds=(DateTime.UtcNow-processStart).TotalMilliseconds});
         status="Rendered";
         Write(status,failure);
       }
@@ -37,7 +38,7 @@ namespace VPLayer.Domain.Diagnostics
       if(!Enabled) return;
       lock(phases)
       {
-        phases.Add(new {Name=name,Milliseconds=(DateTime.UtcNow-Process.GetCurrentProcess().StartTime.ToUniversalTime()).TotalMilliseconds});
+        phases.Add(new {Name=name,Milliseconds=(DateTime.UtcNow-processStart).TotalMilliseconds});
         Write(status,failure);
       }
     }
@@ -67,6 +68,7 @@ namespace VPLayer.Domain.Diagnostics
     private sealed class Scope : IDisposable
     {
       private readonly string name;
+      private readonly double started=(DateTime.UtcNow-processStart).TotalMilliseconds;
       private readonly Stopwatch stopwatch=Stopwatch.StartNew();
       public Scope(string name)
       {
@@ -79,7 +81,8 @@ namespace VPLayer.Domain.Diagnostics
         lock(phases)
         {
           active.Remove(name);
-          phases.Add(new {Name=name,Milliseconds=stopwatch.Elapsed.TotalMilliseconds});
+          phases.Add(new {Name=name,Milliseconds=stopwatch.Elapsed.TotalMilliseconds,
+            StartedMilliseconds=started,CompletedMilliseconds=started+stopwatch.Elapsed.TotalMilliseconds});
           Write(status,failure);
         }
       }

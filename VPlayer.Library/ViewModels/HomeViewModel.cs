@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using VPLayer.Domain.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
@@ -125,20 +126,25 @@ namespace VPlayer.Home.ViewModels
 
     #region InitilizeMenu
 
+    private T CreateMenuModel<T>() where T : class
+    {
+      using var measurement = StartupMeasurements.MeasureLibrary("navigation construction", typeof(T));
+      return viewModelsFactory.Create<T>();
+    }
     public void InitilizeMenu()
     {
-      var songPlaylists = viewModelsFactory.Create<SoundItemPlaylistsViewModel>();
-      var artistsViewModel = viewModelsFactory.Create<IArtistsViewModel>();
-      var albumsViewModel = viewModelsFactory.Create<IAlbumsViewModel>();
-      var tvShowPlaylistsViewModel = viewModelsFactory.Create<VideoPlaylistsViewModel>();
-      var tvShowsViewModel = viewModelsFactory.Create<TvShowsViewModel>();
-      var fileBrowser = viewModelsFactory.Create<WindowsFileBrowserViewModel>();
-      var upnp = viewModelsFactory.Create<UPnPManagerViewModel>();
-      var statisticsViewModel = viewModelsFactory.Create<StatisticsViewModel>();
+      var songPlaylists = CreateMenuModel<SoundItemPlaylistsViewModel>();
+      var artistsViewModel = CreateMenuModel<IArtistsViewModel>();
+      var albumsViewModel = CreateMenuModel<IAlbumsViewModel>();
+      var tvShowPlaylistsViewModel = CreateMenuModel<VideoPlaylistsViewModel>();
+      var tvShowsViewModel = CreateMenuModel<TvShowsViewModel>();
+      var fileBrowser = CreateMenuModel<WindowsFileBrowserViewModel>();
+      var upnp = CreateMenuModel<UPnPManagerViewModel>();
+      var statisticsViewModel = CreateMenuModel<StatisticsViewModel>();
       //var iptvPlaylists = viewModelsFactory.Create<IPTVPlaylistsViewModel>();
       //var iptv = viewModelsFactory.Create<IPTVManagerViewModel>();
-      var settings = viewModelsFactory.Create<SettingsViewModel>();
-      var cloudService = viewModelsFactory.Create<PCloudManagerViewModel>();
+      var settings = CreateMenuModel<SettingsViewModel>();
+      var cloudService = CreateMenuModel<PCloudManagerViewModel>();
 
       var vm = new MenuViewModel("Playlists");
       var vm1 = new MenuViewModel("Library");

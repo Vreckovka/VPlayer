@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using VPLayer.Domain.Diagnostics;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
@@ -20,6 +21,7 @@ namespace VPlayer.Views
     {
       this.storageManager = storageManager ?? throw new ArgumentNullException(nameof(storageManager));
 
+      using var measurement = StartupMeasurements.Measure("Application / main window XAML");
       InitializeComponent();
     }
 
