@@ -14,5 +14,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="../Shared/SavedSongViewFixture.cs" Link="SavedSongViewFixture.cs" />
+    <Compile Include="../Shared/LyricsAnimationFixture.cs" Link="LyricsAnimationFixture.cs" />
   </ItemGroup>
 </Project>

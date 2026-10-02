@@ -1,6 +1,8 @@
 # Current optimization scope
 
-Only these areas are in scope, in the order determined by measured bottlenecks:
+Current priority: lyrics animation and overall performance while playing, plus finding files and folders in the app file browser. Playlist filtering/search is excluded from further performance work. Historical playlist-search checks remain historical evidence.
+
+These previously requested areas remain in scope; prioritize the current focus and the largest measured bottlenecks:
 
 | Area | Worst-case baseline requirement |
 | --- | --- |
