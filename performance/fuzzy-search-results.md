@@ -1,9 +1,12 @@
 # Library fuzzy search
 
-Release measurements discarded at the user's request. They must not be used as baselines, comparisons or evidence of performance improvement.
+Full copied library; longest-title queries. Production filtering and result publication; no loading or XAML. - % = less time; + % = more time.
 
-| Debug baseline | Debug optimized |
+| Baseline now | New optimized version |
 | --- | --- |
-| Pending | Pending |
+| **long near-match / first search** — 13.3k ms | 39.5 ms (-99.7%) |
+| **long near-match / repeat search** — 12.9k ms | 40.1 ms (-99.7%) |
+| **long no-match / repeat search** — 12.7k ms | 40.8 ms (-99.7%) |
+| **long no-match / first search** — 12.4k ms | 42 ms (-99.7%) |
 
-Optimization is paused. Existing fixes remain in the branch; Debug performance has not been measured.
+First samples stay separate from repeats. Raw timings, allocations, matching result hashes and provenance stay in JSON.

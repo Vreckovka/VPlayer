@@ -102,7 +102,7 @@ namespace VPlayer.Performance
         CpuMilliseconds=(Process.GetCurrentProcess().TotalProcessorTime-loadCpu).TotalMilliseconds,
         UiAllocatedBytes=GC.GetAllocatedBytesForCurrentThread()-loadAlloc,
         LoadedItems=loadingFixture.Browser.AllLoadedItems.Count()});
-      File.WriteAllText(output,JsonSerializer.Serialize(new {Schema="file-browser-search-v2",Configuration=BenchmarkBuild.Configuration,SourceCommit=commit,
+      File.WriteAllText(output,JsonSerializer.Serialize(new {Schema="file-browser-search-v2",SourceCommit=commit,
         Fixture=Path.GetFullPath(directory),Results=results,Errors=errors,FullPlayerUiMeasured=false,
         Boundary="Actual Windows browser and recursive folder view models; no rendered window or audio."},new JsonSerializerOptions{WriteIndented=true}));
     }

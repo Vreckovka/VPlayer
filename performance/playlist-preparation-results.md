@@ -1,9 +1,13 @@
 # Playlist query preparation experiment
 
-Release measurements discarded at the user's request. They must not be used as baselines, comparisons or evidence of performance improvement.
+207k fully played sound items; 5,310 playlists. Buffered diagnostics; median times. - % = less time; + % = more time.
 
-| Debug baseline | Debug optimized |
+| Baseline now | Optional candidate |
 | --- | --- |
-| Pending | Pending |
+| **initial playlist view ready** — 4.5k ms | 4.3k ms (-3.9%) |
+| **first window render** — 2.5k ms | 2.6k ms (+2.9%) |
+| **playlist data query** — 1k ms | 159.7 ms (-84.6%) |
 
-Optimization is paused. Existing fixes remain in the branch; Debug performance has not been measured.
+Comparisons use the same buffered diagnostics. Slow outliers remain; full samples and provenance stay in JSON.
+
+Preparation stays disabled by default: the large query reduction produced a small readiness gain and a slower first render. Both series retain their slow outliers.

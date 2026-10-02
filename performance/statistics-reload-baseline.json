@@ -1,0 +1,188 @@
+[
+  {
+    "SchemaVersion": 1,
+    "Commit": "35d654483c00f1a8b16f53a864fb4d09ae2931bc",
+    "CreatedUtc": "2026-10-02T05:00:53.0169406Z",
+    "Runtime": "3.1.32",
+    "OS": "Microsoft Windows NT 10.0.19045.0",
+    "ProcessorCount": 8,
+    "Configuration": "Release",
+    "FixtureSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+    "Fixture": {
+      "CreatedUtc": "2026-10-02T04:08:30.43685+02:00",
+      "DatabaseSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+      "ParentSha256": "ED1EB6181F4A73CE5EA8C7362EC8AAFE8E6DAC7A86DA1FAE8AFB3B115B25B967",
+      "SoundItems": 207110,
+      "Playlists": 5310,
+      "FileInfos": 247692,
+      "UniqueSoundFileMetadata": true,
+      "AdditionalUserPlaylists": 5000,
+      "PlaylistSizes": [
+        1000,
+        10000,
+        100000
+      ],
+      "UniqueSoundTimePlayed": true,
+      "AllSoundsPlayed": true
+    },
+    "Metrics": [
+      {
+        "Name": "UI / statistics reload burst",
+        "Category": "UI",
+        "Boundary": "Production StatisticsViewModel.LoadData and UI publication; no view rendering; 32 overlapping requests",
+        "Workload": "207110 sound items, 5310 playlists; unique file metadata",
+        "FirstMilliseconds": 8056.5266,
+        "MedianMilliseconds": 4409.2298,
+        "P95Milliseconds": 4851.5256,
+        "MedianAllocatedBytes": 3510929392,
+        "SamplesMilliseconds": [
+          8056.5266,
+          4851.5256,
+          4145.509,
+          4263.433,
+          4409.2298,
+          4398.9217,
+          4418.8394,
+          4401.5653,
+          4547.9773
+        ]
+      }
+    ],
+    "ReloadRequests": 32,
+    "RepositoryCounts": [
+      224,
+      224,
+      224,
+      224,
+      224,
+      224,
+      224,
+      224,
+      224
+    ]
+  },
+  {
+    "SchemaVersion": 1,
+    "Commit": "35d654483c00f1a8b16f53a864fb4d09ae2931bc",
+    "CreatedUtc": "2026-10-02T05:01:35.7729199Z",
+    "Runtime": "3.1.32",
+    "OS": "Microsoft Windows NT 10.0.19045.0",
+    "ProcessorCount": 8,
+    "Configuration": "Release",
+    "FixtureSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+    "Fixture": {
+      "CreatedUtc": "2026-10-02T04:08:30.43685+02:00",
+      "DatabaseSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+      "ParentSha256": "ED1EB6181F4A73CE5EA8C7362EC8AAFE8E6DAC7A86DA1FAE8AFB3B115B25B967",
+      "SoundItems": 207110,
+      "Playlists": 5310,
+      "FileInfos": 247692,
+      "UniqueSoundFileMetadata": true,
+      "AdditionalUserPlaylists": 5000,
+      "PlaylistSizes": [
+        1000,
+        10000,
+        100000
+      ],
+      "UniqueSoundTimePlayed": true,
+      "AllSoundsPlayed": true
+    },
+    "Metrics": [
+      {
+        "Name": "UI / statistics reload burst",
+        "Category": "UI",
+        "Boundary": "Production StatisticsViewModel.LoadData and UI publication; no view rendering; 32 overlapping requests",
+        "Workload": "207110 sound items, 5310 playlists; unique file metadata",
+        "FirstMilliseconds": 5776.5836,
+        "MedianMilliseconds": 4399.5754,
+        "P95Milliseconds": 5072.4958,
+        "MedianAllocatedBytes": 3510752592,
+        "SamplesMilliseconds": [
+          5776.5836,
+          4675.206,
+          4180.1709,
+          4278.5262,
+          4595.1461,
+          5072.4958,
+          4399.5754,
+          4351.9155,
+          4213.2286
+        ]
+      }
+    ],
+    "ReloadRequests": 32,
+    "RepositoryCounts": [
+      224,
+      224,
+      224,
+      224,
+      224,
+      224,
+      224,
+      224,
+      224
+    ]
+  },
+  {
+    "SchemaVersion": 1,
+    "Commit": "35d654483c00f1a8b16f53a864fb4d09ae2931bc",
+    "CreatedUtc": "2026-10-02T05:02:17.0606445Z",
+    "Runtime": "3.1.32",
+    "OS": "Microsoft Windows NT 10.0.19045.0",
+    "ProcessorCount": 8,
+    "Configuration": "Release",
+    "FixtureSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+    "Fixture": {
+      "CreatedUtc": "2026-10-02T04:08:30.43685+02:00",
+      "DatabaseSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+      "ParentSha256": "ED1EB6181F4A73CE5EA8C7362EC8AAFE8E6DAC7A86DA1FAE8AFB3B115B25B967",
+      "SoundItems": 207110,
+      "Playlists": 5310,
+      "FileInfos": 247692,
+      "UniqueSoundFileMetadata": true,
+      "AdditionalUserPlaylists": 5000,
+      "PlaylistSizes": [
+        1000,
+        10000,
+        100000
+      ],
+      "UniqueSoundTimePlayed": true,
+      "AllSoundsPlayed": true
+    },
+    "Metrics": [
+      {
+        "Name": "UI / statistics reload burst",
+        "Category": "UI",
+        "Boundary": "Production StatisticsViewModel.LoadData and UI publication; no view rendering; 32 overlapping requests",
+        "Workload": "207110 sound items, 5310 playlists; unique file metadata",
+        "FirstMilliseconds": 5709.7681,
+        "MedianMilliseconds": 4337.7003,
+        "P95Milliseconds": 4506.319,
+        "MedianAllocatedBytes": 3510991552,
+        "SamplesMilliseconds": [
+          5709.7681,
+          4400.9461,
+          4337.7003,
+          4174.7347,
+          4279.371,
+          4212.9715,
+          4115.7594,
+          4458.4852,
+          4506.319
+        ]
+      }
+    ],
+    "ReloadRequests": 32,
+    "RepositoryCounts": [
+      224,
+      224,
+      224,
+      224,
+      224,
+      224,
+      224,
+      224,
+      224
+    ]
+  }
+]

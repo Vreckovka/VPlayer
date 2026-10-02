@@ -3,7 +3,7 @@ param(
   [Parameter(Mandatory=$true)][string]$RunDirectory,
   [Parameter(Mandatory=$true)][string]$Commit,
   [switch]$TransientWindows,
-  [string]$Application='tests/VPlayer.Performance/bin/x64/Debug/netcoreapp3.1/VPlayer.Performance.dll'
+  [string]$Application='tests/VPlayer.Performance/bin/x64/Release/netcoreapp3.1/VPlayer.Performance.dll'
 )
 $ErrorActionPreference='Stop'
 if($Commit -notmatch '^[0-9a-f]{40}$'){throw 'Requires a full source commit.'}

@@ -1,9 +1,14 @@
 # Rapid playlist selection
 
-Release measurements discarded at the user's request. They must not be used as baselines, comparisons or evidence of performance improvement.
+100k entries; controlled media preparation with a mocked device. These are correctness checks, not playback-speed measurements.
 
-| Debug baseline | Debug optimized |
+| Baseline now | New optimized version |
 | --- | --- |
-| Pending | Pending |
+| **100 out-of-order skips: stale media applies** — 99 | 0 (-100%) |
+| **Clear during preparation: unhandled exceptions** — 1 | 0 (-100%) |
+| **Same track in another occurrence: playback starts** — 2 | 1 (-50%) |
+| **Previous from first: selected index** — 100k (invalid) | 99999 (last item) |
 
-Optimization is paused. Existing fixes remain in the branch; Debug performance has not been measured.
+Twelve checks also cover repeated requests, end of queue, device replacement, disposal, delayed initialization, media clearing with the same selection, and normal playback. Device timing, database-save cost and remote-media cancellation remain to measure.
+
+[Baseline](playback-selection-baseline.json); [optimized ebff741c](playback-selection-optimized.json); [test/build evidence](iterations/playback-selection-tests-ebff741c.txt).

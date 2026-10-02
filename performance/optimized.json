@@ -1,0 +1,372 @@
+{
+  "SchemaVersion": 1,
+  "Commit": "c2558db9c7f4a6554e6ed723c518750a8e69cf0b",
+  "CreatedUtc": "2026-10-02T01:18:31.6823274Z",
+  "Runtime": "3.1.32",
+  "OS": "Microsoft Windows NT 10.0.19045.0",
+  "ProcessorCount": 8,
+  "Configuration": "Release",
+  "FixtureSha256": "89737F48D5184B0C3517FCD06872366D11918C621B7005589EEEADE6DC4611AE",
+  "Fixture": {
+    "CreatedUtc": "2026-10-01T23:20:42.2009008Z",
+    "ExpansionFactor": 10,
+    "DatabaseSha256": "89737F48D5184B0C3517FCD06872366D11918C621B7005589EEEADE6DC4611AE",
+    "SoundItems": 207110,
+    "Playlists": 310,
+    "PlaylistSizes": [
+      1000,
+      10000,
+      100000
+    ]
+  },
+  "Metrics": [
+    {
+      "Name": "Data / sound items",
+      "Category": "Data",
+      "Boundary": "New EF context, SQLite query and entity materialization",
+      "Workload": "207110 copied sound items",
+      "FirstMilliseconds": 4200.8891,
+      "MedianMilliseconds": 3807.5273,
+      "P95Milliseconds": 4323.0933,
+      "MedianAllocatedBytes": 386659928,
+      "SamplesMilliseconds": [
+        4200.8891,
+        3101.5124,
+        3894.9522,
+        4323.0933,
+        3804.3179,
+        3807.5273,
+        3387.7747,
+        3836.9417,
+        2976.6818
+      ]
+    },
+    {
+      "Name": "Data / artists",
+      "Category": "Data",
+      "Boundary": "SQLite artist query and materialization",
+      "Workload": "All copied artists",
+      "FirstMilliseconds": 18.0257,
+      "MedianMilliseconds": 8.9819,
+      "P95Milliseconds": 10.1852,
+      "MedianAllocatedBytes": 155192,
+      "SamplesMilliseconds": [
+        18.0257,
+        10.1852,
+        8.7037,
+        8.8067,
+        7.3666,
+        8.5209,
+        8.9819,
+        9.0997,
+        9.3704
+      ]
+    },
+    {
+      "Name": "Data / albums",
+      "Category": "Data",
+      "Boundary": "SQLite albums and artist relationships",
+      "Workload": "All copied albums",
+      "FirstMilliseconds": 38.0338,
+      "MedianMilliseconds": 17.7389,
+      "P95Milliseconds": 22.5178,
+      "MedianAllocatedBytes": 1437568,
+      "SamplesMilliseconds": [
+        38.0338,
+        17.7389,
+        19.1584,
+        13.3979,
+        15.3466,
+        19.8726,
+        22.5178,
+        14.004,
+        16.7127
+      ]
+    },
+    {
+      "Name": "Playlist / summaries",
+      "Category": "Playlist",
+      "Boundary": "SQLite playlist metadata ordered by last played",
+      "Workload": "All copied playlists",
+      "FirstMilliseconds": 49.9281,
+      "MedianMilliseconds": 13.3438,
+      "P95Milliseconds": 16.1552,
+      "MedianAllocatedBytes": 343056,
+      "SamplesMilliseconds": [
+        49.9281,
+        14.305,
+        10.8736,
+        12.3347,
+        13.3723,
+        13.3438,
+        13.1083,
+        13.2955,
+        16.1552
+      ]
+    },
+    {
+      "Name": "UI / playlist view models",
+      "Category": "UI",
+      "Boundary": "Production SoundItemInPlaylistViewModel constructors",
+      "Workload": "207110 items, no playback",
+      "FirstMilliseconds": 687.7309,
+      "MedianMilliseconds": 212.3812,
+      "P95Milliseconds": 240.8392,
+      "MedianAllocatedBytes": 41422672,
+      "SamplesMilliseconds": [
+        687.7309,
+        240.8392,
+        153.402,
+        229.3067,
+        115.5744,
+        231.6555,
+        174.5732,
+        208.9803,
+        212.3812
+      ]
+    },
+    {
+      "Name": "Playlist / 1000 entries",
+      "Category": "Playlist",
+      "Boundary": "SongsPlaylistViewModel.GetItemsToPlay plus full enumeration",
+      "Workload": "1000 entries",
+      "FirstMilliseconds": 1419.6101,
+      "MedianMilliseconds": 59.9101,
+      "P95Milliseconds": 64.737,
+      "MedianAllocatedBytes": 8862416,
+      "SamplesMilliseconds": [
+        1419.6101,
+        64.737,
+        59.4028,
+        57.8352,
+        60.5808,
+        59.9101
+      ]
+    },
+    {
+      "Name": "Playlist / 10000 entries",
+      "Category": "Playlist",
+      "Boundary": "SongsPlaylistViewModel.GetItemsToPlay plus full enumeration",
+      "Workload": "10000 entries",
+      "FirstMilliseconds": 356.0647,
+      "MedianMilliseconds": 336.2904,
+      "P95Milliseconds": 431.508,
+      "MedianAllocatedBytes": 85580376,
+      "SamplesMilliseconds": [
+        356.0647,
+        336.2904,
+        357.6281,
+        431.508,
+        314.0767,
+        329.7309
+      ]
+    },
+    {
+      "Name": "Playlist / 100000 entries",
+      "Category": "Playlist",
+      "Boundary": "SongsPlaylistViewModel.GetItemsToPlay plus full enumeration",
+      "Workload": "100000 entries",
+      "FirstMilliseconds": 3067.1024,
+      "MedianMilliseconds": 3083.3531,
+      "P95Milliseconds": 3747.2987,
+      "MedianAllocatedBytes": 845534632,
+      "SamplesMilliseconds": [
+        3067.1024,
+        3083.3531,
+        3219.2911,
+        3747.2987,
+        3054.6348,
+        3009.9236
+      ]
+    },
+    {
+      "Name": "UI / title search",
+      "Category": "UI",
+      "Boundary": "Case-insensitive title filter over loaded production models",
+      "Workload": "207110 items",
+      "FirstMilliseconds": 65.3861,
+      "MedianMilliseconds": 41.6929,
+      "P95Milliseconds": 48.6612,
+      "MedianAllocatedBytes": 55856,
+      "SamplesMilliseconds": [
+        65.3861,
+        42.693,
+        48.5644,
+        48.6612,
+        41.6929,
+        41.5236,
+        39.1822,
+        37.8197,
+        36.7998
+      ]
+    },
+    {
+      "Name": "UI / title sort",
+      "Category": "UI",
+      "Boundary": "Default name ordering over loaded production models",
+      "Workload": "207110 items",
+      "FirstMilliseconds": 1309.2847,
+      "MedianMilliseconds": 1290.2091,
+      "P95Milliseconds": 1326.2646,
+      "MedianAllocatedBytes": 5799176,
+      "SamplesMilliseconds": [
+        1309.2847,
+        1224.8182,
+        1326.2646,
+        1290.2091,
+        1302.7778,
+        1313.3755,
+        1227.5311,
+        1184.0621,
+        1281.4699
+      ]
+    },
+    {
+      "Name": "Lyrics / 1000 lines",
+      "Category": "Lyrics",
+      "Boundary": "10,000 production SetActualLine calls with varying seeks",
+      "Workload": "1000 timed lines",
+      "FirstMilliseconds": 12.171,
+      "MedianMilliseconds": 2.0021,
+      "P95Milliseconds": 2.3531,
+      "MedianAllocatedBytes": 0,
+      "SamplesMilliseconds": [
+        12.171,
+        1.5748,
+        1.9083,
+        2.0021,
+        1.5469,
+        2.023,
+        2.3504,
+        2.3531,
+        1.4673
+      ]
+    },
+    {
+      "Name": "Lyrics / 10000 lines",
+      "Category": "Lyrics",
+      "Boundary": "10,000 production SetActualLine calls with varying seeks",
+      "Workload": "10000 timed lines",
+      "FirstMilliseconds": 3.4475,
+      "MedianMilliseconds": 2.1455,
+      "P95Milliseconds": 2.7517,
+      "MedianAllocatedBytes": 0,
+      "SamplesMilliseconds": [
+        3.4475,
+        2.7517,
+        2.6379,
+        2.2891,
+        2.1068,
+        2.1455,
+        1.8286,
+        1.7517,
+        1.8032
+      ]
+    },
+    {
+      "Name": "Lyrics / 100000 lines",
+      "Category": "Lyrics",
+      "Boundary": "10,000 production SetActualLine calls with varying seeks",
+      "Workload": "100000 timed lines",
+      "FirstMilliseconds": 24.0904,
+      "MedianMilliseconds": 3.6649,
+      "P95Milliseconds": 4.4658,
+      "MedianAllocatedBytes": 0,
+      "SamplesMilliseconds": [
+        24.0904,
+        3.9511,
+        3.3803,
+        3.8602,
+        4.4658,
+        3.1296,
+        3.2315,
+        3.6649,
+        2.7906
+      ]
+    },
+    {
+      "Name": "Spectrum / stable frames",
+      "Category": "Spectrum",
+      "Boundary": "1,000 production bitmap updates",
+      "Workload": "576x240, 32 unchanged bars",
+      "FirstMilliseconds": 50.6787,
+      "MedianMilliseconds": 2.0558,
+      "P95Milliseconds": 5.8609,
+      "MedianAllocatedBytes": 171528,
+      "SamplesMilliseconds": [
+        50.6787,
+        3.2177,
+        2.9473,
+        1.971,
+        1.626,
+        1.5845,
+        5.8609,
+        1.4165,
+        2.0558
+      ]
+    },
+    {
+      "Name": "Spectrum / changing frames",
+      "Category": "Spectrum",
+      "Boundary": "1,000 production bitmap updates",
+      "Workload": "576x240, 32 changing bars",
+      "FirstMilliseconds": 4.3073,
+      "MedianMilliseconds": 4.3375,
+      "P95Milliseconds": 6.1615,
+      "MedianAllocatedBytes": 171528,
+      "SamplesMilliseconds": [
+        4.3073,
+        4.3375,
+        6.1615,
+        3.7151,
+        4.9916,
+        4.1787,
+        4.3076,
+        3.4931,
+        4.8299
+      ]
+    },
+    {
+      "Name": "UI / virtualized list layout",
+      "Category": "UI",
+      "Boundary": "WPF measure, arrange, and offscreen render",
+      "Workload": "900x600 text-row ListBox, 207110 items; component scenario",
+      "FirstMilliseconds": 114.2978,
+      "MedianMilliseconds": 8.1553,
+      "P95Milliseconds": 9.3273,
+      "MedianAllocatedBytes": 8168,
+      "SamplesMilliseconds": [
+        114.2978,
+        8.3522,
+        7.0735,
+        9.3273,
+        9.0148,
+        7.2943,
+        5.8875,
+        8.1553,
+        6.7376
+      ]
+    },
+    {
+      "Name": "UI / virtualized list scroll",
+      "Category": "UI",
+      "Boundary": "ScrollIntoView, layout and offscreen render",
+      "Workload": "Same ListBox, jumps of 997 rows; component scenario",
+      "FirstMilliseconds": 12.0509,
+      "MedianMilliseconds": 7.4413,
+      "P95Milliseconds": 12.0042,
+      "MedianAllocatedBytes": 32672,
+      "SamplesMilliseconds": [
+        12.0509,
+        12.0042,
+        9.5977,
+        7.4413,
+        6.6542,
+        7.0625,
+        6.7907,
+        7.9572,
+        6.9022
+      ]
+    }
+  ]
+}

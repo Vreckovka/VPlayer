@@ -14,7 +14,7 @@ function Read-Runs([string]$directory) {
   }
   if($runs.Count -ne 3){throw 'Requires three independent snapshot processes.'}
   foreach($run in $runs){
-    if($run.Entries -ne 100000 -or $run.Configuration -ne 'Debug' -or $run.Commit -notmatch '^[0-9a-f]{40}$' -or $run.Samples.Count -ne 5){throw 'Invalid snapshot run.'}
+    if($run.Entries -ne 100000 -or $run.Configuration -ne 'Release' -or $run.Commit -notmatch '^[0-9a-f]{40}$' -or $run.Samples.Count -ne 5){throw 'Invalid snapshot run.'}
     for($i=0;$i -lt 5;$i++){
       $sample=$run.Samples[$i]
       if($sample.Iteration -ne $i -or $sample.Milliseconds -le 0 -or $sample.AllocatedBytes -le 0){throw 'Invalid snapshot samples.'}

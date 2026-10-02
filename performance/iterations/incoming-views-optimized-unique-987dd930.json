@@ -1,0 +1,66 @@
+{
+  "Schema": "incoming-playlist-v1",
+  "Commit": "987dd930450f27d02e8cd18371cfae04b0322ed7",
+  "Variant": "production",
+  "CreatedUtc": "2026-10-02T18:50:15.1336328Z",
+  "Runtime": "3.1.32",
+  "Configuration": "Release",
+  "Architecture": "x64",
+  "ProcessorCount": 8,
+  "OS": "Microsoft Windows NT 10.0.19045.0",
+  "FixtureSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+  "PlaylistId": 658,
+  "Entries": 100000,
+  "DuplicateTracks": 0,
+  "MissingFileInfo": 5,
+  "OrderedRowsSha256": "AE9D44B687E564818EE3578F28576A20E680206300E5DF88BA4DC411D4956D59",
+  "MetadataSha256": "5DF76206F3468D4E4BBAF8F2491B3898F5D0C7EB37879B67F99A2BF5F0414B4D",
+  "Boundary": "Production SongsPlaylistViewModel.GetItemsToPlay plus enumeration; fresh read-only context per iteration, real default Ninject factory and shared stub services; verification/disposal/rendering excluded; creation allocations are current-thread only.",
+  "Samples": [
+    {
+      "Iteration": 0,
+      "ReadMilliseconds": 3258.1311,
+      "CreationMilliseconds": 94.1164,
+      "TotalMilliseconds": 3352.2491,
+      "CreationAllocatedBytes": 19412264,
+      "OrderedIndependentOccurrences": true,
+      "StoredMetadataVerified": true
+    },
+    {
+      "Iteration": 1,
+      "ReadMilliseconds": 1969.2494,
+      "CreationMilliseconds": 123.2162,
+      "TotalMilliseconds": 2092.4677,
+      "CreationAllocatedBytes": 19382696,
+      "OrderedIndependentOccurrences": true,
+      "StoredMetadataVerified": true
+    },
+    {
+      "Iteration": 2,
+      "ReadMilliseconds": 2196.8707,
+      "CreationMilliseconds": 82.8127,
+      "TotalMilliseconds": 2279.685,
+      "CreationAllocatedBytes": 19395416,
+      "OrderedIndependentOccurrences": true,
+      "StoredMetadataVerified": true
+    },
+    {
+      "Iteration": 3,
+      "ReadMilliseconds": 2287.5047,
+      "CreationMilliseconds": 105.8328,
+      "TotalMilliseconds": 2393.3389,
+      "CreationAllocatedBytes": 19382088,
+      "OrderedIndependentOccurrences": true,
+      "StoredMetadataVerified": true
+    },
+    {
+      "Iteration": 4,
+      "ReadMilliseconds": 2022.664,
+      "CreationMilliseconds": 42.7007,
+      "TotalMilliseconds": 2065.3662,
+      "CreationAllocatedBytes": 19382032,
+      "OrderedIndependentOccurrences": true,
+      "StoredMetadataVerified": true
+    }
+  ]
+}

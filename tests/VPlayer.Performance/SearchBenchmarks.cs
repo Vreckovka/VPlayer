@@ -104,7 +104,7 @@ namespace VPlayer.Performance
       Directory.CreateDirectory(Path.GetDirectoryName(output));
       File.WriteAllText(output,JsonSerializer.Serialize(new {SchemaVersion=1,Commit=commit,CreatedUtc=DateTime.UtcNow,
         Runtime=Environment.Version.ToString(),OS=Environment.OSVersion.ToString(),ProcessorCount=Environment.ProcessorCount,
-        Configuration=BenchmarkBuild.Configuration,FixtureSha256=checksum,Fixture=fixture,Metrics=metrics,Results=results},new JsonSerializerOptions {WriteIndented=true}));
+        Configuration="Release",FixtureSha256=checksum,Fixture=fixture,Metrics=metrics,Results=results},new JsonSerializerOptions {WriteIndented=true}));
     }
   }
 }

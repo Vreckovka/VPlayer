@@ -1,6 +1,6 @@
 # Current optimization scope
 
-Current priority: lyrics animation and overall performance while playing, plus finding files and folders in the app file browser. Playlist filtering/search is excluded from further performance work. Release measurements are discarded.
+Current priority: lyrics animation and overall performance while playing, plus finding files and folders in the app file browser. Playlist filtering/search is excluded from further performance work. Historical playlist-search checks remain historical evidence.
 
 These previously requested areas remain in scope; prioritize the current focus and the largest measured bottlenecks:
 
@@ -15,8 +15,16 @@ These previously requested areas remain in scope; prioritize the current focus a
 | Explorer files/folders loading | Large and deeply nested directories, inaccessible entries and interrupted navigation; verify results. |
 | Explorer files/folders finding | Large directory trees, long queries, no matches and interrupted searches; verify matches. |
 
-Freeze the first valid baseline before changing each area. Keep compact two-column baseline/optimized comparisons with signed percentages; preserve raw samples and failures. Optimize the largest measured delay within each area and across the areas. Statistics and other UI Release results are discarded; further work on those features is out of scope.
+Freeze the first valid baseline before changing each area. Keep compact two-column baseline/optimized comparisons with signed percentages; preserve raw samples and failures. Optimize the largest measured delay within each area and across the areas. Previous statistics and other UI results remain historical evidence; further work on those features is out of scope.
 
 Fresh process/profile measurements do not establish a cold disk-cache baseline. A restart-based cold measurement must be scheduled with the user; do not silently restart their PC or clear the system disk cache.
 
-Optimization is paused at the user's request. All tests, measurements and the pending local deployment must use Debug x64. Fresh Debug baselines are pending. The user has authorized deploying and launching the completed branch changes; installation data must be preserved.
+Local test release uses VPlayer/Properties/PublishProfiles/FolderProfile.pubxml (D:\VPlayer) and the existing VersionAutoIncrement.tt formula. Deployment replaces published application files after backing them up; it preserves the installed settings and roaming library database.
+
+Keep the user's running VPlayer and installed files untouched. Benchmarks use an agent-owned build and copied data. Deploy only on a new explicit user request, after the user closes the app themselves.
+
+Startup evidence: [prepared VLC plugins](vlc-startup-results.md) cuts the first observed initial-library-view delay from 42k ms to 20.9k ms (-50.3%) in the expanded-library published-build benchmark. Restart-based cold measurement remains pending. The branch packaging optimization awaits deployment.
+
+Playlist evidence: [incoming views](incoming-playlist-results.md) reduce default view construction and allocation for unique/duplicate 100k playlists while preserving custom creation and stored metadata. Original full-load regressions and later alternating controls are retained separately. Database reading and later loading/publication remain the larger stages. Production source 987dd930 passed 241 tests and awaits deployment.
+
+Lyrics animation: [listener ownership and animation results](lyrics-animation-results.md), source 24d31ad1, passed 246 tests. Component animation/CPU/allocation baseline and optimized evidence are frozen. Next: full-player performance while decoding/playing audio and file/folder search in the actual file browser. Playlist-search benchmarks remain excluded; no deployment is authorized.

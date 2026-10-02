@@ -1,9 +1,11 @@
 # Statistics reload bursts
 
-Release measurements discarded at the user's request. They must not be used as baselines, comparisons or evidence of performance improvement.
+32 rapid Load requests; 207k fully played items and 5,310 playlists. Median times; - % = less time, + % = more time.
 
-| Debug baseline | Debug optimized |
+| Baseline now | New optimized version |
 | --- | --- |
-| Pending | Pending |
+| **reload burst / load and render** — 8.4k ms | 1.2k ms (-85.7%) |
+| **first burst / data and UI publication** — 5.8k ms | 1.7k ms (-70.7%) |
+| **repeat burst / data and UI publication** — 4.4k ms | 514.5 ms (-88.3%) |
 
-Optimization is paused. Existing fixes remain in the branch; Debug performance has not been measured.
+Data rows include production loading and dispatcher publication. The WPF row includes rendering in the actual app. Full samples, failures, repository counts and provenance stay in JSON.

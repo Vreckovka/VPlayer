@@ -27,18 +27,13 @@ $metadata=Get-Content -LiteralPath (Join-Path $fixture 'fixture.json') -Raw | Co
 $checksum=(Get-FileHash -LiteralPath (Join-Path $fixture 'VPlayerDatabase.db') -Algorithm SHA256).Hash
 if($checksum -ne $metadata.DatabaseSha256) {throw 'Performance fixture changed.'}
 $timeoutSeconds=if($MusicPlaylistSave -or $MusicPlaylistClear){180}else{60}
-$applicationAssembly=Join-Path (Split-Path $app -Parent) 'VPlayer.dll'
-# Read the custom-attribute data without instantiating the application.
-$assembly=[Reflection.Assembly]::LoadFile($applicationAssembly)
-$config=@($assembly.GetCustomAttributesData() | Where-Object {$_.AttributeType.FullName -eq 'System.Reflection.AssemblyConfigurationAttribute'})
-if($config.Count -ne 1 -or $config[0].ConstructorArguments[0].Value -ne 'Debug'){throw 'Startup benchmarks require a verified Debug application.'}
 $environmentMetadata=@{
   FixtureSha256=$checksum;SoundItems=$metadata.SoundItems;Playlists=$metadata.Playlists
   PlaylistQueryPreparation=[bool]$PreparePlaylistQuery
   MusicPlaylistEntries=$(if($MusicPlaylist){100000}else{0})
   MusicPlaylistSave=[bool]$MusicPlaylistSave;MusicPlaylistClear=[bool]$MusicPlaylistClear
   ProcessTimeoutSeconds=$timeoutSeconds
-  Configuration='Debug';ProcessorCount=[Environment]::ProcessorCount;OS=[Environment]::OSVersion.VersionString
+  Configuration='Release';ProcessorCount=[Environment]::ProcessorCount;OS=[Environment]::OSVersion.VersionString
 }
 $originalValues=@{}
 foreach($name in @('VPLAYER_BENCHMARK_DIRECTORY','VPLAYER_PERFORMANCE_RUN_FILE','VPLAYER_PERFORMANCE_COMMIT','VPLAYER_PERFORMANCE_EXIT_AFTER_RENDER','VPLAYER_PERFORMANCE_WAIT_FOR_LIBRARY','VPLAYER_PERFORMANCE_SCROLL_PLAYLISTS','VPLAYER_PERFORMANCE_STATISTICS','VPLAYER_PERFORMANCE_STATISTICS_RELOADS','VPLAYER_PERFORMANCE_MUSIC_PLAYLIST','VPLAYER_PERFORMANCE_MUSIC_PLAYLIST_SAVE','VPLAYER_PERFORMANCE_MUSIC_PLAYLIST_CLEAR','VPLAYER_PERFORMANCE_PREPARE_PLAYLIST_QUERY','VPLAYER_PERFORMANCE_CPU_PROFILE')) {

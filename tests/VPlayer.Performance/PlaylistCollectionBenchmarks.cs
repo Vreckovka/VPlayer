@@ -75,7 +75,7 @@ namespace VPlayer.Performance
       using var stream=File.OpenRead(database);
       using var hash=SHA256.Create();
       File.WriteAllText(output,JsonSerializer.Serialize(new {SchemaVersion=1,Commit=commit,CreatedUtc=DateTime.UtcNow,
-        Runtime=Environment.Version.ToString(),Configuration=BenchmarkBuild.Configuration,Environment.ProcessorCount,
+        Runtime=Environment.Version.ToString(),Configuration="Release",Environment.ProcessorCount,
         FixtureSha256=BitConverter.ToString(hash.ComputeHash(stream)).Replace("-",""),Entries=rows.Length,
         SourceOccurrences=repeatedTracks?"first 50k stored occurrences repeated twice":"original 100k stored occurrences",
         DuplicateTracks=rows.Length-rows.Select(x=>x.ReferencedItem.Id).Distinct().Count(),

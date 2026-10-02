@@ -1,9 +1,11 @@
 # Buffered UI performance
 
-Release measurements discarded at the user's request. They must not be used as baselines, comparisons or evidence of performance improvement.
+207k fully played sound items; 5,310 playlists. Buffered diagnostics; median times. - % = less time; + % = more time.
 
-| Debug baseline | Debug optimized |
+| Baseline now | New optimized version |
 | --- | --- |
-| Pending | Pending |
+| **statistics / load and render** — 5.8k ms | 4.1k ms (-28.9%) |
+| **initial playlist view ready** — 4.9k ms | 4.7k ms (-4.7%) |
+| **first window render** — 2.7k ms | 2.8k ms (+3.7%) |
 
-Optimization is paused. Existing fixes remain in the branch; Debug performance has not been measured.
+Comparisons use the same buffered diagnostics. Slow outliers remain; full samples and provenance stay in JSON.

@@ -1,0 +1,43 @@
+{
+  "Commit": "ebff741c2494c0011461dafb1535c1e1efc45341",
+  "BaselineCommit": "7747ace48d1fce04fae8cd7c788643ee1c8922d2",
+  "Boundary": "Controlled unit regression with real playlist/item view models; media device mocked, no SQL or timing claims",
+  "PlaylistEntries": 100000,
+  "TargetedTests": {
+    "Failed": 0,
+    "Passed": 12
+  },
+  "FullSuite": {
+    "Failed": 0,
+    "Passed": 213
+  },
+  "ReleaseBuild": {
+    "Errors": 0,
+    "Warnings": 374
+  },
+  "Cases": [
+    {
+      "StaleMedia": 0,
+      "AppliedMedia": 1,
+      "Requests": 100,
+      "Status": "Passed",
+      "Name": "100 out-of-order selections"
+    },
+    {
+      "Status": "Passed",
+      "UnhandledExceptions": 0,
+      "Name": "Clear during preparation"
+    },
+    {
+      "Status": "Passed",
+      "AutoplayCalls": 1,
+      "Name": "Repeated selection of the same track in another occurrence"
+    },
+    {
+      "Status": "Passed",
+      "ActualIndex": 99999,
+      "ExpectedIndex": 99999,
+      "Name": "Previous from first occurrence"
+    }
+  ]
+}

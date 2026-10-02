@@ -1,0 +1,3110 @@
+[
+  {
+    "Status": "Rendered",
+    "FailureType": null,
+    "ActivePhases": [],
+    "Commit": "f3f075355e8b68dc391da63dc1bbde21c6c8c83d",
+    "Runtime": "3.1.32",
+    "CreatedUtc": "2026-10-02T05:36:56.1663593Z",
+    "Phases": [
+      {
+        "Name": "Application / VPlayerCoreModule",
+        "Milliseconds": 3.467,
+        "StartedMilliseconds": 1625.699,
+        "CompletedMilliseconds": 1629.1660000000002,
+        "Execution": null
+      },
+      {
+        "Name": "Application / IPTVModule",
+        "Milliseconds": 2.6013,
+        "StartedMilliseconds": 1631.4474,
+        "CompletedMilliseconds": 1634.0487,
+        "Execution": null
+      },
+      {
+        "Name": "Application / UPnPNinjectModule",
+        "Milliseconds": 2.8105,
+        "StartedMilliseconds": 1636.5733,
+        "CompletedMilliseconds": 1639.3838,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library module",
+        "Milliseconds": 48.5319,
+        "StartedMilliseconds": 1717.2479,
+        "CompletedMilliseconds": 1765.7798,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / core initialization",
+        "Milliseconds": 9.7274,
+        "StartedMilliseconds": 1858.0701,
+        "CompletedMilliseconds": 1867.7975,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / instance construction",
+        "Milliseconds": 225.6784,
+        "StartedMilliseconds": 1870.0442,
+        "CompletedMilliseconds": 2095.7226,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / media player construction",
+        "Milliseconds": 63.0197,
+        "StartedMilliseconds": 2097.8803,
+        "CompletedMilliseconds": 2160.8999999999996,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / event setup",
+        "Milliseconds": 11.6794,
+        "StartedMilliseconds": 2165.4008,
+        "CompletedMilliseconds": 2177.0802,
+        "Execution": null
+      },
+      {
+        "Name": "Application / video player activation",
+        "Milliseconds": 446.6732,
+        "StartedMilliseconds": 1770.1838,
+        "CompletedMilliseconds": 2216.857,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / instance construction",
+        "Milliseconds": 32.4956,
+        "StartedMilliseconds": 2307.6994,
+        "CompletedMilliseconds": 2340.195,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / media player construction",
+        "Milliseconds": 3.0423,
+        "StartedMilliseconds": 2342.314,
+        "CompletedMilliseconds": 2345.3563,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / event setup",
+        "Milliseconds": 1.8916,
+        "StartedMilliseconds": 2347.4757,
+        "CompletedMilliseconds": 2349.3673,
+        "Execution": null
+      },
+      {
+        "Name": "Application / music player activation",
+        "Milliseconds": 153.5005,
+        "StartedMilliseconds": 2218.9482,
+        "CompletedMilliseconds": 2372.4487,
+        "Execution": null
+      },
+      {
+        "Name": "Application / WindowsPlayerNinjectModule",
+        "Milliseconds": 734.0264,
+        "StartedMilliseconds": 1641.526,
+        "CompletedMilliseconds": 2375.5524,
+        "Execution": null
+      },
+      {
+        "Name": "Application / module registration",
+        "Milliseconds": 1031.1615,
+        "StartedMilliseconds": 1348.1777,
+        "CompletedMilliseconds": 2379.3392,
+        "Execution": null
+      },
+      {
+        "Name": "Application / settings",
+        "Milliseconds": 21.3022,
+        "StartedMilliseconds": 2392.1269,
+        "CompletedMilliseconds": 2413.4291000000003,
+        "Execution": null
+      },
+      {
+        "Name": "Application / container activation",
+        "Milliseconds": 42.006,
+        "StartedMilliseconds": 2381.6834,
+        "CompletedMilliseconds": 2423.6893999999998,
+        "Execution": null
+      },
+      {
+        "Name": "Application / main window XAML",
+        "Milliseconds": 47.9531,
+        "StartedMilliseconds": 2441.0931,
+        "CompletedMilliseconds": 2489.0462,
+        "Execution": null
+      },
+      {
+        "Name": "Application / base main window initialization",
+        "Milliseconds": 2.1361,
+        "StartedMilliseconds": 2511.36,
+        "CompletedMilliseconds": 2513.4961000000003,
+        "Execution": null
+      },
+      {
+        "Name": "Application / audio device enumeration",
+        "Milliseconds": 12.6206,
+        "StartedMilliseconds": 2515.7799,
+        "CompletedMilliseconds": 2528.4005,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemPlaylistsViewModel / navigation construction",
+        "Milliseconds": 10.8766,
+        "StartedMilliseconds": 2561.7045,
+        "CompletedMilliseconds": 2572.5811,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library IArtistsViewModel / navigation construction",
+        "Milliseconds": 5.7864,
+        "StartedMilliseconds": 2574.8657,
+        "CompletedMilliseconds": 2580.6521,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library IAlbumsViewModel / navigation construction",
+        "Milliseconds": 5.9967,
+        "StartedMilliseconds": 2583.0096,
+        "CompletedMilliseconds": 2589.0063,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library VideoPlaylistsViewModel / navigation construction",
+        "Milliseconds": 5.2885,
+        "StartedMilliseconds": 2600.3841,
+        "CompletedMilliseconds": 2605.6726000000003,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library TvShowsViewModel / navigation construction",
+        "Milliseconds": 5.8655,
+        "StartedMilliseconds": 2608.9657,
+        "CompletedMilliseconds": 2614.8312,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library WindowsFileBrowserViewModel / navigation construction",
+        "Milliseconds": 12.0993,
+        "StartedMilliseconds": 2618.219,
+        "CompletedMilliseconds": 2630.3183,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library UPnPManagerViewModel / navigation construction",
+        "Milliseconds": 3.8703,
+        "StartedMilliseconds": 2633.3923,
+        "CompletedMilliseconds": 2637.2626,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library StatisticsViewModel / navigation construction",
+        "Milliseconds": 2.9239,
+        "StartedMilliseconds": 2639.5348,
+        "CompletedMilliseconds": 2642.4586999999997,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SettingsViewModel / navigation construction",
+        "Milliseconds": 7.7885,
+        "StartedMilliseconds": 2644.5715,
+        "CompletedMilliseconds": 2652.36,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library PCloudManagerViewModel / navigation construction",
+        "Milliseconds": 4.7551,
+        "StartedMilliseconds": 2656.1195,
+        "CompletedMilliseconds": 2660.8745999999996,
+        "Execution": null
+      },
+      {
+        "Name": "Application / navigation view model construction",
+        "Milliseconds": 138.6665,
+        "StartedMilliseconds": 2530.5345,
+        "CompletedMilliseconds": 2669.201,
+        "Execution": null
+      },
+      {
+        "Name": "Application / player controls construction",
+        "Milliseconds": 12.0501,
+        "StartedMilliseconds": 2671.591,
+        "CompletedMilliseconds": 2683.6411,
+        "Execution": null
+      },
+      {
+        "Name": "Application / player controls activation",
+        "Milliseconds": 120.8401,
+        "StartedMilliseconds": 2686.8006,
+        "CompletedMilliseconds": 2807.6407,
+        "Execution": null
+      },
+      {
+        "Name": "Application / navigation activation",
+        "Milliseconds": 97.9157,
+        "StartedMilliseconds": 2809.972,
+        "CompletedMilliseconds": 2907.8877,
+        "Execution": null
+      },
+      {
+        "Name": "Application / main window view model initialization",
+        "Milliseconds": 400.9545,
+        "StartedMilliseconds": 2509.2487,
+        "CompletedMilliseconds": 2910.2032,
+        "Execution": null
+      },
+      {
+        "Name": "Application / shell construction",
+        "Milliseconds": 487.6384,
+        "StartedMilliseconds": 2430.094,
+        "CompletedMilliseconds": 2917.7324,
+        "Execution": null
+      },
+      {
+        "Name": "Application / OpenCV native initialization",
+        "Milliseconds": 24.8374,
+        "StartedMilliseconds": 2933.3429,
+        "CompletedMilliseconds": 2958.1803,
+        "Execution": null
+      },
+      {
+        "Name": "Application / initialization",
+        "Milliseconds": 1682.4117,
+        "StartedMilliseconds": 1279.6288,
+        "CompletedMilliseconds": 2962.0405,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / repository setup",
+        "Milliseconds": 340.8467,
+        "StartedMilliseconds": 2878.0126,
+        "CompletedMilliseconds": 3218.8593,
+        "Execution": null
+      },
+      {
+        "Name": "Application / show shell",
+        "Milliseconds": 870.4521,
+        "StartedMilliseconds": 2965.4671,
+        "CompletedMilliseconds": 3835.9192,
+        "Execution": null
+      },
+      {
+        "Name": "Application / first window render",
+        "Milliseconds": 3911.1829
+      },
+      {
+        "Name": "Application / benchmark first-frame screenshot",
+        "Milliseconds": 70.4225,
+        "StartedMilliseconds": 3917.7536,
+        "CompletedMilliseconds": 3988.1761,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / query",
+        "Milliseconds": 1177.4505,
+        "StartedMilliseconds": 2873.433,
+        "CompletedMilliseconds": 4050.8835,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / view model construction",
+        "Milliseconds": 542.0223,
+        "StartedMilliseconds": 4054.0974,
+        "CompletedMilliseconds": 4596.1197,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / UI publication",
+        "Milliseconds": 46.6877,
+        "StartedMilliseconds": 4606.2308,
+        "CompletedMilliseconds": 4652.918500000001,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / UI dispatch and publication",
+        "Milliseconds": 55.3386,
+        "StartedMilliseconds": 4600.9837,
+        "CompletedMilliseconds": 4656.3223,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / current track metadata",
+        "Milliseconds": 49.7285,
+        "StartedMilliseconds": 4728.1504,
+        "CompletedMilliseconds": 4777.878900000001,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / playlist preparation",
+        "Milliseconds": 117.4325,
+        "StartedMilliseconds": 4664.6686,
+        "CompletedMilliseconds": 4782.1011,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / post-load callback",
+        "Milliseconds": 125.7647,
+        "StartedMilliseconds": 4659.9213,
+        "CompletedMilliseconds": 4785.686,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / pinned items",
+        "Milliseconds": 29.9318,
+        "StartedMilliseconds": 4786.9643,
+        "CompletedMilliseconds": 4816.8961,
+        "Execution": null
+      },
+      {
+        "Name": "Application / initial playlist view ready",
+        "Milliseconds": 6205.6191
+      }
+    ],
+    "Observations": {
+      "UI / grouped playlist items": 5073,
+      "UI / realized playlist rows": 41
+    },
+    "DatabaseReads": [
+      {
+        "Table": "UPnPMediaServers",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 1,
+        "Milliseconds": 2.1767,
+        "StartedMilliseconds": 3731.3581
+      },
+      {
+        "Table": "UPnPMediaRenderers",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 6,
+        "Milliseconds": 13.9002,
+        "StartedMilliseconds": 3731.3547
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 5311,
+        "Milliseconds": 91.7347,
+        "StartedMilliseconds": 3889.7362
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 1,
+        "Milliseconds": 0.0437,
+        "StartedMilliseconds": 4717.4074
+      },
+      {
+        "Table": "PlaylistSongs",
+        "IncludesFileMetadata": true,
+        "ReadOperations": 194,
+        "Milliseconds": 7.8172,
+        "StartedMilliseconds": 4766.6226
+      },
+      {
+        "Table": "PinnedItems",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 10,
+        "Milliseconds": 0.3011,
+        "StartedMilliseconds": 4798.6742
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 2,
+        "Milliseconds": 0.1074,
+        "StartedMilliseconds": 4803.9469
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": true,
+        "ReadOperations": 29,
+        "Milliseconds": 0.8791,
+        "StartedMilliseconds": 4827.4467
+      },
+      {
+        "Table": "Songs",
+        "IncludesFileMetadata": true,
+        "ReadOperations": 1,
+        "Milliseconds": 0.0559,
+        "StartedMilliseconds": 6126.0812
+      }
+    ],
+    "DiagnosticWrites": {
+      "Count": 16,
+      "Milliseconds": 398.9456,
+      "LongestMilliseconds": 180.7351
+    },
+    "DiagnosticMode": "buffered-v1",
+    "DiagnosticProfile": "none",
+    "WindowMode": "Visible",
+    "PlaylistQueryPreparation": false,
+    "FixtureSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+    "OS": "Microsoft Windows NT 10.0.19045.0",
+    "Configuration": "Release",
+    "Playlists": 5310,
+    "SoundItems": 207110,
+    "ProcessorCount": 8
+  },
+  {
+    "Status": "Rendered",
+    "FailureType": null,
+    "ActivePhases": [],
+    "Commit": "f3f075355e8b68dc391da63dc1bbde21c6c8c83d",
+    "Runtime": "3.1.32",
+    "CreatedUtc": "2026-10-02T05:37:15.5532292Z",
+    "Phases": [
+      {
+        "Name": "Application / VPlayerCoreModule",
+        "Milliseconds": 3.8064,
+        "StartedMilliseconds": 519.3919,
+        "CompletedMilliseconds": 523.1983,
+        "Execution": null
+      },
+      {
+        "Name": "Application / IPTVModule",
+        "Milliseconds": 3.758,
+        "StartedMilliseconds": 525.9692,
+        "CompletedMilliseconds": 529.7272,
+        "Execution": null
+      },
+      {
+        "Name": "Application / UPnPNinjectModule",
+        "Milliseconds": 2.6466,
+        "StartedMilliseconds": 532.1267,
+        "CompletedMilliseconds": 534.7733000000001,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library module",
+        "Milliseconds": 43.8825,
+        "StartedMilliseconds": 540.3316,
+        "CompletedMilliseconds": 584.2141,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / core initialization",
+        "Milliseconds": 9.3661,
+        "StartedMilliseconds": 653.4039,
+        "CompletedMilliseconds": 662.77,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / instance construction",
+        "Milliseconds": 229.1868,
+        "StartedMilliseconds": 664.8909,
+        "CompletedMilliseconds": 894.0777,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / media player construction",
+        "Milliseconds": 48.3532,
+        "StartedMilliseconds": 896.8333,
+        "CompletedMilliseconds": 945.1865,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / event setup",
+        "Milliseconds": 9.4471,
+        "StartedMilliseconds": 948.4011,
+        "CompletedMilliseconds": 957.8482,
+        "Execution": null
+      },
+      {
+        "Name": "Application / video player activation",
+        "Milliseconds": 401.7971,
+        "StartedMilliseconds": 591.2489,
+        "CompletedMilliseconds": 993.046,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / instance construction",
+        "Milliseconds": 167.3511,
+        "StartedMilliseconds": 1009.5579,
+        "CompletedMilliseconds": 1176.909,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / media player construction",
+        "Milliseconds": 3.1092,
+        "StartedMilliseconds": 1179.126,
+        "CompletedMilliseconds": 1182.2352,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / event setup",
+        "Milliseconds": 2.0371,
+        "StartedMilliseconds": 1184.3314,
+        "CompletedMilliseconds": 1186.3685,
+        "Execution": null
+      },
+      {
+        "Name": "Application / music player activation",
+        "Milliseconds": 214.0038,
+        "StartedMilliseconds": 995.3359,
+        "CompletedMilliseconds": 1209.3397,
+        "Execution": null
+      },
+      {
+        "Name": "Application / WindowsPlayerNinjectModule",
+        "Milliseconds": 674.7019,
+        "StartedMilliseconds": 537.1119,
+        "CompletedMilliseconds": 1211.8138,
+        "Execution": null
+      },
+      {
+        "Name": "Application / module registration",
+        "Milliseconds": 701.8451,
+        "StartedMilliseconds": 512.9021,
+        "CompletedMilliseconds": 1214.7472,
+        "Execution": null
+      },
+      {
+        "Name": "Application / settings",
+        "Milliseconds": 15.1184,
+        "StartedMilliseconds": 1226.9041,
+        "CompletedMilliseconds": 1242.0225,
+        "Execution": null
+      },
+      {
+        "Name": "Application / container activation",
+        "Milliseconds": 26.9097,
+        "StartedMilliseconds": 1217.9831,
+        "CompletedMilliseconds": 1244.8927999999999,
+        "Execution": null
+      },
+      {
+        "Name": "Application / main window XAML",
+        "Milliseconds": 45.6509,
+        "StartedMilliseconds": 1269.4127,
+        "CompletedMilliseconds": 1315.0636000000002,
+        "Execution": null
+      },
+      {
+        "Name": "Application / base main window initialization",
+        "Milliseconds": 2.6023,
+        "StartedMilliseconds": 1335.2255,
+        "CompletedMilliseconds": 1337.8278,
+        "Execution": null
+      },
+      {
+        "Name": "Application / audio device enumeration",
+        "Milliseconds": 13.9729,
+        "StartedMilliseconds": 1339.8824,
+        "CompletedMilliseconds": 1353.8553,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemPlaylistsViewModel / navigation construction",
+        "Milliseconds": 10.4461,
+        "StartedMilliseconds": 1365.7872,
+        "CompletedMilliseconds": 1376.2332999999999,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library IArtistsViewModel / navigation construction",
+        "Milliseconds": 3.8852,
+        "StartedMilliseconds": 1378.428,
+        "CompletedMilliseconds": 1382.3132,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library IAlbumsViewModel / navigation construction",
+        "Milliseconds": 4.1853,
+        "StartedMilliseconds": 1384.3809,
+        "CompletedMilliseconds": 1388.5662000000002,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library VideoPlaylistsViewModel / navigation construction",
+        "Milliseconds": 4.9642,
+        "StartedMilliseconds": 1397.0895,
+        "CompletedMilliseconds": 1402.0537,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library TvShowsViewModel / navigation construction",
+        "Milliseconds": 3.8544,
+        "StartedMilliseconds": 1404.0424,
+        "CompletedMilliseconds": 1407.8968,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library WindowsFileBrowserViewModel / navigation construction",
+        "Milliseconds": 8.042,
+        "StartedMilliseconds": 1410.9206,
+        "CompletedMilliseconds": 1418.9625999999998,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library UPnPManagerViewModel / navigation construction",
+        "Milliseconds": 3.6309,
+        "StartedMilliseconds": 1421.8433,
+        "CompletedMilliseconds": 1425.4742,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library StatisticsViewModel / navigation construction",
+        "Milliseconds": 4.8864,
+        "StartedMilliseconds": 1429.0406,
+        "CompletedMilliseconds": 1433.9270000000001,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SettingsViewModel / navigation construction",
+        "Milliseconds": 4.7584,
+        "StartedMilliseconds": 1436.8283,
+        "CompletedMilliseconds": 1441.5866999999998,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library PCloudManagerViewModel / navigation construction",
+        "Milliseconds": 6.068,
+        "StartedMilliseconds": 1443.8776,
+        "CompletedMilliseconds": 1449.9456,
+        "Execution": null
+      },
+      {
+        "Name": "Application / navigation view model construction",
+        "Milliseconds": 101.514,
+        "StartedMilliseconds": 1355.9662,
+        "CompletedMilliseconds": 1457.4802,
+        "Execution": null
+      },
+      {
+        "Name": "Application / player controls construction",
+        "Milliseconds": 10.6002,
+        "StartedMilliseconds": 1459.8449,
+        "CompletedMilliseconds": 1470.4451000000001,
+        "Execution": null
+      },
+      {
+        "Name": "Application / player controls activation",
+        "Milliseconds": 107.2163,
+        "StartedMilliseconds": 1472.806,
+        "CompletedMilliseconds": 1580.0223,
+        "Execution": null
+      },
+      {
+        "Name": "Application / navigation activation",
+        "Milliseconds": 91.8858,
+        "StartedMilliseconds": 1583.4869,
+        "CompletedMilliseconds": 1675.3727000000001,
+        "Execution": null
+      },
+      {
+        "Name": "Application / main window view model initialization",
+        "Milliseconds": 344.8287,
+        "StartedMilliseconds": 1333.269,
+        "CompletedMilliseconds": 1678.0977,
+        "Execution": null
+      },
+      {
+        "Name": "Application / shell construction",
+        "Milliseconds": 430.4385,
+        "StartedMilliseconds": 1251.0527,
+        "CompletedMilliseconds": 1681.4912,
+        "Execution": null
+      },
+      {
+        "Name": "Application / OpenCV native initialization",
+        "Milliseconds": 25.438,
+        "StartedMilliseconds": 1698.9057,
+        "CompletedMilliseconds": 1724.3437000000001,
+        "Execution": null
+      },
+      {
+        "Name": "Application / initialization",
+        "Milliseconds": 1256.6361,
+        "StartedMilliseconds": 469.8787,
+        "CompletedMilliseconds": 1726.5148,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / repository setup",
+        "Milliseconds": 188.4891,
+        "StartedMilliseconds": 1656.7971,
+        "CompletedMilliseconds": 1845.2862,
+        "Execution": null
+      },
+      {
+        "Name": "Application / show shell",
+        "Milliseconds": 913.2979,
+        "StartedMilliseconds": 1730.0498,
+        "CompletedMilliseconds": 2643.3477000000003,
+        "Execution": null
+      },
+      {
+        "Name": "Application / first window render",
+        "Milliseconds": 2719.7078
+      },
+      {
+        "Name": "Application / benchmark first-frame screenshot",
+        "Milliseconds": 96.0687,
+        "StartedMilliseconds": 2722.873,
+        "CompletedMilliseconds": 2818.9417,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / query",
+        "Milliseconds": 1166.98,
+        "StartedMilliseconds": 1653.0747,
+        "CompletedMilliseconds": 2820.0546999999997,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / view model construction",
+        "Milliseconds": 519.7208,
+        "StartedMilliseconds": 2827.8837,
+        "CompletedMilliseconds": 3347.6045,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / UI publication",
+        "Milliseconds": 37.8781,
+        "StartedMilliseconds": 3357.3617,
+        "CompletedMilliseconds": 3395.2398,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / UI dispatch and publication",
+        "Milliseconds": 45.9469,
+        "StartedMilliseconds": 3352.5468,
+        "CompletedMilliseconds": 3398.4937,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / current track metadata",
+        "Milliseconds": 46.644,
+        "StartedMilliseconds": 3458.4676,
+        "CompletedMilliseconds": 3505.1115999999997,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / playlist preparation",
+        "Milliseconds": 100.8544,
+        "StartedMilliseconds": 3407.1331,
+        "CompletedMilliseconds": 3507.9875,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / post-load callback",
+        "Milliseconds": 109.8939,
+        "StartedMilliseconds": 3401.9202,
+        "CompletedMilliseconds": 3511.8141,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / pinned items",
+        "Milliseconds": 18.0406,
+        "StartedMilliseconds": 3513.5242,
+        "CompletedMilliseconds": 3531.5647999999997,
+        "Execution": null
+      },
+      {
+        "Name": "Application / initial playlist view ready",
+        "Milliseconds": 4665.5163
+      }
+    ],
+    "Observations": {
+      "UI / grouped playlist items": 5073,
+      "UI / realized playlist rows": 41
+    },
+    "DatabaseReads": [
+      {
+        "Table": "UPnPMediaServers",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 1,
+        "Milliseconds": 3.1594,
+        "StartedMilliseconds": 2391.2206
+      },
+      {
+        "Table": "UPnPMediaRenderers",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 6,
+        "Milliseconds": 8.5157,
+        "StartedMilliseconds": 2641.4831
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 5311,
+        "Milliseconds": 67.1142,
+        "StartedMilliseconds": 2646.949
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 1,
+        "Milliseconds": 0.0329,
+        "StartedMilliseconds": 3453.5432
+      },
+      {
+        "Table": "PlaylistSongs",
+        "IncludesFileMetadata": true,
+        "ReadOperations": 194,
+        "Milliseconds": 7.4963,
+        "StartedMilliseconds": 3494.9839
+      },
+      {
+        "Table": "PinnedItems",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 10,
+        "Milliseconds": 0.1569,
+        "StartedMilliseconds": 3522.5482
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 2,
+        "Milliseconds": 0.0863,
+        "StartedMilliseconds": 3527.6238
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": true,
+        "ReadOperations": 29,
+        "Milliseconds": 0.5231,
+        "StartedMilliseconds": 3554.6375
+      },
+      {
+        "Table": "Songs",
+        "IncludesFileMetadata": true,
+        "ReadOperations": 1,
+        "Milliseconds": 0.0591,
+        "StartedMilliseconds": 4645.77
+      }
+    ],
+    "DiagnosticWrites": {
+      "Count": 15,
+      "Milliseconds": 346.39219999999995,
+      "LongestMilliseconds": 92.3697
+    },
+    "DiagnosticMode": "buffered-v1",
+    "DiagnosticProfile": "none",
+    "WindowMode": "Visible",
+    "PlaylistQueryPreparation": false,
+    "FixtureSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+    "OS": "Microsoft Windows NT 10.0.19045.0",
+    "Configuration": "Release",
+    "Playlists": 5310,
+    "SoundItems": 207110,
+    "ProcessorCount": 8
+  },
+  {
+    "Status": "Rendered",
+    "FailureType": null,
+    "ActivePhases": [],
+    "Commit": "f3f075355e8b68dc391da63dc1bbde21c6c8c83d",
+    "Runtime": "3.1.32",
+    "CreatedUtc": "2026-10-02T05:37:21.2293851Z",
+    "Phases": [
+      {
+        "Name": "Application / VPlayerCoreModule",
+        "Milliseconds": 4.0623,
+        "StartedMilliseconds": 513.0971,
+        "CompletedMilliseconds": 517.1594,
+        "Execution": null
+      },
+      {
+        "Name": "Application / IPTVModule",
+        "Milliseconds": 2.9557,
+        "StartedMilliseconds": 519.6067,
+        "CompletedMilliseconds": 522.5624,
+        "Execution": null
+      },
+      {
+        "Name": "Application / UPnPNinjectModule",
+        "Milliseconds": 3.4024,
+        "StartedMilliseconds": 525.1828,
+        "CompletedMilliseconds": 528.5852,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library module",
+        "Milliseconds": 44.3208,
+        "StartedMilliseconds": 534.0278,
+        "CompletedMilliseconds": 578.3485999999999,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / core initialization",
+        "Milliseconds": 10.9715,
+        "StartedMilliseconds": 657.8481,
+        "CompletedMilliseconds": 668.8196,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / instance construction",
+        "Milliseconds": 221.7128,
+        "StartedMilliseconds": 672.2215,
+        "CompletedMilliseconds": 893.9343,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / media player construction",
+        "Milliseconds": 67.7602,
+        "StartedMilliseconds": 896.045,
+        "CompletedMilliseconds": 963.8052,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / event setup",
+        "Milliseconds": 7.6689,
+        "StartedMilliseconds": 965.8933,
+        "CompletedMilliseconds": 973.5622,
+        "Execution": null
+      },
+      {
+        "Name": "Application / video player activation",
+        "Milliseconds": 425.1287,
+        "StartedMilliseconds": 583.6372,
+        "CompletedMilliseconds": 1008.7659,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / instance construction",
+        "Milliseconds": 6.7019,
+        "StartedMilliseconds": 1024.1719,
+        "CompletedMilliseconds": 1030.8738,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / media player construction",
+        "Milliseconds": 3.9019,
+        "StartedMilliseconds": 1034.3312,
+        "CompletedMilliseconds": 1038.2331000000001,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / event setup",
+        "Milliseconds": 2.276,
+        "StartedMilliseconds": 1041.4983,
+        "CompletedMilliseconds": 1043.7743,
+        "Execution": null
+      },
+      {
+        "Name": "Application / music player activation",
+        "Milliseconds": 61.0756,
+        "StartedMilliseconds": 1011.233,
+        "CompletedMilliseconds": 1072.3085999999998,
+        "Execution": null
+      },
+      {
+        "Name": "Application / WindowsPlayerNinjectModule",
+        "Milliseconds": 543.541,
+        "StartedMilliseconds": 531.2684,
+        "CompletedMilliseconds": 1074.8094,
+        "Execution": null
+      },
+      {
+        "Name": "Application / module registration",
+        "Milliseconds": 571.7329,
+        "StartedMilliseconds": 505.8212,
+        "CompletedMilliseconds": 1077.5540999999998,
+        "Execution": null
+      },
+      {
+        "Name": "Application / settings",
+        "Milliseconds": 17.6108,
+        "StartedMilliseconds": 1088.3244,
+        "CompletedMilliseconds": 1105.9352,
+        "Execution": null
+      },
+      {
+        "Name": "Application / container activation",
+        "Milliseconds": 30.5078,
+        "StartedMilliseconds": 1079.7553,
+        "CompletedMilliseconds": 1110.2631000000001,
+        "Execution": null
+      },
+      {
+        "Name": "Application / main window XAML",
+        "Milliseconds": 82.4879,
+        "StartedMilliseconds": 1140.6587,
+        "CompletedMilliseconds": 1223.1466,
+        "Execution": null
+      },
+      {
+        "Name": "Application / base main window initialization",
+        "Milliseconds": 1.9565,
+        "StartedMilliseconds": 1247.1933,
+        "CompletedMilliseconds": 1249.1498,
+        "Execution": null
+      },
+      {
+        "Name": "Application / audio device enumeration",
+        "Milliseconds": 13.7673,
+        "StartedMilliseconds": 1251.2178,
+        "CompletedMilliseconds": 1264.9850999999999,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemPlaylistsViewModel / navigation construction",
+        "Milliseconds": 11.9197,
+        "StartedMilliseconds": 1278.0656,
+        "CompletedMilliseconds": 1289.9852999999998,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library IArtistsViewModel / navigation construction",
+        "Milliseconds": 4.2652,
+        "StartedMilliseconds": 1292.8643,
+        "CompletedMilliseconds": 1297.1295,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library IAlbumsViewModel / navigation construction",
+        "Milliseconds": 5.771,
+        "StartedMilliseconds": 1299.2491,
+        "CompletedMilliseconds": 1305.0201,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library VideoPlaylistsViewModel / navigation construction",
+        "Milliseconds": 4.231,
+        "StartedMilliseconds": 1307.3706,
+        "CompletedMilliseconds": 1311.6016,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library TvShowsViewModel / navigation construction",
+        "Milliseconds": 4.6168,
+        "StartedMilliseconds": 1314.0109,
+        "CompletedMilliseconds": 1318.6277,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library WindowsFileBrowserViewModel / navigation construction",
+        "Milliseconds": 6.8657,
+        "StartedMilliseconds": 1320.8879,
+        "CompletedMilliseconds": 1327.7536,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library UPnPManagerViewModel / navigation construction",
+        "Milliseconds": 2.6601,
+        "StartedMilliseconds": 1329.8743,
+        "CompletedMilliseconds": 1332.5344,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library StatisticsViewModel / navigation construction",
+        "Milliseconds": 3.1947,
+        "StartedMilliseconds": 1334.858,
+        "CompletedMilliseconds": 1338.0527,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SettingsViewModel / navigation construction",
+        "Milliseconds": 4.9926,
+        "StartedMilliseconds": 1347.8707,
+        "CompletedMilliseconds": 1352.8633,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library PCloudManagerViewModel / navigation construction",
+        "Milliseconds": 4.2997,
+        "StartedMilliseconds": 1355.0291,
+        "CompletedMilliseconds": 1359.3288,
+        "Execution": null
+      },
+      {
+        "Name": "Application / navigation view model construction",
+        "Milliseconds": 99.6001,
+        "StartedMilliseconds": 1267.6442,
+        "CompletedMilliseconds": 1367.2442999999998,
+        "Execution": null
+      },
+      {
+        "Name": "Application / player controls construction",
+        "Milliseconds": 9.7971,
+        "StartedMilliseconds": 1369.4902,
+        "CompletedMilliseconds": 1379.2873,
+        "Execution": null
+      },
+      {
+        "Name": "Application / player controls activation",
+        "Milliseconds": 108.1137,
+        "StartedMilliseconds": 1381.7551,
+        "CompletedMilliseconds": 1489.8688000000002,
+        "Execution": null
+      },
+      {
+        "Name": "Application / navigation activation",
+        "Milliseconds": 71.2547,
+        "StartedMilliseconds": 1492.1326,
+        "CompletedMilliseconds": 1563.3872999999999,
+        "Execution": null
+      },
+      {
+        "Name": "Application / main window view model initialization",
+        "Milliseconds": 320.8168,
+        "StartedMilliseconds": 1244.8698,
+        "CompletedMilliseconds": 1565.6866,
+        "Execution": null
+      },
+      {
+        "Name": "Application / shell construction",
+        "Milliseconds": 446.3702,
+        "StartedMilliseconds": 1122.4522,
+        "CompletedMilliseconds": 1568.8224,
+        "Execution": null
+      },
+      {
+        "Name": "Application / OpenCV native initialization",
+        "Milliseconds": 21.6492,
+        "StartedMilliseconds": 1581.2135,
+        "CompletedMilliseconds": 1602.8627000000001,
+        "Execution": null
+      },
+      {
+        "Name": "Application / initialization",
+        "Milliseconds": 1145.4158,
+        "StartedMilliseconds": 459.9392,
+        "CompletedMilliseconds": 1605.355,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / repository setup",
+        "Milliseconds": 338.72,
+        "StartedMilliseconds": 1539.3441,
+        "CompletedMilliseconds": 1878.0641,
+        "Execution": null
+      },
+      {
+        "Name": "Application / show shell",
+        "Milliseconds": 449.303,
+        "StartedMilliseconds": 1607.9381,
+        "CompletedMilliseconds": 2057.2411,
+        "Execution": null
+      },
+      {
+        "Name": "Application / first window render",
+        "Milliseconds": 2457.0147
+      },
+      {
+        "Name": "Application / benchmark first-frame screenshot",
+        "Milliseconds": 75.5335,
+        "StartedMilliseconds": 2461.5761,
+        "CompletedMilliseconds": 2537.1096000000002,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / query",
+        "Milliseconds": 1002.6805,
+        "StartedMilliseconds": 1535.8154,
+        "CompletedMilliseconds": 2538.4959,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / view model construction",
+        "Milliseconds": 470.7963,
+        "StartedMilliseconds": 2555.1957,
+        "CompletedMilliseconds": 3025.992,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / UI publication",
+        "Milliseconds": 54.6331,
+        "StartedMilliseconds": 3040.5772,
+        "CompletedMilliseconds": 3095.2103,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / UI dispatch and publication",
+        "Milliseconds": 64.7712,
+        "StartedMilliseconds": 3033.7333,
+        "CompletedMilliseconds": 3098.5045,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / current track metadata",
+        "Milliseconds": 48.9314,
+        "StartedMilliseconds": 3168.0839,
+        "CompletedMilliseconds": 3217.0153,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / playlist preparation",
+        "Milliseconds": 112.5846,
+        "StartedMilliseconds": 3107.7996,
+        "CompletedMilliseconds": 3220.3842,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / post-load callback",
+        "Milliseconds": 122.4685,
+        "StartedMilliseconds": 3101.405,
+        "CompletedMilliseconds": 3223.8735,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / pinned items",
+        "Milliseconds": 28.6061,
+        "StartedMilliseconds": 3226.251,
+        "CompletedMilliseconds": 3254.8571,
+        "Execution": null
+      },
+      {
+        "Name": "Application / initial playlist view ready",
+        "Milliseconds": 4451.7298
+      }
+    ],
+    "Observations": {
+      "UI / grouped playlist items": 5073,
+      "UI / realized playlist rows": 41
+    },
+    "DatabaseReads": [
+      {
+        "Table": "UPnPMediaServers",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 1,
+        "Milliseconds": 2.0868,
+        "StartedMilliseconds": 2452.8345
+      },
+      {
+        "Table": "UPnPMediaRenderers",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 6,
+        "Milliseconds": 11.8475,
+        "StartedMilliseconds": 2453.503
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 5311,
+        "Milliseconds": 73.6755,
+        "StartedMilliseconds": 2461.5025
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 1,
+        "Milliseconds": 0.0446,
+        "StartedMilliseconds": 3162.1577
+      },
+      {
+        "Table": "PlaylistSongs",
+        "IncludesFileMetadata": true,
+        "ReadOperations": 194,
+        "Milliseconds": 7.098,
+        "StartedMilliseconds": 3205.4522
+      },
+      {
+        "Table": "PinnedItems",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 10,
+        "Milliseconds": 0.1487,
+        "StartedMilliseconds": 3237.1149
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 2,
+        "Milliseconds": 0.0902,
+        "StartedMilliseconds": 3241.2517
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": true,
+        "ReadOperations": 29,
+        "Milliseconds": 1.6011,
+        "StartedMilliseconds": 3272.3438
+      },
+      {
+        "Table": "Songs",
+        "IncludesFileMetadata": true,
+        "ReadOperations": 1,
+        "Milliseconds": 0.0716,
+        "StartedMilliseconds": 4435.889
+      }
+    ],
+    "DiagnosticWrites": {
+      "Count": 14,
+      "Milliseconds": 345.45750000000004,
+      "LongestMilliseconds": 106.5525
+    },
+    "DiagnosticMode": "buffered-v1",
+    "DiagnosticProfile": "none",
+    "WindowMode": "Visible",
+    "PlaylistQueryPreparation": false,
+    "FixtureSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+    "OS": "Microsoft Windows NT 10.0.19045.0",
+    "Configuration": "Release",
+    "Playlists": 5310,
+    "SoundItems": 207110,
+    "ProcessorCount": 8
+  },
+  {
+    "Status": "Rendered",
+    "FailureType": null,
+    "ActivePhases": [],
+    "Commit": "f3f075355e8b68dc391da63dc1bbde21c6c8c83d",
+    "Runtime": "3.1.32",
+    "CreatedUtc": "2026-10-02T05:37:38.8485361Z",
+    "Phases": [
+      {
+        "Name": "Application / VPlayerCoreModule",
+        "Milliseconds": 4.5537,
+        "StartedMilliseconds": 512.5881,
+        "CompletedMilliseconds": 517.1418000000001,
+        "Execution": null
+      },
+      {
+        "Name": "Application / IPTVModule",
+        "Milliseconds": 2.7323,
+        "StartedMilliseconds": 519.5779,
+        "CompletedMilliseconds": 522.3102,
+        "Execution": null
+      },
+      {
+        "Name": "Application / UPnPNinjectModule",
+        "Milliseconds": 2.8288,
+        "StartedMilliseconds": 524.5033,
+        "CompletedMilliseconds": 527.3321,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library module",
+        "Milliseconds": 40.9705,
+        "StartedMilliseconds": 535.961,
+        "CompletedMilliseconds": 576.9315,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / core initialization",
+        "Milliseconds": 9.1307,
+        "StartedMilliseconds": 644.3937,
+        "CompletedMilliseconds": 653.5244,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / instance construction",
+        "Milliseconds": 232.0127,
+        "StartedMilliseconds": 655.9701,
+        "CompletedMilliseconds": 887.9828,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / media player construction",
+        "Milliseconds": 48.817,
+        "StartedMilliseconds": 890.1173,
+        "CompletedMilliseconds": 938.9343,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / event setup",
+        "Milliseconds": 9.1772,
+        "StartedMilliseconds": 941.0837,
+        "CompletedMilliseconds": 950.2609,
+        "Execution": null
+      },
+      {
+        "Name": "Application / video player activation",
+        "Milliseconds": 404.526,
+        "StartedMilliseconds": 583.1289,
+        "CompletedMilliseconds": 987.6549,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / instance construction",
+        "Milliseconds": 42.6126,
+        "StartedMilliseconds": 1004.1002,
+        "CompletedMilliseconds": 1046.7128,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / media player construction",
+        "Milliseconds": 3.8095,
+        "StartedMilliseconds": 1049.1814,
+        "CompletedMilliseconds": 1052.9909,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / event setup",
+        "Milliseconds": 2.5383,
+        "StartedMilliseconds": 1056.3517,
+        "CompletedMilliseconds": 1058.8899999999999,
+        "Execution": null
+      },
+      {
+        "Name": "Application / music player activation",
+        "Milliseconds": 97.4186,
+        "StartedMilliseconds": 989.6835,
+        "CompletedMilliseconds": 1087.1021,
+        "Execution": null
+      },
+      {
+        "Name": "Application / WindowsPlayerNinjectModule",
+        "Milliseconds": 558.9914,
+        "StartedMilliseconds": 531.4082,
+        "CompletedMilliseconds": 1090.3996,
+        "Execution": null
+      },
+      {
+        "Name": "Application / module registration",
+        "Milliseconds": 590.9388,
+        "StartedMilliseconds": 503.1175,
+        "CompletedMilliseconds": 1094.0563,
+        "Execution": null
+      },
+      {
+        "Name": "Application / settings",
+        "Milliseconds": 18.8273,
+        "StartedMilliseconds": 1120.9878,
+        "CompletedMilliseconds": 1139.8151,
+        "Execution": null
+      },
+      {
+        "Name": "Application / container activation",
+        "Milliseconds": 46.5893,
+        "StartedMilliseconds": 1096.8095,
+        "CompletedMilliseconds": 1143.3988000000002,
+        "Execution": null
+      },
+      {
+        "Name": "Application / main window XAML",
+        "Milliseconds": 54.1811,
+        "StartedMilliseconds": 1174.651,
+        "CompletedMilliseconds": 1228.8321,
+        "Execution": null
+      },
+      {
+        "Name": "Application / base main window initialization",
+        "Milliseconds": 2.3123,
+        "StartedMilliseconds": 1250.9173,
+        "CompletedMilliseconds": 1253.2296000000001,
+        "Execution": null
+      },
+      {
+        "Name": "Application / audio device enumeration",
+        "Milliseconds": 12.267,
+        "StartedMilliseconds": 1255.5186,
+        "CompletedMilliseconds": 1267.7856000000002,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemPlaylistsViewModel / navigation construction",
+        "Milliseconds": 12.1811,
+        "StartedMilliseconds": 1279.7901,
+        "CompletedMilliseconds": 1291.9712,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library IArtistsViewModel / navigation construction",
+        "Milliseconds": 6.3269,
+        "StartedMilliseconds": 1295.9587,
+        "CompletedMilliseconds": 1302.2856,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library IAlbumsViewModel / navigation construction",
+        "Milliseconds": 5.4033,
+        "StartedMilliseconds": 1305.5747,
+        "CompletedMilliseconds": 1310.9779999999998,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library VideoPlaylistsViewModel / navigation construction",
+        "Milliseconds": 4.1487,
+        "StartedMilliseconds": 1313.4543,
+        "CompletedMilliseconds": 1317.603,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library TvShowsViewModel / navigation construction",
+        "Milliseconds": 4.4397,
+        "StartedMilliseconds": 1319.6365,
+        "CompletedMilliseconds": 1324.0762,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library WindowsFileBrowserViewModel / navigation construction",
+        "Milliseconds": 7.7728,
+        "StartedMilliseconds": 1326.8996,
+        "CompletedMilliseconds": 1334.6724,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library UPnPManagerViewModel / navigation construction",
+        "Milliseconds": 2.4877,
+        "StartedMilliseconds": 1337.7193,
+        "CompletedMilliseconds": 1340.2069999999999,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library StatisticsViewModel / navigation construction",
+        "Milliseconds": 3.6935,
+        "StartedMilliseconds": 1342.9074,
+        "CompletedMilliseconds": 1346.6009000000001,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SettingsViewModel / navigation construction",
+        "Milliseconds": 11.1428,
+        "StartedMilliseconds": 1348.6218,
+        "CompletedMilliseconds": 1359.7646,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library PCloudManagerViewModel / navigation construction",
+        "Milliseconds": 4.5529,
+        "StartedMilliseconds": 1361.8572,
+        "CompletedMilliseconds": 1366.4100999999998,
+        "Execution": null
+      },
+      {
+        "Name": "Application / navigation view model construction",
+        "Milliseconds": 105.0836,
+        "StartedMilliseconds": 1269.791,
+        "CompletedMilliseconds": 1374.8745999999999,
+        "Execution": null
+      },
+      {
+        "Name": "Application / player controls construction",
+        "Milliseconds": 10.0296,
+        "StartedMilliseconds": 1377.0936,
+        "CompletedMilliseconds": 1387.1232,
+        "Execution": null
+      },
+      {
+        "Name": "Application / player controls activation",
+        "Milliseconds": 99.1774,
+        "StartedMilliseconds": 1390.1523,
+        "CompletedMilliseconds": 1489.3297,
+        "Execution": null
+      },
+      {
+        "Name": "Application / navigation activation",
+        "Milliseconds": 63.3285,
+        "StartedMilliseconds": 1491.4151,
+        "CompletedMilliseconds": 1554.7436,
+        "Execution": null
+      },
+      {
+        "Name": "Application / main window view model initialization",
+        "Milliseconds": 309.0603,
+        "StartedMilliseconds": 1247.7548,
+        "CompletedMilliseconds": 1556.8150999999998,
+        "Execution": null
+      },
+      {
+        "Name": "Application / shell construction",
+        "Milliseconds": 406.3613,
+        "StartedMilliseconds": 1153.4667,
+        "CompletedMilliseconds": 1559.828,
+        "Execution": null
+      },
+      {
+        "Name": "Application / OpenCV native initialization",
+        "Milliseconds": 18.0881,
+        "StartedMilliseconds": 1570.0531,
+        "CompletedMilliseconds": 1588.1412,
+        "Execution": null
+      },
+      {
+        "Name": "Application / initialization",
+        "Milliseconds": 1125.9063,
+        "StartedMilliseconds": 464.3034,
+        "CompletedMilliseconds": 1590.2097,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / repository setup",
+        "Milliseconds": 275.3893,
+        "StartedMilliseconds": 1541.883,
+        "CompletedMilliseconds": 1817.2723,
+        "Execution": null
+      },
+      {
+        "Name": "Application / show shell",
+        "Milliseconds": 779.2244,
+        "StartedMilliseconds": 1592.6164,
+        "CompletedMilliseconds": 2371.8408,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / query",
+        "Milliseconds": 883.2645,
+        "StartedMilliseconds": 1538.3643,
+        "CompletedMilliseconds": 2421.6288,
+        "Execution": null
+      },
+      {
+        "Name": "Application / first window render",
+        "Milliseconds": 2425.4346
+      },
+      {
+        "Name": "Application / benchmark first-frame screenshot",
+        "Milliseconds": 79.9652,
+        "StartedMilliseconds": 2428.6133,
+        "CompletedMilliseconds": 2508.5785,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / view model construction",
+        "Milliseconds": 496.3039,
+        "StartedMilliseconds": 2425.4589,
+        "CompletedMilliseconds": 2921.7628,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / UI publication",
+        "Milliseconds": 51.3498,
+        "StartedMilliseconds": 2931.8725,
+        "CompletedMilliseconds": 2983.2223,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / UI dispatch and publication",
+        "Milliseconds": 60.9201,
+        "StartedMilliseconds": 2927.1336,
+        "CompletedMilliseconds": 2988.0537,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / current track metadata",
+        "Milliseconds": 47.0149,
+        "StartedMilliseconds": 3074.1648,
+        "CompletedMilliseconds": 3121.1797,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / playlist preparation",
+        "Milliseconds": 124.7338,
+        "StartedMilliseconds": 2999.4394,
+        "CompletedMilliseconds": 3124.1732,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / post-load callback",
+        "Milliseconds": 137.0814,
+        "StartedMilliseconds": 2992.4717,
+        "CompletedMilliseconds": 3129.5531,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / pinned items",
+        "Milliseconds": 30.226,
+        "StartedMilliseconds": 3130.8341,
+        "CompletedMilliseconds": 3161.0601,
+        "Execution": null
+      },
+      {
+        "Name": "Application / initial playlist view ready",
+        "Milliseconds": 4350.3603
+      }
+    ],
+    "Observations": {
+      "UI / grouped playlist items": 5073,
+      "UI / realized playlist rows": 41
+    },
+    "DatabaseReads": [
+      {
+        "Table": "UPnPMediaServers",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 1,
+        "Milliseconds": 1.4341,
+        "StartedMilliseconds": 2331.3412
+      },
+      {
+        "Table": "UPnPMediaRenderers",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 6,
+        "Milliseconds": 11.0458,
+        "StartedMilliseconds": 2331.1908
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 5311,
+        "Milliseconds": 59.7287,
+        "StartedMilliseconds": 2337.8084
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 1,
+        "Milliseconds": 0.0881,
+        "StartedMilliseconds": 3068.4359
+      },
+      {
+        "Table": "PlaylistSongs",
+        "IncludesFileMetadata": true,
+        "ReadOperations": 194,
+        "Milliseconds": 7.579,
+        "StartedMilliseconds": 3110.8834
+      },
+      {
+        "Table": "PinnedItems",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 10,
+        "Milliseconds": 0.1558,
+        "StartedMilliseconds": 3151.1344
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 2,
+        "Milliseconds": 0.0955,
+        "StartedMilliseconds": 3157.0016
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": true,
+        "ReadOperations": 29,
+        "Milliseconds": 0.8183,
+        "StartedMilliseconds": 3173.3615
+      }
+    ],
+    "DiagnosticWrites": {
+      "Count": 15,
+      "Milliseconds": 391.2435,
+      "LongestMilliseconds": 205.231
+    },
+    "DiagnosticMode": "buffered-v1",
+    "DiagnosticProfile": "none",
+    "WindowMode": "Visible",
+    "PlaylistQueryPreparation": false,
+    "FixtureSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+    "OS": "Microsoft Windows NT 10.0.19045.0",
+    "Configuration": "Release",
+    "Playlists": 5310,
+    "SoundItems": 207110,
+    "ProcessorCount": 8
+  },
+  {
+    "Status": "Rendered",
+    "FailureType": null,
+    "ActivePhases": [],
+    "Commit": "f3f075355e8b68dc391da63dc1bbde21c6c8c83d",
+    "Runtime": "3.1.32",
+    "CreatedUtc": "2026-10-02T05:37:44.4895202Z",
+    "Phases": [
+      {
+        "Name": "Application / VPlayerCoreModule",
+        "Milliseconds": 4.6843,
+        "StartedMilliseconds": 522.7115,
+        "CompletedMilliseconds": 527.3958,
+        "Execution": null
+      },
+      {
+        "Name": "Application / IPTVModule",
+        "Milliseconds": 2.504,
+        "StartedMilliseconds": 530.5689,
+        "CompletedMilliseconds": 533.0729,
+        "Execution": null
+      },
+      {
+        "Name": "Application / UPnPNinjectModule",
+        "Milliseconds": 2.6424,
+        "StartedMilliseconds": 535.7646,
+        "CompletedMilliseconds": 538.4069999999999,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library module",
+        "Milliseconds": 41.4208,
+        "StartedMilliseconds": 544.8944,
+        "CompletedMilliseconds": 586.3152,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / core initialization",
+        "Milliseconds": 9.555,
+        "StartedMilliseconds": 653.8599,
+        "CompletedMilliseconds": 663.4149,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / instance construction",
+        "Milliseconds": 222.9815,
+        "StartedMilliseconds": 666.1564,
+        "CompletedMilliseconds": 889.1379,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / media player construction",
+        "Milliseconds": 50.6079,
+        "StartedMilliseconds": 891.5529,
+        "CompletedMilliseconds": 942.1608,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / event setup",
+        "Milliseconds": 8.0105,
+        "StartedMilliseconds": 945.7017,
+        "CompletedMilliseconds": 953.7121999999999,
+        "Execution": null
+      },
+      {
+        "Name": "Application / video player activation",
+        "Milliseconds": 397.4408,
+        "StartedMilliseconds": 591.4396,
+        "CompletedMilliseconds": 988.8804,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / instance construction",
+        "Milliseconds": 5.6647,
+        "StartedMilliseconds": 1006.9195,
+        "CompletedMilliseconds": 1012.5842,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / media player construction",
+        "Milliseconds": 4.5754,
+        "StartedMilliseconds": 1015.057,
+        "CompletedMilliseconds": 1019.6324,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / event setup",
+        "Milliseconds": 2.8525,
+        "StartedMilliseconds": 1022.9172,
+        "CompletedMilliseconds": 1025.7697,
+        "Execution": null
+      },
+      {
+        "Name": "Application / music player activation",
+        "Milliseconds": 61.5895,
+        "StartedMilliseconds": 991.2653,
+        "CompletedMilliseconds": 1052.8548,
+        "Execution": null
+      },
+      {
+        "Name": "Application / WindowsPlayerNinjectModule",
+        "Milliseconds": 514.9722,
+        "StartedMilliseconds": 540.614,
+        "CompletedMilliseconds": 1055.5862000000002,
+        "Execution": null
+      },
+      {
+        "Name": "Application / module registration",
+        "Milliseconds": 542.2983,
+        "StartedMilliseconds": 515.8385,
+        "CompletedMilliseconds": 1058.1368,
+        "Execution": null
+      },
+      {
+        "Name": "Application / settings",
+        "Milliseconds": 35.117,
+        "StartedMilliseconds": 1069.5862,
+        "CompletedMilliseconds": 1104.7032,
+        "Execution": null
+      },
+      {
+        "Name": "Application / container activation",
+        "Milliseconds": 47.8543,
+        "StartedMilliseconds": 1060.2921,
+        "CompletedMilliseconds": 1108.1463999999999,
+        "Execution": null
+      },
+      {
+        "Name": "Application / main window XAML",
+        "Milliseconds": 70.2104,
+        "StartedMilliseconds": 1136.6398,
+        "CompletedMilliseconds": 1206.8501999999999,
+        "Execution": null
+      },
+      {
+        "Name": "Application / base main window initialization",
+        "Milliseconds": 3.2662,
+        "StartedMilliseconds": 1229.9789,
+        "CompletedMilliseconds": 1233.2451,
+        "Execution": null
+      },
+      {
+        "Name": "Application / audio device enumeration",
+        "Milliseconds": 14.6372,
+        "StartedMilliseconds": 1236.0248,
+        "CompletedMilliseconds": 1250.6619999999998,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemPlaylistsViewModel / navigation construction",
+        "Milliseconds": 10.1364,
+        "StartedMilliseconds": 1263.2379,
+        "CompletedMilliseconds": 1273.3743000000002,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library IArtistsViewModel / navigation construction",
+        "Milliseconds": 4.0636,
+        "StartedMilliseconds": 1275.5688,
+        "CompletedMilliseconds": 1279.6324,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library IAlbumsViewModel / navigation construction",
+        "Milliseconds": 5.0211,
+        "StartedMilliseconds": 1281.864,
+        "CompletedMilliseconds": 1286.8851,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library VideoPlaylistsViewModel / navigation construction",
+        "Milliseconds": 3.8936,
+        "StartedMilliseconds": 1290.9117,
+        "CompletedMilliseconds": 1294.8053000000002,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library TvShowsViewModel / navigation construction",
+        "Milliseconds": 3.7939,
+        "StartedMilliseconds": 1297.2285,
+        "CompletedMilliseconds": 1301.0223999999998,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library WindowsFileBrowserViewModel / navigation construction",
+        "Milliseconds": 6.9554,
+        "StartedMilliseconds": 1303.2436,
+        "CompletedMilliseconds": 1310.199,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library UPnPManagerViewModel / navigation construction",
+        "Milliseconds": 2.1039,
+        "StartedMilliseconds": 1312.4546,
+        "CompletedMilliseconds": 1314.5585,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library StatisticsViewModel / navigation construction",
+        "Milliseconds": 3.0021,
+        "StartedMilliseconds": 1316.9622,
+        "CompletedMilliseconds": 1319.9642999999999,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SettingsViewModel / navigation construction",
+        "Milliseconds": 18.9539,
+        "StartedMilliseconds": 1322.2631,
+        "CompletedMilliseconds": 1341.2169999999999,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library PCloudManagerViewModel / navigation construction",
+        "Milliseconds": 5.9207,
+        "StartedMilliseconds": 1344.9337,
+        "CompletedMilliseconds": 1350.8544,
+        "Execution": null
+      },
+      {
+        "Name": "Application / navigation view model construction",
+        "Milliseconds": 106.2377,
+        "StartedMilliseconds": 1252.7835,
+        "CompletedMilliseconds": 1359.0212,
+        "Execution": null
+      },
+      {
+        "Name": "Application / player controls construction",
+        "Milliseconds": 10.8119,
+        "StartedMilliseconds": 1362.6873,
+        "CompletedMilliseconds": 1373.4992,
+        "Execution": null
+      },
+      {
+        "Name": "Application / player controls activation",
+        "Milliseconds": 102.1849,
+        "StartedMilliseconds": 1375.8269,
+        "CompletedMilliseconds": 1478.0118,
+        "Execution": null
+      },
+      {
+        "Name": "Application / navigation activation",
+        "Milliseconds": 64.7716,
+        "StartedMilliseconds": 1480.3132,
+        "CompletedMilliseconds": 1545.0848,
+        "Execution": null
+      },
+      {
+        "Name": "Application / main window view model initialization",
+        "Milliseconds": 320.7132,
+        "StartedMilliseconds": 1226.9396,
+        "CompletedMilliseconds": 1547.6527999999998,
+        "Execution": null
+      },
+      {
+        "Name": "Application / shell construction",
+        "Milliseconds": 432.3517,
+        "StartedMilliseconds": 1118.2769,
+        "CompletedMilliseconds": 1550.6286,
+        "Execution": null
+      },
+      {
+        "Name": "Application / OpenCV native initialization",
+        "Milliseconds": 17.1975,
+        "StartedMilliseconds": 1561.5445,
+        "CompletedMilliseconds": 1578.742,
+        "Execution": null
+      },
+      {
+        "Name": "Application / initialization",
+        "Milliseconds": 1110.2945,
+        "StartedMilliseconds": 470.8696,
+        "CompletedMilliseconds": 1581.1641,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / repository setup",
+        "Milliseconds": 300.6311,
+        "StartedMilliseconds": 1528.7638,
+        "CompletedMilliseconds": 1829.3949,
+        "Execution": null
+      },
+      {
+        "Name": "Application / show shell",
+        "Milliseconds": 536.06,
+        "StartedMilliseconds": 1584.4105,
+        "CompletedMilliseconds": 2120.4705,
+        "Execution": null
+      },
+      {
+        "Name": "Application / first window render",
+        "Milliseconds": 2470.8638
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / query",
+        "Milliseconds": 945.294,
+        "StartedMilliseconds": 1526.3184,
+        "CompletedMilliseconds": 2471.6124,
+        "Execution": null
+      },
+      {
+        "Name": "Application / benchmark first-frame screenshot",
+        "Milliseconds": 77.9057,
+        "StartedMilliseconds": 2478.5494,
+        "CompletedMilliseconds": 2556.4550999999997,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / view model construction",
+        "Milliseconds": 452.8529,
+        "StartedMilliseconds": 2501.6418,
+        "CompletedMilliseconds": 2954.4946999999997,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / UI publication",
+        "Milliseconds": 43.9155,
+        "StartedMilliseconds": 2964.531,
+        "CompletedMilliseconds": 3008.4465,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / UI dispatch and publication",
+        "Milliseconds": 54.0935,
+        "StartedMilliseconds": 2959.1545,
+        "CompletedMilliseconds": 3013.248,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / current track metadata",
+        "Milliseconds": 48.6271,
+        "StartedMilliseconds": 3076.5292,
+        "CompletedMilliseconds": 3125.1563,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / playlist preparation",
+        "Milliseconds": 114.5356,
+        "StartedMilliseconds": 3022.5481,
+        "CompletedMilliseconds": 3137.0837,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / post-load callback",
+        "Milliseconds": 124.2663,
+        "StartedMilliseconds": 3016.5721,
+        "CompletedMilliseconds": 3140.8383999999996,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / pinned items",
+        "Milliseconds": 20.0798,
+        "StartedMilliseconds": 3142.8369,
+        "CompletedMilliseconds": 3162.9166999999998,
+        "Execution": null
+      },
+      {
+        "Name": "Application / initial playlist view ready",
+        "Milliseconds": 4412.6359
+      }
+    ],
+    "Observations": {
+      "UI / grouped playlist items": 5073,
+      "UI / realized playlist rows": 41
+    },
+    "DatabaseReads": [
+      {
+        "Table": "UPnPMediaServers",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 1,
+        "Milliseconds": 2.2018,
+        "StartedMilliseconds": 2362.031
+      },
+      {
+        "Table": "UPnPMediaRenderers",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 6,
+        "Milliseconds": 14.2087,
+        "StartedMilliseconds": 2362.0349
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 5311,
+        "Milliseconds": 99.2392,
+        "StartedMilliseconds": 2369.1817
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 1,
+        "Milliseconds": 0.0448,
+        "StartedMilliseconds": 3071.1198
+      },
+      {
+        "Table": "PlaylistSongs",
+        "IncludesFileMetadata": true,
+        "ReadOperations": 194,
+        "Milliseconds": 8.014,
+        "StartedMilliseconds": 3114.1672
+      },
+      {
+        "Table": "PinnedItems",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 10,
+        "Milliseconds": 0.1275,
+        "StartedMilliseconds": 3154.2055
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 2,
+        "Milliseconds": 0.1757,
+        "StartedMilliseconds": 3156.9378
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": true,
+        "ReadOperations": 29,
+        "Milliseconds": 1.5615,
+        "StartedMilliseconds": 3173.6804
+      },
+      {
+        "Table": "Songs",
+        "IncludesFileMetadata": true,
+        "ReadOperations": 1,
+        "Milliseconds": 0.0767,
+        "StartedMilliseconds": 4401.9111
+      }
+    ],
+    "DiagnosticWrites": {
+      "Count": 15,
+      "Milliseconds": 247.9606,
+      "LongestMilliseconds": 51.0045
+    },
+    "DiagnosticMode": "buffered-v1",
+    "DiagnosticProfile": "none",
+    "WindowMode": "Visible",
+    "PlaylistQueryPreparation": false,
+    "FixtureSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+    "OS": "Microsoft Windows NT 10.0.19045.0",
+    "Configuration": "Release",
+    "Playlists": 5310,
+    "SoundItems": 207110,
+    "ProcessorCount": 8
+  },
+  {
+    "Status": "Rendered",
+    "FailureType": null,
+    "ActivePhases": [],
+    "Commit": "f3f075355e8b68dc391da63dc1bbde21c6c8c83d",
+    "Runtime": "3.1.32",
+    "CreatedUtc": "2026-10-02T05:38:05.3500446Z",
+    "Phases": [
+      {
+        "Name": "Application / VPlayerCoreModule",
+        "Milliseconds": 4.1403,
+        "StartedMilliseconds": 526.0864,
+        "CompletedMilliseconds": 530.2267,
+        "Execution": null
+      },
+      {
+        "Name": "Application / IPTVModule",
+        "Milliseconds": 2.5057,
+        "StartedMilliseconds": 540.5786,
+        "CompletedMilliseconds": 543.0843000000001,
+        "Execution": null
+      },
+      {
+        "Name": "Application / UPnPNinjectModule",
+        "Milliseconds": 2.6351,
+        "StartedMilliseconds": 545.2558,
+        "CompletedMilliseconds": 547.8909,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library module",
+        "Milliseconds": 38.7708,
+        "StartedMilliseconds": 553.6475,
+        "CompletedMilliseconds": 592.4183,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / core initialization",
+        "Milliseconds": 9.6806,
+        "StartedMilliseconds": 664.1467,
+        "CompletedMilliseconds": 673.8273,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / instance construction",
+        "Milliseconds": 224.1718,
+        "StartedMilliseconds": 676.0095,
+        "CompletedMilliseconds": 900.1813,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / media player construction",
+        "Milliseconds": 48.0363,
+        "StartedMilliseconds": 902.8246,
+        "CompletedMilliseconds": 950.8609,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / event setup",
+        "Milliseconds": 8.1885,
+        "StartedMilliseconds": 953.1139,
+        "CompletedMilliseconds": 961.3023999999999,
+        "Execution": null
+      },
+      {
+        "Name": "Application / video player activation",
+        "Milliseconds": 397.5947,
+        "StartedMilliseconds": 597.3266,
+        "CompletedMilliseconds": 994.9213,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / instance construction",
+        "Milliseconds": 21.6984,
+        "StartedMilliseconds": 1016.4254,
+        "CompletedMilliseconds": 1038.1238,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / media player construction",
+        "Milliseconds": 3.0512,
+        "StartedMilliseconds": 1041.905,
+        "CompletedMilliseconds": 1044.9562,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / event setup",
+        "Milliseconds": 2.2054,
+        "StartedMilliseconds": 1047.0944,
+        "CompletedMilliseconds": 1049.2998,
+        "Execution": null
+      },
+      {
+        "Name": "Application / music player activation",
+        "Milliseconds": 79.3389,
+        "StartedMilliseconds": 997.0778,
+        "CompletedMilliseconds": 1076.4167,
+        "Execution": null
+      },
+      {
+        "Name": "Application / WindowsPlayerNinjectModule",
+        "Milliseconds": 528.6404,
+        "StartedMilliseconds": 550.6215,
+        "CompletedMilliseconds": 1079.2619,
+        "Execution": null
+      },
+      {
+        "Name": "Application / module registration",
+        "Milliseconds": 563.6768,
+        "StartedMilliseconds": 520.5696,
+        "CompletedMilliseconds": 1084.2464,
+        "Execution": null
+      },
+      {
+        "Name": "Application / settings",
+        "Milliseconds": 19.1254,
+        "StartedMilliseconds": 1107.7392,
+        "CompletedMilliseconds": 1126.8645999999999,
+        "Execution": null
+      },
+      {
+        "Name": "Application / container activation",
+        "Milliseconds": 44.5927,
+        "StartedMilliseconds": 1086.6444,
+        "CompletedMilliseconds": 1131.2370999999998,
+        "Execution": null
+      },
+      {
+        "Name": "Application / main window XAML",
+        "Milliseconds": 66.1495,
+        "StartedMilliseconds": 1161.563,
+        "CompletedMilliseconds": 1227.7125,
+        "Execution": null
+      },
+      {
+        "Name": "Application / base main window initialization",
+        "Milliseconds": 3.0923,
+        "StartedMilliseconds": 1250.8527,
+        "CompletedMilliseconds": 1253.945,
+        "Execution": null
+      },
+      {
+        "Name": "Application / audio device enumeration",
+        "Milliseconds": 12.1408,
+        "StartedMilliseconds": 1256.3915,
+        "CompletedMilliseconds": 1268.5322999999999,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemPlaylistsViewModel / navigation construction",
+        "Milliseconds": 10.4746,
+        "StartedMilliseconds": 1281.3971,
+        "CompletedMilliseconds": 1291.8717,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library IArtistsViewModel / navigation construction",
+        "Milliseconds": 3.8902,
+        "StartedMilliseconds": 1293.931,
+        "CompletedMilliseconds": 1297.8212,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library IAlbumsViewModel / navigation construction",
+        "Milliseconds": 4.9907,
+        "StartedMilliseconds": 1300.1283,
+        "CompletedMilliseconds": 1305.1190000000001,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library VideoPlaylistsViewModel / navigation construction",
+        "Milliseconds": 4.9305,
+        "StartedMilliseconds": 1307.165,
+        "CompletedMilliseconds": 1312.0955,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library TvShowsViewModel / navigation construction",
+        "Milliseconds": 4.2534,
+        "StartedMilliseconds": 1314.6117,
+        "CompletedMilliseconds": 1318.8651,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library WindowsFileBrowserViewModel / navigation construction",
+        "Milliseconds": 7.1047,
+        "StartedMilliseconds": 1321.9277,
+        "CompletedMilliseconds": 1329.0324,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library UPnPManagerViewModel / navigation construction",
+        "Milliseconds": 2.1467,
+        "StartedMilliseconds": 1331.8966,
+        "CompletedMilliseconds": 1334.0433,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library StatisticsViewModel / navigation construction",
+        "Milliseconds": 3.8356,
+        "StartedMilliseconds": 1335.9755,
+        "CompletedMilliseconds": 1339.8111000000001,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SettingsViewModel / navigation construction",
+        "Milliseconds": 10.87,
+        "StartedMilliseconds": 1342.3645,
+        "CompletedMilliseconds": 1353.2344999999998,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library PCloudManagerViewModel / navigation construction",
+        "Milliseconds": 6.5506,
+        "StartedMilliseconds": 1355.909,
+        "CompletedMilliseconds": 1362.4596000000001,
+        "Execution": null
+      },
+      {
+        "Name": "Application / navigation view model construction",
+        "Milliseconds": 101.2412,
+        "StartedMilliseconds": 1272.0716,
+        "CompletedMilliseconds": 1373.3128,
+        "Execution": null
+      },
+      {
+        "Name": "Application / player controls construction",
+        "Milliseconds": 9.6938,
+        "StartedMilliseconds": 1376.8747,
+        "CompletedMilliseconds": 1386.5685,
+        "Execution": null
+      },
+      {
+        "Name": "Application / player controls activation",
+        "Milliseconds": 99.1514,
+        "StartedMilliseconds": 1389.2933,
+        "CompletedMilliseconds": 1488.4447,
+        "Execution": null
+      },
+      {
+        "Name": "Application / navigation activation",
+        "Milliseconds": 63.2424,
+        "StartedMilliseconds": 1491.907,
+        "CompletedMilliseconds": 1555.1494,
+        "Execution": null
+      },
+      {
+        "Name": "Application / main window view model initialization",
+        "Milliseconds": 309.8251,
+        "StartedMilliseconds": 1247.3404,
+        "CompletedMilliseconds": 1557.1655,
+        "Execution": null
+      },
+      {
+        "Name": "Application / shell construction",
+        "Milliseconds": 418.1422,
+        "StartedMilliseconds": 1142.0383,
+        "CompletedMilliseconds": 1560.1805,
+        "Execution": null
+      },
+      {
+        "Name": "Application / OpenCV native initialization",
+        "Milliseconds": 19.0538,
+        "StartedMilliseconds": 1570.6812,
+        "CompletedMilliseconds": 1589.735,
+        "Execution": null
+      },
+      {
+        "Name": "Application / initialization",
+        "Milliseconds": 1108.6612,
+        "StartedMilliseconds": 483.836,
+        "CompletedMilliseconds": 1592.4972,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / repository setup",
+        "Milliseconds": 277.4966,
+        "StartedMilliseconds": 1539.156,
+        "CompletedMilliseconds": 1816.6526,
+        "Execution": null
+      },
+      {
+        "Name": "Application / show shell",
+        "Milliseconds": 848.87,
+        "StartedMilliseconds": 1595.8273,
+        "CompletedMilliseconds": 2444.6973,
+        "Execution": null
+      },
+      {
+        "Name": "Application / first window render",
+        "Milliseconds": 2504.5139
+      },
+      {
+        "Name": "Application / benchmark first-frame screenshot",
+        "Milliseconds": 48.8731,
+        "StartedMilliseconds": 2509.8073,
+        "CompletedMilliseconds": 2558.6803999999997,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / query",
+        "Milliseconds": 1146.9224,
+        "StartedMilliseconds": 1536.3597,
+        "CompletedMilliseconds": 2683.2821,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / view model construction",
+        "Milliseconds": 478.6646,
+        "StartedMilliseconds": 2686.967,
+        "CompletedMilliseconds": 3165.6316,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / UI publication",
+        "Milliseconds": 54.6264,
+        "StartedMilliseconds": 3185.2817,
+        "CompletedMilliseconds": 3239.9081,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / UI dispatch and publication",
+        "Milliseconds": 65.7404,
+        "StartedMilliseconds": 3178.7471,
+        "CompletedMilliseconds": 3244.4875,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / current track metadata",
+        "Milliseconds": 64.418,
+        "StartedMilliseconds": 3320.6036,
+        "CompletedMilliseconds": 3385.0216,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / playlist preparation",
+        "Milliseconds": 134.6601,
+        "StartedMilliseconds": 3254.679,
+        "CompletedMilliseconds": 3389.3391,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / post-load callback",
+        "Milliseconds": 145.0222,
+        "StartedMilliseconds": 3248.3599,
+        "CompletedMilliseconds": 3393.3821,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / pinned items",
+        "Milliseconds": 18.9883,
+        "StartedMilliseconds": 3396.0805,
+        "CompletedMilliseconds": 3415.0688,
+        "Execution": null
+      },
+      {
+        "Name": "Application / initial playlist view ready",
+        "Milliseconds": 4625.0452
+      }
+    ],
+    "Observations": {
+      "UI / grouped playlist items": 5073,
+      "UI / realized playlist rows": 41
+    },
+    "DatabaseReads": [
+      {
+        "Table": "UPnPMediaServers",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 1,
+        "Milliseconds": 1.1736,
+        "StartedMilliseconds": 2463.955
+      },
+      {
+        "Table": "UPnPMediaRenderers",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 6,
+        "Milliseconds": 8.3046,
+        "StartedMilliseconds": 2612.9217
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 5311,
+        "Milliseconds": 60.7555,
+        "StartedMilliseconds": 2619.9518
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 1,
+        "Milliseconds": 0.0506,
+        "StartedMilliseconds": 3314.6141
+      },
+      {
+        "Table": "PlaylistSongs",
+        "IncludesFileMetadata": true,
+        "ReadOperations": 194,
+        "Milliseconds": 10.4049,
+        "StartedMilliseconds": 3371.0914
+      },
+      {
+        "Table": "PinnedItems",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 10,
+        "Milliseconds": 0.1749,
+        "StartedMilliseconds": 3406.584
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 2,
+        "Milliseconds": 0.0926,
+        "StartedMilliseconds": 3407.9656
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": true,
+        "ReadOperations": 29,
+        "Milliseconds": 7.196,
+        "StartedMilliseconds": 3425.0211
+      },
+      {
+        "Table": "Songs",
+        "IncludesFileMetadata": true,
+        "ReadOperations": 1,
+        "Milliseconds": 0.0477,
+        "StartedMilliseconds": 4603.2407
+      }
+    ],
+    "DiagnosticWrites": {
+      "Count": 15,
+      "Milliseconds": 532.6759999999999,
+      "LongestMilliseconds": 339.9248
+    },
+    "DiagnosticMode": "buffered-v1",
+    "DiagnosticProfile": "none",
+    "WindowMode": "Visible",
+    "PlaylistQueryPreparation": false,
+    "FixtureSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+    "OS": "Microsoft Windows NT 10.0.19045.0",
+    "Configuration": "Release",
+    "Playlists": 5310,
+    "SoundItems": 207110,
+    "ProcessorCount": 8
+  },
+  {
+    "Status": "Rendered",
+    "FailureType": null,
+    "ActivePhases": [],
+    "Commit": "f3f075355e8b68dc391da63dc1bbde21c6c8c83d",
+    "Runtime": "3.1.32",
+    "CreatedUtc": "2026-10-02T05:38:11.0664358Z",
+    "Phases": [
+      {
+        "Name": "Application / VPlayerCoreModule",
+        "Milliseconds": 3.3587,
+        "StartedMilliseconds": 555.175,
+        "CompletedMilliseconds": 558.5337,
+        "Execution": null
+      },
+      {
+        "Name": "Application / IPTVModule",
+        "Milliseconds": 2.331,
+        "StartedMilliseconds": 561.2787,
+        "CompletedMilliseconds": 563.6097,
+        "Execution": null
+      },
+      {
+        "Name": "Application / UPnPNinjectModule",
+        "Milliseconds": 3.2825,
+        "StartedMilliseconds": 565.5446,
+        "CompletedMilliseconds": 568.8271,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library module",
+        "Milliseconds": 44.6931,
+        "StartedMilliseconds": 576.0397,
+        "CompletedMilliseconds": 620.7328,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / core initialization",
+        "Milliseconds": 10.3731,
+        "StartedMilliseconds": 685.986,
+        "CompletedMilliseconds": 696.3591,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / instance construction",
+        "Milliseconds": 222.869,
+        "StartedMilliseconds": 698.4885,
+        "CompletedMilliseconds": 921.3575000000001,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / media player construction",
+        "Milliseconds": 49.3318,
+        "StartedMilliseconds": 923.9778,
+        "CompletedMilliseconds": 973.3096,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / event setup",
+        "Milliseconds": 7.7451,
+        "StartedMilliseconds": 976.9727,
+        "CompletedMilliseconds": 984.7178,
+        "Execution": null
+      },
+      {
+        "Name": "Application / video player activation",
+        "Milliseconds": 398.957,
+        "StartedMilliseconds": 625.7111,
+        "CompletedMilliseconds": 1024.6680999999999,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / instance construction",
+        "Milliseconds": 19.9079,
+        "StartedMilliseconds": 1043.3436,
+        "CompletedMilliseconds": 1063.2514999999999,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / media player construction",
+        "Milliseconds": 3.0545,
+        "StartedMilliseconds": 1065.3393,
+        "CompletedMilliseconds": 1068.3938,
+        "Execution": null
+      },
+      {
+        "Name": "VLC / event setup",
+        "Milliseconds": 2.4812,
+        "StartedMilliseconds": 1071.4518,
+        "CompletedMilliseconds": 1073.933,
+        "Execution": null
+      },
+      {
+        "Name": "Application / music player activation",
+        "Milliseconds": 69.3973,
+        "StartedMilliseconds": 1028.6286,
+        "CompletedMilliseconds": 1098.0259,
+        "Execution": null
+      },
+      {
+        "Name": "Application / WindowsPlayerNinjectModule",
+        "Milliseconds": 530.038,
+        "StartedMilliseconds": 571.5642,
+        "CompletedMilliseconds": 1101.6022,
+        "Execution": null
+      },
+      {
+        "Name": "Application / module registration",
+        "Milliseconds": 557.783,
+        "StartedMilliseconds": 547.0839,
+        "CompletedMilliseconds": 1104.8669,
+        "Execution": null
+      },
+      {
+        "Name": "Application / settings",
+        "Milliseconds": 24.1958,
+        "StartedMilliseconds": 1117.2216,
+        "CompletedMilliseconds": 1141.4174,
+        "Execution": null
+      },
+      {
+        "Name": "Application / container activation",
+        "Milliseconds": 37.6669,
+        "StartedMilliseconds": 1107.5979,
+        "CompletedMilliseconds": 1145.2648,
+        "Execution": null
+      },
+      {
+        "Name": "Application / main window XAML",
+        "Milliseconds": 71.9181,
+        "StartedMilliseconds": 1175.3556,
+        "CompletedMilliseconds": 1247.2737000000002,
+        "Execution": null
+      },
+      {
+        "Name": "Application / base main window initialization",
+        "Milliseconds": 2.5015,
+        "StartedMilliseconds": 1268.8221,
+        "CompletedMilliseconds": 1271.3236000000002,
+        "Execution": null
+      },
+      {
+        "Name": "Application / audio device enumeration",
+        "Milliseconds": 12.1895,
+        "StartedMilliseconds": 1273.3748,
+        "CompletedMilliseconds": 1285.5643,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemPlaylistsViewModel / navigation construction",
+        "Milliseconds": 14.7289,
+        "StartedMilliseconds": 1297.2044,
+        "CompletedMilliseconds": 1311.9333000000001,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library IArtistsViewModel / navigation construction",
+        "Milliseconds": 3.8238,
+        "StartedMilliseconds": 1315.4563,
+        "CompletedMilliseconds": 1319.2801,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library IAlbumsViewModel / navigation construction",
+        "Milliseconds": 3.9961,
+        "StartedMilliseconds": 1321.994,
+        "CompletedMilliseconds": 1325.9901,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library VideoPlaylistsViewModel / navigation construction",
+        "Milliseconds": 5.1595,
+        "StartedMilliseconds": 1327.9746,
+        "CompletedMilliseconds": 1333.1341,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library TvShowsViewModel / navigation construction",
+        "Milliseconds": 4.4664,
+        "StartedMilliseconds": 1335.2391,
+        "CompletedMilliseconds": 1339.7055,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library WindowsFileBrowserViewModel / navigation construction",
+        "Milliseconds": 6.8382,
+        "StartedMilliseconds": 1342.803,
+        "CompletedMilliseconds": 1349.6412,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library UPnPManagerViewModel / navigation construction",
+        "Milliseconds": 3.1894,
+        "StartedMilliseconds": 1352.7589,
+        "CompletedMilliseconds": 1355.9483,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library StatisticsViewModel / navigation construction",
+        "Milliseconds": 4.8827,
+        "StartedMilliseconds": 1358.9805,
+        "CompletedMilliseconds": 1363.8631999999998,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SettingsViewModel / navigation construction",
+        "Milliseconds": 13.4864,
+        "StartedMilliseconds": 1367.4012,
+        "CompletedMilliseconds": 1380.8876,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library PCloudManagerViewModel / navigation construction",
+        "Milliseconds": 4.1955,
+        "StartedMilliseconds": 1383.5564,
+        "CompletedMilliseconds": 1387.7519,
+        "Execution": null
+      },
+      {
+        "Name": "Application / navigation view model construction",
+        "Milliseconds": 109.3706,
+        "StartedMilliseconds": 1287.66,
+        "CompletedMilliseconds": 1397.0306,
+        "Execution": null
+      },
+      {
+        "Name": "Application / player controls construction",
+        "Milliseconds": 10.2306,
+        "StartedMilliseconds": 1399.401,
+        "CompletedMilliseconds": 1409.6316000000002,
+        "Execution": null
+      },
+      {
+        "Name": "Application / player controls activation",
+        "Milliseconds": 103.0726,
+        "StartedMilliseconds": 1412.2948,
+        "CompletedMilliseconds": 1515.3673999999999,
+        "Execution": null
+      },
+      {
+        "Name": "Application / navigation activation",
+        "Milliseconds": 72.7755,
+        "StartedMilliseconds": 1517.9283,
+        "CompletedMilliseconds": 1590.7038,
+        "Execution": null
+      },
+      {
+        "Name": "Application / main window view model initialization",
+        "Milliseconds": 326.764,
+        "StartedMilliseconds": 1266.3262,
+        "CompletedMilliseconds": 1593.0902,
+        "Execution": null
+      },
+      {
+        "Name": "Application / shell construction",
+        "Milliseconds": 441.1205,
+        "StartedMilliseconds": 1155.7504,
+        "CompletedMilliseconds": 1596.8709,
+        "Execution": null
+      },
+      {
+        "Name": "Application / OpenCV native initialization",
+        "Milliseconds": 19.2326,
+        "StartedMilliseconds": 1607.0545,
+        "CompletedMilliseconds": 1626.2871,
+        "Execution": null
+      },
+      {
+        "Name": "Application / initialization",
+        "Milliseconds": 1120.3978,
+        "StartedMilliseconds": 509.6691,
+        "CompletedMilliseconds": 1630.0669,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / repository setup",
+        "Milliseconds": 309.9064,
+        "StartedMilliseconds": 1576.048,
+        "CompletedMilliseconds": 1885.9544,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / query",
+        "Milliseconds": 1039.2088,
+        "StartedMilliseconds": 1573.584,
+        "CompletedMilliseconds": 2612.7928,
+        "Execution": null
+      },
+      {
+        "Name": "Application / show shell",
+        "Milliseconds": 1070.2816,
+        "StartedMilliseconds": 1633.4727,
+        "CompletedMilliseconds": 2703.7543,
+        "Execution": null
+      },
+      {
+        "Name": "Application / first window render",
+        "Milliseconds": 2796.8075
+      },
+      {
+        "Name": "Application / benchmark first-frame screenshot",
+        "Milliseconds": 54.9732,
+        "StartedMilliseconds": 2799.8249,
+        "CompletedMilliseconds": 2854.7981,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / view model construction",
+        "Milliseconds": 470.031,
+        "StartedMilliseconds": 2617.9701,
+        "CompletedMilliseconds": 3088.0011,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / UI publication",
+        "Milliseconds": 40.5887,
+        "StartedMilliseconds": 3097.9797,
+        "CompletedMilliseconds": 3138.5683999999997,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / UI dispatch and publication",
+        "Milliseconds": 50.4277,
+        "StartedMilliseconds": 3091.6768,
+        "CompletedMilliseconds": 3142.1045000000004,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / current track metadata",
+        "Milliseconds": 48.8034,
+        "StartedMilliseconds": 3217.2371,
+        "CompletedMilliseconds": 3266.0404999999996,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / playlist preparation",
+        "Milliseconds": 118.1373,
+        "StartedMilliseconds": 3150.8427,
+        "CompletedMilliseconds": 3268.98,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / post-load callback",
+        "Milliseconds": 134.8013,
+        "StartedMilliseconds": 3145.2306,
+        "CompletedMilliseconds": 3280.0319,
+        "Execution": null
+      },
+      {
+        "Name": "Application / library SoundItemFilePlaylist / pinned items",
+        "Milliseconds": 21.9496,
+        "StartedMilliseconds": 3281.6276,
+        "CompletedMilliseconds": 3303.5771999999997,
+        "Execution": null
+      },
+      {
+        "Name": "Application / initial playlist view ready",
+        "Milliseconds": 4437.5874
+      }
+    ],
+    "Observations": {
+      "UI / grouped playlist items": 5073,
+      "UI / realized playlist rows": 41
+    },
+    "DatabaseReads": [
+      {
+        "Table": "UPnPMediaServers",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 1,
+        "Milliseconds": 1.8778,
+        "StartedMilliseconds": 2407.5972
+      },
+      {
+        "Table": "UPnPMediaRenderers",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 6,
+        "Milliseconds": 13.1064,
+        "StartedMilliseconds": 2407.6013
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 5311,
+        "Milliseconds": 48.8378,
+        "StartedMilliseconds": 2560.9811
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 1,
+        "Milliseconds": 0.0986,
+        "StartedMilliseconds": 3210.3292
+      },
+      {
+        "Table": "PlaylistSongs",
+        "IncludesFileMetadata": true,
+        "ReadOperations": 194,
+        "Milliseconds": 7.619,
+        "StartedMilliseconds": 3255.3658
+      },
+      {
+        "Table": "PinnedItems",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 10,
+        "Milliseconds": 0.3352,
+        "StartedMilliseconds": 3293.0408
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": false,
+        "ReadOperations": 2,
+        "Milliseconds": 0.1222,
+        "StartedMilliseconds": 3299.3769
+      },
+      {
+        "Table": "SoundItemPlaylists",
+        "IncludesFileMetadata": true,
+        "ReadOperations": 29,
+        "Milliseconds": 0.8573,
+        "StartedMilliseconds": 3315.2524
+      },
+      {
+        "Table": "Songs",
+        "IncludesFileMetadata": true,
+        "ReadOperations": 1,
+        "Milliseconds": 0.0534,
+        "StartedMilliseconds": 4431.6595
+      }
+    ],
+    "DiagnosticWrites": {
+      "Count": 14,
+      "Milliseconds": 281.48569999999995,
+      "LongestMilliseconds": 65.6747
+    },
+    "DiagnosticMode": "buffered-v1",
+    "DiagnosticProfile": "none",
+    "WindowMode": "Visible",
+    "PlaylistQueryPreparation": false,
+    "FixtureSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+    "OS": "Microsoft Windows NT 10.0.19045.0",
+    "Configuration": "Release",
+    "Playlists": 5310,
+    "SoundItems": 207110,
+    "ProcessorCount": 8
+  }
+]

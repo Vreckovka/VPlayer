@@ -1,0 +1,11 @@
+{
+  "SourceCommit": "b65ef9cef6dbb23ea09a048d052354f865121595",
+  "Diagnostic": "Uncommitted benchmark-only duration snapshot; timings excluded",
+  "StoredIncomingSeconds": 14931582,
+  "RuntimeSeconds": 14946346,
+  "GetterSeconds": 14946346,
+  "ZeroDurationsFilled": 56,
+  "ExistingNonzeroDurationsChanged": 0,
+  "AllPostRunDatabasesPreservedStoredDurations": true,
+  "BackgroundSource": "FilePlayableRegionViewModel updates zero durations with FFProbe; optional updates may not be persisted before benchmark exit"
+}

@@ -1,0 +1,497 @@
+{
+  "Status": "Starting",
+  "FailureType": null,
+  "ActivePhases": [],
+  "Commit": "188751736e6cbe1fd10437743823d948c776f7aa",
+  "Runtime": "3.1.32",
+  "CreatedUtc": "2026-10-02T02:00:15.5919012Z",
+  "Phases": [
+    {
+      "Name": "Statistics / item repository setup",
+      "Milliseconds": 785.6775,
+      "StartedMilliseconds": 1617.249,
+      "CompletedMilliseconds": 2402.9265
+    },
+    {
+      "Name": "Statistics / sound scores",
+      "Milliseconds": 566.6488,
+      "StartedMilliseconds": 2408.4153,
+      "CompletedMilliseconds": 2975.0641
+    },
+    {
+      "Name": "Statistics / video scores",
+      "Milliseconds": 66.3401,
+      "StartedMilliseconds": 2977.6669,
+      "CompletedMilliseconds": 3044.007
+    },
+    {
+      "Name": "Statistics / episode scores",
+      "Milliseconds": 16.606,
+      "StartedMilliseconds": 3045.8165,
+      "CompletedMilliseconds": 3062.4225
+    },
+    {
+      "Name": "Statistics / sound metadata",
+      "Milliseconds": 106.2217,
+      "StartedMilliseconds": 3065.2117,
+      "CompletedMilliseconds": 3171.4334
+    },
+    {
+      "Name": "Statistics / video metadata",
+      "Milliseconds": 20.3478,
+      "StartedMilliseconds": 3173.2266,
+      "CompletedMilliseconds": 3193.5744
+    },
+    {
+      "Name": "Statistics / episode metadata",
+      "Milliseconds": 27.1473,
+      "StartedMilliseconds": 3195.42,
+      "CompletedMilliseconds": 3222.5673
+    },
+    {
+      "Name": "Statistics / song metadata",
+      "Milliseconds": 33.3871,
+      "StartedMilliseconds": 3228.5137,
+      "CompletedMilliseconds": 3261.9008
+    },
+    {
+      "Name": "Statistics / playlists",
+      "Milliseconds": 69.5868,
+      "StartedMilliseconds": 3272.8637,
+      "CompletedMilliseconds": 3342.4505
+    },
+    {
+      "Name": "Statistics / item repository setup",
+      "Milliseconds": 4.3836,
+      "StartedMilliseconds": 3347.1653,
+      "CompletedMilliseconds": 3351.5489000000002
+    },
+    {
+      "Name": "Statistics / sound scores",
+      "Milliseconds": 327.6304,
+      "StartedMilliseconds": 3356.581,
+      "CompletedMilliseconds": 3684.2114
+    },
+    {
+      "Name": "Statistics / video scores",
+      "Milliseconds": 64.5636,
+      "StartedMilliseconds": 3690.9251,
+      "CompletedMilliseconds": 3755.4887
+    },
+    {
+      "Name": "Statistics / episode scores",
+      "Milliseconds": 13.5824,
+      "StartedMilliseconds": 3757.4171,
+      "CompletedMilliseconds": 3770.9995
+    },
+    {
+      "Name": "Statistics / sound metadata",
+      "Milliseconds": 13.573,
+      "StartedMilliseconds": 3772.7335,
+      "CompletedMilliseconds": 3786.3064999999997
+    },
+    {
+      "Name": "Statistics / video metadata",
+      "Milliseconds": 14.1288,
+      "StartedMilliseconds": 3788.0904,
+      "CompletedMilliseconds": 3802.2192
+    },
+    {
+      "Name": "Statistics / episode metadata",
+      "Milliseconds": 14.5701,
+      "StartedMilliseconds": 3803.8824,
+      "CompletedMilliseconds": 3818.4525
+    },
+    {
+      "Name": "Statistics / song metadata",
+      "Milliseconds": 14.8651,
+      "StartedMilliseconds": 3821.0614,
+      "CompletedMilliseconds": 3835.9265
+    },
+    {
+      "Name": "Statistics / playlists",
+      "Milliseconds": 59.1553,
+      "StartedMilliseconds": 3837.9444,
+      "CompletedMilliseconds": 3897.0996999999998
+    },
+    {
+      "Name": "Statistics / item repository setup",
+      "Milliseconds": 7.5014,
+      "StartedMilliseconds": 3900.009,
+      "CompletedMilliseconds": 3907.5104
+    },
+    {
+      "Name": "Statistics / sound scores",
+      "Milliseconds": 332.8547,
+      "StartedMilliseconds": 3913.238,
+      "CompletedMilliseconds": 4246.0927
+    },
+    {
+      "Name": "Statistics / video scores",
+      "Milliseconds": 70.2471,
+      "StartedMilliseconds": 4248.7377,
+      "CompletedMilliseconds": 4318.984799999999
+    },
+    {
+      "Name": "Statistics / episode scores",
+      "Milliseconds": 13.9847,
+      "StartedMilliseconds": 4321.2045,
+      "CompletedMilliseconds": 4335.1892
+    },
+    {
+      "Name": "Statistics / sound metadata",
+      "Milliseconds": 15.6593,
+      "StartedMilliseconds": 4336.9527,
+      "CompletedMilliseconds": 4352.612
+    },
+    {
+      "Name": "Statistics / video metadata",
+      "Milliseconds": 14.6231,
+      "StartedMilliseconds": 4354.6297,
+      "CompletedMilliseconds": 4369.2528
+    },
+    {
+      "Name": "Statistics / episode metadata",
+      "Milliseconds": 17.3041,
+      "StartedMilliseconds": 4371.4775,
+      "CompletedMilliseconds": 4388.7816
+    },
+    {
+      "Name": "Statistics / song metadata",
+      "Milliseconds": 15.1451,
+      "StartedMilliseconds": 4391.69,
+      "CompletedMilliseconds": 4406.835099999999
+    },
+    {
+      "Name": "Statistics / playlists",
+      "Milliseconds": 57.6118,
+      "StartedMilliseconds": 4409.1438,
+      "CompletedMilliseconds": 4466.7555999999995
+    },
+    {
+      "Name": "Statistics / item repository setup",
+      "Milliseconds": 7.734,
+      "StartedMilliseconds": 4469.0502,
+      "CompletedMilliseconds": 4476.7842
+    },
+    {
+      "Name": "Statistics / sound scores",
+      "Milliseconds": 337.4704,
+      "StartedMilliseconds": 4483.2011,
+      "CompletedMilliseconds": 4820.6715
+    },
+    {
+      "Name": "Statistics / video scores",
+      "Milliseconds": 67.5278,
+      "StartedMilliseconds": 4824.4852,
+      "CompletedMilliseconds": 4892.013
+    },
+    {
+      "Name": "Statistics / episode scores",
+      "Milliseconds": 14.2261,
+      "StartedMilliseconds": 4893.9271,
+      "CompletedMilliseconds": 4908.1532
+    },
+    {
+      "Name": "Statistics / sound metadata",
+      "Milliseconds": 22.1905,
+      "StartedMilliseconds": 4910.0157,
+      "CompletedMilliseconds": 4932.2062
+    },
+    {
+      "Name": "Statistics / video metadata",
+      "Milliseconds": 21.5002,
+      "StartedMilliseconds": 4936.1288,
+      "CompletedMilliseconds": 4957.629000000001
+    },
+    {
+      "Name": "Statistics / episode metadata",
+      "Milliseconds": 25.1326,
+      "StartedMilliseconds": 4959.9159,
+      "CompletedMilliseconds": 4985.0485
+    },
+    {
+      "Name": "Statistics / song metadata",
+      "Milliseconds": 21.209,
+      "StartedMilliseconds": 4987.236,
+      "CompletedMilliseconds": 5008.445
+    },
+    {
+      "Name": "Statistics / playlists",
+      "Milliseconds": 77.8089,
+      "StartedMilliseconds": 5012.0659,
+      "CompletedMilliseconds": 5089.8748
+    },
+    {
+      "Name": "Statistics / item repository setup",
+      "Milliseconds": 7.8328,
+      "StartedMilliseconds": 5100.1637,
+      "CompletedMilliseconds": 5107.9965
+    },
+    {
+      "Name": "Statistics / sound scores",
+      "Milliseconds": 349.7185,
+      "StartedMilliseconds": 5118.0167,
+      "CompletedMilliseconds": 5467.7352
+    },
+    {
+      "Name": "Statistics / video scores",
+      "Milliseconds": 97.4388,
+      "StartedMilliseconds": 5473.0728,
+      "CompletedMilliseconds": 5570.5116
+    },
+    {
+      "Name": "Statistics / episode scores",
+      "Milliseconds": 17.6193,
+      "StartedMilliseconds": 5574.4502,
+      "CompletedMilliseconds": 5592.0695000000005
+    },
+    {
+      "Name": "Statistics / sound metadata",
+      "Milliseconds": 15.0919,
+      "StartedMilliseconds": 5594.0765,
+      "CompletedMilliseconds": 5609.1684000000005
+    },
+    {
+      "Name": "Statistics / video metadata",
+      "Milliseconds": 15.5965,
+      "StartedMilliseconds": 5611.1861,
+      "CompletedMilliseconds": 5626.7826
+    },
+    {
+      "Name": "Statistics / episode metadata",
+      "Milliseconds": 13.9915,
+      "StartedMilliseconds": 5628.4743,
+      "CompletedMilliseconds": 5642.4658
+    },
+    {
+      "Name": "Statistics / song metadata",
+      "Milliseconds": 19.8187,
+      "StartedMilliseconds": 5644.4656,
+      "CompletedMilliseconds": 5664.2843
+    },
+    {
+      "Name": "Statistics / playlists",
+      "Milliseconds": 57.3376,
+      "StartedMilliseconds": 5667.0381,
+      "CompletedMilliseconds": 5724.3757
+    },
+    {
+      "Name": "Statistics / item repository setup",
+      "Milliseconds": 8.1196,
+      "StartedMilliseconds": 5726.7512,
+      "CompletedMilliseconds": 5734.8708
+    },
+    {
+      "Name": "Statistics / sound scores",
+      "Milliseconds": 326.6096,
+      "StartedMilliseconds": 5741.2417,
+      "CompletedMilliseconds": 6067.851299999999
+    },
+    {
+      "Name": "Statistics / video scores",
+      "Milliseconds": 69.0339,
+      "StartedMilliseconds": 6070.0797,
+      "CompletedMilliseconds": 6139.113600000001
+    },
+    {
+      "Name": "Statistics / episode scores",
+      "Milliseconds": 19.9935,
+      "StartedMilliseconds": 6141.4525,
+      "CompletedMilliseconds": 6161.446
+    },
+    {
+      "Name": "Statistics / sound metadata",
+      "Milliseconds": 18.6435,
+      "StartedMilliseconds": 6164.0917,
+      "CompletedMilliseconds": 6182.7352
+    },
+    {
+      "Name": "Statistics / video metadata",
+      "Milliseconds": 19.7932,
+      "StartedMilliseconds": 6184.95,
+      "CompletedMilliseconds": 6204.7432
+    },
+    {
+      "Name": "Statistics / episode metadata",
+      "Milliseconds": 21.8064,
+      "StartedMilliseconds": 6207.4303,
+      "CompletedMilliseconds": 6229.2367
+    },
+    {
+      "Name": "Statistics / song metadata",
+      "Milliseconds": 17.4124,
+      "StartedMilliseconds": 6231.6937,
+      "CompletedMilliseconds": 6249.1061
+    },
+    {
+      "Name": "Statistics / playlists",
+      "Milliseconds": 70.5101,
+      "StartedMilliseconds": 6252.0915,
+      "CompletedMilliseconds": 6322.601600000001
+    },
+    {
+      "Name": "Statistics / item repository setup",
+      "Milliseconds": 6.8772,
+      "StartedMilliseconds": 6325.193,
+      "CompletedMilliseconds": 6332.0702
+    },
+    {
+      "Name": "Statistics / sound scores",
+      "Milliseconds": 325.5576,
+      "StartedMilliseconds": 6339.8614,
+      "CompletedMilliseconds": 6665.419
+    },
+    {
+      "Name": "Statistics / video scores",
+      "Milliseconds": 64.8956,
+      "StartedMilliseconds": 6667.5011,
+      "CompletedMilliseconds": 6732.3967
+    },
+    {
+      "Name": "Statistics / episode scores",
+      "Milliseconds": 14.6996,
+      "StartedMilliseconds": 6734.441,
+      "CompletedMilliseconds": 6749.1406
+    },
+    {
+      "Name": "Statistics / sound metadata",
+      "Milliseconds": 14.9523,
+      "StartedMilliseconds": 6750.9684,
+      "CompletedMilliseconds": 6765.9207
+    },
+    {
+      "Name": "Statistics / video metadata",
+      "Milliseconds": 17.9055,
+      "StartedMilliseconds": 6767.8148,
+      "CompletedMilliseconds": 6785.7203
+    },
+    {
+      "Name": "Statistics / episode metadata",
+      "Milliseconds": 13.9756,
+      "StartedMilliseconds": 6787.5833,
+      "CompletedMilliseconds": 6801.5589
+    },
+    {
+      "Name": "Statistics / song metadata",
+      "Milliseconds": 18.9614,
+      "StartedMilliseconds": 6803.9546,
+      "CompletedMilliseconds": 6822.916
+    },
+    {
+      "Name": "Statistics / playlists",
+      "Milliseconds": 60.298,
+      "StartedMilliseconds": 6825.3795,
+      "CompletedMilliseconds": 6885.6775
+    },
+    {
+      "Name": "Statistics / item repository setup",
+      "Milliseconds": 9.2469,
+      "StartedMilliseconds": 6888.0977,
+      "CompletedMilliseconds": 6897.3446
+    },
+    {
+      "Name": "Statistics / sound scores",
+      "Milliseconds": 343.8953,
+      "StartedMilliseconds": 6903.6971,
+      "CompletedMilliseconds": 7247.5924
+    },
+    {
+      "Name": "Statistics / video scores",
+      "Milliseconds": 70.4917,
+      "StartedMilliseconds": 7249.7039,
+      "CompletedMilliseconds": 7320.1956
+    },
+    {
+      "Name": "Statistics / episode scores",
+      "Milliseconds": 15.4213,
+      "StartedMilliseconds": 7322.5345,
+      "CompletedMilliseconds": 7337.9558
+    },
+    {
+      "Name": "Statistics / sound metadata",
+      "Milliseconds": 15.8451,
+      "StartedMilliseconds": 7339.9529,
+      "CompletedMilliseconds": 7355.798
+    },
+    {
+      "Name": "Statistics / video metadata",
+      "Milliseconds": 14.3093,
+      "StartedMilliseconds": 7357.5506,
+      "CompletedMilliseconds": 7371.8598999999995
+    },
+    {
+      "Name": "Statistics / episode metadata",
+      "Milliseconds": 15.1584,
+      "StartedMilliseconds": 7373.8061,
+      "CompletedMilliseconds": 7388.9645
+    },
+    {
+      "Name": "Statistics / song metadata",
+      "Milliseconds": 15.0009,
+      "StartedMilliseconds": 7392.0061,
+      "CompletedMilliseconds": 7407.007
+    },
+    {
+      "Name": "Statistics / playlists",
+      "Milliseconds": 59.3405,
+      "StartedMilliseconds": 7409.3369,
+      "CompletedMilliseconds": 7468.6774000000005
+    },
+    {
+      "Name": "Statistics / item repository setup",
+      "Milliseconds": 7.1207,
+      "StartedMilliseconds": 7471.4799,
+      "CompletedMilliseconds": 7478.600600000001
+    },
+    {
+      "Name": "Statistics / sound scores",
+      "Milliseconds": 359.3767,
+      "StartedMilliseconds": 7486.0926,
+      "CompletedMilliseconds": 7845.4693
+    },
+    {
+      "Name": "Statistics / video scores",
+      "Milliseconds": 88.2448,
+      "StartedMilliseconds": 7848.7444,
+      "CompletedMilliseconds": 7936.9892
+    },
+    {
+      "Name": "Statistics / episode scores",
+      "Milliseconds": 20.0538,
+      "StartedMilliseconds": 7939.1489,
+      "CompletedMilliseconds": 7959.2027
+    },
+    {
+      "Name": "Statistics / sound metadata",
+      "Milliseconds": 21.6618,
+      "StartedMilliseconds": 7962.4851,
+      "CompletedMilliseconds": 7984.1469
+    },
+    {
+      "Name": "Statistics / video metadata",
+      "Milliseconds": 17.658,
+      "StartedMilliseconds": 7986.8872,
+      "CompletedMilliseconds": 8004.5452000000005
+    },
+    {
+      "Name": "Statistics / episode metadata",
+      "Milliseconds": 18.5696,
+      "StartedMilliseconds": 8007.1031,
+      "CompletedMilliseconds": 8025.6727
+    },
+    {
+      "Name": "Statistics / song metadata",
+      "Milliseconds": 16.0798,
+      "StartedMilliseconds": 8027.889,
+      "CompletedMilliseconds": 8043.968800000001
+    },
+    {
+      "Name": "Statistics / playlists",
+      "Milliseconds": 61.1185,
+      "StartedMilliseconds": 8046.8162,
+      "CompletedMilliseconds": 8107.9347
+    }
+  ],
+  "Observations": {}
+}
