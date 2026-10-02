@@ -1,0 +1,527 @@
+[
+  {
+    "Status": "Rendered",
+    "FailureType": null,
+    "ActivePhases": [],
+    "Commit": "ffea769d473b811865fe36d3e023f34a8b3b6d2b",
+    "Runtime": "3.1.32",
+    "CreatedUtc": "2026-10-02T00:11:21.0648304Z",
+    "Phases": [
+      {
+        "Name": "Application / VPlayerCoreModule",
+        "Milliseconds": 191.8401
+      },
+      {
+        "Name": "Application / IPTVModule",
+        "Milliseconds": 6.6437
+      },
+      {
+        "Name": "Application / UPnPNinjectModule",
+        "Milliseconds": 6.4088
+      },
+      {
+        "Name": "Application / library module",
+        "Milliseconds": 40.7669
+      },
+      {
+        "Name": "Application / video player activation",
+        "Milliseconds": 450.2196
+      },
+      {
+        "Name": "Application / music player activation",
+        "Milliseconds": 626.0232
+      },
+      {
+        "Name": "Application / WindowsPlayerNinjectModule",
+        "Milliseconds": 1271.943
+      },
+      {
+        "Name": "Application / module registration",
+        "Milliseconds": 1647.6847
+      },
+      {
+        "Name": "Application / settings",
+        "Milliseconds": 26.1015
+      },
+      {
+        "Name": "Application / container activation",
+        "Milliseconds": 52.4692
+      },
+      {
+        "Name": "Application / shell construction",
+        "Milliseconds": 975.2635
+      },
+      {
+        "Name": "Application / OpenCV native initialization",
+        "Milliseconds": 22.0918
+      },
+      {
+        "Name": "Application / initialization",
+        "Milliseconds": 2796.4092
+      },
+      {
+        "Name": "Application / show shell",
+        "Milliseconds": 1008.1035
+      },
+      {
+        "Name": "Application / first window render",
+        "Milliseconds": 7399.942
+      },
+      {
+        "Name": "Application / initial playlist view ready",
+        "Milliseconds": 9918.8907
+      }
+    ],
+    "WindowMode": "Visible"
+  },
+  {
+    "Status": "Rendered",
+    "FailureType": null,
+    "ActivePhases": [],
+    "Commit": "ffea769d473b811865fe36d3e023f34a8b3b6d2b",
+    "Runtime": "3.1.32",
+    "CreatedUtc": "2026-10-02T00:11:26.6212717Z",
+    "Phases": [
+      {
+        "Name": "Application / VPlayerCoreModule",
+        "Milliseconds": 9.0413
+      },
+      {
+        "Name": "Application / IPTVModule",
+        "Milliseconds": 9.2608
+      },
+      {
+        "Name": "Application / UPnPNinjectModule",
+        "Milliseconds": 9.5063
+      },
+      {
+        "Name": "Application / library module",
+        "Milliseconds": 52.8918
+      },
+      {
+        "Name": "Application / video player activation",
+        "Milliseconds": 423.8956
+      },
+      {
+        "Name": "Application / music player activation",
+        "Milliseconds": 82.0229
+      },
+      {
+        "Name": "Application / WindowsPlayerNinjectModule",
+        "Milliseconds": 577.9295
+      },
+      {
+        "Name": "Application / module registration",
+        "Milliseconds": 644.7327
+      },
+      {
+        "Name": "Application / settings",
+        "Milliseconds": 405.9083
+      },
+      {
+        "Name": "Application / container activation",
+        "Milliseconds": 425.3946
+      },
+      {
+        "Name": "Application / shell construction",
+        "Milliseconds": 542.6262
+      },
+      {
+        "Name": "Application / OpenCV native initialization",
+        "Milliseconds": 21.5023
+      },
+      {
+        "Name": "Application / initialization",
+        "Milliseconds": 1723.3959
+      },
+      {
+        "Name": "Application / show shell",
+        "Milliseconds": 835.3782
+      },
+      {
+        "Name": "Application / first window render",
+        "Milliseconds": 3195.2025
+      },
+      {
+        "Name": "Application / initial playlist view ready",
+        "Milliseconds": 4984.0933
+      }
+    ],
+    "WindowMode": "Visible"
+  },
+  {
+    "Status": "Rendered",
+    "FailureType": null,
+    "ActivePhases": [],
+    "Commit": "ffea769d473b811865fe36d3e023f34a8b3b6d2b",
+    "Runtime": "3.1.32",
+    "CreatedUtc": "2026-10-02T00:11:32.0945681Z",
+    "Phases": [
+      {
+        "Name": "Application / VPlayerCoreModule",
+        "Milliseconds": 7.8866
+      },
+      {
+        "Name": "Application / IPTVModule",
+        "Milliseconds": 10.2477
+      },
+      {
+        "Name": "Application / UPnPNinjectModule",
+        "Milliseconds": 7.5739
+      },
+      {
+        "Name": "Application / library module",
+        "Milliseconds": 54.4936
+      },
+      {
+        "Name": "Application / video player activation",
+        "Milliseconds": 403.5352
+      },
+      {
+        "Name": "Application / music player activation",
+        "Milliseconds": 59.0976
+      },
+      {
+        "Name": "Application / WindowsPlayerNinjectModule",
+        "Milliseconds": 534.74
+      },
+      {
+        "Name": "Application / module registration",
+        "Milliseconds": 591.7012
+      },
+      {
+        "Name": "Application / settings",
+        "Milliseconds": 52.0382
+      },
+      {
+        "Name": "Application / container activation",
+        "Milliseconds": 81.8722
+      },
+      {
+        "Name": "Application / shell construction",
+        "Milliseconds": 910.8632
+      },
+      {
+        "Name": "Application / OpenCV native initialization",
+        "Milliseconds": 24.3556
+      },
+      {
+        "Name": "Application / initialization",
+        "Milliseconds": 1698.9051
+      },
+      {
+        "Name": "Application / show shell",
+        "Milliseconds": 367.749
+      },
+      {
+        "Name": "Application / first window render",
+        "Milliseconds": 2975.4277
+      },
+      {
+        "Name": "Application / initial playlist view ready",
+        "Milliseconds": 4616.0939
+      }
+    ],
+    "WindowMode": "Visible"
+  },
+  {
+    "Status": "Rendered",
+    "FailureType": null,
+    "ActivePhases": [],
+    "Commit": "ffea769d473b811865fe36d3e023f34a8b3b6d2b",
+    "Runtime": "3.1.32",
+    "CreatedUtc": "2026-10-02T00:11:37.3885247Z",
+    "Phases": [
+      {
+        "Name": "Application / VPlayerCoreModule",
+        "Milliseconds": 4.1506
+      },
+      {
+        "Name": "Application / IPTVModule",
+        "Milliseconds": 5.9353
+      },
+      {
+        "Name": "Application / UPnPNinjectModule",
+        "Milliseconds": 6.7668
+      },
+      {
+        "Name": "Application / library module",
+        "Milliseconds": 51.137
+      },
+      {
+        "Name": "Application / video player activation",
+        "Milliseconds": 386.8907
+      },
+      {
+        "Name": "Application / music player activation",
+        "Milliseconds": 76.886
+      },
+      {
+        "Name": "Application / WindowsPlayerNinjectModule",
+        "Milliseconds": 532.1975
+      },
+      {
+        "Name": "Application / module registration",
+        "Milliseconds": 578.6636
+      },
+      {
+        "Name": "Application / settings",
+        "Milliseconds": 579.7177
+      },
+      {
+        "Name": "Application / container activation",
+        "Milliseconds": 597.9924
+      },
+      {
+        "Name": "Application / shell construction",
+        "Milliseconds": 395.7017
+      },
+      {
+        "Name": "Application / OpenCV native initialization",
+        "Milliseconds": 22.0879
+      },
+      {
+        "Name": "Application / initialization",
+        "Milliseconds": 1677.678
+      },
+      {
+        "Name": "Application / show shell",
+        "Milliseconds": 837.034
+      },
+      {
+        "Name": "Application / first window render",
+        "Milliseconds": 3133.5576
+      },
+      {
+        "Name": "Application / initial playlist view ready",
+        "Milliseconds": 4703.0673
+      }
+    ],
+    "WindowMode": "Visible"
+  },
+  {
+    "Status": "Rendered",
+    "FailureType": null,
+    "ActivePhases": [],
+    "Commit": "ffea769d473b811865fe36d3e023f34a8b3b6d2b",
+    "Runtime": "3.1.32",
+    "CreatedUtc": "2026-10-02T00:11:42.8814105Z",
+    "Phases": [
+      {
+        "Name": "Application / VPlayerCoreModule",
+        "Milliseconds": 10.65
+      },
+      {
+        "Name": "Application / IPTVModule",
+        "Milliseconds": 9.3676
+      },
+      {
+        "Name": "Application / UPnPNinjectModule",
+        "Milliseconds": 9.9097
+      },
+      {
+        "Name": "Application / library module",
+        "Milliseconds": 52.5977
+      },
+      {
+        "Name": "Application / video player activation",
+        "Milliseconds": 405.0593
+      },
+      {
+        "Name": "Application / music player activation",
+        "Milliseconds": 56.445
+      },
+      {
+        "Name": "Application / WindowsPlayerNinjectModule",
+        "Milliseconds": 531.8087
+      },
+      {
+        "Name": "Application / module registration",
+        "Milliseconds": 603.6414
+      },
+      {
+        "Name": "Application / settings",
+        "Milliseconds": 425.862
+      },
+      {
+        "Name": "Application / container activation",
+        "Milliseconds": 450.3128
+      },
+      {
+        "Name": "Application / shell construction",
+        "Milliseconds": 691.8908
+      },
+      {
+        "Name": "Application / OpenCV native initialization",
+        "Milliseconds": 18.8132
+      },
+      {
+        "Name": "Application / initialization",
+        "Milliseconds": 1867.2527
+      },
+      {
+        "Name": "Application / show shell",
+        "Milliseconds": 944.8063
+      },
+      {
+        "Name": "Application / first window render",
+        "Milliseconds": 3428.3775
+      },
+      {
+        "Name": "Application / initial playlist view ready",
+        "Milliseconds": 4903.8337
+      }
+    ],
+    "WindowMode": "Visible"
+  },
+  {
+    "Status": "Rendered",
+    "FailureType": null,
+    "ActivePhases": [],
+    "Commit": "ffea769d473b811865fe36d3e023f34a8b3b6d2b",
+    "Runtime": "3.1.32",
+    "CreatedUtc": "2026-10-02T00:11:48.0425571Z",
+    "Phases": [
+      {
+        "Name": "Application / VPlayerCoreModule",
+        "Milliseconds": 5.5487
+      },
+      {
+        "Name": "Application / IPTVModule",
+        "Milliseconds": 7.064
+      },
+      {
+        "Name": "Application / UPnPNinjectModule",
+        "Milliseconds": 7.8569
+      },
+      {
+        "Name": "Application / library module",
+        "Milliseconds": 52.1482
+      },
+      {
+        "Name": "Application / video player activation",
+        "Milliseconds": 402.0086
+      },
+      {
+        "Name": "Application / music player activation",
+        "Milliseconds": 82.2704
+      },
+      {
+        "Name": "Application / WindowsPlayerNinjectModule",
+        "Milliseconds": 552.9305
+      },
+      {
+        "Name": "Application / module registration",
+        "Milliseconds": 615.6781
+      },
+      {
+        "Name": "Application / settings",
+        "Milliseconds": 22.0701
+      },
+      {
+        "Name": "Application / container activation",
+        "Milliseconds": 60.4971
+      },
+      {
+        "Name": "Application / shell construction",
+        "Milliseconds": 921.9345
+      },
+      {
+        "Name": "Application / OpenCV native initialization",
+        "Milliseconds": 20.6586
+      },
+      {
+        "Name": "Application / initialization",
+        "Milliseconds": 1690.4227
+      },
+      {
+        "Name": "Application / show shell",
+        "Milliseconds": 722.0575
+      },
+      {
+        "Name": "Application / first window render",
+        "Milliseconds": 3019.543
+      },
+      {
+        "Name": "Application / initial playlist view ready",
+        "Milliseconds": 4575.3661
+      }
+    ],
+    "WindowMode": "Visible"
+  },
+  {
+    "Status": "Rendered",
+    "FailureType": null,
+    "ActivePhases": [],
+    "Commit": "ffea769d473b811865fe36d3e023f34a8b3b6d2b",
+    "Runtime": "3.1.32",
+    "CreatedUtc": "2026-10-02T00:11:53.5757146Z",
+    "Phases": [
+      {
+        "Name": "Application / VPlayerCoreModule",
+        "Milliseconds": 5.5227
+      },
+      {
+        "Name": "Application / IPTVModule",
+        "Milliseconds": 7.5782
+      },
+      {
+        "Name": "Application / UPnPNinjectModule",
+        "Milliseconds": 7.6402
+      },
+      {
+        "Name": "Application / library module",
+        "Milliseconds": 55.4109
+      },
+      {
+        "Name": "Application / video player activation",
+        "Milliseconds": 413.5527
+      },
+      {
+        "Name": "Application / music player activation",
+        "Milliseconds": 101.5369
+      },
+      {
+        "Name": "Application / WindowsPlayerNinjectModule",
+        "Milliseconds": 587.8962
+      },
+      {
+        "Name": "Application / module registration",
+        "Milliseconds": 635.2182
+      },
+      {
+        "Name": "Application / settings",
+        "Milliseconds": 22.006
+      },
+      {
+        "Name": "Application / container activation",
+        "Milliseconds": 44.6056
+      },
+      {
+        "Name": "Application / shell construction",
+        "Milliseconds": 881.3221
+      },
+      {
+        "Name": "Application / OpenCV native initialization",
+        "Milliseconds": 22.2823
+      },
+      {
+        "Name": "Application / initialization",
+        "Milliseconds": 1684.1116
+      },
+      {
+        "Name": "Application / show shell",
+        "Milliseconds": 922.5791
+      },
+      {
+        "Name": "Application / first window render",
+        "Milliseconds": 3268.5434
+      },
+      {
+        "Name": "Application / initial playlist view ready",
+        "Milliseconds": 4850.6171
+      }
+    ],
+    "WindowMode": "Visible"
+  }
+]

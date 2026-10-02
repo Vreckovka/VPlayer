@@ -95,6 +95,10 @@ $lines.Add('| --- | --- |')
 foreach($name in $startupNames) {
   $reference=@(Startup-Reference $name)
   $lines.Add('| **'+$name+'** — '+(Format-Startup $reference $name)+' | '+(Format-Startup $newStartup $name)+' |')
+  if($phaseSources.Count -and $name -in @('Application / first window render','Application / initial playlist view ready')) {
+    $latestReference=@($phaseSources[$phaseSources.Count-1])
+    $lines.Add('| **'+$name+' before query deferral** — '+(Format-Startup $latestReference $name)+' | '+(Format-Startup $newStartup $name)+' |')
+  }
   if($name -eq 'Application / first window render' -and $readyStartup.Count) {
     $lines.Add('| **Application / first window render after crash fix** — '+(Format-Startup $readyStartup $name)+' | '+(Format-Startup $newStartup $name)+' |')
   }
@@ -129,7 +133,7 @@ foreach($feature in @('Library card templates and scrolling','Navigation and det
   $lines.Add('| **'+$feature+'** — Not measured yet | Pending |')
 }
 $lines.Add('')
-$lines.Add('This comparison changes playlist loading and repairs startup. Other feature metrics are controls: timing differences in unchanged code are observations and must not be credited to the playlist optimization.')
+$lines.Add('This comparison includes playlist loading, the startup crash repair, and library query deferral. Other feature metrics are controls: timing differences in unchanged code are observations and must not be credited to those changes.')
 $lines.Add('')
 $lines.Add('Each feature metric is one operation except lyrics (10,000 seeks) and spectrum (1,000 frames). Divide batched results by their operation count before ranking across categories. UI list scenarios use an offscreen text-row ListBox, not application card templates. First samples share one process, so only the first metric includes process-cold EF initialization. Startup uses fresh processes with warm OS caches and fresh default settings; it does not include every background service becoming ready. Startup phase scopes overlap. Allocation counts cover managed allocations across threads and exclude native bitmap/database memory.')
 $lines.Add('')
