@@ -9,7 +9,9 @@ from pathlib import Path
 parent, target = (Path(value).resolve() for value in sys.argv[1:3])
 source = parent / "VPlayerDatabase.db"
 metadata = json.loads((parent / "fixture.json").read_text(encoding="utf-8-sig"))
-digest = lambda path: hashlib.file_digest(path.open("rb"), "sha256").hexdigest().upper()
+def digest(path):
+    with path.open("rb") as data:
+        return hashlib.file_digest(data, "sha256").hexdigest().upper()
 if digest(source) != metadata["DatabaseSha256"]:
     raise RuntimeError("Parent fixture changed.")
 if target.exists():
@@ -21,6 +23,8 @@ with sqlite3.connect(source.as_uri() + "?mode=ro", uri=True) as original:
         original.backup(copy)
         # One day plus unique subsecond ticks; increasing IDs exercise worst-case
         # leaderboard insertions. All public sounds are played and need totaling.
+        if copy.execute("SELECT max(Id) FROM SoundItems").fetchone()[0] >= 10_000_000:
+            raise RuntimeError("Sound IDs exceed the unique fractional-tick range.")
         copy.execute("UPDATE SoundItems SET TimePlayed = '1.00:00:00.' || printf('%07d', Id)")
         copy.commit()
         count, zero = copy.execute("SELECT count(*), sum(TimePlayed='00:00:00') FROM SoundItems").fetchone()

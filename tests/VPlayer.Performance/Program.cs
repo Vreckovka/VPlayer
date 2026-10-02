@@ -275,6 +275,8 @@ namespace VPlayer.Performance
     }
     private static void RunStatistics(string directory,string output,string commit)
     {
+      if(!System.Text.RegularExpressions.Regex.IsMatch(commit ?? "", "^[0-9a-fA-F]{40}$"))
+        throw new ArgumentException("Statistics benchmarks require a full Git commit SHA.",nameof(commit));
       directory=Path.GetFullPath(directory);
       var database=Path.Combine(directory,"VPlayerDatabase.db");
       var fixture=File.ReadAllText(Path.Combine(directory,"fixture.json"));

@@ -66,7 +66,12 @@ namespace VPlayer.Home.ViewModels.Statistics
       }
       Ranking sounds,videos,episodes;
       using(StartupMeasurements.Measure("Statistics / sound scores"))
-        sounds=new Ranking(soundQuery.Select(x=>new Score {Id=x.Id,Time=x.TimePlayed}));
+        // Zero-time rows contribute nothing to totals. Only their first 30 IDs
+        // can enter a leaderboard, including when negative legacy times exist.
+        sounds=new Ranking(soundQuery.Where(x=>x.TimePlayed!=TimeSpan.Zero)
+          .Select(x=>new Score {Id=x.Id,Time=x.TimePlayed}).AsEnumerable()
+          .Concat(soundQuery.Where(x=>x.TimePlayed==TimeSpan.Zero).OrderBy(x=>x.Id).Take(AllSize)
+            .Select(x=>new Score {Id=x.Id,Time=x.TimePlayed})));
       using(StartupMeasurements.Measure("Statistics / video scores"))
         videos=new Ranking(videoQuery.Select(x=>new Score {Id=x.Id,Time=x.TimePlayed}));
       using(StartupMeasurements.Measure("Statistics / episode scores"))

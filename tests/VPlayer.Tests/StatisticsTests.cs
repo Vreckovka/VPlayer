@@ -201,6 +201,29 @@ namespace VPlayer.Tests
       });
     }
     [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void LargeZeroAndNegativeTimeLibrariesPreserveRankingAndFullTotals(bool mixed)
+    {
+      WithDispatcher(async () =>
+      {
+        using var fixture=new Fixture();
+        var sounds=Enumerable.Range(1,10000).Select(i=>new SoundItem
+        {
+          Id=i,IsPrivate=i==101,
+          TimePlayed=!mixed || i%101==0 ? TimeSpan.Zero : TimeSpan.FromTicks(i>9995 ? i : -i)
+        }).ToArray();
+        fixture.Database.AddRange(sounds);
+        fixture.Database.SaveChanges();
+        await fixture.Load();
+        var expected=sounds.Where(x=>!x.IsPrivate).OrderByDescending(x=>x.TimePlayed).ThenBy(x=>x.Id).ToArray();
+        Assert.Equal(expected.Take(30).Select(x=>x.Id),fixture.View.ItemsView.Select(x=>x.Id));
+        Assert.Equal(expected.Take(15).Select(x=>x.Id),fixture.View.SoundsItemsView.Select(x=>x.Id));
+        Assert.Equal(new TimeSpan(expected.Sum(x=>x.TimePlayed.Ticks)),fixture.View.TotalWatchedItems);
+        Assert.Empty(fixture.View.VideosItemsView);
+      });
+    }
+    [Theory]
     [InlineData(0)]
     [InlineData(10000)]
     public void EmptyAndEntirelyPrivateLibrariesHaveNoPlaceholderRows(int count)
