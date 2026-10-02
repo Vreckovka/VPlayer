@@ -1343,6 +1343,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
             }
             var changed=incoming!=null && (foundPlaylist.HashCode!=playlist.HashCode ||
               PlaylistOrder.HasChanges(existingRows,incoming,x=>x.Id,x=>x.IdReferencedItem,x=>x.OrderInPlaylist));
+            if(!changed) savedRows=existingRows;
             var requestedActualId=playlist.ActualItemId??playlist.ActualItem?.Id;
             if(requestedActualId>0)
               actualItem=savedRows.SingleOrDefault(x=>x.Id==requestedActualId);
@@ -1415,6 +1416,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
           var result=resultCount>0;
           if(result)
           {
+            if(actualItem!=null && playlist.ActualItem!=null && playlist.ActualItem.ReferencedItem==null)
+              playlist.ActualItem=actualItem;
             using(VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Data / playlist save / change notification"))
               PublishItemChanged(playlist);
           }

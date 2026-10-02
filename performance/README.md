@@ -766,3 +766,9 @@ imports those compact rows. Regenerate the current music table with
 music-playlist-ui-report.ps1 -Baseline
 performance/iterations/music-collection-publication-baseline-5be3a2c4.json
 -Optimized performance/music-playlist-ui-optimized.json.
+A follow-up regression supplies 100k unchanged rows without referenced metadata.
+It failed on d467b7ad because the returned row list used the bare input instead of
+the authoritative stored rows. Unchanged saves now retain stored rows, and a bare
+playback reference is repaired before notification. Every returned row and the
+playback reference are checked, along with unchanged persisted IDs/order and
+context cleanup. All 186 tests passed; Release built with 152 warnings, no errors.

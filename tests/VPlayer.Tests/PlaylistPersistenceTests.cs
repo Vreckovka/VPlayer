@@ -157,6 +157,27 @@ namespace VPlayer.Tests
     }
 
     [Fact]
+    public void UnchangedHugeQueueReturnsStoredMetadataAndRepairsBarePlaybackReference()
+    {
+      using var f=new Fixture();
+      var rows=Enumerable.Range(1,100000).Select(id=>new PlaylistSoundItem
+        {Id=id,IdReferencedItem=1+id%2,OrderInPlaylist=id}).ToList();
+      var input=new SoundItemFilePlaylist {Id=1,Name="Original",HashCode=777,PlaylistItems=rows,
+        ActualItem=rows[54321],ActualItemId=rows[54321].Id};
+      var updated=f.Save(input);
+      Assert.True(updated.PlaylistItems.All(row=>row.ReferencedItem?.FileInfoEntity!=null));
+      Assert.NotNull(updated.ActualItem.ReferencedItem?.FileInfoEntity);
+      Assert.NotNull(input.ActualItem.ReferencedItem?.FileInfoEntity);
+      Assert.Same(updated.ActualItem,input.ActualItem);
+      using var context=f.ReadContext();
+      Assert.Equal(100000,context.PlaylistSongs.Count());
+      Assert.False(context.PlaylistSongs.Any(x=>x.OrderInPlaylist!=x.Id || x.IdReferencedItem!=1+x.Id%2));
+      Assert.Equal(2,context.SoundItems.Count());
+      Assert.Equal(1,f.Disposals);
+      Assert.True(f.DetectChangesRestored);
+    }
+
+    [Fact]
     public void ReversingHugeQueuePersistsEveryRowIdentityPositionAndActualOccurrence()
     {
       using var f=new Fixture();
