@@ -294,14 +294,14 @@ namespace VPlayer.Core.ViewModels
     {
       if (value)
       {
-        playlistCopy = new RxObservableCollection<TItemViewModel>();
+        playlistCopy = new PlaylistCollection<TItemViewModel>();
 
         foreach (var item in PlayList)
         {
           playlistCopy.Add(item);
         }
 
-        var newPlaylist = new RxObservableCollection<TItemViewModel>();
+        var newPlaylist = new PlaylistCollection<TItemViewModel>();
 
         foreach (var item in VirtualizedPlayList.Generator.AllItems)
         {
@@ -316,7 +316,7 @@ namespace VPlayer.Core.ViewModels
       {
         PlayList = playlistCopy;
         actualItemIndex = savedActualItemIndex;
-        playlistCopy = new RxObservableCollection<TItemViewModel>();
+        playlistCopy = new PlaylistCollection<TItemViewModel>();
       }
     }
 
@@ -324,7 +324,7 @@ namespace VPlayer.Core.ViewModels
 
     #region PlayList
 
-    private RxObservableCollection<TItemViewModel> playList = new RxObservableCollection<TItemViewModel>();
+    private RxObservableCollection<TItemViewModel> playList = new PlaylistCollection<TItemViewModel>();
 
     public RxObservableCollection<TItemViewModel> PlayList
     {
@@ -839,7 +839,7 @@ namespace VPlayer.Core.ViewModels
         ActualSavedPlaylist.PlaylistItems = ordered;
         ActualSavedPlaylist.HashCode = ordered.Select(x => x.IdReferencedItem).ToList().GetSequenceHashCode();
         // RxObservableCollection treats Move as remove/add; keep track identities without those side effects.
-        PlayList = new RxObservableCollection<TItemViewModel>(desired);
+        PlayList = new PlaylistCollection<TItemViewModel>(desired);
         actualItemIndex = PlayList.IndexOf(ActualItem);
         UpdateSavedPlaybackPosition();
         defaultSortOrder = null;
@@ -907,7 +907,7 @@ namespace VPlayer.Core.ViewModels
       switch (playlistSort)
       {
         case PlaylistSortOrder.None:
-          PlayList = new RxObservableCollection<TItemViewModel>(PlayList.OrderBy(d => defaultSortOrder.IndexOf(d.Model.Id)).ToList());
+          PlayList = new PlaylistCollection<TItemViewModel>(PlayList.OrderBy(d => defaultSortOrder.IndexOf(d.Model.Id)).ToList());
           break;
         case PlaylistSortOrder.Name:
           PlayList.Sort((x, y) => x.Name.CompareTo(y.Name));
@@ -921,7 +921,7 @@ namespace VPlayer.Core.ViewModels
 
       if (IsSortDescending)
       {
-        PlayList = new RxObservableCollection<TItemViewModel>(PlayList.OrderByDescending(d => PlayList.IndexOf(d)).ToList());
+        PlayList = new PlaylistCollection<TItemViewModel>(PlayList.OrderByDescending(d => PlayList.IndexOf(d)).ToList());
       }
 
       RequestReloadVirtulizedPlaylist();
@@ -1606,7 +1606,10 @@ namespace VPlayer.Core.ViewModels
 
     protected virtual void AddPlaylistItems(IEnumerable<TItemViewModel> items)
     {
-      PlayList.AddRange(items);
+      if (PlayList is PlaylistCollection<TItemViewModel> playlist)
+        playlist.AddPlaylistRange(items);
+      else
+        PlayList.AddRange(items);
     }
 
     #region PlayItems

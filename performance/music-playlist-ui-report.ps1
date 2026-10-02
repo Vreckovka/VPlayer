@@ -115,14 +115,19 @@ $scenarios=@(
   @{Name='long no-match search and render';Phase='UI / music playlist / long no-match search and render';Missing='Not reached'},
   @{Name='long near-match search and render';Phase='UI / music playlist / long near-match search and render';Missing='Not reached'}
 )
+$completeBaseline = @($a | Where-Object Status -ne 'Rendered').Count -eq 0
 $lines=@('# 100k-entry music playlist','','Real WPF window; copied 207k-item library. Buffered diagnostics. - % = less time; + % = more time.','','| Baseline now | New optimized version |','| --- | --- |')
 foreach($scenario in $scenarios) {
-  $old=Timing $(if($scenario.ClearControl){$d}elseif($scenario.Control){$c}else{$a}) $scenario.Phase
+  $old=Timing $(if($completeBaseline){$a}elseif($scenario.ClearControl){$d}elseif($scenario.Control){$c}else{$a}) $scenario.Phase
   $new=if($b.Count){Timing $b $scenario.Phase}else{$null}
   $left=if($null -ne $old){Format-Time $old}else{$scenario.Missing}
   $right=if($null -ne $new){(Format-Time $new)+(Format-Change $old $new)}elseif($b.Count){$scenario.Missing}else{'Pending'}
   $lines+='| **'+$scenario.Name+'** — '+$left+' | '+$right+' |'
 }
+if($completeBaseline) {
+  $lines+=@('','Compared complete painted runs using the prior version as baseline. - % = less time; + % = more time. Raw phases and provenance stay in JSON.')
+} else {
 $lines+=@('','The timeout is the overall process limit. Unfinished endpoints have no percentage; completed phase medians exclude the small startup playlist. Clear uses the separate save-wait control; stored-song/replacement/dispatch rows use the pre-lookup control. Painted activation has no prior baseline. Raw phases, failures and provenance stay in JSON.')
+}
 $lines|Set-Content -LiteralPath $Output
 Write-Output ('Wrote '+$Output)

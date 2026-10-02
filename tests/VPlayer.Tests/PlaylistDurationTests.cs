@@ -7,7 +7,7 @@ using System.Runtime.ExceptionServices;
 using System.Runtime.Serialization;
 using Moq;
 using Prism.Events;
-using VCore.ItemsCollections;
+using VPlayer.Core.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.ViewModels.SoundItems;
@@ -21,7 +21,7 @@ namespace VPlayer.Tests
     private sealed class Player : IDisposable
     {
       internal readonly MusicPlayerViewModel Model=(MusicPlayerViewModel)FormatterServices.GetUninitializedObject(typeof(MusicPlayerViewModel));
-      internal readonly RxObservableCollection<SoundItemInPlaylistViewModel> Items=new RxObservableCollection<SoundItemInPlaylistViewModel>();
+      internal readonly PlaylistCollection<SoundItemInPlaylistViewModel> Items=new PlaylistCollection<SoundItemInPlaylistViewModel>();
       private readonly EventAggregator events=new EventAggregator();
       private readonly IStorageManager storage=new Mock<IStorageManager>().Object;
       private readonly List<SoundItemInPlaylistViewModel> owned=new List<SoundItemInPlaylistViewModel>();
@@ -82,7 +82,7 @@ namespace VPlayer.Tests
       old.IsInPlaylist=true;
       player.Items.Add(old);
       player.Notifications=0;
-      var incoming=Enumerable.Range(0,10000).Select(i=>player.Item(i%97,180+i%19)).ToArray();
+      var incoming=Enumerable.Range(0,100000).Select(i=>player.Item(i%97,180+i%19)).ToArray();
       player.Call("ReplacePlaylistItems",(object)incoming);
 
       Assert.Equal(1,player.Notifications);
@@ -100,7 +100,7 @@ namespace VPlayer.Tests
       old.IsInPlaylist=true;
       player.Items.Add(old);
       player.Notifications=0;
-      var incoming=Enumerable.Range(0,10000).Select(i=>player.Item(i%97,200+i%13)).ToArray();
+      var incoming=Enumerable.Range(0,100000).Select(i=>player.Item(i%97,200+i%13)).ToArray();
       player.Call("AddPlaylistItems",(object)incoming);
 
       Assert.Equal(1,player.Notifications);
@@ -117,7 +117,7 @@ namespace VPlayer.Tests
     }
 
     [Fact]
-    public void FailedBulkInsertionPublishesPartialTotalAndRestoresOrdinaryNotifications()
+    public void FailedBulkObserverPublishesFinalTotalAndRestoresOrdinaryNotifications()
     {
       using var player=new Player();
       var first=player.Item(1,17);
@@ -127,15 +127,16 @@ namespace VPlayer.Tests
       Assert.Throws<InvalidOperationException>(()=>player.Call("AddPlaylistItems",(object)new[] {first,second}));
       player.Items.CollectionChanged-=fail;
 
-      Assert.Single(player.Items);
+      Assert.Equal(2,player.Items.Count);
       Assert.Equal(1,player.Notifications);
-      Assert.Equal(TimeSpan.FromSeconds(17),player.PublishedDuration);
-      player.Items.Add(second);
-      Assert.Equal(2,player.Notifications);
       Assert.Equal(TimeSpan.FromSeconds(28),player.PublishedDuration);
+      var third=player.Item(3,5);
+      player.Items.Add(third);
+      Assert.Equal(2,player.Notifications);
+      Assert.Equal(TimeSpan.FromSeconds(33),player.PublishedDuration);
       player.Items.Remove(first);
       Assert.Equal(3,player.Notifications);
-      Assert.Equal(TimeSpan.FromSeconds(11),player.PublishedDuration);
+      Assert.Equal(TimeSpan.FromSeconds(16),player.PublishedDuration);
     }
   }
 }
