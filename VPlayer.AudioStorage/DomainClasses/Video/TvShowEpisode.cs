@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using VCore.Standard.Modularity.Interfaces;
 using VPlayer.Core.ViewModels;
 
@@ -59,13 +59,13 @@ namespace VPlayer.AudioStorage.DomainClasses.Video
 
         return 0;
       }
-      set { if (VideoItem != null) VideoItem.Length = Length; }
+      set { if (VideoItem != null) VideoItem.Length = value; }
     }
 
     public string Name
     {
       get { return VideoItem?.Name; }
-      set { if (VideoItem != null) VideoItem.Name = Name; }
+      set { if (VideoItem != null) VideoItem.Name = value; }
     }
 
     public bool IsFavorite
@@ -77,7 +77,7 @@ namespace VPlayer.AudioStorage.DomainClasses.Video
 
          return false;
       }
-      set { if (VideoItem != null) VideoItem.IsFavorite = IsFavorite; }
+      set { if (VideoItem != null) VideoItem.IsFavorite = value; }
     }
 
 
