@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using Logger;
+using PCloudClient;
 using Moq;
 using Ninject;
 using Prism.Events;
@@ -32,13 +33,14 @@ namespace VPlayer.TestSupport
     internal readonly ILogger Logger=new Mock<ILogger>().Object;
     internal readonly IWindowManager Windows=new Mock<IWindowManager>().Object;
     internal readonly AudioInfoDownloader Downloader=Empty<AudioInfoDownloader>();
-    internal readonly PCloudLyricsProvider Cloud=Empty<PCloudLyricsProvider>();
+    internal readonly PCloudLyricsProvider Cloud;
     internal readonly MusixMatchLyricsProvider Lyrics=Empty<MusixMatchLyricsProvider>();
     internal readonly VPlayerViewModelsFactory Factory;
     private readonly MusicPlayerViewModel player=Empty<MusicPlayerViewModel>();
     private static readonly MethodInfo create=typeof(MusicPlayerViewModel).GetMethod("GetVmToPlayFromPlaylist",BindingFlags.Instance|BindingFlags.NonPublic);
     internal SavedSongViewFixture(bool transientWindows=false)
     {
+      Cloud=new PCloudLyricsProvider(new Mock<IPCloudService>().Object,Windows,new Mock<IPCloudProvider>().Object);
       Kernel.Bind<IEventAggregator>().ToConstant(Events);
       Kernel.Bind<IAlbumsViewModel>().ToConstant(Albums);
       Kernel.Bind<IArtistsViewModel>().ToConstant(Artists);

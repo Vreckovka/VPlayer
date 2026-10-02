@@ -83,7 +83,10 @@ namespace VPlayer.Tests
       {
         // These tests only need the presence of metadata; provider I/O is controlled below.
         AlbumViewModel=(AlbumViewModel)FormatterServices.GetUninitializedObject(typeof(AlbumViewModel));
+        AlbumViewModel.Model=new Album {Name="Test album"};
         ArtistViewModel=(ArtistViewModel)FormatterServices.GetUninitializedObject(typeof(ArtistViewModel));
+        ArtistViewModel.Model=new Artist {Name="Test artist"};
+        model.ItemModel.Name="Stored song";
       }
       protected override async Task LoadLRCFromPCloud()
       {
