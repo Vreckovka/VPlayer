@@ -283,6 +283,13 @@ foreach($category in @('Data','Playlist','UI','Lyrics','Spectrum')) {
   }
 }
 $lines.Add('')
+$lines.Add('## Playlist collection')
+$lines.Add('')
+$collectionReport=Join-Path $PSScriptRoot 'playlist-collection-results.md'
+if(Test-Path -LiteralPath $collectionReport) {
+  $lines.Add('[Collection timing and cleanup](playlist-collection-results.md). Native 100k load/render: 13.9k → 10.7k ms (-22.7%); publication: 4.6k → 498.1 ms (-89.2%). [Matched stages, including slower phases](iterations/music-collection-tracking-results-b65ef9ce.md).')
+  $lines.Add('')
+}
 $lines.Add('## Still to measure')
 $lines.Add('')
 $lines.Add('Cold startup after a restart; full application data load; stored album/file details; native rapid next/back and save overhead; lyrics playback/scrolling; explorer loading/finding. See [current scope](focus.md).')

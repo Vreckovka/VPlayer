@@ -1,0 +1,51 @@
+{
+  "SchemaVersion": 1,
+  "Commit": "b65ef9cef6dbb23ea09a048d052354f865121595",
+  "CreatedUtc": "2026-10-02T16:30:06.164437Z",
+  "Runtime": "3.1.32",
+  "Configuration": "Release",
+  "ProcessorCount": 8,
+  "FixtureSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+  "Entries": 100000,
+  "SourceOccurrences": "first 50k stored occurrences repeated twice",
+  "DuplicateTracks": 50000,
+  "MissingFileInfo": 6,
+  "Boundary": "Production playlist collection with 100k real saved song views, synchronous membership observers and WPF ListCollectionView; database reads, view construction, dispatcher scheduling, verification, disposal and UI painting excluded",
+  "Samples": [
+    {
+      "Iteration": 0,
+      "AddMilliseconds": 179.0915,
+      "AddAllocatedBytes": 19688272,
+      "ClearMilliseconds": 8.2375,
+      "ClearAllocatedBytes": 928
+    },
+    {
+      "Iteration": 1,
+      "AddMilliseconds": 92.1446,
+      "AddAllocatedBytes": 19685448,
+      "ClearMilliseconds": 6.0224,
+      "ClearAllocatedBytes": 304
+    },
+    {
+      "Iteration": 2,
+      "AddMilliseconds": 78.1986,
+      "AddAllocatedBytes": 19685496,
+      "ClearMilliseconds": 6.787,
+      "ClearAllocatedBytes": 344
+    },
+    {
+      "Iteration": 3,
+      "AddMilliseconds": 83.3873,
+      "AddAllocatedBytes": 19685448,
+      "ClearMilliseconds": 7.2133,
+      "ClearAllocatedBytes": 304
+    },
+    {
+      "Iteration": 4,
+      "AddMilliseconds": 86.7646,
+      "AddAllocatedBytes": 19685448,
+      "ClearMilliseconds": 7.0911,
+      "ClearAllocatedBytes": 304
+    }
+  ]
+}

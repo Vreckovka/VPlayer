@@ -915,3 +915,40 @@ The diagnostic trace in iterations/playlist-publication-cpu-profile-0afd191c.jso
 completed the 100k native workload. Collection publication used about 5.1k ms of CPU
 within 5.6k ms elapsed; replacement used about 4.7k ms CPU within 5.1k ms elapsed.
 It uses cpu-v2 diagnostics and is kept separate from ordinary timing comparisons.
+[Playlist collection results](playlist-collection-results.md) cover source b65ef9ce.
+The playlist property now uses a repository-owned ObservableCollection with the
+reactive event contracts used by the app. Typed property handlers replace per-row
+Rx reflection subscriptions; reference counts preserve duplicate occurrences.
+Removed/cleared/replaced rows detach, disabled reactive notifications still maintain
+tracking and the secondary view, and Move preserves membership and view order.
+
+Eight new lifetime/disposal regressions; all 231 tests passed. Five baseline failures
+and the deliberately stopped 100k repeated-reference baseline test host are retained
+in iterations/playlist-collection-baseline-*. The optimized repeated-reference case
+completed unchanged. Release app and benchmark builds passed; warning counts and
+unit evidence are in iterations/playlist-collection-validation.txt.
+
+Component repeat publication: 739.5 to 78.1 ms for unique IDs, 814.5 to 85.1 ms for
+50k IDs repeated into 100k independent views. Allocation: 167.9 to 18.8 MiB. Clear
+includes detaching subscriptions and rose from 0.22 to 8.31 ms in the unique case;
+this slower operation remains visible. Raw first/repeat samples are preserved.
+
+The matched native comparison is iterations/music-collection-tracking-results-b65ef9ce.md:
+100k load/render 13.9k to 10.7k ms (-22.7%), publication 4.6k to 498.1 ms (-89.2%).
+Incoming reads, enrichment, activation, saved-view creation, no-match search and
+clear were slower and remain in that table. All native runs completed order,
+stored-metadata readiness, first/final paint, last-row and search fingerprint checks.
+First/final screenshots from the baseline and optimized series were reviewed.
+The main music table retains its first complete 5be3a2c4 baseline.
+
+Screenshot duration totals varied during optional background updates. A separate,
+uncommitted diagnostic captured only zero-to-positive duration fills; known nonzero
+durations were unchanged and all post-run databases kept the fixture's stored totals.
+The temporary instrumentation was restored; its timings are excluded. Summary:
+iterations/playlist-collection-duration-inspection-b65ef9ce.json. This workload waits
+for stored song metadata, not completion of optional duration enrichment.
+
+Native incoming reads (~3.5k ms) and stored-song enrichment (~3.4k ms) are now the
+largest completed playlist-loading stages. Cold startup, albums, lyrics, explorer
+and native rapid-skip/save work in focus.md remain pending. Local installed build
+7.6.9771.31678 is the earlier a4c5ef2d release; b65ef9ce is on the branch.
