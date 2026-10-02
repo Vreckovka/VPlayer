@@ -91,6 +91,40 @@ namespace VPlayer.Tests
       Assert.Empty(PlaylistSaveSnapshot.Create(new SoundItemFilePlaylist {PlaylistItems=new List<PlaylistSoundItem>()}).PlaylistItems);
     }
 
+    [Serializable]
+    private sealed class ExtendedSoundItem : SoundItem
+    {
+      public List<string> Tags {get;set;}=new List<string>();
+    }
+
+    [Fact]
+    public void UnknownTrackGraphRetainsCompleteDeepCopySemantics()
+    {
+      var extended=new ExtendedSoundItem {Id=1,Tags=new List<string> {"original"}};
+      var row=new PlaylistSoundItem {Id=1,ReferencedItem=extended};
+      var playlist=new SoundItemFilePlaylist {PlaylistItems=new List<PlaylistSoundItem> {row},ActualItem=row};
+      var copy=PlaylistSaveSnapshot.Create(playlist);
+      var track=Assert.IsType<ExtendedSoundItem>(copy.ActualItem.ReferencedItem);
+      Assert.NotSame(extended.Tags,track.Tags);
+      extended.Tags.Clear();
+      Assert.Equal("original",Assert.Single(track.Tags));
+      Assert.Same(copy.ActualItem,copy.PlaylistItems[0]);
+    }
+
+    [Fact]
+    public void MissingRowsAndMissingTracksArePreserved()
+    {
+      var row=new PlaylistSoundItem {Id=71,IdReferencedItem=97};
+      var playlist=new SoundItemFilePlaylist {PlaylistItems=new List<PlaylistSoundItem> {null,row},ActualItem=row,ActualItemId=71};
+      var copy=PlaylistSaveSnapshot.Create(playlist);
+      Assert.Equal(2,copy.PlaylistItems.Count);
+      Assert.Null(copy.PlaylistItems[0]);
+      Assert.Null(copy.ActualItem.ReferencedItem);
+      Assert.NotSame(row,copy.ActualItem);
+      Assert.Same(copy.ActualItem,copy.PlaylistItems[1]);
+      Assert.Equal(71,copy.ActualItemId);
+    }
+
     private static void EqualScalars(object source,object copy)
     {
       foreach(var property in source.GetType().GetProperties(BindingFlags.Instance|BindingFlags.Public)
