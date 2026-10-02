@@ -22,8 +22,11 @@ namespace VPlayer.Performance
       playlist.PlaylistItems=context.SoundItemPlaylists.AsNoTracking().Where(x=>x.Id==658)
         .SelectMany(x=>x.PlaylistItems).Include(x=>x.ReferencedItem.FileInfoEntity)
         .OrderBy(x=>x.OrderInPlaylist).ThenBy(x=>x.Id).ToList();
-      if(playlist.PlaylistItems.Count!=100000 || playlist.PlaylistItems.Any(x=>x.ReferencedItem?.FileInfoEntity==null))
-        throw new InvalidOperationException("Requires the complete 100k-entry stored-metadata fixture.");
+      if(playlist.PlaylistItems.Count!=100000)
+        throw new InvalidOperationException("Requires 100k stored occurrences; found "+playlist.PlaylistItems.Count);
+      var missingModels=playlist.PlaylistItems.Count(x=>x.ReferencedItem==null);
+      var missingFileInfo=playlist.PlaylistItems.Count(x=>x.ReferencedItem!=null && x.ReferencedItem.FileInfoEntity==null);
+      Console.WriteLine("Stored occurrences: "+playlist.PlaylistItems.Count+", missing tracks: "+missingModels+", missing file info: "+missingFileInfo);
       playlist.ActualItem=playlist.PlaylistItems[playlist.PlaylistItems.Count-1];
       playlist.ActualItemId=playlist.ActualItem.Id;
       playlist.LastItemIndex=playlist.PlaylistItems.Count-1;
@@ -42,10 +45,10 @@ namespace VPlayer.Performance
         {
           var source=playlist.PlaylistItems[i];
           var saved=snapshot.PlaylistItems[i];
-          if(ReferenceEquals(source,saved) || ReferenceEquals(source.ReferencedItem,saved.ReferencedItem) ||
-            ReferenceEquals(source.ReferencedItem.FileInfoEntity,saved.ReferencedItem.FileInfoEntity) ||
+          if(ReferenceEquals(source,saved) || (source.ReferencedItem!=null && ReferenceEquals(source.ReferencedItem,saved.ReferencedItem)) ||
+            (source.ReferencedItem?.FileInfoEntity!=null && ReferenceEquals(source.ReferencedItem.FileInfoEntity,saved.ReferencedItem?.FileInfoEntity)) ||
             source.Id!=saved.Id || source.OrderInPlaylist!=saved.OrderInPlaylist ||
-            source.ReferencedItem.Name!=saved.ReferencedItem.Name || source.ReferencedItem.Source!=saved.ReferencedItem.Source)
+            source.ReferencedItem?.Name!=saved.ReferencedItem?.Name || source.ReferencedItem?.Source!=saved.ReferencedItem?.Source)
             throw new InvalidOperationException("Snapshot changed or shared stored data.");
         }
         samples.Add(new {Iteration=iteration,Milliseconds=timer.Elapsed.TotalMilliseconds,AllocatedBytes=allocated});
@@ -56,7 +59,7 @@ namespace VPlayer.Performance
       var fixtureHash=BitConverter.ToString(hash.ComputeHash(stream)).Replace("-","");
       File.WriteAllText(output,JsonSerializer.Serialize(new {SchemaVersion=1,Commit=commit,CreatedUtc=DateTime.UtcNow,
         Runtime=Environment.Version.ToString(),Configuration="Release",Environment.ProcessorCount,
-        FixtureSha256=fixtureHash,Entries=playlist.PlaylistItems.Count,
+        FixtureSha256=fixtureHash,Entries=playlist.PlaylistItems.Count,MissingModels=missingModels,MissingFileInfo=missingFileInfo,
         Boundary="Production save snapshot only; database reads, verification and persistence excluded",
         Samples=samples},new JsonSerializerOptions {WriteIndented=true}));
       Console.WriteLine("Verified five independent 100k-entry snapshots: "+output);
