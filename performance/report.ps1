@@ -167,7 +167,17 @@ foreach($category in @('Data','Playlist','UI','Lyrics','Spectrum')) {
       $lines.Add('Actual WPF load, scrolling and search. Timeout endpoints have no percentage. [Evidence](music-playlist-ui-results.md).')
       $lines.Add('Storage task d467b7ad measured +13.9% load/render against its preceding version; scrolling and search also slowed. [Storage task comparison](iterations/music-playlist-write-load-results-d467b7ad.md).')
       $lines.Add('[Playback-save follow-up](iterations/music-playlist-playback-save-load-results-09ea4d79.md) retains slower stages as well.')
+      $lines.Add('[Snapshot task comparison](iterations/music-playlist-snapshot-load-results-2abd4a10.md) shows this task against the preceding version, including slower stages.')
       foreach($note in @(Get-Content -LiteralPath $musicReport|Where-Object {$_.StartsWith('Read timeout retained')})){$lines.Add($note)}
+    }
+    $snapshotReport=Join-Path $PSScriptRoot 'playlist-snapshot-results.md'
+    if(Test-Path -LiteralPath $snapshotReport) {
+      $lines.Add('')
+      $lines.Add('### Playlist state snapshot (100k entries)')
+      $lines.Add('')
+      foreach($row in @(Get-Content -LiteralPath $snapshotReport|Where-Object {$_.StartsWith('|')})){$lines.Add($row)}
+      $lines.Add('')
+      $lines.Add('Production snapshot used by track selection and playlist loading; component timings exclude database work and rendering. [Evidence](playlist-snapshot-results.md).')
     }
     $writeReport=Join-Path $PSScriptRoot 'music-playlist-write-results.md'
     if(Test-Path -LiteralPath $writeReport) {

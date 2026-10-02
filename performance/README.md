@@ -805,3 +805,25 @@ series and remain visible. The main music table keeps the first complete 5be3a2c
 baseline, with cumulative load/render 32.4k to 24.8k ms. The largest measured music
 operation remains reorder/save/render; collection publication remains the largest
 loading stage. No other UI category is claimed complete by these checks.
+The current optimization scope is listed in [focus.md](focus.md). Local test release
+7.6.9771.25313 was deployed with the existing publish profile at b37ccf86, with
+application backups and protected-data hashes retained under artifacts/local-deployment.
+
+At 2abd4a10, playlist loading/track selection uses detached copies of its known
+stored row, track and file-info graph instead of BinaryFormatter serialization.
+The frozen 100k-entry snapshot baseline and optimized samples are in
+playlist-snapshot-{baseline,optimized}.json; [component results](playlist-snapshot-results.md)
+separate the first snapshot, repeats and allocation. The native
+[snapshot task comparison](iterations/music-playlist-snapshot-load-results-2abd4a10.md)
+compares all complete painted runs with 09ea4d79 and retains slower stages.
+The main music table continues using its first complete 5be3a2c4 baseline.
+
+All 201 tests passed, including six snapshot checks for huge duplicate queues,
+occurrence identity, scalar metadata, detached mutation, missing data and unknown
+derived graphs. Release app compilation passed. Native row order, stored metadata,
+final-row visibility and search fingerprints passed; first/final viewport images
+were reviewed. These are fresh-process measurements, not a post-restart cold-disk
+baseline, and this task does not establish rapid-skip/media-playback correctness.
+The remaining largest completed load phases are saved row view creation (5k ms)
+and collection replacement (4.5k ms); rapid-skip persistence and album detail
+baselines remain required under the current focus.
