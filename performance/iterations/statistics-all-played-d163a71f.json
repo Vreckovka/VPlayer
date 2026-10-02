@@ -1,0 +1,50 @@
+{
+  "SchemaVersion": 1,
+  "Commit": "d163a71f9e66e42be9cb717f61e86a1aa56a19e5",
+  "CreatedUtc": "2026-10-02T02:13:37.7929004Z",
+  "Runtime": "3.1.32",
+  "OS": "Microsoft Windows NT 10.0.19045.0",
+  "ProcessorCount": 8,
+  "Configuration": "Release",
+  "FixtureSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+  "Fixture": {
+    "CreatedUtc": "2026-10-02T02:08:30.436850\u002B00:00",
+    "DatabaseSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+    "ParentSha256": "ED1EB6181F4A73CE5EA8C7362EC8AAFE8E6DAC7A86DA1FAE8AFB3B115B25B967",
+    "SoundItems": 207110,
+    "Playlists": 5310,
+    "FileInfos": 247692,
+    "UniqueSoundFileMetadata": true,
+    "AdditionalUserPlaylists": 5000,
+    "PlaylistSizes": [
+      1000,
+      10000,
+      100000
+    ],
+    "UniqueSoundTimePlayed": true,
+    "AllSoundsPlayed": true
+  },
+  "Metrics": [
+    {
+      "Name": "Data / statistics",
+      "Category": "Data",
+      "Boundary": "Production StatisticsViewModel.LoadData and UI publication; no view rendering",
+      "Workload": "207110 sound items, 5310 playlists; unique file metadata",
+      "FirstMilliseconds": 1816.8743,
+      "MedianMilliseconds": 555.7336,
+      "P95Milliseconds": 567.607,
+      "MedianAllocatedBytes": 109737488,
+      "SamplesMilliseconds": [
+        1816.8743,
+        559.2436,
+        548.6821,
+        555.1641,
+        563.1514,
+        555.7336,
+        534.0374,
+        567.607,
+        554.4757
+      ]
+    }
+  ]
+}
