@@ -552,3 +552,9 @@ collection publication completed. It is retained as
 iterations/music-playlist-painted-timeout-a69e0a61.json. New scopes split stored
 song reads/publication and collection replacement/active-item dispatch so the
 remaining bottleneck is measured before changing its repeated index scans.
+
+The 0fcece16 native control timed out inside stored-song enrichment publication;
+collection replacement had completed in 10.9k ms and active-item dispatch in
+4.1k ms. The new enrichment baseline is retained as
+iterations/music-enrichment-baseline-0fcece16.json before replacing its index
+lookup. The upcoming lookup keeps the original first-occurrence selection.
