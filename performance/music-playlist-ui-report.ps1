@@ -19,6 +19,7 @@ function Read-Series($path) {
   foreach($run in $runs) {
     if($run.Commit -notmatch '^[0-9a-fA-F]{40}$' -or $run.Commit -ne $runs[0].Commit){throw 'Missing or mixed music commit'}
     Same $runs[0] $run
+    if($run.MusicPlaylistSave -or $run.MusicPlaylistClear){throw 'Write workloads require their own comparison.'}
     if($run.MusicPlaylistEntries -ne 100000 -or $run.WindowMode -ne 'Visible' -or
        $run.DiagnosticMode -ne 'buffered-v1' -or $run.DiagnosticProfile -ne 'none'){throw 'Changed music workload or diagnostic protocol'}
     if($run.Status -notin @('Rendered','Timeout') -or $run.FailureType){throw 'Music run failed before a valid timing endpoint'}

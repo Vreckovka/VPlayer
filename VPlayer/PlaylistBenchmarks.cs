@@ -9,6 +9,9 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Ninject;
+using Microsoft.EntityFrameworkCore;
+using VPlayer.AudioStorage.AudioDatabase;
+using VPlayer.AudioStorage.DomainClasses;
 using VCore.WPF.ViewModels.Navigation;
 using VPlayer.Core.Events;
 using VPlayer.Core.ViewModels.SoundItems;
@@ -108,6 +111,70 @@ namespace VPlayer
         StartupMeasurements.RecordObservation("UI / music playlist / "+query.Name+" ordered ids hash",BitConverter.ToInt64(hash,0));
         StartupMeasurements.RecordObservation("UI / music playlist / "+query.Name+" query length",query.Text.Length);
         CaptureBenchmarkWindow(window,".music-"+query.Name.Replace(' ','-')+".png");
+      }
+      if(Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_MUSIC_PLAYLIST_SAVE")=="1" ||
+         Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_MUSIC_PLAYLIST_CLEAR")=="1")
+        await BenchmarkMusicPlaylistWrite(window,player);
+    }
+
+    private async Task BenchmarkMusicPlaylistWrite(Window window,MusicPlayerViewModel player)
+    {
+      player.ActualSearch="";
+      await WaitForMusic(window,()=>player.VirtualizedPlayList?.Count==100000 && MusicRowsReady(window,player),
+        "100k music write workload",20);
+      var playlistId=player.ActualSavedPlaylist.Id;
+      var beforeRows=player.ActualSavedPlaylist.PlaylistItems.OrderBy(x=>x.OrderInPlaylist).ThenBy(x=>x.Id).ToArray();
+      var expectedTracks=player.PlayList.Select(x=>x.Model.Id).ToList();
+      if(beforeRows.Length!=100000 || player.PlayList.Count!=100000) throw new InvalidOperationException("Write workload is not 100k entries.");
+      StartupMeasurements.RecordObservation("UI / music playlist / write rows before",beforeRows.Length);
+      StartupMeasurements.RecordObservation("UI / music playlist / write playlist id",playlistId);
+      StartupMeasurements.RecordProcessMilestone("UI / music playlist / write workload ready");
+      int[] expectedRows;
+      if(Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_MUSIC_PLAYLIST_SAVE")=="1")
+      {
+        var moved=player.PlayList[0];
+        var movedTrack=expectedTracks[0];
+        expectedTracks.RemoveAt(0);
+        expectedTracks.Add(movedTrack);
+        using(StartupMeasurements.Measure("UI / music playlist / save 100k and render"))
+        {
+          if(!await player.MovePlaylistItemAsync(moved,99999)) throw new InvalidOperationException("Large playlist reorder/save failed.");
+          await WaitForMusic(window,()=>player.PlayList.Count==100000 && ReferenceEquals(player.PlayList[99999],moved) &&
+            MusicRowsReady(window,player),"Saved 100k music playlist",20);
+        }
+        expectedRows=player.ActualSavedPlaylist.PlaylistItems.OrderBy(x=>x.OrderInPlaylist).ThenBy(x=>x.Id).Select(x=>x.Id).ToArray();
+        if(!beforeRows.Select(x=>x.Id).OrderBy(x=>x).SequenceEqual(expectedRows.OrderBy(x=>x)))
+          throw new InvalidOperationException("Reorder changed playlist row identities.");
+        StartupMeasurements.RecordObservation("UI / music playlist / saved rows after",player.PlayList.Count);
+        CaptureBenchmarkWindow(window,".music-saved.png");
+      }
+      else
+      {
+        expectedRows=beforeRows.Select(x=>x.Id).ToArray();
+        using(StartupMeasurements.Measure("UI / music playlist / clear 100k and render"))
+        {
+          await player.ClearPlaylist();
+          await WaitForMusic(window,()=>player.PlayList.Count==0 && player.ActualItem==null &&
+            player.ActualSavedPlaylist.Id<=0 && FindTrackList(window)?.Items.Count==0,
+            "Cleared 100k music playlist",20);
+        }
+        StartupMeasurements.RecordObservation("UI / music playlist / cleared rows after",player.PlayList.Count);
+        CaptureBenchmarkWindow(window,".music-cleared.png");
+      }
+      using(StartupMeasurements.Measure("UI / music playlist / verify persisted 100k rows"))
+      using(var context=new AudioDatabaseContext())
+      {
+        var rows=context.Set<SoundItemFilePlaylist>().AsNoTracking().Where(x=>x.Id==playlistId)
+          .SelectMany(x=>x.PlaylistItems).OrderBy(x=>x.OrderInPlaylist).ThenBy(x=>x.Id)
+          .Select(x=>new {x.Id,x.IdReferencedItem,x.OrderInPlaylist}).ToArray();
+        if(rows.Length!=100000 || !rows.Select(x=>x.Id).SequenceEqual(expectedRows) ||
+           !rows.Select(x=>x.IdReferencedItem).SequenceEqual(expectedTracks))
+          throw new InvalidOperationException("Stored playlist does not match all intended occurrences.");
+        if(Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_MUSIC_PLAYLIST_SAVE")=="1" &&
+           !rows.Select(x=>x.OrderInPlaylist).SequenceEqual(Enumerable.Range(1,100000)))
+          throw new InvalidOperationException("Stored playlist order positions changed.");
+        StartupMeasurements.RecordObservation("UI / music playlist / persisted write occurrence check",1);
+        StartupMeasurements.RecordObservation("UI / music playlist / persisted write rows",rows.Length);
       }
     }
     private static bool MusicRowsReady(Window window,MusicPlayerViewModel player)
