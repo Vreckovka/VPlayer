@@ -54,7 +54,7 @@ namespace VPlayer.Performance
         var playAllocation=GC.GetAllocatedBytesForCurrentThread()-allocated;
         LyricsAnimationFixture.Pump(TimeSpan.FromMilliseconds(1200));
         fixture.Layout();
-        var screenshot=Path.Combine(directory,"lyrics-"+swaps+".png");
+        var screenshot=Path.Combine(directory,Path.GetFileNameWithoutExtension(output)+"-lyrics-"+swaps+".png");
         var bitmap=new RenderTargetBitmap(720,480,96,96,PixelFormats.Pbgra32);bitmap.Render(fixture.View);
         var encoder=new PngBitmapEncoder();encoder.Frames.Add(BitmapFrame.Create(bitmap));using(var stream=File.Create(screenshot))encoder.Save(stream);
         if(updates<10 || frameGaps.Count<2 || first.ActualLine==null)throw new InvalidOperationException("No valid rendered animation samples.");
@@ -64,7 +64,7 @@ namespace VPlayer.Performance
         host.Close();
       }
       app.Shutdown();
-      File.WriteAllText(output,JsonSerializer.Serialize(new {Schema="lyrics-animation-v2",Commit=commit,CreatedUtc=DateTime.UtcNow,Runtime=Environment.Version.ToString(),Environment.ProcessorCount,
+      File.WriteAllText(output,JsonSerializer.Serialize(new {Schema="lyrics-animation-v3",Commit=commit,CreatedUtc=DateTime.UtcNow,Runtime=Environment.Version.ToString(),Environment.ProcessorCount,
         Boundary="Production AutoScrollLyricsBehavior and LRCFileViewModel in a visible virtualized pixel-scroll ListView; simplified fixed-height text rows; synthetic 16ms playback ticks, no audio decoding or full player UI. First fresh case then 1000 track changes; distinct WPF rendering timestamps deduplicated before gaps are recorded; dispatcher delay and process CPU measured for six seconds. Context construction, snapshots and settling excluded from playback timing.",Results=results},new JsonSerializerOptions {WriteIndented=true}));
     }
   }

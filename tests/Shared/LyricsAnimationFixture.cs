@@ -34,6 +34,8 @@ namespace VPlayer.TestSupport
       View.Template=(ControlTemplate)XamlReader.Parse("<ControlTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' TargetType='ListView'><Border><ScrollViewer CanContentScroll='True' HorizontalScrollBarVisibility='Disabled' VerticalScrollBarVisibility='Hidden'><ItemsPresenter /></ScrollViewer></Border></ControlTemplate>");
       View.ItemContainerStyle=new Style(typeof(ListViewItem));
       View.ItemContainerStyle.Setters.Add(new Setter(FrameworkElement.HeightProperty,31.0));
+      View.Background=System.Windows.Media.Brushes.Black;
+      View.ItemContainerStyle.Setters.Add(new Setter(Control.ForegroundProperty,System.Windows.Media.Brushes.White));
       var actual=new DataTrigger {Binding=new Binding("IsActual"),Value=true};
       actual.Setters.Add(new Setter(Control.ForegroundProperty,System.Windows.Media.Brushes.DeepPink));
       actual.Setters.Add(new Setter(Control.FontWeightProperty,FontWeights.Bold));
