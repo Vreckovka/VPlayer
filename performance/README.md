@@ -529,3 +529,12 @@ Sources are removed and disposed when their work finishes. Four controlled
 async regressions failed before the fix and now pass; all 164 tests and the
 Release application build pass. This fixes the disposed-track task exposed by
 the native pilot; the next native series will retain full rendering checks.
+
+The repeated 95283cc8 layout-only series is retained as
+iterations/music-playlist-layout-series-95283cc8.json. Its failed runs exposed
+stored-song replacement racing live playlist enumeration. Stored metadata is
+now queried on the worker and applied after returning to the UI context; stale
+results are discarded and notification hooks are restored on failure. Debounced
+search and virtual-list reload callbacks use the UI dispatcher. Both dispatcher
+regressions failed before the fix and now pass; all 166 tests and the application
+Release build pass.

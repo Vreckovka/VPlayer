@@ -2252,22 +2252,28 @@ namespace VPlayer.WindowsPlayer.ViewModels
       var playlistItems = data.Items.ToList();
       bool changed = false;
 
-      await Task.Run(() =>
-      {
-        var songsItems = storageManager.GetTempRepository<Song>()
+      var sourcePlaylist = PlayList.ToArray();
+      var songsItems = await Task.Run(() => storageManager.GetTempRepository<Song>()
           .Where(x => playlistItems.Select(y => y.Model.Id).Contains(x.ItemModel.Id))
           .Include(x => x.Album)
           .ThenInclude(x => x.Artist)
           .Include(x => x.ItemModel)
           .ThenInclude(x => x.FileInfoEntity)
-          .ToList();
+          .ToList());
+
+      // The query may finish after another playlist has been opened or cleared.
+      // Apply its replacements on the caller's UI context only if its rows remain.
+      if (sourcePlaylist.Length != PlayList.Count ||
+          sourcePlaylist.Where((item,index) => !ReferenceEquals(item,PlayList[index])).Any())
+        return;
 
         if (songsItems.Count > 0)
         {
 
           PlayList.DisableNotification();
           UnHookToPlaylistCollectionChanged();
-
+          try
+          {
           foreach (var songItem in songsItems)
           {
             var index = PlayList.IndexOf(x => x.Model.Id == songItem.ItemModel.Id);
@@ -2300,11 +2306,13 @@ namespace VPlayer.WindowsPlayer.ViewModels
             }
           }
 
-          HookToPlaylistCollectionChanged();
-          PlayList.EnableNotification();
-
+          }
+          finally
+          {
+            HookToPlaylistCollectionChanged();
+            PlayList.EnableNotification();
+          }
         }
-      });
 
       if (changed)
         RequestReloadVirtulizedPlaylist();

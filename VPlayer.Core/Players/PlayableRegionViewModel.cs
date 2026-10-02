@@ -1013,7 +1013,7 @@ namespace VPlayer.Core.ViewModels
 
       }).DisposeWith(this);
 
-      actualSearchSubject.Throttle(TimeSpan.FromMilliseconds(250)).Subscribe(FilterByActualSearch).DisposeWith(this);
+      SubscribeToActualSearch().DisposeWith(this);
 
       HookToPubSubEvents();
 
@@ -1029,6 +1029,11 @@ namespace VPlayer.Core.ViewModels
     }
 
     #endregion
+
+    private IDisposable SubscribeToActualSearch()
+    {
+      return actualSearchSubject.Throttle(TimeSpan.FromMilliseconds(250)).ObserveOnDispatcher().Subscribe(FilterByActualSearch);
+    }
 
     #region HookToVlcEvents
 
@@ -2092,7 +2097,7 @@ namespace VPlayer.Core.ViewModels
 
     protected void RequestReloadVirtulizedPlaylist()
     {
-      virtulizedPlaylistTimer.RequestMethodCall(ReloadVirtulizedPlaylist);
+      virtulizedPlaylistTimer.RequestMethodCall(() => VSynchronizationContext.InvokeOnDispatcher(ReloadVirtulizedPlaylist));
     }
 
     #endregion
