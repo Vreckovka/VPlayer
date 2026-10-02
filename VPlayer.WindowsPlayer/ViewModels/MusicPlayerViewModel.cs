@@ -2190,6 +2190,21 @@ namespace VPlayer.WindowsPlayer.ViewModels
       downloadingSongTasks.Add(actualDownloadingSongTask);
 
       using var conversion=VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("UI / music playlist / convert incoming views");
+      PrepareIncomingViews(data);
+      ResetDownload();
+    }
+
+    private void PrepareIncomingViews(PlayItemsEventData<SoundItemInPlaylistViewModel> data)
+    {
+      // Saved playlists construct their visible views from authoritative ordered
+      // playlist rows in PlayPlaylist. Incoming views are only used for IDs/source
+      // during enrichment; converting them here would create a discarded second set.
+      if (data.GetModel<SoundItemFilePlaylist>() != null &&
+          (data.EventAction == EventAction.PlayFromPlaylist ||
+           data.EventAction == EventAction.PlayFromPlaylistLast ||
+           data.EventAction == EventAction.InitSetPlaylist))
+        return;
+
       var songs = new List<SongInPlayListViewModel>();
 
       foreach (var item in data.Items)
@@ -2211,9 +2226,6 @@ namespace VPlayer.WindowsPlayer.ViewModels
       }
 
       data.Items = songs;
-
-      ResetDownload();
-
     }
 
     #endregion
