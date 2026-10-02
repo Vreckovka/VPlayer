@@ -2242,6 +2242,14 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     #region OnPlayEvent
 
+    private static Dictionary<int,int> FirstOccurrenceIndices<T>(IReadOnlyList<T> rows,Func<T,int> id)
+    {
+      var result=new Dictionary<int,int>(rows.Count);
+      for(int index=0;index<rows.Count;index++)
+        result.TryAdd(id(rows[index]),index);
+      return result;
+    }
+
     private List<CancellationTokenSource> downloadingSongTasks = new List<CancellationTokenSource>();
 
     protected override async void OnPlayEvent(PlayItemsEventData<SoundItemInPlaylistViewModel> data)
@@ -2276,13 +2284,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
           UnHookToPlaylistCollectionChanged();
           try
           {
+          var indices=FirstOccurrenceIndices(sourcePlaylist,item=>item.Model.Id);
           foreach (var songItem in songsItems)
           {
-            var index = PlayList.IndexOf(x => x.Model.Id == songItem.ItemModel.Id);
-
-            if (index != null)
+            if (indices.TryGetValue(songItem.ItemModel.Id,out var index))
             {
-              var itemInPlaylistViewModel = PlayList[index.Value];
+              var itemInPlaylistViewModel = PlayList[index];
               songItem.ItemModel = itemInPlaylistViewModel.Model;
               var vm = viewModelsFactory.Create<SongInPlayListViewModel>(songItem);
 
@@ -2298,7 +2305,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
               }
 
 
-              PlayList[index.Value] = vm;
+              PlayList[index] = vm;
 
               if (itemInPlaylistViewModel == ActualItem)
               {

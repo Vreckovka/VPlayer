@@ -558,3 +558,10 @@ collection replacement had completed in 10.9k ms and active-item dispatch in
 4.1k ms. The new enrichment baseline is retained as
 iterations/music-enrichment-baseline-0fcece16.json before replacing its index
 lookup. The upcoming lookup keeps the original first-occurrence selection.
+
+Stored-song enrichment now builds one first-occurrence index for its captured
+playlist instead of scanning the live playlist for every stored song. The
+original duplicate-ID selection and occurrence order are retained. Regression
+checks cover duplicate/non-positive IDs, empty input and 100k rows with 50k
+repeated IDs, including one ID read per row. All 168 tests and the application
+Release build pass; native gains are measured against the frozen control.
