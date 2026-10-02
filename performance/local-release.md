@@ -1,15 +1,11 @@
-﻿# Local test release
+# Local production release
 
-**7.6.9771.34514** installed in `D:\VPlayer`, increased from `7.6.9771.31678`. Source: `3a69c4e8` on `codex/tests-and-performance`.
+**7.6.9771.41550** is installed in `D:\VPlayer` and running, upgraded from **7.6.9771.34514**. Fresh **Release x64**, self-contained `win-x64` publish from `3eaa0a8a` on `codex/tests-and-performance`; compiler optimization flags and the newly generated VLC cache were verified.
 
-The later [VLC startup optimization](vlc-startup-results.md) [incoming playlist changes](incoming-playlist-results.md), and [lyrics animation fixes](lyrics-animation-results.md) are on the branch and awaiting deployment. They were tested in separate workspace builds; the running installation was left untouched.
+Includes the branch's VLC startup, incoming playlist construction, lyrics animation/cached lyrics, and file-browser loading changes. **258 Release tests passed** on the same production implementations; three existing file-browser search regressions remain excluded and unfixed.
 
-Includes the latest [playlist collection optimization and subscription fixes](iterations/music-collection-tracking-results-b65ef9ce.md), earlier playlist loading and rapid-skip fixes, and the [startup window-order fix](window-startup-results.md).
+All **1,306** published application files verified; **36** changed. All **1,033** library/settings files remained unchanged during installation. Read locks were released before launch. The installed main window is responding. This is deployment verification, not a playback or performance comparison.
 
-Release publish succeeded. All application files verified; library and settings preserved during deployment. The same production changes passed 231 regression tests; this release changes only the version using the existing updater formula.
+The disk initially had only 2.6 MB free. Four obsolete published build directories were removed with authorization, freeing 3.4 GiB. Backups remain under `artifacts/local-deployment`, including the successful rollback snapshot. The prior failed attempts rolled back application files; live user data was preserved.
 
-Installed startup, saved metadata, a 100k-item ordered playlist, its last visible track and both search cases passed the smoke check. Initial, first-track and last-track screenshots were reviewed. This single check is not a performance comparison or an audio playback completion test.
-
-VPlayer reopened during the first replacement attempt. The application files were rolled back and verified; the retry succeeded after it stayed closed. Backups remain in `artifacts/local-deployment`. A normal VPlayer session is now running; its live library changes are preserved.
-
-[Release verification](iterations/local-release-3a69c4e8.json). Remaining optimization scope: [focus.md](focus.md).
+Every requested deployment here must use a fresh production publish and an increased version. Optimization remains paused. [Verification](iterations/local-release-3eaa0a8a.json).
