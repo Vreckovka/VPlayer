@@ -1,8 +1,8 @@
 <Project>
   <PropertyGroup>
-    <GenerateVlcPluginCache Condition="'$(GenerateVlcPluginCache)' == '' and '$(Configuration)' == 'Release' and '$(RuntimeIdentifier)' == 'win-x64' and '$(OS)' == 'Windows_NT'">true</GenerateVlcPluginCache>
+    <GenerateVlcPluginCache Condition="'$(GenerateVlcPluginCache)' == ''">true</GenerateVlcPluginCache>
   </PropertyGroup>
-  <Target Name="PreparePublishedVlcPluginCache" AfterTargets="Publish" Condition="'$(GenerateVlcPluginCache)' == 'true'">
+  <Target Name="PreparePublishedVlcPluginCache" AfterTargets="Publish" Condition="'$(GenerateVlcPluginCache)' == 'true' and '$(Configuration)' == 'Release' and '$(RuntimeIdentifier)' == 'win-x64' and '$(OS)' == 'Windows_NT'">
     <PropertyGroup>
       <_VlcNativeDirectory>$([System.IO.Path]::Combine('$(PublishDir)', 'libvlc', 'win-x64'))</_VlcNativeDirectory>
       <_VlcNativeDirectory>$([System.IO.Path]::GetFullPath('$(_VlcNativeDirectory)'))</_VlcNativeDirectory>

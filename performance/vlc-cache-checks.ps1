@@ -20,8 +20,9 @@ function Decode($name){
  return Get-Content -LiteralPath $output -Raw|ConvertFrom-Json
 }
 $relocated=Decode 'relocation'
-& dotnet msbuild (Join-Path $repo 'VPlayer/VPlayer.csproj') -t:PreparePublishedVlcPluginCache -p:Configuration=Release -p:Platform=x64 -p:RuntimeIdentifier=win-x64 "-p:PublishDir=$package/" *> (Join-Path $destination 'publish-target.log')
-if($LASTEXITCODE -ne 0){throw 'Publish target failed'}
+Remove-Item -LiteralPath $cache
+& dotnet msbuild (Join-Path $repo 'VPlayer/VPlayer.csproj') -t:PreparePublishedVlcPluginCache -p:Configuration=Release -p:Platform=x64 -p:PublishProfile=FolderProfile "-p:PublishDir=$package/" *> (Join-Path $destination 'publish-target.log')
+if($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $cache)){throw 'Profile-based publish target failed to generate cache'}
 [IO.File]::WriteAllBytes($cache,[byte[]](1,2,3,4))
 & dotnet $tool $lib *> (Join-Path $destination 'regenerate.log')
 if($LASTEXITCODE -ne 0 -or (Get-Item -LiteralPath $cache).Length -le 4){throw 'Corrupt cache was not replaced'}
@@ -40,5 +41,5 @@ try{
 }finally{Set-ItemProperty -LiteralPath $cache -Name IsReadOnly -Value $false}
 & dotnet $tool $lib *> (Join-Path $destination 'final-regenerate.log')
 if($LASTEXITCODE -ne 0){throw 'Final regeneration failed'}
-[ordered]@{Schema='vlc-cache-checks-v1';ProductionCommit=$ProductionCommit;NativeVersion=$relocated.NativeVersion;NativePayloadSha256=$relocated.NativePayloadSha256;RelocatedCacheDecodes=$true;PublishTargetSucceeds=$true;CorruptCacheReplaced=$true;RegeneratedCacheDecodesSameFramesAndModules=$true;MissingPayloadRejected=$true;InvalidArgumentsRejected=$true;ReadOnlyStaleCacheRejected=$true;Passed=7} | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $destination 'checks.json') -Encoding UTF8
+[ordered]@{Schema='vlc-cache-checks-v1';ProductionCommit=$ProductionCommit;NativeVersion=$relocated.NativeVersion;NativePayloadSha256=$relocated.NativePayloadSha256;RelocatedCacheDecodes=$true;PublishProfileSuppliesRuntimeAndGeneratesFreshCache=$true;CorruptCacheReplaced=$true;RegeneratedCacheDecodesSameFramesAndModules=$true;MissingPayloadRejected=$true;InvalidArgumentsRejected=$true;ReadOnlyStaleCacheRejected=$true;Passed=7} | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $destination 'checks.json') -Encoding UTF8
 Write-Output 'Seven native cache checks passed.'
