@@ -513,3 +513,10 @@ record is iterations/music-playlist-duration-scroll-failure-f6ecdd66.json.
 This is partial evidence, not a completed UI comparison. Failure-only viewport
 observations and a screenshot now retain the exact scrolling state without
 changing successful timing boundaries.
+
+The scrolling diagnostic captured the correct final occurrence at the viewport
+edge. The visibility check now allows 0.001 device-independent pixels of layout
+rounding, far below a physical pixel. The diagnostic run and its failure stack
+are retained under iterations/music-playlist-scroll-diagnostics-dc5b48b0.*.
+It also exposed an uncancelled metadata worker writing to a disposed track;
+that separate lifecycle defect must be fixed before accepting a full UI run.

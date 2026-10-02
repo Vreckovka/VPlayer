@@ -1,0 +1,13 @@
+System.AggregateException: A Task's exception(s) were not observed either by Waiting on the Task or accessing its Exception property. As a result, the unobserved exception was rethrown by the finalizer thread. (Cannot access a disposed object.)
+ ---> System.ObjectDisposedException: Cannot access a disposed object.
+   at System.Reactive.Subjects.ReplaySubject`1.ReplayBase.CheckDisposed() in /_/Rx.NET/Source/src/System.Reactive/Subjects/ReplaySubject.cs:line 424
+   at System.Reactive.Subjects.ReplaySubject`1.ReplayBase.OnNext(T value) in /_/Rx.NET/Source/src/System.Reactive/Subjects/ReplaySubject.cs:line 255
+   at System.Reactive.AnonymousSafeObserver`1.OnNext(T value) in /_/Rx.NET/Source/src/System.Reactive/AnonymousSafeObserver.cs:line 54
+   at System.Reactive.Subjects.Subject`1.OnNext(T value) in /_/Rx.NET/Source/src/System.Reactive/Subjects/Subject.cs:line 147
+   at VPlayer.Core.ViewModels.FileItemInPlayList`1.set_Created(DateTime value) in D:\Aplikacie\VPlayer\VPlayer.Core\ViewModels\FileItemInPlayList.cs:line 237
+   at VPlayer.Core.Players.FilePlayableRegionViewModel`6.DownloadItemInfo(CancellationToken cancellationToken) in D:\Aplikacie\VPlayer\VPlayer.Core\Players\FilePlayableRegionViewModel.cs:line 979
+   at VPlayer.WindowsPlayer.ViewModels.MusicPlayerViewModel.<>c__DisplayClass128_0.<<DownloadItemInfo>b__0>d.MoveNext() in D:\Aplikacie\VPlayer\VPlayer.WindowsPlayer\ViewModels\MusicPlayerViewModel.cs:line 1176
+--- End of stack trace from previous location where exception was thrown ---
+   at VPlayer.WindowsPlayer.ViewModels.MusicPlayerViewModel.DownloadItemInfo(CancellationToken cancellationToken) in D:\Aplikacie\VPlayer\VPlayer.WindowsPlayer\ViewModels\MusicPlayerViewModel.cs:line 1180
+   at VPlayer.Core.Players.FilePlayableRegionViewModel`6.<>c__DisplayClass53_0.<<OnNewItemPlay>b__0>d.MoveNext() in D:\Aplikacie\VPlayer\VPlayer.Core\Players\FilePlayableRegionViewModel.cs:line 486
+   --- End of inner exception stack trace ---

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics;
@@ -244,7 +244,10 @@ namespace VPlayer
       while (parent != null && !(parent is ScrollViewer)) parent = System.Windows.Media.VisualTreeHelper.GetParent(parent);
       if (!(parent is ScrollViewer viewer) || row.ActualHeight <= 0) return false;
       var bounds = row.TransformToAncestor(viewer).TransformBounds(new Rect(row.RenderSize));
-      return bounds.Top >= 0 && bounds.Bottom <= viewer.ActualHeight && bounds.Right > 0 && bounds.Left < viewer.ActualWidth;
+      // Large pixel scroll offsets can leave subpixel floating-point error at
+      // the viewport edge. This tolerance is far below a physical pixel.
+      const double layoutTolerance = 0.001;
+      return bounds.Top >= -layoutTolerance && bounds.Bottom <= viewer.ActualHeight + layoutTolerance && bounds.Right > 0 && bounds.Left < viewer.ActualWidth;
     }
     private static ListView FindPlaylistList(System.Windows.DependencyObject root)
     {

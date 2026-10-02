@@ -1,0 +1,4810 @@
+{
+  "Status": "Failed",
+  "FailureType": "System.AggregateException -> System.ObjectDisposedException",
+  "ActivePhases": [],
+  "Commit": "dc5b48b0dd70ec7dcd853bf6963657b71fdea6d8",
+  "Runtime": "3.1.32",
+  "CreatedUtc": "2026-10-02T06:39:25.5676013Z",
+  "Phases": [
+    {
+      "Name": "Application / VPlayerCoreModule",
+      "Milliseconds": 3.8229,
+      "StartedMilliseconds": 1477.3996,
+      "CompletedMilliseconds": 1481.2224999999999,
+      "Execution": null
+    },
+    {
+      "Name": "Application / IPTVModule",
+      "Milliseconds": 2.8311,
+      "StartedMilliseconds": 1483.5695,
+      "CompletedMilliseconds": 1486.4006000000002,
+      "Execution": null
+    },
+    {
+      "Name": "Application / UPnPNinjectModule",
+      "Milliseconds": 2.3097,
+      "StartedMilliseconds": 1488.5377,
+      "CompletedMilliseconds": 1490.8474,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library module",
+      "Milliseconds": 41.7271,
+      "StartedMilliseconds": 1566.9322,
+      "CompletedMilliseconds": 1608.6593,
+      "Execution": null
+    },
+    {
+      "Name": "VLC / core initialization",
+      "Milliseconds": 10.2166,
+      "StartedMilliseconds": 1699.6432,
+      "CompletedMilliseconds": 1709.8598,
+      "Execution": null
+    },
+    {
+      "Name": "VLC / instance construction",
+      "Milliseconds": 226.4599,
+      "StartedMilliseconds": 1712.0337,
+      "CompletedMilliseconds": 1938.4936,
+      "Execution": null
+    },
+    {
+      "Name": "VLC / media player construction",
+      "Milliseconds": 53.6354,
+      "StartedMilliseconds": 1940.6173,
+      "CompletedMilliseconds": 1994.2526999999998,
+      "Execution": null
+    },
+    {
+      "Name": "VLC / event setup",
+      "Milliseconds": 11.4639,
+      "StartedMilliseconds": 1998.4378,
+      "CompletedMilliseconds": 2009.9017,
+      "Execution": null
+    },
+    {
+      "Name": "Application / video player activation",
+      "Milliseconds": 442.9749,
+      "StartedMilliseconds": 1613.0071,
+      "CompletedMilliseconds": 2055.982,
+      "Execution": null
+    },
+    {
+      "Name": "VLC / instance construction",
+      "Milliseconds": 62.147,
+      "StartedMilliseconds": 2142.3444,
+      "CompletedMilliseconds": 2204.4914,
+      "Execution": null
+    },
+    {
+      "Name": "VLC / media player construction",
+      "Milliseconds": 2.7754,
+      "StartedMilliseconds": 2206.8011,
+      "CompletedMilliseconds": 2209.5765,
+      "Execution": null
+    },
+    {
+      "Name": "VLC / event setup",
+      "Milliseconds": 2.4245,
+      "StartedMilliseconds": 2211.7305,
+      "CompletedMilliseconds": 2214.155,
+      "Execution": null
+    },
+    {
+      "Name": "Application / music player activation",
+      "Milliseconds": 176.3007,
+      "StartedMilliseconds": 2058.6108,
+      "CompletedMilliseconds": 2234.9115,
+      "Execution": null
+    },
+    {
+      "Name": "Application / WindowsPlayerNinjectModule",
+      "Milliseconds": 744.6241,
+      "StartedMilliseconds": 1492.7956,
+      "CompletedMilliseconds": 2237.4197,
+      "Execution": null
+    },
+    {
+      "Name": "Application / module registration",
+      "Milliseconds": 1029.7265,
+      "StartedMilliseconds": 1210.2903,
+      "CompletedMilliseconds": 2240.0168,
+      "Execution": null
+    },
+    {
+      "Name": "Application / settings",
+      "Milliseconds": 82.9519,
+      "StartedMilliseconds": 2250.5105,
+      "CompletedMilliseconds": 2333.4624,
+      "Execution": null
+    },
+    {
+      "Name": "Application / container activation",
+      "Milliseconds": 95.1505,
+      "StartedMilliseconds": 2242.1953,
+      "CompletedMilliseconds": 2337.3458,
+      "Execution": null
+    },
+    {
+      "Name": "Application / main window XAML",
+      "Milliseconds": 42.3538,
+      "StartedMilliseconds": 2356.0459,
+      "CompletedMilliseconds": 2398.3997,
+      "Execution": null
+    },
+    {
+      "Name": "Application / base main window initialization",
+      "Milliseconds": 1.9989,
+      "StartedMilliseconds": 2418.1095,
+      "CompletedMilliseconds": 2420.1084,
+      "Execution": null
+    },
+    {
+      "Name": "Application / audio device enumeration",
+      "Milliseconds": 12.5325,
+      "StartedMilliseconds": 2422.2351,
+      "CompletedMilliseconds": 2434.7675999999997,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library SoundItemPlaylistsViewModel / navigation construction",
+      "Milliseconds": 18.5435,
+      "StartedMilliseconds": 2474.4358,
+      "CompletedMilliseconds": 2492.9793000000004,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library IArtistsViewModel / navigation construction",
+      "Milliseconds": 4.4768,
+      "StartedMilliseconds": 2495.461,
+      "CompletedMilliseconds": 2499.9377999999997,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library IAlbumsViewModel / navigation construction",
+      "Milliseconds": 5.3739,
+      "StartedMilliseconds": 2503.0186,
+      "CompletedMilliseconds": 2508.3925,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library VideoPlaylistsViewModel / navigation construction",
+      "Milliseconds": 4.3709,
+      "StartedMilliseconds": 2510.4943,
+      "CompletedMilliseconds": 2514.8651999999997,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library TvShowsViewModel / navigation construction",
+      "Milliseconds": 5.5672,
+      "StartedMilliseconds": 2518.0543,
+      "CompletedMilliseconds": 2523.6214999999997,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library WindowsFileBrowserViewModel / navigation construction",
+      "Milliseconds": 9.4375,
+      "StartedMilliseconds": 2526.8562,
+      "CompletedMilliseconds": 2536.2937,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library UPnPManagerViewModel / navigation construction",
+      "Milliseconds": 2.3265,
+      "StartedMilliseconds": 2538.6165,
+      "CompletedMilliseconds": 2540.943,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library StatisticsViewModel / navigation construction",
+      "Milliseconds": 4.4621,
+      "StartedMilliseconds": 2543.3219,
+      "CompletedMilliseconds": 2547.784,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library SettingsViewModel / navigation construction",
+      "Milliseconds": 5.5737,
+      "StartedMilliseconds": 2550.2603,
+      "CompletedMilliseconds": 2555.834,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library PCloudManagerViewModel / navigation construction",
+      "Milliseconds": 8.0595,
+      "StartedMilliseconds": 2559.1635,
+      "CompletedMilliseconds": 2567.223,
+      "Execution": null
+    },
+    {
+      "Name": "Application / navigation view model construction",
+      "Milliseconds": 140.153,
+      "StartedMilliseconds": 2437.3239,
+      "CompletedMilliseconds": 2577.4768999999997,
+      "Execution": null
+    },
+    {
+      "Name": "Application / player controls construction",
+      "Milliseconds": 31.6023,
+      "StartedMilliseconds": 2580.8104,
+      "CompletedMilliseconds": 2612.4127,
+      "Execution": null
+    },
+    {
+      "Name": "Application / player controls activation",
+      "Milliseconds": 108.2729,
+      "StartedMilliseconds": 2614.933,
+      "CompletedMilliseconds": 2723.2059,
+      "Execution": null
+    },
+    {
+      "Name": "Application / navigation activation",
+      "Milliseconds": 84.1421,
+      "StartedMilliseconds": 2725.5694,
+      "CompletedMilliseconds": 2809.7115,
+      "Execution": null
+    },
+    {
+      "Name": "Application / main window view model initialization",
+      "Milliseconds": 396.616,
+      "StartedMilliseconds": 2415.7817,
+      "CompletedMilliseconds": 2812.3977,
+      "Execution": null
+    },
+    {
+      "Name": "Application / shell construction",
+      "Milliseconds": 470.5326,
+      "StartedMilliseconds": 2345.8812,
+      "CompletedMilliseconds": 2816.4138,
+      "Execution": null
+    },
+    {
+      "Name": "Application / OpenCV native initialization",
+      "Milliseconds": 21.6719,
+      "StartedMilliseconds": 2828.5684,
+      "CompletedMilliseconds": 2850.2403,
+      "Execution": null
+    },
+    {
+      "Name": "Application / initialization",
+      "Milliseconds": 1704.6637,
+      "StartedMilliseconds": 1147.7813,
+      "CompletedMilliseconds": 2852.445,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / repository setup",
+      "Milliseconds": 133.0515,
+      "StartedMilliseconds": 2774.9594,
+      "CompletedMilliseconds": 2908.0109,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / query",
+      "Milliseconds": 684.5357,
+      "StartedMilliseconds": 2771.9491,
+      "CompletedMilliseconds": 3456.4847999999997,
+      "Execution": null
+    },
+    {
+      "Name": "Application / show shell",
+      "Milliseconds": 994.2351,
+      "StartedMilliseconds": 2854.9801,
+      "CompletedMilliseconds": 3849.2152,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / view model construction",
+      "Milliseconds": 477.1365,
+      "StartedMilliseconds": 3473.4605,
+      "CompletedMilliseconds": 3950.597,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / UI publication",
+      "Milliseconds": 41.7392,
+      "StartedMilliseconds": 4010.0602,
+      "CompletedMilliseconds": 4051.7994,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / UI dispatch and publication",
+      "Milliseconds": 107.293,
+      "StartedMilliseconds": 3957.54,
+      "CompletedMilliseconds": 4064.833,
+      "Execution": null
+    },
+    {
+      "Name": "Application / first window render",
+      "Milliseconds": 4073.3251
+    },
+    {
+      "Name": "Application / benchmark first-frame screenshot",
+      "Milliseconds": 74.5679,
+      "StartedMilliseconds": 4078.0858,
+      "CompletedMilliseconds": 4152.6537,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / current track metadata",
+      "Milliseconds": 64.1507,
+      "StartedMilliseconds": 4167.2215,
+      "CompletedMilliseconds": 4231.3722,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / playlist preparation",
+      "Milliseconds": 159.6239,
+      "StartedMilliseconds": 4075.7692,
+      "CompletedMilliseconds": 4235.3931,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / post-load callback",
+      "Milliseconds": 170.5511,
+      "StartedMilliseconds": 4068.5205,
+      "CompletedMilliseconds": 4239.0716,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / pinned items",
+      "Milliseconds": 27.2663,
+      "StartedMilliseconds": 4240.983,
+      "CompletedMilliseconds": 4268.2493,
+      "Execution": null
+    },
+    {
+      "Name": "UI / music playlist / convert incoming views",
+      "Milliseconds": 12.8284,
+      "StartedMilliseconds": 5323.0374,
+      "CompletedMilliseconds": 5335.8658000000005,
+      "Execution": null
+    },
+    {
+      "Name": "UI / player playlist / create saved playlist views",
+      "Milliseconds": 5.3497,
+      "StartedMilliseconds": 5351.0336,
+      "CompletedMilliseconds": 5356.3832999999995,
+      "Execution": null
+    },
+    {
+      "Name": "UI / player playlist / collection publication",
+      "Milliseconds": 27.0845,
+      "StartedMilliseconds": 5359.6037,
+      "CompletedMilliseconds": 5386.6882,
+      "Execution": null
+    },
+    {
+      "Name": "Application / initial playlist view ready",
+      "Milliseconds": 5427.3381
+    },
+    {
+      "Name": "Application / library Album / repository setup",
+      "Milliseconds": 4.0832,
+      "StartedMilliseconds": 7069.8184,
+      "CompletedMilliseconds": 7073.9016,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 98.8929,
+      "StartedMilliseconds": 7066.3368,
+      "CompletedMilliseconds": 7165.2297,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / repository setup",
+      "Milliseconds": 5.5761,
+      "StartedMilliseconds": 7174.0882,
+      "CompletedMilliseconds": 7179.6643,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 378.9212,
+      "StartedMilliseconds": 7168.8317,
+      "CompletedMilliseconds": 7547.7528999999995,
+      "Execution": null
+    },
+    {
+      "Name": "UI / music playlist / activation and render",
+      "Milliseconds": 2145.9294,
+      "StartedMilliseconds": 5547.4708,
+      "CompletedMilliseconds": 7693.4002,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 8.7285,
+      "StartedMilliseconds": 11232.87,
+      "CompletedMilliseconds": 11241.5985,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 7.1419,
+      "StartedMilliseconds": 11968.1681,
+      "CompletedMilliseconds": 11975.310000000001,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.7897,
+      "StartedMilliseconds": 12957.6678,
+      "CompletedMilliseconds": 12962.457499999999,
+      "Execution": null
+    },
+    {
+      "Name": "UI / music playlist / read and create incoming views",
+      "Milliseconds": 2982.9259,
+      "StartedMilliseconds": 12673.0759,
+      "CompletedMilliseconds": 15656.0018,
+      "Execution": null
+    },
+    {
+      "Name": "UI / music playlist / convert incoming views",
+      "Milliseconds": 5024.838,
+      "StartedMilliseconds": 15660.4746,
+      "CompletedMilliseconds": 20685.312599999997,
+      "Execution": null
+    },
+    {
+      "Name": "UI / player playlist / create saved playlist views",
+      "Milliseconds": 4911.6012,
+      "StartedMilliseconds": 20711.838,
+      "CompletedMilliseconds": 25623.4392,
+      "Execution": null
+    },
+    {
+      "Name": "UI / player playlist / collection publication",
+      "Milliseconds": 15517.2746,
+      "StartedMilliseconds": 25632.0894,
+      "CompletedMilliseconds": 41149.364,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.7667,
+      "StartedMilliseconds": 41966.7408,
+      "CompletedMilliseconds": 41972.5075,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 112.9965,
+      "StartedMilliseconds": 41976.2313,
+      "CompletedMilliseconds": 42089.2278,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.9595,
+      "StartedMilliseconds": 42097.0922,
+      "CompletedMilliseconds": 42102.051699999996,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.882,
+      "StartedMilliseconds": 42111.9915,
+      "CompletedMilliseconds": 42116.873499999994,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 125.3323,
+      "StartedMilliseconds": 42137.254,
+      "CompletedMilliseconds": 42262.5863,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 17.409,
+      "StartedMilliseconds": 42271.2918,
+      "CompletedMilliseconds": 42288.7008,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.0722,
+      "StartedMilliseconds": 42298.1626,
+      "CompletedMilliseconds": 42303.234800000006,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.3322,
+      "StartedMilliseconds": 42312.6337,
+      "CompletedMilliseconds": 42316.965899999996,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 23.1943,
+      "StartedMilliseconds": 42327.1843,
+      "CompletedMilliseconds": 42350.378600000004,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.1841,
+      "StartedMilliseconds": 42355.722,
+      "CompletedMilliseconds": 42359.9061,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.7274,
+      "StartedMilliseconds": 42366.8097,
+      "CompletedMilliseconds": 42372.5371,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.793,
+      "StartedMilliseconds": 42380.3961,
+      "CompletedMilliseconds": 42385.189099999996,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.587,
+      "StartedMilliseconds": 42425.9354,
+      "CompletedMilliseconds": 42430.5224,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.6567,
+      "StartedMilliseconds": 42440.1156,
+      "CompletedMilliseconds": 42444.7723,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 20.4972,
+      "StartedMilliseconds": 42454.2736,
+      "CompletedMilliseconds": 42474.7708,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.5446,
+      "StartedMilliseconds": 42483.2779,
+      "CompletedMilliseconds": 42487.8225,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.7989,
+      "StartedMilliseconds": 42497.9925,
+      "CompletedMilliseconds": 42502.7914,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.7167,
+      "StartedMilliseconds": 42529.6358,
+      "CompletedMilliseconds": 42534.35249999999,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.4606,
+      "StartedMilliseconds": 42543.904,
+      "CompletedMilliseconds": 42548.3646,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 20.9146,
+      "StartedMilliseconds": 42558.7308,
+      "CompletedMilliseconds": 42579.645399999994,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 126.4814,
+      "StartedMilliseconds": 42583.3273,
+      "CompletedMilliseconds": 42709.808699999994,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.6477,
+      "StartedMilliseconds": 42722.2034,
+      "CompletedMilliseconds": 42727.8511,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.9788,
+      "StartedMilliseconds": 42759.0707,
+      "CompletedMilliseconds": 42765.049499999994,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 7.0206,
+      "StartedMilliseconds": 42779.8511,
+      "CompletedMilliseconds": 42786.8717,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 23.1446,
+      "StartedMilliseconds": 42800.5392,
+      "CompletedMilliseconds": 42823.6838,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 8.6799,
+      "StartedMilliseconds": 42837.7694,
+      "CompletedMilliseconds": 42846.4493,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 6.8401,
+      "StartedMilliseconds": 42857.9568,
+      "CompletedMilliseconds": 42864.7969,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 127.321,
+      "StartedMilliseconds": 42870.2828,
+      "CompletedMilliseconds": 42997.603800000004,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 10.0848,
+      "StartedMilliseconds": 43037.683,
+      "CompletedMilliseconds": 43047.767799999994,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 129.7485,
+      "StartedMilliseconds": 43054.806,
+      "CompletedMilliseconds": 43184.5545,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 6.2961,
+      "StartedMilliseconds": 43188.3174,
+      "CompletedMilliseconds": 43194.6135,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 11.7448,
+      "StartedMilliseconds": 43199.2449,
+      "CompletedMilliseconds": 43210.9897,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.8776,
+      "StartedMilliseconds": 43215.2075,
+      "CompletedMilliseconds": 43221.0851,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.2784,
+      "StartedMilliseconds": 43234.0064,
+      "CompletedMilliseconds": 43239.2848,
+      "Execution": null
+    },
+    {
+      "Name": "UI / music playlist / load and render",
+      "Milliseconds": 30677.9923,
+      "StartedMilliseconds": 12669.5823,
+      "CompletedMilliseconds": 43347.5746,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 188.0038,
+      "StartedMilliseconds": 43242.6911,
+      "CompletedMilliseconds": 43430.694899999995,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.0609,
+      "StartedMilliseconds": 43444.8496,
+      "CompletedMilliseconds": 43449.9105,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 21.1532,
+      "StartedMilliseconds": 43462.9021,
+      "CompletedMilliseconds": 43484.0553,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.0427,
+      "StartedMilliseconds": 43491.1484,
+      "CompletedMilliseconds": 43496.1911,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.7549,
+      "StartedMilliseconds": 43511.1597,
+      "CompletedMilliseconds": 43516.9146,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 119.7991,
+      "StartedMilliseconds": 43519.7326,
+      "CompletedMilliseconds": 43639.5317,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.4209,
+      "StartedMilliseconds": 43643.7844,
+      "CompletedMilliseconds": 43648.205299999994,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.4285,
+      "StartedMilliseconds": 43656.7029,
+      "CompletedMilliseconds": 43662.1314,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 14.1421,
+      "StartedMilliseconds": 43669.1046,
+      "CompletedMilliseconds": 43683.246699999996,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.6636,
+      "StartedMilliseconds": 43688.5602,
+      "CompletedMilliseconds": 43693.2238,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.9148,
+      "StartedMilliseconds": 43718.6429,
+      "CompletedMilliseconds": 43724.5577,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 7.0715,
+      "StartedMilliseconds": 43744.9485,
+      "CompletedMilliseconds": 43752.02,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.0662,
+      "StartedMilliseconds": 43766.2128,
+      "CompletedMilliseconds": 43770.279,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.8397,
+      "StartedMilliseconds": 43783.7694,
+      "CompletedMilliseconds": 43788.609099999994,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 13.1069,
+      "StartedMilliseconds": 43796.1926,
+      "CompletedMilliseconds": 43809.2995,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 103.6031,
+      "StartedMilliseconds": 43812.2528,
+      "CompletedMilliseconds": 43915.8559,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.8841,
+      "StartedMilliseconds": 43946.1846,
+      "CompletedMilliseconds": 43952.0687,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 100.34,
+      "StartedMilliseconds": 43955.5898,
+      "CompletedMilliseconds": 44055.9298,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.4973,
+      "StartedMilliseconds": 44076.6632,
+      "CompletedMilliseconds": 44081.160500000005,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.9697,
+      "StartedMilliseconds": 44093.5684,
+      "CompletedMilliseconds": 44099.5381,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 7.1523,
+      "StartedMilliseconds": 44112.4859,
+      "CompletedMilliseconds": 44119.6382,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 22.5674,
+      "StartedMilliseconds": 44135.2338,
+      "CompletedMilliseconds": 44157.8012,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 7.7849,
+      "StartedMilliseconds": 44171.0838,
+      "CompletedMilliseconds": 44178.8687,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 118.6839,
+      "StartedMilliseconds": 44182.1055,
+      "CompletedMilliseconds": 44300.789399999994,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 6.272,
+      "StartedMilliseconds": 44324.6236,
+      "CompletedMilliseconds": 44330.895599999996,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 7.4689,
+      "StartedMilliseconds": 44337.7764,
+      "CompletedMilliseconds": 44345.2453,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.7817,
+      "StartedMilliseconds": 44361.9354,
+      "CompletedMilliseconds": 44367.7171,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.5551,
+      "StartedMilliseconds": 44371.7061,
+      "CompletedMilliseconds": 44377.2612,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.1723,
+      "StartedMilliseconds": 44381.7182,
+      "CompletedMilliseconds": 44386.8905,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.8892,
+      "StartedMilliseconds": 44410.94,
+      "CompletedMilliseconds": 44416.8292,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.7097,
+      "StartedMilliseconds": 44437.7881,
+      "CompletedMilliseconds": 44443.4978,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 104.7965,
+      "StartedMilliseconds": 44447.3924,
+      "CompletedMilliseconds": 44552.188899999994,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 6.3134,
+      "StartedMilliseconds": 44621.9785,
+      "CompletedMilliseconds": 44628.2919,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.9584,
+      "StartedMilliseconds": 44637.7929,
+      "CompletedMilliseconds": 44643.7513,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.6662,
+      "StartedMilliseconds": 44682.9395,
+      "CompletedMilliseconds": 44688.6057,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 111.0103,
+      "StartedMilliseconds": 44691.4451,
+      "CompletedMilliseconds": 44802.4554,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.324,
+      "StartedMilliseconds": 44826.2844,
+      "CompletedMilliseconds": 44831.6084,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.4802,
+      "StartedMilliseconds": 44841.914,
+      "CompletedMilliseconds": 44847.394199999995,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.0459,
+      "StartedMilliseconds": 44857.994,
+      "CompletedMilliseconds": 44863.039899999996,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 119.8063,
+      "StartedMilliseconds": 44867.2265,
+      "CompletedMilliseconds": 44987.03279999999,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 7.5914,
+      "StartedMilliseconds": 45019.1302,
+      "CompletedMilliseconds": 45026.7216,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 390.3579,
+      "StartedMilliseconds": 45039.4178,
+      "CompletedMilliseconds": 45429.775700000006,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 115.5674,
+      "StartedMilliseconds": 45433.5503,
+      "CompletedMilliseconds": 45549.1177,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 6.1674,
+      "StartedMilliseconds": 45558.0473,
+      "CompletedMilliseconds": 45564.2147,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.3231,
+      "StartedMilliseconds": 45593.558,
+      "CompletedMilliseconds": 45598.8811,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.8171,
+      "StartedMilliseconds": 45608.5304,
+      "CompletedMilliseconds": 45613.3475,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.1444,
+      "StartedMilliseconds": 45624.569,
+      "CompletedMilliseconds": 45629.7134,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.6031,
+      "StartedMilliseconds": 45638.614,
+      "CompletedMilliseconds": 45643.2171,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.7835,
+      "StartedMilliseconds": 45680.6422,
+      "CompletedMilliseconds": 45685.4257,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.8101,
+      "StartedMilliseconds": 45693.1284,
+      "CompletedMilliseconds": 45697.938500000004,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.6821,
+      "StartedMilliseconds": 45706.0081,
+      "CompletedMilliseconds": 45710.6902,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 6.8553,
+      "StartedMilliseconds": 45724.0905,
+      "CompletedMilliseconds": 45730.9458,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.0016,
+      "StartedMilliseconds": 45767.109,
+      "CompletedMilliseconds": 45772.1106,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.6689,
+      "StartedMilliseconds": 45780.3112,
+      "CompletedMilliseconds": 45784.98009999999,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.0715,
+      "StartedMilliseconds": 45795.8317,
+      "CompletedMilliseconds": 45800.9032,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.954,
+      "StartedMilliseconds": 45813.6662,
+      "CompletedMilliseconds": 45818.6202,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.0017,
+      "StartedMilliseconds": 45844.3716,
+      "CompletedMilliseconds": 45849.3733,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.7153,
+      "StartedMilliseconds": 45860.313,
+      "CompletedMilliseconds": 45866.028300000005,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.613,
+      "StartedMilliseconds": 45879.0417,
+      "CompletedMilliseconds": 45883.6547,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 7.3239,
+      "StartedMilliseconds": 45894.27,
+      "CompletedMilliseconds": 45901.5939,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.665,
+      "StartedMilliseconds": 45929.1713,
+      "CompletedMilliseconds": 45934.8363,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 124.5619,
+      "StartedMilliseconds": 45938.6438,
+      "CompletedMilliseconds": 46063.2057,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 13.0083,
+      "StartedMilliseconds": 46074.5109,
+      "CompletedMilliseconds": 46087.5192,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 7.048,
+      "StartedMilliseconds": 46110.1895,
+      "CompletedMilliseconds": 46117.2375,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 120.0436,
+      "StartedMilliseconds": 46121.3812,
+      "CompletedMilliseconds": 46241.4248,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.6885,
+      "StartedMilliseconds": 46251.7529,
+      "CompletedMilliseconds": 46257.441399999996,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 6.2176,
+      "StartedMilliseconds": 46289.7804,
+      "CompletedMilliseconds": 46295.99800000001,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 14.269,
+      "StartedMilliseconds": 46311.2984,
+      "CompletedMilliseconds": 46325.5674,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 121.2375,
+      "StartedMilliseconds": 46330.1627,
+      "CompletedMilliseconds": 46451.400200000004,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.8338,
+      "StartedMilliseconds": 46455.0492,
+      "CompletedMilliseconds": 46459.883,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 129.5914,
+      "StartedMilliseconds": 46462.8583,
+      "CompletedMilliseconds": 46592.4497,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.5796,
+      "StartedMilliseconds": 46596.4023,
+      "CompletedMilliseconds": 46600.9819,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 121.9342,
+      "StartedMilliseconds": 46604.0553,
+      "CompletedMilliseconds": 46725.9895,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.1246,
+      "StartedMilliseconds": 46733.4516,
+      "CompletedMilliseconds": 46738.5762,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 121.1347,
+      "StartedMilliseconds": 46742.0337,
+      "CompletedMilliseconds": 46863.1684,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.0003,
+      "StartedMilliseconds": 46874.1156,
+      "CompletedMilliseconds": 46879.1159,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 117.6504,
+      "StartedMilliseconds": 46882.594,
+      "CompletedMilliseconds": 47000.244399999996,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 6.0443,
+      "StartedMilliseconds": 47008.1622,
+      "CompletedMilliseconds": 47014.2065,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.697,
+      "StartedMilliseconds": 47022.4556,
+      "CompletedMilliseconds": 47028.1526,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 126.7878,
+      "StartedMilliseconds": 47032.5589,
+      "CompletedMilliseconds": 47159.3467,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.731,
+      "StartedMilliseconds": 47163.9603,
+      "CompletedMilliseconds": 47169.6913,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 143.394,
+      "StartedMilliseconds": 47173.1859,
+      "CompletedMilliseconds": 47316.5799,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 7.9659,
+      "StartedMilliseconds": 47334.1727,
+      "CompletedMilliseconds": 47342.138600000006,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 108.9631,
+      "StartedMilliseconds": 47345.3779,
+      "CompletedMilliseconds": 47454.341,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.7844,
+      "StartedMilliseconds": 47472.376,
+      "CompletedMilliseconds": 47478.16039999999,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 109.6886,
+      "StartedMilliseconds": 47481.9366,
+      "CompletedMilliseconds": 47591.6252,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.5338,
+      "StartedMilliseconds": 47611.0496,
+      "CompletedMilliseconds": 47615.583399999996,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.8544,
+      "StartedMilliseconds": 47626.4068,
+      "CompletedMilliseconds": 47631.26119999999,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 114.0635,
+      "StartedMilliseconds": 47635.1029,
+      "CompletedMilliseconds": 47749.166399999995,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.5325,
+      "StartedMilliseconds": 47759.0064,
+      "CompletedMilliseconds": 47763.5389,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.9307,
+      "StartedMilliseconds": 47771.8291,
+      "CompletedMilliseconds": 47776.7598,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.6055,
+      "StartedMilliseconds": 47783.8476,
+      "CompletedMilliseconds": 47789.4531,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 6.2127,
+      "StartedMilliseconds": 47803.9011,
+      "CompletedMilliseconds": 47810.1138,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.7431,
+      "StartedMilliseconds": 47828.8553,
+      "CompletedMilliseconds": 47833.5984,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.3051,
+      "StartedMilliseconds": 47866.1146,
+      "CompletedMilliseconds": 47871.4197,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.7621,
+      "StartedMilliseconds": 47876.6959,
+      "CompletedMilliseconds": 47881.458,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.8038,
+      "StartedMilliseconds": 48229.5084,
+      "CompletedMilliseconds": 48234.3122,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.7882,
+      "StartedMilliseconds": 48239.5519,
+      "CompletedMilliseconds": 48244.3401,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 21.6523,
+      "StartedMilliseconds": 48256.7736,
+      "CompletedMilliseconds": 48278.4259,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.4407,
+      "StartedMilliseconds": 48285.314,
+      "CompletedMilliseconds": 48290.7547,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.4949,
+      "StartedMilliseconds": 48298.1427,
+      "CompletedMilliseconds": 48302.637599999995,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 106.2203,
+      "StartedMilliseconds": 48305.7095,
+      "CompletedMilliseconds": 48411.9298,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.8491,
+      "StartedMilliseconds": 48431.9678,
+      "CompletedMilliseconds": 48436.8169,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.5922,
+      "StartedMilliseconds": 48446.5551,
+      "CompletedMilliseconds": 48451.1473,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 123.1271,
+      "StartedMilliseconds": 48454.1464,
+      "CompletedMilliseconds": 48577.273499999996,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 16.1272,
+      "StartedMilliseconds": 48585.6237,
+      "CompletedMilliseconds": 48601.7509,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 102.7407,
+      "StartedMilliseconds": 48606.2047,
+      "CompletedMilliseconds": 48708.945400000004,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.7523,
+      "StartedMilliseconds": 48716.2692,
+      "CompletedMilliseconds": 48721.0215,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.4245,
+      "StartedMilliseconds": 48728.884,
+      "CompletedMilliseconds": 48734.3085,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.6105,
+      "StartedMilliseconds": 48756.4321,
+      "CompletedMilliseconds": 48762.0426,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.9254,
+      "StartedMilliseconds": 48771.6772,
+      "CompletedMilliseconds": 48776.6026,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 17.9871,
+      "StartedMilliseconds": 48785.3734,
+      "CompletedMilliseconds": 48803.360499999995,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.2662,
+      "StartedMilliseconds": 48810.4635,
+      "CompletedMilliseconds": 48815.729699999996,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.1673,
+      "StartedMilliseconds": 48827.3628,
+      "CompletedMilliseconds": 48832.5301,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.4721,
+      "StartedMilliseconds": 48840.5846,
+      "CompletedMilliseconds": 48845.0567,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 102.1387,
+      "StartedMilliseconds": 48848.6997,
+      "CompletedMilliseconds": 48950.8384,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.5502,
+      "StartedMilliseconds": 48959.6407,
+      "CompletedMilliseconds": 48965.1909,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.6541,
+      "StartedMilliseconds": 48996.4148,
+      "CompletedMilliseconds": 49002.0689,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.0666,
+      "StartedMilliseconds": 49012.2958,
+      "CompletedMilliseconds": 49017.3624,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.269,
+      "StartedMilliseconds": 49028.3546,
+      "CompletedMilliseconds": 49033.6236,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 7.1798,
+      "StartedMilliseconds": 49056.094,
+      "CompletedMilliseconds": 49063.273799999995,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.4286,
+      "StartedMilliseconds": 49072.7958,
+      "CompletedMilliseconds": 49077.2244,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 100.6168,
+      "StartedMilliseconds": 49080.2889,
+      "CompletedMilliseconds": 49180.9057,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.2332,
+      "StartedMilliseconds": 49187.0123,
+      "CompletedMilliseconds": 49192.245500000005,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.2488,
+      "StartedMilliseconds": 49197.8813,
+      "CompletedMilliseconds": 49203.1301,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 100.1428,
+      "StartedMilliseconds": 49206.3929,
+      "CompletedMilliseconds": 49306.5357,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.2065,
+      "StartedMilliseconds": 49316.8845,
+      "CompletedMilliseconds": 49322.091,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.156,
+      "StartedMilliseconds": 49329.0509,
+      "CompletedMilliseconds": 49334.206900000005,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 15.9617,
+      "StartedMilliseconds": 49341.8173,
+      "CompletedMilliseconds": 49357.779,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.4646,
+      "StartedMilliseconds": 49366.8121,
+      "CompletedMilliseconds": 49371.2767,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.3336,
+      "StartedMilliseconds": 49376.3499,
+      "CompletedMilliseconds": 49381.6835,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.3618,
+      "StartedMilliseconds": 49388.787,
+      "CompletedMilliseconds": 49394.148799999995,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 20.3455,
+      "StartedMilliseconds": 49407.2073,
+      "CompletedMilliseconds": 49427.552800000005,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.7357,
+      "StartedMilliseconds": 49449.9345,
+      "CompletedMilliseconds": 49454.6702,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 104.4999,
+      "StartedMilliseconds": 49458.1935,
+      "CompletedMilliseconds": 49562.693400000004,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.9179,
+      "StartedMilliseconds": 49576.1328,
+      "CompletedMilliseconds": 49581.0507,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 6.9292,
+      "StartedMilliseconds": 49615.5848,
+      "CompletedMilliseconds": 49622.513999999996,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.8527,
+      "StartedMilliseconds": 49634.404,
+      "CompletedMilliseconds": 49640.256700000005,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 112.8622,
+      "StartedMilliseconds": 49644.5268,
+      "CompletedMilliseconds": 49757.389,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.002,
+      "StartedMilliseconds": 49769.2104,
+      "CompletedMilliseconds": 49774.212400000004,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 110.4382,
+      "StartedMilliseconds": 49778.1232,
+      "CompletedMilliseconds": 49888.5614,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.9838,
+      "StartedMilliseconds": 49905.0685,
+      "CompletedMilliseconds": 49910.0523,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 98.2248,
+      "StartedMilliseconds": 49913.5958,
+      "CompletedMilliseconds": 50011.82060000001,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.5845,
+      "StartedMilliseconds": 50016.7124,
+      "CompletedMilliseconds": 50021.296899999994,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 96.98,
+      "StartedMilliseconds": 50026.1486,
+      "CompletedMilliseconds": 50123.128600000004,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.4229,
+      "StartedMilliseconds": 50127.465,
+      "CompletedMilliseconds": 50132.887899999994,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 6.2956,
+      "StartedMilliseconds": 50144.6051,
+      "CompletedMilliseconds": 50150.9007,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 104.0236,
+      "StartedMilliseconds": 50155.5528,
+      "CompletedMilliseconds": 50259.5764,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 6.6074,
+      "StartedMilliseconds": 50276.885,
+      "CompletedMilliseconds": 50283.4924,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 115.7661,
+      "StartedMilliseconds": 50299.8152,
+      "CompletedMilliseconds": 50415.5813,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.4421,
+      "StartedMilliseconds": 50658.1445,
+      "CompletedMilliseconds": 50663.5866,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 103.2775,
+      "StartedMilliseconds": 50667.1207,
+      "CompletedMilliseconds": 50770.398199999996,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 6.4159,
+      "StartedMilliseconds": 50778.3465,
+      "CompletedMilliseconds": 50784.7624,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 102.4704,
+      "StartedMilliseconds": 50788.5632,
+      "CompletedMilliseconds": 50891.033599999995,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 13.3171,
+      "StartedMilliseconds": 50895.0458,
+      "CompletedMilliseconds": 50908.3629,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.4938,
+      "StartedMilliseconds": 50912.7285,
+      "CompletedMilliseconds": 50917.222299999994,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.5933,
+      "StartedMilliseconds": 50921.6136,
+      "CompletedMilliseconds": 50927.2069,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 6.0685,
+      "StartedMilliseconds": 50932.6076,
+      "CompletedMilliseconds": 50938.676100000004,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.9041,
+      "StartedMilliseconds": 50944.8779,
+      "CompletedMilliseconds": 50950.782,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.5858,
+      "StartedMilliseconds": 50958.0122,
+      "CompletedMilliseconds": 50962.598,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.147,
+      "StartedMilliseconds": 50969.1273,
+      "CompletedMilliseconds": 50974.2743,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.2107,
+      "StartedMilliseconds": 50979.498,
+      "CompletedMilliseconds": 50984.7087,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.7485,
+      "StartedMilliseconds": 50989.318,
+      "CompletedMilliseconds": 50994.0665,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.9199,
+      "StartedMilliseconds": 51004.2529,
+      "CompletedMilliseconds": 51009.1728,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.8072,
+      "StartedMilliseconds": 51026.1255,
+      "CompletedMilliseconds": 51030.932700000005,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.3599,
+      "StartedMilliseconds": 51037.5397,
+      "CompletedMilliseconds": 51041.899600000004,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.5145,
+      "StartedMilliseconds": 51047.5504,
+      "CompletedMilliseconds": 51052.0649,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.2065,
+      "StartedMilliseconds": 51057.9906,
+      "CompletedMilliseconds": 51063.1971,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.5249,
+      "StartedMilliseconds": 51067.92,
+      "CompletedMilliseconds": 51073.444899999995,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 102.7249,
+      "StartedMilliseconds": 51077.4966,
+      "CompletedMilliseconds": 51180.2215,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.7147,
+      "StartedMilliseconds": 51200.6811,
+      "CompletedMilliseconds": 51206.3958,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 104.0523,
+      "StartedMilliseconds": 51210.9103,
+      "CompletedMilliseconds": 51314.962600000006,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.4662,
+      "StartedMilliseconds": 51318.7573,
+      "CompletedMilliseconds": 51323.2235,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 96.211,
+      "StartedMilliseconds": 51327.6263,
+      "CompletedMilliseconds": 51423.83730000001,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.2342,
+      "StartedMilliseconds": 51455.2267,
+      "CompletedMilliseconds": 51460.4609,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 100.3695,
+      "StartedMilliseconds": 51464.3616,
+      "CompletedMilliseconds": 51564.7311,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 13.1118,
+      "StartedMilliseconds": 51576.4706,
+      "CompletedMilliseconds": 51589.5824,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.9006,
+      "StartedMilliseconds": 51600.2241,
+      "CompletedMilliseconds": 51606.1247,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.8258,
+      "StartedMilliseconds": 51616.8534,
+      "CompletedMilliseconds": 51621.6792,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 17.1339,
+      "StartedMilliseconds": 51631.5408,
+      "CompletedMilliseconds": 51648.6747,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 116.4479,
+      "StartedMilliseconds": 51651.9641,
+      "CompletedMilliseconds": 51768.412,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 7.1003,
+      "StartedMilliseconds": 51778.5656,
+      "CompletedMilliseconds": 51785.6659,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.0443,
+      "StartedMilliseconds": 51795.4178,
+      "CompletedMilliseconds": 51800.462100000004,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.1896,
+      "StartedMilliseconds": 51822.1504,
+      "CompletedMilliseconds": 51827.34,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 115.6938,
+      "StartedMilliseconds": 51830.5211,
+      "CompletedMilliseconds": 51946.2149,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.8033,
+      "StartedMilliseconds": 51956.9918,
+      "CompletedMilliseconds": 51961.7951,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.692,
+      "StartedMilliseconds": 51979.2917,
+      "CompletedMilliseconds": 51984.983700000004,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.7172,
+      "StartedMilliseconds": 52016.9989,
+      "CompletedMilliseconds": 52021.7161,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.7752,
+      "StartedMilliseconds": 52034.7077,
+      "CompletedMilliseconds": 52039.482899999995,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.7235,
+      "StartedMilliseconds": 52056.1296,
+      "CompletedMilliseconds": 52061.8531,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.9167,
+      "StartedMilliseconds": 52070.2881,
+      "CompletedMilliseconds": 52075.2048,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.6026,
+      "StartedMilliseconds": 52087.2999,
+      "CompletedMilliseconds": 52091.9025,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 111.6988,
+      "StartedMilliseconds": 52095.5579,
+      "CompletedMilliseconds": 52207.2567,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.0857,
+      "StartedMilliseconds": 52212.26,
+      "CompletedMilliseconds": 52217.345700000005,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 108.8376,
+      "StartedMilliseconds": 52220.6678,
+      "CompletedMilliseconds": 52329.5054,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 7.1851,
+      "StartedMilliseconds": 52335.7047,
+      "CompletedMilliseconds": 52342.889800000004,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.481,
+      "StartedMilliseconds": 52348.2306,
+      "CompletedMilliseconds": 52352.7116,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 102.2647,
+      "StartedMilliseconds": 52357.0647,
+      "CompletedMilliseconds": 52459.3294,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.4303,
+      "StartedMilliseconds": 52463.5337,
+      "CompletedMilliseconds": 52468.964,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 103.0059,
+      "StartedMilliseconds": 52472.5081,
+      "CompletedMilliseconds": 52575.513999999996,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.4489,
+      "StartedMilliseconds": 52580.9417,
+      "CompletedMilliseconds": 52586.390600000006,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.8344,
+      "StartedMilliseconds": 52590.6402,
+      "CompletedMilliseconds": 52595.4746,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.5613,
+      "StartedMilliseconds": 52601.2293,
+      "CompletedMilliseconds": 52605.7906,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 108.871,
+      "StartedMilliseconds": 52609.599,
+      "CompletedMilliseconds": 52718.47,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.9285,
+      "StartedMilliseconds": 52722.5715,
+      "CompletedMilliseconds": 52727.5,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 109.8335,
+      "StartedMilliseconds": 52730.8564,
+      "CompletedMilliseconds": 52840.6899,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.5741,
+      "StartedMilliseconds": 52848.8823,
+      "CompletedMilliseconds": 52853.456399999995,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 100.3717,
+      "StartedMilliseconds": 52857.8069,
+      "CompletedMilliseconds": 52958.17860000001,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.0209,
+      "StartedMilliseconds": 52962.5079,
+      "CompletedMilliseconds": 52967.5288,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 118.2027,
+      "StartedMilliseconds": 52972.3632,
+      "CompletedMilliseconds": 53090.5659,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 4.8842,
+      "StartedMilliseconds": 53099.6883,
+      "CompletedMilliseconds": 53104.5725,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 120.983,
+      "StartedMilliseconds": 53109.1977,
+      "CompletedMilliseconds": 53230.1807,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 6.9108,
+      "StartedMilliseconds": 53244.2468,
+      "CompletedMilliseconds": 53251.1576,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.6204,
+      "StartedMilliseconds": 53277.3923,
+      "CompletedMilliseconds": 53283.0127,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.4205,
+      "StartedMilliseconds": 53293.4268,
+      "CompletedMilliseconds": 53298.8473,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.2523,
+      "StartedMilliseconds": 53309.172,
+      "CompletedMilliseconds": 53314.4243,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 8.2173,
+      "StartedMilliseconds": 53323.5453,
+      "CompletedMilliseconds": 53331.762599999995,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 130.4566,
+      "StartedMilliseconds": 53338.2898,
+      "CompletedMilliseconds": 53468.746399999996,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 7.7142,
+      "StartedMilliseconds": 53530.3395,
+      "CompletedMilliseconds": 53538.053700000004,
+      "Execution": null
+    },
+    {
+      "Name": "UI / music playlist / scroll to last track",
+      "Milliseconds": 10036.4974,
+      "StartedMilliseconds": 43554.0613,
+      "CompletedMilliseconds": 53590.5587,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 21.6496,
+      "StartedMilliseconds": 53895.1438,
+      "CompletedMilliseconds": 53916.793399999995,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 16.9994,
+      "StartedMilliseconds": 53931.5126,
+      "CompletedMilliseconds": 53948.512,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 6.5591,
+      "StartedMilliseconds": 53960.5359,
+      "CompletedMilliseconds": 53967.095,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.8863,
+      "StartedMilliseconds": 53978.5313,
+      "CompletedMilliseconds": 53984.4176,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 6.8401,
+      "StartedMilliseconds": 53989.3638,
+      "CompletedMilliseconds": 53996.2039,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 623.2172,
+      "StartedMilliseconds": 54000.2718,
+      "CompletedMilliseconds": 54623.489,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.3765,
+      "StartedMilliseconds": 54642.8247,
+      "CompletedMilliseconds": 54648.201199999996,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 6.1666,
+      "StartedMilliseconds": 54654.6961,
+      "CompletedMilliseconds": 54660.8627,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.2897,
+      "StartedMilliseconds": 54671.7686,
+      "CompletedMilliseconds": 54677.058300000004,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.5971,
+      "StartedMilliseconds": 54692.1639,
+      "CompletedMilliseconds": 54697.761,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 6.4956,
+      "StartedMilliseconds": 54703.0873,
+      "CompletedMilliseconds": 54709.5829,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 6.5686,
+      "StartedMilliseconds": 54740.2352,
+      "CompletedMilliseconds": 54746.8038,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 6.5808,
+      "StartedMilliseconds": 54757.667,
+      "CompletedMilliseconds": 54764.247800000005,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 10.423,
+      "StartedMilliseconds": 54776.0755,
+      "CompletedMilliseconds": 54786.4985,
+      "Execution": null
+    }
+  ],
+  "Observations": {
+    "UI / grouped playlist items": 5073,
+    "UI / realized playlist rows": 41,
+    "UI / music playlist / ordered occurrence check": 1,
+    "UI / music playlist / items": 100000,
+    "UI / music playlist / realized rows": 13,
+    "UI / music playlist / failed scroll offset": 4999447,
+    "UI / music playlist / failed scroll extent": 5000000,
+    "UI / music playlist / failed scroll viewport": 552,
+    "UI / music playlist / failed scroll last realized index": 99999,
+    "UI / music playlist / failed scroll final model matches": 1,
+    "UI / music playlist / failed scroll final top": 502996,
+    "UI / music playlist / failed scroll final bottom": 552996
+  },
+  "DatabaseReads": [
+    {
+      "Table": "UPnPMediaServers",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 2.5713,
+      "StartedMilliseconds": 3296.8357
+    },
+    {
+      "Table": "UPnPMediaRenderers",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 6,
+      "Milliseconds": 14.1658,
+      "StartedMilliseconds": 3296.8312
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 5311,
+      "Milliseconds": 146.0741,
+      "StartedMilliseconds": 3305.3101
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.1376,
+      "StartedMilliseconds": 4158.6381
+    },
+    {
+      "Table": "PlaylistSongs",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 194,
+      "Milliseconds": 9.5869,
+      "StartedMilliseconds": 4218.101
+    },
+    {
+      "Table": "PinnedItems",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 10,
+      "Milliseconds": 0.1304,
+      "StartedMilliseconds": 4250.8305
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0939,
+      "StartedMilliseconds": 4255.4531
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 29,
+      "Milliseconds": 1.3793,
+      "StartedMilliseconds": 4273.5452
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.049,
+      "StartedMilliseconds": 5419.5384
+    },
+    {
+      "Table": "SoundItems",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 29,
+      "Milliseconds": 71.4135,
+      "StartedMilliseconds": 6357.3202
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0876,
+      "StartedMilliseconds": 6450.6388
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 1.3832,
+      "StartedMilliseconds": 6579.5054
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0386,
+      "StartedMilliseconds": 6581.5103
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.007,
+      "StartedMilliseconds": 6582.1754
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0037,
+      "StartedMilliseconds": 6582.367
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0035,
+      "StartedMilliseconds": 6582.5021
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0032,
+      "StartedMilliseconds": 6582.6157
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0032,
+      "StartedMilliseconds": 6582.7219
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.003,
+      "StartedMilliseconds": 6582.8258
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0034,
+      "StartedMilliseconds": 6582.931
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0035,
+      "StartedMilliseconds": 6583.0545
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0032,
+      "StartedMilliseconds": 6583.1766
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.003,
+      "StartedMilliseconds": 6583.2961
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0032,
+      "StartedMilliseconds": 6583.3981
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0037,
+      "StartedMilliseconds": 6583.5303
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0034,
+      "StartedMilliseconds": 6583.6457
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0033,
+      "StartedMilliseconds": 6583.7514
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0032,
+      "StartedMilliseconds": 6583.8723
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0032,
+      "StartedMilliseconds": 6583.9737
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0048,
+      "StartedMilliseconds": 6584.27
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0044,
+      "StartedMilliseconds": 6584.4237
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0043,
+      "StartedMilliseconds": 6584.564
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0046,
+      "StartedMilliseconds": 6584.7091
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0046,
+      "StartedMilliseconds": 6584.9014
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.004,
+      "StartedMilliseconds": 6585.0414
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0045,
+      "StartedMilliseconds": 6585.1958
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0024,
+      "StartedMilliseconds": 6585.3091
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0022,
+      "StartedMilliseconds": 6585.3854
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0023,
+      "StartedMilliseconds": 6585.4572
+    },
+    {
+      "Table": "SoundItems",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 29,
+      "Milliseconds": 1.3281,
+      "StartedMilliseconds": 6598.8903
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 2,
+      "Milliseconds": 4.7681,
+      "StartedMilliseconds": 6805.0216
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 29,
+      "Milliseconds": 7.0016,
+      "StartedMilliseconds": 6829.8751
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.3655,
+      "StartedMilliseconds": 7092.576
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0056,
+      "StartedMilliseconds": 7186.8154
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 142,
+      "Milliseconds": 5.4994,
+      "StartedMilliseconds": 7496.6351
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.027,
+      "StartedMilliseconds": 10455.0045
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0032,
+      "StartedMilliseconds": 10456.0251
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0028,
+      "StartedMilliseconds": 10456.1758
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0027,
+      "StartedMilliseconds": 10456.38
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0524,
+      "StartedMilliseconds": 10974.412
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0371,
+      "StartedMilliseconds": 10974.564
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0712,
+      "StartedMilliseconds": 10974.8072
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0735,
+      "StartedMilliseconds": 10974.81
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0525,
+      "StartedMilliseconds": 10974.8488
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0497,
+      "StartedMilliseconds": 10974.897
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.042,
+      "StartedMilliseconds": 10975.2981
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 2,
+      "Milliseconds": 5.8501,
+      "StartedMilliseconds": 11225.7036
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.3499,
+      "StartedMilliseconds": 11240.6753
+    },
+    {
+      "Table": "PlaylistSongs",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 2,
+      "Milliseconds": 0.2661,
+      "StartedMilliseconds": 11371.1436
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 2,
+      "Milliseconds": 4.4513,
+      "StartedMilliseconds": 11962.6974
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.1129,
+      "StartedMilliseconds": 11974.9286
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 29,
+      "Milliseconds": 7.6553,
+      "StartedMilliseconds": 12002.7242
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0169,
+      "StartedMilliseconds": 12018.0922
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0571,
+      "StartedMilliseconds": 12018.6757
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0207,
+      "StartedMilliseconds": 12317.885
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0139,
+      "StartedMilliseconds": 12318.3687
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0131,
+      "StartedMilliseconds": 12318.7071
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0156,
+      "StartedMilliseconds": 12319.1453
+    },
+    {
+      "Table": "PlaylistSongs",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 2,
+      "Milliseconds": 0.2732,
+      "StartedMilliseconds": 12580.9914
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0115,
+      "StartedMilliseconds": 12651.9464
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0649,
+      "StartedMilliseconds": 12678.3379
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.006,
+      "StartedMilliseconds": 12743.8425
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0153,
+      "StartedMilliseconds": 12748.0877
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0075,
+      "StartedMilliseconds": 12757.1451
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 2,
+      "Milliseconds": 4.3249,
+      "StartedMilliseconds": 12952.5185
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.1331,
+      "StartedMilliseconds": 12962.0114
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.023,
+      "StartedMilliseconds": 13281.7159
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0057,
+      "StartedMilliseconds": 13287.0522
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 100001,
+      "Milliseconds": 1547.7702,
+      "StartedMilliseconds": 12985.8789
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 6068,
+      "Milliseconds": 486.6931,
+      "StartedMilliseconds": 41471.5081
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 14,
+      "Milliseconds": 0.2154,
+      "StartedMilliseconds": 41971.9753
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 26,
+      "Milliseconds": 2.1398,
+      "StartedMilliseconds": 42086.3359
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 13,
+      "Milliseconds": 0.2129,
+      "StartedMilliseconds": 42101.58
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 10,
+      "Milliseconds": 0.1205,
+      "StartedMilliseconds": 42116.5373
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 139,
+      "Milliseconds": 3.3771,
+      "StartedMilliseconds": 42258.1355
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 12,
+      "Milliseconds": 0.3047,
+      "StartedMilliseconds": 42275.3616
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 10,
+      "Milliseconds": 0.1425,
+      "StartedMilliseconds": 42302.8142
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 10,
+      "Milliseconds": 0.1207,
+      "StartedMilliseconds": 42316.6511
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 5,
+      "Milliseconds": 0.0822,
+      "StartedMilliseconds": 42350.1026
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 8,
+      "Milliseconds": 0.0902,
+      "StartedMilliseconds": 42359.6183
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 9,
+      "Milliseconds": 0.099,
+      "StartedMilliseconds": 42372.1964
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 11,
+      "Milliseconds": 0.1714,
+      "StartedMilliseconds": 42384.812
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 13,
+      "Milliseconds": 0.1272,
+      "StartedMilliseconds": 42430.1997
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 12,
+      "Milliseconds": 0.1122,
+      "StartedMilliseconds": 42444.4697
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 8,
+      "Milliseconds": 0.1109,
+      "StartedMilliseconds": 42474.4604
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 11,
+      "Milliseconds": 0.1079,
+      "StartedMilliseconds": 42487.514
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 12,
+      "Milliseconds": 0.1582,
+      "StartedMilliseconds": 42502.4127
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 11,
+      "Milliseconds": 0.1174,
+      "StartedMilliseconds": 42534.0239
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 11,
+      "Milliseconds": 0.1216,
+      "StartedMilliseconds": 42548.0483
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 12,
+      "Milliseconds": 0.1762,
+      "StartedMilliseconds": 42579.2004
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 132,
+      "Milliseconds": 5.9748,
+      "StartedMilliseconds": 42703.0267
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 14,
+      "Milliseconds": 0.177,
+      "StartedMilliseconds": 42727.4535
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 12,
+      "Milliseconds": 0.1323,
+      "StartedMilliseconds": 42764.6645
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 12,
+      "Milliseconds": 0.1503,
+      "StartedMilliseconds": 42786.457
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 12,
+      "Milliseconds": 18.1519,
+      "StartedMilliseconds": 42805.1736
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 12,
+      "Milliseconds": 0.1851,
+      "StartedMilliseconds": 42843.2233
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 18,
+      "Milliseconds": 0.3962,
+      "StartedMilliseconds": 42864.0371
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 58,
+      "Milliseconds": 2.7816,
+      "StartedMilliseconds": 42993.6224
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0948,
+      "StartedMilliseconds": 43047.3798
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 2.5994,
+      "StartedMilliseconds": 43181.1437
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 12,
+      "Milliseconds": 0.1696,
+      "StartedMilliseconds": 43194.1477
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 16,
+      "Milliseconds": 0.1536,
+      "StartedMilliseconds": 43210.6137
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 3,
+      "Milliseconds": 0.0985,
+      "StartedMilliseconds": 43220.6858
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0409,
+      "StartedMilliseconds": 43239.0377
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 1.7314,
+      "StartedMilliseconds": 43428.3328
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0421,
+      "StartedMilliseconds": 43449.6767
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 8,
+      "Milliseconds": 14.8038,
+      "StartedMilliseconds": 43468.8998
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 5,
+      "Milliseconds": 0.0708,
+      "StartedMilliseconds": 43495.9104
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 7,
+      "Milliseconds": 0.1408,
+      "StartedMilliseconds": 43516.464
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 66,
+      "Milliseconds": 7.863,
+      "StartedMilliseconds": 43630.8305
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 6,
+      "Milliseconds": 0.0626,
+      "StartedMilliseconds": 43647.9465
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 8,
+      "Milliseconds": 0.0722,
+      "StartedMilliseconds": 43661.8487
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 11,
+      "Milliseconds": 0.1453,
+      "StartedMilliseconds": 43673.5981
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 10,
+      "Milliseconds": 0.0858,
+      "StartedMilliseconds": 43692.8794
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 8,
+      "Milliseconds": 0.0773,
+      "StartedMilliseconds": 43724.2284
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 8,
+      "Milliseconds": 0.0791,
+      "StartedMilliseconds": 43751.6904
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 6,
+      "Milliseconds": 0.0672,
+      "StartedMilliseconds": 43770.0272
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 10,
+      "Milliseconds": 0.0771,
+      "StartedMilliseconds": 43788.3442
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 24,
+      "Milliseconds": 8.6158,
+      "StartedMilliseconds": 43800.4063
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 24,
+      "Milliseconds": 2.174,
+      "StartedMilliseconds": 43912.7653
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 13,
+      "Milliseconds": 0.1691,
+      "StartedMilliseconds": 43951.6108
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 65,
+      "Milliseconds": 2.4771,
+      "StartedMilliseconds": 44052.4906
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 15,
+      "Milliseconds": 0.1268,
+      "StartedMilliseconds": 44080.8293
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 13,
+      "Milliseconds": 0.158,
+      "StartedMilliseconds": 44099.0843
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 14,
+      "Milliseconds": 0.2274,
+      "StartedMilliseconds": 44119.0668
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 14,
+      "Milliseconds": 16.1292,
+      "StartedMilliseconds": 44141.3338
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 14,
+      "Milliseconds": 0.1544,
+      "StartedMilliseconds": 44178.463
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 78,
+      "Milliseconds": 2.6708,
+      "StartedMilliseconds": 44297.307
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 6,
+      "Milliseconds": 0.1033,
+      "StartedMilliseconds": 44330.5613
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 20,
+      "Milliseconds": 0.5037,
+      "StartedMilliseconds": 44344.1794
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0721,
+      "StartedMilliseconds": 44367.413
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.092,
+      "StartedMilliseconds": 44376.8405
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 15,
+      "Milliseconds": 0.1412,
+      "StartedMilliseconds": 44386.4653
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 25,
+      "Milliseconds": 0.2064,
+      "StartedMilliseconds": 44416.3835
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 12,
+      "Milliseconds": 0.4455,
+      "StartedMilliseconds": 44442.7484
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 152,
+      "Milliseconds": 2.9267,
+      "StartedMilliseconds": 44548.4641
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 11,
+      "Milliseconds": 0.1081,
+      "StartedMilliseconds": 44627.9847
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 24,
+      "Milliseconds": 0.1862,
+      "StartedMilliseconds": 44643.2651
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 13,
+      "Milliseconds": 0.1204,
+      "StartedMilliseconds": 44688.298
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 34,
+      "Milliseconds": 3.0162,
+      "StartedMilliseconds": 44798.4574
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 11,
+      "Milliseconds": 0.1145,
+      "StartedMilliseconds": 44831.269
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 12,
+      "Milliseconds": 0.1177,
+      "StartedMilliseconds": 44847.0655
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 14,
+      "Milliseconds": 0.1235,
+      "StartedMilliseconds": 44862.6768
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 25,
+      "Milliseconds": 2.4933,
+      "StartedMilliseconds": 44983.487
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 12,
+      "Milliseconds": 0.4466,
+      "StartedMilliseconds": 45024.8784
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 16,
+      "Milliseconds": 0.1924,
+      "StartedMilliseconds": 45429.361
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 189,
+      "Milliseconds": 4.1655,
+      "StartedMilliseconds": 45544.0156
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 41,
+      "Milliseconds": 0.3694,
+      "StartedMilliseconds": 45563.6179
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 20,
+      "Milliseconds": 0.1701,
+      "StartedMilliseconds": 45598.5025
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 21,
+      "Milliseconds": 0.1847,
+      "StartedMilliseconds": 45612.9682
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 15,
+      "Milliseconds": 0.1626,
+      "StartedMilliseconds": 45629.3607
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 19,
+      "Milliseconds": 0.2916,
+      "StartedMilliseconds": 45642.7203
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 14,
+      "Milliseconds": 0.2036,
+      "StartedMilliseconds": 45684.9106
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 17,
+      "Milliseconds": 0.1243,
+      "StartedMilliseconds": 45697.5691
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 17,
+      "Milliseconds": 0.1741,
+      "StartedMilliseconds": 45710.3026
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 18,
+      "Milliseconds": 0.4379,
+      "StartedMilliseconds": 45730.0608
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 9,
+      "Milliseconds": 0.1453,
+      "StartedMilliseconds": 45771.685
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 10,
+      "Milliseconds": 0.2585,
+      "StartedMilliseconds": 45784.3703
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 11,
+      "Milliseconds": 0.1063,
+      "StartedMilliseconds": 45800.5747
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 11,
+      "Milliseconds": 0.1392,
+      "StartedMilliseconds": 45818.2776
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 12,
+      "Milliseconds": 0.1103,
+      "StartedMilliseconds": 45849.0685
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 13,
+      "Milliseconds": 0.1325,
+      "StartedMilliseconds": 45865.023
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 12,
+      "Milliseconds": 0.1366,
+      "StartedMilliseconds": 45883.3019
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 14,
+      "Milliseconds": 0.2365,
+      "StartedMilliseconds": 45900.9372
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 11,
+      "Milliseconds": 0.1021,
+      "StartedMilliseconds": 45934.5154
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 144,
+      "Milliseconds": 4.5317,
+      "StartedMilliseconds": 46057.8391
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 15,
+      "Milliseconds": 0.2597,
+      "StartedMilliseconds": 46086.8037
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 14,
+      "Milliseconds": 0.2309,
+      "StartedMilliseconds": 46116.6985
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 43,
+      "Milliseconds": 2.0474,
+      "StartedMilliseconds": 46238.7253
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 12,
+      "Milliseconds": 0.183,
+      "StartedMilliseconds": 46256.8744
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 19,
+      "Milliseconds": 0.2395,
+      "StartedMilliseconds": 46295.2048
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 3,
+      "Milliseconds": 0.0468,
+      "StartedMilliseconds": 46325.2466
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 4,
+      "Milliseconds": 1.7156,
+      "StartedMilliseconds": 46449.0098
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0397,
+      "StartedMilliseconds": 46459.6585
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 3,
+      "Milliseconds": 1.8169,
+      "StartedMilliseconds": 46589.8325
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 3,
+      "Milliseconds": 0.0459,
+      "StartedMilliseconds": 46600.7516
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 3,
+      "Milliseconds": 1.7192,
+      "StartedMilliseconds": 46723.2417
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 17,
+      "Milliseconds": 0.1275,
+      "StartedMilliseconds": 46738.218
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 17,
+      "Milliseconds": 1.9928,
+      "StartedMilliseconds": 46860.4959
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 15,
+      "Milliseconds": 0.1253,
+      "StartedMilliseconds": 46878.7965
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 16,
+      "Milliseconds": 2.3138,
+      "StartedMilliseconds": 46997.2258
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0451,
+      "StartedMilliseconds": 47013.9091
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 3,
+      "Milliseconds": 0.0996,
+      "StartedMilliseconds": 47027.5981
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 7,
+      "Milliseconds": 2.5384,
+      "StartedMilliseconds": 47155.9055
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 20,
+      "Milliseconds": 0.167,
+      "StartedMilliseconds": 47169.2943
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 39,
+      "Milliseconds": 10.3631,
+      "StartedMilliseconds": 47305.4265
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 16,
+      "Milliseconds": 0.2049,
+      "StartedMilliseconds": 47341.7192
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 31,
+      "Milliseconds": 1.9205,
+      "StartedMilliseconds": 47451.7694
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 14,
+      "Milliseconds": 0.3299,
+      "StartedMilliseconds": 47477.3205
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 27,
+      "Milliseconds": 2.1546,
+      "StartedMilliseconds": 47588.5275
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 14,
+      "Milliseconds": 0.1178,
+      "StartedMilliseconds": 47615.251
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 13,
+      "Milliseconds": 0.0898,
+      "StartedMilliseconds": 47630.9867
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 66,
+      "Milliseconds": 2.3069,
+      "StartedMilliseconds": 47746.1675
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 13,
+      "Milliseconds": 0.0905,
+      "StartedMilliseconds": 47763.2514
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 15,
+      "Milliseconds": 0.1122,
+      "StartedMilliseconds": 47776.4424
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 13,
+      "Milliseconds": 0.152,
+      "StartedMilliseconds": 47788.97
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 16,
+      "Milliseconds": 0.1288,
+      "StartedMilliseconds": 47809.773
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 16,
+      "Milliseconds": 0.148,
+      "StartedMilliseconds": 47833.2308
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 4,
+      "Milliseconds": 0.0656,
+      "StartedMilliseconds": 47871.1565
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 19,
+      "Milliseconds": 0.1476,
+      "StartedMilliseconds": 47881.116
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 6,
+      "Milliseconds": 0.0691,
+      "StartedMilliseconds": 48234.0449
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 13,
+      "Milliseconds": 0.1103,
+      "StartedMilliseconds": 48244.047
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0394,
+      "StartedMilliseconds": 48278.2056
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 11,
+      "Milliseconds": 0.1402,
+      "StartedMilliseconds": 48290.3286
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 14,
+      "Milliseconds": 0.1205,
+      "StartedMilliseconds": 48302.3265
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 30,
+      "Milliseconds": 1.8236,
+      "StartedMilliseconds": 48409.1804
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 17,
+      "Milliseconds": 0.1477,
+      "StartedMilliseconds": 48436.4781
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 14,
+      "Milliseconds": 0.1185,
+      "StartedMilliseconds": 48450.845
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 98,
+      "Milliseconds": 2.7288,
+      "StartedMilliseconds": 48573.6749
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 13,
+      "Milliseconds": 0.2083,
+      "StartedMilliseconds": 48601.2028
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 105,
+      "Milliseconds": 2.7981,
+      "StartedMilliseconds": 48705.4075
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 13,
+      "Milliseconds": 0.1589,
+      "StartedMilliseconds": 48720.6339
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 19,
+      "Milliseconds": 0.2167,
+      "StartedMilliseconds": 48733.8412
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 15,
+      "Milliseconds": 0.2731,
+      "StartedMilliseconds": 48761.4881
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 12,
+      "Milliseconds": 0.1835,
+      "StartedMilliseconds": 48776.1603
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 14,
+      "Milliseconds": 12.2032,
+      "StartedMilliseconds": 48790.8968
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 14,
+      "Milliseconds": 0.2307,
+      "StartedMilliseconds": 48815.0791
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 12,
+      "Milliseconds": 0.1113,
+      "StartedMilliseconds": 48831.8729
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 19,
+      "Milliseconds": 0.157,
+      "StartedMilliseconds": 48844.7146
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 107,
+      "Milliseconds": 2.6723,
+      "StartedMilliseconds": 48947.3308
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 20,
+      "Milliseconds": 0.1906,
+      "StartedMilliseconds": 48964.7642
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 23,
+      "Milliseconds": 0.2654,
+      "StartedMilliseconds": 49001.5394
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 18,
+      "Milliseconds": 0.2045,
+      "StartedMilliseconds": 49016.9186
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 17,
+      "Milliseconds": 0.1461,
+      "StartedMilliseconds": 49033.2761
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 15,
+      "Milliseconds": 0.1717,
+      "StartedMilliseconds": 49062.8268
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 6,
+      "Milliseconds": 0.0662,
+      "StartedMilliseconds": 49076.9845
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 12,
+      "Milliseconds": 1.834,
+      "StartedMilliseconds": 49178.1952
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 7,
+      "Milliseconds": 0.1277,
+      "StartedMilliseconds": 49191.8683
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 18,
+      "Milliseconds": 0.17,
+      "StartedMilliseconds": 49202.7511
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 74,
+      "Milliseconds": 2.3019,
+      "StartedMilliseconds": 49303.3526
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 12,
+      "Milliseconds": 0.2199,
+      "StartedMilliseconds": 49321.6243
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 21,
+      "Milliseconds": 0.238,
+      "StartedMilliseconds": 49333.758
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 14,
+      "Milliseconds": 9.9501,
+      "StartedMilliseconds": 49347.4757
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.043,
+      "StartedMilliseconds": 49371.026
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 12,
+      "Milliseconds": 0.1021,
+      "StartedMilliseconds": 49381.3906
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 14,
+      "Milliseconds": 0.1169,
+      "StartedMilliseconds": 49393.6865
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 16,
+      "Milliseconds": 0.3398,
+      "StartedMilliseconds": 49412.7502
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 15,
+      "Milliseconds": 0.1319,
+      "StartedMilliseconds": 49454.3654
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 39,
+      "Milliseconds": 2.2616,
+      "StartedMilliseconds": 49559.5343
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 13,
+      "Milliseconds": 0.1104,
+      "StartedMilliseconds": 49580.7297
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 13,
+      "Milliseconds": 0.172,
+      "StartedMilliseconds": 49622.0025
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 13,
+      "Milliseconds": 0.1633,
+      "StartedMilliseconds": 49639.8516
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 13,
+      "Milliseconds": 2.1188,
+      "StartedMilliseconds": 49754.6228
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 21,
+      "Milliseconds": 0.1729,
+      "StartedMilliseconds": 49773.8188
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 21,
+      "Milliseconds": 1.7681,
+      "StartedMilliseconds": 49886.1643
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 3,
+      "Milliseconds": 0.0513,
+      "StartedMilliseconds": 49909.8151
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 3,
+      "Milliseconds": 2.299,
+      "StartedMilliseconds": 50008.7729
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0731,
+      "StartedMilliseconds": 50020.9262
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 13,
+      "Milliseconds": 2.2472,
+      "StartedMilliseconds": 50119.8768
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 12,
+      "Milliseconds": 0.1881,
+      "StartedMilliseconds": 50132.4099
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 20,
+      "Milliseconds": 0.1993,
+      "StartedMilliseconds": 50150.4482
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 20,
+      "Milliseconds": 3.7969,
+      "StartedMilliseconds": 50254.8037
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0929,
+      "StartedMilliseconds": 50282.845
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 1.8506,
+      "StartedMilliseconds": 50412.7769
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 13,
+      "Milliseconds": 0.1071,
+      "StartedMilliseconds": 50663.2916
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 13,
+      "Milliseconds": 1.6867,
+      "StartedMilliseconds": 50768.0584
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 45,
+      "Milliseconds": 0.4801,
+      "StartedMilliseconds": 50784.014
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 58,
+      "Milliseconds": 2.2016,
+      "StartedMilliseconds": 50888.0511
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0388,
+      "StartedMilliseconds": 50908.1457
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0567,
+      "StartedMilliseconds": 50916.9439
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 3,
+      "Milliseconds": 0.0509,
+      "StartedMilliseconds": 50926.9141
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0498,
+      "StartedMilliseconds": 50938.42
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0548,
+      "StartedMilliseconds": 50950.4831
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 3,
+      "Milliseconds": 0.0637,
+      "StartedMilliseconds": 50962.128
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0508,
+      "StartedMilliseconds": 50973.9938
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0466,
+      "StartedMilliseconds": 50984.4566
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0425,
+      "StartedMilliseconds": 50993.7947
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0425,
+      "StartedMilliseconds": 51008.9386
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 3,
+      "Milliseconds": 0.0512,
+      "StartedMilliseconds": 51030.6741
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0386,
+      "StartedMilliseconds": 51041.6866
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0384,
+      "StartedMilliseconds": 51051.8236
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0655,
+      "StartedMilliseconds": 51062.7814
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 37,
+      "Milliseconds": 0.4662,
+      "StartedMilliseconds": 51072.5887
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 142,
+      "Milliseconds": 2.9298,
+      "StartedMilliseconds": 51176.6332
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 4,
+      "Milliseconds": 0.0828,
+      "StartedMilliseconds": 51206.0429
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 4,
+      "Milliseconds": 1.9097,
+      "StartedMilliseconds": 51312.4108
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 7,
+      "Milliseconds": 0.1028,
+      "StartedMilliseconds": 51322.8893
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 7,
+      "Milliseconds": 2.7322,
+      "StartedMilliseconds": 51419.9677
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 21,
+      "Milliseconds": 0.2243,
+      "StartedMilliseconds": 51460.0348
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 70,
+      "Milliseconds": 2.5992,
+      "StartedMilliseconds": 51561.2814
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 20,
+      "Milliseconds": 0.2828,
+      "StartedMilliseconds": 51589.0407
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 17,
+      "Milliseconds": 0.2649,
+      "StartedMilliseconds": 51605.5024
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 15,
+      "Milliseconds": 0.2464,
+      "StartedMilliseconds": 51621.2303
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 21,
+      "Milliseconds": 0.1936,
+      "StartedMilliseconds": 51648.2916
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 54,
+      "Milliseconds": 2.4323,
+      "StartedMilliseconds": 51765.3362
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 16,
+      "Milliseconds": 0.1662,
+      "StartedMilliseconds": 51785.3102
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 19,
+      "Milliseconds": 0.2125,
+      "StartedMilliseconds": 51800.0286
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 16,
+      "Milliseconds": 0.1282,
+      "StartedMilliseconds": 51827.0161
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 16,
+      "Milliseconds": 2.1044,
+      "StartedMilliseconds": 51943.1604
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 33,
+      "Milliseconds": 0.2469,
+      "StartedMilliseconds": 51961.3438
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 18,
+      "Milliseconds": 0.1841,
+      "StartedMilliseconds": 51984.5793
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 15,
+      "Milliseconds": 0.1419,
+      "StartedMilliseconds": 52021.402
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 21,
+      "Milliseconds": 0.163,
+      "StartedMilliseconds": 52039.1419
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 8,
+      "Milliseconds": 0.1406,
+      "StartedMilliseconds": 52061.3813
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 15,
+      "Milliseconds": 0.1452,
+      "StartedMilliseconds": 52074.8293
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 4,
+      "Milliseconds": 0.0694,
+      "StartedMilliseconds": 52091.6122
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 8,
+      "Milliseconds": 2.0912,
+      "StartedMilliseconds": 52204.509
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0386,
+      "StartedMilliseconds": 52217.1121
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 1.7717,
+      "StartedMilliseconds": 52327.1071
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 4,
+      "Milliseconds": 0.0721,
+      "StartedMilliseconds": 52342.5544
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 3,
+      "Milliseconds": 0.0459,
+      "StartedMilliseconds": 52352.4711
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 3,
+      "Milliseconds": 1.6829,
+      "StartedMilliseconds": 52457.0097
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0372,
+      "StartedMilliseconds": 52468.7443
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 1.8505,
+      "StartedMilliseconds": 52572.7521
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.2023,
+      "StartedMilliseconds": 52585.8606
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0431,
+      "StartedMilliseconds": 52595.2027
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0412,
+      "StartedMilliseconds": 52605.5632
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 2.1625,
+      "StartedMilliseconds": 52715.6338
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0392,
+      "StartedMilliseconds": 52727.2753
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 1.6594,
+      "StartedMilliseconds": 52838.2567
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0434,
+      "StartedMilliseconds": 52853.2348
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 2.2038,
+      "StartedMilliseconds": 52955.3268
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.044,
+      "StartedMilliseconds": 52967.2907
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 2.3118,
+      "StartedMilliseconds": 53087.3798
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 17,
+      "Milliseconds": 0.1348,
+      "StartedMilliseconds": 53104.2444
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 78,
+      "Milliseconds": 3.5148,
+      "StartedMilliseconds": 53225.7173
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 13,
+      "Milliseconds": 0.2325,
+      "StartedMilliseconds": 53250.6144
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 11,
+      "Milliseconds": 0.1094,
+      "StartedMilliseconds": 53282.7015
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 10,
+      "Milliseconds": 0.0871,
+      "StartedMilliseconds": 53298.5735
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 9,
+      "Milliseconds": 0.1015,
+      "StartedMilliseconds": 53314.0776
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 26,
+      "Milliseconds": 0.5382,
+      "StartedMilliseconds": 53330.8798
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 91,
+      "Milliseconds": 6.8252,
+      "StartedMilliseconds": 53460.9108
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 14,
+      "Milliseconds": 0.3076,
+      "StartedMilliseconds": 53537.3304
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 12,
+      "Milliseconds": 0.1222,
+      "StartedMilliseconds": 53910.7251
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 15,
+      "Milliseconds": 0.3815,
+      "StartedMilliseconds": 53947.8159
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 12,
+      "Milliseconds": 0.4121,
+      "StartedMilliseconds": 53965.8419
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0492,
+      "StartedMilliseconds": 53984.1378
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 39,
+      "Milliseconds": 0.3339,
+      "StartedMilliseconds": 53995.4004
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 200,
+      "Milliseconds": 14.0331,
+      "StartedMilliseconds": 54113.1741
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 10,
+      "Milliseconds": 0.0837,
+      "StartedMilliseconds": 54647.8944
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 14,
+      "Milliseconds": 0.1496,
+      "StartedMilliseconds": 54660.4738
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 29,
+      "Milliseconds": 0.1789,
+      "StartedMilliseconds": 54676.6859
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.1031,
+      "StartedMilliseconds": 54697.28
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 14,
+      "Milliseconds": 0.1613,
+      "StartedMilliseconds": 54709.2055
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 14,
+      "Milliseconds": 0.1053,
+      "StartedMilliseconds": 54746.4732
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 15,
+      "Milliseconds": 0.1882,
+      "StartedMilliseconds": 54763.6886
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 25,
+      "Milliseconds": 0.3643,
+      "StartedMilliseconds": 54785.7932
+    }
+  ],
+  "DiagnosticWrites": {
+    "Count": 114,
+    "Milliseconds": 1696.6182999999996,
+    "LongestMilliseconds": 285.9411
+  },
+  "DiagnosticMode": "buffered-v1",
+  "DiagnosticProfile": "none",
+  "WindowMode": "Visible",
+  "FixtureSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+  "MusicPlaylistEntries": 100000,
+  "OS": "Microsoft Windows NT 10.0.19045.0",
+  "ProcessorCount": 8,
+  "PlaylistQueryPreparation": false,
+  "Playlists": 5310,
+  "Configuration": "Release",
+  "SoundItems": 207110
+}
