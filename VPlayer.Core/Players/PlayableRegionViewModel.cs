@@ -1482,7 +1482,9 @@ namespace VPlayer.Core.ViewModels
       var savedItems = ActualSavedPlaylist.PlaylistItems
         .OrderBy(x => x.OrderInPlaylist).ThenBy(x => x.Id).ToList();
       var playlistItems = savedItems.Where(x => x.ReferencedItem != null).ToList();
-      var items = GetVmToPlayFromPlaylist(playlistItems).ToList();
+      List<TItemViewModel> items;
+      using(VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("UI / player playlist / create saved playlist views"))
+        items = GetVmToPlayFromPlaylist(playlistItems).ToList();
       defaultSortOrder = null;
       ActualPlaylistSortOrder = PlaylistSortOrder.None;
       int visibleIndex = 0;
@@ -1591,6 +1593,7 @@ namespace VPlayer.Core.ViewModels
 
     protected virtual void PlayItems(IEnumerable<TItemViewModel> items, int songIndex, bool savePlaylist = true, bool editSaved = false, bool onlyItemSet = false)
     {
+      using var publication=VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("UI / player playlist / collection publication");
       var itemList = items.ToList();
 
       PlayList.ForEach(x => x.IsInPlaylist = false);

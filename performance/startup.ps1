@@ -8,11 +8,13 @@ param(
   [switch]$ScrollPlaylists,
   [switch]$Statistics,
   [switch]$StatisticsReloads,
+  [switch]$MusicPlaylist,
   [switch]$PreparePlaylistQuery,
   [switch]$CpuProfile,
   [string]$TraceTool
 )
 $ErrorActionPreference='Stop'
+if($MusicPlaylist -and (!$Visible -or $Statistics -or $StatisticsReloads)){throw 'Music playlist benchmarks require visible, separate launches.'}
 $fixture=(Resolve-Path -LiteralPath $FixtureDirectory).Path
 $destination=(Resolve-Path -LiteralPath $RunDirectory).Path
 $app=(Resolve-Path -LiteralPath $Application).Path
@@ -23,10 +25,11 @@ if($checksum -ne $metadata.DatabaseSha256) {throw 'Performance fixture changed.'
 $environmentMetadata=@{
   FixtureSha256=$checksum;SoundItems=$metadata.SoundItems;Playlists=$metadata.Playlists
   PlaylistQueryPreparation=[bool]$PreparePlaylistQuery
+  MusicPlaylistEntries=$(if($MusicPlaylist){100000}else{0})
   Configuration='Release';ProcessorCount=[Environment]::ProcessorCount;OS=[Environment]::OSVersion.VersionString
 }
 $originalValues=@{}
-foreach($name in @('VPLAYER_BENCHMARK_DIRECTORY','VPLAYER_PERFORMANCE_RUN_FILE','VPLAYER_PERFORMANCE_COMMIT','VPLAYER_PERFORMANCE_EXIT_AFTER_RENDER','VPLAYER_PERFORMANCE_WAIT_FOR_LIBRARY','VPLAYER_PERFORMANCE_SCROLL_PLAYLISTS','VPLAYER_PERFORMANCE_STATISTICS','VPLAYER_PERFORMANCE_STATISTICS_RELOADS','VPLAYER_PERFORMANCE_PREPARE_PLAYLIST_QUERY','VPLAYER_PERFORMANCE_CPU_PROFILE')) {
+foreach($name in @('VPLAYER_BENCHMARK_DIRECTORY','VPLAYER_PERFORMANCE_RUN_FILE','VPLAYER_PERFORMANCE_COMMIT','VPLAYER_PERFORMANCE_EXIT_AFTER_RENDER','VPLAYER_PERFORMANCE_WAIT_FOR_LIBRARY','VPLAYER_PERFORMANCE_SCROLL_PLAYLISTS','VPLAYER_PERFORMANCE_STATISTICS','VPLAYER_PERFORMANCE_STATISTICS_RELOADS','VPLAYER_PERFORMANCE_MUSIC_PLAYLIST','VPLAYER_PERFORMANCE_PREPARE_PLAYLIST_QUERY','VPLAYER_PERFORMANCE_CPU_PROFILE')) {
   $originalValues[$name]=[Environment]::GetEnvironmentVariable($name,'Process')
 }
 try {
@@ -45,6 +48,7 @@ try {
     $env:VPLAYER_PERFORMANCE_STATISTICS=$(if($Statistics -or $StatisticsReloads){'1'}else{'0'})
     $env:VPLAYER_PERFORMANCE_STATISTICS_RELOADS=$(if($StatisticsReloads){'1'}else{'0'})
     $env:VPLAYER_PERFORMANCE_PREPARE_PLAYLIST_QUERY=$(if($PreparePlaylistQuery){'1'}else{'0'})
+    $env:VPLAYER_PERFORMANCE_MUSIC_PLAYLIST=$(if($MusicPlaylist){'1'}else{'0'})
     $env:VPLAYER_PERFORMANCE_CPU_PROFILE=$(if($CpuProfile){'1'}else{'0'})
     $launch=@{
       FilePath=$app;WorkingDirectory=(Split-Path -Parent $app);PassThru=$true

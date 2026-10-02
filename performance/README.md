@@ -466,3 +466,14 @@ unchanged. The report rejects changed boundaries, query text, result hashes,
 counts, commits and fixture provenance. These figures cover production
 filtering/publication; rendered search and full library loading remain separate
 unfinished scenarios.
+
+startup.ps1 -MusicPlaylist measures a 100k-entry playlist in the actual music
+player: activation, database/view loading through the normal saved-playlist
+event, populated rendering, scrolling to the last occurrence, and long no-match
+and near-match searches through ActualSearch (including its debounce and WPF
+publication). The benchmark verifies every loaded occurrence in order and
+captures each rendered view. It uses a fresh disposable profile and separate
+visible launches, with the existing overall process timeout. Small phase scopes
+record incoming conversion, saved-row view creation and collection publication
+without changing those paths. This establishes a new baseline before changing
+large-playlist preparation.

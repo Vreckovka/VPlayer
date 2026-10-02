@@ -2168,6 +2168,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       downloadingSongTasks.Add(actualDownloadingSongTask);
 
+      using var conversion=VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("UI / music playlist / convert incoming views");
       var songs = new List<SongInPlayListViewModel>();
 
       foreach (var item in data.Items)

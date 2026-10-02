@@ -43,7 +43,7 @@ using VPLayer.Domain.Diagnostics;
 
 namespace VPlayer
 {
-  public class VPlayerApplication : VApplication<MainWindow, MainWindowViewModel, VPlayerSplashScreen>
+  public partial class VPlayerApplication : VApplication<MainWindow, MainWindowViewModel, VPlayerSplashScreen>
   {
 
     protected override void ShowConsole()
@@ -125,6 +125,8 @@ namespace VPlayer
               CaptureBenchmarkWindow(window, ".ready.png");
               if (Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_SCROLL_PLAYLISTS") == "1")
                 await BenchmarkPlaylistScroll(window, playlistList);
+              if (Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_MUSIC_PLAYLIST") == "1")
+                await BenchmarkMusicPlaylist(window);
               if (Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_STATISTICS") == "1")
                 await BenchmarkStatisticsView(window);
             }
