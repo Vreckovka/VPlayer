@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -586,7 +586,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     #region LoadLRCFromPCloud
 
-    private async Task LoadLRCFromPCloud()
+    protected virtual async Task LoadLRCFromPCloud()
     {
       if (ArtistViewModel == null || AlbumViewModel == null)
         return;
@@ -657,7 +657,9 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     #region TryToRefreshUpdateLyrics
 
-    public async Task<bool> TryToRefreshUpdateLyrics(bool forceRefresh = false)
+    public Task<bool> TryToRefreshUpdateLyrics() => TryToRefreshUpdateLyrics(false);
+
+    public async Task<bool> TryToRefreshUpdateLyrics(bool forceRefresh)
     {
       try
       {
@@ -674,7 +676,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
           if (!string.IsNullOrWhiteSpace(LRCLyrics))
             LoadLRCFromEnitityLyrics();
 
-          if (LRCFile != null || !string.IsNullOrEmpty(Lyrics))
+          if (LRCFile != null)
           {
             RaiseLyricsChange();
             return true;
@@ -685,8 +687,11 @@ namespace VPlayer.Core.ViewModels.SoundItems
         if (ArtistViewModel == null || AlbumViewModel == null)
           return LRCFile != null || !string.IsNullOrEmpty(Lyrics);
 
-        LRCFile = null;
-        Lyrics = null;
+        if (forceRefresh)
+        {
+          LRCFile = null;
+          Lyrics = null;
+        }
 
         if (LRCFile == null)
         {
@@ -694,7 +699,8 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
           if (LRCFile == null)
           {
-            Lyrics = await pCloudLyricsProvider.GetTextLyrics(SongModel.Name, AlbumViewModel?.Name, ArtistViewModel?.Name);
+            if (string.IsNullOrEmpty(Lyrics))
+              Lyrics = await pCloudLyricsProvider.GetTextLyrics(SongModel.Name, AlbumViewModel?.Name, ArtistViewModel?.Name);
 
             if (!string.IsNullOrEmpty(Lyrics))
             {
