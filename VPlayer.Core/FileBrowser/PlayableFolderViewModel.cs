@@ -595,9 +595,14 @@ namespace VPlayer.Core.FileBrowser
 
     #region CreateNewFileItem
 
+    private Func<FileInfo,PlayableFileViewModel> createFileView;
+
     protected override PlayableFileViewModel CreateNewFileItem(FileInfo fileInfo)
     {
-      return viewModelsFactory.Create<PlayableFileViewModel>(fileInfo);
+      if(createFileView==null)
+        createFileView=viewModelsFactory is VPlayer.Core.Factories.IFileBrowserFileViewsFactory factory
+          ?factory.CreateFileBrowserFileConstructor():model=>viewModelsFactory.Create<PlayableFileViewModel>(model);
+      return createFileView(fileInfo);
     }
 
     #endregion

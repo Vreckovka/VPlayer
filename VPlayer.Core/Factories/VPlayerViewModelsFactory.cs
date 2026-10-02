@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Ninject;
@@ -25,7 +25,7 @@ using VPlayer.IPTV.ViewModels;
 
 namespace VPlayer.Core.Factories
 {
-  public class VPlayerViewModelsFactory : BaseViewModelsFactory, IVPlayerViewModelsFactory, ISavedSongViewsFactory, IIncomingPlaylistViewsFactory
+  public class VPlayerViewModelsFactory : BaseViewModelsFactory, IVPlayerViewModelsFactory, ISavedSongViewsFactory, IIncomingPlaylistViewsFactory, IFileBrowserFileViewsFactory
   {
     public VPlayerViewModelsFactory(IKernel kernel) : base(kernel)
     {
@@ -167,6 +167,44 @@ namespace VPlayer.Core.Factories
       // Preserve the default per-item factory lifetime and its constructor cache.
       return song=>new SongInPlayListViewModel(events,albums,artists,downloader,cloud,song,
         logger,storage,windows(),new VPlayerViewModelsFactory(kernel),lyrics);
+    }
+
+    public Func<VCore.WPF.ViewModels.WindowsFiles.FileInfo,VPlayer.Core.FileBrowser.PlayableFileViewModel> CreateFileBrowserFileConstructor()
+    {
+      if(!CanShareFileBrowserServices())
+        return model=>((IViewModelsFactory)this).Create<VPlayer.Core.FileBrowser.PlayableFileViewModel>(model);
+      var events=kernel.Get<IEventAggregator>();
+      var storage=kernel.Get<IStorageManager>();
+      var windowBinding=kernel.GetBindings(typeof(IWindowManager)).Single();
+      Func<IWindowManager> windows;
+      if(windowBinding.Target!=BindingTarget.Constant && windowBinding.ScopeCallback==StandardScopeCallbacks.Transient)
+        windows=windowBinding.Metadata.Get<Func<IWindowManager>>(SavedSongWindowConstructorMetadata);
+      else
+      {
+        var shared=kernel.Get<IWindowManager>();
+        windows=()=>shared;
+      }
+      // Preserve the default per-file factory and transient window-manager lifetimes.
+      return model=>new VPlayer.Core.FileBrowser.PlayableFileViewModel(model,events,storage,windows(),new VPlayerViewModelsFactory(kernel));
+    }
+
+    private bool CanShareFileBrowserServices()
+    {
+      if(GetType()!=typeof(VPlayerViewModelsFactory) ||
+        kernel.GetBindings(typeof(VPlayer.Core.FileBrowser.PlayableFileViewModel)).Any(binding=>!binding.IsImplicit))return false;
+      var factories=kernel.GetBindings(typeof(IViewModelsFactory)).ToArray();
+      if(factories.Length!=1 || factories[0].IsConditional ||
+        factories[0].ScopeCallback!=StandardScopeCallbacks.Transient ||
+        !factories[0].Metadata.Has(DefaultFactoryMetadata) || !factories[0].Metadata.Get<bool>(DefaultFactoryMetadata) ||
+        factories[0].ActivationActions.Any() || factories[0].DeactivationActions.Any() || factories[0].Parameters.Any())return false;
+      foreach(var service in new[]{typeof(IEventAggregator),typeof(IStorageManager),typeof(IWindowManager)})
+      {
+        var bindings=kernel.GetBindings(service).ToArray();
+        if(bindings.Length!=1 || bindings[0].IsConditional ||
+          (bindings[0].Target!=BindingTarget.Constant && bindings[0].ScopeCallback!=StandardScopeCallbacks.Singleton &&
+          !(service==typeof(IWindowManager) && HasDefaultWindowConstructor(bindings[0]))))return false;
+      }
+      return true;
     }
 
     public TvShowEpisodeInPlaylistViewModel CreateTvShowEpisodeInPlayList(VideoItem videoItem, TvShowEpisode tvShowEpisode)
