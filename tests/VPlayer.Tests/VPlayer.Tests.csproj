@@ -17,4 +17,7 @@
     <ProjectReference Include="..\..\VPlayer.Core\VPlayer.Core.csproj" />
     <ProjectReference Include="..\..\VPlayer.Player\VPlayer.Player.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="../Shared/SavedSongViewFixture.cs" Link="SavedSongViewFixture.cs" />
+  </ItemGroup>
 </Project>

@@ -11,4 +11,7 @@
     <ProjectReference Include="..\..\VPlayer.Player\VPlayer.Player.csproj" />
     <PackageReference Include="Moq" Version="4.10.1" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="../Shared/SavedSongViewFixture.cs" Link="SavedSongViewFixture.cs" />
+  </ItemGroup>
 </Project>

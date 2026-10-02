@@ -95,6 +95,8 @@ namespace VPlayer.Performance
         }
         else if(args[0]=="search")
           SearchBenchmarks.Run(args[1],args[2],args.Length>3?args[3]:"unknown");
+        else if(args[0]=="saved-playlist-views")
+          SavedPlaylistViewBenchmarks.Run(args[1],args[2],args.Length>3?args[3]:"unknown");
         else if(args[0]=="playlist-snapshot")
           PlaylistSnapshotBenchmarks.Run(args[1],args[2],args.Length>3?args[3]:"unknown");
         else if(args[0]=="profile-save-read")
