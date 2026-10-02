@@ -203,3 +203,14 @@ New traces identify the protocol as buffered-v1. Report scripts reject mixed
 protocol comparisons: changing the observer is not an application speedup.
 Historical UI comparisons retain their original synchronous protocol; establish
 a separate buffered baseline before further UI optimization.
+
+The buffered-v1 fully played UI baseline at fed56a67 is frozen in
+buffered-ui-baseline.json. All launches completed, with zero empty Statistics
+rows; the last screenshot was visually verified. The source fixture hash is
+unchanged. Diagnostic write counts fell to roughly 20–27, with background writes
+still showing variable disk delays. Real page timings also remain variable.
+buffered-ui-results.md keeps the requested compact two-column format.
+ui-report.ps1 checks full commit hashes, fixture/machine/window consistency and
+diagnostic protocol before comparing versions; same-series zero changes and
+mixed-protocol rejection were verified. The optimized column stays pending until
+an application change is measured against this new baseline.

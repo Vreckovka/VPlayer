@@ -174,5 +174,7 @@ $lines.Add('')
 $lines.Add('Library cards/scrolling; navigation/details; file browser/thumbnails; settings/dialogs; video/fullscreen; cloud timeouts; full library load/fuzzy filtering.')
 $lines.Add('')
 $lines.Add('Percentage changes in unchanged code are observations. Startup phases overlap; component UI tests use a simplified list. Raw samples, maxima, allocations and commit/fixture provenance remain in the JSON files and [README](README.md).')
+$lines.Add('')
+$lines.Add('Further UI optimization uses the separate [buffered baseline](buffered-ui-results.md); historical comparisons above retain their original diagnostics.')
 $lines | Set-Content -LiteralPath $Output
 Write-Output ('Wrote '+$Output)
