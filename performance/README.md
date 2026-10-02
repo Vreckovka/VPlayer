@@ -583,3 +583,11 @@ concurrent preparation, filtered/missing IDs, retry, cache reset, later full
 load identity and nested relationship updates. All 170 tests and the Release build pass. The native
 runner also waits for stored metadata readiness before recording the painted
 100k-playlist endpoint; timings remain pending until a complete native series.
+
+The first two 17e568b1 native attempts did not reach the 100k playlist load.
+They are retained in iterations/music-batch-preload-timeouts-17e568b1.json.
+The first hit the process limit during startup (VLC construction took 44.1k ms).
+The retry painted the initial music view, then timed out before the large read
+scope opened; the clear operation currently has no scope. Neither attempt
+provides a comparable enrichment or end-to-end gain. Optimized playlist values
+remain pending. The next diagnostic target is clearing before the large load.
