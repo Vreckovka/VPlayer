@@ -14,6 +14,10 @@ namespace VPLayer.Domain.Diagnostics
     private static readonly List<object> phases=new List<object>();
     private static readonly Dictionary<string,long> observations=new Dictionary<string,long>();
     private static readonly List<string> active=new List<string>();
+    private static readonly List<object> databaseReads=new List<object>();
+    private static long diagnosticWrites;
+    private static double diagnosticWriteMilliseconds;
+    private static double longestDiagnosticWriteMilliseconds;
     private static string status="Starting";
     private static string failure;
     public static bool Enabled=>!string.IsNullOrWhiteSpace(output);
@@ -48,6 +52,15 @@ namespace VPLayer.Domain.Diagnostics
       if(!Enabled) return;
       lock(phases) {observations[name]=value;Write(status,failure);}
     }
+    public static void RecordDatabaseRead(string table,bool includesFileMetadata,DateTimeOffset start,double duration,int readOperations)
+    {
+      if(!Enabled) return;
+      lock(phases) databaseReads.Add(new
+      {
+        Table=table,IncludesFileMetadata=includesFileMetadata,ReadOperations=readOperations,
+        Milliseconds=duration,StartedMilliseconds=(start.UtcDateTime-processStart).TotalMilliseconds
+      });
+    }
     public static void Fail(Exception exception)
     {
       if(!Enabled) return;
@@ -63,13 +76,19 @@ namespace VPLayer.Domain.Diagnostics
     }
     private static void Write(string status,string failure)
     {
+      var writeWatch=Stopwatch.StartNew();
       var path=Path.GetFullPath(output);
       Directory.CreateDirectory(Path.GetDirectoryName(path));
       File.WriteAllText(path,JsonSerializer.Serialize(new
       {
         Status=status,FailureType=failure,ActivePhases=active.ToArray(),Commit=Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_COMMIT"),
-        Runtime=Environment.Version.ToString(),CreatedUtc=DateTime.UtcNow,Phases=phases,Observations=observations
+        Runtime=Environment.Version.ToString(),CreatedUtc=DateTime.UtcNow,Phases=phases,Observations=observations,
+        DatabaseReads=databaseReads,DiagnosticWrites=new {Count=diagnosticWrites,Milliseconds=diagnosticWriteMilliseconds,LongestMilliseconds=longestDiagnosticWriteMilliseconds}
       },new JsonSerializerOptions {WriteIndented=true}));
+      writeWatch.Stop();
+      diagnosticWrites++;
+      diagnosticWriteMilliseconds+=writeWatch.Elapsed.TotalMilliseconds;
+      longestDiagnosticWriteMilliseconds=Math.Max(longestDiagnosticWriteMilliseconds,writeWatch.Elapsed.TotalMilliseconds);
     }
     private sealed class Scope : IDisposable
     {

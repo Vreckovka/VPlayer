@@ -96,6 +96,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
       optionsBuilder.UseSqlite($"Data Source={directory}\\VPlayerDatabase.db;");
 
       optionsBuilder.EnableSensitiveDataLogging();
+      if(VPLayer.Domain.Diagnostics.StartupMeasurements.Enabled)
+        optionsBuilder.AddInterceptors(BenchmarkQueryInterceptor.Instance);
 
       base.OnConfiguring(optionsBuilder);
     }
