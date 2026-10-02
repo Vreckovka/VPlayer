@@ -714,9 +714,44 @@ namespace VPlayer.Core.Players
 
     #region PlayList_CollectionChanged
 
+    private int playlistDurationBatchDepth;
+    private bool playlistDurationChanged;
+
+    protected override void ReplacePlaylistItems(IReadOnlyList<TItemViewModel> items)
+    {
+      BatchPlaylistDuration(() => base.ReplacePlaylistItems(items));
+    }
+
+    protected override void AddPlaylistItems(IEnumerable<TItemViewModel> items)
+    {
+      BatchPlaylistDuration(() => base.AddPlaylistItems(items));
+    }
+
+    private void BatchPlaylistDuration(Action update)
+    {
+      playlistDurationBatchDepth++;
+      try
+      {
+        update();
+      }
+      finally
+      {
+        if (--playlistDurationBatchDepth == 0 && playlistDurationChanged)
+        {
+          playlistDurationChanged = false;
+          RaisePropertyChanged(nameof(TotalPlaylistDuration));
+        }
+      }
+    }
+
     private void PlayList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
-      RaisePropertyChanged(nameof(TotalPlaylistDuration));
+      // WPF reads the summed duration on each notification. Publish it once
+      // after a bulk replacement/append, while retaining all collection events.
+      if (playlistDurationBatchDepth > 0)
+        playlistDurationChanged = true;
+      else
+        RaisePropertyChanged(nameof(TotalPlaylistDuration));
     }
 
     #endregion

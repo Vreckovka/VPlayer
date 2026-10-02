@@ -497,3 +497,12 @@ music-playlist-ui-baseline.json and music-playlist-ui-results.md. The bound
 total-duration getter sums every item on each collection notification; bulk
 insertion therefore performs quadratic work. Duration notification batching
 is the next optimization, after this immutable baseline is committed.
+
+Bulk playlist replacement and append now defer only TotalPlaylistDuration
+notifications until the outermost operation completes. Collection events,
+occurrence identities and order are retained; single edits notify immediately.
+The final notification also runs after a partial insertion failure. Two 10k-row
+regressions failed in the old behavior (10,001/10,000 notifications instead of
+one), then passed with batching. A third verifies exception recovery and later
+single edits. All 160 tests and the Release application build pass. Native WPF
+results are measured separately against the frozen timeout baseline.

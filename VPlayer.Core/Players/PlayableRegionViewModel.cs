@@ -1589,6 +1589,18 @@ namespace VPlayer.Core.ViewModels
 
     #endregion
 
+    protected virtual void ReplacePlaylistItems(IReadOnlyList<TItemViewModel> items)
+    {
+      PlayList.ForEach(x => x.IsInPlaylist = false);
+      PlayList.Clear();
+      AddPlaylistItems(items);
+    }
+
+    protected virtual void AddPlaylistItems(IEnumerable<TItemViewModel> items)
+    {
+      PlayList.AddRange(items);
+    }
+
     #region PlayItems
 
     protected virtual void PlayItems(IEnumerable<TItemViewModel> items, int songIndex, bool savePlaylist = true, bool editSaved = false, bool onlyItemSet = false)
@@ -1596,9 +1608,7 @@ namespace VPlayer.Core.ViewModels
       using var publication=VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("UI / player playlist / collection publication");
       var itemList = items.ToList();
 
-      PlayList.ForEach(x => x.IsInPlaylist = false);
-      PlayList.Clear();
-      PlayList.AddRange(itemList);
+      ReplacePlaylistItems(itemList);
       RaisePropertyChanged(nameof(CanReorderPlaylist));
       actualItemIndex = songIndex;
 
@@ -1675,7 +1685,7 @@ namespace VPlayer.Core.ViewModels
 
           break;
         case EventAction.Add:
-          PlayList.AddRange(data.Items);
+          AddPlaylistItems(data.Items);
 
           if (ActualItem == null)
           {
