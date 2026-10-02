@@ -1064,6 +1064,11 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private SemaphoreSlim semaphoreVideoSlim = new SemaphoreSlim(1, 1);
     private async Task PlayVideo()
     {
+      if (ActualItem?.Model == null)
+      {
+        await StopVideo();
+        return;
+      }
       if (!await semaphoreVideoSlim.WaitAsync(0))
         return;
 
@@ -1071,8 +1076,15 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         await ViewInitializedTask.Task;
 
-        var videoPath = LyricsConstants.Instance.VideoPath ?? ActualItem.Model.VideoPath;
-        var shouldPlay = LyricsConstants.Instance.IsVideo || !string.IsNullOrEmpty(ActualItem.Model.VideoPath);
+        // The playlist may have been cleared while its view was initializing.
+        var model = ActualItem?.Model;
+        if (model == null)
+        {
+          await StopVideo();
+          return;
+        }
+        var videoPath = LyricsConstants.Instance.VideoPath ?? model.VideoPath;
+        var shouldPlay = LyricsConstants.Instance.IsVideo || !string.IsNullOrEmpty(model.VideoPath);
 
         if (shouldPlay && !string.IsNullOrEmpty(videoPath))
         {
@@ -1088,12 +1100,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
         else
         {
-          Task.Run(() =>
-          {
-            VideoVLCPlayer.Stop();
-            VideoVLCPlayer.Media = null;
-            LyricsConstants.Instance.IsVideo = false;
-          });
+          await StopVideo();
 
         }
       }
@@ -1101,6 +1108,20 @@ namespace VPlayer.WindowsPlayer.ViewModels
       {
         semaphoreVideoSlim.Release();
       }
+    }
+
+    private async Task StopVideo()
+    {
+      await Task.Run(() =>
+      {
+        var player = VideoVLCPlayer;
+        if (player != null)
+        {
+          player.Stop();
+          player.Media = null;
+        }
+      });
+      LyricsConstants.Instance.IsVideo = false;
     }
 
     #region SetPlaylistCover

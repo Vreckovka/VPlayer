@@ -477,3 +477,15 @@ visible launches, with the existing overall process timeout. Small phase scopes
 record incoming conversion, saved-row view creation and collection publication
 without changing those paths. This establishes a new baseline before changing
 large-playlist preparation.
+
+The first native music-playlist pilot failed before the large load: clearing
+the initial playlist left PlayVideo dereferencing ActualItem after an awaited
+view initialization. The failure is retained in
+iterations/music-playlist-clear-failure-9aede860.json; it is not a performance
+baseline for the 100k load. Two dispatcher regressions reproduced the stale
+null dereference and waiting for a view that never opens. Both failed in the
+old code and pass after the fix. Empty playlists now stop/reset video without
+waiting, and initialized refreshes recheck the current model after the await.
+Video stop completion is awaited and video flags are published on the caller's
+context. All 157 tests and the application Release build pass. The full native
+baseline resumes with this correctness fix, before playlist preparation changes.
