@@ -305,3 +305,18 @@ include waiting threads, so stack percentages are not CPU percentages
 ([tool documentation](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/dotnet-trace)).
 The local investigation uses Microsoft dotnet-trace 9.0.661903 in the ignored
 artifacts/tools directory.
+
+The cpu-v2 series at 711f8d97 is retained in
+[iterations/statistics-execution-711f8d97.json](iterations/statistics-execution-711f8d97.json).
+All views rendered; the final screenshot was verified and the fixture stayed
+unchanged. Scope-entry overhead peaked around 25 ms; reader-record lock waits
+stayed below 10 ms. Long phases still used little CPU, with delays in connection
+opening, command execution or cursor lifetime, depending on the sample.
+
+The process-specific
+[EventPipe investigation](iterations/statistics-eventpipe-a79c1d17.json)
+identified PlaylistViewModel.GetDisplayName background filesystem probes,
+including Directory.Exists. Thread-stack percentages include waiting time.
+This is evidence of unnecessary work, not proof that it caused every reader
+delay. The unprofiled, fully played display-name baseline is frozen separately
+in display-names-ui-baseline.json at a79c1d17 before changing the application.
