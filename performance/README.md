@@ -624,3 +624,11 @@ executing the materializing read. The current joined query materializes an
 unfiltered PlaylistSongs/SoundItems/FileInfos subquery before filtering the
 selected playlist. SQL compilation/EXPLAIN timings are diagnostic preparation
 times, not playlist load measurements.
+
+The music-playlist save read now uses EF split queries to avoid materializing
+unrelated playlist entries. The legacy SQL plans are retained in
+iterations/playlist-save-joined-query-plans-3c5e36d6.json. SQLite regressions use
+28-row and full 100k-row queues alongside each other, checking ordered duplicate
+occurrences, file metadata, private flags, actual item and indexed collection
+access without a full PlaylistSongs scan. All 172 tests and the Release build pass. Native timing
+gains remain unproven until a complete painted benchmark series finishes.

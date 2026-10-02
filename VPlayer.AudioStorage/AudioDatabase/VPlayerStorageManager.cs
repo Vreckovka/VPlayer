@@ -1282,6 +1282,14 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region UpdatePlaylist
 
+    private static IQueryable<SoundItemFilePlaylist> QuerySoundPlaylistForUpdate(IQueryable<SoundItemFilePlaylist> source)
+    {
+      return source.AsSplitQuery()
+        .Include(playlist=>playlist.PlaylistItems)
+        .ThenInclude(item=>item.ReferencedItem.FileInfoEntity)
+        .Include(playlist=>playlist.ActualItem.ReferencedItem);
+    }
+
     public bool UpdatePlaylist<TPlaylist, TPlaylistItem, TModel>(TPlaylist playlist, out TPlaylist updatedPlaylist)
       where TPlaylist : class, IPlaylist<TPlaylistItem>
       where TPlaylistItem : class, IItemInPlaylist<TModel>
@@ -1298,10 +1306,7 @@ namespace VPlayer.AudioStorage.AudioDatabase
         {
           if (playlist is SoundItemFilePlaylist)
           {
-            foundPlaylist = (IPlaylist<TPlaylistItem>)GetTempRepository<SoundItemFilePlaylist>()
-              .Include(x => x.PlaylistItems)
-              .ThenInclude(x => x.ReferencedItem.FileInfoEntity)
-              .Include(x => x.ActualItem.ReferencedItem)
+            foundPlaylist = (IPlaylist<TPlaylistItem>)QuerySoundPlaylistForUpdate(GetTempRepository<SoundItemFilePlaylist>())
               .SingleOrDefault(x => x.Id == playlist.Id);
           }
           else
