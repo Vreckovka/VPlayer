@@ -272,7 +272,16 @@ foreach($category in @('Data','Playlist','UI','Lyrics','Spectrum')) {
 $lines.Add('')
 $lines.Add('## Still to measure')
 $lines.Add('')
-$lines.Add('Library cards/scrolling; navigation/details; file browser/thumbnails; settings/dialogs; video/fullscreen; cloud timeouts; full library load; rendered fuzzy filtering.')
+$lines.Add('Cold startup after a restart; full application data load; stored album/file details; native rapid next/back and save overhead; lyrics playback/scrolling; explorer loading/finding. See [current scope](focus.md).')
+$lines.Add('')
+$lines.Add('## Rapid playlist selection')
+$lines.Add('')
+$selectionReport=Join-Path $PSScriptRoot 'playback-selection-results.md'
+if(Test-Path -LiteralPath $selectionReport) {
+  foreach($row in @(Get-Content -LiteralPath $selectionReport | Where-Object {$_.StartsWith('|')})) {$lines.Add($row)}
+  $lines.Add('')
+  $lines.Add('100k-entry controlled correctness checks; mocked media, no timing claim. [Details](playback-selection-results.md).')
+}
 $lines.Add('')
 $lines.Add('Percentage changes in unchanged code are observations. Startup phases overlap; component UI tests use a simplified list. Raw samples, maxima, allocations and commit/fixture provenance remain in the JSON files and [README](README.md).')
 $lines.Add('')

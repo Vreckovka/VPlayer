@@ -51,22 +51,35 @@ namespace VPlayer.Tests
       internal ConcurrentDictionary<int,Gate> Gates;
       internal ConcurrentQueue<int> Notifications;
       internal List<int> Played;
+      internal bool UseBasePlay;
+      internal Gate Initialization;
       protected override Task BeforeSetMedia(SoundItem model)
       {
         var gate=Gates[model.Id];
         gate.Entered.TrySetResult(true);
         return gate.Release.Task;
       }
-      protected override async Task SetMedia(SoundItem model)
+      protected override Task SetMedia(SoundItem model)
       {
-        await base.SetMedia(model);
-        if(model!=null) Gates[model.Id].Completed.TrySetResult(true);
+        var task=base.SetMedia(model);
+        if(model!=null) task.ContinueWith(completed=>
+        {
+          if(completed.IsFaulted) _=completed.Exception;
+          Gates[model.Id].Completed.TrySetResult(true);
+        },TaskScheduler.Default);
+        return task;
       }
       public override void OnSetActualItem(SoundItemInPlaylistViewModel item,bool playing) {}
       protected override void OnActualItemChanged() {}
       protected override void OnIsPlayingChanged() {}
       public override void OnNewItemPlay(SoundItem model)=>Notifications.Enqueue(model.Id);
-      public override Task Play(){Played.Add(ActualItem?.Model.Id??-1);return Task.CompletedTask;}
+      protected override void OnPlay() {}
+      protected override Task WaitForVlcInitilization()
+      {
+        Initialization.Entered.TrySetResult(true);
+        return Initialization.Release.Task;
+      }
+      public override Task Play(){if(UseBasePlay)return base.Play();Played.Add(ActualItem?.Model.Id??-1);return Task.CompletedTask;}
       internal Task Load(SoundItem model)=>SetMedia(model);
     }
     private static FieldInfo Field(Type type,string name)
@@ -88,10 +101,12 @@ namespace VPlayer.Tests
         Player.Gates=new ConcurrentDictionary<int,Gate>();
         Player.Notifications=new ConcurrentQueue<int>();
         Player.Played=new List<int>();
+        Player.Initialization=new Gate();
         var events=new EventAggregator();
         var storage=new Mock<VPlayer.AudioStorage.Interfaces.Storage.IStorageManager>().Object;
         Items.AddPlaylistRange(Enumerable.Range(1,100000).Select(id=>new SoundItemInPlaylistViewModel(
           new SoundItem {Id=id,FileInfoEntity=new FileInfoEntity {Name="Track "+id,Source="file:///D:/benchmark/"+id+".mp3"}},events,storage)));
+        Field(Player.GetType(),"mediaChangeLock").SetValue(Player,new object());
         Field(Player.GetType(),"playList").SetValue(Player,Items);
         Field(Player.GetType(),"actualItemSubject").SetValue(Player,actual);
         Field(Player.GetType(),"shuffleList").SetValue(Player,new HashSet<SoundItemInPlaylistViewModel>());
@@ -99,7 +114,13 @@ namespace VPlayer.Tests
         Field(Player.GetType(),"actualSavedPlaylist").SetValue(Player,new SoundItemFilePlaylist {Id=-1});
         Field(Player.GetType(),"isRepeate").SetValue(Player,false);
         var device=new Mock<IPlayer>();
-        device.Setup(x=>x.SetNewMedia(It.IsAny<Uri>(),It.IsAny<CancellationToken>())).Callback((Uri uri,CancellationToken token)=>{if(uri!=null)Applied.Enqueue(uri.AbsoluteUri);});
+        device.SetupProperty(x=>x.Media);
+        device.Setup(x=>x.SetNewMedia(It.IsAny<Uri>(),It.IsAny<CancellationToken>())).Callback((Uri uri,CancellationToken token)=>
+        {
+          device.Object.Media=uri==null?null:new Mock<IMedia>().Object;
+          if(uri!=null)Applied.Enqueue(uri.AbsoluteUri);
+        });
+        device.Setup(x=>x.Play()).Callback(()=>Player.Played.Add(Player.ActualItem?.Model.Id??-1));
         Player.MediaPlayer=device.Object;
         previousUi=VSynchronizationContext.UISynchronizationContext;
         VSynchronizationContext.UISynchronizationContext=Ui;
@@ -138,7 +159,12 @@ namespace VPlayer.Tests
     public async Task HundredOutOfOrderSelectionsCommitOnlyTheFinalTrack()
     {
       using var f=new Fixture();
-      for(int index=99900;index<100000;index++){f.Register(index+1);f.Select(index);}
+      for(int index=99900;index<100000;index++)
+      {
+        var gate=f.Register(index+1);
+        f.Select(index);
+        await f.PumpUntil(()=>gate.Entered.Task.IsCompleted);
+      }
       await Task.WhenAll(f.Player.Gates.Values.Select(g=>g.Entered.Task));
       var latest=f.Register(100000);
       latest.Release.TrySetResult(true);
@@ -189,6 +215,133 @@ namespace VPlayer.Tests
       Assert.Single(f.Player.Played);
       Assert.Same(f.Items[99999],f.Player.ActualItem);
       Assert.Single(f.Applied);
+    }
+
+    [Fact]
+    public async Task RepeatedRequestsForTheSameOccurrenceAutoplayOnlyOnce()
+    {
+      using var f=new Fixture();
+      var gate=f.Register(100000);
+      f.Select(99999);
+      await gate.Entered.Task;
+      f.Select(99999);
+      gate.Release.TrySetResult(true);
+      await f.ReleaseAll();
+      Assert.Empty(f.Ui.Errors);
+      Assert.Single(f.Player.Played);
+      Assert.Single(f.Applied);
+    }
+
+    [Fact]
+    public async Task EndingThePlaylistInvalidatesThePendingLastTrack()
+    {
+      using var f=new Fixture();
+      var gate=f.Register(100000);
+      f.Select(99999);
+      await gate.Entered.Task;
+      f.Select(100000);
+      await f.ReleaseAll();
+      Assert.Empty(f.Ui.Errors);
+      Assert.Empty(f.Applied);
+      Assert.Empty(f.Player.Played);
+      Assert.True(f.Player.IsPlayFnished);
+    }
+
+    [Fact]
+    public async Task DisposingDuringPreparationDropsPendingCallbacks()
+    {
+      using var f=new Fixture();
+      var gate=f.Register(100000);
+      f.Select(99999);
+      await gate.Entered.Task;
+      Field(f.Player.GetType(),"isDisposing").SetValue(f.Player,true);
+      await f.ReleaseAll();
+      Assert.Empty(f.Ui.Errors);
+      Assert.Empty(f.Applied);
+      Assert.Empty(f.Player.Notifications);
+      Assert.Empty(f.Player.Played);
+    }
+
+    [Fact]
+    public async Task LateDeviceInitializationCannotResumeAfterClearing()
+    {
+      using var f=new Fixture();
+      f.Player.UseBasePlay=true;
+      var gate=f.Register(100000);
+      f.Select(99999);
+      await gate.Entered.Task;
+      gate.Release.TrySetResult(true);
+      await f.PumpUntil(()=>f.Player.Initialization.Entered.Task.IsCompleted);
+      f.ClearCurrent();
+      await f.Player.Load(null);
+      f.Player.Initialization.Release.TrySetResult(true);
+      await f.ReleaseAll();
+      Assert.Empty(f.Ui.Errors);
+      Assert.Empty(f.Player.Played);
+    }
+
+    [Fact]
+    public async Task ReplacingTheMediaDeviceDropsPreparedWorkForTheOldDevice()
+    {
+      using var f=new Fixture();
+      var gate=f.Register(100000);
+      f.Select(99999);
+      await gate.Entered.Task;
+      var replacement=new Mock<IPlayer>();
+      f.Player.MediaPlayer=replacement.Object;
+      await f.ReleaseAll();
+      Assert.Empty(f.Ui.Errors);
+      Assert.Empty(f.Applied);
+      Assert.Empty(f.Player.Played);
+      replacement.Verify(x=>x.SetNewMedia(It.IsAny<Uri>(),It.IsAny<CancellationToken>()),Times.Never);
+    }
+
+    [Fact]
+    public async Task MediaClearWhileKeepingTheSelectionCannotAutoplayOldPreparation()
+    {
+      using var f=new Fixture();
+      var gate=f.Register(100000);
+      f.Select(99999);
+      await gate.Entered.Task;
+      await f.Player.Load(null);
+      await f.ReleaseAll();
+      Assert.Empty(f.Ui.Errors);
+      Assert.Empty(f.Applied);
+      Assert.Empty(f.Player.Played);
+    }
+
+    [Fact]
+    public async Task MediaClearDuringInitializationCannotRestartTheSameSelection()
+    {
+      using var f=new Fixture();
+      f.Player.UseBasePlay=true;
+      var gate=f.Register(100000);
+      f.Select(99999);
+      await gate.Entered.Task;
+      gate.Release.TrySetResult(true);
+      await f.PumpUntil(()=>f.Player.Initialization.Entered.Task.IsCompleted);
+      await f.Player.Load(null);
+      f.Player.Initialization.Release.TrySetResult(true);
+      await f.ReleaseAll();
+      Assert.Empty(f.Ui.Errors);
+      Assert.Empty(f.Player.Played);
+    }
+
+    [Fact]
+    public async Task CurrentPreparedSelectionStillStartsTheDeviceOnce()
+    {
+      using var f=new Fixture();
+      f.Player.UseBasePlay=true;
+      f.Player.Initialization.Release.TrySetResult(true);
+      var gate=f.Register(100000);
+      f.Select(99999);
+      await gate.Entered.Task;
+      await f.ReleaseAll();
+      Assert.Empty(f.Ui.Errors);
+      Assert.Equal(100000,Assert.Single(f.Player.Played));
+      Assert.True(f.Player.IsPlaying);
+      Assert.Single(f.Applied);
+      Assert.Single(f.Player.Notifications);
     }
 
     [Fact]

@@ -1216,92 +1216,69 @@ namespace VPlayer.Core.ViewModels
 
     #region SetItemAndPlay
 
+    private long selectionVersion;
+
     public virtual async void SetItemAndPlay(int? itemIndex = null, bool forcePlay = false, bool onlyItemSet = false)
     {
+      try {await SetItemAndPlayAsync(itemIndex,forcePlay,onlyItemSet);}
+      catch(Exception exception) {logger?.Log(exception);}
+    }
 
-
-      if (IsShuffle && itemIndex == null)
+    protected virtual async Task SetItemAndPlayAsync(int? itemIndex, bool forcePlay, bool onlyItemSet)
+    {
+      if(isDisposing) return;
+      var version=Interlocked.Increment(ref selectionVersion);
+      CancelPendingMedia();
+      if(PlayList.Count==0)
       {
-        var result = PlayList.Where(p => shuffleList.All(p2 => p2 != p)).ToList();
-
-        if (result.Count == 0)
+        SetActualItem(-1);
+        return;
+      }
+      if(IsShuffle && itemIndex==null)
+      {
+        var result=PlayList.Where(p=>shuffleList.All(previous=>previous!=p)).ToList();
+        if(result.Count==0)
         {
           shuffleList.Clear();
-          result = PlayList.Where(p => shuffleList.All(p2 => p2 != p)).ToList();
+          result=PlayList.ToList();
         }
-
-        var shuffleIndex = (int)Math.Floor(shuffleRandom.NextDouble() * result.Count);
-
-        itemIndex = PlayList.IndexOf(result[shuffleIndex]);
+        var shuffleIndex=(int)Math.Floor(shuffleRandom.NextDouble()*result.Count);
+        itemIndex=PlayList.IndexOf(result[shuffleIndex]);
       }
-
-
-      if (IsRepeate && actualItemIndex > PlayList.Count - 1)
+      IsPlayFnished=false;
+      actualItemIndex=itemIndex??actualItemIndex+1;
+      if(actualItemIndex>=PlayList.Count)
       {
-        actualItemIndex = 0;
-        itemIndex = 0;
-      }
-
-
-      IsPlayFnished = false;
-
-      if (itemIndex == null)
-      {
-        actualItemIndex++;
-      }
-      else
-      {
-        actualItemIndex = itemIndex.Value;
-      }
-
-      if (actualItemIndex >= PlayList.Count)
-      {
-        if (!IsRepeate)
+        if(!IsRepeate)
         {
-
-          IsPlayFnished = true;
-
-
+          IsPlayFnished=true;
           Pause();
           return;
         }
-        else if (actualItemIndex > PlayList.Count - 1)
-        {
-          actualItemIndex = 0;
-          itemIndex = 0;
-        }
+        actualItemIndex=0;
+        itemIndex=0;
       }
-
-
       SetActualItem(actualItemIndex);
-
-
-      if (ActualItem == null)
-        return;
-
-      var oldPlaying = IsPlaying;
-
-      await SetMedia(ActualItem.Model);
-
-
-      ActualItem.IsPlaying = true;
-
-
-      if (oldPlaying || forcePlay)
+      var item=ActualItem;
+      var model=item?.Model;
+      if(item==null || model==null || version!=Volatile.Read(ref selectionVersion)) return;
+      var oldPlaying=IsPlaying;
+      var player=MediaPlayer;
+      var preparation=SetMedia(model);
+      await preparation;
+      var request=preparation as Task<CancellationTokenSource>;
+      if(!IsCurrentSelection(version,item) || !ReferenceEquals(MediaPlayer,player) ||
+        (request!=null && !ReferenceEquals(Volatile.Read(ref mediaToken),request.Result))) return;
+      item.IsPlaying=true;
+      if(oldPlaying || forcePlay || (!IsPlaying && itemIndex!=null))
       {
-        if (!onlyItemSet)
-          await Play();
+        if(!onlyItemSet) await Play();
       }
-      else if (!IsPlaying && itemIndex != null)
-      {
-        if (!onlyItemSet)
-          await Play();
-      }
-      else if (ActualItem != null)
-      {
-        ActualItem.IsPaused = true;
-      }
+      else item.IsPaused=true;
     }
+
+    private bool IsCurrentSelection(long version,TItemViewModel item) =>
+      !isDisposing && version==Volatile.Read(ref selectionVersion) && ReferenceEquals(ActualItem,item);
 
     #endregion
 
@@ -1369,46 +1346,76 @@ namespace VPlayer.Core.ViewModels
 
 
     CancellationTokenSource mediaToken;
+    private readonly object mediaChangeLock=new object();
 
+    private void CancelPendingMedia() => CancelAndDisposeMedia(Interlocked.Exchange(ref mediaToken,null));
+
+    private void CancelAndDisposeMedia(CancellationTokenSource source)
+    {
+      if(source==null) return;
+      try {source.Cancel();}
+      catch(Exception exception) {logger?.Log(exception);}
+      finally {source.Dispose();}
+    }
+
+    private bool OwnsMedia(CancellationTokenSource source,IPlayer player,CancellationToken token) =>
+      !isDisposing && !token.IsCancellationRequested && ReferenceEquals(Volatile.Read(ref mediaToken),source) && ReferenceEquals(MediaPlayer,player);
+
+    // Keep the protected Task contract; the base task carries its exact request
+    // owner so continuations can reject a media clear even when the item is unchanged.
     protected virtual Task SetMedia(TModel model)
     {
-      return Task.Run(async () =>
+      var source=new CancellationTokenSource();
+      var token=source.Token;
+      IPlayer player;
+      CancellationTokenSource previous;
+      // Establish request order before scheduling workers; a delayed old worker
+      // must never replace the cancellation source of a newer request.
+      if(isDisposing) {source.Dispose();return Task.FromResult<CancellationTokenSource>(null);}
+      player=MediaPlayer;
+      previous=Interlocked.Exchange(ref mediaToken,source);
+      CancelAndDisposeMedia(previous);
+      return Task.Run(async ()=>
       {
-        mediaToken?.Cancel();
-        mediaToken = new CancellationTokenSource();
-
-        MediaPlayer.SetNewMedia(null, mediaToken.Token);
-
-        if (model == null)
-          return;
-
-        await BeforeSetMedia(model);
-
-        if (model.Source != null)
+        try
         {
-          try
+          lock(mediaChangeLock)
           {
-            var fileUri = new Uri(model.Source);
-
-            MediaPlayer.SetNewMedia(fileUri, mediaToken.Token);
-
-            OnNewItemPlay(model);
+            if(!OwnsMedia(source,player,token)) return source;
+            player.SetNewMedia(null,token);
           }
-          catch (UriFormatException ex)
+          if(model==null) return source;
+          await BeforeSetMedia(model);
+          var uri=model.Source==null?null:new Uri(model.Source);
+          lock(mediaChangeLock)
           {
-            VSynchronizationContext.PostOnUIThread(() =>
+            if(!OwnsMedia(source,player,token)) return source;
+            if(uri!=null) player.SetNewMedia(uri,token);
+          }
+          var published=new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+          VSynchronizationContext.PostOnUIThread(()=>
+          {
+            try
             {
-              statusManager.ShowFailedMessage($"Item source was not in correct format.\nURI: \"{model.Source}\"", true);
-            });
-          }
+              if(!OwnsMedia(source,player,token)) return;
+              if(uri==null) statusManager.ShowFailedMessage("Item source is NULL",true);
+              else OnNewItemPlay(model);
+            }
+            catch(Exception exception) {published.TrySetException(exception);}
+            finally {published.TrySetResult(true);}
+          });
+          await published.Task;
         }
-        else
+        catch(OperationCanceledException) when(token.IsCancellationRequested) {}
+        catch(UriFormatException)
         {
-          VSynchronizationContext.PostOnUIThread(() =>
+          VSynchronizationContext.PostOnUIThread(()=>
           {
-            statusManager.ShowFailedMessage($"Item source is NULL", true);
+            if(OwnsMedia(source,player,token))
+                statusManager.ShowFailedMessage($"Item source was not in correct format.\nURI: \"{model.Source}\"",true);
           });
         }
+        return source;
       });
     }
 
@@ -1440,30 +1447,52 @@ namespace VPlayer.Core.ViewModels
 
     public virtual Task Play()
     {
-      return Task.Run(async () =>
+      var version=Volatile.Read(ref selectionVersion);
+      var item=ActualItem;
+      var player=MediaPlayer;
+      var owner=Volatile.Read(ref mediaToken);
+      bool Current() => IsCurrentSelection(version,item) && ReferenceEquals(MediaPlayer,player) &&
+        ReferenceEquals(Volatile.Read(ref mediaToken),owner);
+      return Task.Run(async ()=>
       {
-        if (!wasVlcInitilized)
-          await WaitForVlcInitilization();
-
-        if (IsPlayFnished)
+        if(!Current()) return;
+        if(!wasVlcInitilized) await WaitForVlcInitilization();
+        if(!Current()) return;
+        if(IsPlayFnished)
         {
-          SetItemAndPlay(0, true);
-        }
-        else
-        {
-          if (ActualItem != null)
+          VSynchronizationContext.PostOnUIThread(()=>
           {
-            if (MediaPlayer.Media == null)
-            {
-              await SetMedia(ActualItem.Model);
-            }
-
-            MediaPlayer.Play();
-            IsPlaying = true;
-          }
+            if(Current()) SetItemAndPlay(0,true);
+          });
+          return;
         }
-
-        OnPlay();
+        if(item==null) return;
+        if(player.Media==null)
+        {
+          var preparation=SetMedia(item.Model);
+          await preparation;
+          owner=preparation is Task<CancellationTokenSource> request?request.Result:Volatile.Read(ref mediaToken);
+        }
+        // Native APIs stay on workers. UI requests invalidate ownership without
+        // waiting for this gate, so a native callback cannot deadlock navigation.
+        lock(mediaChangeLock)
+        {
+          if(!Current()) return;
+          player.Play();
+        }
+        var published=new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        VSynchronizationContext.PostOnUIThread(()=>
+        {
+          try
+          {
+            if(!Current()) return;
+            IsPlaying=true;
+            OnPlay();
+          }
+          catch(Exception exception) {published.TrySetException(exception);}
+          finally {published.TrySetResult(true);}
+        });
+        await published.Task;
       });
     }
 
@@ -1545,7 +1574,7 @@ namespace VPlayer.Core.ViewModels
 
       if (actualItemIndex < 0)
       {
-        actualItemIndex = PlayList.Count;
+        actualItemIndex = PlayList.Count - 1;
       }
 
       if (IsShuffle)
@@ -2515,6 +2544,8 @@ namespace VPlayer.Core.ViewModels
     public override void Dispose()
     {
       isDisposing = true;
+      Interlocked.Increment(ref selectionVersion);
+      CancelPendingMedia();
 
       Task.Run(async () =>
       {

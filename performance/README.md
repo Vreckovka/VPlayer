@@ -827,3 +827,12 @@ baseline, and this task does not establish rapid-skip/media-playback correctness
 The remaining largest completed load phases are saved row view creation (5k ms)
 and collection replacement (4.5k ms); rapid-skip persistence and album detail
 baselines remain required under the current focus.
+
+Rapid playlist selection now rejects superseded preparation and initialization,
+keeps native media calls on workers, publishes current state through the UI
+context, and wraps previous from the first occurrence to the last valid index.
+Twelve controlled checks use 100k-entry playlists; the original four failures
+and compact comparison are retained in [selection results](playback-selection-results.md).
+All 213 tests passed, and the Release app built with no errors (374 warnings).
+The media device is mocked in these checks: native skip timing, background
+playlist saves and remote-media cancellation still need their own baselines.

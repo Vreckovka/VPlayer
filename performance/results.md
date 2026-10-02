@@ -245,7 +245,18 @@ Data rows include dispatcher publication; the WPF row includes rendering in the 
 
 ## Still to measure
 
-Library cards/scrolling; navigation/details; file browser/thumbnails; settings/dialogs; video/fullscreen; cloud timeouts; full library load; rendered fuzzy filtering.
+Cold startup after a restart; full application data load; stored album/file details; native rapid next/back and save overhead; lyrics playback/scrolling; explorer loading/finding. See [current scope](focus.md).
+
+## Rapid playlist selection
+
+| Baseline now | New optimized version |
+| --- | --- |
+| **100 out-of-order skips: stale media applies** — 99 | 0 (-100%) |
+| **Clear during preparation: unhandled exceptions** — 1 | 0 (-100%) |
+| **Same track in another occurrence: playback starts** — 2 | 1 (-50%) |
+| **Previous from first: selected index** — 100k (invalid) | 99999 (last item) |
+
+100k-entry controlled correctness checks; mocked media, no timing claim. [Details](playback-selection-results.md).
 
 Percentage changes in unchanged code are observations. Startup phases overlap; component UI tests use a simplified list. Raw samples, maxima, allocations and commit/fixture provenance remain in the JSON files and [README](README.md).
 
