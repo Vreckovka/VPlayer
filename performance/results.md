@@ -4,6 +4,8 @@
 
 ## Application startup
 
+Startup focus/stacking regression: [window ordering check](window-startup-results.md).
+
 Fully played library; buffered diagnostics.
 
 | Baseline now | New optimized version |

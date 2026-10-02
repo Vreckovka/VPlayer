@@ -91,6 +91,8 @@ $lines.Add('')
 $lines.Add('207k sound items; stress playlists up to 100k entries. Median timings; **- % = less time**, **+ % = more time**. Failed or missing baselines have no percentage.')
 $lines.Add('')
 $lines.Add('## Application startup')
+$lines.Add('')
+$lines.Add('Startup focus/stacking regression: [window ordering check](window-startup-results.md).')
 if($bufferedStartup.Count) {
   $lines.Add('')
   $lines.Add('Fully played library; buffered diagnostics.')

@@ -1,0 +1,12 @@
+Original VVLC overlay from 6d860eba; synthetic host using the new shell-loaded helper. This is an overlay regression, not a baseline launch of the complete original application.
+
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:02.35]     VPlayer.Tests.WindowStartupTests.VideoAndControlsDoNotActivateOnAutomaticShow [FAIL]
+
+Failed!  - Failed:     1, Passed:     3, Skipped:     0, Total:     4, Duration: 622 ms - VPlayer.Tests.dll (netcoreapp3.1)
+System.InvalidOperationException: Window activation regression failed.
+ ---> System.InvalidOperationException: Automatic video/overlay loading stole foreground activation.
+   at VPlayer.Performance.WindowActivationChecks.<>c__DisplayClass6_0.<<Run>b__0>d.MoveNext() in D:\Aplikacie\VPlayer\tests\VPlayer.Performance\WindowActivationChecks.cs:line 71
+   --- End of inner exception stack trace ---
+   at VPlayer.Performance.WindowActivationChecks.Run(String output, String commit) in D:\Aplikacie\VPlayer\tests\VPlayer.Performance\WindowActivationChecks.cs:line 101
+   at VPlayer.Performance.Program.Main(String[] args) in D:\Aplikacie\VPlayer\tests\VPlayer.Performance\Program.cs:line 77

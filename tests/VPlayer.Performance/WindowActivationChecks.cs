@@ -56,7 +56,7 @@ namespace VPlayer.Performance
       if(File.Exists(output)) throw new IOException("Refusing to overwrite a window regression result.");
       Directory.CreateDirectory(Path.GetDirectoryName(output));
       var marker=output+".foreground-hwnd";
-      if(File.Exists(marker)) throw new IOException("Existing foreground probe marker.");
+      if(File.Exists(marker) || File.Exists(marker+".tmp")) throw new IOException("Existing foreground probe marker.");
       var app=new Application {ShutdownMode=ShutdownMode.OnExplicitShutdown};
       Exception failure=null;
       app.Startup+=async (sender,args)=>
@@ -131,6 +131,8 @@ namespace VPlayer.Performance
         {
           overlay?.Close();video?.Close();host?.Close();
           if(probe!=null) {if(!probe.HasExited){probe.CloseMainWindow();if(!probe.WaitForExit(2000))probe.Kill();}probe.Dispose();}
+          if(File.Exists(marker)) File.Delete(marker);
+          if(File.Exists(marker+".tmp")) File.Delete(marker+".tmp");
           app.Shutdown();
         }
       };

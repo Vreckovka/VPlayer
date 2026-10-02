@@ -1,0 +1,14 @@
+{
+  "Commit": "9cfd8889881e0adf8d63db521b672f3b105c544d",
+  "LayoutUpdates": 100,
+  "VisibilityCycles": 10,
+  "SeparateForegroundProcess": true,
+  "ForegroundTopmost": true,
+  "ZOrderVerified": true,
+  "ExplicitActivationVerified": true,
+  "ExplicitTopmostPreserved": true,
+  "AutomaticActivationChanges": 0,
+  "TopmostWindows": 0,
+  "SplashClosures": 1,
+  "Status": "Passed"
+}

@@ -1,0 +1,6 @@
+Uncommitted draft; not a baseline failure of the released application.
+
+Disabling automatic activation preserved the other process's foreground status, but the native stacking-order check still failed:
+System.InvalidOperationException: An inactive VPlayer window remains above the foreground application.
+
+The final native checks verify both foreground ownership and stacking order; activation-only fixes were not accepted.
