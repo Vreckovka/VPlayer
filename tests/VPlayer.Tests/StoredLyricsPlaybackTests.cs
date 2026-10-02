@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using VCore.WPF.LRC.Domain;
+using VCore.WPF.LRC;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.TestSupport;
 using Xunit;
