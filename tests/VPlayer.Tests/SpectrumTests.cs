@@ -15,14 +15,14 @@ namespace VPlayer.Tests
 {
   internal static class Sta
   {
-    public static void Run(Action action)
+    public static void Run(Action action, int timeoutSeconds = 10)
     {
       Exception failure = null;
       var thread = new Thread(() => {try {action();} catch(Exception error) {failure=error;}});
       thread.IsBackground = true;
       thread.SetApartmentState(ApartmentState.STA);
       thread.Start();
-      if(!thread.Join(TimeSpan.FromSeconds(10))) throw new TimeoutException("WPF test did not finish.");
+      if(!thread.Join(TimeSpan.FromSeconds(timeoutSeconds))) throw new TimeoutException("WPF test did not finish.");
       if(failure != null) ExceptionDispatchInfo.Capture(failure).Throw();
     }
   }

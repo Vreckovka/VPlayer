@@ -1,26 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
-using Microsoft.EntityFrameworkCore;
-using VCore.Standard.Helpers;
 using VCore.WPF;
-using VCore.WPF.ItemsCollections.VirtualList.VirtualLists;
 using VCore.WPF.Misc;
 using VCore.WPF.Modularity.RegionProviders;
 using VCore.WPF.ViewModels;
 using VPlayer.AudioStorage.DomainClasses;
-using VPlayer.AudioStorage.DomainClasses.IPTV;
-using VPlayer.AudioStorage.DomainClasses.Video;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Modularity.Regions;
-using VPlayer.Core.ViewModels;
 using VPlayer.Home.Views.Statistics;
-using VPlayer.IPTV.ViewModels;
-using VPlayer.UPnP.Views;
 
 namespace VPlayer.Home.ViewModels.Statistics
 {
@@ -83,9 +72,9 @@ namespace VPlayer.Home.ViewModels.Statistics
 
     #region ItemsView
 
-    private VirtualList<DomainEntity> itemsView;
+    private IReadOnlyList<DomainEntity> itemsView;
 
-    public VirtualList<DomainEntity> ItemsView
+    public IReadOnlyList<DomainEntity> ItemsView
     {
       get { return itemsView; }
       set
@@ -101,9 +90,9 @@ namespace VPlayer.Home.ViewModels.Statistics
 
     #region VideosItemsView
 
-    private VirtualList<DomainEntity> videosItemsView;
+    private IReadOnlyList<DomainEntity> videosItemsView;
 
-    public VirtualList<DomainEntity> VideosItemsView
+    public IReadOnlyList<DomainEntity> VideosItemsView
     {
       get { return videosItemsView; }
       set
@@ -120,9 +109,9 @@ namespace VPlayer.Home.ViewModels.Statistics
 
     #region SoundsItemsView
 
-    private VirtualList<DomainEntity> soundsItemsView;
+    private IReadOnlyList<DomainEntity> soundsItemsView;
 
-    public VirtualList<DomainEntity> SoundsItemsView
+    public IReadOnlyList<DomainEntity> SoundsItemsView
     {
       get { return soundsItemsView; }
       set
@@ -138,9 +127,9 @@ namespace VPlayer.Home.ViewModels.Statistics
 
     #region PlaylistView
 
-    private VirtualList<IPlaylist> playlistView;
+    private IReadOnlyList<IPlaylist> playlistView;
 
-    public VirtualList<IPlaylist> PlaylistView
+    public IReadOnlyList<IPlaylist> PlaylistView
     {
       get { return playlistView; }
       set
@@ -204,67 +193,15 @@ namespace VPlayer.Home.ViewModels.Statistics
 
     private Task LoadItems()
     {
-      int subCategorySize = 15;
-      int allSize = 30;
-
       return Task.Run(() =>
       {
-        var list = new List<IPlayableModel>();
-        var sounds = storageManager.GetTempRepository<SoundItem>().Include(x => x.FileInfoEntity).Where(x => !x.IsPrivate).ToList();
-        var videos = storageManager.GetTempRepository<VideoItem>().Where(x => !x.IsPrivate).ToList();
-        var episodes = storageManager.GetTempRepository<TvShowEpisode>().Where(x => !x.IsPrivate).ToList();
-
-        list.AddRange(sounds);
-        list.AddRange(videos);
-        list.AddRange(episodes);
-
-        var itemsToDisplay = list.OrderByDescending(x => x.TimePlayed).Take(allSize).OfType<DomainEntity>().ToList();
-
-        var songsItems = storageManager.GetTempRepository<Song>()
-          .Where(x => itemsToDisplay.OfType<SoundItem>().Select(y => y.Id).Contains(x.ItemModel.Id))
-          .Include(x => x.Album)
-          .ThenInclude(x => x.Artist)
-          .Include(x => x.ItemModel)
-          .ThenInclude(x => x.FileInfoEntity)
-          .ToList();
-
-        foreach (var song in songsItems)
-        {
-          var index = itemsToDisplay.IndexOf(x => x.Id == song.ItemModelId);
-
-          if (index != null)
-            itemsToDisplay[index.Value] = song;
-        }
-
-
-        var soundsToDisplay = sounds.OrderByDescending(x => x.TimePlayed).Take(subCategorySize).OfType<DomainEntity>().ToList();
-
-        songsItems = storageManager.GetTempRepository<Song>()
-          .Where(x => soundsToDisplay.OfType<SoundItem>().Select(y => y.Id).Contains(x.ItemModel.Id))
-          .Include(x => x.Album)
-          .ThenInclude(x => x.Artist)
-          .Include(x => x.ItemModel)
-          .ThenInclude(x => x.FileInfoEntity)
-          .ToList();
-
-        foreach (var song in songsItems)
-        {
-          var index = soundsToDisplay.IndexOf(x => x.Id == song.ItemModelId);
-
-          if (index != null)
-            soundsToDisplay[index.Value] = song;
-        }
-
-
-        var videosToDisplay = videos.OrderByDescending(x => x.TimePlayed).Take(subCategorySize).OfType<DomainEntity>().ToList();
-
-
+        var snapshot=StatisticsQueries.LoadItems(storageManager);
         VSynchronizationContext.PostOnUIThread(() =>
         {
-          TotalWatchedItems = list.Sum(x => x.TimePlayed);
-          ItemsView = new VirtualList<DomainEntity>(itemsToDisplay, allSize);
-          VideosItemsView = new VirtualList<DomainEntity>(soundsToDisplay, subCategorySize);
-          SoundsItemsView = new VirtualList<DomainEntity>(videosToDisplay, subCategorySize);
+          TotalWatchedItems=snapshot.Total;
+          ItemsView=snapshot.Items;
+          SoundsItemsView=snapshot.Sounds;
+          VideosItemsView=snapshot.Videos;
         });
       });
     }
@@ -273,22 +210,12 @@ namespace VPlayer.Home.ViewModels.Statistics
     {
       return Task.Run(() =>
       {
-        var list = new List<IPlaylist>();
-        var videos = storageManager.GetTempRepository<VideoFilePlaylist>().Where(x => !x.IsPrivate);
-        var sounds = storageManager.GetTempRepository<SoundItemFilePlaylist>().Where(x => !x.IsPrivate);
-        var episodes = storageManager.GetTempRepository<TvPlaylist>().Where(x => !x.IsPrivate);
-
-        list.AddRange(sounds);
-        list.AddRange(videos);
-        list.AddRange(episodes);
-
-
+        var snapshot=StatisticsQueries.LoadPlaylists(storageManager);
         VSynchronizationContext.PostOnUIThread(() =>
         {
-          //Items data were collected later and we don't want to lose old
-          //data so we combine Playlist.TotalPlayedTime - Items.Sum(x => x.TimePlayed)
-          TotalWatched = list.Sum(x => x.TotalPlayedTime) - TotalWatchedItems;
-          PlaylistView = new VirtualList<IPlaylist>(list.OrderByDescending(x => x.TotalPlayedTime).Take(30), 30);
+          // Preserve the legacy playlist history adjustment.
+          TotalWatched=snapshot.Total-TotalWatchedItems;
+          PlaylistView=snapshot.Items;
         });
       });
     }

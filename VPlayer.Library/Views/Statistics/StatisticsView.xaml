@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="VPlayer.Home.Views.Statistics.StatisticsView"
+<UserControl x:Class="VPlayer.Home.Views.Statistics.StatisticsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:attachedProperties="clr-namespace:VCore.WPF.AttachedProperties;assembly=VCore.WPF"
@@ -156,7 +156,7 @@
 
                 <ListView Grid.Row="3"
                           Grid.Column="0"
-                          ItemsSource="{Binding VideosItemsView}">
+                          ItemsSource="{Binding SoundsItemsView}">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Margin="5" Orientation="Horizontal">
@@ -230,7 +230,7 @@
 
                 <ListView Grid.Row="5"
                           Grid.Column="0"
-                          ItemsSource="{Binding SoundsItemsView}">
+                          ItemsSource="{Binding VideosItemsView}">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Margin="5" Orientation="Horizontal">
