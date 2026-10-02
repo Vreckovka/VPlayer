@@ -46,7 +46,7 @@ namespace VPlayer.Performance
       if(commit.Length!=40 || commit.Any(c=>!Uri.IsHexDigit(c)))throw new ArgumentException("Exact source commit required.");
       if(File.Exists(output))throw new IOException("Use a new output file.");
       if(!File.Exists(Path.Combine(directory,"fixture.json")))throw new ArgumentException("Prepared fixture required.");
-      using var fixture=new FileBrowserFixture();
+      using var fixture=new FileBrowserFixture(true);
       var results=new List<object>();
       var loading=Stopwatch.StartNew();fixture.Open(directory);loading.Stop();
       results.Add(new {Name="root-directory-load",Milliseconds=loading.Elapsed.TotalMilliseconds});
@@ -90,7 +90,18 @@ namespace VPlayer.Performance
       else FileBrowserFixture.WaitUntil(()=>publications>=rapidBefore+5,TimeSpan.FromMinutes(5));
       results.Add(new {Name="clear-in-flight",RootRestored=fixture.Browser.RootFolder.SubItems.View.Count==fixture.Browser.RootFolder.SubItems.ViewModels.Count});
       try{fixture.Browser.Filter(null);}catch(Exception ex){errors.Add("null-query: "+ex.GetType().Name);}
-      File.WriteAllText(output,JsonSerializer.Serialize(new {Schema="file-browser-search-v1",SourceCommit=commit,
+      using var loadingFixture=new FileBrowserFixture(true);
+      loadingFixture.Open(directory);
+      var loadCpu=Process.GetCurrentProcess().TotalProcessorTime;
+      var loadAlloc=GC.GetAllocatedBytesForCurrentThread();
+      var loadWatch=Stopwatch.StartNew();
+      FileBrowserFixture.Await(loadingFixture.Browser.RootFolder.LoadSubFolders(loadingFixture.Browser.RootFolder));
+      loadWatch.Stop();
+      results.Add(new {Name="recursive-directory-load-only",Milliseconds=loadWatch.Elapsed.TotalMilliseconds,
+        CpuMilliseconds=(Process.GetCurrentProcess().TotalProcessorTime-loadCpu).TotalMilliseconds,
+        UiAllocatedBytes=GC.GetAllocatedBytesForCurrentThread()-loadAlloc,
+        LoadedItems=loadingFixture.Browser.AllLoadedItems.Count()});
+      File.WriteAllText(output,JsonSerializer.Serialize(new {Schema="file-browser-search-v2",SourceCommit=commit,
         Fixture=Path.GetFullPath(directory),Results=results,Errors=errors,FullPlayerUiMeasured=false,
         Boundary="Actual Windows browser and recursive folder view models; no rendered window or audio."},new JsonSerializerOptions{WriteIndented=true}));
     }

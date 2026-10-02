@@ -1,0 +1,74 @@
+{
+  "Schema": "file-browser-search-v1",
+  "SourceCommit": "be60ac1ab43d1af61bb907ca756cc39a71c3aa0b",
+  "Fixture": "D:\\Aplikacie\\VPlayer\\artifacts\\performance\\file-browser-20261002-215627\\tree",
+  "Results": [
+    {
+      "Name": "root-directory-load",
+      "Milliseconds": 386.6039
+    },
+    {
+      "Name": "first-recursive-miss",
+      "Query": "zzzz-no-such-track",
+      "Milliseconds": 23328.3798,
+      "CpuMilliseconds": 22250,
+      "RootMatches": 0,
+      "DisplayedRootItems": 1102,
+      "RootDisplayMatchesFilter": false,
+      "VisibleFiles": 0,
+      "RootNames": []
+    },
+    {
+      "Name": "loaded-recursive-miss",
+      "Query": "yyyy-no-such-track",
+      "Milliseconds": 3634.8613,
+      "CpuMilliseconds": 3562.5,
+      "RootMatches": 0,
+      "DisplayedRootItems": 1102,
+      "RootDisplayMatchesFilter": false,
+      "VisibleFiles": 0,
+      "RootNames": []
+    },
+    {
+      "Name": "deep-folder-match",
+      "Query": "needle-folder",
+      "Milliseconds": 2487.8233,
+      "CpuMilliseconds": 2296.875,
+      "RootMatches": 1,
+      "DisplayedRootItems": 1102,
+      "RootDisplayMatchesFilter": false,
+      "VisibleFiles": 0,
+      "RootNames": [
+        "d0"
+      ]
+    },
+    {
+      "Name": "uppercase-deep-folder-match",
+      "Query": "NEEDLE-FOLDER",
+      "Milliseconds": 2709.2378,
+      "CpuMilliseconds": 2640.625,
+      "RootMatches": 1,
+      "DisplayedRootItems": 1102,
+      "RootDisplayMatchesFilter": false,
+      "VisibleFiles": 0,
+      "RootNames": [
+        "d0"
+      ]
+    },
+    {
+      "Name": "rapid-query-changes",
+      "Milliseconds": 11804.518,
+      "VisibleFiles": 28133,
+      "LatestQueryWon": false
+    },
+    {
+      "Name": "clear-in-flight",
+      "RootRestored": false
+    }
+  ],
+  "Errors": [
+    "null-query: NullReferenceException"
+  ],
+  "FullPlayerUiMeasured": false,
+  "Boundary": "Actual Windows browser and recursive folder view models; no rendered window or audio."
+}

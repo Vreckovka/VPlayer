@@ -12,6 +12,7 @@ using VCore.Standard.Providers;
 using VCore.WPF;
 using VCore.WPF.Interfaces.Managers;
 using VCore.WPF.Modularity.RegionProviders;
+using VCore.WPF.Managers;
 using VPlayer.AudioStorage.Interfaces.Storage;
 using VPlayer.Core.Factories;
 using VPlayer.Home.ViewModels.FileBrowser;
@@ -26,15 +27,17 @@ namespace VPlayer.TestSupport
     private readonly Dispatcher previousDispatcher=VSynchronizationContext.UIDispatcher;
     internal readonly Mock<IWindowManager> Windows=new Mock<IWindowManager>();
     internal WindowsFileBrowserViewModel Browser {get;}
-    internal FileBrowserFixture()
+    internal FileBrowserFixture(bool productionWindows=false)
     {
       if(Application.Current==null) new Application {ShutdownMode=ShutdownMode.OnExplicitShutdown};
       VSynchronizationContext.UISynchronizationContext=new DispatcherSynchronizationContext(Dispatcher.CurrentDispatcher);
       VSynchronizationContext.UIDispatcher=Dispatcher.CurrentDispatcher;
       kernel.Bind<IEventAggregator>().ToConstant(new EventAggregator());
       kernel.Bind<IStorageManager>().ToConstant(new Mock<IStorageManager>().Object);
-      kernel.Bind<IWindowManager>().ToConstant(Windows.Object);
-      kernel.Bind<IViewModelsFactory>().To<VPlayerViewModelsFactory>();
+      if(productionWindows)
+        kernel.Bind<IWindowManager>().To<WindowManager>().WithMetadata("VPlayerSavedSongWindowConstructor",new Func<IWindowManager>(()=>new WindowManager()));
+      else kernel.Bind<IWindowManager>().ToConstant(Windows.Object);
+      kernel.Bind<IViewModelsFactory>().To<VPlayerViewModelsFactory>().WithMetadata("VPlayerDefaultViewFactory",true);
       var factory=kernel.Get<IViewModelsFactory>();
       Browser=new WindowsFileBrowserViewModel(new Mock<IRegionProvider>().Object,factory,
         new Mock<ISettingsProvider>().Object,Windows.Object,new Mock<IStorageManager>().Object,
