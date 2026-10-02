@@ -2261,6 +2261,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
       bool changed = false;
 
       var sourcePlaylist = PlayList.ToArray();
+      var sourcePlaylistId = ActualSavedPlaylist.Id;
       List<Song> songsItems;
       using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("UI / music playlist / stored song database read"))
         songsItems = await Task.Run(() => storageManager.GetTempRepository<Song>()
@@ -2273,13 +2274,21 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
       // The query may finish after another playlist has been opened or cleared.
       // Apply its replacements on the caller's UI context only if its rows remain.
-      if (sourcePlaylist.Length != PlayList.Count ||
+      if (sourcePlaylistId != ActualSavedPlaylist.Id || sourcePlaylist.Length != PlayList.Count ||
           sourcePlaylist.Where((item,index) => !ReferenceEquals(item,PlayList[index])).Any())
         return;
 
         if (songsItems.Count > 0)
         {
           using var enrichment = VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("UI / music playlist / stored song enrichment publication");
+          using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("UI / music playlist / related view lookup"))
+          {
+            await Kernel.Get<IArtistsViewModel>().PrepareViewModelsAsync(songsItems.Select(song=>song.Album?.Artist?.Id ?? 0));
+            await Kernel.Get<IAlbumsViewModel>().PrepareViewModelsAsync(songsItems.Select(song=>song.Album?.Id ?? 0));
+          }
+          if (sourcePlaylistId != ActualSavedPlaylist.Id || sourcePlaylist.Length != PlayList.Count ||
+              sourcePlaylist.Where((item,index) => !ReferenceEquals(item,PlayList[index])).Any())
+            return;
           PlayList.DisableNotification();
           UnHookToPlaylistCollectionChanged();
           try
@@ -2343,6 +2352,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
         }
       }
 
+      VPLayer.Domain.Diagnostics.StartupMeasurements.RecordObservation("UI / music playlist / stored metadata ready playlist",sourcePlaylistId);
       DownloadInfos(PlayList.ToList());
 
       var actualDownloadingSongTask = new CancellationTokenSource();

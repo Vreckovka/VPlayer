@@ -123,7 +123,10 @@ namespace VPlayer.Tests
             .Returns((object[] args)=>new ArtistViewModel((Artist)args[0],fixture.Events,fixture.Storage.Object,cloud,artists,factory.Object,regions));
           factory.Setup(x=>x.Create<AlbumViewModel>(It.IsAny<object[]>()))
             .Returns((object[] args)=>new AlbumViewModel((Album)args[0],fixture.Events,fixture.Storage.Object,albums,factory.Object,cloud,regions));
+          await artists.PrepareViewModelsAsync(Enumerable.Repeat(storedArtist.Id,100000));
+          await albums.PrepareViewModelsAsync(Enumerable.Repeat(storedAlbum.Id,100000));
           using var artist=await artists.GetViewModelAsync(storedArtist.Id);
+          Assert.Equal(storedAlbum.Id,Assert.Single(artist.Model.Albums).Id);
           using var album=await albums.GetViewModelAsync(storedAlbum.Id);
           artist.IsInPlaylist=album.IsInPlaylist=true;
           storedArtist.Name="Renamed Artist";

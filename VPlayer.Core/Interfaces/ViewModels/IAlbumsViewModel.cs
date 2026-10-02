@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using VCore.WPF.Interfaces.ViewModels;
 using VCore.WPF.ViewModels.Navigation;
@@ -9,5 +10,6 @@ namespace VPlayer.Core.Interfaces.ViewModels
   public interface IAlbumsViewModel : ICollectionViewModel<AlbumViewModel, Album>, INavigationItem
   {
     Task<AlbumViewModel> GetViewModelAsync(int modelId);
+    Task PrepareViewModelsAsync(IEnumerable<int> modelIds);
   }
 }

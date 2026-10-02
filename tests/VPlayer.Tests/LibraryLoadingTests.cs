@@ -233,6 +233,7 @@ namespace VPlayer.Tests
         int callbacks=0;
         library.DataLoadedCallback=()=>callbacks++;
         audit.ReadCounts.Clear();
+        await library.PrepareViewModelsAsync(Enumerable.Repeat(10000,100000));
         var lookups=await Task.WhenAll(Enumerable.Range(0,64).Select(_=>library.GetViewModelAsync(10000)));
         Assert.False(library.WasLoaded);
         Assert.InRange(audit.ReadCounts.Single(),1,3);
@@ -353,6 +354,103 @@ namespace VPlayer.Tests
         factory.Verify(x=>x.Create<INamedEntityViewModel<Model>>(It.IsAny<object[]>()),Times.Exactly(10000));
       });
     }
+    [Fact]
+    public void BatchLookupBoundsQueriesFor100kRepeatedOccurrencesAndKeepsLibraryUnloaded()
+    {
+      WithDispatcher(async () =>
+      {
+        using var connection=new SqliteConnection("Data Source=:memory:");
+        connection.Open();
+        var audit=new ReaderAudit();
+        using var context=new Context(new DbContextOptionsBuilder().UseSqlite(connection).AddInterceptors(audit).Options);
+        context.Database.EnsureCreated();
+        context.AddRange(Enumerable.Range(1,100000).Select(id=>new Model {Id=id,Name=id==100000 ? "excluded" : "included"}));
+        context.SaveChanges();
+        var storage=new Mock<IStorageManager>();
+        storage.Setup(x=>x.GetTempRepository<Model>()).Returns(context.Set<Model>().AsNoTracking());
+        var factory=new Mock<IViewModelsFactory>();
+        factory.Setup(x=>x.Create<INamedEntityViewModel<Model>>(It.IsAny<object[]>())).Returns((object[] args)=>
+        {
+          var model=(Model)args[0];
+          var view=new Mock<INamedEntityViewModel<Model>>();
+          view.SetupGet(x=>x.ModelId).Returns(model.Id);
+          return view.Object;
+        });
+        var library=new LibraryCollection<INamedEntityViewModel<Model>,Model>(factory.Object,storage.Object,new Mock<ILogger>().Object);
+        library.ConfigureQuery(query=>query.Where(model=>model.Name=="included"));
+        int callbacks=0;
+        library.DataLoadedCallback=()=>callbacks++;
+        var existing=await library.GetViewModelAsync(99001);
+        audit.ReadCounts.Clear();
+        var occurrenceIds=Enumerable.Range(0,100000).Select(index=>99001+index%1000).Concat(new[] {0,-1,100001}).ToArray();
+        await Task.WhenAll(library.PrepareViewModelsAsync(occurrenceIds),library.PrepareViewModelsAsync(occurrenceIds));
+        Assert.False(library.WasLoaded);
+        Assert.Null(library.Items);
+        Assert.Equal(0,callbacks);
+        // Each missing distinct row is read once; repeated occurrences never widen a batch.
+        Assert.Equal(998,audit.ReadCounts.Sum()-audit.ReadCounts.Count); // Reader counts include the final EOF read.
+        Assert.All(audit.ReadCounts,count=>Assert.InRange(count,1,257));
+        Assert.InRange(audit.ReadCounts.Count,4,5); // Missing IDs may be retried, never cached.
+        Assert.Same(existing,await library.GetViewModelAsync(99001));
+        var offThread=Task.Run(()=>library.GetViewModelAsync(99999));
+        Assert.True(offThread.Wait(TimeSpan.FromSeconds(2)));
+        Assert.Equal(99999,offThread.Result.ModelId);
+        Assert.Null(await library.GetViewModelAsync(100000));
+        factory.Verify(x=>x.Create<INamedEntityViewModel<Model>>(It.IsAny<object[]>()),Times.Exactly(999));
+        await library.PrepareViewModelsAsync(new[] {0,-1});
+        context.Add(new Model {Id=100001,Name="included"});
+        context.SaveChanges();
+        await library.PrepareViewModelsAsync(new[] {100001});
+        Assert.Equal(100001,(await library.GetViewModelAsync(100001)).ModelId);
+      });
+    }
+
+    [Fact]
+    public void ClearDuringBatchLookupDiscardsOldGenerationAndAllowsRetry()
+    {
+      WithDispatcher(async () =>
+      {
+        using var connection=new SqliteConnection("Data Source=:memory:");
+        connection.Open();
+        using var context=new Context(new DbContextOptionsBuilder().UseSqlite(connection).Options);
+        context.Database.EnsureCreated();
+        context.AddRange(Enumerable.Range(1,10000).Select(id=>new Model {Id=id,Name="Item "+id}));
+        context.SaveChanges();
+        using var entered=new ManualResetEventSlim();
+        using var release=new ManualResetEventSlim();
+        var storage=new Mock<IStorageManager>();
+        storage.Setup(x=>x.GetTempRepository<Model>()).Returns(()=>
+        {
+          entered.Set();
+          if(!release.Wait(TimeSpan.FromSeconds(10))) throw new TimeoutException();
+          return context.Set<Model>().AsNoTracking();
+        });
+        var factory=new Mock<IViewModelsFactory>();
+        factory.Setup(x=>x.Create<INamedEntityViewModel<Model>>(It.IsAny<object[]>())).Returns((object[] args)=>
+        {
+          var view=new Mock<INamedEntityViewModel<Model>>();
+          view.SetupGet(x=>x.ModelId).Returns(((Model)args[0]).Id);
+          return view.Object;
+        });
+        var library=new LibraryCollection<INamedEntityViewModel<Model>,Model>(factory.Object,storage.Object,new Mock<ILogger>().Object);
+        var preparing=library.PrepareViewModelsAsync(Enumerable.Repeat(10000,100000));
+        try
+        {
+          Assert.True(await Task.Run(()=>entered.Wait(TimeSpan.FromSeconds(5))));
+          library.Clear();
+        }
+        finally {release.Set();}
+        await preparing;
+        factory.Verify(x=>x.Create<INamedEntityViewModel<Model>>(It.IsAny<object[]>()),Times.Never);
+        await library.PrepareViewModelsAsync(new[] {10000});
+        Assert.Equal(10000,(await library.GetViewModelAsync(10000)).ModelId);
+        Assert.False(library.WasLoaded);
+        factory.Verify(x=>x.Create<INamedEntityViewModel<Model>>(It.IsAny<object[]>()),Times.Once);
+        library.ConfigureQuery(query=>query.Where(model=>model.Id<10000));
+        Assert.Null(await library.GetViewModelAsync(10000));
+      });
+    }
+
     [Fact]
     public void FailedLoadCanRetryWithoutDeadlocking()
     {

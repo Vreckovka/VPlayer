@@ -263,6 +263,44 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
 
     #endregion
 
+    // Warm only requested relationships; keep the full library unloaded.
+    public async Task PrepareViewModelsAsync(IEnumerable<int> modelIds)
+    {
+      if(modelIds==null) throw new ArgumentNullException(nameof(modelIds));
+      var ids=modelIds.Where(id=>id>0).Distinct().ToArray();
+      if(WasLoaded || ids.Length==0) return;
+      await semaphoreSlim.WaitAsync().ConfigureAwait(false);
+      try
+      {
+        if(WasLoaded) return;
+        long generation;
+        lock(lookupGate)
+        {
+          ids=ids.Where(id=>!lookupViews.ContainsKey(id)).ToArray();
+          generation=queryGeneration;
+        }
+        if(ids.Length==0) return;
+        using var measurement=VPLayer.Domain.Diagnostics.StartupMeasurements.MeasureLibrary("batch item lookup",typeof(TModel));
+        await Task.Run(async () =>
+        {
+          // Bound query width, including callers with very large ID sets.
+          for(int offset=0;offset<ids.Length;offset+=256)
+          {
+            var batch=ids.Skip(offset).Take(256).ToArray();
+            var models=await LoadQuery.Where(model=>batch.Contains(model.Id)).ToListAsync().ConfigureAwait(false);
+            lock(lookupGate) {if(generation!=queryGeneration) return;}
+            var views=models.Select(model=>ViewModelsFactory.Create<TViewModel>(model)).ToArray();
+            lock(lookupGate)
+            {
+              if(generation!=queryGeneration) return;
+              foreach(var view in views) lookupViews[view.ModelId]=view;
+            }
+          }
+        }).ConfigureAwait(false);
+      }
+      finally {semaphoreSlim.Release();}
+    }
+
     public async Task<TViewModel> GetViewModelAsync(int modelId)
     {
       if(modelId<=0) return null;

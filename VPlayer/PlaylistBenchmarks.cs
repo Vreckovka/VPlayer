@@ -44,6 +44,7 @@ namespace VPlayer
         if(incoming.Length!=100000) throw new InvalidOperationException("Large playlist did not load every occurrence.");
         saved.PublishPlayEvent(incoming,EventAction.InitSetPlaylist);
         await WaitForMusic(window,()=>player.ActualSavedPlaylist.Id==saved.Model.Id && player.PlayList.Count==100000 &&
+          StartupMeasurements.ObservationEquals("UI / music playlist / stored metadata ready playlist",saved.Model.Id) &&
           player.VirtualizedPlayList?.Count==100000 && MusicRowsReady(window,player),"100k music playlist",40);
       }
       if(!incoming.Select(item=>item.Model.Id).SequenceEqual(player.PlayList.Select(item=>item.Model.Id)))

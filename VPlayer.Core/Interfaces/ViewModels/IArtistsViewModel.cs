@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Prism.Regions;
 using VCore.WPF.Interfaces.ViewModels;
@@ -10,6 +11,7 @@ namespace VPlayer.Core.Interfaces.ViewModels
   public interface IArtistsViewModel : ICollectionViewModel<ArtistViewModel, Artist>, INavigationItem
   {
     Task<ArtistViewModel> GetViewModelAsync(int modelId);
+    Task PrepareViewModelsAsync(IEnumerable<int> modelIds);
    
   }
 }

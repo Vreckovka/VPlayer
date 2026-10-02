@@ -353,6 +353,12 @@ namespace VPlayer.Home.ViewModels
       return LibraryCollection.GetViewModelAsync(modelId);
     }
 
+    public Task PrepareViewModelsAsync(IEnumerable<int> modelIds)
+    {
+      SubscribeToEntityChanges();
+      return LibraryCollection.PrepareViewModelsAsync(modelIds);
+    }
+
     public async Task<ICollection<TViewModel>> GetViewModelsAsync(IQueryable<TModel> optionalQuery = null)
     {
       if (!LibraryCollection.WasLoaded)

@@ -59,6 +59,12 @@ namespace VPLayer.Domain.Diagnostics
         Write(status,failure);
       }
     }
+    public static bool ObservationEquals(string name,long value)
+    {
+      if(!Enabled) return false;
+      lock(phases) return observations.TryGetValue(name,out var observed) && observed==value;
+    }
+
     public static void RecordObservation(string name,long value)
     {
       if(!Enabled) return;

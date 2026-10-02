@@ -34,6 +34,7 @@ function Read-Series($path) {
       foreach($endpoint in @('Initial music view','100k music playlist','Last music track','long no-match music search','long near-match music search')) {
         if($run.Observations.('UI / music playlist / painted '+$endpoint) -ne 1){throw ('Missing painted music endpoint: '+$endpoint)}
       }
+      if($run.Observations.'UI / music playlist / stored metadata ready playlist' -le 0){throw 'Music metadata has not finished loading'}
       if(@($run.ActivePhases|Where-Object {$_ -like 'UI / music playlist /*' -or $_ -like 'UI / player playlist /*'}).Count){throw 'Music measurements are still active'}
       foreach($phase in @('load and render','scroll to last track','long no-match search and render','long near-match search and render')){
         $completed=@($run.Phases|Where-Object Name -eq ('UI / music playlist / '+$phase))

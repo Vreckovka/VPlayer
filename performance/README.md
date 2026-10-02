@@ -573,3 +573,13 @@ song read, completed artist lookups consumed 11.1k ms and album lookups 3k ms;
 relationship lookups are the next measured target. The occurrence index has no
 validated end-to-end timing gain yet. The results table keeps optimized music
 endpoints pending and uses the frozen enrichment control for the new subphases.
+
+Stored-song enrichment now prepares missing artist/album views in batches of
+up to 256 distinct positive IDs before UI publication. It retains configured
+nested relationships, existing cache identity, change subscriptions and lazy
+full-library loading. A generation change discards stale batch results. Tests
+cover 100k database rows/repeated playlist occurrences, bounded query reads,
+concurrent preparation, filtered/missing IDs, retry, cache reset, later full
+load identity and nested relationship updates. All 170 tests and the Release build pass. The native
+runner also waits for stored metadata readiness before recording the painted
+100k-playlist endpoint; timings remain pending until a complete native series.
