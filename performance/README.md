@@ -356,3 +356,11 @@ Task comparisons use their own pre-change baseline and must not be interpreted
 as equivalent to the earlier overall baseline. Raw JSON keeps individual launch
 status, full precision, phases, observations and commit/fixture provenance;
 the reader-facing tables keep compact times and signed percentages.
+
+The statistics-reload component benchmark issues 32 overlapping production
+LoadData requests against the fully played 207k-item/5,310-playlist fixture,
+with independent read-only repositories and a real dispatcher. RepositoryCounts
+records duplicate query groups. It includes UI publication and excludes XAML.
+startup.ps1 -StatisticsReloads separately measures the same request burst after
+Statistics activation in the actual WPF window, including layout and populated
+rendered rows. Both baselines are captured before changing load coordination.

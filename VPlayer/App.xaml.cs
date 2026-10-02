@@ -166,6 +166,23 @@ namespace VPlayer
         statistics.ItemsView.Concat(statistics.SoundsItemsView).Concat(statistics.VideosItemsView).Count(item => item == null));
       StartupMeasurements.RecordObservation("UI / statistics / empty playlist rows", statistics.PlaylistView.Count(item => item == null));
       CaptureBenchmarkWindow(window, ".statistics.png");
+      if (Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_STATISTICS_RELOADS") == "1")
+      {
+        using (StartupMeasurements.Measure("UI / statistics / reload burst and render"))
+        {
+          var load = typeof(VPlayer.Home.ViewModels.Statistics.StatisticsViewModel)
+            .GetMethod("LoadData", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+          await Task.WhenAll(Enumerable.Range(0, 32).Select(_ => (Task)load.Invoke(statistics, null)));
+          await window.Dispatcher.InvokeAsync(() => window.UpdateLayout(), System.Windows.Threading.DispatcherPriority.ContextIdle);
+          if (statistics.LoadingStatus.IsLoading || !HasRenderedPlaylistRow(FindStatisticsView(window)))
+            throw new InvalidOperationException("Statistics reload did not finish rendering.");
+        }
+        StartupMeasurements.RecordObservation("UI / statistics / reload requests", 32);
+        StartupMeasurements.RecordObservation("UI / statistics / reload empty item rows",
+          statistics.ItemsView.Concat(statistics.SoundsItemsView).Concat(statistics.VideosItemsView).Count(item => item == null));
+        StartupMeasurements.RecordObservation("UI / statistics / reload empty playlist rows", statistics.PlaylistView.Count(item => item == null));
+        CaptureBenchmarkWindow(window, ".statistics-reload.png");
+      }
     }
     private static FrameworkElement FindStatisticsView(System.Windows.DependencyObject root)
     {
