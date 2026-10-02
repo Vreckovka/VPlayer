@@ -99,3 +99,9 @@ the report preserves the slower observation and does not credit it to an optimiz
 Prior cc489285 feature, startup and report records are retained in iterations/.
 The complete application goal remains active: prioritize the largest measured data
 load next, and add separate worst-case baselines for the pending real UI features.
+
+Report display uses compact median times (for example 5.1k ms) and signed percentage
+changes calculated from unrounded values: negative means less time, positive means
+more time. Startup breakdowns are collapsed in results.md. Raw JSON retains launch
+counts, first samples, maxima, percentiles, allocations, commits and fixture hashes.
+A missing or failed timing baseline has no percentage.

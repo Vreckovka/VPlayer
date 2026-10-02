@@ -7,6 +7,7 @@ param(
   [string]$Output='performance/results.md'
 )
 $ErrorActionPreference='Stop'
+. (Join-Path $PSScriptRoot 'report-format.ps1')
 $baselineData=Get-Content (Join-Path $Baseline 'features.json') -Raw | ConvertFrom-Json
 $optimizedData=$null
 if($Optimized) {
@@ -17,7 +18,7 @@ if($Optimized) {
 }
 function Format-Metric($metric) {
   if(!$metric) {return 'Pending'}
-  return ('{0:N2} ms median; {1:N2} ms p95; {2:N2} ms first; {3:N1} MiB allocated' -f $metric.MedianMilliseconds,$metric.P95Milliseconds,$metric.FirstMilliseconds,($metric.MedianAllocatedBytes/1MB))
+  return Format-Time $metric.MedianMilliseconds
 }
 function Read-Startup($directory) {
   if(!$directory) {return @()}
@@ -25,17 +26,30 @@ function Read-Startup($directory) {
 }
 function Format-Startup($runs,$name) {
   if(!$runs.Count) {return 'Pending'}
-  $values=@($runs | ForEach-Object {$_.Phases | Where-Object Name -eq $name | ForEach-Object Milliseconds} | Sort-Object)
-  if(!$values.Count) {
-    $failures=@($runs | Where-Object Status -ne 'Rendered')
-    if($failures.Count) {
-      return ('Not reached; {0}/{1} failed launches ({2})' -f $failures.Count,$runs.Count,(($failures | ForEach-Object {$_.Status+': '+$_.FailureType} | Select-Object -Unique) -join ', '))
-    }
-    return 'Not instrumented or not reached'
+  $value=Startup-Median $runs $name
+  if($value -lt 0) {
+    if($name -eq 'Application / first window render' -and @($runs | Where-Object Status -ne 'Rendered').Count) {return 'Failed'}
+    return 'n/a'
   }
-  $formatted=('{0:N2} ms median; {1:N2} ms max; reached in {2}/{3} launches' -f $values[[int][Math]::Floor($values.Count/2)],$values[-1],$values.Count,$runs.Count)
-  if($values.Count -ne $runs.Count) {$formatted+='; incomplete sample set'}
-  return $formatted
+  $text=Format-Time $value
+  $reached=@($runs | Where-Object {$_.Phases.Name -contains $name}).Count
+  if($reached -ne $runs.Count) {$text+=' (partial)'}
+  return $text
+}
+function Startup-Comparison($reference,$runs,$name) {
+  return (Format-Startup $runs $name)+(Format-Change (Startup-Median $reference $name) (Startup-Median $runs $name))
+}
+function Display-Name([string]$name) {
+  $name=$name -replace '^(Application|Data|Playlist|UI|Lyrics|Spectrum) / ',''
+  $name=$name.Replace('library SoundItemFilePlaylist / ','Playlists / ')
+  $names=@{
+    SoundItemPlaylistsViewModel='Music playlists';IArtistsViewModel='Artists';IAlbumsViewModel='Albums'
+    WindowsFileBrowserViewModel='File browser';SettingsViewModel='Settings';PCloudManagerViewModel='Cloud'
+    VideoPlaylistsViewModel='Video playlists';TvShowsViewModel='TV shows';StatisticsViewModel='Statistics'
+    UPnPManagerViewModel='UPnP'
+  }
+  foreach($key in $names.Keys) {$name=$name.Replace('library '+$key+' / navigation construction',$names[$key]+' / construction')}
+  return $name
 }
 function Startup-Median($runs,$name) {
   $values=@($runs | ForEach-Object {$_.Phases | Where-Object Name -eq $name | ForEach-Object Milliseconds} | Sort-Object)
@@ -66,50 +80,51 @@ foreach($runs in (@($baseStartup,$newStartup,$readyStartup)+@($phaseSources))) {
 if($newStartup.Count -and $baseStartup.Count -and $newStartup[0].WindowMode -ne $baseStartup[0].WindowMode) {throw 'Incompatible startup window modes'}
 if($newStartup.Count -and $readyStartup.Count -and $newStartup[0].WindowMode -ne $readyStartup[0].WindowMode) {throw 'Incompatible readiness window modes'}
 $lines=[Collections.Generic.List[string]]::new()
-$lines.Add('# Worst-case performance comparison')
+$lines.Add('# Worst-case performance')
 $lines.Add('')
-$lines.Add('Baseline commit: '+$baselineData.Commit+'. Optimized commit: '+$(if($optimizedData){$optimizedData.Commit}else{'pending'})+'.')
-$lines.Add('Workload: '+$baselineData.Fixture.SoundItems+' sound items, '+$baselineData.Fixture.Playlists+' playlists, plus 1,000 / 10,000 / 100,000-entry stress playlists. Release x64 on .NET '+$baselineData.Runtime+'.')
-$lines.Add('Fixture SHA-256: '+$baselineData.FixtureSha256+'. Baseline samples are immutable.')
+$lines.Add('207k sound items; stress playlists up to 100k entries. Median timings; **- % = less time**, **+ % = more time**. Failed or missing baselines have no percentage.')
 $lines.Add('')
 $lines.Add('## Application startup')
 $lines.Add('')
-$lines.Add('Startup comparison commit: '+$(if($newStartup.Count){$newStartup[0].Commit}else{'pending'})+'.')
+$lines.Add('| Baseline now | New optimized version |')
+$lines.Add('| --- | --- |')
+foreach($name in @('Application / initial playlist view ready','Application / first window render')) {
+  $reference=@(Startup-Reference $name)
+  $lines.Add('| **'+(Display-Name $name)+'** — '+(Format-Startup $reference $name)+' | '+(Startup-Comparison $reference $newStartup $name)+' |')
+}
 if($readyStartup.Count) {
-  $lines.Add('The initial populated-view milestone has a separate baseline at '+$readyStartup[0].Commit+' after repairing the startup crash. Earlier failed launches cannot provide this timing.')
+  $name='Application / first window render'
+  $lines.Add('| **First render after crash fix** — '+(Format-Startup $readyStartup $name)+' | '+(Startup-Comparison $readyStartup $newStartup $name)+' |')
 }
-if($phaseSources.Count) {
-  $lines.Add('Additional startup phases use the first recorded baseline containing that phase. Baseline commits: '+(($phaseSources | ForEach-Object {$_.Commit} | Select-Object -Unique) -join ', ')+'. These were recorded before query deferral.')
-}
-$startupNames=@($baseStartup | ForEach-Object {$_.Phases | ForEach-Object Name})
-$startupNames+=@($phaseSources | ForEach-Object {$_ | ForEach-Object {$_.Phases | ForEach-Object Name}})
-$startupNames+=@($newStartup | ForEach-Object {$_.Phases | ForEach-Object Name})
-$startupNames+=@('Application / first window render')
-$startupNames=@($startupNames | Select-Object -Unique | Where-Object {$_ -ne 'Application / initial playlist view ready'} | Sort-Object {Startup-Median (Startup-Reference $_) $_} -Descending)
-$startupNames=@('Application / first window render')+@($startupNames | Where-Object {$_ -ne 'Application / first window render'})
-if($readyStartup.Count) {$startupNames=@('Application / initial playlist view ready')+$startupNames}
-# Put explanatory prose before the table, preserving exactly two table columns.
+$lines.Add('')
+$lines.Add('<details>')
+$lines.Add('<summary>Startup breakdown</summary>')
 $lines.Add('')
 $lines.Add('| Baseline now | New optimized version |')
 $lines.Add('| --- | --- |')
+$startupNames=@($baseStartup | ForEach-Object {$_.Phases.Name})
+$startupNames+=@($phaseSources | ForEach-Object {$_ | ForEach-Object {$_.Phases.Name}})
+$startupNames+=@($newStartup | ForEach-Object {$_.Phases.Name})
+$startupNames=@($startupNames | Select-Object -Unique | Where-Object {$_ -notin @('Application / initial playlist view ready','Application / first window render')} | Sort-Object {Startup-Median (Startup-Reference $_) $_} -Descending)
 foreach($name in $startupNames) {
   $reference=@(Startup-Reference $name)
-  $lines.Add('| **'+$name+'** — '+(Format-Startup $reference $name)+' | '+(Format-Startup $newStartup $name)+' |')
-  if($phaseSources.Count -and $name -in @('Application / first window render','Application / initial playlist view ready')) {
-    $latestReference=@($phaseSources[$phaseSources.Count-1])
-    $lines.Add('| **'+$name+' before query deferral** — '+(Format-Startup $latestReference $name)+' | '+(Format-Startup $newStartup $name)+' |')
-  }
-  if($name -eq 'Application / first window render' -and $readyStartup.Count) {
-    $lines.Add('| **Application / first window render after crash fix** — '+(Format-Startup $readyStartup $name)+' | '+(Format-Startup $newStartup $name)+' |')
+  $lines.Add('| **'+(Display-Name $name)+'** — '+(Format-Startup $reference $name)+' | '+(Startup-Comparison $reference $newStartup $name)+' |')
+}
+if($phaseSources.Count) {
+  $reference=@($phaseSources[$phaseSources.Count-1])
+  foreach($name in @('Application / initial playlist view ready','Application / first window render')) {
+    $lines.Add('| **'+(Display-Name $name)+' before query deferral** — '+(Format-Startup $reference $name)+' | '+(Startup-Comparison $reference $newStartup $name)+' |')
   }
 }
+$lines.Add('')
+$lines.Add('</details>')
 foreach($category in @('Data','Playlist','UI','Lyrics','Spectrum')) {
   $lines.Add('')
-  $lines.Add('## '+$category)
+  $title=switch($category){'Lyrics' {'Lyrics (10k seeks)'} 'Spectrum' {'Spectrum (1k frames)'} default {$category}}
+  $lines.Add('## '+$title)
   $lines.Add('')
   $lines.Add('| Baseline now | New optimized version |')
   $lines.Add('| --- | --- |')
-  # Sort biggest to smallest within each category.
   foreach($metric in @($baselineData.Metrics | Where-Object Category -eq $category | Sort-Object MedianMilliseconds -Descending)) {
     $new=$null
     if($optimizedData) {
@@ -117,39 +132,25 @@ foreach($category in @('Data','Playlist','UI','Lyrics','Spectrum')) {
       if(!$new -or $new.Boundary -ne $metric.Boundary -or $new.Workload -ne $metric.Workload) {throw ('Changed or missing metric boundary: '+$metric.Name)}
     }
     $newText=Format-Metric $new
-    if($new -and $metric.MedianMilliseconds -gt 0) {
-      $change=100*($metric.MedianMilliseconds-$new.MedianMilliseconds)/$metric.MedianMilliseconds
-      $newText+=('; {0:N1}% {1}' -f [Math]::Abs($change),$(if($change -ge 0){'faster'}else{'slower'}))
-    }
-    $lines.Add('| **'+$metric.Name+'** — '+(Format-Metric $metric)+' | '+$newText+' |')
+    if($new) {$newText+=Format-Change $metric.MedianMilliseconds $new.MedianMilliseconds}
+    $label=(Display-Name $metric.Name) -replace '100000','100k' -replace '10000','10k' -replace '1000','1k'
+    $lines.Add('| **'+$label+'** — '+(Format-Metric $metric)+' | '+$newText+' |')
   }
   if($category -eq 'UI') {
     $groupedReport=Join-Path $PSScriptRoot 'grouped-ui-results.md'
     if(Test-Path -LiteralPath $groupedReport) {
       $lines.Add('')
-      $lines.Add('### Grouped music playlists — actual application')
-      $lines.Add('')
-      $lines.Add('Separate worst-case fixture: 207,110 sound items and 5,310 playlists, including 5,000 additional favorites with long titles. Seven visible fresh-profile launches per version. The baseline failed to become usable within 60 seconds; times from its first frame are partial observations.')
+      $lines.Add('### Grouped playlists (5k added favorites)')
       $lines.Add('')
       foreach($row in @(Get-Content -LiteralPath $groupedReport | Where-Object { $_.StartsWith('|') })) {$lines.Add($row)}
-      $lines.Add('')
-      $lines.Add('See [grouped-ui-results.md](grouped-ui-results.md) for fixture identity, benchmark boundaries and complete scenario notes.')
     }
   }
 }
 $lines.Add('')
-$lines.Add('## Coverage still requiring end-to-end scenarios')
+$lines.Add('## Still to measure')
 $lines.Add('')
-$lines.Add('| Baseline now | New optimized version |')
-$lines.Add('| --- | --- |')
-foreach($feature in @('Library card templates and scrolling','Navigation and detail views','File-browser folders and thumbnails','Settings and modal dialogs','Video and fullscreen transitions','Cloud and network timeout handling','LibraryCollection full sound-item load/fuzzy filter publication')) {
-  $lines.Add('| **'+$feature+'** — Not measured yet | Pending |')
-}
+$lines.Add('Library cards/scrolling; navigation/details; file browser/thumbnails; settings/dialogs; video/fullscreen; cloud timeouts; full library load/fuzzy filtering.')
 $lines.Add('')
-$lines.Add('This comparison includes playlist loading, the startup crash repair, library query deferral, and actual grouped-playlist UI virtualization. Other feature metrics are controls: timing differences in unchanged code are observations and must not be credited to those changes.')
-$lines.Add('')
-$lines.Add('Each feature metric is one operation except lyrics (10,000 seeks) and spectrum (1,000 frames). Divide batched results by their operation count before ranking across categories. Component UI list scenarios use an offscreen text-row ListBox, not application card templates. First samples share one process, so only the first metric includes process-cold EF initialization. Startup uses fresh processes with warm OS caches and fresh default settings; it does not include every background service becoming ready. Startup phase scopes overlap. Allocation counts cover managed allocations across threads and exclude native bitmap/database memory.')
-$lines.Add('')
-$lines.Add('See README.md for workload boundaries and the optimization protocol.')
+$lines.Add('Percentage changes in unchanged code are observations. Startup phases overlap; component UI tests use a simplified list. Raw samples, maxima, allocations and commit/fixture provenance remain in the JSON files and [README](README.md).')
 $lines | Set-Content -LiteralPath $Output
 Write-Output ('Wrote '+$Output)
