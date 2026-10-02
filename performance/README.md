@@ -437,3 +437,17 @@ forcing the existing fuzzy path to evaluate long queries across the full library
 Each fresh process retains its first sample and two repeats, including ordered
 result hashes, allocations and full commit/fixture provenance. Baselines are
 captured before replacing the edit-distance implementation.
+
+The replacement matcher keeps the legacy invariant-case Levenshtein predicate
+and its float threshold. It rejects impossible length differences, removes
+common prefixes/suffixes without changing the original denominator, and visits
+only the distance band needed for a match using two pooled rows. Library and
+player predicates use it; player substring matching short-circuits before fuzzy
+work while preserving its existing culture/contains behavior.
+
+Six regression tests cover threshold boundaries, exhaustive short inputs,
+random Unicode, long prefix/suffix cases, repeated long-input allocations,
+10k-title result order and edits, and the actual player predicate under three
+cultures. All 155 tests pass; application and performance runner Release builds
+complete with no errors. The frozen pre-change search baseline is retained;
+optimized results will be checked against its ordered result hashes.

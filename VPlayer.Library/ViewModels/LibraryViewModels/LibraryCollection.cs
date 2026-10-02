@@ -1,3 +1,4 @@
+using VPLayer.Domain.Text;
 using System;
 using VPLayer.Domain.Diagnostics;
 using System.Collections.Generic;
@@ -487,7 +488,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
         {
           var name = x?.Name;
           return name != null && (name.IndexOf(predicated, StringComparison.OrdinalIgnoreCase) >= 0 ||
-            name.ToLowerInvariant().Similarity(normalized) > 0.8);
+            FuzzySearch.IsSimilar(name,normalized));
         }).ToList();
         FilteredItemsCollection = new ObservableCollection<TViewModel>(FilteredItems);
       }

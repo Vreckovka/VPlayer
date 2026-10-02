@@ -1,4 +1,5 @@
-﻿using System;
+﻿using VPLayer.Domain.Text;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -2064,7 +2065,7 @@ namespace VPlayer.Core.ViewModels
           result = lowerVariant.Contains(phrase);
         }
 
-        return original.Similarity(phrase) > 0.8 || result;
+        return result || FuzzySearch.IsSimilar(original,phrase);
       }
 
       return result;
