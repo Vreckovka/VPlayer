@@ -16,6 +16,7 @@ namespace VPLayer.Domain.Diagnostics
     private static string failure;
     public static bool Enabled=>!string.IsNullOrWhiteSpace(output);
     public static IDisposable Measure(string name)=>Enabled?new Scope(name):null;
+    public static IDisposable MeasureLibrary(string phase,Type model)=>Enabled?Measure("Application / library "+model.Name+" / "+phase):null;
     public static void Start()
     {
       if(Enabled) lock(phases) Write(status,failure);

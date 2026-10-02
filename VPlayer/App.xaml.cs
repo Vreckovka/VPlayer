@@ -103,7 +103,8 @@ namespace VPlayer
           try
           {
             StartupMeasurements.Complete();
-            CaptureBenchmarkWindow(window, ".png");
+            using (StartupMeasurements.Measure("Application / benchmark first-frame screenshot"))
+              CaptureBenchmarkWindow(window, ".png");
             if (Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_WAIT_FOR_LIBRARY") == "1")
             {
               var playlists = Kernel.Get<VPlayer.Home.ViewModels.SoundItemPlaylistsViewModel>();

@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using VPLayer.Domain.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -220,6 +221,7 @@ namespace VPlayer.Home.ViewModels
 
     protected override void OnDataLoaded()
     {
+      using var preparation = StartupMeasurements.MeasureLibrary("playlist preparation", typeof(TPlaylistModel));
       AllItems = LibraryCollection.Items.ToList();
       AllUserCreatedItems = LibraryCollection.Items.Where(x => x.Model.IsUserCreated).ToList();
       AllGeneratedItems = LibraryCollection.Items.Where(x => !x.Model.IsUserCreated).ToList();
@@ -263,6 +265,7 @@ namespace VPlayer.Home.ViewModels
 
     protected void GetActualItems()
     {
+      using var measurement = StartupMeasurements.MeasureLibrary("current track metadata", typeof(TPlaylistModel));
       var allItemsWithActualItem = AllItems.Concat(PrivateItems).Where(x => x.Model.ActualItemId != null).ToList();
       var allIds = allItemsWithActualItem.Select(x => x.Model.ActualItemId.Value);
 
@@ -281,6 +284,7 @@ namespace VPlayer.Home.ViewModels
 
     private async Task LoadPinnedItems()
     {
+      using var measurement = StartupMeasurements.MeasureLibrary("pinned items", typeof(TPlaylistModel));
       PinnedItems.Clear();
 
       var items = await Task.Run(() =>

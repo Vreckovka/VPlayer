@@ -1,4 +1,5 @@
 using System;
+using VPLayer.Domain.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -154,12 +155,17 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
 
           var vms = await Task.Run(async () =>
           {
-            var data = await (optionalQuery ?? LoadQuery).ToListAsync().ConfigureAwait(false);
+            List<TModel> data;
+            using (StartupMeasurements.MeasureLibrary("query", typeof(TModel)))
+              data = await (optionalQuery ?? LoadQuery).ToListAsync().ConfigureAwait(false);
+            using var construction = StartupMeasurements.MeasureLibrary("view model construction", typeof(TModel));
             return data.Select(x => ViewModelsFactory.Create<TViewModel>(x)).ToList();
           }).ConfigureAwait(false);
 
+          using (StartupMeasurements.MeasureLibrary("UI dispatch and publication", typeof(TModel)))
           await VSynchronizationContext.InvokeOnDispatcherAsync(() =>
           {
+            using var publication = StartupMeasurements.MeasureLibrary("UI publication", typeof(TModel));
             Items = new RxObservableCollection<TViewModel>(vms);
             FilteredItemsCollection = new ObservableCollection<TViewModel>(
               MaxTake.HasValue ? vms.Take(MaxTake.Value) : vms);
@@ -169,6 +175,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
           }).ConfigureAwait(false);
 
           // Existing callbacks may perform database queries; keep those off the UI thread.
+          using (StartupMeasurements.MeasureLibrary("post-load callback", typeof(TModel)))
           await Task.Run(() => DataLoadedCallback?.Invoke()).ConfigureAwait(false);
           return true;
         }
