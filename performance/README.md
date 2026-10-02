@@ -413,3 +413,18 @@ sets the application preparation flag and records PlaylistQueryPreparation in
 each result. Ordinary launches keep preparation disabled until paired evidence
 supports adoption. The baseline and prepared series alternate on the same
 compiled application with buffered-v1/none diagnostics and fresh copied profiles.
+
+The paired startup experiment is retained in
+[playlist-preparation-results.md](playlist-preparation-results.md), with frozen
+baseline/candidate JSON at f3f07535. Median query time fell from 1k ms to
+159.7 ms (-84.6%), but view readiness improved only 3.9% and first render took
+2.9% longer. Preparation remains disabled by default; this does not establish
+an overall startup improvement worth adopting. Both modes had slow outliers,
+which remain in the complete series. No builds, tests or tracing overlapped
+these measurements. The source fixture checksum stayed unchanged, every launch
+rendered the same populated playlist workload, and the final candidate view was
+visually checked. All 149 tests and the Release build passed before the run.
+
+playlist-preparation-report.ps1 validates preparation flags, same-commit
+provenance, phase boundaries, untraced buffered diagnostics and rendered
+workload consistency before generating the compact comparison.

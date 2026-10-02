@@ -75,6 +75,19 @@ Fully played library; buffered diagnostics.
 
 </details>
 
+<details>
+<summary>Optional startup experiment — disabled by default</summary>
+
+| Baseline now | Optional candidate |
+| --- | --- |
+| **initial playlist view ready** — 4.5k ms | 4.3k ms (-3.9%) |
+| **first window render** — 2.5k ms | 2.6k ms (+2.9%) |
+| **playlist data query** — 1k ms | 159.7 ms (-84.6%) |
+
+Query preparation reduced query time; overall readiness improved slightly and first render slowed. Full evidence: [playlist-preparation-results.md](playlist-preparation-results.md).
+
+</details>
+
 ## Data
 
 | Baseline now | New optimized version |

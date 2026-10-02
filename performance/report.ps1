@@ -140,6 +140,18 @@ if($bufferedStartup.Count) {
   $lines.Add('')
   $lines.Add('</details>')
 }
+$preparationReport=Join-Path $PSScriptRoot 'playlist-preparation-results.md'
+if(Test-Path -LiteralPath $preparationReport) {
+  $lines.Add('')
+  $lines.Add('<details>')
+  $lines.Add('<summary>Optional startup experiment — disabled by default</summary>')
+  $lines.Add('')
+  foreach($row in @(Get-Content -LiteralPath $preparationReport|Where-Object {$_.StartsWith('|')})){$lines.Add($row)}
+  $lines.Add('')
+  $lines.Add('Query preparation reduced query time; overall readiness improved slightly and first render slowed. Full evidence: [playlist-preparation-results.md](playlist-preparation-results.md).')
+  $lines.Add('')
+  $lines.Add('</details>')
+}
 foreach($category in @('Data','Playlist','UI','Lyrics','Spectrum')) {
   $lines.Add('')
   $title=switch($category){'Lyrics' {'Lyrics (10k seeks)'} 'Spectrum' {'Spectrum (1k frames)'} default {$category}}
