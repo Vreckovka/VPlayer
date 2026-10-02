@@ -39,9 +39,9 @@ namespace VPlayer.Performance
         second.SetActualLine(TimeSpan.FromSeconds(90000));LyricsAnimationFixture.Pump(TimeSpan.FromMilliseconds(50));
         var oldTrackMovedScroll=fixture.Scroller.VerticalOffset>1;
         fixture.Scroller.ScrollToTop();LyricsAnimationFixture.Pump(TimeSpan.FromMilliseconds(30));
-        var frameGaps=new List<double>();var lags=new List<double>();
+        var frameGaps=new List<double>();var lags=new List<double>();var renderingTimes=new List<double>();TimeSpan lastRenderingTime=TimeSpan.MinValue;
         var watch=Stopwatch.StartNew();double lastFrame=-1;double previousTick=0;
-        EventHandler frame=(sender,args)=>{var now=watch.Elapsed.TotalMilliseconds;if(lastFrame>=0)frameGaps.Add(now-lastFrame);lastFrame=now;};
+        EventHandler frame=(sender,args)=>{var rendering=(RenderingEventArgs)args;if(rendering.RenderingTime<=lastRenderingTime)return;lastRenderingTime=rendering.RenderingTime;renderingTimes.Add(rendering.RenderingTime.TotalMilliseconds);var now=watch.Elapsed.TotalMilliseconds;if(lastFrame>=0)frameGaps.Add(now-lastFrame);lastFrame=now;};
         CompositionTarget.Rendering+=frame;
         int updates=0;
         var timer=new DispatcherTimer(DispatcherPriority.Normal){Interval=TimeSpan.FromMilliseconds(16)};
@@ -59,13 +59,13 @@ namespace VPlayer.Performance
         var encoder=new PngBitmapEncoder();encoder.Frames.Add(BitmapFrame.Create(bitmap));using(var stream=File.Create(screenshot))encoder.Save(stream);
         if(updates<10 || frameGaps.Count<2 || first.ActualLine==null)throw new InvalidOperationException("No valid rendered animation samples.");
         results.Add(new {TrackChanges=swaps,LinesPerTrack=100000,TrackChangeMilliseconds=swapWatch.Elapsed.TotalMilliseconds,TrackChangeAllocatedBytes=swapAllocation,OldTrackStillObserved=oldObserved,OldTrackMovedScroll=oldTrackMovedScroll,
-          PlaybackUpdates=updates,ElapsedMilliseconds=elapsed,FrameCount=frameGaps.Count,FrameGapsMilliseconds=frameGaps.ToArray(),DispatcherDelayMilliseconds=lags.ToArray(),CpuMilliseconds=cpuUsed,UiThreadAllocatedBytes=playAllocation,
+          PlaybackUpdates=updates,ElapsedMilliseconds=elapsed,FrameCount=frameGaps.Count,RenderingTimesMilliseconds=renderingTimes.ToArray(),FrameGapsMilliseconds=frameGaps.ToArray(),DispatcherDelayMilliseconds=lags.ToArray(),CpuMilliseconds=cpuUsed,UiThreadAllocatedBytes=playAllocation,
           ActiveLineIndex=first.AllLine.IndexOf(first.ActualLine),FinalVerticalOffset=fixture.Scroller.VerticalOffset,Screenshot=screenshot});
         host.Close();
       }
       app.Shutdown();
-      File.WriteAllText(output,JsonSerializer.Serialize(new {Schema="lyrics-animation-v1",Commit=commit,CreatedUtc=DateTime.UtcNow,Runtime=Environment.Version.ToString(),Environment.ProcessorCount,
-        Boundary="Production AutoScrollLyricsBehavior and LRCFileViewModel in a visible virtualized pixel-scroll ListView; simplified fixed-height text rows; synthetic 16ms playback ticks, no audio decoding or full player UI. First fresh case then 1000 track changes; render gaps, dispatcher delay and process CPU measured for six seconds. Context construction, snapshots and settling excluded from playback timing.",Results=results},new JsonSerializerOptions {WriteIndented=true}));
+      File.WriteAllText(output,JsonSerializer.Serialize(new {Schema="lyrics-animation-v2",Commit=commit,CreatedUtc=DateTime.UtcNow,Runtime=Environment.Version.ToString(),Environment.ProcessorCount,
+        Boundary="Production AutoScrollLyricsBehavior and LRCFileViewModel in a visible virtualized pixel-scroll ListView; simplified fixed-height text rows; synthetic 16ms playback ticks, no audio decoding or full player UI. First fresh case then 1000 track changes; distinct WPF rendering timestamps deduplicated before gaps are recorded; dispatcher delay and process CPU measured for six seconds. Context construction, snapshots and settling excluded from playback timing.",Results=results},new JsonSerializerOptions {WriteIndented=true}));
     }
   }
 }
