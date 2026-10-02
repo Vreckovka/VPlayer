@@ -74,6 +74,7 @@ namespace VPlayer.Performance
       Query("yyyy-no-such-track","loaded-recursive-miss");
       var expectedPaths=Query("needle-folder","deep-folder-match");
       Query("NEEDLE-FOLDER","uppercase-deep-folder-match");
+      Query("copy","wide-file-matches");
       fixture.Browser.FilterPhrase="";
       var rapidWatch=Stopwatch.StartNew();int rapidBefore=publications;
       foreach(var query in new[]{"zzzz-no-such-track","copy-0000","album-099","needle-folder"})fixture.Browser.FilterPhrase=query;
