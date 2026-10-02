@@ -1287,97 +1287,105 @@ namespace VPlayer.AudioStorage.AudioDatabase
       where TPlaylistItem : class, IItemInPlaylist<TModel>
       where TModel : IEntity
     {
+      using var totalMeasurement = VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Data / playlist save / total");
       using (var context = new AudioDatabaseContext())
       {
         var result = false;
         updatedPlaylist = null;
         IPlaylist<TPlaylistItem> foundPlaylist = null;
 
-        if (playlist is SoundItemFilePlaylist)
+        using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Data / playlist save / stored read"))
         {
-          foundPlaylist = (IPlaylist<TPlaylistItem>)GetTempRepository<SoundItemFilePlaylist>()
-            .Include(x => x.PlaylistItems)
-            .ThenInclude(x => x.ReferencedItem.FileInfoEntity)
-            .Include(x => x.ActualItem.ReferencedItem)
-            .SingleOrDefault(x => x.Id == playlist.Id);
+          if (playlist is SoundItemFilePlaylist)
+          {
+            foundPlaylist = (IPlaylist<TPlaylistItem>)GetTempRepository<SoundItemFilePlaylist>()
+              .Include(x => x.PlaylistItems)
+              .ThenInclude(x => x.ReferencedItem.FileInfoEntity)
+              .Include(x => x.ActualItem.ReferencedItem)
+              .SingleOrDefault(x => x.Id == playlist.Id);
+          }
+          else
+          {
+            foundPlaylist = GetTempRepository<TPlaylist>()
+              .Include(x => x.PlaylistItems)
+              .ThenInclude(x => x.ReferencedItem)
+              .Include(x => x.ActualItem.ReferencedItem)
+              .SingleOrDefault(x => x.Id == playlist.Id);
+          }
         }
-        else
-        {
-          foundPlaylist = GetTempRepository<TPlaylist>()
-            .Include(x => x.PlaylistItems)
-            .ThenInclude(x => x.ReferencedItem)
-            .Include(x => x.ActualItem.ReferencedItem)
-            .SingleOrDefault(x => x.Id == playlist.Id);
-        }
-
 
         if (foundPlaylist != null)
         {
-          context.Entry(foundPlaylist).State = EntityState.Modified;
           TPlaylistItem actualItem = null;
-
-          var oldHash = foundPlaylist.HashCode;
-          var oldItems = playlist.PlaylistItems;
-
-          foundPlaylist.Update(playlist);
-
-          if (playlist.PlaylistItems != null)
+          using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Data / playlist save / reconciliation"))
           {
-            if (foundPlaylist.PlaylistItems != null && (oldHash != playlist.HashCode || PlaylistOrder.HasChanges(foundPlaylist.PlaylistItems, oldItems, x => x.Id, x => x.IdReferencedItem, x => x.OrderInPlaylist)))
+            context.Entry(foundPlaylist).State = EntityState.Modified;
+
+            var oldHash = foundPlaylist.HashCode;
+            var oldItems = playlist.PlaylistItems;
+
+            foundPlaylist.Update(playlist);
+
+            if (playlist.PlaylistItems != null)
             {
-              if (oldItems.Count > 0)
+              if (foundPlaylist.PlaylistItems != null && (oldHash != playlist.HashCode || PlaylistOrder.HasChanges(foundPlaylist.PlaylistItems, oldItems, x => x.Id, x => x.IdReferencedItem, x => x.OrderInPlaylist)))
               {
-                var removedItems = foundPlaylist.PlaylistItems.Where(p => oldItems.All(p2 => p2.Id != p.Id)).ToList();
-
-                foreach (var removed in removedItems)
+                if (oldItems.Count > 0)
                 {
-                  if (foundPlaylist.ActualItemId == removed.Id)
+                  var removedItems = foundPlaylist.PlaylistItems.Where(p => oldItems.All(p2 => p2.Id != p.Id)).ToList();
+
+                  foreach (var removed in removedItems)
                   {
-                    foundPlaylist.ActualItemId = null;
-                  }
-
-                  context.Entry(removed).State = EntityState.Deleted;
-                }
-
-                var items = foundPlaylist.PlaylistItems.ToList();
-                foundPlaylist.PlaylistItems.Clear();
-
-                foreach (var playlistItem in oldItems)
-                {
-                  foundPlaylist.PlaylistItems.Add(playlistItem);
-
-                  if (playlistItem.Id == 0)
-                  {
-                    context.Entry(playlistItem).State = EntityState.Added;
-                  }
-                  else
-                  {
-                    var existing = items.SingleOrDefault(x => x.Id == playlistItem.Id);
-
-                    if (existing != null)
+                    if (foundPlaylist.ActualItemId == removed.Id)
                     {
-                      if (existing.Compare(playlistItem))
+                      foundPlaylist.ActualItemId = null;
+                    }
+
+                    context.Entry(removed).State = EntityState.Deleted;
+                  }
+
+                  var items = foundPlaylist.PlaylistItems.ToList();
+                  foundPlaylist.PlaylistItems.Clear();
+
+                  foreach (var playlistItem in oldItems)
+                  {
+                    foundPlaylist.PlaylistItems.Add(playlistItem);
+
+                    if (playlistItem.Id == 0)
+                    {
+                      context.Entry(playlistItem).State = EntityState.Added;
+                    }
+                    else
+                    {
+                      var existing = items.SingleOrDefault(x => x.Id == playlistItem.Id);
+
+                      if (existing != null)
                       {
-                        context.Entry(playlistItem).State = EntityState.Modified;
+                        if (existing.Compare(playlistItem))
+                        {
+                          context.Entry(playlistItem).State = EntityState.Modified;
+                        }
                       }
                     }
                   }
+
+                  foundPlaylist.ItemCount = foundPlaylist.PlaylistItems.Count;
                 }
-
-                foundPlaylist.ItemCount = foundPlaylist.PlaylistItems.Count;
               }
+
+              actualItem = foundPlaylist.ActualItem;
+              foundPlaylist.ActualItem = null;
             }
-
-            actualItem = foundPlaylist.ActualItem;
-            foundPlaylist.ActualItem = null;
           }
-
-          var resultCount = context.SaveChanges();
+          int resultCount;
+          using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Data / playlist save / playlist write"))
+            resultCount = context.SaveChanges();
 
           if (actualItem != null)
           {
             foundPlaylist.ActualItem = actualItem;
-            resultCount = context.SaveChanges();
+            using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Data / playlist save / actual item write"))
+              resultCount = context.SaveChanges();
           }
 
           result = resultCount > 0;
@@ -1391,13 +1399,17 @@ namespace VPlayer.AudioStorage.AudioDatabase
               playlist.ActualItem = foundPlaylist.PlaylistItems.SingleOrDefault(x => x.Id == playlist.ActualItem.Id);
             }
 
-            PublishItemChanged(playlist);
+            using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Data / playlist save / change notification"))
+              PublishItemChanged(playlist);
           }
 
-          if (result)
-            logger.Log(MessageType.Success, $"Item was updated {playlist} {playlist.Id} result count {resultCount}");
-          else
-            logger.Log(MessageType.Warning, $"Item was not updated {playlist} {playlist.Id} result count {resultCount}");
+          using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Data / playlist save / log"))
+          {
+            if (result)
+              logger.Log(MessageType.Success, $"Item was updated {playlist} {playlist.Id} result count {resultCount}");
+            else
+              logger.Log(MessageType.Warning, $"Item was not updated {playlist} {playlist.Id} result count {resultCount}");
+          }
 
           updatedPlaylist = (TPlaylist)foundPlaylist;
         }

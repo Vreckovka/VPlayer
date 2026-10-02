@@ -597,3 +597,16 @@ snapshot creation, save queue wait, database update, player reset and final
 collection clearing. The Release build passes. These opt-in scopes retain the
 existing operation order and are disabled during ordinary application use;
 the next native control will identify the incomplete clear stage before fixes.
+
+The cc2bf8e2 clear control timed out while clearing waited on the playlist save
+queue. An earlier save remained inside UpdatePlaylist for the original 28-row
+playlist; snapshot creation took 18.5 ms initially and 4 ms for clearing. The
+record is frozen in iterations/music-clear-save-wait-baseline-cc2bf8e2.json.
+Further scopes will distinguish stored-data reads, reconciliation, database
+writes and change publication within that save before selecting a fix.
+
+Playlist storage diagnostics now split UpdatePlaylist into stored read,
+reconciliation, playlist write, actual-item write, change notification and
+logging. The Release build passes. These scopes preserve the previous query,
+reconciliation and write order. They apply only with benchmark diagnostics
+on; ordinary application behavior is unchanged.
