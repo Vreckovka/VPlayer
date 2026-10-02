@@ -1,0 +1,119 @@
+[
+  {
+    "SchemaVersion": 1,
+    "Commit": "269120f309fd7fd21964c739e741b6247ec4ea53",
+    "CreatedUtc": "2026-10-02T13:58:24.3064693Z",
+    "Runtime": "3.1.32",
+    "Configuration": "Release",
+    "ProcessorCount": 8,
+    "FixtureSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+    "Entries": 100000,
+    "MissingFileInfo": 5,
+    "Boundary": "Production MusicPlayerViewModel saved view creation; real Ninject, shared stub services; database reads, UI rendering, verification and disposal excluded",
+    "Samples": [
+      {
+        "Iteration": 0,
+        "Milliseconds": 111.9791,
+        "AllocatedBytes": 50780808
+      },
+      {
+        "Iteration": 1,
+        "Milliseconds": 140.6291,
+        "AllocatedBytes": 50542656
+      },
+      {
+        "Iteration": 2,
+        "Milliseconds": 111.9012,
+        "AllocatedBytes": 50542368
+      },
+      {
+        "Iteration": 3,
+        "Milliseconds": 74.4314,
+        "AllocatedBytes": 50542368
+      },
+      {
+        "Iteration": 4,
+        "Milliseconds": 206.8309,
+        "AllocatedBytes": 50542376
+      }
+    ]
+  },
+  {
+    "SchemaVersion": 1,
+    "Commit": "269120f309fd7fd21964c739e741b6247ec4ea53",
+    "CreatedUtc": "2026-10-02T13:58:28.738208Z",
+    "Runtime": "3.1.32",
+    "Configuration": "Release",
+    "ProcessorCount": 8,
+    "FixtureSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+    "Entries": 100000,
+    "MissingFileInfo": 5,
+    "Boundary": "Production MusicPlayerViewModel saved view creation; real Ninject, shared stub services; database reads, UI rendering, verification and disposal excluded",
+    "Samples": [
+      {
+        "Iteration": 0,
+        "Milliseconds": 120.9401,
+        "AllocatedBytes": 50781864
+      },
+      {
+        "Iteration": 1,
+        "Milliseconds": 155.43,
+        "AllocatedBytes": 50542664
+      },
+      {
+        "Iteration": 2,
+        "Milliseconds": 112.3592,
+        "AllocatedBytes": 50542368
+      },
+      {
+        "Iteration": 3,
+        "Milliseconds": 81.3472,
+        "AllocatedBytes": 50542368
+      },
+      {
+        "Iteration": 4,
+        "Milliseconds": 203.2455,
+        "AllocatedBytes": 50542712
+      }
+    ]
+  },
+  {
+    "SchemaVersion": 1,
+    "Commit": "269120f309fd7fd21964c739e741b6247ec4ea53",
+    "CreatedUtc": "2026-10-02T13:58:33.1415789Z",
+    "Runtime": "3.1.32",
+    "Configuration": "Release",
+    "ProcessorCount": 8,
+    "FixtureSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+    "Entries": 100000,
+    "MissingFileInfo": 5,
+    "Boundary": "Production MusicPlayerViewModel saved view creation; real Ninject, shared stub services; database reads, UI rendering, verification and disposal excluded",
+    "Samples": [
+      {
+        "Iteration": 0,
+        "Milliseconds": 111.6507,
+        "AllocatedBytes": 50781864
+      },
+      {
+        "Iteration": 1,
+        "Milliseconds": 129.2925,
+        "AllocatedBytes": 50542984
+      },
+      {
+        "Iteration": 2,
+        "Milliseconds": 109.4862,
+        "AllocatedBytes": 50542368
+      },
+      {
+        "Iteration": 3,
+        "Milliseconds": 82.0106,
+        "AllocatedBytes": 50542368
+      },
+      {
+        "Iteration": 4,
+        "Milliseconds": 231.4836,
+        "AllocatedBytes": 50542536
+      }
+    ]
+  }
+]
