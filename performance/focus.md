@@ -18,3 +18,5 @@ Freeze the first valid baseline before changing each area. Keep compact two-colu
 Fresh process/profile measurements do not establish a cold disk-cache baseline. A restart-based cold measurement must be scheduled with the user; do not silently restart their PC or clear the system disk cache.
 
 Local test release uses VPlayer/Properties/PublishProfiles/FolderProfile.pubxml (D:\VPlayer) and the existing VersionAutoIncrement.tt formula. Deployment replaces published application files after backing them up; it preserves the installed settings and roaming library database.
+
+Keep the user's running VPlayer and installed files untouched. Benchmarks use an agent-owned build and copied data. Deploy only on a new explicit user request, after the user closes the app themselves.

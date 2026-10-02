@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\VPlayer.Core\VPlayer.Core.csproj" />
     <ProjectReference Include="..\..\VPlayer.Player\VPlayer.Player.csproj" />
+    <ProjectReference Include="..\..\VVLC\VVLC.csproj" />
     <PackageReference Include="Moq" Version="4.10.1" />
   </ItemGroup>
   <ItemGroup>
