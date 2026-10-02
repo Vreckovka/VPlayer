@@ -147,11 +147,16 @@ namespace VPlayer
       using (StartupMeasurements.Measure("UI / statistics / load and render"))
       {
         statistics.IsActive = true;
+        Kernel.Get<VCore.WPF.Modularity.RegionProviders.IRegionProvider>().ActivateView(statistics.Guid);
         var deadline = Stopwatch.StartNew();
         while (statistics.ItemsView == null || statistics.PlaylistView == null || statistics.LoadingStatus.IsLoading ||
                FindStatisticsView(window) == null || !HasRenderedPlaylistRow(FindStatisticsView(window)))
         {
-          if (deadline.Elapsed > TimeSpan.FromSeconds(30)) throw new TimeoutException("Statistics view did not render.");
+          if (deadline.Elapsed > TimeSpan.FromSeconds(30))
+          {
+            CaptureBenchmarkWindow(window, ".statistics-failed.png");
+            throw new TimeoutException($"Statistics view did not render: items={statistics.ItemsView?.Count}, playlists={statistics.PlaylistView?.Count}, loading={statistics.LoadingStatus.IsLoading}, visible={FindStatisticsView(window) != null}.");
+          }
           await Task.Delay(25);
         }
         await window.Dispatcher.InvokeAsync(() => window.UpdateLayout(), System.Windows.Threading.DispatcherPriority.ContextIdle);
