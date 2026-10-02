@@ -157,6 +157,15 @@ foreach($category in @('Data','Playlist','UI','Lyrics','Spectrum')) {
   $title=switch($category){'Lyrics' {'Lyrics (10k seeks)'} 'Spectrum' {'Spectrum (1k frames)'} default {$category}}
   $lines.Add('## '+$title)
   if($category -eq 'UI') {
+    $musicReport=Join-Path $PSScriptRoot 'music-playlist-ui-results.md'
+    if(Test-Path -LiteralPath $musicReport) {
+      $lines.Add('')
+      $lines.Add('### 100k-entry music playlist')
+      $lines.Add('')
+      foreach($row in @(Get-Content -LiteralPath $musicReport|Where-Object {$_.StartsWith('|')})){$lines.Add($row)}
+      $lines.Add('')
+      $lines.Add('Actual WPF load, scrolling and search. Timeout endpoints have no percentage. [Evidence](music-playlist-ui-results.md).')
+    }
     $searchReport=Join-Path $PSScriptRoot 'fuzzy-search-results.md'
     if(Test-Path -LiteralPath $searchReport) {
       $lines.Add('')

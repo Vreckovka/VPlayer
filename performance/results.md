@@ -121,6 +121,22 @@ Query preparation reduced query time; overall readiness improved slightly and fi
 
 ## UI
 
+### 100k-entry music playlist
+
+| Baseline now | New optimized version |
+| --- | --- |
+| **load and render** — Timeout (60k ms) | Pending |
+| **collection publication** — Unfinished | Pending |
+| **incoming song view conversion** — 5.6k ms | Pending |
+| **saved playlist view creation** — 4.9k ms | Pending |
+| **database and incoming views** — 3k ms | Pending |
+| **activation and render** — 1.6k ms | Pending |
+| **scroll to last track** — Not reached | Pending |
+| **long no-match search and render** — Not reached | Pending |
+| **long near-match search and render** — Not reached | Pending |
+
+Actual WPF load, scrolling and search. Timeout endpoints have no percentage. [Evidence](music-playlist-ui-results.md).
+
 ### Full library fuzzy search
 
 | Baseline now | New optimized version |

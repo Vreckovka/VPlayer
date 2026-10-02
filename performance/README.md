@@ -489,3 +489,11 @@ waiting, and initialized refreshes recheck the current model after the await.
 Video stop completion is awaited and video flags are published on the caller's
 context. All 157 tests and the application Release build pass. The full native
 baseline resumes with this correctness fix, before playlist preparation changes.
+
+Three fresh native launches at 7928506b all reached the 100k playlist and timed
+out while publishing its collection. Completed subphases are kept separately
+from the small startup playlist. The baseline and compact comparison are in
+music-playlist-ui-baseline.json and music-playlist-ui-results.md. The bound
+total-duration getter sums every item on each collection notification; bulk
+insertion therefore performs quadratic work. Duration notification batching
+is the next optimization, after this immutable baseline is committed.
