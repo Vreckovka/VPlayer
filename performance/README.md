@@ -900,3 +900,16 @@ Home and first/final playlist images were reviewed. This single smoke launch has
 performance percentage or cold-disk claim. Raw launch/screenshot data remains local
 under artifacts/performance/runs/window-startup-smoke-20261002-172018. The startup
 fix is included in the [local test release](local-release.md).
+
+The playlist collection benchmark runs with `playlist-collection <fixture-directory>
+<new-output.json> <commit>` in the performance runner. It uses 100k real saved song
+views, duplicate tracks and stored file information from playlist 658. The timed
+boundary includes reactive membership observers and WPF ListCollectionView; database
+reads, view construction, dispatcher scheduling, verification, disposal and painting
+are excluded. Raw JSON records first/repeated samples and allocated bytes for
+publication and clear. Native application checks remain necessary for overall gains.
+
+The diagnostic trace in iterations/playlist-publication-cpu-profile-0afd191c.json
+completed the 100k native workload. Collection publication used about 5.1k ms of CPU
+within 5.6k ms elapsed; replacement used about 4.7k ms CPU within 5.1k ms elapsed.
+It uses cpu-v2 diagnostics and is kept separate from ordinary timing comparisons.
