@@ -248,3 +248,17 @@ The final screenshot was visually verified, the source fixture checksum stayed
 unchanged, and CodeGraph sync found the index current. Main results.md now shows
 the current buffered startup/Statistics comparison, with older comparisons
 folded under details. The broad application audit and optimization goal continues.
+
+startup.ps1 -CpuProfile adds opt-in per-scope execution diagnostics:
+thread CPU time, GC collection deltas and thread-pool counts at scope boundaries.
+Windows CPU time comes from user/kernel GetThreadTimes values
+([API documentation](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getthreadtimes)).
+Scopes that move between managed threads report unavailable CPU deltas.
+GC counts are process-wide; thread-pool samples describe only the boundaries,
+so neither directly proves the cause of a wait. Ordinary benchmarks leave this
+profiling disabled; report compatibility checks reject mixed profiles.
+
+Two regressions verify native CPU accounting during actual work and rejection
+of a CPU delta across threads. All 123 tests and the production Release build
+pass. These new profiles investigate the long score-reader delays and do not
+replace the existing baseline/optimized comparisons.

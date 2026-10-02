@@ -19,7 +19,9 @@ function Format-Change($baseline,$current) {
 # to application optimization. Missing mode is the original protocol.
 function Assert-DiagnosticMode($reference,$runs) {
   $modes=@(@($reference)+@($runs) | Where-Object {$null -ne $_} | ForEach-Object {
-    if($_.DiagnosticMode){$_.DiagnosticMode}else{'synchronous-v1'}
+    $mode=if($_.DiagnosticMode){$_.DiagnosticMode}else{'synchronous-v1'}
+    $profile=if($_.DiagnosticProfile){$_.DiagnosticProfile}else{'none'}
+    $mode+'/'+$profile
   } | Select-Object -Unique)
   if($modes.Count -gt 1){throw 'Incompatible diagnostic modes; establish a new UI baseline.'}
 }

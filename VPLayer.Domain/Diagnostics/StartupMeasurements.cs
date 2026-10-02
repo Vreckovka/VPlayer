@@ -30,6 +30,7 @@ namespace VPLayer.Domain.Diagnostics
     private static string status="Starting";
     private static string failure;
     public static bool Enabled=>!string.IsNullOrWhiteSpace(output);
+    private static readonly bool cpuProfile=Enabled && Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_CPU_PROFILE")=="1";
     public static IDisposable Measure(string name)=>Enabled?new Scope(name):null;
     public static IDisposable MeasureLibrary(string phase,Type model)=>Enabled?Measure("Application / library "+model.Name+" / "+phase):null;
     public static void Start()
@@ -91,7 +92,7 @@ namespace VPLayer.Domain.Diagnostics
       {
         Status=status,FailureType=failure,ActivePhases=active.ToArray(),Commit=Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_COMMIT"),
         Runtime=Environment.Version.ToString(),CreatedUtc=DateTime.UtcNow,Phases=phases,Observations=observations,
-        DatabaseReads=databaseReads,DiagnosticWrites=metrics,DiagnosticMode="buffered-v1"
+        DatabaseReads=databaseReads,DiagnosticWrites=metrics,DiagnosticMode="buffered-v1",DiagnosticProfile=cpuProfile?"cpu-v1":"none"
       },new JsonSerializerOptions {WriteIndented=true}));
     }
     private static void WriteSnapshot(string snapshot)
@@ -114,6 +115,7 @@ namespace VPLayer.Domain.Diagnostics
     private sealed class Scope : IDisposable
     {
       private readonly string name;
+      private readonly RuntimeExecutionSample executionStart=cpuProfile?RuntimeExecutionSample.Capture():default;
       private readonly double started=(DateTime.UtcNow-processStart).TotalMilliseconds;
       private readonly Stopwatch stopwatch=Stopwatch.StartNew();
       public Scope(string name)
@@ -124,11 +126,12 @@ namespace VPLayer.Domain.Diagnostics
       public void Dispose()
       {
         stopwatch.Stop();
+        var execution=cpuProfile?RuntimeExecutionSample.Capture().Since(executionStart):null;
         lock(phases)
         {
           active.Remove(name);
           phases.Add(new {Name=name,Milliseconds=stopwatch.Elapsed.TotalMilliseconds,
-            StartedMilliseconds=started,CompletedMilliseconds=started+stopwatch.Elapsed.TotalMilliseconds});
+            StartedMilliseconds=started,CompletedMilliseconds=started+stopwatch.Elapsed.TotalMilliseconds,Execution=execution});
           Write(status,failure);
         }
       }
