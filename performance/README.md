@@ -274,3 +274,10 @@ were zero at the sampled boundaries; intermediate queueing remains unmeasured.
 CPU counter granularity also limits interpretation of short phases.
 All launches rendered successfully. Profiling remains separate from the
 baseline/optimized timing tables because its diagnostic profile differs.
+
+The [covering-index experiment](iterations/statistics-index-probe-6a2089b5.md)
+uses disposable copies of the fully played library. Production Statistics warm
+loading improved by 3.2%, while first loading increased by 1.1%; indexes were
+not adopted. Raw queries used covering scans, but this modest gain does not
+explain the much larger UI reader waits. All samples remain in the experiment
+JSON, separate from application baseline/optimized results.
