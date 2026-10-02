@@ -7,6 +7,7 @@ using System.Windows;
 // associated with an assembly.
 [assembly: AssemblyTitle("VPlayer")]
 [assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("VPlayer")]
 [assembly: AssemblyCopyright("Copyright © 2019 - 2021")]
