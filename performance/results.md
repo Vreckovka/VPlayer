@@ -8,8 +8,8 @@ Fully played library; buffered diagnostics.
 
 | Baseline now | New optimized version |
 | --- | --- |
-| **initial playlist view ready** — 4.9k ms | 4.7k ms (-4.7%) |
-| **first window render** — 2.7k ms | 2.8k ms (+3.7%) |
+| **initial playlist view ready** — 4.9k ms | 4.7k ms (-4.9%) |
+| **first window render** — 2.7k ms | 2.7k ms (-0.2%) |
 
 <details>
 <summary>Earlier startup comparisons</summary>
@@ -108,6 +108,18 @@ Fully played library; buffered diagnostics.
 
 ## UI
 
+### Statistics reload bursts (32 rapid requests)
+
+| Baseline now | New optimized version |
+| --- | --- |
+| **reload burst / load and render** — 8.4k ms | 1.2k ms (-85.7%) |
+| **first burst / data and UI publication** — 5.8k ms | 1.7k ms (-70.7%) |
+| **repeat burst / data and UI publication** — 4.4k ms | 514.5 ms (-88.3%) |
+
+Data rows include dispatcher publication; the WPF row includes rendering in the actual app.
+
+### Other UI measurements
+
 | Baseline now | New optimized version |
 | --- | --- |
 | **title sort** — 1.7k ms | 1.3k ms (-23.1%) |
@@ -120,7 +132,7 @@ Fully played library; buffered diagnostics.
 
 | Baseline now | New optimized version |
 | --- | --- |
-| **load and render** — 5.8k ms | 4.1k ms (-28.9%) |
+| **load and render** — 5.8k ms | 3.3k ms (-43.9%) |
 
 <details>
 <summary>Earlier Statistics comparisons</summary>
@@ -170,4 +182,4 @@ Library cards/scrolling; navigation/details; file browser/thumbnails; settings/d
 
 Percentage changes in unchanged code are observations. Startup phases overlap; component UI tests use a simplified list. Raw samples, maxima, allocations and commit/fixture provenance remain in the JSON files and [README](README.md).
 
-Current UI timings compare the original buffered baseline with the latest application. [Playlist-name task comparisons](display-names-ui-results.md) vary in direction; a consistent gain from that change is unproven. Raw samples retain the control timeout and slow outliers.
+Current startup and single Statistics-load timings compare the original buffered baseline with the latest application. [Playlist-name task comparisons](display-names-ui-results.md) vary in direction; a consistent gain from that change is unproven. Raw samples retain the control timeout and slow outliers.

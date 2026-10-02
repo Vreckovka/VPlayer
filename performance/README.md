@@ -377,3 +377,24 @@ publication and partial refresh on failure in the old implementation, and pass
 with coordinated loading. All 147 tests pass; the production application and
 performance runner Release builds complete with no errors. Frozen component
 and rendered baselines remain separate from the upcoming optimized samples.
+
+The coordinated-load comparison is retained in
+[statistics-reload-results.md](statistics-reload-results.md). The real WPF
+reload-burst median decreased from 8.4k ms to 1.2k ms (-85.7%); first component
+bursts from 5.8k ms to 1.7k ms (-70.7%); repeated component bursts from 4.4k ms
+to 514.5 ms (-88.3%). Each component burst opened seven repositories instead
+of 224, across every sample. Component figures combine three fresh processes,
+keeping first loads separate from their eight repeats; WPF series retain all
+seven visible launches per version. Full precision and all samples stay in JSON.
+
+The component baseline is at 35d65448, the WPF baseline at 01c32c3d, and the
+optimized application at c7894170. Benchmark instrumentation was added before
+changing the Statistics loading implementation. The fixture checksum remained
+unchanged; every optimized WPF burst had populated rows, and the final reload
+screenshot was inspected. No tests, builds or CPU tracing ran during timings.
+
+The main startup/single-load table now compares its original buffered baseline
+with the seven c7894170 launches. Those phases complete before each launch's
+reload burst, so they keep their original timing boundaries. The previous
+5df42e33 series/report remain in iterations/buffered-ui-5df42e33.*. The separate
+playlist-name comparison and its mixed-direction results are still retained.

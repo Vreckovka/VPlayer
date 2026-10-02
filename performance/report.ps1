@@ -144,6 +144,19 @@ foreach($category in @('Data','Playlist','UI','Lyrics','Spectrum')) {
   $lines.Add('')
   $title=switch($category){'Lyrics' {'Lyrics (10k seeks)'} 'Spectrum' {'Spectrum (1k frames)'} default {$category}}
   $lines.Add('## '+$title)
+  if($category -eq 'UI') {
+    $reloadReport=Join-Path $PSScriptRoot 'statistics-reload-results.md'
+    if(Test-Path -LiteralPath $reloadReport) {
+      $lines.Add('')
+      $lines.Add('### Statistics reload bursts (32 rapid requests)')
+      $lines.Add('')
+      foreach($row in @(Get-Content -LiteralPath $reloadReport|Where-Object {$_.StartsWith('|')})){$lines.Add($row)}
+      $lines.Add('')
+      $lines.Add('Data rows include dispatcher publication; the WPF row includes rendering in the actual app.')
+      $lines.Add('')
+      $lines.Add('### Other UI measurements')
+    }
+  }
   $lines.Add('')
   $lines.Add('| Baseline now | New optimized version |')
   $lines.Add('| --- | --- |')
@@ -211,6 +224,6 @@ $lines.Add('Library cards/scrolling; navigation/details; file browser/thumbnails
 $lines.Add('')
 $lines.Add('Percentage changes in unchanged code are observations. Startup phases overlap; component UI tests use a simplified list. Raw samples, maxima, allocations and commit/fixture provenance remain in the JSON files and [README](README.md).')
 $lines.Add('')
-$lines.Add('Current UI timings compare the original buffered baseline with the latest application. [Playlist-name task comparisons](display-names-ui-results.md) vary in direction; a consistent gain from that change is unproven. Raw samples retain the control timeout and slow outliers.')
+$lines.Add('Current startup and single Statistics-load timings compare the original buffered baseline with the latest application. [Playlist-name task comparisons](display-names-ui-results.md) vary in direction; a consistent gain from that change is unproven. Raw samples retain the control timeout and slow outliers.')
 $lines | Set-Content -LiteralPath $Output
 Write-Output ('Wrote '+$Output)

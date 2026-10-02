@@ -20,6 +20,7 @@ function Read-Series($path,$ui) {
   foreach($run in $runs) {
     if($run.Commit -notmatch '^[0-9a-fA-F]{40}$' -or $run.Commit -ne $runs[0].Commit){throw 'Missing or mixed reload commit'}
     Assert-Fields $runs[0] $run $fields
+    if(!$ui){Assert-Fields $runs[0].Metrics[0] $run.Metrics[0] @('Name','Category','Boundary','Workload')}
   }
   if($ui){Assert-DiagnosticMode $runs @()}
   return $runs
@@ -65,7 +66,7 @@ if($a[0].FixtureSha256 -ne $c[0].FixtureSha256){throw 'Reload data/UI fixtures d
 $rows=@(
   [pscustomobject]@{Name='first burst / data and UI publication';Old=[pscustomobject]@{Value=(Data-Timing $a $true);Partial=$false};New=$(if($b.Count){[pscustomobject]@{Value=(Data-Timing $b $true);Partial=$false}}else{$null})},
   [pscustomobject]@{Name='repeat burst / data and UI publication';Old=[pscustomobject]@{Value=(Data-Timing $a $false);Partial=$false};New=$(if($b.Count){[pscustomobject]@{Value=(Data-Timing $b $false);Partial=$false}}else{$null})},
-  [pscustomobject]@{Name='reload burst / WPF render';Old=(UI-Timing $c);New=$(if($d.Count){UI-Timing $d}else{$null})}
+  [pscustomobject]@{Name='reload burst / load and render';Old=(UI-Timing $c);New=$(if($d.Count){UI-Timing $d}else{$null})}
 )
 $lines=[Collections.Generic.List[string]]::new()
 $lines.Add('# Statistics reload bursts')
