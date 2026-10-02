@@ -79,6 +79,8 @@ namespace VPlayer.Performance
           RunGraphics(soundModels
             .Select(x=>new SoundItemInPlaylistViewModel(x,events,storage)).ToList());
         }
+        else if(args[0]=="profile-playlist")
+          ProfilePlaylist(args[1]);
         else if(args[0]=="run")
           Run(args[1],args[2],args.Length>3?args[3]:"unknown");
         else throw new ArgumentException("Unknown command.");
@@ -278,6 +280,43 @@ namespace VPlayer.Performance
           .Cast<System.Reflection.AssemblyConfigurationAttribute>().FirstOrDefault()?.Configuration,
         FixtureSha256=checksum,Fixture=JsonSerializer.Deserialize<JsonElement>(fixture),Metrics=metrics
       },json));
+    }
+    private static void ProfilePlaylist(string directory)
+    {
+      var database=Path.Combine(Path.GetFullPath(directory),"VPlayerDatabase.db");
+      foreach(int size in new[] {1000,10000,100000})
+      {
+        using var context=new FixtureContext(database);
+        var model=context.SoundItemPlaylists.AsNoTracking().Single(x=>x.Name=="VPlayer benchmark "+size);
+        var watch=Stopwatch.StartNew();
+        var playlist=context.SoundItemPlaylists.AsNoTracking()
+          .Include(x=>x.PlaylistItems).ThenInclude(x=>x.ReferencedItem).ThenInclude(x=>x.FileInfoEntity)
+          .Single(x=>x.Id==model.Id);
+        watch.Stop();
+        Console.WriteLine(size+" entries: existing collection query "+watch.Elapsed.TotalMilliseconds.ToString("F2")+" ms");
+        watch.Restart();
+        var ordered=playlist.PlaylistItems.OrderBy(x=>x.OrderInPlaylist).ToList();
+        watch.Stop();
+        Console.WriteLine(size+" entries: order "+watch.Elapsed.TotalMilliseconds.ToString("F2")+" ms");
+        var events=new EventAggregator();
+        using var kernel=new StandardKernel();
+        kernel.Bind<IEventAggregator>().ToConstant(events);
+        kernel.Bind<IStorageManager>().ToConstant(new Mock<IStorageManager>().Object);
+        var factory=new VPlayerViewModelsFactory(kernel);
+        watch.Restart();
+        var views=ordered.Select(x=>factory.Create<SoundItemInPlaylistViewModel>(x.ReferencedItem)).ToArray();
+        watch.Stop();
+        Console.WriteLine(size+" entries: production factory "+watch.Elapsed.TotalMilliseconds.ToString("F2")+" ms");
+        foreach(var view in views) view.Dispose();
+        watch.Restart();
+        var flat=context.Set<PlaylistSoundItem>().AsNoTracking()
+          .Where(x=>EF.Property<int?>(x,"SoundItemFilePlaylistId")==model.Id)
+          .Include(x=>x.ReferencedItem).ThenInclude(x=>x.FileInfoEntity)
+          .OrderBy(x=>x.OrderInPlaylist).ThenBy(x=>x.Id).ToList();
+        watch.Stop();
+        if(flat.Count!=size) throw new InvalidOperationException("Incomplete flat query.");
+        Console.WriteLine(size+" entries: candidate flat query "+watch.Elapsed.TotalMilliseconds.ToString("F2")+" ms");
+      }
     }
     private static void RunGraphics(List<SoundItemInPlaylistViewModel> views)
     {

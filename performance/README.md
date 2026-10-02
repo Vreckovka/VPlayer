@@ -23,7 +23,7 @@ The first sample is recorded separately; later samples report median and p95.
 Fresh application processes are measured through the first main-window ContentRendered event.
 OS disk caches are not cleared: these are fresh-process measurements, not cold-disk measurements.
 Use the same window mode for both runs. Visible launches are authorized for this project; other users should explicitly authorize them before an agent opens windows.
-First render does not mean all asynchronous libraries or services are ready. A separate initial-playlist-view milestone waits for the production collection to load, its loading status to clear, and UI layout to finish. Screenshots of both milestones stay local.
+First render does not mean all asynchronous libraries or services are ready. A separate initial-playlist-view milestone waits for the production collection to load, its loading status to clear, and the visible playlist ListView to generate a nonempty row. This prevents an empty view from being reported as ready. Screenshots of both milestones stay local.
 
 Startup uses a separate writable copy per launch through VPLAYER_BENCHMARK_DIRECTORY,
 with settings redirected into that copy. Ordinary launches use the existing paths.
@@ -57,3 +57,5 @@ Convert batched workloads to per-operation cost before comparing them; do not co
 Retest every metric in the affected category and run the regression suite.
 Keep baseline samples immutable. Record the optimized commit and any regressions.
 Only aggregate timings and non-sensitive workload counts belong in committed reports.
+
+Diagnostic query/factory breakdown: run the Release performance executable with profile-playlist <fixture-directory> unused. These single samples identify a candidate bottleneck; they do not replace the repeated comparison protocol.

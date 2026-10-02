@@ -108,7 +108,7 @@ namespace VPlayer
             {
               var playlists = Kernel.Get<VPlayer.Home.ViewModels.SoundItemPlaylistsViewModel>();
               var deadline = Stopwatch.StartNew();
-              while (!playlists.LibraryCollection.WasLoaded || playlists.LoadingStatus.IsLoading)
+              while (!playlists.LibraryCollection.WasLoaded || playlists.LoadingStatus.IsLoading || !IsPlaylistViewRendered(window))
               {
                 if (deadline.Elapsed > TimeSpan.FromSeconds(45))
                   throw new TimeoutException("Initial playlist view did not finish loading.");
@@ -132,6 +132,14 @@ namespace VPlayer
         window.ContentRendered += rendered;
       }
       return window;
+    }
+    private static bool IsPlaylistViewRendered(System.Windows.DependencyObject root)
+    {
+      if (root is System.Windows.Controls.ListView list && list.Name == "playlists" && list.IsVisible)
+        return list.Items.Count > 0 && list.ItemContainerGenerator.ContainerFromIndex(0) is System.Windows.FrameworkElement item && item.ActualHeight > 0;
+      for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(root); i++)
+        if (IsPlaylistViewRendered(System.Windows.Media.VisualTreeHelper.GetChild(root, i))) return true;
+      return false;
     }
     private static void CaptureBenchmarkWindow(Window window, string suffix)
     {
