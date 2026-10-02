@@ -93,6 +93,8 @@ namespace VPlayer.Performance
           RunGraphics(soundModels
             .Select(x=>new SoundItemInPlaylistViewModel(x,events,storage)).ToList());
         }
+        else if(args[0]=="search")
+          SearchBenchmarks.Run(args[1],args[2],args.Length>3?args[3]:"unknown");
         else if(args[0]=="profile-playlist")
           ProfilePlaylist(args[1]);
         else if(args[0]=="run")

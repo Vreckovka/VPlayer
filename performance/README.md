@@ -428,3 +428,12 @@ visually checked. All 149 tests and the Release build passed before the run.
 playlist-preparation-report.ps1 validates preparation flags, same-commit
 provenance, phase boundaries, untraced buffered diagnostics and rendered
 workload consistency before generating the compact comparison.
+
+The search component benchmark (`VPlayer.Performance search`) calls production
+LibraryCollection.Filter and materializes both published result collections for
+all copied titles. It excludes entity loading, view construction and XAML.
+The no-match and one-character near-match queries use the longest fixture title,
+forcing the existing fuzzy path to evaluate long queries across the full library.
+Each fresh process retains its first sample and two repeats, including ordered
+result hashes, allocations and full commit/fixture provenance. Baselines are
+captured before replacing the edit-distance implementation.
