@@ -1,0 +1,15 @@
+Uncommitted draft before the custom-window context guard; this is not a baseline failure of the released app.
+
+  VPlayer.Tests -> D:\Aplikacie\VPlayer\tests\VPlayer.Tests\bin\x64\Release\netcoreapp3.1\VPlayer.Tests.dll
+Test run for D:\Aplikacie\VPlayer\tests\VPlayer.Tests\bin\x64\Release\netcoreapp3.1\VPlayer.Tests.dll (.NETCoreApp,Version=v3.1)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:02.27]     VPlayer.Tests.SavedPlaylistViewsTests.CustomWindowActivationRemainsPerOccurrence [FAIL]
+  Failed VPlayer.Tests.SavedPlaylistViewsTests.CustomWindowActivationRemainsPerOccurrence [204 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 0
+Actual:   97
+  Stack Trace:
+     at VPlayer.Tests.SavedPlaylistViewsTests.CustomWindowActivationRemainsPerOccurrence() in D:\Aplikacie\VPlayer\tests\VPlayer.Tests\SavedPlaylistViewsTests.cs:line 81
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 204 ms - VPlayer.Tests.dll (netcoreapp3.1)

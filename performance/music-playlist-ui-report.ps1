@@ -141,19 +141,22 @@ $scenarios=@(
   @{Name='long no-match search and render';Phase='UI / music playlist / long no-match search and render';Missing='Not reached'},
   @{Name='long near-match search and render';Phase='UI / music playlist / long near-match search and render';Missing='Not reached'}
 )
-$completeBaseline = @($a | Where-Object Status -ne 'Rendered').Count -eq 0
+$hasPaintedBaseline = @($a | Where-Object Status -eq 'Rendered').Count -gt 0
 $lines=@('# 100k-entry music playlist','','Real WPF window; copied 207k-item library. Buffered diagnostics. - % = less time; + % = more time.','','| Baseline now | New optimized version |','| --- | --- |')
 foreach($scenario in $scenarios) {
-  $old=Timing $(if($completeBaseline){$a}elseif($scenario.ClearControl){$d}elseif($scenario.Control){$c}else{$a}) $scenario.Phase
+  $old=Timing $(if($hasPaintedBaseline){$a}elseif($scenario.ClearControl){$d}elseif($scenario.Control){$c}else{$a}) $scenario.Phase
   $new=if($b.Count){Timing $b $scenario.Phase}else{$null}
   $left=if($null -ne $old){Format-Time $old}else{$scenario.Missing}
   $right=if($null -ne $new){(Format-Time $new)+(Format-Change $old $new)}elseif($b.Count){$scenario.Missing}else{'Pending'}
   $lines+='| **'+$scenario.Name+'** — '+$left+' | '+$right+' |'
 }
-if($completeBaseline) {
+if($hasPaintedBaseline) {
   $lines+=@('','Completed endpoint timings compare against the frozen baseline. - % = less time; + % = more time. Raw phases and provenance stay in JSON.')
 } else {
 $lines+=@('','The timeout is the overall process limit. Unfinished endpoints have no percentage; completed phase medians exclude the small startup playlist. Clear uses the separate save-wait control; stored-song/replacement/dispatch rows use the pre-lookup control. Painted activation has no prior baseline. Raw phases, failures and provenance stay in JSON.')
+}
+if($hasPaintedBaseline -and @($a|Where-Object Status -eq 'Timeout').Count){
+  $lines+=@('','Baseline load timeout retained (60k ms limit); timings use completed endpoints.')
 }
 if(@($b|Where-Object Status -eq 'Timeout').Count){
   $lines+=@('','Load timeout retained (60k ms limit); medians use completed endpoints, and consistent loading remains unproven.')

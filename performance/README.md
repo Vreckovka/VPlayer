@@ -850,3 +850,30 @@ view-creation stage and checks search fingerprints even when the first run fails
 Malformed timeout evidence and changed fingerprints were rejected in guard checks.
 The largest unfinished load stage is saved playlist view creation; native skip
 persistence, albums, cold startup, lyrics and explorer work remain within focus.
+
+Saved playlist construction at 171b2af1 resolves shared dependencies once per batch,
+while retaining a distinct song wrapper, view model, nested factory and transient
+window manager for each occurrence. Custom bindings and activation hooks retain
+container resolution and its original parent context. The controlled 100k-entry
+comparison uses real Ninject, eight shared stub services and a real WindowManager
+per entry; database reads, rendering, verification and disposal are excluded.
+[Component results](saved-playlist-views-results.md) retain first/repeated timings
+and allocations. The earlier all-shared-service control is frozen in iterations/;
+it did not represent the application's transient window binding.
+
+The final native series confirmed batch construction and per-item window creation
+in every run. Saved-view creation fell from 4.3k to 130.6 ms (-97%); total load/render
+fell from 16.6k to 15.9k ms (-4.7%). The preceding baseline timeout and every slower
+stage remain in the [task comparison](iterations/music-playlist-saved-views-load-results-171b2af1.md).
+All three final runs completed ordered 100k occurrences, stored metadata, painted
+first/final rows and unchanged search fingerprints. The six viewport screenshots
+were visually reviewed. Fresh profiles do not establish cold-disk performance.
+
+All 218 tests passed; Release built with 152 warnings and no errors. Tests preserve
+occurrence identity, independent state, per-item service lifetimes and custom
+activation parent contexts. The failed intermediate parent-context regression is
+explicitly labeled as an uncommitted draft in iterations/. Test/build evidence is
+in iterations/saved-views-tests-171b2af1.txt. The main music report keeps its first
+complete 5be3a2c4 baseline. Enrichment and collection publication, each about 4.7k ms,
+are now the largest completed load stages. Other areas in focus.md remain pending;
+the locally installed test version remains 7.6.9771.25313.

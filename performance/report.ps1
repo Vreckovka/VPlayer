@@ -169,6 +169,7 @@ foreach($category in @('Data','Playlist','UI','Lyrics','Spectrum')) {
       $lines.Add('[Playback-save follow-up](iterations/music-playlist-playback-save-load-results-09ea4d79.md) retains slower stages as well.')
       $lines.Add('[Snapshot task comparison](iterations/music-playlist-snapshot-load-results-2abd4a10.md) retains the earlier snapshot comparison, including slower stages.')
       $lines.Add('[Selection task rendering check](iterations/music-playlist-selection-load-results-ebff741c.md) retains the load timeout and slower scrolling/search.')
+      $lines.Add('[Saved-view task comparison](iterations/music-playlist-saved-views-load-results-171b2af1.md): view creation -97%; total load/render -4.7%. Enrichment and publication remain the largest stages; slower observations are retained.')
       foreach($note in @(Get-Content -LiteralPath $musicReport|Where-Object {$_.StartsWith('Read timeout retained') -or $_.StartsWith('Load timeout retained')})){$lines.Add($note)}
     }
     $snapshotReport=Join-Path $PSScriptRoot 'playlist-snapshot-results.md'
@@ -179,6 +180,15 @@ foreach($category in @('Data','Playlist','UI','Lyrics','Spectrum')) {
       foreach($row in @(Get-Content -LiteralPath $snapshotReport|Where-Object {$_.StartsWith('|')})){$lines.Add($row)}
       $lines.Add('')
       $lines.Add('Production snapshot used by track selection and playlist loading; component timings exclude database work and rendering. [Evidence](playlist-snapshot-results.md).')
+    }
+    $savedViewReport=Join-Path $PSScriptRoot 'saved-playlist-views-results.md'
+    if(Test-Path -LiteralPath $savedViewReport) {
+      $lines.Add('')
+      $lines.Add('### Saved playlist view creation (100k entries)')
+      $lines.Add('')
+      foreach($row in @(Get-Content -LiteralPath $savedViewReport|Where-Object {$_.StartsWith('|')})){$lines.Add($row)}
+      $lines.Add('')
+      $lines.Add('Production music view construction with real Ninject and stub services; excludes database reads and rendering. [Evidence](saved-playlist-views-results.md).')
     }
     $writeReport=Join-Path $PSScriptRoot 'music-playlist-write-results.md'
     if(Test-Path -LiteralPath $writeReport) {

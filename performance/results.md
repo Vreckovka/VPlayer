@@ -125,27 +125,27 @@ Query preparation reduced query time; overall readiness improved slightly and fi
 
 | Baseline now | New optimized version |
 | --- | --- |
-| **clear before load** — 662.7 ms | 336.4 ms (-49.2%) |
-| **load and render** — 32.4k ms | 16.6k ms (-48.6%) |
-| **stored song enrichment** — 2.3k ms | 2.7k ms (+19.2%) |
-| **collection publication** — 15.2k ms | 4.1k ms (-72.8%) |
-| **collection replacement** — 11.3k ms | 3.9k ms (-65.3%) |
-| **incoming song view conversion** — 4.8k ms | 3.1 ms (-99.9%) |
-| **saved playlist view creation** — 4.6k ms | 4.3k ms (-7.3%) |
-| **active item dispatch** — 3.8k ms | 170.2 ms (-95.5%) |
-| **database and incoming views** — 3.2k ms | 3.2k ms (+0.8%) |
-| **stored song read** — 2k ms | 2k ms (-1.6%) |
-| **activation and render** — 2.8k ms | 1.6k ms (-40.6%) |
-| **scroll to last track** — 222.3 ms | 379.5 ms (+70.7%) |
-| **long no-match search and render** — 474.5 ms | 699.3 ms (+47.4%) |
-| **long near-match search and render** — 483.8 ms | 847 ms (+75.1%) |
+| **clear before load** — 662.7 ms | 583 ms (-12%) |
+| **load and render** — 32.4k ms | 15.9k ms (-51%) |
+| **stored song enrichment** — 2.3k ms | 4.7k ms (+108.1%) |
+| **collection publication** — 15.2k ms | 4.7k ms (-69.4%) |
+| **collection replacement** — 11.3k ms | 4.4k ms (-60.9%) |
+| **incoming song view conversion** — 4.8k ms | 3.41 ms (-99.9%) |
+| **saved playlist view creation** — 4.6k ms | 130.6 ms (-97.2%) |
+| **active item dispatch** — 3.8k ms | 217.8 ms (-94.2%) |
+| **database and incoming views** — 3.2k ms | 3.5k ms (+10.9%) |
+| **stored song read** — 2k ms | 2.5k ms (+22.7%) |
+| **activation and render** — 2.8k ms | 2.2k ms (-19.5%) |
+| **scroll to last track** — 222.3 ms | 687.2 ms (+209.2%) |
+| **long no-match search and render** — 474.5 ms | 972.8 ms (+105%) |
+| **long near-match search and render** — 483.8 ms | 827.6 ms (+71.1%) |
 
 Actual WPF load, scrolling and search. Timeout endpoints have no percentage. [Evidence](music-playlist-ui-results.md).
 Storage task d467b7ad measured +13.9% load/render against its preceding version; scrolling and search also slowed. [Storage task comparison](iterations/music-playlist-write-load-results-d467b7ad.md).
 [Playback-save follow-up](iterations/music-playlist-playback-save-load-results-09ea4d79.md) retains slower stages as well.
 [Snapshot task comparison](iterations/music-playlist-snapshot-load-results-2abd4a10.md) retains the earlier snapshot comparison, including slower stages.
 [Selection task rendering check](iterations/music-playlist-selection-load-results-ebff741c.md) retains the load timeout and slower scrolling/search.
-Load timeout retained (60k ms limit); medians use completed endpoints, and consistent loading remains unproven.
+[Saved-view task comparison](iterations/music-playlist-saved-views-load-results-171b2af1.md): view creation -97%; total load/render -4.7%. Enrichment and publication remain the largest stages; slower observations are retained.
 
 ### Playlist state snapshot (100k entries)
 
@@ -156,6 +156,16 @@ Load timeout retained (60k ms limit); medians use completed endpoints, and consi
 | **allocated per snapshot** — 696.3 MiB | 30.7 MiB (-95.6%) |
 
 Production snapshot used by track selection and playlist loading; component timings exclude database work and rendering. [Evidence](playlist-snapshot-results.md).
+
+### Saved playlist view creation (100k entries)
+
+| Baseline now | New optimized version |
+| --- | --- |
+| **first batch** — 3.8k ms | 157.1 ms (-95.8%) |
+| **repeated batch** — 3.9k ms | 217.9 ms (-94.4%) |
+| **allocated per batch** — 1.9 GiB | 57.4 MiB (-97.1%) |
+
+Production music view construction with real Ninject and stub services; excludes database reads and rendering. [Evidence](saved-playlist-views-results.md).
 
 ### 100k-track save and clear
 

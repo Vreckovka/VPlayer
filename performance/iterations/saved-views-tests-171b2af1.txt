@@ -1,0 +1,8 @@
+Test run for D:\Aplikacie\VPlayer\tests\VPlayer.Tests\bin\x64\Release\netcoreapp3.1\VPlayer.Tests.dll (.NETCoreApp,Version=v3.1)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   218, Skipped:     0, Total:   218, Duration: 4 m 23 s - VPlayer.Tests.dll (netcoreapp3.1)
+    152 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:13.92
