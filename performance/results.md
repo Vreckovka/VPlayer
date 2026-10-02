@@ -125,10 +125,10 @@ Query preparation reduced query time; overall readiness improved slightly and fi
 
 | Baseline now | New optimized version |
 | --- | --- |
-| **long near-match / first search** — 13.3k ms | Pending |
-| **long near-match / repeat search** — 12.9k ms | Pending |
-| **long no-match / repeat search** — 12.7k ms | Pending |
-| **long no-match / first search** — 12.4k ms | Pending |
+| **long near-match / first search** — 13.3k ms | 39.5 ms (-99.7%) |
+| **long near-match / repeat search** — 12.9k ms | 40.1 ms (-99.7%) |
+| **long no-match / repeat search** — 12.7k ms | 40.8 ms (-99.7%) |
+| **long no-match / first search** — 12.4k ms | 42 ms (-99.7%) |
 
 Production filtering and result publication; loading and XAML are measured separately.
 
@@ -206,4 +206,4 @@ Library cards/scrolling; navigation/details; file browser/thumbnails; settings/d
 
 Percentage changes in unchanged code are observations. Startup phases overlap; component UI tests use a simplified list. Raw samples, maxima, allocations and commit/fixture provenance remain in the JSON files and [README](README.md).
 
-Current startup and single Statistics-load timings compare the original buffered baseline with the latest application. [Playlist-name task comparisons](display-names-ui-results.md) vary in direction; a consistent gain from that change is unproven. Raw samples retain the control timeout and slow outliers.
+Startup and single Statistics-load timings compare the original buffered baseline with the retained c7894170 series. [Playlist-name task comparisons](display-names-ui-results.md) vary in direction; a consistent gain from that change is unproven. Raw samples retain the control timeout and slow outliers.

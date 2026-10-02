@@ -451,3 +451,18 @@ random Unicode, long prefix/suffix cases, repeated long-input allocations,
 cultures. All 155 tests pass; application and performance runner Release builds
 complete with no errors. The frozen pre-change search baseline is retained;
 optimized results will be checked against its ordered result hashes.
+
+The verified comparison is retained in
+[fuzzy-search-results.md](fuzzy-search-results.md). Long queries across 207,110
+copied titles fell from 12.4–13.3k ms to 39.5–42 ms (-99.7%). Warm allocation
+medians fell from about 24.06 GB per query to about 106–110k bytes. The longest
+fixture title is 114 characters. All ordered result hashes match: zero matches
+for the no-match query and ten for the near-match query in every sample.
+
+The frozen baseline uses 0a391935 and the optimized application f4fa1b16,
+with three independent processes per version and first/repeated samples kept
+separate. No tests or builds ran during timings. The fixture checksum stayed
+unchanged. The report rejects changed boundaries, query text, result hashes,
+counts, commits and fixture provenance. These figures cover production
+filtering/publication; rendered search and full library loading remain separate
+unfinished scenarios.

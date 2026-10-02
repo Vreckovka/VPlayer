@@ -1,0 +1,221 @@
+[
+  {
+    "SchemaVersion": 1,
+    "Commit": "f4fa1b167b12cb3c44d8d1c4a1e57bf45d27ca43",
+    "CreatedUtc": "2026-10-02T05:58:24.2205474Z",
+    "Runtime": "3.1.32",
+    "OS": "Microsoft Windows NT 10.0.19045.0",
+    "ProcessorCount": 8,
+    "Configuration": "Release",
+    "FixtureSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+    "Fixture": {
+      "CreatedUtc": "2026-10-02T04:08:30.43685+02:00",
+      "DatabaseSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+      "ParentSha256": "ED1EB6181F4A73CE5EA8C7362EC8AAFE8E6DAC7A86DA1FAE8AFB3B115B25B967",
+      "SoundItems": 207110,
+      "Playlists": 5310,
+      "FileInfos": 247692,
+      "UniqueSoundFileMetadata": true,
+      "AdditionalUserPlaylists": 5000,
+      "PlaylistSizes": [
+        1000,
+        10000,
+        100000
+      ],
+      "UniqueSoundTimePlayed": true,
+      "AllSoundsPlayed": true
+    },
+    "Metrics": [
+      {
+        "Name": "UI / library fuzzy long no-match",
+        "Category": "UI",
+        "Boundary": "Production LibraryCollection.Filter and both materialized result publications; no entity loading or XAML",
+        "Workload": "207110 copied titles; query length 114",
+        "FirstMilliseconds": 41.968,
+        "MedianMilliseconds": 39.37245,
+        "P95Milliseconds": 40.4972,
+        "MedianAllocatedBytes": 106184,
+        "SamplesMilliseconds": [
+          41.968,
+          40.4972,
+          38.2477
+        ]
+      },
+      {
+        "Name": "UI / library fuzzy long near-match",
+        "Category": "UI",
+        "Boundary": "Production LibraryCollection.Filter and both materialized result publications; no entity loading or XAML",
+        "Workload": "207110 copied titles; query length 114",
+        "FirstMilliseconds": 39.0624,
+        "MedianMilliseconds": 45.506,
+        "P95Milliseconds": 46.673,
+        "MedianAllocatedBytes": 110268,
+        "SamplesMilliseconds": [
+          39.0624,
+          44.339,
+          46.673
+        ]
+      }
+    ],
+    "Results": [
+      {
+        "Name": "UI / library fuzzy long no-match",
+        "Query": "¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤",
+        "Count": 0,
+        "OrderedIdsSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+      },
+      {
+        "Name": "UI / library fuzzy long near-match",
+        "Query": "4.Ice Cube (2000) - War & Peace Vol. 2 (The Peace Disc) -¤The Gutter Shit feat. Jayo Felon,Gangsta & Squeak Ru.mp3",
+        "Count": 10,
+        "OrderedIdsSha256": "54FAAB571918266CE95751CDBF850E9F88B92F4177BB2652DADFC10265A80DB2"
+      }
+    ]
+  },
+  {
+    "SchemaVersion": 1,
+    "Commit": "f4fa1b167b12cb3c44d8d1c4a1e57bf45d27ca43",
+    "CreatedUtc": "2026-10-02T05:58:40.8061571Z",
+    "Runtime": "3.1.32",
+    "OS": "Microsoft Windows NT 10.0.19045.0",
+    "ProcessorCount": 8,
+    "Configuration": "Release",
+    "FixtureSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+    "Fixture": {
+      "CreatedUtc": "2026-10-02T04:08:30.43685+02:00",
+      "DatabaseSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+      "ParentSha256": "ED1EB6181F4A73CE5EA8C7362EC8AAFE8E6DAC7A86DA1FAE8AFB3B115B25B967",
+      "SoundItems": 207110,
+      "Playlists": 5310,
+      "FileInfos": 247692,
+      "UniqueSoundFileMetadata": true,
+      "AdditionalUserPlaylists": 5000,
+      "PlaylistSizes": [
+        1000,
+        10000,
+        100000
+      ],
+      "UniqueSoundTimePlayed": true,
+      "AllSoundsPlayed": true
+    },
+    "Metrics": [
+      {
+        "Name": "UI / library fuzzy long no-match",
+        "Category": "UI",
+        "Boundary": "Production LibraryCollection.Filter and both materialized result publications; no entity loading or XAML",
+        "Workload": "207110 copied titles; query length 114",
+        "FirstMilliseconds": 41.5633,
+        "MedianMilliseconds": 40.4555,
+        "P95Milliseconds": 41.0328,
+        "MedianAllocatedBytes": 106184,
+        "SamplesMilliseconds": [
+          41.5633,
+          41.0328,
+          39.8782
+        ]
+      },
+      {
+        "Name": "UI / library fuzzy long near-match",
+        "Category": "UI",
+        "Boundary": "Production LibraryCollection.Filter and both materialized result publications; no entity loading or XAML",
+        "Workload": "207110 copied titles; query length 114",
+        "FirstMilliseconds": 39.4728,
+        "MedianMilliseconds": 39.67985,
+        "P95Milliseconds": 39.9367,
+        "MedianAllocatedBytes": 110268,
+        "SamplesMilliseconds": [
+          39.4728,
+          39.9367,
+          39.423
+        ]
+      }
+    ],
+    "Results": [
+      {
+        "Name": "UI / library fuzzy long no-match",
+        "Query": "¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤",
+        "Count": 0,
+        "OrderedIdsSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+      },
+      {
+        "Name": "UI / library fuzzy long near-match",
+        "Query": "4.Ice Cube (2000) - War & Peace Vol. 2 (The Peace Disc) -¤The Gutter Shit feat. Jayo Felon,Gangsta & Squeak Ru.mp3",
+        "Count": 10,
+        "OrderedIdsSha256": "54FAAB571918266CE95751CDBF850E9F88B92F4177BB2652DADFC10265A80DB2"
+      }
+    ]
+  },
+  {
+    "SchemaVersion": 1,
+    "Commit": "f4fa1b167b12cb3c44d8d1c4a1e57bf45d27ca43",
+    "CreatedUtc": "2026-10-02T05:58:58.2708676Z",
+    "Runtime": "3.1.32",
+    "OS": "Microsoft Windows NT 10.0.19045.0",
+    "ProcessorCount": 8,
+    "Configuration": "Release",
+    "FixtureSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+    "Fixture": {
+      "CreatedUtc": "2026-10-02T04:08:30.43685+02:00",
+      "DatabaseSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+      "ParentSha256": "ED1EB6181F4A73CE5EA8C7362EC8AAFE8E6DAC7A86DA1FAE8AFB3B115B25B967",
+      "SoundItems": 207110,
+      "Playlists": 5310,
+      "FileInfos": 247692,
+      "UniqueSoundFileMetadata": true,
+      "AdditionalUserPlaylists": 5000,
+      "PlaylistSizes": [
+        1000,
+        10000,
+        100000
+      ],
+      "UniqueSoundTimePlayed": true,
+      "AllSoundsPlayed": true
+    },
+    "Metrics": [
+      {
+        "Name": "UI / library fuzzy long no-match",
+        "Category": "UI",
+        "Boundary": "Production LibraryCollection.Filter and both materialized result publications; no entity loading or XAML",
+        "Workload": "207110 copied titles; query length 114",
+        "FirstMilliseconds": 65.33,
+        "MedianMilliseconds": 52.944500000000005,
+        "P95Milliseconds": 63.3014,
+        "MedianAllocatedBytes": 110172,
+        "SamplesMilliseconds": [
+          65.33,
+          63.3014,
+          42.5876
+        ]
+      },
+      {
+        "Name": "UI / library fuzzy long near-match",
+        "Category": "UI",
+        "Boundary": "Production LibraryCollection.Filter and both materialized result publications; no entity loading or XAML",
+        "Workload": "207110 copied titles; query length 114",
+        "FirstMilliseconds": 40.7509,
+        "MedianMilliseconds": 40.102599999999995,
+        "P95Milliseconds": 40.2771,
+        "MedianAllocatedBytes": 106184,
+        "SamplesMilliseconds": [
+          40.7509,
+          40.2771,
+          39.9281
+        ]
+      }
+    ],
+    "Results": [
+      {
+        "Name": "UI / library fuzzy long no-match",
+        "Query": "¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤",
+        "Count": 0,
+        "OrderedIdsSha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+      },
+      {
+        "Name": "UI / library fuzzy long near-match",
+        "Query": "4.Ice Cube (2000) - War & Peace Vol. 2 (The Peace Disc) -¤The Gutter Shit feat. Jayo Felon,Gangsta & Squeak Ru.mp3",
+        "Count": 10,
+        "OrderedIdsSha256": "54FAAB571918266CE95751CDBF850E9F88B92F4177BB2652DADFC10265A80DB2"
+      }
+    ]
+  }
+]
