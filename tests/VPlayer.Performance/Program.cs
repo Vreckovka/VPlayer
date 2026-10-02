@@ -73,7 +73,11 @@ namespace VPlayer.Performance
       try
       {
         if(args.Length<3) throw new ArgumentException("prepare <source.db> <fixture-directory> [factor] OR run <fixture-directory> <output.json> <commit>");
-        if(args[0]=="prepare")
+        if(args[0]=="window-activation")
+          WindowActivationChecks.Run(args[1],args[2],args.Length>3 && args[3]=="topmost");
+        else if(args[0]=="window-foreground-probe")
+          WindowActivationChecks.ShowProbe(args[1],args[2]=="topmost");
+        else if(args[0]=="prepare")
           Prepare(args[1],args[2],args.Length>3?int.Parse(args[3]):5);
         else if(args[0]=="prepare-ui")
           PrepareUi(args[1],args[2],args.Length>3?int.Parse(args[3]):5000);

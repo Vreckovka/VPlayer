@@ -42,7 +42,7 @@ namespace VVLC
           if (Visibility != Visibility.Visible)
             ForegroundWindow.Hide();
           else
-            ForegroundWindow.Show();
+            OwnedWindowOrder.Show(ForegroundWindow);
         }
         catch (Exception ex)
         {

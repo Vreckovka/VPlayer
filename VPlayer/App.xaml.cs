@@ -20,6 +20,9 @@ using Ninject.Activation;
 using Ninject.Parameters;
 using Prism.Ioc;
 using Prism.Modularity;
+using Prism.Regions;
+using VCore.WPF.Misc;
+using VPlayer.Core.Windows;
 using VCore.Standard.Modularity.NinjectModules;
 using VCore.Standard.Providers;
 using VCore.WPF;
@@ -95,10 +98,23 @@ namespace VPlayer
       using var measurement = StartupMeasurements.Measure("Application / show shell");
       base.OnInitialized();
     }
+    private SaveWindowsPositionFunction shellPosition;
+
     protected override Window CreateShell()
     {
       using var measurement = StartupMeasurements.Measure("Application / shell construction");
-      var window = base.CreateShell();
+      // VCore's shell-loaded handler briefly sets Topmost and breaks its binding.
+      // Build the same shell here, retaining region setup and saved positioning,
+      // and close the splash without raising an inactive application.
+      SplashScreenManager.SetText("Creating shell");
+      var window = Container.Resolve<MainWindow>();
+      RegionManager.SetRegionManager(window, Kernel.Get<IRegionManager>());
+      RegionManager.UpdateRegions();
+      window.DataContext = Kernel.Get<MainWindowViewModel>();
+      if (SaveWindowPosition)
+        shellPosition = new SaveWindowsPositionFunction(window);
+      ShellWindowStartup.Attach(window, SplashScreenManager.CloseActualSplashScreen);
+      SplashScreenManager.AddProgress(25);
       if (StartupMeasurements.Enabled)
       {
         EventHandler rendered = null;

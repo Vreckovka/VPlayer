@@ -34,6 +34,7 @@ namespace VVLC
       ResizeMode = ResizeMode.NoResize;
       AllowsTransparency = true;
       ShowInTaskbar = false;
+      ShowActivated = false;
       Style = null;
 
       _bckgnd = frameworkElement;
@@ -45,6 +46,7 @@ namespace VVLC
       overlayWindow.ResizeMode = ResizeMode.NoResize;
       overlayWindow.AllowsTransparency = true;
       overlayWindow.ShowInTaskbar = false;
+      overlayWindow.ShowActivated = false;
       overlayWindow.Style = null;
       overlayWindow.Background = Brushes.Transparent;
 
@@ -88,8 +90,6 @@ namespace VVLC
       base.OnStateChanged(e);
 
       overlayWindow.WindowState = WindowState;
-
-      _wndhost?.Focus();
     }
 
     #endregion
@@ -219,19 +219,18 @@ namespace VVLC
       Width = size.X;
 
       if (!overlayWindow.IsLoaded || Visibility == Visibility.Visible)
-        Show();
+        OwnedWindowOrder.Show(this);
 
       overlayWindow.Left = Left;
       overlayWindow.Top = Top;
       overlayWindow.Height = Height;
       overlayWindow.Width = Width;
 
-      if (!overlayWindow.IsLoaded || Visibility == Visibility.Visible)
-        overlayWindow.Show();
-
+      // Establish ownership before showing so this is never an unowned popup.
       overlayWindow.Owner = this;
+      if (!overlayWindow.IsLoaded || Visibility == Visibility.Visible)
+        OwnedWindowOrder.Show(overlayWindow);
 
-      _wndhost.Focus();
 
       await Task.Delay(10);
       Wndhost_SizeChanged(null, null);
