@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,7 +24,8 @@ namespace VVLC.Providers
       {
         if (!initilized)
         {
-          Core.Initialize();
+          using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("VLC / core initialization"))
+            Core.Initialize();
           initilized = true;
         }
 
@@ -34,6 +35,7 @@ namespace VVLC.Providers
 
     public LibVLC GetLibVLC()
     {
+      using var measurement = VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("VLC / instance construction");
       bool enableLogs = false;
 #if DEBUG
       enableLogs = true;

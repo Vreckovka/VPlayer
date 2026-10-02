@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -129,11 +129,13 @@ namespace VVLC.Players
     public void Initilize()
     {
       libVLC = vlcProvider.InitlizeVlc();
-      MediaPlayer = new MediaPlayer(libVLC);
+      using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("VLC / media player construction"))
+        MediaPlayer = new MediaPlayer(libVLC);
 #if DEBUG
       libVLC.Log += LibVLC_Log;
 #endif
-      HookToVlcEvents();
+      using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("VLC / event setup"))
+        HookToVlcEvents();
     }
 
     private void LibVLC_Log(object sender, LogEventArgs e)
