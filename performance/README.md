@@ -506,3 +506,10 @@ regressions failed in the old behavior (10,001/10,000 notifications instead of
 one), then passed with batching. A third verifies exception recovery and later
 single edits. All 160 tests and the Release application build pass. Native WPF
 results are measured separately against the frozen timeout baseline.
+
+The first duration-batched native pilot verified and rendered all 100k ordered
+occurrences, then timed out during the final-track scrolling check. Its raw
+record is iterations/music-playlist-duration-scroll-failure-f6ecdd66.json.
+This is partial evidence, not a completed UI comparison. Failure-only viewport
+observations and a screenshot now retain the exact scrolling state without
+changing successful timing boundaries.

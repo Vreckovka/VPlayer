@@ -53,14 +53,37 @@ namespace VPlayer
       StartupMeasurements.RecordObservation("UI / music playlist / realized rows",CountTrackRows(FindTrackList(window)));
       CaptureBenchmarkWindow(window,".music-playlist.png");
       var list=FindTrackList(window);
-      using(StartupMeasurements.Measure("UI / music playlist / scroll to last track"))
+      try
+      {
+        using(StartupMeasurements.Measure("UI / music playlist / scroll to last track"))
+        {
+          var viewer=FindMusicScroll(list);
+          if(viewer==null) throw new InvalidOperationException("Music playlist has no scroll viewer.");
+          viewer.ScrollToEnd();
+          await WaitForMusic(window,()=>list.ItemContainerGenerator.ContainerFromIndex(99999) is ListViewItem row &&
+            row.DataContext is SoundItemInPlaylistViewModel item && ReferenceEquals(item,player.PlayList[99999]) && IsRowInViewport(row),
+            "Last music track",10);
+        }
+      }
+      catch
       {
         var viewer=FindMusicScroll(list);
-        if(viewer==null) throw new InvalidOperationException("Music playlist has no scroll viewer.");
-        viewer.ScrollToEnd();
-        await WaitForMusic(window,()=>list.ItemContainerGenerator.ContainerFromIndex(99999) is ListViewItem row &&
-          row.DataContext is SoundItemInPlaylistViewModel item && ReferenceEquals(item,player.PlayList[99999]) && IsRowInViewport(row),
-          "Last music track",10);
+        StartupMeasurements.RecordObservation("UI / music playlist / failed scroll offset",(long)(viewer?.VerticalOffset ?? -1));
+        StartupMeasurements.RecordObservation("UI / music playlist / failed scroll extent",(long)(viewer?.ExtentHeight ?? -1));
+        StartupMeasurements.RecordObservation("UI / music playlist / failed scroll viewport",(long)(viewer?.ViewportHeight ?? -1));
+        StartupMeasurements.RecordObservation("UI / music playlist / failed scroll last realized index",LastMusicRowIndex(list,list));
+        if(list.ItemContainerGenerator.ContainerFromIndex(99999) is ListViewItem row)
+        {
+          StartupMeasurements.RecordObservation("UI / music playlist / failed scroll final model matches",ReferenceEquals(row.DataContext,player.PlayList[99999])?1:0);
+          if(viewer!=null)
+          {
+            var bounds=row.TransformToAncestor(viewer).TransformBounds(new Rect(row.RenderSize));
+            StartupMeasurements.RecordObservation("UI / music playlist / failed scroll final top",(long)(bounds.Top*1000));
+            StartupMeasurements.RecordObservation("UI / music playlist / failed scroll final bottom",(long)(bounds.Bottom*1000));
+          }
+        }
+        CaptureBenchmarkWindow(window,".music-scroll-failed.png");
+        throw;
       }
       StartupMeasurements.RecordObservation("UI / music playlist / last track visible",1);
       StartupMeasurements.RecordObservation("UI / music playlist / realized rows after scroll",CountTrackRows(list));
@@ -123,6 +146,13 @@ namespace VPlayer
         if(found!=null) return found;
       }
       return null;
+    }
+    private static int LastMusicRowIndex(ListView list,DependencyObject root)
+    {
+      int last=root is ListViewItem row?list.ItemContainerGenerator.IndexFromContainer(row):-1;
+      for(int i=0;i<VisualTreeHelper.GetChildrenCount(root);i++)
+        last=Math.Max(last,LastMusicRowIndex(list,VisualTreeHelper.GetChild(root,i)));
+      return last;
     }
     private static int CountTrackRows(DependencyObject root)
     {
