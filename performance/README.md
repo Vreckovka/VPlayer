@@ -717,3 +717,52 @@ Regenerate the main native table with music-playlist-ui-report.ps1 using
 comparison with -Baseline performance/iterations/music-incoming-views-baseline-ff22209c.json
 -Optimized performance/music-playlist-ui-optimized.json
 -Output performance/iterations/music-incoming-views-results-39e8df24.md.
+
+The d467b7ad storage task replaces nested per-row reconciliation with row-ID
+lookups, reads the parent and ordered rows separately, and writes at most 512
+tracked rows per batch. Parent metadata, removals, updates, inserts and playback
+reference writes share one transaction; the context is disposed and its change
+tracking setting restored. Four new 100k-row regressions cover complete deletion,
+reversal with duplicate tracks, half replacement with generated playback identity,
+and rollback after successful batches. Empty input previously retained every row.
+All 185 tests passed; Release x64 built with 152 warnings and no errors.
+
+The native save endpoint moves the first item to the end and checks the planned
+row IDs, track IDs and positions in SQLite. Clear saves the queue before clearing
+the displayed list; its persisted queue deliberately remains restorable. Both
+endpoints wait for composition and verify all 100k persisted occurrences.
+The extended 180-second baseline is music-playlist-write-baseline.json at 3b70d7dc:
+save reached reconciliation and timed out; clear completed in 66.9k ms. Earlier
+60-second attempts stalled before the write workload. Their untouched snapshots
+remain in iterations/music-write-initial-*.json and music-write-retry-*.json.
+The initial clear runner also failed reading a just-terminated process's file;
+its raw early Rendered status does not establish a completed workload. 88725f0a
+waits for termination before reading; 3b70d7dc extends the write process budget.
+Different budgets and unfinished endpoints are never compared as timing gains.
+
+music-playlist-write-optimized.json retains the d467b7ad native series.
+music-playlist-write-report.ps1 verifies operation flags, fixture/runtime/machine,
+180-second protocol, painted workload/result and persisted occurrence checks.
+Completed save/render is 27.6k ms without a percentage; clear is 15.3k ms (-77.1%).
+All slower samples remain. Shutdown save scopes after the verified save endpoint
+remain in raw JSON and do not define the reported endpoint. Queue waits and
+ordinary media/metadata work remain part of native operation; background CPU and
+paging activity were observed during baseline collection. These are measurements
+on this machine, rather than an isolated estimate of one code change's effect.
+
+The plain music series was also rerun. Its immediate comparison is
+iterations/music-playlist-write-load-results-d467b7ad.md, with the prior 39e8df24
+series frozen alongside it. Load/render is slower: 23.1k to 26.4k ms (+13.9%);
+scroll and searches also slowed. The main table retains its first complete
+5be3a2c4 baseline, so cumulative load/render is 32.4k to 26.4k ms (-18.6%).
+All plain runs retain ordered occurrence, metadata, composition, final-row and
+search fingerprint checks. Loaded and final viewports were inspected for every
+plain run, alongside empty/five-row searches and the saved/cleared write results.
+One loaded viewport showed the media Buffering overlay while playlist rows were
+ready; the playlist endpoint does not assert completed audio playback.
+
+Regenerate write results with music-playlist-write-report.ps1. The main report.ps1
+imports those compact rows. Regenerate the current music table with
+music-playlist-ui-report.ps1 -Baseline
+performance/iterations/music-collection-publication-baseline-5be3a2c4.json
+-Optimized performance/music-playlist-ui-optimized.json.

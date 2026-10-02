@@ -1,0 +1,1257 @@
+{
+  "Status": "Timeout",
+  "FailureType": null,
+  "ActivePhases": [
+    "UI / music playlist / load and render",
+    "UI / player playlist / save database",
+    "Data / playlist save / total",
+    "Data / playlist save / stored read",
+    "UI / music playlist / stored song enrichment publication",
+    "UI / music playlist / related view lookup",
+    "Application / library Album / batch item lookup"
+  ],
+  "Commit": "88725f0a7461ba7c70d9ab8750385cdf3e046c8d",
+  "Runtime": "3.1.32",
+  "CreatedUtc": "2026-10-02T09:40:26.4629417Z",
+  "Phases": [
+    {
+      "Name": "Application / VPlayerCoreModule",
+      "Milliseconds": 3.9279,
+      "StartedMilliseconds": 694.5057,
+      "CompletedMilliseconds": 698.4336000000001,
+      "Execution": null
+    },
+    {
+      "Name": "Application / IPTVModule",
+      "Milliseconds": 2.4031,
+      "StartedMilliseconds": 700.7558,
+      "CompletedMilliseconds": 703.1589,
+      "Execution": null
+    },
+    {
+      "Name": "Application / UPnPNinjectModule",
+      "Milliseconds": 2.4934,
+      "StartedMilliseconds": 706.0909,
+      "CompletedMilliseconds": 708.5843,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library module",
+      "Milliseconds": 42.5388,
+      "StartedMilliseconds": 715.1801,
+      "CompletedMilliseconds": 757.7189000000001,
+      "Execution": null
+    },
+    {
+      "Name": "VLC / core initialization",
+      "Milliseconds": 9.428,
+      "StartedMilliseconds": 826.0361,
+      "CompletedMilliseconds": 835.4641,
+      "Execution": null
+    },
+    {
+      "Name": "VLC / instance construction",
+      "Milliseconds": 236.1614,
+      "StartedMilliseconds": 837.7803,
+      "CompletedMilliseconds": 1073.9417,
+      "Execution": null
+    },
+    {
+      "Name": "VLC / media player construction",
+      "Milliseconds": 46.1939,
+      "StartedMilliseconds": 1076.2475,
+      "CompletedMilliseconds": 1122.4414,
+      "Execution": null
+    },
+    {
+      "Name": "VLC / event setup",
+      "Milliseconds": 7.0552,
+      "StartedMilliseconds": 1124.7789,
+      "CompletedMilliseconds": 1131.8341,
+      "Execution": null
+    },
+    {
+      "Name": "Application / video player activation",
+      "Milliseconds": 404.9984,
+      "StartedMilliseconds": 762.3173,
+      "CompletedMilliseconds": 1167.3157,
+      "Execution": null
+    },
+    {
+      "Name": "VLC / instance construction",
+      "Milliseconds": 20.0208,
+      "StartedMilliseconds": 1187.0633,
+      "CompletedMilliseconds": 1207.0841,
+      "Execution": null
+    },
+    {
+      "Name": "VLC / media player construction",
+      "Milliseconds": 3.4554,
+      "StartedMilliseconds": 1209.8342,
+      "CompletedMilliseconds": 1213.2896,
+      "Execution": null
+    },
+    {
+      "Name": "VLC / event setup",
+      "Milliseconds": 2.7367,
+      "StartedMilliseconds": 1216.906,
+      "CompletedMilliseconds": 1219.6426999999999,
+      "Execution": null
+    },
+    {
+      "Name": "Application / music player activation",
+      "Milliseconds": 78.8901,
+      "StartedMilliseconds": 1169.3949,
+      "CompletedMilliseconds": 1248.285,
+      "Execution": null
+    },
+    {
+      "Name": "Application / WindowsPlayerNinjectModule",
+      "Milliseconds": 540.3486,
+      "StartedMilliseconds": 710.749,
+      "CompletedMilliseconds": 1251.0976,
+      "Execution": null
+    },
+    {
+      "Name": "Application / module registration",
+      "Milliseconds": 569.0379,
+      "StartedMilliseconds": 686.7495,
+      "CompletedMilliseconds": 1255.7874000000002,
+      "Execution": null
+    },
+    {
+      "Name": "Application / settings",
+      "Milliseconds": 23.7596,
+      "StartedMilliseconds": 1270.7985,
+      "CompletedMilliseconds": 1294.5581000000002,
+      "Execution": null
+    },
+    {
+      "Name": "Application / container activation",
+      "Milliseconds": 39.2394,
+      "StartedMilliseconds": 1259.4654,
+      "CompletedMilliseconds": 1298.7048,
+      "Execution": null
+    },
+    {
+      "Name": "Application / main window XAML",
+      "Milliseconds": 79.0866,
+      "StartedMilliseconds": 1329.1663,
+      "CompletedMilliseconds": 1408.2529000000002,
+      "Execution": null
+    },
+    {
+      "Name": "Application / base main window initialization",
+      "Milliseconds": 3.0221,
+      "StartedMilliseconds": 1432.2885,
+      "CompletedMilliseconds": 1435.3106,
+      "Execution": null
+    },
+    {
+      "Name": "Application / audio device enumeration",
+      "Milliseconds": 14.3001,
+      "StartedMilliseconds": 1437.9067,
+      "CompletedMilliseconds": 1452.2068,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library SoundItemPlaylistsViewModel / navigation construction",
+      "Milliseconds": 11.5854,
+      "StartedMilliseconds": 1467.2817,
+      "CompletedMilliseconds": 1478.8671,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library IArtistsViewModel / navigation construction",
+      "Milliseconds": 5.4957,
+      "StartedMilliseconds": 1480.8667,
+      "CompletedMilliseconds": 1486.3624,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library IAlbumsViewModel / navigation construction",
+      "Milliseconds": 6.4215,
+      "StartedMilliseconds": 1488.8768,
+      "CompletedMilliseconds": 1495.2983,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library VideoPlaylistsViewModel / navigation construction",
+      "Milliseconds": 4.2184,
+      "StartedMilliseconds": 1497.6519,
+      "CompletedMilliseconds": 1501.8703,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library TvShowsViewModel / navigation construction",
+      "Milliseconds": 3.834,
+      "StartedMilliseconds": 1504.4989,
+      "CompletedMilliseconds": 1508.3329,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library WindowsFileBrowserViewModel / navigation construction",
+      "Milliseconds": 7.679,
+      "StartedMilliseconds": 1510.4369,
+      "CompletedMilliseconds": 1518.1159,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library UPnPManagerViewModel / navigation construction",
+      "Milliseconds": 2.0925,
+      "StartedMilliseconds": 1520.2558,
+      "CompletedMilliseconds": 1522.3482999999999,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library StatisticsViewModel / navigation construction",
+      "Milliseconds": 3.0957,
+      "StartedMilliseconds": 1524.7284,
+      "CompletedMilliseconds": 1527.8241,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library SettingsViewModel / navigation construction",
+      "Milliseconds": 4.7312,
+      "StartedMilliseconds": 1529.9288,
+      "CompletedMilliseconds": 1534.6599999999999,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library PCloudManagerViewModel / navigation construction",
+      "Milliseconds": 4.9286,
+      "StartedMilliseconds": 1544.3438,
+      "CompletedMilliseconds": 1549.2724,
+      "Execution": null
+    },
+    {
+      "Name": "Application / navigation view model construction",
+      "Milliseconds": 100.5207,
+      "StartedMilliseconds": 1456.7048,
+      "CompletedMilliseconds": 1557.2255,
+      "Execution": null
+    },
+    {
+      "Name": "Application / player controls construction",
+      "Milliseconds": 11.6961,
+      "StartedMilliseconds": 1559.3755,
+      "CompletedMilliseconds": 1571.0716,
+      "Execution": null
+    },
+    {
+      "Name": "Application / player controls activation",
+      "Milliseconds": 83.1059,
+      "StartedMilliseconds": 1574.0102,
+      "CompletedMilliseconds": 1657.1161,
+      "Execution": null
+    },
+    {
+      "Name": "Application / navigation activation",
+      "Milliseconds": 72.9886,
+      "StartedMilliseconds": 1679.8756,
+      "CompletedMilliseconds": 1752.8642,
+      "Execution": null
+    },
+    {
+      "Name": "Application / main window view model initialization",
+      "Milliseconds": 325.8399,
+      "StartedMilliseconds": 1430.2565,
+      "CompletedMilliseconds": 1756.0964,
+      "Execution": null
+    },
+    {
+      "Name": "Application / shell construction",
+      "Milliseconds": 449.4762,
+      "StartedMilliseconds": 1309.5107,
+      "CompletedMilliseconds": 1758.9869,
+      "Execution": null
+    },
+    {
+      "Name": "Application / OpenCV native initialization",
+      "Milliseconds": 18.9816,
+      "StartedMilliseconds": 1769.8161,
+      "CompletedMilliseconds": 1788.7977,
+      "Execution": null
+    },
+    {
+      "Name": "Application / initialization",
+      "Milliseconds": 1154.686,
+      "StartedMilliseconds": 648.1435,
+      "CompletedMilliseconds": 1802.8294999999998,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / repository setup",
+      "Milliseconds": 326.2643,
+      "StartedMilliseconds": 1737.2283,
+      "CompletedMilliseconds": 2063.4926,
+      "Execution": null
+    },
+    {
+      "Name": "Application / show shell",
+      "Milliseconds": 762.7689,
+      "StartedMilliseconds": 1805.1053,
+      "CompletedMilliseconds": 2567.8742,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / query",
+      "Milliseconds": 859.7721,
+      "StartedMilliseconds": 1728.1159,
+      "CompletedMilliseconds": 2587.888,
+      "Execution": null
+    },
+    {
+      "Name": "Application / first window render",
+      "Milliseconds": 2630.8739
+    },
+    {
+      "Name": "Application / benchmark first-frame screenshot",
+      "Milliseconds": 64.0964,
+      "StartedMilliseconds": 2633.9172,
+      "CompletedMilliseconds": 2698.0135999999998,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / view model construction",
+      "Milliseconds": 589.3881,
+      "StartedMilliseconds": 2592.7747,
+      "CompletedMilliseconds": 3182.1628,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / UI publication",
+      "Milliseconds": 54.1247,
+      "StartedMilliseconds": 3196.5565,
+      "CompletedMilliseconds": 3250.6812,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / UI dispatch and publication",
+      "Milliseconds": 64.2566,
+      "StartedMilliseconds": 3189.5606,
+      "CompletedMilliseconds": 3253.8172,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / current track metadata",
+      "Milliseconds": 51.9352,
+      "StartedMilliseconds": 3332.2791,
+      "CompletedMilliseconds": 3384.2143,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / playlist preparation",
+      "Milliseconds": 125.6508,
+      "StartedMilliseconds": 3262.9226,
+      "CompletedMilliseconds": 3388.5733999999998,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / post-load callback",
+      "Milliseconds": 136.233,
+      "StartedMilliseconds": 3257.5448,
+      "CompletedMilliseconds": 3393.7778000000003,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library SoundItemFilePlaylist / pinned items",
+      "Milliseconds": 20.9928,
+      "StartedMilliseconds": 3393.5291,
+      "CompletedMilliseconds": 3414.5219,
+      "Execution": null
+    },
+    {
+      "Name": "UI / music playlist / convert incoming views",
+      "Milliseconds": 9.2163,
+      "StartedMilliseconds": 4647.543,
+      "CompletedMilliseconds": 4656.7593,
+      "Execution": null
+    },
+    {
+      "Name": "UI / player playlist / create saved playlist views",
+      "Milliseconds": 14.339,
+      "StartedMilliseconds": 4670.0474,
+      "CompletedMilliseconds": 4684.3864,
+      "Execution": null
+    },
+    {
+      "Name": "UI / player playlist / replace collection",
+      "Milliseconds": 6.2931,
+      "StartedMilliseconds": 4701.2612,
+      "CompletedMilliseconds": 4707.5543,
+      "Execution": null
+    },
+    {
+      "Name": "UI / player playlist / save snapshot",
+      "Milliseconds": 15.5494,
+      "StartedMilliseconds": 4720.2769,
+      "CompletedMilliseconds": 4735.8263,
+      "Execution": null
+    },
+    {
+      "Name": "UI / player playlist / save queue wait",
+      "Milliseconds": 11.4186,
+      "StartedMilliseconds": 4741.134,
+      "CompletedMilliseconds": 4752.5526,
+      "Execution": null
+    },
+    {
+      "Name": "UI / player playlist / dispatch active item",
+      "Milliseconds": 56.861,
+      "StartedMilliseconds": 4711.2378,
+      "CompletedMilliseconds": 4768.0988,
+      "Execution": null
+    },
+    {
+      "Name": "UI / player playlist / collection publication",
+      "Milliseconds": 82.8607,
+      "StartedMilliseconds": 4689.7478,
+      "CompletedMilliseconds": 4772.6085,
+      "Execution": null
+    },
+    {
+      "Name": "Application / initial playlist view ready",
+      "Milliseconds": 4794.3983
+    },
+    {
+      "Name": "UI / music playlist / stored song database read",
+      "Milliseconds": 47.108,
+      "StartedMilliseconds": 4801.1858,
+      "CompletedMilliseconds": 4848.2938,
+      "Execution": null
+    },
+    {
+      "Name": "Data / playlist save / stored read",
+      "Milliseconds": 90.4054,
+      "StartedMilliseconds": 4794.8124,
+      "CompletedMilliseconds": 4885.217799999999,
+      "Execution": null
+    },
+    {
+      "Name": "Data / playlist save / reconciliation",
+      "Milliseconds": 122.2188,
+      "StartedMilliseconds": 4890.8738,
+      "CompletedMilliseconds": 5013.0926,
+      "Execution": null
+    },
+    {
+      "Name": "Data / playlist save / playlist write",
+      "Milliseconds": 865.912,
+      "StartedMilliseconds": 5016.1937,
+      "CompletedMilliseconds": 5882.1057,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / repository setup",
+      "Milliseconds": 4.631,
+      "StartedMilliseconds": 6003.1029,
+      "CompletedMilliseconds": 6007.7339,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 45.5928,
+      "StartedMilliseconds": 5998.1111,
+      "CompletedMilliseconds": 6043.7039,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / repository setup",
+      "Milliseconds": 17.4301,
+      "StartedMilliseconds": 6051.6079,
+      "CompletedMilliseconds": 6069.038,
+      "Execution": null
+    },
+    {
+      "Name": "Data / playlist save / actual item write",
+      "Milliseconds": 1217.2717,
+      "StartedMilliseconds": 5885.6441,
+      "CompletedMilliseconds": 7102.915800000001,
+      "Execution": null
+    },
+    {
+      "Name": "Data / playlist save / change notification",
+      "Milliseconds": 22.1619,
+      "StartedMilliseconds": 7106.9614,
+      "CompletedMilliseconds": 7129.1233,
+      "Execution": null
+    },
+    {
+      "Name": "Data / playlist save / log",
+      "Milliseconds": 3.0629,
+      "StartedMilliseconds": 7137.3242,
+      "CompletedMilliseconds": 7140.3871,
+      "Execution": null
+    },
+    {
+      "Name": "Data / playlist save / total",
+      "Milliseconds": 2356.5556,
+      "StartedMilliseconds": 4787.5024,
+      "CompletedMilliseconds": 7144.058000000001,
+      "Execution": null
+    },
+    {
+      "Name": "UI / player playlist / save database",
+      "Milliseconds": 2377.1688,
+      "StartedMilliseconds": 4769.8934,
+      "CompletedMilliseconds": 7147.0622,
+      "Execution": null
+    },
+    {
+      "Name": "UI / music playlist / activation and render",
+      "Milliseconds": 2296.4629,
+      "StartedMilliseconds": 4970.0981,
+      "CompletedMilliseconds": 7266.561,
+      "Execution": null
+    },
+    {
+      "Name": "UI / player playlist / save snapshot",
+      "Milliseconds": 4.7075,
+      "StartedMilliseconds": 7278.54,
+      "CompletedMilliseconds": 7283.2475,
+      "Execution": null
+    },
+    {
+      "Name": "UI / player playlist / save queue wait",
+      "Milliseconds": 3.4453,
+      "StartedMilliseconds": 7286.7285,
+      "CompletedMilliseconds": 7290.1738000000005,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / single item lookup",
+      "Milliseconds": 1432.3443,
+      "StartedMilliseconds": 6048.1693,
+      "CompletedMilliseconds": 7480.513599999999,
+      "Execution": null
+    },
+    {
+      "Name": "Data / playlist save / stored read",
+      "Milliseconds": 186.8097,
+      "StartedMilliseconds": 7299.7333,
+      "CompletedMilliseconds": 7486.543,
+      "Execution": null
+    },
+    {
+      "Name": "Data / playlist save / reconciliation",
+      "Milliseconds": 3.9941,
+      "StartedMilliseconds": 7490.1592,
+      "CompletedMilliseconds": 7494.1533,
+      "Execution": null
+    },
+    {
+      "Name": "Data / playlist save / playlist write",
+      "Milliseconds": 778.6389,
+      "StartedMilliseconds": 7497.7149,
+      "CompletedMilliseconds": 8276.3538,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 8.3447,
+      "StartedMilliseconds": 8417.1495,
+      "CompletedMilliseconds": 8425.4942,
+      "Execution": null
+    },
+    {
+      "Name": "Data / playlist save / actual item write",
+      "Milliseconds": 572.9964,
+      "StartedMilliseconds": 8281.5985,
+      "CompletedMilliseconds": 8854.5949,
+      "Execution": null
+    },
+    {
+      "Name": "Data / playlist save / change notification",
+      "Milliseconds": 14.5888,
+      "StartedMilliseconds": 8858.4671,
+      "CompletedMilliseconds": 8873.0559,
+      "Execution": null
+    },
+    {
+      "Name": "Data / playlist save / log",
+      "Milliseconds": 4.0832,
+      "StartedMilliseconds": 8876.9597,
+      "CompletedMilliseconds": 8881.042899999999,
+      "Execution": null
+    },
+    {
+      "Name": "Data / playlist save / total",
+      "Milliseconds": 1588.4567,
+      "StartedMilliseconds": 7296.9064,
+      "CompletedMilliseconds": 8885.3631,
+      "Execution": null
+    },
+    {
+      "Name": "UI / player playlist / save database",
+      "Milliseconds": 1596.7508,
+      "StartedMilliseconds": 7293.6619,
+      "CompletedMilliseconds": 8890.4127,
+      "Execution": null
+    },
+    {
+      "Name": "UI / player playlist / clear save",
+      "Milliseconds": 1635.1227,
+      "StartedMilliseconds": 7275.0314,
+      "CompletedMilliseconds": 8910.1541,
+      "Execution": null
+    },
+    {
+      "Name": "UI / player playlist / clear reset",
+      "Milliseconds": 92.5223,
+      "StartedMilliseconds": 8913.0693,
+      "CompletedMilliseconds": 9005.5916,
+      "Execution": null
+    },
+    {
+      "Name": "UI / player playlist / clear collection",
+      "Milliseconds": 7.0768,
+      "StartedMilliseconds": 9010.3141,
+      "CompletedMilliseconds": 9017.3909,
+      "Execution": null
+    },
+    {
+      "Name": "UI / music playlist / clear before load",
+      "Milliseconds": 1765.8897,
+      "StartedMilliseconds": 7269.412,
+      "CompletedMilliseconds": 9035.3017,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Album / single item lookup",
+      "Milliseconds": 5.9046,
+      "StartedMilliseconds": 9360.4867,
+      "CompletedMilliseconds": 9366.3913,
+      "Execution": null
+    },
+    {
+      "Name": "UI / music playlist / read and create incoming views",
+      "Milliseconds": 34588.3319,
+      "StartedMilliseconds": 9042.5701,
+      "CompletedMilliseconds": 43630.902,
+      "Execution": null
+    },
+    {
+      "Name": "UI / music playlist / convert incoming views",
+      "Milliseconds": 4.1411,
+      "StartedMilliseconds": 43638.1567,
+      "CompletedMilliseconds": 43642.2978,
+      "Execution": null
+    },
+    {
+      "Name": "UI / player playlist / create saved playlist views",
+      "Milliseconds": 4853.0259,
+      "StartedMilliseconds": 43669.6853,
+      "CompletedMilliseconds": 48522.7112,
+      "Execution": null
+    },
+    {
+      "Name": "UI / player playlist / replace collection",
+      "Milliseconds": 4172.1271,
+      "StartedMilliseconds": 48537.0158,
+      "CompletedMilliseconds": 52709.1429,
+      "Execution": null
+    },
+    {
+      "Name": "UI / player playlist / save snapshot",
+      "Milliseconds": 3825.6816,
+      "StartedMilliseconds": 52739.4142,
+      "CompletedMilliseconds": 56565.095799999996,
+      "Execution": null
+    },
+    {
+      "Name": "UI / player playlist / save queue wait",
+      "Milliseconds": 3.101,
+      "StartedMilliseconds": 56569.2949,
+      "CompletedMilliseconds": 56572.3959,
+      "Execution": null
+    },
+    {
+      "Name": "UI / player playlist / dispatch active item",
+      "Milliseconds": 3869.3557,
+      "StartedMilliseconds": 52714.9122,
+      "CompletedMilliseconds": 56584.2679,
+      "Execution": null
+    },
+    {
+      "Name": "UI / player playlist / collection publication",
+      "Milliseconds": 8060.7754,
+      "StartedMilliseconds": 48533.5055,
+      "CompletedMilliseconds": 56594.2809,
+      "Execution": null
+    },
+    {
+      "Name": "UI / music playlist / stored song database read",
+      "Milliseconds": 2498.8019,
+      "StartedMilliseconds": 56599.4927,
+      "CompletedMilliseconds": 59098.2946,
+      "Execution": null
+    },
+    {
+      "Name": "Application / library Artist / batch item lookup",
+      "Milliseconds": 579.9139,
+      "StartedMilliseconds": 59117.4051,
+      "CompletedMilliseconds": 59697.319,
+      "Execution": null
+    }
+  ],
+  "Observations": {
+    "UI / grouped playlist items": 5073,
+    "UI / realized playlist rows": 41,
+    "UI / music playlist / stored metadata ready playlist": 625,
+    "UI / music playlist / painted Initial music view": 1
+  },
+  "DatabaseReads": [
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 5311,
+      "Milliseconds": 51.9561,
+      "StartedMilliseconds": 2528.5997
+    },
+    {
+      "Table": "UPnPMediaServers",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.412,
+      "StartedMilliseconds": 2672.1855
+    },
+    {
+      "Table": "UPnPMediaRenderers",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 6,
+      "Milliseconds": 10.596,
+      "StartedMilliseconds": 2672.2163
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0378,
+      "StartedMilliseconds": 3326.8597
+    },
+    {
+      "Table": "PlaylistSongs",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 194,
+      "Milliseconds": 7.7523,
+      "StartedMilliseconds": 3373.7988
+    },
+    {
+      "Table": "PinnedItems",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 10,
+      "Milliseconds": 0.1867,
+      "StartedMilliseconds": 3402.4994
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.1597,
+      "StartedMilliseconds": 3411.682
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 29,
+      "Milliseconds": 0.9647,
+      "StartedMilliseconds": 3432.8552
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0471,
+      "StartedMilliseconds": 4845.786
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 7.7651,
+      "StartedMilliseconds": 4875.311
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 0,
+      "Milliseconds": 3.2438,
+      "StartedMilliseconds": 4880.0031
+    },
+    {
+      "Table": "SoundItems",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 29,
+      "Milliseconds": 27.4821,
+      "StartedMilliseconds": 5060.9031
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.8196,
+      "StartedMilliseconds": 5124.213
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.149,
+      "StartedMilliseconds": 5571.7245
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0698,
+      "StartedMilliseconds": 5883.4599
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0077,
+      "StartedMilliseconds": 5889.3015
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0047,
+      "StartedMilliseconds": 5889.4988
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.004,
+      "StartedMilliseconds": 5889.6814
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0034,
+      "StartedMilliseconds": 5889.8558
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0034,
+      "StartedMilliseconds": 5889.9919
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0058,
+      "StartedMilliseconds": 5890.1942
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0036,
+      "StartedMilliseconds": 5890.3515
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0048,
+      "StartedMilliseconds": 5890.4989
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0024,
+      "StartedMilliseconds": 5890.613
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0022,
+      "StartedMilliseconds": 5890.6913
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0024,
+      "StartedMilliseconds": 5890.7747
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0022,
+      "StartedMilliseconds": 5890.8486
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0023,
+      "StartedMilliseconds": 5890.9317
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0022,
+      "StartedMilliseconds": 5891.0114
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.002,
+      "StartedMilliseconds": 5891.0812
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0023,
+      "StartedMilliseconds": 5891.1597
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0022,
+      "StartedMilliseconds": 5891.2302
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0021,
+      "StartedMilliseconds": 5891.2987
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0021,
+      "StartedMilliseconds": 5891.3663
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.002,
+      "StartedMilliseconds": 5891.4346
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0022,
+      "StartedMilliseconds": 5891.5023
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0021,
+      "StartedMilliseconds": 5891.5695
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0021,
+      "StartedMilliseconds": 5891.6365
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0021,
+      "StartedMilliseconds": 5891.7032
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0021,
+      "StartedMilliseconds": 5891.7708
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0021,
+      "StartedMilliseconds": 5891.8376
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0022,
+      "StartedMilliseconds": 5891.9048
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0075,
+      "StartedMilliseconds": 5992.654
+    },
+    {
+      "Table": "SoundItems",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 29,
+      "Milliseconds": 0.8492,
+      "StartedMilliseconds": 5993.1093
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0054,
+      "StartedMilliseconds": 5994.0913
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0042,
+      "StartedMilliseconds": 5994.3417
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 2,
+      "Milliseconds": 8.5258,
+      "StartedMilliseconds": 5985.8433
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0086,
+      "StartedMilliseconds": 5994.5537
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.2522,
+      "StartedMilliseconds": 6040.859
+    },
+    {
+      "Table": "PlaylistSongs",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 2,
+      "Milliseconds": 0.3565,
+      "StartedMilliseconds": 7125.5001
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 142,
+      "Milliseconds": 6.5754,
+      "StartedMilliseconds": 7269.8169
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 2.9523,
+      "StartedMilliseconds": 7478.4011
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 0,
+      "Milliseconds": 5.7646,
+      "StartedMilliseconds": 7479.3321
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0148,
+      "StartedMilliseconds": 7503.7376
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0331,
+      "StartedMilliseconds": 8289.4053
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0035,
+      "StartedMilliseconds": 8289.739
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.004,
+      "StartedMilliseconds": 8289.8951
+    },
+    {
+      "Table": "other",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0025,
+      "StartedMilliseconds": 8290.058
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 2,
+      "Milliseconds": 6.2429,
+      "StartedMilliseconds": 8409.0985
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.1868,
+      "StartedMilliseconds": 8424.569
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0169,
+      "StartedMilliseconds": 8454.9515
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0041,
+      "StartedMilliseconds": 8579.3739
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0116,
+      "StartedMilliseconds": 8588.8161
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0118,
+      "StartedMilliseconds": 8588.8161
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0114,
+      "StartedMilliseconds": 8588.8161
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0066,
+      "StartedMilliseconds": 8589.5861
+    },
+    {
+      "Table": "PlaylistSongs",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 2,
+      "Milliseconds": 0.2451,
+      "StartedMilliseconds": 8865.7348
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0087,
+      "StartedMilliseconds": 8886.7358
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0751,
+      "StartedMilliseconds": 9050.4929
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0042,
+      "StartedMilliseconds": 9349.8173
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 2,
+      "Milliseconds": 4.8365,
+      "StartedMilliseconds": 9351.9951
+    },
+    {
+      "Table": "Albums",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 2,
+      "Milliseconds": 0.0981,
+      "StartedMilliseconds": 9365.0921
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 1,
+      "Milliseconds": 0.0059,
+      "StartedMilliseconds": 9371.1447
+    },
+    {
+      "Table": "SoundItemPlaylists",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 100001,
+      "Milliseconds": 1381.4809,
+      "StartedMilliseconds": 41070.8681
+    },
+    {
+      "Table": "Songs",
+      "IncludesFileMetadata": true,
+      "ReadOperations": 6068,
+      "Milliseconds": 1826.9698,
+      "StartedMilliseconds": 57018.4128
+    },
+    {
+      "Table": "Artists",
+      "IncludesFileMetadata": false,
+      "ReadOperations": 5466,
+      "Milliseconds": 176.6956,
+      "StartedMilliseconds": 59504.7956
+    }
+  ],
+  "DiagnosticWrites": {
+    "Count": 32,
+    "Milliseconds": 2354.5907999999995,
+    "LongestMilliseconds": 466.881
+  },
+  "DiagnosticMode": "buffered-v1",
+  "DiagnosticProfile": "none",
+  "TimeoutSeconds": 60,
+  "WindowMode": "Visible",
+  "MusicPlaylistSave": false,
+  "ProcessorCount": 8,
+  "MusicPlaylistEntries": 100000,
+  "Configuration": "Release",
+  "OS": "Microsoft Windows NT 10.0.19045.0",
+  "SoundItems": 207110,
+  "FixtureSha256": "AE279B1FC4CF5376BEDBC69E641EDA4410816AFC25DA86B333913D125911C4BD",
+  "MusicPlaylistClear": true,
+  "Playlists": 5310,
+  "PlaylistQueryPreparation": false
+}
