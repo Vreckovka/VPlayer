@@ -72,12 +72,13 @@ namespace VPlayer.Tests
     {
       using var fixture=new SavedSongViewFixture(true);
       int activations=0;
+      int wrongParents=0;
       fixture.Kernel.Rebind<IWindowManager>().To<WindowManager>()
         .WithMetadata("VPlayerSavedSongWindowConstructor",new Func<IWindowManager>(()=>new WindowManager()))
-        .OnActivation(window=>activations++);
+        .OnActivation((context,window)=>{activations++;if(context.Request.ParentContext?.Request.Service!=typeof(SongInPlayListViewModel))wrongParents++;});
       var rows=Enumerable.Range(1,97).Select(id=>new PlaylistSoundItem {ReferencedItem=new SoundItem {Id=id}}).ToArray();
       var views=fixture.Create(rows).ToArray();
-      try {Assert.Equal(rows.Length,activations);}
+      try {Assert.Equal(rows.Length,activations);Assert.Equal(0,wrongParents);}
       finally {foreach(var view in views)view.Dispose();}
     }
     [Fact]

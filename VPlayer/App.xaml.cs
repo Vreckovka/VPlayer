@@ -1,4 +1,5 @@
-﻿using System;
+﻿using VPlayer.Core.Factories;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics;
@@ -66,7 +67,9 @@ namespace VPlayer
         Kernel.Rebind<ISettingsProvider>().To<SettingsProvider>().InSingletonScope()
           .WithConstructorArgument("settingsPath", Path.Combine(Path.GetFullPath(benchmarkDirectory), "settings", "settings.txt"));
 
-      Kernel.Rebind<IWindowManager>().To<VPlayerWindowManager>();
+      Kernel.Rebind<IWindowManager>().To<VPlayerWindowManager>()
+        .WithMetadata(VPlayerViewModelsFactory.SavedSongWindowConstructorMetadata,
+          new Func<IWindowManager>(()=>new VPlayerWindowManager()));
 
       Kernel.BindToSelfInSingletonScope<KeyListener>();
 

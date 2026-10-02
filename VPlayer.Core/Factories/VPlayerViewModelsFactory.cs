@@ -32,7 +32,8 @@ namespace VPlayer.Core.Factories
     }
 
     internal const string DefaultFactoryMetadata="VPlayerDefaultViewFactory";
-    private static readonly Type[] SharedSongServices={typeof(IEventAggregator),typeof(IAlbumsViewModel),
+    public const string SavedSongWindowConstructorMetadata="VPlayerSavedSongWindowConstructor";
+    private static readonly Type[] SongServices={typeof(IEventAggregator),typeof(IAlbumsViewModel),
       typeof(IArtistsViewModel),typeof(AudioInfoDownloader),typeof(PCloudLyricsProvider),typeof(ILogger),
       typeof(IStorageManager),typeof(IWindowManager),typeof(MusixMatchLyricsProvider)};
 
@@ -57,7 +58,8 @@ namespace VPlayer.Core.Factories
     private bool CanShareSongServices()
     {
       // Explicit item bindings can carry custom providers, injection or activation.
-      // They and services with transient/conditional scopes retain container creation.
+      // Conditional services and transient services other than window managers
+      // retain container creation. Window-manager lifetime is handled per occurrence.
       if(GetType()!=typeof(VPlayerViewModelsFactory)) return RecordBatchFallback("factory type");
       if(kernel.GetBindings(typeof(SongInPlayListViewModel)).Any(binding=>!binding.IsImplicit)) return RecordBatchFallback("view binding");
       var factories=kernel.GetBindings(typeof(IViewModelsFactory)).ToArray();
@@ -65,16 +67,23 @@ namespace VPlayer.Core.Factories
         factories[0].ScopeCallback!=StandardScopeCallbacks.Transient ||
         !factories[0].Metadata.Has(DefaultFactoryMetadata) ||
         !factories[0].Metadata.Get<bool>(DefaultFactoryMetadata)) return RecordBatchFallback("factory binding");
-      foreach(var service in SharedSongServices)
+      foreach(var service in SongServices)
       {
         var bindings=kernel.GetBindings(service).ToArray();
         if(bindings.Length!=1 || bindings[0].IsConditional ||
-          (bindings[0].Target!=BindingTarget.Constant && bindings[0].ScopeCallback!=StandardScopeCallbacks.Singleton))
+          (bindings[0].Target!=BindingTarget.Constant && bindings[0].ScopeCallback!=StandardScopeCallbacks.Singleton &&
+           !(service==typeof(IWindowManager) && HasDefaultWindowConstructor(bindings[0]))))
           return RecordBatchFallback(service.Name);
       }
       VPLayer.Domain.Diagnostics.StartupMeasurements.RecordObservation("UI / saved song views / batch constructor",1);
       return true;
     }
+
+    private static bool HasDefaultWindowConstructor(IBinding binding) =>
+      binding.ScopeCallback==StandardScopeCallbacks.Transient &&
+      binding.Metadata.Has(SavedSongWindowConstructorMetadata) &&
+      binding.Metadata.Get<object>(SavedSongWindowConstructorMetadata) is Func<IWindowManager> &&
+      !binding.ActivationActions.Any() && !binding.DeactivationActions.Any() && !binding.Parameters.Any();
 
     private bool RecordBatchFallback(string reason)
     {
@@ -91,11 +100,29 @@ namespace VPlayer.Core.Factories
       var cloud=kernel.Get<PCloudLyricsProvider>();
       var logger=kernel.Get<ILogger>();
       var storage=kernel.Get<IStorageManager>();
-      var windows=kernel.Get<IWindowManager>();
+      var windowBinding=kernel.GetBindings(typeof(IWindowManager)).Single();
+      Func<IWindowManager> windows;
+      if(windowBinding.Target!=BindingTarget.Constant && windowBinding.ScopeCallback==StandardScopeCallbacks.Transient)
+      {
+        // The app supplies its known parameterless constructor. Custom activation,
+        // deactivation or constructor parameters still go through the container.
+        if(windowBinding.Metadata.Has(SavedSongWindowConstructorMetadata) &&
+          !windowBinding.ActivationActions.Any() && !windowBinding.DeactivationActions.Any() && !windowBinding.Parameters.Any())
+        {
+          windows=windowBinding.Metadata.Get<Func<IWindowManager>>(SavedSongWindowConstructorMetadata);
+          VPLayer.Domain.Diagnostics.StartupMeasurements.RecordObservation("UI / saved song views / direct window constructor",1);
+        }
+        else windows=()=>kernel.Get<IWindowManager>();
+      }
+      else
+      {
+        var shared=kernel.Get<IWindowManager>();
+        windows=()=>shared;
+      }
       var lyrics=kernel.Get<MusixMatchLyricsProvider>();
       // Preserve the default per-item factory lifetime and its constructor cache.
       return song=>new SongInPlayListViewModel(events,albums,artists,downloader,cloud,song,
-        logger,storage,windows,new VPlayerViewModelsFactory(kernel),lyrics);
+        logger,storage,windows(),new VPlayerViewModelsFactory(kernel),lyrics);
     }
 
     public TvShowEpisodeInPlaylistViewModel CreateTvShowEpisodeInPlayList(VideoItem videoItem, TvShowEpisode tvShowEpisode)
