@@ -1282,148 +1282,157 @@ namespace VPlayer.AudioStorage.AudioDatabase
 
     #region UpdatePlaylist
 
-    private static IQueryable<SoundItemFilePlaylist> QuerySoundPlaylistForUpdate(IQueryable<SoundItemFilePlaylist> source)
+    protected virtual IQueryable<T> GetPlaylistUpdateReadRepository<T>(AudioDatabaseContext context) where T : class
+      => context.Set<T>().AsNoTracking();
+
+    private static SoundItemFilePlaylist ReadSoundPlaylistForUpdate(IQueryable<SoundItemFilePlaylist> source,int id)
     {
-      return source.AsSplitQuery()
-        .Include(playlist=>playlist.PlaylistItems)
-        .ThenInclude(item=>item.ReferencedItem.FileInfoEntity)
-        .Include(playlist=>playlist.ActualItem.ReferencedItem);
+      var playlist=source.Include(x=>x.ActualItem.ReferencedItem.FileInfoEntity).SingleOrDefault(x=>x.Id==id);
+      if(playlist!=null)
+        playlist.PlaylistItems=source.Where(x=>x.Id==id).SelectMany(x=>x.PlaylistItems)
+          .Include(x=>x.ReferencedItem.FileInfoEntity).OrderBy(x=>x.OrderInPlaylist).ThenBy(x=>x.Id).ToList();
+      return playlist;
     }
 
-    public bool UpdatePlaylist<TPlaylist, TPlaylistItem, TModel>(TPlaylist playlist, out TPlaylist updatedPlaylist)
-      where TPlaylist : class, IPlaylist<TPlaylistItem>
-      where TPlaylistItem : class, IItemInPlaylist<TModel>
-      where TModel : IEntity
+    public bool UpdatePlaylist<TPlaylist,TPlaylistItem,TModel>(TPlaylist playlist,out TPlaylist updatedPlaylist)
+      where TPlaylist:class,IPlaylist<TPlaylistItem>
+      where TPlaylistItem:class,IItemInPlaylist<TModel>
+      where TModel:IEntity
     {
-      using var totalMeasurement = VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Data / playlist save / total");
-      using (var context = new AudioDatabaseContext())
+      using var totalMeasurement=VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Data / playlist save / total");
+      updatedPlaylist=null;
+      using(var context=CreateEntityUpdateContext())
+      using(var transaction=context.Database.BeginTransaction())
       {
-        var result = false;
-        updatedPlaylist = null;
-        IPlaylist<TPlaylistItem> foundPlaylist = null;
-
-        using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Data / playlist save / stored read"))
+        var detectChanges=context.ChangeTracker.AutoDetectChangesEnabled;
+        IPlaylist<TPlaylistItem> foundPlaylist=null;
+        List<TPlaylistItem> savedRows=null;
+        context.ChangeTracker.AutoDetectChangesEnabled=false;
+        try
         {
-          if (playlist is SoundItemFilePlaylist)
+          using(VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Data / playlist save / stored read"))
           {
-            foundPlaylist = (IPlaylist<TPlaylistItem>)QuerySoundPlaylistForUpdate(GetTempRepository<SoundItemFilePlaylist>())
-              .SingleOrDefault(x => x.Id == playlist.Id);
-          }
-          else
-          {
-            foundPlaylist = GetTempRepository<TPlaylist>()
-              .Include(x => x.PlaylistItems)
-              .ThenInclude(x => x.ReferencedItem)
-              .Include(x => x.ActualItem.ReferencedItem)
-              .SingleOrDefault(x => x.Id == playlist.Id);
-          }
-        }
-
-        if (foundPlaylist != null)
-        {
-          TPlaylistItem actualItem = null;
-          using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Data / playlist save / reconciliation"))
-          {
-            context.Entry(foundPlaylist).State = EntityState.Modified;
-
-            var oldHash = foundPlaylist.HashCode;
-            var oldItems = playlist.PlaylistItems;
-
-            foundPlaylist.Update(playlist);
-
-            if (playlist.PlaylistItems != null)
+            if(playlist is SoundItemFilePlaylist)
+              foundPlaylist=(IPlaylist<TPlaylistItem>)ReadSoundPlaylistForUpdate(GetPlaylistUpdateReadRepository<SoundItemFilePlaylist>(context),playlist.Id);
+            else
             {
-              if (foundPlaylist.PlaylistItems != null && (oldHash != playlist.HashCode || PlaylistOrder.HasChanges(foundPlaylist.PlaylistItems, oldItems, x => x.Id, x => x.IdReferencedItem, x => x.OrderInPlaylist)))
+              var source=GetPlaylistUpdateReadRepository<TPlaylist>(context);
+              foundPlaylist=source.Include(x=>x.ActualItem.ReferencedItem).SingleOrDefault(x=>x.Id==playlist.Id);
+              if(foundPlaylist!=null)
+                foundPlaylist.PlaylistItems=source.Where(x=>x.Id==playlist.Id).SelectMany(x=>x.PlaylistItems)
+                  .Include(x=>x.ReferencedItem).OrderBy(x=>x.OrderInPlaylist).ThenBy(x=>x.Id).ToList();
+            }
+          }
+          if(foundPlaylist==null) return false;
+          TPlaylistItem actualItem=null;
+          var pending=new List<(TPlaylistItem Row,EntityState State)>();
+          string parentKey=null;
+          using(VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Data / playlist save / reconciliation"))
+          {
+            var storedActualId=foundPlaylist.ActualItemId;
+            var existingRows=foundPlaylist.PlaylistItems??new List<TPlaylistItem>();
+            var incoming=playlist.PlaylistItems;
+            savedRows=incoming??existingRows;
+            var existingById=existingRows.ToDictionary(x=>x.Id);
+            var incomingIds=new HashSet<int>();
+            if(incoming!=null)
+            {
+              foreach(var row in incoming.Where(x=>x.Id!=0))
+                if(!incomingIds.Add(row.Id) || !existingById.ContainsKey(row.Id))
+                  throw new InvalidOperationException("The playlist contains duplicate or foreign row identities.");
+            }
+            var changed=incoming!=null && (foundPlaylist.HashCode!=playlist.HashCode ||
+              PlaylistOrder.HasChanges(existingRows,incoming,x=>x.Id,x=>x.IdReferencedItem,x=>x.OrderInPlaylist));
+            var requestedActualId=playlist.ActualItemId??playlist.ActualItem?.Id;
+            if(requestedActualId>0)
+              actualItem=savedRows.SingleOrDefault(x=>x.Id==requestedActualId);
+            else if(playlist.ActualItem!=null)
+              actualItem=savedRows.FirstOrDefault(x=>ReferenceEquals(x,playlist.ActualItem));
+            foundPlaylist.Update(playlist);
+            foundPlaylist.ItemCount=savedRows.Count;
+            // Track root metadata separately. Tracking a replacement 100k-row
+            // navigation would make EF repeatedly fix up the List collection.
+            foundPlaylist.PlaylistItems=null;
+            foundPlaylist.ActualItem=null;
+            foundPlaylist.ActualItemId=null;
+            var rootEntry=context.Entry(foundPlaylist);
+            rootEntry.State=EntityState.Modified;
+            rootEntry.Property(nameof(IPlaylist<TPlaylistItem>.ActualItemId)).OriginalValue=storedActualId;
+
+            if(changed)
+            {
+              foreach(var removed in existingRows.Where(x=>!incomingIds.Contains(x.Id)))
+                pending.Add((removed,EntityState.Deleted));
+              parentKey=context.Model.FindEntityType(typeof(TPlaylist)).FindNavigation(nameof(IPlaylist<TPlaylistItem>.PlaylistItems))
+                .ForeignKey.Properties.Single().Name;
+              foreach(var row in incoming)
               {
-                if (oldItems.Count > 0)
-                {
-                  var removedItems = foundPlaylist.PlaylistItems.Where(p => oldItems.All(p2 => p2.Id != p.Id)).ToList();
-
-                  foreach (var removed in removedItems)
-                  {
-                    if (foundPlaylist.ActualItemId == removed.Id)
-                    {
-                      foundPlaylist.ActualItemId = null;
-                    }
-
-                    context.Entry(removed).State = EntityState.Deleted;
-                  }
-
-                  var items = foundPlaylist.PlaylistItems.ToList();
-                  foundPlaylist.PlaylistItems.Clear();
-
-                  foreach (var playlistItem in oldItems)
-                  {
-                    foundPlaylist.PlaylistItems.Add(playlistItem);
-
-                    if (playlistItem.Id == 0)
-                    {
-                      context.Entry(playlistItem).State = EntityState.Added;
-                    }
-                    else
-                    {
-                      var existing = items.SingleOrDefault(x => x.Id == playlistItem.Id);
-
-                      if (existing != null)
-                      {
-                        if (existing.Compare(playlistItem))
-                        {
-                          context.Entry(playlistItem).State = EntityState.Modified;
-                        }
-                      }
-                    }
-                  }
-
-                  foundPlaylist.ItemCount = foundPlaylist.PlaylistItems.Count;
-                }
+                if(row.Id==0) pending.Add((row,EntityState.Added));
+                else if(existingById[row.Id].Compare(row)) pending.Add((row,EntityState.Modified));
               }
-
-              actualItem = foundPlaylist.ActualItem;
-              foundPlaylist.ActualItem = null;
             }
           }
           int resultCount;
-          using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Data / playlist save / playlist write"))
-            resultCount = context.SaveChanges();
-
-          if (actualItem != null)
+          using(VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Data / playlist save / playlist write"))
           {
-            foundPlaylist.ActualItem = actualItem;
-            using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Data / playlist save / actual item write"))
-              resultCount = context.SaveChanges();
-          }
-
-          result = resultCount > 0;
-
-          if (result)
-          {
-            if (foundPlaylist.PlaylistItems != null &&
-                foundPlaylist.ActualItem != null &&
-                foundPlaylist.ActualItem.ReferencedItem == null)
+            // Persist the cleared playback FK before touching its referenced row.
+            // All batches remain inside the same transaction. A bounded tracker
+            // avoids EF building a dependency graph for the entire huge queue.
+            resultCount=context.SaveChanges();
+            context.Entry(foundPlaylist).State=EntityState.Detached;
+            const int batchSize=512;
+            for(int offset=0;offset<pending.Count;offset+=batchSize)
             {
-              playlist.ActualItem = foundPlaylist.PlaylistItems.SingleOrDefault(x => x.Id == playlist.ActualItem.Id);
+              var end=Math.Min(offset+batchSize,pending.Count);
+              for(int i=offset;i<end;i++)
+              {
+                var change=pending[i];
+                var entry=context.Entry(change.Row);
+                if(change.State==EntityState.Added) entry.Property(parentKey).CurrentValue=foundPlaylist.Id;
+                entry.State=change.State;
+                // Detached input has no snapshot of the parent shadow FK.
+                if(change.State==EntityState.Modified) entry.Property(parentKey).IsModified=false;
+              }
+              context.ChangeTracker.DetectChanges();
+              resultCount+=context.SaveChanges();
+              for(int i=offset;i<end;i++) context.Entry(pending[i].Row).State=EntityState.Detached;
             }
-
-            using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Data / playlist save / change notification"))
+          }
+          if(actualItem!=null)
+          {
+            context.Entry(foundPlaylist).State=EntityState.Unchanged;
+            context.Entry(actualItem).State=EntityState.Unchanged;
+            foundPlaylist.ActualItem=actualItem;
+            foundPlaylist.ActualItemId=actualItem.Id;
+            using(VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Data / playlist save / actual item write"))
+            {
+              context.ChangeTracker.DetectChanges();
+              resultCount+=context.SaveChanges();
+            }
+          }
+          transaction.Commit();
+          foundPlaylist.PlaylistItems=savedRows;
+          var result=resultCount>0;
+          if(result)
+          {
+            using(VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Data / playlist save / change notification"))
               PublishItemChanged(playlist);
           }
-
-          using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Data / playlist save / log"))
+          using(VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("Data / playlist save / log"))
           {
-            if (result)
-              logger.Log(MessageType.Success, $"Item was updated {playlist} {playlist.Id} result count {resultCount}");
-            else
-              logger.Log(MessageType.Warning, $"Item was not updated {playlist} {playlist.Id} result count {resultCount}");
+            if(result) logger.Log(MessageType.Success,$"Item was updated {playlist} {playlist.Id} result count {resultCount}");
+            else logger.Log(MessageType.Warning,$"Item was not updated {playlist} {playlist.Id} result count {resultCount}");
           }
-
-          updatedPlaylist = (TPlaylist)foundPlaylist;
+          updatedPlaylist=(TPlaylist)foundPlaylist;
+          return result;
         }
-
-
-        return result;
+        finally
+        {
+          if(foundPlaylist!=null && savedRows!=null) foundPlaylist.PlaylistItems=savedRows;
+          context.ChangeTracker.AutoDetectChangesEnabled=detectChanges;
+        }
       }
     }
-
     #endregion
 
     #endregion

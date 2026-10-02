@@ -66,10 +66,9 @@ namespace VPlayer.Tests
       context.Database.ExecuteSqlRaw("UPDATE SoundItemPlaylists SET ActualItemId=100028 WHERE Id=2;");
       audit.Plan.Clear();
       audit.Commands=0;
-      var query=(IQueryable<SoundItemFilePlaylist>)typeof(VPlayerStorageManager)
-        .GetMethod("QuerySoundPlaylistForUpdate",BindingFlags.Static|BindingFlags.NonPublic)
-        .Invoke(null,new object[] {context.Set<SoundItemFilePlaylist>().AsNoTracking()});
-      var loaded=query.Single(playlist=>playlist.Id==playlistId);
+      var loaded=(SoundItemFilePlaylist)typeof(VPlayerStorageManager)
+        .GetMethod("ReadSoundPlaylistForUpdate",BindingFlags.Static|BindingFlags.NonPublic)
+        .Invoke(null,new object[] {context.Set<SoundItemFilePlaylist>().AsNoTracking(),playlistId});
       var ordered=loaded.PlaylistItems.OrderBy(item=>item.OrderInPlaylist).ThenBy(item=>item.Id).ToArray();
       Assert.Equal(expectedCount,ordered.Length);
       Assert.Equal(Enumerable.Range(1,expectedCount).Select(id=>playlistId==1?id:id+28),ordered.Select(item=>item.Id));
