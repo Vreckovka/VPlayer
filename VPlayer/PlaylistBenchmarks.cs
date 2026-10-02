@@ -88,7 +88,7 @@ namespace VPlayer
       StartupMeasurements.RecordObservation("UI / music playlist / last track visible",1);
       StartupMeasurements.RecordObservation("UI / music playlist / realized rows after scroll",CountTrackRows(list));
       CaptureBenchmarkWindow(window,".music-scroll.png");
-      var longest=player.PlayList.Where(item=>!string.IsNullOrEmpty(item.Name)).OrderByDescending(item=>item.Name.Length).First().Name;
+      var longest=incoming.Where(item=>!string.IsNullOrEmpty(item.Name)).OrderByDescending(item=>item.Name.Length).First().Name;
       var near=longest.Substring(0,longest.Length/2)+"¤"+longest.Substring(longest.Length/2+1);
       foreach(var query in new[] {new {Name="long no-match",Text=new string('¤',longest.Length)},new {Name="long near-match",Text=near}})
       {
@@ -122,9 +122,34 @@ namespace VPlayer
       while(true)
       {
         await window.Dispatcher.InvokeAsync(()=>window.UpdateLayout(),DispatcherPriority.ContextIdle);
-        if(ready()) return;
+        if(ready())
+        {
+          await WaitForMusicFrame(window,seconds);
+          if(ready())
+          {
+            StartupMeasurements.RecordObservation("UI / music playlist / painted "+name,1);
+            return;
+          }
+        }
         if(deadline.Elapsed>TimeSpan.FromSeconds(seconds)) throw new TimeoutException(name+" did not finish rendering.");
         await Task.Delay(25);
+      }
+    }
+    private static async Task WaitForMusicFrame(Window window,int seconds)
+    {
+      var rendered=new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+      EventHandler frame=(sender,args)=>rendered.TrySetResult(true);
+      CompositionTarget.Rendering+=frame;
+      try
+      {
+        window.InvalidateVisual();
+        await Task.WhenAny(rendered.Task,Task.Delay(TimeSpan.FromSeconds(seconds)));
+        if(!rendered.Task.IsCompleted) throw new TimeoutException("Music view did not paint a frame.");
+        await window.Dispatcher.InvokeAsync(()=>window.UpdateLayout(),DispatcherPriority.ContextIdle);
+      }
+      finally
+      {
+        CompositionTarget.Rendering-=frame;
       }
     }
     private static ListView FindTrackList(DependencyObject root)

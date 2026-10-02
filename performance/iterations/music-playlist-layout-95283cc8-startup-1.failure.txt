@@ -1,0 +1,19 @@
+System.InvalidOperationException: Collection was modified; enumeration operation may not execute.
+   at System.Collections.Generic.List`1.Enumerator.MoveNextRare()
+   at System.Linq.Enumerable.WhereEnumerableIterator`1.ToList()
+   at VPlayer.WindowsPlayer.ViewModels.MusicPlayerViewModel.FilterByActualSearch(String predictate) in D:\Aplikacie\VPlayer\VPlayer.WindowsPlayer\ViewModels\MusicPlayerViewModel.cs:line 2656
+   at System.Reactive.AnonymousSafeObserver`1.OnNext(T value) in /_/Rx.NET/Source/src/System.Reactive/AnonymousSafeObserver.cs:line 54
+   at System.Reactive.Linq.ObservableImpl.Throttle`1._.Propagate(UInt64 currentid) in /_/Rx.NET/Source/src/System.Reactive/Linq/Observable/Throttle.cs:line 80
+   at System.Reactive.Linq.ObservableImpl.Throttle`1._.<>c.<OnNext>b__9_0(ValueTuple`2 tuple) in /_/Rx.NET/Source/src/System.Reactive/Linq/Observable/Throttle.cs:line 68
+   at System.Reactive.Concurrency.Scheduler.Invoke[TState](ValueTuple`2 tuple) in /_/Rx.NET/Source/src/System.Reactive/Concurrency/Scheduler.Simple.cs:line 260
+   at System.Reactive.Concurrency.Scheduler.<>c__78`1.<ScheduleAction>b__78_0(IScheduler _, ValueTuple`2 tuple) in /_/Rx.NET/Source/src/System.Reactive/Concurrency/Scheduler.Simple.cs:line 137
+   at System.Reactive.Concurrency.UserWorkItem`1.Run() in /_/Rx.NET/Source/src/System.Reactive/Concurrency/UserWorkItem.cs:line 29
+   at System.Reactive.Concurrency.DefaultScheduler.<>c__6`1.<Schedule>b__6_0(Object closureWorkItem) in /_/Rx.NET/Source/src/System.Reactive/Concurrency/DefaultScheduler.cs:line 76
+   at System.Reactive.Concurrency.ConcurrencyAbstractionLayerImpl.Timer.Tick() in /_/Rx.NET/Source/src/System.Reactive/Concurrency/ConcurrencyAbstractionLayerImpl.cs:line 176
+   at System.Reactive.Concurrency.ConcurrencyAbstractionLayerImpl.Timer.<>c.<.ctor>b__4_0(Object this) in /_/Rx.NET/Source/src/System.Reactive/Concurrency/ConcurrencyAbstractionLayerImpl.cs:line 166
+   at System.Threading.TimerQueueTimer.<>c.<.cctor>b__23_0(Object state)
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Threading.TimerQueueTimer.CallCallback(Boolean isThreadPool)
+   at System.Threading.TimerQueueTimer.Fire(Boolean isThreadPool)
+   at System.Threading.TimerQueue.FireNextTimers()

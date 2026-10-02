@@ -1,0 +1,8 @@
+System.InvalidOperationException: Collection was modified; enumeration operation may not execute.
+   at System.Collections.Generic.List`1.Enumerator.MoveNextRare()
+   at System.Linq.Enumerable.WhereEnumerableIterator`1.MoveNext()
+   at System.Linq.OrderedEnumerable`1.TryGetFirst(Boolean& found)
+   at System.Linq.Enumerable.TryGetFirst[TSource](IEnumerable`1 source, Boolean& found)
+   at System.Linq.Enumerable.First[TSource](IEnumerable`1 source)
+   at VPlayer.VPlayerApplication.BenchmarkMusicPlaylist(Window window) in D:\Aplikacie\VPlayer\VPlayer\PlaylistBenchmarks.cs:line 91
+   at VPlayer.VPlayerApplication.<>c__DisplayClass4_1.<<CreateShell>b__0>d.MoveNext() in D:\Aplikacie\VPlayer\VPlayer\App.xaml.cs:line 129

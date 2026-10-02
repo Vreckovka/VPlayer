@@ -125,12 +125,12 @@ Query preparation reduced query time; overall readiness improved slightly and fi
 
 | Baseline now | New optimized version |
 | --- | --- |
-| **load and render** — Timeout (60k ms) | Pending |
+| **load and render** — Timeout (60k ms limit) | Pending |
 | **collection publication** — Unfinished | Pending |
 | **incoming song view conversion** — 5.6k ms | Pending |
 | **saved playlist view creation** — 4.9k ms | Pending |
 | **database and incoming views** — 3k ms | Pending |
-| **activation and render** — 1.6k ms | Pending |
+| **activation and render** — Not measured (painted) | Pending |
 | **scroll to last track** — Not reached | Pending |
 | **long no-match search and render** — Not reached | Pending |
 | **long near-match search and render** — Not reached | Pending |

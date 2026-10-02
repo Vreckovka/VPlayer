@@ -538,3 +538,11 @@ results are discarded and notification hooks are restored on failure. Debounced
 search and virtual-list reload callbacks use the UI dispatcher. Both dispatcher
 regressions failed before the fix and now pass; all 166 tests and the application
 Release build pass.
+
+The native music runner now waits for a composition frame and rechecks its row
+predicate before each endpoint, then records painted-view proof. Query text is
+chosen from the immutable incoming snapshot rather than the live collection.
+The compact report requires all painted endpoints, ordered playlist/viewport
+checks and stable search fingerprints; it rejects layout-only or traced data.
+The older activation scope measured layout only, so painted activation has no
+comparable baseline. Completed conversion/read phase boundaries stay unchanged.
