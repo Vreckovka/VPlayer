@@ -82,6 +82,7 @@ try {
     }
     if(!$process.WaitForExit(60000)) {
       Stop-Process -Id $process.Id -Force
+      if(!$process.WaitForExit(10000)){throw 'Benchmark process did not exit after termination.'}
       $record=@{Status='Timeout';Commit=$Commit;Phases=@();TimeoutSeconds=60}
       if(Test-Path -LiteralPath $result) {
         $record=Get-Content -LiteralPath $result -Raw | ConvertFrom-Json
