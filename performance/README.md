@@ -231,3 +231,20 @@ read-failure recovery. The full-load compatibility path failed three initial
 regressions before the bounded implementation. All 121 tests and the production
 Release build pass. The buffered UI baseline remains frozen for comparison;
 publish measured results only after the source commit is benchmarked.
+
+At 0884d95f all fully played UI launches completed without full Album/Artist
+library loads or empty Statistics rows. The application also resolves other
+realized songs, so it legitimately performs additional bounded album lookups.
+Both unchanged-build series are retained together in buffered-ui-optimized.json;
+the original buffered baseline remains immutable at fed56a67.
+Combined Statistics render median is 4.6k ms versus 5.8k ms (-21.4%).
+Initial playlist readiness is 4.7k ms versus 4.9k ms (-4.7%); first render is
+effectively unchanged (+0.2%). This is an observed median comparison, with
+substantial timing variation. Two initial Statistics outliers include a 14.8k ms
+run, worse than the baseline maximum; score-reader waits dominate that run.
+Do not claim that all render delays were fixed or discard the slow samples.
+
+The final screenshot was visually verified, the source fixture checksum stayed
+unchanged, and CodeGraph sync found the index current. Main results.md now shows
+the current buffered startup/Statistics comparison, with older comparisons
+folded under details. The broad application audit and optimization goal continues.

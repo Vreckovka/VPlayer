@@ -47,7 +47,7 @@ $rows=foreach($name in $PhaseNames) {
   [pscustomobject]@{Name=($name -replace '^(Application|UI) / ','');Old=$old;New=$new}
 }
 $lines=[Collections.Generic.List[string]]::new()
-$lines.Add('# Buffered UI baseline')
+$lines.Add('# Buffered UI performance')
 $lines.Add('')
 $lines.Add('207k fully played sound items; 5,310 playlists. Buffered diagnostics; median times. - % = less time; + % = more time.')
 $lines.Add('')
@@ -59,7 +59,7 @@ foreach($row in @($rows|Sort-Object {$_.Old.Value} -Descending)) {
   $lines.Add('| **'+$row.Name+'** — '+$left+' | '+$right+' |')
 }
 $lines.Add('')
-$lines.Add('New measurement protocol: no speedup is credited against older synchronous traces. Full samples and provenance remain in JSON.')
+$lines.Add('Comparisons use the same buffered diagnostics. Slow outliers remain; full samples and provenance stay in JSON.')
 if(@($rows|Where-Object {$_.Old.Partial -or $_.New.Partial}).Count){$lines.Add('* Timing uses completed samples; incomplete launches remain in JSON.')}
 $lines | Set-Content -LiteralPath $Output
 Write-Output ('Wrote '+$Output)

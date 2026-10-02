@@ -4,6 +4,17 @@
 
 ## Application startup
 
+Fully played library; buffered diagnostics.
+
+| Baseline now | New optimized version |
+| --- | --- |
+| **initial playlist view ready** — 4.9k ms | 4.7k ms (-4.7%) |
+| **first window render** — 2.7k ms | 2.7k ms (+0.2%) |
+
+<details>
+<summary>Earlier startup comparisons</summary>
+
+
 | Baseline now | New optimized version |
 | --- | --- |
 | **initial playlist view ready** — 5.8k ms | 4.7k ms (-18.6%) |
@@ -62,6 +73,8 @@
 
 </details>
 
+</details>
+
 ## Data
 
 | Baseline now | New optimized version |
@@ -103,6 +116,16 @@
 | **virtualized list scroll** — 8.28 ms | 7.44 ms (-10.1%) |
 | **virtualized list layout** — 6.36 ms | 8.16 ms (+28.2%) |
 
+### Statistics (fully played, buffered)
+
+| Baseline now | New optimized version |
+| --- | --- |
+| **load and render** — 5.8k ms | 4.6k ms (-21.4%) |
+
+<details>
+<summary>Earlier Statistics comparisons</summary>
+
+
 ### Statistics (207k unique file records)
 
 | Baseline now | New optimized version |
@@ -114,6 +137,8 @@
 | Baseline now | New optimized version |
 | --- | --- |
 | **load and render** — 3.5k ms | 4.2k ms (+20.3%) |
+
+</details>
 
 ### Grouped playlists (5k added favorites)
 
@@ -145,4 +170,4 @@ Library cards/scrolling; navigation/details; file browser/thumbnails; settings/d
 
 Percentage changes in unchanged code are observations. Startup phases overlap; component UI tests use a simplified list. Raw samples, maxima, allocations and commit/fixture provenance remain in the JSON files and [README](README.md).
 
-Further UI optimization uses the separate [buffered baseline](buffered-ui-results.md); historical comparisons above retain their original diagnostics.
+Current UI timings use the [buffered comparison](buffered-ui-results.md); earlier comparisons retain their original diagnostics.

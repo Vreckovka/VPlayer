@@ -81,12 +81,28 @@ foreach($runs in (@($baseStartup,$newStartup,$readyStartup)+@($phaseSources))) {
 }
 if($newStartup.Count -and $baseStartup.Count -and $newStartup[0].WindowMode -ne $baseStartup[0].WindowMode) {throw 'Incompatible startup window modes'}
 if($newStartup.Count -and $readyStartup.Count -and $newStartup[0].WindowMode -ne $readyStartup[0].WindowMode) {throw 'Incompatible readiness window modes'}
+$bufferedPath=Join-Path $PSScriptRoot 'buffered-ui-results.md'
+$bufferedRows=if(Test-Path -LiteralPath $bufferedPath){@(Get-Content -LiteralPath $bufferedPath|Where-Object {$_.StartsWith('| **')})}else{@()}
+$bufferedStartup=@($bufferedRows|Where-Object {$_ -match '^\| \*\*(initial playlist view ready|first window render)\*\*'})
+$bufferedStatistics=@($bufferedRows|Where-Object {$_ -match '^\| \*\*statistics / load and render\*\*'})
 $lines=[Collections.Generic.List[string]]::new()
 $lines.Add('# Worst-case performance')
 $lines.Add('')
 $lines.Add('207k sound items; stress playlists up to 100k entries. Median timings; **- % = less time**, **+ % = more time**. Failed or missing baselines have no percentage.')
 $lines.Add('')
 $lines.Add('## Application startup')
+if($bufferedStartup.Count) {
+  $lines.Add('')
+  $lines.Add('Fully played library; buffered diagnostics.')
+  $lines.Add('')
+  $lines.Add('| Baseline now | New optimized version |')
+  $lines.Add('| --- | --- |')
+  foreach($row in $bufferedStartup){$lines.Add($row)}
+  $lines.Add('')
+  $lines.Add('<details>')
+  $lines.Add('<summary>Earlier startup comparisons</summary>')
+  $lines.Add('')
+}
 $lines.Add('')
 $lines.Add('| Baseline now | New optimized version |')
 $lines.Add('| --- | --- |')
@@ -120,6 +136,10 @@ if($phaseSources.Count) {
 }
 $lines.Add('')
 $lines.Add('</details>')
+if($bufferedStartup.Count) {
+  $lines.Add('')
+  $lines.Add('</details>')
+}
 foreach($category in @('Data','Playlist','UI','Lyrics','Spectrum')) {
   $lines.Add('')
   $title=switch($category){'Lyrics' {'Lyrics (10k seeks)'} 'Spectrum' {'Spectrum (1k frames)'} default {$category}}
@@ -139,6 +159,18 @@ foreach($category in @('Data','Playlist','UI','Lyrics','Spectrum')) {
     $lines.Add('| **'+$label+'** — '+(Format-Metric $metric)+' | '+$newText+' |')
   }
   if($category -in @('Data','UI')) {
+    if($category -eq 'UI' -and $bufferedStatistics.Count) {
+      $lines.Add('')
+      $lines.Add('### Statistics (fully played, buffered)')
+      $lines.Add('')
+      $lines.Add('| Baseline now | New optimized version |')
+      $lines.Add('| --- | --- |')
+      foreach($row in $bufferedStatistics){$lines.Add($row.Replace('statistics / load and render','load and render'))}
+      $lines.Add('')
+      $lines.Add('<details>')
+      $lines.Add('<summary>Earlier Statistics comparisons</summary>')
+      $lines.Add('')
+    }
     foreach($scenario in @(
       @{File='statistics-results.md';Title='Statistics (207k unique file records)'},
       @{File='statistics-played-results.md';Title='Statistics (fully played, 207k unique times)'}
@@ -158,6 +190,10 @@ foreach($category in @('Data','Playlist','UI','Lyrics','Spectrum')) {
       }
     }
   }
+  if($category -eq 'UI' -and $bufferedStatistics.Count) {
+    $lines.Add('')
+    $lines.Add('</details>')
+  }
   if($category -eq 'UI') {
     $groupedReport=Join-Path $PSScriptRoot 'grouped-ui-results.md'
     if(Test-Path -LiteralPath $groupedReport) {
@@ -175,6 +211,6 @@ $lines.Add('Library cards/scrolling; navigation/details; file browser/thumbnails
 $lines.Add('')
 $lines.Add('Percentage changes in unchanged code are observations. Startup phases overlap; component UI tests use a simplified list. Raw samples, maxima, allocations and commit/fixture provenance remain in the JSON files and [README](README.md).')
 $lines.Add('')
-$lines.Add('Further UI optimization uses the separate [buffered baseline](buffered-ui-results.md); historical comparisons above retain their original diagnostics.')
+$lines.Add('Current UI timings use the [buffered comparison](buffered-ui-results.md); earlier comparisons retain their original diagnostics.')
 $lines | Set-Content -LiteralPath $Output
 Write-Output ('Wrote '+$Output)
