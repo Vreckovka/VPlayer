@@ -2253,7 +2253,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
       bool changed = false;
 
       var sourcePlaylist = PlayList.ToArray();
-      var songsItems = await Task.Run(() => storageManager.GetTempRepository<Song>()
+      List<Song> songsItems;
+      using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("UI / music playlist / stored song database read"))
+        songsItems = await Task.Run(() => storageManager.GetTempRepository<Song>()
           .Where(x => playlistItems.Select(y => y.Model.Id).Contains(x.ItemModel.Id))
           .Include(x => x.Album)
           .ThenInclude(x => x.Artist)
@@ -2269,7 +2271,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
         if (songsItems.Count > 0)
         {
-
+          using var enrichment = VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("UI / music playlist / stored song enrichment publication");
           PlayList.DisableNotification();
           UnHookToPlaylistCollectionChanged();
           try

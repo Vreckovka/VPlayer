@@ -1613,7 +1613,8 @@ namespace VPlayer.Core.ViewModels
       using var publication=VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("UI / player playlist / collection publication");
       var itemList = items.ToList();
 
-      ReplacePlaylistItems(itemList);
+      using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("UI / player playlist / replace collection"))
+        ReplacePlaylistItems(itemList);
       RaisePropertyChanged(nameof(CanReorderPlaylist));
       actualItemIndex = songIndex;
 
@@ -1628,7 +1629,8 @@ namespace VPlayer.Core.ViewModels
 
       }
 
-      SetItemAndPlay(songIndex, onlyItemSet: onlyItemSet);
+      using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("UI / player playlist / dispatch active item"))
+        SetItemAndPlay(songIndex, onlyItemSet: onlyItemSet);
     }
 
     #endregion

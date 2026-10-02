@@ -546,3 +546,9 @@ The compact report requires all painted endpoints, ordered playlist/viewport
 checks and stable search fingerprints; it rejects layout-only or traced data.
 The older activation scope measured layout only, so painted activation has no
 comparable baseline. Completed conversion/read phase boundaries stay unchanged.
+
+With dispatcher ownership restored, the painted a69e0a61 pilot timed out after
+collection publication completed. It is retained as
+iterations/music-playlist-painted-timeout-a69e0a61.json. New scopes split stored
+song reads/publication and collection replacement/active-item dispatch so the
+remaining bottleneck is measured before changing its repeated index scans.
