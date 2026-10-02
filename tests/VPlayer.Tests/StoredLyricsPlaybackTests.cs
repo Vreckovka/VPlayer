@@ -1,5 +1,7 @@
 using System;
 using System.Threading.Tasks;
+using System.Threading;
+using VCore.WPF;
 using System.Runtime.Serialization;
 using VPlayer.Core.ViewModels.Albums;
 using VPlayer.Core.ViewModels.Artists;
@@ -12,8 +14,15 @@ using Xunit;
 namespace VPlayer.Tests
 {
   [Collection("UI synchronization")]
-  public class StoredLyricsPlaybackTests
+  public class StoredLyricsPlaybackTests : IDisposable
   {
+    private sealed class InlineUi : SynchronizationContext
+    {
+      public override void Post(SendOrPostCallback callback,object state)=>callback(state);
+    }
+    private readonly SynchronizationContext previousUi=VSynchronizationContext.UISynchronizationContext;
+    public StoredLyricsPlaybackTests()=>VSynchronizationContext.UISynchronizationContext=new InlineUi();
+    public void Dispose()=>VSynchronizationContext.UISynchronizationContext=previousUi;
     [Fact]
     public async Task AutomaticRefreshKeepsTheLoadedTimelineWhenAlbumMetadataIsMissing()
     {
@@ -24,6 +33,7 @@ namespace VPlayer.Tests
       view.LRCFile=timeline;
       timeline.SetActualLine(TimeSpan.FromSeconds(90000));
       var active=timeline.ActualLine;
+      Assert.NotNull(active);
       Assert.True(await view.TryToRefreshUpdateLyrics());
       for(int i=0;i<1000;i++) Assert.True(await view.TryToRefreshUpdateLyrics());
       Assert.Same(timeline,view.LRCFile);

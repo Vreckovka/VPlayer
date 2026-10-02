@@ -1,0 +1,27 @@
+{
+  "BaselinePath": "D:\\Aplikacie\\VPlayer\\artifacts\\performance\\file-browser-20261002-215627\\baseline-v2.json",
+  "UserInstallationTouched": false,
+  "Deployed": false,
+  "BrowserRegressionTestsFailedBefore": 3,
+  "Payload": {
+    "VPlayer.Core.dll": "2987ECF7A9A38B761AA00B22F050AD4D321C0F65F29FE7B6EAAD43C4D2E13818",
+    "VCore.Standard.dll": "CBAABA74582C48CD2C4B6014FB367CD26D72DE1B36AEC97DB5D111B0511FF0E7",
+    "VCore.WPF.dll": "E605C056117C58D36162C2A382B44FFA6B13FF58D35C47CF685FE4544DE41134",
+    "VPlayer.Performance.dll": "9A32518D080BA3F08075F2C8A3EB013A7A098ACE9EAF461E7FC495C80D90DF60"
+  },
+  "BaselineSha256": "3F48C6438AF25760D69C2B85B49B9C0EF83E906910E8F2DBDBE6FC6E84070A35",
+  "SourceCommit": "5d2a1f989480158d8030e27d541bc62d9e2acad2",
+  "BrowserRegressionTestsBefore": 3,
+  "RenderedUiMeasured": false,
+  "AudioMeasured": false,
+  "Fixture": {
+    "Schema": "file-browser-tree-v1",
+    "Files": 101033,
+    "Folders": 133,
+    "Depth": 33,
+    "LibraryNames": 1000,
+    "MediaContentCopied": false,
+    "Description": "Names copied from the disposable library; zero-byte files for directory/search tests."
+  },
+  "BrowserTrxSha256": "4821F8B49E3D656EF2C861526D5509C7EC45503E79F12C22E8C5300BFAC100F4"
+}
