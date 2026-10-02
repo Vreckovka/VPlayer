@@ -5,6 +5,8 @@ using System.Reflection;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.Core.ViewModels.SoundItems;
 using VPlayer.TestSupport;
+using VCore.WPF.Interfaces.Managers;
+using VCore.WPF.Managers;
 using Prism.Events;
 using Xunit;
 
@@ -15,7 +17,7 @@ namespace VPlayer.Tests
     [Fact]
     public void HugeDuplicateQueueKeepsStoredMetadataAndIndependentOccurrences()
     {
-      using var fixture=new SavedSongViewFixture();
+      using var fixture=new SavedSongViewFixture(true);
       var tracks=Enumerable.Range(1,97).Select(id=>new SoundItem {Id=id,Duration=id+20,
         FileInfoEntity=id==97?null:new FileInfoEntity {Name="Stored "+id,Source="file:///D:/stress/"+id+".mp3"}}).ToArray();
       var rows=Enumerable.Range(0,100000).Select(i=>new PlaylistSoundItem {Id=i+1,OrderInPlaylist=i+1,ReferencedItem=tracks[i%97]}).ToArray();
@@ -27,6 +29,8 @@ namespace VPlayer.Tests
         Assert.Equal(100000,new HashSet<Song>(views.Select(x=>x.SongModel)).Count);
         var factories=typeof(SongInPlayListViewModel).GetField("viewModelsFactory",BindingFlags.Instance|BindingFlags.NonPublic);
         Assert.Equal(100000,new HashSet<object>(views.Select(view=>factories.GetValue(view))).Count);
+        var windows=typeof(SongInPlayListViewModel).GetField("windowManager",BindingFlags.Instance|BindingFlags.NonPublic);
+        Assert.Equal(100000,new HashSet<object>(views.Select(view=>windows.GetValue(view))).Count);
         for(int i=0;i<views.Length;i++)
         {
           Assert.Same(rows[i].ReferencedItem,views[i].Model);
@@ -61,6 +65,19 @@ namespace VPlayer.Tests
       var rows=Enumerable.Range(1,97).Select(id=>new PlaylistSoundItem {ReferencedItem=new SoundItem {Id=id}}).ToArray();
       var views=fixture.Create(rows).ToArray();
       try {Assert.Equal(rows.Length,resolutions);}
+      finally {foreach(var view in views)view.Dispose();}
+    }
+    [Fact]
+    public void CustomWindowActivationRemainsPerOccurrence()
+    {
+      using var fixture=new SavedSongViewFixture(true);
+      int activations=0;
+      fixture.Kernel.Rebind<IWindowManager>().To<WindowManager>()
+        .WithMetadata("VPlayerSavedSongWindowConstructor",new Func<IWindowManager>(()=>new WindowManager()))
+        .OnActivation(window=>activations++);
+      var rows=Enumerable.Range(1,97).Select(id=>new PlaylistSoundItem {ReferencedItem=new SoundItem {Id=id}}).ToArray();
+      var views=fixture.Create(rows).ToArray();
+      try {Assert.Equal(rows.Length,activations);}
       finally {foreach(var view in views)view.Dispose();}
     }
     [Fact]

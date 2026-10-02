@@ -9,6 +9,7 @@ using Ninject;
 using Prism.Events;
 using VCore.Standard.Factories.ViewModels;
 using VCore.WPF.Interfaces.Managers;
+using VCore.WPF.Managers;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.AudioStorage.InfoDownloader;
 using VPlayer.AudioStorage.InfoDownloader.Clients.MusixMatch;
@@ -36,14 +37,17 @@ namespace VPlayer.TestSupport
     internal readonly VPlayerViewModelsFactory Factory;
     private readonly MusicPlayerViewModel player=Empty<MusicPlayerViewModel>();
     private static readonly MethodInfo create=typeof(MusicPlayerViewModel).GetMethod("GetVmToPlayFromPlaylist",BindingFlags.Instance|BindingFlags.NonPublic);
-    internal SavedSongViewFixture()
+    internal SavedSongViewFixture(bool transientWindows=false)
     {
       Kernel.Bind<IEventAggregator>().ToConstant(Events);
       Kernel.Bind<IAlbumsViewModel>().ToConstant(Albums);
       Kernel.Bind<IArtistsViewModel>().ToConstant(Artists);
       Kernel.Bind<IStorageManager>().ToConstant(Storage);
       Kernel.Bind<ILogger>().ToConstant(Logger);
-      Kernel.Bind<IWindowManager>().ToConstant(Windows);
+      if(transientWindows)
+        Kernel.Bind<IWindowManager>().To<WindowManager>()
+          .WithMetadata("VPlayerSavedSongWindowConstructor",new Func<IWindowManager>(()=>new WindowManager()));
+      else Kernel.Bind<IWindowManager>().ToConstant(Windows);
       Kernel.Bind<AudioInfoDownloader>().ToConstant(Downloader);
       Kernel.Bind<PCloudLyricsProvider>().ToConstant(Cloud);
       Kernel.Bind<MusixMatchLyricsProvider>().ToConstant(Lyrics);

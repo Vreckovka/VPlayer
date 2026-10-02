@@ -2,6 +2,7 @@ param(
   [Parameter(Mandatory=$true)][string]$FixtureDirectory,
   [Parameter(Mandatory=$true)][string]$RunDirectory,
   [Parameter(Mandatory=$true)][string]$Commit,
+  [switch]$TransientWindows,
   [string]$Application='tests/VPlayer.Performance/bin/x64/Release/netcoreapp3.1/VPlayer.Performance.dll'
 )
 $ErrorActionPreference='Stop'
@@ -15,7 +16,9 @@ if((Get-FileHash $database -Algorithm SHA256).Hash -ne $metadata.DatabaseSha256)
 for($i=0;$i -lt 3;$i++) {
   $output=Join-Path $destination ('saved-views-'+$i+'.json')
   if(Test-Path -LiteralPath $output){throw 'Run outputs are immutable; use a new directory.'}
-  & dotnet $app saved-playlist-views $fixture $output $Commit
+  $arguments=@($app,'saved-playlist-views',$fixture,$output,$Commit)
+  if($TransientWindows){$arguments+='transient-windows'}
+  & dotnet @arguments
   if($LASTEXITCODE -ne 0){throw ('Saved view benchmark failed: '+$LASTEXITCODE)}
   $record=Get-Content -LiteralPath $output -Raw|ConvertFrom-Json
   if($record.Commit -ne $Commit -or $record.FixtureSha256 -ne $metadata.DatabaseSha256 -or

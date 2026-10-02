@@ -13,7 +13,7 @@ namespace VPlayer.Performance
 {
   internal static class SavedPlaylistViewBenchmarks
   {
-    internal static void Run(string directory,string output,string commit)
+    internal static void Run(string directory,string output,string commit,bool transientWindows=false)
     {
       if(File.Exists(output)) throw new InvalidOperationException("Benchmark output is immutable.");
       var database=Path.Combine(Path.GetFullPath(directory),"VPlayerDatabase.db");
@@ -22,7 +22,7 @@ namespace VPlayer.Performance
         .SelectMany(x=>x.PlaylistItems).Include(x=>x.ReferencedItem.FileInfoEntity)
         .OrderBy(x=>x.OrderInPlaylist).ThenBy(x=>x.Id).ToArray();
       if(rows.Length!=100000 || rows.Any(x=>x.ReferencedItem==null)) throw new InvalidOperationException("Requires 100k available stored occurrences.");
-      using var fixture=new SavedSongViewFixture();
+      using var fixture=new SavedSongViewFixture(transientWindows);
       var samples=new List<object>();
       for(int iteration=0;iteration<5;iteration++)
       {
@@ -49,7 +49,8 @@ namespace VPlayer.Performance
         Runtime=Environment.Version.ToString(),Configuration="Release",Environment.ProcessorCount,
         FixtureSha256=BitConverter.ToString(hash.ComputeHash(stream)).Replace("-",""),Entries=rows.Length,
         MissingFileInfo=rows.Count(x=>x.ReferencedItem.FileInfoEntity==null),
-        Boundary="Production MusicPlayerViewModel saved view creation; real Ninject, shared stub services; database reads, UI rendering, verification and disposal excluded",
+        Boundary=transientWindows?"Production MusicPlayerViewModel saved view creation; real Ninject, eight shared stub services and per-occurrence WindowManager; database reads, UI rendering, verification and disposal excluded":
+          "Production MusicPlayerViewModel saved view creation; real Ninject, shared stub services; database reads, UI rendering, verification and disposal excluded",
         Samples=samples},new JsonSerializerOptions {WriteIndented=true}));
       Console.WriteLine("Verified five independent 100k-entry saved view batches: "+output);
     }
