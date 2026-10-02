@@ -125,19 +125,20 @@ Query preparation reduced query time; overall readiness improved slightly and fi
 
 | Baseline now | New optimized version |
 | --- | --- |
-| **load and render** — Timeout (60k ms limit) | Pending |
-| **stored song enrichment** — Unfinished | Pending |
-| **collection publication** — Unfinished | Pending |
-| **collection replacement** — 10.9k ms | Pending |
-| **incoming song view conversion** — 5.6k ms | Pending |
-| **saved playlist view creation** — 4.9k ms | Pending |
-| **active item dispatch** — 4.1k ms | Pending |
-| **database and incoming views** — 3k ms | Pending |
-| **stored song read** — 2.1k ms | Pending |
-| **activation and render** — Not measured (painted) | Pending |
-| **scroll to last track** — Not reached | Pending |
-| **long no-match search and render** — Not reached | Pending |
-| **long near-match search and render** — Not reached | Pending |
+| **clear before load** — Unfinished | 662.7 ms |
+| **load and render** — Timeout (60k ms limit) | 32.4k ms |
+| **stored song enrichment** — Unfinished | 2.3k ms |
+| **collection publication** — Unfinished | 15.2k ms |
+| **collection replacement** — 10.9k ms | 11.3k ms (+3.8%) |
+| **incoming song view conversion** — 5.6k ms | 4.8k ms (-13.6%) |
+| **saved playlist view creation** — 4.9k ms | 4.6k ms (-5.8%) |
+| **active item dispatch** — 4.1k ms | 3.8k ms (-7.6%) |
+| **database and incoming views** — 3k ms | 3.2k ms (+5%) |
+| **stored song read** — 2.1k ms | 2k ms (-1.7%) |
+| **activation and render** — Not measured (painted) | 2.8k ms |
+| **scroll to last track** — Not reached | 222.3 ms |
+| **long no-match search and render** — Not reached | 474.5 ms |
+| **long near-match search and render** — Not reached | 483.8 ms |
 
 Actual WPF load, scrolling and search. Timeout endpoints have no percentage. [Evidence](music-playlist-ui-results.md).
 

@@ -632,3 +632,21 @@ iterations/playlist-save-joined-query-plans-3c5e36d6.json. SQLite regressions us
 occurrences, file metadata, private flags, actual item and indexed collection
 access without a full PlaylistSongs scan. All 172 tests and the Release build pass. Native timing
 gains remain unproven until a complete painted benchmark series finishes.
+
+The complete 5be3a2c4 native series is retained in
+music-playlist-ui-optimized.json: all three runs passed ordered 100k occurrence
+checks, stored-metadata readiness, composition-frame checks, final-row viewport
+checks and stable search IDs/counts. Their load/render times range from 32.3k
+to 32.5k ms. Screenshots were inspected for populated initial/final rows, empty
+no-match results and five near-match rows. The initial attempt, which timed
+out in small-playlist publication before the measured large load, is retained
+separately in iterations/music-save-split-initial-publication-timeout-5be3a2c4.json.
+
+The median table now records 32.4k ms load/render, 2.3k ms stored enrichment,
+222.3 ms final-row scroll and about 0.5k ms rendered searches. Prior unfinished
+endpoints have no invented percentage. Startup/disposal save and clear tasks
+remain visible in raw snapshots; report validity requires every measured
+music/publication endpoint to finish, while excluding those separate shutdown
+tasks from its active-endpoint gate. Active enrichment remains rejected.
+Collection publication at 15.2k ms, including 11.3k ms replacement, is the next
+largest measured loading bottleneck; it has no consistent measured gain yet.
