@@ -320,3 +320,15 @@ including Directory.Exists. Thread-stack percentages include waiting time.
 This is evidence of unnecessary work, not proof that it caused every reader
 delay. The unprofiled, fully played display-name baseline is frozen separately
 in display-names-ui-baseline.json at a79c1d17 before changing the application.
+
+Playlist display names now use synchronous string/path parsing. They no longer
+start a task or probe Directory.Exists/File.Exists for each playlist. Plain and
+relative custom titles stay verbatim; absolute paths show their last component,
+including offline drives/shares, while drive roots stay intact. Empty names keep
+the existing GENERATED/date fallback. Renames and fresh model snapshots now
+refresh the cached display name.
+
+Two 10k-row regressions reproduced asynchronous/stale labels before the fix;
+ten path/title cases cover offline paths, roots, URLs and empty names. All 143
+tests and the production Release build pass. The unprofiled UI baseline remains
+frozen for the upcoming comparison.

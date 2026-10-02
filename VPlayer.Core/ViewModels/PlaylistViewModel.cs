@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Prism.Events;
 using VCore;
@@ -222,6 +221,7 @@ namespace VPlayer.Library.ViewModels
 
     public virtual void RaisePropertyChanges()
     {
+      GetDisplayName();
       RaisePropertyChanged(nameof(LastPlayed));
       RaisePropertyChanged(nameof(Name));
       RaisePropertyChanged(nameof(IsUserCreated));
@@ -234,27 +234,30 @@ namespace VPlayer.Library.ViewModels
 
     #endregion
 
-    public async void GetDisplayName()
+    public void GetDisplayName()
     {
-      var result = await Task.Run(() =>
+      var name = Name;
+      if (string.IsNullOrEmpty(name))
       {
-        if (Directory.Exists(Name))
-          return new DirectoryInfo(Name).Name;
-
-        if (File.Exists(Name))
-          return new System.IO.FileInfo(Name).Name;
-
-        return Name;
-      });
-
-      if (string.IsNullOrEmpty(result))
-      {
-        var stringC = Model.Created?.ToString("dddd,dd MMMM yyyy HH:mm");
-
-        result = $"GENERATED: {stringC}";
+        DisplayName = $"GENERATED: {Model.Created?.ToString("dddd,dd MMMM yyyy HH:mm")}";
+        return;
       }
 
-      DisplayName = result;
+      // Titles (including relative text with slashes) stay verbatim. Absolute
+      // paths have a stable leaf name even when their drive/share is offline.
+      if (Path.IsPathFullyQualified(name))
+      {
+        var leaf = Path.GetFileName(name.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
+        DisplayName = string.IsNullOrEmpty(leaf) ? name : leaf;
+      }
+      else
+        DisplayName = name;
+    }
+
+    public override void RefreshModel(TPlaylistModel model)
+    {
+      base.RefreshModel(model);
+      GetDisplayName();
     }
 
     #region Update
