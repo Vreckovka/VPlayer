@@ -123,19 +123,32 @@ foreach($category in @('Data','Playlist','UI','Lyrics','Spectrum')) {
     }
     $lines.Add('| **'+$metric.Name+'** — '+(Format-Metric $metric)+' | '+$newText+' |')
   }
+  if($category -eq 'UI') {
+    $groupedReport=Join-Path $PSScriptRoot 'grouped-ui-results.md'
+    if(Test-Path -LiteralPath $groupedReport) {
+      $lines.Add('')
+      $lines.Add('### Grouped music playlists — actual application')
+      $lines.Add('')
+      $lines.Add('Separate worst-case fixture: 207,110 sound items and 5,310 playlists, including 5,000 additional favorites with long titles. Seven visible fresh-profile launches per version. The baseline failed to become usable within 60 seconds; times from its first frame are partial observations.')
+      $lines.Add('')
+      foreach($row in @(Get-Content -LiteralPath $groupedReport | Where-Object { $_.StartsWith('|') })) {$lines.Add($row)}
+      $lines.Add('')
+      $lines.Add('See [grouped-ui-results.md](grouped-ui-results.md) for fixture identity, benchmark boundaries and complete scenario notes.')
+    }
+  }
 }
 $lines.Add('')
 $lines.Add('## Coverage still requiring end-to-end scenarios')
 $lines.Add('')
 $lines.Add('| Baseline now | New optimized version |')
 $lines.Add('| --- | --- |')
-foreach($feature in @('Library card templates and scrolling','Navigation and detail views','File-browser folders and thumbnails','Settings and modal dialogs','Video and fullscreen transitions','Cloud and network timeout handling','LibraryCollection full load/filter publication')) {
+foreach($feature in @('Library card templates and scrolling','Navigation and detail views','File-browser folders and thumbnails','Settings and modal dialogs','Video and fullscreen transitions','Cloud and network timeout handling','LibraryCollection full sound-item load/fuzzy filter publication')) {
   $lines.Add('| **'+$feature+'** — Not measured yet | Pending |')
 }
 $lines.Add('')
-$lines.Add('This comparison includes playlist loading, the startup crash repair, and library query deferral. Other feature metrics are controls: timing differences in unchanged code are observations and must not be credited to those changes.')
+$lines.Add('This comparison includes playlist loading, the startup crash repair, library query deferral, and actual grouped-playlist UI virtualization. Other feature metrics are controls: timing differences in unchanged code are observations and must not be credited to those changes.')
 $lines.Add('')
-$lines.Add('Each feature metric is one operation except lyrics (10,000 seeks) and spectrum (1,000 frames). Divide batched results by their operation count before ranking across categories. UI list scenarios use an offscreen text-row ListBox, not application card templates. First samples share one process, so only the first metric includes process-cold EF initialization. Startup uses fresh processes with warm OS caches and fresh default settings; it does not include every background service becoming ready. Startup phase scopes overlap. Allocation counts cover managed allocations across threads and exclude native bitmap/database memory.')
+$lines.Add('Each feature metric is one operation except lyrics (10,000 seeks) and spectrum (1,000 frames). Divide batched results by their operation count before ranking across categories. Component UI list scenarios use an offscreen text-row ListBox, not application card templates. First samples share one process, so only the first metric includes process-cold EF initialization. Startup uses fresh processes with warm OS caches and fresh default settings; it does not include every background service becoming ready. Startup phase scopes overlap. Allocation counts cover managed allocations across threads and exclude native bitmap/database memory.')
 $lines.Add('')
 $lines.Add('See README.md for workload boundaries and the optimization protocol.')
 $lines | Set-Content -LiteralPath $Output

@@ -81,3 +81,21 @@ Use grouped-ui-report.ps1 -Baseline <baseline-directory-or-json> -Optimized <opt
 This report rejects mismatched fixtures, runtime, configuration, machine or window mode.
 Timeouts remain failed workloads. Baselines for the smaller initial view are retained separately.
 Generated-playlist load-more expansion, filtering and group changes still need their own scenarios.
+
+Measured grouped-UI result (64a18e1f to c2558db9): the seven baseline launches all
+timed out at 60 seconds before the populated view. All seven optimized launches
+rendered the view and reached the last favorite: ready median 5,576.12 ms, maximum
+7,895.76 ms; scroll median 280.00 ms, maximum 435.53 ms. Only 41 row containers
+were realized for 5,073 displayed playlists, both before and after scrolling.
+The existing columns, commands and header layout are retained. Selection across
+groups, deselection, unloading/reloading and global Home/End and boundary Up/Down
+navigation are covered by six regressions over 10,000 items; the full suite passes 100 tests.
+
+The smaller expanded-library startup scenario also completed seven times at c2558db9:
+populated-view median 4,700.49 ms, versus 5,108.83 ms in the previous cc489285 run.
+The latest full-library data-read control measured 3,807.53 ms, versus 2,640.81 ms
+in the original feature baseline. That query code did not change in this UI task;
+the report preserves the slower observation and does not credit it to an optimization.
+Prior cc489285 feature, startup and report records are retained in iterations/.
+The complete application goal remains active: prioritize the largest measured data
+load next, and add separate worst-case baselines for the pending real UI features.
