@@ -25,7 +25,7 @@ using VPlayer.IPTV.ViewModels;
 
 namespace VPlayer.Core.Factories
 {
-  public class VPlayerViewModelsFactory : BaseViewModelsFactory, IVPlayerViewModelsFactory, ISavedSongViewsFactory
+  public class VPlayerViewModelsFactory : BaseViewModelsFactory, IVPlayerViewModelsFactory, ISavedSongViewsFactory, IIncomingPlaylistViewsFactory
   {
     public VPlayerViewModelsFactory(IKernel kernel) : base(kernel)
     {
@@ -37,6 +37,50 @@ namespace VPlayer.Core.Factories
       typeof(IArtistsViewModel),typeof(AudioInfoDownloader),typeof(PCloudLyricsProvider),typeof(ILogger),
       typeof(IStorageManager),typeof(IWindowManager),typeof(MusixMatchLyricsProvider)};
 
+    public IEnumerable<SoundItemInPlaylistViewModel> CreateIncomingPlaylistViews(IEnumerable<PlaylistSoundItem> rows)
+    {
+      if(rows==null) throw new ArgumentNullException(nameof(rows));
+      return CreateIncomingPlaylistViewsCore(rows);
+    }
+
+    private IEnumerable<SoundItemInPlaylistViewModel> CreateIncomingPlaylistViewsCore(IEnumerable<PlaylistSoundItem> rows)
+    {
+      Func<SoundItem,SoundItemInPlaylistViewModel> create=null;
+      foreach(var row in rows)
+      {
+        if(create==null)
+        {
+          if(CanShareIncomingServices())
+          {
+            var events=kernel.Get<IEventAggregator>();
+            var storage=kernel.Get<IStorageManager>();
+            create=item=>new SoundItemInPlaylistViewModel(item,events,storage);
+          }
+          else create=item=>((IViewModelsFactory)this).Create<SoundItemInPlaylistViewModel>(item);
+        }
+        yield return create(row.ReferencedItem);
+      }
+    }
+
+    private bool CanShareIncomingServices()
+    {
+      // Custom views, factories and contextual/transient services keep container activation per row.
+      if(GetType()!=typeof(VPlayerViewModelsFactory) ||
+        kernel.GetBindings(typeof(SoundItemInPlaylistViewModel)).Any(binding=>!binding.IsImplicit)) return false;
+      var factories=kernel.GetBindings(typeof(IViewModelsFactory)).ToArray();
+      if(factories.Length!=1 || factories[0].IsConditional ||
+        factories[0].ScopeCallback!=StandardScopeCallbacks.Transient ||
+        !factories[0].Metadata.Has(DefaultFactoryMetadata) ||
+        !factories[0].Metadata.Get<bool>(DefaultFactoryMetadata)) return false;
+      foreach(var service in new[] {typeof(IEventAggregator),typeof(IStorageManager)})
+      {
+        var bindings=kernel.GetBindings(service).ToArray();
+        if(bindings.Length!=1 || bindings[0].IsConditional ||
+          (bindings[0].Target!=BindingTarget.Constant && bindings[0].ScopeCallback!=StandardScopeCallbacks.Singleton))
+          return false;
+      }
+      return true;
+    }
     public IEnumerable<SoundItemInPlaylistViewModel> CreateSavedSongViews(IEnumerable<PlaylistSoundItem> rows)
     {
       if(rows==null) throw new ArgumentNullException(nameof(rows));
@@ -50,7 +94,7 @@ namespace VPlayer.Core.Factories
       foreach(var row in rows)
       {
         if(create==null)
-          create=CanShareSongServices()?CreateSongConstructor():song=>Create<SongInPlayListViewModel>(song);
+          create=CanShareSongServices()?CreateSongConstructor():song=>((IViewModelsFactory)this).Create<SongInPlayListViewModel>(song);
         yield return create(new Song {ItemModel=row.ReferencedItem});
       }
     }

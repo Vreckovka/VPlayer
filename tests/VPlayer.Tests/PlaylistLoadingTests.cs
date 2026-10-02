@@ -65,6 +65,7 @@ namespace VPlayer.Tests
     [InlineData(0)]
     [InlineData(1)]
     [InlineData(10000)]
+    [InlineData(100000)]
     public async Task LoadsFreshMetadataAndEveryOccurrenceInOrder(int size)
     {
       using var fixture=new Fixture();

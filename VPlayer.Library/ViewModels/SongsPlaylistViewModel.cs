@@ -84,6 +84,9 @@ namespace VPlayer.Home.ViewModels
           .ToList();
         playlist.PlaylistItems = playlistItems;
 
+        if(viewModelsFactory is VPlayer.Core.Factories.IIncomingPlaylistViewsFactory incomingViews)
+          return incomingViews.CreateIncomingPlaylistViews(playlistItems);
+
         return playlistItems.Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x.ReferencedItem));
       }
 
