@@ -520,3 +520,12 @@ rounding, far below a physical pixel. The diagnostic run and its failure stack
 are retained under iterations/music-playlist-scroll-diagnostics-dc5b48b0.*.
 It also exposed an uncancelled metadata worker writing to a disposed track;
 that separate lifecycle defect must be fixed before accepting a full UI run.
+
+Metadata refresh now registers its cancellation source before media analysis,
+cancels the previous generation and cancels before playlist replacement,
+clearing or player disposal. The worker checks cancellation before metadata
+publication, observes cancelled/disposed completion and logs active failures.
+Sources are removed and disposed when their work finishes. Four controlled
+async regressions failed before the fix and now pass; all 164 tests and the
+Release application build pass. This fixes the disposed-track task exposed by
+the native pilot; the next native series will retain full rendering checks.

@@ -1171,12 +1171,12 @@ namespace VPlayer.WindowsPlayer.ViewModels
       await Task.Run(async () =>
       {
         await base.DownloadItemInfo(cancellationToken);
-
-
+        cancellationToken.ThrowIfCancellationRequested();
         await DownloadHighQualityAlbumCover(ActualItem);
       });
 
 
+      cancellationToken.ThrowIfCancellationRequested();
       await SetPlaylistCover();
     }
 

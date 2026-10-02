@@ -455,13 +455,23 @@ namespace VPlayer.Core.Players
 
     private CancellationTokenSource GetCTSAndCancel()
     {
-      cTSOnActualItemChangeds.ToList().ForEach(x => x.Cancel());
+      lock (cTSOnActualItemChangeds)
+      {
+        CancelMetadataRefresh();
+        var cancellation = new CancellationTokenSource();
+        cTSOnActualItemChangeds.Add(cancellation);
+        return cancellation;
+      }
+    }
 
-      var cTsOnActualItemChanged = new CancellationTokenSource();
-
-      cTSOnActualItemChangeds.ToList().Add(cTsOnActualItemChanged);
-
-      return cTsOnActualItemChanged;
+    private void CancelMetadataRefresh()
+    {
+      lock (cTSOnActualItemChangeds)
+      {
+        foreach (var cancellation in cTSOnActualItemChangeds.ToArray())
+          cancellation.Cancel();
+        cTSOnActualItemChangeds.Clear();
+      }
     }
 
     #region OnNewItemPlay
@@ -480,15 +490,42 @@ namespace VPlayer.Core.Players
 
         MediaPlayer.Media.DurationChanged += Media_DurationChanged;
 
-        Task.Run(async () =>
-        {
-          await GetMediaInfo(model);
-          await DownloadItemInfo(GetCTSAndCancel().Token);
-        });
+        var cancellation = GetCTSAndCancel();
+        Task.Run(() => RefreshItemMetadataAsync(model, cancellation));
       }
     }
 
     #endregion
+
+    private async Task RefreshItemMetadataAsync(TModel model, CancellationTokenSource cancellation)
+    {
+      var token = cancellation.Token;
+      try
+      {
+        token.ThrowIfCancellationRequested();
+        await GetMediaInfo(model);
+        token.ThrowIfCancellationRequested();
+        await DownloadItemInfo(token);
+      }
+      catch (OperationCanceledException) when (token.IsCancellationRequested)
+      {
+      }
+      catch (ObjectDisposedException) when (token.IsCancellationRequested)
+      {
+        // Playlist clearing cancels before disposing tracks; a publication
+        // already in progress may observe that disposal while unwinding.
+      }
+      catch (Exception exception)
+      {
+        logger?.Log(exception);
+      }
+      finally
+      {
+        lock (cTSOnActualItemChangeds)
+          cTSOnActualItemChangeds.Remove(cancellation);
+        cancellation.Dispose();
+      }
+    }
 
     #region PlayNext
 
@@ -954,6 +991,7 @@ namespace VPlayer.Core.Players
 
     protected virtual async Task DownloadItemInfo(CancellationToken cancellationToken)
     {
+      cancellationToken.ThrowIfCancellationRequested();
       RaisePropertyChanged(nameof(TotalPlaylistDuration));
 
       var list = PlayList.ToList();
@@ -975,6 +1013,7 @@ namespace VPlayer.Core.Players
 
       foreach (var item in itemsToUpdate)
       {
+        cancellationToken.ThrowIfCancellationRequested();
         item.Created = File.GetCreationTime(item.Model.Source);
         item.Modified = File.GetLastWriteTime(item.Model.Source);
 
@@ -986,9 +1025,11 @@ namespace VPlayer.Core.Players
 
       foreach (var item in itemsToUpdate)
       {
+        cancellationToken.ThrowIfCancellationRequested();
         try
         {
           var mediaInfo = await FFProbe.AnalyseAsync(item.Model.Source);
+          cancellationToken.ThrowIfCancellationRequested();
 
           item.Duration = (int)mediaInfo.Duration.TotalSeconds;
 
@@ -999,9 +1040,11 @@ namespace VPlayer.Core.Players
         }
       }
 
+      cancellationToken.ThrowIfCancellationRequested();
       if (changedItems.Count > 0)
         await storageManager.UpdateEntitiesAsync(changedItems.Select(x => x.Model));
 
+      cancellationToken.ThrowIfCancellationRequested();
       await DownloadPublicLinks(cloudItems, cancellationToken);
     }
 
@@ -1011,6 +1054,8 @@ namespace VPlayer.Core.Players
 
     protected override async Task BeforePlayEvent(PlayItemsEventData<TItemViewModel> data)
     {
+      if (data.EventAction != EventAction.Add)
+        CancelMetadataRefresh();
       await base.BeforePlayEvent(data);
 
       lastTotalTimeSaved = 0;
@@ -1028,6 +1073,7 @@ namespace VPlayer.Core.Players
 
     protected override void BeforeClearPlaylist()
     {
+      CancelMetadataRefresh();
       VSynchronizationContext.InvokeOnDispatcher(() =>
       {
         CheckedFiles.Clear();
@@ -1399,12 +1445,13 @@ namespace VPlayer.Core.Players
 
     public override void Dispose()
     {
+      CancelMetadataRefresh();
       base.Dispose();
 
       MediaPlayer.TimeChanged -= OnVlcTimeChanged;
       UnHookToPlaylistCollectionChanged();
 
-      cTSOnActualItemChangeds.ForEach(x => x.Cancel());
+
     }
 
     #endregion
