@@ -123,6 +123,8 @@ namespace VPlayer
               CaptureBenchmarkWindow(window, ".ready.png");
               if (Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_SCROLL_PLAYLISTS") == "1")
                 await BenchmarkPlaylistScroll(window, playlistList);
+              if (Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_STATISTICS") == "1")
+                await BenchmarkStatisticsView(window);
             }
           }
           catch (Exception exception)
@@ -138,6 +140,36 @@ namespace VPlayer
         window.ContentRendered += rendered;
       }
       return window;
+    }
+    private async Task BenchmarkStatisticsView(Window window)
+    {
+      var statistics = Kernel.Get<VPlayer.Home.ViewModels.Statistics.StatisticsViewModel>();
+      using (StartupMeasurements.Measure("UI / statistics / load and render"))
+      {
+        statistics.IsActive = true;
+        var deadline = Stopwatch.StartNew();
+        while (statistics.ItemsView == null || statistics.PlaylistView == null || statistics.LoadingStatus.IsLoading ||
+               FindStatisticsView(window) == null || !HasRenderedPlaylistRow(FindStatisticsView(window)))
+        {
+          if (deadline.Elapsed > TimeSpan.FromSeconds(30)) throw new TimeoutException("Statistics view did not render.");
+          await Task.Delay(25);
+        }
+        await window.Dispatcher.InvokeAsync(() => window.UpdateLayout(), System.Windows.Threading.DispatcherPriority.ContextIdle);
+      }
+      StartupMeasurements.RecordObservation("UI / statistics / empty item rows",
+        statistics.ItemsView.Concat(statistics.SoundsItemsView).Concat(statistics.VideosItemsView).Count(item => item == null));
+      StartupMeasurements.RecordObservation("UI / statistics / empty playlist rows", statistics.PlaylistView.Count(item => item == null));
+      CaptureBenchmarkWindow(window, ".statistics.png");
+    }
+    private static FrameworkElement FindStatisticsView(System.Windows.DependencyObject root)
+    {
+      if (root is VPlayer.Home.Views.Statistics.StatisticsView view && view.IsVisible) return view;
+      for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(root); i++)
+      {
+        var found = FindStatisticsView(System.Windows.Media.VisualTreeHelper.GetChild(root, i));
+        if (found != null) return found;
+      }
+      return null;
     }
     private static async Task BenchmarkPlaylistScroll(Window window, ListView list)
     {

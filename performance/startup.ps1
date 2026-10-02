@@ -5,7 +5,8 @@ param(
   [Parameter(Mandatory=$true)][string]$Commit,
   [int]$Runs=7,
   [switch]$Visible,
-  [switch]$ScrollPlaylists
+  [switch]$ScrollPlaylists,
+  [switch]$Statistics
 )
 $ErrorActionPreference='Stop'
 $fixture=(Resolve-Path -LiteralPath $FixtureDirectory).Path
@@ -19,7 +20,7 @@ $environmentMetadata=@{
   Configuration='Release';ProcessorCount=[Environment]::ProcessorCount;OS=[Environment]::OSVersion.VersionString
 }
 $originalValues=@{}
-foreach($name in @('VPLAYER_BENCHMARK_DIRECTORY','VPLAYER_PERFORMANCE_RUN_FILE','VPLAYER_PERFORMANCE_COMMIT','VPLAYER_PERFORMANCE_EXIT_AFTER_RENDER','VPLAYER_PERFORMANCE_WAIT_FOR_LIBRARY','VPLAYER_PERFORMANCE_SCROLL_PLAYLISTS')) {
+foreach($name in @('VPLAYER_BENCHMARK_DIRECTORY','VPLAYER_PERFORMANCE_RUN_FILE','VPLAYER_PERFORMANCE_COMMIT','VPLAYER_PERFORMANCE_EXIT_AFTER_RENDER','VPLAYER_PERFORMANCE_WAIT_FOR_LIBRARY','VPLAYER_PERFORMANCE_SCROLL_PLAYLISTS','VPLAYER_PERFORMANCE_STATISTICS')) {
   $originalValues[$name]=[Environment]::GetEnvironmentVariable($name,'Process')
 }
 try {
@@ -35,6 +36,7 @@ try {
     $env:VPLAYER_PERFORMANCE_EXIT_AFTER_RENDER='1'
     $env:VPLAYER_PERFORMANCE_WAIT_FOR_LIBRARY='1'
     $env:VPLAYER_PERFORMANCE_SCROLL_PLAYLISTS=$(if($ScrollPlaylists){'1'}else{'0'})
+    $env:VPLAYER_PERFORMANCE_STATISTICS=$(if($Statistics){'1'}else{'0'})
     $launch=@{
       FilePath=$app;WorkingDirectory=(Split-Path -Parent $app);PassThru=$true
       WindowStyle=$(if($Visible){'Normal'}else{'Hidden'})
