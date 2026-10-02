@@ -177,47 +177,59 @@ namespace VPlayer.Home.ViewModels.Statistics
       }
     }
 
-    private async Task LoadData()
+    private readonly object loadGate=new object();
+    private Task pendingLoad;
+
+    private Task LoadData()
+    {
+      lock(loadGate)
+      {
+        if(pendingLoad!=null && !pendingLoad.IsCompleted) return pendingLoad;
+        var completion=new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
+        // Install the shared task before raising any loading notifications.
+        pendingLoad=completion.Task;
+        _=CompleteLoadAsync(completion);
+        return completion.Task;
+      }
+    }
+
+    private async Task CompleteLoadAsync(TaskCompletionSource<object> completion)
     {
       try
       {
-        LoadingStatus.IsLoading = true;
-        await LoadItems();
-        await LoadPlaylists();
+        await LoadSnapshotAsync();
+        completion.TrySetResult(null);
       }
-      finally 
+      catch(Exception exception)
       {
-        LoadingStatus.IsLoading = false;
+        completion.TrySetException(exception);
       }
     }
 
-    private Task LoadItems()
+    private async Task LoadSnapshotAsync()
     {
-      return Task.Run(() =>
+      try
       {
-        var snapshot=StatisticsQueries.LoadItems(storageManager);
-        VSynchronizationContext.PostOnUIThread(() =>
+        await VSynchronizationContext.UIDispatcher.InvokeAsync(()=>LoadingStatus.IsLoading=true);
+        var snapshot=await Task.Run(()=>
+          (Items:StatisticsQueries.LoadItems(storageManager),Playlists:StatisticsQueries.LoadPlaylists(storageManager)));
+        // Publish only after both query groups succeed, and include publication
+        // in the shared task so callers never observe a half-finished reload.
+        await VSynchronizationContext.UIDispatcher.InvokeAsync(()=>
         {
-          TotalWatchedItems=snapshot.Total;
-          ItemsView=snapshot.Items;
-          SoundsItemsView=snapshot.Sounds;
-          VideosItemsView=snapshot.Videos;
-        });
-      });
-    }
-
-    private Task LoadPlaylists()
-    {
-      return Task.Run(() =>
-      {
-        var snapshot=StatisticsQueries.LoadPlaylists(storageManager);
-        VSynchronizationContext.PostOnUIThread(() =>
-        {
+          TotalWatchedItems=snapshot.Items.Total;
+          ItemsView=snapshot.Items.Items;
+          SoundsItemsView=snapshot.Items.Sounds;
+          VideosItemsView=snapshot.Items.Videos;
           // Preserve the legacy playlist history adjustment.
-          TotalWatched=snapshot.Total-TotalWatchedItems;
-          PlaylistView=snapshot.Items;
+          TotalWatched=snapshot.Playlists.Total-snapshot.Items.Total;
+          PlaylistView=snapshot.Playlists.Items;
         });
-      });
+      }
+      finally
+      {
+        await VSynchronizationContext.UIDispatcher.InvokeAsync(()=>LoadingStatus.IsLoading=false);
+      }
     }
   }
 }

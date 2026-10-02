@@ -364,3 +364,16 @@ records duplicate query groups. It includes UI publication and excludes XAML.
 startup.ps1 -StatisticsReloads separately measures the same request burst after
 Statistics activation in the actual WPF window, including layout and populated
 rendered rows. Both baselines are captured before changing load coordination.
+
+Statistics loads now share one in-flight task, including reentrant requests
+raised by loading notifications. Both query groups finish before rows and
+totals are published on the dispatcher; failed playlist queries retain the
+previous snapshot. Task completion includes publication and loading-state
+cleanup, and a subsequent request can retry after failure.
+
+Four native SQLite/dispatcher regressions use 10k distinct sound records and
+10k playlists. They reproduced duplicate/reentrant requests, completion before
+publication and partial refresh on failure in the old implementation, and pass
+with coordinated loading. All 147 tests pass; the production application and
+performance runner Release builds complete with no errors. Frozen component
+and rendered baselines remain separate from the upcoming optimized samples.

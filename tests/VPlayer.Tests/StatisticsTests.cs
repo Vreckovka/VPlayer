@@ -33,12 +33,13 @@ namespace VPlayer.Tests
       private readonly SqliteConnection connection=new SqliteConnection("Data Source=:memory:");
       public Context Database {get;}
       public StatisticsViewModel View {get;}
+      public Mock<IStorageManager> Storage {get;}=new Mock<IStorageManager>();
       public Fixture()
       {
         connection.Open();
         Database=new Context(connection);
         Database.Database.EnsureCreated();
-        var storage=new Mock<IStorageManager>();
+        var storage=Storage;
         storage.Setup(x=>x.GetTempRepository<SoundItem>()).Returns(Database.Set<SoundItem>().AsNoTracking());
         storage.Setup(x=>x.GetTempRepository<VideoItem>()).Returns(Database.Set<VideoItem>().AsNoTracking());
         storage.Setup(x=>x.GetTempRepository<TvShowEpisode>()).Returns(Database.Set<TvShowEpisode>().AsNoTracking());
@@ -48,9 +49,10 @@ namespace VPlayer.Tests
         storage.Setup(x=>x.GetTempRepository<TvPlaylist>()).Returns(Database.Set<TvPlaylist>().AsNoTracking());
         View=new StatisticsViewModel(new Mock<IRegionProvider>().Object,storage.Object);
       }
+      public Task StartLoad() => (Task)typeof(StatisticsViewModel).GetMethod("LoadData",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(View,null);
       public async Task Load()
       {
-        await (Task)typeof(StatisticsViewModel).GetMethod("LoadData",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(View,null);
+        await StartLoad();
         await Dispatcher.CurrentDispatcher.InvokeAsync(()=>{},DispatcherPriority.ContextIdle);
       }
       public void Dispose() {View.Dispose();Database.Dispose();connection.Dispose();}
@@ -83,6 +85,154 @@ namespace VPlayer.Tests
           dispatcher.InvokeShutdown();
         }
       },120);
+    }
+
+    private static void SeedReloadStress(Fixture fixture)
+    {
+      const int count=10000;
+      fixture.Database.AddRange(Enumerable.Range(1,count).Select(i=>new SoundItem
+      {
+        Id=i,TimePlayed=TimeSpan.FromTicks(i),FileInfoEntity=new FileInfoEntity {Title="Stress sound "+i}
+      }));
+      fixture.Database.AddRange(Enumerable.Range(1,count).Select(i=>new SoundItemFilePlaylist
+      {
+        Id=i,HashCode=i,Name="Stress playlist "+i,TotalPlayedTime=TimeSpan.FromTicks(i*2L)
+      }));
+      fixture.Database.SaveChanges();
+    }
+
+    [Fact]
+    public void RapidReloadRequestsShareOneDatabaseLoadUntilUiPublicationCompletes()
+    {
+      WithDispatcher(async () =>
+      {
+        using var fixture=new Fixture();
+        SeedReloadStress(fixture);
+        var entered=new TaskCompletionSource<bool>();
+        using var release=new ManualResetEventSlim();
+        int reads=0;
+        fixture.Storage.Setup(x=>x.GetTempRepository<SoundItem>()).Returns(() =>
+        {
+          Interlocked.Increment(ref reads);
+          entered.TrySetResult(true);
+          if(!release.Wait(TimeSpan.FromSeconds(15))) throw new TimeoutException("Test load was not released.");
+          return fixture.Database.SoundItems.AsNoTracking();
+        });
+        var requests=Enumerable.Range(0,32).Select(_=>fixture.StartLoad()).ToArray();
+        try
+        {
+          Assert.Same(entered.Task,await Task.WhenAny(entered.Task,Task.Delay(TimeSpan.FromSeconds(10))));
+          Assert.True(fixture.View.LoadingStatus.IsLoading);
+          Assert.All(requests,request=>Assert.Same(requests[0],request));
+          Assert.Equal(1,Volatile.Read(ref reads));
+        }
+        finally
+        {
+          release.Set();
+          // Drain old-implementation requests even when the regression fails.
+          try {await Task.WhenAll(requests);} catch { }
+        }
+        Assert.Equal(30,fixture.View.ItemsView.Count);
+        Assert.Equal(30,fixture.View.PlaylistView.Count);
+        Assert.False(fixture.View.LoadingStatus.IsLoading);
+        Assert.Equal(1,reads);
+      });
+    }
+
+    [Fact]
+    public void ReentrantLoadingNotificationsDoNotStartAdditionalScans()
+    {
+      WithDispatcher(async () =>
+      {
+        using var fixture=new Fixture();
+        SeedReloadStress(fixture);
+        var reentered=new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        Task[] nested=null;
+        fixture.View.LoadingStatus.PropertyChanged+=(sender,args)=>
+        {
+          if(args.PropertyName=="IsLoading" && fixture.View.LoadingStatus.IsLoading && nested==null)
+          {
+            nested=Array.Empty<Task>();
+            nested=Enumerable.Range(0,32).Select(_=>fixture.StartLoad()).ToArray();
+            reentered.TrySetResult(true);
+          }
+        };
+        var original=fixture.StartLoad();
+        try
+        {
+          Assert.Same(reentered.Task,await Task.WhenAny(reentered.Task,Task.Delay(TimeSpan.FromSeconds(10))));
+          Assert.All(nested,request=>Assert.Same(original,request));
+        }
+        finally
+        {
+          try {await Task.WhenAll((nested ?? Array.Empty<Task>()).Concat(new[] {original}));} catch { }
+        }
+        Assert.NotNull(fixture.View.ItemsView);
+        Assert.NotNull(fixture.View.PlaylistView);
+        Assert.False(fixture.View.LoadingStatus.IsLoading);
+      });
+    }
+
+    [Fact]
+    public void CompletingLoadMeansRowsAndTotalsHaveAlreadyBeenPublished()
+    {
+      WithDispatcher(async () =>
+      {
+        using var fixture=new Fixture();
+        SeedReloadStress(fixture);
+        var previous=VSynchronizationContext.UISynchronizationContext;
+        var held=new System.Collections.Concurrent.ConcurrentQueue<Action>();
+        var synchronization=new Mock<SynchronizationContext>();
+        synchronization.Setup(x=>x.Post(It.IsAny<SendOrPostCallback>(),It.IsAny<object>()))
+          .Callback((SendOrPostCallback callback,object state)=>held.Enqueue(()=>callback(state)));
+        VSynchronizationContext.UISynchronizationContext=synchronization.Object;
+        try
+        {
+          await fixture.StartLoad();
+          Assert.NotNull(fixture.View.ItemsView);
+          Assert.NotNull(fixture.View.PlaylistView);
+          Assert.Equal(30,fixture.View.ItemsView.Count);
+          Assert.Equal(30,fixture.View.PlaylistView.Count);
+          Assert.Equal(TimeSpan.FromTicks(50005000),fixture.View.TotalWatchedItems);
+          Assert.Equal(fixture.View.TotalWatchedItems,fixture.View.TotalWatched);
+          Assert.False(fixture.View.LoadingStatus.IsLoading);
+        }
+        finally
+        {
+          VSynchronizationContext.UISynchronizationContext=previous;
+          while(held.TryDequeue(out var publish)) publish();
+        }
+      });
+    }
+
+    [Fact]
+    public void FailedPlaylistReloadKeepsThePreviousSnapshotAndCanBeRetried()
+    {
+      WithDispatcher(async () =>
+      {
+        using var fixture=new Fixture();
+        SeedReloadStress(fixture);
+        await fixture.Load();
+        var originalItems=fixture.View.ItemsView;
+        var originalPlaylists=fixture.View.PlaylistView;
+        var originalTotal=fixture.View.TotalWatchedItems;
+        var originalPlaylistTotal=fixture.View.TotalWatched;
+        fixture.Database.SoundItems.Find(10000).TimePlayed=TimeSpan.FromDays(100);
+        fixture.Database.SaveChanges();
+        fixture.Storage.Setup(x=>x.GetTempRepository<SoundItemFilePlaylist>()).Throws(new InvalidOperationException("Playlist read failed."));
+        await Assert.ThrowsAsync<InvalidOperationException>(()=>fixture.Load());
+        Assert.Same(originalItems,fixture.View.ItemsView);
+        Assert.Same(originalPlaylists,fixture.View.PlaylistView);
+        Assert.Equal(originalTotal,fixture.View.TotalWatchedItems);
+        Assert.Equal(originalPlaylistTotal,fixture.View.TotalWatched);
+        Assert.False(fixture.View.LoadingStatus.IsLoading);
+        fixture.Storage.Setup(x=>x.GetTempRepository<SoundItemFilePlaylist>()).Returns(fixture.Database.SoundItemPlaylists.AsNoTracking());
+        await fixture.Load();
+        Assert.NotSame(originalItems,fixture.View.ItemsView);
+        Assert.True(fixture.View.TotalWatchedItems>originalTotal);
+        Assert.Equal(10000,fixture.View.ItemsView[0].Id);
+        Assert.False(fixture.View.LoadingStatus.IsLoading);
+      });
     }
 
     [Fact]
