@@ -2233,6 +2233,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     protected override IEnumerable<SoundItemInPlaylistViewModel> GetVmToPlayFromPlaylist(IEnumerable<PlaylistSoundItem> playlistItems)
     {
+      VPLayer.Domain.Diagnostics.StartupMeasurements.RecordObservation("UI / saved song views / batch factory",viewModelsFactory is ISavedSongViewsFactory?1:0);
       if(viewModelsFactory is ISavedSongViewsFactory savedViews)
         return savedViews.CreateSavedSongViews(playlistItems);
 

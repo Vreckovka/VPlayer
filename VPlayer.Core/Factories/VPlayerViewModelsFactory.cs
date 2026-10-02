@@ -58,21 +58,28 @@ namespace VPlayer.Core.Factories
     {
       // Explicit item bindings can carry custom providers, injection or activation.
       // They and services with transient/conditional scopes retain container creation.
-      if(GetType()!=typeof(VPlayerViewModelsFactory) ||
-        kernel.GetBindings(typeof(SongInPlayListViewModel)).Any(binding=>!binding.IsImplicit)) return false;
+      if(GetType()!=typeof(VPlayerViewModelsFactory)) return RecordBatchFallback("factory type");
+      if(kernel.GetBindings(typeof(SongInPlayListViewModel)).Any(binding=>!binding.IsImplicit)) return RecordBatchFallback("view binding");
       var factories=kernel.GetBindings(typeof(IViewModelsFactory)).ToArray();
       if(factories.Length!=1 || factories[0].IsConditional ||
         factories[0].ScopeCallback!=StandardScopeCallbacks.Transient ||
         !factories[0].Metadata.Has(DefaultFactoryMetadata) ||
-        !factories[0].Metadata.Get<bool>(DefaultFactoryMetadata)) return false;
+        !factories[0].Metadata.Get<bool>(DefaultFactoryMetadata)) return RecordBatchFallback("factory binding");
       foreach(var service in SharedSongServices)
       {
         var bindings=kernel.GetBindings(service).ToArray();
         if(bindings.Length!=1 || bindings[0].IsConditional ||
           (bindings[0].Target!=BindingTarget.Constant && bindings[0].ScopeCallback!=StandardScopeCallbacks.Singleton))
-          return false;
+          return RecordBatchFallback(service.Name);
       }
+      VPLayer.Domain.Diagnostics.StartupMeasurements.RecordObservation("UI / saved song views / batch constructor",1);
       return true;
+    }
+
+    private bool RecordBatchFallback(string reason)
+    {
+      VPLayer.Domain.Diagnostics.StartupMeasurements.RecordObservation("UI / saved song views / fallback "+reason,1);
+      return false;
     }
 
     private Func<Song,SongInPlayListViewModel> CreateSongConstructor()
