@@ -903,7 +903,9 @@ fix is included in the [local test release](local-release.md).
 
 The playlist collection benchmark runs with `playlist-collection <fixture-directory>
 <new-output.json> <commit>` in the performance runner. It uses 100k real saved song
-views, duplicate tracks and stored file information from playlist 658. The timed
+views and stored file information from playlist 658. Its original rows have unique
+track IDs; the optional "repeated-tracks" argument repeats the first 50k stored rows
+twice and creates independent view models for all 100k occurrences. The timed
 boundary includes reactive membership observers and WPF ListCollectionView; database
 reads, view construction, dispatcher scheduling, verification, disposal and painting
 are excluded. Raw JSON records first/repeated samples and allocated bytes for

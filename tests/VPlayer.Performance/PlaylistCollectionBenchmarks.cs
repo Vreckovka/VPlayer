@@ -16,7 +16,7 @@ namespace VPlayer.Performance
 {
   internal static class PlaylistCollectionBenchmarks
   {
-    internal static void Run(string directory,string output,string commit)
+    internal static void Run(string directory,string output,string commit,bool repeatedTracks=false)
     {
       if(File.Exists(output)) throw new InvalidOperationException("Benchmark output is immutable.");
       var database=Path.Combine(Path.GetFullPath(directory),"VPlayerDatabase.db");
@@ -26,6 +26,7 @@ namespace VPlayer.Performance
         .OrderBy(x=>x.OrderInPlaylist).ThenBy(x=>x.Id).ToArray();
       if(rows.Length!=100000 || rows.Any(x=>x.ReferencedItem==null))
         throw new InvalidOperationException("Requires 100k available stored occurrences.");
+      if(repeatedTracks)rows=rows.Take(50000).Concat(rows.Take(50000)).ToArray();
       using var fixture=new SavedSongViewFixture(true);
       var views=fixture.Create(rows).ToArray();
       var samples=new List<object>();
@@ -76,6 +77,7 @@ namespace VPlayer.Performance
       File.WriteAllText(output,JsonSerializer.Serialize(new {SchemaVersion=1,Commit=commit,CreatedUtc=DateTime.UtcNow,
         Runtime=Environment.Version.ToString(),Configuration="Release",Environment.ProcessorCount,
         FixtureSha256=BitConverter.ToString(hash.ComputeHash(stream)).Replace("-",""),Entries=rows.Length,
+        SourceOccurrences=repeatedTracks?"first 50k stored occurrences repeated twice":"original 100k stored occurrences",
         DuplicateTracks=rows.Length-rows.Select(x=>x.ReferencedItem.Id).Distinct().Count(),
         MissingFileInfo=rows.Count(x=>x.ReferencedItem.FileInfoEntity==null),
         Boundary="Production playlist collection with 100k real saved song views, synchronous membership observers and WPF ListCollectionView; database reads, view construction, dispatcher scheduling, verification, disposal and UI painting excluded",
