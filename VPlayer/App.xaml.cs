@@ -80,6 +80,8 @@ namespace VPlayer
     public override void Initialize()
     {
       using var measurement = StartupMeasurements.Measure("Application / initialization");
+      if (Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_PREPARE_PLAYLIST_QUERY") == "1")
+        _ = VPlayer.AudioStorage.AudioDatabase.PlaylistQueries.PrepareAsync();
       base.Initialize();
 
       using (StartupMeasurements.Measure("Application / OpenCV native initialization")) CvInvoke.Init();

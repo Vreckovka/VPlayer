@@ -398,3 +398,18 @@ with the seven c7894170 launches. Those phases complete before each launch's
 reload burst, so they keep their original timing boundaries. The previous
 5df42e33 series/report remain in iterations/buffered-ui-5df42e33.*. The separate
 playlist-name comparison and its mixed-direction results are still retained.
+
+The startup preparation candidate shares the production public-playlist query
+shape and prepares its async enumerator without advancing it. This moves model
+setup and query compilation onto an early worker; it executes no row queries.
+[EF query caching](https://learn.microsoft.com/en-us/ef/core/performance/advanced-performance-topics)
+is the relevant provider mechanism. Native EF 5.0.3/SQLite checks verify no
+connection opening, reuse across contexts, 10k-row privacy/order correctness,
+disposal after failure and successful retry. All 149 tests and the application
+Release build pass.
+
+The candidate is opt-in while measured: startup.ps1 -PreparePlaylistQuery
+sets the application preparation flag and records PlaylistQueryPreparation in
+each result. Ordinary launches keep preparation disabled until paired evidence
+supports adoption. The baseline and prepared series alternate on the same
+compiled application with buffered-v1/none diagnostics and fresh copied profiles.
