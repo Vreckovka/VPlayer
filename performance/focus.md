@@ -20,3 +20,5 @@ Fresh process/profile measurements do not establish a cold disk-cache baseline. 
 Local test release uses VPlayer/Properties/PublishProfiles/FolderProfile.pubxml (D:\VPlayer) and the existing VersionAutoIncrement.tt formula. Deployment replaces published application files after backing them up; it preserves the installed settings and roaming library database.
 
 Keep the user's running VPlayer and installed files untouched. Benchmarks use an agent-owned build and copied data. Deploy only on a new explicit user request, after the user closes the app themselves.
+
+Startup evidence: [prepared VLC plugins](vlc-startup-results.md) cuts the first observed initial-library-view delay from 42k ms to 20.9k ms (-50.3%) in the expanded-library published-build benchmark. Restart-based cold measurement remains pending. The branch packaging optimization awaits deployment.
