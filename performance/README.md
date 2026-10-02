@@ -650,3 +650,34 @@ music/publication endpoint to finish, while excluding those separate shutdown
 tasks from its active-endpoint gate. Active enrichment remains rejected.
 Collection publication at 15.2k ms, including 11.3k ms replacement, is the next
 largest measured loading bottleneck; it has no consistent measured gain yet.
+
+The ff22209c collection task defers WPF Count/Item[] and collection notifications
+while retaining every Rx item event, order and duplicate occurrence. Ordinary
+edits retain Rx tracking after the batch, and Clear also empties the secondary
+view. Four new collection regressions cover 100k entries (200k for self-append),
+WPF ListCollectionView, tracking, empty append, throwing observers and enumerators.
+Player duration regressions now use 100k entries. All 176 tests passed; after
+adding the secondary-view clear fix, all seven affected tests passed again.
+The Release build has 152 warnings and no errors.
+
+The prior complete 5be3a2c4 baseline is frozen in
+iterations/music-collection-publication-baseline-5be3a2c4.json. The ff22209c
+completed native series is now music-playlist-ui-optimized.json: load/render
+27k ms (-16.7%), collection publication 8.4k ms (-44.7%), replacement 4.4k ms
+(-61.2%). All three completed runs passed ordered 100k occurrence, stored metadata,
+composition, final-row and unchanged search fingerprint checks. Loaded/final rows
+and empty/five-row searches were visually inspected. One additional launch timed
+out in incoming data/view creation; it remains in
+iterations/music-collection-read-timeout-ff22209c.json and is disclosed in the
+compact reports. Completed-endpoint medians do not establish improved reliability.
+
+Clear-before-load is slower (2.2k vs 662.7 ms); its collection stage is only
+5-9 ms and most measured time is awaiting saves. Scroll and search medians also
+increased and remain visible. No improvement is claimed for these regressions.
+Remaining collection publication is 8.4k ms; saved/incoming view creation is
+5.3k/5.1k ms, with duplicate conversion and dispatch still to investigate.
+
+Regenerate the native comparison with music-playlist-ui-report.ps1 using
+-Baseline performance/iterations/music-collection-publication-baseline-5be3a2c4.json
+-Optimized performance/music-playlist-ui-optimized.json
+-IncompleteRuns performance/iterations/music-collection-read-timeout-ff22209c.json.

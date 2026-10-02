@@ -3,6 +3,7 @@ param(
   [string]$Optimized,
   [string]$EnrichmentBaseline=(Join-Path $PSScriptRoot 'iterations/music-enrichment-baseline-0fcece16.json'),
   [string]$ClearBaseline=(Join-Path $PSScriptRoot 'iterations/music-clear-save-wait-baseline-cc2bf8e2.json'),
+  [string]$IncompleteRuns,
   [string]$Output=(Join-Path $PSScriptRoot 'music-playlist-ui-results.md')
 )
 $ErrorActionPreference='Stop'
@@ -78,7 +79,28 @@ function Timing($runs,$name) {
 }
 $a=Read-Series $Baseline
 $b=Read-Series $Optimized
-if($b.Count){Same $a[0] $b[0]}
+if($b.Count){
+  Same $a[0] $b[0]
+  if($a[0].Status -eq 'Rendered' -and $b[0].Status -eq 'Rendered') {
+    foreach($kind in @('long no-match','long near-match')) {
+      foreach($metric in @('matches','ordered ids hash','query length')) {
+        $key='UI / music playlist / '+$kind+' '+$metric
+        if($a[0].Observations.$key -ne $b[0].Observations.$key){throw ('Changed search result or input: '+$key)}
+      }
+    }
+  }
+}
+$incomplete=@()
+if($IncompleteRuns) {
+  if(!$b.Count){throw 'Incomplete evidence requires an optimized series'}
+  $incomplete=@(Get-Content -LiteralPath $IncompleteRuns -Raw|ConvertFrom-Json)
+  foreach($run in $incomplete) {
+    Same $b[0] $run
+    if($run.Commit -ne $b[0].Commit -or $run.Status -ne 'Timeout' -or $run.TimeoutSeconds -ne 60 -or
+       $run.FailureType -or $run.DiagnosticMode -ne 'buffered-v1' -or $run.DiagnosticProfile -ne 'none' -or
+       'UI / music playlist / read and create incoming views' -notin $run.ActivePhases){throw 'Invalid incomplete read evidence'}
+  }
+}
 $c=@(Get-Content -LiteralPath $EnrichmentBaseline -Raw|ConvertFrom-Json)
 if(!$c.Count){throw 'Empty enrichment control'}
 foreach($run in $c){
@@ -129,5 +151,6 @@ if($completeBaseline) {
 } else {
 $lines+=@('','The timeout is the overall process limit. Unfinished endpoints have no percentage; completed phase medians exclude the small startup playlist. Clear uses the separate save-wait control; stored-song/replacement/dispatch rows use the pre-lookup control. Painted activation has no prior baseline. Raw phases, failures and provenance stay in JSON.')
 }
+if($incomplete.Count){$lines+=@('','Read timeout retained in raw evidence; medians use completed runs.')}
 $lines|Set-Content -LiteralPath $Output
 Write-Output ('Wrote '+$Output)
