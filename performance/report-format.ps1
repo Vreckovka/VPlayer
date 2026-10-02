@@ -14,3 +14,12 @@ function Format-Change($baseline,$current) {
   $sign=if($change -gt 0){'+'}else{'-'}
   return ' ('+$sign+([Math]::Abs($change)).ToString('0.#',[Globalization.CultureInfo]::InvariantCulture)+'%)'
 }
+
+# Old traces wrote synchronously; never attribute a measurement-protocol change
+# to application optimization. Missing mode is the original protocol.
+function Assert-DiagnosticMode($reference,$runs) {
+  $modes=@(@($reference)+@($runs) | Where-Object {$null -ne $_} | ForEach-Object {
+    if($_.DiagnosticMode){$_.DiagnosticMode}else{'synchronous-v1'}
+  } | Select-Object -Unique)
+  if($modes.Count -gt 1){throw 'Incompatible diagnostic modes; establish a new UI baseline.'}
+}

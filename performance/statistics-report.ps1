@@ -31,6 +31,7 @@ function Complete-UI($run) {
 }
 function UI-Time($runs) {
   if(!$runs.Count){return $null}
+  Assert-DiagnosticMode $runs @()
   foreach($run in $runs) {
     Assert-Fields $runs[0] $run @('Commit','FixtureSha256','SoundItems','Playlists','WindowMode','Runtime','Configuration','ProcessorCount','OS')
   }
@@ -56,6 +57,7 @@ $oldUI=UI-Time $oldUIRuns
 $incomplete=@($newUIRuns|Where-Object{!(Complete-UI $_)}).Count -gt 0
 $newUI=UI-Time $newUIRuns
 if($newUIRuns.Count) {
+  Assert-DiagnosticMode $oldUIRuns $newUIRuns
   Assert-Fields $oldUIRuns[0] $newUIRuns[0] @('FixtureSha256','SoundItems','Playlists','WindowMode','Runtime','Configuration','ProcessorCount','OS')
 }
 if($a.FixtureSha256 -ne $oldUIRuns[0].FixtureSha256){throw 'Statistics data and UI fixtures differ'}

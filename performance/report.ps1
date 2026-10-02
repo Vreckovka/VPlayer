@@ -37,6 +37,7 @@ function Format-Startup($runs,$name) {
   return $text
 }
 function Startup-Comparison($reference,$runs,$name) {
+  Assert-DiagnosticMode $reference $runs
   return (Format-Startup $runs $name)+(Format-Change (Startup-Median $reference $name) (Startup-Median $runs $name))
 }
 function Display-Name([string]$name) {
@@ -74,6 +75,7 @@ function Startup-Reference($name) {
   return $baseStartup
 }
 foreach($runs in (@($baseStartup,$newStartup,$readyStartup)+@($phaseSources))) {
+  Assert-DiagnosticMode $runs @()
   if($runs.Count -and @($runs | ForEach-Object WindowMode | Select-Object -Unique).Count -ne 1) {throw 'Mixed startup window modes'}
   if($runs.Count -and @($runs | ForEach-Object Commit | Select-Object -Unique).Count -ne 1) {throw 'Mixed startup commits'}
 }

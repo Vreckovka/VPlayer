@@ -18,6 +18,15 @@ namespace VPLayer.Domain.Diagnostics
     private static long diagnosticWrites;
     private static double diagnosticWriteMilliseconds;
     private static double longestDiagnosticWriteMilliseconds;
+    private static readonly object writeMetricsGate=new object();
+    private static readonly BufferedDiagnosticWriter writer;
+    static StartupMeasurements()
+    {
+      if(!Enabled) return;
+      writer=new BufferedDiagnosticWriter(WriteSnapshot);
+      AppDomain.CurrentDomain.ProcessExit+=(sender,args)=> {try {writer.Flush();} catch {}};
+    }
+    public static void Flush() {writer?.Flush();}
     private static string status="Starting";
     private static string failure;
     public static bool Enabled=>!string.IsNullOrWhiteSpace(output);
@@ -76,19 +85,31 @@ namespace VPLayer.Domain.Diagnostics
     }
     private static void Write(string status,string failure)
     {
-      var writeWatch=Stopwatch.StartNew();
-      var path=Path.GetFullPath(output);
-      Directory.CreateDirectory(Path.GetDirectoryName(path));
-      File.WriteAllText(path,JsonSerializer.Serialize(new
+      object metrics;
+      lock(writeMetricsGate) metrics=new {Count=diagnosticWrites,Milliseconds=diagnosticWriteMilliseconds,LongestMilliseconds=longestDiagnosticWriteMilliseconds};
+      writer.Post(JsonSerializer.Serialize(new
       {
         Status=status,FailureType=failure,ActivePhases=active.ToArray(),Commit=Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_COMMIT"),
         Runtime=Environment.Version.ToString(),CreatedUtc=DateTime.UtcNow,Phases=phases,Observations=observations,
-        DatabaseReads=databaseReads,DiagnosticWrites=new {Count=diagnosticWrites,Milliseconds=diagnosticWriteMilliseconds,LongestMilliseconds=longestDiagnosticWriteMilliseconds}
+        DatabaseReads=databaseReads,DiagnosticWrites=metrics,DiagnosticMode="buffered-v1"
       },new JsonSerializerOptions {WriteIndented=true}));
-      writeWatch.Stop();
-      diagnosticWrites++;
-      diagnosticWriteMilliseconds+=writeWatch.Elapsed.TotalMilliseconds;
-      longestDiagnosticWriteMilliseconds=Math.Max(longestDiagnosticWriteMilliseconds,writeWatch.Elapsed.TotalMilliseconds);
+    }
+    private static void WriteSnapshot(string snapshot)
+    {
+      var watch=Stopwatch.StartNew();
+      var path=Path.GetFullPath(output);
+      Directory.CreateDirectory(Path.GetDirectoryName(path));
+      // An interrupted process retains the last complete JSON snapshot.
+      var temporary=path+".tmp";
+      File.WriteAllText(temporary,snapshot);
+      File.Move(temporary,path,true);
+      watch.Stop();
+      lock(writeMetricsGate)
+      {
+        diagnosticWrites++;
+        diagnosticWriteMilliseconds+=watch.Elapsed.TotalMilliseconds;
+        longestDiagnosticWriteMilliseconds=Math.Max(longestDiagnosticWriteMilliseconds,watch.Elapsed.TotalMilliseconds);
+      }
     }
     private sealed class Scope : IDisposable
     {

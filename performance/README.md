@@ -188,3 +188,18 @@ real application despite much faster isolated runs, so diagnose concurrent work,
 database waits and scheduling before attributing these delays to query logic.
 Screenshots of both fixtures were visually checked and immutable hashes verified.
 The earlier native initialization timeout remains unproven; the goal continues.
+
+Reader traces at 29d1ce75 are retained in
+iterations/statistics-query-waits-29d1ce75.json. Growing diagnostic snapshots
+were synchronously written roughly 124 times per launch, costing 1.0–1.5k ms
+in total, including individual writes above 500 ms. Reader lifetimes also
+contained multi-second outliers, so file logging does not explain all delays.
+
+Diagnostics now coalesce snapshots on a background writer and atomically replace
+the last complete JSON file. Explicit final flushing occurs after timed UI work.
+Three tests cover blocked disk writes with 10k concurrent producers, final
+snapshot durability and disk failure propagation; all 116 tests pass.
+New traces identify the protocol as buffered-v1. Report scripts reject mixed
+protocol comparisons: changing the observer is not an application speedup.
+Historical UI comparisons retain their original synchronous protocol; establish
+a separate buffered baseline before further UI optimization.

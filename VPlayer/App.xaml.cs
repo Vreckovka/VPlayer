@@ -133,6 +133,7 @@ namespace VPlayer
           }
           finally
           {
+            StartupMeasurements.Flush();
             if (Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_EXIT_AFTER_RENDER") == "1")
               Dispatcher.BeginInvoke(new Action(() => Shutdown()));
           }
