@@ -141,3 +141,18 @@ median is marked as an incomplete series. Screenshots of both versions were
 visually checked. The immutable fixture checksum remained unchanged.
 Prioritize that startup delay and first-load query/JIT costs in the continuing
 application audit; the broader application goal is not yet complete.
+
+Focused traces at 18875173 split native core loading, LibVLC construction,
+MediaPlayer construction and event setup. All traced launches completed, with
+LibVLC instance construction below 300 ms; the earlier 54.1k ms delay did not
+recur, and its cause remains unproven. The trace is retained under iterations/.
+No claim is made that instrumentation fixed it.
+
+Statistics query traces identify sound-score reading as the largest query phase.
+The first isolated traced load was 1.9k ms, showing substantial variation against
+the earlier 6k ms sample. These instrumented timings are diagnostic records,
+not replacements for the uninstrumented baseline/optimized comparisons.
+The stress fixture has 143,610 zero-time sound rows out of 207,110 (69.3%).
+Such rows do not contribute to totals; only 30 smallest public IDs are needed
+for ranking. Negative legacy times and entirely unplayed 10k-item libraries
+are covered explicitly before reducing score materialization.
