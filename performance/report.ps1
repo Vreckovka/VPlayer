@@ -157,6 +157,15 @@ foreach($category in @('Data','Playlist','UI','Lyrics','Spectrum')) {
   $title=switch($category){'Lyrics' {'Lyrics (10k seeks)'} 'Spectrum' {'Spectrum (1k frames)'} default {$category}}
   $lines.Add('## '+$title)
   if($category -eq 'UI') {
+    $searchReport=Join-Path $PSScriptRoot 'fuzzy-search-results.md'
+    if(Test-Path -LiteralPath $searchReport) {
+      $lines.Add('')
+      $lines.Add('### Full library fuzzy search')
+      $lines.Add('')
+      foreach($row in @(Get-Content -LiteralPath $searchReport|Where-Object {$_.StartsWith('|')})){$lines.Add($row)}
+      $lines.Add('')
+      $lines.Add('Production filtering and result publication; loading and XAML are measured separately.')
+    }
     $reloadReport=Join-Path $PSScriptRoot 'statistics-reload-results.md'
     if(Test-Path -LiteralPath $reloadReport) {
       $lines.Add('')
@@ -232,7 +241,7 @@ foreach($category in @('Data','Playlist','UI','Lyrics','Spectrum')) {
 $lines.Add('')
 $lines.Add('## Still to measure')
 $lines.Add('')
-$lines.Add('Library cards/scrolling; navigation/details; file browser/thumbnails; settings/dialogs; video/fullscreen; cloud timeouts; full library load/fuzzy filtering.')
+$lines.Add('Library cards/scrolling; navigation/details; file browser/thumbnails; settings/dialogs; video/fullscreen; cloud timeouts; full library load; rendered fuzzy filtering.')
 $lines.Add('')
 $lines.Add('Percentage changes in unchanged code are observations. Startup phases overlap; component UI tests use a simplified list. Raw samples, maxima, allocations and commit/fixture provenance remain in the JSON files and [README](README.md).')
 $lines.Add('')

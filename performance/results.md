@@ -121,6 +121,17 @@ Query preparation reduced query time; overall readiness improved slightly and fi
 
 ## UI
 
+### Full library fuzzy search
+
+| Baseline now | New optimized version |
+| --- | --- |
+| **long near-match / first search** — 13.3k ms | Pending |
+| **long near-match / repeat search** — 12.9k ms | Pending |
+| **long no-match / repeat search** — 12.7k ms | Pending |
+| **long no-match / first search** — 12.4k ms | Pending |
+
+Production filtering and result publication; loading and XAML are measured separately.
+
 ### Statistics reload bursts (32 rapid requests)
 
 | Baseline now | New optimized version |
@@ -191,7 +202,7 @@ Data rows include dispatcher publication; the WPF row includes rendering in the 
 
 ## Still to measure
 
-Library cards/scrolling; navigation/details; file browser/thumbnails; settings/dialogs; video/fullscreen; cloud timeouts; full library load/fuzzy filtering.
+Library cards/scrolling; navigation/details; file browser/thumbnails; settings/dialogs; video/fullscreen; cloud timeouts; full library load; rendered fuzzy filtering.
 
 Percentage changes in unchanged code are observations. Startup phases overlap; component UI tests use a simplified list. Raw samples, maxima, allocations and commit/fixture provenance remain in the JSON files and [README](README.md).
 
