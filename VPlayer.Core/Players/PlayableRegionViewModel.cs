@@ -1097,14 +1097,17 @@ namespace VPlayer.Core.ViewModels
 
     public virtual async Task ClearPlaylist()
     {
-      if (ActualSavedPlaylist.Id > 0)
+      using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("UI / player playlist / clear save"))
       {
-        await UpdateActualSavedPlaylistPlaylist();
+        if (ActualSavedPlaylist.Id > 0)
+          await UpdateActualSavedPlaylistPlaylist();
       }
 
-      await ResetProperties();
+      using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("UI / player playlist / clear reset"))
+        await ResetProperties();
 
-      PlayList.Clear();
+      using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("UI / player playlist / clear collection"))
+        PlayList.Clear();
     }
 
     #endregion
@@ -1999,14 +2002,20 @@ namespace VPlayer.Core.ViewModels
 
         var sourcePlaylist = ActualSavedPlaylist;
         var version = Interlocked.Increment(ref playlistSaveVersion);
-        var clone = sourcePlaylist.DeepClone();
-        await playlistSemaphore.WaitAsync();
+        TPlaylistModel clone;
+        using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("UI / player playlist / save snapshot"))
+          clone = sourcePlaylist.DeepClone();
+        using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("UI / player playlist / save queue wait"))
+          await playlistSemaphore.WaitAsync();
 
         return await Task.Run(async () =>
         {
           try
           {
-            var result = storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel, TModel>(clone, out var updated);
+            TPlaylistModel updated;
+            bool result;
+            using (VPLayer.Domain.Diagnostics.StartupMeasurements.Measure("UI / player playlist / save database"))
+              result = storageManager.UpdatePlaylist<TPlaylistModel, TPlaylistItemModel, TModel>(clone, out updated);
 
             if (result && updated.IsPrivate)
             {

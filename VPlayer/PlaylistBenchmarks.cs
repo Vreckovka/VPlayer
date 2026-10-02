@@ -33,7 +33,8 @@ namespace VPlayer
         await WaitForMusic(window,()=>player.PlayList.Count>0 && FindTrackList(window)!=null &&
           FindTrackList(window).ItemContainerGenerator.ContainerFromIndex(0) is ListViewItem,"Initial music view",20);
       }
-      await player.ClearPlaylist();
+      using(StartupMeasurements.Measure("UI / music playlist / clear before load"))
+        await player.ClearPlaylist();
       var playlists=Kernel.Get<SoundItemPlaylistsViewModel>();
       var saved=playlists.LibraryCollection.Items.Single(item=>item.Model.Name=="VPlayer benchmark 100000");
       SoundItemInPlaylistViewModel[] incoming;

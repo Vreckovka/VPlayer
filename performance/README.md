@@ -591,3 +591,9 @@ The retry painted the initial music view, then timed out before the large read
 scope opened; the clear operation currently has no scope. Neither attempt
 provides a comparable enrichment or end-to-end gain. Optimized playlist values
 remain pending. The next diagnostic target is clearing before the large load.
+
+Clear/save diagnostics now distinguish the native clear endpoint, saved
+snapshot creation, save queue wait, database update, player reset and final
+collection clearing. The Release build passes. These opt-in scopes retain the
+existing operation order and are disabled during ordinary application use;
+the next native control will identify the incomplete clear stage before fixes.
