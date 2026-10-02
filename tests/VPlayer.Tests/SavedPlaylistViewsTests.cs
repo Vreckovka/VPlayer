@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using VPlayer.AudioStorage.DomainClasses;
 using VPlayer.Core.ViewModels.SoundItems;
 using VPlayer.TestSupport;
@@ -24,6 +25,8 @@ namespace VPlayer.Tests
         Assert.Equal(100000,views.Length);
         Assert.Equal(100000,new HashSet<SongInPlayListViewModel>(views).Count);
         Assert.Equal(100000,new HashSet<Song>(views.Select(x=>x.SongModel)).Count);
+        var factories=typeof(SongInPlayListViewModel).GetField("viewModelsFactory",BindingFlags.Instance|BindingFlags.NonPublic);
+        Assert.Equal(100000,new HashSet<object>(views.Select(view=>factories.GetValue(view))).Count);
         for(int i=0;i<views.Length;i++)
         {
           Assert.Same(rows[i].ReferencedItem,views[i].Model);

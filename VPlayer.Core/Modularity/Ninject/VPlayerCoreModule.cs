@@ -22,7 +22,8 @@ namespace VPlayer.Core.Modularity.Ninject
 
       Kernel.Bind<IVFfmpegProvider>().To<VFfmpegProvider>().InSingletonScope().WithConstructorArgument("ffmpegFolderPath", "ffmpeg");
       Kernel.Bind<IVPlayerViewModelsFactory>().To<VPlayerViewModelsFactory>();
-      Kernel.Rebind<IViewModelsFactory>().To<VPlayerViewModelsFactory>();
+      Kernel.Rebind<IViewModelsFactory>().To<VPlayerViewModelsFactory>()
+        .WithMetadata(VPlayerViewModelsFactory.DefaultFactoryMetadata,true);
 
       Kernel.Bind<IVlcProvider>().To<VlcProvider>().InSingletonScope();
       Kernel.Bind<IStatusManager>().To<VPlayerStatusManager>().InSingletonScope();

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using VPlayer.Core.Factories;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
@@ -2232,6 +2233,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     protected override IEnumerable<SoundItemInPlaylistViewModel> GetVmToPlayFromPlaylist(IEnumerable<PlaylistSoundItem> playlistItems)
     {
+      if(viewModelsFactory is ISavedSongViewsFactory savedViews)
+        return savedViews.CreateSavedSongViews(playlistItems);
+
       return playlistItems.Select(x => viewModelsFactory.Create<SongInPlayListViewModel>(new Song()
       {
         ItemModel = x.ReferencedItem
