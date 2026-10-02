@@ -7,12 +7,14 @@ param(
   [switch]$Visible,
   [switch]$ScrollPlaylists,
   [switch]$Statistics,
-  [switch]$CpuProfile
+  [switch]$CpuProfile,
+  [string]$TraceTool
 )
 $ErrorActionPreference='Stop'
 $fixture=(Resolve-Path -LiteralPath $FixtureDirectory).Path
 $destination=(Resolve-Path -LiteralPath $RunDirectory).Path
 $app=(Resolve-Path -LiteralPath $Application).Path
+$traceExecutable=if($TraceTool){(Resolve-Path -LiteralPath $TraceTool).Path}else{$null}
 $metadata=Get-Content -LiteralPath (Join-Path $fixture 'fixture.json') -Raw | ConvertFrom-Json
 $checksum=(Get-FileHash -LiteralPath (Join-Path $fixture 'VPlayerDatabase.db') -Algorithm SHA256).Hash
 if($checksum -ne $metadata.DatabaseSha256) {throw 'Performance fixture changed.'}
@@ -46,6 +48,22 @@ try {
       RedirectStandardError=(Join-Path $destination ('startup-'+$i+'.stderr.log'))
     }
     $process=Start-Process @launch
+    $traceProcess=$null
+    $tracePath=Join-Path $destination ('startup-'+$i+'.nettrace')
+    if($traceExecutable) {
+      $traceLaunch=@{
+        FilePath=$traceExecutable;WindowStyle='Hidden';PassThru=$true
+        ArgumentList=@(
+          'collect','--process-id',$process.Id,'--output',('"'+$tracePath+'"'),
+          '--profile','dotnet-sampled-thread-time',
+          '--providers','Microsoft-Windows-DotNETRuntime:0x40014001:4',
+          '--duration','00:00:01:00'
+        )
+        RedirectStandardOutput=(Join-Path $destination ('startup-'+$i+'.trace.stdout.log'))
+        RedirectStandardError=(Join-Path $destination ('startup-'+$i+'.trace.stderr.log'))
+      }
+      $traceProcess=Start-Process @traceLaunch
+    }
     if(!$process.WaitForExit(60000)) {
       Stop-Process -Id $process.Id -Force
       $record=@{Status='Timeout';Commit=$Commit;Phases=@();TimeoutSeconds=60}
@@ -64,6 +82,23 @@ try {
     foreach($name in $environmentMetadata.Keys) {
       if($record -is [Collections.IDictionary]) {$record[$name]=$environmentMetadata[$name]}
       else {$record | Add-Member -NotePropertyName $name -NotePropertyValue $environmentMetadata[$name] -Force}
+    }
+    if($traceProcess) {
+      if(!$traceProcess.WaitForExit(30000)) {
+        Stop-Process -Id $traceProcess.Id -Force
+        throw 'Trace collector did not finish after the benchmark process exited.'
+      }
+      if($traceProcess.ExitCode -ne 0 -or !(Test-Path -LiteralPath $tracePath) -or (Get-Item -LiteralPath $tracePath).Length -eq 0) {
+        throw 'Trace collector failed; retained collector logs and benchmark output.'
+      }
+      $profile=if($record.DiagnosticProfile){$record.DiagnosticProfile}else{'none'}
+      if($record -is [Collections.IDictionary]) {
+        $record['DiagnosticProfile']=$profile+'-eventpipe'
+        $record['ExternalTrace']='dotnet-sampled-thread-time; CLR GC/contention/threading/stacks'
+      } else {
+        $record | Add-Member -NotePropertyName DiagnosticProfile -NotePropertyValue ($profile+'-eventpipe') -Force
+        $record | Add-Member -NotePropertyName ExternalTrace -NotePropertyValue 'dotnet-sampled-thread-time; CLR GC/contention/threading/stacks' -Force
+      }
     }
     $record | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath $result
     Write-Output ('Startup '+$i+': '+$record.Status)

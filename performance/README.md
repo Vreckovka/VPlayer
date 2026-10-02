@@ -296,3 +296,12 @@ duplicate IDs and failures. A native SQLite regression uses 10k long-name artist
 and verifies connection/command completion for synchronous, asynchronous and
 failed queries.
 All 131 tests and the production Release build pass.
+
+startup.ps1 -TraceTool <dotnet-trace.exe> optionally collects only the launched
+benchmark PID. The collector window stays hidden; output is retained beside
+startup JSON. Samples with an external trace receive a separate diagnostic
+profile suffix and are not valid baseline comparisons. Sampled thread stacks
+include waiting threads, so stack percentages are not CPU percentages
+([tool documentation](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/dotnet-trace)).
+The local investigation uses Microsoft dotnet-trace 9.0.661903 in the ignored
+artifacts/tools directory.
