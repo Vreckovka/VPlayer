@@ -98,6 +98,8 @@ namespace VPlayer.AudioStorage.AudioDatabase
       optionsBuilder.EnableSensitiveDataLogging();
       if(VPLayer.Domain.Diagnostics.StartupMeasurements.Enabled)
         optionsBuilder.AddInterceptors(BenchmarkQueryInterceptor.Instance);
+      if (VPLayer.Domain.Diagnostics.StartupMeasurements.CpuProfilingEnabled)
+        optionsBuilder.AddInterceptors(BenchmarkExecutionInterceptor.Instance,BenchmarkConnectionInterceptor.Instance);
 
       base.OnConfiguring(optionsBuilder);
     }

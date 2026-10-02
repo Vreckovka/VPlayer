@@ -31,7 +31,9 @@ namespace VPLayer.Domain.Diagnostics
     private static string failure;
     public static bool Enabled=>!string.IsNullOrWhiteSpace(output);
     private static readonly bool cpuProfile=Enabled && Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_CPU_PROFILE")=="1";
+    public static bool CpuProfilingEnabled=>cpuProfile;
     public static IDisposable Measure(string name)=>Enabled?new Scope(name):null;
+    public static IDisposable MeasureDatabase(string name)=>cpuProfile?new Scope(name,false):null;
     public static IDisposable MeasureLibrary(string phase,Type model)=>Enabled?Measure("Application / library "+model.Name+" / "+phase):null;
     public static void Start()
     {
@@ -65,11 +67,22 @@ namespace VPLayer.Domain.Diagnostics
     public static void RecordDatabaseRead(string table,bool includesFileMetadata,DateTimeOffset start,double duration,int readOperations)
     {
       if(!Enabled) return;
-      lock(phases) databaseReads.Add(new
+      var wait=cpuProfile?Stopwatch.StartNew():null;
+      lock(phases)
       {
-        Table=table,IncludesFileMetadata=includesFileMetadata,ReadOperations=readOperations,
-        Milliseconds=duration,StartedMilliseconds=(start.UtcDateTime-processStart).TotalMilliseconds
-      });
+        if(cpuProfile) databaseReads.Add(new
+        {
+          Table=table,IncludesFileMetadata=includesFileMetadata,ReadOperations=readOperations,
+          Milliseconds=duration,StartedMilliseconds=(start.UtcDateTime-processStart).TotalMilliseconds,
+          ThreadId=System.Threading.Thread.CurrentThread.ManagedThreadId,
+          DiagnosticWaitMilliseconds=wait.Elapsed.TotalMilliseconds
+        });
+        else databaseReads.Add(new
+        {
+          Table=table,IncludesFileMetadata=includesFileMetadata,ReadOperations=readOperations,
+          Milliseconds=duration,StartedMilliseconds=(start.UtcDateTime-processStart).TotalMilliseconds
+        });
+      }
     }
     public static void Fail(Exception exception)
     {
@@ -92,7 +105,7 @@ namespace VPLayer.Domain.Diagnostics
       {
         Status=status,FailureType=failure,ActivePhases=active.ToArray(),Commit=Environment.GetEnvironmentVariable("VPLAYER_PERFORMANCE_COMMIT"),
         Runtime=Environment.Version.ToString(),CreatedUtc=DateTime.UtcNow,Phases=phases,Observations=observations,
-        DatabaseReads=databaseReads,DiagnosticWrites=metrics,DiagnosticMode="buffered-v1",DiagnosticProfile=cpuProfile?"cpu-v1":"none"
+        DatabaseReads=databaseReads,DiagnosticWrites=metrics,DiagnosticMode="buffered-v1",DiagnosticProfile=cpuProfile?"cpu-v2":"none"
       },new JsonSerializerOptions {WriteIndented=true}));
     }
     private static void WriteSnapshot(string snapshot)
@@ -118,10 +131,14 @@ namespace VPLayer.Domain.Diagnostics
       private readonly RuntimeExecutionSample executionStart=cpuProfile?RuntimeExecutionSample.Capture():default;
       private readonly double started=(DateTime.UtcNow-processStart).TotalMilliseconds;
       private readonly Stopwatch stopwatch=Stopwatch.StartNew();
-      public Scope(string name)
+      private readonly bool publish;
+      private readonly double entryMilliseconds;
+      public Scope(string name,bool publish=true)
       {
         this.name=name;
-        lock(phases) {active.Add(name);Write(status,failure);}
+        this.publish=publish;
+        lock(phases) {active.Add(name);if(publish) Write(status,failure);}
+        entryMilliseconds=cpuProfile?stopwatch.Elapsed.TotalMilliseconds:0;
       }
       public void Dispose()
       {
@@ -130,9 +147,13 @@ namespace VPLayer.Domain.Diagnostics
         lock(phases)
         {
           active.Remove(name);
-          phases.Add(new {Name=name,Milliseconds=stopwatch.Elapsed.TotalMilliseconds,
+          if(cpuProfile) phases.Add(new {Name=name,Milliseconds=stopwatch.Elapsed.TotalMilliseconds,
+            StartedMilliseconds=started,CompletedMilliseconds=started+stopwatch.Elapsed.TotalMilliseconds,
+            Execution=execution,DiagnosticEntryMilliseconds=entryMilliseconds,
+            ThreadId=System.Threading.Thread.CurrentThread.ManagedThreadId});
+          else phases.Add(new {Name=name,Milliseconds=stopwatch.Elapsed.TotalMilliseconds,
             StartedMilliseconds=started,CompletedMilliseconds=started+stopwatch.Elapsed.TotalMilliseconds,Execution=execution});
-          Write(status,failure);
+          if(publish) Write(status,failure);
         }
       }
     }

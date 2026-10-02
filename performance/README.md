@@ -281,3 +281,18 @@ loading improved by 3.2%, while first loading increased by 1.1%; indexes were
 not adopted. Raw queries used covering scans. These data-load measurements
 do not establish a fix for the longer UI waits. Valid paired samples remain in
 the JSON, separate from application baseline/optimized results.
+
+The cpu-v2 profile separates database connection opening and reader-command
+execution from cursor enumeration. Phase DiagnosticEntryMilliseconds includes
+the diagnostics lock and entry snapshot; DatabaseReads.DiagnosticWaitMilliseconds
+records waiting to add a completed reader observation. Thread IDs correlate
+concurrent operations. Database subscopes add records in memory without
+requesting an extra snapshot per query. The ordinary buffered-v1/none protocol
+keeps its existing records; profile compatibility checks reject cpu-v1/cpu-v2
+and profiled/unprofiled comparisons.
+
+Three operation-tracking regressions cover 10k operations across 64 workers,
+duplicate IDs and failures. A native SQLite regression uses 10k long-name artists
+and verifies connection/command completion for synchronous, asynchronous and
+failed queries.
+All 131 tests and the production Release build pass.
