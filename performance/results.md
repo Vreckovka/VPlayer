@@ -70,6 +70,13 @@
 | **albums** — 13.1 ms | 17.7 ms (+35.7%) |
 | **artists** — 7.83 ms | 8.98 ms (+14.7%) |
 
+### Statistics (207k unique file records)
+
+| Baseline now | New optimized version |
+| --- | --- |
+| **first data load** — 4.4k ms | 6k ms (+38.4%) |
+| **warm data load** — 2.9k ms | 471 ms (-83.5%) |
+
 ## Playlist
 
 | Baseline now | New optimized version |
@@ -88,6 +95,14 @@
 | **title search** — 47.6 ms | 41.7 ms (-12.4%) |
 | **virtualized list scroll** — 8.28 ms | 7.44 ms (-10.1%) |
 | **virtualized list layout** — 6.36 ms | 8.16 ms (+28.2%) |
+
+### Statistics (207k unique file records)
+
+| Baseline now | New optimized version |
+| --- | --- |
+| **load and render** — 6.2k ms | 4k ms (-35.2%)* |
+
+* UI timing uses completed Statistics samples; raw JSON retains the incomplete launch.
 
 ### Grouped playlists (5k added favorites)
 

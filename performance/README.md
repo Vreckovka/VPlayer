@@ -105,3 +105,39 @@ changes calculated from unrounded values: negative means less time, positive mea
 more time. Startup breakdowns are collapsed in results.md. Raw JSON retains launch
 counts, first samples, maxima, percentiles, allocations, commits and fixture hashes.
 A missing or failed timing baseline has no percentage.
+
+Statistics uses a separate worst-case fixture made from the grouped-playlist copy.
+prepare-statistics clones file metadata so all 207,110 sound items have independent
+FileInfo rows; it retains the 5,310 playlists and 100k-entry playlist. The parent
+and generated databases are checksum verified. No user library is modified.
+
+The statistics command runs production StatisticsViewModel.LoadData, pumps UI
+publication, and enumerates all four displayed lists. startup.ps1 -Visible -Statistics
+measures actual navigation and populated WPF rendering with a fresh disposable
+profile per launch. Statistics data and UI baselines are frozen separately in
+statistics-baseline.json and statistics-ui-baseline.json. statistics-report.ps1
+checks fixture, workload, runtime, configuration, machine and window compatibility,
+uses only completed UI samples, flags incomplete series, rejects series with no
+completed samples, and uses the same compact timing/percentage format.
+
+The Statistics optimization streams Id/TimePlayed and Id/TotalPlayedTime scores,
+keeps 30 candidates per media/playlist type, then fetches only bounded display
+metadata. It preserves exact tick totals, private filtering and stable ties.
+Song enrichment matches SoundItem type and ID together. Snapshot arrays preserve
+the first row and remove null placeholders; Sounds/Videos bindings now match
+their property names. Six regressions cover 10k unique files and playlists,
+overlapping media IDs, empty/private libraries, long times, ties and reloads.
+Two initial ranking regressions failed before the fix; the full suite now passes
+106 tests. Production Release builds retain the repository's existing warnings.
+
+At 36a1f5c3 the warm Statistics data median fell from 2.9k ms to 471 ms (-83.5%).
+Managed allocation median fell from 460,041,488 to 105,761,112 bytes (-77.0%).
+The first isolated data load increased from 4.4k ms to 6k ms (+38.4%); that regression
+is explicitly reported and remains an optimization target. Completed visible-page
+loads improved from 6.2k ms to 4k ms (-35.2%), with no null item/playlist rows.
+One optimized launch timed out before Statistics while video player activation
+took 54.1k ms. Its raw record is retained in statistics-ui-optimized.json; the UI
+median is marked as an incomplete series. Screenshots of both versions were
+visually checked. The immutable fixture checksum remained unchanged.
+Prioritize that startup delay and first-load query/JIT costs in the continuing
+application audit; the broader application goal is not yet complete.

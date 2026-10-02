@@ -136,6 +136,19 @@ foreach($category in @('Data','Playlist','UI','Lyrics','Spectrum')) {
     $label=(Display-Name $metric.Name) -replace '100000','100k' -replace '10000','10k' -replace '1000','1k'
     $lines.Add('| **'+$label+'** — '+(Format-Metric $metric)+' | '+$newText+' |')
   }
+  if($category -in @('Data','UI')) {
+    $statisticsReport=Join-Path $PSScriptRoot 'statistics-results.md'
+    if(Test-Path -LiteralPath $statisticsReport) {
+      $lines.Add('')
+      $lines.Add('### Statistics (207k unique file records)')
+      $lines.Add('')
+      $lines.Add('| Baseline now | New optimized version |')
+      $lines.Add('| --- | --- |')
+      $label=if($category -eq 'Data'){'data load**'}else{'**load and render**'}
+      foreach($row in @(Get-Content -LiteralPath $statisticsReport|Where-Object {$_.StartsWith('|') -and $_.Contains($label)})) {$lines.Add($row)}
+      if($category -eq 'UI') {foreach($note in @(Get-Content -LiteralPath $statisticsReport|Where-Object {$_.StartsWith('* UI timing')})) {$lines.Add('');$lines.Add($note)}}
+    }
+  }
   if($category -eq 'UI') {
     $groupedReport=Join-Path $PSScriptRoot 'grouped-ui-results.md'
     if(Test-Path -LiteralPath $groupedReport) {
