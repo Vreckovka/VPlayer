@@ -787,3 +787,21 @@ clear/switch, queued notification, disposal and write failure boundaries; the si
 original race/failure cases failed before correction. The normal current-track
 notification remains covered. All 195 tests passed; Release built with 152 warnings
 and no errors. No render deadline or workload was relaxed.
+The verified 09ea4d79 rerun is now the current optimized JSON series. Save/render
+is 28.6k ms (the original save baseline timed out); save/clear/render is 14.3k ms
+versus 66.9k ms (-78.6%). All final write launches completed their painted endpoints
+and exact persisted occurrence checks. The plain music series also completed
+ordered/metadata/composition/final-row and unchanged search fingerprint checks.
+Loaded and final rows were inspected for every plain launch, plus empty/five-row
+search results and saved/cleared write results. Prior 074136ae failures remain
+explicitly linked from the write report; completed medians do not prove reliability.
+
+The follow-up comparisons against the last complete d467b7ad series are
+iterations/music-playlist-playback-save-write-results-09ea4d79.md and
+iterations/music-playlist-playback-save-load-results-09ea4d79.md. Save is slower
+(+3.7%), clear faster (-6.7%), and load/render 26.4k to 24.8k ms (-5.8%). Incoming
+read/conversion, active-item dispatch and near-match search are slower in that
+series and remain visible. The main music table keeps the first complete 5be3a2c4
+baseline, with cumulative load/render 32.4k to 24.8k ms. The largest measured music
+operation remains reorder/save/render; collection publication remains the largest
+loading stage. No other UI category is claimed complete by these checks.

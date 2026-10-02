@@ -125,30 +125,31 @@ Query preparation reduced query time; overall readiness improved slightly and fi
 
 | Baseline now | New optimized version |
 | --- | --- |
-| **clear before load** — 662.7 ms | 1.8k ms (+164.8%) |
-| **load and render** — 32.4k ms | 26.4k ms (-18.6%) |
-| **stored song enrichment** — 2.3k ms | 3.9k ms (+71.2%) |
-| **collection publication** — 15.2k ms | 9.5k ms (-37.2%) |
-| **collection replacement** — 11.3k ms | 4.7k ms (-58.2%) |
-| **incoming song view conversion** — 4.8k ms | 3.74 ms (-99.9%) |
-| **saved playlist view creation** — 4.6k ms | 5.7k ms (+23.4%) |
-| **active item dispatch** — 3.8k ms | 4.4k ms (+16.6%) |
-| **database and incoming views** — 3.2k ms | 3.1k ms (-1.6%) |
-| **stored song read** — 2k ms | 3k ms (+44.6%) |
-| **activation and render** — 2.8k ms | 1.6k ms (-41.4%) |
-| **scroll to last track** — 222.3 ms | 570.8 ms (+156.8%) |
-| **long no-match search and render** — 474.5 ms | 743.7 ms (+56.7%) |
-| **long near-match search and render** — 483.8 ms | 767.4 ms (+58.6%) |
+| **clear before load** — 662.7 ms | 552.3 ms (-16.7%) |
+| **load and render** — 32.4k ms | 24.8k ms (-23.3%) |
+| **stored song enrichment** — 2.3k ms | 2.7k ms (+20.8%) |
+| **collection publication** — 15.2k ms | 9.1k ms (-40.2%) |
+| **collection replacement** — 11.3k ms | 4.7k ms (-58.7%) |
+| **incoming song view conversion** — 4.8k ms | 3.32 ms (-99.9%) |
+| **saved playlist view creation** — 4.6k ms | 5.3k ms (+14.1%) |
+| **active item dispatch** — 3.8k ms | 4.5k ms (+19.2%) |
+| **database and incoming views** — 3.2k ms | 3.5k ms (+8.8%) |
+| **stored song read** — 2k ms | 2.3k ms (+11.4%) |
+| **activation and render** — 2.8k ms | 1.1k ms (-59.1%) |
+| **scroll to last track** — 222.3 ms | 458.5 ms (+106.3%) |
+| **long no-match search and render** — 474.5 ms | 572.6 ms (+20.7%) |
+| **long near-match search and render** — 483.8 ms | 796.2 ms (+64.6%) |
 
 Actual WPF load, scrolling and search. Timeout endpoints have no percentage. [Evidence](music-playlist-ui-results.md).
 Storage task d467b7ad measured +13.9% load/render against its preceding version; scrolling and search also slowed. [Storage task comparison](iterations/music-playlist-write-load-results-d467b7ad.md).
+[Playback-save follow-up](iterations/music-playlist-playback-save-load-results-09ea4d79.md) retains slower stages as well.
 
 ### 100k-track save and clear
 
 | Baseline now | New optimized version |
 | --- | --- |
-| **Reorder, save and render 100k tracks** — Timed out | 27.6k ms |
-| **Save, clear and render 100k tracks** — 66.9k ms | 15.3k ms (-77.1%) |
+| **Reorder, save and render 100k tracks** — Timed out | 28.6k ms |
+| **Save, clear and render 100k tracks** — 66.9k ms | 14.3k ms (-78.6%) |
 
 Persisted occurrences and painted results verified. [Evidence](music-playlist-write-results.md).
 

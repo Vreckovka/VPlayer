@@ -166,6 +166,7 @@ foreach($category in @('Data','Playlist','UI','Lyrics','Spectrum')) {
       $lines.Add('')
       $lines.Add('Actual WPF load, scrolling and search. Timeout endpoints have no percentage. [Evidence](music-playlist-ui-results.md).')
       $lines.Add('Storage task d467b7ad measured +13.9% load/render against its preceding version; scrolling and search also slowed. [Storage task comparison](iterations/music-playlist-write-load-results-d467b7ad.md).')
+      $lines.Add('[Playback-save follow-up](iterations/music-playlist-playback-save-load-results-09ea4d79.md) retains slower stages as well.')
       foreach($note in @(Get-Content -LiteralPath $musicReport|Where-Object {$_.StartsWith('Read timeout retained')})){$lines.Add($note)}
     }
     $writeReport=Join-Path $PSScriptRoot 'music-playlist-write-results.md'

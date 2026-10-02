@@ -70,7 +70,12 @@ foreach($kind in @('Save','Clear')) {
   $lines.Add('| **'+$label+'** — '+$baseText+' | '+(Format-Time $after)+(Format-Change $before $after)+' |')
 }
 $lines.Add('')
-$lines.Add('The save baseline reached reconciliation but exceeded the process budget; it has no percentage. Raw JSON retains all phases, failures and precision, including shutdown save scopes after the verified endpoint. Timings include queue waits and background activity on this machine.')
+if(@($baselineData.Save | Where-Object Status -ne 'Rendered').Count) {
+  $lines.Add('The save baseline did not complete; it has no percentage.')
+}
+$lines.Add('Raw JSON retains all phases, failures and precision, including shutdown save scopes after the verified endpoint. Timings include queue waits and background activity on this machine.')
+$lines.Add('')
+$lines.Add('Earlier rerun failures remain in [retained evidence](iterations/music-playlist-metadata-native-attempts-074136ae.json): initial-render timeout and playback-save exception. Completed timings do not establish failure rates.')
 $lines.Add('')
 $lines.Add('Baseline: `'+$baselineData.Save[0].Commit+'`; optimized: `'+$optimizedData.Save[0].Commit+'`.')
 [IO.File]::WriteAllLines((Join-Path $PWD $Output),$lines,(New-Object Text.UTF8Encoding $false))
