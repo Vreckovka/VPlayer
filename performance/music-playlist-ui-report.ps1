@@ -147,7 +147,7 @@ foreach($scenario in $scenarios) {
   $lines+='| **'+$scenario.Name+'** — '+$left+' | '+$right+' |'
 }
 if($completeBaseline) {
-  $lines+=@('','Compared complete painted runs using the prior version as baseline. - % = less time; + % = more time. Raw phases and provenance stay in JSON.')
+  $lines+=@('','Compared complete painted runs against the frozen baseline. - % = less time; + % = more time. Raw phases and provenance stay in JSON.')
 } else {
 $lines+=@('','The timeout is the overall process limit. Unfinished endpoints have no percentage; completed phase medians exclude the small startup playlist. Clear uses the separate save-wait control; stored-song/replacement/dispatch rows use the pre-lookup control. Painted activation has no prior baseline. Raw phases, failures and provenance stay in JSON.')
 }

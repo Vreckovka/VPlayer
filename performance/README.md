@@ -681,3 +681,39 @@ Regenerate the native comparison with music-playlist-ui-report.ps1 using
 -Baseline performance/iterations/music-collection-publication-baseline-5be3a2c4.json
 -Optimized performance/music-playlist-ui-optimized.json
 -IncompleteRuns performance/iterations/music-collection-read-timeout-ff22209c.json.
+
+The 39e8df24 task removes the incoming song-view conversion for saved-playlist
+PlayFromPlaylist, PlayFromPlaylistLast and InitSetPlaylist events. PlayPlaylist
+still constructs displayed views from authoritative rows ordered by position and
+row ID. The incoming rows remain available for IDs/source in enrichment; they
+previously produced a second set of song views which was immediately discarded.
+Ordinary Play/Add retain construction and copying of position, favorite, playing,
+selection and duration state. Five new regressions use 100k-entry payloads; the
+three saved-playlist cases failed before the fast path. All 181 tests passed and
+the Release build completed with 152 warnings and no errors.
+
+The immediate ff22209c baseline is frozen in
+iterations/music-incoming-views-baseline-ff22209c.json. Its task comparison is
+iterations/music-incoming-views-results-39e8df24.md: conversion 5.1k to 3.81 ms
+(-99.9%), load/render 27k to 23.1k ms (-14.2%). All three native runs completed,
+including ordered 100k occurrences, stored metadata readiness, composition frames,
+final-row viewport checks and unchanged search inputs/result fingerprints.
+Loaded/final rows were inspected for each run, alongside empty and five-row
+search results. Full load/render samples range from 21.7k to 27.1k ms; the slowest
+is retained in the series. Native startup/disposal save scopes remain in raw JSON.
+No new startup reliability claim is made.
+
+The main music table keeps the first complete painted 5be3a2c4 baseline, so it
+shows cumulative load/render 32.4k to 23.1k ms (-28.5%). Its original earlier
+unfinished baselines and the ff22209c read timeout remain in the iterations/raw
+evidence. Clear-before-load is now 3k ms (+36.1% against ff22209c), collection
+publication 9.1k ms (+7.8%) and saved view construction 5.9k ms (+10.7%); these
+slower timings stay visible. Collection publication remains the largest measured
+loading stage; its replacement and dispatch stages are 5.2k and 4.2k ms.
+
+Regenerate the main native table with music-playlist-ui-report.ps1 using
+-Baseline performance/iterations/music-collection-publication-baseline-5be3a2c4.json
+-Optimized performance/music-playlist-ui-optimized.json. Regenerate this task's
+comparison with -Baseline performance/iterations/music-incoming-views-baseline-ff22209c.json
+-Optimized performance/music-playlist-ui-optimized.json
+-Output performance/iterations/music-incoming-views-results-39e8df24.md.
