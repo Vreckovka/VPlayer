@@ -3,6 +3,7 @@ param(
   [string]$Optimized,
   [string]$StartupOptimized,
   [string]$ReadyBaseline='performance/startup-ready-baseline.json',
+  [string[]]$StartupPhaseBaselines=@('performance/startup-detail-baseline.json','performance/startup-shell-baseline.json'),
   [string]$Output='performance/results.md'
 )
 $ErrorActionPreference='Stop'
@@ -45,7 +46,20 @@ $baseStartup=Read-Startup $Baseline
 $newStartup=Read-Startup $(if($StartupOptimized){$StartupOptimized}else{$Optimized})
 $readyStartup=@()
 if($ReadyBaseline -and (Test-Path -LiteralPath $ReadyBaseline)) {$readyStartup=@(Get-Content $ReadyBaseline -Raw | ConvertFrom-Json)}
-foreach($runs in @($baseStartup,$newStartup,$readyStartup)) {
+$phaseSources=[Collections.Generic.List[object]]::new()
+foreach($path in $StartupPhaseBaselines) {
+  if(Test-Path -LiteralPath $path) {$phaseSources.Add(@(Get-Content $path -Raw | ConvertFrom-Json))}
+}
+function Startup-Reference($name) {
+  if($name -eq 'Application / initial playlist view ready') {return $readyStartup}
+  if($name -eq 'Application / first window render') {return $baseStartup}
+  if(@($baseStartup | ForEach-Object {$_.Phases | Where-Object Name -eq $name}).Count) {return $baseStartup}
+  foreach($runs in $phaseSources) {
+    if(@($runs | ForEach-Object {$_.Phases | Where-Object Name -eq $name}).Count) {return $runs}
+  }
+  return $baseStartup
+}
+foreach($runs in (@($baseStartup,$newStartup,$readyStartup)+@($phaseSources))) {
   if($runs.Count -and @($runs | ForEach-Object WindowMode | Select-Object -Unique).Count -ne 1) {throw 'Mixed startup window modes'}
   if($runs.Count -and @($runs | ForEach-Object Commit | Select-Object -Unique).Count -ne 1) {throw 'Mixed startup commits'}
 }
@@ -64,10 +78,14 @@ $lines.Add('Startup comparison commit: '+$(if($newStartup.Count){$newStartup[0].
 if($readyStartup.Count) {
   $lines.Add('The initial populated-view milestone has a separate baseline at '+$readyStartup[0].Commit+' after repairing the startup crash. Earlier failed launches cannot provide this timing.')
 }
+if($phaseSources.Count) {
+  $lines.Add('Additional startup phases use the first recorded baseline containing that phase. Baseline commits: '+(($phaseSources | ForEach-Object {$_.Commit} | Select-Object -Unique) -join ', ')+'. These were recorded before query deferral.')
+}
 $startupNames=@($baseStartup | ForEach-Object {$_.Phases | ForEach-Object Name})
+$startupNames+=@($phaseSources | ForEach-Object {$_ | ForEach-Object {$_.Phases | ForEach-Object Name}})
 $startupNames+=@($newStartup | ForEach-Object {$_.Phases | ForEach-Object Name})
 $startupNames+=@('Application / first window render')
-$startupNames=@($startupNames | Select-Object -Unique | Where-Object {$_ -ne 'Application / initial playlist view ready'} | Sort-Object {Startup-Median $baseStartup $_} -Descending)
+$startupNames=@($startupNames | Select-Object -Unique | Where-Object {$_ -ne 'Application / initial playlist view ready'} | Sort-Object {Startup-Median (Startup-Reference $_) $_} -Descending)
 $startupNames=@('Application / first window render')+@($startupNames | Where-Object {$_ -ne 'Application / first window render'})
 if($readyStartup.Count) {$startupNames=@('Application / initial playlist view ready')+$startupNames}
 # Put explanatory prose before the table, preserving exactly two table columns.
@@ -75,8 +93,11 @@ $lines.Add('')
 $lines.Add('| Baseline now | New optimized version |')
 $lines.Add('| --- | --- |')
 foreach($name in $startupNames) {
-  $reference=if($name -eq 'Application / initial playlist view ready'){$readyStartup}else{$baseStartup}
+  $reference=@(Startup-Reference $name)
   $lines.Add('| **'+$name+'** — '+(Format-Startup $reference $name)+' | '+(Format-Startup $newStartup $name)+' |')
+  if($name -eq 'Application / first window render' -and $readyStartup.Count) {
+    $lines.Add('| **Application / first window render after crash fix** — '+(Format-Startup $readyStartup $name)+' | '+(Format-Startup $newStartup $name)+' |')
+  }
 }
 foreach($category in @('Data','Playlist','UI','Lyrics','Spectrum')) {
   $lines.Add('')

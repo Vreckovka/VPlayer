@@ -59,7 +59,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
 
       ViewModelsFactory = viewModelsFactory ?? throw new ArgumentNullException(nameof(viewModelsFactory));
 
-      LoadQuery = storageManager.GetTempRepository<TModel>();
+      ResetLoadQuery();
       LoadData = LoadInitilizedDataAsync();
     }
 
@@ -124,7 +124,33 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
 
     #endregion
 
-    public IQueryable<TModel> LoadQuery { get; set; }
+    private IQueryable<TModel> customQuery;
+    private Func<IQueryable<TModel>, IQueryable<TModel>> queryTransform;
+    private Lazy<IQueryable<TModel>> deferredQuery;
+    public IQueryable<TModel> LoadQuery
+    {
+      get => deferredQuery.Value;
+      set { customQuery = value; ResetLoadQuery(); }
+    }
+
+    public void ConfigureQuery(Func<IQueryable<TModel>, IQueryable<TModel>> transform)
+    {
+      queryTransform = transform ?? throw new ArgumentNullException(nameof(transform));
+      ResetLoadQuery();
+    }
+
+    private void ResetLoadQuery()
+    {
+      var query = customQuery;
+      var transform = queryTransform;
+      deferredQuery = new Lazy<IQueryable<TModel>>(() =>
+      {
+        using var measurement = StartupMeasurements.MeasureLibrary("repository setup", typeof(TModel));
+        var root = query ?? storageManager.GetTempRepository<TModel>();
+        return transform == null ? root :
+          transform(root) ?? throw new InvalidOperationException("Query configuration returned null.");
+      }, LazyThreadSafetyMode.ExecutionAndPublication);
+    }
     public IObservable<bool> LoadData { get; }
     public bool WasLoaded { get; private set; }
     public Action DataLoadedCallback { get; set; }
@@ -407,7 +433,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
     public void Clear()
     {
       Items?.Clear();
-      LoadQuery = storageManager.GetTempRepository<TModel>();
+      LoadQuery = null;
       FilteredItemsCollection?.Clear();
       WasLoaded = false;
     }

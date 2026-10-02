@@ -133,7 +133,7 @@ namespace VPlayer.Home.ViewModels
 
     #endregion
 
-    public override IQueryable<TPlaylistModel> LoadQuery => base.LoadQuery.OrderByDescending(x => x.LastPlayed).Where(x => !x.IsPrivate);
+    protected override IQueryable<TPlaylistModel> ConfigureLoadQuery(IQueryable<TPlaylistModel> query) => base.ConfigureLoadQuery(query).OrderByDescending(x => x.LastPlayed).Where(x => !x.IsPrivate);
 
     public ObservableCollection<TViewModel> ViewCollection
     {

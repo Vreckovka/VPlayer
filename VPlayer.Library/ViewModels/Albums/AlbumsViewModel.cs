@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Windows;
 using Logger;
@@ -46,7 +46,7 @@ namespace VPlayer.Home.ViewModels.Albums
 
     public override bool ContainsNestedRegions => false;
     public override string Header => "Albums";
-    public override IQueryable<Album> LoadQuery => base.LoadQuery.Include(x => x.Artist).Include(x => x.Songs);
+    protected override IQueryable<Album> ConfigureLoadQuery(IQueryable<Album> query) => base.ConfigureLoadQuery(query).Include(x => x.Artist).Include(x => x.Songs);
     public override string RegionName { get; protected set; } = RegionNames.HomeContentRegion;
     public IEventAggregator EventAggregator { get; }
 

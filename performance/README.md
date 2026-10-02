@@ -61,3 +61,7 @@ Only aggregate timings and non-sensitive workload counts belong in committed rep
 Diagnostic query/factory breakdown: run the Release performance executable with profile-playlist <fixture-directory> unused. These single samples identify a candidate bottleneck; they do not replace the repeated comparison protocol.
 
 The populated initial-view startup baseline is stored separately in startup-ready-baseline.json at commit f9bdaa8a. The original seven visible baseline launches crashed before rendering, so no populated-view time existed there. report.ps1 accepts StartupOptimized for a startup-only comparison and ReadyBaseline for this additional frozen milestone.
+
+Startup phase baselines are retained in startup-detail-baseline.json and startup-shell-baseline.json. The report uses the first recorded baseline containing each phase, names those commits, and keeps the original failed startup baseline. Library query setup moves to the loading worker; artist/album/TV relationships and playlist privacy/order are verified against real SQLite queries.
+
+Query deferral is evaluated against the frozen startup-shell-baseline.json as well as the earlier recovered-startup milestone. Constructor work and repository setup are reported separately; moving work to a background thread is not treated as eliminating its cost. Cold-first launches and maxima remain visible.

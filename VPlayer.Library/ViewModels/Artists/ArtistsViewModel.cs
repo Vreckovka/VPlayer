@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Windows;
 using Microsoft.EntityFrameworkCore;
@@ -48,7 +48,7 @@ namespace VPlayer.Home.ViewModels.Artists
 
     }
 
-    public override IQueryable<Artist> LoadQuery => base.LoadQuery.Include(x => x.Albums).ThenInclude(x => x.Songs);
+    protected override IQueryable<Artist> ConfigureLoadQuery(IQueryable<Artist> query) => base.ConfigureLoadQuery(query).Include(x => x.Albums).ThenInclude(x => x.Songs);
 
     #endregion 
 

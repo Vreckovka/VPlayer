@@ -102,6 +102,86 @@ namespace VPlayer.Tests
     }
 
     [Fact]
+    public void DatabaseSetupIsDeferredToLoadingWorkerAndClearDoesNotReopenIt()
+    {
+      WithDispatcher(async () =>
+      {
+        using var connection=new SqliteConnection("Data Source=:memory:");
+        connection.Open();
+        using var context=new Context(new DbContextOptionsBuilder().UseSqlite(connection).Options);
+        context.Database.EnsureCreated();
+        var storage=new Mock<IStorageManager>();
+        int creates=0,creationThread=0;
+        storage.Setup(x=>x.GetTempRepository<Model>()).Returns(() =>
+        {
+          Interlocked.Increment(ref creates);
+          creationThread=Thread.CurrentThread.ManagedThreadId;
+          return context.Set<Model>().AsNoTracking();
+        });
+        var library=new LibraryCollection<INamedEntityViewModel<Model>,Model>(
+          new Mock<IViewModelsFactory>().Object,storage.Object,new Mock<ILogger>().Object);
+        int ownerThread=Thread.CurrentThread.ManagedThreadId;
+        Assert.Equal(0,creates);
+        Assert.True(await library.GetOrLoadDataAsync());
+        Assert.Equal(1,creates);
+        Assert.NotEqual(ownerThread,creationThread);
+        library.Clear();
+        Assert.Equal(1,creates);
+        Assert.True(await library.GetOrLoadDataAsync());
+        Assert.Equal(2,creates);
+      });
+    }
+    [Fact]
+    public void ConfiguredQueryIsDeferredAppliedOnceAndPreservedAfterClear()
+    {
+      WithDispatcher(async () =>
+      {
+        using var connection=new SqliteConnection("Data Source=:memory:");
+        connection.Open();
+        using var context=new Context(new DbContextOptionsBuilder().UseSqlite(connection).Options);
+        context.Database.EnsureCreated();
+        context.AddRange(Enumerable.Range(1,10000).Select(i=>new Model {Id=i,Name=i%3000==0?"included":"excluded"}));
+        context.SaveChanges();
+        var storage=new Mock<IStorageManager>();
+        int creates=0,configurations=0;
+        storage.Setup(x=>x.GetTempRepository<Model>()).Returns(() =>
+        {
+          Interlocked.Increment(ref creates);
+          return context.Set<Model>().AsNoTracking();
+        });
+        var factory=new Mock<IViewModelsFactory>();
+        factory.Setup(x=>x.Create<INamedEntityViewModel<Model>>(It.IsAny<object[]>()))
+          .Returns((object[] args)=>
+          {
+            var model=(Model)args[0];
+            var view=new Mock<INamedEntityViewModel<Model>>();
+            view.SetupGet(x=>x.ModelId).Returns(model.Id);
+            view.SetupGet(x=>x.Name).Returns(model.Name);
+            return view.Object;
+          });
+        var library=new LibraryCollection<INamedEntityViewModel<Model>,Model>(factory.Object,storage.Object,new Mock<ILogger>().Object);
+        library.ConfigureQuery(query =>
+        {
+          Interlocked.Increment(ref configurations);
+          return query.Where(x=>x.Name=="included").OrderByDescending(x=>x.Id).Take(2);
+        });
+        Assert.Equal(0,creates);
+        Assert.Equal(0,configurations);
+        var loads=await Task.WhenAll(Enumerable.Range(0,32).Select(_=>library.GetOrLoadDataAsync().ToTask()));
+        Assert.All(loads,Assert.True);
+        Assert.Equal(new[] {9000,6000},library.Items.Select(x=>x.ModelId));
+        Assert.Equal(1,creates);
+        Assert.Equal(1,configurations);
+        library.Clear();
+        Assert.Equal(1,creates);
+        Assert.True(await library.GetOrLoadDataAsync());
+        Assert.Equal(new[] {9000,6000},library.Items.Select(x=>x.ModelId));
+        Assert.Equal(2,creates);
+        Assert.Equal(2,configurations);
+        factory.Verify(x=>x.Create<INamedEntityViewModel<Model>>(It.IsAny<object[]>()),Times.Exactly(4));
+      });
+    }
+    [Fact]
     public void FailedLoadCanRetryWithoutDeadlocking()
     {
       WithDispatcher(async () =>

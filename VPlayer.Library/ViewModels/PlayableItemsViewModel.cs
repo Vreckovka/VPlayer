@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -62,6 +62,7 @@ namespace VPlayer.Home.ViewModels
       LoadingStatus = new LoadingStatus();
 
 
+      LibraryCollection.ConfigureQuery(ConfigureLoadQuery);
       LibraryCollection.DataLoadedCallback = OnDataLoaded;
     }
 
@@ -73,6 +74,8 @@ namespace VPlayer.Home.ViewModels
     protected virtual bool SubscribeToPinned { get; } = false;
 
 
+
+    protected virtual IQueryable<TModel> ConfigureLoadQuery(IQueryable<TModel> query) => query;
 
     public abstract override bool ContainsNestedRegions { get; }
     public LibraryCollection<TViewModel, TModel> LibraryCollection { get; set; }
@@ -180,7 +183,6 @@ namespace VPlayer.Home.ViewModels
     {
       base.Initialize();
 
-      LibraryCollection.LoadQuery = LoadQuery;
       LibraryCollection.OnRecreate.ObserveOnDispatcher().Subscribe(x =>
       {
         RaisePropertyChanged(nameof(View));
