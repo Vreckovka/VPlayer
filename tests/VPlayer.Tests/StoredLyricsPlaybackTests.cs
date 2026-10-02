@@ -21,6 +21,7 @@ namespace VPlayer.Tests
       timeline.SetActualLine(TimeSpan.FromSeconds(90000));
       var active=timeline.ActualLine;
       Assert.True(await view.TryToRefreshUpdateLyrics());
+      for(int i=0;i<1000;i++) Assert.True(await view.TryToRefreshUpdateLyrics());
       Assert.Same(timeline,view.LRCFile);
       Assert.Same(active,view.LRCFile.ActualLine);
       Assert.Equal(100000,view.LRCFile.AllLine.Count);
@@ -46,6 +47,17 @@ namespace VPlayer.Tests
       Assert.True(await view.TryToRefreshUpdateLyrics());
       Assert.NotNull(view.LRCFile);
       Assert.Contains(view.LRCFile.AllLine,x=>x.Text=="Stored first line");
+    }
+    [Fact]
+    public async Task ExplicitRefreshWithoutProviderMetadataPreservesUsableLyrics()
+    {
+      using var fixture=new SavedSongViewFixture();
+      var song=new Song {ItemModel=new SoundItem {Id=4,IsAutomaticLyricsFindEnabled=true}};
+      var view=fixture.CreateDirect(song);
+      var timeline=LyricsAnimationFixture.Create(100000);
+      view.LRCFile=timeline;
+      Assert.True(await view.TryToRefreshUpdateLyrics(forceRefresh:true));
+      Assert.Same(timeline,view.LRCFile);
     }
   }
 }

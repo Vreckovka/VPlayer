@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -315,7 +315,7 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     private async void OnRefresh()
     {
-      await TryToRefreshUpdateLyrics();
+      await TryToRefreshUpdateLyrics(forceRefresh: true);
     }
 
     #endregion
@@ -657,20 +657,36 @@ namespace VPlayer.Core.ViewModels.SoundItems
 
     #region TryToRefreshUpdateLyrics
 
-    public async Task<bool> TryToRefreshUpdateLyrics()
+    public async Task<bool> TryToRefreshUpdateLyrics(bool forceRefresh = false)
     {
       try
       {
-        LRCFile = null;
-        Lyrics = null;
-
         if (IsAutomaticLyricsDownloadDisabled)
-        {
           return false;
+
+        // Track activation and background enrichment reuse the stored timeline.
+        // Rebuilding it would lose its active line, edit/offset state and listeners.
+        if (!forceRefresh)
+        {
+          if (LRCFile != null)
+            return true;
+
+          if (!string.IsNullOrWhiteSpace(LRCLyrics))
+            LoadLRCFromEnitityLyrics();
+
+          if (LRCFile != null || !string.IsNullOrEmpty(Lyrics))
+          {
+            RaiseLyricsChange();
+            return true;
+          }
         }
 
+        // A provider refresh needs metadata. Preserve usable lyrics if it is absent.
         if (ArtistViewModel == null || AlbumViewModel == null)
-          return false;
+          return LRCFile != null || !string.IsNullOrEmpty(Lyrics);
+
+        LRCFile = null;
+        Lyrics = null;
 
         if (LRCFile == null)
         {
