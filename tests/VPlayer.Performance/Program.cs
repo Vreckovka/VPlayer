@@ -309,8 +309,9 @@ namespace VPlayer.Performance
         Console.WriteLine(size+" entries: production factory "+watch.Elapsed.TotalMilliseconds.ToString("F2")+" ms");
         foreach(var view in views) view.Dispose();
         watch.Restart();
-        var flat=context.Set<PlaylistSoundItem>().AsNoTracking()
-          .Where(x=>EF.Property<int?>(x,"SoundItemFilePlaylistId")==model.Id)
+        var flat=context.SoundItemPlaylists.AsNoTracking()
+          .Where(x=>x.Id==model.Id)
+          .SelectMany(x=>x.PlaylistItems)
           .Include(x=>x.ReferencedItem).ThenInclude(x=>x.FileInfoEntity)
           .OrderBy(x=>x.OrderInPlaylist).ThenBy(x=>x.Id).ToList();
         watch.Stop();

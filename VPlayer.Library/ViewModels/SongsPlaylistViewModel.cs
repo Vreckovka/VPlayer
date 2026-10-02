@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Disposables;
@@ -65,17 +65,24 @@ namespace VPlayer.Home.ViewModels
     private SerialDisposable serialDisposable = new SerialDisposable();
     public override async Task<IEnumerable<SoundItemInPlaylistViewModel>> GetItemsToPlay()
     {
-      var playlist = storageManager.GetTempRepository<SoundItemFilePlaylist>()
-        .Include(x => x.PlaylistItems)
-        .ThenInclude(x => x.ReferencedItem)
-        .ThenInclude(x => x.FileInfoEntity)
+      var repository = storageManager.GetTempRepository<SoundItemFilePlaylist>();
+      var playlist = repository
         .SingleOrDefault(x => x.Id == Model.Id);
 
       if (playlist != null)
       {
         Model = playlist;
 
-        var playlistItems = playlist.PlaylistItems.OrderBy(x => x.OrderInPlaylist).ToList();
+        // Load rows directly instead of rebuilding a large parent collection through Include.
+        var playlistItems = repository
+          .Where(x => x.Id == playlist.Id)
+          .SelectMany(x => x.PlaylistItems)
+          .Include(x => x.ReferencedItem)
+          .ThenInclude(x => x.FileInfoEntity)
+          .OrderBy(x => x.OrderInPlaylist)
+          .ThenBy(x => x.Id)
+          .ToList();
+        playlist.PlaylistItems = playlistItems;
 
         return playlistItems.Select(x => viewModelsFactory.Create<SoundItemInPlaylistViewModel>(x.ReferencedItem));
       }
@@ -98,7 +105,7 @@ namespace VPlayer.Home.ViewModels
 
       eventAggregator.GetEvent<PlayItemsEvent<SoundItem, SoundItemInPlaylistViewModel>>().Publish(e);
     }
-    
+
     public override void Dispose()
     {
       base.Dispose();
