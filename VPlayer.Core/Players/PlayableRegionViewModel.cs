@@ -2511,6 +2511,7 @@ namespace VPlayer.Core.ViewModels
     #region Dispose
 
     private bool isDisposing;
+    protected bool IsDisposing => isDisposing;
     public override void Dispose()
     {
       isDisposing = true;

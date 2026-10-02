@@ -607,23 +607,36 @@ namespace VPlayer.Core.Players
         {
           lastTotalTimeSaved = totalSec;
 
+          var itemToSave = ActualItem;
           Task.Run(async () =>
           {
-            //Data race pri CLEAR
             await Task.Delay(500);
-
-            if (ActualItem != null)
-            {
-              await UpdateActualSavedPlaylistPlaylist();
-              await storageManager.UpdateEntityAsync(ActualItem.Model);
-
-              VSynchronizationContext.PostOnUIThread(() =>
-              {
-                ActualItem.RaiseNotifyPropertyChanged(nameof(ViewModel<TModel>.Model));
-              });
-            }
+            await SavePlaybackProgressAsync(itemToSave);
           });
         }
+      }
+    }
+
+    private async Task SavePlaybackProgressAsync(TItemViewModel item)
+    {
+      if (item == null || IsDisposing || !ReferenceEquals(ActualItem, item)) return;
+      var model = item.Model;
+      if (model == null) return;
+      try
+      {
+        await UpdateActualSavedPlaylistPlaylist();
+        // The playlist save may clear or switch the current track. Persist the
+        // model whose playback time triggered this save, including its last ticks.
+        await storageManager.UpdateEntityAsync(model);
+        VSynchronizationContext.PostOnUIThread(() =>
+        {
+          if (!IsDisposing && ReferenceEquals(ActualItem, item))
+            item.RaiseNotifyPropertyChanged(nameof(ViewModel<TModel>.Model));
+        });
+      }
+      catch (Exception ex)
+      {
+        logger.Log(ex);
       }
     }
 

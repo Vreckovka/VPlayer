@@ -772,3 +772,18 @@ the authoritative stored rows. Unchanged saves now retain stored rows, and a bar
 playback reference is repaired before notification. Every returned row and the
 playback reference are checked, along with unchanged persisted IDs/order and
 context cleanup. All 186 tests passed; Release built with 152 warnings, no errors.
+The 074136ae native attempts remain in
+iterations/music-playlist-metadata-native-attempts-074136ae.json. One clear launch
+missed the unchanged 20-second initial-render deadline; another reported an
+unobserved NullReferenceException from UpdateVlcTime's delayed playback save.
+Completed samples in that attempted series are retained without concealing failures.
+The prior d467b7ad write and plain-load series are frozen in the adjacent files.
+
+The playback callback now captures its track before the delay, skips a stale
+track/disposed player, persists the captured model across the playlist-save await,
+and rechecks track identity before a queued UI notification. Background write
+exceptions are observed and logged. Nine tests use 100k-row queues and controlled
+clear/switch, queued notification, disposal and write failure boundaries; the six
+original race/failure cases failed before correction. The normal current-track
+notification remains covered. All 195 tests passed; Release built with 152 warnings
+and no errors. No render deadline or workload was relaxed.
