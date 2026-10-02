@@ -1,0 +1,15 @@
+<Project>
+  <PropertyGroup>
+    <GenerateVlcPluginCache Condition="'$(GenerateVlcPluginCache)' == '' and '$(Configuration)' == 'Release' and '$(RuntimeIdentifier)' == 'win-x64' and '$(OS)' == 'Windows_NT'">true</GenerateVlcPluginCache>
+  </PropertyGroup>
+  <Target Name="PreparePublishedVlcPluginCache" AfterTargets="Publish" Condition="'$(GenerateVlcPluginCache)' == 'true'">
+    <PropertyGroup>
+      <_VlcNativeDirectory>$([System.IO.Path]::Combine('$(PublishDir)', 'libvlc', 'win-x64'))</_VlcNativeDirectory>
+      <_VlcNativeDirectory>$([System.IO.Path]::GetFullPath('$(_VlcNativeDirectory)'))</_VlcNativeDirectory>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(_VlcNativeDirectory)\libvlc.dll')" Text="Published win-x64 LibVLC payload is missing." />
+    <!-- Rebuild against the published native version on every publish; never reuse a cache from another payload. -->
+    <Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="dotnet run --project &quot;$(MSBuildThisFileDirectory)..\tools\VPlayer.VlcCache\VPlayer.VlcCache.csproj&quot; --configuration Release --no-launch-profile -- &quot;$(_VlcNativeDirectory)&quot;" />
+    <Error Condition="!Exists('$(_VlcNativeDirectory)\plugins\plugins.dat')" Text="Published LibVLC plugin cache was not generated." />
+  </Target>
+</Project>
