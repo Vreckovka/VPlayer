@@ -1,14 +1,16 @@
 # VPlayer behavioral tests
 
+Use **Debug only**; see [build policy](build-policy.md). Prior Release runs do not constitute Debug validation.
+
 The xUnit project tests production assemblies on their existing .NET Core 3.1 runtime.
 It needs the sibling CustomLibraries checkout described in the root README, the .NET Core 3.1
 desktop runtime, and a .NET SDK. Use x64 because CefSharp requires an explicit architecture.
 
 Run from the repository root:
 
-    dotnet test tests/VPlayer.Tests/VPlayer.Tests.csproj -p:Platform=x64
-    dotnet run --project tests/PlaylistOrder.Regression/PlaylistOrder.Regression.csproj
-    dotnet build VPlayer/VPlayer.csproj -p:Platform=x64
+    dotnet test tests/VPlayer.Tests/VPlayer.Tests.csproj -c Debug -p:Platform=x64
+    dotnet run --project tests/PlaylistOrder.Regression/PlaylistOrder.Regression.csproj -c Debug
+    dotnet build VPlayer/VPlayer.csproj -c Debug -p:Platform=x64
 
 The pinned xUnit adapter 2.4.1 supports .NET Core 3.1; newer adapter 2.5.3 requires .NET 6
 and silently discovers zero tests when its fallback .NET Framework adapter is selected.

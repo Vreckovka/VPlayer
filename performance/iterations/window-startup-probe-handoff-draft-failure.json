@@ -1,6 +1,0 @@
-{
-  "Commit": "draft-final-topmost",
-  "Status": "Failed",
-  "FailureType": "System.IO.IOException",
-  "Message": "The process cannot access the file \u0027D:\\Aplikacie\\VPlayer\\artifacts\\window-activation-final-topmost.json.foreground-hwnd\u0027 because it is being used by another process."
-}

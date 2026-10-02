@@ -1,11 +1,9 @@
 # Playlist snapshot
 
-100k stored entries. Component timings; database work, UI rendering and media playback are excluded.
+Release measurements discarded at the user's request. They must not be used as baselines, comparisons or evidence of performance improvement.
 
-| Baseline now | New optimized version |
+| Debug baseline | Debug optimized |
 | --- | --- |
-| **first snapshot** — 3.9k ms | 186.7 ms (-95.2%) |
-| **repeated snapshot** — 4k ms | 138.4 ms (-96.5%) |
-| **allocated per snapshot** — 696.3 MiB | 30.7 MiB (-95.6%) |
+| Pending | Pending |
 
-Source commits: `5b1d2ac3` → `2abd4a10`. Original samples and validation remain in the raw JSON.
+Optimization is paused. Existing fixes remain in the branch; Debug performance has not been measured.

@@ -64,7 +64,7 @@ namespace VPlayer.Performance
         host.Close();
       }
       app.Shutdown();
-      File.WriteAllText(output,JsonSerializer.Serialize(new {Schema="lyrics-animation-v3",Commit=commit,CreatedUtc=DateTime.UtcNow,Runtime=Environment.Version.ToString(),Environment.ProcessorCount,
+      File.WriteAllText(output,JsonSerializer.Serialize(new {Schema="lyrics-animation-v3",Configuration=BenchmarkBuild.Configuration,Commit=commit,CreatedUtc=DateTime.UtcNow,Runtime=Environment.Version.ToString(),Environment.ProcessorCount,
         Boundary="Production AutoScrollLyricsBehavior and LRCFileViewModel in a visible virtualized pixel-scroll ListView; simplified fixed-height text rows; synthetic 16ms playback ticks, no audio decoding or full player UI. First fresh case then 1000 track changes; distinct WPF rendering timestamps deduplicated before gaps are recorded; dispatcher delay and process CPU measured for six seconds. Context construction, snapshots and settling excluded from playback timing.",Results=results},new JsonSerializerOptions {WriteIndented=true}));
     }
   }

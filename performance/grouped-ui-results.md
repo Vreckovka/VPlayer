@@ -1,12 +1,9 @@
 # Grouped playlist UI
 
-207k sound items; 5,310 playlists including 5k added favorites. Median timings; - % = less time, + % = more time.
+Release measurements discarded at the user's request. They must not be used as baselines, comparisons or evidence of performance improvement.
 
-| Baseline now | New optimized version |
+| Debug baseline | Debug optimized |
 | --- | --- |
-| Populated view: Timeout (60k ms) | 5.6k ms |
-| First frame*: 3.6k ms | 3.2k ms (-10.8%) |
-| Scroll to last favorite: n/a | 280 ms |
-| Realized rows (ready / scrolled): n/a / n/a | 41 / 41 |
+| Pending | Pending |
 
-*The baseline rendered its first frame, then timed out before becoming usable. Timeout comparisons have no percentage. Full samples and provenance are retained in grouped-ui-baseline.json and grouped-ui-optimized.json.
+Optimization is paused. Existing fixes remain in the branch; Debug performance has not been measured.

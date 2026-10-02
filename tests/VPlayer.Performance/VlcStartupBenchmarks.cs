@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -58,7 +58,7 @@ namespace VPlayer.Performance
       var cacheAfter=File.Exists(cache)?Hash(cache):null;
       if(cacheBefore!=cacheAfter) throw new InvalidOperationException("Measurement changed the native cache.");
       File.WriteAllText(output,JsonSerializer.Serialize(new {
-        Schema="vlc-startup-v1",Commit=commit,Runtime=Environment.Version.ToString(),Configuration="Release",Architecture="x64",
+        Schema="vlc-startup-v1",Commit=commit,Runtime=Environment.Version.ToString(),Configuration=BenchmarkBuild.Configuration,Architecture="x64",
         NativeVersion=lib.Version,NativeDirectory=nativeDirectory,NativePayloadSha256=payloadHash,NativeDlls=files.Length,
         CachePresent=cacheBefore!=null,CacheSha256=cacheBefore,CacheBytes=File.Exists(cache)?new FileInfo(cache).Length:0,
         NativeLoadMilliseconds=nativeLoad,ProviderInitializeMilliseconds=construction,TotalInitializationMilliseconds=nativeLoad+construction,

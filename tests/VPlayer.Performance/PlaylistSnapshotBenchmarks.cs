@@ -58,7 +58,7 @@ namespace VPlayer.Performance
       using var hash=SHA256.Create();
       var fixtureHash=BitConverter.ToString(hash.ComputeHash(stream)).Replace("-","");
       File.WriteAllText(output,JsonSerializer.Serialize(new {SchemaVersion=1,Commit=commit,CreatedUtc=DateTime.UtcNow,
-        Runtime=Environment.Version.ToString(),Configuration="Release",Environment.ProcessorCount,
+        Runtime=Environment.Version.ToString(),Configuration=BenchmarkBuild.Configuration,Environment.ProcessorCount,
         FixtureSha256=fixtureHash,Entries=playlist.PlaylistItems.Count,MissingModels=missingModels,MissingFileInfo=missingFileInfo,
         Boundary="Production save snapshot only; database reads, verification and persistence excluded",
         Samples=samples},new JsonSerializerOptions {WriteIndented=true}));

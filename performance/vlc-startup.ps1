@@ -1,4 +1,4 @@
-﻿param(
+param(
  [Parameter(Mandatory=$true)][string]$NativeDirectory,
  [Parameter(Mandatory=$true)][string]$RunDirectory,
  [Parameter(Mandatory=$true)][string]$ProductionCommit,
@@ -13,7 +13,7 @@ foreach($path in @($native,$destination)){
  if(-not $path.StartsWith($repo+'\',[StringComparison]::OrdinalIgnoreCase)){throw 'Native benchmarks require workspace-owned inputs and outputs.'}
 }
 if($Runs -lt 1 -or $ProductionCommit -notmatch '^[a-fA-F0-9]{40}$'){throw 'Invalid benchmark arguments'}
-$benchmark=(Resolve-Path -LiteralPath (Join-Path $repo 'tests/VPlayer.Performance/bin/x64/Release/netcoreapp3.1/VPlayer.Performance.dll')).Path
+$benchmark=(Resolve-Path -LiteralPath (Join-Path $repo 'tests/VPlayer.Performance/bin/x64/Debug/netcoreapp3.1/VPlayer.Performance.dll')).Path
 $cache=Test-Path -LiteralPath (Join-Path $native 'plugins/plugins.dat')
 for($i=0;$i -lt $Runs;$i++){
  $output=Join-Path $destination ('native-'+$i+'.json')

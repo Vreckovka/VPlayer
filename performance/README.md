@@ -1,5 +1,8 @@
 # Performance baselines
 
+**Debug only.** Previous Release measurements and comparison claims have been discarded. Fresh worst-case Debug baselines are pending; optimization is paused. See [build policy](../tests/build-policy.md).
+
+
 The primary workload is a SQLite backup of the current library, expanded tenfold, with
 1,000-, 10,000-, and 100,000-entry playlists. The backup API includes committed WAL data.
 Fixture databases, titles, file paths, settings, and raw logs stay under ignored artifacts/.
@@ -17,7 +20,7 @@ Measure the same fixture after a verified change:
 
     pwsh -File performance/run.ps1 -Mode optimized -Visible
 
-Use Release x64, the same machine/runtime/power settings, and no concurrent builds or tests.
+Use Debug x64, the same machine/runtime/power settings, and no concurrent builds or tests.
 Do not compare runs with different fixture checksums, workloads, build configurations, or runtimes.
 The first sample is recorded separately; later samples report median and p95.
 Fresh application processes are measured through the first main-window ContentRendered event.
@@ -58,7 +61,7 @@ Retest every metric in the affected category and run the regression suite.
 Keep baseline samples immutable. Record the optimized commit and any regressions.
 Only aggregate timings and non-sensitive workload counts belong in committed reports.
 
-Diagnostic query/factory breakdown: run the Release performance executable with profile-playlist <fixture-directory> unused. These single samples identify a candidate bottleneck; they do not replace the repeated comparison protocol.
+Diagnostic query/factory breakdown: run the Debug performance executable with profile-playlist <fixture-directory> unused. These single samples identify a candidate bottleneck; they do not replace the repeated comparison protocol.
 
 The populated initial-view startup baseline is stored separately in startup-ready-baseline.json at commit f9bdaa8a. The original seven visible baseline launches crashed before rendering, so no populated-view time existed there. report.ps1 accepts StartupOptimized for a startup-only comparison and ReadyBaseline for this additional frozen milestone.
 

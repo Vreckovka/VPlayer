@@ -76,7 +76,7 @@ namespace VPlayer.Performance
       using var hash=SHA256.Create();
       File.WriteAllText(output,JsonSerializer.Serialize(new {
         Schema="incoming-playlist-v1",Commit=commit,Variant=variant,CreatedUtc=DateTime.UtcNow,Runtime=Environment.Version.ToString(),
-        Configuration="Release",Architecture="x64",Environment.ProcessorCount,OS=Environment.OSVersion.VersionString,
+        Configuration=BenchmarkBuild.Configuration,Architecture="x64",Environment.ProcessorCount,OS=Environment.OSVersion.VersionString,
         FixtureSha256=BitConverter.ToString(hash.ComputeHash(stream)).Replace("-",""),PlaylistId=658,Entries=100000,DuplicateTracks=duplicates,MissingFileInfo=missingInfo,
         OrderedRowsSha256=orderHash,MetadataSha256=metadataHash,
         Boundary="Production SongsPlaylistViewModel.GetItemsToPlay plus enumeration; fresh read-only context per iteration, real default Ninject factory and shared stub services; verification/disposal/rendering excluded; creation allocations are current-thread only.",

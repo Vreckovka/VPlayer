@@ -1,4 +1,4 @@
-﻿param([Parameter(Mandatory=$true)][string]$NativeDirectory,[Parameter(Mandatory=$true)][string]$RunDirectory,[Parameter(Mandatory=$true)][string]$ProductionCommit)
+param([Parameter(Mandatory=$true)][string]$NativeDirectory,[Parameter(Mandatory=$true)][string]$RunDirectory,[Parameter(Mandatory=$true)][string]$ProductionCommit)
 $ErrorActionPreference='Stop'
 $repo=Split-Path -Parent $PSScriptRoot
 $destination=(Resolve-Path -LiteralPath $RunDirectory).Path
@@ -11,8 +11,8 @@ $lib=Join-Path $package 'libvlc/win-x64'
 Copy-Item -LiteralPath $native -Destination $lib -Recurse
 $cache=Join-Path $lib 'plugins/plugins.dat'
 if(-not (Test-Path -LiteralPath $cache)){throw 'Prepared cache required for relocation test.'}
-$tool=Join-Path $repo 'tools/VPlayer.VlcCache/bin/Release/netcoreapp3.1/VPlayer.VlcCache.dll'
-$benchmark=Join-Path $repo 'tests/VPlayer.Performance/bin/x64/Release/netcoreapp3.1/VPlayer.Performance.dll'
+$tool=Join-Path $repo 'tools/VPlayer.VlcCache/bin/Debug/netcoreapp3.1/VPlayer.VlcCache.dll'
+$benchmark=Join-Path $repo 'tests/VPlayer.Performance/bin/x64/Debug/netcoreapp3.1/VPlayer.Performance.dll'
 function Decode($name){
  $output=Join-Path $destination ($name+'.json')
  & dotnet $benchmark vlc-startup $lib $output $ProductionCommit *> (Join-Path $destination ($name+'.log'))
@@ -21,7 +21,7 @@ function Decode($name){
 }
 $relocated=Decode 'relocation'
 Remove-Item -LiteralPath $cache
-& dotnet msbuild (Join-Path $repo 'VPlayer/VPlayer.csproj') -t:PreparePublishedVlcPluginCache -p:Configuration=Release -p:Platform=x64 -p:PublishProfile=FolderProfile "-p:PublishDir=$package/" *> (Join-Path $destination 'publish-target.log')
+& dotnet msbuild (Join-Path $repo 'VPlayer/VPlayer.csproj') -t:PreparePublishedVlcPluginCache -p:Configuration=Debug -p:Platform=x64 -p:PublishProfile=FolderProfile "-p:PublishDir=$package/" *> (Join-Path $destination 'publish-target.log')
 if($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $cache)){throw 'Profile-based publish target failed to generate cache'}
 [IO.File]::WriteAllBytes($cache,[byte[]](1,2,3,4))
 & dotnet $tool $lib *> (Join-Path $destination 'regenerate.log')

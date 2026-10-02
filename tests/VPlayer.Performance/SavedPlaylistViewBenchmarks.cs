@@ -46,7 +46,7 @@ namespace VPlayer.Performance
       using var stream=File.OpenRead(database);
       using var hash=SHA256.Create();
       File.WriteAllText(output,JsonSerializer.Serialize(new {SchemaVersion=1,Commit=commit,CreatedUtc=DateTime.UtcNow,
-        Runtime=Environment.Version.ToString(),Configuration="Release",Environment.ProcessorCount,
+        Runtime=Environment.Version.ToString(),Configuration=BenchmarkBuild.Configuration,Environment.ProcessorCount,
         FixtureSha256=BitConverter.ToString(hash.ComputeHash(stream)).Replace("-",""),Entries=rows.Length,
         MissingFileInfo=rows.Count(x=>x.ReferencedItem.FileInfoEntity==null),
         Boundary=transientWindows?"Production MusicPlayerViewModel saved view creation; real Ninject, eight shared stub services and per-occurrence WindowManager; database reads, UI rendering, verification and disposal excluded":

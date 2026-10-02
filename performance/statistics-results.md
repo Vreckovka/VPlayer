@@ -1,13 +1,9 @@
 # Statistics
 
-207k sound items with unique file metadata; 5,310 playlists.
-First data load and repeat medians; - % = less time, + % = more time.
+Release measurements discarded at the user's request. They must not be used as baselines, comparisons or evidence of performance improvement.
 
-| Baseline now | New optimized version |
+| Debug baseline | Debug optimized |
 | --- | --- |
-| **first data load** — 4.4k ms | 1.9k ms (-55.9%) |
-| **warm data load** — 2.9k ms | 299.4 ms (-89.5%) |
-| **load and render** — 6.2k ms | 2.6k ms (-57.3%) |
+| Pending | Pending |
 
-
-Data timing includes production loading and UI publication. View timing includes navigation and actual WPF rendering. Full samples, allocations, row checks and provenance remain in the Statistics JSON files.
+Optimization is paused. Existing fixes remain in the branch; Debug performance has not been measured.

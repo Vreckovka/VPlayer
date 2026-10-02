@@ -72,6 +72,7 @@ namespace VPlayer.Performance
     {
       try
       {
+        BenchmarkBuild.EnsureDebug();
         if(args.Length<3) throw new ArgumentException("prepare <source.db> <fixture-directory> [factor] OR run <fixture-directory> <output.json> <commit>");
         if(args[0]=="window-activation")
           WindowActivationChecks.Run(args[1],args[2],args.Length>3 && args[3]=="topmost");
@@ -371,7 +372,7 @@ namespace VPlayer.Performance
       File.WriteAllText(output,JsonSerializer.Serialize(new
       {
         SchemaVersion=1,Commit=commit,CreatedUtc=DateTime.UtcNow,Runtime=Environment.Version.ToString(),
-        OS=Environment.OSVersion.ToString(),ProcessorCount=Environment.ProcessorCount,Configuration="Release",
+        OS=Environment.OSVersion.ToString(),ProcessorCount=Environment.ProcessorCount,Configuration=BenchmarkBuild.Configuration,
         FixtureSha256=checksum,Fixture=metadata,Metrics=metrics,ReloadRequests=reloadRequests,RepositoryCounts=repositoryCounts
       },json));
     }
