@@ -1,4 +1,5 @@
-﻿using Prism.Regions;
+using System.Threading.Tasks;
+using Prism.Regions;
 using VCore.WPF.Interfaces.ViewModels;
 using VCore.WPF.ViewModels.Navigation;
 using VPlayer.AudioStorage.DomainClasses;
@@ -8,6 +9,7 @@ namespace VPlayer.Core.Interfaces.ViewModels
 {
   public interface IArtistsViewModel : ICollectionViewModel<ArtistViewModel, Artist>, INavigationItem
   {
+    Task<ArtistViewModel> GetViewModelAsync(int modelId);
    
   }
 }

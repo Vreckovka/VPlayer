@@ -126,6 +126,9 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
 
     private IQueryable<TModel> customQuery;
     private Func<IQueryable<TModel>, IQueryable<TModel>> queryTransform;
+    private readonly object lookupGate=new object();
+    private readonly Dictionary<int,TViewModel> lookupViews=new Dictionary<int,TViewModel>();
+    private long queryGeneration;
     private Lazy<IQueryable<TModel>> deferredQuery;
     public IQueryable<TModel> LoadQuery
     {
@@ -141,6 +144,7 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
 
     private void ResetLoadQuery()
     {
+      lock(lookupGate) {lookupViews.Clear();queryGeneration++;}
       var query = customQuery;
       var transform = queryTransform;
       deferredQuery = new Lazy<IQueryable<TModel>>(() =>
@@ -178,27 +182,63 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
         try
         {
           if (WasLoaded) return true;
+          long generation;
+          lock(lookupGate) generation=queryGeneration;
 
           var vms = await Task.Run(async () =>
           {
             List<TModel> data;
             using (StartupMeasurements.MeasureLibrary("query", typeof(TModel)))
               data = await (optionalQuery ?? LoadQuery).ToListAsync().ConfigureAwait(false);
+            Dictionary<int,TViewModel> cachedViews;
+            lock(lookupGate)
+            {
+              if(generation!=queryGeneration) return null;
+              cachedViews=new Dictionary<int,TViewModel>(lookupViews);
+            }
             using var construction = StartupMeasurements.MeasureLibrary("view model construction", typeof(TModel));
-            return data.Select(x => ViewModelsFactory.Create<TViewModel>(x)).ToList();
+            var views=new List<TViewModel>(data.Count);
+            var refresh=new List<(TViewModel View,TModel Model)>(cachedViews.Count);
+            foreach(var model in data)
+            {
+              if(cachedViews.TryGetValue(model.Id,out var cached))
+              {
+                views.Add(cached);
+                refresh.Add((cached,model));
+              }
+              else views.Add(ViewModelsFactory.Create<TViewModel>(model));
+            }
+            return new {Views=views,Refresh=refresh};
           }).ConfigureAwait(false);
 
+          if(vms==null) return false;
+          bool published=false;
           using (StartupMeasurements.MeasureLibrary("UI dispatch and publication", typeof(TModel)))
           await VSynchronizationContext.InvokeOnDispatcherAsync(() =>
           {
             using var publication = StartupMeasurements.MeasureLibrary("UI publication", typeof(TModel));
-            Items = new RxObservableCollection<TViewModel>(vms);
+            lock(lookupGate)
+            {
+              if(generation!=queryGeneration)
+              {
+                var shared=new HashSet<TViewModel>(vms.Refresh.Select(x=>x.View));
+                foreach(var view in vms.Views)
+                  if(!shared.Contains(view)) (view as IDisposable)?.Dispose();
+                return;
+              }
+            }
+            foreach(var row in vms.Refresh) row.View.RefreshModel(row.Model);
+            var views=vms.Views;
+            Items = new RxObservableCollection<TViewModel>(views);
             FilteredItemsCollection = new ObservableCollection<TViewModel>(
-              MaxTake.HasValue ? vms.Take(MaxTake.Value) : vms);
+              MaxTake.HasValue ? views.Take(MaxTake.Value) : views);
             Items.CollectionChanged += Items_CollectionChanged;
             Recreate();
             WasLoaded = true;
+            published=true;
           }).ConfigureAwait(false);
+
+          if(!published) return false;
 
           // Existing callbacks may perform database queries; keep those off the UI thread.
           using (StartupMeasurements.MeasureLibrary("post-load callback", typeof(TModel)))
@@ -222,6 +262,70 @@ namespace VPlayer.Home.ViewModels.LibraryViewModels
 
     #endregion
 
+    public async Task<TViewModel> GetViewModelAsync(int modelId)
+    {
+      if(modelId<=0) return null;
+      // Song initialization may synchronously wait on a worker; cached reads
+      // must not schedule a round trip to the blocked UI dispatcher.
+      if(WasLoaded) return Items.SingleOrDefault(x=>x.ModelId==modelId);
+      lock(lookupGate) {if(lookupViews.TryGetValue(modelId,out var ready)) return ready;}
+      await semaphoreSlim.WaitAsync().ConfigureAwait(false);
+      try
+      {
+        if(WasLoaded) return Items.SingleOrDefault(x=>x.ModelId==modelId);
+
+        long generation;
+        lock(lookupGate)
+        {
+          if(lookupViews.TryGetValue(modelId,out var cached)) return cached;
+          generation=queryGeneration;
+        }
+        using var measurement=StartupMeasurements.MeasureLibrary("single item lookup",typeof(TModel));
+        var model=await Task.Run(()=>LoadQuery.SingleOrDefaultAsync(x=>x.Id==modelId)).ConfigureAwait(false);
+        if(model==null) return null;
+        var view=ViewModelsFactory.Create<TViewModel>(model);
+        lock(lookupGate)
+        {
+          if(generation==queryGeneration) lookupViews[modelId]=view;
+        }
+        return view;
+      }
+      finally {semaphoreSlim.Release();}
+    }
+    public async Task RefreshCachedAsync(int modelId,bool removed=false)
+    {
+      await semaphoreSlim.WaitAsync().ConfigureAwait(false);
+      try
+      {
+        TViewModel view;
+        long generation;
+        lock(lookupGate)
+        {
+          if(!lookupViews.TryGetValue(modelId,out view)) return;
+          if(removed) {lookupViews.Remove(modelId);return;}
+          generation=queryGeneration;
+        }
+        var model=await Task.Run(()=>LoadQuery.SingleOrDefaultAsync(x=>x.Id==modelId)).ConfigureAwait(false);
+        await VSynchronizationContext.InvokeOnDispatcherAsync(() =>
+        {
+          lock(lookupGate)
+          {
+            if(generation!=queryGeneration) return;
+            if(model==null) lookupViews.Remove(modelId);
+            else view.RefreshModel(model);
+          }
+        }).ConfigureAwait(false);
+      }
+      catch(Exception error) {logger.Log(error);}
+      finally {semaphoreSlim.Release();}
+    }
+
+    public async Task RefreshCachedAsync(Func<TViewModel,bool> predicate,bool removed=false)
+    {
+      int[] ids;
+      lock(lookupGate) ids=lookupViews.Where(x=>predicate(x.Value)).Select(x=>x.Key).ToArray();
+      foreach(var id in ids) await RefreshCachedAsync(id,removed).ConfigureAwait(false);
+    }
     #region GetOrLoadDataAsync
 
     public IObservable<bool> GetOrLoadDataAsync(IQueryable<TModel> optionalQuery = null)

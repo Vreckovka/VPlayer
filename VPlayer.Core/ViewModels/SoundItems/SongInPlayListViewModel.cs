@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -428,16 +428,16 @@ namespace VPlayer.Core.ViewModels.SoundItems
       {
         if (SongModel.Album != null)
         {
-          AlbumViewModel = (await albumsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == SongModel.Album.Id);
+          AlbumViewModel = await albumsViewModel.GetViewModelAsync(SongModel.Album.Id);
 
           if (SongModel.Album.Artist != null)
           {
             if (SongModel.Album.Artist.Id > 0)
-              ArtistViewModel = (await artistsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == SongModel.Album.Artist.Id);
+              ArtistViewModel = await artistsViewModel.GetViewModelAsync(SongModel.Album.Artist.Id);
           }
           else if (AlbumViewModel?.Model.Artist != null)
           {
-            ArtistViewModel = (await artistsViewModel.GetViewModelsAsync()).SingleOrDefault(x => x.ModelId == AlbumViewModel.Model.Artist.Id);
+            ArtistViewModel = await artistsViewModel.GetViewModelAsync(AlbumViewModel.Model.Artist.Id);
           }
         }
 

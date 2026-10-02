@@ -214,3 +214,20 @@ ui-report.ps1 checks full commit hashes, fixture/machine/window consistency and
 diagnostic protocol before comparing versions; same-series zero changes and
 mixed-protocol rejection were verified. The optimized column stays pending until
 an application change is measured against this new baseline.
+
+Current-song relationship lookup now selects one album and one artist through
+the existing configured EF queries, without opening their full libraries.
+Repeated lookups reuse view models; later full loading reuses those instances
+and refreshes complete model snapshots on the UI thread, preserving playback
+and playlist flags. Cached entity and nested relationship notifications refresh
+only affected entries; transient database read failures retain the last valid
+snapshot and can retry. Cached reads need no dispatcher round trip.
+
+Five regressions use 10k-row libraries or nested snapshots. They cover 64
+concurrent lookups, bounded reader operations, missing/newly inserted rows,
+configured query filtering, shared identity after full loading, clearing during
+an in-flight load, UI-blocked synchronous lookup, metadata notifications and
+read-failure recovery. The full-load compatibility path failed three initial
+regressions before the bounded implementation. All 121 tests and the production
+Release build pass. The buffered UI baseline remains frozen for comparison;
+publish measured results only after the source commit is benchmarked.

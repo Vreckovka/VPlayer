@@ -1,4 +1,4 @@
-﻿using Prism.Events;
+using Prism.Events;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -30,6 +30,15 @@ namespace VPlayer.Core.ViewModels
     public int ModelId => Model.Id;
     public string Name => Model.Name;
 
+    // A full library snapshot replaces the model while retaining VM identity
+    // and transient playback/playlist state.
+    public virtual void RefreshModel(TModel model)
+    {
+      if(model is null) throw new ArgumentNullException(nameof(model));
+      if(model.Id!=ModelId) throw new ArgumentException("Snapshot must have the same entity ID.",nameof(model));
+      Model=model;
+      RaisePropertyChanged(string.Empty);
+    }
     public abstract void Update(TModel updateItem);
 
     #endregion 

@@ -56,6 +56,11 @@ namespace VPlayer.Home.ViewModels.Artists
 
     private async void AlbumChange(IItemChanged<Album> itemChanged)
     {
+      if(!LibraryCollection.WasLoaded && itemChanged.Item is Album changedAlbum)
+      {
+        await LibraryCollection.RefreshCachedAsync(changedAlbum.ArtistId);
+        if(!LibraryCollection.WasLoaded) return;
+      }
       if (itemChanged.Item is Album album && LibraryCollection.WasLoaded)
       {
         ArtistViewModel artist = null;

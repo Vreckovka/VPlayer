@@ -1,4 +1,4 @@
-﻿using Prism.Events;
+using Prism.Events;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -33,6 +33,7 @@ namespace VPlayer.Core.ViewModels.Artists
     #region Methods
 
     void Update(TModel updateItem);
+    void RefreshModel(TModel model);
 
     #endregion Methods
   }
@@ -146,6 +147,11 @@ namespace VPlayer.Core.ViewModels.Artists
 
     #region Update
 
+    public override void RefreshModel(Artist model)
+    {
+      albumCoverPath=null;
+      base.RefreshModel(model);
+    }
     public override void Update(Artist updateItem)
     {
       if (updateItem.Modified > Model.Modified || Model.Modified == null)

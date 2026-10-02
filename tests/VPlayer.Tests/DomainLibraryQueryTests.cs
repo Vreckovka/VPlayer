@@ -1,3 +1,9 @@
+using System.Threading.Tasks;
+using System.Collections.Concurrent;
+using System.Reflection;
+using VPLayer.Domain;
+using VPlayer.Core.Interfaces.ViewModels;
+using VPlayer.Core.Modularity.Regions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +33,7 @@ using Xunit;
 
 namespace VPlayer.Tests
 {
+  [Collection("UI synchronization")]
   public class DomainLibraryQueryTests
   {
     private sealed class Context : AudioDatabaseContext
@@ -62,6 +69,157 @@ namespace VPlayer.Tests
       public void Dispose() {Database.Dispose();connection.Dispose();}
     }
 
+    private static Task UntilAsync(Func<bool> condition) => UntilAsync(()=>Task.FromResult(condition()));
+    private static async Task UntilAsync(Func<Task<bool>> condition)
+    {
+      for(int i=0;i<500;i++)
+      {
+        if(await condition()) return;
+        await Task.Delay(10);
+      }
+      throw new TimeoutException("Cached relationship notification did not arrive.");
+    }
+    [Fact]
+    public void CachedRelationshipsObserveEditsAndNestedChangesWithoutLoadingLibraries()
+    {
+      LibraryLoadingTests.WithDispatcher(async () =>
+      {
+        using var fixture=new Fixture();
+        fixture.Database.Artists.AddRange(Enumerable.Range(1,10000).Select(i=>new Artist {Name="Artist "+i}));
+        fixture.Database.SaveChanges();
+        var storedArtist=fixture.Database.Artists.OrderBy(x=>x.Id).Last();
+        var storedAlbum=new Album {Name="Album",Artist=storedArtist};
+        fixture.Database.Albums.Add(storedAlbum);
+        fixture.Database.SaveChanges();
+        var contexts=new ConcurrentBag<Context>();
+        try
+        {
+          fixture.Storage.Setup(x=>x.GetTempRepository<Artist>()).Returns(()=>
+          {
+            var context=new Context((SqliteConnection)fixture.Database.Database.GetDbConnection());
+            contexts.Add(context);
+            return context.Artists.AsNoTracking();
+          });
+          fixture.Storage.Setup(x=>x.GetTempRepository<Album>()).Returns(()=>
+          {
+            var context=new Context((SqliteConnection)fixture.Database.Database.GetDbConnection());
+            contexts.Add(context);
+            return context.Albums.AsNoTracking();
+          });
+          var artistObservers=new List<Action<IItemChanged<Artist>>>();
+          var albumObservers=new List<Action<IItemChanged<Album>>>();
+          fixture.Storage.Setup(x=>x.SubscribeToItemChange<Artist>(It.IsAny<Action<IItemChanged<Artist>>>()))
+            .Callback<Action<IItemChanged<Artist>>>(artistObservers.Add).Returns(Disposable.Empty);
+          fixture.Storage.Setup(x=>x.SubscribeToItemChange<Album>(It.IsAny<Action<IItemChanged<Album>>>()))
+            .Callback<Action<IItemChanged<Album>>>(albumObservers.Add).Returns(Disposable.Empty);
+          var factory=new Mock<IViewModelsFactory>();
+          var artistLibrary=new LibraryCollection<ArtistViewModel,Artist>(factory.Object,fixture.Storage.Object,fixture.Logger);
+          var albumLibrary=new LibraryCollection<AlbumViewModel,Album>(factory.Object,fixture.Storage.Object,fixture.Logger);
+          using var artists=new ArtistsViewModel(fixture.Regions,factory.Object,fixture.Storage.Object,artistLibrary,fixture.Events);
+          using var albums=new AlbumsViewModel(fixture.Regions,factory.Object,fixture.Storage.Object,albumLibrary,fixture.Events,fixture.Logger);
+          var cloud=new Mock<IVPlayerCloudService>().Object;
+          var regions=new Mock<IVPlayerRegionProvider>().Object;
+          factory.Setup(x=>x.Create<ArtistViewModel>(It.IsAny<object[]>()))
+            .Returns((object[] args)=>new ArtistViewModel((Artist)args[0],fixture.Events,fixture.Storage.Object,cloud,artists,factory.Object,regions));
+          factory.Setup(x=>x.Create<AlbumViewModel>(It.IsAny<object[]>()))
+            .Returns((object[] args)=>new AlbumViewModel((Album)args[0],fixture.Events,fixture.Storage.Object,albums,factory.Object,cloud,regions));
+          using var artist=await artists.GetViewModelAsync(storedArtist.Id);
+          using var album=await albums.GetViewModelAsync(storedAlbum.Id);
+          artist.IsInPlaylist=album.IsInPlaylist=true;
+          storedArtist.Name="Renamed Artist";
+          fixture.Database.SaveChanges();
+          foreach(var observer in artistObservers)
+          {
+            var change=new Mock<IItemChanged<Artist>>();
+            change.SetupGet(x=>x.Item).Returns(storedArtist);
+            change.SetupGet(x=>x.Changed).Returns(Changed.Updated);
+            observer(change.Object);
+
+
+          }
+          await UntilAsync(()=>artist.Name==storedArtist.Name && album.Model.Artist.Name==storedArtist.Name);
+          Assert.Equal(storedArtist.Name,artist.Name);
+          Assert.Equal(storedArtist.Name,album.Model.Artist.Name);
+          var addedAlbum=new Album {Name="Added Album",Artist=storedArtist};
+          fixture.Database.Albums.Add(addedAlbum);
+          fixture.Database.SaveChanges();
+          foreach(var observer in albumObservers)
+          {
+            var change=new Mock<IItemChanged<Album>>();
+            change.SetupGet(x=>x.Item).Returns(addedAlbum);
+            change.SetupGet(x=>x.Changed).Returns(Changed.Added);
+            observer(change.Object);
+
+          }
+          await UntilAsync(()=>artist.Model.Albums.Count==2);
+          Assert.Equal(2,artist.Model.Albums.Count);
+          var song=new Song {Album=storedAlbum,ItemModel=new SoundItem {FileInfoEntity=new FileInfoEntity {Title="Added Song"}}};
+          fixture.Database.Songs.Add(song);
+          fixture.Database.SaveChanges();
+          var songChange=new Mock<IItemChanged<Song>>();
+          songChange.SetupGet(x=>x.Item).Returns(song);
+          songChange.SetupGet(x=>x.Changed).Returns(Changed.Added);
+          typeof(AlbumsViewModel).GetMethod("SongChange",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(albums,new object[] {songChange.Object});
+          await UntilAsync(()=>album.Model.Songs.Count==1);
+          Assert.Same(album,await albums.GetViewModelAsync(storedAlbum.Id));
+          Assert.Single(album.Model.Songs);
+          Assert.True(artist.IsInPlaylist && album.IsInPlaylist);
+          Assert.False(artistLibrary.WasLoaded);
+          Assert.False(albumLibrary.WasLoaded);
+          factory.Verify(x=>x.Create<ArtistViewModel>(It.IsAny<object[]>()),Times.Once);
+          factory.Verify(x=>x.Create<AlbumViewModel>(It.IsAny<object[]>()),Times.Once);
+          fixture.Database.Artists.Remove(storedArtist);
+          fixture.Database.SaveChanges();
+          foreach(var observer in artistObservers)
+          {
+            var change=new Mock<IItemChanged<Artist>>();
+            change.SetupGet(x=>x.Item).Returns(storedArtist);
+            change.SetupGet(x=>x.Changed).Returns(Changed.Removed);
+            observer(change.Object);
+
+
+          }
+          await UntilAsync(async()=>await artists.GetViewModelAsync(storedArtist.Id)==null && await albums.GetViewModelAsync(storedAlbum.Id)==null);
+          Assert.Null(await artists.GetViewModelAsync(storedArtist.Id));
+          Assert.Null(await albums.GetViewModelAsync(storedAlbum.Id));
+        }
+        finally {foreach(var context in contexts) context.Dispose();}
+      });
+    }
+    [Fact]
+    public void RelationshipSnapshotRefreshPreservesPlaybackStateAndNestedData()
+    {
+      using var fixture=new Fixture();
+      var factory=new Mock<IViewModelsFactory>().Object;
+      var cloud=new Mock<IVPlayerCloudService>().Object;
+      var regions=new Mock<IVPlayerRegionProvider>().Object;
+      using var artist=new ArtistViewModel(new Artist {Id=1,ArtistCover="old"},fixture.Events,fixture.Storage.Object,
+        cloud,new Mock<IArtistsViewModel>().Object,factory,regions);
+      using var album=new AlbumViewModel(new Album {Id=2,Name="Old"},fixture.Events,fixture.Storage.Object,
+        new Mock<IAlbumsViewModel>().Object,factory,cloud,regions);
+      artist.IsPlaying=artist.IsInPlaylist=true;
+      album.IsPlaying=album.IsInPlaylist=true;
+      var freshArtist=new Artist
+      {
+        Id=1,Name="Fresh Artist",ArtistCover="new",
+        Albums=Enumerable.Range(1,10000).Select(i=>new Album {Id=i,Name="Album "+i}).ToList()
+      };
+      var freshAlbum=new Album {Id=2,Name="Fresh Album",Artist=freshArtist,ArtistId=1,
+        Songs=Enumerable.Range(1,10000).Select(i=>new Song {Id=i}).ToList()};
+      artist.RefreshModel(freshArtist);
+      album.RefreshModel(freshAlbum);
+      Assert.Same(freshArtist,artist.Model);
+      Assert.Equal(freshArtist.Name,artist.Name);
+      Assert.Equal("new",artist.ImageThumbnail);
+      Assert.Equal("10000 albums",artist.BottomText);
+      Assert.Same(freshAlbum,album.Model);
+      Assert.Same(freshArtist,album.Model.Artist);
+      Assert.Equal(10000,album.Model.Songs.Count);
+      Assert.True(artist.IsPlaying && artist.IsInPlaylist);
+      Assert.True(album.IsPlaying && album.IsInPlaylist);
+      Assert.Throws<ArgumentException>(()=>artist.RefreshModel(new Artist {Id=3}));
+      Assert.Same(freshArtist,artist.Model);
+    }
     [Fact]
     public void ArtistAndAlbumQueriesRetainNestedRelationshipsAfterReset()
     {

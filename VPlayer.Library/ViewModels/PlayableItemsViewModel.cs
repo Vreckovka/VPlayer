@@ -202,6 +202,11 @@ namespace VPlayer.Home.ViewModels
     protected virtual async void ItemsChanged(IItemChanged<TModel> itemChanged)
     {
       var model = itemChanged.Item;
+      if(!LibraryCollection.WasLoaded)
+      {
+        await LibraryCollection.RefreshCachedAsync(model.Id,itemChanged.Changed==Changed.Removed);
+        if(!LibraryCollection.WasLoaded) return;
+      }
 
       switch (itemChanged.Changed)
       {
@@ -297,7 +302,7 @@ namespace VPlayer.Home.ViewModels
 
           wasSubscribed = true;
 
-          this.storageManager.SubscribeToItemChange<TModel>(ItemsChanged).DisposeWith(this);
+          SubscribeToEntityChanges();
 
           if (SubscribeToPinned)
             this.storageManager.SubscribeToItemChange<PinnedItem>(OnPinnedItemChanged).DisposeWith(this);
@@ -334,6 +339,19 @@ namespace VPlayer.Home.ViewModels
     #endregion
 
     #region GetViewModelsAsync
+
+    private int entityChangesSubscribed;
+    private void SubscribeToEntityChanges()
+    {
+      if(Interlocked.CompareExchange(ref entityChangesSubscribed,1,0)==0)
+        storageManager.SubscribeToItemChange<TModel>(ItemsChanged).DisposeWith(this);
+    }
+
+    public Task<TViewModel> GetViewModelAsync(int modelId)
+    {
+      SubscribeToEntityChanges();
+      return LibraryCollection.GetViewModelAsync(modelId);
+    }
 
     public async Task<ICollection<TViewModel>> GetViewModelsAsync(IQueryable<TModel> optionalQuery = null)
     {

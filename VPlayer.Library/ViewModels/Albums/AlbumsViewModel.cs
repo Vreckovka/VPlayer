@@ -68,9 +68,14 @@ namespace VPlayer.Home.ViewModels.Albums
 
     #region ArtistChanged
 
-    protected void ArtistChanged(IItemChanged<Artist> itemChanged)
+    protected async void ArtistChanged(IItemChanged<Artist> itemChanged)
     {
       var artist = itemChanged.Item;
+      if(!LibraryCollection.WasLoaded && artist!=null)
+      {
+        await LibraryCollection.RefreshCachedAsync(x=>x.Model.ArtistId==artist.Id,itemChanged.Changed==Changed.Removed);
+        if(!LibraryCollection.WasLoaded) return;
+      }
 
       if (LibraryCollection.WasLoaded && artist != null)
       {
@@ -109,9 +114,14 @@ namespace VPlayer.Home.ViewModels.Albums
 
     #region SongChange
 
-    protected void SongChange(IItemChanged<Song> itemChanged)
+    protected async void SongChange(IItemChanged<Song> itemChanged)
     {
       var song = itemChanged.Item;
+      if(!LibraryCollection.WasLoaded && song.Album!=null)
+      {
+        await LibraryCollection.RefreshCachedAsync(song.Album.Id);
+        if(!LibraryCollection.WasLoaded) return;
+      }
 
       if (LibraryCollection.WasLoaded && song.Album != null)
       {
