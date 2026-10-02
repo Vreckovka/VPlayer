@@ -81,6 +81,8 @@ namespace VPlayer.Performance
           PrepareStatistics(args[1],args[2]);
         else if(args[0]=="statistics")
           RunStatistics(args[1],args[2],args.Length>3?args[3]:"unknown");
+        else if(args[0]=="statistics-reload")
+          RunStatistics(args[1],args[2],args.Length>3?args[3]:"unknown",32);
         else if(args[0]=="graphics")
         {
           using var context=new FixtureContext(Path.Combine(Path.GetFullPath(args[1]),"VPlayerDatabase.db"));
@@ -273,7 +275,7 @@ namespace VPlayer.Performance
       },json));
       Console.WriteLine("Prepared statistics fixture with unique sound-file metadata.");
     }
-    private static void RunStatistics(string directory,string output,string commit)
+    private static void RunStatistics(string directory,string output,string commit,int reloadRequests=1)
     {
       if(!System.Text.RegularExpressions.Regex.IsMatch(commit ?? "", "^[0-9a-fA-F]{40}$"))
         throw new ArgumentException("Statistics benchmarks require a full Git commit SHA.",nameof(commit));
@@ -292,7 +294,8 @@ namespace VPlayer.Performance
       VSynchronizationContext.UISynchronizationContext=synchronization;
       VSynchronizationContext.UIDispatcher=dispatcher;
       SynchronizationContext.SetSynchronizationContext(synchronization);
-      var contexts=new List<FixtureContext>();
+      var contexts=new System.Collections.Concurrent.ConcurrentBag<FixtureContext>();
+      var repositoryCounts=new List<int>();
       IQueryable<T> Repository<T>() where T:class
       {
         var context=new FixtureContext(database);
@@ -309,13 +312,16 @@ namespace VPlayer.Performance
       storage.Setup(x=>x.GetTempRepository<TvPlaylist>()).Returns(()=>Repository<TvPlaylist>());
       try
       {
-        Measure("Data / statistics","Data","Production StatisticsViewModel.LoadData and UI publication; no view rendering",
+        Measure(reloadRequests==1?"Data / statistics":"UI / statistics reload burst",reloadRequests==1?"Data":"UI",
+          reloadRequests==1?"Production StatisticsViewModel.LoadData and UI publication; no view rendering":
+          "Production StatisticsViewModel.LoadData and UI publication; no view rendering; "+reloadRequests+" overlapping requests",
           metadata.GetProperty("SoundItems").GetInt32()+" sound items, "+metadata.GetProperty("Playlists").GetInt32()+" playlists; unique file metadata",()=>
         {
           using var view=new StatisticsViewModel(new Mock<IRegionProvider>().Object,storage.Object);
           try
           {
-            var task=(Task)typeof(StatisticsViewModel).GetMethod("LoadData",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(view,null);
+            var load=typeof(StatisticsViewModel).GetMethod("LoadData",BindingFlags.Instance|BindingFlags.NonPublic);
+            var task=Task.WhenAll(Enumerable.Range(0,reloadRequests).Select(_=>(Task)load.Invoke(view,null)));
             var frame=new DispatcherFrame();
             task.ContinueWith(_=>dispatcher.BeginInvoke(new Action(()=>frame.Continue=false),DispatcherPriority.ContextIdle),TaskScheduler.Default);
             Dispatcher.PushFrame(frame);
@@ -323,7 +329,11 @@ namespace VPlayer.Performance
             GC.KeepAlive(view.ItemsView.ToArray());GC.KeepAlive(view.SoundsItemsView.ToArray());
             GC.KeepAlive(view.VideosItemsView.ToArray());GC.KeepAlive(view.PlaylistView.ToArray());
           }
-          finally {foreach(var context in contexts) context.Dispose();contexts.Clear();}
+          finally
+          {
+            repositoryCounts.Add(contexts.Count);
+            while(contexts.TryTake(out var context)) context.Dispose();
+          }
         });
       }
       finally
@@ -338,7 +348,7 @@ namespace VPlayer.Performance
       {
         SchemaVersion=1,Commit=commit,CreatedUtc=DateTime.UtcNow,Runtime=Environment.Version.ToString(),
         OS=Environment.OSVersion.ToString(),ProcessorCount=Environment.ProcessorCount,Configuration="Release",
-        FixtureSha256=checksum,Fixture=metadata,Metrics=metrics
+        FixtureSha256=checksum,Fixture=metadata,Metrics=metrics,ReloadRequests=reloadRequests,RepositoryCounts=repositoryCounts
       },json));
     }
     private sealed class WritableFixtureContext : AudioDatabaseContext
