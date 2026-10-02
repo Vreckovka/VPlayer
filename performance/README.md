@@ -156,3 +156,35 @@ The stress fixture has 143,610 zero-time sound rows out of 207,110 (69.3%).
 Such rows do not contribute to totals; only 30 smallest public IDs are needed
 for ranking. Negative legacy times and entirely unplayed 10k-item libraries
 are covered explicitly before reducing score materialization.
+
+Episode name, length and favorite setters previously assigned their existing
+values instead of the supplied value. Three regressions reproduced the failures;
+the corrected setters pass four tests exercising 10k episodes, long names,
+64-bit lengths, toggling both ways and absent video references (9be2de8d).
+
+The first zero-row optimization improved the copied library but slowed a fully
+played workload by 9.4%; both records are retained under iterations/. The final
+39d21c64 implementation samples the first 30 public IDs. It uses zero-row reduction
+only when all are unplayed, reusing those zero candidates; otherwise it keeps the
+full score scan. Parsed legacy zero strings are filtered to prevent duplicate IDs.
+All 113 tests pass, including 10k zero/negative-time and legacy-format libraries.
+Release application and benchmark builds succeeded with existing warnings.
+
+Copied-library Statistics warm data is 299.4 ms (-89.5% from the original baseline),
+with 44,911,648 managed bytes (-90.2%). The fully played fixture has 207k unique
+positive play times and unique file metadata, so every sound must be totaled and
+leaderboard insertions remain worst case. Its warm data is 514 ms versus 508 ms
+(+1.2%) at 18875173; first data is 1.7k ms (+1.4%).
+The added fixture and baseline belong to this later optimization stage, separately
+from the original full-entity Statistics baseline.
+
+Copied-library visible rendering is 2.6k ms (-57.3%) on median, but includes an
+18.4k ms outlier. Fully played rendering was slower in the initial series; an
+additional unchanged-code series confirmed substantial variation. Both complete
+series are retained and combined, giving 4.2k ms versus 3.5k ms (+20.3%).
+The report preserves the regression; it is not credited as an improvement.
+Sound/video scores and small metadata fetches have multi-second outliers in the
+real application despite much faster isolated runs, so diagnose concurrent work,
+database waits and scheduling before attributing these delays to query logic.
+Screenshots of both fixtures were visually checked and immutable hashes verified.
+The earlier native initialization timeout remains unproven; the goal continues.

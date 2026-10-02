@@ -74,8 +74,15 @@
 
 | Baseline now | New optimized version |
 | --- | --- |
-| **first data load** — 4.4k ms | 6k ms (+38.4%) |
-| **warm data load** — 2.9k ms | 471 ms (-83.5%) |
+| **first data load** — 4.4k ms | 1.9k ms (-55.9%) |
+| **warm data load** — 2.9k ms | 299.4 ms (-89.5%) |
+
+### Statistics (fully played, 207k unique times)
+
+| Baseline now | New optimized version |
+| --- | --- |
+| **first data load** — 1.7k ms | 1.7k ms (+1.4%) |
+| **warm data load** — 507.9 ms | 514 ms (+1.2%) |
 
 ## Playlist
 
@@ -100,9 +107,13 @@
 
 | Baseline now | New optimized version |
 | --- | --- |
-| **load and render** — 6.2k ms | 4k ms (-35.2%)* |
+| **load and render** — 6.2k ms | 2.6k ms (-57.3%) |
 
-* UI timing uses completed Statistics samples; raw JSON retains the incomplete launch.
+### Statistics (fully played, 207k unique times)
+
+| Baseline now | New optimized version |
+| --- | --- |
+| **load and render** — 3.5k ms | 4.2k ms (+20.3%) |
 
 ### Grouped playlists (5k added favorites)
 

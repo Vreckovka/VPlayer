@@ -1,7 +1,7 @@
 {
   "SchemaVersion": 1,
-  "Commit": "39d21c645a6fa94cc48fcecd8d68d70065defc25",
-  "CreatedUtc": "2026-10-02T02:21:34.9804396Z",
+  "Commit": "36a1f5c3b5762f9ceda065431ab95871a535485a",
+  "CreatedUtc": "2026-10-02T01:52:48.3700361Z",
   "Runtime": "3.1.32",
   "OS": "Microsoft Windows NT 10.0.19045.0",
   "ProcessorCount": 8,
@@ -28,20 +28,20 @@
       "Category": "Data",
       "Boundary": "Production StatisticsViewModel.LoadData and UI publication; no view rendering",
       "Workload": "207110 sound items, 5310 playlists; unique file metadata",
-      "FirstMilliseconds": 1922.8188,
-      "MedianMilliseconds": 299.4189,
-      "P95Milliseconds": 362.1886,
-      "MedianAllocatedBytes": 44911648,
+      "FirstMilliseconds": 6038.8028,
+      "MedianMilliseconds": 471.0113,
+      "P95Milliseconds": 607.3755,
+      "MedianAllocatedBytes": 105761112,
       "SamplesMilliseconds": [
-        1922.8188,
-        362.1886,
-        299.2557,
-        314.1322,
-        299.0827,
-        304.294,
-        293.0306,
-        299.4189,
-        286.4824
+        6038.8028,
+        470.8255,
+        607.3755,
+        471.0113,
+        475.1224,
+        469.3521,
+        480.0027,
+        468.075,
+        468.3483
       ]
     }
   ]

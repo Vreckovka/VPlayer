@@ -1,13 +1,13 @@
-# Statistics
+# Statistics — fully played library
 
-207k sound items with unique file metadata; 5,310 playlists.
+207k played sound items with unique metadata and play times; 5,310 playlists.
 First data load and repeat medians; - % = less time, + % = more time.
 
 | Baseline now | New optimized version |
 | --- | --- |
-| **first data load** — 4.4k ms | 1.9k ms (-55.9%) |
-| **warm data load** — 2.9k ms | 299.4 ms (-89.5%) |
-| **load and render** — 6.2k ms | 2.6k ms (-57.3%) |
+| **first data load** — 1.7k ms | 1.7k ms (+1.4%) |
+| **warm data load** — 507.9 ms | 514 ms (+1.2%) |
+| **load and render** — 3.5k ms | 4.2k ms (+20.3%) |
 
 
 Data timing includes production loading and UI publication. View timing includes navigation and actual WPF rendering. Full samples, allocations, row checks and provenance remain in the Statistics JSON files.

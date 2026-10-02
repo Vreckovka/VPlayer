@@ -64,9 +64,10 @@ function New-Time($baseline,$value) {
   return (Format-Time $value)+(Format-Change $baseline $value)
 }
 @(
-  '# Statistics'
+  $(if($a.Fixture.AllSoundsPlayed){'# Statistics — fully played library'}else{'# Statistics'})
   ''
-  '207k sound items with unique file metadata; 5,310 playlists. First data load and repeat medians; - % = less time, + % = more time.'
+  $(if($a.Fixture.AllSoundsPlayed){'207k played sound items with unique metadata and play times; 5,310 playlists.'}else{'207k sound items with unique file metadata; 5,310 playlists.'})
+  'First data load and repeat medians; - % = less time, + % = more time.'
   ''
   '| Baseline now | New optimized version |'
   '| --- | --- |'

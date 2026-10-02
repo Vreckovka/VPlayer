@@ -137,16 +137,23 @@ foreach($category in @('Data','Playlist','UI','Lyrics','Spectrum')) {
     $lines.Add('| **'+$label+'** — '+(Format-Metric $metric)+' | '+$newText+' |')
   }
   if($category -in @('Data','UI')) {
-    $statisticsReport=Join-Path $PSScriptRoot 'statistics-results.md'
-    if(Test-Path -LiteralPath $statisticsReport) {
+    foreach($scenario in @(
+      @{File='statistics-results.md';Title='Statistics (207k unique file records)'},
+      @{File='statistics-played-results.md';Title='Statistics (fully played, 207k unique times)'}
+    )) {
+      $scenarioReport=Join-Path $PSScriptRoot $scenario.File
+      if(!(Test-Path -LiteralPath $scenarioReport)){continue}
+      $content=@(Get-Content -LiteralPath $scenarioReport)
       $lines.Add('')
-      $lines.Add('### Statistics (207k unique file records)')
+      $lines.Add('### '+$scenario.Title)
       $lines.Add('')
       $lines.Add('| Baseline now | New optimized version |')
       $lines.Add('| --- | --- |')
       $label=if($category -eq 'Data'){'data load**'}else{'**load and render**'}
-      foreach($row in @(Get-Content -LiteralPath $statisticsReport|Where-Object {$_.StartsWith('|') -and $_.Contains($label)})) {$lines.Add($row)}
-      if($category -eq 'UI') {foreach($note in @(Get-Content -LiteralPath $statisticsReport|Where-Object {$_.StartsWith('* UI timing')})) {$lines.Add('');$lines.Add($note)}}
+      foreach($row in @($content|Where-Object {$_.StartsWith('|') -and $_.Contains($label)})) {$lines.Add($row)}
+      if($category -eq 'UI') {
+        foreach($note in @($content|Where-Object {$_.StartsWith('* UI timing')})) {$lines.Add('');$lines.Add($note)}
+      }
     }
   }
   if($category -eq 'UI') {
