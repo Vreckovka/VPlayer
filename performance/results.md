@@ -9,7 +9,7 @@ Fully played library; buffered diagnostics.
 | Baseline now | New optimized version |
 | --- | --- |
 | **initial playlist view ready** — 4.9k ms | 4.7k ms (-4.7%) |
-| **first window render** — 2.7k ms | 2.7k ms (+0.2%) |
+| **first window render** — 2.7k ms | 2.8k ms (+3.7%) |
 
 <details>
 <summary>Earlier startup comparisons</summary>
@@ -120,7 +120,7 @@ Fully played library; buffered diagnostics.
 
 | Baseline now | New optimized version |
 | --- | --- |
-| **load and render** — 5.8k ms | 4.6k ms (-21.4%) |
+| **load and render** — 5.8k ms | 4.1k ms (-28.9%) |
 
 <details>
 <summary>Earlier Statistics comparisons</summary>
@@ -170,4 +170,4 @@ Library cards/scrolling; navigation/details; file browser/thumbnails; settings/d
 
 Percentage changes in unchanged code are observations. Startup phases overlap; component UI tests use a simplified list. Raw samples, maxima, allocations and commit/fixture provenance remain in the JSON files and [README](README.md).
 
-Current UI timings use the [buffered comparison](buffered-ui-results.md); earlier comparisons retain their original diagnostics.
+Current UI timings compare the original buffered baseline with the latest application. [Playlist-name task comparisons](display-names-ui-results.md) vary in direction; a consistent gain from that change is unproven. Raw samples retain the control timeout and slow outliers.

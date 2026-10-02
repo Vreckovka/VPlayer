@@ -332,3 +332,27 @@ Two 10k-row regressions reproduced asynchronous/stale labels before the fix;
 ten path/title cases cover offline paths, roots, URLs and empty names. All 143
 tests and the production Release build pass. The unprofiled UI baseline remains
 frozen for the upcoming comparison.
+The display-name task has two retained comparisons in
+[display-names-ui-results.md](display-names-ui-results.md): the original seven
+baseline/seven changed launches, followed by seven alternating launches per
+version. The first control launch in the repeat series timed out, spending
+about 43 seconds in VLC construction; six completed controls remain for its
+median. It is retained rather than discarded. Statistics changed by +28.6%
+in the first series and -6.7% in the repeat, so a consistent speedup from the
+name change is unproven. The repeat first-render median also increased.
+
+The repeat data and control-build provenance are in
+[iterations/display-names-confirmation-5df42e33.json](iterations/display-names-confirmation-5df42e33.json).
+The control was rebuilt from the previous playlist source; only that application
+source differed between the compared commits. The changed source was restored
+exactly and its Release build completed before alternating runs. The source
+fixture checksum stayed unchanged; changed-app Statistics rows were populated
+and the final rendered screenshot was inspected.
+
+The main buffered table keeps its original immutable baseline and now uses
+all fourteen unprofiled changed-app samples at 5df42e33, including slow outliers.
+The earlier 0884d95f samples/report remain in iterations/buffered-ui-0884d95f.*.
+Task comparisons use their own pre-change baseline and must not be interpreted
+as equivalent to the earlier overall baseline. Raw JSON keeps individual launch
+status, full precision, phases, observations and commit/fixture provenance;
+the reader-facing tables keep compact times and signed percentages.

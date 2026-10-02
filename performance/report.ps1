@@ -211,6 +211,6 @@ $lines.Add('Library cards/scrolling; navigation/details; file browser/thumbnails
 $lines.Add('')
 $lines.Add('Percentage changes in unchanged code are observations. Startup phases overlap; component UI tests use a simplified list. Raw samples, maxima, allocations and commit/fixture provenance remain in the JSON files and [README](README.md).')
 $lines.Add('')
-$lines.Add('Current UI timings use the [buffered comparison](buffered-ui-results.md); earlier comparisons retain their original diagnostics.')
+$lines.Add('Current UI timings compare the original buffered baseline with the latest application. [Playlist-name task comparisons](display-names-ui-results.md) vary in direction; a consistent gain from that change is unproven. Raw samples retain the control timeout and slow outliers.')
 $lines | Set-Content -LiteralPath $Output
 Write-Output ('Wrote '+$Output)
