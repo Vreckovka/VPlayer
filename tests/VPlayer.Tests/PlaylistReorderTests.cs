@@ -197,7 +197,7 @@ namespace VPlayer.Tests
     public void MouseDownKeepsSelectionDragCancelKeepsItAndPlainClickStillSelectsOne() => Sta.Run(() =>
     {
       var items = Enumerable.Range(0, 100000).Select(_ => new object()).ToArray();
-      var list = new ListView { ItemsSource = items, SelectionMode = SelectionMode.Extended };
+      var list = new PlaylistTrackListView { ItemsSource = items, SelectionMode = SelectionMode.Extended };
       list.SelectedItems.Add(items[1]); list.SelectedItems.Add(items[99999]);
       var selection = new PlaylistDragSelection(list);
       Assert.True(selection.Begin(items[99999], ModifierKeys.None));

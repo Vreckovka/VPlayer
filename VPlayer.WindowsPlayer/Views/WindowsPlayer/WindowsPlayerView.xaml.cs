@@ -141,8 +141,7 @@ namespace VPlayer.Player.Views.WindowsPlayer
       if (ReferenceEquals(DataContext, playlist) && playlist.PlaylistItemIndices(items).Length == items.Length)
       {
         // Reloading the virtual queue clears WPF selection; restore every dragged occurrence.
-        ListView_Tracks.RestoreSelection(items);
-        ListView_Tracks.ScrollIntoView(item);
+        ListView_Tracks.RestoreSelection(items, item);
       }
     }
 

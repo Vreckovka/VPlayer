@@ -6,9 +6,9 @@ namespace VPlayer.WindowsPlayer.Behaviors
   // WPF normally collapses an extended selection on mouse-down, before a drag can start.
   internal sealed class PlaylistDragSelection
   {
-    private readonly ListView list;
+    private readonly PlaylistTrackListView list;
     private object pendingClick;
-    public PlaylistDragSelection(ListView list) => this.list = list;
+    public PlaylistDragSelection(PlaylistTrackListView list) => this.list = list;
 
     public bool Begin(object item, ModifierKeys modifiers)
     {
@@ -27,8 +27,7 @@ namespace VPlayer.WindowsPlayer.Behaviors
       var item = pendingClick;
       pendingClick = null;
       if (item == null || !list.Items.Contains(item)) return;
-      list.SelectedItems.Clear();
-      list.SelectedItem = item;
+      list.CompletePlainClick(item);
     }
   }
 }
