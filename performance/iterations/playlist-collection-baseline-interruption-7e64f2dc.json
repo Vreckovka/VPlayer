@@ -1,7 +1,0 @@
-{
-  "SourceCommit": "7e64f2dc49b35c6661f1316d96bce8731feb3939",
-  "Status": "StoppedOwnedBaselineTestHost",
-  "StoppedAt": "2026-10-02T18:09:02.3139626+02:00",
-  "ElapsedSeconds": 286.5243308,
-  "Reason": "100k repeated-reference regression did not finish within the observed baseline interval; three other failures were already recorded. Preserve the full workload for optimized validation."
-}
