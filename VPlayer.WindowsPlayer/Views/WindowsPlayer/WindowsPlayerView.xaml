@@ -1888,9 +1888,10 @@
 
 
       <AdornerDecorator Grid.Row="1">
-      <ListView
+      <behaviors1:PlaylistTrackListView
         x:Name="ListView_Tracks"
         PreviewMouseLeftButtonDown="TrackMouseDown"
+        PreviewMouseLeftButtonUp="TrackMouseUp"
         PreviewMouseMove="TrackMouseMove"
         PreviewDragOver="TrackDragOver"
         PreviewDrop="TrackDrop"
@@ -1900,7 +1901,8 @@
         HorizontalAlignment="Stretch"
         Panel.ZIndex="0"
         AllowDrop="True"
-        ItemsSource="{Binding VirtualizedPlayList}"
+        SelectionMode="Extended"
+        ItemsSource="{Binding VirtualizedPlayList, Converter={behaviors1:PlaylistSelectionViewConverter}}"
         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
         Style="{StaticResource WindowsPlayerSongs}">
         <b:Interaction.Behaviors>
@@ -1910,7 +1912,7 @@
             StepSize="50" />
           <behaviors1:FixListViewItemResizeBehavior ValueDecrease="25" />
         </b:Interaction.Behaviors>
-      </ListView>
+      </behaviors1:PlaylistTrackListView>
       </AdornerDecorator>
 
       <b:Interaction.Behaviors>

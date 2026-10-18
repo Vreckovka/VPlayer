@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using System.Globalization;
 
 namespace VPlayer.WindowsPlayer.Behaviors
 {
@@ -16,6 +17,7 @@ namespace VPlayer.WindowsPlayer.Behaviors
   {
     private readonly ListView list;
     private readonly object sourceItem;
+    private readonly HashSet<int> sourceIndices;
     private readonly double rowHeight;
     private readonly Point grabOffset;
     private readonly Dictionary<ListViewItem, RowVisual> visuals = new Dictionary<ListViewItem, RowVisual>();
@@ -28,13 +30,16 @@ namespace VPlayer.WindowsPlayer.Behaviors
 
     public int SourceIndex { get; }
     public int TargetIndex { get; private set; }
+    public int InsertionIndex { get; private set; }
     public bool IsVisible { get; private set; }
 
-    public PlaylistDragPreview(ListView list, ListViewItem source, int sourceIndex, Point start)
+    public PlaylistDragPreview(ListView list, ListViewItem source, int sourceIndex, Point start, int[] selectedIndices)
     {
       this.list = list;
       sourceItem = source.DataContext;
+      sourceIndices = new HashSet<int>(selectedIndices);
       SourceIndex = TargetIndex = sourceIndex;
+      InsertionIndex = sourceIndex;
       rowHeight = source.ActualHeight + source.Margin.Top + source.Margin.Bottom;
       var origin = source.TranslatePoint(new Point(), list);
       grabOffset = new Point(start.X - origin.X, start.Y - origin.Y);
@@ -47,7 +52,7 @@ namespace VPlayer.WindowsPlayer.Behaviors
           new Rect(0, 0, source.ActualWidth, source.ActualHeight));
       bitmap.Render(snapshotVisual);
       bitmap.Freeze();
-      adorner = new DragAdorner(list, bitmap, new Size(source.ActualWidth, source.ActualHeight));
+      adorner = new DragAdorner(list, bitmap, new Size(source.ActualWidth, source.ActualHeight), sourceIndices.Count);
       layer = AdornerLayer.GetAdornerLayer(list);
       layer?.Add(adorner);
       scroll = Descendants<ScrollViewer>(list).FirstOrDefault();
@@ -82,10 +87,23 @@ namespace VPlayer.WindowsPlayer.Behaviors
       int insertion = slots.Last().Index + 1;
       foreach (var slot in slots)
       {
-        if (slot.Index == SourceIndex) continue;
+        if (sourceIndices.Contains(slot.Index)) continue;
         if (position.Y < slot.Top + slot.Height / 2) { insertion = slot.Index; break; }
       }
       TargetIndex = Math.Max(0, Math.Min(list.Items.Count - 1, insertion > SourceIndex ? insertion - 1 : insertion));
+      InsertionIndex = insertion;
+      if (sourceIndices.Count > 1)
+      {
+        // A compact insertion marker stays visible even when thousands of selected rows are off-screen.
+        foreach (var slot in slots)
+        {
+          visuals[slot.Row].SetHidden(sourceIndices.Contains(slot.Index), 0.35);
+          visuals[slot.Row].MoveTo(0);
+        }
+        double top = slots.FirstOrDefault(x => x.Index >= insertion)?.Top ?? slots.Last().Top + slots.Last().Height;
+        adorner.Show(position - (Vector)grabOffset, top, 6);
+        return;
+      }
       var target = slots.FirstOrDefault(x => x.Index == TargetIndex);
       double gapTop = target != null ? target.Top : slots.Last().Top + slots.Last().Height - rowHeight;
       if (TargetIndex > SourceIndex && target != null) gapTop += target.Height - rowHeight;
@@ -175,7 +193,7 @@ namespace VPlayer.WindowsPlayer.Behaviors
         row.SetCurrentValue(UIElement.RenderTransformProperty, group);
       }
 
-      public void SetHidden(bool hidden) => row.SetCurrentValue(UIElement.OpacityProperty, hidden ? 0d : opacity);
+      public void SetHidden(bool hidden, double dimmedOpacity = 0) => row.SetCurrentValue(UIElement.OpacityProperty, hidden ? dimmedOpacity : opacity);
       public void MoveTo(double value)
       {
         if (Math.Abs(destination - value) < 0.1) return;
@@ -197,14 +215,15 @@ namespace VPlayer.WindowsPlayer.Behaviors
     {
       private readonly ImageSource snapshot;
       private readonly Size imageSize;
+      private readonly int itemCount;
       private Point position;
       private double gapHeight;
       private double targetTop = double.NaN;
       public static readonly DependencyProperty GapTopProperty = DependencyProperty.Register(nameof(GapTop), typeof(double), typeof(DragAdorner), new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.AffectsRender));
       public double GapTop { get => (double)GetValue(GapTopProperty); set => SetValue(GapTopProperty, value); }
 
-      public DragAdorner(UIElement element, ImageSource snapshot, Size size) : base(element)
-      { this.snapshot = snapshot; imageSize = size; IsHitTestVisible = false; }
+      public DragAdorner(UIElement element, ImageSource snapshot, Size size, int itemCount) : base(element)
+      { this.snapshot = snapshot; imageSize = size; this.itemCount = itemCount; IsHitTestVisible = false; }
 
       public void Show(Point point, double top, double height)
       {
@@ -234,6 +253,15 @@ namespace VPlayer.WindowsPlayer.Behaviors
         dc.PushOpacity(0.92);
         dc.DrawImage(snapshot, card);
         dc.Pop();
+        if (itemCount > 1)
+        {
+          var text = new FormattedText(itemCount.ToString("N0", CultureInfo.CurrentCulture) + " items",
+            CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface("Segoe UI"), 13, Brushes.White,
+            VisualTreeHelper.GetDpi(this).PixelsPerDip);
+          var badge = new Rect(Math.Max(card.Left, card.Right - text.Width - 20), card.Top + 4, text.Width + 12, text.Height + 6);
+          dc.DrawRoundedRectangle(new SolidColorBrush(Color.FromRgb(70, 56, 37)), new Pen(accent, 1), badge, 4, 4);
+          dc.DrawText(text, new Point(badge.Left + 6, badge.Top + 3));
+        }
         dc.Pop();
       }
     }

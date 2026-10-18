@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -17,10 +18,15 @@ namespace VPlayer.Player.Views.WindowsPlayer
     private object dragItem;
     private object dragOwner;
     private PlaylistDragPreview dragPreview;
+    private readonly PlaylistDragSelection dragSelection;
+    private object[] dragItems;
+    private object dragItemsSource;
+    private int dragItemCount;
 
     public WindowsPlayerView()
     {
       InitializeComponent();
+      dragSelection = new PlaylistDragSelection(ListView_Tracks);
       Unloaded += (sender, args) => ClearDragPreview();
       DataContextChanged += (sender, args) => ClearDragPreview();
     }
@@ -41,10 +47,19 @@ namespace VPlayer.Player.Views.WindowsPlayer
     private void TrackMouseDown(object sender, MouseButtonEventArgs e)
     {
       dragItem = null;
+      dragSelection.Cancel();
       if (e.ClickCount != 1 || IsInteractive(e.OriginalSource as DependencyObject)) return;
       dragStart = e.GetPosition(ListView_Tracks);
       dragItem = RowAt(e.OriginalSource as DependencyObject)?.DataContext;
       dragOwner = DataContext;
+      if (DataContext is IReorderablePlaylist playlist && playlist.CanReorderPlaylist &&
+          dragSelection.Begin(dragItem, Keyboard.Modifiers)) e.Handled = true;
+    }
+
+    private void TrackMouseUp(object sender, MouseButtonEventArgs e)
+    {
+      dragSelection.CompleteClick();
+      dragItem = null;
     }
 
     private void TrackMouseMove(object sender, MouseEventArgs e)
@@ -59,9 +74,16 @@ namespace VPlayer.Player.Views.WindowsPlayer
       var row = ListView_Tracks.ItemContainerGenerator.ContainerFromIndex(index) as ListViewItem;
       if (row == null) return;
       var item = dragItem;
+      if (!ListView_Tracks.SelectedItems.Contains(item)) return;
+      dragItems = ListView_Tracks.SelectedItems.Cast<object>().ToArray();
+      var indices = playlist.PlaylistItemIndices(dragItems);
+      if (indices.Length != dragItems.Length) return;
+      dragItemsSource = ListView_Tracks.ItemsSource;
+      dragItemCount = ListView_Tracks.Items.Count;
+      dragSelection.Cancel();
       try
       {
-        dragPreview = new PlaylistDragPreview(ListView_Tracks, row, index, dragStart);
+        dragPreview = new PlaylistDragPreview(ListView_Tracks, row, index, dragStart, indices);
         dragPreview.Update(point);
         DragDrop.DoDragDrop(ListView_Tracks, new DataObject(TrackFormat, item), DragDropEffects.Move);
       }
@@ -76,6 +98,7 @@ namespace VPlayer.Player.Views.WindowsPlayer
     private bool AcceptsDrag(DragEventArgs e) => dragPreview != null &&
       ReferenceEquals(dragOwner, DataContext) && DataContext is IReorderablePlaylist playlist &&
       playlist.CanReorderPlaylist && ReferenceEquals(e.Data.GetData(TrackFormat), dragItem) &&
+      ReferenceEquals(dragItemsSource, ListView_Tracks.ItemsSource) && dragItemCount == ListView_Tracks.Items.Count &&
       playlist.PlaylistItemIndex(dragItem) == dragPreview.SourceIndex;
 
     private void TrackDragOver(object sender, DragEventArgs e)
@@ -110,12 +133,15 @@ namespace VPlayer.Player.Views.WindowsPlayer
       if (!AcceptsDrag(e)) return;
       var playlist = (IReorderablePlaylist)DataContext;
       var item = dragItem;
+      var items = dragItems;
       dragPreview.Update(e.GetPosition(ListView_Tracks));
-      int target = dragPreview.TargetIndex;
+      int target = dragPreview.InsertionIndex;
       ClearDragPreview();
-      if (await playlist.MovePlaylistItemAsync(item, target) && ReferenceEquals(DataContext, playlist))
+      await playlist.MovePlaylistItemsAsync(items, target);
+      if (ReferenceEquals(DataContext, playlist) && playlist.PlaylistItemIndices(items).Length == items.Length)
       {
-        ListView_Tracks.SelectedItem = item;
+        // Reloading the virtual queue clears WPF selection; restore every dragged occurrence.
+        ListView_Tracks.RestoreSelection(items);
         ListView_Tracks.ScrollIntoView(item);
       }
     }
@@ -124,6 +150,8 @@ namespace VPlayer.Player.Views.WindowsPlayer
     {
       dragPreview?.Dispose();
       dragPreview = null;
+      dragItems = null;
+      dragSelection?.Cancel();
     }
   }
 }
