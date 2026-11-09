@@ -323,6 +323,9 @@ namespace VPlayer
       };
 
 
+      foreach (var setting in VVLC.Providers.SubtitleAppearance.Defaults)
+        settings.Add(setting.Key, new SettingParameters(setting.Value));
+
       provider.Load();
       var missingSettings = settings.Where(x => !provider.Settings.ContainsKey(x.Key));
 

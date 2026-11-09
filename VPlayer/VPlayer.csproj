@@ -250,5 +250,11 @@
 		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
 
+  <ItemGroup Condition="'$(PlatformTarget)' == 'x64' and ('$(RuntimeIdentifier)' == '' or '$(RuntimeIdentifier)' == 'win-x64')">
+    <Content Include="..\VVLC\Native\win-x64\libvplayer_ass_text_plugin.dll"
+             TargetPath="libvlc\win-x64\plugins\codec\libvplayer_ass_text_plugin.dll"
+             CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <Import Project="VlcPluginCache.targets" />
 </Project>
