@@ -48,14 +48,16 @@ namespace VPlayer.Player.Views.WindowsPlayer
     {
       dragItem = null;
       dragSelection.Cancel();
-      if (e.ClickCount != 1 || IsInteractive(e.OriginalSource as DependencyObject)) return;
+      var source = e.OriginalSource as DependencyObject;
+      if (IsInteractive(source)) return;
+      var item = RowAt(source)?.DataContext;
+      if (!dragSelection.TryBegin(item, Keyboard.Modifiers, e.ClickCount, out var handled)) return;
+      e.Handled = handled;
       dragStart = e.GetPosition(ListView_Tracks);
-      dragItem = RowAt(e.OriginalSource as DependencyObject)?.DataContext;
+      dragItem = item;
       dragOwner = DataContext;
       dragItemsSource = ListView_Tracks.ItemsSource;
       dragItemCount = ListView_Tracks.Items.Count;
-      if (DataContext is IReorderablePlaylist playlist && playlist.CanReorderPlaylist &&
-          dragSelection.Begin(dragItem, Keyboard.Modifiers)) e.Handled = true;
     }
 
     private void TrackMouseUp(object sender, MouseButtonEventArgs e)
@@ -82,7 +84,10 @@ namespace VPlayer.Player.Views.WindowsPlayer
       if (dragItems.Length == 0) return;
       var indices = playlist.PlaylistItemIndices(dragItems);
       if (indices.Length != dragItems.Length) return;
-      dragSelection.Cancel();
+      // Native extended selection captures the mouse while Shift is pressed.
+      if (Mouse.Captured == ListView_Tracks) ListView_Tracks.ReleaseMouseCapture();
+      dragSelection.CommitDrag(dragItems);
+      e.Handled = true;
       try
       {
         dragPreview = new PlaylistDragPreview(ListView_Tracks, row, index, dragStart, indices);
@@ -94,7 +99,6 @@ namespace VPlayer.Player.Views.WindowsPlayer
         ClearDragPreview();
         dragItem = null;
       }
-      e.Handled = true;
     }
 
     private bool AcceptsDrag(DragEventArgs e) => dragPreview != null &&

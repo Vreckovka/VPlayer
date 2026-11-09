@@ -8,37 +8,54 @@ namespace VPlayer.WindowsPlayer.Behaviors
   internal sealed class PlaylistDragSelection
   {
     private readonly PlaylistTrackListView list;
-    private object pendingClick;
+    private object pressedItem;
+    private bool preserveOnRelease;
     private object[] pendingItems;
     public PlaylistDragSelection(PlaylistTrackListView list) => this.list = list;
 
-    public bool Begin(object item, ModifierKeys modifiers)
+    public bool TryBegin(object item, ModifierKeys modifiers, int clickCount, out bool handled)
     {
       Cancel();
-      if (modifiers != ModifierKeys.None || item == null || list.SelectedItems.Count < 2 ||
-          !list.SelectedItems.Contains(item)) return false;
-      pendingClick = item;
-      pendingItems = list.SelectedItems.Cast<object>().ToArray();
-      list.Focus();
-      return true;
+      handled = false;
+      if (item == null) return false;
+      if ((modifiers == ModifierKeys.None || modifiers == ModifierKeys.Shift) &&
+          list.SelectedItems.Count > 1 && list.SelectedItems.Contains(item))
+      {
+        pressedItem = item;
+        pendingItems = list.SelectedItems.Cast<object>().ToArray();
+        preserveOnRelease = modifiers == ModifierKeys.None;
+        // Take precedence over double-click playback when a selected group can be dragged.
+        handled = preserveOnRelease;
+        if (handled) list.Focus();
+        return true;
+      }
+      // Let native Shift-click establish a new range before the mouse starts moving.
+      return clickCount == 1 || (modifiers & ModifierKeys.Shift) != 0;
     }
 
     public object[] ItemsForDrag(object item) =>
-      ReferenceEquals(item, pendingClick) && pendingItems != null ? pendingItems :
+      ReferenceEquals(item, pressedItem) && pendingItems != null ? pendingItems :
       list.SelectedItems.Contains(item) ? list.SelectedItems.Cast<object>().ToArray() : Array.Empty<object>();
 
     public void Cancel()
     {
-      pendingClick = null;
+      pressedItem = null;
       pendingItems = null;
+      preserveOnRelease = false;
+    }
+
+    public void CommitDrag(object[] items)
+    {
+      // A native Shift press can shorten the visible range before crossing the drag threshold.
+      if (!list.SelectedItems.Cast<object>().SequenceEqual(items)) list.KeepDragSelection(items);
+      Cancel();
     }
 
     public void CompleteClick()
     {
-      var item = pendingClick;
+      var item = preserveOnRelease ? pressedItem : null;
       Cancel();
-      if (item == null || !list.Items.Contains(item)) return;
-      list.CompletePlainClick(item);
+      if (item != null && list.SelectedItems.Contains(item)) list.SetRangeAnchor(item);
     }
   }
 }

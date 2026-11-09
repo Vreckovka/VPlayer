@@ -23,6 +23,13 @@ namespace VPlayer.WindowsPlayer.Behaviors
       item != null && indices.TryGetValue(item, out var index) ? index : -1;
     public override bool Contains(object item) => IndexOf(item) >= 0;
 
+    protected override IEnumerator GetEnumerator()
+    {
+      // WPF uses enumeration for Shift ranges and indexed access for displayed
+      // rows. VirtualList's enumerator advances before yielding its first row.
+      for (int i = 0; i < Count; i++) yield return GetItemAt(i);
+    }
+
     private sealed class ReferenceComparer : IEqualityComparer<object>
     {
       public new bool Equals(object x, object y) => ReferenceEquals(x, y);

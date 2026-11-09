@@ -52,26 +52,22 @@ namespace VPlayer.WindowsPlayer.Behaviors
     {
       GetBindingExpression(ItemsSourceProperty)?.UpdateTarget();
       SetSelectedItems(items);
-      SetRangeAnchor(anchorItem, false);
+      SetRangeAnchor(anchorItem);
     }
 
-    internal void CompletePlainClick(object item)
-    {
-      SetSelectedItems(new[] { item });
-      SetRangeAnchor(item, true);
-    }
+    internal void KeepDragSelection(IEnumerable items) => SetSelectedItems(items);
 
-    private void SetRangeAnchor(object item, bool focus)
+    internal void SetRangeAnchor(object item)
     {
       if (item == null || !Items.Contains(item)) return;
-      ScrollIntoView(item);
-      UpdateLayout();
-      if (ItemContainerGenerator.ContainerFromItem(item) is ListBoxItem row)
+      var row = ItemContainerGenerator.ContainerFromItem(item) as ListViewItem;
+      if (row == null)
       {
-        if (focus) row.Focus();
-        // SelectedItem alone does not update WPF's pivot for Shift-click/keyboard ranges.
-        AnchorItem = item;
+        ScrollIntoView(item);
+        UpdateLayout();
+        row = ItemContainerGenerator.ContainerFromItem(item) as ListViewItem;
       }
+      if (row != null) AnchorItem = item;
     }
   }
 }

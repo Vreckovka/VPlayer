@@ -265,7 +265,8 @@ namespace VPlayer.Tests
       var list = new PlaylistTrackListView { ItemsSource = new PlaylistSelectionView(items), SelectionMode = SelectionMode.Extended };
       list.RestoreSelection(new[] { items[1], items[99999] });
       var drag = new PlaylistDragSelection(list);
-      Assert.True(drag.Begin(items[99999], ModifierKeys.None));
+      Assert.True(drag.TryBegin(items[99999], ModifierKeys.None, 1, out bool handled));
+      Assert.True(handled);
       list.RestoreSelection(new[] { items[1] });
       Assert.Equal(new[] { items[1], items[99999] }, drag.ItemsForDrag(items[99999]));
       drag.Cancel();
@@ -311,22 +312,27 @@ namespace VPlayer.Tests
     }
 
     [Fact]
-    public void MouseDownKeepsSelectionDragCancelKeepsItAndPlainClickStillSelectsOne() => Sta.Run(() =>
+    public void MouseDownCancelledDragAndPlainClickKeepSelectedRows() => Sta.Run(() =>
     {
       var items = Enumerable.Range(0, 100000).Select(_ => new object()).ToArray();
       var list = new PlaylistTrackListView { ItemsSource = items, SelectionMode = SelectionMode.Extended };
       list.SelectedItems.Add(items[1]); list.SelectedItems.Add(items[99999]);
       var selection = new PlaylistDragSelection(list);
-      Assert.True(selection.Begin(items[99999], ModifierKeys.None));
+      Assert.True(selection.TryBegin(items[99999], ModifierKeys.None, 1, out bool handled));
+      Assert.True(handled);
       Assert.Equal(2, list.SelectedItems.Count);
       selection.Cancel(); selection.CompleteClick();
       Assert.Equal(2, list.SelectedItems.Count);
-      Assert.False(selection.Begin(items[99999], ModifierKeys.Control));
-      Assert.False(selection.Begin(items[99999], ModifierKeys.Shift));
-      Assert.False(selection.Begin(items[2], ModifierKeys.None));
-      Assert.True(selection.Begin(items[1], ModifierKeys.None));
+      Assert.True(selection.TryBegin(items[99999], ModifierKeys.Control, 1, out handled));
+      Assert.False(handled);
+      Assert.True(selection.TryBegin(items[99999], ModifierKeys.Shift, 1, out handled));
+      Assert.False(handled);
+      Assert.True(selection.TryBegin(items[2], ModifierKeys.None, 1, out handled));
+      Assert.False(handled);
+      Assert.True(selection.TryBegin(items[1], ModifierKeys.None, 1, out handled));
+      Assert.True(handled);
       selection.CompleteClick();
-      Assert.Same(items[1], Assert.Single(list.SelectedItems.Cast<object>()));
+      Assert.Equal(new[] { items[1], items[99999] }, list.SelectedItems.Cast<object>());
     });
 
     [Fact]

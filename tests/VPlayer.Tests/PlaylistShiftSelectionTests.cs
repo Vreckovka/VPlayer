@@ -52,7 +52,8 @@ namespace VPlayer.Tests
       var fixture = new Fixture();
       fixture.Single(clicked);
       fixture.Toggle(oldAnchor);
-      Assert.True(fixture.Drag.Begin(fixture.Items[clicked], ModifierKeys.None));
+      Assert.True(fixture.Drag.TryBegin(fixture.Items[clicked], ModifierKeys.None, 1, out bool handled));
+      Assert.True(handled);
       fixture.Drag.CompleteClick();
       fixture.Shift(target);
       fixture.Expect(Enumerable.Range(Math.Min(clicked, target), Math.Abs(clicked - target) + 1).ToArray());
@@ -73,12 +74,59 @@ namespace VPlayer.Tests
     });
 
     [Fact]
+    public void ClickingAnAlreadySelectedRowKeepsTheShiftRangeAvailableForDrag() => Sta.Run(() =>
+    {
+      var fixture = new Fixture();
+      fixture.Single(1);
+      fixture.Shift(9);
+      Assert.True(fixture.Drag.TryBegin(fixture.Items[9], ModifierKeys.None, 1, out bool handled));
+      Assert.True(handled);
+      fixture.Drag.CompleteClick();
+      fixture.Expect(1, 2, 3, 4, 5, 6, 7, 8, 9);
+      Assert.Equal(9, fixture.Drag.ItemsForDrag(fixture.Items[9]).Length);
+    });
+
+    [Theory]
+    [InlineData(ModifierKeys.None, 2)]
+    [InlineData(ModifierKeys.Shift, 1)]
+    public void PressingInsideAShiftRangeDragsTheWholeRange(ModifierKeys modifiers, int clickCount) => Sta.Run(() =>
+    {
+      var fixture = new Fixture();
+      fixture.Single(1);
+      fixture.Shift(9);
+      var expected = fixture.List.SelectedItems.Cast<object>().ToArray();
+      Assert.True(fixture.Drag.TryBegin(fixture.Items[5], modifiers, clickCount, out bool handled));
+      Assert.Equal(modifiers == ModifierKeys.None, handled);
+      if (!handled) fixture.Shift(5);
+      var dragged = fixture.Drag.ItemsForDrag(fixture.Items[5]);
+      Assert.Equal(expected, dragged);
+      fixture.Drag.CommitDrag(dragged);
+      fixture.Drag.CompleteClick();
+      fixture.Expect(1, 2, 3, 4, 5, 6, 7, 8, 9);
+    });
+
+    [Fact]
+    public void ShiftPressCanSelectAndDragFiftyThousandRowsInOneGesture() => Sta.Run(() =>
+    {
+      var fixture = new Fixture();
+      fixture.Single(1);
+      Assert.True(fixture.Drag.TryBegin(fixture.Items[50000], ModifierKeys.Shift, 1, out bool handled));
+      Assert.False(handled);
+      fixture.Shift(50000);
+      var dragged = fixture.Drag.ItemsForDrag(fixture.Items[50000]);
+      Assert.Equal(fixture.Items.Skip(1).Take(50000), dragged);
+      fixture.Drag.CommitDrag(dragged);
+      Assert.Equal(50000, fixture.List.SelectedItems.Count);
+    }, 60);
+
+    [Fact]
     public void CancellingDragPreservesTheExistingNativeAnchor() => Sta.Run(() =>
     {
       var fixture = new Fixture();
       fixture.Single(1);
       fixture.Toggle(9);
-      Assert.True(fixture.Drag.Begin(fixture.Items[1], ModifierKeys.None));
+      Assert.True(fixture.Drag.TryBegin(fixture.Items[1], ModifierKeys.None, 1, out bool handled));
+      Assert.True(handled);
       fixture.Drag.Cancel();
       fixture.Drag.CompleteClick();
       fixture.Shift(6);
