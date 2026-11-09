@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using LibVLCSharp.Shared;
+using VCore.Standard.Providers;
 
 namespace VVLC.Providers
 {
@@ -10,10 +12,11 @@ namespace VVLC.Providers
   {
     private object lockObject = new object();
     private bool initilized;
+    private readonly ISettingsProvider settingsProvider;
 
-    public VlcProvider()
+    public VlcProvider(ISettingsProvider settingsProvider = null)
     {
-
+      this.settingsProvider = settingsProvider;
     }
 
     #region LoadVlc
@@ -40,19 +43,14 @@ namespace VVLC.Providers
 #if DEBUG
       enableLogs = true;
 #endif
-      return new LibVLC(
-        enableLogs,
+      var arguments = new[] {
         "--verbose=2",
-        "--freetype-background-opacity=150", 
-        "--freetype-background-color=0",
-        "--freetype-rel-fontsize=22",
-        "--codec=freetype",
-        "--sub-filter=freetype",
-
         "--aout=directsound",   //Multiple Mediaplayers are sharing volume, this allows each volume for each player
-
-        "--http-reconnect"   
-        );
+        "--http-reconnect"
+      }.Concat(SubtitleAppearance.Options(key =>
+        settingsProvider?.Settings != null && settingsProvider.Settings.TryGetValue(key, out var setting)
+          ? setting.Value : null)).ToArray();
+      return new LibVLC(enableLogs, arguments);
     }
 
     #endregion

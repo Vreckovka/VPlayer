@@ -50,6 +50,7 @@ using VPlayer.WindowsPlayer.ViewModels.Windows;
 using VPlayer.WindowsPlayer.Views.Prompts;
 using VPlayer.WindowsPlayer.Views.WindowsPlayer;
 using VVLC.Players;
+using VVLC.Providers;
 using Application = System.Windows.Application;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 using System.Net;
@@ -63,6 +64,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
   {
     private readonly IWindowManager windowManager;
     private readonly ICSFDWebsiteScrapper iCsfdWebsiteScrapper;
+    private readonly SubtitleOverrideSession subtitleOverride;
+    private readonly string subtitleFfmpeg;
+    private readonly IStatusManager subtitleStatus;
     private TaskCompletionSource<bool> loadedTask = new TaskCompletionSource<bool>();
 
     #region Constructors
@@ -86,6 +90,9 @@ namespace VPlayer.WindowsPlayer.ViewModels
     {
       this.windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
       this.iCsfdWebsiteScrapper = iCsfdWebsiteScrapper ?? throw new ArgumentNullException(nameof(iCsfdWebsiteScrapper));
+      subtitleOverride = new SubtitleOverrideSession().DisposeWith(this);
+      subtitleFfmpeg = iVFfmpegProvider.FFMPEG_PATH;
+      subtitleStatus = statusManager;
     }
 
     #endregion
@@ -568,29 +575,28 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     private async void OnSubtitleSelected(SubtitleViewModel selectedItem)
     {
-      if (selectedItem == null)
+      var player = MediaPlayer;
+      var item = ActualItem;
+      var media = base.MediaPlayer.Media;
+      if (player == null || media == null) return;
+      int id = selectedItem?.Model.Id ?? -1;
+      lastSPUValue = id;
+      bool IsCurrent() => ReferenceEquals(media, base.MediaPlayer.Media) && ReferenceEquals(item, ActualItem);
+      try
       {
-        MediaPlayer.SetSpu(-1);
-        lastSPUValue = -1;
-        return;
-      }
-
-      if (MediaPlayer.Spu != selectedItem.Model.Id)
-      {
-        MediaPlayer.SetSpu(selectedItem.Model.Id);
-
-        if (ActualItem != null)
+        if (await subtitleOverride.SelectAsync(player, media, id, subtitleFfmpeg, IsCurrent, error =>
         {
-          var model = ActualItem.Model;
-
-          model.SubtitleTrack = selectedItem.Model.Id;
-
-          await storageManager.UpdateEntityAsync(model);
+          logger.Log(error);
+          subtitleStatus.ShowFailedMessage("Could not apply your subtitle style. Using the original track.");
+        }) && IsCurrent() && lastSPUValue == id && item != null && item.Model.SubtitleTrack != id)
+        {
+          item.Model.SubtitleTrack = id;
+          await storageManager.UpdateEntityAsync(item.Model);
         }
       }
-
-      lastSPUValue = selectedItem.Model.Id;
+      catch (Exception error) { logger.Log(error); }
     }
+
 
     #endregion
 
@@ -1166,71 +1172,30 @@ namespace VPlayer.WindowsPlayer.ViewModels
     private int? lastSPUValue = null;
     private async Task ReloadSubtitles()
     {
-      await VSynchronizationContext.InvokeOnDispatcherAsync(async () =>
+      await VSynchronizationContext.InvokeOnDispatcherAsync(() =>
       {
+        subtitleOverride.UseMedia(base.MediaPlayer.Media);
         Subtitles.Clear();
-        SubtitleViewModel subtitleSetting = null;
+        foreach (var spu in MediaPlayer.SpuDescription.Where(track => !subtitleOverride.IsGenerated(track.Id)))
+          Subtitles.Add(new SubtitleViewModel(spu));
 
-        if (MediaPlayer.SpuDescription.Length > 0)
+        var selected = Subtitles.FirstOrDefault(track => track.Model.Id == ActualItem?.Model.SubtitleTrack)
+          ?? Subtitles.FirstOrDefault(track => track.Model.Id == lastSPUValue);
+        if (selected == null && Subtitles.Count >= 2)
         {
-          foreach (var spu in MediaPlayer.SpuDescription)
+          var selectedAudio = AudioTracks.FirstOrDefault(track => track.IsSelected);
+          if (selectedAudio != null)
           {
-            Subtitles.Add(new SubtitleViewModel(spu));
-          }
-
-          if (ActualItem?.Model.SubtitleTrack != null &&
-           Subtitles.SingleOrDefault(x => x.Model.Id == ActualItem?.Model.SubtitleTrack) != null)
-          {
-            MediaPlayer.SetSpu(ActualItem.Model.SubtitleTrack.Value);
-            lastSPUValue = ActualItem.Model.SubtitleTrack.Value;
-          }
-          if (Subtitles.Count >= 2)
-          {
-            if (lastSPUValue != null)
-            {
-              subtitleSetting = Subtitles.FirstOrDefault(x => x.Model.Id == lastSPUValue);
-            }
-
-            if (subtitleSetting == null)
-            {
-              var selectedAudio = AudioTracks.FirstOrDefault(x => x.IsSelected);
-
-              if (selectedAudio != null)
-              {
-                subtitleSetting = TryGetSettingOrGetPreffered(Subtitles, Language.Enghlish);
-
-                if (subtitleSetting.Language == Language.Czech && selectedAudio.Language == Language.Czech)
-                {
-                  subtitleSetting = Subtitles.FirstOrDefault(x => x.Model.Id == -1);
-                }
-              }
-            }
-
-            if (subtitleSetting != null)
-            {
-              OnSubtitleSelected(subtitleSetting);
-            }
-          }
-
-          SubtitleViewModel actualSub = null;
-
-          if (lastSPUValue == null)
-          {
-            actualSub = Subtitles.SingleOrDefault(x => MediaPlayer.Spu == x.Model.Id);
-          }
-          else
-          {
-            actualSub = Subtitles.SingleOrDefault(x => lastSPUValue.Value == x.Model.Id);
-          }
-
-          if (actualSub != null)
-          {
-            actualSub.IsSelected = true;
-            lastSPUValue = actualSub.Model.Id;
+            selected = TryGetSettingOrGetPreffered(Subtitles, Language.Enghlish);
+            if (selected?.Language == Language.Czech && selectedAudio.Language == Language.Czech)
+              selected = Subtitles.FirstOrDefault(track => track.Model.Id == -1);
           }
         }
+        selected ??= Subtitles.FirstOrDefault(track => track.Model.Id == subtitleOverride.OriginalTrack(MediaPlayer.Spu));
+        if (selected != null) selected.IsSelected = true;
       });
     }
+
 
     #endregion
 
@@ -1450,6 +1415,7 @@ namespace VPlayer.WindowsPlayer.ViewModels
 
     protected override void OnActualItemChanged()
     {
+      subtitleOverride?.UseMedia(null);
       base.OnActualItemChanged();
 
       if (ActualItem?.ExtraData is CSFDItem cSFDItem)
