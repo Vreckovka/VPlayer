@@ -83,11 +83,12 @@ namespace VPlayer.WindowsPlayer.Behaviors
         Top = row.TranslatePoint(new Point(), list).Y - visuals[row].Shift.Y - row.Margin.Top,
         Height = row.ActualHeight + row.Margin.Top + row.Margin.Bottom
       }).Where(x => x.Index >= 0).OrderBy(x => x.Index).ToList();
-      if (slots.Count == 0) { Hide(); return; }
-      int insertion = slots.Last().Index + 1;
-      foreach (var slot in slots)
+      var visibleSlots = slots.Where(slot => slot.Top < list.ActualHeight && slot.Top + slot.Height > 0).ToList();
+      if (visibleSlots.Count == 0) { Hide(); return; }
+      int insertion = visibleSlots.Last().Index + 1;
+      foreach (var slot in visibleSlots)
       {
-        if (sourceIndices.Contains(slot.Index)) continue;
+        if (sourceIndices.Count == 1 && sourceIndices.Contains(slot.Index)) continue;
         if (position.Y < slot.Top + slot.Height / 2) { insertion = slot.Index; break; }
       }
       TargetIndex = Math.Max(0, Math.Min(list.Items.Count - 1, insertion > SourceIndex ? insertion - 1 : insertion));
@@ -100,8 +101,9 @@ namespace VPlayer.WindowsPlayer.Behaviors
           visuals[slot.Row].SetHidden(sourceIndices.Contains(slot.Index), 0.35);
           visuals[slot.Row].MoveTo(0);
         }
-        double top = slots.FirstOrDefault(x => x.Index >= insertion)?.Top ?? slots.Last().Top + slots.Last().Height;
-        adorner.Show(position - (Vector)grabOffset, top, 6);
+        double top = visibleSlots.FirstOrDefault(x => x.Index >= insertion)?.Top ??
+          visibleSlots.Last().Top + visibleSlots.Last().Height;
+        adorner.Show(position - (Vector)grabOffset, Math.Max(0, Math.Min(top, list.ActualHeight - 6)), 6);
         return;
       }
       var target = slots.FirstOrDefault(x => x.Index == TargetIndex);

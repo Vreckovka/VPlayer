@@ -10,5 +10,7 @@ namespace VPlayer.Core.ViewModels
     int[] PlaylistItemIndices(IEnumerable<object> items);
     Task<bool> MovePlaylistItemAsync(object item, int newIndex);
     Task<bool> MovePlaylistItemsAsync(IEnumerable<object> items, int insertionIndex);
+    bool CanRemovePlaylistItems { get; }
+    Task<bool> RemovePlaylistItemsAsync(IEnumerable<object> items);
   }
 }

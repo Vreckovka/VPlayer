@@ -86,16 +86,27 @@ namespace VPlayer.Tests
     }
 
     private delegate bool Save(SoundItemFilePlaylist input, out SoundItemFilePlaylist output);
+    private sealed class TestPlayer : MusicPlayerViewModel
+    {
+      public TestPlayer() : base(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null) { }
+      protected override void OnActualItemChanged() { }
+      public override void SetItemAndPlay(int? itemIndex = null, bool forcePlay = false, bool onlyItemSet = false)
+      {
+        actualItemIndex = itemIndex.Value;
+        ActualItem = PlayList[actualItemIndex];
+      }
+    }
+
     private sealed class Fixture : IDisposable
     {
-      internal readonly MusicPlayerViewModel Player = (MusicPlayerViewModel)FormatterServices.GetUninitializedObject(typeof(MusicPlayerViewModel));
+      internal readonly TestPlayer Player = (TestPlayer)FormatterServices.GetUninitializedObject(typeof(TestPlayer));
       internal readonly SoundItemInPlaylistViewModel[] Items;
       internal readonly SoundItemFilePlaylist Saved;
       internal SoundItemFilePlaylist Written;
       internal int Saves;
       private readonly ReplaySubject<int> actual = new ReplaySubject<int>(1);
       private readonly SynchronizationContext previousUi;
-      internal Fixture(int count, bool saveSucceeds)
+      internal Fixture(int count, bool saveSucceeds, bool unavailable = true)
       {
         var storage = new Mock<IStorageManager>();
         SoundItemFilePlaylist ignored;
@@ -107,7 +118,7 @@ namespace VPlayer.Tests
           new SoundItem { Id = i % 7 + 1, FileInfoEntity = new FileInfoEntity { Name = "Track " + i } }, events, storage.Object)).ToArray();
         var rows = Items.Select((item, i) => new PlaylistSoundItem
           { Id = i + 1, OrderInPlaylist = i + 1, ReferencedItem = item.Model, IdReferencedItem = item.Model.Id }).ToList();
-        rows.Insert(1, new PlaylistSoundItem { Id = count + 1, OrderInPlaylist = 1, IdReferencedItem = 999 });
+        if (unavailable) rows.Insert(1, new PlaylistSoundItem { Id = count + 1, OrderInPlaylist = 1, IdReferencedItem = 999 });
         for (int i = 0; i < rows.Count; i++) rows[i].OrderInPlaylist = i + 1;
         Saved = new SoundItemFilePlaylist { Id = 42, Name = "Test", PlaylistItems = rows, ActualItem = rows.Last(), ActualItemId = count, LastItemIndex = count, HashCode = 123 };
         Set("playList", new PlaylistCollection<SoundItemInPlaylistViewModel>(Items));
@@ -176,6 +187,112 @@ namespace VPlayer.Tests
     }
 
     [Fact]
+    public async Task GroupMoveUsesDisplayedOrderEvenWhenTheStoredOrderDiffers()
+    {
+      using var fixture = new Fixture(7, true);
+      using var original = fixture.Player.PlayList;
+      using var reversed = new PlaylistCollection<SoundItemInPlaylistViewModel>(Enumerable.Reverse(fixture.Items));
+      fixture.Player.PlayList = reversed;
+      Assert.True(await fixture.Player.MovePlaylistItemsAsync(new[] { fixture.Items[2], fixture.Items[5] }, 7));
+      Assert.Equal(new[] { 7, 5, 4, 2, 1, 6, 3 },
+        fixture.Written.PlaylistItems.Where(row => row.ReferencedItem != null).Select(row => row.Id));
+      Assert.Equal(1, fixture.Saves);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task RemovingHalfOfHugeQueueSavesOnceAndKeepsOtherOccurrences(bool succeeds)
+    {
+      const int count = 100000;
+      using var fixture = new Fixture(count, succeeds);
+      var original = fixture.Player.PlayList;
+      var selected = fixture.Items.Where((_, index) => index % 2 == 0).ToArray();
+      var remaining = fixture.Items.Where((_, index) => index % 2 == 1).ToArray();
+      Assert.Equal(succeeds, await fixture.Player.RemovePlaylistItemsAsync(selected));
+      Assert.Equal(1, fixture.Saves);
+      Assert.Same(fixture.Items.Last(), fixture.Player.ActualItem);
+      Assert.Equal(count, fixture.Written.ActualItemId);
+      Assert.Equal(Enumerable.Range(1, count).Where(id => id % 2 == 0),
+        fixture.Written.PlaylistItems.Where(row => row.ReferencedItem != null).Select(row => row.Id));
+      Assert.Contains(fixture.Written.PlaylistItems, row => row.Id == count + 1 && row.ReferencedItem == null);
+      if (succeeds) Assert.Equal(remaining, fixture.Player.PlayList);
+      else
+      {
+        Assert.Same(original, fixture.Player.PlayList);
+        Assert.Equal(count + 1, fixture.Saved.PlaylistItems.Count);
+        Assert.Equal(123, fixture.Saved.HashCode);
+      }
+    }
+
+    [Fact]
+    public async Task DeletingAllSelectedRowsPersistsAnEmptyPlaylistAndClearsTheCurrentTrack()
+    {
+      using var fixture = new Fixture(100000, true, unavailable: false);
+      Assert.True(await fixture.Player.RemovePlaylistItemsAsync(fixture.Items));
+      Assert.Empty(fixture.Player.PlayList);
+      Assert.Empty(fixture.Written.PlaylistItems);
+      Assert.Null(fixture.Player.ActualItem);
+      Assert.Null(fixture.Written.ActualItemId);
+      Assert.Equal(1, fixture.Saves);
+    }
+
+    [Fact]
+    public async Task RemovingTheCurrentTrackSelectsTheClosestRemainingTrack()
+    {
+      using var fixture = new Fixture(8, true);
+      Assert.True(await fixture.Player.RemovePlaylistItemsAsync(new[] { fixture.Items[7], fixture.Items[6] }));
+      Assert.Same(fixture.Items[5], fixture.Player.ActualItem);
+      Assert.Equal(6, fixture.Written.ActualItemId);
+    }
+
+    [Fact]
+    public async Task UnsavedQueueCanBeMovedAndEditedWithoutWritingStorage()
+    {
+      using var fixture = new Fixture(8, true);
+      fixture.Saved.Id = -1;
+      Assert.True(await fixture.Player.MovePlaylistItemsAsync(new[] { fixture.Items[0], fixture.Items[2] }, 8));
+      Assert.Equal(new[] { fixture.Items[0], fixture.Items[2] }, fixture.Player.PlayList.Skip(6));
+      Assert.True(await fixture.Player.RemovePlaylistItemsAsync(new[] { fixture.Items[0], fixture.Items[2] }));
+      Assert.Equal(6, fixture.Player.PlayList.Count);
+      Assert.Equal(0, fixture.Saves);
+    }
+
+    [Fact]
+    public void DeferredDragKeepsItsSnapshotWhenWpfSelectionChanges() => Sta.Run(() =>
+    {
+      var items = Enumerable.Range(0, 100000).Select(_ => new object()).ToArray();
+      var list = new PlaylistTrackListView { ItemsSource = new PlaylistSelectionView(items), SelectionMode = SelectionMode.Extended };
+      list.RestoreSelection(new[] { items[1], items[99999] });
+      var drag = new PlaylistDragSelection(list);
+      Assert.True(drag.Begin(items[99999], ModifierKeys.None));
+      list.RestoreSelection(new[] { items[1] });
+      Assert.Equal(new[] { items[1], items[99999] }, drag.ItemsForDrag(items[99999]));
+      drag.Cancel();
+      Assert.Empty(drag.ItemsForDrag(items[99999]));
+    });
+
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(1)]
+    [InlineData(50000)]
+    public void RemoveCommandTargetsTheSelectionOrAnUnselectedContextRow(int contextIndex) => Sta.Run(() =>
+    {
+      var items = Enumerable.Range(0, 100000).Select(_ => new object()).ToArray();
+      var editor = new Mock<IReorderablePlaylist>();
+      editor.SetupGet(x => x.CanRemovePlaylistItems).Returns(true);
+      object[] removed = null;
+      editor.Setup(x => x.RemovePlaylistItemsAsync(It.IsAny<IEnumerable<object>>()))
+        .Callback((IEnumerable<object> rows) => removed = rows.ToArray()).ReturnsAsync(true);
+      var list = new PlaylistTrackListView { ItemsSource = new PlaylistSelectionView(items), SelectionMode = SelectionMode.Extended, DataContext = editor.Object };
+      list.RestoreSelection(new[] { items[1], items[99999] });
+      object row = contextIndex < 0 ? null : items[contextIndex];
+      Assert.True(PlaylistTrackListView.RemovePlaylistSelection.CanExecute(row, list));
+      PlaylistTrackListView.RemovePlaylistSelection.Execute(row, list);
+      Assert.Equal(contextIndex == 50000 ? new[] { row } : new[] { items[1], items[99999] }, removed);
+    });
+
+    [Fact]
     public async Task NoOpAndStaleSelectionNeverSave()
     {
       using var fixture = new Fixture(100000, true);
@@ -237,6 +354,9 @@ namespace VPlayer.Tests
       Assert.NotNull(source);
       var last = (ListViewItem)list.ItemContainerGenerator.ContainerFromIndex(11);
       var preview = new PlaylistDragPreview(list, source, 1, new Point(10, 10), new[] { 1, 3, 10 });
+      var selectedTarget = (ListViewItem)list.ItemContainerGenerator.ContainerFromIndex(3);
+      preview.Update(selectedTarget.TranslatePoint(new Point(10, selectedTarget.ActualHeight / 4), list));
+      Assert.Equal(3, preview.InsertionIndex);
       preview.Update(last.TranslatePoint(new Point(10, last.ActualHeight), list));
       Assert.True(preview.IsVisible);
       Assert.Equal(12, preview.InsertionIndex);

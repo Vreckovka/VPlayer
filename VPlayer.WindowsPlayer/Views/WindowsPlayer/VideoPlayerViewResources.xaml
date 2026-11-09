@@ -2,6 +2,7 @@
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+  xmlns:playlist="clr-namespace:VPlayer.WindowsPlayer.Behaviors"
   xmlns:buttons="clr-namespace:VCore.WPF.Behaviors.Buttons;assembly=VCore.WPF"
   xmlns:controls="clr-namespace:VCore.WPF.Controls;assembly=VCore.WPF"
   xmlns:local="clr-namespace:VPlayer.WindowsPlayer.Views.WindowsPlayer"
@@ -155,7 +156,11 @@
 
       <Grid.ContextMenu>
         <ContextMenu>
-          <MenuItem Command="{Binding DeleteItemFromPlaylist}" Header="Delete episode from playlist" />
+          <MenuItem
+            Command="{x:Static playlist:PlaylistTrackListView.RemovePlaylistSelection}"
+            CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+            CommandTarget="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+            Header="Remove from playlist" />
 
           <MenuItem IsHitTestVisible="False" />
 
@@ -285,8 +290,10 @@
               <DataTemplate>
                 <Grid DataContext="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu, Mode=FindAncestor}, Path=DataContext}">
                   <controls:PathButton
-                    Command="{Binding DeleteItemFromPlaylist}"
-                    Content="Remove item from playlist"
+                    Command="{x:Static playlist:PlaylistTrackListView.RemovePlaylistSelection}"
+                    CommandParameter="{Binding}"
+                    CommandTarget="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                    Content="Remove from playlist"
                     Glyph="{StaticResource layer-minus-glyph}"
                     IconHoverColor="{StaticResource DefaultRedColor}"
                     ToolTip="Removes SINGLE item from playlist">

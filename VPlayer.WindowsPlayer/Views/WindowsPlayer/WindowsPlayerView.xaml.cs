@@ -52,6 +52,8 @@ namespace VPlayer.Player.Views.WindowsPlayer
       dragStart = e.GetPosition(ListView_Tracks);
       dragItem = RowAt(e.OriginalSource as DependencyObject)?.DataContext;
       dragOwner = DataContext;
+      dragItemsSource = ListView_Tracks.ItemsSource;
+      dragItemCount = ListView_Tracks.Items.Count;
       if (DataContext is IReorderablePlaylist playlist && playlist.CanReorderPlaylist &&
           dragSelection.Begin(dragItem, Keyboard.Modifiers)) e.Handled = true;
     }
@@ -64,8 +66,10 @@ namespace VPlayer.Player.Views.WindowsPlayer
 
     private void TrackMouseMove(object sender, MouseEventArgs e)
     {
+      if (dragPreview != null) return;
       if (e.LeftButton != MouseButtonState.Pressed) { dragItem = null; return; }
       if (dragItem == null || !ReferenceEquals(dragOwner, DataContext) ||
+          !ReferenceEquals(dragItemsSource, ListView_Tracks.ItemsSource) || dragItemCount != ListView_Tracks.Items.Count ||
           !(DataContext is IReorderablePlaylist playlist) || !playlist.CanReorderPlaylist) return;
       var point = e.GetPosition(ListView_Tracks);
       if (Math.Abs(point.X - dragStart.X) < SystemParameters.MinimumHorizontalDragDistance &&
@@ -74,12 +78,10 @@ namespace VPlayer.Player.Views.WindowsPlayer
       var row = ListView_Tracks.ItemContainerGenerator.ContainerFromIndex(index) as ListViewItem;
       if (row == null) return;
       var item = dragItem;
-      if (!ListView_Tracks.SelectedItems.Contains(item)) return;
-      dragItems = ListView_Tracks.SelectedItems.Cast<object>().ToArray();
+      dragItems = dragSelection.ItemsForDrag(item);
+      if (dragItems.Length == 0) return;
       var indices = playlist.PlaylistItemIndices(dragItems);
       if (indices.Length != dragItems.Length) return;
-      dragItemsSource = ListView_Tracks.ItemsSource;
-      dragItemCount = ListView_Tracks.Items.Count;
       dragSelection.Cancel();
       try
       {
@@ -135,10 +137,11 @@ namespace VPlayer.Player.Views.WindowsPlayer
       var item = dragItem;
       var items = dragItems;
       dragPreview.Update(e.GetPosition(ListView_Tracks));
+      if (!dragPreview.IsVisible) { e.Effects = DragDropEffects.None; return; }
       int target = dragPreview.InsertionIndex;
       ClearDragPreview();
-      await playlist.MovePlaylistItemsAsync(items, target);
-      if (ReferenceEquals(DataContext, playlist) && playlist.PlaylistItemIndices(items).Length == items.Length)
+      if (await playlist.MovePlaylistItemsAsync(items, target) &&
+          ReferenceEquals(DataContext, playlist) && playlist.PlaylistItemIndices(items).Length == items.Length)
       {
         // Reloading the virtual queue clears WPF selection; restore every dragged occurrence.
         ListView_Tracks.RestoreSelection(items, item);

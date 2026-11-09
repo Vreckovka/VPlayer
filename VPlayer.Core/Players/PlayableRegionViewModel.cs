@@ -1,4 +1,4 @@
-﻿using VPLayer.Domain.Text;
+using VPLayer.Domain.Text;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -791,8 +791,7 @@ namespace VPlayer.Core.ViewModels
 
     private readonly SemaphoreSlim playlistEditSemaphore = new SemaphoreSlim(1, 1);
     private bool isReorderingPlaylist;
-    public bool CanReorderPlaylist => !isReorderingPlaylist && !PlaylistFromSearch &&
-      string.IsNullOrEmpty(ActualSearch) && ActualSavedPlaylist?.Id > 0 && PlayList.Count > 1;
+    public bool CanReorderPlaylist => CanRemovePlaylistItems && PlayList.Count > 1;
 
     public int PlaylistItemIndex(object item) => item is TItemViewModel vm ? PlayList.IndexOf(vm) : -1;
 
@@ -819,68 +818,134 @@ namespace VPlayer.Core.ViewModels
       return MovePlaylistItemsAsync(new[] { item }, newIndex > oldIndex ? newIndex + 1 : newIndex);
     }
 
-    public async Task<bool> MovePlaylistItemsAsync(IEnumerable<object> items, int insertionIndex)
+    public Task<bool> MovePlaylistItemsAsync(IEnumerable<object> items, int insertionIndex)
+      => EditPlaylistItemsAsync(items, insertionIndex);
+
+    public bool CanRemovePlaylistItems => !isReorderingPlaylist && !PlaylistFromSearch &&
+      string.IsNullOrEmpty(ActualSearch) && PlayList.Count > 0;
+
+    public Task<bool> RemovePlaylistItemsAsync(IEnumerable<object> items)
+      => EditPlaylistItemsAsync(items, null);
+
+    private async Task<bool> EditPlaylistItemsAsync(IEnumerable<object> items, int? insertionIndex)
     {
-      if (!CanReorderPlaylist || items == null) return false;
+      bool removing = !insertionIndex.HasValue;
+      if (items == null || !(removing ? CanRemovePlaylistItems : CanReorderPlaylist)) return false;
       var selection = items.ToArray();
-      var indices = PlaylistItemIndices(selection);
-      if (PlaylistReorder.CreateOrder(PlayList.Count, indices, insertionIndex) == null) return false;
       var sourcePlaylist = ActualSavedPlaylist;
+      var original = PlayList;
       isReorderingPlaylist = true;
       RaisePropertyChanged(nameof(CanReorderPlaylist));
       await playlistEditSemaphore.WaitAsync();
       try
       {
-        if (!ReferenceEquals(sourcePlaylist, ActualSavedPlaylist)) return false;
-        indices = PlaylistItemIndices(selection);
-        var order = PlaylistReorder.CreateOrder(PlayList.Count, indices, insertionIndex);
+        if (!ReferenceEquals(original, PlayList) || !ReferenceEquals(sourcePlaylist, ActualSavedPlaylist) ||
+            PlaylistFromSearch || !string.IsNullOrEmpty(ActualSearch)) return false;
+        var selected = PlaylistReorder.SelectedIndices(original, selection);
+        if (selected.Length == 0) return false;
+        var order = removing
+          ? Enumerable.Range(0, original.Count).Except(selected).ToArray()
+          : PlaylistReorder.CreateOrder(original.Count, selected, insertionIndex.Value);
         if (order == null) return false;
-        var originalPlaylist = PlayList;
-        var originalEntries = ActualSavedPlaylist.PlaylistItems.ToList();
-        var originalOrders = originalEntries.Select(x => x.OrderInPlaylist).ToList();
-        var originalHash = ActualSavedPlaylist.HashCode;
-        var originalSort = ActualPlaylistSortOrder;
-        var originalDefaultSort = defaultSortOrder;
-        var ordered = originalEntries.OrderBy(x => x.OrderInPlaylist).ThenBy(x => x.Id).ToList();
-        var available = ordered.Where(x => x.ReferencedItem != null).ToList();
-        if (available.Count != PlayList.Count || available.Where((x, i) => x.IdReferencedItem != PlayList[i].Model.Id).Any())
-          return false;
-        var desired = order.Select(index => PlayList[index]).ToList();
-        int next = 0;
-        // Use the original row positions to preserve duplicate occurrence identities and unavailable slots.
-        ordered = ordered.Select(row => row.ReferencedItem == null ? row : available[order[next++]]).ToList();
-        for (int i = 0; i < ordered.Count; i++) ordered[i].OrderInPlaylist = i + 1;
-        ActualSavedPlaylist.PlaylistItems = ordered;
-        ActualSavedPlaylist.HashCode = ordered.Select(x => x.IdReferencedItem).ToList().GetSequenceHashCode();
-        // Keep the original collection available while persistence can still roll back.
+        var desired = order.Select(index => original[index]).ToList();
+        int previousIndex = original.IndexOf(ActualItem);
+        int nextIndex = desired.IndexOf(ActualItem);
+        if (removing && nextIndex < 0 && previousIndex >= 0 && desired.Count > 0)
+          nextIndex = Math.Min(PlaylistReorder.TargetIndex(selected, previousIndex), desired.Count - 1);
+
+        if (sourcePlaylist?.Id > 0)
+        {
+          var previousRows = sourcePlaylist.PlaylistItems;
+          var previousHash = sourcePlaylist.HashCode;
+          var previousItem = sourcePlaylist.ActualItem;
+          var previousItemId = sourcePlaylist.ActualItemId;
+          var previousLastIndex = sourcePlaylist.LastItemIndex;
+          var previousCount = sourcePlaylist.ItemCount;
+          // The visible queue can be sorted before its order has reached storage. Match
+          // its occurrences by track ID, retaining duplicate rows in their original order.
+          var aligned = PlaylistOrder.ReorderAvailable(
+            previousRows.OrderBy(row => row.OrderInPlaylist).ThenBy(row => row.Id),
+            original.Select(item => item.Model.Id), row => row.IdReferencedItem, row => row.ReferencedItem != null);
+          var available = aligned.Where(row => row.ReferencedItem != null).ToArray();
+          var kept = order.Select(index => available[index]).ToArray();
+          var ordered = new List<TPlaylistItemModel>(aligned.Count);
+          int next = 0;
+          foreach (var row in aligned)
+          {
+            if (row.ReferencedItem == null) ordered.Add(row);
+            else if (next < kept.Length) ordered.Add(kept[next++]);
+          }
+          var previousOrders = ordered.Select(row => row.OrderInPlaylist).ToArray();
+          bool saved = false;
+          try
+          {
+            for (int i = 0; i < ordered.Count; i++) ordered[i].OrderInPlaylist = i + 1;
+            sourcePlaylist.PlaylistItems = ordered;
+            sourcePlaylist.ItemCount = ordered.Count;
+            sourcePlaylist.HashCode = ordered.Select(row => row.IdReferencedItem).ToList().GetSequenceHashCode();
+            sourcePlaylist.ActualItem = nextIndex >= 0 ? kept[nextIndex] :
+              previousIndex < 0 && previousItemId.HasValue ? kept.FirstOrDefault(row => row.Id == previousItemId) : null;
+            sourcePlaylist.ActualItemId = sourcePlaylist.ActualItem?.Id;
+            sourcePlaylist.LastItemIndex = sourcePlaylist.ActualItem == null ? 0 : ordered.IndexOf(sourcePlaylist.ActualItem);
+            saved = await UpdateActualSavedPlaylistPlaylist();
+          }
+          finally
+          {
+            if (!saved)
+            {
+              for (int i = 0; i < ordered.Count; i++) ordered[i].OrderInPlaylist = previousOrders[i];
+              sourcePlaylist.PlaylistItems = previousRows;
+              sourcePlaylist.HashCode = previousHash;
+              sourcePlaylist.ActualItem = previousItem;
+              sourcePlaylist.ActualItemId = previousItemId;
+              sourcePlaylist.LastItemIndex = previousLastIndex;
+              sourcePlaylist.ItemCount = previousCount;
+            }
+          }
+          if (!saved)
+          {
+            statusManager.ShowFailedMessage("The playlist changes could not be saved. Please try again.", true);
+            return false;
+          }
+        }
+
+        // Do not apply a completed edit to a different queue if the user navigated away.
+        if (!ReferenceEquals(original, PlayList) || ActualSavedPlaylist?.Id != sourcePlaylist?.Id) return true;
+        var playing = ActualItem;
+        bool wasPlaying = IsPlaying;
+        int playingIndex = original.IndexOf(playing);
         PlayList = new PlaylistCollection<TItemViewModel>(desired);
-        actualItemIndex = PlayList.IndexOf(ActualItem);
-        UpdateSavedPlaybackPosition();
+        actualItemIndex = PlayList.IndexOf(playing);
+        if (removing)
+        {
+          foreach (var index in selected)
+          {
+            original[index].IsInPlaylist = false;
+            shuffleList?.Remove(original[index]);
+          }
+          if (playingIndex >= 0 && actualItemIndex < 0)
+          {
+            if (desired.Count == 0)
+            {
+              Interlocked.Increment(ref selectionVersion);
+              CancelPendingMedia();
+              MediaPlayer?.Stop();
+              ActualItem = null;
+              IsPlaying = false;
+            }
+            else
+            {
+              int successor = Math.Min(PlaylistReorder.TargetIndex(selected, playingIndex), desired.Count - 1);
+              SetItemAndPlay(successor, onlyItemSet: !wasPlaying);
+            }
+          }
+        }
         defaultSortOrder = null;
         ActualPlaylistSortOrder = PlaylistSortOrder.None;
         ReloadVirtulizedPlaylist();
         actualItemSubject.OnNext(actualItemIndex);
         RaisePropertyChanged(nameof(ActualItemIndex));
-        var saved = await UpdateActualSavedPlaylistPlaylist();
-        if (!saved)
-        {
-          for (int i = 0; i < originalEntries.Count; i++) originalEntries[i].OrderInPlaylist = originalOrders[i];
-          if (ReferenceEquals(ActualSavedPlaylist, sourcePlaylist))
-          {
-            ActualSavedPlaylist.PlaylistItems = originalEntries;
-            ActualSavedPlaylist.HashCode = originalHash;
-            PlayList = originalPlaylist;
-            ActualPlaylistSortOrder = originalSort;
-            defaultSortOrder = originalDefaultSort;
-            actualItemIndex = PlayList.IndexOf(ActualItem);
-            UpdateSavedPlaybackPosition();
-            ReloadVirtulizedPlaylist();
-            actualItemSubject.OnNext(actualItemIndex);
-            RaisePropertyChanged(nameof(ActualItemIndex));
-          }
-          statusManager.ShowFailedMessage("The playlist order could not be saved. Please try again.", true);
-        }
-        return saved;
+        return true;
       }
       catch (Exception ex)
       {
@@ -1203,7 +1268,7 @@ namespace VPlayer.Core.ViewModels
 
           OnSetActualItem(ActualItem, true);
 
-          if (ActualSavedPlaylist?.PlaylistItems != null)
+          if (!isReorderingPlaylist && ActualSavedPlaylist?.PlaylistItems != null)
           {
             UpdateSavedPlaybackPosition();
             UpdateActualSavedPlaylistPlaylist();
